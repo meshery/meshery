@@ -71,8 +71,9 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	// testName - should be loaded from the file and updated with a random string appended to the end of the name
 	testName := perfTest.Config.Name
 	if testName == "" {
-		h.log.Error(ErrBlankName(err))
-		writeMeshkitError(w, ErrBlankName(err), http.StatusForbidden)
+		blankNameErr := ErrBlankName(nil)
+		h.log.Error(blankNameErr)
+		writeMeshkitError(w, blankNameErr, http.StatusBadRequest)
 		return
 	}
 
@@ -114,15 +115,13 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	}
 
 	ltURL, err := url.Parse(loadTestOptions.URL)
-	if err != nil {
-		obj := "the provided load test"
-		h.log.Error(ErrParseBool(err, obj))
-		writeMeshkitError(w, ErrParseBool(err, obj), http.StatusBadRequest)
-		return
-	}
-	if !ltURL.IsAbs() {
-		h.log.Error(ErrInvalidLTURL(ltURL.String()))
-		writeMeshkitError(w, ErrInvalidLTURL(ltURL.String()), http.StatusBadRequest)
+	if err != nil || !ltURL.IsAbs() || ltURL.Host == "" {
+		invalidURL := loadTestOptions.URL
+		if err != nil {
+			invalidURL = fmt.Sprintf("%s (%v)", loadTestOptions.URL, err)
+		}
+		h.log.Error(ErrInvalidLTURL(invalidURL))
+		writeMeshkitError(w, ErrInvalidLTURL(loadTestOptions.URL), http.StatusBadRequest)
 		return
 	}
 	loadTestOptions.Name = testName
@@ -148,7 +147,10 @@ func (h *Handler) jsonToMap(headersString string) *map[string]string {
 	return &headers
 }
 
-// LoadTestHandler runs the load test with the given parameters
+// LoadTestHandler executes a performance load test with the provided parameters.
+// It parses query parameters and performance profile metadata, safely writes temporary
+// CA certificate files when cert=true, ensures their file descriptors are closed and
+// unlinked upon exit, and invokes the underlying load generator.
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	cleanUpFiles := make([]string, 0)
 
@@ -201,11 +203,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 		return
 	}
 
-	options, ok := performanceProfile.Metadata["additional_options"].(string)
-
-	if ok {
-		loadTestOptions.Options = options
-	}
+	loadTestOptions.Options = savedAdditionalOptions(performanceProfile.Metadata)
 
 	if isSSLCertificateProvided {
 		var isErrLoadingCertificate bool
@@ -222,8 +220,20 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 					writeMeshkitError(w, ErrCreateFile(err, certificateName), http.StatusInternalServerError)
 					return
 				}
+				defer func() {
+					if err := file.Close(); err != nil && err != os.ErrClosed {
+						h.log.Error(fmt.Errorf("failed to close temp certificate file %s: %w", file.Name(), err))
+					}
+				}()
 				cleanUpFiles = append(cleanUpFiles, file.Name())
-				certificateData := caCertificate["file"].(string)
+
+				certificateData, ok := caCertificate["file"].(string)
+				if !ok {
+					createErr := ErrCreateFile(fmt.Errorf("certificate file data is invalid or missing"), certificateName)
+					h.log.Error(createErr)
+					writeMeshkitError(w, createErr, http.StatusBadRequest)
+					return
+				}
 
 				_, err = file.Write([]byte(certificateData))
 				if err != nil {
@@ -256,8 +266,9 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	testName := q.Get("name")
 	if testName == "" {
-		h.log.Error(ErrBlankName(err))
-		writeMeshkitError(w, ErrBlankName(err), http.StatusForbidden)
+		blankNameErr := ErrBlankName(nil)
+		h.log.Error(blankNameErr)
+		writeMeshkitError(w, blankNameErr, http.StatusBadRequest)
 		return
 	}
 	meshName := q.Get("mesh")
@@ -309,10 +320,13 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	loadTestURL := q.Get("url")
 	ltURL, err := url.Parse(loadTestURL)
-	if err != nil || !ltURL.IsAbs() {
-		obj := "the provided load test url"
-		h.log.Error(ErrParseBool(err, obj))
-		writeMeshkitError(w, ErrParseBool(err, obj), http.StatusBadRequest)
+	if err != nil || !ltURL.IsAbs() || ltURL.Host == "" {
+		invalidURL := loadTestURL
+		if err != nil {
+			invalidURL = fmt.Sprintf("%s (%v)", loadTestURL, err)
+		}
+		h.log.Error(ErrInvalidLTURL(invalidURL))
+		writeMeshkitError(w, ErrInvalidLTURL(loadTestURL), http.StatusBadRequest)
 		return
 	}
 	loadTestOptions.URL = loadTestURL
@@ -348,69 +362,94 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 
 	notify := req.Context()
 
+	// Channel ownership contract:
+	// - The producer goroutine owns and closes respChan after executeLoadTest completes (deferred).
+	// - The streaming goroutine drains respChan and closes endChan to signal completion (deferred).
+	// - The main handler waits for client disconnect (notify.Done()) or completion (endChan),
+	//   and never closes endChan itself, eliminating send-on-closed-channel races.
+	// - writeMu synchronizes writes to ResponseWriter (w). On client disconnect, disconnected is set
+	//   under writeMu so no subsequent writes to w occur after the handler returns, satisfying the
+	//   Go HTTP contract while continuing to drain respChan to let the producer finish.
+	var (
+		writeMu      sync.Mutex
+		disconnected bool
+	)
+
 	respChan := make(chan *models.LoadTestResponse, 100)
 	endChan := make(chan struct{})
-	defer close(endChan)
 
 	go func() {
+		defer close(endChan)
+		defer func() {
+			if r := recover(); r != nil {
+				h.log.Error(ErrPanicRecovery(r))
+				// Drain respChan in recovery path so producer cannot block if it continues sending
+				for range respChan {
+				}
+			}
+		}()
+		for data := range respChan {
+			writeMu.Lock()
+			if !disconnected {
+				bd, err := json.Marshal(data)
+				if err != nil {
+					// We are inside an active SSE connection — Content-Type:
+					// text/event-stream has already been committed above. Calling
+					// http.Error here would silently corrupt the stream (it tries
+					// to set text/plain after headers are flushed, then writes a
+					// trailing newline that breaks SSE framing). Instead, emit an
+					// in-protocol error event using the same LoadTestResponse
+					// envelope the client already understands (status="error" is
+					// handled by the EventSource onmessage consumer in the UI).
+					//
+					// We deliberately do NOT return here: the worker goroutine
+					// will keep writing into respChan until executeLoadTest
+					// exits, and an early return would block the worker once
+					// the buffered slots fill. Continue draining so the worker
+					// can finish and close(respChan) terminates this loop.
+					h.log.Error(models.ErrMarshal(err, "meshery result for shipping"))
+					errPayload, mErr := json.Marshal(&models.LoadTestResponse{
+						Status:  models.LoadTestError,
+						Message: models.ErrMarshal(err, "meshery result for shipping").Error(),
+					})
+					if mErr != nil {
+						// Last-resort: a static, hand-rolled JSON literal so the
+						// stream stays well-formed even if envelope marshal fails.
+						errPayload = []byte(`{"status":"error","message":"failed to marshal load test result"}`)
+					}
+					_, _ = fmt.Fprintf(w, "data: %s\n\n", errPayload)
+					flusher.Flush()
+				} else {
+					h.log.Debug("received new data on response channel")
+					_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
+					flusher.Flush()
+					h.log.Debug("Flushed the messages on the wire...")
+				}
+			}
+			writeMu.Unlock()
+		}
+		h.log.Debug("response channel closed")
+	}()
+	go func() {
+		defer close(respChan)
 		defer func() {
 			if r := recover(); r != nil {
 				h.log.Error(ErrPanicRecovery(r))
 			}
 		}()
-		for data := range respChan {
-			bd, err := json.Marshal(data)
-			if err != nil {
-				// We are inside an active SSE connection — Content-Type:
-				// text/event-stream has already been committed above. Calling
-				// http.Error here would silently corrupt the stream (it tries
-				// to set text/plain after headers are flushed, then writes a
-				// trailing newline that breaks SSE framing). Instead, emit an
-				// in-protocol error event using the same LoadTestResponse
-				// envelope the client already understands (status="error" is
-				// handled by the EventSource onmessage consumer in the UI).
-				//
-				// We deliberately do NOT return here: the worker goroutine
-				// will keep writing into respChan until executeLoadTest
-				// exits, and an early return would block the worker once
-				// the buffered slots fill. Continue draining so the worker
-				// can finish and close(respChan) terminates this loop.
-				h.log.Error(models.ErrMarshal(err, "meshery result for shipping"))
-				errPayload, mErr := json.Marshal(&models.LoadTestResponse{
-					Status:  models.LoadTestError,
-					Message: models.ErrMarshal(err, "meshery result for shipping").Error(),
-				})
-				if mErr != nil {
-					// Last-resort: a static, hand-rolled JSON literal so the
-					// stream stays well-formed even if envelope marshal fails.
-					errPayload = []byte(`{"status":"error","message":"failed to marshal load test result"}`)
-				}
-				_, _ = fmt.Fprintf(w, "data: %s\n\n", errPayload)
-				flusher.Flush()
-				continue
-			}
-
-			h.log.Debug("received new data on response channel")
-			_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
-			flusher.Flush()
-			h.log.Debug("Flushed the messages on the wire...")
-		}
-		endChan <- struct{}{}
-		h.log.Debug("response channel closed")
-	}()
-	go func() {
 		ctx := context.Background()
 		h.executeLoadTest(ctx, req, profileID, testName, meshName, testUUID, prefObj, provider, loadTestOptions, respChan)
-		close(respChan)
 	}()
 	select {
 	case <-notify.Done():
 		h.log.Debug("received signal to close connection and channels")
-		break
+		writeMu.Lock()
+		disconnected = true
+		writeMu.Unlock()
 	case <-endChan:
 		h.log.Debug("load test completed")
-		_ = req.Body.Close()
 	}
+	_ = req.Body.Close()
 }
 
 func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profileID, testName, meshName, testUUID string, prefObj *models.Preference, provider models.Provider, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
@@ -570,6 +609,24 @@ func (h *Handler) persistPerformanceTestResult(ctx context.Context, req *http.Re
 		Status: models.LoadTestSuccess,
 		Result: result,
 	}
+}
+
+// savedAdditionalOptions returns the load generator options saved on a
+// performance profile. mesheryctl saves them as a string and the UI as a
+// one-element list of strings, so both shapes are read. An empty value means
+// no options.
+func savedAdditionalOptions(metadata map[string]interface{}) string {
+	switch options := metadata["additional_options"].(type) {
+	case string:
+		return options
+	case []interface{}:
+		for _, option := range options {
+			if s, ok := option.(string); ok && s != "" {
+				return s
+			}
+		}
+	}
+	return ""
 }
 
 func assignCertificatePath(key, path string, loadTestOptions *models.LoadTestOptions) {

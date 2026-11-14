@@ -40,12 +40,14 @@ var (
 	forceDelete bool
 )
 
+var stopUsageMsg = "Usage: mesheryctl system stop [flags]\nRun 'mesheryctl system stop --help' to see detailed help message"
+
 // stopCmd represents the stop command
 var stopCmd = &cobra.Command{
 	Use:   "stop",
 	Short: "Stop Meshery",
 	Long: `Stop all Meshery containers / remove all Meshery resources.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/stop`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/stop`,
 	Example: `
 // Stop Meshery
 mesheryctl system stop
@@ -59,6 +61,12 @@ mesheryctl system stop --keep-namespace
 // Stop Meshery forcefully (use it when system stop doesn't work)
 mesheryctl system stop --force
 	`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", stopUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -73,9 +81,6 @@ mesheryctl system stop --force
 		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "stop"))
-		}
 		if err := stop(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to stop Meshery"))
 		}
@@ -151,7 +156,10 @@ func stop() error {
 			userResponse = true
 		} else {
 			// ask user for confirmation
-			userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
+			userResponse, err = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
+			if err != nil {
+				return err
+			}
 		}
 
 		if !userResponse {

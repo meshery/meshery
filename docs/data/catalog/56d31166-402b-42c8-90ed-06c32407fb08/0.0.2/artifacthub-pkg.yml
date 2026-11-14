@@ -1,0 +1,20 @@
+version: 0.0.2
+name: chat-app
+displayName: Chat App
+createdAt: "2026-08-16T22:54:46Z"
+description: A scalable, cloud-native real-time chat application architecture built on Kubernetes. It features a stateless Node.js backend running across multiple replicas, an Ingress Load Balancer for routing external HTTP/WebSocket traffic, a Redis broker for pub/sub message broadcasting across pods, and externalized environment configuration via ConfigMaps.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/56d31166-402b-42c8-90ed-06c32407fb08/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Ingress Controller: Requires an active Ingress Controller (such as NGINX Ingress Controller) running in the cluster to route incoming external traffic.            \n2. Redis Persistence: The Redis broker currently uses ephemeral storage optimized for caching and real-time pub/sub messaging. For durable chat history, attach a PersistentVolumeClaim (PVC) or convert to a StatefulSet.\n3. WebSocket Scaling: Ensure the Ingress Controller is configured with WebSocket proxy support and session affinity (sticky sessions) if long-lived socket connections are maintained across pod replicas. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 4f100797-4dd7-4ce6-910f-e507703ab370
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

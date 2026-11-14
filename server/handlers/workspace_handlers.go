@@ -8,6 +8,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/meshery/meshkit/errors"
 
 	"github.com/meshery/meshery/server/models"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
@@ -186,6 +187,14 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 	workspaceID := mux.Vars(r)["id"]
 	resp, err := provider.DeleteWorkspace(r, workspaceID)
 	if err != nil {
+		// Deleting an id the provider never issued is "not found", not a
+		// failure to write. The local provider says so with
+		// ErrResultNotFound; the remote provider says so with its own 404.
+		// Answer 404 for either instead of the 502 providerStatus default.
+		if errors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			writeMeshkitError(w, err, http.StatusNotFound)
+			return
+		}
 		handlerErr := ErrDeleteWorkspace(err)
 		h.log.Error(handlerErr)
 		writeMeshkitError(w, handlerErr, providerStatus(err))

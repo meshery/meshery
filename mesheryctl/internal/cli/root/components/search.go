@@ -25,8 +25,8 @@ import (
 )
 
 type cmdComponentSearchFlags struct {
-	Page     int `json:"page" validate:"omitempty,gte=1"`
-	PageSize int `json:"page-size" validate:"omitempty,gte=1"`
+	Page     int `json:"page" validate:"gte=1"`
+	PageSize int `json:"pagesize" validate:"gte=1"`
 }
 
 var componentSearchFlags cmdComponentSearchFlags
@@ -36,7 +36,7 @@ var searchComponentsCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search registered components",
 	Long: `Search components registered in Meshery Server based on kind
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/component/search`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/component/search`,
 	Example: `
 // Search for components using a query
 mesheryctl component search [query-text]

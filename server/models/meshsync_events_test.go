@@ -11,6 +11,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	meshkitErrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/stretchr/testify/assert"
@@ -21,7 +22,10 @@ import (
 type testMeshsyncBroker struct {
 	mu            sync.Mutex
 	subscriptions []chan *meshkitBroker.Message
-	closed        bool
+	// subjects counts the active subscriptions per subject, so a test can
+	// tell whether a handler is paused (unsubscribed) or receiving.
+	subjects map[string]int
+	closed   bool
 }
 
 func (b *testMeshsyncBroker) Publish(_ string, _ *meshkitBroker.Message) error {
@@ -36,15 +40,36 @@ func (b *testMeshsyncBroker) Subscribe(_ string, _ string, _ []byte) error {
 	return nil
 }
 
-func (b *testMeshsyncBroker) SubscribeWithChannel(_ string, _ string, subscription chan *meshkitBroker.Message) error {
+func (b *testMeshsyncBroker) SubscribeWithChannel(subject string, _ string, subscription chan *meshkitBroker.Message) error {
 	b.mu.Lock()
 	defer b.mu.Unlock()
+	if b.subjects == nil {
+		b.subjects = map[string]int{}
+	}
+	b.subjects[subject]++
+	// A resumed handler re-subscribes the same channel: keep one entry per
+	// channel, or CloseConnection would close it twice.
+	for _, existing := range b.subscriptions {
+		if existing == subscription {
+			return nil
+		}
+	}
 	b.subscriptions = append(b.subscriptions, subscription)
 	return nil
 }
 
-func (b *testMeshsyncBroker) Unsubscribe(_ string) error {
+func (b *testMeshsyncBroker) Unsubscribe(subject string) error {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	delete(b.subjects, subject)
 	return nil
+}
+
+// subscribed reports whether subject currently has a subscription.
+func (b *testMeshsyncBroker) subscribed(subject string) bool {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return b.subjects[subject] > 0
 }
 
 func (b *testMeshsyncBroker) Info() string {
@@ -321,6 +346,69 @@ func TestMeshsyncDataHandlerStopIsIdempotent(t *testing.T) {
 	}
 }
 
+// TestMeshsyncDataHandlerPauseAndResumeSubscriptions: pausing unsubscribes both
+// MeshSync subjects so a reconnecting connection delivers nothing, and
+// resuming re-subscribes the same channels so delivery continues. Pausing or
+// resuming twice is a no-op, and resuming a stopped handler does not
+// re-subscribe it.
+func TestMeshsyncDataHandlerPauseAndResumeSubscriptions(t *testing.T) {
+	broker := &testMeshsyncBroker{}
+	handler := newTestMeshsyncHandler(t, broker, func() {})
+
+	if err := handler.Run(); err != nil {
+		t.Fatalf("Run() returned error: %v", err)
+	}
+
+	subscribedBoth := func() bool {
+		return broker.subscribed(meshsyncEventsSubject) && broker.subscribed(MeshsyncStoreUpdatesSubject)
+	}
+	unsubscribedBoth := func() bool {
+		return !broker.subscribed(meshsyncEventsSubject) && !broker.subscribed(MeshsyncStoreUpdatesSubject)
+	}
+	// The events listener subscribes from its own goroutine, so Run may
+	// return before it has.
+	deadline := time.Now().Add(2 * time.Second)
+	for !subscribedBoth() && time.Now().Before(deadline) {
+		time.Sleep(time.Millisecond)
+	}
+	if !subscribedBoth() {
+		t.Fatal("handler did not subscribe to both MeshSync subjects")
+	}
+
+	handler.PauseSubscriptions()
+	if !unsubscribedBoth() {
+		t.Fatal("pausing did not unsubscribe both MeshSync subjects")
+	}
+	handler.PauseSubscriptions()
+	if !unsubscribedBoth() {
+		t.Fatal("pausing twice changed the subscriptions")
+	}
+
+	handler.ResumeSubscriptions()
+	if !subscribedBoth() {
+		t.Fatal("resuming did not re-subscribe both MeshSync subjects")
+	}
+	// The same channels are re-subscribed, not new ones: a second subscription
+	// per channel would deliver every message twice.
+	broker.mu.Lock()
+	n := len(broker.subscriptions)
+	broker.mu.Unlock()
+	if n != 2 {
+		t.Fatalf("%d subscription channels, want 2 after a resume", n)
+	}
+	handler.ResumeSubscriptions()
+	if !subscribedBoth() {
+		t.Fatal("resuming twice changed the subscriptions")
+	}
+
+	handler.PauseSubscriptions()
+	handler.Stop()
+	handler.ResumeSubscriptions()
+	if !unsubscribedBoth() {
+		t.Fatal("resuming a stopped handler re-subscribed it")
+	}
+}
+
 type fakeMeshsyncLogger struct {
 	logger.Handler
 	mu     sync.Mutex
@@ -485,5 +573,44 @@ func TestMeshsyncStoreUpdatesNonErrorObjectWrapped(t *testing.T) {
 		assert.Equal(t, ErrMeshsyncStoreUpdatesCode, mkErr.Code)
 	} else {
 		t.Fatalf("expected logged error to be a *meshkitErrors.Error, got %T", logged[0])
+	}
+}
+
+func TestReplaceMeshsyncResourceMetadata(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = db.AutoMigrate(&meshsyncmodel.KubernetesResource{}, &meshsyncmodel.KubernetesResourceObjectMeta{}, &meshsyncmodel.KubernetesKeyValue{}, &meshsyncmodel.KubernetesResourceSpec{}, &meshsyncmodel.KubernetesResourceStatus{}); err != nil {
+		t.Fatal(err)
+	}
+	handler := &MeshsyncDataHandler{dbHandler: database.Handler{DB: db}}
+	obj := &meshsyncmodel.KubernetesResource{APIVersion: "v1", Kind: "Pod", ClusterID: "cluster", KubernetesResourceMeta: &meshsyncmodel.KubernetesResourceObjectMeta{Name: "pod", Namespace: "default", Labels: []*meshsyncmodel.KubernetesKeyValue{{Kind: "label", Key: "app", Value: "v1"}, {Kind: "label", Key: "tier", Value: "front"}}, Annotations: []*meshsyncmodel.KubernetesKeyValue{{Kind: "annotation", Key: "old", Value: "value"}}}}
+	if err := db.Create(obj).Error; err != nil {
+		t.Fatal(err)
+	}
+	obj.KubernetesResourceMeta.Labels = []*meshsyncmodel.KubernetesKeyValue{{Kind: "label", Key: "app", Value: "v2"}}
+	obj.KubernetesResourceMeta.Annotations = nil
+	if err := handler.replaceMeshsyncResource(obj); err != nil {
+		t.Fatal(err)
+	}
+	var rows []meshsyncmodel.KubernetesKeyValue
+	if err := db.Where("id = ?", obj.ID).Find(&rows).Error; err != nil {
+		t.Fatal(err)
+	}
+	if len(rows) != 1 || rows[0].Key != "app" || rows[0].Value != "v2" {
+		t.Fatalf("unexpected metadata: %+v", rows)
+	}
+}
+
+func TestReplaceMeshsyncResourceRejectsMissingIdentity(t *testing.T) {
+	handler := &MeshsyncDataHandler{}
+	for _, obj := range []*meshsyncmodel.KubernetesResource{
+		{},
+		{ID: "existing-id"},
+	} {
+		if err := handler.replaceMeshsyncResource(obj); err == nil {
+			t.Fatalf("expected missing identity to be rejected: %+v", obj)
+		}
 	}
 }
