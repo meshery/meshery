@@ -23,7 +23,17 @@ function createFixture(t) {
   fs.mkdirSync(path.join(fixture, 'ui', 'scripts'), { recursive: true });
   fs.copyFileSync(productionScript, path.join(fixture, 'ui', 'scripts', 'audit-hex.js'));
 
-  for (const dir of ['components', 'pages', 'utils', 'store', 'rtk-query', 'machines', 'hooks', 'api', 'css']) {
+  for (const dir of [
+    'components',
+    'pages',
+    'utils',
+    'store',
+    'rtk-query',
+    'machines',
+    'hooks',
+    'api',
+    'css',
+  ]) {
     fs.mkdirSync(path.join(fixture, 'ui', dir), { recursive: true });
   }
 
@@ -213,14 +223,15 @@ test('excludes nested node_modules directories at every depth', (t) => {
   );
 });
 
-
 test('reports unreadable directories and files while scanning the rest', (t) => {
   const fixture = createFixture(t);
   writeFile(fixture, 'ui/components/ok.tsx', "const c = '#fff';\n");
   writeFile(fixture, 'ui/components/blocked.tsx', "const c = '#000';\n");
   writeFile(fixture, 'ui/components/blocked-dir/source.tsx', "const c = '#123';\n");
   const preload = path.join(fixture, 'preload.js');
-  fs.writeFileSync(preload, `
+  fs.writeFileSync(
+    preload,
+    `
     const fs = require('fs');
     for (const [method, name] of [['readdirSync', 'blocked-dir'], ['readFileSync', 'blocked.tsx']]) {
       const original = fs[method];
@@ -229,12 +240,19 @@ test('reports unreadable directories and files while scanning the rest', (t) => 
         return original.call(this, file, ...args);
       };
     }
-  `);
+  `,
+  );
   const script = path.join(fixture, 'ui/scripts/audit-hex.js');
-  const run = (...args) => spawnSync(process.execPath, ['--require', preload, script, ...args], {
-    encoding: 'utf8',
-    env: { ...process.env, NODE_PATH: [typescriptModuleRoot, process.env.NODE_PATH].filter(Boolean).join(path.delimiter) },
-  });
+  const run = (...args) =>
+    spawnSync(process.execPath, ['--require', preload, script, ...args], {
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        NODE_PATH: [typescriptModuleRoot, process.env.NODE_PATH]
+          .filter(Boolean)
+          .join(path.delimiter),
+      },
+    });
   const json = run('--json');
   assert.equal(json.status, 0, json.stderr);
   const result = JSON.parse(json.stdout);
