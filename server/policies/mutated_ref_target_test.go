@@ -307,7 +307,10 @@ func TestUnprefixedMutatedRefReadWriteTargets(t *testing.T) {
 		t.Fatalf("an unprefixed mutatedRef must produce %q, got %q", UpdateComponentOp, actions[0].Op)
 	}
 
-	applied := applyActionsToDesign(design, actions)
+	applied, patchErrs := applyActionsToDesign(design, actions)
+	if len(patchErrs) != 0 {
+		t.Fatalf("applying actions reported errors: %v", patchErrs)
+	}
 	bus := componentByID(applied, busID)
 
 	if got := string(bus.DisplayName); got != "bus-alpha" {
@@ -339,7 +342,10 @@ func TestConfigurationMutatedRefStaysInConfiguration(t *testing.T) {
 		t.Fatalf("want 1 %q action, got %+v", UpdateComponentConfigurationOp, actions)
 	}
 
-	applied := applyActionsToDesign(design, actions)
+	applied, patchErrs := applyActionsToDesign(design, actions)
+	if len(patchErrs) != 0 {
+		t.Fatalf("applying actions reported errors: %v", patchErrs)
+	}
 	bus := componentByID(applied, busID)
 
 	if got := objectGetNested(bus.Configuration, []string{"spec", "busRef"}, nil); got != "bus-alpha" {
@@ -369,7 +375,10 @@ func TestEnvelopeMutatedRefDoesNotLeakIntoConfiguration(t *testing.T) {
 		t.Fatalf("want 1 %q action, got %+v", UpdateComponentOp, actions)
 	}
 
-	applied := applyActionsToDesign(design, actions)
+	applied, patchErrs := applyActionsToDesign(design, actions)
+	if len(patchErrs) != 0 {
+		t.Fatalf("applying actions reported errors: %v", patchErrs)
+	}
 	bus := componentByID(applied, busID)
 
 	want := map[string]interface{}{"app": "bus-alpha"}
@@ -499,5 +508,32 @@ func TestChainedEnvelopeMutationsConvergeAcrossPasses(t *testing.T) {
 		if got := countMutationActions(third.Actions, id.String()); got != 0 {
 			t.Errorf("chain did not reach a fixed point: %d action(s) still emitted for %s", got, id)
 		}
+	}
+}
+
+// TestUnappliedPatchIsReported covers the diagnostic path for a patch that
+// cannot be applied. The mutated field keeps its previous value, so the next
+// evaluation re-emits the same action; without a reported error the only
+// symptom is an evaluation that never settles, with the cause lost.
+func TestUnappliedPatchIsReported(t *testing.T) {
+	busID, _ := uuid.FromString("00000000-0000-0000-0000-0000000000d2")
+	bus := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "EventBus"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		DisplayName:    "event-bus-original",
+		Configuration:  map[string]interface{}{},
+	}
+	bus.ID = busID
+	design := makePatternFile([]*component.ComponentDefinition{bus}, nil)
+
+	// A value JSON cannot encode fails the patch rather than being written.
+	action := newComponentUpdateAction(UpdateComponentOp, busID.String(), []string{"displayName"}, func() {})
+
+	applied, errs := applyActionsToDesign(design, []PolicyAction{action})
+	if len(errs) == 0 {
+		t.Fatal("an unapplied patch must be reported, otherwise the evaluation silently never settles")
+	}
+	if got := string(componentByID(applied, busID).DisplayName); got != "event-bus-original" {
+		t.Errorf("a failed patch must leave the field unchanged, got %q", got)
 	}
 }
