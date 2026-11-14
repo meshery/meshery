@@ -4089,6 +4089,23 @@
       "suggestedRemediation": [
         "Provide the full ID instead of a short prefix, or retry the command."
       ]
+    },
+    {
+      "code": "mesheryctl-1263",
+      "moniker": "ErrRedirectChangesMethodCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1263",
+      "severity": "alert",
+      "shortDescription": "Redirect would change the request method",
+      "probableCause": [
+        "The current context's endpoint is not the address Meshery Server answers on directly (for example an http:// endpoint behind a proxy that redirects to https), or the request path is not in the form the server routes (for example it contains a doubled slash)"
+      ],
+      "suggestedRemediation": [
+        "Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"
+      ]
     }
   ],
   "schemaVersion": 2
