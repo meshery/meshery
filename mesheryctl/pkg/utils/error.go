@@ -1049,5 +1049,5 @@ func ErrRedirectChangesMethod(method, from string, statusCode int, to string) er
 		[]string{"Redirect would change the request method"},
 		[]string{fmt.Sprintf("The server answered %s %s with %d %s, redirecting to %s. Following it would re-send the request as a GET without its body, so it was not followed.", method, from, statusCode, http.StatusText(statusCode), to)},
 		[]string{"The current context's endpoint is not the address Meshery Server answers on directly (for example an http:// endpoint behind a proxy that redirects to https), or the request path is not in the form the server routes (for example it contains a doubled slash)"},
-		[]string{"Set the current context's endpoint to the address the redirect points to; check it with `mesheryctl system context view`"})
+		[]string{"Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"})
 }

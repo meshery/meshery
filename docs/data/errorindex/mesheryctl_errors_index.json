@@ -4104,7 +4104,7 @@
         "The current context's endpoint is not the address Meshery Server answers on directly (for example an http:// endpoint behind a proxy that redirects to https), or the request path is not in the form the server routes (for example it contains a doubled slash)"
       ],
       "suggestedRemediation": [
-        "Set the current context's endpoint to the address the redirect points to; check it with `mesheryctl system context view`"
+        "Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"
       ]
     }
   ],
