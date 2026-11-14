@@ -142,10 +142,22 @@ func newAddRelationshipAction(rel *relationship.RelationshipDefinition) PolicyAc
 	}
 }
 
-// getComponentUpdateOp returns the appropriate update op based on whether
-// the path starts with "configuration".
+// isConfigurationPath reports whether a mutator/mutated reference addresses the
+// component's configuration rather than the component envelope. A reference is a
+// literal path into the component object, so only a leading "configuration"
+// segment descends into Configuration; every other path (displayName,
+// metadata.labels, component.kind) addresses the envelope. This is the rule
+// configurationForComponentAtPath reads through, and the one
+// applyComponentConfigPatches must write through, so a mutated value lands in
+// the object it is read back from.
+func isConfigurationPath(path []string) bool {
+	return len(path) > 0 && path[0] == "configuration"
+}
+
+// getComponentUpdateOp returns the appropriate update op based on whether the
+// path addresses the component configuration or the component envelope.
 func getComponentUpdateOp(path []string) string {
-	if len(path) > 0 && path[0] == "configuration" {
+	if isConfigurationPath(path) {
 		return UpdateComponentConfigurationOp
 	}
 	return UpdateComponentOp
@@ -273,58 +285,108 @@ func applyComponentConfigPatches(design *pattern.PatternFile, actions []PolicyAc
 	}
 
 	for _, comp := range design.Components {
-		var patches []patching.Patch
+		// A reference is a literal path into the component object: a
+		// "configuration"-prefixed path patches Configuration, any other path
+		// patches the envelope. Splitting here keeps the write target identical
+		// to the read target in configurationForComponentAtPath.
+		var configPatches, envelopePatches []patching.Patch
 		for _, up := range updates {
 			if up.id != comp.ID.String() {
 				continue
 			}
-			path := up.path
-			if len(path) > 0 && path[0] == "configuration" {
-				path = path[1:]
+			if isConfigurationPath(up.path) {
+				configPatches = append(configPatches, patching.Patch{Path: up.path[1:], Value: up.value})
+				continue
 			}
-			patches = append(patches, patching.Patch{Path: path, Value: up.value})
+			envelopePatches = append(envelopePatches, patching.Patch{Path: up.path, Value: up.value})
 		}
-		if len(patches) > 0 {
-			if updated, err := patching.ApplyPatches(comp.Configuration, patches); err == nil {
+		if len(configPatches) > 0 {
+			if updated, err := patching.ApplyPatches(comp.Configuration, configPatches); err == nil {
 				comp.Configuration = updated
 			}
 		}
 
-		var compRemoves []PolicyAction
+		var configRemoves, envelopeRemoves [][]string
 		for _, rm := range removes {
-			if rm.ID == comp.ID.String() {
-				compRemoves = append(compRemoves, rm)
+			if rm.ID != comp.ID.String() {
+				continue
 			}
+			if isConfigurationPath(rm.UpdatePath) {
+				configRemoves = append(configRemoves, rm.UpdatePath[1:])
+				continue
+			}
+			envelopeRemoves = append(envelopeRemoves, rm.UpdatePath)
 		}
-		if len(compRemoves) > 0 {
-			comp.Configuration = applyConfigRemoves(comp.Configuration, compRemoves)
+		if len(configRemoves) > 0 {
+			comp.Configuration = applyRemovesToMap(comp.Configuration, configRemoves)
+		}
+
+		if len(envelopePatches) > 0 || len(envelopeRemoves) > 0 {
+			patchComponentEnvelope(comp, envelopePatches, envelopeRemoves)
 		}
 	}
 }
 
-// applyConfigRemoves removes fields from a component's configuration via sjson.Delete.
-func applyConfigRemoves(config map[string]interface{}, removes []PolicyAction) map[string]interface{} {
-	data, err := json.Marshal(config)
+// patchComponentEnvelope applies envelope-targeted patches and removals through
+// the same JSON projection of the component that
+// configurationForComponentAtPath reads through, then folds the result back onto
+// the component. Mirrors the Rego engine, which applies update_component by
+// json.patch-ing the component object at the raw reference path.
+func patchComponentEnvelope(comp *component.ComponentDefinition, patches []patching.Patch, removes [][]string) {
+	envelope, err := toGenericMap(comp)
 	if err != nil {
-		return config
+		return
+	}
+	if len(patches) > 0 {
+		envelope, err = patching.ApplyPatches(envelope, patches)
+		if err != nil {
+			return
+		}
+	}
+	if len(removes) > 0 {
+		envelope = applyRemovesToMap(envelope, removes)
+	}
+
+	raw, err := json.Marshal(envelope)
+	if err != nil {
+		return
+	}
+	// Decode into a fresh value so a removed field is reset rather than left at
+	// its pre-mutation value, then restore the fields the JSON projection cannot
+	// carry: ModelId and Metadata.AdditionalProperties are the only `json:"-"`
+	// members of ComponentDefinition, so a new one has to be restored here too.
+	modelID := comp.ModelId
+	additional := comp.Metadata.AdditionalProperties
+	var folded component.ComponentDefinition
+	if err := json.Unmarshal(raw, &folded); err != nil {
+		return
+	}
+	folded.ModelId = modelID
+	folded.Metadata.AdditionalProperties = additional
+	*comp = folded
+}
+
+// applyRemovesToMap removes each path from a generic object via sjson.Delete.
+// Paths are relative to the object passed in, so callers strip any leading
+// "configuration" segment before calling.
+func applyRemovesToMap(obj map[string]interface{}, removes [][]string) map[string]interface{} {
+	data, err := json.Marshal(obj)
+	if err != nil {
+		return obj
 	}
 	jsonStr := string(data)
-	for _, rm := range removes {
-		path := rm.UpdatePath
-		if len(path) > 0 && path[0] == "configuration" {
-			path = path[1:]
-		}
+	for _, path := range removes {
 		if len(path) == 0 {
 			continue
 		}
 		jsonStr, err = sjson.Delete(jsonStr, strings.Join(path, "."))
 		if err != nil {
-			return config
+			return obj
 		}
 	}
 	var result map[string]interface{}
 	if err := json.Unmarshal([]byte(jsonStr), &result); err != nil {
-		return config
+		return obj
 	}
 	return result
 }
