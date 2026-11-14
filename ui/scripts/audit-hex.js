@@ -85,7 +85,7 @@ function walk(dir, out, scanErrors) {
       withFileTypes: true,
     });
   } catch (error) {
-    const message = `Unable to read directory ${dir}: ${error.message}`;
+    const message = `Unable to read directory ${path.relative(UI_ROOT, dir)}: ${error.message}`;
 
     scanErrors.push(message);
 
@@ -146,10 +146,8 @@ function main() {
     try {
       ({ hex, rgb } = scanFile(file));
     } catch (error) {
-      const message = `Unable to read file ${file}: ${error.message}`;
-
+      const message = `Unable to read file ${path.relative(UI_ROOT, file)}: ${error.code || error.message}`;
       scanErrors.push(message);
-
       continue;
     }
 

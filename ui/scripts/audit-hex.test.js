@@ -22,19 +22,75 @@ function createFixture(t) {
   fs.mkdirSync(path.join(fixture, 'ui', 'scripts'), { recursive: true });
   fs.copyFileSync(productionScript, path.join(fixture, 'ui', 'scripts', 'audit-hex.js'));
 
-  fs.mkdirSync(path.join(fixture, 'ui', 'components'), { recursive: true });
+  const scanDirs = [
+    'components',
+    'pages',
+    'utils',
+    'store',
+    'rtk-query',
+    'machines',
+    'hooks',
+    'api',
+    'css',
+  ];
+
+  for (const dir of scanDirs) {
+    fs.mkdirSync(path.join(fixture, 'ui', dir), { recursive: true });
+  }
 
   return fixture;
 }
 
-function runAudit(fixture) {
+function runAudit(fixture, args = ['--json'], options = {}) {
   const script = path.join(fixture, 'ui', 'scripts', 'audit-hex.js');
-  const result = spawnSync(process.execPath, [script, '--json'], {
+
+  const result = spawnSync(process.execPath, [...(options.nodeArgs || []), script, ...args], {
     encoding: 'utf8',
+    env: { ...process.env, ...options.env },
   });
 
   assert.equal(result.status, 0, result.stderr);
-  return JSON.parse(result.stdout);
+
+  return args.includes('--json') ? { ...result, json: JSON.parse(result.stdout) } : result;
+}
+
+function addFilesystemFailureMock(fixture) {
+  const preload = path.join(fixture, 'mock-fs-errors.js');
+
+  fs.writeFileSync(
+    preload,
+    `
+'use strict';
+
+const fs = require('node:fs');
+const path = require('node:path');
+
+const originalReaddirSync = fs.readdirSync;
+const originalReadFileSync = fs.readFileSync;
+
+fs.readdirSync = function (target, ...args) {
+  if (path.basename(String(target)) === 'blocked-directory') {
+    const error = new Error('Permission denied');
+    error.code = 'EACCES';
+    throw error;
+  }
+
+  return originalReaddirSync.call(this, target, ...args);
+};
+
+fs.readFileSync = function (target, ...args) {
+  if (path.basename(String(target)) === 'blocked-file.tsx') {
+    const error = new Error('Permission denied');
+    error.code = 'EACCES';
+    throw error;
+  }
+
+  return originalReadFileSync.call(this, target, ...args);
+};
+`,
+  );
+
+  return preload;
 }
 
 test('excludes test files and nested __tests__ directories', (t) => {
@@ -47,7 +103,7 @@ test('excludes test files and nested __tests__ directories', (t) => {
   writeFile(fixture, 'ui/components/another.test.jsx', "const color = '#abc';\n");
   writeFile(fixture, 'ui/components/__tests__/helper.ts', "const color = '#456';\n");
 
-  const result = runAudit(fixture);
+  const { json: result } = runAudit(fixture);
 
   assert.equal(result.files, 1);
   assert.equal(result.matches, 1);
@@ -62,7 +118,7 @@ test('does not exclude production files merely containing the word test', (t) =>
 
   writeFile(fixture, 'ui/components/test-helper.tsx', "const color = '#abc';\n");
 
-  const result = runAudit(fixture);
+  const { json: result } = runAudit(fixture);
 
   assert.equal(result.files, 1);
   assert.equal(result.matches, 1);
@@ -88,7 +144,7 @@ test('detects case-insensitive RGB functions without matching identifier suffixe
     writeFile(fixture, `ui/components/${filename}`, content);
   }
 
-  const result = runAudit(fixture);
+  const { json: result } = runAudit(fixture);
   const actual = Object.fromEntries(
     Object.entries(result.offenders).map(([, offender]) => [
       offender.file.split('/').pop(),
@@ -104,4 +160,73 @@ test('detects case-insensitive RGB functions without matching identifier suffixe
 
   assert.deepEqual(actual, expected);
   assert.equal(result.rgb, 6);
+});
+
+test('successful scans report no filesystem errors', (t) => {
+  const fixture = createFixture(t);
+
+  writeFile(fixture, 'ui/components/valid.tsx', "const color = '#fff';\n");
+
+  const { json } = runAudit(fixture);
+
+  assert.equal(json.files, 1);
+  assert.equal(json.matches, 1);
+  assert.deepEqual(json.scanErrors, []);
+  assert.equal(json.scanComplete, true);
+});
+
+test('directory read failures are reported while accessible files are scanned', (t) => {
+  const fixture = createFixture(t);
+  const preload = addFilesystemFailureMock(fixture);
+
+  writeFile(fixture, 'ui/components/valid.tsx', "const color = '#fff';\n");
+  writeFile(fixture, 'ui/components/blocked-directory/hidden.tsx', "const color = '#000';\n");
+
+  const { json } = runAudit(fixture, ['--json'], {
+    nodeArgs: ['--require', preload],
+  });
+
+  assert.equal(json.files, 1);
+  assert.equal(json.matches, 1);
+  assert.equal(json.offenders[0].file, 'components/valid.tsx');
+  assert.equal(json.scanComplete, false);
+  assert.equal(json.scanErrors.length, 1);
+  assert.match(json.scanErrors[0], /Unable to read directory/);
+  assert.match(json.scanErrors[0], /blocked-directory/);
+});
+
+test('file read failures are reported while accessible files are scanned', (t) => {
+  const fixture = createFixture(t);
+  const preload = addFilesystemFailureMock(fixture);
+
+  writeFile(fixture, 'ui/components/valid.tsx', "const color = '#abc';\n");
+  writeFile(fixture, 'ui/components/blocked-file.tsx', "const color = '#123';\n");
+
+  const { json } = runAudit(fixture, ['--json'], {
+    nodeArgs: ['--require', preload],
+  });
+
+  assert.equal(json.files, 1);
+  assert.equal(json.matches, 1);
+  assert.equal(json.offenders[0].file, 'components/valid.tsx');
+  assert.equal(json.scanComplete, false);
+  assert.equal(json.scanErrors.length, 1);
+  assert.match(json.scanErrors[0], /Unable to read file/);
+  assert.match(json.scanErrors[0], /blocked-file\.tsx/);
+});
+
+test('text output warns about incomplete scans on stderr', (t) => {
+  const fixture = createFixture(t);
+  const preload = addFilesystemFailureMock(fixture);
+
+  writeFile(fixture, 'ui/components/valid.tsx', "const color = '#fff';\n");
+  writeFile(fixture, 'ui/components/blocked-file.tsx', "const color = '#123';\n");
+
+  const result = runAudit(fixture, [], {
+    nodeArgs: ['--require', preload],
+  });
+
+  assert.match(result.stderr, /WARNING: Scan incomplete/);
+  assert.match(result.stderr, /Unable to read file/);
+  assert.match(result.stdout, /AUDIT hex files=1 matches=1/);
 });
