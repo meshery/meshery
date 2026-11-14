@@ -3961,7 +3961,7 @@
           },
           {
             "id": null,
-            "kind": "NamespaceTopic",
+            "kind": "NamespacesTopic",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -3997,7 +3997,7 @@
           },
           {
             "id": null,
-            "kind": "NamespaceTopicsSubscription",
+            "kind": "NamespacesTopicsSubscription",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -4033,7 +4033,7 @@
           },
           {
             "id": null,
-            "kind": "NamespaceTopic",
+            "kind": "NamespacesTopic",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -5005,7 +5005,7 @@
           },
           {
             "id": null,
-            "kind": "StorageAccountBlobService",
+            "kind": "StorageAccountsBlobService",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -5077,7 +5077,7 @@
           },
           {
             "id": null,
-            "kind": "StorageAccountFileService",
+            "kind": "StorageAccountsFileService",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -5185,7 +5185,7 @@
           },
           {
             "id": null,
-            "kind": "StorageAccountQueueService",
+            "kind": "StorageAccountsQueueService",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -5257,7 +5257,7 @@
           },
           {
             "id": null,
-            "kind": "StorageAccountTableService",
+            "kind": "StorageAccountsTableService",
             "match": {},
             "match_strategy_matrix": null,
             "model": {

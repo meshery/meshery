@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "TransitGatewayVpcAttachment",
+            "kind": "TransitGatewayVPCAttachment",
             "match": {},
             "match_strategy_matrix": null,
             "model": {

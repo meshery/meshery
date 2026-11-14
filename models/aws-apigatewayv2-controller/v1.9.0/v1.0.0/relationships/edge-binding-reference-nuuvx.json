@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "ApiMapping",
+            "kind": "APIMapping",
             "match": {},
             "match_strategy_matrix": null,
             "model": {

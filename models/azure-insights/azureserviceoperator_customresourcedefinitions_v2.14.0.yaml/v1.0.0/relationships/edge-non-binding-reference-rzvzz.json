@@ -72,7 +72,7 @@
         "to": [
           {
             "id": null,
-            "kind": "virtualMachineScaleSet",
+            "kind": "VirtualMachineScaleSet",
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",

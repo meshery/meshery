@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Api",
+            "kind": "API",
             "match": {
               "from": [
                 {
@@ -105,7 +105,7 @@
               "to": [
                 {
                   "id": null,
-                  "kind": "Api",
+                  "kind": "API",
                   "mutatorRef": [
                     [
                       "displayName"
