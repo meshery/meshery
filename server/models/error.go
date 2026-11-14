@@ -176,6 +176,7 @@ const (
 	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
 	ErrInvalidExtensionProxyPathCode      = "meshery-server-1490"
 	ErrMigrateEventIndexesCode            = "meshery-server-1491"
+	ErrHandlerPanicCode                   = "meshery-server-1495"
 )
 
 var (
@@ -1020,5 +1021,19 @@ func ErrAttachEventError(err error) error {
 		[]string{err.Error()},
 		[]string{"The error the event reports carries no MeshKit error code", "The MeshKit error's causes or matched causes break the schemas EventError contract"},
 		[]string{"Report the error the event reports as a MeshKit error with a code", "Fix the probable causes of the MeshKit error, or the matched cause ids its producer names, so they satisfy the EventError contract"},
+	)
+}
+
+// ErrHandlerPanic is returned to the client when an HTTP handler panics and the
+// recovery middleware contains it. err carries only the panic value: the stack
+// stays in the server log, never in the response.
+func ErrHandlerPanic(err error) error {
+	return errors.New(
+		ErrHandlerPanicCode,
+		errors.Alert,
+		[]string{"Meshery Server hit an unexpected internal error while handling the request"},
+		[]string{err.Error()},
+		[]string{"A defect in Meshery Server caused the handler for this request to panic"},
+		[]string{"Retry the request", "If it keeps failing, report it at https://github.com/meshery/meshery/issues/new/choose together with the request that triggered it; the server log holds the full stack"},
 	)
 }
