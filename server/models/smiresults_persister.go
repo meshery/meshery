@@ -2,9 +2,12 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/core"
+	"gorm.io/gorm"
 )
 
 // SMIResultsPersister assists with persisting SMI results in store
@@ -32,11 +35,17 @@ func (s *SMIResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) 
 	}
 
 	total := int64(0)
-	s.DB.Model(&SmiResultWithID{}).Count(&total)
+	if err := s.DB.Model(&SmiResultWithID{}).Count(&total).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
+
 	results := []*SmiResultWithID{}
-	order := defaultOrderUpdatedAtDesc
+	order := "date desc"
 	query := s.DB.Order(order)
-	Paginate(uint(page), uint(pageSize))(query).Find(&results)
+	if err := Paginate(uint(page), uint(pageSize))(query).Find(&results).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
+
 	bd, err := json.Marshal(&SmiResultPage{
 		Page:       page,
 		PageSize:   pageSize,
@@ -44,9 +53,7 @@ func (s *SMIResultsPersister) GetResults(page, pageSize uint64) ([]byte, error) 
 		Results:    results,
 	})
 	if err != nil {
-		obj := "result data"
-		//err = errors.Wrapf(err, "Unable to marshal result data.")
-		return nil, ErrMarshal(err, obj)
+		return nil, ErrMarshal(err, "result data")
 	}
 
 	return bd, nil
@@ -63,37 +70,62 @@ func (s *SMIResultsPersister) WriteResult(key core.Uuid, result []byte) error {
 	}
 	var r SmiResultWithID
 	if err := s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).First(&r).Error; err == nil {
+		if err := json.Unmarshal(result, &r.SmiResult); err != nil {
+			return ErrUnmarshal(err, "smi result")
+		}
 		return s.UpdateResult(key, r)
 	}
-	err := json.Unmarshal(result, &r.SmiResult)
-	if err != nil {
-		return err
+	if err := json.Unmarshal(result, &r.SmiResult); err != nil {
+		return ErrUnmarshal(err, "smi result")
 	}
 	r.ID = key
-	return s.DB.Model(&SmiResultWithID{}).Create(&r).Error
+	if err := s.DB.Model(&SmiResultWithID{}).Create(&r).Error; err != nil {
+		return ErrDBCreate(err)
+	}
+	return nil
 }
 
 func (s *SMIResultsPersister) DeleteResult(key core.Uuid) error {
 	if s.DB == nil {
 		return ErrDBConnection
 	}
-	return s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).Delete(&SmiResultWithID{}).Error
+	res := s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).Delete(&SmiResultWithID{})
+	if res.Error != nil {
+		return ErrDBDelete(res.Error, key.String())
+	}
+	if res.RowsAffected == 0 {
+		return ErrResultNotFound(fmt.Errorf("smi result %s not found", key.String()))
+	}
+	return nil
 }
 
 func (s *SMIResultsPersister) GetResult(key core.Uuid) ([]byte, error) {
 	if s.DB == nil {
 		return nil, ErrDBConnection
 	}
-	var result SmiResult
-	err := s.DB.First(&result, key).Error
+	var result SmiResultWithID
+	err := s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).First(&result).Error
 	if err != nil {
-		return nil, err
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(fmt.Errorf("smi result %s not found", key.String()))
+		}
+		return nil, ErrDBRead(err)
 	}
-	bd, _ := json.Marshal(result)
+	result.SmiResult.ID = result.ID
+	bd, err := json.Marshal(result.SmiResult)
+	if err != nil {
+		return nil, ErrMarshal(err, "smi result data")
+	}
 
 	return bd, nil
 }
 
 func (s *SMIResultsPersister) UpdateResult(key core.Uuid, res SmiResultWithID) error {
-	return s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).UpdateColumns(res).Error
+	if s.DB == nil {
+		return ErrDBConnection
+	}
+	if err := s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).UpdateColumns(res).Error; err != nil {
+		return ErrDBPut(err)
+	}
+	return nil
 }
