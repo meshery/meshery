@@ -80,7 +80,7 @@
               "model": {
                 "version": ""
               },
-              "name": "azure-event-hubs",
+              "name": "azure-event-hub",
               "registrant": {
                 "kind": "github"
               },
@@ -113,7 +113,7 @@
       }
     }
   ],
-  "subType": "inventory",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"
