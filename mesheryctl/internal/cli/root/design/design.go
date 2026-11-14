@@ -19,6 +19,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"path/filepath"
 	"slices"
 	"strings"
 	"time"
@@ -156,6 +158,53 @@ func fetchDesignFromGithub(fileURL string) ([]byte, error) {
 
 	client := &http.Client{Timeout: githubDownloadTimeout}
 	resp, err := client.Get(rawURL)
+	if err != nil {
+		return nil, utils.ErrFailRequest(err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, utils.ErrResponseStatus(resp.StatusCode)
+	}
+
+	content, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, utils.ErrReadFromBody(err)
+	}
+	return content, nil
+}
+
+func isGithubURL(fileURL string) bool {
+	u, err := url.Parse(fileURL)
+	if err != nil {
+		return false
+	}
+	return u.Hostname() == "github.com" || u.Hostname() == "raw.githubusercontent.com"
+}
+
+// designFileName derives a clean file name from a file path or URL, stripping query parameters.
+func designFileName(filePathOrURL string) string {
+	if utils.IsValidUrl(filePathOrURL) {
+		if u, err := url.Parse(filePathOrURL); err == nil && u.Path != "" {
+			base := filepath.Base(u.Path)
+			if base != "." && base != "/" && base != "" {
+				return base
+			}
+		}
+	}
+	return filepath.Base(filePathOrURL)
+}
+
+// fetchDesignFile downloads a design file from a URL. If the URL points to GitHub,
+// it is normalized and fetched via fetchDesignFromGithub. For other HTTP/HTTPS URLs,
+// it is fetched directly.
+func fetchDesignFile(fileURL string) ([]byte, error) {
+	if isGithubURL(fileURL) {
+		return fetchDesignFromGithub(fileURL)
+	}
+
+	client := &http.Client{Timeout: githubDownloadTimeout}
+	resp, err := client.Get(fileURL)
 	if err != nil {
 		return nil, utils.ErrFailRequest(err)
 	}

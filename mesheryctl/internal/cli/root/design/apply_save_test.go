@@ -221,3 +221,46 @@ func TestFetchDesignFromGithub(t *testing.T) {
 	_, err = fetchDesignFromGithub("https://example.com/design.yaml")
 	assert.Error(t, err, "only GitHub URLs are supported")
 }
+
+func TestFetchDesignFile_GenericURL(t *testing.T) {
+	httpmock.Activate()
+	t.Cleanup(httpmock.DeactivateAndReset)
+
+	genericURL := "https://example.com/designs/sample.yaml"
+	httpmock.RegisterResponder("GET", genericURL, httpmock.NewStringResponder(http.StatusOK, "generic design content"))
+
+	content, err := fetchDesignFile(genericURL)
+	require.NoError(t, err)
+	assert.Equal(t, "generic design content", string(content))
+
+	// 404 response returns error
+	httpmock.RegisterResponder("GET", genericURL, httpmock.NewStringResponder(http.StatusNotFound, "404 Not Found"))
+	_, err = fetchDesignFile(genericURL)
+	assert.Error(t, err)
+}
+
+func TestFetchDesignFile_GithubURL(t *testing.T) {
+	httpmock.Activate()
+	t.Cleanup(httpmock.DeactivateAndReset)
+
+	httpmock.RegisterResponder("GET", githubRawURL, httpmock.NewStringResponder(http.StatusOK, "github design content"))
+
+	content, err := fetchDesignFile(githubBlobURL)
+	require.NoError(t, err)
+	assert.Equal(t, "github design content", string(content))
+}
+
+func TestIsGithubURL(t *testing.T) {
+	assert.True(t, isGithubURL(githubBlobURL))
+	assert.True(t, isGithubURL(githubRawURL))
+	assert.False(t, isGithubURL("https://github.com.evil.com/meshery/design.yaml"))
+	assert.False(t, isGithubURL("https://gitlab.com/meshery/design.yaml"))
+	assert.False(t, isGithubURL("https://example.com/design.yaml"))
+	assert.False(t, isGithubURL("not-a-url"))
+}
+
+func TestDesignFileName(t *testing.T) {
+	assert.Equal(t, "design.yaml", designFileName("https://example.com/designs/design.yaml?token=secret&sig=123"))
+	assert.Equal(t, "sample.yaml", designFileName("https://example.com/sample.yaml"))
+	assert.Equal(t, "local.yaml", designFileName("designs/local.yaml"))
+}

@@ -22,7 +22,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -122,12 +121,9 @@ mesheryctl design apply [design-name]
 				designFile = response.Patterns[index].PatternFile
 			}
 		} else {
-			// Method to check if the entered file is a URL or not
-			validURL := strings.HasPrefix(file, "https://github.com") || strings.HasPrefix(file, "https://raw.githubusercontent.com")
-
 			var content []byte
-			if validURL {
-				content, err = fetchDesignFromGithub(file)
+			if utils.IsValidUrl(file) {
+				content, err = fetchDesignFile(file)
 				if err != nil {
 					return err
 				}
@@ -140,7 +136,7 @@ mesheryctl design apply [design-name]
 
 			// if --skip-save is not passed we save the pattern first
 			if !skipSave {
-				fileName := filepath.Base(file)
+				fileName := designFileName(file)
 				if _, err := importDesignFile(patternURL+"/import", fileName, fileName, content); err != nil {
 					return err
 				}
