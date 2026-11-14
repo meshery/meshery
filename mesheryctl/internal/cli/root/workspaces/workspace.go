@@ -30,15 +30,21 @@ var (
 var WorkSpaceCmd = &cobra.Command{
 	Use:   "workspace",
 	Short: "Manage workspaces under an organization",
-	Long: `Create, list of workspaces under an organization
+	Long: `Create, list, and view workspaces under an organization
 Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace`,
 	Example: `
 
-// To view a list workspaces
+// List workspaces under a specific organization
 mesheryctl workspace list --orgId [orgId]
 
-// To create a workspace
+// Create a workspace
 mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
+
+// View details of a specific workspace by ID
+mesheryctl workspace view [workspace-id] --orgId [orgId]
+
+// View details of a specific workspace by name
+mesheryctl workspace view [workspace-name] --orgId [orgId]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 || len(args) > 1 {
