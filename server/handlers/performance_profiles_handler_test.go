@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"bytes"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -9,6 +11,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	mkerrors "github.com/meshery/meshkit/errors"
 )
 
 func TestSavePerformanceProfileHandler_NilProvider_ReturnsInternalServerError(t *testing.T) {
@@ -74,6 +77,69 @@ func TestDeletePerformanceProfileHandler_NilProvider_ReturnsInternalServerError(
 	}
 	if !strings.Contains(rec.Body.String(), "provider not initialized") {
 		t.Errorf("expected 'provider not initialized', got %s", rec.Body.String())
+	}
+}
+
+// deletePerfProfileErrProvider fails performance profile deletes with err.
+type deletePerfProfileErrProvider struct {
+	*models.DefaultLocalProvider
+	err error
+}
+
+func (p *deletePerfProfileErrProvider) DeletePerformanceProfile(_ *http.Request, _ string) ([]byte, error) {
+	return nil, p.err
+}
+
+func TestDeletePerformanceProfileHandler_NotFoundIs404(t *testing.T) {
+	cases := []struct {
+		name     string
+		err      error
+		wantCode int
+	}{
+		{"local provider not found", models.ErrResultNotFound(fmt.Errorf("performance profile not found")), http.StatusNotFound},
+		{"remote provider 404", models.ErrFetch(fmt.Errorf("failed to delete the profile"), "not found", http.StatusNotFound), http.StatusNotFound},
+		{"other failure", fmt.Errorf("database is locked"), http.StatusInternalServerError},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			base := &models.DefaultLocalProvider{}
+			base.Initialize()
+			provider := &deletePerfProfileErrProvider{DefaultLocalProvider: base, err: tc.err}
+
+			id := "abcdefab-abcd-abcd-abcd-abcdefabcdef"
+			req := httptest.NewRequest(http.MethodDelete, "/api/user/performance/profiles/"+id, nil)
+			req = mux.SetURLVars(req, map[string]string{"performanceProfileId": id})
+			rec := httptest.NewRecorder()
+
+			h.DeletePerformanceProfileHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != tc.wantCode {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, tc.wantCode, rec.Body.String())
+			}
+
+			// The body must be a MeshKit error, not just carry the right status.
+			// A not-found error is written as is; anything else is wrapped in
+			// ErrFailToDelete.
+			wantErrCode := mkerrors.GetCode(tc.err)
+			if tc.wantCode == http.StatusInternalServerError {
+				wantErrCode = mkerrors.GetCode(ErrFailToDelete(tc.err, "performance profile"))
+			}
+			var body struct {
+				Error string `json:"error"`
+				Code  string `json:"code"`
+			}
+			if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+				t.Fatalf("response body is not a JSON error: %v (body=%q)", err, rec.Body.String())
+			}
+			if body.Code != wantErrCode {
+				t.Errorf("error code = %q, want %q", body.Code, wantErrCode)
+			}
+			if body.Error == "" {
+				t.Errorf("error message is empty (body=%q)", rec.Body.String())
+			}
+		})
 	}
 }
 

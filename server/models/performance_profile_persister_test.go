@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/core"
 )
 
@@ -128,5 +129,63 @@ func TestGetPerformanceProfilesPropagatesQueryError(t *testing.T) {
 	raw, err := ppp.GetPerformanceProfiles("", "", "", 0, 10)
 	if err == nil {
 		t.Fatalf("expected an error querying a missing table, got body %s", raw)
+	}
+}
+
+// TestDeletePerformanceProfileRemovesStoredProfile pins the success path: a
+// stored profile is deleted and the persister reports the id it removed.
+func TestDeletePerformanceProfileRemovesStoredProfile(t *testing.T) {
+	db := newMigratedDB(t)
+	ppp := &PerformanceProfilePersister{DB: db}
+
+	profile := &PerformanceProfile{ID: mustUUID(t), Name: "linkerd-10s", Owner: mustUUID(t), Duration: "10s"}
+	if err := ppp.SavePerformanceProfile(profile.ID, profile); err != nil {
+		t.Fatalf("SavePerformanceProfile: %v", err)
+	}
+
+	raw, err := ppp.DeletePerformanceProfile(profile.ID)
+	if err != nil {
+		t.Fatalf("DeletePerformanceProfile: %v", err)
+	}
+
+	var deleted PerformanceProfile
+	if err := json.Unmarshal(raw, &deleted); err != nil {
+		t.Fatalf("unmarshal deleted profile: %v", err)
+	}
+	if deleted.ID != profile.ID {
+		t.Errorf("deleted id = %s, want %s", deleted.ID, profile.ID)
+	}
+
+	page, err := ppp.GetPerformanceProfiles("", "", "", 0, 10)
+	if err != nil {
+		t.Fatalf("GetPerformanceProfiles: %v", err)
+	}
+	var after PerformanceProfilePage
+	if err := json.Unmarshal(page, &after); err != nil {
+		t.Fatalf("unmarshal page: %v", err)
+	}
+	if after.TotalCount != 0 {
+		t.Errorf("profile still stored after delete: totalCount=%d", after.TotalCount)
+	}
+}
+
+// TestDeletePerformanceProfileReportsMissingProfile is the regression test for
+// a silent success: deleting an id that was never stored affects no row, which
+// gorm does not treat as an error, so the persister marshalled the stub profile
+// it had just built (carrying only the caller's id) and the handler answered 200.
+// A client could not tell "deleted" from "never existed". It must be not-found.
+func TestDeletePerformanceProfileReportsMissingProfile(t *testing.T) {
+	db := newMigratedDB(t)
+	ppp := &PerformanceProfilePersister{DB: db}
+
+	raw, err := ppp.DeletePerformanceProfile(mustUUID(t))
+	if err == nil {
+		t.Fatalf("expected a not-found error, got body %s", raw)
+	}
+	if got := mkerrors.GetCode(err); got != ErrResultNotFoundCode {
+		t.Errorf("error code = %q, want %q (err: %v)", got, ErrResultNotFoundCode, err)
+	}
+	if raw != nil {
+		t.Errorf("expected no body for a missing profile, got %s", raw)
 	}
 }
