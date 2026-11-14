@@ -242,13 +242,11 @@ func identifyBindingRelationships(relDef *relationship.RelationshipDefinition, d
 							continue
 						}
 
-						newFromSel := fromSel
+						newFromSel := patchBindingSelectorIDsTyped(&fromSel, fromDecl.ID.String(), bindingDecl.ID.String())
 						newFromSel.ID = &fromDecl.ID
-						patchBindingSelectorIDsTyped(&newFromSel, fromDecl.ID.String(), bindingDecl.ID.String())
 
-						newToSel := toSel
+						newToSel := patchBindingSelectorIDsTyped(&toSel, bindingDecl.ID.String(), toDecl.ID.String())
 						newToSel.ID = &toDecl.ID
-						patchBindingSelectorIDsTyped(&newToSel, bindingDecl.ID.String(), toDecl.ID.String())
 
 						selectorSetItem := relationship.SelectorSetItem{
 							Allow: relationship.Selector{
@@ -322,23 +320,69 @@ func indexToSelectorsByKindPairTyped(toSels []relationship.SelectorItem) map[str
 	return result
 }
 
-// patchBindingSelectorIDsTyped sets the IDs in a binding selector's match field.
-func patchBindingSelectorIDsTyped(sel *relationship.SelectorItem, matchFromID, matchToID string) {
-	if sel.Match == nil {
-		return
+// copyMatchSelector creates a deep copy of a MatchSelector, isolating MatchSelectorItem
+// slices and their inner ID pointers so that ID patching does not mutate shared
+// definitions or corrupt sibling relationships in multi-binding designs.
+func copyMatchSelector(m *relationship.MatchSelector) *relationship.MatchSelector {
+	if m == nil {
+		return nil
 	}
+	cp := &relationship.MatchSelector{}
+	if m.From != nil {
+		fromSlice := make([]relationship.MatchSelectorItem, len(*m.From))
+		for i, item := range *m.From {
+			fromSlice[i] = item
+			if item.ID != nil {
+				id := *item.ID
+				fromSlice[i].ID = &id
+			}
+		}
+		cp.From = &fromSlice
+	}
+	if m.To != nil {
+		toSlice := make([]relationship.MatchSelectorItem, len(*m.To))
+		for i, item := range *m.To {
+			toSlice[i] = item
+			if item.ID != nil {
+				id := *item.ID
+				toSlice[i].ID = &id
+			}
+		}
+		cp.To = &toSlice
+	}
+	if m.Refs != nil {
+		refsSlice := make([][]string, len(*m.Refs))
+		for i, inner := range *m.Refs {
+			innerCopy := make([]string, len(inner))
+			copy(innerCopy, inner)
+			refsSlice[i] = innerCopy
+		}
+		cp.Refs = &refsSlice
+	}
+	return cp
+}
+
+// patchBindingSelectorIDsTyped deep-copies the selector item and sets the IDs in its match field,
+// ensuring the source template and previously identified relationships remain unmodified.
+func patchBindingSelectorIDsTyped(sel *relationship.SelectorItem, matchFromID, matchToID string) relationship.SelectorItem {
+	cp := *sel
+	if cp.Match == nil {
+		return cp
+	}
+	cp.Match = copyMatchSelector(cp.Match)
 	fromUUID, _ := uuidFromString(matchFromID)
 	toUUID, _ := uuidFromString(matchToID)
-	if sel.Match.From != nil {
-		for i := range *sel.Match.From {
-			(*sel.Match.From)[i].ID = &fromUUID
+	if cp.Match.From != nil {
+		for i := range *cp.Match.From {
+			(*cp.Match.From)[i].ID = &fromUUID
 		}
 	}
-	if sel.Match.To != nil {
-		for i := range *sel.Match.To {
-			(*sel.Match.To)[i].ID = &toUUID
+	if cp.Match.To != nil {
+		for i := range *cp.Match.To {
+			(*cp.Match.To)[i].ID = &toUUID
 		}
 	}
+	return cp
 }
 
 // isValidBindingTyped checks if two components match via a binding selector's match field.
