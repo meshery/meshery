@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"slices"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -46,19 +47,38 @@ func HandlePaginationAsync[T any](
 			return ErrPagination(err, currentPage)
 		}
 
-		query := parsedURL.Query()
-		if !query.Has("page") {
-			query.Set("page", fmt.Sprintf("%d", currentPage))
-		}
-		if !query.Has("pagesize") {
-			query.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
-		}
-		if displayData.SearchTerm != "" {
-			query.Set("search", displayData.SearchTerm)
+		existingQuery := parsedURL.Query()
+		pagesQuerySearch := url.Values{}
+
+		if !existingQuery.Has("page") {
+			pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
+		} else if currentPage > 0 {
+			existingQuery.Set("page", fmt.Sprintf("%d", currentPage))
 		}
 
-		parsedURL.RawQuery = query.Encode()
-		urlPath := parsedURL.String()
+		if !existingQuery.Has("pagesize") {
+			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
+		}
+
+		urlPath := displayData.UrlPath
+		if displayData.SearchTerm != "" {
+			existingQuery.Set("search", displayData.SearchTerm)
+		}
+
+		if (existingQuery.Has("search") && displayData.SearchTerm != "") || (existingQuery.Has("page") && currentPage > 0) {
+			parsedURL.RawQuery = existingQuery.Encode()
+			urlPath = parsedURL.String()
+		} else if displayData.SearchTerm != "" && !existingQuery.Has("search") {
+			pagesQuerySearch.Set("search", displayData.SearchTerm)
+		}
+
+		if queryStr := pagesQuerySearch.Encode(); queryStr != "" {
+			if strings.Contains(urlPath, "?") {
+				urlPath = fmt.Sprintf("%s&%s", urlPath, queryStr)
+			} else {
+				urlPath = fmt.Sprintf("%s?%s", urlPath, queryStr)
+			}
+		}
 
 		data, err := api.Fetch[T](urlPath)
 		if err != nil {
