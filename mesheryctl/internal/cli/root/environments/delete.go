@@ -1,4 +1,4 @@
-// Copyright Meshery Authorsayer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,25 +20,27 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
+var deleteUsageMsg = "Usage: mesheryctl environment delete [environmentId]\nRun 'mesheryctl environment delete --help' to see detailed help message"
+
 var deleteEnvironmentCmd = &cobra.Command{
-	Use:   "delete",
+	Use:   "delete [environmentId]",
 	Short: "Delete an environment",
 	Long: `Delete an environment by providing the environment ID
 Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/delete`,
 	Example: `
-// delete a new environment
+// Delete an environment by ID
 mesheryctl environment delete [environmentId]
 `,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
-			const errMsg = "[ Environment ID ] isn't specified\n\nUsage: mesheryctl environment delete [environmentId]\nRun 'mesheryctl environment delete --help' to see detailed help message"
-			return utils.ErrInvalidArgument(errors.New(errMsg))
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("[ Environment ID ] isn't specified\n\n%s", deleteUsageMsg))
 		}
-
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", deleteUsageMsg))
+		}
 		if !utils.IsUUID(args[0]) {
 			return utils.ErrInvalidUUID(fmt.Errorf("invalid environment ID: %s", args[0]))
 		}
