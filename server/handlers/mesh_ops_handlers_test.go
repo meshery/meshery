@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -12,6 +13,13 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
 )
+
+// errYamlMarshal is a test fixture that implements yaml.Marshaler and returns an error.
+type errYamlMarshal struct{}
+
+func (errYamlMarshal) MarshalYAML() (interface{}, error) {
+	return nil, fmt.Errorf("forced yaml marshal error for test")
+}
 
 // mockAdaptersTracker is an in-memory implementation of models.AdaptersTrackerInterface for testing.
 type mockAdaptersTracker struct {
@@ -160,11 +168,11 @@ func TestMeshOpsHandlerFailsGracefullyOnInvalidKubeConfig(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/api/system/adapter/operation", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	// Inject an unmarshalable K8sContext so GenerateKubeConfig returns ErrMarshal
+	// Inject a context with errYamlMarshal so GenerateKubeConfig returns ErrMarshal without panicking
 	invalidCluster := models.K8sContext{
 		Name: "broken-cluster",
 		Cluster: map[string]interface{}{
-			"unmarshalable": make(chan int),
+			"unmarshalable": errYamlMarshal{},
 		},
 	}
 	ctx := context.WithValue(req.Context(), models.KubeClustersKey, []models.K8sContext{invalidCluster})
