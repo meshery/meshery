@@ -131,7 +131,7 @@ mesheryctl design delete -f [file | URL]
 			patternFileByt = content
 		} else {
 			// Else treat it like a URL
-			patternFileByt, err = fetchDesignFromGithub(targetFile)
+			patternFileByt, err = fetchDesignFile(targetFile)
 			if err != nil {
 				return err
 			}
