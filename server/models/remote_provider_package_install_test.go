@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"math"
 	"math/rand"
 	"net/http"
 	"net/http/httptest"
@@ -412,5 +413,180 @@ func TestTarXZ_SweepsStaleStagingDirectories(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(destination, "ext-v1.0.0", "index.js")); err != nil {
 		t.Errorf("package was not installed: %v", err)
+	}
+}
+
+// rawTarGz builds a gzip-compressed tar from headers, writing only the bodies
+// given. It ignores the tar writer's complaint about unwritten body bytes, so a
+// test can declare a size it never sends, which is what a hostile archive does.
+func rawTarGz(t *testing.T, entries []rawEntry) []byte {
+	t.Helper()
+
+	var buf bytes.Buffer
+	gz := gzip.NewWriter(&buf)
+	tw := tar.NewWriter(gz)
+	for _, e := range entries {
+		if err := tw.WriteHeader(e.header); err != nil {
+			t.Fatalf("write header %q: %v", e.header.Name, err)
+		}
+		if len(e.body) > 0 {
+			if _, err := tw.Write(e.body); err != nil {
+				t.Fatalf("write body %q: %v", e.header.Name, err)
+			}
+		}
+	}
+	_ = tw.Flush()
+	_ = gz.Close()
+	return buf.Bytes()
+}
+
+type rawEntry struct {
+	header *tar.Header
+	body   []byte
+}
+
+// Two logins can both see a missing package and download it. The one that
+// finishes second must not touch the first one's completed install.
+func TestTarXZ_NeverOverwritesAnInstallThatAppearedMeanwhile(t *testing.T) {
+	parent := t.TempDir()
+	destination := filepath.Join(parent, "pkg")
+
+	// Another login finished first.
+	if err := os.MkdirAll(destination, 0755); err != nil {
+		t.Fatal(err)
+	}
+	installed := filepath.Join(destination, "index.js")
+	if err := os.WriteFile(installed, []byte("A: the completed install"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("a complete second download leaves the first install alone", func(t *testing.T) {
+		second := tarGzBytes(t, []tarEntry{{name: "index.js", body: "B: the second download"}})
+		if err := TarXZ(bytes.NewReader(second), destination); err != nil {
+			t.Fatalf("TarXZ returned an error although the package is already installed: %v", err)
+		}
+		got, _ := os.ReadFile(installed)
+		if string(got) != "A: the completed install" {
+			t.Errorf("the completed install was overwritten: %q", got)
+		}
+	})
+
+	t.Run("a truncated second download cannot damage the first install", func(t *testing.T) {
+		big := manyFilesTarGz(t, 20, 4096)
+		_ = TarXZ(bytes.NewReader(big[:len(big)/2]), destination)
+		got, _ := os.ReadFile(installed)
+		if string(got) != "A: the completed install" {
+			t.Errorf("a truncated download damaged the completed install: %q", got)
+		}
+		if names := dirEntries(t, destination); len(names) != 1 {
+			t.Errorf("the completed install gained or lost files: %v", names)
+		}
+	})
+}
+
+// An existing, empty destination (the directory a caller made in advance) is
+// still a valid place to install into.
+func TestTarXZ_InstallsIntoAnExistingEmptyDirectory(t *testing.T) {
+	destination := filepath.Join(t.TempDir(), "pkg")
+	if err := os.MkdirAll(destination, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := TarXZ(bytes.NewReader(githubArchiveTarGz(t)), destination); err != nil {
+		t.Fatalf("TarXZ failed for an empty existing directory: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(destination, "ext-v1.0.0", "index.js")); err != nil {
+		t.Errorf("package was not installed into the existing directory: %v", err)
+	}
+}
+
+// filepath.Dir("/x/pkg/") is "/x/pkg", so a destination with a trailing
+// separator would stage inside itself.
+func TestTarXZ_TrailingSeparatorDestination(t *testing.T) {
+	parent := t.TempDir()
+	destination := filepath.Join(parent, "pkg") + string(os.PathSeparator)
+
+	if err := TarXZ(bytes.NewReader(githubArchiveTarGz(t)), destination); err != nil {
+		t.Fatalf("TarXZ failed: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(parent, "pkg", "ext-v1.0.0", "index.js")); err != nil {
+		t.Errorf("package was not installed at the destination: %v", err)
+	}
+	if names := dirEntries(t, parent); len(names) != 1 || names[0] != "pkg" {
+		t.Errorf("unexpected entries beside the destination: %v", names)
+	}
+}
+
+// Only a directory may stand for the root. A link or file named "." is not
+// something to skip: links and special entries are rejected.
+func TestTarXZ_RejectsNonDirectoryRootEntries(t *testing.T) {
+	cases := map[string]*tar.Header{
+		"symlink":  {Typeflag: tar.TypeSymlink, Name: ".", Linkname: "/etc", Mode: 0777},
+		"hardlink": {Typeflag: tar.TypeLink, Name: "./", Linkname: "somewhere", Mode: 0644},
+		"file":     {Typeflag: tar.TypeReg, Name: ".", Mode: 0644, Size: 0},
+	}
+	for name, header := range cases {
+		t.Run(name, func(t *testing.T) {
+			destination := filepath.Join(t.TempDir(), "pkg")
+			err := TarXZ(bytes.NewReader(rawTarGz(t, []rawEntry{{header: header}})), destination)
+			if err == nil {
+				t.Fatalf("a %s entry named %q was accepted", name, header.Name)
+			}
+			if _, statErr := os.Stat(destination); !os.IsNotExist(statErr) {
+				t.Error("a rejected package left an install behind")
+			}
+		})
+	}
+}
+
+// Adding a declared size to the running total wraps negative for a size near
+// MaxInt64, which would let the next comparison pass.
+func TestTarXZ_SizeCapSurvivesOverflow(t *testing.T) {
+	archive := rawTarGz(t, []rawEntry{
+		{header: &tar.Header{Typeflag: tar.TypeReg, Name: "small.txt", Mode: 0644, Size: 1}, body: []byte("x")},
+		{header: &tar.Header{Typeflag: tar.TypeReg, Name: "huge.bin", Mode: 0644, Size: math.MaxInt64}},
+	})
+	destination := filepath.Join(t.TempDir(), "pkg")
+
+	err := TarXZ(bytes.NewReader(archive), destination)
+	if err == nil {
+		t.Fatal("an entry declaring a size near MaxInt64 was accepted")
+	}
+	if !strings.Contains(err.Error(), "exceeds") {
+		t.Errorf("error = %q, want it to report the size cap, not an I/O failure after writing", err)
+	}
+	if _, statErr := os.Stat(destination); !os.IsNotExist(statErr) {
+		t.Error("an oversized package left an install behind")
+	}
+}
+
+// Go does not apply global PAX records to later entries, but the format says a
+// global path or size applies to every following entry. Skipping such a record
+// would extract the wrong layout, so only the inert comment is accepted.
+func TestTarXZ_GlobalPaxRecords(t *testing.T) {
+	build := func(records map[string]string) []byte {
+		return rawTarGz(t, []rawEntry{
+			{header: &tar.Header{Typeflag: tar.TypeXGlobalHeader, Name: "pax_global_header", PAXRecords: records}},
+			{header: &tar.Header{Typeflag: tar.TypeReg, Name: "index.js", Mode: 0644, Size: 4}, body: []byte("main")},
+		})
+	}
+
+	t.Run("comment only is accepted", func(t *testing.T) {
+		destination := filepath.Join(t.TempDir(), "pkg")
+		if err := TarXZ(bytes.NewReader(build(map[string]string{"comment": "abc123"})), destination); err != nil {
+			t.Fatalf("a comment-only global header was rejected: %v", err)
+		}
+	})
+
+	for _, key := range []string{"path", "size"} {
+		t.Run(key+" is rejected", func(t *testing.T) {
+			destination := filepath.Join(t.TempDir(), "pkg")
+			err := TarXZ(bytes.NewReader(build(map[string]string{key: "1"})), destination)
+			if err == nil {
+				t.Fatalf("a global %q record was ignored, which would extract the wrong layout", key)
+			}
+			if _, statErr := os.Stat(destination); !os.IsNotExist(statErr) {
+				t.Error("a rejected package left an install behind")
+			}
+		})
 	}
 }
