@@ -200,6 +200,54 @@ describe('TypingFilter', () => {
     expect(screen.getByTestId('chip')).toHaveTextContent('status: Open');
   });
 
+  it('re-seeds chips when defaultFilters changes to a different set', () => {
+    const { rerender } = render(
+      <TypingFilter
+        filterSchema={filterSchema}
+        placeholder="Filter..."
+        handleFilter={vi.fn()}
+        defaultFilters={[{ type: 'STATUS', value: 'Open', label: 'status: Open' }]}
+      />,
+    );
+    expect(screen.getByTestId('chip')).toHaveTextContent('status: Open');
+
+    rerender(
+      <TypingFilter
+        filterSchema={filterSchema}
+        placeholder="Filter..."
+        handleFilter={vi.fn()}
+        defaultFilters={[{ type: 'STATUS', value: 'Closed', label: 'status: Closed' }]}
+      />,
+    );
+    expect(screen.getByTestId('chip')).toHaveTextContent('status: Closed');
+
+    rerender(
+      <TypingFilter
+        filterSchema={filterSchema}
+        placeholder="Filter..."
+        handleFilter={vi.fn()}
+        defaultFilters={[
+          { type: 'STATUS', value: 'Closed', label: 'status: Closed' },
+          { type: 'AUTHOR', value: 'bob', label: 'author: bob' },
+        ]}
+      />,
+    );
+    expect(screen.getAllByTestId('chip').map((chip) => chip.textContent)).toEqual([
+      'status: Closed',
+      'author: bob',
+    ]);
+
+    rerender(
+      <TypingFilter
+        filterSchema={filterSchema}
+        placeholder="Filter..."
+        handleFilter={vi.fn()}
+        defaultFilters={[]}
+      />,
+    );
+    expect(screen.queryByTestId('chip')).toBeNull();
+  });
+
   it('handles "Enter" press for free-solo (custom value) filters', async () => {
     const handleFilter = vi.fn();
     render(
