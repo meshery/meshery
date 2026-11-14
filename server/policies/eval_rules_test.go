@@ -833,6 +833,19 @@ func TestCopyMatchSelector_PreservesRefs(t *testing.T) {
 	if len(*copied.Refs) != len(refs) {
 		t.Fatalf("expected %d refs, got %d", len(refs), len(*copied.Refs))
 	}
+	// Compare each copied reference path with original before mutation
+	for i, refPath := range refs {
+		copiedPath := (*copied.Refs)[i]
+		if len(copiedPath) != len(refPath) {
+			t.Fatalf("expected ref[%d] length %d, got %d", i, len(refPath), len(copiedPath))
+		}
+		for j, elem := range refPath {
+			if copiedPath[j] != elem {
+				t.Errorf("expected copied.Refs[%d][%d] to be %q, got %q", i, j, elem, copiedPath[j])
+			}
+		}
+	}
+
 	// Verify deep copy isolation
 	(*copied.Refs)[0][0] = "mutated"
 	if refs[0][0] == "mutated" {
