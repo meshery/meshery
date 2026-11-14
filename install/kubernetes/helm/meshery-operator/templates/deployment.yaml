@@ -43,10 +43,23 @@ spec:
             {{- end }}
             - --metrics-addr=:8443
             - --health-probe-bind-address=:8081
+          {{- $userEnv := .Values.env | default dict }}
+          {{- if hasKey $userEnv "ENABLE_WEBHOOKS" }}
+          {{- fail "env.ENABLE_WEBHOOKS is managed by the chart; set webhook.enabled instead" }}
+          {{- end }}
+          {{- if hasKey $userEnv "MESHSYNC_SERVICE_ACCOUNT" }}
+          {{- fail "env.MESHSYNC_SERVICE_ACCOUNT is managed by the chart; set meshsync.serviceAccount.dedicated=true (and meshsync.serviceAccount.name) instead" }}
+          {{- end }}
           env:
             - name: ENABLE_WEBHOOKS
               value: {{ .Values.webhook.enabled | quote }}
-          {{- range $key, $val := .Values.env }}
+            {{- if .Values.meshsync.serviceAccount.dedicated }}
+            # ServiceAccount the operator runs MeshSync under
+            # (meshery/meshery-operator#954; unset keeps meshery-operator).
+            - name: MESHSYNC_SERVICE_ACCOUNT
+              value: {{ .Values.meshsync.serviceAccount.name | quote }}
+            {{- end }}
+          {{- range $key, $val := $userEnv }}
             - name: {{ $key }}
               value: {{ $val | quote }}
           {{- end }}

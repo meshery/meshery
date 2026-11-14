@@ -26,9 +26,13 @@ The chart's `version`/`appVersion` and the CRD bundles under `crds/` and
 - **Upgrade**: Helm [never touches `crds/` on upgrade](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/);
   the `crds.updateJob` pre-upgrade hook is what refreshes the CRDs, so
   `helm upgrade` delivers schema updates to live clusters.
-- **Uninstall**: the CRDs (and every `Broker`/`MeshSync` object) deliberately
-  survive `helm uninstall` — they are never owned by the release. To remove
-  them permanently, including all custom resources of those types:
+- **Uninstall**: the CRDs deliberately survive `helm uninstall` - they are
+  never owned by the release. The `meshery-broker` and `meshery-meshsync`
+  custom resources the subcharts render *are* release-owned, and each carries
+  a finalizer only the operator removes, so the `customResourceCleanup`
+  pre-delete hook deletes them while the operator is still running (see
+  [Uninstall](#uninstall)). To remove the CRDs permanently, including all
+  custom resources of those types:
 
   ```console
   kubectl delete crd brokers.meshery.io meshsyncs.meshery.io
@@ -40,6 +44,105 @@ The chart's `version`/`appVersion` and the CRD bundles under `crds/` and
   diverge upstream, enable `webhook.enabled` (chart-generated self-signed
   certificate) or `webhook.certManager.enabled` (cert-manager v1) and the CRD
   update Job patches webhook conversion onto the CRDs.
+
+## MeshSync identity and RBAC
+
+The operator's own ClusterRole (`meshery-operator-role`, bound to the
+`meshery-operator` ServiceAccount) is least-privilege: it can manage the
+Broker and MeshSync workloads, including the configmaps, secrets, and
+services those workloads need, but it grants no reads outside the resource
+types it manages. MeshSync,
+which the operator deploys from the `MeshSync` custom resource, needs the
+opposite: read access to everything it discovers, and no writes. The chart
+therefore gives it a separate role and ServiceAccount:
+
+| Object | Name |
+| --- | --- |
+| ServiceAccount | `meshery-meshsync` (`meshsync.serviceAccount.name`) |
+| ClusterRole | `meshery-meshsync-role` |
+| ClusterRoleBinding | `meshery-meshsync-rolebinding` |
+
+`meshery-meshsync-role` grants `list`/`watch` on every resource -
+MeshSync's watch-list is user-configurable and includes CRDs and
+cluster-scoped kinds - plus `get` on its own `MeshSync` resource, Namespaces
+and `pods/log`. It does not wildcard `get`, because `get` on `*` also
+authorizes the exec, attach, port-forward and proxy subresources (`get` on
+`nodes/proxy` reaches the kubelet API of every node). Add rules (for example
+`create` on `pods/exec` for Meshery's interactive terminal) with
+`meshsync.rbac.extraRules`.
+
+**Which ServiceAccount MeshSync runs as** is set by one switch,
+`meshsync.serviceAccount.dedicated`:
+
+- `false` (the default while the chart deploys operator 1.0.6): the chart does
+  not set `MESHSYNC_SERVICE_ACCOUNT`, and the operator runs MeshSync as
+  `meshery-operator` (1.0.6 hard-codes it; later releases default to it). The
+  chart binds the read-only `meshery-meshsync-role` to `meshery-operator`
+  (`meshery-meshsync-compat-rolebinding`), so that ServiceAccount gains the
+  role's reads (plus any `meshsync.rbac.extraRules`) and no wildcard writes.
+  MeshSync, sharing it, still holds the operator's own write permissions, as
+  it has since 1.0.0.
+- `true`: the chart passes `MESHSYNC_SERVICE_ACCOUNT=<meshsync.serviceAccount.name>`
+  to the manager and drops the compatibility binding. Requires an operator
+  release that includes meshery/meshery-operator#954; with an older operator
+  MeshSync would stay on `meshery-operator` without discovery reads.
+
+The default flips to `true` in the change that moves `image.tag` to the first
+operator release that includes meshery/meshery-operator#954. Until then,
+leaving it `false` with a newer operator is safe: MeshSync simply keeps running
+as `meshery-operator` with the role's read access. The ServiceAccount must exist in
+the `MeshSync` resource's namespace, which is the release namespace.
+
+## Broker exposure
+
+The `meshery-broker` subchart renders the `Broker` custom resource and can set
+how the Broker is exposed. An out-of-cluster Meshery Server must reach the
+Broker on `4222/tcp`:
+
+```console
+helm upgrade --install meshery-operator meshery/meshery-operator -n meshery \
+  --set meshery-broker.service.type=LoadBalancer \
+  --set 'meshery-broker.service.loadBalancerSourceRanges={10.0.0.0/8}'
+```
+
+Unset `meshery-broker.service.*` and `meshery-broker.version` fields are
+omitted from the resource, keeping the operator defaults (`ClusterIP`, the
+pinned NATS release) and leaving them free for Meshery Server, which
+server-side-applies `spec.service` and `spec.version` from its controllers
+configuration under the field manager `meshery-server`. Set each field in one
+place only: when both set it, Helm 4 (server-side apply) fails the upgrade with
+a field-ownership conflict, and Helm 3 lets whichever wrote last win.
+To return to the default exposure, set `meshery-broker.service.type=ClusterIP`
+in the same upgrade that removes the other `service` values, rather than
+unsetting every field. Operator 1.0.6 writes an empty `spec.service` back to
+the Broker and co-owns it, so under Helm 4 removing the last chart-set field
+there (for example with `--reset-values`) fails the upgrade with
+`spec.service ... must be of type object: "null"`. Helm 3, or Helm 4 with
+`--server-side=false`, is not affected.
+`loadBalancerClass` and `loadBalancerSourceRanges` require
+`type: LoadBalancer`; the chart refuses to render them otherwise. The resource
+is rendered as `meshery.io/v1alpha1`: both served versions are field-identical,
+and the storage version `v1alpha2` would break `helm upgrade` from charts whose
+CRDs predate it, because Helm maps a manifest's apiVersion before the CRD
+update Job runs. See [charts/meshery-broker](charts/meshery-broker/README.md)
+for every field.
+
+## Uninstall
+
+`helm uninstall` would delete the operator and the Broker and MeshSync custom
+resources in the same pass, leaving the resources stuck `Terminating` on
+finalizers no controller is left to remove. The `customResourceCleanup`
+pre-delete hook Job runs first, while the operator is still up: it deletes the
+custom resources this release owns (identified by the release's Helm ownership
+annotation, so a `helm template | kubectl apply` render of the Job deletes
+nothing) and waits up to 90 seconds for the operator to process the
+finalizers. If the operator is not reconciling, it removes the finalizers
+instead; everything the operator created for those resources carries a
+controller ownerReference and is garbage-collected. The Job uses
+`crds.updateJob.image` and a Role limited to `brokers` and `meshsyncs` in the
+release namespace, and fails only on API errors, in which case it is kept for
+inspection and `helm uninstall` stops. Set `customResourceCleanup.enabled=false`
+to opt out.
 
 ## Maintainers
 
@@ -66,7 +169,8 @@ The chart's `version`/`appVersion` and the CRD bundles under `crds/` and
 | crds.updateJob.image.pullPolicy | string | `"IfNotPresent"` |  |
 | crds.updateJob.image.repository | string | `"alpine/k8s"` | kubectl-capable image for the CRD update Job |
 | crds.updateJob.image.tag | string | `"1.35.6"` |  |
-| env | object | `{}` | Extra environment variables for the manager container |
+| customResourceCleanup.enabled | bool | `true` | Pre-delete hook Job that deletes this release's Broker and MeshSync resources while the operator still runs, so their finalizers are processed (see [Uninstall](#uninstall)) |
+| env | object | `{}` | Extra environment variables for the manager container. `ENABLE_WEBHOOKS` and `MESHSYNC_SERVICE_ACCOUNT` are chart-managed and rejected here |
 | fullnameOverride | string | `"meshery-operator"` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.repository | string | `"meshery/meshery-operator"` |  |
@@ -80,10 +184,12 @@ The chart's `version`/`appVersion` and the CRD bundles under `crds/` and
 | leaderElection.enabled | bool | `true` | Leader election (adds the leases Role/RoleBinding and `--enable-leader-election`) |
 | meshery-broker.enabled | bool | `true` |  |
 | meshery-broker.fullnameOverride | string | `"meshery-broker"` |  |
-| meshery-broker.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | meshery-meshsync.enabled | bool | `true` |  |
 | meshery-meshsync.fullnameOverride | string | `"meshery-meshsync"` |  |
-| meshery-meshsync.serviceAccountNameOverride | string | `"meshery-server"` |  |
+| meshsync.rbac.extraRules | list | `[]` | Rules appended to the otherwise read-only `meshery-meshsync-role`, e.g. `create` on `pods/exec` for the interactive terminal |
+| meshsync.serviceAccount.create | bool | `true` | Create the MeshSync ServiceAccount; when `false` it must already exist in the release namespace |
+| meshsync.serviceAccount.dedicated | bool | `false` | Run MeshSync as `meshsync.serviceAccount.name` by passing `MESHSYNC_SERVICE_ACCOUNT` to the operator (needs an operator with meshery/meshery-operator#954); while `false`, the read-only role is bound to `meshery-operator` instead (see [MeshSync identity and RBAC](#meshsync-identity-and-rbac)) |
+| meshsync.serviceAccount.name | string | `"meshery-meshsync"` | MeshSync's ServiceAccount (DNS-1123 name), bound to the read-only `meshery-meshsync-role` |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
 | podAnnotations | object | `{}` |  |

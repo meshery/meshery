@@ -99,7 +99,7 @@ MeshSync's configuration spans three mechanisms: fields on the `MeshSync` custom
 | Broker to publish to | `MeshSync` CR `spec.broker.native` or `spec.broker.custom.url` | The cluster's `meshery-broker` | Operator re-reconciles `BROKER_URL` |
 
 {{% alert color="dark" title="Discovery is read-only; exec and log streaming are not" %}}
-MeshSync's discovery never creates, modifies, or deletes anything in your cluster - it only lists and watches. Two <em>on-request</em> operations served over the Broker go further: pod log streaming (reads <code>pods/log</code>) and interactive exec sessions (opens a shell in a target container via <code>pods/exec</code>). These power Meshery's log viewer and interactive terminal, run only when a client requests them, and are never part of discovery (file/snapshot mode does not start them at all). Factor them into your RBAC review if your security posture distinguishes read from exec.
+MeshSync's discovery never creates, modifies, or deletes anything in your cluster - it only lists and watches. Two <em>on-request</em> operations served over the Broker go further: pod log streaming (reads <code>pods/log</code>) and interactive exec sessions (opens a shell in a target container via <code>pods/exec</code>). These power Meshery's log viewer and interactive terminal, run only when a client requests them, and are never part of discovery (file/snapshot mode does not start them at all). In operator mode MeshSync reads through the chart's read-only <code>meshery-meshsync-role</code>, which grants <code>get</code> on <code>pods/log</code> but not <code>create</code> on <code>pods/exec</code>; add that rule with the chart value <code>meshsync.rbac.extraRules</code> to enable the terminal.
 {{% /alert %}}
 
 ### Scoping discovery with the watch-list
@@ -279,6 +279,8 @@ Meshery Broker is NATS, deployed by the Operator from the `Broker` custom resour
 | Service annotations | `Broker` CR `spec.service.annotations` | None | Cloud load balancer hints, MetalLB pools, internal-LB switches |
 | Load balancer class / source ranges | `spec.service.loadBalancerClass`, `spec.service.loadBalancerSourceRanges` | None | LoadBalancer-type only; CRD validation rejects them for other types |
 | Advertised external endpoint | `spec.service.externalEndpointOverride` | Derived from the Service | Pins the advertised `host:port` for ingress, gateway, NAT, or air-gapped topologies |
+
+If you install the `meshery-operator` Helm chart yourself, you can set the version and every `spec.service` field at install time as `meshery-broker.version` and `meshery-broker.service.*` (see the [chart README](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery-operator#broker-exposure)). Fields you leave unset are omitted from the `Broker`, so the Operator defaults and Meshery Server's controllers configuration still apply. Set each field in one place: when both the chart and Meshery Server set it, a Helm 4 upgrade fails on the field-ownership conflict and Helm 3 keeps whichever wrote last. To return to the default exposure, set `meshery-broker.service.type=ClusterIP` in the same upgrade that removes the other `meshery-broker.service.*` values instead of unsetting them all: with Operator 1.0.6, a Helm 4 upgrade that removes the last chart-set `spec.service` field fails with `spec.service ... must be of type object: "null"`. Helm 3, or Helm 4 with `--server-side=false`, is not affected.
 
 ### Broker service networking
 

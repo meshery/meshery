@@ -95,7 +95,7 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "meshery-operator.selectorLabels" . | nindent 8 }}
+        {{- include "meshery-operator.hookPodLabels" (dict "context" . "component" "crd-update") | nindent 8 }}
     spec:
       serviceAccountName: {{ $fullname }}-crd-update
       restartPolicy: Never

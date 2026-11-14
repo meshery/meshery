@@ -94,6 +94,8 @@ See [Meshery Broker]({{< ref "concepts/architecture/broker/index.md" >}}) for mo
 
 MeshSync Controller manages the lifecycle of MeshSync that is deployed for resource synchronization for the cluster. It derives the Broker's address from the `Broker` resource's status and injects it into MeshSync as `BROKER_URL` (a `nats://host:port` URL); when the Broker's endpoint changes, the controller re-reconciles MeshSync so it reconnects.
 
+MeshSync reads the cluster through its own read-only ClusterRole, `meshery-meshsync-role`, while the Operator's own role can manage Broker and MeshSync workloads but not read the rest of the cluster. Operator releases up to 1.0.6 run MeshSync as `meshery-operator`, so the Helm chart binds the read-only role to that ServiceAccount. Operator releases that include the `MESHSYNC_SERVICE_ACCOUNT` setting run it as the dedicated `meshery-meshsync` ServiceAccount instead, once the chart's `meshsync.serviceAccount.dedicated` is on. On `helm uninstall`, a pre-delete hook deletes the `Broker` and `MeshSync` resources while the Operator is still running, so their finalizers are processed. See the [chart README](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery-operator#meshsync-identity-and-rbac).
+
 See [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) for more information.
 
 ## Common tasks

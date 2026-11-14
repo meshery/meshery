@@ -117,17 +117,44 @@ tolerations: []
 
 affinity: {}
 
-# By default, the adapters need to have the same cluster role as the meshery to have permissions for performing necessary operations
+# Identity of the MeshSync workload the operator deploys for the MeshSync
+# custom resource. MeshSync reads the cluster through the read-only
+# meshery-meshsync-role instead of the operator's least-privilege role, which
+# grants writes but no discovery reads (see templates/meshsync-rbac.yaml).
+meshsync:
+  serviceAccount:
+    # -- Run MeshSync under the ServiceAccount below by passing
+    # MESHSYNC_SERVICE_ACCOUNT to the operator. Requires an operator release
+    # that includes meshery/meshery-operator#954; flip the default to true in
+    # the change that moves image.tag to that release. While false, the operator
+    # runs MeshSync as meshery-operator (1.0.6 and earlier hard-code it; later
+    # releases default to it without the variable), so the chart binds the
+    # read-only meshery-meshsync-role (plus any rbac.extraRules) to
+    # meshery-operator instead; it gains no wildcard writes.
+    dedicated: false
+    # -- Create the MeshSync ServiceAccount. Set false to supply your own; it
+    # must exist in the release namespace (the MeshSync resource's namespace).
+    create: true
+    # -- MeshSync's ServiceAccount, bound to the read-only meshery-meshsync-role
+    # and, when `dedicated`, passed to the operator as MESHSYNC_SERVICE_ACCOUNT.
+    name: meshery-meshsync
+  rbac:
+    # -- Rules appended to meshery-meshsync-role, which is otherwise read-only.
+    # For example, Meshery's interactive terminal needs
+    # `{apiGroups: [""], resources: [pods/exec], verbs: [create]}`.
+    extraRules: []
 
-# If need to use a different service accounts for the adapters, modify the serviceAccountNameOverride for the corresponding adapters here,
-# or set the serviceAccountNameOverride to empty while setting the serviceAccount information in the sub-chart accordingly
+customResourceCleanup:
+  # -- Pre-delete hook Job that deletes this release's Broker and MeshSync
+  # custom resources while the operator is still running, so their finalizers
+  # are processed instead of leaving them Terminating once the operator is
+  # gone. Reuses crds.updateJob.image. See templates/cr-cleanup.yaml.
+  enabled: true
 
 meshery-broker:
   enabled: true
   fullnameOverride: meshery-broker
-  serviceAccountNameOverride: meshery-server
 
 meshery-meshsync:
   enabled: true
   fullnameOverride: meshery-meshsync
-  serviceAccountNameOverride: meshery-server
