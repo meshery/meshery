@@ -355,6 +355,7 @@ func ErrPatternDeploy(err error, patternName string) error {
 	return errors.New(ErrPatternDeployCode, errors.Alert, []string{fmt.Sprintf("Unable to deploy the selected design \"%s\"", patternName)}, []string{err.Error()}, []string{"Connection Error: There was an error connecting to the selected target platform (i.e. Kubernetes cluster(s)).", "This connection might not be assigned to the selected environment."}, []string{"Verify that the Kubernetes connection status is 'Connected' or try uploading a new kubeconfig.", "Assign the current Kubernetes connection to the selected environment."})
 }
 
+// ErrRequestBody returns an error indicating the request body could not be read or is invalid.
 func ErrRequestBody(err error) error {
 	errStr := ""
 	if err != nil {
@@ -707,7 +708,11 @@ func ErrClonePattern(err error) error {
 }
 
 func ErrCloneFilter(err error) error {
-	return errors.New(ErrCloneFilterCode, errors.Alert, []string{"Error failed to clone filter"}, []string{err.Error()}, []string{"Failed to clone Filter with the given ID"}, []string{"Check if the Filter ID is correct and the Filter is published"})
+	errStr := ""
+	if err != nil {
+		errStr = err.Error()
+	}
+	return errors.New(ErrCloneFilterCode, errors.Alert, []string{"Error failed to clone filter"}, []string{errStr}, []string{"Failed to clone Filter with the given ID"}, []string{"Check if the Filter ID is correct and the Filter is published"})
 }
 
 func ErrPublishCatalogPattern(err error) error {

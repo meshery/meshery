@@ -7,13 +7,14 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+
+	_events "github.com/meshery/meshkit/models/events"
 	"testing"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
-	_events "github.com/meshery/meshkit/models/events"
 	component "github.com/meshery/schemas/models/v1beta2/component"
 	relationship "github.com/meshery/schemas/models/v1beta2/relationship"
 	design "github.com/meshery/schemas/models/v1beta3/design"
@@ -845,4 +846,98 @@ func TestCloneMesheryPatternHandler_NullBody(t *testing.T) {
 	if !strings.Contains(rec.Body.String(), "design name is required") {
 		t.Errorf("expected response to contain 'design name is required', got %s", rec.Body.String())
 	}
+}
+
+func TestErrCloneFilter_NilError(t *testing.T) {
+	err := ErrCloneFilter(nil)
+	if err == nil {
+		t.Fatal("expected non-nil error from ErrCloneFilter(nil)")
+	}
+	if got, want := errors.GetCode(err), ErrCloneFilterCode; got != want {
+		t.Errorf("expected error code %q, got %q", want, got)
+	}
+}
+
+// TestCloneMesheryFilterHandler_EmptyIDReturns400 verifies that calling
+// CloneMesheryFilterHandler with an empty resource ID and a valid JSON payload
+// returns HTTP 400 Bad Request and does not panic with a nil pointer dereference.
+func TestCloneMesheryFilterHandler_EmptyIDReturns400(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	body := []byte(`{"name": "my-cloned-filter"}`)
+	req := httptest.NewRequest(http.MethodPost, "/api/filter/clone/", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	req = mux.SetURLVars(req, map[string]string{"id": ""})
+
+	rec := httptest.NewRecorder()
+
+	assert.NotPanics(t, func() {
+		h.CloneMesheryFilterHandler(rec, req, nil, nil, nil)
+	}, "CloneMesheryFilterHandler must not panic when filter ID is empty")
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+	assert.Contains(t, rec.Body.String(), "clone filter")
+}
+
+// TestCloneMesheryFilterHandler_NullBodyReturns400 verifies that sending a
+// literal JSON null body (which decodes without error but yields a nil parsedBody)
+// returns HTTP 400 Bad Request instead of panicking on parsedBody.Name later.
+func TestCloneMesheryFilterHandler_NullBodyReturns400(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	body := []byte(`null`)
+	req := httptest.NewRequest(http.MethodPost, "/api/filter/clone/test-id", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	req = mux.SetURLVars(req, map[string]string{"id": "test-id"})
+
+	rec := httptest.NewRecorder()
+	user := models.LocalProviderUser()
+	provider := &models.DefaultLocalProvider{}
+
+	assert.NotPanics(t, func() {
+		h.CloneMesheryFilterHandler(rec, req, nil, user, provider)
+	}, "CloneMesheryFilterHandler must not panic on null JSON body")
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+// TestCloneMesheryFilterHandler_MalformedBodyReturns400 verifies that sending
+// malformed JSON returns HTTP 400 Bad Request.
+func TestCloneMesheryFilterHandler_MalformedBodyReturns400(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	body := []byte(`{not valid json`)
+	req := httptest.NewRequest(http.MethodPost, "/api/filter/clone/test-id", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	req = mux.SetURLVars(req, map[string]string{"id": "test-id"})
+
+	rec := httptest.NewRecorder()
+	user := models.LocalProviderUser()
+	provider := &models.DefaultLocalProvider{}
+
+	assert.NotPanics(t, func() {
+		h.CloneMesheryFilterHandler(rec, req, nil, user, provider)
+	}, "CloneMesheryFilterHandler must not panic on malformed JSON body")
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+// TestCloneMesheryFilterHandler_EmptyBodyReturns400 verifies that sending
+// an empty request body returns HTTP 400 Bad Request.
+func TestCloneMesheryFilterHandler_EmptyBodyReturns400(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	req := httptest.NewRequest(http.MethodPost, "/api/filter/clone/test-id", bytes.NewReader([]byte("")))
+	req.Header.Set("Content-Type", "application/json")
+	req = mux.SetURLVars(req, map[string]string{"id": "test-id"})
+
+	rec := httptest.NewRecorder()
+	user := models.LocalProviderUser()
+	provider := &models.DefaultLocalProvider{}
+
+	assert.NotPanics(t, func() {
+		h.CloneMesheryFilterHandler(rec, req, nil, user, provider)
+	}, "CloneMesheryFilterHandler must not panic on empty body")
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
 }
