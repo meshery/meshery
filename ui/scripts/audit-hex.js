@@ -45,10 +45,9 @@ const SCAN_DIRS = [
   'css',
 ];
 
-// Skipped entirely. These are the same exclusions applied in
-// eslint.config.js to the hex/rgba no-restricted-syntax rule: the theme
-// module, SVG icon components, third-party integration helpers, static
-// assets, and tests.
+// Directories skipped at every depth because they contain generated,
+// temporary, or test-only content. UI-root opt-outs are handled by
+// SCAN_DIRS, so nested production directories with the same names remain scanned.
 const IGNORED_DIRS = new Set([
   'node_modules',
   '__tests__',
@@ -58,12 +57,6 @@ const IGNORED_DIRS = new Set([
   'playwright-report',
   'test-results',
   '__generated__',
-  // Scoped opt-outs matching the ESLint rule
-  'theme',
-  'assets',
-  'lib',
-  'public',
-  'tests',
 ]);
 
 const EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx']);
