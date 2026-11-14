@@ -315,7 +315,7 @@ func TestDeleteWithGenericURL(t *testing.T) {
 				func(req *http.Request) (*http.Response, error) {
 					deleteCalled = true
 					if req.Body != nil {
-						defer req.Body.Close()
+						defer func() { _ = req.Body.Close() }()
 						bodyBytes, err := io.ReadAll(req.Body)
 						assert.NoError(t, err)
 						assert.NoError(t, json.Unmarshal(bodyBytes, &undeployPayload))
