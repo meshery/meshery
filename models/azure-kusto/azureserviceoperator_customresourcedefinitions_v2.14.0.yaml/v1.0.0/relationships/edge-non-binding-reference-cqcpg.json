@@ -113,7 +113,7 @@
       }
     }
   ],
-  "subType": "inventory",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"
