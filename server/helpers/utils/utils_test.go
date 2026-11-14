@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 )
@@ -79,6 +81,23 @@ func TestSplitAndTrim(t *testing.T) {
 }
 
 func TestWriteSVGHelper_TraversalGuard(t *testing.T) {
+	// Resolve ../../ui inside a temporary tree instead of the source checkout.
+	workDir := filepath.Join(t.TempDir(), "helpers", "utils")
+	if err := os.MkdirAll(workDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	t.Chdir(workDir)
+
+	uiSVGMutex.Lock()
+	savedPaths := UISVGPaths
+	UISVGPaths = make([]string, 0)
+	uiSVGMutex.Unlock()
+	t.Cleanup(func() {
+		uiSVGMutex.Lock()
+		UISVGPaths = savedPaths
+		uiSVGMutex.Unlock()
+	})
+
 	tests := []struct {
 		name     string
 		dirname  string
