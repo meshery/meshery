@@ -242,6 +242,26 @@ func TestDeleteCmd(t *testing.T) {
 			},
 			ExpectError: false,
 		},
+		{
+			Name:             "given github URL with -f flag when design delete then design is deleted",
+			Args:             []string{"delete", "-f", "https://github.com/meshery/meshery/blob/master/mesheryctl/internal/cli/root/design/fixtures/sampleDesign.golden"},
+			ExpectedResponse: "delete.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          "https://raw.githubusercontent.com/meshery/meshery/master/mesheryctl/internal/cli/root/design/fixtures/sampleDesign.golden",
+					Response:     "sampleDesign.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
 	}
 
 	// Run tests
@@ -296,8 +316,9 @@ func TestDeleteWithGenericURL(t *testing.T) {
 					deleteCalled = true
 					if req.Body != nil {
 						defer req.Body.Close()
-						bodyBytes, _ := io.ReadAll(req.Body)
-						_ = json.Unmarshal(bodyBytes, &undeployPayload)
+						bodyBytes, err := io.ReadAll(req.Body)
+						assert.NoError(t, err)
+						assert.NoError(t, json.Unmarshal(bodyBytes, &undeployPayload))
 					}
 					return httpmock.NewStringResponse(http.StatusOK, `{}`), nil
 				},
