@@ -83,6 +83,51 @@ func TestKeyPersister_NilReceiverSafety(t *testing.T) {
 	})
 }
 
+func TestKeyPersister_SaveUsersKeys_EmptySlice(t *testing.T) {
+	kp, _ := setupTestKeyPersister(t)
+
+	res, err := kp.SaveUsersKeys([]Key{})
+	require.NoError(t, err)
+	assert.Empty(t, res)
+}
+
+func TestKeyPersister_ZeroTimestampDeletedAtIsActive(t *testing.T) {
+	kp, db := setupTestKeyPersister(t)
+
+	keyID := core.Uuid(uuid.Must(uuid.NewV4()))
+	k := &Key{
+		ID:          keyID,
+		Function:    "legacy_active_key",
+		Category:    "core",
+		Subcategory: "auth",
+		CreatedAt:   time.Now().UTC(),
+		UpdatedAt:   time.Now().UTC(),
+	}
+
+	_, err := kp.SaveUsersKey(k)
+	require.NoError(t, err)
+
+	// Simulate legacy row where deleted_at holds a zero timestamp rather than SQL NULL
+	zeroTime := core.NewTime(time.Time{}) // 0001-01-01 00:00:00
+	err = db.Model(&Key{}).Where("id = ?", keyID).Update("deleted_at", zeroTime).Error
+	require.NoError(t, err)
+
+	// Key should still be retrievable by ID
+	bytes, err := kp.GetUsersKey(keyID)
+	require.NoError(t, err)
+	assert.NotNil(t, bytes)
+
+	// Key should also still appear in GetUsersKeys listing
+	listBytes, err := kp.GetUsersKeys("legacy_active_key", "", "")
+	require.NoError(t, err)
+	var page KeysPage
+	err = json.Unmarshal(listBytes, &page)
+	require.NoError(t, err)
+	assert.Equal(t, 1, page.TotalCount)
+	require.Len(t, page.Keys, 1)
+	assert.Equal(t, keyID, page.Keys[0].ID)
+}
+
 func TestKeyPersister_SaveUsersKey_NilKey(t *testing.T) {
 	kp, _ := setupTestKeyPersister(t)
 

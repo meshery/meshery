@@ -30,7 +30,7 @@ func (kp *KeyPersister) GetUsersKeys(search, order, updatedAfter string) ([]byte
 	count := int64(0)
 	keys := []Key{}
 
-	query := kp.DB.Table("keys").Where("deleted_at IS NULL")
+	query := kp.DB.Table("keys").Where("deleted_at IS NULL OR deleted_at <= '1970-01-01 00:00:00'")
 	if updatedAfter != "" {
 		query = query.Where("updated_at > ?", updatedAfter)
 	}
@@ -80,6 +80,9 @@ func (kp *KeyPersister) SaveUsersKeys(keys []Key) ([]Key, error) {
 	if kp == nil || kp.DB == nil {
 		return nil, ErrDBConnection
 	}
+	if len(keys) == 0 {
+		return keys, nil
+	}
 
 	if err := kp.DB.Save(&keys).Error; err != nil {
 		return nil, ErrDBCreate(err)
@@ -95,7 +98,7 @@ func (kp *KeyPersister) GetUsersKey(id core.Uuid) ([]byte, error) {
 	}
 
 	var key Key
-	err := kp.DB.Where("id = ? AND deleted_at IS NULL", id).First(&key).Error
+	err := kp.DB.Where("id = ? AND (deleted_at IS NULL OR deleted_at <= '1970-01-01 00:00:00')", id).First(&key).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrResultNotFound(err)
