@@ -105,3 +105,49 @@ test('detects case-insensitive RGB functions without matching identifier suffixe
   assert.deepEqual(actual, expected);
   assert.equal(result.rgb, 6);
 });
+
+test('scans nested production directories with root-scoped names', (t) => {
+  const fixture = createFixture(t);
+
+  const directoryNames = ['assets', 'lib', 'public', 'theme', 'tests'];
+
+  for (const directory of directoryNames) {
+    writeFile(
+      fixture,
+      `ui/components/feature/${directory}/source.tsx`,
+      'const color = "#252E31";\n',
+    );
+
+    // These UI-root directories are intentionally outside SCAN_DIRS.
+    writeFile(fixture, `ui/${directory}/root-source.tsx`, 'const color = "#000000";\n');
+  }
+
+  const result = runAudit(fixture);
+
+  assert.equal(result.files, directoryNames.length);
+  assert.equal(result.matches, directoryNames.length);
+  assert.deepEqual(
+    result.offenders.map((offender) => offender.file).sort(),
+    directoryNames.map((directory) => `components/feature/${directory}/source.tsx`).sort(),
+  );
+});
+
+test('excludes nested node_modules directories at every depth', (t) => {
+  const fixture = createFixture(t);
+
+  writeFile(fixture, 'ui/components/feature/source.tsx', 'const color = "#252E31";\n');
+  writeFile(
+    fixture,
+    'ui/components/feature/node_modules/package/source.tsx',
+    'const color = "#000000";\n',
+  );
+
+  const result = runAudit(fixture);
+
+  assert.equal(result.files, 1);
+  assert.equal(result.matches, 1);
+  assert.deepEqual(
+    result.offenders.map((offender) => offender.file),
+    ['components/feature/source.tsx'],
+  );
+});
