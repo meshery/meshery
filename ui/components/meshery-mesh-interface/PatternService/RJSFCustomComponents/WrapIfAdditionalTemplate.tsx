@@ -1,6 +1,14 @@
 import React from 'react';
 import { ADDITIONAL_PROPERTY_FLAG } from '@rjsf/utils';
-import { DeleteIcon, FormControl, Grid2, IconButton, Input, InputLabel } from '@sistent/sistent';
+import {
+  DeleteIcon,
+  FormControl,
+  Grid2,
+  IconButton,
+  Input,
+  InputLabel,
+  useTheme,
+} from '@sistent/sistent';
 import { iconMedium } from '../../../../css/icons.styles';
 
 const WrapIfAdditionalTemplate = ({
@@ -9,12 +17,13 @@ const WrapIfAdditionalTemplate = ({
   disabled,
   id,
   label,
-  onDropPropertyClick,
-  onKeyChange,
+  onRemoveProperty,
+  onKeyRenameBlur,
   readonly,
   required,
   schema,
 }) => {
+  const theme = useTheme();
   const value = label.startsWith('newKey') ? '' : label; // removing the default value i.e newKey.
   const keyLabel = `Key`;
   const additional = ADDITIONAL_PROPERTY_FLAG in schema;
@@ -22,7 +31,6 @@ const WrapIfAdditionalTemplate = ({
   if (!additional) {
     return <div className={classNames}>{children}</div>;
   }
-  const handleChange = ({ target }) => onKeyChange(target.value);
 
   return (
     <Grid2
@@ -31,7 +39,8 @@ const WrapIfAdditionalTemplate = ({
       alignItems="center"
       spacing={2}
       className={classNames}
-      size="grow"
+      size={12}
+      sx={{ width: '100%', minWidth: 0 }}
     >
       <Grid2 size={{ xs: 12 }}>
         <FormControl fullWidth={true} required={required}>
@@ -42,7 +51,7 @@ const WrapIfAdditionalTemplate = ({
             disabled={disabled || readonly}
             id={`${id}-key`}
             name={`${id}-key`}
-            onChange={!readonly ? handleChange : undefined}
+            onBlur={!readonly ? onKeyRenameBlur : undefined}
             type="text"
           />
         </FormControl>
@@ -50,14 +59,12 @@ const WrapIfAdditionalTemplate = ({
       <Grid2 style={{ alignSelf: 'flex-end' }}>
         <span style={{ fontSize: '1.25rem' }}>&nbsp;:&nbsp;</span>
       </Grid2>
-      <Grid2 size={{ xs: 12 }}>{children}</Grid2>
+      <Grid2 size={{ xs: 12 }} sx={{ minWidth: 0 }}>
+        {children}
+      </Grid2>
       <Grid2>
-        <IconButton
-          component="span"
-          disabled={disabled || readonly}
-          onClick={onDropPropertyClick(label)}
-        >
-          <DeleteIcon style={iconMedium} />
+        <IconButton component="span" disabled={disabled || readonly} onClick={onRemoveProperty}>
+          <DeleteIcon style={iconMedium} fill={theme?.palette?.icon?.default} />
         </IconButton>
       </Grid2>
     </Grid2>

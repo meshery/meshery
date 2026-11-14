@@ -15,16 +15,21 @@
 package organizations
 
 import (
+	"fmt"
+
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 )
+
+var listUsageMsg = "Usage: mesheryctl organization list\nRun 'mesheryctl organization list --help' to see detailed help message"
 
 var listOrgCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered organizations",
 	Long: `List all registered organizations with their id, name and date of creation. Organization will be returned based on provider you logged in.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/organization/list`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/organization/list`,
 	Example: `
 // list all organizations
 mesheryctl organization list
@@ -35,6 +40,12 @@ mesheryctl organization list --page [page-number]
 // Display number of available organizations
 mesheryctl organization list --count
 	`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg))
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		page, _ := cmd.Flags().GetInt("page")
 		pagesize, _ := cmd.Flags().GetInt("pagesize")

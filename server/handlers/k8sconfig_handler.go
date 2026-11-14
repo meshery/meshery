@@ -107,8 +107,13 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		ErroredContexts:    make([]models.K8sContext, 0),
 	}
 
-	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create").
-		WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
+	// Every event of this import starts from its own builder: the receipt below
+	// and each per-context failure are separate events, and a builder built
+	// twice would hand both the same event.
+	newImportEvent := func() *events.EventBuilder {
+		return events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
+	}
+	eventBuilder := newImportEvent().WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
 	eventMetadata := map[string]interface{}{}
 	// Include unreachable contexts so they are still registered as discovered
 	// connections; reachability is only required to transition to connected.
@@ -220,9 +225,8 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Unable to record the MeshSync deployment mode for context \"%s\" at %s", ctx.Name, ctx.Server)
 				metadata["error"] = modeErr
-				event := eventBuilder.WithSeverity(events.Error).WithDescription(metadata["description"].(string)).WithMetadata(metadata).Build()
-				_ = provider.PersistEvent(*event, token)
-				go h.config.EventBroadcaster.Publish(userID, event)
+				event := newImportEvent().WithSeverity(events.Error).WithDescription(metadata["description"].(string)).WithMetadata(metadata).Build()
+				h.persistAndPublish(provider, token, userID, event)
 				continue
 			}
 		}
@@ -327,11 +331,14 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			// has still been persisted in the discovered state; just skip the
 			// event. See mhelpers.HasMachineContext.
 			if mhelpers.HasMachineContext(inst) {
+				// Import returns before the transition finishes, so keep its values
+				// without tying discovery to the request's cancellation.
+				transitionCtx, cancel := backgroundDiscoveryContext(req.Context())
 				go func(inst *machines.StateMachine) {
-					event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
-					if err != nil {
-						_ = provider.PersistEvent(*event, token)
-						go h.config.EventBroadcaster.Publish(userID, event)
+					defer cancel()
+					event, err := inst.SendEvent(transitionCtx, machines.EventType(mhelpers.StatusToEvent(status)), nil)
+					if err != nil || machines.IsRecurrence(event, err) {
+						h.reportMachineOutcome(provider, token, userID, event, err)
 					}
 				}(inst)
 			}
@@ -360,14 +367,10 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	}
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	// This receipt is the durable, filterable record of the import, so log a
-	// persistence failure rather than dropping it silently — a missing
-	// notification would otherwise be untraceable. The live event is still
-	// broadcast below regardless.
-	if perr := provider.PersistEvent(*event, token); perr != nil {
-		h.log.Error(models.ErrPersistEvent(perr))
-	}
-	go h.config.EventBroadcaster.Publish(userID, event)
+	// This receipt is the durable, filterable record of the import;
+	// persistAndPublish logs a persistence failure rather than dropping it
+	// silently, and still broadcasts the live event.
+	h.persistAndPublish(provider, token, userID, event)
 
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
 		// Response body has already started streaming via json.Encoder —
@@ -451,8 +454,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	contexts := models.K8sContextsFromKubeconfigWithOptions(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log, true)
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userUUID, event)
+	h.persistAndPublish(provider, token, userUUID, event)
 
 	err = json.NewEncoder(w).Encode(contexts)
 	if err != nil {
@@ -531,13 +533,15 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 	writeJSONMessage(w, map[string]string{"status": "accepted"}, http.StatusAccepted)
 }
 
+// DiscoverK8SContextFromKubeConfig attempts to discover Kubernetes contexts from the filesystem
+// kubeconfig, falling back to in-cluster configuration discovery when unavailable.
 func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, prov models.Provider) ([]*models.K8sContext, error) {
 	var contexts []*models.K8sContext
 	// userUUID := uuid.FromStringOrNil(userID)
 
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*core.Uuid)
-	if !ok {
+	if !ok || mid == nil {
 		return contexts, models.ErrMesheryInstanceID
 	}
 
@@ -563,9 +567,10 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		}
 		if cc == nil {
 			metadata["description"] = "No contexts detected in the in-cluster kubeconfig."
-
-			h.log.Warn(ErrNilClusterContext(err))
-			return contexts, err
+			nilContextErr := ErrNilClusterContext(nil)
+			metadata["error"] = nilContextErr
+			h.log.Warn(nilContextErr)
+			return contexts, nilContextErr
 		}
 		cc.DeploymentType = "in_cluster"
 		conn, err := prov.SaveK8sContext(token, *cc, nil)

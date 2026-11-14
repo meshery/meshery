@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { WorkspaceActivityCard } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
+import { useHasPermission, WorkspaceActivityCard } from '@sistent/sistent';
 import { useGetEventsOfWorkspaceQuery, useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../store';
@@ -11,13 +12,20 @@ type WorkspaceChangeHandler = NonNullable<
 
 const WorkspaceActivityWidget = () => {
   const { organization: currentOrg } = useSelector((state: RootState) => state.ui);
+  const canViewWorkspaces = useHasPermission(Keys.WorkspaceManagementViewWorkspace);
   const {
     data: workspaces,
     isError: isWorkspacesError,
     isLoading: isWorkspacesLoading,
-  } = useGetWorkspacesQuery({ orgId: currentOrg?.id }, { skip: !currentOrg?.id });
+  } = useGetWorkspacesQuery(
+    { orgId: currentOrg?.id },
+    { skip: !currentOrg?.id || !canViewWorkspaces },
+  );
 
-  const workspaceOptions = workspaces?.workspaces ?? [];
+  const workspaceOptions = useMemo(
+    () => (canViewWorkspaces ? (workspaces?.workspaces ?? []) : []),
+    [canViewWorkspaces, workspaces?.workspaces],
+  );
   const [selectedWorkspace, setSelectedWorkspace] = useState('');
   const activeWorkspaceId = useMemo(() => {
     if (
@@ -40,7 +48,7 @@ const WorkspaceActivityWidget = () => {
       pagesize: 5,
     },
     {
-      skip: !activeWorkspaceId,
+      skip: !canViewWorkspaces || !activeWorkspaceId,
     },
   );
 
@@ -48,7 +56,7 @@ const WorkspaceActivityWidget = () => {
     setSelectedWorkspace(String(event.target.value));
   }, []);
 
-  if (isWorkspacesError) {
+  if (canViewWorkspaces && isWorkspacesError) {
     return (
       <WidgetErrorFallback
         widgetTitle="Workspace Activity"
@@ -61,9 +69,9 @@ const WorkspaceActivityWidget = () => {
     <WorkspaceActivityCard
       selectedWorkspace={activeWorkspaceId}
       handleWorkspaceChange={handleWorkspaceChange}
-      activities={isEventsError ? [] : (events?.data ?? [])}
+      activities={canViewWorkspaces && !isEventsError ? (events?.data ?? []) : []}
       workspaces={workspaceOptions}
-      isEventsLoading={isEventsLoading || isWorkspacesLoading}
+      isEventsLoading={canViewWorkspaces && (isEventsLoading || isWorkspacesLoading)}
       workspacePagePath="/management/workspaces"
     />
   );

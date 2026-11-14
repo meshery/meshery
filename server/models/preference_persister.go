@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/meshery/meshkit/database"
@@ -35,27 +36,17 @@ func (s *SessionPreferencePersister) ReadFromPersister(userID string) (*Preferen
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return data, nil
 		}
-		return nil, err
+		return nil, ErrDBRead(err)
 	}
 	err = json.Unmarshal(u.PreferenceBytes, data)
 	if err != nil {
-		return nil, err
+		return nil, ErrUnmarshal(err, "User Preference Data")
 	}
 	return data, nil
 }
 
 // WriteToPersister persists session for the user
 func (s *SessionPreferencePersister) WriteToPersister(userID string, data *Preference) error {
-	var u UserPreference
-	err := s.DB.Model(&UserPreference{}).Where("id = ?", userID).First(&u).Error
-	if err == nil {
-		data.UpdatedAt = time.Now()
-		p, err := json.Marshal(data)
-		if err != nil {
-			return err
-		}
-		return s.DB.Model(&UserPreference{}).Where("id = ?", userID).Update("preference_bytes", p).Error
-	}
 	if s.DB == nil {
 		return ErrDBConnection
 	}
@@ -68,6 +59,24 @@ func (s *SessionPreferencePersister) WriteToPersister(userID string, data *Prefe
 		return ErrNilConfigData
 	}
 
+	var u UserPreference
+	err := s.DB.Model(&UserPreference{}).Where("id = ?", userID).First(&u).Error
+	if err == nil {
+		data.UpdatedAt = time.Now()
+		p, err := json.Marshal(data)
+		if err != nil {
+			return ErrMarshal(err, "User Config Data")
+		}
+		if err := s.DB.Model(&UserPreference{}).Where("id = ?", userID).Update("preference_bytes", p).Error; err != nil {
+			return ErrDBPut(err)
+		}
+		return nil
+	}
+
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return ErrDBRead(err)
+	}
+
 	dataB, err := json.Marshal(data)
 	if err != nil {
 		return ErrMarshal(err, "User Config Data")
@@ -78,7 +87,10 @@ func (s *SessionPreferencePersister) WriteToPersister(userID string, data *Prefe
 		ID:              userID,
 	}
 
-	return s.DB.Model(&UserPreference{}).Create(&p).Error
+	if err := s.DB.Model(&UserPreference{}).Create(&p).Error; err != nil {
+		return ErrDBCreate(err)
+	}
+	return nil
 }
 
 // DeleteFromPersister removes the session for the user
@@ -91,7 +103,14 @@ func (s *SessionPreferencePersister) DeleteFromPersister(userID string) error {
 		return ErrUserID
 	}
 
-	return s.DB.Model(&UserPreference{}).Where("id = ?", userID).Delete(&UserPreference{}).Error
+	res := s.DB.Model(&UserPreference{}).Where("id = ?", userID).Delete(&UserPreference{})
+	if res.Error != nil {
+		return ErrDBDelete(res.Error, userID)
+	}
+	if res.RowsAffected == 0 {
+		return ErrResultNotFound(fmt.Errorf("user preference for user %s not found", userID))
+	}
+	return nil
 }
 
 // // ClosePersister closes the badger store

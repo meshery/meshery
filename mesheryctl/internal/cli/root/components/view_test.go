@@ -102,3 +102,30 @@ func TestComponentView(t *testing.T) {
 	mesheryctlflags.InitValidators(ComponentCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, ComponentCmd, tests, currDir, "component")
 }
+
+// TestComponentViewSaveFlattensSeparatorsInName verifies that --save writes one
+// file for a component whose display name has path separators, and that the real
+// ~/.meshery is never touched.
+func TestComponentViewSaveFlattensSeparatorsInName(t *testing.T) {
+	const componentID = "fda1c4e7-14ae-4435-8236-adfb9cea0395"
+
+	mesheryctlflags.InitValidators(ComponentCmd)
+	mesheryDir := utils.IsolateMesheryHome(t)
+
+	run := utils.MesheryCommandRun{
+		Cmd:        ComponentCmd,
+		Args:       []string{"view", componentID, "--save"},
+		CommandDir: utils.CallerDir(t),
+		Mocks: []utils.MockURL{
+			{
+				URL:      fmt.Sprintf("/%s?id=%s&page=0&pagesize=10", componentApiPath, componentID),
+				Response: "view.component.save.name.api.response.golden",
+			},
+		},
+	}
+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "component_apps_v1_Deployment_test.yaml"))
+}

@@ -27,8 +27,8 @@ import (
 
 type cmdRelationshipListFlags struct {
 	Count    bool `json:"count"    validate:"boolean"`
-	Page     int  `json:"page"     validate:"omitempty,gte=1"`
-	PageSize int  `json:"pagesize" validate:"omitempty,gte=1"`
+	Page     int  `json:"page"     validate:"gte=1"`
+	PageSize int  `json:"pagesize" validate:"gte=1"`
 }
 
 var relationshipListFlags cmdRelationshipListFlags
@@ -38,7 +38,7 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered relationships",
 	Long: `List all relationships registered in Meshery Server.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/relationship/list`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/relationship/list`,
 	Example: `
 // List all relationships
 mesheryctl relationship list

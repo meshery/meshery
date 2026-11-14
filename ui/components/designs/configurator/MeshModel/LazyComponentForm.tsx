@@ -55,9 +55,25 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
     try {
       if (isEmpty(schemaSet)) {
         const res = await getMeshModelComponent(modelName, kind, version, apiVersion);
-        if (res.components[0]) {
+        if (res?.components?.[0]) {
+          const rawSchema = res.components[0].component?.schema;
+          let parsedSchema = {};
+          if (typeof rawSchema === 'string') {
+            parsedSchema = rawSchema.trim() ? JSON.parse(rawSchema) : {};
+          } else if (rawSchema && typeof rawSchema === 'object') {
+            parsedSchema = rawSchema;
+          }
+          if (!parsedSchema || typeof parsedSchema !== 'object' || Array.isArray(parsedSchema)) {
+            parsedSchema = {};
+          }
+          if (!parsedSchema.properties || typeof parsedSchema.properties !== 'object') {
+            parsedSchema.properties = {};
+          }
+          if (!parsedSchema.type) {
+            parsedSchema.type = 'object';
+          }
           setSchemaSet({
-            workload: JSON.parse(res.components[0].component.schema), // has to be removed
+            workload: parsedSchema,
           });
         } else {
           throw new Error('found null in component definition');

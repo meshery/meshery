@@ -45,34 +45,30 @@ const SCAN_DIRS = [
   'css',
 ];
 
-// Skipped entirely. These are the same exclusions applied in
-// eslint.config.js to the hex/rgba no-restricted-syntax rule: the theme
-// module, SVG icon components, third-party integration helpers, static
-// assets, and tests.
+// Directories skipped at every depth because they contain generated,
+// temporary, or test-only content. UI-root opt-outs are handled by
+// SCAN_DIRS, so nested production directories with the same names remain scanned.
 const IGNORED_DIRS = new Set([
   'node_modules',
+  '__tests__',
   '.next',
   'out',
   'playground',
   'playwright-report',
   'test-results',
   '__generated__',
-  // Scoped opt-outs matching the ESLint rule
-  'theme',
-  'assets',
-  'lib',
-  'public',
-  'tests',
 ]);
 
 const EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx']);
+const TEST_FILE_PATTERN = /\.test\.(?:ts|tsx|js|jsx)$/;
 
 // Hex colors: #RGB, #RGBA, #RRGGBB, #RRGGBBAA. Valid CSS hex lengths only.
 // Uses a word boundary so #abcde (5 chars) does not match as #abc.
 const HEX_PATTERN = /#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b/g;
 
 // rgb() / rgba() function calls inside strings.
-const RGB_PATTERN = /rgba?\(/g;
+// Match case-insensitive rgb()/rgba() calls without matching longer identifiers.
+const RGB_PATTERN = /(?<![\w$-])rgba?\(/gi;
 
 function walk(dir, out) {
   let entries;
@@ -86,7 +82,11 @@ function walk(dir, out) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       walk(full, out);
-    } else if (entry.isFile() && EXTENSIONS.has(path.extname(entry.name))) {
+    } else if (
+      entry.isFile() &&
+      EXTENSIONS.has(path.extname(entry.name)) &&
+      !TEST_FILE_PATTERN.test(entry.name)
+    ) {
       out.push(full);
     }
   }
@@ -153,7 +153,10 @@ function main() {
   process.stdout.write('==============================\n');
   process.stdout.write('Patterns: #RGB/#RGBA/#RRGGBB/#RRGGBBAA, rgb(), rgba()\n');
   process.stdout.write(`Scope:    ${SCAN_DIRS.join(', ')}\n`);
-  process.stdout.write('Ignored:  theme, assets, lib, public, tests, __generated__\n\n');
+  process.stdout.write(`Ignored at any depth: ${[...IGNORED_DIRS].join(', ')}\n`);
+  process.stdout.write(
+    'UI-root directories outside scan scope: theme, assets, lib, public, tests\n\n',
+  );
 
   const limit = showAll ? offenders.length : Math.min(20, offenders.length);
   if (offenders.length === 0) {

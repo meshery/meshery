@@ -24,7 +24,11 @@ import { useGetLoadTestPrefsQuery, useUpdateLoadTestPrefsMutation } from '@/rtk-
 import { useSelector, useDispatch } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
-import { normalizeLoadTestPrefs } from '../../lib/load-test-prefs';
+import {
+  isValidLoadTestDuration,
+  isZeroLoadTestDuration,
+  normalizeLoadTestPrefs,
+} from '../../lib/load-test-prefs';
 
 const loadGenerators = ['fortio'];
 
@@ -49,6 +53,8 @@ const MesherySettingsPerformanceComponent = () => {
   const [qps, setQps] = useState<number>(initialQps);
   const [c, setC] = useState<number>(initialC);
   const [t, setT] = useState<string>(initialT);
+  const [storedDuration, setStoredDuration] = useState<string>(initialT);
+  const [durationEdited, setDurationEdited] = useState(false);
   const [tValue, setTValue] = useState<string>(initialT);
   const [gen, setGen] = useState<string>(initialGen);
   const [tError, setTError] = useState<string>('');
@@ -59,6 +65,8 @@ const MesherySettingsPerformanceComponent = () => {
       setQps(loadTestPrefs.qps ?? 0);
       setC(loadTestPrefs.c ?? 0);
       setT(loadTestPrefs.t ?? '30s');
+      setStoredDuration(loadTestPrefs.t ?? '30s');
+      setDurationEdited(false);
       setGen(loadTestPrefs.gen ?? 'fortio');
       setTValue(loadTestPrefs.t ?? '30s');
     }
@@ -83,8 +91,12 @@ const MesherySettingsPerformanceComponent = () => {
     }
   };
 
-  const handleInputDurationChange = (_event: unknown, newValue: string) => {
+  const handleInputDurationChange = (_event: unknown, newValue: string, reason: string) => {
     setT(newValue);
+    if (reason === 'input' || reason === 'clear') {
+      setDurationEdited(true);
+    }
+    setTError('');
   };
 
   const handleSubmit = () => {
@@ -92,14 +104,9 @@ const MesherySettingsPerformanceComponent = () => {
       setTError('error-autocomplete-value');
       return;
     }
-    try {
-      const tNum = t.length > 1 ? parseInt(t.substring(0, t.length - 1), 10) : NaN;
-      if (isNaN(tNum) || tNum <= 0 || !['d', 'h', 'm', 's'].includes(t.slice(-1).toLowerCase())) {
-        setTError('error-autocomplete-value');
-        return;
-      }
-    } catch (e) {
-      console.error('[MesherySettingsPerformance] autocomplete error:', e);
+    const unchangedStoredZero =
+      !durationEdited && t === storedDuration && isZeroLoadTestDuration(t);
+    if (!isValidLoadTestDuration(t) && !unchangedStoredZero) {
       setTError('error-autocomplete-value');
       return;
     }
@@ -116,6 +123,9 @@ const MesherySettingsPerformanceComponent = () => {
         selectedK8sContexts,
         loadTestPrefs,
       }).unwrap();
+
+      setStoredDuration(t);
+      setDurationEdited(false);
 
       updateProgress({ showProgress: false });
       notify({ message: 'Preferences saved', event_type: EVENT_TYPES.SUCCESS });
@@ -197,7 +207,15 @@ const MesherySettingsPerformanceComponent = () => {
                   options={durationOptions}
                   style={{ marginTop: '16px', marginBottom: '8px' }}
                   renderInput={(params) => (
-                    <TextField {...params} label="Duration*" variant="outlined" />
+                    <TextField
+                      {...params}
+                      label="Duration*"
+                      variant="outlined"
+                      error={!!tError}
+                      helperText={
+                        tError ? 'Use lowercase h, m or s, for example 24h or 1h30m.' : ''
+                      }
+                    />
                   )}
                 />
               </CustomTooltip>

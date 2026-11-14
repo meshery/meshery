@@ -267,6 +267,7 @@ const Dashboard = () => {
       action: toggleEditMode,
       description: 'Configure dashboard layout for the current organization',
       isShown: !isEditMode,
+      alwaysShowLabel: true,
     },
     CANCEL_EDIT: {
       label: 'Cancel',
@@ -359,6 +360,10 @@ const Dashboard = () => {
               justifyContent="flex-end"
               alignItems="center"
               flexWrap="wrap"
+              sx={{
+                width: '100%',
+                maxWidth: '100%',
+              }}
             >
               {topBarActions.map(({ key, ...layoutAction }) => (
                 <LayoutActionButton {...layoutAction} key={key} />

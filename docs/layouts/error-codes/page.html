@@ -1,0 +1,40 @@
+{{ define "main" }}
+{{- /* .Params.definition is the code's ErrorDefinition (see reference/_content.gotmpl). */ -}}
+{{ $error := .Params.errorCode }}
+{{ $def := .Params.definition }}
+<p>
+  <strong>Component:</strong> {{ .Params.componentType }} / {{ .Params.componentName }}<br>
+  <strong>Code:</strong> <code>{{ $def.code }}</code> (<code>{{ $error.name }}-{{ $error.code }}</code>)<br>
+  <strong>Severity:</strong> {{ $error.severity }}
+</p>
+
+<h2>Short description</h2>
+<p>{{ $error.short_description }}</p>
+
+<h2>Long description</h2>
+<p>{{ $error.long_description }}</p>
+
+{{ with $def.probableCauses }}
+<h2>Probable causes</h2>
+<p>Each cause lists the remediations that address it.</p>
+{{ range . }}
+<h3 id="{{ .id }}">{{ .description }}</h3>
+<ul>
+  {{ range .remediations }}
+  <li>
+    {{ .description }}
+    {{ with .actionPolicy }}{{ if ne . "manual" }}<em>({{ if eq . "requiresApproval" }}a client may run this after you approve it{{ else if eq . "automatic" }}a client may run this automatically{{ else }}{{ . }}{{ end }})</em>{{ end }}{{ end }}
+  </li>
+  {{ end }}
+</ul>
+{{ end }}
+{{ else }}
+<h2>Probable cause</h2>
+{{ with $def.probableCause }}<ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>{{ else }}<p>None documented.</p>{{ end }}
+
+<h2>Suggested remediation</h2>
+{{ with $def.suggestedRemediation }}<ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>{{ else }}<p>None documented.</p>{{ end }}
+{{ end }}
+
+<p><a href="{{ "reference/error-codes/" | relURL }}">View the complete error code reference</a></p>
+{{ end }}

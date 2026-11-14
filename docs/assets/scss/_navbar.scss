@@ -63,6 +63,13 @@ html {
     .nav-mode-icon {
       background: none;
       border: none;
+      padding: 4px;
+
+      &:focus-visible {
+        outline: 2px solid var(--brand-color-secondary);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
 
       & > img {
         padding: 0 !important;
@@ -103,9 +110,13 @@ html {
       }
 
       &:hover,
-      &:active,
-      &:focus {
+      &:active {
         outline: none;
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--brand-color-secondary);
+        outline-offset: 2px;
       }
     }
 
@@ -238,6 +249,16 @@ html {
           position: absolute;
           background: var(--background-primary);
           transition: all 0.3s;
+        }
+
+        &.nav-item--btn {
+          & a::after {
+            display: none;
+          }
+
+          & a > .nav-btn {
+            color: var(--color-white);
+          }
         }
       }
 

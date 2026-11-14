@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/meshery/meshkit/errors"
 )
@@ -82,6 +83,11 @@ var (
 	ErrMesheryCheckRunningStatusCode  = "mesheryctl-1227"
 	ErrDockerComposeStopCode          = "mesheryctl-1228"
 	ErrGitHubAPIResponseCode          = "mesheryctl-1255"
+	ErrAmbiguousIDCode                = "mesheryctl-1256"
+	ErrProviderNotFoundCode           = "mesheryctl-1259"
+	ErrProviderAmbiguousCode          = "mesheryctl-1260"
+	ErrIDLookupIncompleteCode         = "mesheryctl-1261"
+	ErrIDLookupPageLimitCode          = "mesheryctl-1262"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -478,6 +484,35 @@ func ErrInvalidNameOrID(err error) error {
 		[]string{"Provide a valid Name or ID using the `list` command with the appropriate subcommand."})
 }
 
+func ErrAmbiguousID(prefix string, matches []string) error {
+	return errors.New(ErrAmbiguousIDCode, errors.Alert,
+		[]string{"Ambiguous ID prefix"},
+		[]string{fmt.Sprintf("%q matches %d IDs, including: %s", prefix, len(matches), strings.Join(matches[:min(10, len(matches))], ", "))},
+		[]string{"The provided ID prefix is shared by more than one item."},
+		[]string{"Provide more characters of the ID, or the full ID."})
+}
+
+// ErrIDLookupIncomplete reports that a paginated ID lookup stopped before
+// fetching every item the server reported, so the returned list may be incomplete.
+func ErrIDLookupIncomplete(total, fetched int64) error {
+	return errors.New(ErrIDLookupIncompleteCode, errors.Alert,
+		[]string{"ID lookup incomplete"},
+		[]string{fmt.Sprintf("fetched %d of %d IDs; the ID list may be incomplete", fetched, total)},
+		[]string{"The server reported more items than mesheryctl could fetch within the page limit."},
+		[]string{"Provide the full ID instead of a short prefix, or retry the command."})
+}
+
+// ErrIDLookupPageLimit reports that a paginated ID lookup hit the page limit
+// without the server reporting a total count, so mesheryctl could not confirm
+// the returned list is complete.
+func ErrIDLookupPageLimit(fetched int64) error {
+	return errors.New(ErrIDLookupPageLimitCode, errors.Alert,
+		[]string{"ID lookup hit page limit"},
+		[]string{fmt.Sprintf("fetched %d IDs across the page limit without a reported total; the ID list may be incomplete", fetched)},
+		[]string{"The server did not report a total count and every page was full, so mesheryctl stopped at the page limit without confirming the list is complete."},
+		[]string{"Provide the full ID instead of a short prefix, or retry the command."})
+}
+
 func ErrAttachAuthToken(err error) error {
 	return errors.New(ErrAttachAuthTokenCode, errors.Alert,
 		[]string{"Authentication token Not Found"},
@@ -607,7 +642,7 @@ func ErrInvalidAPIResponse(err error) error {
 func ErrLoadConfig(err error) error {
 	return errors.New(ErrLoadConfigCode, errors.Alert,
 		[]string{"Error processing config"},
-		[]string{"Error processing config:" + err.Error()},
+		[]string{"Error processing config: " + err.Error()},
 		[]string{"Unable to load meshconfig due to wrong configurations"},
 		[]string{"Ensure your `config.yaml` file in your `.meshery` is valid, or run `mesheryctl system config`."})
 }
@@ -615,8 +650,8 @@ func ErrLoadConfig(err error) error {
 func ErrParseGithubFile(err error, URL string) error {
 	return errors.New(ErrParseGithubFileCode, errors.Alert,
 		[]string{"Failed to parse github file"},
-		[]string{"Failed to parse github file" + err.Error()},
-		[]string{"Unable to retrieve file from URL: %s", URL},
+		[]string{"Failed to parse github file: " + err.Error()},
+		[]string{"Unable to retrieve file from the given URL", fmt.Sprintf("URL: %s", URL)},
 		[]string{"Ensure you have a github url in file path"})
 }
 
@@ -631,7 +666,7 @@ func ErrReadToken(err error) error {
 func ErrRequestResponse(err error) error {
 	return errors.New(ErrRequestResponseCode, errors.Alert,
 		[]string{"Failed to handle request"},
-		[]string{"Unable to create a response from request" + err.Error()},
+		[]string{"Unable to create a response from request: " + err.Error()},
 		[]string{"Error occurred while generating a response"},
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
@@ -756,10 +791,10 @@ func ErrRetrieveHomeDir(err error) error {
 
 func ErrMarkFlagRequire(flagName string, err error) error {
 	return errors.New(ErrMarkFlagRequireCode, errors.Alert,
-		[]string{fmt.Sprintf("Failed to mark the flag '%s' as required", flagName)},
+		[]string{"Failed to mark the flag as required", fmt.Sprintf("Flag: %s", flagName)},
 		[]string{err.Error()},
 		[]string{"The flag may not exist or there was some error while specifying the flag."},
-		[]string{"Please ensure that the required flag '%s' is correctly specified and set before running the command."})
+		[]string{fmt.Sprintf("Please ensure that the required flag '%s' is correctly specified and set before running the command.", flagName)})
 }
 
 func ErrReadFromBody(err error) error {
@@ -979,4 +1014,25 @@ func ErrDockerComposeStop(err error) error {
 		[]string{err.Error()},
 		[]string{"An error occurred while trying to stop Meshery containers using Docker Compose"},
 		[]string{"Please ensure Docker is installed and running, and that the docker-compose file is present in the Meshery folder."})
+}
+
+// ErrProviderNotFound is returned when the provider requested with
+// `mesheryctl system login --provider` is not offered by the Meshery Server.
+func ErrProviderNotFound(requested string, available []string) error {
+	return errors.New(ErrProviderNotFoundCode, errors.Alert,
+		[]string{"Requested provider is not available on this Meshery Server"},
+		[]string{fmt.Sprintf("Provider %q is not offered by this Meshery Server. Available providers: %s", requested, strings.Join(available, ", "))},
+		[]string{"The provider name is misspelled", "The Meshery Server is pinned to a different provider"},
+		[]string{"Run `mesheryctl system provider list` to see the providers this server offers", "Omit --provider to choose one interactively"})
+}
+
+// ErrProviderAmbiguous is returned when the provider requested with
+// `mesheryctl system login --provider` matches more than one provider's
+// display name, so no single provider can be selected deterministically.
+func ErrProviderAmbiguous(requested string, keys []string) error {
+	return errors.New(ErrProviderAmbiguousCode, errors.Alert,
+		[]string{"More than one provider matches that name"},
+		[]string{fmt.Sprintf("Provider name %q matches %d providers. Specify a registration key: %s", requested, len(keys), strings.Join(keys, ", "))},
+		[]string{"Two or more providers share the same display name"},
+		[]string{"Run `mesheryctl system provider list` to see the registration keys", "Pass a registration key to --provider instead of the display name"})
 }

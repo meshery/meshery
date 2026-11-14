@@ -1,0 +1,20 @@
+version: 0.0.3
+name: rag_ai_agent
+displayName: RAG_AI_Agent
+createdAt: "2026-08-04T09:39:20Z"
+description: A comprehensive cloud-native architecture designed specifically for Retrieval-Augmented Generation (RAG) systems and AI agents. This blueprint seamlessly connects a Next.js client interface with a robust Django backend API. To ensure high performance, it integrates a Redis caching layer for rapid memory retrieval and a Milvus vector database, which is heavily optimized for storing and querying chunked document embeddings. This infrastructure provides a complete, scalable foundation for deploying modern AI applications on Kubernetes.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/1a68c515-8612-4e40-a515-1e93726cb265/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "torage: This blueprint uses standard Kubernetes deployments for the vector database. For a production environment, you will need to attach Persistent Volume Claims (PVCs) to the Milvus StatefulSet to ensure your embedded data is not lost if the pod restarts.\n\nNetworking: The Next.js frontend is exposed via a LoadBalancer on port 80, while the Django API, Redis cache, and Milvus DB are secured internally using ClusterIP services.\n\nConfiguration: Ensure you inject the appropriate environment variables (like database connection strings and AI model API keys) into the Django and Next.js containers before deploying to a live cluster. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 608bc397-7aed-4cda-ad0f-c851020cbae8
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

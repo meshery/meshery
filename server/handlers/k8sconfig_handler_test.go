@@ -2,7 +2,13 @@ package handlers
 
 import (
 	"errors"
+	"strings"
 	"testing"
+
+	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
+	"github.com/meshery/schemas/models/core"
+	"github.com/spf13/viper"
 )
 
 // TestK8sEventMetadataHasError guards the decision that raises a Kubernetes
@@ -71,6 +77,16 @@ func TestK8sEventMetadataHasError(t *testing.T) {
 			want: true,
 		},
 		{
+			name: "in-cluster nil context error reports an error",
+			eventMetadata: map[string]interface{}{
+				"in-cluster": map[string]interface{}{
+					"description": "No contexts detected in the in-cluster kubeconfig.",
+					"error":       ErrNilClusterContext(nil),
+				},
+			},
+			want: true,
+		},
+		{
 			name: "non-map entries are ignored",
 			eventMetadata: map[string]interface{}{
 				"weird": "not a metadata map",
@@ -85,5 +101,51 @@ func TestK8sEventMetadataHasError(t *testing.T) {
 				t.Errorf("k8sEventMetadataHasError() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+// TestErrNilClusterContext verifies that ErrNilClusterContext handles a nil error gracefully
+// without panicking on err.Error(), and includes appropriate error code.
+func TestErrNilClusterContext(t *testing.T) {
+	testCases := []struct {
+		name string
+		err  error
+	}{
+		{
+			name: "nil error",
+			err:  nil,
+		},
+		{
+			name: "non-nil error",
+			err:  errors.New("in-cluster context not found"),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			res := ErrNilClusterContext(tc.err)
+			if res == nil {
+				t.Fatal("expected non-nil error, got nil")
+			}
+			if code := meshkiterrors.GetCode(res); code != ErrNilClusterContextCode {
+				t.Fatalf("expected error code %s, got %s", ErrNilClusterContextCode, code)
+			}
+			if tc.err != nil && !strings.Contains(res.Error(), tc.err.Error()) {
+				t.Fatalf("expected error to contain %q, got %q", tc.err.Error(), res.Error())
+			}
+		})
+	}
+}
+
+func TestDiscoverK8SContextFromKubeConfigTypedNilInstanceID(t *testing.T) {
+	orig := viper.Get("INSTANCE_ID")
+	t.Cleanup(func() { viper.Set("INSTANCE_ID", orig) })
+
+	var typedNil *core.Uuid
+	viper.Set("INSTANCE_ID", typedNil)
+
+	_, err := (&Handler{}).DiscoverK8SContextFromKubeConfig("user-1", "tok", nil)
+	if !errors.Is(err, models.ErrMesheryInstanceID) {
+		t.Fatalf("err = %v, want models.ErrMesheryInstanceID", err)
 	}
 }

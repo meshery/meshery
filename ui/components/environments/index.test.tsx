@@ -30,32 +30,43 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // render is an infinite render loop that exhausts the heap, not a test failure.
 const {
   notify,
+  getEnvironmentsQuery,
+  getEnvironmentConnectionsQuery,
   createEnvironment,
   updateEnvironment,
   deleteEnvironment,
+  canSpy,
+  permissionOverrides,
   ENVIRONMENTS_QUERY_RESULT,
   CONNECTIONS_QUERY_RESULT,
   NOOP_MUTATION,
   UI_STATE,
-} = vi.hoisted(() => ({
-  notify: vi.fn(),
-  createEnvironment: vi.fn(),
-  updateEnvironment: vi.fn(),
-  deleteEnvironment: vi.fn(),
-  ENVIRONMENTS_QUERY_RESULT: {
-    data: { environments: [], totalCount: 0 },
-    isLoading: false,
-    isError: false,
-    error: undefined,
-  },
-  CONNECTIONS_QUERY_RESULT: {
-    data: { connections: [], totalCount: 0 },
-    isError: false,
-    error: undefined,
-  },
-  NOOP_MUTATION: [vi.fn()],
-  UI_STATE: { ui: { organization: { id: 'org-1' } } },
-}));
+} = vi.hoisted(() => {
+  const overrides = new Map<string, boolean>();
+  return {
+    notify: vi.fn(),
+    getEnvironmentsQuery: vi.fn(),
+    getEnvironmentConnectionsQuery: vi.fn(),
+    createEnvironment: vi.fn(),
+    updateEnvironment: vi.fn(),
+    deleteEnvironment: vi.fn(),
+    permissionOverrides: overrides,
+    canSpy: vi.fn((key?: { id?: string }) => overrides.get(key?.id ?? '') ?? true),
+    ENVIRONMENTS_QUERY_RESULT: {
+      data: { environments: [], totalCount: 0 },
+      isLoading: false,
+      isError: false,
+      error: undefined,
+    },
+    CONNECTIONS_QUERY_RESULT: {
+      data: { connections: [], totalCount: 0 },
+      isError: false,
+      error: undefined,
+    },
+    NOOP_MUTATION: [vi.fn()],
+    UI_STATE: { ui: { organization: { id: 'org-1' } } },
+  };
+});
 
 vi.mock('../../utils/hooks/useNotification', () => ({
   useNotification: () => ({ notify }),
@@ -65,8 +76,14 @@ vi.mock('../../rtk-query/environments', () => ({
   useCreateEnvironmentMutation: () => [createEnvironment, { isLoading: false }],
   useUpdateEnvironmentMutation: () => [updateEnvironment, { isLoading: false }],
   useDeleteEnvironmentMutation: () => [deleteEnvironment],
-  useGetEnvironmentsQuery: () => ENVIRONMENTS_QUERY_RESULT,
-  useGetEnvironmentConnectionsQuery: () => CONNECTIONS_QUERY_RESULT,
+  useGetEnvironmentsQuery: (args: unknown, options: unknown) => {
+    getEnvironmentsQuery(args, options);
+    return ENVIRONMENTS_QUERY_RESULT;
+  },
+  useGetEnvironmentConnectionsQuery: (args: unknown, options: unknown) => {
+    getEnvironmentConnectionsQuery(args, options);
+    return CONNECTIONS_QUERY_RESULT;
+  },
   useAddConnectionToEnvironmentMutation: () => NOOP_MUTATION,
   useRemoveConnectionFromEnvironmentMutation: () => NOOP_MUTATION,
 }));
@@ -84,7 +101,7 @@ vi.mock('@/store/slices/mesheryUi', () => ({ updateProgress: vi.fn() }));
 vi.mock('@/utils/can', () => ({ default: () => true }));
 
 vi.mock('@meshery/schemas/permissions', () => ({
-  Keys: new Proxy({}, { get: () => ({ id: 'id', function: 'fn' }) }),
+  Keys: new Proxy({}, { get: (_, prop) => ({ id: String(prop), function: 'fn' }) }),
 }));
 
 // The RJSF form is not under test; expose a button that submits the payload the
@@ -123,7 +140,7 @@ vi.mock('../../assets/icons/Connection', () => ({ default: () => null }));
 vi.mock('@sistent/sistent', () => ({
   // This suite exercises the create flow, not authorization: grant every
   // capability so the permission gates never mask the behaviour under test.
-  useHasPermission: () => true,
+  useHasPermission: (key: any) => canSpy(key),
   Button: ({ children, onClick, ...rest }: any) => (
     <button onClick={onClick} {...rest}>
       {children}
@@ -138,11 +155,19 @@ vi.mock('@sistent/sistent', () => ({
   ModalBody: ({ children }: any) => <div>{children}</div>,
   ModalFooter: ({ children }: any) => <div>{children}</div>,
   NoSsr: ({ children }: any) => <>{children}</>,
-  Pagination: () => null,
+  Pagination: ({ onChange }: any) => (
+    <button data-testid="go-to-page-3" onClick={(e) => onChange(e, 3)}>
+      page 3
+    </button>
+  ),
   PaginationItem: () => null,
   PrimaryActionButtons: () => null,
   PROMPT_VARIANTS: { DANGER: 'danger' },
-  SearchBar: () => null,
+  SearchBar: ({ onSearch }: any) => (
+    <button data-testid="search-prod" onClick={() => onSearch('prod')}>
+      search
+    </button>
+  ),
   TransferList: () => null,
   Typography: ({ children }: any) => <span>{children}</span>,
   createAndEditEnvironmentSchema: {},
@@ -199,6 +224,7 @@ const notifiedEventTypes = () =>
 
 describe('Environments create flow notifications', () => {
   beforeEach(() => {
+    permissionOverrides.clear();
     notify.mockReset();
     createEnvironment.mockReset();
     updateEnvironment.mockReset();
@@ -257,5 +283,67 @@ describe('Environments create flow notifications', () => {
     expect(createEnvironment).toHaveBeenCalledWith({
       environmentPayload: expect.objectContaining({ organizationId: 'org-1' }),
     });
+  });
+});
+
+describe('Environments search paging', () => {
+  const lastQueryArgs = () => getEnvironmentsQuery.mock.calls.at(-1)?.[0];
+
+  it('goes back to the first page when the search changes', async () => {
+    const originalData = ENVIRONMENTS_QUERY_RESULT.data;
+    // Pagination only renders when the current page has environments.
+    ENVIRONMENTS_QUERY_RESULT.data = {
+      environments: [{ id: 'env-1', name: 'staging' }],
+      totalCount: 40,
+    } as any;
+    try {
+      const user = userEvent.setup();
+      render(<Environments />);
+
+      await user.click(screen.getByTestId('go-to-page-3'));
+      // The pagination handler is debounced.
+      await waitFor(() => expect(lastQueryArgs()).toMatchObject({ page: 2, search: '' }));
+
+      await user.click(screen.getByTestId('search-prod'));
+      await waitFor(() => expect(lastQueryArgs()).toMatchObject({ page: 0, search: 'prod' }));
+    } finally {
+      ENVIRONMENTS_QUERY_RESULT.data = originalData;
+    }
+  });
+});
+
+describe('Environments permissions and wire query skipping', () => {
+  beforeEach(() => {
+    permissionOverrides.clear();
+    canSpy.mockReset();
+    canSpy.mockImplementation(
+      (key?: { id?: string }) => permissionOverrides.get(key?.id ?? '') ?? true,
+    );
+    getEnvironmentsQuery.mockClear();
+    getEnvironmentConnectionsQuery.mockClear();
+  });
+
+  it('skips useGetEnvironmentsQuery and renders 404 fallback when WorkspaceManagementViewEnvironment is denied', () => {
+    permissionOverrides.set('WorkspaceManagementViewEnvironment', false);
+    render(<Environments />);
+
+    expect(screen.getByText('no access')).toBeInTheDocument();
+    expect(getEnvironmentsQuery).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ skip: true }),
+    );
+    expect(getEnvironmentConnectionsQuery).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ skip: true }),
+    );
+  });
+
+  it('runs useGetEnvironmentsQuery without skip when view permission and orgId are present', () => {
+    render(<Environments />);
+
+    expect(getEnvironmentsQuery).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ skip: false }),
+    );
   });
 });

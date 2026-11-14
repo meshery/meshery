@@ -421,7 +421,8 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 		case "edge":
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/master/install/docker/docker-compose.yaml"
 		case "stable":
-			if ctx.Version == "latest" {
+			// An empty version means latest, as in Context.ValidateVersion.
+			if ctx.Version == "" || ctx.Version == "latest" {
 				versions, err := meshkitutils.GetLatestReleaseTagsSorted(constants.GetMesheryGitHubOrg(), constants.GetMesheryGitHubRepo())
 				if err != nil {
 					return errors.Wrapf(err, "failed to fetch latest stable release tag")
@@ -430,16 +431,8 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 					return fmt.Errorf("no versions found")
 				}
 				ReleaseTag = versions[len(versions)-1]
-			} else { // else we get version tag from the config file
-				mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-				if err != nil {
-					return errors.Wrap(err, "error processing meshconfig")
-				}
-				currCtx, err := mctlCfg.GetCurrentContext()
-				if err != nil {
-					return err
-				}
-				ReleaseTag = currCtx.GetVersion()
+			} else { // else we use the version pinned in the given context
+				ReleaseTag = ctx.GetVersion()
 			}
 
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ReleaseTag + "/install/docker/docker-compose.yaml"
@@ -652,9 +645,9 @@ func ChangeManifestVersion(channel, version, filePath string) error {
 
 // CreateManifestsFolder creates a new folder (.meshery/manifests)
 func CreateManifestsFolder() error {
-	log.Debug("Deleting " + ManifestsFolder + " folder...")
+	log.Debug("Deleting " + filepath.Join(MesheryFolder, ManifestsFolder) + " folder...")
 	// delete manifests folder if it already exists
-	if err := os.RemoveAll(ManifestsFolder); err != nil {
+	if err := os.RemoveAll(filepath.Join(MesheryFolder, ManifestsFolder)); err != nil {
 		return err
 	}
 	log.Debug("Creating " + ManifestsFolder + " folder...")
@@ -729,7 +722,11 @@ func Startdockerdaemon(subcommand string) error {
 	if SilentFlag {
 		userResponse = true
 	} else {
-		userResponse = AskForConfirmation("Start Docker now")
+		var promptErr error
+		userResponse, promptErr = AskForConfirmation("Start Docker now")
+		if promptErr != nil {
+			return promptErr
+		}
 	}
 	if !userResponse {
 		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
@@ -742,14 +739,12 @@ func Startdockerdaemon(subcommand string) error {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 	} else {
-		// Assuming we are on macOS, try to start Docker from default path
-		cmd := exec.Command("/Applications/Docker.app/Contents/MacOS/Docker")
-		err := cmd.Start()
-		if err != nil {
+		// Assuming we are on macOS, try to start Docker
+		if err := exec.Command("open", "-a", "Docker").Run(); err != nil {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
 		// wait for few seconds for docker to start
-		err = exec.Command("sleep", "30").Run()
+		err := exec.Command("sleep", "30").Run()
 		if err != nil {
 			return errors.Wrapf(err, "please start Docker then run the command `mesheryctl system %s`", subcommand)
 		}
@@ -774,6 +769,9 @@ func InstallprereqDocker() error {
 	dockerComposeBinaryURL := dockerComposeBinaryURL
 	//checks for the latest docker-compose
 	resp, err := http.Get(dockerComposeWebURL)
+	if resp != nil {
+		defer SafeClose(resp.Body)
+	}
 	if err != nil {
 		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
 	} else {
