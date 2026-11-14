@@ -31,7 +31,7 @@ var deleteConnectionCmd = &cobra.Command{
 
 	Example: `
 // Delete a connection
-mesheryctl connection delete [connection_id]
+mesheryctl connection delete [connection-id]
 `,
 
 	Args: func(_ *cobra.Command, args []string) error {
