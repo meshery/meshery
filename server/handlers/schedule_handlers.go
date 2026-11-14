@@ -22,8 +22,9 @@ func (h *Handler) SaveScheduleHandler(
 	}()
 
 	if provider == nil {
-		h.log.Error(ErrNilProvider())
-		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		nilProviderErr := ErrNilProvider()
+		h.log.Error(nilProviderErr)
+		writeMeshkitError(rw, nilProviderErr, http.StatusInternalServerError)
 		return
 	}
 
@@ -73,8 +74,9 @@ func (h *Handler) GetSchedulesHandler(
 	provider models.Provider,
 ) {
 	if provider == nil {
-		h.log.Error(ErrNilProvider())
-		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		nilProviderErr := ErrNilProvider()
+		h.log.Error(nilProviderErr)
+		writeMeshkitError(rw, nilProviderErr, http.StatusInternalServerError)
 		return
 	}
 
@@ -104,16 +106,17 @@ func (h *Handler) DeleteScheduleHandler(
 	provider models.Provider,
 ) {
 	if provider == nil {
-		h.log.Error(ErrNilProvider())
-		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		nilProviderErr := ErrNilProvider()
+		h.log.Error(nilProviderErr)
+		writeMeshkitError(rw, nilProviderErr, http.StatusInternalServerError)
 		return
 	}
 
 	scheduleID := mux.Vars(r)["id"]
 	if scheduleID == "" {
-		err := fmt.Errorf("schedule ID cannot be empty")
-		h.log.Error(models.ErrInvalidUUID(err))
-		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
+		missingIDErr := ErrMissingRouteVariable("id")
+		h.log.Error(missingIDErr)
+		writeMeshkitError(rw, missingIDErr, http.StatusBadRequest)
 		return
 	}
 
@@ -141,16 +144,17 @@ func (h *Handler) GetScheduleHandler(
 	provider models.Provider,
 ) {
 	if provider == nil {
-		h.log.Error(ErrNilProvider())
-		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		nilProviderErr := ErrNilProvider()
+		h.log.Error(nilProviderErr)
+		writeMeshkitError(rw, nilProviderErr, http.StatusInternalServerError)
 		return
 	}
 
 	scheduleID := mux.Vars(r)["id"]
 	if scheduleID == "" {
-		err := fmt.Errorf("schedule ID cannot be empty")
-		h.log.Error(models.ErrInvalidUUID(err))
-		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
+		missingIDErr := ErrMissingRouteVariable("id")
+		h.log.Error(missingIDErr)
+		writeMeshkitError(rw, missingIDErr, http.StatusBadRequest)
 		return
 	}
 
