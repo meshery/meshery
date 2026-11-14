@@ -640,3 +640,43 @@ func TestGetAllContexts_NilProvider(t *testing.T) {
 		t.Fatalf("expected status %d, got %d", http.StatusInternalServerError, rec.Code)
 	}
 }
+
+// TestDeleteContext_SuccessWritesStatusOK verifies that DeleteContext explicitly
+// writes HTTP 200 OK on successful acceptance and initiation of context deletion.
+func TestDeleteContext_SuccessWritesStatusOK(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	userID := uuid.Must(uuid.NewV4())
+	contextID := uuid.Must(uuid.NewV4())
+
+	provider := &mockContextsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		getK8sContextFn: func(token, id string) (models.K8sContext, error) {
+			return models.K8sContext{
+				ID:           contextID.String(),
+				Name:         "test-cluster",
+				ConnectionID: contextID.String(),
+			}, nil
+		},
+	}
+
+	h := &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+		ConnectionToStateMachineInstanceTracker: &machines.ConnectionToStateMachineInstanceTracker{
+			ConnectToInstanceMap: map[uuid.UUID]*machines.StateMachine{},
+		},
+	}
+
+	reqCtx := context.WithValue(context.Background(), models.TokenCtxKey, "secret-token")
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+contextID.String(), nil)
+	req = req.WithContext(reqCtx)
+	req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
+	rec := httptest.NewRecorder()
+
+	h.DeleteContext(rec, req, nil, &models.User{ID: userID}, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d. body: %s", http.StatusOK, rec.Code, rec.Body.String())
+	}
+}
