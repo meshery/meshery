@@ -1,3 +1,7 @@
+export function getLoginRedirectUrl(): string {
+  return window.location.host.endsWith('3000') ? '/user/login' : window.location.href;
+}
+
 let sessionExpiredShown = false;
 
 function showSessionExpiredAndRedirect() {
@@ -5,7 +9,7 @@ function showSessionExpiredAndRedirect() {
   if (sessionExpiredShown) return;
   sessionExpiredShown = true;
 
-  const redirectTo = window.location.host.endsWith('3000') ? '/user/login' : window.location.href;
+  const redirectTo = getLoginRedirectUrl();
 
   // If the document isn't interactive yet, redirect immediately
   if (!document.body) {
