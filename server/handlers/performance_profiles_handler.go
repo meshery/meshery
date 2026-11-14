@@ -32,8 +32,16 @@ func (h *Handler) SavePerformanceProfileHandler(
 	}()
 
 	const maxBodyLimit = 4 << 20 // 4MB
-	body, err := io.ReadAll(io.LimitReader(r.Body, maxBodyLimit))
+	body, err := io.ReadAll(http.MaxBytesReader(rw, r.Body, maxBodyLimit))
 	if err != nil {
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			if h.log != nil {
+				h.log.Error(ErrRequestBody(err))
+			}
+			writeMeshkitError(rw, ErrRequestBody(err), http.StatusRequestEntityTooLarge)
+			return
+		}
 		if h.log != nil {
 			h.log.Error(ErrRequestBody(err))
 		}
@@ -119,12 +127,12 @@ func (h *Handler) GetPerformanceProfilesHandler(
 		return
 	}
 	tokenString, ok := r.Context().Value(models.TokenCtxKey).(string)
-	if !ok || tokenString == "" {
+	if (!ok || tokenString == "") && provider.GetProviderType() != models.LocalProviderType {
 		fetchTokenErr := ErrFetchToken(fmt.Errorf("token not found in request context"))
 		if h.log != nil {
 			h.log.Error(fetchTokenErr)
 		}
-		writeMeshkitError(rw, fetchTokenErr, http.StatusInternalServerError)
+		writeMeshkitError(rw, fetchTokenErr, http.StatusUnauthorized)
 		return
 	}
 

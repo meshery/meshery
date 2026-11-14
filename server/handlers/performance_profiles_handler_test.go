@@ -396,38 +396,83 @@ func (p *perfProfilesMockProvider) SavePerformanceProfile(tokenVal string, profi
 	return p.DefaultLocalProvider.SavePerformanceProfile(tokenVal, profile)
 }
 
-func TestGetPerformanceProfilesHandler_MissingToken(t *testing.T) {
-	h := newTestHandler(t, map[string]models.Provider{}, "")
-	base := &models.DefaultLocalProvider{}
-	base.Initialize()
-
-	req := httptest.NewRequest(http.MethodGet, "/api/perf/profile", nil)
-	rec := httptest.NewRecorder()
-
-	h.GetPerformanceProfilesHandler(rec, req, nil, nil, base)
-
-	if rec.Code != http.StatusInternalServerError {
-		t.Fatalf("expected status 500, got %d (body: %s)", rec.Code, rec.Body.String())
-	}
-	if !strings.Contains(rec.Body.String(), ErrFetchTokenCode) {
-		t.Errorf("expected error body to contain %s, got: %s", ErrFetchTokenCode, rec.Body.String())
-	}
+type remotePerfProfilesMockProvider struct {
+	*models.DefaultLocalProvider
+	getProfilesFn func(tokenVal, page, pageSize, search, order string) ([]byte, error)
 }
 
-func TestGetPerformanceProfilesHandler_EmptyToken(t *testing.T) {
+func (p *remotePerfProfilesMockProvider) GetProviderType() models.ProviderType {
+	return models.RemoteProviderType
+}
+
+func (p *remotePerfProfilesMockProvider) GetPerformanceProfiles(tokenVal, page, pageSize, search, order string) ([]byte, error) {
+	if p.getProfilesFn != nil {
+		return p.getProfilesFn(tokenVal, page, pageSize, search, order)
+	}
+	return []byte(`{"profiles":[],"total_count":0}`), nil
+}
+
+func TestGetPerformanceProfilesHandler_LocalProvider_EmptyToken_Success(t *testing.T) {
 	h := newTestHandler(t, map[string]models.Provider{}, "")
 	base := &models.DefaultLocalProvider{}
 	base.Initialize()
+	mockResp := []byte(`{"profiles":[],"total_count":0}`)
+	provider := &perfProfilesMockProvider{
+		DefaultLocalProvider: base,
+		getProfilesFn: func(tokenVal, page, pageSize, search, order string) ([]byte, error) {
+			return mockResp, nil
+		},
+	}
 
 	req := httptest.NewRequest(http.MethodGet, "/api/perf/profile", nil)
 	ctx := context.WithValue(req.Context(), models.TokenCtxKey, "")
 	req = req.WithContext(ctx)
 	rec := httptest.NewRecorder()
 
-	h.GetPerformanceProfilesHandler(rec, req, nil, nil, base)
+	h.GetPerformanceProfilesHandler(rec, req, nil, nil, provider)
 
-	if rec.Code != http.StatusInternalServerError {
-		t.Fatalf("expected status 500, got %d (body: %s)", rec.Code, rec.Body.String())
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status 200 OK for local provider with empty token, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if rec.Body.String() != string(mockResp) {
+		t.Errorf("expected body %s, got %s", string(mockResp), rec.Body.String())
+	}
+}
+
+func TestGetPerformanceProfilesHandler_RemoteProvider_MissingToken(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	base := &models.DefaultLocalProvider{}
+	base.Initialize()
+	provider := &remotePerfProfilesMockProvider{DefaultLocalProvider: base}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/perf/profile", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetPerformanceProfilesHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected status 401 Unauthorized for remote provider without token, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrFetchTokenCode) {
+		t.Errorf("expected error body to contain %s, got: %s", ErrFetchTokenCode, rec.Body.String())
+	}
+}
+
+func TestGetPerformanceProfilesHandler_RemoteProvider_EmptyToken(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	base := &models.DefaultLocalProvider{}
+	base.Initialize()
+	provider := &remotePerfProfilesMockProvider{DefaultLocalProvider: base}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/perf/profile", nil)
+	ctx := context.WithValue(req.Context(), models.TokenCtxKey, "")
+	req = req.WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	h.GetPerformanceProfilesHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected status 401 Unauthorized for remote provider with empty token, got %d (body: %s)", rec.Code, rec.Body.String())
 	}
 	if !strings.Contains(rec.Body.String(), ErrFetchTokenCode) {
 		t.Errorf("expected error body to contain %s, got: %s", ErrFetchTokenCode, rec.Body.String())
@@ -543,5 +588,33 @@ func TestSavePerformanceProfileHandler_PreservesProviderStatus(t *testing.T) {
 				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, tc.wantCode, rec.Body.String())
 			}
 		})
+	}
+}
+
+func TestSavePerformanceProfileHandler_BodyExceedsLimit_ReturnsRequestEntityTooLarge(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	base := &models.DefaultLocalProvider{}
+	base.Initialize()
+	called := false
+	provider := &perfProfilesMockProvider{
+		DefaultLocalProvider: base,
+		saveProfileFn: func(tokenVal string, profile *models.PerformanceProfile) ([]byte, error) {
+			called = true
+			return []byte(`{}`), nil
+		},
+	}
+
+	const maxBodyLimit = 4 << 20 // 4MB
+	oversizedBody := bytes.Repeat([]byte("a"), maxBodyLimit+10)
+	req := httptest.NewRequest(http.MethodPost, "/api/perf/profile", bytes.NewReader(oversizedBody))
+	rec := httptest.NewRecorder()
+
+	h.SavePerformanceProfileHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusRequestEntityTooLarge {
+		t.Fatalf("expected status 413 Request Entity Too Large, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if called {
+		t.Error("provider.SavePerformanceProfile must NOT be called when body exceeds maxBodyLimit")
 	}
 }
