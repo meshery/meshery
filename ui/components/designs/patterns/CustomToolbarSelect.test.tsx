@@ -32,8 +32,8 @@ describe('CustomToolbarSelect', () => {
     expect(screen.getByTestId('delete-icon')).toBeInTheDocument();
   });
 
-  it('asks for confirmation before delete and aborts on "no"', async () => {
-    const showModal = vi.fn().mockResolvedValue('no');
+  it('asks for confirmation before delete and aborts on "CANCEL"', async () => {
+    const showModal = vi.fn().mockResolvedValue('CANCEL');
     const deletePatterns = vi.fn();
     const setSelectedRows = vi.fn();
 
@@ -53,7 +53,7 @@ describe('CustomToolbarSelect', () => {
   });
 
   it('forwards delete to the supplied callback when confirmed', async () => {
-    const showModal = vi.fn().mockResolvedValue('yes');
+    const showModal = vi.fn().mockResolvedValue('DELETE');
     const deletePatterns = vi.fn().mockReturnValue(Promise.resolve());
     const setSelectedRows = vi.fn();
 
