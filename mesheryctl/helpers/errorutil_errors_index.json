@@ -4016,7 +4016,7 @@
         "Assigning the token to the target context failed, and deleting the newly created token during rollback also failed."
       ],
       "suggestedRemediation": [
-        "Remove the orphaned token from meshconfig or run `mesheryctl system token delete <token-name>`, and verify the target context exists with `mesheryctl system context view`."
+        "Remove the orphaned token from meshconfig or run `mesheryctl system token delete \u003ctoken-name\u003e`, and verify the target context exists with `mesheryctl system context view`."
       ]
     },
     {

@@ -74,7 +74,8 @@ const TEST_FILE_PATTERN = /\.test\.(?:ts|tsx|js|jsx)$/;
 const HEX_PATTERN = /#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b/g;
 
 // rgb() / rgba() function calls inside strings.
-const RGB_PATTERN = /rgba?\(/g;
+// Match case-insensitive rgb()/rgba() calls without matching longer identifiers.
+const RGB_PATTERN = /(?<![\w$-])rgba?\(/gi;
 
 function walk(dir, out) {
   let entries;
