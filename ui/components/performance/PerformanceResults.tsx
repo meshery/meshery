@@ -605,6 +605,8 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
               setSearch(tableState.searchText || '');
+              // the new filter may have fewer pages than the current one
+              setPage(0);
             }
           }, 500);
           break;

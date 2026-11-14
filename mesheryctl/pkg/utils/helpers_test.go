@@ -4,16 +4,21 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
+	"github.com/meshery/schemas/models/core"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"k8s.io/client-go/tools/clientcmd/api"
 )
 
@@ -52,6 +57,41 @@ type trackingBody struct {
 func (b *trackingBody) Close() error {
 	b.closed = true
 	return b.ReadCloser.Close()
+}
+
+func installTrackingTransport(t *testing.T) *trackingTransport {
+	t.Helper()
+	transport := &trackingTransport{base: http.DefaultTransport}
+	previous := http.DefaultTransport
+	http.DefaultTransport = transport
+	t.Cleanup(func() { http.DefaultTransport = previous })
+	return transport
+}
+
+func assertBodyClosed(t *testing.T, transport *trackingTransport, msg string) {
+	t.Helper()
+	if transport.body == nil || !transport.body.closed {
+		t.Fatal(msg)
+	}
+}
+
+func setupAuthenticatedContext(t *testing.T, endpoint string) {
+	t.Helper()
+	origToken := TokenFlag
+	t.Cleanup(func() { TokenFlag = origToken })
+	TokenFlag = GetToken(t)
+	origEndpoint := viper.GetString("contexts.local.endpoint")
+	t.Cleanup(func() { viper.Set("contexts.local.endpoint", origEndpoint) })
+	viper.Set("contexts.local.endpoint", endpoint)
+	tokenData, err := os.ReadFile(GetToken(t))
+	if err != nil {
+		return
+	}
+	tempAuth := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tempAuth, tokenData, 0o600); err != nil {
+		return
+	}
+	viper.Set("tokens", []map[string]string{{"name": "default", "location": tempAuth}})
 }
 
 func TestIsLocalProvider(t *testing.T) {
@@ -157,11 +197,59 @@ func TestSetFileLocation(t *testing.T) {
 }
 
 func TestNavigateToBrowser(t *testing.T) {
-	// opens up a browser window whenever this test runs
-	err := NavigateToBrowser("https://meshery.io")
-	if err != nil {
-		t.Errorf("NavigateToBrowser error: %v", err)
-	}
+	// Save the original function.
+	originalOpenURL := openURL
+
+	// Restore it after this test finishes.
+	t.Cleanup(func() {
+		openURL = originalOpenURL
+	})
+
+	const testURL = "https://meshery.io"
+
+	t.Run("success", func(t *testing.T) {
+		var receivedURL string
+
+		// Replace the real browser opener with a fake.
+		openURL = func(url string) error {
+			receivedURL = url
+			return nil
+		}
+
+		err := NavigateToBrowser(testURL)
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		if receivedURL != testURL {
+			t.Errorf("got URL %q, want %q",
+				receivedURL, testURL)
+		}
+	})
+
+	t.Run("error", func(t *testing.T) {
+		expectedErr := errors.New("browser unavailable")
+		var receivedURL string
+
+		// Simulate the browser opener failing.
+		openURL = func(url string) error {
+			receivedURL = url
+			return expectedErr
+		}
+
+		err := NavigateToBrowser(testURL)
+
+		if receivedURL != testURL {
+			t.Errorf("got URL %q, want %q",
+				receivedURL, testURL)
+		}
+
+		if !errors.Is(err, expectedErr) {
+			t.Errorf("got error %v, want %v",
+				err, expectedErr)
+		}
+	})
 }
 
 func TestContentTypeIsHTML(t *testing.T) {
@@ -333,11 +421,65 @@ func TestValidateURL(t *testing.T) {
 // }
 
 func TestTruncateID(t *testing.T) {
-	id := "1234567890"
-	want := "12345678"
-	got := TruncateID(id)
-	if got != want {
-		t.Errorf("TruncateID got = %v want = %v", got, want)
+	tests := []struct {
+		name string
+		id   string
+		want string
+	}{
+		{name: "long id truncated to 8 chars", id: "1234567890", want: "12345678"},
+		{name: "exact 8 char id unchanged", id: "12345678", want: "12345678"},
+		{name: "short fallback unchanged", id: "N/A", want: "N/A"},
+		{name: "empty string unchanged", id: "", want: ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := TruncateID(tt.id); got != tt.want {
+				t.Errorf("TruncateID(%q) = %q, want %q", tt.id, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFormatTime(t *testing.T) {
+	ts := time.Date(2025, time.January, 2, 3, 4, 5, 0, time.UTC)
+	tests := []struct {
+		name     string
+		ts       *time.Time
+		layout   string
+		fallback string
+		want     string
+	}{
+		{name: "nil timestamp returns fallback", ts: nil, layout: "01-02-2006", fallback: "N/A", want: "N/A"},
+		{name: "non-nil date formatted", ts: &ts, layout: "01-02-2006", fallback: "N/A", want: "01-02-2025"},
+		{name: "non-nil datetime formatted", ts: &ts, layout: "01-02-2006 15:04:05", fallback: "N/A", want: "01-02-2025 03:04:05"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := FormatTime(tt.ts, tt.layout, tt.fallback); got != tt.want {
+				t.Errorf("FormatTime() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFormatUUID(t *testing.T) {
+	id := core.Uuid{0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef, 0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef}
+	tests := []struct {
+		name     string
+		id       *core.Uuid
+		fallback string
+		want     string
+	}{
+		{name: "nil uuid returns fallback", id: nil, fallback: "N/A", want: "N/A"},
+		{name: "nil uuid returns null fallback", id: nil, fallback: "null", want: "null"},
+		{name: "non-nil uuid formatted", id: &id, fallback: "N/A", want: "12345678-90ab-cdef-1234-567890abcdef"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := FormatUUID(tt.id, tt.fallback); got != tt.want {
+				t.Errorf("FormatUUID() = %q, want %q", got, tt.want)
+			}
+		})
 	}
 }
 
@@ -524,6 +666,514 @@ func TestContainsStringPrefix(t *testing.T) {
 				t.Errorf("ContainsStringPrefix got = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestValidId(t *testing.T) {
+	const (
+		idA = "dc76a1b2-0000-4000-8000-000000000001"
+		idB = "d4e5f6a7-0000-4000-8000-000000000002"
+		idC = "1a2b3c4d-0000-4000-8000-000000000003"
+	)
+	manyIDs := make([]string, 12)
+	for i := range manyIDs {
+		manyIDs[i] = fmt.Sprintf("e0000000-0000-4000-8000-0000000000%02d", i)
+	}
+	tests := []struct {
+		name         string
+		ids          []string
+		input        string
+		wantID       string
+		wantIsID     bool
+		wantErr      error
+		wantErrText  string
+		wantRequests int
+	}{
+		{
+			name:         "given an exact ID when ValidId then that ID is returned",
+			ids:          []string{idA, idB, idC},
+			input:        idB,
+			wantID:       idB,
+			wantIsID:     true,
+			wantRequests: 1,
+		},
+		{
+			name:         "given a prefix of one ID when ValidId then the full ID is returned",
+			ids:          []string{idA, idB, idC},
+			input:        "dc",
+			wantID:       idA,
+			wantIsID:     true,
+			wantRequests: 1,
+		},
+		{
+			name:         "given a prefix of several IDs when ValidId then an ambiguity error lists them",
+			ids:          []string{idA, idB, idC},
+			input:        "d",
+			wantErr:      ErrAmbiguousID("d", []string{idA, idB}),
+			wantRequests: 1,
+		},
+		{
+			name:         "given a prefix of more than 10 IDs when ValidId then the error lists only the first 10",
+			ids:          manyIDs,
+			input:        "e",
+			wantErr:      ErrAmbiguousID("e", manyIDs),
+			wantErrText:  `"e" matches 12 IDs, including: ` + strings.Join(manyIDs[:10], ", "),
+			wantRequests: 1,
+		},
+		{
+			name:         "given input matching no ID when ValidId then the input is returned unchanged",
+			ids:          []string{idA, idB, idC},
+			input:        "my-design",
+			wantID:       "my-design",
+			wantIsID:     false,
+			wantRequests: 1,
+		},
+		{
+			name:         "given an exact ID that is also a prefix of another ID when ValidId then the exact ID wins",
+			ids:          []string{idA + "0", idA},
+			input:        idA,
+			wantID:       idA,
+			wantIsID:     true,
+			wantRequests: 1,
+		},
+		{
+			name:         "given an empty ID list when ValidId then the input is returned unchanged",
+			ids:          []string{},
+			input:        "d",
+			wantID:       "d",
+			wantIsID:     false,
+			wantRequests: 1,
+		},
+		{
+			name:         "given empty input when ValidId then it is rejected without a request",
+			ids:          []string{idA, idB, idC},
+			input:        "",
+			wantErr:      ErrInvalidArgument(errors.New("name or ID cannot be empty")),
+			wantRequests: 0,
+		},
+		{
+			name:         "given whitespace input when ValidId then it is rejected without a request",
+			ids:          []string{idA, idB, idC},
+			input:        "   ",
+			wantErr:      ErrInvalidArgument(errors.New("name or ID cannot be empty")),
+			wantRequests: 0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			requests := 0
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				requests++
+				if got := r.URL.Query().Get("pagesize"); got != "10000" {
+					t.Errorf("GetID sent pagesize=%q, want %q", got, "10000")
+				}
+				patterns := make([]string, 0, len(tt.ids))
+				for _, id := range tt.ids {
+					patterns = append(patterns, fmt.Sprintf(`{"id":%q}`, id))
+				}
+				_, _ = fmt.Fprintf(w, `{"patterns":[%s]}`, strings.Join(patterns, ","))
+			}))
+			defer server.Close()
+			setupAuthenticatedContext(t, server.URL)
+
+			gotID, gotIsID, err := ValidId(server.URL, tt.input, "pattern")
+
+			if tt.wantErr != nil {
+				if err == nil {
+					t.Fatalf("expected error %v, got nil", tt.wantErr)
+				}
+				AssertMeshkitErrorsEqual(t, err, tt.wantErr)
+				if tt.wantErrText != "" && !strings.HasPrefix(err.Error(), tt.wantErrText+" | ") {
+					t.Errorf("ValidId error = %q, want it to start with %q", err.Error(), tt.wantErrText)
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("unexpected error: %v", err)
+				}
+				if gotID != tt.wantID || gotIsID != tt.wantIsID {
+					t.Errorf("ValidId got = (%q, %v), want (%q, %v)", gotID, gotIsID, tt.wantID, tt.wantIsID)
+				}
+			}
+			if requests != tt.wantRequests {
+				t.Errorf("ValidId made %d requests, want %d", requests, tt.wantRequests)
+			}
+		})
+	}
+}
+
+func TestValidId_MultiPage(t *testing.T) {
+	const (
+		idA = "dc76a1b2-0000-4000-8000-000000000001"
+		idB = "d4e5f6a7-0000-4000-8000-000000000002"
+		idC = "1a2b3c4d-0000-4000-8000-000000000003"
+		idD = "dc4e5f6a-0000-4000-8000-000000000004"
+	)
+
+	t.Run("ambiguous prefix split across pages is rejected", func(t *testing.T) {
+		requests := 0
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			requests++
+			page := r.URL.Query().Get("page")
+			w.Header().Set("Content-Type", "application/json")
+			switch page {
+			case "":
+				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}],"totalCount":2}`, idA)
+			case "1":
+				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}],"totalCount":2}`, idD)
+			default:
+				_, _ = fmt.Fprintf(w, `{"patterns":[],"totalCount":2}`)
+			}
+		}))
+		defer server.Close()
+		setupAuthenticatedContext(t, server.URL)
+
+		_, _, err := ValidId(server.URL, "dc", "pattern")
+		if err == nil {
+			t.Fatalf("expected ambiguity error, got nil")
+		}
+		AssertMeshkitErrorsEqual(t, err, ErrAmbiguousID("dc", []string{idA, idD}))
+		if requests != 2 {
+			t.Errorf("ValidId made %d requests, want 2", requests)
+		}
+	})
+
+	t.Run("unique prefix on a later page is resolved", func(t *testing.T) {
+		requests := 0
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			requests++
+			page := r.URL.Query().Get("page")
+			w.Header().Set("Content-Type", "application/json")
+			switch page {
+			case "":
+				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q},{"id":%q}],"totalCount":3}`, idB, idC)
+			case "1":
+				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}],"totalCount":3}`, idA)
+			default:
+				_, _ = fmt.Fprintf(w, `{"patterns":[],"totalCount":3}`)
+			}
+		}))
+		defer server.Close()
+		setupAuthenticatedContext(t, server.URL)
+
+		gotID, gotIsID, err := ValidId(server.URL, "dc", "pattern")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if gotID != idA || !gotIsID {
+			t.Errorf("ValidId got = (%q, %v), want (%q, true)", gotID, gotIsID, idA)
+		}
+		if requests != 2 {
+			t.Errorf("ValidId made %d requests, want 2", requests)
+		}
+	})
+
+	t.Run("legacy total_count field triggers multi-page lookup", func(t *testing.T) {
+		requests := 0
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			requests++
+			page := r.URL.Query().Get("page")
+			w.Header().Set("Content-Type", "application/json")
+			switch page {
+			case "":
+				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}],"total_count":2}`, idA)
+			case "1":
+				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}],"total_count":2}`, idD)
+			default:
+				_, _ = fmt.Fprintf(w, `{"patterns":[],"total_count":2}`)
+			}
+		}))
+		defer server.Close()
+		setupAuthenticatedContext(t, server.URL)
+
+		_, _, err := ValidId(server.URL, "dc", "pattern")
+		if err == nil {
+			t.Fatalf("expected ambiguity error, got nil")
+		}
+		AssertMeshkitErrorsEqual(t, err, ErrAmbiguousID("dc", []string{idA, idD}))
+		if requests != 2 {
+			t.Errorf("ValidId made %d requests, want 2", requests)
+		}
+	})
+
+	t.Run("single page complete when totalCount matches items", func(t *testing.T) {
+		requests := 0
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			requests++
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q},{"id":%q}],"totalCount":2}`, idA, idB)
+		}))
+		defer server.Close()
+		setupAuthenticatedContext(t, server.URL)
+
+		gotID, gotIsID, err := ValidId(server.URL, "dc", "pattern")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if gotID != idA || !gotIsID {
+			t.Errorf("ValidId got = (%q, %v), want (%q, true)", gotID, gotIsID, idA)
+		}
+		if requests != 1 {
+			t.Errorf("ValidId made %d requests, want 1", requests)
+		}
+	})
+
+	t.Run("server without totalCount paginates until a non-full page", func(t *testing.T) {
+		requests := 0
+		manyIDs := make([]string, 10000)
+		for i := range manyIDs {
+			manyIDs[i] = fmt.Sprintf("10000000-0000-4000-8000-%012d", i)
+		}
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			requests++
+			page := r.URL.Query().Get("page")
+			w.Header().Set("Content-Type", "application/json")
+			switch page {
+			case "":
+				patterns := make([]string, len(manyIDs))
+				for i, id := range manyIDs {
+					patterns[i] = fmt.Sprintf(`{"id":%q}`, id)
+				}
+				_, _ = fmt.Fprintf(w, `{"patterns":[%s]}`, strings.Join(patterns, ","))
+			case "1":
+				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}]}`, idA)
+			default:
+				_, _ = fmt.Fprintf(w, `{"patterns":[]}`)
+			}
+		}))
+		defer server.Close()
+		setupAuthenticatedContext(t, server.URL)
+
+		gotID, gotIsID, err := ValidId(server.URL, "dc", "pattern")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if gotID != idA || !gotIsID {
+			t.Errorf("ValidId got = (%q, %v), want (%q, true)", gotID, gotIsID, idA)
+		}
+		if requests != 2 {
+			t.Errorf("ValidId made %d requests, want 2", requests)
+		}
+	})
+
+	t.Run("full page with a malformed entry still paginates", func(t *testing.T) {
+		requests := 0
+		manyIDs := make([]string, 9999)
+		for i := range manyIDs {
+			manyIDs[i] = fmt.Sprintf("10000000-0000-4000-8000-%012d", i)
+		}
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			requests++
+			page := r.URL.Query().Get("page")
+			w.Header().Set("Content-Type", "application/json")
+			switch page {
+			case "":
+				patterns := make([]string, len(manyIDs))
+				for i, id := range manyIDs {
+					patterns[i] = fmt.Sprintf(`{"id":%q}`, id)
+				}
+				patterns = append(patterns, `{"name":"entry without an id"}`)
+				_, _ = fmt.Fprintf(w, `{"patterns":[%s]}`, strings.Join(patterns, ","))
+			case "1":
+				_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}]}`, idA)
+			default:
+				_, _ = fmt.Fprintf(w, `{"patterns":[]}`)
+			}
+		}))
+		defer server.Close()
+		setupAuthenticatedContext(t, server.URL)
+
+		gotID, gotIsID, err := ValidId(server.URL, "dc", "pattern")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if gotID != idA || !gotIsID {
+			t.Errorf("ValidId got = (%q, %v), want (%q, true)", gotID, gotIsID, idA)
+		}
+		if requests != 2 {
+			t.Errorf("ValidId made %d requests, want 2", requests)
+		}
+	})
+}
+
+func TestGetID_Pagination(t *testing.T) {
+	const (
+		id1 = "11111111-0000-4000-8000-000000000001"
+		id2 = "22222222-0000-4000-8000-000000000002"
+		id3 = "33333333-0000-4000-8000-000000000003"
+	)
+
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		page := r.URL.Query().Get("page")
+		w.Header().Set("Content-Type", "application/json")
+		switch page {
+		case "":
+			_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q},{"id":%q}],"totalCount":3}`, id1, id2)
+		case "1":
+			_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}],"totalCount":3}`, id3)
+		default:
+			_, _ = fmt.Fprintf(w, `{"patterns":[],"totalCount":3}`)
+		}
+	}))
+	defer server.Close()
+	setupAuthenticatedContext(t, server.URL)
+
+	ids, err := GetID(server.URL, "pattern")
+	if err != nil {
+		t.Fatalf("GetID returned unexpected error: %v", err)
+	}
+	wantIDs := []string{id1, id2, id3}
+	if !reflect.DeepEqual(ids, wantIDs) {
+		t.Errorf("GetID = %v, want %v", ids, wantIDs)
+	}
+	if requests != 2 {
+		t.Errorf("GetID made %d requests, want 2", requests)
+	}
+}
+
+func TestGetID_PageLimitReturnsError(t *testing.T) {
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = fmt.Fprintf(w, `{"patterns":[{"id":"11111111-0000-4000-8000-%012d"}],"totalCount":600000}`, requests)
+	}))
+	defer server.Close()
+	setupAuthenticatedContext(t, server.URL)
+
+	_, err := GetID(server.URL, "pattern")
+	if err == nil {
+		t.Fatalf("expected incomplete-lookup error, got nil")
+	}
+	AssertMeshkitErrorsEqual(t, err, ErrIDLookupIncomplete(600000, 50))
+	if requests != 50 {
+		t.Errorf("GetID made %d requests, want 50", requests)
+	}
+}
+
+func TestGetID_DeduplicatesIDs(t *testing.T) {
+	const (
+		id1 = "11111111-0000-4000-8000-000000000001"
+		id2 = "22222222-0000-4000-8000-000000000002"
+		id3 = "33333333-0000-4000-8000-000000000003"
+	)
+
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		page := r.URL.Query().Get("page")
+		w.Header().Set("Content-Type", "application/json")
+		switch page {
+		case "":
+			_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q},{"id":%q}],"totalCount":3}`, id1, id2)
+		case "1":
+			_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q},{"id":%q}],"totalCount":3}`, id2, id3)
+		default:
+			_, _ = fmt.Fprintf(w, `{"patterns":[],"totalCount":3}`)
+		}
+	}))
+	defer server.Close()
+	setupAuthenticatedContext(t, server.URL)
+
+	ids, err := GetID(server.URL, "pattern")
+	if err != nil {
+		t.Fatalf("GetID returned unexpected error: %v", err)
+	}
+	wantIDs := []string{id1, id2, id3}
+	if !reflect.DeepEqual(ids, wantIDs) {
+		t.Errorf("GetID = %v, want %v", ids, wantIDs)
+	}
+	if requests != 2 {
+		t.Errorf("GetID made %d requests, want 2", requests)
+	}
+}
+
+func TestGetID_PreservesTotalWhenLaterPageOmitsCount(t *testing.T) {
+	const (
+		id1 = "11111111-0000-4000-8000-000000000001"
+		id2 = "22222222-0000-4000-8000-000000000002"
+	)
+
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		page := r.URL.Query().Get("page")
+		w.Header().Set("Content-Type", "application/json")
+		switch page {
+		case "":
+			_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}],"totalCount":3}`, id1)
+		case "1":
+			_, _ = fmt.Fprintf(w, `{"patterns":[{"id":%q}]}`, id2)
+		default:
+			_, _ = fmt.Fprintf(w, `{"patterns":[]}`)
+		}
+	}))
+	defer server.Close()
+	setupAuthenticatedContext(t, server.URL)
+
+	_, err := GetID(server.URL, "pattern")
+	if err == nil {
+		t.Fatalf("expected incomplete-lookup error, got nil")
+	}
+	AssertMeshkitErrorsEqual(t, err, ErrIDLookupIncomplete(3, 2))
+	if requests != 3 {
+		t.Errorf("GetID made %d requests, want 3", requests)
+	}
+}
+
+// fullPagePatternIDs returns a comma-separated list of pageSize unique pattern
+// IDs for the given zero-based page, so a test server can serve a full page.
+func fullPagePatternIDs(page, pageSize int) string {
+	var b strings.Builder
+	for i := 0; i < pageSize; i++ {
+		if i > 0 {
+			b.WriteByte(',')
+		}
+		fmt.Fprintf(&b, `{"id":"11111111-0000-4000-8000-%012d"}`, page*pageSize+i)
+	}
+	return b.String()
+}
+
+func TestGetID_PageLimitWithoutTotalReturnsError(t *testing.T) {
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = fmt.Fprintf(w, `{"patterns":[%s]}`, fullPagePatternIDs(page, 10000))
+	}))
+	defer server.Close()
+	setupAuthenticatedContext(t, server.URL)
+
+	_, err := GetID(server.URL, "pattern")
+	if err == nil {
+		t.Fatalf("expected page-limit error, got nil")
+	}
+	AssertMeshkitErrorsEqual(t, err, ErrIDLookupPageLimit(500000))
+	if requests != 50 {
+		t.Errorf("GetID made %d requests, want 50", requests)
+	}
+}
+
+func TestValidId_PageLimitWithoutTotalReturnsError(t *testing.T) {
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = fmt.Fprintf(w, `{"patterns":[%s]}`, fullPagePatternIDs(page, 10000))
+	}))
+	defer server.Close()
+	setupAuthenticatedContext(t, server.URL)
+
+	_, _, err := ValidId(server.URL, "11111111", "pattern")
+	if err == nil {
+		t.Fatalf("expected page-limit error, got nil")
+	}
+	AssertMeshkitErrorsEqual(t, err, ErrIDLookupPageLimit(500000))
+	if requests != 50 {
+		t.Errorf("ValidId made %d requests, want 50", requests)
 	}
 }
 
@@ -868,6 +1518,35 @@ func TestTrimFileExtension(t *testing.T) {
 	}
 }
 
+func TestSanitizeFileName(t *testing.T) {
+	tests := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{"standard name without special characters", "kubernetes", "kubernetes"},
+		{"name with spaces", "Kubernetes Manifest", "Kubernetes_Manifest"},
+		{"name with path separators", "org/repo\\sub", "org_repo_sub"},
+		{"name with colon and question mark", "model:v1.0?query", "model_v1.0_query"},
+		{"name with wildcard asterisk", "filter*test", "filter_test"},
+		{"name with quotes, angle brackets and pipe", `<tag|"test">|value`, "_tag__test___value"},
+		{"name with control chars", "name\twith\nnewlines", "name_with_newlines"},
+		{"name with embedded NUL", "model\x00with\x00nul", "model_with_nul"},
+		{"name with unlisted control character", "a\u001fb", "a_b"},
+		{"name with escape and bell control chars", "alert\x07and\x1bescape", "alert_and_escape"},
+		{"name with leading and trailing whitespace", "   Kubernetes Manifest   ", "Kubernetes_Manifest"},
+		{"empty string", "", ""},
+		{"whitespace only", "     ", ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SanitizeFileName(tt.in); got != tt.want {
+				t.Errorf("SanitizeFileName(%q) = %q, want %q", tt.in, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestUploadFileWithParams(t *testing.T) {
 	origToken := TokenFlag
 	defer func() { TokenFlag = origToken }()
@@ -904,4 +1583,22 @@ func TestUploadFileWithParams(t *testing.T) {
 	if err == nil {
 		t.Error("expected error for non-existent file, got nil")
 	}
+}
+
+func TestDeleteConfiguration_BodyClosed(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	t.Run("closes body on success", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = fmt.Fprint(w, `{"status":"deleted"}`)
+		}))
+		defer server.Close()
+		setupAuthenticatedContext(t, server.URL)
+		transport := installTrackingTransport(t)
+		if err := DeleteConfiguration(server.URL, "test-id", "pattern"); err != nil {
+			t.Fatalf("expected no error, got: %v", err)
+		}
+		assertBodyClosed(t, transport, "expected response body to be closed on delete configuration")
+	})
 }

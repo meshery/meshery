@@ -4,6 +4,7 @@ package models
 import (
 	stderrors "errors"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/meshery/meshery/server/models/httputil"
@@ -173,6 +174,8 @@ const (
 	ErrOperatorChartNotPublishedCode      = "meshery-server-1470"
 	ErrOperatorChartSubstitutedCode       = "meshery-server-1471"
 	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
+	ErrInvalidExtensionProxyPathCode      = "meshery-server-1490"
+	ErrMigrateEventIndexesCode            = "meshery-server-1491"
 )
 
 var (
@@ -253,11 +256,11 @@ func ErrPageSize(err error) error {
 }
 
 func ErrPageNumber(err error) error {
-	return errors.New(ErrPageNumberCode, errors.Alert, []string{"Unable to prase the Page Numer"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrPageNumberCode, errors.Alert, []string{"Unable to parse the Page Number"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrPerfID(err error) error {
-	return errors.New(ErrPerfIDCode, errors.Alert, []string{"Invalid peformance profile ID"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrPerfIDCode, errors.Alert, []string{"Invalid performance profile ID"}, []string{err.Error()}, []string{}, []string{})
 }
 func ErrPublish(err error, obj string) error {
 	return errors.New(ErrPublishCode, errors.Alert, []string{fmt.Sprintf("Error while publishing %s to catlog", obj)}, []string{err.Error()}, []string{}, []string{})
@@ -539,7 +542,7 @@ func ErrJWKsKeys(err error) error {
 }
 
 func ErrInvalidCapability(capability string, provider string) error {
-	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capability is not supported by your Provider", capability}, []string{"You dont have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the vaild remote Provider"}, []string{"Connect to the vaild remote Provider", "Ask the Provider Adim for access"})
+	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capability is not supported by your Provider", capability}, []string{"You don't have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the valid remote Provider"}, []string{"Connect to the valid remote Provider", "Ask the Provider Admin for access"})
 }
 
 func ErrFetchData(err error) error {
@@ -636,7 +639,10 @@ func ErrUnreachableKubeAPI(err error, server string) error {
 			},
 		},
 	)
-	kubeAPIErr.LongDescription = append(kubeAPIErr.LongDescription, fmt.Sprintf("API server: %s", server), err.Error())
+	kubeAPIErr.LongDescription = append(kubeAPIErr.LongDescription, fmt.Sprintf("API server: %s", server))
+	if err != nil {
+		kubeAPIErr.LongDescription = append(kubeAPIErr.LongDescription, err.Error())
+	}
 	return withMatchedCause(kubeAPIErr, classifyKubeAPIError(err))
 }
 
@@ -653,7 +659,10 @@ func ErrUpdateConnectionStatus(err error, statusCode int) error {
 }
 
 func ErrResultNotFound(err error) error {
-	return errors.New(ErrResultNotFoundCode, errors.Alert, []string{err.Error()}, []string{"The record in the database does not exist."}, []string{"The record might have been deleted."}, []string{""})
+	return httputil.WithProviderStatus(
+		errors.New(ErrResultNotFoundCode, errors.Alert, []string{err.Error()}, []string{"The record in the database does not exist."}, []string{"The record might have been deleted."}, []string{""}),
+		http.StatusNotFound,
+	)
 }
 
 func ErrPersistCredential(err error) error {
@@ -835,7 +844,7 @@ func ErrMarshallingDesignIntoYAML(err error) error {
 }
 
 func ErrMeshsyncDataHandler(err error) error {
-	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data hadler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
+	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data handler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
 }
 
 // ErrReconcileServerID wraps a failure to back-fill an already-persisted
@@ -945,6 +954,25 @@ func ErrNoMesheryReleasesFound() error {
 	return errors.New(ErrNoMesheryReleasesFoundCode, errors.Alert, []string{"No Meshery releases were found"}, []string{"The GitHub releases listing for meshery/meshery returned no tags."}, []string{"GitHub returned an empty or filtered release listing, possibly because the request was rate-limited."}, []string{"Retry later. This only affects the reported latest-version comparison; Meshery continues to run."})
 }
 
+// ErrInvalidExtensionProxyPath is returned when a requested extension proxy path
+// does not match the expected '/api/extensions' prefix or contains malformed boundary characters.
+func ErrInvalidExtensionProxyPath(path string) error {
+	return errors.New(
+		ErrInvalidExtensionProxyPathCode,
+		errors.Alert,
+		[]string{"Invalid extension proxy path"},
+		[]string{fmt.Sprintf("The requested path '%s' is not a valid extension proxy path", path)},
+		[]string{
+			"The path does not start with '/api/extensions' or has an invalid delimiter",
+			"The URL format might be malformed or manipulated",
+		},
+		[]string{
+			"Ensure the request path starts with '/api/extensions' followed by a valid subpath (e.g. '/api/extensions/users')",
+			"Check client routing and extension configuration",
+		},
+	)
+}
+
 // ErrOperatorChartSubstituted reports that the Meshery Operator chart
 // version derived from this Meshery Server's release was replaced by one the
 // chart repository publishes and that can actually run. It is a warning, not a
@@ -970,6 +998,17 @@ func ErrMigrateEventCorrelationIndex(err error) error {
 		[]string{err.Error()},
 		[]string{"The events table has more than one open event (no resolved_at) with the same owner and correlation_key, which an earlier Meshery Server could have recorded", "The database is read-only, locked by another process or not reachable"},
 		[]string{"Resolve or delete the duplicate open events for that owner and correlation_key, then restart Meshery Server", "Make sure Meshery Server can write to its database, or perform a hard reset"},
+	)
+}
+
+func ErrMigrateEventIndexes(err error) error {
+	return errors.New(
+		ErrMigrateEventIndexesCode,
+		errors.Alert,
+		[]string{"Meshery Server could not create the indexes the Notification Center queries use"},
+		[]string{err.Error()},
+		[]string{"The database is read-only, locked by another process or not reachable"},
+		[]string{"Make sure Meshery Server can write to its database, then restart Meshery Server"},
 	)
 }
 

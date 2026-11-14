@@ -210,7 +210,7 @@ mesheryctl system logs meshery-istio
 				return utils.ErrDockerComposeClient(err)
 			}
 
-			if err := composeClient.Logs(context.Background(), utils.DockerComposeFile, true, os.Stdout); err != nil {
+			if err := composeClient.Logs(context.Background(), utils.DockerComposeFile, systemLogsFlags.Follow, os.Stdout, args...); err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to get logs"))
 			}
 		case platformKubernetes:
@@ -324,6 +324,9 @@ mesheryctl system logs meshery-istio
 					err = func() error {
 						defer func() { _ = logs.Close() }()
 						logBuf, err := io.ReadAll(logs)
+					if !systemLogsFlags.Follow {
+						logBuf, err := io.ReadAll(logs)
+						_ = logs.Close()
 						if err != nil {
 							return utils.ErrReadResponseBody(err)
 						}
@@ -332,6 +335,27 @@ mesheryctl system logs meshery-istio
 					}()
 					if err != nil {
 						return err
+					} else {
+						wg.Add(1)
+						go func(stream io.ReadCloser, podName string) {
+							defer wg.Done()
+							defer func() { _ = stream.Close() }()
+							buf := make([]byte, BYTE_SIZE)
+							for {
+								numBytes, err := stream.Read(buf)
+								if numBytes > 0 {
+									logBuf := buf[0:numBytes]
+									printLogs(string(logBuf), podName)
+								}
+								if err == io.EOF {
+									break
+								}
+								if err != nil {
+									utils.Log.Errorf("error occurred while processing logs %v", err)
+									break
+								}
+							}
+						}(logs, name)
 					}
 				}
 			}

@@ -331,10 +331,14 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			// has still been persisted in the discovered state; just skip the
 			// event. See mhelpers.HasMachineContext.
 			if mhelpers.HasMachineContext(inst) {
+				// Import returns before the transition finishes, so keep its values
+				// without tying discovery to the request's cancellation.
+				transitionCtx, cancel := backgroundDiscoveryContext(req.Context())
 				go func(inst *machines.StateMachine) {
-					event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
-					if err != nil {
-						h.persistAndPublish(provider, token, userID, event)
+					defer cancel()
+					event, err := inst.SendEvent(transitionCtx, machines.EventType(mhelpers.StatusToEvent(status)), nil)
+					if err != nil || machines.IsRecurrence(event, err) {
+						h.reportMachineOutcome(provider, token, userID, event, err)
 					}
 				}(inst)
 			}
@@ -537,7 +541,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*core.Uuid)
-	if !ok {
+	if !ok || mid == nil {
 		return contexts, models.ErrMesheryInstanceID
 	}
 

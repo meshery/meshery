@@ -36,6 +36,8 @@ func PrintProviderToStdout(ctx config.Context, contextName string) string {
 	return fmt.Sprintf("Context: %v\nProvider: %v", contextName, ctx.Provider)
 }
 
+var viewProviderUsageMsg = "Usage: mesheryctl system provider view\nRun 'mesheryctl system provider view --help' to see detailed help message"
+
 var viewProviderCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View provider",
@@ -45,13 +47,16 @@ var viewProviderCmd = &cobra.Command{
 // View current provider
 mesheryctl system provider view
 	`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", viewProviderUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &providerViewFlags)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			return errors.New(utils.SystemProviderSubError("this command takes no arguments\n", "view"))
-		}
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
@@ -86,6 +91,8 @@ mesheryctl system provider view
 	},
 }
 
+var listProviderUsageMsg = "Usage: mesheryctl system provider list\nRun 'mesheryctl system provider list --help' to see detailed help message"
+
 // listProviderCmd represents the list command
 var listProviderCmd = &cobra.Command{
 	Use:   "list",
@@ -95,11 +102,13 @@ var listProviderCmd = &cobra.Command{
 // List all available providers
 mesheryctl system provider list
 	`,
-	SilenceUsage: true,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return errors.New(utils.SystemProviderSubError("this command takes no arguments\n", "list"))
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listProviderUsageMsg))
 		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

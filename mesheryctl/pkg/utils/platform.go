@@ -421,7 +421,8 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 		case "edge":
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/master/install/docker/docker-compose.yaml"
 		case "stable":
-			if ctx.Version == "latest" {
+			// An empty version means latest, as in Context.ValidateVersion.
+			if ctx.Version == "" || ctx.Version == "latest" {
 				versions, err := meshkitutils.GetLatestReleaseTagsSorted(constants.GetMesheryGitHubOrg(), constants.GetMesheryGitHubRepo())
 				if err != nil {
 					return errors.Wrapf(err, "failed to fetch latest stable release tag")
@@ -430,16 +431,8 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 					return fmt.Errorf("no versions found")
 				}
 				ReleaseTag = versions[len(versions)-1]
-			} else { // else we get version tag from the config file
-				mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-				if err != nil {
-					return errors.Wrap(err, "error processing meshconfig")
-				}
-				currCtx, err := mctlCfg.GetCurrentContext()
-				if err != nil {
-					return err
-				}
-				ReleaseTag = currCtx.GetVersion()
+			} else { // else we use the version pinned in the given context
+				ReleaseTag = ctx.GetVersion()
 			}
 
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/" + ReleaseTag + "/install/docker/docker-compose.yaml"
@@ -776,6 +769,9 @@ func InstallprereqDocker() error {
 	dockerComposeBinaryURL := dockerComposeBinaryURL
 	//checks for the latest docker-compose
 	resp, err := http.Get(dockerComposeWebURL)
+	if resp != nil {
+		defer SafeClose(resp.Body)
+	}
 	if err != nil {
 		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
 	} else {

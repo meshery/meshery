@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -148,23 +149,40 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 	return resp, nil
 }
 
-// GetTokenLocation checks the location of token and returns appropriate location of the token
+// GetTokenLocation returns the path of the file a meshconfig token entry names.
+// Absolute and "~/" locations resolve through config.Token.GetLocation, so
+// requests read the same file system login and logout write. A bare file name
+// is joined to MesheryFolder, which is ~/.meshery at runtime, as GetLocation
+// does, and which tests point at their fixtures.
 func GetTokenLocation(token config.Token) (string, error) {
-	// Find home directory.
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", errors.Wrap(err, "failed to get users home directory")
+	if filepath.IsAbs(token.Location) || strings.HasPrefix(token.Location, "~/") {
+		return token.GetLocation(), nil
+	}
+	return filepath.Join(MesheryFolder, token.Location), nil
+}
+
+// EnsureContextToken returns the token entry the named context refers to. When
+// the meshconfig does not define that token yet, an entry pointing at
+// AuthConfigFile is added to the meshconfig this command is using (the --config
+// file when one is given). Writing it to any other file would also leave viper
+// reading that file, so later requests would go to its server.
+func EnsureContextToken(mctlCfg *config.MesheryCtlConfig, contextName string) (config.Token, error) {
+	token, err := mctlCfg.GetTokenForContext(contextName)
+	if err == nil {
+		return token, nil
+	}
+	// GetTokenForContext also errors when the context itself does not exist,
+	// and then token is empty. Only auto-create the entry when the context
+	// names a token; otherwise surface the original error.
+	if token.Name == "" {
+		return config.Token{}, err
 	}
 
-	location := token.Location
-	// if location contains /home/nectar in path we return exact location
-	ok := strings.Contains(location, home)
-	if ok {
-		return location, nil
+	token.Location = AuthConfigFile
+	if err := config.AddTokenToConfig(token, GetActiveConfigPath()); err != nil {
+		return config.Token{}, err
 	}
-
-	// else we add the home directory with the path
-	return filepath.Join(MesheryFolder, location), nil
+	return token, nil
 }
 
 // GetCurrentAuthToken returns location of current context token
@@ -175,15 +193,9 @@ func GetCurrentAuthToken() (string, error) {
 		log.Fatal(err)
 	}
 	// Get token of current-context
-	token, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
+	token, err := EnsureContextToken(mctlCfg, mctlCfg.CurrentContext)
 	if err != nil {
-		// Attempt to create token if it doesn't already exists
-		token.Location = AuthConfigFile
-
-		// Write new entry in the config
-		if err := config.AddTokenToConfig(token, DefaultConfigPath); err != nil {
-			return "", err
-		}
+		return "", err
 	}
 	// grab actual token location with home directory
 	TokenLocation, err := GetTokenLocation(token)
@@ -253,7 +265,7 @@ func UpdateAuthDetails(filepath string) error {
 		return errors.New("invalid body")
 	}
 
-	return os.WriteFile(filepath, data, os.ModePerm)
+	return WriteTokenFile(filepath, data)
 }
 
 // ReadToken returns a map of the token passed in
@@ -309,9 +321,10 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, err
 
 	// Let the user select a provider
 	var provider Provider
+	providerKey := ""
 	if option != "" {
 		// If option is given by user
-		provider, err = chooseDirectProvider(providers, option)
+		provider, providerKey, err = chooseDirectProvider(providers, option)
 	} else {
 		// Trigger prompt
 		provider, err = selectProviderPrompt(providers)
@@ -338,13 +351,57 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, err
 		}
 	}
 
-	// Send request with the token to the meshery server
-	data, err := getTokenObjFromMesheryServer(mctlCfg, provider.ProviderName, token)
+	// Send request with the token to the meshery server. The meshery-provider
+	// cookie carries the registration key when the provider was named with
+	// --provider: /api/providers is keyed by registration key, and two
+	// providers can share a display name, so sending the display name could
+	// route the token request to the other provider. The interactive prompt
+	// path keeps the previous display-name behaviour.
+	cookieProvider := provider.ProviderName
+	if providerKey != "" {
+		cookieProvider = providerKey
+	}
+	data, err := getTokenObjFromMesheryServer(mctlCfg, cookieProvider, token)
 	if err != nil {
 		return nil, err
 	}
 
+	// The server answers /api/token with the provider's display name in
+	// meshery-provider, and login persists that response unchanged for later
+	// requests (AddAuthDetails sends the persisted value as the cookie). A
+	// display name shared by two providers would route those later requests
+	// nondeterministically, so when --provider named a registration key,
+	// persist the key instead: the key is what /api/providers is keyed by
+	// and what the server resolves first.
+	if providerKey != "" {
+		data = rewriteTokenProvider(data, providerKey)
+	}
+
 	return data, nil
+}
+
+// rewriteTokenProvider replaces the meshery-provider field of the token
+// JSON returned by /api/token with the registration key login selected,
+// preserving every other field. A response that is not a JSON object, or
+// that carries no meshery-provider field, is returned unchanged: login
+// must not fail a provider whose token endpoint answers in an unexpected
+// shape.
+func rewriteTokenProvider(data []byte, providerKey string) []byte {
+	var tokenObj map[string]interface{}
+	if err := json.Unmarshal(data, &tokenObj); err != nil {
+		return data
+	}
+	if _, ok := tokenObj["meshery-provider"]; !ok {
+		return data
+	}
+	tokenObj["meshery-provider"] = providerKey
+	var buf bytes.Buffer
+	enc := json.NewEncoder(&buf)
+	enc.SetEscapeHTML(false)
+	if err := enc.Encode(tokenObj); err != nil {
+		return data
+	}
+	return bytes.TrimRight(buf.Bytes(), "\n")
 }
 
 // GetProviderInfo queries meshery API for the provider info
@@ -355,6 +412,7 @@ func GetProviderInfo(mctCfg *config.MesheryCtlConfig) (map[string]Provider, erro
 	if err != nil {
 		return nil, err
 	}
+	defer SafeClose(resp.Body)
 
 	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return nil, err
@@ -433,24 +491,62 @@ func selectProviderPrompt(provs map[string]Provider) (Provider, error) {
 	return provArray[i], nil
 }
 
-func chooseDirectProvider(provs map[string]Provider, option string) (Provider, error) {
-	provArray := []Provider{}
-	provNames := []string{}
-
-	for _, prov := range provs {
-		provArray = append(provArray, prov)
+// chooseDirectProvider returns the provider the user named with --provider,
+// plus the key it is registered under in /api/providers. The name matches,
+// case-insensitively, either the provider's display name or the key it is
+// registered under; a server can report a key that differs from the display
+// name (for example a URL-style key). When nothing matches, a structured
+// error listing the available providers is returned. It must never index
+// into the provider list on that path: a server pinned to a single provider
+// would make any fixed index out of range.
+//
+// Matching is done in passes, not in a single map traversal: an exact
+// registration-key match wins, then a case-insensitive key match, then a
+// case-insensitive display-name match. A single traversal is
+// nondeterministic when one entry's key equals another entry's display name
+// (for example key "cloud-a" named "Meshery" beside key "cloud-b" named
+// "cloud-a"), because Go map iteration order is random. The display-name
+// pass likewise collects every match: a display name shared by two
+// providers is rejected instead of returning whichever entry the traversal
+// happens to visit first.
+func chooseDirectProvider(provs map[string]Provider, option string) (Provider, string, error) {
+	if prov, ok := provs[option]; ok {
+		return prov, option, nil
 	}
-
-	for _, prov := range provArray {
-		provNames = append(provNames, prov.ProviderName)
-	}
-
-	for i := range provNames {
-		if strings.EqualFold(provNames[i], option) {
-			return provArray[i], nil
+	for key, prov := range provs {
+		if strings.EqualFold(key, option) {
+			return prov, key, nil
 		}
 	}
-	return provArray[1], fmt.Errorf("the specified provider '%s' is not available. Please try giving correct provider name", option)
+	// A display name is not a unique key: two providers can share one, so
+	// collect every match instead of returning the first the traversal
+	// visits. Exactly one match selects that provider; several is an error
+	// asking for a registration key.
+	var displayMatches []string
+	var displayProv Provider
+	for key, prov := range provs {
+		if strings.EqualFold(prov.ProviderName, option) {
+			displayMatches = append(displayMatches, key)
+			displayProv = prov
+		}
+	}
+	if len(displayMatches) == 1 {
+		return displayProv, displayMatches[0], nil
+	}
+	if len(displayMatches) > 1 {
+		sort.Strings(displayMatches)
+		return Provider{}, "", ErrProviderAmbiguous(option, displayMatches)
+	}
+	available := make([]string, 0, len(provs))
+	for key, prov := range provs {
+		name := prov.ProviderName
+		if name == "" {
+			name = key
+		}
+		available = append(available, name)
+	}
+	sort.Strings(available)
+	return Provider{}, "", ErrProviderNotFound(option, available)
 }
 
 func createProviderURI(provider Provider, host string, port int) (string, error) {
@@ -507,4 +603,38 @@ func IsServerRunning(serverAddr string) error {
 	}
 	defer func() { _ = conn.Close() }()
 	return nil
+}
+
+// tokenFileMode is the permission mode of a mesheryctl auth token file. The
+// file holds a bearer token for the user's provider account, so only the owner
+// may read it.
+const tokenFileMode os.FileMode = 0o600
+
+// WriteTokenFile writes an auth token file and restricts it to its owner.
+// The open mode only applies when the file is created, so an existing token
+// file written by an older mesheryctl (0644 or 0666) is restricted with
+// restrictTokenFile before the new token is written into it: chmod to 0600 on
+// Unix and, on Windows where chmod does not touch ACLs, a protected DACL that
+// grants only the current user access. The file is opened without O_TRUNC and
+// truncated only after the restriction succeeds, so a failure (for example a
+// token file owned by another user) leaves the previous credentials intact
+// instead of emptying the file and then erroring.
+func WriteTokenFile(path string, data []byte) error {
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, tokenFileMode)
+	if err != nil {
+		return err
+	}
+	if err := restrictTokenFile(f); err != nil {
+		_ = f.Close()
+		return err
+	}
+	if err := f.Truncate(0); err != nil {
+		_ = f.Close()
+		return err
+	}
+	if _, err := f.Write(data); err != nil {
+		_ = f.Close()
+		return err
+	}
+	return f.Close()
 }

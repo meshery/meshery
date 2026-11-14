@@ -15,6 +15,20 @@ import (
 type Router struct {
 	S    *mux.Router
 	port int
+	srv  *http.Server
+}
+
+// newHTTPServer builds the HTTP server for the router, carrying the timeouts
+// the old ListenAndServe call did not have, so the listener can be drained on
+// graceful shutdown instead of serving until main returns.
+func newHTTPServer(port int, handler http.Handler) *http.Server {
+	return &http.Server{
+		Addr:           fmt.Sprintf(":%d", port),
+		Handler:        handler,
+		ReadTimeout:    5 * time.Second,
+		WriteTimeout:   2 * time.Minute,
+		MaxHeaderBytes: 1 << 20,
+	}
 }
 
 // registerRegistryRoute registers a capabilities-registry route at its
@@ -180,7 +194,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/system/events/config", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ServerEventConfigurationHandler), models.ProviderAuth))).
 		Methods("GET", "PUT")
 
-	// Telemetry (v2) — clean, connection-driven Grafana dashboard browsing & rendering.
+	// Telemetry (v2) - clean, connection-driven Grafana dashboard browsing & rendering.
 	gMux.Handle("/api/telemetry/grafana/{connectionID}/ping", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaTelemetryPingHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/telemetry/grafana/{connectionID}/boards", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaTelemetryBoardsHandler), models.ProviderAuth))).
@@ -196,7 +210,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/telemetry/grafana/{connectionID}/pinned", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaTelemetryPinnedBoardsHandler), models.ProviderAuth))).
 		Methods("GET", "POST")
 
-	// Telemetry (v2) — clean, connection-driven Prometheus-native metric browsing & rendering.
+	// Telemetry (v2) - clean, connection-driven Prometheus-native metric browsing & rendering.
 	gMux.Handle("/api/telemetry/prometheus/{connectionID}/ping", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusTelemetryPingHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/telemetry/prometheus/{connectionID}/metrics", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PrometheusTelemetryMetricsHandler), models.ProviderAuth))).
@@ -223,6 +237,10 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.Handle("/api/pattern/import", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DesignFileImportHandler), models.ProviderAuth))).
 		Methods("POST")
+	gMux.Handle("/api/pattern/clone", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CloneMesheryPatternHandler), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/pattern/clone/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CloneMesheryPatternHandler), models.ProviderAuth))).
+		Methods("POST")
 	gMux.Handle("/api/pattern/{sourcetype}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DesignFileRequestHandlerWithSourceType), models.ProviderAuth))).
 		Methods("POST", "PUT")
 	gMux.Handle("/api/pattern/types", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryDesignTypesHandler), models.ProviderAuth))).
@@ -237,8 +255,6 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("GET")
 	gMux.Handle("/api/pattern/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryPatternHandler), models.ProviderAuth))).
 		Methods("DELETE")
-	gMux.Handle("/api/pattern/clone/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CloneMesheryPatternHandler), models.ProviderAuth))).
-		Methods("POST")
 	gMux.Handle("/api/pattern/download/{id}/{sourcetype}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryPatternSourceHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/pattern/download/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DownloadMesheryPatternHandler), models.ProviderAuth))).
@@ -260,8 +276,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	}
 
 	handleRegistry("/validate", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ValidationHandler), models.NoAuth)), "POST")
-	handleRegistry("/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents), models.NoAuth)), "POST") //This should also be left with NoAuth
-	gMux.Handle("/api/meshmodel/components/register", h.ProviderMiddleware((http.HandlerFunc(h.RegisterMeshmodelComponents)))).Methods("POST") //For backwards compatibility with previous registrants
+	handleRegistry("/components", h.ProviderMiddleware(h.RegistrationAuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents))), "POST")
+	gMux.Handle("/api/meshmodel/components/register", h.ProviderMiddleware(h.RegistrationAuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents)))).Methods("POST") //For backwards compatibility with previous registrants
 	handleRegistry("/{entityType}/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateEntityStatus), models.NoAuth)), "POST")
 	handleRegistry("/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelComponents), models.NoAuth)), "GET")
 
@@ -309,7 +325,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	// form above uses the corrected /policies/{name} shape.
 	gMux.Handle("/api/meshmodels/models/{model}/policies{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelPoliciesByName), models.NoAuth))).Methods("GET")
 
-	handleRegistry("/export", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ExportModel), models.NoAuth)), "GET")
+	handleRegistry("/export", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ExportModel), models.ProviderAuth)), "GET")
 
 	gMux.Handle("/api/filter/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.FilterFileHandler)), models.ProviderAuth))).
 		Methods("POST", "DELETE")
@@ -576,19 +592,21 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	return &Router{
 		S:    gMux,
 		port: port,
+		srv:  newHTTPServer(port, gMux),
 	}
 }
 
 // Run starts the http server
 func (r *Router) Run() error {
-	// s := &http.Server{
-	// 	Addr:           fmt.Sprintf(":%d", r.port),
-	// 	Handler:        r.s,
-	// 	ReadTimeout:    5 * time.Second,
-	// 	WriteTimeout:   2 * time.Minute,
-	// 	MaxHeaderBytes: 1 << 20,
-	// 	IdleTimeout:    0, //time.Second,
-	// }
-	// return s.ListenAndServe()
-	return http.ListenAndServe(fmt.Sprintf(":%d", r.port), r.S)
+	return r.srv.ListenAndServe()
+}
+
+// Shutdown drains the HTTP listener, waiting for in-flight requests to
+// finish, and returns once the listener is closed. Run then returns
+// http.ErrServerClosed, which the caller treats as a clean shutdown.
+func (r *Router) Shutdown(ctx context.Context) error {
+	if r.srv == nil {
+		return nil
+	}
+	return r.srv.Shutdown(ctx)
 }

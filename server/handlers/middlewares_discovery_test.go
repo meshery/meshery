@@ -20,14 +20,22 @@ import (
 // recordingEventsProvider records the events persisted through it. It answers
 // with stored when set, as a persister does for an occurrence counted on, or
 // the resolution of, an open condition; otherwise with the event as created.
+// It correlates conditions unless uncorrelated is set.
 type recordingEventsProvider struct {
 	models.Provider
-	persisted []events.Event
-	stored    *models.PersistedEvent
+	persisted    []events.Event
+	stored       *models.PersistedEvent
+	err          error
+	uncorrelated bool
 }
+
+func (p *recordingEventsProvider) CorrelatesConditions() bool { return !p.uncorrelated }
 
 func (p *recordingEventsProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
 	p.persisted = append(p.persisted, event)
+	if p.err != nil {
+		return models.PersistedEvent{}, p.err
+	}
 	if p.stored != nil {
 		return *p.stored, nil
 	}
@@ -50,6 +58,10 @@ func (p *persisterEventsProvider) PersistEvent(event events.Event, token string)
 
 func (p *persisterEventsProvider) PersistClientEvent(event events.Event, token string) (models.PersistedEvent, error) {
 	return p.persister.PersistClientEvent(event, token)
+}
+
+func (p *persisterEventsProvider) CorrelatesConditions() bool {
+	return p.persister.CorrelatesConditions()
 }
 
 func (p *persisterEventsProvider) GetProviderToken(*http.Request) (string, error) { return "", nil }
@@ -104,7 +116,7 @@ func TestEventSourceIsTheServersOnlyForServerEvents(t *testing.T) {
 	}
 }
 
-// An event the server builds with a bare events.NewEvent() carries no ID; it
+// An event constructed without the builder carries no ID; it
 // is broadcast as stored, with the stored row's non-zero ID and the server's
 // source, never as the zero-ID input.
 func TestPersistAndPublishBroadcastsTheStoredRow(t *testing.T) {
@@ -133,9 +145,9 @@ func TestPersistAndPublishBroadcastsTheStoredRow(t *testing.T) {
 	for name, publish := range publishers {
 		sent := events.NewEvent().FromOwner(user).WithCategory("kubernetes").WithAction("register").
 			WithSeverity(events.Informational).WithDescription(name).Build()
-		if !sent.ID.IsNil() {
-			t.Fatalf("precondition: events.NewEvent() minted ID %s", sent.ID)
-		}
+		// events.NewEvent mints an ID; an event constructed without the
+		// builder carries none, which is the case under test.
+		sent.ID = uuid.Nil
 		publish(sent)
 
 		got := receiveEvent(t, ch)
@@ -218,7 +230,8 @@ func TestReportBackgroundDiscovery(t *testing.T) {
 		wantPersist bool
 	}{
 		{"routine success", routine, nil, false},
-		{"suppressed repeat", nil, nil, false},
+		{"suppressed", nil, nil, false},
+		{"recurrence", events.NewEvent().WithSeverity(events.Error).WithCorrelationKey(key).Build(), nil, true},
 		{"failure", failure, errors.New("unreachable"), true},
 		{"resolution", resolution, nil, true},
 	}
@@ -258,7 +271,7 @@ func TestClientEventHandlerForwardsContractFields(t *testing.T) {
 	provider := &tokenEventsProvider{}
 	rec := postClientEvent(t, h, provider, `{"actedUpon":"`+actedUpon+`","category":"connection","action":"update","severity":"error",
 		"description":"cluster unreachable","correlationKey":"meshery-ui/k8s-connection/abc/unreachable","occurrenceCount":2,
-		"source":"meshery-ui","traceId":"4bf92f3577b34da6a3ce929d0e0e4736","parentId":"00f067aa0ba902b7"}`)
+		"source":"meshery-ui","traceId":"4bf92f3577b34da6a3ce929d0e0e4736","parentId":"00f067aa0ba902b7","idempotencyKey":"ui/retry-1"}`)
 	if rec.Code != http.StatusCreated || len(provider.persisted) != 1 {
 		t.Fatalf("status %d, %d persisted; body %s", rec.Code, len(provider.persisted), rec.Body.String())
 	}
@@ -266,7 +279,8 @@ func TestClientEventHandlerForwardsContractFields(t *testing.T) {
 	if got.CorrelationKey == nil || *got.CorrelationKey != "meshery-ui/k8s-connection/abc/unreachable" ||
 		got.OccurrenceCount == nil || *got.OccurrenceCount != 2 ||
 		got.Source == nil || *got.Source != "meshery-ui" ||
-		got.TraceID == nil || *got.TraceID != "4bf92f3577b34da6a3ce929d0e0e4736" || got.ParentID == nil {
+		got.TraceID == nil || *got.TraceID != "4bf92f3577b34da6a3ce929d0e0e4736" || got.ParentID == nil ||
+		got.IdempotencyKey == nil || *got.IdempotencyKey != "ui/retry-1" {
 		t.Fatalf("contract fields were not forwarded: %+v", got)
 	}
 
@@ -308,8 +322,9 @@ func TestClientEventHandlerAnswersStoredEvent(t *testing.T) {
 	rec := httptest.NewRecorder()
 	h.ClientEventHandler(rec, req, nil, user, provider)
 
-	if rec.Code != http.StatusCreated {
-		t.Fatalf("status %d; body %s", rec.Code, rec.Body.String())
+	// An occurrence counted on an open condition recorded nothing new.
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status %d, want 200; body %s", rec.Code, rec.Body.String())
 	}
 	if got := rec.Header().Get(models.EventDispositionHeader); got != string(models.EventIncremented) {
 		t.Errorf("%s = %q, want %q", models.EventDispositionHeader, got, models.EventIncremented)
@@ -323,5 +338,135 @@ func TestClientEventHandlerAnswersStoredEvent(t *testing.T) {
 	}
 	if got := receiveEvent(t, ch); got.ID != open.ID {
 		t.Errorf("broadcast event %s, want the stored condition %s", got.ID, open.ID)
+	}
+}
+
+// POST /api/events answers 201 only when the create recorded a new event, and
+// 200 when it recorded nothing new, as the createEvent contract requires. An
+// answer that names no stored event is sent with no body and broadcasts
+// nothing.
+func TestClientEventHandlerStatusFollowsTheDisposition(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	h := &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: models.NewBroadcaster("test")},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+	body := `{"actedUpon":"` + uuid.Must(uuid.NewV4()).String() + `","category":"connection","action":"update","severity":"error"}`
+	stored := events.NewEvent().WithSeverity(events.Error).Build()
+	for _, c := range []struct {
+		disposition models.EventDisposition
+		event       *events.Event
+		want        int
+	}{
+		{models.EventCreated, stored, http.StatusCreated},
+		{"", stored, http.StatusCreated},
+		{models.EventIncremented, stored, http.StatusOK},
+		{models.EventResolved, stored, http.StatusOK},
+		{models.EventReplayed, stored, http.StatusOK},
+		{models.EventIncremented, nil, http.StatusOK},
+	} {
+		provider := &tokenEventsProvider{recordingEventsProvider{stored: &models.PersistedEvent{Event: c.event, Disposition: c.disposition}}}
+		rec := postClientEvent(t, h, provider, body)
+		if rec.Code != c.want {
+			t.Errorf("%q: status %d, want %d", c.disposition, rec.Code, c.want)
+		}
+		if c.event == nil && rec.Body.Len() != 0 {
+			t.Errorf("%q with no stored event: body %q, want none", c.disposition, rec.Body.String())
+		}
+	}
+}
+
+// persistAndPublishEvent reports nothing for a nil event (a suppressed
+// Discovery failure), broadcasts nothing when the stored event is unknown, and
+// suppresses broadcast when persistence fails to avoid ghost notifications.
+func TestPersistAndPublishEventEdgeCases(t *testing.T) {
+	broadcaster := models.NewBroadcaster("test")
+	user := uuid.Must(uuid.NewV4())
+	ch, unsubscribe := broadcaster.Subscribe(user)
+	defer unsubscribe()
+	log := newTestLogger(t)
+
+	provider := &recordingEventsProvider{}
+	persistAndPublishEvent(log, provider, "", broadcaster, user, nil)
+	if len(provider.persisted) != 0 {
+		t.Fatalf("persisted %d events for a nil event", len(provider.persisted))
+	}
+
+	provider = &recordingEventsProvider{stored: &models.PersistedEvent{Disposition: models.EventIncremented}}
+	persistAndPublishEvent(log, provider, "", broadcaster, user, events.NewEvent().WithSeverity(events.Error).Build())
+	select {
+	case got := <-ch:
+		t.Fatalf("broadcast %v for an occurrence whose stored event is unknown", got)
+	case <-time.After(100 * time.Millisecond):
+	}
+
+	provider = &recordingEventsProvider{err: errors.New("database is down")}
+	sent := events.NewEvent().WithSeverity(events.Error).Build()
+	sent.ID = uuid.Nil
+	persistAndPublishEvent(log, provider, "", broadcaster, user, sent)
+	select {
+	case got := <-ch:
+		t.Fatalf("unexpected broadcast %v when persistence failed", got)
+	case <-time.After(100 * time.Millisecond):
+	}
+}
+
+// A Recurrence is counted on its open condition without notifying anyone.
+func TestReportBackgroundDiscoveryCountsARecurrenceSilently(t *testing.T) {
+	broadcaster := models.NewBroadcaster("test")
+	h := &Handler{config: &models.HandlerConfig{EventBroadcaster: broadcaster}, log: newTestLogger(t)}
+	user := uuid.Must(uuid.NewV4())
+	ch, unsubscribe := broadcaster.Subscribe(user)
+	defer unsubscribe()
+
+	key := models.ConditionKey("k8s-connection", uuid.Must(uuid.NewV4()).String(), "unreachable")
+	provider := &recordingEventsProvider{}
+	h.reportBackgroundDiscovery(provider, "token", user, events.NewEvent().WithSeverity(events.Error).WithCorrelationKey(key).Build(), nil)
+	if len(provider.persisted) != 1 {
+		t.Fatalf("persisted %d events, want the recurrence counted", len(provider.persisted))
+	}
+	select {
+	case got := <-ch:
+		t.Fatalf("broadcast %v for a recurrence", got)
+	case <-time.After(100 * time.Millisecond):
+	}
+}
+
+// A provider not known to correlate conditions is sent no Recurrence, which it
+// would record as a new event, but is still sent a condition's first
+// occurrence and its resolution.
+func TestReportMachineOutcomeSendsRecurrencesOnlyToACorrelatingProvider(t *testing.T) {
+	key := models.ConditionKey("k8s-connection", uuid.Must(uuid.NewV4()).String(), "unreachable")
+	user := uuid.Must(uuid.NewV4())
+	resolvedAt := time.Now()
+	resolution := events.NewEvent().WithSeverity(events.Informational).WithCorrelationKey(key).WithResolvedAt(resolvedAt).Build()
+	firstOccurrence := events.NewEvent().WithSeverity(events.Error).WithCorrelationKey(key).Build()
+	recurrence := events.NewEvent().WithSeverity(events.Error).WithCorrelationKey(key).Build()
+
+	for _, tc := range []struct {
+		name         string
+		uncorrelated bool
+		want         []*events.Event
+	}{
+		{name: "correlating", want: []*events.Event{firstOccurrence, recurrence, resolution}},
+		{name: "not correlating", uncorrelated: true, want: []*events.Event{firstOccurrence, resolution}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			h := &Handler{config: &models.HandlerConfig{EventBroadcaster: models.NewBroadcaster("test")}, log: newTestLogger(t)}
+			provider := &recordingEventsProvider{uncorrelated: tc.uncorrelated}
+			h.reportMachineOutcome(provider, "token", user, firstOccurrence, errors.New("cluster unreachable"))
+			h.reportMachineOutcome(provider, "token", user, recurrence, nil)
+			h.reportMachineOutcome(provider, "token", user, resolution, nil)
+
+			if len(provider.persisted) != len(tc.want) {
+				t.Fatalf("persisted %d events, want %d", len(provider.persisted), len(tc.want))
+			}
+			for i, want := range tc.want {
+				if provider.persisted[i].ID != want.ID {
+					t.Errorf("persisted[%d] = %s, want %s", i, provider.persisted[i].ID, want.ID)
+				}
+			}
+		})
 	}
 }

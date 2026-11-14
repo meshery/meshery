@@ -21,6 +21,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/meshery/schemas/models/core"
@@ -114,6 +115,12 @@ type RemoteProvider struct {
 
 	syncStopChan chan struct{}
 	syncChan     chan *userSession
+
+	// correlatesConditions records whether the remote provider was last seen
+	// applying condition correlation: the answer to the most recent create
+	// that carried a correlationKey said what it did (Event-Disposition) or
+	// did not. It starts false, as unknown.
+	correlatesConditions atomic.Bool
 
 	ProviderVersion    string
 	SmiResultPersister *SMIResultsPersister
@@ -1134,10 +1141,15 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 		k8sServerID = *k8sContext.KubernetesServerID
 	}
 
+	var mesheryInstanceID string
+	if k8sContext.MesheryInstanceID != nil {
+		mesheryInstanceID = k8sContext.MesheryInstanceID.String()
+	}
+
 	_metadata := map[string]string{
 		"id":                 k8sContext.ID,
 		"server":             k8sContext.Server,
-		"mesheryInstanceId":  k8sContext.MesheryInstanceID.String(),
+		"mesheryInstanceId":  mesheryInstanceID,
 		"deploymentType":     k8sContext.DeploymentType,
 		"version":            k8sContext.Version,
 		"name":               k8sContext.Name,
@@ -1193,9 +1205,10 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 
 	return *connection, nil
 }
+
 func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error) {
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*core.Uuid)
-	if !ok {
+	if !ok || MesheryInstanceID == nil {
 		return nil, ErrMesheryInstanceID
 	}
 	mi := MesheryInstanceID.String()
@@ -1253,8 +1266,14 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 			for _, c := range cp.Connections {
 				ctx, err := K8sContextFromConnection(Provider(l), token, c)
 				if err != nil {
-					l.Log.Error(err)
-					continue
+					if c == nil {
+						return nil, fmt.Errorf("failed to convert remote Kubernetes connection: %w", err)
+					}
+					return nil, fmt.Errorf(
+						"failed to convert remote Kubernetes connection %q: %w",
+						c.Name,
+						err,
+					)
 				}
 				contexts = append(contexts, &ctx)
 			}
@@ -1745,6 +1764,14 @@ func (l *RemoteProvider) PersistEvent(event events.Event, token string) (Persist
 	return l.persist(withServerSource(event), token)
 }
 
+// CorrelatesConditions reports whether the remote provider answered the most
+// recent create carrying a correlationKey with an Event-Disposition, which a
+// provider that predates condition correlation omits. Until such a create has
+// been answered it is false.
+func (l *RemoteProvider) CorrelatesConditions() bool {
+	return l.correlatesConditions.Load()
+}
+
 // PersistClientEvent persists an event a client sent as PersistEvent does, but
 // with its source as sent: one that names no source is recorded without one.
 func (l *RemoteProvider) PersistClientEvent(event events.Event, token string) (PersistedEvent, error) {
@@ -1810,15 +1837,17 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 		return PersistedEvent{}, ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
 	}
 	disposition := EventDisposition(resp.Header.Get(EventDispositionHeader))
+	if event.CorrelationKey != nil && *event.CorrelationKey != "" {
+		l.correlatesConditions.Store(disposition != "")
+	}
 	if disposition == "" && resp.StatusCode == http.StatusCreated {
 		disposition = EventCreated
 	}
 	l.Log.Debugf("remote provider recorded event (%s: %s)", EventDispositionHeader, disposition)
 
 	// The answer carries the event as stored, which for an incremented,
-	// resolved or replayed create is an earlier event with its own ID. A
-	// remote provider that answers with no event stored the event as sent.
-	stored := &event
+	// resolved or replayed create is an earlier event with its own ID.
+	var stored *events.Event
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		l.Log.Warn(ErrDataRead(err, "remote provider event response"))
@@ -1830,7 +1859,33 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 			stored = &decoded
 		}
 	}
+	if stored == nil {
+		if recordedNothingNew(disposition) {
+			// The create recorded nothing new, so the event as sent is not
+			// what is stored: its ID names no row. Without the stored event
+			// in the answer there is nothing to present; the caller reports
+			// nothing new for it.
+			l.Log.Warn(fmt.Errorf("remote provider answered %s: %s without the stored event", EventDispositionHeader, disposition))
+			return PersistedEvent{Disposition: disposition}, nil
+		}
+		// A remote provider that answers a create with no event stored the
+		// event as sent.
+		stored = &event
+	}
 	return PersistedEvent{Event: stored, Disposition: disposition}, nil
+}
+
+// recordedNothingNew reports whether a create with disposition recorded no
+// new event: it counted an occurrence on, or resolved, an open condition, or
+// it was a replay. The stored event is then an earlier one, never the event
+// sent.
+func recordedNothingNew(disposition EventDisposition) bool {
+	switch disposition {
+	case EventIncremented, EventResolved, EventReplayed:
+		return true
+	default:
+		return false
+	}
 }
 
 func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {
@@ -2645,6 +2700,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, patternID))
 	q := remoteProviderURL.Query()
 	q.Set("metrics", includeMetrics)
+	remoteProviderURL.RawQuery = q.Encode()
 
 	l.Log.Debug("constructed design url: ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
@@ -2803,7 +2859,7 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryPatternsCatalog)
 
-	l.Log.Info("attempting to pubish design with id: ", publishPatternRequest.ID)
+	l.Log.Info("attempting to publish design with id: ", publishPatternRequest.ID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	l.Log.Debug("constructed design url: ", remoteProviderURL.String())
@@ -3382,7 +3438,7 @@ func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRe
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryFiltersCatalog)
 
-	l.Log.Info("attempting to pubish filter with id: ", publishFilterRequest.ID)
+	l.Log.Info("attempting to publish filter with id: ", publishFilterRequest.ID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	l.Log.Debug("constructed filter url: ", remoteProviderURL.String())
@@ -4514,10 +4570,13 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error) {
 	l.Log.Info("attempting to request remote provider")
 	// gets the requested path from user_account extension UI in Meshery UI
-	// splits the requested path into '/api/extensions' and '/<remote-provider-endpoint>'
+	// validates that the path begins with '/api/extensions' and extracts '/<remote-provider-endpoint>'
 	p := req.URL.Path
-	split := strings.Split(p, "/api/extensions")
-	path := split[1]
+	const extensionsPrefix = "/api/extensions"
+	if p != extensionsPrefix && !strings.HasPrefix(p, extensionsPrefix+"/") {
+		return nil, ErrInvalidExtensionProxyPath(p)
+	}
+	path := strings.TrimPrefix(p, extensionsPrefix)
 	// gets the available query parameters
 	q := req.URL.Query().Encode()
 	if len(q) > 0 {
@@ -4783,6 +4842,38 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID c
 
 	l.Log.Debug(string(bdr))
 	return nil, resp.StatusCode, ErrUpdateConnectionStatus(fmt.Errorf("unable to update connection with id %s", connectionID), resp.StatusCode)
+}
+
+// UpdateConnectionStatusIf updates a connection's status to newStatus only
+// when its stored status is one of fromStatuses, and reports whether the
+// write applied. The remote provider has no conditional-update API, so
+// this is best-effort: the stored status is read and compared
+// immediately before the PUT, and a status change landing between the
+// read and the PUT can still slip through. The reporting-path re-check
+// does not cover that window: the PUT overwrites the intervening
+// change, so the gate re-reads the status the PUT already wrote and
+// passes. The gate only covers the window after the PUT, up to the
+// report. Closing the read-to-PUT window needs a conditional-update API
+// on the remote side, tracked as a follow-up to issue #23248; until
+// then, callers must not rely on this alone for the remote path.
+func (l *RemoteProvider) UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
+	current, _, err := l.GetConnectionByID(token, connectionID)
+	if err != nil {
+		return false, nil, err
+	}
+	if current == nil {
+		return false, nil, nil
+	}
+	for _, fromStatus := range fromStatuses {
+		if current.Status == fromStatus {
+			updated, _, err := l.UpdateConnectionStatusByID(token, connectionID, newStatus)
+			if err != nil {
+				return false, nil, err
+			}
+			return true, updated, nil
+		}
+	}
+	return false, current, nil
 }
 
 // UpdateConnection - to update an existing connection

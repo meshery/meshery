@@ -21,6 +21,17 @@ func TestCreateEnvironment(t *testing.T) {
 	// Test scenarios for environment creation
 	tests := []utils.MesheryCommandTest{
 		{
+			Name:             "given unexpected positional argument when environment create then throw error",
+			Args:             []string{"create", "extra-arg", "--name", testConstants["environmentName"], "--description", "integration test", "--orgId", testConstants["orgId"]},
+			URL:              "/api/environments",
+			HttpMethod:       "POST",
+			Fixture:          "",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", createUsageMsg)),
+		},
+		{
 			Name:             "given no flags provided when environment create then throw error",
 			Args:             []string{"create"},
 			URL:              "/api/environments",

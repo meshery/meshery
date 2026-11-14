@@ -78,15 +78,21 @@ func init() {
 	EnvironmentCmd.AddCommand(availableSubcommands...)
 }
 
+var runSelectPrompt = utils.RunSelectPrompt
+
 // selectEnvironmentPrompt lets user to select an environment if environments are more than one
 func selectEnvironmentPrompt(environments []environment.Environment) (environment.Environment, error) {
+	if len(environments) == 0 {
+		return environment.Environment{}, nil
+	}
+
 	environmentNames := make([]string, len(environments))
 
 	for i, environment := range environments {
 		environmentNames[i] = fmt.Sprintf("ID: %s, Name: %s, Owner: %s, Organization: %s", environment.ID, environment.Name, environment.Owner, environment.OrganizationID)
 	}
 
-	i, err := utils.RunSelectPrompt("Select environment", environmentNames)
+	i, err := runSelectPrompt("Select environment", environmentNames)
 	if err != nil {
 		return environment.Environment{}, err
 	}

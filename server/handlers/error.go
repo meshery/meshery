@@ -241,6 +241,7 @@ const (
 	ErrFetchProfilesCode         = "meshery-server-1464"
 	ErrResetInProgressCode       = "meshery-server-1481"
 	ErrInvalidClientEventCode    = "meshery-server-1489"
+	ErrNilProviderCode           = "meshery-server-1492"
 )
 
 var (
@@ -355,7 +356,11 @@ func ErrPatternDeploy(err error, patternName string) error {
 }
 
 func ErrRequestBody(err error) error {
-	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to read the request body"}, []string{err.Error()}, []string{"Request body is empty or faulty"}, []string{"Check if the request is sent with proper values"})
+	errStr := ""
+	if err != nil {
+		errStr = err.Error()
+	}
+	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to read the request body"}, []string{errStr}, []string{"Request body is empty or faulty"}, []string{"Check if the request is sent with proper values"})
 }
 
 func ErrParseBool(err error, obj string) error {
@@ -484,6 +489,9 @@ func ErrFailToDelete(err error, obj string) error {
 }
 
 func ErrBlankName(err error) error {
+	if err == nil {
+		err = fmt.Errorf("test name is empty")
+	}
 	return errors.New(ErrBlankNameCode, errors.Alert, []string{"Error: name field is blank."}, []string{err.Error()}, []string{"Load test name empty or not valid."}, []string{"Provide a name for the test."})
 }
 
@@ -691,7 +699,11 @@ func ErrRemoteApplication(err error) error {
 }
 
 func ErrClonePattern(err error) error {
-	return errors.New(ErrClonePatternCode, errors.Alert, []string{"Error failed to clone design"}, []string{err.Error()}, []string{"Failed to clone design with the given ID"}, []string{"Check if the design ID is correct and the design is published"})
+	errStr := ""
+	if err != nil {
+		errStr = err.Error()
+	}
+	return errors.New(ErrClonePatternCode, errors.Alert, []string{"Error failed to clone design"}, []string{errStr}, []string{"Failed to clone design with the given ID"}, []string{"Check if the design ID is correct and the design is published"})
 }
 
 func ErrCloneFilter(err error) error {
@@ -1264,5 +1276,16 @@ func ErrInvalidClientEvent(err error) error {
 		[]string{err.Error()},
 		[]string{"A field breaks the meshery/schemas event contract: a correlationKey, source or type outside 1 to 255 characters, an occurrenceCount below 1, a lastSeenAt before firstSeenAt, a specversion other than 1.0, or a traceId or parentId that is not W3C Trace Context hex", "A metadata.error object carrying a lowercase code key breaks the schemas EventError contract: a value of the wrong JSON type or an unknown key, an empty code, a severity that is not an error severity, too many causes or remediations, a duplicate cause id, one remediation id naming two different remediations, an automatic or requiresApproval actionPolicy without an action, flat probableCause or suggestedRemediation lists that are not the ones derived from probableCauses, or a matchedCauses entry whose causeId is malformed, is not one of probableCauses, or whose confidence is outside 0 to 1. The long description names each failing field path"},
 		[]string{"Send the fields as the schemas EventPayload defines them, or omit the ones the client does not set", "Send metadata.error as the schemas EventError shape (code, shortDescription and the other defined keys only), or drop it when the client has no structured error to attach"},
+	)
+}
+
+func ErrNilProvider() error {
+	return errors.New(
+		ErrNilProviderCode,
+		errors.Alert,
+		[]string{"Provider not initialized"},
+		[]string{"Provider instance passed to the handler is nil"},
+		[]string{"The handler was invoked without an initialized provider instance"},
+		[]string{"Ensure the provider is properly initialized before handling the request"},
 	)
 }

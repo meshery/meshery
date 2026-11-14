@@ -14,6 +14,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/meshery/schemas/models/core"
 	"k8s.io/client-go/util/homedir"
@@ -423,6 +424,7 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 		Name:           environmentPayload.Name,
 		OrganizationID: orgId,
 		Owner:          &uuid.Nil, // "Meshery"
+		Purpose:        environment.EnvironmentPurposeUser,
 		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.SaveEnvironment(environment)
@@ -433,17 +435,22 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 	if err != nil {
 		return nil, ErrInvalidUUID(err)
 	}
+	existingEnv, err := l.EnvironmentPersister.GetEnvironment(core.Uuid(id))
+	if err != nil {
+		return nil, err
+	}
 	orgId := core.Uuid(environmentPayload.OrgID)
-	environment := &environment.Environment{
+	env := &environment.Environment{
 		ID:             id,
-		CreatedAt:      time.Now(),
+		CreatedAt:      existingEnv.CreatedAt,
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
 		OrganizationID: orgId,
-		Owner:          &uuid.Nil, // "Meshery"
+		Owner:          existingEnv.Owner,
+		Purpose:        existingEnv.Purpose,
 		UpdatedAt:      time.Now(),
 	}
-	return l.EnvironmentPersister.UpdateEnvironmentByID(environment)
+	return l.EnvironmentPersister.UpdateEnvironmentByID(env)
 }
 
 func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
@@ -515,10 +522,15 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 		connID = uuid.FromStringOrNil(id)
 	}
 
+	var mesheryInstanceID string
+	if k8sContext.MesheryInstanceID != nil {
+		mesheryInstanceID = k8sContext.MesheryInstanceID.String()
+	}
+
 	_metadata := map[string]string{
 		"id":                 k8sContext.ID,
 		"server":             k8sContext.Server,
-		"mesheryInstanceId":  k8sContext.MesheryInstanceID.String(),
+		"mesheryInstanceId":  mesheryInstanceID,
 		"deploymentType":     k8sContext.DeploymentType,
 		"version":            k8sContext.Version,
 		"name":               k8sContext.Name,
@@ -559,10 +571,15 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 	if err != nil {
 		return connections.Connection{}, fmt.Errorf("error in saving k8s context %v", err)
 	}
+	if connectionCreated == nil {
+		return connections.Connection{}, ErrPersistConnection(fmt.Errorf("error in saving k8s context: nil connection returned"))
+	}
 
 	k8sContext.ConnectionID = connID.String()
 
-	_, _ = l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+	if l.MesheryK8sContextPersister != nil {
+		_, _ = l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+	}
 	return *connectionCreated, nil
 }
 
@@ -587,9 +604,26 @@ func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order s
 	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
 }
 
+// GetK8sContext returns the Kubernetes context associated with the given ID or ConnectionID.
+// It searches for an exact ID match first before falling back to a dash-normalized form.
+// Returns ErrDBConnection if MesheryK8sContextPersister is uninitialized.
 func (l *DefaultLocalProvider) GetK8sContext(_, id string) (K8sContext, error) {
+	if l.MesheryK8sContextPersister == nil {
+		return K8sContext{}, ErrDBConnection
+	}
+	// Try the exact ID (or ConnectionID fallback in persister) first.
+	k8sCtx, err := l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+	if err == nil {
+		return k8sCtx, nil
+	}
+	// Fall back to the legacy dash-normalized UUID form if different from the exact ID.
 	idStrWithoutDashes := strings.ReplaceAll(id, "-", "")
-	return l.MesheryK8sContextPersister.GetMesheryK8sContext(idStrWithoutDashes)
+	if idStrWithoutDashes != id {
+		if k8sCtxNorm, errNorm := l.MesheryK8sContextPersister.GetMesheryK8sContext(idStrWithoutDashes); errNorm == nil {
+			return k8sCtxNorm, nil
+		}
+	}
+	return K8sContext{}, err
 }
 
 func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
@@ -683,12 +717,13 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 	}
 	user, _ := l.GetUserDetails(req)
 	pref, _ := l.ReadFromPersister(user.ID.String())
-	if !pref.AnonymousPerfResults {
-		return "", nil
-	}
 
-	l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
-	resultID, _ := l.shipResults(req, data)
+	// The preference only controls sending the result. It is always saved locally.
+	var resultID string
+	if pref.AnonymousPerfResults {
+		l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
+		resultID, _ = l.shipResults(req, data)
+	}
 
 	key := uuid.FromStringOrNil(resultID)
 	l.Log.Debug(fmt.Sprintf("key: %s, is nil: %t", key.String(), (key == uuid.Nil)))
@@ -786,6 +821,8 @@ func (l *DefaultLocalProvider) PublishEventToProvider(_ string, _ events.Event) 
 
 // PublishMetrics - publishes metrics to the provider backend asynchronously
 func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
+	const maxPublishMetricsErrorBodyBytes = 1024
+
 	data, err := json.Marshal(result)
 	if err != nil {
 		return ErrMarshal(err, "Meshery Metrics for shipping")
@@ -812,12 +849,36 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 		l.Log.Info("metrics published to remote provider")
 		return nil
 	}
-	_, err = io.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(io.LimitReader(resp.Body, maxPublishMetricsErrorBodyBytes+1))
 	if err != nil {
 		l.Log.Warn(ErrDataRead(err, "body"))
 		return nil
 	}
-	l.Log.Warn(ErrDoRequest(err, resp.Request.Method, remoteProviderURL.String()))
+	truncated := len(bdr) > maxPublishMetricsErrorBodyBytes
+	if truncated {
+		bdr = bdr[:maxPublishMetricsErrorBodyBytes]
+		for i := len(bdr) - 1; i >= 0 && len(bdr)-i < utf8.UTFMax; i-- {
+			if utf8.RuneStart(bdr[i]) {
+				if !utf8.FullRune(bdr[i:]) {
+					bdr = bdr[:i]
+				}
+				break
+			}
+		}
+	}
+	obj := "metrics"
+	if body := strings.TrimSpace(string(bdr)); body != "" {
+		if truncated {
+			obj = fmt.Sprintf("metrics: %s... (truncated)", body)
+		} else {
+			obj = fmt.Sprintf("metrics: %s", body)
+		}
+	}
+	l.Log.Warn(ErrPost(
+		fmt.Errorf("unexpected HTTP status %d %s from %s %s", resp.StatusCode, http.StatusText(resp.StatusCode), cReq.Method, remoteProviderURL.String()),
+		obj,
+		resp.StatusCode,
+	))
 	return nil
 }
 
@@ -1255,12 +1316,20 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfi
 		performanceProfile.Metadata = core.Map{}
 	}
 
-	data, err := json.Marshal(performanceProfile)
+	if err := l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile); err != nil {
+		return nil, err
+	}
+
+	// Respond with the stored profile: an edit does not carry createdAt.
+	stored, err := l.PerformanceProfilesPersister.GetPerformanceProfile(performanceProfile.ID)
+	if err != nil {
+		return nil, err
+	}
+	data, err := json.Marshal(stored)
 	if err != nil {
 		return nil, ErrMarshal(err, "Perf Profile for persisting")
 	}
-
-	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile)
+	return data, nil
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
@@ -1402,6 +1471,23 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 	return updatedConnection, http.StatusOK, nil
 }
 
+// UpdateConnectionStatusIf updates a connection's status to newStatus only
+// when its stored status is one of fromStatuses, and reports whether the
+// write applied. The check and the write are a single UPDATE ... WHERE
+// status IN (...) statement in the local store, so no concurrent status
+// change can slip between them (issue #23248).
+func (l *DefaultLocalProvider) UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
+	applied, updatedConnection, err := l.ConnectionPersister.UpdateConnectionStatusIf(connectionID, fromStatuses, newStatus)
+	if err != nil {
+		return false, nil, err
+	}
+	return applied, updatedConnection, nil
+}
+
+// UpdateConnectionById updates an existing connection identified by connId (or
+// conn.ID when connId is not set), backfilling any fields omitted by the
+// partial payload and preserving the connection's original creation time and
+// owner.
 func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error) {
 	// Always persist against the connection identified by the URL id. A payload
 	// that omits `id` (e.g. an RTK mutation that only forwards status+metadata)
@@ -1420,10 +1506,16 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 	conn.ID = id
 	// A partial payload (e.g. the UI's connect action sending only {status}, or an
 	// FSM status transition sending only {kind, metadata, status}) must not
-	// clobber the columns it omits — UpdateConnection persists via GORM's Save(),
-	// which writes every column. Backfill omitted fields from the persisted row.
+	// clobber the columns it omits — UpdateConnection writes every column.
+	// Backfill omitted fields and immutable row metadata from the persisted row.
+	createdAt := time.Now()
+	var owner *core.Uuid
 	if existing, gerr := l.ConnectionPersister.GetConnection(id, ""); gerr == nil && existing != nil {
 		connections.MergePayloadOntoExisting(conn, existing)
+		if !existing.CreatedAt.IsZero() {
+			createdAt = existing.CreatedAt
+		}
+		owner = existing.Owner
 	}
 	connection := connections.Connection{
 		ID:             id,
@@ -1433,7 +1525,8 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 		Kind:           conn.Kind,
 		Metadata:       conn.MetaData,
 		Status:         conn.Status,
-		CreatedAt:      time.Now(),
+		Owner:          owner,
+		CreatedAt:      createdAt,
 		UpdatedAt:      time.Now(),
 		CredentialID:   conn.CredentialID,
 	}
@@ -1673,21 +1766,40 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 
 func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
 	updatedCredential := &Credential{}
-	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Updates(credential)
-	if db.Error != nil {
-		return nil, fmt.Errorf("error updating user credential: %v", db.Error)
-	}
-
-	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserId, credential.ID).First(updatedCredential).Error; err != nil {
-		return nil, fmt.Errorf("error getting updated user credential: %v", err)
+	err := l.GetGenericPersister().Transaction(func(tx *gorm.DB) error {
+		live := tx.Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Session(&gorm.Session{})
+		// Updates on a missing or deleted row matches nothing and is not an
+		// error, so look the credential up first.
+		if err := live.First(updatedCredential).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return ErrResultNotFound(fmt.Errorf("credential with id %s not found", credential.ID))
+			}
+			return fmt.Errorf("error getting user credential: %v", err)
+		}
+		if err := live.Updates(credential).Error; err != nil {
+			return fmt.Errorf("error updating user credential: %v", err)
+		}
+		if err := live.First(updatedCredential).Error; err != nil {
+			return fmt.Errorf("error getting updated user credential: %v", err)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 	return updatedCredential, nil
 }
 
 func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialID core.Uuid) (*Credential, error) {
 	delCredential := &Credential{}
-	if err := l.GetGenericPersister().Model(&Credential{}).Where("id = ?", credentialID).Update("deleted_at", time.Now()).Error; err != nil {
-		return nil, err
+	// Only a live credential can be deleted. Matching deleted rows too would
+	// report success for an id that is already gone and move its deleted_at.
+	result := l.GetGenericPersister().Model(&Credential{}).Where("id = ? AND deleted_at is NULL", credentialID).Update("deleted_at", time.Now())
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return nil, ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
 	}
 	if err := l.GetGenericPersister().Where("id = ?", credentialID).First(delCredential).Error; err != nil {
 		return nil, err
