@@ -127,8 +127,11 @@ const EnvironmentConnections = ({ environment, connections, onAddConnection }) =
 
 const EnvironmentCard = ({ environment, onAddConnection }) => {
   const theme = useTheme();
+  // Without a page size the server returns only its first 10 connections, of
+  // any kind, and the Kubernetes ones are picked out of that page below.
   const { data, isLoading } = useGetEnvironmentConnectionsQuery({
     environmentId: environment.id,
+    pagesize: 'all',
   });
   const dispatch = useDispatch();
   const connections =
