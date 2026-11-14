@@ -133,8 +133,11 @@ ol {
   & #breadcrumbs {
     font-size: .9rem;
     line-height: 1.15rem;
+    flex-direction: row;
+    flex-wrap: wrap;
     & .breadcrumb-item + .breadcrumb-item::before {
       content: "/";
+      padding: 0 .25rem;
     }
     & a {
       color: var(--color-grey-dark);
