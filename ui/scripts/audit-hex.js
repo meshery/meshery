@@ -29,6 +29,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const ts = require('typescript');
 
 const UI_ROOT = path.resolve(__dirname, '..');
 
@@ -99,9 +100,66 @@ function countMatches(src, pattern) {
   return count;
 }
 
+function maskComments(src) {
+  const chars = src.split('');
+  const scanner = ts.createScanner(
+    ts.ScriptTarget.Latest,
+    false,
+    ts.LanguageVariant.JSX,
+    src,
+  );
+  const templateExpressionBraceDepths = [];
+
+  while (true) {
+    let kind = scanner.scan();
+    if (kind === ts.SyntaxKind.EndOfFileToken) break;
+
+    if (kind === ts.SyntaxKind.TemplateHead) {
+      templateExpressionBraceDepths.push(0);
+    } else if (
+      templateExpressionBraceDepths.length > 0 &&
+      kind === ts.SyntaxKind.OpenBraceToken
+    ) {
+      templateExpressionBraceDepths[
+        templateExpressionBraceDepths.length - 1
+      ]++;
+    } else if (
+      templateExpressionBraceDepths.length > 0 &&
+      kind === ts.SyntaxKind.CloseBraceToken
+    ) {
+      const last = templateExpressionBraceDepths.length - 1;
+
+      if (templateExpressionBraceDepths[last] > 0) {
+        templateExpressionBraceDepths[last]--;
+      } else {
+        kind = scanner.reScanTemplateToken();
+
+        if (kind === ts.SyntaxKind.TemplateTail) {
+          templateExpressionBraceDepths.pop();
+        }
+      }
+    }
+
+    if (
+      kind === ts.SyntaxKind.SingleLineCommentTrivia ||
+      kind === ts.SyntaxKind.MultiLineCommentTrivia
+    ) {
+      const start = scanner.getTokenPos();
+      const end = scanner.getTextPos();
+
+      for (let i = start; i < end; i++) {
+        if (chars[i] !== '\n' && chars[i] !== '\r') {
+          chars[i] = ' ';
+        }
+      }
+    }
+  }
+
+  return chars.join('');
+}
 function scanFile(file) {
   const src = fs.readFileSync(file, 'utf8');
-  const hex = countMatches(src, HEX_PATTERN);
+  const hex = countMatches(maskComments(src), HEX_PATTERN);
   const rgb = countMatches(src, RGB_PATTERN);
   return { hex, rgb };
 }

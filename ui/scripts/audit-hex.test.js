@@ -8,6 +8,11 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const productionScript = path.join(__dirname, 'audit-hex.js');
+const typescriptModuleRoot = path.resolve(
+  path.dirname(require.resolve('typescript')),
+  '..',
+  '..',
+);
 
 function writeFile(root, relativePath, contents) {
   const file = path.join(root, relativePath);
@@ -31,11 +36,46 @@ function runAudit(fixture) {
   const script = path.join(fixture, 'ui', 'scripts', 'audit-hex.js');
   const result = spawnSync(process.execPath, [script, '--json'], {
     encoding: 'utf8',
+    env: {
+      ...process.env,
+      NODE_PATH: [typescriptModuleRoot, process.env.NODE_PATH]
+        .filter(Boolean)
+        .join(path.delimiter),
+    },
   });
 
   assert.equal(result.status, 0, result.stderr);
   return JSON.parse(result.stdout);
 }
+
+test('ignores hex-like text in comments but preserves actual literals', (t) => {
+  const fixture = createFixture(t);
+
+  writeFile(
+    fixture,
+    'ui/components/comment-cases.tsx',
+    [
+      '// React error #185',
+      '/* Documentation reference #123456 */',
+      "const stringColor = '#F91313';",
+      'const templateColor = `#AABBCC`;',
+      'const jsx = <div title="#ABCDEF" />;',
+      'const commentLikeString = "/* #654321 */";',
+      'const templateInterpolation = `${ /* #112233 */ "#445566" }`;',
+      'const slashLikeString = "https://example.com/path//segment#778899";',
+      'const jsxComment = <div>{/* #987654 */}</div>;',
+      '',
+    ].join('\n'),
+  );
+
+  const result = runAudit(fixture);
+
+  assert.equal(result.files, 1);
+  assert.equal(result.hex, 6);
+  assert.equal(result.rgb, 0);
+  assert.equal(result.matches, 6);
+  assert.equal(result.offenders[0].hex, 6);
+});
 
 test('excludes test files and nested __tests__ directories', (t) => {
   const fixture = createFixture(t);
