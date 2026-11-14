@@ -133,11 +133,18 @@ ol {
   & #breadcrumbs {
     font-size: .9rem;
     line-height: 1.15rem;
+    & .breadcrumb-item + .breadcrumb-item::before {
+      content: "/";
+    }
     & a {
       color: var(--color-grey-dark);
       transition: all 0.3s;
       &:hover {
         color: var(--color-secondary-dark);
+      }
+      &:focus-visible {
+        outline: 2px solid var(--color-secondary-dark);
+        outline-offset: 2px;
       }
     }
   }
