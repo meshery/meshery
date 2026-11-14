@@ -77,3 +77,88 @@ func TestSplitAndTrim(t *testing.T) {
 		})
 	}
 }
+
+func TestWriteSVGHelper_TraversalGuard(t *testing.T) {
+	tests := []struct {
+		name     string
+		dirname  string
+		filename string
+		wantSafe bool
+	}{
+		{
+			name:     "valid dirname and filename",
+			dirname:  "test-model",
+			filename: "test-kind",
+			wantSafe: true,
+		},
+		{
+			name:     "traversal dirname relative parent",
+			dirname:  "../outside",
+			filename: "test-kind",
+			wantSafe: false,
+		},
+		{
+			name:     "traversal dirname deep dotdot",
+			dirname:  "../../../../etc",
+			filename: "test-kind",
+			wantSafe: false,
+		},
+		{
+			name:     "traversal dirname single dot",
+			dirname:  ".",
+			filename: "test-kind",
+			wantSafe: false,
+		},
+		{
+			name:     "traversal dirname double dot",
+			dirname:  "..",
+			filename: "test-kind",
+			wantSafe: false,
+		},
+		{
+			name:     "traversal filename dotdot",
+			dirname:  "test-model",
+			filename: "../evil",
+			wantSafe: false,
+		},
+		{
+			name:     "traversal filename nested path",
+			dirname:  "test-model",
+			filename: "foo/bar",
+			wantSafe: false,
+		},
+		{
+			name:     "traversal filename windows backslash",
+			dirname:  "test-model",
+			filename: `..\evil`,
+			wantSafe: false,
+		},
+		{
+			name:     "empty dirname",
+			dirname:  "",
+			filename: "test-kind",
+			wantSafe: false,
+		},
+		{
+			name:     "empty filename",
+			dirname:  "test-model",
+			filename: "",
+			wantSafe: false,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			color, white, complete := writeSVGHelper("<svg></svg>", "<svg></svg>", "<svg></svg>", tc.dirname, tc.filename)
+			if tc.wantSafe {
+				if color == "" || white == "" || complete == "" {
+					t.Errorf("writeSVGHelper(%q, %q) returned empty paths for safe input: color=%q, white=%q, complete=%q", tc.dirname, tc.filename, color, white, complete)
+				}
+			} else {
+				if color != "" || white != "" || complete != "" {
+					t.Errorf("writeSVGHelper(%q, %q) returned non-empty paths for unsafe input: color=%q, white=%q, complete=%q", tc.dirname, tc.filename, color, white, complete)
+				}
+			}
+		})
+	}
+}

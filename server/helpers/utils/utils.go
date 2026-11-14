@@ -155,9 +155,20 @@ var (
 	uiSVGMutex sync.Mutex
 )
 
-func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename string) (svgColorPath, svgWhitePath, svgCompletePath string) {
+func isSafePathComponent(s string) bool {
+	if s == "" {
+		return false
+	}
+	return s != "." && s != ".." && filepath.Base(s) == s && !strings.ContainsAny(s, `/\`)
+}
 
-	filename = strings.ToLower(filename)
+func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename string) (svgColorPath, svgWhitePath, svgCompletePath string) {
+	filename = strings.ToLower(strings.TrimSpace(filename))
+	dirname = strings.TrimSpace(dirname)
+	if !isSafePathComponent(dirname) || !isSafePathComponent(filename) {
+		return
+	}
+
 	cleanedUI := filepath.Clean(UI)
 	targetDir := filepath.Clean(filepath.Join(UI, dirname))
 	rel, err := filepath.Rel(cleanedUI, targetDir)
@@ -174,7 +185,10 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 		}
 	}()
 	if svgColor != "" {
-		path := filepath.Join(targetDir, "color")
+		path := filepath.Clean(filepath.Join(targetDir, "color"))
+		if relSub, err := filepath.Rel(targetDir, path); err != nil || strings.HasPrefix(relSub, "..") {
+			return
+		}
 		err := os.MkdirAll(path, 0755)
 		if err != nil {
 			fmt.Println(err)
@@ -182,7 +196,12 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 		}
 		successCreatingDirectory = true
 
-		err = os.WriteFile(filepath.Join(path, filename+"-color.svg"), []byte(svgColor), 0644)
+		filePath := filepath.Clean(filepath.Join(path, filename+"-color.svg"))
+		if relFile, err := filepath.Rel(path, filePath); err != nil || strings.HasPrefix(relFile, "..") || filepath.Dir(filePath) != path {
+			return
+		}
+
+		err = os.WriteFile(filePath, []byte(svgColor), 0644)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -192,7 +211,10 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 	}
 
 	if svgWhite != "" {
-		path := filepath.Join(targetDir, "white")
+		path := filepath.Clean(filepath.Join(targetDir, "white"))
+		if relSub, err := filepath.Rel(targetDir, path); err != nil || strings.HasPrefix(relSub, "..") {
+			return
+		}
 		err := os.MkdirAll(path, 0755)
 		if err != nil {
 			fmt.Println(err)
@@ -200,7 +222,12 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 		}
 		successCreatingDirectory = true
 
-		err = os.WriteFile(filepath.Join(path, filename+"-white.svg"), []byte(svgWhite), 0644)
+		filePath := filepath.Clean(filepath.Join(path, filename+"-white.svg"))
+		if relFile, err := filepath.Rel(path, filePath); err != nil || strings.HasPrefix(relFile, "..") || filepath.Dir(filePath) != path {
+			return
+		}
+
+		err = os.WriteFile(filePath, []byte(svgWhite), 0644)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -209,7 +236,10 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 
 	}
 	if svgComplete != "" {
-		path := filepath.Join(targetDir, "complete")
+		path := filepath.Clean(filepath.Join(targetDir, "complete"))
+		if relSub, err := filepath.Rel(targetDir, path); err != nil || strings.HasPrefix(relSub, "..") {
+			return
+		}
 		err := os.MkdirAll(path, 0755)
 		if err != nil {
 			fmt.Println(err)
@@ -217,7 +247,12 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 		}
 		successCreatingDirectory = true
 
-		err = os.WriteFile(filepath.Join(path, filename+"-complete.svg"), []byte(svgComplete), 0644)
+		filePath := filepath.Clean(filepath.Join(path, filename+"-complete.svg"))
+		if relFile, err := filepath.Rel(path, filePath); err != nil || strings.HasPrefix(relFile, "..") || filepath.Dir(filePath) != path {
+			return
+		}
+
+		err = os.WriteFile(filePath, []byte(svgComplete), 0644)
 		if err != nil {
 			fmt.Println(err)
 			return
