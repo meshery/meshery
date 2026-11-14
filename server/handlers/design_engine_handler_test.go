@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	patterncore "github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshery/server/models/pattern/planner"
 	"github.com/meshery/meshkit/logger"
 	meshkube "github.com/meshery/meshkit/utils/kubernetes"
@@ -446,4 +447,152 @@ func TestDryRunComponent_PreservesComponentOnDelete(t *testing.T) {
 	if cmp.Configuration["spec"] == nil {
 		t.Errorf("original component configuration was mutated: %v", cmp.Configuration)
 	}
+}
+
+// TestDryRunKeepsResultsForComponentsSharingADisplayName guards issue #23387: DryRun keyed results by
+// display name, so of two components named "web" only the last one's result survived. Here the rejected
+// Ingress came first and its failure was replaced by the Namespace's success, reporting the design as
+// valid. Every component must keep its own result, and a unique name must keep its plain key.
+func TestDryRunKeepsResultsForComponentsSharingADisplayName(t *testing.T) {
+	cluster := newFakeCluster(t, false, func(path string, body []byte) (int, interface{}) {
+		if bytes.Contains(body, []byte(`"name":"web"`)) && bytes.Contains(body, []byte(`"kind":"Ingress"`)) {
+			return http.StatusUnprocessableEntity, metav1.Status{
+				TypeMeta: metav1.TypeMeta{Kind: "Status", APIVersion: "v1"},
+				Status:   metav1.StatusFailure,
+				Reason:   metav1.StatusReasonInvalid,
+				Code:     http.StatusUnprocessableEntity,
+				Message:  `Ingress.networking.k8s.io "web" is invalid: spec.rules[0].host: Invalid value`,
+			}
+		}
+		return echoDryRun(path, body)
+	})
+
+	rejected := dryRunTestComponent("web", "Ingress", "networking.k8s.io/v1", map[string]interface{}{
+		"metadata": map[string]interface{}{"namespace": "default"},
+	})
+	accepted := dryRunTestComponent("web", "Namespace", "v1", nil)
+	unique := dryRunTestComponent("api", "Ingress", "networking.k8s.io/v1", map[string]interface{}{
+		"metadata": map[string]interface{}{"namespace": "default"},
+	})
+
+	sap := newMutateActionProvider(t)
+	sap.ctxTokubeconfig = map[string]string{"ctx-a": cluster.kubeconfig()}
+
+	resp, err := sap.DryRun([]*component.ComponentDefinition{rejected, accepted, unique})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if len(resp) != 3 {
+		t.Fatalf("expected a result for each of the 3 components, got %d: %v", len(resp), resultKeys(resp))
+	}
+	if got := resp["web (Ingress)"]["ctx-a"]; got.Success || got.Error == nil {
+		t.Errorf("expected the rejected Ingress to be reported as failed, got success=%v error=%v", got.Success, got.Error)
+	}
+	if got := resp["web (Namespace)"]["ctx-a"]; !got.Success {
+		t.Errorf("expected the Namespace to pass, got error %+v", got.Error)
+	}
+	if got := resp["api"]["ctx-a"]; !got.Success {
+		t.Errorf("expected the uniquely named Ingress to keep its plain key and pass, got %+v (keys %v)", got.Error, resultKeys(resp))
+	}
+}
+
+func resultKeys(resp map[string]map[string]patterncore.DryRunResponseWrapper) []string {
+	keys := make([]string, 0, len(resp))
+	for k := range resp {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
+// TestDryRunResultKeys pins how DryRun names each component's results: a unique display name is kept
+// as is (the format consumers already read), a shared name is qualified with the kind, a shared name
+// and kind is qualified with the component ID, and no two components ever share a key.
+func TestDryRunResultKeys(t *testing.T) {
+	deployA := mutateTestComponent("web", "Deployment")
+	deployB := mutateTestComponent("web", "Deployment")
+	service := mutateTestComponent("web", "Service")
+	api := mutateTestComponent("api", "Deployment")
+
+	t.Run("unique names are unchanged", func(t *testing.T) {
+		got := dryRunResultKeys([]*component.ComponentDefinition{api, service})
+		want := []string{"api", "web"}
+		for i := range want {
+			if got[i] != want[i] {
+				t.Errorf("key %d: got %q, want %q", i, got[i], want[i])
+			}
+		}
+	})
+
+	t.Run("shared names are qualified by kind, and by id when the kind is shared too", func(t *testing.T) {
+		got := dryRunResultKeys([]*component.ComponentDefinition{deployA, deployB, service, api})
+		want := []string{
+			"web (Deployment, " + deployA.ID.String() + ")",
+			"web (Deployment, " + deployB.ID.String() + ")",
+			"web (Service)",
+			"api",
+		}
+		for i := range want {
+			if got[i] != want[i] {
+				t.Errorf("key %d: got %q, want %q", i, got[i], want[i])
+			}
+		}
+	})
+
+	t.Run("keys are unique even when a qualified key equals another display name", func(t *testing.T) {
+		literal := mutateTestComponent("web (Service)", "ConfigMap")
+		comps := []*component.ComponentDefinition{literal, service, mutateTestComponent("web", "Deployment")}
+		assertDistinctKeysKeepingUniqueNames(t, comps)
+	})
+
+	// A shared name qualified early must not take a key that a later component uses as its own
+	// display name: unique display names are reserved before any qualified key is chosen.
+	t.Run("a unique display name is kept even when a qualified key would claim it first", func(t *testing.T) {
+		svc := mutateTestComponent("web", "Service")
+		deploy := mutateTestComponent("web", "Deployment")
+		literal := mutateTestComponent("web (Service)", "ConfigMap")
+		got := assertDistinctKeysKeepingUniqueNames(t, []*component.ComponentDefinition{svc, deploy, literal})
+		if got[2] != "web (Service)" {
+			t.Errorf("the ConfigMap named %q was renamed to %q", literal.DisplayName, got[2])
+		}
+	})
+
+	// The ID-qualified fallback can itself equal another component's display name; it must be checked
+	// again rather than overwrite that component's result.
+	t.Run("an id-qualified fallback never collides with another display name", func(t *testing.T) {
+		svc := mutateTestComponent("web", "Service")
+		literal := mutateTestComponent("web (Service)", "ConfigMap")
+		// Display names spelled like the ID-qualified keys a shared name can fall back to.
+		literalFallback := mutateTestComponent("web (Service) ("+svc.ID.String()+")", "Secret")
+		literalWithID := mutateTestComponent("web (Service, "+svc.ID.String()+")", "Secret")
+		deploy := mutateTestComponent("web", "Deployment")
+		assertDistinctKeysKeepingUniqueNames(t, []*component.ComponentDefinition{literal, literalFallback, literalWithID, svc, deploy})
+	})
+}
+
+// assertDistinctKeysKeepingUniqueNames checks the two guarantees DryRun relies on: every component gets a
+// key of its own, so no result overwrites another, and a display name no other component shares is kept
+// exactly. It returns the keys for further checks.
+func assertDistinctKeysKeepingUniqueNames(t *testing.T, comps []*component.ComponentDefinition) []string {
+	t.Helper()
+	got := dryRunResultKeys(comps)
+	if len(got) != len(comps) {
+		t.Fatalf("got %d keys for %d components", len(got), len(comps))
+	}
+
+	nameCount := map[string]int{}
+	for _, c := range comps {
+		nameCount[c.DisplayName]++
+	}
+	seen := map[string]bool{}
+	for i, k := range got {
+		if seen[k] {
+			t.Fatalf("duplicate key %q in %v", k, got)
+		}
+		seen[k] = true
+		if name := comps[i].DisplayName; nameCount[name] == 1 && k != name {
+			t.Errorf("unique display name %q was renamed to %q", name, k)
+		}
+	}
+	return got
 }
