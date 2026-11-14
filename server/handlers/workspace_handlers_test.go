@@ -373,6 +373,35 @@ func TestSaveWorkspaceHandler_PropagatesProviderStatus(t *testing.T) {
 	}
 }
 
+// TestGetWorkspacesHandler_InvalidPagination_ReturnsBadRequest asserts that a
+// rejected page or pagesize is answered with 400, not a provider-failure status.
+func TestGetWorkspacesHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	cases := []struct {
+		name     string
+		query    string
+		provider error
+	}{
+		{"page", "page=-1", models.ErrPageNumber(errors.New("bad page"))},
+		{"pagesize", "pagesize=abc", models.ErrPageSize(errors.New("bad pagesize"))},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := newWorkspaceFailingProvider(tc.provider)
+
+			req := httptest.NewRequest(http.MethodGet, "/api/workspaces?orgId=11111111-1111-1111-1111-111111111111&"+tc.query, nil)
+			req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+			rec := httptest.NewRecorder()
+
+			h.GetWorkspacesHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+			}
+		})
+	}
+}
+
 // TestGetWorkspacesHandler_PropagatesProviderStatus covers the read path.
 func TestGetWorkspacesHandler_PropagatesProviderStatus(t *testing.T) {
 	h := newTestHandler(t, map[string]models.Provider{}, "")

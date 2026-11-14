@@ -103,6 +103,10 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 	}
 	resp, err := provider.GetWorkspaces(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
 		handlerErr := ErrGetWorkspaces(err)
 		h.log.Error(handlerErr)
 		writeMeshkitError(w, handlerErr, providerStatus(err))

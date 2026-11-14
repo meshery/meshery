@@ -71,6 +71,10 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 	}
 	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
 		handlerErr := ErrGetEnvironments(err)
 		h.log.Error(handlerErr)
 		writeMeshkitError(w, handlerErr, providerStatus(err))

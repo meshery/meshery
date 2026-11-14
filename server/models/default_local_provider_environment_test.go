@@ -162,3 +162,29 @@ func TestDefaultLocalProvider_UpdateNonExistentEnvironmentReturnsNotFound(t *tes
 		t.Fatalf("expected ErrResultNotFoundCode (%s), got: %v", ErrResultNotFoundCode, err)
 	}
 }
+
+func TestDefaultLocalProvider_GetEnvironments_InvalidPagination(t *testing.T) {
+	provider := newTestLocalProviderWithEnvironmentDB(t)
+	orgID := uuid.Must(uuid.NewV4()).String()
+
+	tests := []struct {
+		name     string
+		page     string
+		pageSize string
+		wantCode string
+	}{
+		{"invalid page", "-1", "10", ErrPageNumberCode},
+		{"invalid pagesize", "0", "abc", ErrPageSizeCode},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := provider.GetEnvironments("", tc.page, tc.pageSize, "", "", "", orgID)
+			if err == nil {
+				t.Fatalf("expected an error for page=%q pagesize=%q, got nil", tc.page, tc.pageSize)
+			}
+			if got := mkerrors.GetCode(err); got != tc.wantCode {
+				t.Errorf("error code = %q, want %q (err: %v)", got, tc.wantCode, err)
+			}
+		})
+	}
+}
