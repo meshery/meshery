@@ -5220,16 +5220,17 @@ func (s *stallGuardReader) Read(p []byte) (int, error) {
 // TarXZ takes in a gzip stream and untars and uncompresses it to
 // the destination directory
 //
-// When the destination does not exist the archive is extracted into a staging
-// directory beside it and moved into place only once every entry has been
-// written. The callers skip the download whenever the destination exists, so
-// extracting in place would turn one truncated download into a permanently
-// broken install. When the destination already exists the archive is extracted
-// into it directly, as before.
+// The archive is always extracted into a staging directory beside the
+// destination and moved into place only once every entry has been written, never
+// into the destination itself. The callers skip the download whenever the
+// destination exists, so extracting in place would turn one truncated download
+// into a permanently broken install. It also means an install that another
+// login completed in the meantime is never touched: if the destination exists by
+// the time this one is done, that install is kept and this one is discarded.
 func TarXZ(gzipStream io.Reader, destination string) error {
-	if _, err := os.Stat(destination); err == nil {
-		return extractTarGz(gzipStream, destination)
-	}
+	// A trailing separator would make filepath.Dir return the destination itself
+	// and stage the archive inside it.
+	destination = filepath.Clean(destination)
 
 	parent := filepath.Dir(destination)
 	if err := os.MkdirAll(parent, 0755); err != nil {
@@ -5251,11 +5252,26 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 		return err
 	}
 
+	// os.Rename refuses to replace an existing directory, even an empty one, so
+	// look at what is already there. A destination with content is an install
+	// that another login completed first: keep it untouched and drop this one.
+	// An empty one, such as a directory made in advance, is replaced.
+	if entries, err := os.ReadDir(destination); err == nil {
+		if len(entries) > 0 {
+			_ = os.RemoveAll(staging)
+			return nil
+		}
+		if err := os.Remove(destination); err != nil {
+			_ = os.RemoveAll(staging)
+			return err
+		}
+	}
+
 	if err := os.Rename(staging, destination); err != nil {
 		_ = os.RemoveAll(staging)
-		// Two logins can race to install the same package. If the other one won,
-		// the package is in place and this call has nothing left to do.
-		if _, statErr := os.Stat(destination); statErr == nil {
+		// Another install can land between the check above and the rename. If a
+		// populated destination is there now, that install stands.
+		if entries, readErr := os.ReadDir(destination); readErr == nil && len(entries) > 0 {
 			return nil
 		}
 		return err
@@ -5320,7 +5336,17 @@ func extractTarGz(gzipStream io.Reader, destination string) error {
 		// A PAX global header describes the archive as a whole (GitHub's
 		// /archive tarballs and `git archive` begin with one, carrying the
 		// commit id) and holds no file.
+		//
+		// Go's reader does not apply global records to later entries, but the
+		// format says a global "path" or "size" applies to every entry after it.
+		// Skipping such a record would extract the wrong layout, so only the
+		// inert "comment" record is accepted.
 		if header.Typeflag == tar.TypeXGlobalHeader {
+			for key := range header.PAXRecords {
+				if key != "comment" {
+					return fmt.Errorf("unsupported global pax header record %q", key)
+				}
+			}
 			continue
 		}
 
@@ -5329,6 +5355,11 @@ func extractTarGz(gzipStream io.Reader, destination string) error {
 		// which is the destination itself and has nothing to extract.
 		name := path.Clean(header.Name)
 		if name == "." {
+			// Only a directory can stand for the root. A link or file named "."
+			// is rejected like any other entry type this extractor refuses.
+			if header.Typeflag != tar.TypeDir {
+				return fmt.Errorf("%s: illegal file path", header.Name)
+			}
 			continue
 		}
 
@@ -5351,10 +5382,13 @@ func extractTarGz(gzipStream io.Reader, destination string) error {
 			if header.Size < 0 {
 				return fmt.Errorf("%s: invalid file size", header.Name)
 			}
-			extracted += header.Size
-			if extracted > maxProviderPackageExtractedBytes {
+			// Compare against what is left of the allowance before adding: a
+			// declared size near MaxInt64 would wrap the running total negative
+			// and slip past a check made after the addition.
+			if header.Size > maxProviderPackageExtractedBytes-extracted {
 				return fmt.Errorf("provider package exceeds the maximum extracted size of %d bytes", maxProviderPackageExtractedBytes)
 			}
+			extracted += header.Size
 
 			// When we encounter files that are in nested dirs this takes care of
 			// creating parent dirs.
