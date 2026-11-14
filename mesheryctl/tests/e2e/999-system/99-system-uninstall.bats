@@ -34,7 +34,10 @@ setup() {
     assert_success
     assert_output --partial "Meshery is not running"
 
-    # ... and the namespace the command deletes is actually gone
+    # ... and the namespace the command deletes is actually gone. The output
+    # assertion matters: a bare assert_failure would also pass if kubectl were
+    # missing from PATH or failed for an unrelated reason.
     run kubectl get namespace meshery
     assert_failure
+    assert_output --partial "not found"
 }
