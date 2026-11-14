@@ -254,7 +254,6 @@ func TestDeleteWithGenericURL(t *testing.T) {
 	testContext := utils.InitTestEnvironment(t)
 	defer utils.StopMockery(t)
 	_ = utils.SetupMeshkitLoggerTesting(t, false)
-	utils.TokenFlag = utils.GetToken(t)
 
 	const genericURL = "https://example.com/designs/sample.yaml"
 	const expectedContent = "name: sampleDesign\nservices:\n  app:\n    type: Application\n"
@@ -277,6 +276,10 @@ func TestDeleteWithGenericURL(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			defer resetVariables()
 			defer utils.ResetCommandFlags(DesignCmd, t)
+
+			// ResetCommandFlags restores the --token flag to its default after
+			// each run, so point it at the fixture token for every subtest.
+			utils.TokenFlag = utils.GetToken(t)
 
 			var getCalled, deleteCalled bool
 			var undeployPayload struct {
