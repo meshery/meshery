@@ -74,3 +74,37 @@ func TestResolveImportVariant_URLImportSSRF(t *testing.T) {
 		t.Errorf("unexpected error message: %v", err)
 	}
 }
+
+func TestConvertFileToDesignRejectsUnregisteredResources(t *testing.T) {
+	rm, _ := newTestRegistryDB(t)
+	_, _, err := ConvertFileToDesign(FileToImport{
+		FileName: "deployment.yaml",
+		Data:     []byte("apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: example\n"),
+	}, rm, newTestLogger(t))
+	if err == nil || !strings.Contains(err.Error(), "Deployment") || !strings.Contains(err.Error(), "apps/v1") {
+		t.Fatalf("expected an error identifying the unregistered resource, got %v", err)
+	}
+}
+
+func TestConvertFileToDesignRejectsPartiallyRegisteredManifest(t *testing.T) {
+	rm, _ := newTestRegistryDB(t)
+	seedTestComponent(t, rm) // Registers batch/v1 Job.
+	log := newTestLogger(t)
+	registered := "apiVersion: batch/v1\nkind: Job\nmetadata:\n  name: example-job\n"
+
+	design, _, err := ConvertFileToDesign(FileToImport{
+		FileName: "job.yaml",
+		Data:     []byte(registered),
+	}, rm, log)
+	if err != nil || len(design.Components) != 1 {
+		t.Fatalf("expected registered Job to import as one component, got %d components and error %v", len(design.Components), err)
+	}
+
+	_, _, err = ConvertFileToDesign(FileToImport{
+		FileName: "mixed.yaml",
+		Data:     []byte(registered + "---\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: example-deployment\n"),
+	}, rm, log)
+	if err == nil || !strings.Contains(err.Error(), "Deployment") || !strings.Contains(err.Error(), "apps/v1") {
+		t.Fatalf("expected an error identifying the unregistered Deployment, got %v", err)
+	}
+}

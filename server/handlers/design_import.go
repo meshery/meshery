@@ -233,7 +233,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	}
 
 	now = time.Now()
-	design, err := pCore.NewPatternFileFromK8sManifest(manifest, fileToImport.FileName, true, registry)
+	design, err := pCore.NewPatternFileFromK8sManifest(manifest, fileToImport.FileName, false, registry)
 	utils.TrackTime(logger, now, "ConvertManifestToDesign")
 
 	if err != nil {
