@@ -231,7 +231,10 @@ test('reports unreadable directories and files while scanning the rest', (t) => 
     }
   `);
   const script = path.join(fixture, 'ui/scripts/audit-hex.js');
-  const run = (...args) => spawnSync(process.execPath, ['--require', preload, script, ...args], { encoding: 'utf8' });
+  const run = (...args) => spawnSync(process.execPath, ['--require', preload, script, ...args], {
+    encoding: 'utf8',
+    env: { ...process.env, NODE_PATH: [typescriptModuleRoot, process.env.NODE_PATH].filter(Boolean).join(path.delimiter) },
+  });
   const json = run('--json');
   assert.equal(json.status, 0, json.stderr);
   const result = JSON.parse(json.stdout);
