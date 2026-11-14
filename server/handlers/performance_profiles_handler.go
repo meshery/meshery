@@ -10,6 +10,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
 )
 
 func performanceProfileIDFromRequest(r *http.Request) string {
@@ -137,6 +138,13 @@ func (h *Handler) DeletePerformanceProfileHandler(
 	resp, err := provider.DeletePerformanceProfile(r, performanceProfileID)
 	if err != nil {
 		obj := "performance profile"
+		// a profile that does not exist is a 404, not a server failure
+		if errors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			h.log.Warnf("No %s with ID %q found to delete", obj, performanceProfileID)
+			writeMeshkitError(rw, err, http.StatusNotFound)
+			return
+		}
+
 		//fail to delete performance profile
 		h.log.Error(ErrFailToDelete(err, obj))
 		writeMeshkitError(rw, ErrFailToDelete(err, obj), http.StatusInternalServerError)
