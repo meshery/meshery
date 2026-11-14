@@ -8,6 +8,7 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const productionScript = path.join(__dirname, 'audit-hex.js');
+const typescriptModuleRoot = path.resolve(path.dirname(require.resolve('typescript')), '..', '..');
 
 function writeFile(root, relativePath, contents) {
   const file = path.join(root, relativePath);
@@ -31,11 +32,46 @@ function runAudit(fixture) {
   const script = path.join(fixture, 'ui', 'scripts', 'audit-hex.js');
   const result = spawnSync(process.execPath, [script, '--json'], {
     encoding: 'utf8',
+    env: {
+      ...process.env,
+      NODE_PATH: [typescriptModuleRoot, process.env.NODE_PATH].filter(Boolean).join(path.delimiter),
+    },
   });
 
   assert.equal(result.status, 0, result.stderr);
   return JSON.parse(result.stdout);
 }
+
+test('ignores hex-like text in comments but preserves actual literals', (t) => {
+  const fixture = createFixture(t);
+
+  writeFile(
+    fixture,
+    'ui/components/comment-cases.tsx',
+    [
+      '// React error #185',
+      '/* Documentation reference #123456 */',
+      "const stringColor = '#F91313';",
+      'const templateColor = `#AABBCC`;',
+      'const jsx = <div title="#ABCDEF" />;',
+      'const commentLikeString = "/* #654321 */";',
+      'const templateInterpolation = `${ /* #112233 */ "#445566" }`;',
+      'const slashLikeString = "https://example.com/path//segment#778899";',
+      'const jsxComment = <div>{/* #987654 */}</div>;',
+      'const jsxTextWithSlashes = <div>// label <span style={{ color: "#abcdef" }} /></div>;',
+      'const regexWithSlashes = /[//]/; const regexColor = "#fedcba";',
+      '',
+    ].join('\n'),
+  );
+
+  const result = runAudit(fixture);
+
+  assert.equal(result.files, 1);
+  assert.equal(result.hex, 8);
+  assert.equal(result.rgb, 0);
+  assert.equal(result.matches, 8);
+  assert.equal(result.offenders[0].hex, 8);
+});
 
 test('excludes test files and nested __tests__ directories', (t) => {
   const fixture = createFixture(t);
@@ -104,6 +140,29 @@ test('detects case-insensitive RGB functions without matching identifier suffixe
 
   assert.deepEqual(actual, expected);
   assert.equal(result.rgb, 6);
+});
+
+test('ignores RGB functions in comments but counts actual functions', (t) => {
+  const fixture = createFixture(t);
+
+  writeFile(
+    fixture,
+    'ui/components/rgb-comments.tsx',
+    [
+      '// rgb(255, 0, 0)',
+      '/* rgba(0, 0, 0, .5) */',
+      'const color = rgb(12, 34, 56);',
+      'const alpha = rgba(12, 34, 56, .5);',
+      '',
+    ].join('\n'),
+  );
+
+  const result = runAudit(fixture);
+
+  assert.equal(result.files, 1);
+  assert.equal(result.rgb, 2);
+  assert.equal(result.matches, 2);
+  assert.equal(result.offenders[0].rgb, 2);
 });
 
 test('scans nested production directories with root-scoped names', (t) => {

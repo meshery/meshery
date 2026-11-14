@@ -29,6 +29,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const ts = require('typescript');
 
 const UI_ROOT = path.resolve(__dirname, '..');
 
@@ -99,10 +100,71 @@ function countMatches(src, pattern) {
   return count;
 }
 
+function maskComments(src) {
+  const sourceFile = ts.createSourceFile(
+    'audit-source.tsx',
+    src,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
+  const chars = src.split('');
+  const jsxTextRanges = [];
+  const commentRanges = new Map();
+
+  function addCommentRanges(ranges) {
+    for (const range of ranges || []) {
+      commentRanges.set(`${range.pos}:${range.end}`, range);
+    }
+  }
+
+  function visit(node) {
+    if (ts.isJsxText(node)) {
+      jsxTextRanges.push({
+        start: node.getStart(sourceFile),
+        end: node.end,
+      });
+    }
+
+    addCommentRanges(ts.getLeadingCommentRanges(src, node.pos));
+    addCommentRanges(ts.getTrailingCommentRanges(src, node.end));
+
+    if (ts.isJsxExpression(node)) {
+      const openBrace = node
+        .getChildren(sourceFile)
+        .find((child) => child.kind === ts.SyntaxKind.OpenBraceToken);
+
+      if (openBrace) {
+        addCommentRanges(ts.getTrailingCommentRanges(src, openBrace.end));
+      }
+    }
+
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+
+  for (const range of commentRanges.values()) {
+    const overlapsJsxText = jsxTextRanges.some(
+      ({ start, end }) => range.pos < end && range.end > start,
+    );
+
+    if (overlapsJsxText) continue;
+
+    for (let i = range.pos; i < range.end; i++) {
+      if (chars[i] !== '\n' && chars[i] !== '\r') {
+        chars[i] = ' ';
+      }
+    }
+  }
+
+  return chars.join('');
+}
 function scanFile(file) {
   const src = fs.readFileSync(file, 'utf8');
-  const hex = countMatches(src, HEX_PATTERN);
-  const rgb = countMatches(src, RGB_PATTERN);
+  const maskedSrc = maskComments(src);
+  const hex = countMatches(maskedSrc, HEX_PATTERN);
+  const rgb = countMatches(maskedSrc, RGB_PATTERN);
   return { hex, rgb };
 }
 
