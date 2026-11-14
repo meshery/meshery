@@ -15,8 +15,6 @@
 package filter
 
 import (
-	"errors"
-
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
@@ -33,7 +31,7 @@ var deleteCmd = &cobra.Command{
 // A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be deleted.
 mesheryctl filter delete [filter-name | ID]
 	`,
-	Args: cobra.MinimumNArgs(0),
+	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// for formatting errors
 		subCmdUsed := cmd.Use
@@ -41,10 +39,6 @@ mesheryctl filter delete [filter-name | ID]
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
-		}
-
-		if len(args) == 0 {
-			return utils.ErrInvalidNameOrID(errors.New(errFilterNameOrIDNotProvided))
 		}
 
 		var filterID string

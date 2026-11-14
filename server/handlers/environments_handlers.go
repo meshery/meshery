@@ -11,7 +11,9 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta3/environment"
+	"gorm.io/gorm"
 )
 
 // environmentPayloadWire is a handler-local dual-accept wrapper around
@@ -94,7 +96,12 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		handlerErr := ErrGetEnvironment(err)
 		h.log.Error(handlerErr)
-		writeMeshkitError(w, handlerErr, providerStatus(err))
+		status := providerStatus(err)
+		if meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode || errors.Is(err, gorm.ErrRecordNotFound) || status == http.StatusNotFound {
+			writeMeshkitError(w, handlerErr, http.StatusNotFound)
+			return
+		}
+		writeMeshkitError(w, handlerErr, status)
 		return
 	}
 
@@ -147,7 +154,12 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		handlerErr := ErrDeleteEnvironment(err)
 		h.log.Error(handlerErr)
-		writeMeshkitError(w, handlerErr, providerStatus(err))
+		status := providerStatus(err)
+		if meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode || errors.Is(err, gorm.ErrRecordNotFound) || status == http.StatusNotFound {
+			writeMeshkitError(w, handlerErr, http.StatusNotFound)
+			return
+		}
+		writeMeshkitError(w, handlerErr, status)
 		return
 	}
 
@@ -181,7 +193,12 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 	if err != nil {
 		handlerErr := ErrUpdateEnvironment(err)
 		h.log.Error(handlerErr)
-		writeMeshkitError(w, handlerErr, providerStatus(err))
+		status := providerStatus(err)
+		if meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode || errors.Is(err, gorm.ErrRecordNotFound) || status == http.StatusNotFound {
+			writeMeshkitError(w, handlerErr, http.StatusNotFound)
+			return
+		}
+		writeMeshkitError(w, handlerErr, status)
 		return
 	}
 

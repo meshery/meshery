@@ -119,16 +119,16 @@ export const buildServiceColumns = ({
         },
         customBodyRender: function CustomBody(val) {
           let attribute = JSON.parse(val);
-          let loadbalancer = attribute?.loadbalancer;
-          let ingresses = loadbalancer?.ingress;
+          let loadBalancer = attribute?.loadBalancer;
+          let ingresses = loadBalancer?.ingress;
           return (
             <>
               {ingresses?.map((ingress, i) => {
                 return (
-                  <>
-                    {ingress.hostname}
+                  <React.Fragment key={i}>
+                    {ingress.ip || ingress.hostname}
                     {i < ingresses.length - 1 && ','}
-                  </>
+                  </React.Fragment>
                 );
               })}
             </>

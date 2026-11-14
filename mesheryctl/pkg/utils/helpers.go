@@ -19,6 +19,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/briandowns/spinner"
 	"github.com/eiannone/keyboard"
@@ -29,6 +30,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/core"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -384,10 +386,11 @@ func BackupConfigFile(cfgFile string) {
 	if err != nil {
 		Log.Fatal(err)
 	}
-	_, err = os.Create(cfgFile)
+	f, err := os.Create(cfgFile)
 	if err != nil {
 		Log.Fatal(err)
 	}
+	_ = f.Close()
 }
 
 const (
@@ -444,10 +447,13 @@ func SetFileLocation() error {
 	return nil
 }
 
+// openURL opens the given URL in the browser. It is a variable (rather than a direct call to browser.OpenURL) so tests can substitute a fake.
+// It must not be swapped from parallel tests.
+var openURL = browser.OpenURL
+
 // NavigateToBrowser navigates to the endpoint displaying the Meshery UI in the browser.
 func NavigateToBrowser(endpoint string) error {
-	err := browser.OpenURL(endpoint)
-	return err
+	return openURL(endpoint)
 }
 
 // UploadFileWithParams returns a request configured to upload files with other values
@@ -456,15 +462,15 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path 
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		_ = file.Close()
+	}()
 	fileContents, err := io.ReadAll(file)
 	if err != nil {
 		return nil, err
 	}
 	fi, err := file.Stat()
 	if err != nil {
-		return nil, err
-	}
-	if err = file.Close(); err != nil {
 		return nil, err
 	}
 
@@ -577,10 +583,11 @@ func AskForConfirmation(s string) (bool, error) {
 // CreateConfigFile creates config file in Meshery Folder
 func CreateConfigFile() error {
 	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
-		_, err := os.Create(DefaultConfigPath)
+		f, err := os.Create(DefaultConfigPath)
 		if err != nil {
 			return err
 		}
+		_ = f.Close()
 	}
 	return nil
 }
@@ -597,10 +604,28 @@ func ValidateURL(URL string) error {
 	return nil
 }
 
-// TruncateID shortens an id to 8 characters
+// TruncateID shortens an id to at most 8 characters.
 func TruncateID(id string) string {
-	ShortenedID := id[0:8]
-	return ShortenedID
+	if len(id) <= 8 {
+		return id
+	}
+	return id[:8]
+}
+
+// FormatTime formats a nullable timestamp with layout, returning fallback when t is nil.
+func FormatTime(t *time.Time, layout, fallback string) string {
+	if t == nil {
+		return fallback
+	}
+	return t.Format(layout)
+}
+
+// FormatUUID returns the string form of a nullable UUID, or fallback when id is nil.
+func FormatUUID(id *core.Uuid, fallback string) string {
+	if id == nil {
+		return fallback
+	}
+	return id.String()
 }
 
 func BoldString(s string) string {
@@ -644,42 +669,129 @@ func StringInSlice(str string, slice []string) bool {
 
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
 func GetID(mesheryServerUrl, configuration string) ([]string, error) {
-	url := mesheryServerUrl + "/api/" + configuration + "?"
+	populatePrefix := ""
 	if configuration == "pattern" {
-		url += "populate=pattern_file&"
+		populatePrefix = "populate=pattern_file&"
 	}
-	url += "page_size=10000"
 	configType := configuration + "s"
 	var idList []string
-	req, err := NewRequest("GET", url, nil)
-	if err != nil {
-		return idList, err
+	seen := map[string]bool{}
+
+	const pageSize = 10000
+	const maxPages = 50
+
+	var totalCount int64
+	var hasTotalCount bool
+	completed := false
+
+	for page := 0; page < maxPages; page++ {
+		var url string
+		if page == 0 {
+			url = fmt.Sprintf("%s/api/%s?%spagesize=%d", mesheryServerUrl, configuration, populatePrefix, pageSize)
+		} else {
+			url = fmt.Sprintf("%s/api/%s?%spagesize=%d&page=%d", mesheryServerUrl, configuration, populatePrefix, pageSize, page)
+		}
+
+		req, err := NewRequest("GET", url, nil)
+		if err != nil {
+			return idList, err
+		}
+
+		res, err := MakeRequest(req)
+		if err != nil {
+			return idList, err
+		}
+
+		body, err := io.ReadAll(res.Body)
+		_ = res.Body.Close()
+		if err != nil {
+			return idList, ErrReadResponseBody(err)
+		}
+
+		var dat map[string]interface{}
+		if err = encoding.Unmarshal(body, &dat); err != nil {
+			return idList, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
+		}
+		if dat == nil {
+			if page == 0 {
+				return idList, ErrNotFound(errors.New("no data found"))
+			}
+			completed = true
+			break
+		}
+		if dat[configType] == nil {
+			if page == 0 {
+				return idList, ErrNotFound(errors.New("no results found"))
+			}
+			completed = true
+			break
+		}
+
+		configs, ok := dat[configType].([]interface{})
+		if !ok {
+			if page == 0 {
+				return idList, ErrNotFound(errors.New("no results found"))
+			}
+			return idList, ErrInvalidAPIResponse(errors.New("expected an array of results"))
+		}
+
+		for _, config := range configs {
+			m, ok := config.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			id, ok := m["id"].(string)
+			if !ok || id == "" || seen[id] {
+				continue
+			}
+			seen[id] = true
+			idList = append(idList, id)
+		}
+
+		if count, ok := parseTotalCount(dat); ok {
+			totalCount, hasTotalCount = count, true
+		}
+		if hasTotalCount {
+			if int64(len(idList)) >= totalCount || len(configs) == 0 {
+				completed = true
+				break
+			}
+		} else if len(configs) < pageSize {
+			completed = true
+			break
+		}
 	}
 
-	res, err := MakeRequest(req)
-	if err != nil {
-		return idList, err
+	if hasTotalCount && int64(len(idList)) < totalCount {
+		return idList, ErrIDLookupIncomplete(totalCount, int64(len(idList)))
+	}
+	if !completed {
+		return idList, ErrIDLookupPageLimit(int64(len(idList)))
 	}
 
-	defer func() { _ = res.Body.Close() }()
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return idList, ErrReadResponseBody(err)
-	}
-	var dat map[string]interface{}
-	if err = encoding.Unmarshal(body, &dat); err != nil {
-		return idList, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
-	}
-	if dat == nil {
-		return idList, ErrNotFound(errors.New("no data found"))
-	}
-	if dat[configType] == nil {
-		return idList, ErrNotFound(errors.New("no results found"))
-	}
-	for _, config := range dat[configType].([]interface{}) {
-		idList = append(idList, config.(map[string]interface{})["id"].(string))
-	}
 	return idList, nil
+}
+
+// parseTotalCount reads the total item count from a paginated list response,
+// accepting both the current "totalCount" field and the legacy "total_count" field.
+func parseTotalCount(dat map[string]interface{}) (int64, bool) {
+	for _, key := range []string{"totalCount", "total_count"} {
+		if v, ok := dat[key]; ok && v != nil {
+			switch val := v.(type) {
+			case float64:
+				return int64(val), true
+			case int:
+				return int64(val), true
+			case int64:
+				return val, true
+			case string:
+				if parsed, err := strconv.ParseInt(val, 10, 64); err == nil {
+					return parsed, true
+				}
+			}
+		}
+	}
+	return 0, false
 }
 
 // GetName returns a of name:id from meshery server endpoint /api/{configurations}
@@ -726,22 +838,38 @@ func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
 		return err
 	}
 
-	_, err = MakeRequest(req)
+	res, err := MakeRequest(req)
 	if err != nil {
 		return err
 	}
+	defer SafeClose(res.Body)
 	return nil
 }
 
-// ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID
+// ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID.
+// An exact ID match wins; a prefix shared by more than one ID is rejected as ambiguous.
 func ValidId(mesheryServerUrl, args string, configuration string) (string, bool, error) {
 	isID := false
+	if strings.TrimSpace(args) == "" {
+		return "", false, ErrInvalidArgument(errors.New("name or ID cannot be empty"))
+	}
 	configID, err := GetID(mesheryServerUrl, configuration)
 	if err == nil {
+		var matches []string
 		for _, id := range configID {
-			if strings.HasPrefix(id, args) {
-				args = id
+			if id == args {
+				matches = []string{id}
+				break
 			}
+			if strings.HasPrefix(id, args) {
+				matches = append(matches, id)
+			}
+		}
+		if len(matches) > 1 {
+			return "", false, ErrAmbiguousID(args, matches)
+		}
+		if len(matches) == 1 {
+			args = matches[0]
 		}
 	} else {
 		return "", false, err
@@ -1369,4 +1497,28 @@ func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 // TrimFileExtension returns name with its final file extension removed
 func TrimFileExtension(name string) string {
 	return strings.TrimSuffix(name, filepath.Ext(name))
+}
+
+var fileNameSanitizer = strings.NewReplacer(
+	"/", "_",
+	"\\", "_",
+	":", "_",
+	"*", "_",
+	"?", "_",
+	"\"", "_",
+	"<", "_",
+	">", "_",
+	"|", "_",
+	" ", "_",
+)
+
+// SanitizeFileName sanitizes filesystem-unsafe characters, control characters (0x00-0x1F and 0x7F),
+// and whitespace into underscores and trims leading/trailing whitespace.
+func SanitizeFileName(name string) string {
+	return strings.Map(func(r rune) rune {
+		if unicode.IsControl(r) {
+			return '_'
+		}
+		return r
+	}, fileNameSanitizer.Replace(strings.TrimSpace(name)))
 }

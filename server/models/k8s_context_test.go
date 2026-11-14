@@ -10,6 +10,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/core"
 	"gorm.io/driver/sqlite"
@@ -34,6 +35,50 @@ func TestFlushMeshSyncDataNilKubernetesServerIDNoPanic(t *testing.T) {
 	// Should complete without panic. If the guard is missing this will panic with a
 	// nil dereference on KubernetesServerID.String() inside the refcount loop.
 	FlushMeshSyncData(ctx, k8sCtx, nil, nil, "00000000-0000-0000-0000-000000000000", nil, nil)
+}
+
+type flushFakeProvider struct {
+	Provider
+	persistedEvents []events.Event
+}
+
+func (f *flushFakeProvider) PersistSystemEvent(event events.Event) (PersistedEvent, error) {
+	f.persistedEvents = append(f.persistedEvents, event)
+	return PersistedEvent{Event: &event, Disposition: EventCreated}, nil
+}
+
+// TestFlushMeshSyncDataEmptyUserIDAndNilMesheryInstanceID verifies that FlushMeshSyncData
+// does not panic when userID is empty or mesheryInstanceID is nil, and handles event persistence safely.
+func TestFlushMeshSyncDataEmptyUserIDAndNilMesheryInstanceID(t *testing.T) {
+	k8sCtx := K8sContext{ID: "ctx-1", Name: "cluster-a", Server: "https://k8s.example.com"}
+
+	t.Run("empty context list and empty user ID persists event without owner", func(t *testing.T) {
+		fp := &flushFakeProvider{}
+		FlushMeshSyncData(context.Background(), k8sCtx, fp, nil, "", nil, nil)
+		if len(fp.persistedEvents) != 1 {
+			t.Fatalf("expected 1 persisted event, got %d", len(fp.persistedEvents))
+		}
+		if fp.persistedEvents[0].Category != "meshsync" || fp.persistedEvents[0].Action != "flush" {
+			t.Errorf("unexpected event category/action: %s/%s", fp.persistedEvents[0].Category, fp.persistedEvents[0].Action)
+		}
+	})
+
+	t.Run("valid user ID and nil mesheryInstanceID with cluster list", func(t *testing.T) {
+		k8sctxs := []*K8sContext{
+			{ID: "ctx-1", Name: "cluster-a", KubernetesServerID: nil},
+		}
+		ctx := context.WithValue(context.Background(), AllKubeClusterKey, k8sctxs)
+		fp := &flushFakeProvider{}
+		validUser := uuid.Must(uuid.NewV4()).String()
+		FlushMeshSyncData(ctx, k8sCtx, fp, nil, validUser, nil, nil)
+		if len(fp.persistedEvents) != 0 {
+			t.Fatalf("expected no persisted events, got %d", len(fp.persistedEvents))
+		}
+	})
+
+	t.Run("nil provider does not panic", func(t *testing.T) {
+		FlushMeshSyncData(context.Background(), k8sCtx, nil, nil, "", nil, nil)
+	})
 }
 
 // TestFlushMeshSyncDataMixedNilAndPopulatedServerIDs verifies that the refcount loop
@@ -269,5 +314,51 @@ func TestK8sContextsFromKubeconfigDiscoversAllContexts(t *testing.T) {
 		if want := fmt.Sprintf("ctx-%d", i); name != want {
 			t.Errorf("context[%d] = %q, want %q", i, name, want)
 		}
+	}
+}
+
+func TestK8sContextGenerateIDNilMesheryInstanceID(t *testing.T) {
+	ctxWithoutInstanceID := K8sContext{
+		Name:    "minikube",
+		Cluster: map[string]interface{}{"server": "https://127.0.0.1:6443"},
+		Auth:    map[string]interface{}{"token": "test-token"},
+	}
+
+	idWithoutInstance, err := K8sContextGenerateID(ctxWithoutInstanceID)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID returned error for nil MesheryInstanceID: %v", err)
+	}
+	if idWithoutInstance == "" {
+		t.Fatal("expected non-empty deterministic ID for context with nil MesheryInstanceID")
+	}
+
+	idRepeat, err := K8sContextGenerateID(ctxWithoutInstanceID)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID repeat call returned error: %v", err)
+	}
+	if idRepeat != idWithoutInstance {
+		t.Fatalf("expected deterministic ID %q, got %q", idWithoutInstance, idRepeat)
+	}
+
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+	ctxWithInstanceID := ctxWithoutInstanceID
+	ctxWithInstanceID.MesheryInstanceID = &instanceID
+
+	idWithInstance, err := K8sContextGenerateID(ctxWithInstanceID)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID returned error for populated MesheryInstanceID: %v", err)
+	}
+	if idWithInstance == idWithoutInstance {
+		t.Fatalf("expected ID with MesheryInstanceID (%q) to differ from nil MesheryInstanceID (%q)", idWithInstance, idWithoutInstance)
+	}
+
+	// RedactCredentialsForContext clears MesheryInstanceID to nil; calling
+	// K8sContextGenerateID afterward must remain panic-free.
+	redacted := RedactCredentialsForContext(&ctxWithInstanceID)
+	if redacted.MesheryInstanceID != nil {
+		t.Fatalf("expected RedactCredentialsForContext to nil MesheryInstanceID, got %v", redacted.MesheryInstanceID)
+	}
+	if _, err := K8sContextGenerateID(redacted); err != nil {
+		t.Fatalf("K8sContextGenerateID returned error after RedactCredentialsForContext: %v", err)
 	}
 }

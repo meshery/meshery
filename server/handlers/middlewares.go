@@ -3,20 +3,27 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshsync/pkg/model"
+	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
 )
 
@@ -35,6 +42,149 @@ func isTransientProviderError(err error) bool {
 }
 
 const providerQParamName = "provider"
+
+// backgroundDiscoveryContext keeps request values while allowing discovery to
+// outlive the HTTP response, with a deadline for context-aware operations.
+func backgroundDiscoveryContext(ctx context.Context) (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.WithoutCancel(ctx), 2*time.Minute)
+}
+
+// notFoundProbeInterval bounds how often a NOTFOUND connection is re-probed
+// and how often the NOTFOUND list is reloaded: at most once per connection
+// per minute, and at most one reload per minute.
+const notFoundProbeInterval = time.Minute
+
+// discoveryResolutionStatusReadAttempts bounds how often the reporting
+// path re-reads a connection's stored status before giving up on a
+// resolution whose status cannot be verified, and
+// discoveryResolutionStatusReadRetryDelay is the pause between attempts.
+// The reporting path runs in a goroutine, so a brief retry costs nothing
+// on the request path.
+const discoveryResolutionStatusReadAttempts = 3
+
+const discoveryResolutionStatusReadRetryDelay = 50 * time.Millisecond
+
+// notFoundProbeLoadScope identifies one NOTFOUND load budget: a provider
+// deployment serving one user. A single Handler serves every user and every
+// provider, so a single global load gate would let one user's requests block
+// another user's NOTFOUND recovery for a minute.
+type notFoundProbeLoadScope struct {
+	providerName string
+	providerURL  string
+	user         core.Uuid
+}
+
+// notFoundProbeThrottle gates background Discovery probes of NOTFOUND
+// Kubernetes connections (issue #22955). A connection whose cluster went
+// unreachable sits in NOTFOUND with an open "unreachable" condition, and
+// Discovery never runs for it again because it is no longer in
+// AllKubeClusterKey. The throttle lets K8sFSMMiddleware re-probe such
+// connections without a second remote-provider round trip per request: the
+// NOTFOUND list is reloaded at most once per interval per provider+user, and
+// each connection is probed at most once per interval.
+//
+// Both gates are an atomic check-and-set under one mutex, stamped when the
+// load/probe starts rather than when it finishes, because the middleware
+// fires one goroutine per request and concurrent requests must not
+// double-probe a connection. Entries are dropped when a connection leaves
+// NOTFOUND (its probe resolves the condition, see forget) or when they
+// expire (see prune), so the map cannot grow without bound. Load entries
+// are likewise dropped once they are older than the interval: a scope that
+// has not loaded within the interval would be allowed again anyway.
+//
+// The clock is injected so tests can advance time without sleeping.
+type notFoundProbeThrottle struct {
+	mu         sync.Mutex
+	now        func() time.Time
+	interval   time.Duration
+	lastLoad   map[notFoundProbeLoadScope]time.Time
+	lastProbed map[core.Uuid]time.Time
+}
+
+func newNotFoundProbeThrottle(now func() time.Time, interval time.Duration) *notFoundProbeThrottle {
+	if now == nil {
+		now = time.Now
+	}
+	return &notFoundProbeThrottle{
+		now:        now,
+		interval:   interval,
+		lastLoad:   make(map[notFoundProbeLoadScope]time.Time),
+		lastProbed: make(map[core.Uuid]time.Time),
+	}
+}
+
+// allowLoad reports whether the NOTFOUND list may be reloaded now for this
+// provider+user, and stamps the load start time when it does. At most one
+// load per interval per scope, so one user's traffic cannot block another
+// user's NOTFOUND recovery.
+func (t *notFoundProbeThrottle) allowLoad(scope notFoundProbeLoadScope) bool {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	now := t.now()
+	if last, ok := t.lastLoad[scope]; ok && now.Sub(last) < t.interval {
+		return false
+	}
+	t.lastLoad[scope] = now
+	return true
+}
+
+// allowProbe reports whether the connection may be probed now, and stamps
+// the probe start time when it does. At most one probe per connection per
+// interval.
+func (t *notFoundProbeThrottle) allowProbe(id core.Uuid) bool {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	now := t.now()
+	if last, ok := t.lastProbed[id]; ok && now.Sub(last) < t.interval {
+		return false
+	}
+	t.lastProbed[id] = now
+	return true
+}
+
+// forget drops the probe entry for a connection that left NOTFOUND.
+func (t *notFoundProbeThrottle) forget(id core.Uuid) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	delete(t.lastProbed, id)
+}
+
+// prune drops throttle entries older than the interval: probe entries for
+// connections that left NOTFOUND or were deleted, and load entries for
+// scopes that would be allowed to load again anyway. It must not drop a
+// fresh probe entry for a connection absent from this load: the load is
+// scoped to one provider+user, but the probe map is global, so pruning by
+// this scope's page would delete another scope's active entries and let
+// its connections be probed again inside the interval.
+func (t *notFoundProbeThrottle) prune() {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	now := t.now()
+	for id, at := range t.lastProbed {
+		if now.Sub(at) >= t.interval {
+			delete(t.lastProbed, id)
+		}
+	}
+	for scope, at := range t.lastLoad {
+		if now.Sub(at) >= t.interval {
+			delete(t.lastLoad, scope)
+		}
+	}
+}
+
+// defaultNotFoundProbeThrottle backs Handlers built without a throttle (for
+// example Handler literals in tests); production Handlers get their own
+// from NewHandlerInstance.
+var defaultNotFoundProbeThrottle = newNotFoundProbeThrottle(time.Now, notFoundProbeInterval)
+
+// notFoundProbeThrottleOrDefault returns the Handler's throttle, or the
+// shared default when the Handler was built without one.
+func (h *Handler) notFoundProbeThrottleOrDefault() *notFoundProbeThrottle {
+	if h != nil && h.notFoundProbeThrottle != nil {
+		return h.notFoundProbeThrottle
+	}
+	return defaultNotFoundProbeThrottle
+}
 
 // legacyProviderAliasWarnOnce ensures the "None"->"Local" deprecation warning
 // fires at most once per process lifetime, regardless of how many requests
@@ -112,6 +262,8 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 	}
 	return http.HandlerFunc(fn)
 }
+
+// NoCacheMiddleware sets response headers that stop clients and proxies from caching the response.
 func (h *Handler) NoCacheMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		// Set headers to disable caching
@@ -186,6 +338,31 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 	return http.HandlerFunc(fn)
 }
 
+// RegistrationAuthMiddleware requires provider authentication for component
+// registration only when a provider is actually in play: a provider is
+// enforced through PROVIDER, or the request carries a selector for a remote
+// provider. Adapters register against a local deployment with no provider
+// selector, and in local mode there is no session to validate, so forcing
+// ProviderAuth there would redirect every selector-free registration to
+// /provider and break adapter registration. Requests that select Local
+// (including the legacy None alias) pass through for the same reason: local
+// mode has no credentials to check. The traversal itself is still blocked by
+// the single-path-component validation in RegisterMeshmodelComponents, which
+// runs regardless of auth.
+func (h *Handler) RegistrationAuthMiddleware(next http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		name, _ := resolveProviderName(r, h.config.ProviderCookieName, h.Provider)
+		if h.Provider != "" || (name != "" && name != models.LocalProviderName) {
+			h.AuthMiddleware(next, models.ProviderAuth).ServeHTTP(w, r)
+			return
+		}
+		next.ServeHTTP(w, r)
+	}
+	return http.HandlerFunc(fn)
+}
+
+// validateAuth reports whether the request carries a valid provider session, returning the
+// session error when it does not.
 func (h *Handler) validateAuth(provider models.Provider, req *http.Request) (bool, error) {
 	err := provider.GetSession(req)
 	if err == nil {
@@ -296,11 +473,31 @@ func (h *Handler) GraphqlMiddleware(next http.Handler) func(http.ResponseWriter,
 	}
 }
 
+// KubernetesMiddleware loads connected Kubernetes contexts for the authenticated user and
+// initiates background discovery on associated state machine instances. It guards against
+// nil user, provider, or token inputs to prevent runtime panics.
 func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provider, user *models.User, k8sContextIDs []string) (context.Context, error) {
+	if user == nil {
+		err := fmt.Errorf("user is required for KubernetesMiddleware")
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
+		return nil, err
+	}
+	if provider == nil {
+		err := fmt.Errorf("provider is required for KubernetesMiddleware")
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
+		return nil, err
+	}
+
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
 	if !ok {
 		err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
-		h.log.Error(err)
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
 		return nil, err
 	}
 	userUUID := user.ID
@@ -310,8 +507,16 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 	k8sContextPassedByUser := []models.K8sContext{}
 	k8sContextsFromKubeConfig := []*models.K8sContext{}
 
-	if err != nil || len(connectedK8sContexts) == 0 {
+	// A failed read is not the same as having no contexts, so log its cause
+	// distinctly. Both still fall back to kubeconfig discovery: this middleware
+	// fronts session bootstrap routes such as /api/system/sync, and failing them
+	// on a transient read error would take the UI down with it.
+	if err != nil {
+		h.log.Error(ErrGetK8sContexts(err))
+	} else if len(connectedK8sContexts) == 0 {
 		h.log.Warn(ErrFailToGetK8SContext)
+	}
+	if err != nil || len(connectedK8sContexts) == 0 {
 		k8sContextsFromKubeConfig, err = h.DiscoverK8SContextFromKubeConfig(user.ID.String(), token, provider)
 		if err != nil {
 			h.log.Warn(ErrFailToLoadK8sContext(err))
@@ -337,14 +542,26 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 	ctx = context.WithValue(ctx, models.KubeClustersKey, k8sContextPassedByUser)
 	ctx = context.WithValue(ctx, models.AllKubeClusterKey, connectedK8sContexts)
 
+	var operatorTracker *models.OperatorTracker
+	var k8scontextChannel *models.K8scontextChan
+	var eventBroadcaster *models.Broadcast
+	if h.config != nil {
+		operatorTracker = h.config.OperatorTracker
+		k8scontextChannel = h.config.K8scontextChannel
+		eventBroadcaster = h.config.EventBroadcaster
+	}
+
 	for _, k8sContext := range k8sContextsFromKubeConfig {
+		if k8sContext == nil {
+			continue
+		}
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext:         *k8sContext,
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 			K8sCompRegHelper:   h.K8sCompRegHelper,
-			OperatorTracker:    h.config.OperatorTracker,
-			K8scontextChannel:  h.config.K8scontextChannel,
-			EventBroadcaster:   h.config.EventBroadcaster,
+			OperatorTracker:    operatorTracker,
+			K8scontextChannel:  k8scontextChannel,
+			EventBroadcaster:   eventBroadcaster,
 			RegistryManager:    h.registryManager,
 		}
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
@@ -361,7 +578,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			"kubernetes",
 			kubernetes.AssignInitialCtx,
 		)
-		if err != nil {
+		if err != nil && h.log != nil {
 			h.log.Error(err)
 		}
 
@@ -373,16 +590,181 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		}
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
-			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
-			if err != nil {
-				_ = provider.PersistEvent(*event, token)
-				go h.config.EventBroadcaster.Publish(userUUID, event)
-			}
+			// Discovery outlives the request but must not wait indefinitely on Kubernetes.
+			discoveryCtx, cancel := backgroundDiscoveryContext(ctx)
+			defer cancel()
+			event, err := inst.SendEvent(discoveryCtx, machines.Discovery, nil)
+			h.reportBackgroundDiscovery(provider, token, userUUID, event, err)
 		}(inst)
 	}
 	return ctx, nil
 }
 
+// reportBackgroundDiscovery persists and broadcasts what a background
+// Discovery of a connection has to tell the user: its failure, or the
+// resolution of the connection's unreachable condition when it became
+// reachable again. A repeat of a failure that left the status unchanged is a
+// Recurrence: it is counted on the open condition without notifying anyone. A
+// routine successful Discovery reports nothing.
+func (h *Handler) reportBackgroundDiscovery(provider models.Provider, token string, userUUID core.Uuid, event *events.Event, err error) {
+	if provider == nil || event == nil || (err == nil && event.ResolvedAt == nil && !machines.IsRecurrence(event, err)) {
+		return
+	}
+	// A Discovery resolution is reported only while the connection is
+	// still in the state the Discovery settled it in. SendEvent's
+	// conditional write (issue #23248) already refuses to move a
+	// connection the user has since disconnected, but the resolution is
+	// persisted later, in this goroutine, after SendEvent returns: a
+	// disconnect landing in between would otherwise close the
+	// unreachable condition and broadcast "reachable again" for a
+	// connection the user just disconnected. Re-read the stored status
+	// here and drop the resolution when it no longer matches the state
+	// the event says the Discovery settled in. Recurrences and failures
+	// are unaffected: they carry no resolution to drop.
+	if err == nil && event.ResolvedAt != nil && !discoveryResolutionStillCurrent(provider, token, event) {
+		return
+	}
+	h.reportMachineOutcome(provider, token, userUUID, event, err)
+}
+
+// discoveryResolutionStillCurrent reports whether a Discovery resolution
+// event may still be persisted: the connection's stored status must still
+// be the state the Discovery settled it in (the event's currentStatus
+// metadata, set by SendEvent). A disconnect, delete or ignore landing
+// after SendEvent wrote its state but before this report ran makes the
+// resolution stale, and persisting it would resolve the unreachable
+// condition for a connection the user just moved away (issue #23248).
+// A stored status that cannot be read is not treated as matching: the
+// lookup is retried briefly, so a transient provider blip does not
+// swallow a legitimate recovery, but a lookup that keeps failing drops
+// the resolution rather than resolving a condition for a connection
+// whose state is unknown — the safer side for a disconnect race. A
+// connection that is gone (404) has no condition left to resolve, so
+// its resolution is dropped without a retry. An event that does not say
+// what state the Discovery settled in fails open, as before.
+func discoveryResolutionStillCurrent(provider models.Provider, token string, event *events.Event) bool {
+	settled, ok := eventCurrentStatus(event)
+	if !ok || event.ActedUpon.IsNil() {
+		return true
+	}
+	var stored *connections.Connection
+	var statusCode int
+	var err error
+	for attempt := 0; attempt < discoveryResolutionStatusReadAttempts; attempt++ {
+		if attempt > 0 {
+			time.Sleep(discoveryResolutionStatusReadRetryDelay)
+		}
+		stored, statusCode, err = provider.GetConnectionByID(token, event.ActedUpon)
+		if err == nil {
+			break
+		}
+		if statusCode == http.StatusNotFound {
+			return false
+		}
+	}
+	if err != nil {
+		return false
+	}
+	if stored == nil {
+		return false
+	}
+	return stored.Status == connections.ConnectionStatus(settled)
+}
+
+// eventCurrentStatus reads the state SendEvent settled in from a success
+// event's currentStatus metadata. The value is a machines.StateType
+// in-process and a plain string after a JSON round trip, so both shapes
+// are accepted.
+func eventCurrentStatus(event *events.Event) (machines.StateType, bool) {
+	if event == nil || event.Metadata == nil {
+		return "", false
+	}
+	switch v := event.Metadata["currentStatus"].(type) {
+	case string:
+		return machines.StateType(v), v != ""
+	case machines.StateType:
+		return v, v != ""
+	default:
+		return "", false
+	}
+}
+
+// reportMachineOutcome reports what a connection's StateMachine.SendEvent
+// returned: nothing for no event, a Recurrence counted on its open condition
+// without a broadcast, and anything else persisted and broadcast. A Recurrence
+// is sent only to a provider that correlates conditions
+// (Provider.CorrelatesConditions); any other would record it as a new event,
+// so it is dropped, as before condition correlation.
+func (h *Handler) reportMachineOutcome(provider models.Provider, token string, userID core.Uuid, event *events.Event, err error) {
+	if provider == nil || event == nil {
+		return
+	}
+	if machines.IsRecurrence(event, err) {
+		if !provider.CorrelatesConditions() {
+			return
+		}
+		if _, perr := provider.PersistEvent(*event, token); perr != nil {
+			if h.log != nil {
+				h.log.Error(perr)
+			}
+		}
+		return
+	}
+	h.persistAndPublish(provider, token, userID, event)
+}
+
+// persistAndPublish persists event and broadcasts it as stored: an occurrence
+// counted on, or the resolution of, an open condition is broadcast as the
+// condition's stored event, so a client updates that notification in place
+// instead of showing one whose ID was never recorded. When persisting fails the
+// event is logged and not broadcast to avoid ghost notifications and 404s.
+//
+// Every server site that persists an event and broadcasts it goes through this
+// helper (or persistAndPublishEvent, outside a Handler; a system event goes
+// through models.PersistAndPublishSystemEvent), never publishing its own copy
+// after PersistEvent: that copy carries no stored ID.
+func (h *Handler) persistAndPublish(provider models.Provider, token string, userID core.Uuid, event *events.Event) {
+	if h == nil || provider == nil || event == nil {
+		return
+	}
+	var broadcaster *models.Broadcast
+	if h.config != nil {
+		broadcaster = h.config.EventBroadcaster
+	}
+	persistAndPublishEvent(h.log, provider, token, broadcaster, userID, event)
+}
+
+// persistAndPublishEvent is persistAndPublish for code that has no Handler.
+//
+// A nil event reports nothing: SendEvent returns none for a background
+// Discovery whose failure it suppressed.
+func persistAndPublishEvent(log logger.Handler, provider models.Provider, token string, broadcaster *models.Broadcast, userID core.Uuid, event *events.Event) {
+	if provider == nil || event == nil {
+		return
+	}
+	// Prepare the event here, not only on the provider's copy, so the
+	// preparation mints the ID for the persisted copy.
+	prepared := models.PrepareEventForPersistence(*event, log)
+	event = &prepared
+	persisted, err := provider.PersistEvent(*event, token)
+	if err != nil {
+		if log != nil {
+			log.Error(err)
+		}
+		return
+	}
+	if persisted.Event == nil {
+		// Nothing new was recorded and the stored event is unknown.
+		return
+	}
+	event = persisted.Event
+	if broadcaster != nil {
+		broadcaster.Publish(userID, event)
+	}
+}
+
+// K8sFSMMiddleware wraps an HTTP handler function with Kubernetes finite state machine
+// background discovery, safely passing context and identity down the middleware chain.
 func (h *Handler) K8sFSMMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
 	return func(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 		K8sFSMMiddleware(req.Context(), h, provider, user)
@@ -395,81 +777,83 @@ type dataHandlerToClusterID struct {
 	clusterID string
 }
 
+// K8sFSMMiddleware re-runs background discovery across connected Kubernetes contexts and registers meshsync handlers.
+// It defensively extracts cluster contexts and guards against nil user or provider values to prevent runtime panics.
 func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider, user *models.User) {
+	if h == nil {
+		return
+	}
+
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
-	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
-	connectedK8sContexts := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
-	userUUID := user.ID
+
+	var connectedK8sContexts []*models.K8sContext
+	if val := ctx.Value(models.AllKubeClusterKey); val != nil {
+		if contexts, ok := val.([]*models.K8sContext); ok {
+			connectedK8sContexts = contexts
+		}
+	}
+
+	var userUUID uuid.UUID
+	if user != nil {
+		userUUID = user.ID
+	}
+
 	dataHandlers := []*dataHandlerToClusterID{}
 	clusterIDs := []string{}
 	for _, k8sContext := range connectedK8sContexts {
-		machineCtx := &kubernetes.MachineCtx{
-			K8sContext:         *k8sContext,
-			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
-			K8sCompRegHelper:   h.K8sCompRegHelper,
-			OperatorTracker:    h.config.OperatorTracker,
-			K8scontextChannel:  h.config.K8scontextChannel,
-			EventBroadcaster:   h.config.EventBroadcaster,
-			RegistryManager:    h.registryManager,
-		}
-		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
-
-		inst, err := mhelpers.InitializeMachineWithContext(
-			machineCtx,
-			ctx,
-			connectionUUID,
-			userUUID,
-			smInstanceTracker,
-			h.log,
-			provider,
-			machines.DefaultState,
-			"kubernetes",
-			kubernetes.AssignInitialCtx,
-		)
-		if err != nil {
-			h.log.Error(err)
-		}
-
-		// Skip a machine that failed to initialize rather than nil-dereferencing
-		// on ResetState/SendEvent, or type-asserting its nil Context on the Cast
-		// below. See mhelpers.HasMachineContext for why.
-		if !mhelpers.HasMachineContext(inst) {
+		if k8sContext == nil {
 			continue
 		}
-		inst.ResetState()
-		go func(inst *machines.StateMachine) {
-			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
-			if err != nil {
-				_ = provider.PersistEvent(*event, token)
-				go h.config.EventBroadcaster.Publish(userUUID, event)
-			}
-		}(inst)
-		kubernesMachineCtx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
-		if err != nil {
-			h.log.Error(err)
+		inst := h.discoverK8sContext(ctx, provider, token, userUUID, k8sContext, nil, false)
+		if inst == nil {
 			continue
 		}
-		mdh := kubernesMachineCtx.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
-		if mdh != nil {
-			if k8sContext.KubernetesServerID == nil {
-				continue
+		kubernesMachineCtx, err := utils.Cast[*kubernetes.MachineCtx](inst.GetContext())
+		if err != nil {
+			if h.log != nil {
+				h.log.Error(err)
 			}
-			dataHandlers = append(dataHandlers, &dataHandlerToClusterID{
-				mdh:       *mdh,
-				clusterID: k8sContext.KubernetesServerID.String(),
-			})
-			clusterIDs = append(clusterIDs, k8sContext.KubernetesServerID.String())
+			continue
+		}
+		if kubernesMachineCtx != nil && kubernesMachineCtx.MesheryCtrlsHelper != nil {
+			mdh := kubernesMachineCtx.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
+			if mdh != nil {
+				if k8sContext.KubernetesServerID == nil {
+					continue
+				}
+				dataHandlers = append(dataHandlers, &dataHandlerToClusterID{
+					mdh:       *mdh,
+					clusterID: k8sContext.KubernetesServerID.String(),
+				})
+				clusterIDs = append(clusterIDs, k8sContext.KubernetesServerID.String())
+			}
 		}
 	}
+
+	// Probe NOTFOUND connections so their unreachable condition can resolve
+	// when the cluster comes back (issue #22955). These contexts are loaded
+	// separately and are never added to AllKubeClusterKey.
+	h.probeNotFoundK8sContexts(ctx, provider, token, userUUID, connectedK8sContexts)
+
+	if provider == nil || len(clusterIDs) == 0 {
+		return
+	}
+	genericPersister := provider.GetGenericPersister()
+	if genericPersister == nil {
+		return
+	}
+
 	var resources []model.KubernetesResource
 
-	err := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
+	err := genericPersister.Model(&model.KubernetesResource{}).
 		Preload("KubernetesResourceMeta").
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
 		Where("kubernetes_resources.cluster_id IN (?)", clusterIDs).Where(&model.KubernetesResource{Kind: "Service"}).Where("lower(kubernetes_resource_object_meta.name) LIKE ? OR lower(kubernetes_resource_object_meta.name) LIKE ?", "%grafana%", "%prometheus%").Find(&resources).Error
 
 	if err != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err))
+		if h.log != nil {
+			h.log.Error(ErrFetchMeshSyncResources(err))
+		}
 		return
 	}
 
@@ -482,5 +866,228 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			}
 		}
 	}
+}
 
+// discoverK8sContext initializes (or reuses) the state machine for a
+// Kubernetes connection and fires a background Discovery on it, reporting
+// the outcome through reportBackgroundDiscovery. It returns the machine, or
+// nil when the machine could not be initialized. afterProbe, when non-nil,
+// runs in the discovery goroutine once the probe has reported; the NOTFOUND
+// probe uses it to forget a connection whose condition resolved.
+// skipProbeOnRefreshFailure, set by the NOTFOUND probe only, skips the
+// probe when the credential refresh fails instead of running Discovery
+// against the old clientset: a successful probe would report the connection
+// recovered even though the stored credentials cannot build a client. The
+// connected path leaves it false — a failed refresh there only maintains
+// the existing CONNECTED status, and skipping would freeze outage detection
+// for a connection whose rotated credentials are broken.
+func (h *Handler) discoverK8sContext(ctx context.Context, provider models.Provider, token string, userUUID uuid.UUID, k8sContext *models.K8sContext, afterProbe func(event *events.Event, err error), skipProbeOnRefreshFailure bool) *machines.StateMachine {
+	var operatorTracker *models.OperatorTracker
+	var k8scontextChannel *models.K8scontextChan
+	var eventBroadcaster *models.Broadcast
+	if h.config != nil {
+		operatorTracker = h.config.OperatorTracker
+		k8scontextChannel = h.config.K8scontextChannel
+		eventBroadcaster = h.config.EventBroadcaster
+	}
+
+	machineCtx := &kubernetes.MachineCtx{
+		K8sContext:         *k8sContext,
+		MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+		K8sCompRegHelper:   h.K8sCompRegHelper,
+		OperatorTracker:    operatorTracker,
+		K8scontextChannel:  k8scontextChannel,
+		EventBroadcaster:   eventBroadcaster,
+		RegistryManager:    h.registryManager,
+	}
+	connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+
+	inst, err := mhelpers.InitializeMachineWithContext(
+		machineCtx,
+		ctx,
+		connectionUUID,
+		userUUID,
+		h.ConnectionToStateMachineInstanceTracker,
+		h.log,
+		provider,
+		machines.DefaultState,
+		"kubernetes",
+		kubernetes.AssignInitialCtx,
+	)
+	if err != nil && h.log != nil {
+		h.log.Error(err)
+	}
+
+	// Skip a machine that failed to initialize rather than nil-dereferencing
+	// on ResetState/SendEvent. See mhelpers.HasMachineContext for why.
+	if !mhelpers.HasMachineContext(inst) {
+		return nil
+	}
+
+	// A tracked machine reuses the context (and clientset) built when it was
+	// created, so a credential update would otherwise never reach Discovery:
+	// the probe would keep failing against the old clientset and the
+	// unreachable condition would stay open. Refresh the stored context when
+	// the newly loaded one carries different connection material. This runs
+	// here, in the helper both paths share, so the connected path benefits
+	// too. A rebuild failure keeps the old context and is logged; when
+	// skipProbeOnRefreshFailure is set the probe is skipped this cycle,
+	// because probing with the old clientset could report the connection
+	// recovered when the stored credentials cannot connect. The next
+	// request retries the refresh.
+	var refreshErr error
+	inst.UpdateContext(func(oldCtx interface{}) interface{} {
+		stored, ok := oldCtx.(*kubernetes.MachineCtx)
+		if !ok || stored == nil {
+			return oldCtx
+		}
+		if _, err := stored.RefreshK8sContext(*k8sContext, models.NewServerEvent(ctx), h.log); err != nil {
+			refreshErr = err
+			if h.log != nil {
+				h.log.Error(err)
+			}
+		}
+		return oldCtx
+	})
+	if refreshErr != nil && skipProbeOnRefreshFailure {
+		return nil
+	}
+
+	inst.ResetState()
+	go func(inst *machines.StateMachine) {
+		discoveryCtx, cancel := backgroundDiscoveryContext(ctx)
+		defer cancel()
+		event, err := inst.SendEvent(discoveryCtx, machines.Discovery, nil)
+		h.reportBackgroundDiscovery(provider, token, userUUID, event, err)
+		if afterProbe != nil {
+			afterProbe(event, err)
+		}
+	}(inst)
+	return inst
+}
+
+// loadNotFoundK8sContexts fetches all of the user's Kubernetes contexts
+// whose connection status is NOTFOUND, paginating like
+// RemoteProvider.LoadAllK8sContext. The provider API takes a single status,
+// so this is a separate call from the CONNECTED load — gated behind the
+// throttle in probeNotFoundK8sContexts, it runs at most once per interval.
+func loadNotFoundK8sContexts(provider models.Provider, token string) ([]*models.K8sContext, error) {
+	page := 0
+	pageSize := 25
+	results := []*models.K8sContext{}
+
+	for {
+		res, err := provider.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", string(connections.NOTFOUND), true)
+		if err != nil {
+			return results, err
+		}
+		var k8scontext models.MesheryK8sContextPage
+		if err := json.Unmarshal(res, &k8scontext); err != nil {
+			return results, err
+		}
+		results = append(results, k8scontext.Contexts...)
+
+		if (page+1)*pageSize >= k8scontext.TotalCount {
+			break
+		}
+
+		page++
+	}
+
+	return results, nil
+}
+
+// probeNotFoundK8sContexts re-probes the user's managed Kubernetes
+// connections that background Discovery previously moved to NOTFOUND, so
+// their "unreachable" condition can resolve when the cluster comes back.
+// Discovery otherwise runs only over AllKubeClusterKey, which holds only
+// CONNECTED contexts, so a NOTFOUND connection is never probed again.
+//
+// The NOTFOUND list is loaded with a single provider call, gated by the
+// throttle (at most one load per interval per provider+user) — no second
+// remote-provider round trip per request. Each connection is probed at most
+// once per interval, and a connection already in AllKubeClusterKey (i.e.
+// CONNECTED, or a local-provider context, which the local provider returns
+// unfiltered) is skipped; for the local provider the persisted status is
+// checked too, so a DISCONNECTED context is never probed. Probed connections
+// stay out of AllKubeClusterKey: only the Discovery event can move them back
+// to CONNECTED, through the state machine, exactly like a connected context.
+func (h *Handler) probeNotFoundK8sContexts(ctx context.Context, provider models.Provider, token string, userUUID uuid.UUID, connectedK8sContexts []*models.K8sContext) {
+	if provider == nil {
+		return
+	}
+
+	throttle := h.notFoundProbeThrottleOrDefault()
+
+	// Prune expired throttle entries before the load, so the maps cannot
+	// grow without bound even when loads keep failing: a probe entry for a
+	// connection that left NOTFOUND or was deleted expires after the interval.
+	throttle.prune()
+
+	// One Handler serves every user and provider, so the load gate is
+	// scoped to this provider and user: one user's requests must not block
+	// another user's NOTFOUND recovery. The per-connection probe limit stays
+	// global — a connection belongs to one user and provider anyway.
+	if !throttle.allowLoad(notFoundProbeLoadScope{
+		providerName: provider.Name(),
+		providerURL:  provider.GetProviderURL(),
+		user:         userUUID,
+	}) {
+		return
+	}
+
+	notFoundContexts, err := loadNotFoundK8sContexts(provider, token)
+	if err != nil {
+		if h.log != nil {
+			h.log.Error(err)
+		}
+		return
+	}
+
+	connectedIDs := make(map[core.Uuid]struct{}, len(connectedK8sContexts))
+	for _, k8sContext := range connectedK8sContexts {
+		if k8sContext == nil {
+			continue
+		}
+		connectedIDs[uuid.FromStringOrNil(k8sContext.ConnectionID)] = struct{}{}
+	}
+
+	for _, k8sContext := range notFoundContexts {
+		if k8sContext == nil {
+			continue
+		}
+		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+		if _, ok := connectedIDs[connectionUUID]; ok {
+			continue
+		}
+		// The local provider returns contexts unfiltered by status, so a
+		// context whose connection is not NOTFOUND can slip into this load.
+		// Probe only connections that are still NOTFOUND: a DISCONNECTED
+		// connection must wait for the user to reconnect it, and Discovery
+		// must not move it to CONNECTED on its own. Remote providers filter
+		// by status server-side, so the check is unnecessary there. A
+		// lookup failure skips the probe this cycle; the connection is
+		// retried on the next load.
+		if provider.GetProviderType() == models.LocalProviderType {
+			conn, _, err := provider.GetConnectionByID(token, connectionUUID)
+			if err != nil || conn == nil || conn.Status != connections.NOTFOUND {
+				if err != nil && h.log != nil {
+					h.log.Error(err)
+				}
+				continue
+			}
+		}
+		if !throttle.allowProbe(connectionUUID) {
+			continue
+		}
+		h.discoverK8sContext(ctx, provider, token, userUUID, k8sContext, func(event *events.Event, err error) {
+			// A probe that leaves NOTFOUND resolves the connection's
+			// unreachable condition; forget the throttle entry so the
+			// connection is probed again promptly if it goes NOTFOUND
+			// again, instead of waiting out the interval.
+			if err == nil && event != nil && event.ResolvedAt != nil {
+				throttle.forget(connectionUUID)
+			}
+		}, true)
+	}
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
 )
 
 func performanceProfileIDFromRequest(r *http.Request) string {
@@ -57,6 +58,11 @@ func (h *Handler) SavePerformanceProfileHandler(
 	j, _ := json.Marshal(parsedBody)
 	h.log.Info("performance profile is ", string(j))
 
+	if provider == nil {
+		writeJSONError(rw, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
 		//unable to save user config data
@@ -91,7 +97,11 @@ func (h *Handler) GetPerformanceProfilesHandler(
 ) {
 	q := r.URL.Query()
 
-	tokenString := r.Context().Value(models.TokenCtxKey).(string)
+	if provider == nil {
+		writeJSONError(rw, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+	tokenString, _ := r.Context().Value(models.TokenCtxKey).(string)
 
 	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
@@ -116,13 +126,31 @@ func (h *Handler) DeletePerformanceProfileHandler(
 	provider models.Provider,
 ) {
 	performanceProfileID := performanceProfileIDFromRequest(r)
+	if performanceProfileID == "" {
+		writeJSONError(rw, "performanceProfileId is required", http.StatusBadRequest)
+		return
+	}
+	if provider == nil {
+		writeJSONError(rw, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 
 	resp, err := provider.DeletePerformanceProfile(r, performanceProfileID)
 	if err != nil {
 		obj := "performance profile"
+		// a profile that does not exist is a 404, not a server failure
+		if errors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			h.log.Warnf("No %s with ID %q found to delete", obj, performanceProfileID)
+			writeMeshkitError(rw, err, http.StatusNotFound)
+			return
+		}
+
 		//fail to delete performance profile
 		h.log.Error(ErrFailToDelete(err, obj))
-		writeMeshkitError(rw, ErrFailToDelete(err, obj), http.StatusInternalServerError)
+		// Keep the status a remote provider returned (403, 409, ...) and fall
+		// back to 500 only when the failure carries none, as the other delete
+		// handlers do.
+		writeMeshkitError(rw, ErrFailToDelete(err, obj), providerStatusOrInternal(err))
 		return
 	}
 
@@ -140,6 +168,14 @@ func (h *Handler) GetPerformanceProfileHandler(
 	provider models.Provider,
 ) {
 	performanceProfileID := performanceProfileIDFromRequest(r)
+	if performanceProfileID == "" {
+		writeJSONError(rw, "performanceProfileId is required", http.StatusBadRequest)
+		return
+	}
+	if provider == nil {
+		writeJSONError(rw, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 
 	resp, err := provider.GetPerformanceProfile(r, performanceProfileID)
 	if err != nil {

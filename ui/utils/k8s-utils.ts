@@ -126,8 +126,10 @@ export function normalizeUnit(resourceType, quantity) {
         bytes *= 1024 * 1024 * 1024;
       } else if (quantity.endsWith('Ti')) {
         bytes *= 1024 * 1024 * 1024 * 1024;
-      } else if (quantity.endsWith('Ei')) {
+      } else if (quantity.endsWith('Pi')) {
         bytes *= 1024 * 1024 * 1024 * 1024 * 1024;
+      } else if (quantity.endsWith('Ei')) {
+        bytes *= 1024 * 1024 * 1024 * 1024 * 1024 * 1024;
       } else if (quantity.endsWith('m')) {
         bytes /= 1000;
       } else if (quantity.endsWith('u')) {
@@ -142,8 +144,10 @@ export function normalizeUnit(resourceType, quantity) {
         bytes *= 1000 * 1000 * 1000;
       } else if (quantity.endsWith('T')) {
         bytes *= 1000 * 1000 * 1000 * 1000;
-      } else if (quantity.endsWith('E')) {
+      } else if (quantity.endsWith('P')) {
         bytes *= 1000 * 1000 * 1000 * 1000 * 1000;
+      } else if (quantity.endsWith('E')) {
+        bytes *= 1000 * 1000 * 1000 * 1000 * 1000 * 1000;
       }
 
       if (bytes === 0) {
@@ -183,7 +187,7 @@ export function parseRam(value) {
 function parseUnitsOfBytes(value) {
   if (!value) return 0;
 
-  const groups = value.match(/(\d+)([BKMGTPEe])?(i)?(\d+)?/) || [];
+  const groups = value.match(/(\d+)([BKMGTPEek])?(i)?(\d+)?/) || [];
   const number = parseInt(groups[1], 10);
 
   // number ex. 1000
@@ -196,7 +200,8 @@ function parseUnitsOfBytes(value) {
     return number * 10 ** parseInt(groups[4], 10);
   }
 
-  const unitIndex = _.indexOf(UNITS, groups[2]);
+  const rawUnit = groups[2] === 'k' ? 'K' : groups[2];
+  const unitIndex = _.indexOf(UNITS, rawUnit);
 
   // Unit + i ex. 1Ki
   if (groups[3] !== undefined) {
