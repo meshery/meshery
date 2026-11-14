@@ -2859,7 +2859,7 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryPatternsCatalog)
 
-	l.Log.Info("attempting to pubish design with id: ", publishPatternRequest.ID)
+	l.Log.Info("attempting to publish design with id: ", publishPatternRequest.ID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	l.Log.Debug("constructed design url: ", remoteProviderURL.String())
@@ -3438,7 +3438,7 @@ func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRe
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryFiltersCatalog)
 
-	l.Log.Info("attempting to pubish filter with id: ", publishFilterRequest.ID)
+	l.Log.Info("attempting to publish filter with id: ", publishFilterRequest.ID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	l.Log.Debug("constructed filter url: ", remoteProviderURL.String())
