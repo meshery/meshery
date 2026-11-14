@@ -159,17 +159,25 @@ func TestExportModel_VersionTraversal(t *testing.T) {
 }
 
 // TestRegisterMeshmodelComponents_VersionTraversal verifies that registration
-// rejects a component whose model version carries a traversal string, in
-// either the outer version or the embedded model version, so a hostile
-// version cannot be planted through the registration endpoint.
+// rejects a component whose model version, model name, or component kind carries
+// a traversal string, or whose model is nil, so hostile paths cannot be planted
+// through the registration endpoint.
 func TestRegisterMeshmodelComponents_VersionTraversal(t *testing.T) {
 	tests := []struct {
 		name         string
+		modelName    string
+		kind         string
 		version      string
 		innerVersion string
+		nilModel     bool
+		wantReason   string
 	}{
-		{"outer version traverses", "../../../escaped", "v1"},
-		{"embedded version traverses", "v1", "../../../escaped"},
+		{"outer version traverses", "traversal-model", "test-kind", "../../../escaped", "v1", false, "invalid model version, name, or component kind: must be a single path component"},
+		{"embedded version traverses", "traversal-model", "test-kind", "v1", "../../../escaped", false, "invalid model version, name, or component kind: must be a single path component"},
+		{"model name traverses", "../../../escaped-model", "test-kind", "v1", "v1", false, "invalid model version, name, or component kind: must be a single path component"},
+		{"component kind traverses", "traversal-model", "../../../escaped-kind", "v1", "v1", false, "invalid model version, name, or component kind: must be a single path component"},
+		{"component kind with backslash", "traversal-model", "test\\kind", "v1", "v1", false, "invalid model version, name, or component kind: must be a single path component"},
+		{"nil model rejected", "", "test-kind", "", "", true, "model is required in component definition"},
 	}
 
 	for _, tt := range tests {
@@ -185,11 +193,16 @@ func TestRegisterMeshmodelComponents_VersionTraversal(t *testing.T) {
 			}
 
 			comp := compv1beta3.ComponentDefinition{
-				Model: &model.ModelDefinition{
-					Name:    "traversal-model",
+				Component: compv1beta3.Component{
+					Kind: tt.kind,
+				},
+			}
+			if !tt.nilModel {
+				comp.Model = &model.ModelDefinition{
+					Name:    tt.modelName,
 					Version: tt.version,
 					Model:   model.Model{Version: tt.innerVersion},
-				},
+				}
 			}
 			entityBytes, err := json.Marshal(comp)
 			require.NoError(t, err)
@@ -209,6 +222,15 @@ func TestRegisterMeshmodelComponents_VersionTraversal(t *testing.T) {
 
 			resp := rw.Result()
 			assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+
+			var errResp struct {
+				Code            string   `json:"code"`
+				Error           string   `json:"error"`
+				LongDescription []string `json:"longDescription"`
+			}
+			require.NoError(t, json.NewDecoder(resp.Body).Decode(&errResp))
+			assert.Equal(t, ErrRequestBodyCode, errResp.Code)
+			assert.Contains(t, errResp.LongDescription, tt.wantReason)
 		})
 	}
 }
