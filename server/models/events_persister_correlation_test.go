@@ -72,6 +72,37 @@ func mustPersist(t *testing.T, p *EventsPersister, event *events.Event) Persiste
 	return persisted
 }
 
+func TestResolveConnectionConditionRollsBackOnUpdateFailure(t *testing.T) {
+	persister := newCorrelationTestPersister(t)
+	provider := &DefaultLocalProvider{EventsPersister: persister}
+	key := ConditionKey("k8s-connection", mustUUID(t).String(), "unreachable")
+	owners := []uuid.UUID{mustUUID(t), mustUUID(t)}
+	for _, owner := range owners {
+		mustPersist(t, persister, conditionEvent(owner, key, "unreachable").Build())
+	}
+
+	updates := 0
+	if err := persister.DB.Callback().Update().Before("gorm:update").Register("test:fail_second_update", func(tx *gorm.DB) {
+		updates++
+		if updates == 2 {
+			_ = tx.AddError(errors.New("second update failed"))
+		}
+	}); err != nil {
+		t.Fatalf("register update callback: %v", err)
+	}
+	recovery := events.NewEvent().WithSeverity(events.Success).Resolves(key, time.Now().UTC()).Build()
+	resolved, err := provider.ResolveConnectionCondition(*recovery)
+	if err == nil || len(resolved) != 0 || updates != 2 {
+		t.Fatalf("got %d resolved rows, %d updates and error %v, want failure on second update", len(resolved), updates, err)
+	}
+	for _, owner := range owners {
+		rows := storedEvents(t, persister, owner)
+		if len(rows) != 1 || rows[0].ResolvedAt != nil {
+			t.Errorf("owner %s should still have one open condition after rollback, got %+v", owner, rows)
+		}
+	}
+}
+
 // An event that sets none of the new fields is recorded as a new row every
 // time, exactly as before correlation existed; the only field it gains is the
 // server's source.

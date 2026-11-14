@@ -209,6 +209,85 @@ func TestReportBackgroundDiscoveryPublishesStoredEvent(t *testing.T) {
 	}
 }
 
+func TestReportBackgroundDiscoveryResolvesSharedConnection(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	broadcaster := h.config.EventBroadcaster
+	observer := uuid.Must(uuid.NewV4())
+	observerEvents, stopObserver := broadcaster.Subscribe(observer)
+	defer stopObserver()
+	key := models.ConditionKey("k8s-connection", uuid.Must(uuid.NewV4()).String(), "unreachable")
+	otherKey := models.ConditionKey("k8s-connection", uuid.Must(uuid.NewV4()).String(), "unreachable")
+
+	open := func(owner uuid.UUID, key string) *events.Event {
+		t.Helper()
+		event := events.NewEvent().FromOwner(owner).WithCategory("connection").WithAction("update").
+			WithSeverity(events.Error).WithDescription("connection unreachable").WithCorrelationKey(key).Build()
+		persisted, err := provider.PersistEvent(*event, "")
+		if err != nil {
+			t.Fatalf("open condition: %v", err)
+		}
+		return persisted.Event
+	}
+
+	firstOwner, secondOwner := uuid.Must(uuid.NewV4()), uuid.Must(uuid.NewV4())
+	open(firstOwner, key)
+	first := open(firstOwner, key) // Keep the recorded recurrence count.
+	second := open(secondOwner, key)
+	unrelated := open(firstOwner, otherKey)
+
+	firstEvents, stopFirst := broadcaster.Subscribe(firstOwner)
+	defer stopFirst()
+	secondEvents, stopSecond := broadcaster.Subscribe(secondOwner)
+	defer stopSecond()
+	recovery := events.NewEvent().FromOwner(observer).WithCategory("connection").WithAction("update").
+		WithSeverity(events.Success).WithDescription("connection reachable").Resolves(key, time.Now().UTC()).Build()
+	h.reportBackgroundDiscovery(provider, "", observer, recovery, nil)
+
+	for _, owner := range []struct {
+		before *events.Event
+		stream chan interface{}
+	}{
+		{first, firstEvents},
+		{second, secondEvents},
+	} {
+		got := receiveEvent(t, owner.stream)
+		if got.ID != owner.before.ID || got.Owner == nil || *got.Owner != *owner.before.Owner ||
+			got.ResolvedAt == nil || !got.ResolvedAt.Equal(*recovery.ResolvedAt) ||
+			got.OccurrenceCount == nil || *got.OccurrenceCount != *owner.before.OccurrenceCount ||
+			got.Severity != recovery.Severity || got.Description != recovery.Description {
+			t.Errorf("published event %+v does not match the resolved condition %+v", got, owner.before)
+		}
+		var stored events.Event
+		if err := provider.EventsPersister.DB.Where("id = ?", owner.before.ID).Take(&stored).Error; err != nil {
+			t.Fatalf("read condition: %v", err)
+		}
+		if stored.ResolvedAt == nil {
+			t.Errorf("condition %s remains open", stored.ID)
+		}
+	}
+
+	h.reportBackgroundDiscovery(provider, "", observer, recovery, nil)
+	for _, stream := range []chan interface{}{firstEvents, secondEvents, observerEvents} {
+		select {
+		case unexpected := <-stream:
+			t.Errorf("unexpected notification: %+v", unexpected)
+		default:
+		}
+	}
+	var rows []events.Event
+	if err := provider.EventsPersister.DB.Find(&rows).Error; err != nil {
+		t.Fatalf("read events: %v", err)
+	}
+	if len(rows) != 3 {
+		t.Fatalf("got %d event rows, want 3 original rows", len(rows))
+	}
+	for _, row := range rows {
+		if row.ID == unrelated.ID && row.ResolvedAt != nil {
+			t.Errorf("unrelated condition %s was resolved", row.ID)
+		}
+	}
+}
+
 // A background Discovery reports its failure and the resolution of the
 // connection's unreachable condition, and nothing for a routine success.
 func TestReportBackgroundDiscovery(t *testing.T) {

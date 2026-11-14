@@ -949,7 +949,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	}
 	event := eventBuilder.WithDescription(description).Build()
 
-	h.persistAndPublish(provider, token, userID, event)
+	h.reportMachineOutcome(provider, token, userID, event, nil)
 
 	h.log.Info("connection deleted.")
 	w.WriteHeader(http.StatusOK)
