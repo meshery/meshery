@@ -47,7 +47,7 @@ func seededModelDefDirs(t *testing.T, root string) []seededModelDefDir {
 		if err != nil {
 			t.Fatalf("reading %s: %v", versionDirs[0], err)
 		}
-		versionModel := ""
+		versionModel, sawVersionModel := "", false
 		for _, defDir := range defDirs {
 			if !defDir.IsDir() {
 				continue
@@ -63,10 +63,10 @@ func seededModelDefDirs(t *testing.T, root string) []seededModelDefDir {
 			if err := json.Unmarshal(raw, &model); err != nil {
 				t.Fatalf("parsing model definition in %s: %v", dir, err)
 			}
-			if versionModel != "" && model.Name != versionModel {
+			if sawVersionModel && model.Name != versionModel {
 				t.Fatalf("definition directories in %s register different models (%q and %q), but seeding loads only one of them", versionDirs[0], versionModel, model.Name)
 			}
-			versionModel = model.Name
+			versionModel, sawVersionModel = model.Name, true
 			seeded = append(seeded, seededModelDefDir{name: model.Name, dir: dir})
 		}
 	}
