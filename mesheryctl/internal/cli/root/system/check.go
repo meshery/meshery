@@ -77,6 +77,10 @@ type HealthCheckOptions struct {
 	RunComponentChecks bool
 	// if RunOperatorChecks is true we run operator checks
 	RunOperatorChecks bool
+	// if SkipKubernetesVersionChecks is true the Kubernetes/kubectl minimum
+	// version checks are skipped. Teardown commands set it so an outdated
+	// cluster or kubectl cannot block the removal of an existing installation.
+	SkipKubernetesVersionChecks bool
 }
 
 type HealthChecker struct {
@@ -480,6 +484,11 @@ func (hc *HealthChecker) runKubernetesHealthChecks() error {
 	// Run k8s API healthchecks
 	if err := hc.runKubernetesAPIHealthCheck(); err != nil {
 		return err
+	}
+	// Teardown has to work against an outdated cluster or kubectl, so the
+	// minimum version checks are skipped there.
+	if hc.Options.SkipKubernetesVersionChecks {
+		return nil
 	}
 	// Run k8s plus kubectl minimum version healthchecks
 	err = hc.runKubernetesVersionHealthCheck()

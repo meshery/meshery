@@ -54,15 +54,16 @@ const (
 	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 
 	// Documentation URLs
-	docsBaseURL      = "https://docs.meshery.io/"
-	rootUsageURL     = docsBaseURL + "reference/mesheryctl"
-	perfUsageURL     = docsBaseURL + "reference/mesheryctl/perf"
-	systemUsageURL   = docsBaseURL + "reference/mesheryctl/system"
-	systemStopURL    = docsBaseURL + "reference/mesheryctl/system/stop"
-	systemUpdateURL  = docsBaseURL + "reference/mesheryctl/system/update"
-	systemResetURL   = docsBaseURL + "reference/mesheryctl/system/reset"
-	systemStatusURL  = docsBaseURL + "reference/mesheryctl/system/status"
-	systemRestartURL = docsBaseURL + "reference/mesheryctl/system/restart"
+	docsBaseURL        = "https://docs.meshery.io/"
+	rootUsageURL       = docsBaseURL + "reference/mesheryctl"
+	perfUsageURL       = docsBaseURL + "reference/mesheryctl/perf"
+	systemUsageURL     = docsBaseURL + "reference/mesheryctl/system"
+	systemStopURL      = docsBaseURL + "reference/mesheryctl/system/stop"
+	systemUpdateURL    = docsBaseURL + "reference/mesheryctl/system/update"
+	systemResetURL     = docsBaseURL + "reference/mesheryctl/system/reset"
+	systemStatusURL    = docsBaseURL + "reference/mesheryctl/system/status"
+	systemRestartURL   = docsBaseURL + "reference/mesheryctl/system/restart"
+	systemUninstallURL = docsBaseURL + "reference/mesheryctl/system/uninstall"
 	// No dedicated page exists for `mesheryctl mesh`; point at the command
 	// reference index rather than a 404.
 	meshUsageURL                   = docsBaseURL + "reference/mesheryctl"
@@ -138,6 +139,7 @@ const (
 	cmdSystemReset              cmdType = "system reset"
 	cmdSystemStatus             cmdType = "system status"
 	cmdSystemRestart            cmdType = "system restart"
+	cmdSystemUninstall          cmdType = "system uninstall"
 	cmdExp                      cmdType = "exp"
 	cmdFilter                   cmdType = "filter"
 	cmdFilterImport             cmdType = "filter import"

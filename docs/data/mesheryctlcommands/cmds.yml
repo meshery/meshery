@@ -105,6 +105,21 @@ system:
           description: (optional) uninstall Meshery resources forcefully
           usage: mesheryctl system stop --force
 
+    uninstall:
+      name: uninstall
+      arg: system
+      description: Uninstall Meshery
+      usage: mesheryctl system uninstall
+      flags:
+        keep-namespace:
+          name: --keep-namespace
+          description: (optional) keep the Meshery namespace during uninstallation
+          usage: mesheryctl system uninstall --keep-namespace
+        force:
+          name: --force
+          description: (optional) forcefully delete Kubernetes resources; has no effect for Docker installations
+          usage: mesheryctl system uninstall --force
+
     update:
       name: update
       description: Pull new Meshery images from Docker Hub. Does not update `mesheryctl`. This command may be executed while Meshery is running.
