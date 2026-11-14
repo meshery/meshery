@@ -27,6 +27,12 @@ func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.
 }
 
 func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if provider == nil {
+		h.log.Error(ErrNilProvider())
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	userID := mux.Vars(r)["id"]
 	_, err := uuid.FromString(userID)
 	if err != nil {
@@ -60,6 +66,12 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 }
 
 func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if provider == nil {
+		h.log.Error(ErrNilProvider())
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		writeMeshkitError(w, ErrFetchToken(fmt.Errorf("token not found in request context")), http.StatusInternalServerError)
@@ -84,6 +96,12 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 
 // UserPrefsHandler updates anonymous stats for user or for persisting load test preferences
 func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if provider == nil {
+		h.log.Error(ErrNilProvider())
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	if req.Method == http.MethodGet {
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
@@ -145,6 +163,13 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		}
 	}
 
+	if user == nil {
+		err := fmt.Errorf("user not found in request context")
+		h.log.Error(ErrSavingUserPreference(err))
+		writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusBadRequest)
+		return
+	}
+
 	if err := provider.RecordPreferences(req, user.ID.String(), prefObj); err != nil {
 		err := fmt.Errorf("unable to save user preferences: %v", err)
 		h.log.Error(ErrSavingUserPreference(err))
@@ -162,6 +187,12 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 }
 
 func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if provider == nil {
+		h.log.Error(ErrNilProvider())
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	statusCode, err := provider.ShareDesign(r)
 	if err != nil {
 		writeMeshkitError(w, ErrShareDesign(err), statusCode)
@@ -172,6 +203,12 @@ func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *
 }
 
 func (h *Handler) ShareFilterHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if provider == nil {
+		h.log.Error(ErrNilProvider())
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	statusCode, err := provider.ShareFilter(r)
 	if err != nil {
 		writeMeshkitError(w, ErrShareFilter(err), statusCode)
