@@ -262,18 +262,16 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 		go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: obj})
 		// Try to update object if Create fails. If MeshSync is restarted, on initial sync the discovered data will have eventType as ADD, but the database would already have the data, leading to conflicts hence try to update the object in such cases.
 		if result.Error != nil {
-			result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
-			if result.Error != nil {
-				return ErrDBPut(result.Error)
+			if err := mh.replaceMeshsyncResource(&obj); err != nil {
+				return ErrDBPut(err)
 			}
 		}
 	case broker.Update:
 		compMetadata, model := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
 		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
 		obj.Model = model
-		result := mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
-		if result.Error != nil {
-			return ErrDBPut(result.Error)
+		if err := mh.replaceMeshsyncResource(&obj); err != nil {
+			return ErrDBPut(err)
 		}
 		return nil
 	case broker.Delete:
@@ -300,9 +298,8 @@ func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Kubernet
 	go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: *object})
 
 	if result.Error != nil {
-		result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(object)
-		if result.Error != nil {
-			return ErrDBPut(result.Error)
+		if err := mh.replaceMeshsyncResource(object); err != nil {
+			return ErrDBPut(err)
 		}
 		mh.log.Info("Updated object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " in the database")
 		return nil
@@ -310,6 +307,21 @@ func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Kubernet
 	mh.log.Info("Added object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " to the database")
 
 	return nil
+}
+
+// replaceMeshsyncResource replaces the metadata rows and resource atomically. GORM's
+// association updates insert new key/value rows but do not remove old values.
+func (mh *MeshsyncDataHandler) replaceMeshsyncResource(obj *meshsyncmodel.KubernetesResource) error {
+	meshsyncmodel.SetID(obj)
+	if obj.ID == "" || obj.KubernetesResourceMeta == nil {
+		return fmt.Errorf("cannot update MeshSync resource without an identity and metadata")
+	}
+	return mh.dbHandler.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("id = ?", obj.ID).Delete(&meshsyncmodel.KubernetesKeyValue{}).Error; err != nil {
+			return err
+		}
+		return tx.Session(&gorm.Session{FullSaveAssociations: true}).Updates(obj).Error
+	})
 }
 
 func RemoveStaleObjects(dbHandler database.Handler) error {
