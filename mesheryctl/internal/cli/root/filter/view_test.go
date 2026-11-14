@@ -1,7 +1,11 @@
 package filter
 
 import (
+	"fmt"
+	"net/url"
 	"path/filepath"
+
+	mkerrors "github.com/meshery/meshkit/errors"
 	"runtime"
 	"testing"
 
@@ -101,5 +105,35 @@ func TestSelectFilterByName(t *testing.T) {
 				t.Fatalf("got %v, err %v, prompted %v", got, err, called)
 			}
 		})
+	}
+}
+
+func TestFetchFilterSearchPages(t *testing.T) {
+	calls := 0
+	got, err := fetchFilterSearch("auth & token", func(raw string) (*models.MesheryFilterPage, error) {
+		u, parseErr := url.Parse(raw)
+		if parseErr != nil {
+			t.Fatal(parseErr)
+		}
+		if u.Query().Get("search") != "auth & token" || u.Query().Get("page") != fmt.Sprint(calls) {
+			t.Fatalf("unexpected query %s", raw)
+		}
+		calls++
+		if calls == 1 {
+			return &models.MesheryFilterPage{PageSize: 1, TotalCount: 2, Filters: []*models.MesheryFilter{{Name: "partial"}}}, nil
+		}
+		return &models.MesheryFilterPage{PageSize: 1, TotalCount: 2, Filters: []*models.MesheryFilter{{Name: "auth & token"}}}, nil
+	})
+	if err != nil || calls != 2 || len(got.Filters) != 2 || got.Filters[1].Name != "auth & token" {
+		t.Fatalf("pages=%d result=%v error=%v", calls, got, err)
+	}
+}
+
+func TestFilterViewNotFoundReturnsTypedError(t *testing.T) {
+	mesheryctlflags.InitValidators(FilterCmd)
+	run := utils.MesheryCommandRun{Cmd: FilterCmd, Args: []string{"view", "xyz"}, CommandDir: utils.CallerDir(t), Mocks: []utils.MockURL{{URL: "/api/filter", Response: "view.nonexisting.filter.api.response.golden"}}}
+	_, err := utils.RunMesheryctlCommand(t, run)
+	if err == nil || mkerrors.GetCode(err) != ErrFilterNotFoundCode {
+		t.Fatalf("got %v, want %s", err, ErrFilterNotFoundCode)
 	}
 }

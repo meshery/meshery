@@ -117,7 +117,12 @@ mesheryctl filter view "filter name"
 			}
 			selectedFilter = filter
 		} else {
-			page, err := api.Fetch[models.MesheryFilterPage](urlString)
+			var page *models.MesheryFilterPage
+			if filterViewFlagsProvided.ViewAllFlag {
+				page, err = api.Fetch[models.MesheryFilterPage](urlString)
+			} else {
+				page, err = fetchFilterSearch(filter, api.Fetch[models.MesheryFilterPage])
+			}
 			if err != nil {
 				return err
 			}
@@ -176,6 +181,36 @@ mesheryctl filter view "filter name"
 		)
 
 	},
+}
+
+// fetchFilterSearch collects every page so that selection can consider exact
+// matches and duplicates even when the provider caps the requested page size.
+func fetchFilterSearch(name string, fetch func(string) (*models.MesheryFilterPage, error)) (*models.MesheryFilterPage, error) {
+	const requestedPageSize = 10000
+	result := &models.MesheryFilterPage{}
+	var pageSize uint64
+	for pageNum := uint64(0); ; pageNum++ {
+		query := fmt.Sprintf("api/filter?pagesize=%d&search=%s&page=%d", requestedPageSize, url.QueryEscape(name), pageNum)
+		page, err := fetch(query)
+		if err != nil {
+			return nil, err
+		}
+		if page == nil {
+			return nil, fmt.Errorf("empty filter search response")
+		}
+		if pageNum == 0 {
+			pageSize = page.PageSize
+		} else if page.PageSize != pageSize {
+			return nil, fmt.Errorf("filter search page size changed")
+		}
+		result.Filters = append(result.Filters, page.Filters...)
+		if len(result.Filters) >= page.TotalCount {
+			return result, nil
+		}
+		if pageSize == 0 || len(page.Filters) == 0 {
+			return nil, fmt.Errorf("incomplete filter search results")
+		}
+	}
 }
 
 var runFilterSelectPrompt = utils.RunSelectPrompt
