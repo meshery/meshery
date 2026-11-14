@@ -5,20 +5,45 @@ on:
       release-tag:
         type: string
         required: true
-        default: v0.x.x
 
 jobs:
 
   ctlrelease:
     name: Mesheryctl build & release
-    if: github.repository == 'meshery/meshery' && ${{inputs.release-tag}} && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
+    if: github.repository == 'meshery/meshery'
     runs-on: macos-latest
     
     steps:
+      - name: Validate requested release tag
+        env:
+          RELEASE_TAG: ${{ inputs.release-tag }}
+        run: |
+          if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Release tag must be an existing stable vMAJOR.MINOR.PATCH tag (for example, v1.0.71)."
+            exit 1
+          fi
+          if ! git ls-remote --exit-code --refs https://github.com/meshery/meshery.git "refs/tags/$RELEASE_TAG" >/dev/null; then
+            echo "::error::Release tag $RELEASE_TAG does not exist in meshery/meshery."
+            exit 1
+          fi
       - name: Check out code
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ref: ${{ inputs.release-tag }}
+      - name: Verify checked-out release tag
+        env:
+          RELEASE_TAG: ${{ inputs.release-tag }}
+        run: |
+          if ! checked_out_tag=$(git describe --tags --exact-match HEAD); then
+            echo "::error::Checked-out commit is not exactly tagged."
+            exit 1
+          fi
+          if [[ "$checked_out_tag" != "$RELEASE_TAG" ]]; then
+            echo "::error::Expected $RELEASE_TAG but checked out $checked_out_tag."
+            exit 1
+          fi
+          echo "Verified release tag $checked_out_tag at $(git rev-parse HEAD)"
       - name: Set up Go
         uses: actions/setup-go@master
         with:
@@ -28,7 +53,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           RELEASE_CHANNEL: "stable"
-          Tag: ${{inputs.release-tag}}
         with:
           version: 2
           args: release --clean --skip=validate -f .github/.goreleaser.yml
