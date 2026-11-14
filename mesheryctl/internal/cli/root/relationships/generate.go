@@ -56,6 +56,8 @@ type CustomValueRange struct {
 	VisualizationExample string `json:"VisualizationExample"`
 }
 
+var generateUsageMsg = "Usage: mesheryctl relationship generate [flags]\nRun 'mesheryctl relationship generate --help' to see detailed help message"
+
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate relationships documents",
@@ -71,6 +73,12 @@ mesheryctl relationship generate --file <path-to-relationships.csv> --output <pa
 // Generate relationships documents from a Google Spreadsheet
 mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
 `,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", generateUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &relationshipGenerateFlag)
 	},
