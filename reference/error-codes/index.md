@@ -7929,7 +7929,7 @@ Make sure the network connectivity is up between meshery server and the service 
             <td id=" -1160" class="error-name-code">
               <a href="/reference/error-codes/component-meshery-server/errrestconfigfromkubeconfigcode-1160/"><code>ErrRestConfigFromKubeConfigCode-1160</code></a>
             </td>
-            <td>Unable to create rest config from kube congif</td>
+            <td>Unable to create rest config from kube config</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrRestConfigFromKubeConfigCode-1160" target="_blank">search forum</a></td>
           </tr>
           <tr id="meshery-server-ErrRestConfigFromKubeConfigCode-more-info" class="tbl-hidden-row">
@@ -8878,7 +8878,7 @@ Please check if Meshery server has access to the Broker</p>
             </td>
             <td>failed to find the resource
 invalid resource type
-resource doens&#39;t exists</td>
+resource doesn&#39;t exist</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrKubectlDescribeCode-1198" target="_blank">search forum</a></td>
           </tr>
           <tr id="meshery-server-ErrKubectlDescribeCode-more-info" class="tbl-hidden-row">
@@ -9162,7 +9162,7 @@ Please check if Meshery server is accessible to the Database</p>
               <div class="error-heading">Probable Cause</div>
               <p class="error-details">The machine context has become invalid.</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Retry the opereation or try archiving and reinitializing the connection</p>
+              <p class="error-details">Retry the operation or try archiving and reinitializing the connection</p>
             </td>
           </tr>
         
@@ -9277,7 +9277,7 @@ Please check if Meshery server is accessible to the Database</p>
             <td id=" -1222" class="error-name-code">
               <a href="/reference/error-codes/component-meshery-server/errpagenumbercode-1222/"><code>ErrPageNumberCode-1222</code></a>
             </td>
-            <td>Unable to prase the Page Numer</td>
+            <td>Unable to parse the Page Number</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPageNumberCode-1222" target="_blank">search forum</a></td>
           </tr>
           <tr id="meshery-server-ErrPageNumberCode-more-info" class="tbl-hidden-row">
@@ -9327,7 +9327,7 @@ Please check if Meshery server is accessible to the Database</p>
             <td id=" -1224" class="error-name-code">
               <a href="/reference/error-codes/component-meshery-server/errperfidcode-1224/"><code>ErrPerfIDCode-1224</code></a>
             </td>
-            <td>Invalid peformance profile ID</td>
+            <td>Invalid performance profile ID</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrPerfIDCode-1224" target="_blank">search forum</a></td>
           </tr>
           <tr id="meshery-server-ErrPerfIDCode-more-info" class="tbl-hidden-row">
@@ -10561,12 +10561,12 @@ Connect to Grafana from the settings page in the UI</p>
           <tr id="meshery-server-ErrInvalidCapabilityCode-more-info" class="tbl-hidden-row">
             <td style="word-break:break-all;" colspan="4">
               <div class="error-heading">Long Description</div>
-              <p class="error-details">You dont have access to the capability</p>
+              <p class="error-details">You don&#39;t have access to the capability</p>
               <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Not logged in to the vaild remote Provider</p>
+              <p class="error-details">Not logged in to the valid remote Provider</p>
               <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Connect to the vaild remote Provider
-Ask the Provider Adim for access</p>
+              <p class="error-details">Connect to the valid remote Provider
+Ask the Provider Admin for access</p>
             </td>
           </tr>
         
@@ -13018,7 +13018,7 @@ Confirm the API endpoint is correct and functional.</p>
             <td id=" -1370" class="error-name-code">
               <a href="/reference/error-codes/component-meshery-server/errmeshsyncdatahandlercode-1370/"><code>ErrMeshsyncDataHandlerCode-1370</code></a>
             </td>
-            <td>Error in meshsync data hadler</td>
+            <td>Error in meshsync data handler</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrMeshsyncDataHandlerCode-1370" target="_blank">search forum</a></td>
           </tr>
           <tr id="meshery-server-ErrMeshsyncDataHandlerCode-more-info" class="tbl-hidden-row">
@@ -17367,7 +17367,7 @@ See https://docs.meshery.io for help getting started with Meshery</p>
               <div class="error-heading">Long Description</div>
               <p class="error-details"></p>
               <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Unable to covert JSON format from yml file</p>
+              <p class="error-details">Unable to convert JSON format from yml file</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Ensure a valid data is provided in your yml file</p>
             </td>
@@ -18042,7 +18042,7 @@ Check if mesheryctl is connected to kubernetes with `mesheryctl system check`</p
               <div class="error-heading">Long Description</div>
               <p class="error-details">Failed to start port-forwarding</p>
               <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Unable to provide a free port to connect to a kuberentes cluster</p>
+              <p class="error-details">Unable to provide a free port to connect to a kubernetes cluster</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Ensure your Meshery Server is running,
 Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system check`</p>
@@ -18158,7 +18158,7 @@ Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system che
             <td id=" -1082" class="error-name-code">
               <a href="/reference/error-codes/client-mesheryctl/errswitchchannelresponsecode-1082/"><code>ErrSwitchChannelResponseCode-1082</code></a>
             </td>
-            <td>Unable to exectute command</td>
+            <td>Unable to execute command</td>
             <td><a href="https://discuss.meshery.io/search?q=ErrSwitchChannelResponseCode-1082" target="_blank">search forum</a></td>
           </tr>
           <tr id="mesheryctl-ErrSwitchChannelResponseCode-more-info" class="tbl-hidden-row">
