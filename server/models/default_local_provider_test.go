@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
@@ -420,5 +421,61 @@ func TestDefaultLocalProviderSaveK8sContextNilMesheryInstanceID(t *testing.T) {
 	}
 	if got, _ := conn.Metadata["kubernetesServerId"].(string); got != "" {
 		t.Fatalf("expected empty kubernetesServerId metadata for nil KubernetesServerID, got %q", got)
+	}
+}
+
+func TestDefaultLocalProviderSaveK8sContext_DuplicateReturnsErrContextAlreadyPersisted(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to open in-memory database: %v", err)
+	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		t.Fatalf("failed to inspect sqlite handle: %v", err)
+	}
+	sqlDB.SetMaxOpenConns(1)
+
+	if err := db.AutoMigrate(&connections.Connection{}, &Credential{}, &K8sContext{}); err != nil {
+		t.Fatalf("failed to migrate k8s context tables: %v", err)
+	}
+
+	dbHandler := &database.Handler{DB: db}
+	provider := &DefaultLocalProvider{
+		GenericPersister:           dbHandler,
+		ConnectionPersister:        &ConnectionPersister{DB: dbHandler},
+		MesheryK8sContextPersister: &MesheryK8sContextPersister{DB: dbHandler},
+	}
+
+	k8sCtx := K8sContext{
+		ID:      "ctx-dedup-test",
+		Name:    "cluster-dedup",
+		Server:  "https://127.0.0.1:6443",
+		Cluster: map[string]interface{}{"server": "https://127.0.0.1:6443"},
+		Auth:    map[string]interface{}{"token": "tok"},
+	}
+
+	firstConn, err := provider.SaveK8sContext("", k8sCtx, nil)
+	if err != nil {
+		t.Fatalf("initial SaveK8sContext failed: %v", err)
+	}
+	if firstConn.ID == uuid.Nil {
+		t.Fatal("expected first connection to have valid UUID")
+	}
+
+	// Re-saving the same context without connectionID should detect existing cluster by context ID / hash and return ErrContextAlreadyPersisted
+	secondConn, err := provider.SaveK8sContext("", k8sCtx, nil)
+	if !errors.Is(err, ErrContextAlreadyPersisted) {
+		t.Fatalf("expected ErrContextAlreadyPersisted on duplicate SaveK8sContext, got %v", err)
+	}
+	if secondConn.ID != firstConn.ID {
+		t.Fatalf("expected second connection ID %s to match existing connection ID %s", secondConn.ID, firstConn.ID)
+	}
+
+	savedCtx, err := provider.MesheryK8sContextPersister.GetMesheryK8sContext(k8sCtx.ID)
+	if err != nil {
+		t.Fatalf("expected context to be persisted: %v", err)
+	}
+	if savedCtx.ConnectionID != firstConn.ID.String() {
+		t.Fatalf("expected context ConnectionID to be %s, got %s", firstConn.ID.String(), savedCtx.ConnectionID)
 	}
 }
