@@ -5117,8 +5117,35 @@ func (l *RemoteProvider) LogoutMesheryServer() error {
 	return nil
 }
 
+// providerPackageStallTimeout aborts a provider UI package download that has
+// received no data for this long. The download runs inside the login handler,
+// so a package host that accepts the connection and then stalls must not be
+// able to hold a user's login open. Measuring silence, not total time, keeps a
+// slow but steady host working however large the package is.
+var providerPackageStallTimeout = 30 * time.Second
+
+// providerPackageDownloadTimeout is the hard upper bound on the whole download,
+// however steadily it progresses. Both timeouts are variables so tests can
+// shorten them.
+var providerPackageDownloadTimeout = 10 * time.Minute
+
+// stalePartialInstallAge is how old a leftover staging directory must be before
+// the next install sweeps it. A process killed mid-extraction leaves its
+// ".<name>.partial-*" directory behind; the age keeps the sweep away from the
+// staging directory of an install that is still running.
+var stalePartialInstallAge = time.Hour
+
+// maxProviderPackageExtractedBytes caps how much a provider UI package may
+// expand to on disk, so a hostile or corrupt archive cannot fill the disk. It
+// is a variable so tests can lower it.
+var maxProviderPackageExtractedBytes int64 = 512 << 20
+
 // TarXZF takes in a source url downloads the tar.gz file
 // uncompresses and then save the file to the destination
+//
+// The download is bounded by providerPackageDownloadTimeout. It runs inside the
+// login handler, so a host that accepts the connection and then stalls must not
+// be able to hold a user's login open.
 func TarXZF(srcURL, destination string, log logger.Handler) error {
 	filename := filepath.Base(srcURL)
 
@@ -5127,16 +5154,40 @@ func TarXZF(srcURL, destination string, log logger.Handler) error {
 		return fmt.Errorf("file is not of type tar.gz or tgz")
 	}
 
-	resp, err := http.Get(srcURL)
-	if err != nil {
-		if resp == nil {
-			return fmt.Errorf("could not reach %v: %w", srcURL, err)
+	ctx, cancel := context.WithTimeout(context.Background(), providerPackageDownloadTimeout)
+	defer cancel()
+
+	// The stall timer starts with the request, so it also covers connecting and
+	// waiting for response headers, and is pushed back each time data arrives.
+	var stalled atomic.Bool
+	stallTimer := time.AfterFunc(providerPackageStallTimeout, func() {
+		stalled.Store(true)
+		cancel()
+	})
+	defer stallTimer.Stop()
+
+	// downloadError says why a download was cut short, which a bare
+	// "context canceled" does not.
+	downloadError := func(err error) error {
+		switch {
+		case stalled.Load():
+			return fmt.Errorf("provider package download stalled: no data received for %s: %w", providerPackageStallTimeout, err)
+		case errors.Is(ctx.Err(), context.DeadlineExceeded):
+			return fmt.Errorf("provider package download exceeded %s: %w", providerPackageDownloadTimeout, err)
 		}
 		return err
 	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, srcURL, nil)
+	if err != nil {
+		return fmt.Errorf("invalid package url %v: %w", srcURL, err)
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return downloadError(fmt.Errorf("could not reach %v: %w", srcURL, err))
+	}
 	defer func() {
-		err := resp.Body.Close()
-		if err != nil {
+		if err := resp.Body.Close(); err != nil && log != nil {
 			log.Error(ErrCloseIoReader(err))
 		}
 	}()
@@ -5145,14 +5196,114 @@ func TarXZF(srcURL, destination string, log logger.Handler) error {
 		return ErrFetch(fmt.Errorf("failed GET request"), "TarTZF file :"+srcURL, resp.StatusCode)
 	}
 
-	return TarXZ(resp.Body, destination)
+	if err := TarXZ(&stallGuardReader{r: resp.Body, timer: stallTimer, timeout: providerPackageStallTimeout}, destination); err != nil {
+		return downloadError(err)
+	}
+	return nil
+}
+
+// stallGuardReader pushes the stall timer back whenever data arrives.
+type stallGuardReader struct {
+	r       io.Reader
+	timer   *time.Timer
+	timeout time.Duration
+}
+
+func (s *stallGuardReader) Read(p []byte) (int, error) {
+	n, err := s.r.Read(p)
+	if n > 0 {
+		s.timer.Reset(s.timeout)
+	}
+	return n, err
 }
 
 // TarXZ takes in a gzip stream and untars and uncompresses it to
 // the destination directory
 //
-// If the destination doesn't exists, it will create it
+// The archive is always extracted into a staging directory beside the
+// destination and moved into place only once every entry has been written, never
+// into the destination itself. The callers skip the download whenever the
+// destination exists, so extracting in place would turn one truncated download
+// into a permanently broken install. It also means an install that another
+// login completed in the meantime is never touched: if the destination exists by
+// the time this one is done, that install is kept and this one is discarded.
 func TarXZ(gzipStream io.Reader, destination string) error {
+	// A trailing separator would make filepath.Dir return the destination itself
+	// and stage the archive inside it.
+	destination = filepath.Clean(destination)
+
+	parent := filepath.Dir(destination)
+	if err := os.MkdirAll(parent, 0755); err != nil {
+		return err
+	}
+	sweepStalePartialInstalls(parent, filepath.Base(destination))
+	staging, err := os.MkdirTemp(parent, "."+filepath.Base(destination)+".partial-*")
+	if err != nil {
+		return err
+	}
+	// MkdirTemp creates the directory 0700; the destination has always been 0755.
+	if err := os.Chmod(staging, 0755); err != nil {
+		_ = os.RemoveAll(staging)
+		return err
+	}
+
+	if err := extractTarGz(gzipStream, staging); err != nil {
+		_ = os.RemoveAll(staging)
+		return err
+	}
+
+	// os.Rename refuses to replace an existing directory, even an empty one, so
+	// look at what is already there. A destination with content is an install
+	// that another login completed first: keep it untouched and drop this one.
+	// An empty one, such as a directory made in advance, is replaced.
+	if entries, err := os.ReadDir(destination); err == nil {
+		if len(entries) > 0 {
+			_ = os.RemoveAll(staging)
+			return nil
+		}
+		if err := os.Remove(destination); err != nil {
+			_ = os.RemoveAll(staging)
+			return err
+		}
+	}
+
+	if err := os.Rename(staging, destination); err != nil {
+		_ = os.RemoveAll(staging)
+		// Another install can land between the check above and the rename. If a
+		// populated destination is there now, that install stands.
+		if entries, readErr := os.ReadDir(destination); readErr == nil && len(entries) > 0 {
+			return nil
+		}
+		return err
+	}
+	return nil
+}
+
+// sweepStalePartialInstalls removes the staging directories that an install of
+// <base> left behind when the process died before it could clean up. Only
+// directories older than stalePartialInstallAge are removed, so the staging
+// directory of an install that is still running is left alone. It is best
+// effort: a leftover is harmless, so errors are ignored.
+func sweepStalePartialInstalls(parent, base string) {
+	entries, err := os.ReadDir(parent)
+	if err != nil {
+		return
+	}
+	prefix := "." + base + ".partial-"
+	for _, entry := range entries {
+		if !entry.IsDir() || !strings.HasPrefix(entry.Name(), prefix) {
+			continue
+		}
+		info, err := entry.Info()
+		if err != nil || time.Since(info.ModTime()) < stalePartialInstallAge {
+			continue
+		}
+		_ = os.RemoveAll(filepath.Join(parent, entry.Name()))
+	}
+}
+
+// extractTarGz untars a gzip stream into destination, creating it if needed.
+func extractTarGz(gzipStream io.Reader, destination string) error {
 	if err := os.MkdirAll(destination, 0755); err != nil {
 		return err
 	}
@@ -5169,6 +5320,7 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 	}()
 
 	tarReader := tar.NewReader(uncompressedStream)
+	var extracted int64
 
 	for {
 		header, err := tarReader.Next()
@@ -5181,31 +5333,70 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 			return err
 		}
 
+		// A PAX global header describes the archive as a whole (GitHub's
+		// /archive tarballs and `git archive` begin with one, carrying the
+		// commit id) and holds no file.
+		//
+		// Go's reader does not apply global records to later entries, but the
+		// format says a global "path" or "size" applies to every entry after it.
+		// Skipping such a record would extract the wrong layout, so only the
+		// inert "comment" record is accepted.
+		if header.Typeflag == tar.TypeXGlobalHeader {
+			for key := range header.PAXRecords {
+				if key != "comment" {
+					return fmt.Errorf("unsupported global pax header record %q", key)
+				}
+			}
+			continue
+		}
+
+		// Clean the name first so "./", "./a" and "a/./b" are understood as the
+		// paths they mean. An archive made with `tar -C dir .` starts with "./",
+		// which is the destination itself and has nothing to extract.
+		name := path.Clean(header.Name)
+		if name == "." {
+			// Only a directory can stand for the root. A link or file named "."
+			// is rejected like any other entry type this extractor refuses.
+			if header.Typeflag != tar.TypeDir {
+				return fmt.Errorf("%s: illegal file path", header.Name)
+			}
+			continue
+		}
+
 		// Prevent Arbitrary file write during zip extraction ("zip slip")
 		// This checks that the zip doesn't contain filenames like
 		// `../../../tmp/some.sh`
 		// see https://snyk.io/research/zip-slip-vulnerability for more
-		err = validateExtractPath(header.Name, destination)
+		err = validateExtractPath(name, destination)
 		if err != nil {
 			return err
 		}
+		target := filepath.Join(destination, filepath.FromSlash(name))
 
 		switch header.Typeflag {
 		case tar.TypeDir:
-			if err := os.MkdirAll(path.Join(destination, header.Name), 0755); err != nil {
+			if err := os.MkdirAll(target, 0755); err != nil {
 				return err
 			}
 		case tar.TypeReg:
+			if header.Size < 0 {
+				return fmt.Errorf("%s: invalid file size", header.Name)
+			}
+			// Compare against what is left of the allowance before adding: a
+			// declared size near MaxInt64 would wrap the running total negative
+			// and slip past a check made after the addition.
+			if header.Size > maxProviderPackageExtractedBytes-extracted {
+				return fmt.Errorf("provider package exceeds the maximum extracted size of %d bytes", maxProviderPackageExtractedBytes)
+			}
+			extracted += header.Size
+
 			// When we encounter files that are in nested dirs this takes care of
 			// creating parent dirs.
-			// #nosec
-			if _, err := os.Stat(path.Join(destination, path.Dir(header.Name))); err != nil {
-				if err := os.MkdirAll(path.Join(destination, path.Dir(header.Name)), 0750); err != nil {
-					return err
-				}
+			if err := os.MkdirAll(filepath.Dir(target), 0750); err != nil {
+				return err
 			}
 
-			outFile, err := os.Create(path.Join(destination, header.Name))
+			outFile, err := os.Create(target)
 			if err != nil {
 				return err
 			}
