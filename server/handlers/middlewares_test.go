@@ -708,7 +708,8 @@ func TestRegistrationAuthMiddleware(t *testing.T) {
 				w.WriteHeader(http.StatusOK)
 			})
 			chain := h.ProviderMiddleware(h.RegistrationAuthMiddleware(inner))
-			req := httptest.NewRequest(http.MethodPost, "/api/meshmodel/components/register", nil)
+			req := httptest.NewRequest(http.MethodPost, "http://localhost:9081/api/meshmodel/components/register", nil)
+			req.Header.Set("Origin", "http://localhost:9081")
 			if tc.setup != nil {
 				tc.setup(req)
 			}
