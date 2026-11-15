@@ -178,6 +178,22 @@ describe('buildFiltersColumns', () => {
     expect(screen.getByTestId('action-Unpublish')).toBeInTheDocument();
   });
 
+  it('does not render Publish or Unpublish actions when canPublishFilter is false', () => {
+    const columns = build({ canPublishFilter: false });
+    const actionsCol = columns.find((c) => c.name === 'Actions')!;
+
+    // Non-published row
+    const { unmount } = render(actionsCol.options.customBodyRender(null, { rowIndex: 0 }));
+    expect(screen.queryByTestId('action-Publish')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('action-Unpublish')).not.toBeInTheDocument();
+    unmount();
+
+    // Published row
+    render(actionsCol.options.customBodyRender(null, { rowIndex: 1 }));
+    expect(screen.queryByTestId('action-Publish')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('action-Unpublish')).not.toBeInTheDocument();
+  });
+
   it('renders Sortable headers for sortable columns', () => {
     const columns = build();
     const nameCol = columns.find((c) => c.name === 'name')!;
