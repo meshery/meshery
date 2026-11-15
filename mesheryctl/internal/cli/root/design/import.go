@@ -19,7 +19,7 @@ import (
 	"encoding/json"
 	"io"
 	"os"
-	"path"
+	"path/filepath"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -135,7 +135,7 @@ func importPattern(sourceType string, file string, patternURL string) (*models.M
 	// If design name is not provided
 	// use file name as default
 	var patternName string
-	fileName := path.Base(file)
+	fileName := filepath.Base(file)
 	if name == "" {
 		patternName = fileName
 	} else {

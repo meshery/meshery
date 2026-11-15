@@ -73,6 +73,10 @@ func TestFilterPOSTResponseCarriesSavedFilter(t *testing.T) {
 	require.NoError(t, db.Where("id = ?", *saved[0].ID).First(&stored).Error,
 		"the returned id must be the stored row's id")
 	assert.Equal(t, "rate-limit", stored.Name)
+
+	var eventCount int64
+	require.NoError(t, db.Model(&events.Event{}).Where("description = ?", "Filter rate-limit saved").Count(&eventCount).Error)
+	assert.Equal(t, int64(1), eventCount, "saving a filter must persist an event in the events table")
 }
 
 // TestFilterPOSTResponseCarriesUnsavedFilter pins the body when save is false:
@@ -138,7 +142,7 @@ func TestFilterPOSTResponseCarriesURLImportedFilter(t *testing.T) {
 // the remote provider: the body carries the filters Cloud answered with,
 // re-encoded through MesheryFilter, so fields outside that model are dropped.
 func TestFilterPOSTResponseCarriesRemoteProviderFilters(t *testing.T) {
-	h, _, _ := newFilterPOSTFixture(t)
+	h, _, db := newFilterPOSTFixture(t)
 	savedID := uuid.Must(uuid.NewV4()).String()
 	var gotMethod, gotPath, gotAuth string
 	cloud := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -155,6 +159,7 @@ func TestFilterPOSTResponseCarriesRemoteProviderFilters(t *testing.T) {
 		},
 		RemoteProviderURL: cloud.URL,
 		Log:               h.log,
+		EventsPersister:   &models.EventsPersister{DB: &db},
 	}
 
 	rec := postFilter(t, h, remote, models.MesheryFilterRequestBody{
