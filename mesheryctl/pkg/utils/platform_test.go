@@ -424,6 +424,29 @@ func TestCleanupCluster(t *testing.T) {
 	})
 }
 
+// TestForceCleanupClusterWithClient verifies that the client-taking cleanup
+// helper deletes the Meshery resources visible through the supplied client,
+// so callers that resolved their configuration once can clean up without
+// re-reading the kubeconfig.
+func TestForceCleanupClusterWithClient(t *testing.T) {
+	client := k8sfake.NewSimpleClientset(
+		&appsv1.Deployment{ObjectMeta: metav1.ObjectMeta{Name: "meshery", Namespace: MesheryNamespace}},
+		&corev1.Service{ObjectMeta: metav1.ObjectMeta{Name: "meshery", Namespace: MesheryNamespace}},
+	)
+
+	if err := ForceCleanupClusterWithClient(client); err != nil {
+		t.Fatalf("expected the cleanup through the supplied client to succeed, got %v", err)
+	}
+
+	deployments, err := client.AppsV1().Deployments(MesheryNamespace).List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		t.Fatalf("failed to list deployments: %v", err)
+	}
+	if len(deployments.Items) != 0 {
+		t.Errorf("expected the deployment to be deleted through the supplied client, got %d remaining", len(deployments.Items))
+	}
+}
+
 func TestDeleteDeployments(t *testing.T) {
 	t.Run("wraps list failures with the resource kind", func(t *testing.T) {
 		client := newDeploymentClientset("meshery")
