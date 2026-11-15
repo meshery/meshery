@@ -18,7 +18,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -136,6 +138,13 @@ func importPattern(sourceType string, file string, patternURL string) (*models.M
 	// use file name as default
 	var patternName string
 	fileName := filepath.Base(file)
+	if utils.IsValidUrl(file) {
+		parsed, err := url.Parse(file)
+		if err != nil {
+			return nil, utils.ErrParsingUrl(err)
+		}
+		fileName = path.Base(parsed.Path)
+	}
 	if name == "" {
 		patternName = fileName
 	} else {
