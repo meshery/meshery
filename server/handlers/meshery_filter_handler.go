@@ -184,6 +184,7 @@ func (h *Handler) handleFilterPOST(
 				return
 			}
 
+			eventBuilder.WithDescription(fmt.Sprintf("Filter %s saved", parsedBody.FilterData.Name))
 			h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
 
 			h.persistAndPublish(provider, token, userID, eventBuilder.WithSeverity(events.Informational).Build())
