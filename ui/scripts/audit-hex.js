@@ -26,7 +26,6 @@
  */
 
 'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const ts = require('typescript');
@@ -71,18 +70,30 @@ const HEX_PATTERN = /#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b/g;
 // Match case-insensitive rgb()/rgba() calls without matching longer identifiers.
 const RGB_PATTERN = /(?<![\w$-])rgba?\(/gi;
 
-function walk(dir, out) {
+function walk(dir, out, scanErrors) {
   let entries;
+
   try {
-    entries = fs.readdirSync(dir, { withFileTypes: true });
-  } catch {
+    entries = fs.readdirSync(dir, {
+      withFileTypes: true,
+    });
+  } catch (error) {
+    const message = `Unable to read directory ${path.relative(UI_ROOT, dir)}: ${error.message}`;
+
+    scanErrors.push(message);
+
     return;
   }
+
   for (const entry of entries) {
-    if (IGNORED_DIRS.has(entry.name)) continue;
+    if (IGNORED_DIRS.has(entry.name)) {
+      continue;
+    }
+
     const full = path.join(dir, entry.name);
+
     if (entry.isDirectory()) {
-      walk(full, out);
+      walk(full, out, scanErrors);
     } else if (
       entry.isFile() &&
       EXTENSIONS.has(path.extname(entry.name)) &&
@@ -174,16 +185,29 @@ function main() {
   const asJson = args.includes('--json');
 
   const files = [];
+  const scanErrors = [];
   for (const dir of SCAN_DIRS) {
-    walk(path.join(UI_ROOT, dir), files);
+    walk(path.join(UI_ROOT, dir), files, scanErrors);
   }
 
   const offenders = [];
   let totalHex = 0;
   let totalRgb = 0;
   for (const file of files) {
-    const { hex, rgb } = scanFile(file);
-    if (hex === 0 && rgb === 0) continue;
+    let hex;
+    let rgb;
+
+    try {
+      ({ hex, rgb } = scanFile(file));
+    } catch (error) {
+      const message = `Unable to read file ${path.relative(UI_ROOT, file)}: ${error.code || error.message}`;
+      scanErrors.push(message);
+      continue;
+    }
+
+    if (hex === 0 && rgb === 0) {
+      continue;
+    }
     const rel = path.relative(UI_ROOT, file);
     offenders.push({ file: rel, hex, rgb, total: hex + rgb });
     totalHex += hex;
@@ -203,6 +227,8 @@ function main() {
           hex: totalHex,
           rgb: totalRgb,
           offenders,
+          scanErrors,
+          scanComplete: scanErrors.length === 0,
         },
         null,
         2,
@@ -211,6 +237,13 @@ function main() {
     return;
   }
 
+  if (scanErrors.length > 0) {
+    process.stderr.write(`WARNING: Scan incomplete. ${scanErrors.length} filesystem error(s).\n`);
+
+    for (const error of scanErrors) {
+      process.stderr.write(`${error}\n`);
+    }
+  }
   process.stdout.write('meshery-ui color-literal audit\n');
   process.stdout.write('==============================\n');
   process.stdout.write('Patterns: #RGB/#RGBA/#RRGGBB/#RRGGBBAA, rgb(), rgba()\n');
