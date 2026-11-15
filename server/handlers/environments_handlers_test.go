@@ -194,6 +194,10 @@ func (m *environmentFailingProvider) UpdateEnvironment(_ *http.Request, _ *envir
 	return nil, m.err
 }
 
+func (m *environmentFailingProvider) GetConnectionsOfEnvironment(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
 // decodeErrorBody parses the JSON error envelope every non-2xx response
 // carries (see docs/content/en/project/contributing/error-contract.md).
 func decodeErrorBody(t *testing.T, body []byte) struct {
@@ -381,6 +385,35 @@ func TestGetEnvironmentsHandler_PropagatesProviderStatus(t *testing.T) {
 	}
 }
 
+// TestGetEnvironmentsHandler_InvalidPagination_ReturnsBadRequest asserts that a
+// rejected page or pagesize is answered with 400, not a provider-failure status.
+func TestGetEnvironmentsHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	cases := []struct {
+		name     string
+		query    string
+		provider error
+	}{
+		{"page", "page=-1", models.ErrPageNumber(errors.New("bad page"))},
+		{"pagesize", "pagesize=abc", models.ErrPageSize(errors.New("bad pagesize"))},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := newEnvironmentFailingProvider(tc.provider)
+
+			req := httptest.NewRequest(http.MethodGet, "/api/environments?orgId=11111111-1111-1111-1111-111111111111&"+tc.query, nil)
+			req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+			rec := httptest.NewRecorder()
+
+			h.GetEnvironments(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+			}
+		})
+	}
+}
+
 // TestDeleteEnvironmentHandler_PropagatesProviderStatus covers the delete path.
 func TestDeleteEnvironmentHandler_PropagatesProviderStatus(t *testing.T) {
 	h := newTestHandler(t, map[string]models.Provider{}, "")
@@ -447,5 +480,39 @@ func TestUpdateEnvironmentHandler_RawGormRecordNotFoundMapsTo404(t *testing.T) {
 	decoded := decodeErrorBody(t, rec.Body.Bytes())
 	if decoded.Code != ErrUpdateEnvironmentCode {
 		t.Errorf("code = %q, want %q", decoded.Code, ErrUpdateEnvironmentCode)
+	}
+}
+
+// TestGetConnectionsOfEnvironmentHandler_InvalidPagination_ReturnsBadRequest
+// asserts that a rejected page or pagesize is answered with 400 and the
+// pagination error code, not a provider-failure status.
+func TestGetConnectionsOfEnvironmentHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	cases := []struct {
+		name     string
+		query    string
+		provider error
+		wantCode string
+	}{
+		{"page", "page=-1", models.ErrPageNumber(errors.New("bad page")), models.ErrPageNumberCode},
+		{"pagesize", "pagesize=abc", models.ErrPageSize(errors.New("bad pagesize")), models.ErrPageSizeCode},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := newEnvironmentFailingProvider(tc.provider)
+
+			req := httptest.NewRequest(http.MethodGet, "/api/environments/22222222-2222-2222-2222-222222222222/connections?"+tc.query, nil)
+			req = mux.SetURLVars(req, map[string]string{"environmentID": "22222222-2222-2222-2222-222222222222"})
+			rec := httptest.NewRecorder()
+
+			h.GetConnectionsOfEnvironmentHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+			}
+			if !strings.Contains(rec.Body.String(), tc.wantCode) {
+				t.Errorf("body = %q, want it to contain code %q", rec.Body.String(), tc.wantCode)
+			}
+		})
 	}
 }
