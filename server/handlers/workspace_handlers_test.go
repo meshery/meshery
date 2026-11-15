@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta3/workspace"
+	"gorm.io/gorm"
 )
 
 // workspaceSpyProvider embeds DefaultLocalProvider and records the orgID
@@ -300,6 +301,14 @@ func (m *workspaceFailingProvider) GetWorkspaces(_, _, _, _, _, _, _ string) ([]
 	return nil, m.err
 }
 
+func (m *workspaceFailingProvider) GetWorkspaceByID(_ *http.Request, _, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *workspaceFailingProvider) UpdateWorkspace(_ *http.Request, _ *workspace.WorkspaceUpdatePayload, _ string) (*workspace.Workspace, error) {
+	return nil, m.err
+}
+
 func (m *workspaceFailingProvider) DeleteWorkspace(_ *http.Request, _ string) ([]byte, error) {
 	return nil, m.err
 }
@@ -527,5 +536,55 @@ func TestGetViewsOfWorkspaceHandler_InvalidPagination_ReturnsBadRequest(t *testi
 func TestGetTeamsOfWorkspaceHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
 	runWorkspaceResourceInvalidPagination(t, "teams", func(h *Handler, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 		h.GetTeamsOfWorkspaceHandler(w, req, nil, nil, provider)
+	})
+}
+
+// TestWorkspaceHandlers_MissingWorkspace_ReturnsNotFound pins the 404 contract
+// for a workspace that does not exist: the persister reports ErrResultNotFound
+// and the handlers must surface it as 404 with a MeshKit code on the wire.
+func TestWorkspaceHandlers_MissingWorkspace_ReturnsNotFound(t *testing.T) {
+	const missingID = "33333333-3333-3333-3333-333333333333"
+	const orgID = "11111111-1111-1111-1111-111111111111"
+
+	assertNotFound := func(t *testing.T, rec *httptest.ResponseRecorder) {
+		t.Helper()
+		if rec.Code != http.StatusNotFound {
+			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusNotFound, rec.Body.String())
+		}
+		var decoded struct {
+			Code string `json:"code"`
+		}
+		if err := json.Unmarshal(rec.Body.Bytes(), &decoded); err != nil {
+			t.Fatalf("error body did not parse as JSON: %v (body=%q)", err, rec.Body.String())
+		}
+		if decoded.Code == "" {
+			t.Errorf("expected a non-empty error code (body=%q)", rec.Body.String())
+		}
+	}
+
+	t.Run("GetWorkspaceByIdHandler", func(t *testing.T) {
+		h := newTestHandler(t, map[string]models.Provider{}, "")
+		provider := newWorkspaceFailingProvider(models.ErrResultNotFound(gorm.ErrRecordNotFound))
+
+		req := httptest.NewRequest(http.MethodGet, "/api/workspaces/"+missingID+"?orgId="+orgID, nil)
+		req = mux.SetURLVars(req, map[string]string{"id": missingID})
+		rec := httptest.NewRecorder()
+
+		h.GetWorkspaceByIdHandler(rec, req, nil, nil, provider)
+
+		assertNotFound(t, rec)
+	})
+
+	t.Run("UpdateWorkspaceHandler", func(t *testing.T) {
+		h := newTestHandler(t, map[string]models.Provider{}, "")
+		provider := newWorkspaceFailingProvider(models.ErrResultNotFound(gorm.ErrRecordNotFound))
+
+		req := httptest.NewRequest(http.MethodPut, "/api/workspaces/"+missingID, strings.NewReader(`{"name":"x"}`))
+		req = mux.SetURLVars(req, map[string]string{"id": missingID})
+		rec := httptest.NewRecorder()
+
+		h.UpdateWorkspaceHandler(rec, req, nil, nil, provider)
+
+		assertNotFound(t, rec)
 	})
 }
