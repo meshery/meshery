@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"path/filepath"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
@@ -107,6 +108,29 @@ func Test_importPattern_SendsCamelCaseFileName(t *testing.T) {
 	assert.Contains(t, capturedBody, "fileName", "request body must carry camelCase fileName")
 	assert.NotContains(t, capturedBody, "file_name", "request body must not carry legacy snake_case file_name")
 	assert.Equal(t, "sampleDesign.golden", capturedBody["fileName"])
+}
+
+// Test_importPattern_PlatformFileName checks the filename and default name.
+func Test_importPattern_PlatformFileName(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	defer resetVariables()
+	defer utils.ResetCommandFlags(DesignCmd, t)
+	utils.TokenFlag = utils.GetToken(t)
+	var body map[string]interface{}
+	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/pattern/import", func(req *http.Request) (*http.Response, error) {
+		if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
+			return nil, err
+		}
+		return httpmock.NewStringResponse(200, `[{"id":"3817ec9a-1d83-4f6f-9154-0fd4408ba9f0","name":"SampleApp"}]`), nil
+	})
+	DesignCmd.SetArgs([]string{"import", "-f", filepath.Join("fixtures", "sampleDesign.golden")})
+	if err := DesignCmd.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, "sampleDesign.golden", body["fileName"])
+	assert.Equal(t, "sampleDesign.golden", body["name"])
 }
 
 // Test_importPattern_SendsContractUrlPayload covers the URL oneOf arm, the one
