@@ -452,11 +452,19 @@ export const getDesignVersion = (design) => {
     }
   }
 };
-export const urlEncodeArrayParam = (key, array) => {
-  if (typeof array === 'string') {
-    return array;
+export const urlEncodeArrayParam = (key: string, array: unknown) => {
+  if (!array) {
+    return '';
   }
-  return array.map((item) => `${key}=${item}`).join('&');
+  if (typeof array === 'string') {
+    return `${encodeURIComponent(key)}=${encodeURIComponent(array)}`;
+  }
+  if (!Array.isArray(array) || array.length === 0) {
+    return '';
+  }
+  return array
+    .map((item) => `${encodeURIComponent(key)}=${encodeURIComponent(String(item))}`)
+    .join('&');
 };
 
 export const urlEncodeParams = (params) => {
