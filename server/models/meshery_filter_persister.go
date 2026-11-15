@@ -151,7 +151,9 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, sear
 	return marshalledResponse, nil
 }
 
-// CloneMesheryFilter clones meshery filter to private
+// CloneMesheryFilter saves a private copy of a filter under a new ID. The copy
+// keeps the source's file, resource and location, but gets its own creation
+// time and no catalog data.
 func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error) {
 	var mesheryFilter MesheryFilter
 	filterUUID, err := uuid.FromString(filterID)
@@ -168,11 +170,18 @@ func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string, cloneFilt
 		return nil, err
 	}
 
-	mesheryFilter.Visibility = Private
-	mesheryFilter.ID = &id
-	mesheryFilter.Name = cloneFilterRequest.Name
+	// Build the row from scratch so the source's created_at and catalog data
+	// do not carry over. Timestamps are left nil for gorm to set on insert.
+	clone := MesheryFilter{
+		ID:             &id,
+		Name:           cloneFilterRequest.Name,
+		FilterFile:     mesheryFilter.FilterFile,
+		Location:       mesheryFilter.Location,
+		Visibility:     Private,
+		FilterResource: mesheryFilter.FilterResource,
+	}
 
-	return mfp.SaveMesheryFilter(&mesheryFilter)
+	return mfp.SaveMesheryFilter(&clone)
 }
 
 // DeleteMesheryFilter takes in a profile id and delete it if it already exists
