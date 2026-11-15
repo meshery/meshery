@@ -166,10 +166,10 @@ func TestGetMesheryK8sContextsWithStatus_FiltersByConnectionStatus(t *testing.T)
 		t.Fatalf("expected 2 total contexts without status filter, got %d", pageAll.TotalCount)
 	}
 
-	// Status = CONNECTED + Search = "connected"
-	respSearch, err := persister.GetMesheryK8sContextsWithStatus("connected", "", 0, 10, string(connections.CONNECTED))
+	// Status = CONNECTED + Search = "connected" + Order = "name asc"
+	respSearch, err := persister.GetMesheryK8sContextsWithStatus("connected", "name asc", 0, 10, string(connections.CONNECTED))
 	if err != nil {
-		t.Fatalf("expected no error for search with status, got %v", err)
+		t.Fatalf("expected no error for search with status and order, got %v", err)
 	}
 	var pageSearch MesheryK8sContextPage
 	if err := json.Unmarshal(respSearch, &pageSearch); err != nil {
