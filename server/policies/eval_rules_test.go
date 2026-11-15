@@ -468,18 +468,19 @@ func TestBindingMatchSelectors_MultiItemMatchResolutionAndIDStamping(t *testing.
 		},
 	}
 
-	// 1. Verify patchBindingSelectorIDsTyped stamps all items
-	patchBindingSelectorIDsTyped(&sel, fromID, toID)
-	for i, item := range *sel.Match.From {
+	// 1. Verify patchBindingSelectorIDsTyped stamps all items without mutating the source template
+	patchedSel := patchBindingSelectorIDsTyped(&sel, fromID, toID)
+	for i, item := range *patchedSel.Match.From {
 		if item.ID == nil || item.ID.String() != fromID {
 			t.Fatalf("expected Match.From[%d].ID to be %s, got %v", i, fromID, item.ID)
 		}
 	}
-	for i, item := range *sel.Match.To {
+	for i, item := range *patchedSel.Match.To {
 		if item.ID == nil || item.ID.String() != toID {
 			t.Fatalf("expected Match.To[%d].ID to be %s, got %v", i, toID, item.ID)
 		}
 	}
+	sel = patchedSel
 
 	// 2. Verify extractMutatorFromMatch finds mutator even at index 1
 	comp1 := &component.ComponentDefinition{ID: uuid.FromStringOrNil(fromID)}
@@ -658,5 +659,196 @@ func TestFromAndToComponentID_RangingSelectors(t *testing.T) {
 	}
 	if got := toComponentID(rel); got != toUUID.String() {
 		t.Fatalf("toComponentID failed to range selectors: want %s, got %s", toUUID, got)
+	}
+}
+
+// TestIdentifyBindingRelationships_MatchSelectorIDIsolation verifies that when multiple
+// binding relationships are identified in a design (e.g. multiple ClusterRoleBindings or Services),
+// ID stamping deep-copies the MatchSelector so that subsequent iterations do not mutate the
+// MatchSelector IDs of previously identified relationships in-place.
+func TestIdentifyBindingRelationships_MatchSelectorIDIsolation(t *testing.T) {
+	relDefID := uuid.Must(uuid.NewV4())
+	mutatorRef := [][]string{{"configuration", "spec", "roleName"}}
+	mutatedRef := [][]string{{"configuration", "spec", "boundRole"}}
+
+	fromKind := "ClusterRole"
+	bindingKind := "ClusterRoleBinding"
+	toKind := "ServiceAccount"
+
+	relDef := &relationship.RelationshipDefinition{
+		ID:               relDefID,
+		Kind:             relationship.RelationshipDefinitionKind("edge"),
+		RelationshipType: "edge",
+		SubType:          "binding",
+		Selectors: &relationship.SelectorSet{
+			{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{
+						{
+							Kind: &fromKind,
+							Match: &relationship.MatchSelector{
+								From: &[]relationship.MatchSelectorItem{
+									{Kind: "self", MutatorRef: &mutatorRef},
+								},
+								To: &[]relationship.MatchSelectorItem{
+									{Kind: bindingKind, MutatedRef: &mutatedRef},
+								},
+							},
+						},
+					},
+					To: []relationship.SelectorItem{
+						{
+							Kind: &toKind,
+							Match: &relationship.MatchSelector{
+								From: &[]relationship.MatchSelectorItem{
+									{Kind: bindingKind, MutatorRef: &mutatorRef},
+								},
+								To: &[]relationship.MatchSelectorItem{
+									{Kind: "self", MutatedRef: &mutatedRef},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	// Pair 1
+	cr1 := &component.ComponentDefinition{
+		ID:        uuid.Must(uuid.NewV4()),
+		Component: component.Component{Kind: fromKind},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{"roleName": "viewer"},
+		},
+	}
+	crb1 := &component.ComponentDefinition{
+		ID:        uuid.Must(uuid.NewV4()),
+		Component: component.Component{Kind: bindingKind},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{"boundRole": "viewer", "roleName": "viewer"},
+		},
+	}
+	sa1 := &component.ComponentDefinition{
+		ID:        uuid.Must(uuid.NewV4()),
+		Component: component.Component{Kind: toKind},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{"boundRole": "viewer"},
+		},
+	}
+
+	// Pair 2
+	cr2 := &component.ComponentDefinition{
+		ID:        uuid.Must(uuid.NewV4()),
+		Component: component.Component{Kind: fromKind},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{"roleName": "admin"},
+		},
+	}
+	crb2 := &component.ComponentDefinition{
+		ID:        uuid.Must(uuid.NewV4()),
+		Component: component.Component{Kind: bindingKind},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{"boundRole": "admin", "roleName": "admin"},
+		},
+	}
+	sa2 := &component.ComponentDefinition{
+		ID:        uuid.Must(uuid.NewV4()),
+		Component: component.Component{Kind: toKind},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{"boundRole": "admin"},
+		},
+	}
+
+	design := &pattern.PatternFile{
+		Components: []*component.ComponentDefinition{cr1, crb1, sa1, cr2, crb2, sa2},
+	}
+
+	identified := identifyBindingRelationships(relDef, design)
+	if len(identified) != 2 {
+		t.Fatalf("expected 2 identified binding relationships, got %d", len(identified))
+	}
+
+	// Find the relationship corresponding to Pair 1
+	var rel1, rel2 *relationship.RelationshipDefinition
+	for _, rel := range identified {
+		fromID := (*rel.Selectors)[0].Allow.From[0].ID
+		if fromID != nil && *fromID == cr1.ID {
+			rel1 = rel
+		} else if fromID != nil && *fromID == cr2.ID {
+			rel2 = rel
+		}
+	}
+
+	if rel1 == nil || rel2 == nil {
+		t.Fatalf("could not isolate both distinct identified relationships: rel1=%v, rel2=%v", rel1, rel2)
+	}
+
+	// Assert rel1's Match.From and Match.To retain cr1 and crb1 IDs
+	rel1FromMatch := (*rel1.Selectors)[0].Allow.From[0].Match
+	if rel1FromMatch == nil || rel1FromMatch.From == nil || (*rel1FromMatch.From)[0].ID == nil {
+		t.Fatalf("rel1 Match.From is nil or unstamped")
+	}
+	if *(*rel1FromMatch.From)[0].ID != cr1.ID {
+		t.Errorf("rel1 Match.From[0].ID clobbered: want %s (cr1), got %s", cr1.ID, *(*rel1FromMatch.From)[0].ID)
+	}
+	if *(*rel1FromMatch.To)[0].ID != crb1.ID {
+		t.Errorf("rel1 Match.To[0].ID clobbered: want %s (crb1), got %s", crb1.ID, *(*rel1FromMatch.To)[0].ID)
+	}
+
+	// Assert rel2's Match.From and Match.To retain cr2 and crb2 IDs
+	rel2FromMatch := (*rel2.Selectors)[0].Allow.From[0].Match
+	if *(*rel2FromMatch.From)[0].ID != cr2.ID {
+		t.Errorf("rel2 Match.From[0].ID invalid: want %s (cr2), got %s", cr2.ID, *(*rel2FromMatch.From)[0].ID)
+	}
+	if *(*rel2FromMatch.To)[0].ID != crb2.ID {
+		t.Errorf("rel2 Match.To[0].ID invalid: want %s (crb2), got %s", crb2.ID, *(*rel2FromMatch.To)[0].ID)
+	}
+}
+
+func TestCopyMatchSelector_PreservesRefs(t *testing.T) {
+	refs := [][]string{
+		{"configuration", "spec", "port"},
+		{"configuration", "spec", "targetPort"},
+	}
+	fromID := uuid.Must(uuid.NewV4())
+	toID := uuid.Must(uuid.NewV4())
+	orig := &relationship.MatchSelector{
+		From: &[]relationship.MatchSelectorItem{
+			{Kind: "Service", ID: &fromID},
+		},
+		To: &[]relationship.MatchSelectorItem{
+			{Kind: "Pod", ID: &toID},
+		},
+		Refs: &refs,
+	}
+
+	copied := copyMatchSelector(orig)
+	if copied == nil {
+		t.Fatal("expected non-nil copy")
+	}
+	if copied.Refs == nil {
+		t.Fatal("expected copied Refs to be non-nil")
+	}
+	if len(*copied.Refs) != len(refs) {
+		t.Fatalf("expected %d refs, got %d", len(refs), len(*copied.Refs))
+	}
+	// Compare each copied reference path with original before mutation
+	for i, refPath := range refs {
+		copiedPath := (*copied.Refs)[i]
+		if len(copiedPath) != len(refPath) {
+			t.Fatalf("expected ref[%d] length %d, got %d", i, len(refPath), len(copiedPath))
+		}
+		for j, elem := range refPath {
+			if copiedPath[j] != elem {
+				t.Errorf("expected copied.Refs[%d][%d] to be %q, got %q", i, j, elem, copiedPath[j])
+			}
+		}
+	}
+
+	// Verify deep copy isolation
+	(*copied.Refs)[0][0] = "mutated"
+	if refs[0][0] == "mutated" {
+		t.Error("modifying copied Refs affected original refs slice")
 	}
 }
