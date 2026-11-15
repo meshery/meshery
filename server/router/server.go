@@ -18,16 +18,46 @@ type Router struct {
 	srv  *http.Server
 }
 
-// newHTTPServer builds the HTTP server for the router, carrying the timeouts
-// the old ListenAndServe call did not have, so the listener can be drained on
-// graceful shutdown instead of serving until main returns.
+const (
+	// httpReadHeaderTimeout bounds how long a client may take to send the
+	// request line and headers, so a slow or stalled client cannot hold a
+	// connection open indefinitely.
+	httpReadHeaderTimeout = 5 * time.Second
+	// httpIdleTimeout closes keep-alive connections that sit idle between
+	// requests.
+	httpIdleTimeout = 2 * time.Minute
+)
+
+// newHTTPServer builds the HTTP server for the router, so the listener can be
+// drained on graceful shutdown instead of serving until main returns.
+//
+// It deliberately sets no ReadTimeout or WriteTimeout. Both are absolute
+// deadlines measured from the start of each request, and Meshery serves
+// requests that legitimately outlast any fixed bound: Server-Sent Event
+// streams that stay open for minutes to hours (a load test run, the provider
+// status stream, events, adapter events, controller status) and uploads whose
+// duration depends on the client's link.
+//
+// Request bodies are bounded by progress instead: boundRequestBodyReads fails
+// a body that stops arriving for requestBodyIdleTimeout, so a client cannot
+// hold a handler by declaring a body and never sending it.
+//
+// The tradeoff is that the server no longer bounds how long writing a
+// response may take. Every SSE stream bounds its own writes instead: it sets
+// a fresh deadline through http.ResponseController before each frame, so a
+// client that stops reading fails that write rather than pinning the handler
+// (see handlers/events_stream_handler.go). Ordinary responses, including
+// large downloads and exports, have no write bound, as was the case before
+// the server set any timeouts: a client that stays connected but stops
+// reading holds its handler until it disconnects. A new streaming or
+// long-lived response must set per-write deadlines the same way.
 func newHTTPServer(port int, handler http.Handler) *http.Server {
 	return &http.Server{
-		Addr:           fmt.Sprintf(":%d", port),
-		Handler:        handler,
-		ReadTimeout:    5 * time.Second,
-		WriteTimeout:   2 * time.Minute,
-		MaxHeaderBytes: 1 << 20,
+		Addr:              fmt.Sprintf(":%d", port),
+		Handler:           boundRequestBodyReads(handler, requestBodyIdleTimeout),
+		ReadHeaderTimeout: httpReadHeaderTimeout,
+		IdleTimeout:       httpIdleTimeout,
+		MaxHeaderBytes:    1 << 20,
 	}
 }
 
