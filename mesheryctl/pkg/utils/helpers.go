@@ -940,10 +940,12 @@ func ParseURLGithub(URL string) (string, string, error) {
 	}
 	host := parsedURL.Host
 	path := parsedURL.Path
-	path = strings.ReplaceAll(path, "/blob/", "/")
 	paths := strings.Split(path, "/")
 	switch host {
 	case "github.com":
+		if len(paths) > 3 && paths[3] == "blob" {
+			paths = append(paths[:3], paths[4:]...)
+		}
 		if len(paths) < 5 {
 			return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
 		}
