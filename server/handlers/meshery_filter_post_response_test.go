@@ -75,7 +75,7 @@ func TestFilterPOSTResponseCarriesSavedFilter(t *testing.T) {
 	assert.Equal(t, "rate-limit", stored.Name)
 
 	var eventCount int64
-	require.NoError(t, db.Model(&events.Event{}).Count(&eventCount).Error)
+	require.NoError(t, db.Model(&events.Event{}).Where("description = ?", "Filter rate-limit saved").Count(&eventCount).Error)
 	assert.Equal(t, int64(1), eventCount, "saving a filter must persist an event in the events table")
 }
 
