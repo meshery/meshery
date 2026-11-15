@@ -601,7 +601,7 @@ func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order s
 		return nil, ErrPageSize(err)
 	}
 
-	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
+	return l.MesheryK8sContextPersister.GetMesheryK8sContextsWithStatus(search, order, pg, pgs, withStatus)
 }
 
 // GetK8sContext returns the Kubernetes context associated with the given ID or ConnectionID.
@@ -1790,11 +1790,21 @@ func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential 
 	return updatedCredential, nil
 }
 
-func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialID core.Uuid) (*Credential, error) {
+func (l *DefaultLocalProvider) DeleteUserCredential(req *http.Request, credentialID core.Uuid) (*Credential, error) {
+	// Fail-closed: require an authenticated user in the request context. An unscoped delete is never permitted.
+	if req == nil {
+		return nil, ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
+	}
+	user, ok := req.Context().Value(UserCtxKey).(*User)
+	if !ok || user == nil || user.ID == uuid.Nil {
+		return nil, ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
+	}
+
 	delCredential := &Credential{}
-	// Only a live credential can be deleted. Matching deleted rows too would
-	// report success for an id that is already gone and move its deleted_at.
-	result := l.GetGenericPersister().Model(&Credential{}).Where("id = ? AND deleted_at is NULL", credentialID).Update("deleted_at", time.Now())
+	// Only a live credential matching both credentialID and the caller's user_id can be deleted.
+	result := l.GetGenericPersister().Model(&Credential{}).
+		Where("id = ? AND user_id = ? AND deleted_at is NULL", credentialID, user.ID).
+		Update("deleted_at", time.Now())
 	if result.Error != nil {
 		return nil, result.Error
 	}

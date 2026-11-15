@@ -681,15 +681,32 @@ func GetPodList(client *meshkitkube.Client, namespace string) (*v1core.PodList, 
 // GetRequiredPods checks whether the pods specified by the user are valid and returns a map of the required pods.
 func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) (map[string]string, error) {
 	requiredPodsMap := make(map[string]string)
-	var availablePodsName []string
-	for _, pod := range availablePods {
-		availablePodsName = append(availablePodsName, pod.GetName())
-	}
 	for _, sp := range specifiedPods {
-		if index := StringContainedInSlice(sp, availablePodsName); index != -1 {
-			requiredPodsMap[availablePodsName[index]] = availablePodsName[index]
-		} else {
-			return nil, fmt.Errorf("pod \"%s\" specified, does not exist in the 'meshery' namespace. Please  Run `mesheryctl system status` to view the available pods", sp)
+		var exact, clean, partial []string
+		for _, pod := range availablePods {
+			name := pod.GetName()
+			if name == sp {
+				exact = append(exact, name)
+			} else if GetCleanPodName(name) == sp {
+				clean = append(clean, name)
+			} else if strings.Contains(name, sp) {
+				partial = append(partial, name)
+			}
+		}
+		matches := partial
+		if len(clean) > 0 {
+			matches = clean
+		}
+		if len(exact) > 0 {
+			matches = exact
+		}
+		switch len(matches) {
+		case 0:
+			return nil, fmt.Errorf("pod %q specified, does not exist in the 'meshery' namespace. Please run `mesheryctl system status` to view the available pods", sp)
+		case 1:
+			requiredPodsMap[matches[0]] = matches[0]
+		default:
+			return nil, fmt.Errorf("pod %q is ambiguous; matches: %s", sp, strings.Join(matches, ", "))
 		}
 	}
 
@@ -821,6 +838,15 @@ func ForceCleanupCluster() error {
 	}
 
 	return cleanupCluster(client.KubeClient)
+}
+
+// ForceCleanupClusterWithClient deletes the Meshery resources visible through
+// an already-resolved client, so callers that resolved their configuration
+// once (for example, `system uninstall`) do not re-read the kubeconfig and
+// risk cleaning up a different cluster than the teardown began on. Callers
+// without a resolved client keep using ForceCleanupCluster.
+func ForceCleanupClusterWithClient(kube kubernetes.Interface) error {
+	return cleanupCluster(kube)
 }
 
 // cleanupCluster deletes the Meshery resources visible through kube. A list or

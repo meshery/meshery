@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -55,10 +56,25 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 		query = query.Where("type IN (?)", connType)
 	}
 
-	dynamicKeys := []string{"type", "sub_type"}
-
-	// Apply filters using the utility function
-	query = utils.ApplyFilters(query, filter, dynamicKeys)
+	// Accept the public type alias while querying the persisted connection_type column.
+	// The existing filter syntax is "key value"; JSON objects are also accepted.
+	var jsonFilter map[string]string
+	if json.Unmarshal([]byte(filter), &jsonFilter) == nil && jsonFilter != nil {
+		for _, key := range []string{"type", "connection_type", "sub_type"} {
+			if value, ok := jsonFilter[key]; ok {
+				column := key
+				if key == "type" {
+					column = "connection_type"
+				}
+				query = query.Where(column+" = ?", value)
+			}
+		}
+	} else {
+		if filter == "type" || strings.HasPrefix(filter, "type ") {
+			filter = "connection_type" + strings.TrimPrefix(filter, "type")
+		}
+		query = utils.ApplyFilters(query, filter, []string{"connection_type", "sub_type"})
+	}
 
 	query = query.Order(order)
 	count := int64(0)

@@ -19,11 +19,13 @@ import (
 // user's ID replaces any client-supplied `userId` in the request body.
 type credentialSpyProvider struct {
 	*models.DefaultLocalProvider
-	observedSave   atomic.Pointer[models.Credential]
-	observedUpdate atomic.Pointer[models.Credential]
-	observedDelete atomic.Pointer[uuid.UUID]
-	observedGet    atomic.Pointer[uuid.UUID]
-	observedList   atomic.Pointer[[2]int] // page, pageSize
+	observedSave       atomic.Pointer[models.Credential]
+	observedUpdate     atomic.Pointer[models.Credential]
+	observedDelete     atomic.Pointer[uuid.UUID]
+	observedDeleteUser atomic.Pointer[models.User]
+	observedGet        atomic.Pointer[uuid.UUID]
+	observedList       atomic.Pointer[[2]int] // page, pageSize
+	stubbedCredential  *models.Credential
 }
 
 func newCredentialSpyProvider() *credentialSpyProvider {
@@ -44,13 +46,21 @@ func (m *credentialSpyProvider) UpdateUserCredential(_ *http.Request, c *models.
 	return c, nil
 }
 
-func (m *credentialSpyProvider) DeleteUserCredential(_ *http.Request, id uuid.UUID) (*models.Credential, error) {
+func (m *credentialSpyProvider) DeleteUserCredential(req *http.Request, id uuid.UUID) (*models.Credential, error) {
 	m.observedDelete.Store(&id)
+	if req != nil {
+		if user, ok := req.Context().Value(models.UserCtxKey).(*models.User); ok && user != nil {
+			m.observedDeleteUser.Store(user)
+		}
+	}
 	return nil, nil
 }
 
 func (m *credentialSpyProvider) GetCredentialByID(_ string, id uuid.UUID) (*models.Credential, int, error) {
 	m.observedGet.Store(&id)
+	if m.stubbedCredential != nil {
+		return m.stubbedCredential, http.StatusOK, nil
+	}
 	return &models.Credential{ID: id}, http.StatusOK, nil
 }
 
@@ -284,17 +294,22 @@ func TestGetUserCredentialByID_RejectsMissingOrInvalidID(t *testing.T) {
 }
 
 // TestGetUserCredentialByID_ValidID verifies that a valid UUID successfully
-// queries the provider and returns 200 OK.
+// queries the provider and returns 200 OK for the owning user.
 func TestGetUserCredentialByID_ValidID(t *testing.T) {
 	validID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
+	authUser := &models.User{ID: uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))}
 	h := newTestHandler(t, map[string]models.Provider{}, "")
 	p := newCredentialSpyProvider()
+	p.stubbedCredential = &models.Credential{
+		ID:     validID,
+		UserId: authUser.ID,
+	}
 
 	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials/"+validID.String(), nil)
 	req = mux.SetURLVars(req, map[string]string{"credentialID": validID.String()})
 	rec := httptest.NewRecorder()
 
-	h.GetUserCredentialByID(rec, req, nil, &models.User{}, p)
+	h.GetUserCredentialByID(rec, req, nil, authUser, p)
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
@@ -305,5 +320,128 @@ func TestGetUserCredentialByID_ValidID(t *testing.T) {
 	}
 	if *observed != validID {
 		t.Fatalf("provider queried with %v, want %v", *observed, validID)
+	}
+}
+
+// TestGetUserCredentialByID_UnownedCredentialReturns404 verifies that requesting
+// a legacy unowned credential (UserId == uuid.Nil) returns 404 Not Found (fail-closed).
+func TestGetUserCredentialByID_UnownedCredentialReturns404(t *testing.T) {
+	credID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
+	authUser := &models.User{ID: uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))}
+
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := newCredentialSpyProvider()
+	p.stubbedCredential = &models.Credential{
+		ID:     credID,
+		UserId: uuid.Nil,
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials/"+credID.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"credentialID": credID.String()})
+	rec := httptest.NewRecorder()
+
+	h.GetUserCredentialByID(rec, req, nil, authUser, p)
+
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("expected 404, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+}
+
+// TestGetUserCredentialByID_NilUserReturns404 verifies that calling GetUserCredentialByID
+// when the caller is unauthenticated/unresolved (user is nil) returns 404 Not Found (fail-closed).
+func TestGetUserCredentialByID_NilUserReturns404(t *testing.T) {
+	credID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
+
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := newCredentialSpyProvider()
+	p.stubbedCredential = &models.Credential{
+		ID:     credID,
+		UserId: uuid.Must(uuid.NewV4()),
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials/"+credID.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"credentialID": credID.String()})
+	rec := httptest.NewRecorder()
+
+	h.GetUserCredentialByID(rec, req, nil, nil, p)
+
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("expected 404, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+}
+
+// TestGetUserCredentialByID_ForeignUserReturns404 verifies that requesting
+// a credential belonging to another user returns 404 Not Found.
+func TestGetUserCredentialByID_ForeignUserReturns404(t *testing.T) {
+	credID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
+	authUser := &models.User{ID: uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))}
+	foreignUser := uuid.Must(uuid.FromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"))
+
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := newCredentialSpyProvider()
+	p.stubbedCredential = &models.Credential{
+		ID:     credID,
+		UserId: foreignUser,
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials/"+credID.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"credentialID": credID.String()})
+	rec := httptest.NewRecorder()
+
+	h.GetUserCredentialByID(rec, req, nil, authUser, p)
+
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("expected 404, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+}
+
+// TestGetUserCredentialByID_OwnerReturns200 verifies that the owner of a
+// credential receives 200 OK and the credential body.
+func TestGetUserCredentialByID_OwnerReturns200(t *testing.T) {
+	credID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
+	owner := &models.User{ID: uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))}
+
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := newCredentialSpyProvider()
+	p.stubbedCredential = &models.Credential{
+		ID:     credID,
+		UserId: owner.ID,
+		Name:   "my-cred",
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials/"+credID.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"credentialID": credID.String()})
+	rec := httptest.NewRecorder()
+
+	h.GetUserCredentialByID(rec, req, nil, owner, p)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+}
+
+// TestDeleteUserCredential_PropagatesAuthenticatedUser verifies that
+// DeleteUserCredential passes the authenticated user to the provider via request context.
+func TestDeleteUserCredential_PropagatesAuthenticatedUser(t *testing.T) {
+	id := uuid.Must(uuid.FromString("55555555-5555-5555-5555-555555555555"))
+	authUser := &models.User{ID: uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))}
+
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := newCredentialSpyProvider()
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/integrations/credentials?credentialId="+id.String(), nil)
+	rec := httptest.NewRecorder()
+
+	h.DeleteUserCredential(rec, req, nil, authUser, p)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+	receivedUser := p.observedDeleteUser.Load()
+	if receivedUser == nil {
+		t.Fatal("provider DeleteUserCredential was not passed authenticated user in context")
+	}
+	if receivedUser.ID != authUser.ID {
+		t.Fatalf("received user ID %v, want %v", receivedUser.ID, authUser.ID)
 	}
 }

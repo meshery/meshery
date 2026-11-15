@@ -7,7 +7,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/httputil"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	meshkitutils "github.com/meshery/meshkit/utils"
 )
 
@@ -226,4 +228,11 @@ func SafeOpenFile(providedPath string) (*os.File, error) {
 	}
 
 	return nil, errFileOutsideAllowedDirs
+}
+
+// isPaginationError reports whether err is a rejected `page` or `pagesize`
+// query parameter. That is a client error: answer it with 400.
+func isPaginationError(err error) bool {
+	code := meshkiterrors.GetCode(err)
+	return code == models.ErrPageNumberCode || code == models.ErrPageSizeCode
 }
