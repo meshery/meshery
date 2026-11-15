@@ -1050,7 +1050,7 @@
             "match_strategy_matrix": null,
             "model": {
               "version": "",
-              "name": "azure-conatiner-service",
+              "name": "azure-container-service",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
@@ -1086,7 +1086,7 @@
             "match_strategy_matrix": null,
             "model": {
               "version": "",
-              "name": "azure-conatiner-service",
+              "name": "azure-container-service",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
@@ -1122,7 +1122,7 @@
             "match_strategy_matrix": null,
             "model": {
               "version": "",
-              "name": "azure-conatiner-service",
+              "name": "azure-container-service",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
@@ -1158,7 +1158,7 @@
             "match_strategy_matrix": null,
             "model": {
               "version": "",
-              "name": "azure-conatiner-service",
+              "name": "azure-container-service",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
@@ -1194,7 +1194,7 @@
             "match_strategy_matrix": null,
             "model": {
               "version": "",
-              "name": "azure-conatiner-service",
+              "name": "azure-container-service",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
@@ -2490,7 +2490,7 @@
             "match_strategy_matrix": null,
             "model": {
               "version": "",
-              "name": "azure-conatiner-service",
+              "name": "azure-container-service",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {
@@ -2526,7 +2526,7 @@
             "match_strategy_matrix": null,
             "model": {
               "version": "",
-              "name": "azure-conatiner-service",
+              "name": "azure-container-service",
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
               "registrant": {

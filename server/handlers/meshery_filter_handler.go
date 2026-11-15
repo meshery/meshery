@@ -517,10 +517,12 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ s
 
 		return
 	}
+	// A provider answering null decodes to a nil slice; keep the wire shape a list.
+	if contentMesheryFilterSlice == nil {
+		contentMesheryFilterSlice = []models.MesheryFilter{}
+	}
 
-	result := []models.MesheryFilter{}
-
-	data, err := json.Marshal(&result)
+	data, err := json.Marshal(contentMesheryFilterSlice)
 	if err != nil {
 		obj := "filter file"
 		writeMeshkitError(rw, models.ErrMarshal(err, obj), http.StatusInternalServerError)

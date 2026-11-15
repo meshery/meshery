@@ -86,9 +86,30 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	return req, nil
 }
 
+// maxRedirects is the limit net/http's default redirect policy applies, kept
+// because MakeRequest replaces that policy.
+const maxRedirects = 10
+
 // MakeRequest sends an HTTP request, validates the response, and returns the response or an error.
 func MakeRequest(req *http.Request) (*http.Response, error) {
-	client := &http.Client{}
+	// net/http follows a 301, 302 or 303 answer to a request other than GET or
+	// HEAD by re-sending it as a GET without its body. When the new path also has
+	// a GET route, that GET runs and the command reports success for work that
+	// never happened. Such a redirect is not followed; the redirect response
+	// itself is handled below. Redirects that keep the method are followed.
+	var refused *http.Request
+	client := &http.Client{
+		CheckRedirect: func(next *http.Request, via []*http.Request) error {
+			if len(via) >= maxRedirects {
+				return fmt.Errorf("stopped after %d redirects", maxRedirects)
+			}
+			if next.Method != via[0].Method {
+				refused = next
+				return http.ErrUseLastResponse
+			}
+			return nil
+		},
+	}
 
 	// check status code from request, checks for issues with auth token
 	resp, err := client.Do(req)
@@ -105,6 +126,11 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 	if resp.StatusCode == 302 {
 		SafeClose(resp.Body)
 		return nil, ErrInvalidToken()
+	}
+
+	if refused != nil {
+		SafeClose(resp.Body)
+		return nil, ErrRedirectChangesMethod(req.Method, resp.Request.URL.String(), resp.StatusCode, refused.URL.String())
 	}
 
 	if resp.StatusCode == http.StatusInternalServerError {

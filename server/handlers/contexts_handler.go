@@ -242,5 +242,9 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			"error": err,
 		}).Build()
 		h.persistAndPublish(provider, token, userID, event)
+		writeMeshkitError(w, ErrFailToDelete(err, "context"), http.StatusInternalServerError)
+		return
 	}
+
+	w.WriteHeader(http.StatusOK)
 }

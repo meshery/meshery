@@ -26,9 +26,9 @@
  */
 
 'use strict';
-
 const fs = require('fs');
 const path = require('path');
+const ts = require('typescript');
 
 const UI_ROOT = path.resolve(__dirname, '..');
 
@@ -45,10 +45,9 @@ const SCAN_DIRS = [
   'css',
 ];
 
-// Skipped entirely. These are the same exclusions applied in
-// eslint.config.js to the hex/rgba no-restricted-syntax rule: the theme
-// module, SVG icon components, third-party integration helpers, static
-// assets, and tests.
+// Directories skipped at every depth because they contain generated,
+// temporary, or test-only content. UI-root opt-outs are handled by
+// SCAN_DIRS, so nested production directories with the same names remain scanned.
 const IGNORED_DIRS = new Set([
   'node_modules',
   '__tests__',
@@ -58,12 +57,6 @@ const IGNORED_DIRS = new Set([
   'playwright-report',
   'test-results',
   '__generated__',
-  // Scoped opt-outs matching the ESLint rule
-  'theme',
-  'assets',
-  'lib',
-  'public',
-  'tests',
 ]);
 
 const EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx']);
@@ -77,18 +70,30 @@ const HEX_PATTERN = /#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b/g;
 // Match case-insensitive rgb()/rgba() calls without matching longer identifiers.
 const RGB_PATTERN = /(?<![\w$-])rgba?\(/gi;
 
-function walk(dir, out) {
+function walk(dir, out, scanErrors) {
   let entries;
+
   try {
-    entries = fs.readdirSync(dir, { withFileTypes: true });
-  } catch {
+    entries = fs.readdirSync(dir, {
+      withFileTypes: true,
+    });
+  } catch (error) {
+    const message = `Unable to read directory ${path.relative(UI_ROOT, dir)}: ${error.message}`;
+
+    scanErrors.push(message);
+
     return;
   }
+
   for (const entry of entries) {
-    if (IGNORED_DIRS.has(entry.name)) continue;
+    if (IGNORED_DIRS.has(entry.name)) {
+      continue;
+    }
+
     const full = path.join(dir, entry.name);
+
     if (entry.isDirectory()) {
-      walk(full, out);
+      walk(full, out, scanErrors);
     } else if (
       entry.isFile() &&
       EXTENSIONS.has(path.extname(entry.name)) &&
@@ -106,10 +111,71 @@ function countMatches(src, pattern) {
   return count;
 }
 
+function maskComments(src) {
+  const sourceFile = ts.createSourceFile(
+    'audit-source.tsx',
+    src,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
+  const chars = src.split('');
+  const jsxTextRanges = [];
+  const commentRanges = new Map();
+
+  function addCommentRanges(ranges) {
+    for (const range of ranges || []) {
+      commentRanges.set(`${range.pos}:${range.end}`, range);
+    }
+  }
+
+  function visit(node) {
+    if (ts.isJsxText(node)) {
+      jsxTextRanges.push({
+        start: node.getStart(sourceFile),
+        end: node.end,
+      });
+    }
+
+    addCommentRanges(ts.getLeadingCommentRanges(src, node.pos));
+    addCommentRanges(ts.getTrailingCommentRanges(src, node.end));
+
+    if (ts.isJsxExpression(node)) {
+      const openBrace = node
+        .getChildren(sourceFile)
+        .find((child) => child.kind === ts.SyntaxKind.OpenBraceToken);
+
+      if (openBrace) {
+        addCommentRanges(ts.getTrailingCommentRanges(src, openBrace.end));
+      }
+    }
+
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+
+  for (const range of commentRanges.values()) {
+    const overlapsJsxText = jsxTextRanges.some(
+      ({ start, end }) => range.pos < end && range.end > start,
+    );
+
+    if (overlapsJsxText) continue;
+
+    for (let i = range.pos; i < range.end; i++) {
+      if (chars[i] !== '\n' && chars[i] !== '\r') {
+        chars[i] = ' ';
+      }
+    }
+  }
+
+  return chars.join('');
+}
 function scanFile(file) {
   const src = fs.readFileSync(file, 'utf8');
-  const hex = countMatches(src, HEX_PATTERN);
-  const rgb = countMatches(src, RGB_PATTERN);
+  const maskedSrc = maskComments(src);
+  const hex = countMatches(maskedSrc, HEX_PATTERN);
+  const rgb = countMatches(maskedSrc, RGB_PATTERN);
   return { hex, rgb };
 }
 
@@ -119,16 +185,29 @@ function main() {
   const asJson = args.includes('--json');
 
   const files = [];
+  const scanErrors = [];
   for (const dir of SCAN_DIRS) {
-    walk(path.join(UI_ROOT, dir), files);
+    walk(path.join(UI_ROOT, dir), files, scanErrors);
   }
 
   const offenders = [];
   let totalHex = 0;
   let totalRgb = 0;
   for (const file of files) {
-    const { hex, rgb } = scanFile(file);
-    if (hex === 0 && rgb === 0) continue;
+    let hex;
+    let rgb;
+
+    try {
+      ({ hex, rgb } = scanFile(file));
+    } catch (error) {
+      const message = `Unable to read file ${path.relative(UI_ROOT, file)}: ${error.code || error.message}`;
+      scanErrors.push(message);
+      continue;
+    }
+
+    if (hex === 0 && rgb === 0) {
+      continue;
+    }
     const rel = path.relative(UI_ROOT, file);
     offenders.push({ file: rel, hex, rgb, total: hex + rgb });
     totalHex += hex;
@@ -148,6 +227,8 @@ function main() {
           hex: totalHex,
           rgb: totalRgb,
           offenders,
+          scanErrors,
+          scanComplete: scanErrors.length === 0,
         },
         null,
         2,
@@ -156,11 +237,21 @@ function main() {
     return;
   }
 
+  if (scanErrors.length > 0) {
+    process.stderr.write(`WARNING: Scan incomplete. ${scanErrors.length} filesystem error(s).\n`);
+
+    for (const error of scanErrors) {
+      process.stderr.write(`${error}\n`);
+    }
+  }
   process.stdout.write('meshery-ui color-literal audit\n');
   process.stdout.write('==============================\n');
   process.stdout.write('Patterns: #RGB/#RGBA/#RRGGBB/#RRGGBBAA, rgb(), rgba()\n');
   process.stdout.write(`Scope:    ${SCAN_DIRS.join(', ')}\n`);
-  process.stdout.write('Ignored:  theme, assets, lib, public, tests, __tests__, __generated__\n\n');
+  process.stdout.write(`Ignored at any depth: ${[...IGNORED_DIRS].join(', ')}\n`);
+  process.stdout.write(
+    'UI-root directories outside scan scope: theme, assets, lib, public, tests\n\n',
+  );
 
   const limit = showAll ? offenders.length : Math.min(20, offenders.length);
   if (offenders.length === 0) {
