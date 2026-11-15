@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -213,7 +214,14 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	} else {
 		// Detach from the request context so cancellation on HTTP handler exit
 		// does not abort background state machine transitions, bounded by a timeout.
+		// Read every status before returning: disconnected contexts can still
+		// refer to the cluster. A failed read must not authorize a flush.
+		contexts, listErr := loadContextsForDeletion(provider, token)
+		if listErr != nil {
+			h.log.Error(ErrGetK8sContexts(listErr))
+		}
 		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), defaultFSMTransitionTimeout)
+		detachedCtx = context.WithValue(detachedCtx, models.AllKubeClusterKey, contexts)
 		go func(inst *machines.StateMachine) {
 			defer cancel()
 			if smInstanceTracker != nil {
@@ -247,4 +255,51 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+// loadContextsForDeletion obtains an unfiltered snapshot before the delete
+// transition, so cluster data is retained while any other context refers to it.
+func loadContextsForDeletion(provider interface {
+	GetK8sContexts(token, page, pageSize, search, order, status string, withCredentials bool) ([]byte, error)
+}, token string) ([]*models.K8sContext, error) {
+	const pageSize = 100
+	var contexts []*models.K8sContext
+	var expectedTotal int
+	seen := make(map[string]struct{})
+	for page := 0; ; page++ {
+		data, err := provider.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", "", true)
+		if err != nil {
+			return nil, err
+		}
+		var result models.MesheryK8sContextPage
+		if err := json.Unmarshal(data, &result); err != nil {
+			return nil, err
+		}
+		// Changing totals or repeated IDs show that offset pagination shifted.
+		// A stable count still cannot guarantee a transactional snapshot.
+		if page == 0 {
+			expectedTotal = result.TotalCount
+		} else if result.TotalCount != expectedTotal {
+			return nil, fmt.Errorf("Kubernetes context count changed during pagination")
+		}
+		for _, item := range result.Contexts {
+			if item == nil || item.ID == "" {
+				return nil, fmt.Errorf("invalid Kubernetes context in snapshot")
+			}
+			if _, exists := seen[item.ID]; exists {
+				return nil, fmt.Errorf("duplicate Kubernetes context in snapshot")
+			}
+			seen[item.ID] = struct{}{}
+		}
+		contexts = append(contexts, result.Contexts...)
+		if len(contexts) > expectedTotal {
+			return nil, fmt.Errorf("inconsistent Kubernetes context count")
+		}
+		if len(contexts) == expectedTotal {
+			return contexts, nil
+		}
+		if len(result.Contexts) == 0 {
+			return nil, fmt.Errorf("incomplete Kubernetes context list")
+		}
+	}
 }

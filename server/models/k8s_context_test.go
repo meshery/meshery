@@ -362,3 +362,38 @@ func TestK8sContextGenerateIDNilMesheryInstanceID(t *testing.T) {
 		t.Fatalf("K8sContextGenerateID returned error after RedactCredentialsForContext: %v", err)
 	}
 }
+
+type flushDatabaseProvider struct {
+	flushFakeProvider
+	db *database.Handler
+}
+
+func (p *flushDatabaseProvider) GetGenericPersister() *database.Handler { return p.db }
+
+func TestFlushMeshSyncDataSharedAndLastContext(t *testing.T) {
+	serverID := uuid.Must(uuid.NewV4())
+	for _, tc := range []struct {
+		name   string
+		shared bool
+		want   int64
+	}{{"last context", false, 0}, {"shared server", true, 1}} {
+		t.Run(tc.name, func(t *testing.T) {
+			db := newMeshSyncTestDB(t)
+			seedMeshSyncResource(t, db, "resource", serverID.String())
+			current := &K8sContext{ID: uuid.Must(uuid.NewV4()).String(), KubernetesServerID: &serverID}
+			contexts := []*K8sContext{current}
+			if tc.shared {
+				contexts = append(contexts, &K8sContext{ID: uuid.Must(uuid.NewV4()).String(), KubernetesServerID: &serverID})
+			}
+			ctx := context.WithValue(context.Background(), AllKubeClusterKey, contexts)
+			FlushMeshSyncData(ctx, *current, &flushDatabaseProvider{db: db}, nil, "", nil, nil)
+			var count int64
+			if err := db.Model(&meshsyncmodel.KubernetesResource{}).Where("cluster_id = ?", serverID.String()).Count(&count).Error; err != nil {
+				t.Fatal(err)
+			}
+			if count != tc.want {
+				t.Fatalf("remaining resources = %d, want %d", count, tc.want)
+			}
+		})
+	}
+}
