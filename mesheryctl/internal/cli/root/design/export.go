@@ -73,6 +73,16 @@ mesheryctl design export [design-name | ID] --type [design-type] --output ./expo
 			return err
 		}
 
+		designType, _ := cmd.Flags().GetString("type")
+		if designType == "" {
+			designType = "current"
+		}
+		switch designType {
+		case "current", "original", "oci":
+		default:
+			return utils.ErrInvalidArgument(fmt.Errorf("invalid --type %q: use one of current, original or oci", designType))
+		}
+
 		patternNameOrID := strings.Join(args, " ")
 		design, isID, err := utils.ValidId(mctlCfg.GetBaseMesheryURL(), patternNameOrID, "pattern")
 		if err != nil {
@@ -84,11 +94,6 @@ mesheryctl design export [design-name | ID] --type [design-type] --output ./expo
 			if design, err = fetchPatternIDByName(baseUrl, design); err != nil {
 				return err
 			}
-		}
-
-		designType, _ := cmd.Flags().GetString("type")
-		if designType == "" {
-			designType = "current"
 		}
 
 		if err := exportDesign(baseUrl, design, designType); err != nil {
@@ -170,7 +175,7 @@ func exportDesign(baseUrl, design, designType string) error {
 		return utils.ErrReadFromBody(err)
 	}
 
-	filename := generateFilename(pattern.Name, design, designType)
+	filename := generateFilename(pattern.Name, design, designType, pattern.Type.String)
 	outputFilePath := filepath.Join(outputDir, filename)
 	outputFilePath = getUniqueFilename(outputFilePath)
 
@@ -213,13 +218,24 @@ func makeRequest(method, url string) (*http.Response, error) {
 	return utils.MakeRequest(req)
 }
 
-func generateFilename(patternName, design, designType string) string {
+// generateFilename names the exported file after what the server sends back:
+// an OCI image tarball for "oci", the uploaded source for "original" (a
+// packaged chart for Helm, YAML for Kubernetes manifests and Docker Compose),
+// and a Meshery design YAML for "current".
+func generateFilename(patternName, design, designType, sourceType string) string {
 	lastPartOfID := strings.Split(design, "-")[len(strings.Split(design, "-"))-1]
-	filename := fmt.Sprintf("%s_%s", patternName, lastPartOfID)
+	// The design name comes from the server and may contain path separators
+	// or "..", so sanitize it to keep the file inside the output directory.
+	filename := fmt.Sprintf("%s_%s", utils.SanitizeFileName(patternName), lastPartOfID)
 	switch designType {
 	case "oci":
+		filename += ".tar"
 	case "original":
-		filename += ".tar.gz"
+		if models.DesignType(sourceType) == models.HelmChart {
+			filename += ".tar.gz"
+		} else {
+			filename += ".yaml"
+		}
 	default:
 		filename += ".yaml"
 	}
@@ -347,6 +363,6 @@ func init() {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})
 
-	exportCmd.Flags().StringVarP(&designType, "type", "", "", "Specify the design type to export")
+	exportCmd.Flags().StringVarP(&designType, "type", "", "", "Type of export: current (Meshery design YAML), original (the source the design was imported from) or oci (OCI image tarball)")
 	exportCmd.Flags().StringVarP(&outputDir, "output", "o", "", "Specify the output directory to save the design")
 }

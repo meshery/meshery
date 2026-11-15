@@ -2,6 +2,13 @@ import { describe, expect, it } from 'vitest';
 import normalizeURI from '../normalizeURI';
 
 describe('normalizeURI', () => {
+  it.each([undefined, null, '', 0, 42, false, {}, [], { startsWith: () => true }])(
+    'returns an empty string for invalid input %j',
+    (input) => {
+      expect(normalizeURI(input)).toBe('');
+    },
+  );
+
   it('prepends a slash to a URI without one', () => {
     expect(normalizeURI('users/me')).toBe('/users/me');
   });
@@ -10,7 +17,7 @@ describe('normalizeURI', () => {
     expect(normalizeURI('/users/me')).toBe('/users/me');
   });
 
-  it('adds a slash for an empty path segment', () => {
+  it('adds a slash for a single-character path', () => {
     expect(normalizeURI('a')).toBe('/a');
   });
 

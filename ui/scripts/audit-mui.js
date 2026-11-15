@@ -38,6 +38,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const ts = require('typescript');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
@@ -66,8 +67,8 @@ const SCANS = [
     ],
     // Top-level config files that aren't under any scanned `dirs` entry but
     // can still hold @mui imports. The next.config.js webpack alias keys
-    // (e.g. `'@mui/material': path.resolve(...)`) don't match the audit
-    // regex (no `from`/`require(` prefix), so this list is currently just
+    // (e.g. `'@mui/material': path.resolve(...)`) are not import declarations
+    // or require() calls, so this list is currently just
     // remote-component.config.js, which has many real require() calls.
     // Listed by relative path; resolved from `root`.
     files: ['remote-component.config.js'],
@@ -135,14 +136,75 @@ const IGNORED_DIRS = new Set([
 
 const EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx']);
 
-// Match any import/require from @mui/*, @material-ui/*, or @rjsf/mui.
-// Covers:
-//   import X from '@mui/material'
-//   import { X } from '@mui/material'
-//   import '@mui/material/Button'
-//   const X = require('@mui/material')
-const IMPORT_PATTERN =
-  /(?:import\s+|from\s+|require\(\s*)['"](@mui\/[^'"]+|@material-ui\/[^'"]+|@rjsf\/mui)['"]/g;
+// Match imports from @mui/*, @material-ui/*, or @rjsf/mui using
+// the TypeScript parser so comments and ordinary strings are ignored.
+function isMuiModuleSpecifier(moduleName) {
+  return (
+    moduleName.startsWith('@mui/') ||
+    moduleName.startsWith('@material-ui/') ||
+    moduleName === '@rjsf/mui'
+  );
+}
+
+function findMuiImports(file, src) {
+  const scriptKindByExtension = {
+    '.js': ts.ScriptKind.JS,
+    '.jsx': ts.ScriptKind.JSX,
+    '.ts': ts.ScriptKind.TS,
+    '.tsx': ts.ScriptKind.TSX,
+  };
+
+  const sourceFile = ts.createSourceFile(
+    file,
+    src,
+    ts.ScriptTarget.Latest,
+    true,
+    scriptKindByExtension[path.extname(file)] ?? ts.ScriptKind.TSX,
+  );
+
+  const matches = [];
+
+  function visit(node) {
+    // Detect ES module imports and re-exports.
+    if (
+      (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
+      node.moduleSpecifier &&
+      ts.isStringLiteralLike(node.moduleSpecifier) &&
+      isMuiModuleSpecifier(node.moduleSpecifier.text)
+    ) {
+      matches.push(node.moduleSpecifier.text);
+    }
+
+    // Detect TypeScript import-equals declarations.
+    // Example: import Mui = require('@mui/material/Button');
+    if (
+      ts.isImportEqualsDeclaration(node) &&
+      ts.isExternalModuleReference(node.moduleReference) &&
+      node.moduleReference.expression &&
+      ts.isStringLiteralLike(node.moduleReference.expression) &&
+      isMuiModuleSpecifier(node.moduleReference.expression.text)
+    ) {
+      matches.push(node.moduleReference.expression.text);
+    }
+
+    // Detect CommonJS require() calls.
+    if (
+      ts.isCallExpression(node) &&
+      ts.isIdentifier(node.expression) &&
+      node.expression.text === 'require' &&
+      node.arguments.length > 0 &&
+      ts.isStringLiteralLike(node.arguments[0]) &&
+      isMuiModuleSpecifier(node.arguments[0].text)
+    ) {
+      matches.push(node.arguments[0].text);
+    }
+
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return matches;
+}
 
 function walk(dir, out, scanErrors) {
   let entries;
@@ -180,15 +242,7 @@ function scanFile(file, scanErrors) {
     return null;
   }
 
-  const matches = [];
-  let m;
-  IMPORT_PATTERN.lastIndex = 0;
-
-  while ((m = IMPORT_PATTERN.exec(src)) !== null) {
-    matches.push(m[1]);
-  }
-
-  return matches;
+  return findMuiImports(file, src);
 }
 function runScan(scan) {
   const files = [];

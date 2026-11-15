@@ -180,8 +180,9 @@ func TestWriteEventStream_StopsOnContextCancellation(t *testing.T) {
 	body := &safeBuffer{writeCh: make(chan struct{}, 1)}
 	done := make(chan struct{})
 
+	w := &sseRecorder{header: make(http.Header), body: body, testFlusher: flusher}
 	go func() {
-		writeEventStream(ctx, body, respChan, log, flusher)
+		writeEventStream(ctx, w, respChan, log, flusher)
 		close(done)
 	}()
 

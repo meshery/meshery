@@ -3,7 +3,10 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
+
+	"github.com/spf13/viper"
 )
 
 // var update = flag.Bool("update", false, "update golden files")
@@ -498,4 +501,150 @@ func TestGetBaseMesheryURLTrimsTrailingSlash(t *testing.T) {
 	if got, want := mctl.GetBaseMesheryURL(), "http://localhost:9081"; got != want {
 		t.Errorf("GetBaseMesheryURL() = %q, want %q", got, want)
 	}
+}
+
+func TestAddContextRejectsDotBeforeWriting(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "config.yaml")
+	original := []byte("contexts: {}\ncurrent-context: local\n")
+	if err := os.WriteFile(path, original, 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := AddContextToConfig("local.dev", Context{}, path, true, false); err == nil || !strings.Contains(err.Error(), "cannot contain") {
+		t.Fatalf("expected invalid name error, got %v", err)
+	}
+	got, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got) != string(original) {
+		t.Fatalf("config changed: %s", got)
+	}
+}
+
+const tokenRefsConfig = `contexts:
+  local:
+    endpoint: http://localhost:9081
+    token: default
+    platform: docker
+    provider: Meshery
+  prod:
+    endpoint: http://localhost:9082
+    token: prod
+    platform: kubernetes
+    provider: Meshery
+  staging:
+    endpoint: http://localhost:9083
+    token: prod
+    platform: kubernetes
+    provider: Meshery
+current-context: local
+tokens:
+  - name: default
+    location: auth.json
+  - name: prod
+    location: prod-auth.json
+  - name: spare
+    location: spare-auth.json
+`
+
+// writeTokenRefsConfig writes tokenRefsConfig to a private meshconfig and
+// resets the global viper the token helpers read through.
+func writeTokenRefsConfig(t *testing.T) string {
+	t.Helper()
+	configPath := filepath.Join(t.TempDir(), "config.yaml")
+	if err := os.WriteFile(configPath, []byte(tokenRefsConfig), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	viper.Reset()
+	t.Cleanup(viper.Reset)
+	return configPath
+}
+
+func readTokenRefsConfig(t *testing.T, configPath string) *MesheryCtlConfig {
+	t.Helper()
+	v := viper.New()
+	v.SetConfigFile(configPath)
+	if err := v.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	cfg, err := GetMesheryCtl(v)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return cfg
+}
+
+func TestSetTokenToConfigRequiresExistingToken(t *testing.T) {
+	t.Run("unknown token is rejected and the context keeps its token", func(t *testing.T) {
+		configPath := writeTokenRefsConfig(t)
+
+		err := SetTokenToConfig("prodd", configPath, "prod")
+		if err == nil {
+			t.Fatal("SetTokenToConfig() accepted a token that is not defined in meshconfig")
+		}
+		if !strings.Contains(err.Error(), `token "prodd" does not exist`) {
+			t.Errorf("SetTokenToConfig() error = %q, want it to name the missing token", err)
+		}
+		if got := readTokenRefsConfig(t, configPath).Contexts["prod"].Token; got != "prod" {
+			t.Errorf("context prod token = %q after a rejected set, want %q", got, "prod")
+		}
+	})
+
+	t.Run("existing token is set on the given context only", func(t *testing.T) {
+		configPath := writeTokenRefsConfig(t)
+
+		if err := SetTokenToConfig("spare", configPath, "prod"); err != nil {
+			t.Fatalf("SetTokenToConfig() error = %v", err)
+		}
+		cfg := readTokenRefsConfig(t, configPath)
+		if got := cfg.Contexts["prod"].Token; got != "spare" {
+			t.Errorf("context prod token = %q, want %q", got, "spare")
+		}
+		if got := cfg.Contexts["local"].Token; got != "default" {
+			t.Errorf("context local token = %q, want %q", got, "default")
+		}
+	})
+}
+
+func TestDeleteTokenFromConfigRefusesTokenInUse(t *testing.T) {
+	t.Run("token used by contexts is kept and the contexts are named", func(t *testing.T) {
+		configPath := writeTokenRefsConfig(t)
+
+		err := DeleteTokenFromConfig("prod", configPath)
+		if err == nil {
+			t.Fatal("DeleteTokenFromConfig() deleted a token that contexts still use")
+		}
+		if !strings.Contains(err.Error(), `token "prod" is still used by context(s) prod, staging`) {
+			t.Errorf("DeleteTokenFromConfig() error = %q, want it to name both contexts", err)
+		}
+		if got := len(readTokenRefsConfig(t, configPath).Tokens); got != 3 {
+			t.Errorf("meshconfig has %d tokens after a refused delete, want 3", got)
+		}
+	})
+
+	t.Run("unused token is deleted", func(t *testing.T) {
+		configPath := writeTokenRefsConfig(t)
+
+		if err := DeleteTokenFromConfig("spare", configPath); err != nil {
+			t.Fatalf("DeleteTokenFromConfig() error = %v", err)
+		}
+		cfg := readTokenRefsConfig(t, configPath)
+		for _, tok := range cfg.Tokens {
+			if tok.Name == "spare" {
+				t.Fatal("token spare is still in meshconfig after delete")
+			}
+		}
+		if got := len(cfg.Tokens); got != 2 {
+			t.Errorf("meshconfig has %d tokens after delete, want 2", got)
+		}
+	})
+
+	t.Run("unknown token still reports that it does not exist", func(t *testing.T) {
+		configPath := writeTokenRefsConfig(t)
+
+		err := DeleteTokenFromConfig("missing", configPath)
+		if err == nil || !strings.Contains(err.Error(), "no such token exists") {
+			t.Errorf("DeleteTokenFromConfig() error = %v, want \"no such token exists\"", err)
+		}
+	})
 }

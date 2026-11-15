@@ -103,11 +103,14 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 
 			// Connections from local providers can exist without a name.
 			connectionString := func(c connection.Connection) string {
-				if c.Name == "" {
-					return c.ID.String()
+				name := utils.SanitizeFileName(fmt.Sprintf("%v", c.Name))
+				if name == "" {
+					name = utils.SanitizeFileName(c.ID.String())
 				}
-
-				return strings.ReplaceAll(fmt.Sprintf("%v", c.Name), " ", "_")
+				if name == "" {
+					name = "unknown"
+				}
+				return name
 			}(*selectedConnection)
 
 			fileName := fmt.Sprintf(

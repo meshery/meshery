@@ -25,9 +25,10 @@ import (
 
 type mockContextsProvider struct {
 	*models.DefaultLocalProvider
-	getK8sContextFn func(token, id string) (models.K8sContext, error)
-	persistEventFn  func(event events.Event, token string) error
-	persistedEvents []events.Event
+	getK8sContextFn   func(token, id string) (models.K8sContext, error)
+	getK8sContextsErr error
+	persistEventFn    func(event events.Event, token string) error
+	persistedEvents   []events.Event
 }
 
 // GetK8sContext returns the stubbed context lookup, or an empty context when none is set.
@@ -36,6 +37,14 @@ func (m *mockContextsProvider) GetK8sContext(token, id string) (models.K8sContex
 		return m.getK8sContextFn(token, id)
 	}
 	return models.K8sContext{}, nil
+}
+
+// GetK8sContexts supplies an empty snapshot unless a test needs its own provider.
+func (m *mockContextsProvider) GetK8sContexts(_, _, _, _, _, _ string, _ bool) ([]byte, error) {
+	if m.getK8sContextsErr != nil {
+		return nil, m.getK8sContextsErr
+	}
+	return []byte(`{"contexts":[],"totalCount":0}`), nil
 }
 
 // PersistEvent records the event and returns the stubbed persistence result.
@@ -222,6 +231,27 @@ func TestGetAllContexts_DatabaseFailure(t *testing.T) {
 	}
 	if !strings.Contains(rec.Body.String(), ErrGetK8sContextsCode) {
 		t.Fatalf("expected error code %s in body, got %s", ErrGetK8sContextsCode, rec.Body.String())
+	}
+}
+
+// A rejected page or pagesize is a client error. Uses the real local provider,
+// which parses both values before it touches the database.
+func TestGetAllContexts_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	for _, query := range []string{"page=-1", "pagesize=abc"} {
+		t.Run(query, func(t *testing.T) {
+			provider := &models.DefaultLocalProvider{}
+			h := &Handler{log: newTestLogger(t)}
+
+			req := httptest.NewRequest(http.MethodGet, "/api/system/kubernetes/contexts?"+query, nil)
+			req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+			rec := httptest.NewRecorder()
+
+			h.GetAllContexts(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected status %d, got %d. body: %s", http.StatusBadRequest, rec.Code, rec.Body.String())
+			}
+		})
 	}
 }
 
@@ -449,5 +479,330 @@ func TestDeleteContext_DetachesContextFromRequest(t *testing.T) {
 			t.Fatal("expected state machine to be evicted from tracker after deletion")
 		}
 		time.Sleep(10 * time.Millisecond)
+	}
+}
+
+func TestDeleteContext_InvalidContextID(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	h := &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+	provider := &mockContextsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/invalid-uuid", nil)
+	req = mux.SetURLVars(req, map[string]string{"id": "invalid-uuid"})
+	rec := httptest.NewRecorder()
+
+	h.DeleteContext(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status %d, got %d", http.StatusBadRequest, rec.Code)
+	}
+	if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
+		t.Fatalf("expected error code %s in body, got %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+	}
+}
+
+func TestDeleteContext_NilContextID(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	h := &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+	provider := &mockContextsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+uuid.Nil.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"id": uuid.Nil.String()})
+	rec := httptest.NewRecorder()
+
+	h.DeleteContext(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status %d, got %d", http.StatusBadRequest, rec.Code)
+	}
+	if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
+		t.Fatalf("expected error code %s in body, got %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+	}
+}
+
+func TestDeleteContext_NilProvider(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	h := &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+
+	contextID := uuid.Must(uuid.NewV4())
+	reqCtx := context.WithValue(context.Background(), models.TokenCtxKey, "secret-token")
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+contextID.String(), nil)
+	req = req.WithContext(reqCtx)
+	req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
+	rec := httptest.NewRecorder()
+
+	h.DeleteContext(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected status %d, got %d", http.StatusInternalServerError, rec.Code)
+	}
+}
+
+func TestDeleteContext_NilUser_DoesNotPanic(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	h := &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+	provider := &mockContextsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+	}
+
+	contextID := uuid.Must(uuid.NewV4())
+	reqCtx := context.WithValue(context.Background(), models.TokenCtxKey, "secret-token")
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+contextID.String(), nil)
+	req = req.WithContext(reqCtx)
+	req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
+	rec := httptest.NewRecorder()
+
+	// Must not panic with user == nil
+	h.DeleteContext(rec, req, nil, nil, provider)
+}
+
+func TestDeleteContext_NilSystemID_DoesNotPanic(t *testing.T) {
+	h := &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:      newTestLogger(t),
+		SystemID: nil,
+	}
+	provider := &mockContextsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+	}
+
+	contextID := uuid.Must(uuid.NewV4())
+	reqCtx := context.WithValue(context.Background(), models.TokenCtxKey, "secret-token")
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+contextID.String(), nil)
+	req = req.WithContext(reqCtx)
+	req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
+	rec := httptest.NewRecorder()
+
+	// Must not panic with SystemID == nil
+	h.DeleteContext(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
+}
+
+func TestGetContext_InvalidContextID(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/system/kubernetes/contexts/invalid-uuid", nil)
+	req = mux.SetURLVars(req, map[string]string{"id": "invalid-uuid"})
+	rec := httptest.NewRecorder()
+
+	h.GetContext(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status %d, got %d", http.StatusBadRequest, rec.Code)
+	}
+	if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
+		t.Fatalf("expected error code %s in body, got %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+	}
+}
+
+func TestGetContext_NilContextID(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/system/kubernetes/contexts/"+uuid.Nil.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"id": uuid.Nil.String()})
+	rec := httptest.NewRecorder()
+
+	h.GetContext(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status %d, got %d", http.StatusBadRequest, rec.Code)
+	}
+	if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
+		t.Fatalf("expected error code %s in body, got %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+	}
+}
+
+func TestGetContext_NilProvider(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+
+	contextID := uuid.Must(uuid.NewV4())
+	reqCtx := context.WithValue(context.Background(), models.TokenCtxKey, "secret-token")
+	req := httptest.NewRequest(http.MethodGet, "/api/system/kubernetes/contexts/"+contextID.String(), nil)
+	req = req.WithContext(reqCtx)
+	req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
+	rec := httptest.NewRecorder()
+
+	h.GetContext(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected status %d, got %d", http.StatusInternalServerError, rec.Code)
+	}
+}
+
+func TestGetAllContexts_NilProvider(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+
+	reqCtx := context.WithValue(context.Background(), models.TokenCtxKey, "secret-token")
+	req := httptest.NewRequest(http.MethodGet, "/api/system/kubernetes/contexts", nil)
+	req = req.WithContext(reqCtx)
+	rec := httptest.NewRecorder()
+
+	h.GetAllContexts(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected status %d, got %d", http.StatusInternalServerError, rec.Code)
+	}
+}
+
+// TestDeleteContext_SuccessWritesStatusOK verifies that DeleteContext explicitly
+// writes HTTP 200 OK on successful acceptance and initiation of context deletion.
+func TestDeleteContext_SuccessWritesStatusOK(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	tracker := &machines.ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: map[uuid.UUID]*machines.StateMachine{},
+	}
+	h := &Handler{
+		config:                                  &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:                                     newTestLogger(t),
+		SystemID:                                &systemID,
+		ConnectionToStateMachineInstanceTracker: tracker,
+	}
+
+	contextID := uuid.Must(uuid.NewV4())
+	provider := &mockContextsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		getK8sContextFn: func(token, id string) (models.K8sContext, error) {
+			return models.K8sContext{
+				ID:           strings.ReplaceAll(contextID.String(), "-", ""),
+				Name:         "test-cluster",
+				ConnectionID: contextID.String(),
+			}, nil
+		},
+	}
+
+	sm := &machines.StateMachine{
+		ID:            core.Uuid(contextID),
+		Name:          "kubernetes",
+		InitialState:  machines.InitialState,
+		CurrentState:  machines.DISCOVERED,
+		PreviousState: machines.InitialState,
+		Log:           h.log,
+		Provider:      provider,
+		Context:       &kubernetes.MachineCtx{MesheryCtrlsHelper: &models.MesheryControllersHelper{}},
+		States: machines.States{
+			machines.DISCOVERED: machines.State{
+				Events: machines.Events{machines.Delete: machines.DELETED},
+			},
+			machines.DELETED: machines.State{
+				Action: &contextCheckingAction{done: make(chan struct{})},
+			},
+		},
+	}
+	tracker.Add(contextID, sm)
+
+	reqCtx := context.WithValue(context.Background(), models.TokenCtxKey, "secret-token")
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+contextID.String(), nil)
+	req = req.WithContext(reqCtx)
+	req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
+	rec := httptest.NewRecorder()
+	// NewRecorder defaults Code to 200, so reset it: otherwise this
+	// assertion passes even if the handler never writes a status.
+	rec.Code = 0
+
+	h.DeleteContext(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d. body: %s", http.StatusOK, rec.Code, rec.Body.String())
+	}
+}
+
+// TestDeleteContext_InitializationErrorReturns500 verifies that when state machine
+// initialization fails in DeleteContext (due to an empty Cluster/Auth fixture
+// rejecting client construction on a cache-miss), DeleteContext writes HTTP 500
+// and returns ErrFailToDeleteCode.
+func TestDeleteContext_InitializationErrorReturns500(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	userID := uuid.Must(uuid.NewV4())
+	contextID := uuid.Must(uuid.NewV4())
+
+	provider := &mockContextsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		getK8sContextFn: func(token, id string) (models.K8sContext, error) {
+			// Nil Cluster and Auth cause GenerateKubeConfig / client builder to fail
+			// during InitializeMachineWithContext deterministically.
+			return models.K8sContext{
+				ID:           strings.ReplaceAll(contextID.String(), "-", ""),
+				Name:         "invalid-cluster",
+				ConnectionID: contextID.String(),
+			}, nil
+		},
+	}
+
+	tracker := &machines.ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: map[uuid.UUID]*machines.StateMachine{},
+	}
+
+	h := &Handler{
+		config: &models.HandlerConfig{
+			EventBroadcaster: &models.Broadcast{},
+		},
+		log:                                     newTestLogger(t),
+		SystemID:                                &systemID,
+		ConnectionToStateMachineInstanceTracker: tracker,
+	}
+
+	reqCtx := context.WithValue(context.Background(), models.TokenCtxKey, "secret-token")
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+contextID.String(), nil)
+	req = req.WithContext(reqCtx)
+	req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
+	rec := httptest.NewRecorder()
+	rec.Code = 0
+
+	h.DeleteContext(rec, req, nil, &models.User{ID: userID}, provider)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected status %d on initialization failure, got %d. body: %s", http.StatusInternalServerError, rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), ErrFailToDeleteCode) {
+		t.Fatalf("expected error code %s in response body, got %s", ErrFailToDeleteCode, rec.Body.String())
+	}
+}
+
+// A failed snapshot must not be reported as an accepted deletion.
+func TestDeleteContext_SnapshotFailureReturnsError(t *testing.T) {
+	id := uuid.Must(uuid.NewV4())
+	provider := &mockContextsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		getK8sContextFn:      func(_, _ string) (models.K8sContext, error) { return models.K8sContext{ID: id.String()}, nil },
+		getK8sContextsErr:    errors.New("snapshot unavailable"),
+	}
+	h := &Handler{log: newTestLogger(t)}
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+id.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"id": id.String()})
+	req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "token"))
+	rec := httptest.NewRecorder()
+	h.DeleteContext(rec, req, nil, nil, provider)
+	if rec.Code != http.StatusInternalServerError || !strings.Contains(rec.Body.String(), ErrGetK8sContextsCode) {
+		t.Fatalf("expected snapshot error, got status %d: %s", rec.Code, rec.Body.String())
+	}
+	if len(provider.persistedEvents) != 0 {
+		t.Fatal("deletion was started after snapshot failure")
 	}
 }
