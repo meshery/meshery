@@ -680,7 +680,9 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 		// after a SendEvent that cannot succeed without a Context.
 		usable := err == nil && helpers.HasMachineContext(inst)
 		if !usable && connection.Status == connections.DELETED {
-			smInstanceTracker.Remove(connectionID)
+			if inst != nil {
+				smInstanceTracker.CompareAndDelete(connectionID, inst)
+			}
 		}
 
 		if err != nil {
@@ -711,7 +713,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 			}
 
 			if status == connections.DELETED {
-				smInstanceTracker.Remove(inst.ID)
+				smInstanceTracker.CompareAndDelete(inst.ID, inst)
 			}
 
 			h.reportMachineOutcome(provider, token, userID, event, nil)
@@ -776,14 +778,14 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	// removing controller handlers, stopping MeshSync, and flushing MeshSync data)
 	// before the connection and its context rows are deleted from the database.
 	isKubernetes := (gerr == nil && existing != nil && strings.EqualFold(existing.Kind, "kubernetes"))
+	var inst *machines.StateMachine
 
 	if isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil {
-		var inst *machines.StateMachine
 		if tracked, ok := h.ConnectionToStateMachineInstanceTracker.Get(connectionID); ok && tracked != nil && helpers.HasMachineContext(tracked) {
 			inst = tracked
 		} else {
-			if h.ConnectionToStateMachineInstanceTracker != nil {
-				h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+			if h.ConnectionToStateMachineInstanceTracker != nil && tracked != nil {
+				h.ConnectionToStateMachineInstanceTracker.CompareAndDelete(connectionID, tracked)
 			}
 			contextID := connectionID.String()
 			hasMetadataContextID := false
@@ -882,8 +884,8 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
-		if isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil {
-			h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+		if isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil && inst != nil {
+			h.ConnectionToStateMachineInstanceTracker.CompareAndDelete(connectionID, inst)
 		}
 		// Deleting an id the provider never issued is "not found", not a
 		// failure to write. The local provider says so with ErrResultNotFound;
@@ -931,7 +933,11 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	// Nothing can drive a deleted connection's machine any more; left in the
 	// tracker, the Kubernetes middlewares would keep probing it.
 	if h.ConnectionToStateMachineInstanceTracker != nil {
-		h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+		if inst != nil {
+			h.ConnectionToStateMachineInstanceTracker.CompareAndDelete(connectionID, inst)
+		} else if !isKubernetes {
+			h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+		}
 	}
 
 	// A provider is free to answer a successful delete without echoing the

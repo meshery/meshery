@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"sync"
 
@@ -428,6 +429,19 @@ func DeleteTokenFromConfig(tokenName string, configPath string) error {
 
 	for i := range mctlCfg.Tokens {
 		if mctlCfg.Tokens[i].Name == tokenName {
+			// A context left naming a deleted token makes later requests fall
+			// back to the default auth.json, so its token would be sent to
+			// that context's server.
+			var inUse []string
+			for name, ctx := range mctlCfg.Contexts {
+				if ctx.Token == tokenName {
+					inUse = append(inUse, name)
+				}
+			}
+			if len(inUse) > 0 {
+				slices.Sort(inUse)
+				return fmt.Errorf("token %q is still used by context(s) %s; set another token on them first with `mesheryctl system token set <token-name> -c <context>`", tokenName, strings.Join(inUse, ", "))
+			}
 			mctlCfg.Tokens = append(mctlCfg.Tokens[:i], mctlCfg.Tokens[i+1:]...)
 			viper.Set("contexts", mctlCfg.Contexts)
 			viper.Set("current-context", mctlCfg.CurrentContext)
@@ -461,6 +475,11 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 	context, err := mctlCfg.CheckIfGivenContextIsValid(ctxName)
 	if err != nil {
 		return err
+	}
+	// Without this check a mistyped name is saved, and requests made with the
+	// context then fall back to the default auth.json instead of failing.
+	if !slices.ContainsFunc(mctlCfg.Tokens, func(t Token) bool { return t.Name == tokenName }) {
+		return fmt.Errorf("token %q does not exist in meshconfig", tokenName)
 	}
 	context.Token = tokenName
 	err = UpdateContextInConfig(context, ctxName)

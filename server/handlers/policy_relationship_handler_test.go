@@ -1,19 +1,23 @@
 package handlers
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/meshery/meshery/server/models"
 	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/models/events"
 	policyv1beta1 "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/schemas/models/core"
@@ -25,6 +29,7 @@ import (
 	modelv1beta2 "github.com/meshery/schemas/models/v1beta2/model"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	v1beta3comp "github.com/meshery/schemas/models/v1beta3/component"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -1123,4 +1128,147 @@ func TestGetAllMeshmodelPoliciesPagination(t *testing.T) {
 			)
 		})
 	}
+}
+
+func TestEvaluateRelationshipPolicy_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	provider := &models.DefaultLocalProvider{}
+	h.EvaluateRelationshipPolicy(rec, req, nil, nil, provider)
+
+	require.Equal(t, http.StatusUnauthorized, rec.Code)
+	assert.Contains(t, rec.Body.String(), "user unauthorized")
+}
+
+func TestEvaluateRelationshipPolicy_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, nil)
+
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+	assert.Contains(t, rec.Body.String(), ErrNilProviderCode)
+}
+
+func TestEvaluateRelationshipPolicy_EmptyRequestBody_ReturnsBadRequest(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(""))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &models.DefaultLocalProvider{}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+func TestEvaluateRelationshipPolicy_PayloadTooLarge_ReturnsRequestEntityTooLarge(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+	// 4MB + 1 byte payload
+	largePayload := bytes.Repeat([]byte("a"), (4<<20)+1)
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", bytes.NewReader(largePayload))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &models.DefaultLocalProvider{}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusRequestEntityTooLarge, rec.Code)
+}
+
+func TestEvaluateRelationshipPolicy_MalformedJSON_ReturnsBadRequest(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader("invalid json"))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &models.DefaultLocalProvider{}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+func TestEvaluateRelationshipPolicy_NilSystemID_DoesNotPanic(t *testing.T) {
+	h := &Handler{
+		log:         newTestLogger(t),
+		evalTracker: newEvaluationTracker(),
+	}
+	validJSON := `{"design":{"id":"11111111-1111-1111-1111-111111111111","name":"test","version":"v1"}}`
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(validJSON))
+	ctx, cancel := context.WithCancel(req.Context())
+	cancel()
+	req = req.WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &models.DefaultLocalProvider{}
+
+	// SystemID is nil on h; must not panic and must return 500 on canceled context
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+}
+
+type panickingPersistEventProvider struct {
+	*models.DefaultLocalProvider
+	persisted chan struct{}
+}
+
+func (p *panickingPersistEventProvider) PersistEvent(event events.Event, token string) (models.PersistedEvent, error) {
+	if p.persisted != nil {
+		select {
+		case <-p.persisted:
+		default:
+			close(p.persisted)
+		}
+	}
+	panic("synthetic panic in PersistEvent")
+}
+
+func TestEvaluateRelationshipPolicy_PersistEventPanicRecovered(t *testing.T) {
+	viper.Set("USE_GO_POLICY_ENGINE", true)
+	t.Cleanup(func() {
+		viper.Set("USE_GO_POLICY_ENGINE", false)
+	})
+
+	logger := newTestLogger(t)
+	h := &Handler{
+		log:         logger,
+		evalTracker: newEvaluationTracker(),
+		GoEngine:    gopolicies.NewGoEngine(logger),
+	}
+
+	persistedCh := make(chan struct{})
+	provider := &panickingPersistEventProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		persisted:            persistedCh,
+	}
+
+	validJSON := `{"design":{"id":"11111111-1111-1111-1111-111111111111","name":"test","version":"v1"}}`
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(validJSON))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	// Wait for the detached persistence goroutine to run and panic (which is safely recovered)
+	select {
+	case <-persistedCh:
+	case <-time.After(2 * time.Second):
+		t.Fatal("PersistEvent was never called before timeout")
+	}
+
+	// Verify that the handler returns HTTP 200 OK without crashing the process
+	require.Equal(t, http.StatusOK, rec.Code)
 }
