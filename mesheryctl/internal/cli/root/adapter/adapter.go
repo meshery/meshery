@@ -275,39 +275,29 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query, operationID 
 		return "", ErrCreatingDeployResponseStream(err)
 	}
 
-	timer := time.NewTimer(time.Duration(1200) * time.Second)
-	eventChan := make(chan string)
-
-	// Run a goroutine to wait for the response
-	go func() {
-		for i := range event {
-			if !isOperationEvent(i.Data, operationID) {
+	timer := time.NewTimer(1200 * time.Second)
+	defer timer.Stop()
+	for {
+		select {
+		case <-timer.C:
+			return "", ErrTimeoutWaitingForDeployResponse
+		case item, ok := <-event:
+			if !ok {
+				return "", ErrCreatingDeployResponseStream(errEventStreamClosed)
+			}
+			if !isOperationEvent(item.Data, operationID) {
 				continue
 			}
-			if strings.Contains(i.Data.Details, query) {
-				eventChan <- "successful"
-				utils.Log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
-			} else if strings.Contains(i.Data.Details, "Error") {
-				eventChan <- "error"
-				utils.Log.Infof("%s\n", i.Data.Summary)
+			if strings.Contains(item.Data.Details, query) {
+				utils.Log.Infof("%s\n%s\n", item.Data.Summary, item.Data.Details)
+				return "", nil
+			}
+			if strings.Contains(item.Data.Details, "Error") {
+				utils.Log.Infof("%s\n", item.Data.Summary)
+				return "", ErrFailedDeployingMesh
 			}
 		}
-		close(eventChan)
-	}()
-
-	select {
-	case <-timer.C:
-		return "", ErrTimeoutWaitingForDeployResponse
-	case event, ok := <-eventChan:
-		if !ok {
-			return "", ErrCreatingDeployResponseStream(errEventStreamClosed)
-		}
-		if event != "successful" {
-			return "", ErrFailedDeployingMesh
-		}
 	}
-
-	return "", nil
 }
 
 // waitForValidateResponse waits on the event stream for the result of a
@@ -338,37 +328,27 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query, operationI
 		return "", ErrCreatingValidateResponseStream(err)
 	}
 
-	timer := time.NewTimer(time.Duration(1200) * time.Second)
-	eventChan := make(chan string)
-
-	// Run a goroutine to wait for the response
-	go func() {
-		for i := range event {
-			if !isOperationEvent(i.Data, operationID) {
+	timer := time.NewTimer(1200 * time.Second)
+	defer timer.Stop()
+	for {
+		select {
+		case <-timer.C:
+			return "", ErrTimeoutWaitingForValidateResponse
+		case item, ok := <-event:
+			if !ok {
+				return "", ErrCreatingValidateResponseStream(errEventStreamClosed)
+			}
+			if !isOperationEvent(item.Data, operationID) {
 				continue
 			}
-			if strings.Contains(i.Data.Summary, query) {
-				eventChan <- "successful"
-				utils.Log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
-			} else if strings.Contains(i.Data.Details, "error") {
-				eventChan <- "error"
-				utils.Log.Infof("%s", i.Data.Summary)
+			if strings.Contains(item.Data.Summary, query) {
+				utils.Log.Infof("%s\n%s", item.Data.Summary, item.Data.Details)
+				return "", nil
+			}
+			if strings.Contains(item.Data.Details, "error") {
+				utils.Log.Infof("%s", item.Data.Summary)
+				return "", ErrSMIConformanceTestsFailed
 			}
 		}
-		close(eventChan)
-	}()
-
-	select {
-	case <-timer.C:
-		return "", ErrTimeoutWaitingForValidateResponse
-	case event, ok := <-eventChan:
-		if !ok {
-			return "", ErrCreatingValidateResponseStream(errEventStreamClosed)
-		}
-		if event != "successful" {
-			return "", ErrSMIConformanceTestsFailed
-		}
 	}
-
-	return "", nil
 }
