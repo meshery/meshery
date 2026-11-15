@@ -18,7 +18,7 @@ func TestLogoutHandler_NilUser(t *testing.T) {
 	providers := map[string]models.Provider{local.Name(): local}
 	h := newTestHandler(t, providers, "")
 
-	req := httptest.NewRequest(http.MethodGet, "/user/logout", nil)
+	req := httptest.NewRequest(http.MethodPost, "/user/logout", nil)
 	rec := httptest.NewRecorder()
 
 	assert.NotPanics(t, func() {
@@ -104,7 +104,7 @@ func TestLogoutHandler_MethodNotAllowed(t *testing.T) {
 
 	h := newTestHandler(t, map[string]models.Provider{local.Name(): local}, "")
 
-	req := httptest.NewRequest(http.MethodPost, "/user/logout", nil)
+	req := httptest.NewRequest(http.MethodPut, "/user/logout", nil)
 	rec := httptest.NewRecorder()
 
 	h.LogoutHandler(rec, req, nil, local)

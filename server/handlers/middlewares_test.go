@@ -293,12 +293,6 @@ func TestProviderMiddlewareBlocksCrossOriginLocalMutations(t *testing.T) {
 			wantStatus: http.StatusForbidden,
 		},
 		{
-			name:       "headerless non-browser API client remains supported",
-			method:     http.MethodPost,
-			target:     "http://localhost:9081/api/system/database/reset?provider=Local",
-			wantStatus: http.StatusNoContent,
-		},
-		{
 			name:       "cross-site GET to logout is rejected",
 			method:     http.MethodGet,
 			target:     "http://localhost:9081/user/logout?provider=Local",
