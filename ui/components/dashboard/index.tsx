@@ -40,7 +40,7 @@ import UnsavedChangesModal from '@/components/shared/Modal/UnsavedChangesModal';
 
 const ResponsiveReactGridLayout = debounceWidthProvider(Responsive);
 
-const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
+const cols = { lg: 12, md: 12, sm: 6, xs: 4, xxs: 2 };
 
 const getQueryParamValue = (value: string | string[] | undefined, fallback?: string) => {
   if (Array.isArray(value)) {
