@@ -93,6 +93,7 @@ func paginationParam(value string, pageSize bool) string {
 	if value == "" || (pageSize && value == "all") {
 		return value
 	}
+	value = strings.TrimPrefix(value, "+")
 	if _, err := strconv.ParseUint(value, 10, 32); err != nil {
 		return ""
 	}

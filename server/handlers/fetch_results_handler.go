@@ -231,7 +231,7 @@ func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.R
 		return
 	}
 
-	bdr, err := p.FetchSmiResult(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), key)
+	bdr, err := p.FetchSmiResult(req, paginationParam(q.Get("page"), false), paginationParam(q.Get("pageSize"), true), q.Get("search"), q.Get("order"), key)
 	if err != nil {
 		if h.log != nil {
 			h.log.Error(ErrFetchSMIResults(err))

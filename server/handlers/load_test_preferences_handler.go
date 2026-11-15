@@ -68,14 +68,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 	h.log.Debug(testUUID)
 	if testUUID == "" {
 		testPage := paginationParam(q.Get("page"), false)
-		testPageSize := paginationParam(q.Get("pagesize"), false)
-		// The local test-profile provider requires explicit numeric defaults.
-		if testPage == "" {
-			testPage = "0"
-		}
-		if testPageSize == "" {
-			testPageSize = "10"
-		}
+		testPageSize := paginationParam(q.Get("pagesize"), true)
 		testSearch := q.Get("search")
 		testOrder := q.Get("order")
 		h.log.Debug(testPage, testPageSize)
