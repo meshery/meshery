@@ -41,7 +41,7 @@ export const viewsApi = api
         invalidatesTags: (result, error, { id }) => [{ type: TAGS.VIEWS, id }],
       }),
       fetchViews: builder.query({
-        query: (queryArg = {}) => {
+        query: (queryArg) => {
           const visibility = urlEncodeArrayParam('visibility', queryArg.visibility);
           const otherParams = urlEncodeParams({
             page: queryArg.page,
@@ -65,7 +65,7 @@ export const viewsApi = api
         },
         // Always merge incoming data to the cache entry
         merge: (currentCache, newItems, { arg }) => {
-          if (arg?.page === 0) {
+          if (arg.page === 0) {
             return newItems;
           }
           return {
