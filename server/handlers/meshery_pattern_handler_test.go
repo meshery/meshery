@@ -767,23 +767,33 @@ func TestErrClonePattern_NilError(t *testing.T) {
 	}
 }
 
-func TestCloneMesheryPatternHandler_MissingID(t *testing.T) {
-	h := newTestHandler(t, map[string]models.Provider{}, "")
-
-	body := bytes.NewBufferString(`{"name":"cloned-design"}`)
-	req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/", body)
-	rec := httptest.NewRecorder()
-
-	h.CloneMesheryPatternHandler(rec, req, nil, nil, newMockCloneProvider("test-token"))
-
-	if rec.Code != http.StatusBadRequest {
-		t.Fatalf("expected status 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
+func TestCloneMesheryPatternHandler_InvalidID(t *testing.T) {
+	tests := []struct {
+		name string
+		id   string
+	}{
+		{name: "missing id", id: ""},
+		{name: "malformed id", id: "not-a-uuid"},
 	}
-	if !strings.Contains(rec.Body.String(), ErrClonePatternCode) {
-		t.Errorf("expected response to contain ErrClonePatternCode %q, got %s", ErrClonePatternCode, rec.Body.String())
-	}
-	if !strings.Contains(rec.Body.String(), "missing design ID") {
-		t.Errorf("expected response to contain 'missing design ID', got %s", rec.Body.String())
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+
+			body := bytes.NewBufferString(`{"name":"cloned-design"}`)
+			req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/"+tc.id, body)
+			req = mux.SetURLVars(req, map[string]string{"id": tc.id})
+			rec := httptest.NewRecorder()
+
+			h.CloneMesheryPatternHandler(rec, req, nil, nil, newMockCloneProvider("test-token"))
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected status 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
+			}
+			if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
+				t.Errorf("expected response to contain %q, got %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+			}
+		})
 	}
 }
 
@@ -791,8 +801,8 @@ func TestCloneMesheryPatternHandler_MalformedBody(t *testing.T) {
 	h := newTestHandler(t, map[string]models.Provider{}, "")
 
 	body := bytes.NewBufferString(`invalid-json`)
-	req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/test-id", body)
-	req = mux.SetURLVars(req, map[string]string{"id": "test-id"})
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/11111111-1111-1111-1111-111111111111", body)
+	req = mux.SetURLVars(req, map[string]string{"id": "11111111-1111-1111-1111-111111111111"})
 	rec := httptest.NewRecorder()
 
 	h.CloneMesheryPatternHandler(rec, req, nil, nil, newMockCloneProvider("test-token"))
@@ -809,8 +819,8 @@ func TestCloneMesheryPatternHandler_EmptyName(t *testing.T) {
 	h := newTestHandler(t, map[string]models.Provider{}, "")
 
 	body := bytes.NewBufferString(`{"name":""}`)
-	req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/test-id", body)
-	req = mux.SetURLVars(req, map[string]string{"id": "test-id"})
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/11111111-1111-1111-1111-111111111111", body)
+	req = mux.SetURLVars(req, map[string]string{"id": "11111111-1111-1111-1111-111111111111"})
 	rec := httptest.NewRecorder()
 
 	h.CloneMesheryPatternHandler(rec, req, nil, nil, newMockCloneProvider("test-token"))
@@ -830,8 +840,8 @@ func TestCloneMesheryPatternHandler_NullBody(t *testing.T) {
 	h := newTestHandler(t, map[string]models.Provider{}, "")
 
 	body := bytes.NewBufferString(`null`)
-	req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/test-id", body)
-	req = mux.SetURLVars(req, map[string]string{"id": "test-id"})
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/clone/11111111-1111-1111-1111-111111111111", body)
+	req = mux.SetURLVars(req, map[string]string{"id": "11111111-1111-1111-1111-111111111111"})
 	rec := httptest.NewRecorder()
 
 	h.CloneMesheryPatternHandler(rec, req, nil, nil, newMockCloneProvider("test-token"))
