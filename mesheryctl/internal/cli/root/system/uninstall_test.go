@@ -883,6 +883,67 @@ func TestUninstallHelmReleases(t *testing.T) {
 	})
 }
 
+// TestUninstallRetryAfterInterruptedAttempt reproduces the failure that made the
+// Helm stage a blocker: an earlier attempt removes the releases and then cannot
+// delete the CRDs, so the retry must not stop at Helm reporting them missing.
+func TestUninstallRetryAfterInterruptedAttempt(t *testing.T) {
+	previousLookup, previousApply := isHelmReleaseInstalled, applyHelmChart
+	previousClient := apiExtensionsClient
+	t.Cleanup(func() {
+		isHelmReleaseInstalled, applyHelmChart = previousLookup, previousApply
+		apiExtensionsClient = previousClient
+	})
+
+	installed := map[string]bool{mesheryReleaseName: true, mesheryOperatorReleaseName: true}
+	var uninstalls []string
+
+	isHelmReleaseInstalled = func(_ kubernetes.Interface, _, releaseName string) (bool, error) {
+		return installed[releaseName], nil
+	}
+	applyHelmChart = func(_ *meshkitkube.Client, cfg meshkitkube.ApplyHelmChartConfig) error {
+		delete(installed, cfg.ReleaseName)
+		uninstalls = append(uninstalls, cfg.ReleaseName)
+		return nil
+	}
+
+	// The first CRD deletion attempt is the one that gets interrupted; the retry
+	// finds nothing left to uninstall and must get this far again.
+	crdAttempts := 0
+	apiExtensionsClient = func(*rest.Config) (apiextension.Interface, error) {
+		crdAttempts++
+		if crdAttempts == 1 {
+			return nil, errors.New("the connection to the cluster was interrupted")
+		}
+		return apiextensionfake.NewClientset(), nil
+	}
+
+	client := &meshkitkube.Client{RestConfig: rest.Config{Host: "https://cluster-a.example:6443"}}
+	stages := kubernetesUninstallStages(client, &config.Context{})
+	stage := func(description string) uninstallStage {
+		t.Helper()
+		for _, candidate := range stages {
+			if candidate.description == description {
+				return candidate
+			}
+		}
+		t.Fatalf("the %q stage is missing", description)
+		return uninstallStage{}
+	}
+	helmStage := stage("cannot uninstall the Meshery Helm release")
+	crdStage := stage("cannot delete Meshery custom resource definitions")
+
+	// First attempt: the releases are removed, then the teardown is interrupted.
+	require.NoError(t, helmStage.run())
+	assert.Len(t, uninstalls, 2, "the first attempt must uninstall both releases")
+	require.Error(t, crdStage.run())
+
+	// Retry: Helm no longer holds the releases, so nothing is uninstalled and the
+	// teardown proceeds to the CRD stage instead of failing.
+	require.NoError(t, helmStage.run(), "a retry must not fail on the releases the first attempt removed")
+	assert.Len(t, uninstalls, 2, "the retry must not try to uninstall an absent release")
+	require.NoError(t, crdStage.run(), "the retry must reach the remaining stages")
+}
+
 // TestKubernetesUninstallStagesUseOneConfiguration verifies that the Helm and CRD
 // stages work against the configuration the command resolved once, instead of
 // re-reading the kubeconfig and possibly targeting a different cluster.
