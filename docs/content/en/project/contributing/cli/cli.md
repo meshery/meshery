@@ -127,9 +127,8 @@ The following key principles should be taken to mind when writing tests:
 5. **Testdata** is the expected response of mesheryctl commands or functions.
 6. The mock data and the expected responses are stored in the **golden files**.
 7. Table formatted tests are performed on functions and commands.
-8. [mesheryctl/pkg/utils/fixtures/validate.version.github.golden](https://github.com/meshery/meshery/blob/master/mesheryctl/pkg/utils/fixtures/validate.version.github.golden) file needs to be updated regularly.
-9. The version in utils.NewTestHelper() should be updated regularly.
-10. Golden files should be updated synchronously as API responses, mesheryctl outputs are updated.
+8. The version in utils.NewTestHelper() should be updated regularly.
+9. Golden files should be updated synchronously as API responses, mesheryctl outputs are updated.
 
 **References**
 
