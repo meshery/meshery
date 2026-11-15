@@ -33,7 +33,14 @@ func boundRequestBodyReads(next http.Handler, idle time.Duration) http.Handler {
 			// SetReadDeadline reports ErrNotSupported for writers that don't
 			// implement it; there body reads stay unbounded, as before.
 			_ = rc.SetReadDeadline(time.Now().Add(idle))
-			r.Body = &idleDeadlineBody{ReadCloser: r.Body, rc: rc, idle: idle}
+			// Wrap the body on a shallow copy, never on r itself. r is the
+			// request net/http keeps for writing the response, and it checks
+			// the body's own type there: an Expect: 100-continue request
+			// rejected before its body is read is only answered at once while
+			// net/http can still see its expectContinueReader.
+			wrapped := r.WithContext(r.Context())
+			wrapped.Body = &idleDeadlineBody{ReadCloser: r.Body, rc: rc, idle: idle}
+			r = wrapped
 		}
 		next.ServeHTTP(w, r)
 	})

@@ -1,6 +1,7 @@
 package router
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"net"
@@ -16,10 +17,16 @@ const testBodyIdle = 200 * time.Millisecond
 
 // serveWithBodyBound starts a real HTTP server (so connection read deadlines
 // apply) with only a header timeout, like newHTTPServer, and handler wrapped
-// in boundRequestBodyReads. It returns the address to dial.
+// in boundRequestBodyReads with the test idle timeout. It returns the address
+// to dial.
 func serveWithBodyBound(t *testing.T, handler http.HandlerFunc) string {
 	t.Helper()
-	srv := httptest.NewUnstartedServer(boundRequestBodyReads(handler, testBodyIdle))
+	return serveWithBodyBoundIdle(t, testBodyIdle, handler)
+}
+
+func serveWithBodyBoundIdle(t *testing.T, idle time.Duration, handler http.HandlerFunc) string {
+	t.Helper()
+	srv := httptest.NewUnstartedServer(boundRequestBodyReads(handler, idle))
 	srv.Config.ReadHeaderTimeout = 5 * time.Second
 	srv.Start()
 	t.Cleanup(srv.Close)
@@ -152,6 +159,35 @@ func TestBoundRequestBodyReads_LeavesHandlerAloneAfterBody(t *testing.T) {
 		}
 	case <-time.After(20 * testBodyIdle):
 		t.Fatal("handler did not finish")
+	}
+}
+
+// TestBoundRequestBodyReads_EarlyRejectionOfExpectContinue sends a request
+// with Expect: 100-continue and holds its body back, as a client does until
+// the server says to go ahead. A handler that rejects it without reading the
+// body must answer at once: net/http recognises the unread 100-continue body
+// and closes the connection instead of waiting for it, as long as the
+// middleware leaves the server's own request untouched.
+func TestBoundRequestBodyReads_EarlyRejectionOfExpectContinue(t *testing.T) {
+	// A long idle timeout, so waiting for the body would show as a clear delay.
+	const idle = 5 * time.Second
+	addr := serveWithBodyBoundIdle(t, idle, func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusForbidden)
+	})
+
+	start := time.Now()
+	conn := sendRaw(t, addr, "POST /upload HTTP/1.1\r\nHost: x\r\nContent-Length: 5\r\nExpect: 100-continue\r\n\r\n")
+	_ = conn.SetReadDeadline(time.Now().Add(2 * idle))
+	resp, err := http.ReadResponse(bufio.NewReader(conn), nil)
+	if err != nil {
+		t.Fatalf("reading response: %v", err)
+	}
+	_ = resp.Body.Close()
+	if resp.StatusCode != http.StatusForbidden {
+		t.Fatalf("status = %d, want %d", resp.StatusCode, http.StatusForbidden)
+	}
+	if elapsed := time.Since(start); elapsed >= idle/2 {
+		t.Fatalf("early rejection took %v; the server waited for a body the client was holding back", elapsed)
 	}
 }
 
