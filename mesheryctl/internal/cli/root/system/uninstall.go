@@ -331,7 +331,9 @@ func kubernetesUninstallStages(client *meshkitkube.Client, currCtx *config.Conte
 	if forceDelete {
 		stages = append(stages, uninstallStage{
 			description: "cannot clean up Meshery resources",
-			run:         utils.ForceCleanupCluster,
+			// The configuration resolved when the command started is reused, so
+			// the force cleanup targets the cluster the teardown began on.
+			run: func() error { return forceCleanupCluster(client.KubeClient) },
 		})
 	} else {
 		// Delete meshery components by uninstalling the helm releases
@@ -597,6 +599,10 @@ func deleteNamespace(ns string, client kubernetes.Interface) error {
 // waitForMesheryNamespaceDeletion is a variable so tests can exercise the
 // failure and timeout paths without waiting on a real cluster.
 var waitForMesheryNamespaceDeletion = utils.CheckMesheryNsDelete
+
+// forceCleanupCluster is a variable so tests can verify the --force stage
+// cleans up through the resolved client without touching a real cluster.
+var forceCleanupCluster = utils.ForceCleanupClusterWithClient
 
 // uninstallNamespace deletes the Meshery namespace unless the user asked to
 // keep it, and waits for the namespace to actually disappear. Uninstall cannot

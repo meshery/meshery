@@ -944,6 +944,51 @@ func TestUninstallRetryAfterInterruptedAttempt(t *testing.T) {
 	require.NoError(t, crdStage.run(), "the retry must reach the remaining stages")
 }
 
+// TestUninstallForceStageUsesResolvedClient verifies that the --force cleanup
+// stage runs against the configuration the command resolved once, instead of
+// re-reading the kubeconfig and possibly cleaning up a different cluster.
+func TestUninstallForceStageUsesResolvedClient(t *testing.T) {
+	previousForceDelete := forceDelete
+	previousForceCleanup := forceCleanupCluster
+	t.Cleanup(func() {
+		forceDelete = previousForceDelete
+		forceCleanupCluster = previousForceCleanup
+	})
+	forceDelete = true
+
+	// A real clientset for the resolved cluster. Building it dials nothing;
+	// the stubbed cleanup below proves the stage hands it that client.
+	kubeClient, err := kubernetes.NewForConfig(&rest.Config{Host: "https://cluster-a.example:6443"})
+	require.NoError(t, err)
+	client := &meshkitkube.Client{
+		KubeClient: kubeClient,
+		RestConfig: rest.Config{Host: "https://cluster-a.example:6443"},
+	}
+
+	var got kubernetes.Interface
+	forceCleanupCluster = func(kube kubernetes.Interface) error {
+		got = kube
+		return nil
+	}
+
+	stages := kubernetesUninstallStages(client, &config.Context{})
+	stage := func(description string) uninstallStage {
+		t.Helper()
+		for _, candidate := range stages {
+			if candidate.description == description {
+				return candidate
+			}
+		}
+		t.Fatalf("the %q stage is missing", description)
+		return uninstallStage{}
+	}
+
+	require.NoError(t, stage("cannot clean up Meshery resources").run())
+	require.NotNil(t, got, "the force stage must call the cleanup through a client")
+	assert.True(t, got == client.KubeClient,
+		"the force stage must clean up through the resolved client, not a re-read kubeconfig")
+}
+
 // TestKubernetesUninstallStagesUseOneConfiguration verifies that the Helm and CRD
 // stages work against the configuration the command resolved once, instead of
 // re-reading the kubeconfig and possibly targeting a different cluster.
