@@ -744,6 +744,13 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 
 // FetchSmiResults - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchSmiResults(_ *http.Request, page, pageSize, _, _ string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" || pageSize == "all" {
+		pageSize = "10"
+	}
+
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -941,6 +948,13 @@ func (l *DefaultLocalProvider) SMPTestConfigGet(_ *http.Request, testUUID string
 
 // SMPTestConfigFetch gets all the PerformanceTestConfigs from the local datastore
 func (l *DefaultLocalProvider) SMPTestConfigFetch(_ *http.Request, page, pageSize, _, _ string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" || pageSize == "all" {
+		pageSize = "10"
+	}
+
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)

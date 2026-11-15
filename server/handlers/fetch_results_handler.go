@@ -45,7 +45,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 		return
 	}
 
-	bdr, err := p.FetchResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), profileID)
+	bdr, err := p.FetchResults(tokenString, paginationParam(q.Get("page"), false), paginationParam(q.Get("pagesize"), true), q.Get("search"), q.Get("order"), profileID)
 	if err != nil {
 		if h.log != nil {
 			h.log.Error(ErrFetchResults(err))
@@ -84,7 +84,7 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	bdr, err := p.FetchAllResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
+	bdr, err := p.FetchAllResults(tokenString, paginationParam(q.Get("page"), false), paginationParam(q.Get("pagesize"), true), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
 	if err != nil {
 		if h.log != nil {
 			h.log.Error(ErrFetchResults(err))
@@ -192,7 +192,7 @@ func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	bdr, err := p.FetchSmiResults(req, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	bdr, err := p.FetchSmiResults(req, paginationParam(q.Get("page"), false), paginationParam(q.Get("pagesize"), true), q.Get("search"), q.Get("order"))
 	if err != nil {
 		if h.log != nil {
 			h.log.Error(ErrFetchSMIResults(err))
@@ -231,7 +231,7 @@ func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.R
 		return
 	}
 
-	bdr, err := p.FetchSmiResult(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), key)
+	bdr, err := p.FetchSmiResult(req, paginationParam(q.Get("page"), false), paginationParam(q.Get("pageSize"), true), q.Get("search"), q.Get("order"), key)
 	if err != nil {
 		if h.log != nil {
 			h.log.Error(ErrFetchSMIResults(err))

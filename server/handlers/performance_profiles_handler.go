@@ -136,7 +136,7 @@ func (h *Handler) GetPerformanceProfilesHandler(
 		return
 	}
 
-	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetPerformanceProfiles(tokenString, paginationParam(q.Get("page"), false), paginationParam(q.Get("pagesize"), true), q.Get("search"), q.Get("order"))
 	if err != nil {
 		fetchErr := ErrFetchProfiles(err)
 		if h.log != nil {

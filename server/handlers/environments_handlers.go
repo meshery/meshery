@@ -69,7 +69,7 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 		writeJSONError(w, "orgId is required", http.StatusBadRequest)
 		return
 	}
-	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
+	resp, err := provider.GetEnvironments(token, paginationParam(q.Get("page"), false), paginationParam(q.Get("pagesize"), true), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
 	if err != nil {
 		handlerErr := ErrGetEnvironments(err)
 		h.log.Error(handlerErr)
@@ -258,7 +258,7 @@ func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, 
 func (h *Handler) GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	environmentID := mux.Vars(r)["environmentID"]
 	q := r.URL.Query()
-	resp, err := provider.GetConnectionsOfEnvironment(r, environmentID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
+	resp, err := provider.GetConnectionsOfEnvironment(r, environmentID, paginationParam(q.Get("page"), false), paginationParam(q.Get("pagesize"), true), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		handlerErr := ErrEnvironmentConnection(err, "list the connections of")
 		h.log.Error(handlerErr)
