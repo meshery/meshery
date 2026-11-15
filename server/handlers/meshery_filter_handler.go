@@ -245,6 +245,10 @@ func (h *Handler) GetMesheryFiltersHandler(
 
 	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), filter.Visibility)
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(rw, err, http.StatusBadRequest)
+			return
+		}
 		h.log.Error(ErrFetchFilter(err))
 		writeMeshkitError(rw, ErrFetchFilter(err), http.StatusInternalServerError)
 		return
