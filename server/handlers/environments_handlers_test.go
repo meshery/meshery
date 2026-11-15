@@ -421,8 +421,8 @@ func TestDeleteEnvironmentHandler_PropagatesProviderStatus(t *testing.T) {
 		models.ErrFetch(errors.New("forbidden"), "Environment", http.StatusForbidden),
 	)
 
-	req := httptest.NewRequest(http.MethodDelete, "/api/environments/env-1", nil)
-	req = mux.SetURLVars(req, map[string]string{"id": "env-1"})
+	req := httptest.NewRequest(http.MethodDelete, "/api/environments/11111111-1111-1111-1111-111111111111", nil)
+	req = mux.SetURLVars(req, map[string]string{"id": "11111111-1111-1111-1111-111111111111"})
 	rec := httptest.NewRecorder()
 
 	h.DeleteEnvironmentHandler(rec, req, nil, nil, provider)
