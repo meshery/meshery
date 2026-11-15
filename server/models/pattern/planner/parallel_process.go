@@ -27,7 +27,6 @@ type ParallelProcessGraphNode struct {
 	DepUpdateCh chan struct{}
 	// DepCancleCh carries the name of the dependency that did not succeed.
 	DepCancleCh chan string
-	depLock     sync.Mutex
 
 	DepCount int
 }
@@ -44,11 +43,9 @@ func NewParallelProcessGraph(g *Graph) (*ParallelProcessGraph, error) {
 	// Copy the nodes data
 	for node, data := range g.Nodes {
 		pg.ParallelProcessGraphNodeMap[node] = &ParallelProcessGraphNode{
-			Name:        node,
-			Data:        data,
-			DepUpdateCh: make(chan struct{}, 1),
-			DepCancleCh: make(chan string, 1),
-			DepCount:    0,
+			Name:     node,
+			Data:     data,
+			DepCount: 0,
 		}
 	}
 
@@ -67,6 +64,19 @@ func NewParallelProcessGraph(g *Graph) (*ParallelProcessGraph, error) {
 			dependent.DepCount++
 			pg.dependents[node] = append(pg.dependents[node], dependent)
 		}
+	}
+
+	// Sizing both channels to max(1, node.DepCount) ensures the buffer has sufficient
+	// capacity for all incoming signals. Given the exactly-once reporting invariant
+	// for each dependency, the buffer never saturates, allowing sends to proceed
+	// without waiting or lock contention.
+	for _, node := range pg.ParallelProcessGraphNodeMap {
+		bufSize := node.DepCount
+		if bufSize < 1 {
+			bufSize = 1
+		}
+		node.DepUpdateCh = make(chan struct{}, bufSize)
+		node.DepCancleCh = make(chan string, bufSize)
 	}
 
 	return pg, nil
@@ -144,14 +154,10 @@ func sendSignalToDeps(deps []*ParallelProcessGraphNode, ok bool, from string, lo
 // depending upon the "ok" parameter. "from" names the node the signal is sent on
 // behalf of.
 //
-// sendSignalToDep will first acquire a lock on the channel operation and then will
-// perform the acttion, hence this method SHOULD be used for sending the messages
-// on the channels to avoid races
+// Because DepUpdateCh and DepCancleCh are buffered to the node's DepCount and each
+// dependency reports exactly once, the buffer never saturates, allowing standard channel
+// sends to complete without waiting and without requiring mutex locking.
 func sendSignalToDep(dep *ParallelProcessGraphNode, ok bool, from string, log logger.Handler) {
-	// Lock the channel
-	dep.depLock.Lock()
-	defer dep.depLock.Unlock()
-
 	if ok {
 		log.Debug("Sending completed signal to:", dep.Name)
 		dep.DepUpdateCh <- struct{}{}

@@ -113,7 +113,7 @@ Name: **"Meshery"** (default), URL: `https://cloud.meshery.io`
 
 Name: **"Digital Ocean"**, URL: `https://meshery.digitalocean.com`
 
-- Alternate remote provider, also shipped in the default `PROVIDER_BASE_URLS` list.
+- Alternate remote provider. Digital Ocean is not enabled in the default `PROVIDER_BASE_URLS` list; add its URL when setting that variable to use it.
 - Same capability surface as the Meshery remote provider; choose based on your organization's account.
 
 #### Example remote provider
@@ -195,19 +195,45 @@ unaffected: it receives its provider from the request context, which enforcement
 resolves consistently.
 {{% /alert %}}
 
+{{% alert color="warning" title="Contributing: a seeding fault must not terminate the server" %}}
+Every boot seeding stage runs through `models.RunSeedStage`, which recovers a
+panic raised inside that stage, logs it as
+[`meshery-server-1483`]({{< ref "reference/error-codes.md" >}}) with
+the stage name and stack trace, and lets the remaining stages run. A Meshery
+Server with an incomplete registry is still useful and its operator can read the
+error; one that exits at boot leaves them a crash loop and no UI to read it in.
+
+`recover` reaches only the goroutine that deferred it, so wrapping a stage does
+not cover a goroutine that stage spawns - a fault there would still take the
+process down. A stage that spawns one therefore recovers at its own spawn site
+and reports through the same `ErrSeedingStagePanic`, making the failure
+indistinguishable in the log from one `RunSeedStage` caught itself. `SeedKeys`
+(`server/models/keys_helper.go`), which parses `keys.csv` on a spawned
+goroutine, is the only seeding callee that spawns one today; give any new one
+the same deferred recover rather than widening `RunSeedStage`, which cannot
+reach a child goroutine. Both halves are pinned by tests in `server/models`:
+`TestRunSeedStageRecoversPanic` and
+`TestSeedKeysChildGoroutinePanicIsContained`.
+{{% /alert %}}
+
 ### Deep-Link Preservation
 
-Meshery preserves the originally requested URL when authentication is required, enabling seamless navigation after login:
+Meshery preserves the originally requested in-app destination - its path and query, plus its fragment where the browser captured one - on the entry paths that capture it: an unauthenticated first visit, which is routed through provider selection (`/provider`) with the page attached, and the **Sign In** control offered during an anonymous session, which sends the page the user is standing on. A session that expires mid-use takes neither path - it is sent to `/auth/login` carrying that page's own query but not the page itself - so re-authentication lands on the default page rather than the original destination.
 
-- When an unauthenticated user attempts to access a protected page, the URL is base64-encoded into a `ref` query parameter
-- After successful login, the provider decodes `ref` and redirects to the original destination
-- The Local Provider supports this functionality, validating `ref` values to prevent open redirects (absolute URLs, protocol-relative URLs, and URLs with schemes/hosts are rejected)
-- If `ref` validation fails or is absent, users are redirected to the dashboard (`/`)
+- Where the destination is captured, the in-app URL is base64-encoded into a `ref` query parameter
+- Meshery owns that destination for the rest of the flow: `InitiateLogin` records it in a one-shot, `HttpOnly` cookie on Meshery's own domain rather than trusting the value back out of the provider's auth chain, where a custom-domain bounce can rewrite it. A login carrying no `ref` deletes any cookie an abandoned earlier attempt left behind, so a stale destination cannot outrank this login's own
+- When the provider returns to `/api/user/token`, that cookie supplies the destination and is deleted. Only if it is absent or empty does Meshery fall back to the `?ref=` the provider echoed back. A deployment that offers anonymous sessions writes no cookie at all, because its exit resolves the destination from the request in hand - which is how a Sign In taken during an anonymous session keeps its query
+- The same validation gate runs at every entry point: the Local Provider's login, the Remote Provider's token handler, and the anonymous-session exit
+- If validation fails, or no `ref` is present at all, the user lands on the default page for that provider - the dashboard (`/`) or a [provider-defined redirect](#provider-defined-redirects) target
 
-**Example**: User visits `https://meshery.example.com/extension/meshmap` while unauthenticated → redirected to login with `ref` parameter → after login, automatically returned to the extension.
+**Example**: A user who has not yet selected a provider visits `https://meshery.example.com/extension/meshmap?mode=design` → redirected to provider selection and on to login, with the page carried in a `ref` parameter → after login, automatically returned to the extension with `mode=design` intact.
 
 {{% alert color="info" title="Deep-Link Security" %}}
-Deep-link targets are validated to prevent open redirect vulnerabilities. Only relative paths within the Meshery application are accepted.
+Deep-link targets are validated to prevent open redirect vulnerabilities and post-login redirect loops:
+
+- A relative in-app path is used as-is. An absolute URL is accepted only when its host is Meshery's own, and is then reduced to its path and query; every other host is rejected. The host compared against is taken from `MESHERY_SERVER_CALLBACK_URL` when set, falling back to the request's `Host` - so a rewritten `Host` header cannot widen the test
+- Protocol-relative values (`//host`) and backslashes in the path are rejected, because a browser reads either as the start of a new authority
+- Routes whose job is to *start* authentication are rejected as destinations, otherwise the browser immediately re-enters the OAuth dance and the original target is lost: `/user/login`, `/auth/login`, `/api/user/token`, `/provider`, and `/login` (the Remote Provider's own login page, which a custom-domain bounce can synthesize into the `ref` it echoes back). The check runs on the normalized target as well as the decoded one, so encoded or fragment-hidden traversal onto one of those routes is caught too
 {{% /alert %}}
 
 ## Runtime Configuration Options
@@ -289,7 +315,7 @@ Meshery keeps the implementation of Remote Providers separate so that they are b
 
 ### Verifying Compatibility With Golang Version Update
 
-When Meshery is updated to a newer version of Golang, extension providers need to ensure their integrations remain compatible with the updated version. Changes in the Golang version can lead to compatibility issues, so it’s important to update your extension to align with Meshery’s new environment. For a detailed guide on how to verify and address any compatibility issues, refer to this [guide on verifying compatibility](./verify-compatibility).
+When Meshery is updated to a newer version of Golang, extension providers need to ensure their integrations remain compatible with the updated version. Changes in the Golang version can lead to compatibility issues, so it’s important to update your extension to align with Meshery’s new environment. For a detailed guide on how to verify and address any compatibility issues, refer to this [guide on verifying compatibility]({{< ref "reference/extensibility/verify-compatibility.md" >}}).
 
 ### Remote Provider Extension Points
 
@@ -301,7 +327,7 @@ Interwoven into Meshery’s web-based user interface are a variety of extension 
 |user_prefs   |Single Component   |This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. As of now, the only place where this extension can be loaded is the “User Preference” section under meshery settings.   |
 |account   |Full Page   |Remote Reactjs components (or other) are placed in a pre-existing page and will have dedicated endpoint: `/extension/account`.   |
 |collaborator |Single Component|This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Mehery UI. Its work is to show active Meshery users under the same remote provider.|
-  |/extension/\<your name here>|Full Page|The Provider package is unzipped into Meshery server filesystem under `/app/provider-pkg/<package-name>`.|
+  |/extension/\<your name here>|Full Page|The Provider package is unzipped into Meshery server filesystem under `~/.meshery/provider/<provider-name>/<package-version>`.|
 
 Remote Providers must fulfill the following endpoints:
 
@@ -315,7 +341,7 @@ All UI extensions will be hosted under the endpoint `<mesheryserver:port/provide
 
 ### UserPrefs
 
-The UserPrefs extension point expects and loads a component to be displayed into `/userpreferences` page.
+The UserPrefs extension point expects and loads a component to be displayed into `/user/preferences` page.
 
 ### Navigator
 
@@ -523,15 +549,24 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
 #### Meshery Server Registration
 
 Every Meshery server is capable of registering itself with the remote provider, considering that remote provider supports this feature as a capability.
-On successful authentication with the remote provider, Meshery server registers itself by sending a POST request to the remote provider through the `persist-connection` capability. The body of the request should include information so as to uniquely indentify Meshery server and its status.
+On successful authentication with the remote provider, Meshery server registers itself by sending a POST request to the remote provider through the `persist-connection` capability. The body of the request should include information so as to uniquely identify Meshery server and its status.
 
-Example of the request body:
+Example of the request body. The `id` is the zero UUID serialized for the unset connection ID; the Meshery server ID is in `metadata.serverId`:
 
 {{< code code=`{
-  "server_id": "xxxx-xxxxx-xxxx-xxxx",
-  "server_version": "vx.x.x",
-  "server_build-sha": "xxxx-xxxxx",
-  "server_location": "<protocol>://<hostname>:<port>"
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "meshery",
+  "subType": "management",
+  "type": "platform",
+  "metadata": {
+    "serverId": "xxxx-xxxxx-xxxx-xxxx",
+    "serverVersion": "vx.x.x",
+    "serverBuildSha": "xxxx-xxxxx",
+    "serverLocation": "<protocol>://<hostname>:<port>"
+  },
+  "status": "connected",
+  "credentialSecret": {"token": null},
+  "skipCredentialVerification": false
 }` >}}
 
 ## Configurable OAuth Callback URL

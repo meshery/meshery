@@ -299,9 +299,17 @@ describe('getSharableCommonHostAndprotocolLink', () => {
     );
   });
 
-  it('returns an extension/meshmap link with filter id for filter_resource', () => {
-    expect(getSharableCommonHostAndprotocolLink({ filter_resource: 'foo', id: 'f-1' })).toBe(
+  it('returns an extension/meshmap link with filter id for filterResource resources', () => {
+    expect(getSharableCommonHostAndprotocolLink({ filterResource: '{}', id: 'f-1' })).toBe(
       'http://localhost:9081/extension/meshmap?filter=f-1',
+    );
+  });
+
+  // Filters saved without a configuration carry an empty filterResource; they
+  // are still filters and need a share link.
+  it('returns a filter link when filterResource is empty', () => {
+    expect(getSharableCommonHostAndprotocolLink({ filterResource: '', id: 'f-2' })).toBe(
+      'http://localhost:9081/extension/meshmap?filter=f-2',
     );
   });
 
@@ -485,9 +493,35 @@ describe('getComponentFromDesign', () => {
 });
 
 describe('getDesignVersion', () => {
-  it('returns the published version when visibility is published', () => {
+  it('returns the published version from camelCase catalogData when visibility is published', () => {
+    expect(
+      getDesignVersion({ visibility: 'published', catalogData: { publishedVersion: '1.2.3' } }),
+    ).toBe('1.2.3');
+  });
+
+  it('prefers camelCase catalogData.publishedVersion over legacy snake_case catalog_data.published_version', () => {
+    expect(
+      getDesignVersion({
+        visibility: 'published',
+        catalogData: { publishedVersion: '2.0.0' },
+        catalog_data: { published_version: '1.0.0' },
+      }),
+    ).toBe('2.0.0');
+  });
+
+  it('falls back to legacy snake_case catalog_data.published_version when catalogData is absent', () => {
     expect(
       getDesignVersion({ visibility: 'published', catalog_data: { published_version: '1.2.3' } }),
+    ).toBe('1.2.3');
+  });
+
+  it('falls back to legacy snake_case catalog_data.published_version when catalogData.publishedVersion is empty', () => {
+    expect(
+      getDesignVersion({
+        visibility: 'published',
+        catalogData: { publishedVersion: '' },
+        catalog_data: { published_version: '1.2.3' },
+      }),
     ).toBe('1.2.3');
   });
 

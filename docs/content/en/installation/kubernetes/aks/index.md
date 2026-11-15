@@ -10,7 +10,7 @@ description: Manage your AKS clusters with Meshery. Deploy Meshery in AKS in-clu
 
 <h1>Quick Start with AKS <img src="images/aks.svg" style="width:35px;height:35px;" /></h1>
 
-Manage your AKS clusters with Meshery. Deploy Meshery in AKS [in-cluster](#in-cluster-installation) or outside of AKS [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your AKS clusters_**
+Manage your AKS clusters with Meshery. Deploy Meshery inside your AKS cluster ([in-cluster](#in-cluster-installation)), or run it outside of AKS ([out-of-cluster]({{< ref "installation/kubernetes/_index.md#out-of-cluster-installation" >}})) and connect it to your cluster. **_Note: We recommend installing Meshery in your AKS clusters._**
 
 <div class="prereqs"><h4>Prerequisites</h4>
 <ol>
@@ -38,41 +38,41 @@ Follow the steps below to install Meshery in your AKS cluster.
 
 ### Preflight Checks
 
-Read through the following considerations prior to deploying Meshery on AKS.
+Before you deploy Meshery on AKS, check the following.
 
 ### Preflight: Cluster Connectivity
 
-1. Verify you connection to an Azure Kubernetes Services Cluster using Azure CLI.
-1. Login to Azure account using [az login](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli).
-1. After a successful login, identify the subscription associated with your AKS cluster:
+Use the Azure CLI to connect `kubectl` to your Azure Kubernetes Service (AKS) cluster.
+
+1. Sign in to your Azure account with [az login](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli).
+1. Select the subscription that contains your AKS cluster:
 
 {{< code code="az account set --subscription [SUBSCRIPTION_ID]" >}}
 
-1. After setting the subscription, set the cluster context.
+1. Download the cluster's credentials and make it your current context:
 
 {{< code code="az aks get-credentials --resource-group [RESOURCE_GROUP] --name [AKS_SERVICE_NAME]" >}}
 
 ### Installation: Using `mesheryctl`
 
-Use Meshery's CLI to streamline your connection to your AKS cluster. Configure Meshery to connect to your AKS cluster by executing:
+With your AKS cluster as the current context, start Meshery on Kubernetes:
 
-{{< code code="mesheryctl system config aks" >}}
+{{< code code="mesheryctl system start -p kubernetes" >}}
 
-Once configured, execute the following command to start Meshery.
+Meshery Server runs in the cluster and connects to it automatically, so you do not need to upload a kubeconfig. To connect a Meshery Server that runs elsewhere to this cluster, sign in with `mesheryctl system login` and run `mesheryctl connection create --type aks`, which prompts for the resource group and cluster name. (`mesheryctl system config aks` is deprecated.)
 
-{{< code code="mesheryctl system start" >}}
-
-If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}) to learn more.
+If `mesheryctl` reports an authentication error, sign in with `mesheryctl system login`. See [Authenticate with Meshery via CLI]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}).
 
 ### Installation: Using Helm
 
-For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
+To install Meshery with Helm 3, see the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment, using <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Optionally, verify the health of your Meshery deployment with <a href='{{< ref "reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
-You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
+You're ready to use Meshery. Open Meshery UI in your browser.
 
+{{< installation/accessing-meshery-ui >}}
 
 {{< related-discussions tag="meshery" >}}

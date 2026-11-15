@@ -19,10 +19,13 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta3/workspace"
 
 	"github.com/spf13/cobra"
 )
+
+var listUsageMsg = "Usage: mesheryctl workspace list --orgId [orgId]\nRun 'mesheryctl workspace list --help' to see detailed help message"
 
 type cmdWorkspaceListFlags struct {
 	Page     int    `json:"page" validate:"min=1"`
@@ -37,17 +40,23 @@ var listWorkspaceCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered workspaces",
 	Long: `List name of all registered workspaces
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/workspace/list`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace/list`,
 	Example: `
-// List of workspace under a specific organization
+// List of workspaces under a specific organization
 mesheryctl workspace list --orgId [orgId]
 
-// List of workspace under a specific organization for a specified page
+// List of workspaces under a specific organization for a specified page
 mesheryctl workspace list --orgId [orgId] --page [page-number]
 
-// Display number of available  workspace under a specific organization
+// Display number of available workspaces under a specific organization
 mesheryctl workspace list --orgId [orgId] --count
 `,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceListFlags)
 	},

@@ -141,7 +141,15 @@ components:
   colorIcon: extensions/models/kubedb-catalog/components/weaviate-version/icons/color/weaviate-version-color.svg
   whiteIcon: extensions/models/kubedb-catalog/components/weaviate-version/icons/white/weaviate-version-white.svg
   description: 
-components-count: 33
+- name: aerospike-version
+  colorIcon: extensions/models/kubedb-catalog/components/aerospike-version/icons/color/aerospike-version-color.svg
+  whiteIcon: extensions/models/kubedb-catalog/components/aerospike-version/icons/white/aerospike-version-white.svg
+  description: 
+- name: document-db-version
+  colorIcon: extensions/models/kubedb-catalog/components/document-db-version/icons/color/document-db-version-color.svg
+  whiteIcon: extensions/models/kubedb-catalog/components/document-db-version/icons/white/document-db-version-white.svg
+  description: 
+components-count: 35
 relationships: 
 relationship-count: 0
 featureList: [

@@ -9,6 +9,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/meshery/meshery/server/models"
 )
 
 // TestHandlerWrappers_ForwardToHttputil is a smoke test for the four thin
@@ -267,6 +269,16 @@ func TestGetPageSizeParam(t *testing.T) {
 			expected: "10",
 		},
 		{
+			name:     "legacy page_size used as last fallback",
+			query:    "?page_size=30",
+			expected: "30",
+		},
+		{
+			name:     "pagesize wins over page_size",
+			query:    "?pagesize=20&page_size=30",
+			expected: "20",
+		},
+		{
 			name:     "empty string when neither present",
 			query:    "",
 			expected: "",
@@ -281,6 +293,27 @@ func TestGetPageSizeParam(t *testing.T) {
 
 			if got != tc.expected {
 				t.Errorf("getPageSizeParam() = %q, want %q", got, tc.expected)
+			}
+		})
+	}
+}
+
+func TestIsPaginationError(t *testing.T) {
+	tests := []struct {
+		name string
+		err  error
+		want bool
+	}{
+		{"page number error", models.ErrPageNumber(errors.New("x")), true},
+		{"page size error", models.ErrPageSize(errors.New("x")), true},
+		{"plain error", errors.New("x"), false},
+		{"nil error", nil, false},
+		{"other meshkit error", models.ErrResultNotFound(errors.New("x")), false},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := isPaginationError(tc.err); got != tc.want {
+				t.Errorf("isPaginationError(%v) = %v, want %v", tc.err, got, tc.want)
 			}
 		})
 	}

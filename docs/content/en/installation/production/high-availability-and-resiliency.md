@@ -15,7 +15,7 @@ aliases:
 Resiliency for Meshery has two layers: the platform-level self-healing that
 Kubernetes provides, and the application-level recovery behavior built into
 Meshery's components. This page explains how Meshery behaves under failure, how
-to configure it for high availability, and—critically—where durable state lives
+to configure it for high availability, and - critically - where durable state lives
 so that a lost Server is a recoverable event rather than a data-loss event.
 
 ## The resiliency model in one idea
@@ -41,7 +41,7 @@ rather than around protecting the local database.
 {{% alert title="Use a Remote Provider for production resiliency" color="warning" %}}
 Running production on the **Local Provider** means user state has no durable
 home beyond the ephemeral database, and sessions are unauthenticated. Preselect
-a Remote Provider—see
+a Remote Provider - see
 [Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}}).
 This is the single most important resiliency decision.
 {{% /alert %}}
@@ -56,7 +56,7 @@ chart wires them into liveness, readiness, and (optional) startup probes:
 | `/healthz/live` | Liveness | Server is running and responsive; provider capabilities are loaded. A failing liveness probe restarts the pod. |
 | `/healthz/ready` | Readiness | Server is ready to accept traffic. A failing readiness probe removes the pod from the Service until it recovers. |
 
-The chart's defaults account for Meshery's startup characteristics—notably the
+The chart's defaults account for Meshery's startup characteristics - notably the
 time to initialize and load provider capabilities:
 
 - **Liveness:** `initialDelaySeconds: 80` (allow for server startup and provider
@@ -69,8 +69,13 @@ time to initialize and load provider capabilities:
 You can verify health directly, including a verbose breakdown:
 
 ```bash
-kubectl exec --namespace meshery deployment/meshery -- \
-  curl -s 'http://localhost:8080/healthz/ready?verbose=1'
+kubectl port-forward --namespace meshery deployment/meshery 8080:8080
+```
+
+Then, in another terminal (the Meshery Server image does not include `curl`, so query the endpoint from your workstation):
+
+```bash
+curl -s 'http://localhost:8080/healthz/ready?verbose=1'
 ```
 
 ```
@@ -86,7 +91,7 @@ unhealthy), and `[i]` an informational status that does not affect health.
 During upgrades, capability reloading can make the Server temporarily
 unavailable. The chart provides `values-upgrade.yaml` with a startup probe and
 higher failure thresholds so pods are not killed mid-initialization. Use it for
-upgrades—see
+upgrades - see
 [Operational Readiness]({{< ref "installation/production/operational-readiness-checklist.md" >}})
 and the [Helm guide]({{< ref "installation/kubernetes/helm.md" >}}).
 {{% /alert %}}
@@ -114,7 +119,7 @@ scaling:
   from the Remote Provider, not from the local cache.
 - For most production needs, prefer a **well-resourced, probe-protected Server**
   (vertical headroom) plus Kubernetes self-healing, with a Remote Provider for
-  durability—rather than assuming many Server replicas behave like a clustered
+  durability - rather than assuming many Server replicas behave like a clustered
   database.
 - If you scale out replicas, validate behavior under your workload and front
   them with the Service/ingress; treat the local database as a per-instance
@@ -135,10 +140,10 @@ scaling decisions safe.
 
 | Component | Failure behavior | Recovery |
 | :--- | :--- | :--- |
-| **Meshery Server** | Pod restarted by liveness probe / Kubernetes. Local cache rebuilt. | Durable state from Remote Provider; cluster snapshot rebuilt by MeshSync. |
+| **Meshery Server** | Pod restarted by liveness probe / Kubernetes. On `SIGTERM` (or `SIGINT`) it shuts down gracefully: it de-registers from and logs out of the Remote Provider and closes its database before exiting. Local cache rebuilt. | Durable state from Remote Provider; cluster snapshot rebuilt by MeshSync. |
 | **Meshery Operator** | Stateless; rescheduled by Kubernetes. | Reconciles Broker and MeshSync back to desired state on restart. |
 | **MeshSync** | Stateless; managed by the Operator. | Resumes discovery and re-syncs the snapshot on restart. |
-| **Meshery Broker** | Deployed as a StatefulSet; rescheduled on failure. In-memory messages not yet consumed may be lost. | NATS topic persistence bridges brief interruptions; MeshSync re-syncs to restore the snapshot. |
+| **Meshery Broker** | Deployed as a StatefulSet; rescheduled on failure. In-memory messages not yet consumed may be lost. | NATS topic persistence bridges brief interruptions; MeshSync re-syncs to restore the snapshot. If the Broker is recreated with a new endpoint or auth token, Meshery Server rebuilds its connection after about 45 seconds of outage - no Server restart. |
 | **Meshery Adapter** | Stateless; if the Server is unavailable it backs off and retries to reconnect perpetually. | Reconnects and re-registers capabilities automatically. |
 | **Remote Provider** | External dependency for auth and durable state. | Provided by the Remote Provider's own availability; see below. |
 
@@ -175,20 +180,20 @@ recovery model:
 Because durable state lives with the Remote Provider and the local database is a
 cache, DR planning is refreshingly simple:
 
-1. **Durable user data** — covered by your Remote Provider's backup/DR
+1. **Durable user data** - covered by your Remote Provider's backup/DR
    guarantees. Confirm them with your provider.
-2. **Deployment configuration** — keep Helm `values.yaml`, environment-variable
+2. **Deployment configuration** - keep Helm `values.yaml`, environment-variable
    configuration, kubeconfig/context definitions, and any MeshSync
    `informer_config` customization under version control (GitOps). This _is_
    your Meshery "backup"; it lets you recreate an identical deployment.
-3. **Cluster snapshot** — not backed up; it is rebuilt by MeshSync on
+3. **Cluster snapshot** - not backed up; it is rebuilt by MeshSync on
    reconnect.
-4. **Recovery drill** — periodically validate that you can redeploy Meshery from
+4. **Recovery drill** - periodically validate that you can redeploy Meshery from
    source-controlled configuration, reconnect clusters, and authenticate against
    the Remote Provider.
 
 {{% alert title="Your real backup is your configuration" color="info" %}}
-Snapshotting the local database is unnecessary and misleading—it is ephemeral.
+Snapshotting the local database is unnecessary and misleading - it is ephemeral.
 Version-control your Helm values, environment configuration, and connection
 definitions instead. Recreating Meshery from that configuration restores the
 deployment; the provider restores user data; MeshSync restores the live view.

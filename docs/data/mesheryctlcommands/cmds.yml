@@ -10,7 +10,7 @@ global:
   flags:
     config:
       name: --config
-      description: configures Meshery with the meshconfig, generated with the help of user details to provide cluster access for public clouds(GKE/EKS).
+      description: configures Meshery with the meshconfig, generated with the help of user details to provide cluster access for public clouds (GKE/EKS).
       usage: mesheryctl [command] --config=[path to config file]
       example: mesheryctl system reset --config="~/.meshery/config.yaml"
     help:
@@ -105,6 +105,21 @@ system:
           description: (optional) uninstall Meshery resources forcefully
           usage: mesheryctl system stop --force
 
+    uninstall:
+      name: uninstall
+      arg: system
+      description: Uninstall Meshery
+      usage: mesheryctl system uninstall
+      flags:
+        keep-namespace:
+          name: --keep-namespace
+          description: (optional) keep the Meshery namespace during uninstallation
+          usage: mesheryctl system uninstall --keep-namespace
+        force:
+          name: --force
+          description: (optional) forcefully delete Kubernetes resources; has no effect for Docker installations
+          usage: mesheryctl system uninstall --force
+
     update:
       name: update
       description: Pull new Meshery images from Docker Hub. Does not update `mesheryctl`. This command may be executed while Meshery is running.
@@ -122,12 +137,6 @@ system:
       example: |
         mesheryctl system config minikube
           mesheryctl system config eks
-      flags:
-        token:
-          name: --token
-          description: Path to token for authenticating to Meshery API.
-          usage: mesheryctl system config --token [path-to-file]
-          example: mesheryctl system config --token "~/Downloads/auth.json"
       examples:
         aks:
           name: aks
@@ -246,6 +255,12 @@ system:
           usage: mesheryctl system check --components
           example: mesheryctl system check --components
 
+    delete:
+      name: delete
+      description: Delete Meshery containers created by docker-compose
+      usage: mesheryctl system delete
+      example: mesheryctl system delete -y
+
 system-channel:
   name: system channel
   description: Switch between release channels.
@@ -296,7 +311,7 @@ system-context:
           name: --components, -a
           description: create a new context in config.yaml file- specify the list of adapters to be added
           usage: mesheryctl system context create [context name] --adapters [list of adapters]
-          example: mesheryctl system context create k8s-sample --adapters "meshery-osm:10010", "meshery-istio:10000"
+          example: mesheryctl system context create k8s-sample --adapters "meshery-linkerd:10001", "meshery-istio:10000"
         set:
           name: --set, -s
           description: create a new context in config.yaml file- set as current context
@@ -547,6 +562,12 @@ perf:
           usage: mesheryctl perf result --view
           example: mesheryctl perf result --view
 
+    delete:
+      name: delete
+      description: Delete a performance profile by its name
+      usage: mesheryctl perf delete [profile-name]
+      example: mesheryctl perf delete test-3 --yes
+
 adapter:
   name: adapter
   description: Lifecycle management of cloud native infrastructure
@@ -557,24 +578,19 @@ adapter:
       flags:
         adapter:
           name: --adapter, -a
-          description: (required) adapter to use for validation. Defaults to "meshery-osm:10010"
+          description: (required) adapter to use for validation. Defaults to "meshery-nsm"
           usage: mesheryctl adapter validate --adapter [name of the adapter]
           example: mesheryctl adapter validate --adapter meshery-istio:10000 -t "~/Download/auth.json"
-        namespace:
-          name: --namespace, -n
-          description: Kubernetes namespace to be used for deploying the validation tests and sample workload
-          usage: mesheryctl adapter validate --namespace [namespace to be used]
-          example: mesheryctl adapter validate --namespace test-x1 -t "~/Download/auth.json"
         spec:
           name: --spec, -s
           description: (required) specification to be used for conformance test. Defaults to "smi"
           usage: mesheryctl adapter validate --spec [specification to be used for conformance test]
           example: mesheryctl adapter validate --spec smi -t "~/Download/auth.json"
-        tokenpath:
-          name: --tokenpath, -t
+        token:
+          name: --token, -t
           description: (required) path to token for authenticating to Meshery API
-          usage: mesheryctl adapter validate --tokenPath [path to token for authentication]
-          example: mesheryctl adapter validate --tokenPath "~/Downloads/auth.json"
+          usage: mesheryctl adapter validate --token [path to token for authentication]
+          example: mesheryctl adapter validate --token "~/Downloads/auth.json"
 
     remove:
       name: remove
@@ -593,11 +609,6 @@ adapter:
       usage: mesheryctl adapter deploy [flags]
       example: mesheryctl adapter deploy -t "~/Downloads/auth.json"
       flags:
-        adapter:
-          name: --adapter, -a
-          description: (required) adapter to use for validation. Defaults to "meshery-osm:10010"
-          usage: mesheryctl adapter deploy --adapter [name of the adapter]
-          example: mesheryctl adapter deploy --adapter meshery-istio:10000
         namespace:
           name: --namespace, -n
           description: Kubernetes namespace to be used for deploying the validation tests and sample workload
@@ -606,10 +617,10 @@ adapter:
             mesheryctl adapter deploy --namespace docker-desktop
               mesheryctl adapter deploy --namespace minikube
         token:
-          name: --tokenpath, -t
+          name: --token, -t
           description: (required) path to token for authenticating to Meshery API
-          usage: mesheryctl adapter deploy --tokenPath [path to token for authentication]
-          example: mesheryctl adapter deploy --tokenPath "~/Downloads/auth.json"
+          usage: mesheryctl adapter deploy --token [path to token for authentication]
+          example: mesheryctl adapter deploy --token "~/Downloads/auth.json"
 
 design:
   name: design
@@ -629,7 +640,7 @@ design:
           example: mesheryctl design apply -f "bookInfo.yaml"
     delete:
       name: delete
-      description: Deprovision cloud native infrastructure using a design /design file
+      description: Deprovision cloud native infrastructure using a design file
       usage: mesheryctl design delete [flags]
       flags:
         file:
@@ -657,6 +668,27 @@ design:
           description: Type of source file (ex. manifest / compose / helm)
           usage: mesheryctl design deploy --file [filepath] --source-type [manifest/compose/helm]
           example: mesheryctl design deploy -f "bookInfo.yaml" --source-type manifest
+    evaluate:
+      name: evaluate
+      description: Evaluate a design by running relationship evaluation policies
+      usage: mesheryctl design evaluate [ID] [flags]
+      example: mesheryctl design evaluate -f design.yaml -o evaluated-design.yaml
+      flags:
+        file:
+          name: --file, -f
+          description: Path to design file
+          usage: mesheryctl design evaluate -f [filepath]
+          example: mesheryctl design evaluate -f design.yaml
+        output:
+          name: --output, -o
+          description: Path to save the evaluated design (required)
+          usage: mesheryctl design evaluate -f [filepath] -o [output-filepath]
+          example: mesheryctl design evaluate -f design.yaml -o evaluated-design.yaml
+        output-format:
+          name: --output-format
+          description: Output format for the evaluated design [json|yaml] (default yaml)
+          usage: mesheryctl design evaluate -f [filepath] --output-format [json|yaml]
+          example: mesheryctl design evaluate -f design.yaml --output-format json -o evaluated-design.json
     export:
       name: export
       description: Export a design from Meshery
@@ -836,9 +868,9 @@ registry:
       description: Generate Models to the registry
       usage: mesheryctl registry generate [flags]
       flags:
-        output-format:
-          name: --output-format, -o
-          description: (optional) format to display in [md | mdx | js]
+        output:
+          name: --output, -o
+          description: (optional) location to output generated models (when unset, the repo-root models directory is auto-detected)
         registrant_cred:
           name: --registrant-cred
           description: path pointing to the registrant credential definition
@@ -851,6 +883,32 @@ registry:
         spreadsheet_id:
           name: --spreadsheet-id
           description: id of the spreadsheet to download
+    purge:
+      name: purge
+      description: Prune old model version directories under ./models, retaining only the most recent versions of each model (kubernetes and meshery-core are always excluded)
+      usage: mesheryctl registry purge [flags]
+      example: mesheryctl registry purge --retain 3
+      flags:
+        retain:
+          name: --retain
+          description: Number of most-recent versions to retain per model (default 1)
+          usage: mesheryctl registry purge --retain [number]
+          example: mesheryctl registry purge --retain 3
+        exclude:
+          name: --exclude
+          description: Comma-delimited list of additional model names to exclude from purging
+          usage: mesheryctl registry purge --exclude [model-name,...]
+          example: mesheryctl registry purge --exclude aws-ec2-controller,cilium
+        dry-run:
+          name: --dry-run
+          description: Print what would be removed without deleting anything
+          usage: mesheryctl registry purge --dry-run
+          example: mesheryctl registry purge --dry-run
+        yes:
+          name: --yes, -y
+          description: (optional) assume yes for user interactive prompts
+          usage: mesheryctl registry purge -y
+          example: mesheryctl registry purge --retain 2 -y
 
 model:
   name: model
@@ -892,12 +950,38 @@ model:
     export:
       name: export
       description: Export a model by name to the given output type (default is oci).
-      usage: mesheryctl model export [model-name]
+      usage: mesheryctl model export [model-name] [flags]
       examples:
         - mesheryctl model export [model-name] -l /home/meshery
         - mesheryctl model export [model-name] --discard-components
-        - mesheryctl model export [model-name] -o yaml
+        - mesheryctl model export [model-name] -t yaml
+        - mesheryctl model export [model-name] -o tar
         - mesheryctl model export [model-name] --version v0.7.3
+      flags:
+        discard-components:
+          name: --discard-components, -c
+          description: (optional) whether to discard components in the exported model definition (default false)
+          usage: mesheryctl model export [model-name] --discard-components
+        discard-relationships:
+          name: --discard-relationships, -r
+          description: (optional) whether to discard relationships in the exported model definition (default false)
+          usage: mesheryctl model export [model-name] --discard-relationships
+        output-format:
+          name: --output-format, -t
+          description: (optional) format of the exported model definition [json|yaml] (default yaml)
+          usage: mesheryctl model export [model-name] --output-format [json|yaml]
+        output-location:
+          name: --output-location, -l
+          description: (optional) directory to save the exported model in (default current directory)
+          usage: mesheryctl model export [model-name] --output-location [path]
+        output-type:
+          name: --output-type, -o
+          description: (optional) package type of the exported model [oci|tar] (default oci)
+          usage: mesheryctl model export [model-name] --output-type [oci|tar]
+        version:
+          name: --version
+          description: (optional) model version to export, in vX.X.X format
+          usage: mesheryctl model export [model-name] --version [version]
     generate:
       name: generate
       description: Generate models by specifying the directory, file, or URL.
@@ -1049,7 +1133,7 @@ environment:
       usage: mesheryctl environment list [flags]
       flags:
         org:
-          name: -o, --orgId
+          name: --orgId
           description: organization id
           usage: mesheryctl environment list --orgID [orgId]
     view:
@@ -1172,8 +1256,8 @@ relationship:
       description: generate relationships docs from the google spreadsheets
       usage: mesheryctl relationship generate [flags]
       flags:
-        sheet:
-          name: -s, --sheetId
+        spreadsheet-id:
+          name: --spreadsheet-id
           description: google sheet id
     list:
       name: list

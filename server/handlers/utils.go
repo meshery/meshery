@@ -8,7 +8,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/httputil"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	meshkitutils "github.com/meshery/meshkit/utils"
 )
 
@@ -89,8 +91,8 @@ const (
 )
 
 // getPageSizeParam returns the canonical camelCase "pageSize" wire param,
-// falling back to the legacy "pagesize" spelling still sent by
-// pre-/api/registry clients. Handlers that pass a page-size string straight
+// falling back to the legacy "pagesize" and "page_size" spellings still
+// sent by older clients. Handlers that pass a page-size string straight
 // through to a provider call (rather than parsing it via getPaginationParams)
 // should read it through this helper instead of calling
 // urlValues.Get("pagesize") directly.
@@ -98,7 +100,10 @@ func getPageSizeParam(urlValues url.Values) string {
 	if v := urlValues.Get("pageSize"); v != "" {
 		return v
 	}
-	return urlValues.Get("pagesize")
+	if v := urlValues.Get("pagesize"); v != "" {
+		return v
+	}
+	return urlValues.Get("page_size")
 }
 
 func getPaginationParams(req *http.Request) (page, offset, limit int, search, order, sortOnCol, status string) {
@@ -237,4 +242,11 @@ func SafeOpenFile(providedPath string) (*os.File, error) {
 	}
 
 	return nil, errFileOutsideAllowedDirs
+}
+
+// isPaginationError reports whether err is a rejected `page` or `pagesize`
+// query parameter. That is a client error: answer it with 400.
+func isPaginationError(err error) bool {
+	code := meshkiterrors.GetCode(err)
+	return code == models.ErrPageNumberCode || code == models.ErrPageSizeCode
 }

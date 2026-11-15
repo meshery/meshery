@@ -9,13 +9,13 @@ setup() {
   assert_success
 }
 
-@test "Search for a known component" {
+@test "[cut=Component][tg=Component Search] Search for a known component" {
   run $MESHERYCTL_BIN component search component_cli-e2e-test --page 1 --pagesize 1
   assert_success
   assert_output --partial "model_cli-e2e-test"
 }
 
-@test "given no search query when mesheryctl component search is run then an invalid argument error is displayed" {
+@test "[cut=Component][tg=Component Search] given no search query when mesheryctl component search is run then an invalid argument error is displayed" {
   run $MESHERYCTL_BIN component search
   assert_failure
 
@@ -25,7 +25,7 @@ setup() {
   assert_output --partial "Run 'mesheryctl component search --help' to see detailed help message"
 }
 
-@test "given a non-existent component when mesheryctl component search component-name is run then no components are found" {
+@test "[cut=Component][tg=Component Search] given a non-existent component when mesheryctl component search component-name is run then no components are found" {
   run $MESHERYCTL_BIN component search nosuchcomponent123
   assert_success
   assert_output --partial "No components found"

@@ -22,7 +22,7 @@ Meshery and its components are written using the following languages and technol
 | --- [Extensions]({{< ref "extensions/_index.md" >}}) ---                                    |                                                                                   |
 | [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}})                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/)                              |
 | [Meshery Remote Providers]({{< ref "reference/extensibility/providers/index.md" >}})                 | _any_ - must adhere to Meshery [Extension Points]({{< ref "reference/extensibility/_index.md" >}}) |
-| [Envoy WASM Filters](https://github.com/meshery-extensions/wasm-filters)     | Rust and C++                                                                      |
+| [Envoy WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust and C++                                                                      |
 
 ## Deployments
 
@@ -55,7 +55,7 @@ Meshery's REST API may be consumed by any number of clients. Clients need to pre
 <a href="images/Meshery-client-architecture.webp" class="lightbox-image">
 <img src="images/Meshery-client-architecture.webp" width="50%" /></a>
 
-_Figure: Clients use Meshery's [REST API]({{< ref "reference/extensibility/api.md#rest" >}}), [GraphQL API]({{< ref "reference/extensibility/api.md#graphql" >}}), or a combination of both._
+_Figure: Clients use Meshery's [REST API]({{< ref "reference/rest-apis/_index.md" >}}), [GraphQL API]({{< ref "reference/graphql-apis.md" >}}), or a combination of both._
 
 ### Providers
 

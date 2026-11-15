@@ -1,0 +1,20 @@
+version: 0.0.1
+name: kafka-
+displayName: kafka-
+createdAt: "2026-10-09T17:52:53Z"
+description: .
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/eaf47786-6cfa-4fc4-a599-4b2f817cea99/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: ". \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: b62d1237-8bcb-474f-9d79-2991933629d8
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
