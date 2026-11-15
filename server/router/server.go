@@ -18,16 +18,48 @@ type Router struct {
 	srv  *http.Server
 }
 
-// newHTTPServer builds the HTTP server for the router, carrying the timeouts
-// the old ListenAndServe call did not have, so the listener can be drained on
-// graceful shutdown instead of serving until main returns.
+const (
+	// httpReadHeaderTimeout bounds how long a client may take to send the
+	// request line and headers, so a slow or stalled client cannot hold a
+	// connection open indefinitely.
+	httpReadHeaderTimeout = 5 * time.Second
+	// httpIdleTimeout closes keep-alive connections that sit idle between
+	// requests.
+	httpIdleTimeout = 2 * time.Minute
+)
+
+// newHTTPServer builds the HTTP server for the router, so the listener can be
+// drained on graceful shutdown instead of serving until main returns.
+//
+// It deliberately sets no ReadTimeout or WriteTimeout. Both are absolute
+// deadlines measured from the start of each request, and Meshery serves
+// requests that legitimately outlast any fixed bound: Server-Sent Event
+// streams that stay open for minutes to hours (a load test run, the provider
+// status stream, events, adapter events, controller status) and uploads whose
+// duration depends on the client's link.
+//
+// Request bodies are bounded by progress instead: boundRequestBodyReads fails
+// a body that stops arriving for requestBodyIdleTimeout, so a client cannot
+// hold a handler by declaring a body and never sending it.
+//
+// The tradeoff is that the server no longer bounds how long writing a
+// response may take. Every SSE stream bounds its own writes instead: it sets
+// a fresh deadline through http.ResponseController before each frame, so a
+// client that stops reading fails that write rather than pinning the handler
+// (see handlers/events_stream_handler.go). Ordinary responses, including
+// large downloads and exports, have no write bound, as was the case before
+// the server set any timeouts: a client that stays connected but stops
+// reading holds its handler until it disconnects. A new streaming or
+// long-lived response must set per-write deadlines the same way. A stream
+// that serves until its client leaves must also be wrapped with stream in
+// NewRouter, so it ends on shutdown.
 func newHTTPServer(port int, handler http.Handler) *http.Server {
 	return &http.Server{
-		Addr:           fmt.Sprintf(":%d", port),
-		Handler:        handler,
-		ReadTimeout:    5 * time.Second,
-		WriteTimeout:   2 * time.Minute,
-		MaxHeaderBytes: 1 << 20,
+		Addr:              fmt.Sprintf(":%d", port),
+		Handler:           boundRequestBodyReads(handler, requestBodyIdleTimeout),
+		ReadHeaderTimeout: httpReadHeaderTimeout,
+		IdleTimeout:       httpIdleTimeout,
+		MaxHeaderBytes:    1 << 20,
 	}
 }
 
@@ -44,6 +76,17 @@ func registerRegistryRoute(gMux *mux.Router, subpath string, handler http.Handle
 func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Handler, gp http.Handler) *Router {
 	gMux := mux.NewRouter()
 	gMux.Use(otelmux.Middleware("meshery-server"))
+
+	// shuttingDown is cancelled when the HTTP server starts shutting down.
+	// Every SSE stream that serves until its client leaves is wrapped with
+	// stream, so its request context ends then too and Shutdown is not held
+	// open by it (see endOnShutdown). The load-test routes are not wrapped:
+	// their handler returns when the run ends, and the run saves its result
+	// on the way, so Shutdown drains them like any other request.
+	shuttingDown, endStreams := context.WithCancel(context.Background())
+	stream := func(next http.Handler) http.Handler {
+		return endOnShutdown(shuttingDown, next)
+	}
 
 	gMux.Handle("/api/system/graphql/query", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlMiddleware(g)), models.ProviderAuth))).Methods("GET", "POST")
 	gMux.Handle("/api/system/graphql/playground", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlMiddleware(gp)), models.ProviderAuth))).Methods("GET", "POST")
@@ -66,7 +109,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	// provider immediately and update each remote entry independently as
 	// its capability probe settles, instead of blocking on the slowest
 	// remote like the old polling-based /api/providers did.
-	gMux.HandleFunc("/api/providers/stream", h.ProvidersStreamHandler).
+	gMux.Handle("/api/providers/stream", stream(http.HandlerFunc(h.ProvidersStreamHandler))).
 		Methods("GET")
 	gMux.Handle("/api/provider/extension/install", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.InstallExtensionHandler), models.ProviderAuth))).Methods("POST")
 	gMux.Handle("/api/provider/extension/remove", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RemoveExtensionHandler), models.ProviderAuth))).Methods("POST")
@@ -154,7 +197,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	// and validate. Adapter events are only collected while this stream is open,
 	// and it also publishes them to the event broadcaster. It stays off /api/events,
 	// which is reserved for /api/system/events once the UI migration finishes.
-	gMux.Handle("/api/system/adapter/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.EventStreamHandler), models.ProviderAuth))).
+	gMux.Handle("/api/system/adapter/events", stream(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.EventStreamHandler), models.ProviderAuth)))).
 		Methods("GET")
 	gMux.Handle("/api/system/adapters", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AdaptersHandler), models.ProviderAuth)))
 	gMux.Handle("/api/system/availableAdapters", http.HandlerFunc(h.AvailableAdaptersHandler)).
@@ -165,13 +208,13 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/system/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetAllEvents), models.ProviderAuth))).
 		Methods("GET")
 	// SSE stream of live events; replaces the subscribeEvents GraphQL subscription.
-	gMux.Handle("/api/system/events/subscribe", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SubscribeEventsHandler), models.ProviderAuth))).
+	gMux.Handle("/api/system/events/subscribe", stream(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SubscribeEventsHandler), models.ProviderAuth)))).
 		Methods("GET")
 
 	// Controller (operator/MeshSync/broker) status: SSE stream replaces the
 	// subscribeMesheryControllersStatus GraphQL subscription; the three one-shot
 	// GETs replace getOperatorStatus/getMeshsyncStatus/getNatsStatus.
-	gMux.Handle("/api/system/controllers/status/subscribe", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SubscribeMesheryControllersStatusHandler), models.ProviderAuth))).
+	gMux.Handle("/api/system/controllers/status/subscribe", stream(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SubscribeMesheryControllersStatusHandler), models.ProviderAuth)))).
 		Methods("GET")
 	gMux.Handle("/api/system/controllers/operator/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.OperatorStatusHandler), models.ProviderAuth))).
 		Methods("GET")
@@ -589,10 +632,13 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		}), models.ProviderAuth))).
 		Methods("GET", "HEAD")
 
+	srv := newHTTPServer(port, gMux)
+	srv.RegisterOnShutdown(endStreams)
+
 	return &Router{
 		S:    gMux,
 		port: port,
-		srv:  newHTTPServer(port, gMux),
+		srv:  srv,
 	}
 }
 
@@ -604,9 +650,21 @@ func (r *Router) Run() error {
 // Shutdown drains the HTTP listener, waiting for in-flight requests to
 // finish, and returns once the listener is closed. Run then returns
 // http.ErrServerClosed, which the caller treats as a clean shutdown.
+//
+// SSE streams do not hold the drain open: their contexts are cancelled as
+// soon as Shutdown starts (see endOnShutdown). If ctx expires before the
+// remaining requests finish, Shutdown closes their connections and returns
+// ctx's error. Closing a connection cancels its request context, but Shutdown
+// does not wait for those handlers to return. http.Server.Shutdown alone
+// leaves those connections open, so a handler waiting on its context would
+// keep running while the caller closes the provider session and database.
 func (r *Router) Shutdown(ctx context.Context) error {
 	if r.srv == nil {
 		return nil
 	}
-	return r.srv.Shutdown(ctx)
+	err := r.srv.Shutdown(ctx)
+	if err != nil {
+		_ = r.srv.Close()
+	}
+	return err
 }
