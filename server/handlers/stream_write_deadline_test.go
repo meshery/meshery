@@ -25,7 +25,7 @@ import (
 
 // deadlineRecorder is an SSE-capable http.ResponseWriter that also implements
 // SetWriteDeadline, so http.ResponseController reaches it, and logs every
-// deadline and write in order.
+// deadline, write and flush in order.
 type deadlineRecorder struct {
 	mu     sync.Mutex
 	header http.Header
@@ -34,7 +34,7 @@ type deadlineRecorder struct {
 }
 
 type deadlineRecorderOp struct {
-	kind     string // "deadline" or "write"
+	kind     string // "deadline", "write" or "flush"
 	at       time.Time
 	deadline time.Time
 }
@@ -45,7 +45,14 @@ func newDeadlineRecorder() *deadlineRecorder {
 
 func (r *deadlineRecorder) Header() http.Header { return r.header }
 func (r *deadlineRecorder) WriteHeader(int)     {}
-func (r *deadlineRecorder) Flush()              {}
+
+// Flush is logged so a handler that flushes its headers before setting any
+// deadline fails requireDeadlineBeforeEveryWrite's first-operation check.
+func (r *deadlineRecorder) Flush() {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.ops = append(r.ops, deadlineRecorderOp{kind: "flush", at: time.Now()})
+}
 
 func (r *deadlineRecorder) Write(p []byte) (int, error) {
 	r.mu.Lock()
@@ -85,8 +92,9 @@ func (r *deadlineRecorder) waitForBody(t *testing.T, want string, n int) {
 }
 
 // requireDeadlineBeforeEveryWrite fails unless the first operation on the
-// connection sets a write deadline and every write is preceded by a deadline
-// set since the previous write, each in the future and at most limit away.
+// connection - including a header flush - sets a write deadline, and every
+// write is preceded by a deadline set since the previous write, each in the
+// future and at most limit away.
 func requireDeadlineBeforeEveryWrite(t *testing.T, ops []deadlineRecorderOp, limit time.Duration) {
 	t.Helper()
 	if len(ops) == 0 || ops[0].kind != "deadline" {

@@ -38,6 +38,10 @@ const (
 // status stream, events, adapter events, controller status) and uploads whose
 // duration depends on the client's link.
 //
+// Request bodies are bounded by progress instead: boundRequestBodyReads fails
+// a body that stops arriving for requestBodyIdleTimeout, so a client cannot
+// hold a handler by declaring a body and never sending it.
+//
 // The tradeoff is that the server no longer bounds how long writing a
 // response may take. Every SSE stream bounds its own writes instead: it sets
 // a fresh deadline through http.ResponseController before each frame, so a
@@ -50,7 +54,7 @@ const (
 func newHTTPServer(port int, handler http.Handler) *http.Server {
 	return &http.Server{
 		Addr:              fmt.Sprintf(":%d", port),
-		Handler:           handler,
+		Handler:           boundRequestBodyReads(handler, requestBodyIdleTimeout),
 		ReadHeaderTimeout: httpReadHeaderTimeout,
 		IdleTimeout:       httpIdleTimeout,
 		MaxHeaderBytes:    1 << 20,
