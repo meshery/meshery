@@ -26,29 +26,20 @@
  */
 
 'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const ts = require('typescript');
 
 const UI_ROOT = path.resolve(__dirname, '..');
 
-// Directories under ui/ that are scanned.
-const SCAN_DIRS = [
-  'components',
-  'pages',
-  'utils',
-  'store',
-  'rtk-query',
-  'machines',
-  'hooks',
-  'api',
-  'css',
-];
+// UI-root paths excluded by the companion ESLint color-literal rule.
+const IGNORED_ROOT_DIRS = new Set(['theme', 'assets', 'lib', 'public', 'tests', 'scripts']);
+
+const IGNORED_ROOT_FILES = new Set(['eslint.config.js']);
 
 // Directories skipped at every depth because they contain generated,
-// temporary, or test-only content. UI-root opt-outs are handled by
-// SCAN_DIRS, so nested production directories with the same names remain scanned.
+// temporary, or test-only content. UI-root exclusions are handled separately,
+// so nested production directories with the same names remain scanned.
 const IGNORED_DIRS = new Set([
   'node_modules',
   '__tests__',
@@ -71,18 +62,37 @@ const HEX_PATTERN = /#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b/g;
 // Match case-insensitive rgb()/rgba() calls without matching longer identifiers.
 const RGB_PATTERN = /(?<![\w$-])rgba?\(/gi;
 
-function walk(dir, out) {
+function walk(dir, out, scanErrors) {
   let entries;
+
   try {
-    entries = fs.readdirSync(dir, { withFileTypes: true });
-  } catch {
+    entries = fs.readdirSync(dir, {
+      withFileTypes: true,
+    });
+  } catch (error) {
+    const message = `Unable to read directory ${path.relative(UI_ROOT, dir)}: ${error.message}`;
+
+    scanErrors.push(message);
+
     return;
   }
+
   for (const entry of entries) {
-    if (IGNORED_DIRS.has(entry.name)) continue;
+    if (
+      dir === UI_ROOT &&
+      (IGNORED_ROOT_DIRS.has(entry.name) || IGNORED_ROOT_FILES.has(entry.name))
+    ) {
+      continue;
+    }
+
+    if (IGNORED_DIRS.has(entry.name)) {
+      continue;
+    }
+
     const full = path.join(dir, entry.name);
+
     if (entry.isDirectory()) {
-      walk(full, out);
+      walk(full, out, scanErrors);
     } else if (
       entry.isFile() &&
       EXTENSIONS.has(path.extname(entry.name)) &&
@@ -174,16 +184,27 @@ function main() {
   const asJson = args.includes('--json');
 
   const files = [];
-  for (const dir of SCAN_DIRS) {
-    walk(path.join(UI_ROOT, dir), files);
-  }
+  const scanErrors = [];
+  walk(UI_ROOT, files, scanErrors);
 
   const offenders = [];
   let totalHex = 0;
   let totalRgb = 0;
   for (const file of files) {
-    const { hex, rgb } = scanFile(file);
-    if (hex === 0 && rgb === 0) continue;
+    let hex;
+    let rgb;
+
+    try {
+      ({ hex, rgb } = scanFile(file));
+    } catch (error) {
+      const message = `Unable to read file ${path.relative(UI_ROOT, file)}: ${error.code || error.message}`;
+      scanErrors.push(message);
+      continue;
+    }
+
+    if (hex === 0 && rgb === 0) {
+      continue;
+    }
     const rel = path.relative(UI_ROOT, file);
     offenders.push({ file: rel, hex, rgb, total: hex + rgb });
     totalHex += hex;
@@ -203,6 +224,8 @@ function main() {
           hex: totalHex,
           rgb: totalRgb,
           offenders,
+          scanErrors,
+          scanComplete: scanErrors.length === 0,
         },
         null,
         2,
@@ -211,13 +234,20 @@ function main() {
     return;
   }
 
+  if (scanErrors.length > 0) {
+    process.stderr.write(`WARNING: Scan incomplete. ${scanErrors.length} filesystem error(s).\n`);
+
+    for (const error of scanErrors) {
+      process.stderr.write(`${error}\n`);
+    }
+  }
   process.stdout.write('meshery-ui color-literal audit\n');
   process.stdout.write('==============================\n');
   process.stdout.write('Patterns: #RGB/#RGBA/#RRGGBB/#RRGGBBAA, rgb(), rgba()\n');
-  process.stdout.write(`Scope:    ${SCAN_DIRS.join(', ')}\n`);
+  process.stdout.write('Scope:    all eligible UI source files\n');
   process.stdout.write(`Ignored at any depth: ${[...IGNORED_DIRS].join(', ')}\n`);
   process.stdout.write(
-    'UI-root directories outside scan scope: theme, assets, lib, public, tests\n\n',
+    `Ignored at UI root: ${[...IGNORED_ROOT_DIRS, ...IGNORED_ROOT_FILES].join(', ')}\n\n`,
   );
 
   const limit = showAll ? offenders.length : Math.min(20, offenders.length);
