@@ -5,12 +5,15 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/core"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"net/http"
+	"strings"
 )
 
 func newWorkspaceTestDB(t *testing.T) *database.Handler {
@@ -324,4 +327,66 @@ func TestWorkspacePersisterGetWorkspaceTeams_InvalidPagination(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestWorkspacePersister_MissingWorkspace_ReturnsResultNotFound(t *testing.T) {
+	dbHandler := newWorkspaceTestDB(t)
+	if err := dbHandler.AutoMigrate(&workspace.Workspace{}); err != nil {
+		t.Fatalf("failed to auto-migrate schemas workspace: %v", err)
+	}
+
+	persister := &WorkspacePersister{DB: dbHandler}
+	missingID := core.Uuid(uuid.Must(uuid.NewV4()))
+
+	assertNotFound := func(t *testing.T, err error) {
+		t.Helper()
+		if err == nil {
+			t.Fatal("expected an error for a missing workspace, got nil")
+		}
+		if got := meshkiterrors.GetCode(err); got != ErrResultNotFoundCode {
+			t.Errorf("MeshKit code = %q, want %q (err=%v)", got, ErrResultNotFoundCode, err)
+		}
+		if got := httputil.StatusForProviderError(err, http.StatusBadGateway); got != http.StatusNotFound {
+			t.Errorf("status = %d, want %d", got, http.StatusNotFound)
+		}
+	}
+
+	t.Run("GetWorkspaceByID", func(t *testing.T) {
+		_, err := persister.GetWorkspaceByID(missingID)
+		assertNotFound(t, err)
+	})
+
+	t.Run("UpdateWorkspace", func(t *testing.T) {
+		_, err := persister.UpdateWorkspace(missingID, &workspace.WorkspaceUpdatePayload{})
+		assertNotFound(t, err)
+	})
+
+	t.Run("DeleteWorkspaceByID", func(t *testing.T) {
+		_, err := persister.DeleteWorkspaceByID(missingID)
+		assertNotFound(t, err)
+	})
+
+	t.Run("existing workspace is still returned", func(t *testing.T) {
+		workspaceID := core.Uuid(uuid.Must(uuid.NewV4()))
+		now := time.Now().UTC().Round(time.Second)
+		ws := workspace.Workspace{
+			ID:             workspaceID,
+			CreatedAt:      now,
+			UpdatedAt:      now,
+			Name:           "Present Workspace",
+			Metadata:       core.Map{},
+			OrganizationID: core.Uuid(uuid.Must(uuid.NewV4())),
+		}
+		if err := dbHandler.Create(&ws).Error; err != nil {
+			t.Fatalf("failed to persist workspace: %v", err)
+		}
+
+		got, err := persister.GetWorkspaceByID(workspaceID)
+		if err != nil {
+			t.Fatalf("expected no error for an existing workspace, got %v", err)
+		}
+		if !strings.Contains(string(got), workspaceID.String()) {
+			t.Errorf("returned JSON %s does not contain workspace ID %s", got, workspaceID)
+		}
+	})
 }
