@@ -175,7 +175,7 @@ func UnreachableConditionKey(connectionID core.Uuid) string {
 
 func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
-	log.Info("initialising K8s machine for connetion Id", connectionID)
+	log.Info("initialising K8s machine for connection Id", connectionID)
 	if err != nil {
 		return nil, machines.ErrInititalizeK8sMachine(err)
 	}

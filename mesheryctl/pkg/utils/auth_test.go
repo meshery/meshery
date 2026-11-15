@@ -442,8 +442,13 @@ func TestInitiateLogin_PersistsRegistrationKey(t *testing.T) {
 func TestWriteTokenFile(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "auth.json")
 
-	// A token file left behind by an older mesheryctl is world-readable.
-	if err := os.WriteFile(path, []byte("old"), 0o644); err != nil {
+	// On Unix, simulate a token file left world-readable by an older version.
+	// Windows creates it with an explicit user owner for the ACL test.
+	if runtime.GOOS == "windows" {
+		if err := WriteTokenFile(path, []byte("old")); err != nil {
+			t.Fatal(err)
+		}
+	} else if err := os.WriteFile(path, []byte("old"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	if err := WriteTokenFile(path, []byte(`{"token":"t"}`)); err != nil {
@@ -454,7 +459,8 @@ func TestWriteTokenFile(t *testing.T) {
 		t.Fatal(err)
 	}
 	// Windows only tracks the read-only attribute, so a mode check is
-	// meaningless there; the content check below still applies.
+	// meaningless there; its ACL is checked in tokenfile_windows_test.go. The
+	// content check below applies everywhere.
 	if runtime.GOOS != "windows" {
 		if mode := info.Mode().Perm(); mode != 0o600 {
 			t.Fatalf("token file mode = %o, want 600", mode)
@@ -466,6 +472,116 @@ func TestWriteTokenFile(t *testing.T) {
 	}
 	if string(data) != `{"token":"t"}` {
 		t.Fatalf("token file content = %q", data)
+	}
+}
+
+func TestWriteTokenFileNewFileMode(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Windows access is controlled by a DACL")
+	}
+	path := filepath.Join(t.TempDir(), "auth.json")
+	if err := WriteTokenFile(path, []byte("token")); err != nil {
+		t.Fatal(err)
+	}
+	info, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if mode := info.Mode().Perm(); mode != 0600 {
+		t.Fatalf("token file mode = %o, want 600", mode)
+	}
+}
+
+// Requests must read a token from the file system login and logout write it
+// to, which they find with config.Token.GetLocation.
+func TestGetTokenLocationMatchesTokenGetLocation(t *testing.T) {
+	mesheryDir := IsolateMesheryHome(t)
+	home := filepath.Dir(mesheryDir)
+	outside := filepath.Join(t.TempDir(), "meshery.json")
+	inside := filepath.Join(home, "tok", "auth.json")
+
+	tests := []struct {
+		name     string
+		location string
+		want     string
+	}{
+		{"relative name", "auth.json", filepath.Join(mesheryDir, "auth.json")},
+		{"absolute path outside home", outside, outside},
+		{"home-relative path", "~/tok/auth.json", inside},
+		{"absolute path inside home", inside, inside},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			token := config.Token{Name: "default", Location: tc.location}
+			got, err := GetTokenLocation(token)
+			if err != nil {
+				t.Fatalf("GetTokenLocation(%q): %v", tc.location, err)
+			}
+			if got != tc.want {
+				t.Errorf("GetTokenLocation(%q) = %q, want %q", tc.location, got, tc.want)
+			}
+			if login := token.GetLocation(); got != login {
+				t.Errorf("requests read %q, but system login writes %q", got, login)
+			}
+		})
+	}
+}
+
+// A token kept outside HOME, such as a secret mounted into a CI job or a
+// container, must be the file a request attaches.
+func TestNewRequestReadsTokenOutsideHome(t *testing.T) {
+	mesheryDir := IsolateMesheryHome(t)
+
+	tokenFile := filepath.Join(t.TempDir(), "meshery.json")
+	if err := os.WriteFile(tokenFile, []byte(`{"token":"secret","meshery-provider":"Meshery"}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	cfgFile := filepath.Join(mesheryDir, "config.yaml")
+	contents := fmt.Sprintf(`contexts:
+  local:
+    endpoint: http://127.0.0.1:19999
+    token: default
+    platform: docker
+current-context: local
+tokens:
+- name: default
+  location: %q
+`, tokenFile)
+	if err := os.WriteFile(cfgFile, []byte(contents), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	origDefaultConfigPath, origCfgFile, origTokenFlag := DefaultConfigPath, CfgFile, TokenFlag
+	t.Cleanup(func() {
+		DefaultConfigPath, CfgFile, TokenFlag = origDefaultConfigPath, origCfgFile, origTokenFlag
+		viper.Reset()
+	})
+	DefaultConfigPath, CfgFile, TokenFlag = cfgFile, cfgFile, ""
+
+	viper.Reset()
+	viper.SetConfigFile(cfgFile)
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Fatal(err)
+	}
+	token, err := mctlCfg.GetTokenForContext("local")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := token.GetLocation(); got != tokenFile {
+		t.Fatalf("system login would write %q, want %q", got, tokenFile)
+	}
+
+	req, err := NewRequest(http.MethodGet, "http://127.0.0.1:19999/api/system/version", nil)
+	if err != nil {
+		t.Fatalf("NewRequest: %v", err)
+	}
+	cookie, err := req.Cookie(tokenName)
+	if err != nil || cookie.Value != "secret" {
+		t.Errorf("request token cookie = %v, %v; want the one in %s", cookie, err, tokenFile)
 	}
 }
 
