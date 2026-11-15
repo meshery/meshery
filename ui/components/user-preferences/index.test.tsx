@@ -264,6 +264,41 @@ describe('UserPreference', () => {
     },
   );
 
+  it.each(['UsageStatsPreference', 'PerfResultPreference'])(
+    'turns the %s switch back when saving it fails',
+    async (testId) => {
+      updateUserPrefWithContext.mockImplementationOnce(() => ({
+        unwrap: () => Promise.reject(new Error('network down')),
+      }));
+      render(<UserPreference anonymousStats={false} perfResultStats={false} />);
+      const toggle = screen.getByTestId(testId);
+      fireEvent.click(toggle);
+
+      await waitFor(() =>
+        expect(notify).toHaveBeenCalledWith({
+          message: 'There was an error sending your preference',
+          event_type: 'error',
+        }),
+      );
+      expect(toggle).not.toBeChecked();
+    },
+  );
+
+  it.each(['UsageStatsPreference', 'PerfResultPreference'])(
+    'keeps the %s switch on when saving it succeeds',
+    async (testId) => {
+      updateUserPrefWithContext.mockImplementationOnce(() => ({
+        unwrap: () => Promise.resolve({}),
+      }));
+      render(<UserPreference anonymousStats={false} perfResultStats={false} />);
+      const toggle = screen.getByTestId(testId);
+      fireEvent.click(toggle);
+
+      await waitFor(() => expect(notify).toHaveBeenCalled());
+      expect(toggle).toBeChecked();
+    },
+  );
+
   it('rolls back to a value successfully saved earlier in this session', async () => {
     render(<UserPreference />);
     const toggle = screen.getByTestId('CatalogContentPreference');

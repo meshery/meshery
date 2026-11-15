@@ -249,6 +249,13 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
         }
       })
       .catch(() => {
+        // The switch was flipped before the request; put it back so it
+        // matches the preference that is still saved.
+        if (name === 'anonymousUsageStats') {
+          setAnonymousStats(!val);
+        } else {
+          setPerfResultStats(!val);
+        }
         handleError('There was an error sending your preference')();
       });
   };
