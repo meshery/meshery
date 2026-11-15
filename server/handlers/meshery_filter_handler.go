@@ -321,9 +321,23 @@ func (h *Handler) CloneMesheryFilterHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
+	if provider == nil {
+		h.log.Error(ErrNilProvider())
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	filterID := mux.Vars(r)["id"]
+	filterUUID, err := uuid.FromString(filterID)
+	if err != nil || filterUUID == uuid.Nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid filter ID: %s", filterID))
+		h.log.Warn(invalidIDErr)
+		writeMeshkitError(rw, invalidIDErr, http.StatusBadRequest)
+		return
+	}
+
 	var parsedBody *models.MesheryCloneFilterRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || filterID == "" {
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || parsedBody == nil {
 		h.log.Error(ErrRequestBody(err))
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
@@ -331,8 +345,14 @@ func (h *Handler) CloneMesheryFilterHandler(
 
 	resp, err := provider.CloneMesheryFilter(r, filterID, parsedBody)
 	if err != nil {
+		if errors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			h.log.Warnf("No filter with ID %q found to clone", filterID)
+			writeMeshkitError(rw, err, http.StatusNotFound)
+			return
+		}
+
 		h.log.Error(ErrCloneFilter(err))
-		writeMeshkitError(rw, ErrCloneFilter(err), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrCloneFilter(err), providerStatusOrInternal(err))
 		return
 	}
 

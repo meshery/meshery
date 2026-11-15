@@ -153,14 +153,17 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, sear
 
 // CloneMesheryFilter clones meshery filter to private
 func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error) {
+	if cloneFilterRequest == nil {
+		return nil, fmt.Errorf("clone request body is required")
+	}
 	var mesheryFilter MesheryFilter
 	filterUUID, err := uuid.FromString(filterID)
 	if err != nil {
 		return nil, ErrInvalidUUID(err)
 	}
 	err = mfp.DB.First(&mesheryFilter, filterUUID).Error
-	if err != nil || *mesheryFilter.ID == uuid.Nil {
-		return nil, fmt.Errorf("unable to get filter: %w", err)
+	if err != nil || mesheryFilter.ID == nil || *mesheryFilter.ID == uuid.Nil {
+		return nil, ErrResultNotFound(fmt.Errorf("unable to get filter: %w", err))
 	}
 
 	id, err := uuid.NewV4()

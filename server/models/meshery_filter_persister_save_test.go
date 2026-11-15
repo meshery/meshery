@@ -294,3 +294,70 @@ func TestDeleteMesheryFilterExisting(t *testing.T) {
 		t.Errorf("rows = %d, want 0 after deletion", n)
 	}
 }
+
+func TestCloneMesheryFilterNilBody(t *testing.T) {
+	_, mfp := newFilterPersisterTestDB(t)
+	id := uuid.Must(uuid.NewV4()).String()
+
+	_, err := mfp.CloneMesheryFilter(id, nil)
+	if err == nil {
+		t.Fatalf("expected error cloning with nil body, got nil")
+	}
+}
+
+func TestCloneMesheryFilterInvalidUUID(t *testing.T) {
+	_, mfp := newFilterPersisterTestDB(t)
+
+	_, err := mfp.CloneMesheryFilter("invalid-uuid", &MesheryCloneFilterRequestBody{Name: "clone"})
+	if err == nil {
+		t.Fatalf("expected error cloning with invalid UUID, got nil")
+	}
+	if code := mkerrors.GetCode(err); code != ErrInvalidUUIDValueCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrInvalidUUIDValueCode, err)
+	}
+}
+
+func TestCloneMesheryFilterNotFound(t *testing.T) {
+	_, mfp := newFilterPersisterTestDB(t)
+	id := uuid.Must(uuid.NewV4()).String()
+
+	_, err := mfp.CloneMesheryFilter(id, &MesheryCloneFilterRequestBody{Name: "clone"})
+	if err == nil {
+		t.Fatalf("expected error cloning non-existent filter, got nil")
+	}
+	if code := mkerrors.GetCode(err); code != ErrResultNotFoundCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrResultNotFoundCode, err)
+	}
+}
+
+func TestCloneMesheryFilterExisting(t *testing.T) {
+	db, mfp := newFilterPersisterTestDB(t)
+	sourceID := seedPublishedFilter(t, db)
+
+	resp, err := mfp.CloneMesheryFilter(sourceID.String(), &MesheryCloneFilterRequestBody{Name: "cloned-filter"})
+	if err != nil {
+		t.Fatalf("unexpected error cloning filter: %v", err)
+	}
+
+	var cloned []MesheryFilter
+	if err := json.Unmarshal(resp, &cloned); err != nil {
+		t.Fatalf("unmarshal clone response: %v", err)
+	}
+	if len(cloned) == 0 {
+		t.Fatalf("expected non-empty cloned filters slice")
+	}
+
+	if cloned[0].ID == nil || *cloned[0].ID == sourceID {
+		t.Errorf("expected cloned filter to have a new ID, got %v", cloned[0].ID)
+	}
+	if cloned[0].Name != "cloned-filter" {
+		t.Errorf("cloned name = %q, want %q", cloned[0].Name, "cloned-filter")
+	}
+	if cloned[0].Visibility != Private {
+		t.Errorf("cloned visibility = %q, want %q", cloned[0].Visibility, Private)
+	}
+	if n := countFilters(t, db); n != 2 {
+		t.Errorf("rows = %d, want 2 (source + clone)", n)
+	}
+}
+
