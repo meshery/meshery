@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -32,6 +33,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
+	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/kubernetes"
 	controllerConfig "sigs.k8s.io/controller-runtime/pkg/client/config"
 )
@@ -64,6 +66,11 @@ mesheryctl system uninstall --keep-namespace
 mesheryctl system uninstall --force
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// A Docker installation that is not there has nothing to stop, so a
+		// missing daemon must not turn the no-op into a preflight failure.
+		if skipPreflightForAbsentDockerInstallation() {
+			return nil
+		}
 		//Check prerequisite
 		hc, err := NewHealthChecker(uninstallHealthCheckOptions(cmd))
 		if err != nil {
@@ -80,6 +87,47 @@ mesheryctl system uninstall --force
 		}
 		return nil
 	},
+}
+
+// skipPreflightForAbsentDockerInstallation reports whether the preflight can be
+// skipped because the current context is a Docker installation that has no
+// compose file to remove.
+//
+// The Docker preflight fails, or even tries to start the daemon, whenever Docker
+// is not reachable, which would make `system uninstall` refuse to report that
+// there is nothing to uninstall. Only the Docker platform is affected, the
+// Kubernetes preflight is never skipped, and a context that cannot be resolved
+// falls through to the normal preflight so its own error is reported.
+func skipPreflightForAbsentDockerInstallation() bool {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return false
+	}
+	if err := mctlCfg.SetCurrentContext(tempContext); err != nil {
+		return false
+	}
+	currCtx, err := mctlCfg.GetCurrentContext()
+	if err != nil {
+		return false
+	}
+
+	platform := currCtx.GetPlatform()
+	if utils.PlatformFlag != "" {
+		if utils.PlatformFlag != platformDocker && utils.PlatformFlag != platformKubernetes {
+			// Let the preflight report the unsupported platform.
+			return false
+		}
+		platform = utils.PlatformFlag
+	}
+
+	return skipPreflightForPlatform(platform, dockerInstallationPresent())
+}
+
+// skipPreflightForPlatform reports whether the preflight can be skipped for a
+// resolved platform: only a Docker installation that is absent from disk has
+// nothing to remove, and a Kubernetes preflight is never skipped.
+func skipPreflightForPlatform(platform string, dockerInstallationPresent bool) bool {
+	return platform == platformDocker && !dockerInstallationPresent
 }
 
 // uninstallHealthCheckOptions returns the preflight configuration used by
@@ -141,7 +189,9 @@ func uninstallMeshery() error {
 		utils.Log.Info("Uninstalling Meshery resources...")
 
 		if err := uninstallKubernetesInstallation(client, currCtx); err != nil {
-			return err
+			// The stages say what failed; classify the failure as an uninstall
+			// failure so its error code and recovery instructions reach the user.
+			return ErrUninstallMeshery(err)
 		}
 
 		if utils.KeepNamespace {
@@ -255,8 +305,15 @@ func uninstallKubernetesInstallation(client *meshkitkube.Client, currCtx *config
 }
 
 // kubernetesUninstallStages returns the teardown stages in the order they run.
-// The order matters: the custom resources are deleted before the Helm release,
-// otherwise they can no longer be found.
+//
+// The order is a dependency chain, not a preference. The custom resources are
+// deleted, and their deletion confirmed, before the Helm release, because that
+// release is what removes the operator able to clear their finalizers; the
+// namespace goes last so its deletion covers whatever is left. A normal
+// uninstall stops at the first stage that fails, which is what keeps the cluster
+// recoverable when a stage could not finish. --force deliberately breaks the
+// chain: it exists for the case where a stage cannot complete at all, so it runs
+// every stage and aggregates the failures instead of stopping.
 func kubernetesUninstallStages(client *meshkitkube.Client, currCtx *config.Context) []uninstallStage {
 	stages := []uninstallStage{
 		{
@@ -325,19 +382,57 @@ func deleteMesheryCRs(client *meshkitkube.Client) error {
 	return utilerrors.NewAggregate(failures)
 }
 
+// crDeletionPollInterval and crDeletionTimeout bound the wait for a deleted
+// custom resource instance to disappear. They are variables so tests can
+// exercise the timeout without waiting for the real one.
+var (
+	crDeletionPollInterval = 2 * time.Second
+	crDeletionTimeout      = 2 * time.Minute
+)
+
 // deleteCRInstance deletes a single custom resource instance in the Meshery
-// namespace, treating an already deleted instance as success.
+// namespace and waits until it is really gone, treating an already deleted
+// instance as success.
+//
+// An accepted delete request is not a completed deletion. The Broker and
+// MeshSync instances carry finalizers that the Meshery Operator clears while it
+// is still running, so the instance can stay behind in Terminating for as long
+// as the operator needs to finish. Returning as soon as the request is accepted
+// would let the next stage remove the operator, and with it the only thing able
+// to clear those finalizers: the instances then stay stuck and the namespace
+// never becomes deletable.
 func deleteCRInstance(resourceName, instanceName string, client *meshkitkube.Client) error {
-	err := client.DynamicKubeClient.Resource(schema.GroupVersionResource{
+	resource := client.DynamicKubeClient.Resource(schema.GroupVersionResource{
 		Group:    v1alpha1.GroupVersion.Group,
 		Version:  v1alpha1.GroupVersion.Version,
 		Resource: resourceName,
-	}).Namespace(utils.MesheryNamespace).Delete(context.TODO(), instanceName, metav1.DeleteOptions{})
+	}).Namespace(utils.MesheryNamespace)
+
+	err := resource.Delete(context.TODO(), instanceName, metav1.DeleteOptions{})
 	if apierrors.IsNotFound(err) {
 		return nil
 	}
+	if err != nil {
+		return err
+	}
 
-	return err
+	err = wait.PollUntilContextTimeout(context.TODO(), crDeletionPollInterval, crDeletionTimeout, true,
+		func(ctx context.Context) (bool, error) {
+			_, err := resource.Get(ctx, instanceName, metav1.GetOptions{})
+			if apierrors.IsNotFound(err) {
+				return true, nil
+			}
+			// A successful Get means the instance is still there, whatever its
+			// deletion timestamp: keep waiting. Any other error is a genuine API
+			// failure and must be reported rather than retried as though the
+			// instance were merely still present.
+			return false, err
+		})
+	if err != nil {
+		return errors.Wrapf(err, "cannot confirm deletion of %s within %s", instanceName, crDeletionTimeout)
+	}
+
+	return nil
 }
 
 // apiExtensionsClient builds the client used to delete Meshery's CRDs. It is a

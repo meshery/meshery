@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 	"testing"
+	"time"
 
 	mesheryoperator "github.com/meshery/meshery-operator/api/v1alpha1"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -256,6 +257,31 @@ func TestDockerInstallationPresent(t *testing.T) {
 	assert.True(t, dockerInstallationPresent())
 }
 
+// TestSkipPreflightForPlatform pins when the uninstall preflight is skipped: a
+// Docker installation that is not there has nothing to stop, so a missing
+// daemon must not block the no-op. A Kubernetes teardown always keeps its
+// preflight, because it is the only thing that verifies API connectivity.
+func TestSkipPreflightForPlatform(t *testing.T) {
+	tests := []struct {
+		name                     string
+		platform                 string
+		dockerInstallationOnDisk bool
+		want                     bool
+	}{
+		{"docker platform without a compose file", platformDocker, false, true},
+		{"docker platform with a compose file", platformDocker, true, false},
+		{"kubernetes platform without a compose file", platformKubernetes, false, false},
+		{"kubernetes platform with a compose file", platformKubernetes, true, false},
+		{"unknown platform", "unknown", false, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, skipPreflightForPlatform(tt.platform, tt.dockerInstallationOnDisk))
+		})
+	}
+}
+
 // TestUninstallDockerInstallationWithoutComposeFile verifies that uninstalling a
 // Docker installation that is not there is a no-op. In particular it must not
 // create ~/.meshery just to look for the compose file.
@@ -457,6 +483,98 @@ func TestDeleteCRInstance(t *testing.T) {
 		err := deleteCRInstance(brokerResource, brokerInstance, client)
 		require.Error(t, err)
 		assert.True(t, apierrors.IsForbidden(err), "Forbidden must not be swallowed: %v", err)
+	})
+}
+
+// withShortCRDeletionWait shortens the bounded wait for a custom resource
+// instance to disappear so the timeout path is testable, and restores it after.
+func withShortCRDeletionWait(t *testing.T, interval, timeout time.Duration) {
+	t.Helper()
+
+	previousInterval, previousTimeout := crDeletionPollInterval, crDeletionTimeout
+	crDeletionPollInterval, crDeletionTimeout = interval, timeout
+	t.Cleanup(func() {
+		crDeletionPollInterval, crDeletionTimeout = previousInterval, previousTimeout
+	})
+}
+
+// TestDeleteCRInstanceWaitsForDeletion pins the contract the teardown order
+// depends on: a deletion is only complete once the instance is gone, so the
+// operator that clears the instance's finalizers is still running when
+// deleteCRInstance returns. An accepted delete request is not enough.
+func TestDeleteCRInstanceWaitsForDeletion(t *testing.T) {
+	const (
+		brokerResource = "brokers"
+		brokerInstance = "meshery-broker"
+	)
+
+	// keepInstance answers every Get with the instance, as the API server does
+	// while the instance is still terminating.
+	keepInstance := func(client *dynamicfake.FakeDynamicClient, gets *int) {
+		client.PrependReactor("get", brokerResource, func(action k8stesting.Action) (bool, runtime.Object, error) {
+			*gets++
+			return true, newCRInstanceOfKind(brokerInstance, "Broker"), nil
+		})
+	}
+
+	t.Run("polls until the instance is gone", func(t *testing.T) {
+		dynamicClient := newDynamicClient(newCRInstanceOfKind(brokerInstance, "Broker"))
+		withShortCRDeletionWait(t, time.Millisecond, time.Second)
+
+		// The instance outlives the delete request by two polls.
+		gets := 0
+		dynamicClient.PrependReactor("get", brokerResource, func(action k8stesting.Action) (bool, runtime.Object, error) {
+			gets++
+			if gets <= 2 {
+				return true, newCRInstanceOfKind(brokerInstance, "Broker"), nil
+			}
+			return false, nil, nil
+		})
+		client := &meshkitkube.Client{DynamicKubeClient: dynamicClient}
+
+		require.NoError(t, deleteCRInstance(brokerResource, brokerInstance, client))
+		assert.Equal(t, 3, gets, "deletion must not be reported as complete while the instance is still present")
+	})
+
+	t.Run("fails with a bounded timeout when the instance never disappears", func(t *testing.T) {
+		dynamicClient := newDynamicClient(newCRInstanceOfKind(brokerInstance, "Broker"))
+		gets := 0
+		keepInstance(dynamicClient, &gets)
+		withShortCRDeletionWait(t, time.Millisecond, 20*time.Millisecond)
+		client := &meshkitkube.Client{DynamicKubeClient: dynamicClient}
+
+		err := deleteCRInstance(brokerResource, brokerInstance, client)
+		require.Error(t, err, "an instance that never disappears must not be reported as deleted")
+		assert.Contains(t, err.Error(), "cannot confirm deletion of "+brokerInstance)
+		assert.Greater(t, gets, 1, "the wait must poll more than once")
+	})
+
+	t.Run("reports an API error instead of waiting for the timeout", func(t *testing.T) {
+		dynamicClient := newDynamicClient(newCRInstanceOfKind(brokerInstance, "Broker"))
+		gets := 0
+		dynamicClient.PrependReactor("get", brokerResource, func(action k8stesting.Action) (bool, runtime.Object, error) {
+			gets++
+			return true, nil, apierrors.NewForbidden(
+				schema.GroupResource{Resource: brokerResource}, brokerInstance, errors.New("get is forbidden"))
+		})
+		// A long timeout proves the failure comes from the API error, not the wait.
+		withShortCRDeletionWait(t, time.Millisecond, time.Minute)
+		client := &meshkitkube.Client{DynamicKubeClient: dynamicClient}
+
+		err := deleteCRInstance(brokerResource, brokerInstance, client)
+		require.Error(t, err)
+		assert.Equal(t, 1, gets, "a genuine API error must not be retried as if the instance were present")
+
+		var statusErr *apierrors.StatusError
+		require.ErrorAs(t, err, &statusErr)
+		assert.True(t, apierrors.IsForbidden(statusErr), "the original API error must survive the wait")
+	})
+
+	t.Run("does not wait for an instance that is already gone", func(t *testing.T) {
+		withShortCRDeletionWait(t, time.Millisecond, 20*time.Millisecond)
+		client := &meshkitkube.Client{DynamicKubeClient: newDynamicClient()}
+
+		assert.NoError(t, deleteCRInstance(brokerResource, brokerInstance, client))
 	})
 }
 
