@@ -14,11 +14,14 @@ import (
 
 // recordingKeysProvider scripts GetUsersKeys and records the arguments the
 // handler passed through, so the tests can assert both the response mapping and
-// that validation did not alter a valid request.
+// that validation did not alter a valid request. called distinguishes "the
+// handler never reached the provider" from "the handler called it with an empty
+// organization ID", which a gotOrgID == "" assertion cannot tell apart.
 type recordingKeysProvider struct {
 	*models.DefaultLocalProvider
 	resp     []byte
 	err      error
+	called   bool
 	gotToken string
 	gotOrgID string
 }
@@ -30,6 +33,7 @@ func newRecordingKeysProvider(resp []byte, err error) *recordingKeysProvider {
 }
 
 func (p *recordingKeysProvider) GetUsersKeys(token, _, _, _, _, _ string, orgID string) ([]byte, error) {
+	p.called = true
 	p.gotToken = token
 	p.gotOrgID = orgID
 	return p.resp, p.err
@@ -74,8 +78,8 @@ func TestGetUsersKeys_InvalidOrganizationIDIsBadRequest(t *testing.T) {
 			if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
 				t.Errorf("code = %q, want %q", decoded.Code, models.ErrInvalidUUIDValueCode)
 			}
-			if provider.gotOrgID != "" {
-				t.Errorf("provider was called with orgID %q, want no call at all", provider.gotOrgID)
+			if provider.called {
+				t.Error("provider was called, want no call at all")
 			}
 		})
 	}
