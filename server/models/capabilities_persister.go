@@ -15,7 +15,7 @@ type UserCapabilities struct {
 
 // ReadCapabilitiesForUser - reads the capabilities for the given userID
 func (u *UserCapabilitiesPersister) ReadCapabilitiesForUser(userID string) (*ProviderProperties, error) {
-	if u.DB == nil {
+	if u == nil || u.DB == nil {
 		return nil, ErrDBConnection
 	}
 
@@ -34,7 +34,7 @@ func (u *UserCapabilitiesPersister) ReadCapabilitiesForUser(userID string) (*Pro
 
 // WriteCapabilitiesForUser persists the capabilities for the user
 func (u *UserCapabilitiesPersister) WriteCapabilitiesForUser(userID string, data *ProviderProperties) error {
-	if u.DB == nil {
+	if u == nil || u.DB == nil {
 		return ErrDBConnection
 	}
 
@@ -57,7 +57,7 @@ func (u *UserCapabilitiesPersister) WriteCapabilitiesForUser(userID string, data
 
 // DeleteCapabilitiesForUser removes the capabilities for the user
 func (u *UserCapabilitiesPersister) DeleteCapabilitiesForUser(userID string) error {
-	if u.DB == nil {
+	if u == nil || u.DB == nil {
 		return ErrDBConnection
 	}
 

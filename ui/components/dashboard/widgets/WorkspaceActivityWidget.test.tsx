@@ -18,10 +18,13 @@ let eventsQueryReturn: {
 let currentOrg: { id?: string } | undefined = { id: 'org-1' };
 
 const activityCardSpy = vi.fn();
+const canSpy = vi.fn(() => true);
+const useGetWorkspacesQuerySpy = vi.fn(() => workspacesQueryReturn);
+const useGetEventsOfWorkspaceQuerySpy = vi.fn(() => eventsQueryReturn);
 
 vi.mock('@/rtk-query/workspace', () => ({
-  useGetWorkspacesQuery: () => workspacesQueryReturn,
-  useGetEventsOfWorkspaceQuery: () => eventsQueryReturn,
+  useGetWorkspacesQuery: (...args: unknown[]) => useGetWorkspacesQuerySpy(...args),
+  useGetEventsOfWorkspaceQuery: (...args: unknown[]) => useGetEventsOfWorkspaceQuerySpy(...args),
 }));
 
 vi.mock('react-redux', () => ({
@@ -30,6 +33,7 @@ vi.mock('react-redux', () => ({
 }));
 
 vi.mock('@sistent/sistent', () => ({
+  useHasPermission: (key: unknown) => canSpy(key),
   WorkspaceActivityCard: (props: {
     selectedWorkspace?: string;
     workspaces: Array<{ id: string; name: string }>;
@@ -74,12 +78,19 @@ vi.mock('./WidgetErrorFallback', () => ({
   },
 }));
 
+import { Keys } from '@meshery/schemas/permissions';
 import WorkspaceActivityWidget from './WorkspaceActivityWidget';
 
 describe('WorkspaceActivityWidget', () => {
   beforeEach(() => {
     activityCardSpy.mockReset();
     widgetErrorFallbackSpy.mockReset();
+    canSpy.mockClear();
+    canSpy.mockReturnValue(true);
+    useGetWorkspacesQuerySpy.mockReset();
+    useGetWorkspacesQuerySpy.mockImplementation(() => workspacesQueryReturn);
+    useGetEventsOfWorkspaceQuerySpy.mockReset();
+    useGetEventsOfWorkspaceQuerySpy.mockImplementation(() => eventsQueryReturn);
     workspacesQueryReturn = {
       data: {
         workspaces: [
@@ -145,5 +156,33 @@ describe('WorkspaceActivityWidget', () => {
       'Workspace Activity',
     );
     expect(screen.queryByTestId('activity-card')).not.toBeInTheDocument();
+  });
+
+  it('authorizes against WorkspaceManagementViewWorkspace and skips workspace and event queries when denied', () => {
+    canSpy.mockReturnValue(false);
+    workspacesQueryReturn = {
+      data: { workspaces: [{ id: 'ws-cached', name: 'Cached WS' }] },
+      isError: true,
+      isLoading: true,
+    };
+    eventsQueryReturn = {
+      data: { data: [{ id: 'evt-cached' }] },
+      isLoading: true,
+      isError: false,
+    };
+
+    render(<WorkspaceActivityWidget />);
+
+    expect(canSpy).toHaveBeenCalledWith(Keys.WorkspaceManagementViewWorkspace);
+    expect(useGetWorkspacesQuerySpy).toHaveBeenCalledWith({ orgId: 'org-1' }, { skip: true });
+    expect(useGetEventsOfWorkspaceQuerySpy).toHaveBeenCalledWith(
+      { workspaceId: '', pagesize: 5 },
+      { skip: true },
+    );
+    const card = screen.getByTestId('activity-card');
+    expect(card).toHaveAttribute('data-selected', '');
+    expect(card).toHaveAttribute('data-activities', '0');
+    expect(card).toHaveAttribute('data-loading', 'false');
+    expect(screen.queryByTestId('widget-error-fallback')).not.toBeInTheDocument();
   });
 });

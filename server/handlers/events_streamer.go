@@ -49,6 +49,14 @@ type statusIDs struct {
 }
 
 func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 	userID := user.ID
 	page, offset, limit,
 		search, order, sortOnCol, status := getPaginationParams(req)
@@ -67,7 +75,12 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	ctx := req.Context()
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
-	e, err := provider.GetEvents(token, filter, page, userID, *h.SystemID)
+	var sysID core.Uuid
+	if h.SystemID != nil {
+		sysID = *h.SystemID
+	}
+
+	e, err := provider.GetEvents(token, filter, page, userID, sysID)
 
 	if err != nil || e == nil {
 		h.log.Error(ErrGetEvents(err))
@@ -109,9 +122,23 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 }
 
 func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 	userID := user.ID
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	eventTypes, err := provider.GetEventTypes(token, userID, *h.SystemID)
+
+	var sysID core.Uuid
+	if h.SystemID != nil {
+		sysID = *h.SystemID
+	}
+
+	eventTypes, err := provider.GetEventTypes(token, userID, sysID)
 
 	if err != nil {
 		retrieveErr := ErrRetrieveEventTypes(err)
@@ -133,6 +160,10 @@ func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefOb
 }
 
 func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if provider == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 
@@ -148,9 +179,14 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 		return
 	}
 
-	_ = json.Unmarshal(body, &reqBody)
+	if err = json.Unmarshal(body, &reqBody); err != nil {
+		_err := models.ErrUnmarshal(err, "event request body")
+		h.log.Error(_err)
+		writeMeshkitError(w, _err, http.StatusBadRequest)
+		return
+	}
 	status, ok := reqBody["status"].(string)
-	if !ok {
+	if !ok || status == "" {
 		// Missing/non-string status field is a client-side payload issue.
 		statusErr := ErrUpdateEvent(fmt.Errorf("unable to parse provided event status %s", status), eventID.String())
 		h.log.Error(statusErr)
@@ -168,6 +204,10 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 }
 
 func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if provider == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 
 	defer func() {
 		_ = req.Body.Close()
@@ -182,7 +222,18 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	_ = json.Unmarshal(body, &reqBody)
+	if err = json.Unmarshal(body, &reqBody); err != nil {
+		_err := models.ErrUnmarshal(err, "bulk update event status")
+		h.log.Error(_err)
+		writeMeshkitError(w, _err, http.StatusBadRequest)
+		return
+	}
+	if len(reqBody.StatusIDs) == 0 || reqBody.Status == "" {
+		_err := models.ErrInvalidEventData()
+		h.log.Error(_err)
+		writeMeshkitError(w, _err, http.StatusBadRequest)
+		return
+	}
 	err = provider.BulkUpdateEventStatus(token, reqBody.StatusIDs, reqBody.Status)
 	if err != nil {
 		_err := ErrBulkUpdateEvent(err)
@@ -194,6 +245,11 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 }
 
 func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if provider == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
+
 	defer func() {
 		_ = req.Body.Close()
 	}()
@@ -207,7 +263,18 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 		return
 	}
 
-	_ = json.Unmarshal(body, &reqBody)
+	if err = json.Unmarshal(body, &reqBody); err != nil {
+		_err := models.ErrUnmarshal(err, "bulk delete event")
+		h.log.Error(_err)
+		writeMeshkitError(w, _err, http.StatusBadRequest)
+		return
+	}
+	if len(reqBody.IDs) == 0 {
+		_err := models.ErrInvalidEventData()
+		h.log.Error(_err)
+		writeMeshkitError(w, _err, http.StatusBadRequest)
+		return
+	}
 	err = provider.BulkDeleteEvent(token, reqBody.IDs)
 	if err != nil {
 		_err := ErrBulkDeleteEvent(err)
@@ -218,6 +285,10 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 }
 
 func (h *Handler) DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if provider == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	err := provider.DeleteEvent(token, eventID)
@@ -298,6 +369,10 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	// Send the headers now: a client doesn't see the response until they
+	// arrive, and no event may come for a long time.
+	w.WriteHeader(http.StatusOK)
+	flusher.Flush()
 
 	notify := req.Context()
 
@@ -314,7 +389,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 		for mClient := range newAdaptersChan {
 			h.log.Debug("received a new mesh client, listening for events")
 			go func(mClient *meshes.MeshClient) {
-				listenForAdapterEvents(req.Context(), mClient, respChan, h.log, p, h.config.EventBroadcaster, *h.SystemID, user.ID.String())
+				listenForAdapterEvents(req.Context(), mClient, respChan, h.log, p, h.config.EventBroadcaster, *h.SystemID, user.ID.String(), h.adapterOperations)
 				_ = mClient.Close()
 			}(mClient)
 		}
@@ -464,7 +539,7 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 		}
 	}
 }
-func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID core.Uuid, userID string) {
+func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID core.Uuid, userID string, owners *adapterOperationOwners) {
 	log.Debug("Received a stream client...")
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 	userUUID := uuid.FromStringOrNil(userID)
@@ -488,6 +563,9 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 			return
 		}
 		// log.Debugf("received an event: %+#v", event)
+		if !forwardAdapterEvent(owners, event, userID) {
+			continue
+		}
 		log.Debug("Received an event.")
 		eventType := event.EventType.String()
 		eventBuilder := events.NewEvent().FromSystem(uuid.FromStringOrNil(event.Component)).
@@ -504,8 +582,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		}
 
 		_event := eventBuilder.Build()
-		_ = p.PersistEvent(*_event, token)
-		ec.Publish(userUUID, _event)
+		persistAndPublishEvent(log, p, token, ec, userUUID, _event)
 
 		data, err := json.Marshal(event)
 		if err != nil {
@@ -529,6 +606,14 @@ func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapter
 }
 
 func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+		return
+	}
 	userID := user.ID
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
@@ -563,28 +648,65 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		return
 	}
 
-	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).
+	var sysID core.Uuid
+	if h.SystemID != nil {
+		sysID = *h.SystemID
+	}
+
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(sysID).
 		WithCategory(evt.Category).WithAction(evt.Action).WithSeverity(events.EventSeverity(evt.Severity)).
 		WithDescription(evt.Description).WithMetadata(evt.Metadata).ActedUpon(evt.ActedUpon)
 
 	event := eventBuilder.Build()
-	err = provider.PersistEvent(*event, token)
+	models.ApplyClientEventFields(event, evt)
+	if verr := event.Validate(); verr != nil {
+		h.log.Error(ErrInvalidClientEvent(verr))
+		writeMeshkitError(w, ErrInvalidClientEvent(verr), http.StatusBadRequest)
+		return
+	}
+	persisted, err := provider.PersistClientEvent(*event, token)
 	if err != nil {
 		h.log.Error(models.ErrPersistEvent(err))
 		writeMeshkitError(w, models.ErrPersistEvent(err), http.StatusInternalServerError)
 		return
 
 	}
-	go h.config.EventBroadcaster.Publish(userID, event)
+	if persisted.Disposition != "" {
+		w.Header().Set(models.EventDispositionHeader, string(persisted.Disposition))
+	}
+	if persisted.Event == nil {
+		// A remote provider recorded nothing new and did not return the
+		// stored event, so there is no event to broadcast or answer with.
+		w.WriteHeader(createEventStatus(persisted.Disposition))
+		return
+	}
+	if h.config != nil && h.config.EventBroadcaster != nil {
+		go h.config.EventBroadcaster.Publish(userID, persisted.Event)
+	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(w).Encode(event)
+	w.WriteHeader(createEventStatus(persisted.Disposition))
+	err = json.NewEncoder(w).Encode(persisted.Event)
 	if err != nil {
-		// Headers + 201 committed and the response body has started
+		// Headers + status committed and the response body has started
 		// streaming via json.Encoder, so we cannot send a fresh JSON
 		// error response here. Log only.
 		h.log.Error(models.ErrMarshal(err, "event response"))
 		return
+	}
+}
+
+// createEventStatus is the createEvent status for what persisting the event
+// did (docs/event-correlation-contract.md in meshery/schemas): 201 only when a
+// new event was recorded, 200 when the create recorded nothing new - an
+// occurrence counted on an open condition, its resolution, or a replay. A
+// remote provider that predates correlation reports no disposition; its create
+// recorded the event, so the answer is 201.
+func createEventStatus(disposition models.EventDisposition) int {
+	switch disposition {
+	case models.EventIncremented, models.EventResolved, models.EventReplayed:
+		return http.StatusOK
+	default:
+		return http.StatusCreated
 	}
 }

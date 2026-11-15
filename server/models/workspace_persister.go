@@ -2,7 +2,6 @@ package models
 
 import (
 	"encoding/json"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -83,7 +82,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 	workspacesFetched := []workspace.Workspace{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 	// Fetch all workspaces if pageSize is "all"
 	if pageSize == "all" {
@@ -92,7 +91,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 		// Convert page and pageSize from string to uint
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
-			return nil, err
+			return nil, ErrPageSize(err)
 		}
 
 		// Fetch workspaces with pagination
@@ -153,20 +152,50 @@ func (wp *WorkspacePersister) SaveWorkspace(workspace *workspace.Workspace) ([]b
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) DeleteWorkspace(workspace *workspace.Workspace) ([]byte, error) {
-	err := wp.DB.Model(&workspace).Find(&workspace).Error
+// DeleteWorkspace deletes a workspace and cascades the removal to its associated
+// environment, design, view, and team mapping tables in a transaction.
+func (wp *WorkspacePersister) DeleteWorkspace(ws *workspace.Workspace) ([]byte, error) {
+	var existing workspace.Workspace
+	err := wp.DB.Where("id = ?", ws.ID).First(&existing).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, ErrResultNotFound(err)
 		}
+		return nil, ErrDBRead(err)
 	}
-	err = wp.DB.Delete(workspace).Error
+
+	err = wp.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Delete(ws).Error; err != nil {
+			return err
+		}
+		if tx.Migrator().HasTable(&workspace.WorkspacesEnvironmentsMapping{}) {
+			if err := tx.Where("workspace_id = ?", ws.ID).Delete(&workspace.WorkspacesEnvironmentsMapping{}).Error; err != nil {
+				return err
+			}
+		}
+		if tx.Migrator().HasTable(&workspace.WorkspacesDesignsMapping{}) {
+			if err := tx.Where("workspace_id = ?", ws.ID).Delete(&workspace.WorkspacesDesignsMapping{}).Error; err != nil {
+				return err
+			}
+		}
+		if tx.Migrator().HasTable(&workspace.WorkspacesViewsMapping{}) {
+			if err := tx.Where("workspace_id = ?", ws.ID).Delete(&workspace.WorkspacesViewsMapping{}).Error; err != nil {
+				return err
+			}
+		}
+		if tx.Migrator().HasTable(&workspace.WorkspacesTeamsMapping{}) {
+			if err := tx.Where("workspace_id = ?", ws.ID).Delete(&workspace.WorkspacesTeamsMapping{}).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	// Marshal the workspace to JSON
-	wsJSON, err := json.Marshal(workspace)
+	wsJSON, err := json.Marshal(ws)
 	if err != nil {
 		return nil, err
 	}
@@ -238,14 +267,27 @@ func (wp *WorkspacePersister) UpdateWorkspace(workspaceID core.Uuid, payload *wo
 func (wp *WorkspacePersister) DeleteWorkspaceByID(workspaceID core.Uuid) ([]byte, error) {
 	ws, err := wp.GetWorkspace(workspaceID)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, ErrResultNotFound(err)
+		}
 		return nil, err
 	}
 
 	return wp.DeleteWorkspace(ws)
 }
 
-// AddEnvironmentToWorkspace adds an environment to a workspace
+// AddEnvironmentToWorkspace adds an environment to a workspace. Adding one the
+// workspace already has returns the existing mapping instead of a second row.
 func (wp *WorkspacePersister) AddEnvironmentToWorkspace(workspaceID, environmentID core.Uuid) ([]byte, error) {
+	var existing workspace.WorkspacesEnvironmentsMapping
+	found := wp.DB.Where("workspace_id = ? AND environment_id = ?", workspaceID, environmentID).Limit(1).Find(&existing)
+	if found.Error != nil {
+		return nil, ErrDBRead(found.Error)
+	}
+	if found.RowsAffected > 0 {
+		return json.Marshal(existing)
+	}
+
 	wsEnvMapping := workspace.WorkspacesEnvironmentsMapping{
 		EnvironmentID: environmentID,
 		WorkspaceID:   workspaceID,
@@ -336,7 +378,7 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, se
 	environmentsFetched := []environment.Environment{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 
 	if pageSize == "all" {
@@ -344,7 +386,7 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, se
 	} else {
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
-			return nil, err
+			return nil, ErrPageSize(err)
 		}
 
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&environmentsFetched)
@@ -365,7 +407,9 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, se
 	return envsJSON, nil
 }
 
-// DeleteEnvironmentFromWorkspace deletes an environment from a workspace
+// DeleteEnvironmentFromWorkspace deletes an environment from a workspace.
+// Every mapping of the pair is deleted, including duplicates stored before
+// assignments were checked.
 func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, environmentID core.Uuid) ([]byte, error) {
 	var wsEnvMapping workspace.WorkspacesEnvironmentsMapping
 
@@ -377,8 +421,9 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 		return nil, ErrDBRead(err)
 	}
 
-	// Delete the environment mapping
-	if err := wp.DB.Delete(&wsEnvMapping).Error; err != nil {
+	// Delete every mapping of the pair: rows added twice before assignments
+	// were checked would otherwise keep the environment assigned.
+	if err := wp.DB.Where("workspace_id = ? AND environment_id = ?", workspaceID, environmentID).Delete(&workspace.WorkspacesEnvironmentsMapping{}).Error; err != nil {
 		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
@@ -390,13 +435,16 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 	return wsJSON, nil
 }
 
+// AddDesignToWorkspace adds a design to a workspace. Adding one the
+// workspace already has returns the existing mapping instead of a second row.
 func (wp *WorkspacePersister) AddDesignToWorkspace(workspaceID, designID core.Uuid) ([]byte, error) {
-
-	// delete any existing mapping for the design in the workspace
-	_, err := wp.DeleteDesignFromWorkspace(workspaceID, designID)
-
-	if err != nil && !strings.Contains(err.Error(), "record not found") {
-		return nil, fmt.Errorf("failed to delete existing design mapping: %w", err)
+	var existing workspace.WorkspacesDesignsMapping
+	found := wp.DB.Where("workspace_id = ? AND design_id = ?", workspaceID, designID).Limit(1).Find(&existing)
+	if found.Error != nil {
+		return nil, ErrDBRead(found.Error)
+	}
+	if found.RowsAffected > 0 {
+		return json.Marshal(existing)
 	}
 
 	wsDesignMapping := workspace.WorkspacesDesignsMapping{
@@ -425,6 +473,9 @@ func (wp *WorkspacePersister) AddDesignToWorkspace(workspaceID, designID core.Uu
 	return wsJSON, nil
 }
 
+// DeleteDesignFromWorkspace deletes a design from a workspace. Every mapping of
+// the pair is deleted, including duplicates stored before assignments were
+// checked.
 func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID core.Uuid) ([]byte, error) {
 	var wsDesignMapping workspace.WorkspacesDesignsMapping
 
@@ -436,8 +487,9 @@ func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID co
 		return nil, ErrDBRead(err)
 	}
 
-	// Delete the design mapping
-	if err := wp.DB.Delete(&wsDesignMapping).Error; err != nil {
+	// Delete every mapping of the pair: rows added twice before assignments
+	// were checked would otherwise keep the design assigned.
+	if err := wp.DB.Where("workspace_id = ? AND design_id = ?", workspaceID, designID).Delete(&workspace.WorkspacesDesignsMapping{}).Error; err != nil {
 		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
@@ -503,7 +555,7 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 	designsFetched := []*MesheryPattern{}
 	pageUint, err := strconv.ParseUint(page, 10, 64)
 	if err != nil {
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 
 	if pageSize == "all" {
@@ -511,7 +563,7 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 	} else {
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 64)
 		if err != nil {
-			return nil, err
+			return nil, ErrPageSize(err)
 		}
 
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&designsFetched)
@@ -567,7 +619,20 @@ func schemaMesheryPatterns(patterns []*MesheryPattern) ([]patternv1beta1.Meshery
 	return decoded, nil
 }
 
+// AddViewToWorkspace adds a view to a workspace. Adding one the workspace
+// already has returns the existing mapping instead of a second row.
 func (wp *WorkspacePersister) AddViewToWorkspace(workspaceID, viewID core.Uuid) ([]byte, error) {
+	// A view the workspace already has keeps its mapping; a second row would
+	// survive DeleteViewFromWorkspace.
+	var existing workspace.WorkspacesViewsMapping
+	found := wp.DB.Where("workspace_id = ? AND view_id = ?", workspaceID, viewID).Limit(1).Find(&existing)
+	if found.Error != nil {
+		return nil, ErrDBRead(found.Error)
+	}
+	if found.RowsAffected > 0 {
+		return json.Marshal(existing)
+	}
+
 	wsViewMapping := workspace.WorkspacesViewsMapping{
 		ViewID:      viewID,
 		WorkspaceID: workspaceID,
@@ -593,6 +658,9 @@ func (wp *WorkspacePersister) AddViewToWorkspace(workspaceID, viewID core.Uuid) 
 	return wsJSON, nil
 }
 
+// DeleteViewFromWorkspace deletes a view from a workspace. Every mapping of
+// the pair is deleted, including duplicates stored before assignments were
+// checked.
 func (wp *WorkspacePersister) DeleteViewFromWorkspace(workspaceID, viewID core.Uuid) ([]byte, error) {
 	var wsViewMapping workspace.WorkspacesViewsMapping
 
@@ -603,7 +671,9 @@ func (wp *WorkspacePersister) DeleteViewFromWorkspace(workspaceID, viewID core.U
 		return nil, ErrDBRead(err)
 	}
 
-	if err := wp.DB.Delete(&wsViewMapping).Error; err != nil {
+	// Delete every mapping of the pair, including duplicates stored before
+	// assignments were checked.
+	if err := wp.DB.Where("workspace_id = ? AND view_id = ?", workspaceID, viewID).Delete(&workspace.WorkspacesViewsMapping{}).Error; err != nil {
 		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
@@ -667,7 +737,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 	viewsFetched := []viewv1beta2.MesheryViewWithLocation{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 
 	if pageSize == "all" {
@@ -675,7 +745,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 	} else {
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
-			return nil, err
+			return nil, ErrPageSize(err)
 		}
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&viewsFetched)
 	}
@@ -695,7 +765,20 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 	return viewsJSON, nil
 }
 
+// AddTeamToWorkspace adds a team to a workspace. Adding one the workspace
+// already has returns the existing mapping instead of a second row.
 func (wp *WorkspacePersister) AddTeamToWorkspace(workspaceID, teamID core.Uuid) ([]byte, error) {
+	// A team the workspace already has keeps its mapping; a second row would
+	// survive DeleteTeamFromWorkspace.
+	var existing workspace.WorkspacesTeamsMapping
+	found := wp.DB.Where("workspace_id = ? AND team_id = ?", workspaceID, teamID).Limit(1).Find(&existing)
+	if found.Error != nil {
+		return nil, ErrDBRead(found.Error)
+	}
+	if found.RowsAffected > 0 {
+		return json.Marshal(existing)
+	}
+
 	wsTeamMapping := workspace.WorkspacesTeamsMapping{
 		TeamID:      teamID,
 		WorkspaceID: workspaceID,
@@ -721,6 +804,9 @@ func (wp *WorkspacePersister) AddTeamToWorkspace(workspaceID, teamID core.Uuid) 
 	return wsJSON, nil
 }
 
+// DeleteTeamFromWorkspace deletes a team from a workspace. Every mapping of
+// the pair is deleted, including duplicates stored before assignments were
+// checked.
 func (wp *WorkspacePersister) DeleteTeamFromWorkspace(workspaceID, teamID core.Uuid) ([]byte, error) {
 	var wsTeamMapping workspace.WorkspacesTeamsMapping
 
@@ -731,7 +817,9 @@ func (wp *WorkspacePersister) DeleteTeamFromWorkspace(workspaceID, teamID core.U
 		return nil, ErrDBRead(err)
 	}
 
-	if err := wp.DB.Delete(&wsTeamMapping).Error; err != nil {
+	// Delete every mapping of the pair, including duplicates stored before
+	// assignments were checked.
+	if err := wp.DB.Where("workspace_id = ? AND team_id = ?", workspaceID, teamID).Delete(&workspace.WorkspacesTeamsMapping{}).Error; err != nil {
 		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
@@ -803,7 +891,7 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, o
 	teamsFetched := []Team{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 
 	if pageSize == "all" {
@@ -811,7 +899,7 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, o
 	} else {
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
-			return nil, err
+			return nil, ErrPageSize(err)
 		}
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&teamsFetched)
 	}

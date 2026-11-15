@@ -1,11 +1,15 @@
 package system
 
 import (
+	"net/http"
+	"os"
 	"slices"
 	"strings"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -65,6 +69,19 @@ func TestViewProviderCmd(t *testing.T) {
 			BreakupFunc()
 		})
 	}
+
+	t.Run("given extra positional arguments when provider view then throw error", func(t *testing.T) {
+		b := utils.SetupMeshkitLoggerTesting(t, false)
+		SystemCmd.SetOut(b)
+		SystemCmd.SetArgs([]string{"provider", "view", "extra-arg"})
+		err := SystemCmd.Execute()
+
+		if assert.Error(t, err) {
+			assert.Contains(t, err.Error(), "too many arguments specified")
+			assert.Contains(t, err.Error(), viewProviderUsageMsg)
+		}
+		BreakupFunc()
+	})
 }
 func TestRunProviderWithNoCmdOrFlag(t *testing.T) {
 	setupSystemOutCmdTest(t)
@@ -74,10 +91,112 @@ func TestRunProviderWithNoCmdOrFlag(t *testing.T) {
 	actualResponse := err.Error()
 
 	expectedResponse := "please specify a flag or subcommand. Use 'mesheryctl system provider --help' to display user guide." + "\n\n"
-	expectedResponse += "See https://docs.meshery.io/reference/references/mesheryctl/system/provider for usage details\n"
+	expectedResponse += "See https://docs.meshery.io/reference/mesheryctl/system/provider for usage details\n"
 
 	if expectedResponse != actualResponse {
 		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 	}
 	BreakupFunc()
+}
+
+// TestSwitchProviderCmdValidatesProviderBeforeConfirmation checks that
+// `system provider switch` rejects a provider the server does not offer before
+// asking to replace the deployment, and still asks for an available one.
+func TestSwitchProviderCmdValidatesProviderBeforeConfirmation(t *testing.T) {
+	setupContextTestEnv(t)
+	t.Cleanup(BreakupFunc)
+
+	httpmock.Activate()
+	t.Cleanup(httpmock.DeactivateAndReset)
+	httpmock.RegisterResponder(http.MethodGet, "http://localhost:9081/api/providers",
+		httpmock.NewStringResponder(http.StatusOK, `{"Local":{"providerName":"Local"}}`))
+
+	tests := []struct {
+		name          string
+		provider      string
+		expectedError string
+	}{
+		{
+			name:          "given unknown provider when provider switch then fail before asking for confirmation",
+			provider:      "bogus",
+			expectedError: "Invalid provider",
+		},
+		{
+			name:          "given available provider when provider switch then ask for confirmation",
+			provider:      "Local",
+			expectedError: "provider switch aborted",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Decline the confirmation prompt, so a prompt shown before the
+			// provider is checked ends the switch as aborted.
+			r, w, err := os.Pipe()
+			if err != nil {
+				t.Fatal(err)
+			}
+			_, _ = w.WriteString("n\n")
+			_ = w.Close()
+			stdin := os.Stdin
+			os.Stdin = r
+			defer func() {
+				os.Stdin = stdin
+				_ = r.Close()
+			}()
+
+			err = switchProviderCmd.RunE(switchProviderCmd, []string{tt.provider})
+			if assert.Error(t, err) {
+				assert.Contains(t, err.Error(), tt.expectedError)
+			}
+		})
+	}
+}
+
+func TestListProviderCmd(t *testing.T) {
+	setupContextTestEnv(t)
+	t.Cleanup(BreakupFunc)
+
+	httpmock.Activate()
+	t.Cleanup(httpmock.DeactivateAndReset)
+	httpmock.RegisterResponder(http.MethodGet, "http://localhost:9081/api/providers",
+		httpmock.NewStringResponder(http.StatusOK, `{"Local":{"providerName":"Local"}}`))
+
+	tests := []struct {
+		name          string
+		args          []string
+		expectedError string
+		expectError   bool
+	}{
+		{
+			name:        "given no arguments when provider list then succeed",
+			args:        []string{"provider", "list"},
+			expectError: false,
+		},
+		{
+			name:          "given extra positional arguments when provider list then throw error",
+			args:          []string{"provider", "list", "extra-arg"},
+			expectError:   true,
+			expectedError: "too many arguments specified",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			b := utils.SetupMeshkitLoggerTesting(t, false)
+			SystemCmd.SetOut(b)
+			SystemCmd.SetArgs(tt.args)
+			err := SystemCmd.Execute()
+
+			if tt.expectError {
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), tt.expectedError)
+					assert.Contains(t, err.Error(), listProviderUsageMsg)
+				}
+			} else {
+				assert.NoError(t, err)
+			}
+			BreakupFunc()
+		})
+	}
 }

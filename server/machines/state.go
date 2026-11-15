@@ -1,6 +1,6 @@
 package machines
 
-// Represents an state in the system/machine
+// StateType represents a state in the system/machine.
 type StateType string
 
 type State struct {
@@ -8,7 +8,7 @@ type State struct {
 	Action Action
 }
 
-// Represents mapping between state name and the state
+// States represents the mapping between a state's name and the state itself.
 type States map[StateType]State
 
 func (s *State) RegisterEvent(eventType EventType, stateType StateType) *State {

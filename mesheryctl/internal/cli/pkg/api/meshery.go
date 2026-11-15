@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Generic function to fetch data from Mesehry server needs to be type of meshery data ApiResponse
+// Fetch sends a GET request to the given URL and unmarshals the JSON response body into T.
 func Fetch[T any](url string) (*T, error) {
 	resp, err := makeRequest(url, http.MethodGet, nil, nil)
 	if err != nil {
@@ -100,7 +100,8 @@ func makeRequest(urlPath string, httpMethod string, body io.Reader, headers map[
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
 		if errors.GetCode(err) == utils.ErrFailRequestCode {
-			endpoint := mctlCfg.Contexts[mctlCfg.CurrentContext].Endpoint
+			currentContext := mctlCfg.Contexts[mctlCfg.CurrentContext]
+			endpoint := currentContext.GetEndpoint()
 			errCtx := fmt.Sprintf("Unable to connect to Meshery server at %s (current context).", endpoint)
 			failedReqErr := utils.ErrFailRequest(fmt.Errorf("%s", errCtx))
 			errRemediation := errors.GetRemedy(failedReqErr)

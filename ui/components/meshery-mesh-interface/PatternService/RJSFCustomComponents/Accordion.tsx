@@ -52,7 +52,7 @@ export default function SimpleAccordion(props) {
             <IconButton
               style={{ padding: '0', ...iconSmall }}
               disabled={props.childProps.disabled || props.childProps.readonly}
-              onClick={props.childProps.onDropIndexClick(props.childProps.index)}
+              onClick={props.childProps.onRemoveItem}
             >
               <DeleteIcon fill="gray" style={iconSmall} />
             </IconButton>

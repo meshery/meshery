@@ -1,0 +1,20 @@
+version: 0.0.6
+name: '[tutorial]-exploring-kubernetes-pod'
+displayName: '[Tutorial] Exploring Kubernetes Pod'
+createdAt: "2026-10-14T11:51:52Z"
+description: This design maps to the "Exploring Kubernetes Pods with Meshery" tutorial and is the end result of the design. It can be used to quickly deploy an nginx pod exposed through a service.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/e77f1818-892e-4a6b-85f3-9e75b2028c96/0.0.6/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Service type is NodePort. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a82ac972-ad69-4efd-87fd-dca4c771b9fd
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,7 +1,6 @@
 package model
 
 import (
-	"context"
 	"database/sql"
 	"strings"
 	"sync"
@@ -20,11 +19,9 @@ var (
 		MeshTypeConsul:             {"consul-system"},
 		MeshTypeTraefikMesh:        {"traefik-system"},
 		MeshTypeKuma:               {"kuma-system"},
-		MeshTypeNginxServiceMesh:   {"nginx-system"},
 		MeshTypeNetworkServiceMesh: {"nsm-system"},
-		MeshTypeAppMesh:            {"appmesh-system"},
 		//Any namespace added or appended above should also be appended on the AllMesh array
-		MeshTypeAllMesh: {"istio-system", "linkerd-system", "consul-system", "traefik-system", "kuma-system", "nginx-system", "nsm-system", "appmesh-system"},
+		MeshTypeAllMesh: {"istio-system", "linkerd-system", "consul-system", "traefik-system", "kuma-system", "nsm-system"},
 	}
 
 	addonPortSelector = map[string]string{
@@ -41,75 +38,6 @@ var (
 		MeshTypeCiliumServiceMesh: {"cilium"},
 	}
 )
-
-// SetOverrideValues detects the currently insalled adapters and sets appropriate
-// overrides so as to not uninstall them. It also sets override values for
-// operator so that it can be enabled or disabled depending on the need
-
-// to be depricated
-func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterface) map[string]interface{} {
-	installedAdapters := make([]string, 0)
-	adapters := adapterTracker.GetAdapters(context.TODO())
-
-	for _, adapter := range adapters {
-		if adapter.Name != "" {
-			installedAdapters = append(installedAdapters, strings.Split(adapter.Location, ":")[0])
-		}
-	}
-
-	overrideValues := map[string]interface{}{
-		"fullnameOverride": "meshery-operator",
-		"meshery": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-istio": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-cilium": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-linkerd": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-consul": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-kuma": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-nsm": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-nginx-sm": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-traefik-mesh": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-app-mesh": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-operator": map[string]interface{}{
-			"enabled": true,
-		},
-	}
-
-	for _, adapter := range installedAdapters {
-		if _, ok := overrideValues[adapter]; ok {
-			overrideValues[adapter] = map[string]interface{}{
-				"enabled": true,
-			}
-		}
-	}
-
-	if delete {
-		overrideValues["meshery-operator"] = map[string]interface{}{
-			"enabled": false,
-		}
-	}
-
-	return overrideValues
-}
 
 // K8sConnectionTracker keeps track of BrokerURLs per kubernetes context
 type K8sConnectionTracker struct {
@@ -128,7 +56,7 @@ func (k *K8sConnectionTracker) Set(id string, url string) {
 	k.contextToBroker[id] = url
 }
 
-// Takes a set of endpoints and discard the current endpoint if its not present in the set
+// ResetEndpoints takes a set of endpoints and discards any tracked endpoint that is not present in the set.
 func (k *K8sConnectionTracker) ResetEndpoints(available map[string]bool) {
 	k.mx.Lock()
 	defer k.mx.Unlock()
@@ -155,7 +83,7 @@ func (k *K8sConnectionTracker) Get(id string) (url string) {
 	return
 }
 
-// Takes the meshkit Logger and logs a comma separated list of currently tracked Broker Endpoints
+// Log takes the meshkit Logger and logs a comma-separated list of currently tracked broker endpoints.
 func (k *K8sConnectionTracker) Log(l logger.Handler) {
 	var e = "Connected broker endpoints : "
 	k.mx.Lock()

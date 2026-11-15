@@ -105,3 +105,101 @@ func TestRegisteredState_HasNotFoundTransition(t *testing.T) {
 		t.Fatalf("expected NotFound transition to go to %q, got %q", machines.NOTFOUND, next)
 	}
 }
+
+func TestAssignInitialCtx_NilContextDoesNotPanic(t *testing.T) {
+	log, err := logger.New("test", logger.Options{})
+	if err != nil {
+		t.Fatalf("failed to build test logger: %v", err)
+	}
+
+	machinectx := &MachineCtx{
+		K8sContext: models.K8sContext{
+			Name:         "unreachable-test-context",
+			Server:       "https://127.0.0.1:1",
+			ConnectionID: uuid.Must(uuid.NewV4()).String(),
+		},
+	}
+
+	// Calling AssignInitialCtx with context.Background() where UserCtxKey and SystemIDKey are absent.
+	// Previously this caused a nil-pointer dereference panic immediately when extracting user.ID or *sysID.
+	result, _, err := AssignInitialCtx(context.Background(), machinectx, log)
+	if err == nil {
+		t.Fatal("expected AssignInitialCtx to return an error for an unreachable K8s context, got nil")
+	}
+	if result != nil {
+		t.Fatalf("expected nil machine context on AssignClientSetToContext error, got %#v", result)
+	}
+}
+
+// TestK8sContextSnapshot_ReturnsConsistentCopy guards the snapshot accessor
+// the handlers use after GetContext: the copy must hold the stored values at
+// snapshot time, and a later refresh (which replaces the whole struct under
+// setupLock) must not change a snapshot taken earlier.
+func TestK8sContextSnapshot_ReturnsConsistentCopy(t *testing.T) {
+	machinectx := &MachineCtx{
+		K8sContext: models.K8sContext{
+			ID:     "ctx-1",
+			Name:   "old",
+			Server: "https://old:6443",
+		},
+	}
+
+	snap := machinectx.K8sContextSnapshot()
+	if snap.ID != "ctx-1" || snap.Name != "old" || snap.Server != "https://old:6443" {
+		t.Fatalf("snapshot = %+v, want the stored context", snap)
+	}
+
+	// A refresh replaces the stored context under setupLock; the earlier
+	// snapshot must keep the old values.
+	machinectx.setupLock.Lock()
+	machinectx.K8sContext = models.K8sContext{
+		ID:     "ctx-2",
+		Name:   "new",
+		Server: "https://new:6443",
+	}
+	machinectx.setupLock.Unlock()
+
+	if snap.Name != "old" || snap.Server != "https://old:6443" {
+		t.Fatalf("earlier snapshot changed after a refresh: %+v", snap)
+	}
+	if got := machinectx.K8sContextSnapshot(); got.ID != "ctx-2" || got.Server != "https://new:6443" {
+		t.Fatalf("snapshot after refresh = %+v, want the new context", got)
+	}
+}
+
+// TestK8sContextSnapshot_ConcurrentRefreshDoesNotRace pins the race the
+// accessor exists to close: a credential refresh replaces K8sContext under
+// setupLock while a handler reads it. Reading through the snapshot must stay
+// race-free under -race; reading the field directly (the old code) does not.
+func TestK8sContextSnapshot_ConcurrentRefreshDoesNotRace(t *testing.T) {
+	machinectx := &MachineCtx{
+		K8sContext: models.K8sContext{
+			ID:     "ctx-1",
+			Server: "https://old:6443",
+		},
+	}
+	newCtx := models.K8sContext{
+		ID:     "ctx-2",
+		Server: "https://new:6443",
+	}
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		for i := 0; i < 500; i++ {
+			machinectx.setupLock.Lock()
+			machinectx.K8sContext = newCtx
+			machinectx.setupLock.Unlock()
+			machinectx.setupLock.Lock()
+			machinectx.K8sContext = models.K8sContext{
+				ID:     "ctx-1",
+				Server: "https://old:6443",
+			}
+			machinectx.setupLock.Unlock()
+		}
+	}()
+	for i := 0; i < 500; i++ {
+		_ = machinectx.K8sContextSnapshot()
+	}
+	<-done
+}

@@ -17,7 +17,7 @@ import (
 
 var TAB = "    "
 
-// representation of what could not be registered
+// RegistrationFailureLog represents what could not be registered.
 type RegistrationFailureLog struct {
 	// {'artifacthub':{'modelname': 'component' : {'jaegar': error}}}
 	// for models, the structure will be like this:
@@ -70,9 +70,11 @@ func (rfl *RegistrationFailureLog) GetNonRegisteredEntitiesCount() map[string]v1
 				entitySummary.Models = int64(modelsCount)
 				continue
 			}
-			entitySummary.Components = int64(len(entityTypeNamespacedData[string(entity.ComponentDefinition)]))
-			entitySummary.Relationships = int64(len(entityTypeNamespacedData[string(entity.RelationshipDefinition)]))
-			entitySummary.Policies = int64(len(entityTypeNamespacedData[string(entity.PolicyDefinition)]))
+			// A registrant's failures are spread across its models, so the
+			// per-model counts must be summed rather than overwritten.
+			entitySummary.Components += int64(len(entityTypeNamespacedData[string(entity.ComponentDefinition)]))
+			entitySummary.Relationships += int64(len(entityTypeNamespacedData[string(entity.RelationshipDefinition)]))
+			entitySummary.Policies += int64(len(entityTypeNamespacedData[string(entity.PolicyDefinition)]))
 		}
 		res[registrant] = entitySummary
 	}
@@ -120,17 +122,16 @@ func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, persister 
 		filePath := viper.GetString("REGISTRY_LOG_FILE")
 		errorEventBuilder := events.NewEvent().FromOwner(mesheryInstanceID).FromSystem(mesheryInstanceID).WithCategory("registration").WithAction("get_summary")
 		errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMsg)
-		errorEvent := errorEventBuilder.Build()
 		errorEventBuilder.WithMetadata(map[string]interface{}{
 			"DownloadLink": filePath,
 			"ViewLink":     filePath,
 			"error":        ErrImportFailure(hostname, failedMsg),
 		})
-		persistErr = persister.PersistSystemEvent(*errorEvent)
+		errorEvent := errorEventBuilder.Build()
 		if userID != "" {
-			userUUID := gofrs.FromStringOrNil(userID)
-			ec.Publish(userUUID, errorEvent)
-
+			persistErr = PersistAndPublishSystemEvent(persister, ec, gofrs.FromStringOrNil(userID), errorEvent)
+		} else {
+			_, persistErr = persister.PersistSystemEvent(*errorEvent)
 		}
 	}
 	return failedMsg, persistErr
@@ -274,7 +275,7 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		})
 		eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
 		successEvent := eventBuilder.Build()
-		if err := persister.PersistSystemEvent(*successEvent); err != nil {
+		if _, err := persister.PersistSystemEvent(*successEvent); err != nil {
 			log.Error(err)
 		}
 
@@ -320,4 +321,6 @@ func (rfl *RegistrationFailureLog) GetEntityRegErrors() []EntityRegError {
 // is not a silent skip.
 type discardSystemEvents struct{}
 
-func (discardSystemEvents) PersistSystemEvent(events.Event) error { return nil }
+func (discardSystemEvents) PersistSystemEvent(event events.Event) (PersistedEvent, error) {
+	return PersistedEvent{Event: &event, Disposition: EventCreated}, nil
+}

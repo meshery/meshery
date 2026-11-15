@@ -13,7 +13,7 @@ aliases:
 ---
 
 A core reason to run Meshery as a central management plane is to operate many
-clusters—often across multiple clouds—from one place. This page covers how
+clusters - often across multiple clouds - from one place. This page covers how
 Meshery connects to clusters, the difference between managed and unmanaged
 connections, how discovery is deployed per cluster, and the cloud-specific
 details that decide whether a fleet "just works."
@@ -30,7 +30,7 @@ the cluster's Kubernetes API:
   connection; each context becomes a managed connection.
 
 On connection, Meshery deploys one [Operator]({{< ref "concepts/architecture/operator/index.md" >}})
-per cluster (unless you use embedded MeshSync—see below), which manages that
+per cluster (unless you use embedded MeshSync - see below), which manages that
 cluster's [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) and
 [Broker]({{< ref "concepts/architecture/broker/index.md" >}}). On disconnect, those components are
 removed. The Operator is also controllable from the UI's on/off switch
@@ -38,7 +38,7 @@ independently of the connection.
 
 ## Managed vs. unmanaged connections
 
-"Managed" and "unmanaged" can mean two different—and both relevant—things in a
+"Managed" and "unmanaged" can mean two different - and both relevant - things in a
 multi-cluster context. Be clear about which you mean:
 
 ### Meshery-managed discovery vs. library (embedded) discovery
@@ -46,7 +46,7 @@ multi-cluster context. Be clear about which you mean:
 | Connection style | What's deployed into the cluster | Trade-offs |
 | :--- | :--- | :--- |
 | **Operator-managed** | Operator + MeshSync + Broker run in the managed cluster. | Full, event-driven discovery with in-cluster components; the Operator self-heals them. Requires permission to deploy into the cluster. |
-| **Embedded (library, default)** | Nothing—MeshSync runs as a library inside Meshery Server for that connection. | No in-cluster footprint; useful where you can't or won't deploy the Operator. Shifts discovery work into the Server process. |
+| **Embedded (library, default)** | Nothing - MeshSync runs as a library inside Meshery Server for that connection. | No in-cluster footprint; useful where you can't or won't deploy the Operator. Shifts discovery work into the Server process. |
 
 The mode for new connections is governed by
 `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` (`operator` or `embedded`), which **defaults
@@ -67,7 +67,7 @@ load-balanced endpoints, covered under [cloud-specific notes](#cloud-specific-gu
 
 You can also disable Operator deployment entirely for a deployment with
 `DISABLE_OPERATOR=true`, which prevents Meshery from automatically deploying the
-Operator into connected clusters—useful when discovery is handled in embedded
+Operator into connected clusters - useful when discovery is handled in embedded
 mode or by policy.
 
 ## Managing kubeconfig and contexts at scale
@@ -125,7 +125,7 @@ that matter:
   reachability checks must account for the form your cloud uses.
 - **Private clusters.** For private API servers or nodes (private EKS/GKE/AKS),
   the central Server needs network reachability to both the API server and the
-  Broker—via VPC/VNet peering, private load balancers, transit gateways, or a
+  Broker - via VPC/VNet peering, private load balancers, transit gateways, or a
   VPN. Public exposure is discouraged (see
   [Security Hardening]({{< ref "installation/production/security-hardening.md" >}})).
 - **Cross-region latency.** A central Server managing distant clusters incurs

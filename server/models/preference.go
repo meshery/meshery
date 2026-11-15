@@ -30,7 +30,7 @@ type LoadTestPreferences struct {
 	LoadGenerator      string `json:"gen,omitempty"`
 }
 
-// Parameters to updates Anonymous stats
+// PreferenceParams holds the parameters used to update anonymous usage stats.
 type PreferenceParams struct {
 	AnonymousUsageStats  bool `json:"anonymousUsageStats"`
 	AnonymousPerfResults bool `json:"anonymousPerfResults"`

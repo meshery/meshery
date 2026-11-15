@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { getAllCustomResourceDefinitionsKinds, ResourceMenuConfig } from '../../resources/config';
 
-export type ResourceKind = { Kind: string; Model?: string; Count?: number };
+export type ResourceKind = { kind: string; model?: string; count?: number };
 
 type ResourceGroupOption = { value: string; label: string };
 
@@ -61,23 +61,23 @@ const filterKindsByGroup = (kinds: ResourceKind[], groupBy: string): ResourceKin
   if (groupBy === 'crds') {
     const crdKinds = new Set(
       getAllCustomResourceDefinitionsKinds(kinds).map(
-        (customResource: ResourceKind) => customResource.Kind,
+        (customResource: ResourceKind) => customResource.kind,
       ),
     );
 
-    return kinds.filter((item) => crdKinds.has(item.Kind));
+    return kinds.filter((item) => crdKinds.has(item.kind));
   }
 
   const categoryKey = groupBy.charAt(0).toUpperCase() + groupBy.slice(1);
   const categoryKinds = ResourceMenuConfig[categoryKey] || [];
 
-  return kinds.filter((item) => categoryKinds.includes(item.Kind));
+  return kinds.filter((item) => categoryKinds.includes(item.kind));
 };
 
 const sortKindsByCount = (kinds: ResourceKind[], direction: SortDirection): ResourceKind[] => {
   return [...kinds].sort((a, b) => {
     return direction === SORT_DIRECTIONS.ASC
-      ? (a.Count ?? 0) - (b.Count ?? 0)
-      : (b.Count ?? 0) - (a.Count ?? 0);
+      ? (a.count ?? 0) - (b.count ?? 0)
+      : (b.count ?? 0) - (a.count ?? 0);
   });
 };

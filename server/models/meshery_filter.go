@@ -56,7 +56,7 @@ type MesheryCatalogFilterRequestBody struct {
 	CatalogData sql.Map   `json:"catalogData,omitempty"`
 }
 
-// MesheryCatalogFilterRequestBody refers to the type of request body
+// MesheryCloneFilterRequestBody refers to the type of request body
 // that CloneMesheryFilterHandler would receive
 type MesheryCloneFilterRequestBody struct {
 	Name string `json:"name,omitempty"`

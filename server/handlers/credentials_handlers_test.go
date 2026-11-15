@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 )
 
@@ -21,6 +22,8 @@ type credentialSpyProvider struct {
 	observedSave   atomic.Pointer[models.Credential]
 	observedUpdate atomic.Pointer[models.Credential]
 	observedDelete atomic.Pointer[uuid.UUID]
+	observedGet    atomic.Pointer[uuid.UUID]
+	observedList   atomic.Pointer[[2]int] // page, pageSize
 }
 
 func newCredentialSpyProvider() *credentialSpyProvider {
@@ -44,6 +47,59 @@ func (m *credentialSpyProvider) UpdateUserCredential(_ *http.Request, c *models.
 func (m *credentialSpyProvider) DeleteUserCredential(_ *http.Request, id uuid.UUID) (*models.Credential, error) {
 	m.observedDelete.Store(&id)
 	return nil, nil
+}
+
+func (m *credentialSpyProvider) GetCredentialByID(_ string, id uuid.UUID) (*models.Credential, int, error) {
+	m.observedGet.Store(&id)
+	return &models.Credential{ID: id}, http.StatusOK, nil
+}
+
+func (m *credentialSpyProvider) GetUserCredentials(_ *http.Request, _ string, page, pageSize int, _, _ string) (*models.CredentialsPage, error) {
+	m.observedList.Store(&[2]int{page, pageSize})
+	return &models.CredentialsPage{Page: page, PageSize: pageSize}, nil
+}
+
+// TestGetUserCredentials_PageSizeQueryParamContract pins the list page size to
+// the canonical camelCase `pageSize` that schemas' generated getUserCredentials
+// sends, while keeping the legacy `page_size` spelling working. The handler
+// read only `page_size`, so the Credentials table's page sizes 20 and 25 were
+// ignored and every page held the default 10.
+func TestGetUserCredentials_PageSizeQueryParamContract(t *testing.T) {
+	for _, tc := range []struct {
+		name         string
+		query        string
+		wantPageSize int
+	}{
+		{"canonical camelCase", "page=1&pageSize=20", 20},
+		{"legacy snake_case", "page=1&page_size=20", 20},
+		{"camelCase wins when both are sent", "page=1&pageSize=20&page_size=25", 20},
+		{"default when neither is sent", "page=1", 10},
+		{"capped at 25", "page=1&pageSize=50", 25},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			p := newCredentialSpyProvider()
+
+			req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials?"+tc.query, nil)
+			rec := httptest.NewRecorder()
+
+			h.GetUserCredentials(rec, req, nil, &models.User{}, p)
+
+			if rec.Code != http.StatusOK {
+				t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
+			}
+			got := p.observedList.Load()
+			if got == nil {
+				t.Fatal("provider GetUserCredentials was not invoked")
+			}
+			if got[0] != 1 {
+				t.Errorf("page = %d, want 1", got[0])
+			}
+			if got[1] != tc.wantPageSize {
+				t.Errorf("pageSize = %d, want %d", got[1], tc.wantPageSize)
+			}
+		})
+	}
 }
 
 // TestDeleteUserCredential_QueryParamContract pins the delete param to the
@@ -114,6 +170,9 @@ func TestDeleteUserCredential_RejectsMissingOrInvalidID(t *testing.T) {
 			if p.observedDelete.Load() != nil {
 				t.Error("provider DeleteUserCredential was invoked for an unusable id")
 			}
+			if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
+				t.Errorf("expected code %q, got %q", models.ErrInvalidUUIDValueCode, decoded.Code)
+			}
 		})
 	}
 }
@@ -183,5 +242,68 @@ func TestUpdateUserCredential_ClientSuppliedUserIdCannotOverride(t *testing.T) {
 	}
 	if updated.UserId == attacker {
 		t.Fatalf("credential.UserId matches attacker-supplied value %v — authorization bypass", attacker)
+	}
+}
+
+// TestGetUserCredentialByID_RejectsMissingOrInvalidID pins that a missing,
+// malformed, or nil credential ID path parameter returns 400 Bad Request
+// with ErrInvalidUUIDValueCode and never reaches the provider.
+func TestGetUserCredentialByID_RejectsMissingOrInvalidID(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		id   string
+	}{
+		{"absent", ""},
+		{"malformed", "not-a-uuid"},
+		{"explicit nil uuid", "00000000-0000-0000-0000-000000000000"},
+		{"too short", "1234"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			p := newCredentialSpyProvider()
+
+			req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials/"+tc.id, nil)
+			if tc.id != "" {
+				req = mux.SetURLVars(req, map[string]string{"credentialID": tc.id})
+			}
+			rec := httptest.NewRecorder()
+
+			h.GetUserCredentialByID(rec, req, nil, &models.User{}, p)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Errorf("expected 400, got %d (body=%q)", rec.Code, rec.Body.String())
+			}
+			if p.observedGet.Load() != nil {
+				t.Error("provider GetCredentialByID was invoked for an unusable id")
+			}
+			if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
+				t.Errorf("expected code %q, got %q", models.ErrInvalidUUIDValueCode, decoded.Code)
+			}
+		})
+	}
+}
+
+// TestGetUserCredentialByID_ValidID verifies that a valid UUID successfully
+// queries the provider and returns 200 OK.
+func TestGetUserCredentialByID_ValidID(t *testing.T) {
+	validID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := newCredentialSpyProvider()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials/"+validID.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"credentialID": validID.String()})
+	rec := httptest.NewRecorder()
+
+	h.GetUserCredentialByID(rec, req, nil, &models.User{}, p)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+	observed := p.observedGet.Load()
+	if observed == nil {
+		t.Fatalf("provider GetCredentialByID was not invoked")
+	}
+	if *observed != validID {
+		t.Fatalf("provider queried with %v, want %v", *observed, validID)
 	}
 }

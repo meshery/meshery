@@ -293,7 +293,7 @@ kubectl -n meshery get broker meshery-broker -o jsonpath='{.status.endpoint}{"\n
 Which type you need follows from where Meshery Server runs relative to the cluster:
 
 - **Meshery Server in the same cluster**: the default `ClusterIP` is correct. The Broker acquires no external address.
-- **Meshery Server outside the cluster** (Docker host, another cluster, Meshery Cloud): the server must reach the Broker's *external* endpoint. Use `NodePort` or `LoadBalancer`, or front the Broker with your own ingress/gateway and pin the advertised address with `spec.service.externalEndpointOverride: <host:port>`.
+- **Meshery Server outside the cluster** (Docker host, a Pod in another cluster, Meshery Cloud): by default Meshery Server reaches a `ClusterIP` Broker through a [managed port-forward]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#managed-port-forward-automatic" >}}) over the Kubernetes API, so no exposure is needed. To connect directly instead (for example with `MESHERY_MANAGED_BROKER_PORTFORWARD=false`), the server must reach the Broker's *external* endpoint: use `NodePort` or `LoadBalancer`, or front the Broker with your own ingress/gateway and pin the advertised address with `spec.service.externalEndpointOverride: <host:port>`.
 
 Service annotations pass load-balancer hints through to your platform - for example, requesting an internal load balancer on AWS, or a MetalLB address pool on bare metal:
 
@@ -398,7 +398,7 @@ Several discovery and delivery controls are designed but not yet shipped. They a
 <!-- The brownfield guide ships in a parallel PR at this agreed permalink. Convert to a
      ref-shortcode link once it exists on master, since an unresolved ref fails the Hugo build. -->
 - [Bringing Existing Infrastructure Under Meshery Management](https://docs.meshery.io/guides/infrastructure-management/managing-existing-infrastructure) - discovering and managing brownfield infrastructure.
-- [Meshery Operator CRDs reference]({{< ref "reference/references/meshery-operator-crds.md" >}}) - full `Broker` and `MeshSync` schema reference.
+- [Meshery Operator CRDs reference]({{< ref "reference/meshery-operator-crds.md" >}}) - full `Broker` and `MeshSync` schema reference.
 - [Troubleshooting Meshery Operator, MeshSync, and Broker]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}}) - failure scenarios and recovery.
 - [`kubectl meshsync snapshot`]({{< ref "extensions/extensions/kubectl-meshsync-snapshot/index.md" >}}) - file-mode cluster snapshots without a Broker.
 

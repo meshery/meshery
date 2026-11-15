@@ -153,7 +153,23 @@ components:
   colorIcon: extensions/models/consul/components/route-ext-proc/icons/color/route-ext-proc-color.svg
   whiteIcon: extensions/models/consul/components/route-ext-proc/icons/white/route-ext-proc-white.svg
   description: 
-components-count: 36
+- name: route-header-match-invert-filter
+  colorIcon: extensions/models/consul/components/route-header-match-invert-filter/icons/color/route-header-match-invert-filter-color.svg
+  whiteIcon: extensions/models/consul/components/route-header-match-invert-filter/icons/white/route-header-match-invert-filter-white.svg
+  description: 
+- name: route-upstream-limits-filter
+  colorIcon: extensions/models/consul/components/route-upstream-limits-filter/icons/color/route-upstream-limits-filter-color.svg
+  whiteIcon: extensions/models/consul/components/route-upstream-limits-filter/icons/white/route-upstream-limits-filter-white.svg
+  description: 
+- name: inference-gateway
+  colorIcon: extensions/models/consul/components/inference-gateway/icons/color/inference-gateway-color.svg
+  whiteIcon: extensions/models/consul/components/inference-gateway/icons/white/inference-gateway-white.svg
+  description: 
+- name: inference-pool-config
+  colorIcon: extensions/models/consul/components/inference-pool-config/icons/color/inference-pool-config-color.svg
+  whiteIcon: extensions/models/consul/components/inference-pool-config/icons/white/inference-pool-config-white.svg
+  description: 
+components-count: 40
 relationships: 
 relationship-count: 0
 featureList: [

@@ -1,0 +1,20 @@
+version: 0.0.31
+name: solar-monitor
+displayName: Solar Monitor
+createdAt: "2026-09-04T14:04:09Z"
+description: A basic solar monitoring architecture that collects solar data, processes measurements, and presents the results through a monitoring dashboard.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/147167e7-c443-4ef4-b51b-4ab2101bd68b/0.0.31/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a conceptual architecture for demonstration in Meshery. The data collector represents the service receiving data from solar sensors. The design does not include physical sensor hardware, persistent storage, or production deployment configuration. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: b9d1f0ef-9cff-4d48-b8b0-33036a4274ab
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

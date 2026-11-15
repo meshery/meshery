@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1beta3",
+  "version": "v1.0.0",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "wallet",
+  "status": "enabled",
+  "evaluationQuery": "",
+  "metadata": {
+    "description": "A child carries configuration that is patched into its parent (the parent holds the child). Classic: WASMFilter (meshery-core) config into an Istio EnvoyFilter configPatch.",
+    "isAnnotation": false
+  },
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "istio-base",
+    "version": "v1.0.0",
+    "displayName": "istio-base",
+    "registrant": { "kind": "github" },
+    "model": { "version": "v1.0.0" }
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "WASMFilter",
+            "model": { "name": "meshery-core", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["configuration", "config"]]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "EnvoyFilter",
+            "model": { "name": "istio-base", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["configuration", "spec", "configPatches", "_", "patch", "value"]]
+            }
+          }
+        ]
+      },
+      "deny": { "from": [], "to": [] }
+    }
+  ]
+}

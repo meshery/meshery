@@ -6,11 +6,15 @@ import { ComponentIcon, DEPLOYMENT_TYPE, Loading, processDesign } from './common
 import {
   designValidatorCommands,
   designValidatorEvents,
+  useDryRunRawResponse,
   useDryRunValidationResults,
   useIsValidatingDryRun,
 } from '../../../machines/validator/designValidator';
-import { ErrorIcon } from '@sistent/sistent';
+import { ErrorIcon, Box, Button, ButtonGroup } from '@sistent/sistent';
 import { useTheme } from '@/theme';
+import { useSelector } from 'react-redux';
+import { selectAllSelectedK8sConnections } from '@/store/slices/globalEnvironmentContext';
+import { CrossClusterCompatibilityAnalysis } from './CrossClusterCompatibilityAnalysis';
 import { FormatStructuredData } from '../../data-formatter';
 import {
   DryRunComponentLabel,
@@ -33,11 +37,13 @@ function breakCapitalizedWords(input) {
  * @returns
  */
 export function getTotalCountOfDeploymentErrors(errors) {
-  if (!errors) {
+  if (!errors || !Array.isArray(errors)) {
     return 0;
   }
 
-  return errors.reduce((preCount, currEle) => preCount + currEle.errors.length, 0);
+  return errors
+    .filter((entry) => Array.isArray(entry?.errors))
+    .reduce((preCount, currEle) => preCount + currEle.errors.length, 0);
 }
 
 function getFieldPathString(fieldPath) {
@@ -51,26 +57,29 @@ function getFieldPathString(fieldPath) {
 // errors - [{type, fieldPath, message}]
 // 'component' refers to MeshModel Component
 // 'componentName' is assumed to be unique
+// Like ValidateDesign, each error deep-links into the designer through
+// TAP_ON_ERROR when canNavigateToErrors is set; otherwise it is plain text.
 const ExpandableComponentErrors = ({
   errors,
   component,
   componentName,
   validationMachine,
-  currentComponentName, // if dry run is initiated by clicking on node's error badge
+  canNavigateToErrors,
+  // the component the dry run was opened for, from its error badge: Kanvas passes
+  // currentComponentId, older callers currentComponentName
+  currentComponentId,
+  currentComponentName,
 }) => {
   const componentIcon = component ? `/${component?.styles?.svgWhite}` : null;
 
-  const isCurrentComponent = (name) => name == currentComponentName;
-  const [isComponentAccordionOpen, setIsComponentAccordionOpen] = useState(
-    isCurrentComponent(componentName),
-  );
+  const isCurrentComponent =
+    (Boolean(currentComponentId) && component?.id === currentComponentId) ||
+    (Boolean(currentComponentName) && componentName === currentComponentName);
+  const [isComponentAccordionOpen, setIsComponentAccordionOpen] = useState(isCurrentComponent);
   const currentComponentErrorRef = useRef(null);
+  const isNavigable = Boolean(canNavigateToErrors && validationMachine);
 
-  const onErrorTap = (error) => {
-    if (!validationMachine) {
-      return;
-    }
-
+  const navigateToError = (error) => {
     validationMachine.send(
       designValidatorEvents.tapOnError({
         error,
@@ -91,10 +100,26 @@ const ExpandableComponentErrors = ({
   if (!componentName) return null;
 
   if (!errors.length) return null;
+
+  const navigationProps = (error) =>
+    isNavigable
+      ? {
+          role: 'button',
+          tabIndex: 0,
+          onClick: () => navigateToError(error),
+          onKeyDown: (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              navigateToError(error);
+            }
+          },
+        }
+      : {};
+
   return (
     <DryRunComponentStyled
       aria-labelledby="nested-list-subheader"
-      ref={isCurrentComponent(componentName) ? currentComponentErrorRef : null}
+      ref={isCurrentComponent ? currentComponentErrorRef : null}
     >
       <DryRunComponentLabel button onClick={() => setIsComponentAccordionOpen((p) => !p)}>
         {componentIcon && <ComponentIcon iconSrc={componentIcon} />}
@@ -114,8 +139,9 @@ const ExpandableComponentErrors = ({
               <DryRunErrorContainer
                 disablePadding
                 key={index}
-                style={{ cursor: 'pointer' }}
-                onClick={() => onErrorTap(err)}
+                clickable={isNavigable}
+                data-testid="dry-run-error"
+                {...navigationProps(err)}
               >
                 <ListItemIcon>
                   {' '}
@@ -171,17 +197,22 @@ export const FormatDryRunResponse = ({
   configurableComponentsCount,
   annotationComponentsCount,
   validationMachine,
-  currentComponentName,
+  canNavigateToErrors = false,
+  currentComponentId = undefined,
+  currentComponentName = undefined,
 }) => {
-  const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);
+  const actualErrors = Array.isArray(dryRunErrors)
+    ? dryRunErrors.filter((error) => error?.type !== 'CompatibilityMatrix')
+    : [];
+  const totalDryRunErrors = getTotalCountOfDeploymentErrors(actualErrors);
   const theme = useTheme();
   const canShowComponentCount =
     annotationComponentsCount !== undefined && annotationComponentsCount !== undefined;
 
-  const dryRunRequestErrors = dryRunErrors
+  const dryRunRequestErrors = actualErrors
     .filter((error) => error.type === 'RequestError')
     .flatMap((error) => error?.errors || []);
-  const componentErrors = dryRunErrors.filter((error) => error.type === 'ComponentError');
+  const componentErrors = actualErrors.filter((error) => error.type === 'ComponentError');
 
   return (
     <DryRunRootListStyled
@@ -221,6 +252,8 @@ export const FormatDryRunResponse = ({
             component={err.component}
             componentName={err.compName}
             validationMachine={validationMachine}
+            canNavigateToErrors={canNavigateToErrors}
+            currentComponentId={currentComponentId}
             currentComponentName={currentComponentName}
             errors={err.errors}
           />
@@ -243,6 +276,8 @@ const DryRunComponent = (props) => {
   const {
     design,
     validationMachine,
+    canNavigateToErrors,
+    currentComponentId,
     currentComponentName,
     selectedK8sContexts,
     deployment_type,
@@ -250,10 +285,14 @@ const DryRunComponent = (props) => {
   } = props;
 
   const dryRunErrors = useDryRunValidationResults(validationMachine);
+  const rawDryRunResponse = useDryRunRawResponse(validationMachine);
   const isLoading = useIsValidatingDryRun(validationMachine);
   const { configurableComponents, annotationComponents } = processDesign(design);
+  const selectedK8sConnections = useSelector(selectAllSelectedK8sConnections);
 
-  useEffect(() => {
+  const [viewMode, setViewMode] = useState<'matrix' | 'list'>('matrix');
+
+  const handleReRun = () => {
     const dryRunCommand =
       deployment_type == DEPLOYMENT_TYPE.DEPLOY
         ? designValidatorCommands.dryRunDesignDeployment
@@ -265,6 +304,10 @@ const DryRunComponent = (props) => {
         includeDependencies,
       }),
     );
+  };
+
+  useEffect(() => {
+    handleReRun();
   }, [includeDependencies]);
 
   if (isLoading) {
@@ -286,21 +329,61 @@ const DryRunComponent = (props) => {
   }
 
   return (
-    <FormatDryRunResponse
-      dryRunErrors={dryRunErrors}
-      annotationComponentsCount={annotationComponents.length}
-      configurableComponentsCount={configurableComponents.length}
-      validationMachine={validationMachine}
-      currentComponentName={currentComponentName}
-    />
+    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 1 }}>
+      {rawDryRunResponse && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+          <ButtonGroup size="small" variant="outlined">
+            <Button
+              variant={viewMode === 'matrix' ? 'contained' : 'outlined'}
+              onClick={() => setViewMode('matrix')}
+              data-testid="toggle-view-matrix"
+            >
+              Compatibility Matrix
+            </Button>
+            <Button
+              variant={viewMode === 'list' ? 'contained' : 'outlined'}
+              onClick={() => setViewMode('list')}
+              data-testid="toggle-view-list"
+            >
+              List View
+            </Button>
+          </ButtonGroup>
+        </Box>
+      )}
+
+      {viewMode === 'matrix' && rawDryRunResponse ? (
+        <CrossClusterCompatibilityAnalysis
+          dryRunResponse={rawDryRunResponse}
+          design={design}
+          selectedK8sConnections={selectedK8sConnections}
+          selectedK8sContexts={selectedK8sContexts}
+          onReRunAnalysis={handleReRun}
+          isReRunning={isLoading}
+        />
+      ) : (
+        <FormatDryRunResponse
+          dryRunErrors={dryRunErrors}
+          annotationComponentsCount={annotationComponents.length}
+          configurableComponentsCount={configurableComponents.length}
+          validationMachine={validationMachine}
+          canNavigateToErrors={canNavigateToErrors}
+          currentComponentId={currentComponentId}
+          currentComponentName={currentComponentName}
+        />
+      )}
+    </Box>
   );
 };
 
+// canNavigateToErrors: see ValidateDesign. True by default for Kanvas Designer;
+// Meshery UI pages, which have no designer to navigate into, pass false.
 export const DryRunDesign = ({
   handleClose,
-  currentComponentName,
+  currentComponentId = undefined,
+  currentComponentName = undefined,
   design,
   validationMachine,
+  canNavigateToErrors = true,
   selectedK8sContexts,
   deployment_type,
   includeDependencies,
@@ -314,9 +397,11 @@ export const DryRunDesign = ({
       design={design}
       includeDependencies={includeDependencies}
       validationMachine={validationMachine}
+      canNavigateToErrors={canNavigateToErrors}
       deployment_type={deployment_type}
       handleClose={handleClose}
       selectedK8sContexts={selectedK8sContexts}
+      currentComponentId={currentComponentId}
       currentComponentName={currentComponentName}
     />
   );

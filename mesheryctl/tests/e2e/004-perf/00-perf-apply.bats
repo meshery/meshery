@@ -5,7 +5,7 @@ setup() {
 	_load_bats_libraries
 }
 
-@test "mesheryctl perf apply fails when new profile and URL is missing" {
+@test "[cut=Performance][tg=Performance Apply] mesheryctl perf apply fails when new profile and URL is missing" {
     run $MESHERYCTL_BIN perf apply dummy-test-profile -y
 
     assert_failure
@@ -14,7 +14,7 @@ setup() {
 }
 
 
-@test "mesheryctl perf apply runs successfully with test-profile and valid URL" {
+@test "[cut=Performance][tg=Performance Apply] mesheryctl perf apply runs successfully with test-profile and valid URL" {
     run $MESHERYCTL_BIN perf apply test-profile --url "https://google.com" -y
 
     assert_success
@@ -22,7 +22,7 @@ setup() {
     assert_line --partial "Test Completed"
 }
 
-@test "mesheryctl perf apply with URL and mesh istio runs successfully" {
+@test "[cut=Performance][tg=Performance Apply] mesheryctl perf apply with URL and mesh istio runs successfully" {
     run $MESHERYCTL_BIN perf apply test-profile --url https://192.168.1.15/productpage --mesh istio
 
     assert_success

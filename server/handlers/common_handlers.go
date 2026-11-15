@@ -30,11 +30,12 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, user *
 		return
 	}
 	// Clear all Meshery cookies to ensure complete logout
-	for _, cookieName := range []string{
-		h.config.ProviderCookieName,
-		models.TokenCookieName,
-		models.ProviderSessionCookieName,
-	} {
+	var cookieNames []string
+	if h.config != nil && h.config.ProviderCookieName != "" {
+		cookieNames = append(cookieNames, h.config.ProviderCookieName)
+	}
+	cookieNames = append(cookieNames, models.TokenCookieName, models.ProviderSessionCookieName)
+	for _, cookieName := range cookieNames {
 		http.SetCookie(w, &http.Cookie{
 			Name:     cookieName,
 			Value:    "",
@@ -43,14 +44,23 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, user *
 			MaxAge:   -1,
 		})
 	}
-	_ = p.DeleteCapabilitiesForUser(user.ID.String())
-	err := p.Logout(w, req)
-	if err != nil {
-		h.log.Error(models.ErrLogout(err))
-		p.HandleUnAuthenticated(w, req)
-		return
+
+	if p != nil {
+		if user != nil {
+			_ = p.DeleteCapabilitiesForUser(user.ID.String())
+		}
+		err := p.Logout(w, req)
+		if err != nil {
+			if h.log != nil {
+				h.log.Error(models.ErrLogout(err))
+			}
+			p.HandleUnAuthenticated(w, req)
+			return
+		}
+		if h.log != nil {
+			h.log.Info(fmt.Sprintf("logged out from %v provider", p.Name()))
+		}
 	}
-	h.log.Info(fmt.Sprintf("logged out from %v provider", p.Name()))
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
@@ -118,7 +128,7 @@ func (h *Handler) serveFile(responseWriter http.ResponseWriter, request *http.Re
 	}
 }
 
-// Deep-link and redirect support to land user on their originally requested page post authentication instead of dropping user on the root (home) page.
+// GetRefURL provides deep-link and redirect support to land the user on their originally requested page post-authentication instead of dropping them on the root (home) page.
 func GetRefURL(req *http.Request) string {
 	return core.EncodeRefUrl(*req.URL)
 }
