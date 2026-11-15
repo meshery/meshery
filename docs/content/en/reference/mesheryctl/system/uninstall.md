@@ -26,7 +26,7 @@ uninstallation and forcefully deletes the remaining Meshery resources; use it
 when a normal uninstall fails. A normal uninstall stops at the first failure, so
 a failed run leaves the cluster untouched from that point on. --force instead
 attempts every cleanup stage and reports all the failures it hit.
-
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -34,7 +34,7 @@ mesheryctl system uninstall [flags]
 
 </div>
 </div>
-</pre>
+</pre> 
 
 ## Examples
 
@@ -46,7 +46,7 @@ mesheryctl system uninstall
 
 </div>
 </div>
-</pre>
+</pre> 
 
 (optional) keep the Meshery namespace during uninstallation
 <pre class='codeblock-pre'>
@@ -56,7 +56,7 @@ mesheryctl system uninstall --keep-namespace
 
 </div>
 </div>
-</pre>
+</pre> 
 
 Uninstall Meshery forcefully on Kubernetes (use it when system uninstall doesn't work)
 <pre class='codeblock-pre'>
@@ -66,7 +66,7 @@ mesheryctl system uninstall --force
 
 </div>
 </div>
-</pre>
+</pre> 
 
 ## Options
 
@@ -90,34 +90,6 @@ mesheryctl system uninstall --force
 
 </div>
 </pre>
-
-## What uninstall removes
-
-For a Kubernetes installation, uninstall deletes the Broker and MeshSync custom
-resource instances, uninstalls the Meshery Helm release, deletes the `brokers.meshery.io`
-and `meshsyncs.meshery.io` custom resource definitions, and finally deletes the
-`meshery` namespace and waits for it to disappear. The custom resources go first
-because they cannot be found once the Helm release is gone.
-
-## Docker cleanup limitations
-
-A Docker installation is removed with Docker Compose, so uninstall can only
-remove containers that the compose file in `~/.meshery/meshery.yaml` declares:
-
-- Containers whose service is no longer in that compose file, or that were started
-  with a different project name, are left running.
-- Named volumes are kept, so the Meshery database and other persistent state
-  survive the uninstall.
-- Downloaded images and the contents of `~/.meshery` (the compose file, the
-  config file and the seeded content) are kept as well.
-
-Remove what you no longer need with `docker volume rm <volume>`,
-`docker image rm <image>` and, for the local state, `rm -rf ~/.meshery`. If no
-compose file is present, uninstall reports that Meshery is not installed and
-leaves Docker untouched: it does not create a compose file to look for, and no
-container, volume or image is removed.
-
-{{% mesheryctl/system-uninstall-failure %}}
 
 ## See Also
 
