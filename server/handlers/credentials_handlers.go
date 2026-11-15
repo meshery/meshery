@@ -68,8 +68,9 @@ func (h *Handler) GetUserCredentialByID(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	// Enforce user ownership: an authenticated user cannot read another user's credential.
-	if user != nil && user.ID != uuid.Nil && credential.UserId != uuid.Nil && credential.UserId != user.ID {
+	// Enforce user ownership: fail closed. Only the explicit owner can read a credential;
+	// unowned credentials (credential.UserId == uuid.Nil) or requests without a resolved caller are rejected with 404.
+	if user == nil || user.ID == uuid.Nil || credential.UserId == uuid.Nil || credential.UserId != user.ID {
 		notOwned := models.ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
 		writeMeshkitError(w, notOwned, http.StatusNotFound)
 		return

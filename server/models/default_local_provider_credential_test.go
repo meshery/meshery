@@ -98,7 +98,10 @@ func TestLocalDeleteUserCredential(t *testing.T) {
 		provider := newTestProviderWithCredentialDB(t)
 		cred := saveTestCredential(t, provider, userID, "c")
 
-		if _, err := provider.DeleteUserCredential(nil, cred.ID); err != nil {
+		req := httptest.NewRequest(http.MethodDelete, "/api/integrations/credentials", nil)
+		req = req.WithContext(context.WithValue(req.Context(), UserCtxKey, &User{ID: userID}))
+
+		if _, err := provider.DeleteUserCredential(req, cred.ID); err != nil {
 			t.Fatalf("delete: %v", err)
 		}
 		if !credentialDeletedAt(t, provider, cred.ID).Valid {
@@ -109,7 +112,10 @@ func TestLocalDeleteUserCredential(t *testing.T) {
 	t.Run("unknown id is not found", func(t *testing.T) {
 		provider := newTestProviderWithCredentialDB(t)
 
-		_, err := provider.DeleteUserCredential(nil, uuid.Must(uuid.NewV4()))
+		req := httptest.NewRequest(http.MethodDelete, "/api/integrations/credentials", nil)
+		req = req.WithContext(context.WithValue(req.Context(), UserCtxKey, &User{ID: userID}))
+
+		_, err := provider.DeleteUserCredential(req, uuid.Must(uuid.NewV4()))
 		if errors.GetCode(err) != ErrResultNotFoundCode {
 			t.Fatalf("err = %v, want code %s", err, ErrResultNotFoundCode)
 		}
@@ -132,16 +138,50 @@ func TestLocalDeleteUserCredential(t *testing.T) {
 		}
 	})
 
+	t.Run("fails closed when request or user is missing", func(t *testing.T) {
+		provider := newTestProviderWithCredentialDB(t)
+		cred := saveTestCredential(t, provider, userID, "c")
+
+		// Nil request
+		if _, err := provider.DeleteUserCredential(nil, cred.ID); errors.GetCode(err) != ErrResultNotFoundCode {
+			t.Fatalf("err = %v, want code %s on nil req", err, ErrResultNotFoundCode)
+		}
+		// Request without UserCtxKey
+		emptyReq := httptest.NewRequest(http.MethodDelete, "/api/integrations/credentials", nil)
+		if _, err := provider.DeleteUserCredential(emptyReq, cred.ID); errors.GetCode(err) != ErrResultNotFoundCode {
+			t.Fatalf("err = %v, want code %s on unauthenticated req", err, ErrResultNotFoundCode)
+		}
+		// Request with nil user
+		nilUserReq := httptest.NewRequest(http.MethodDelete, "/api/integrations/credentials", nil)
+		nilUserReq = nilUserReq.WithContext(context.WithValue(nilUserReq.Context(), UserCtxKey, (*User)(nil)))
+		if _, err := provider.DeleteUserCredential(nilUserReq, cred.ID); errors.GetCode(err) != ErrResultNotFoundCode {
+			t.Fatalf("err = %v, want code %s on nil user", err, ErrResultNotFoundCode)
+		}
+		// Request with uuid.Nil user
+		zeroUserReq := httptest.NewRequest(http.MethodDelete, "/api/integrations/credentials", nil)
+		zeroUserReq = zeroUserReq.WithContext(context.WithValue(zeroUserReq.Context(), UserCtxKey, &User{ID: uuid.Nil}))
+		if _, err := provider.DeleteUserCredential(zeroUserReq, cred.ID); errors.GetCode(err) != ErrResultNotFoundCode {
+			t.Fatalf("err = %v, want code %s on zero user ID", err, ErrResultNotFoundCode)
+		}
+		// Live credential was not deleted
+		if credentialDeletedAt(t, provider, cred.ID).Valid {
+			t.Fatal("deleted_at was unexpectedly set for unauthenticated delete attempt")
+		}
+	})
+
 	t.Run("second delete is not found and keeps the first deleted_at", func(t *testing.T) {
 		provider := newTestProviderWithCredentialDB(t)
 		cred := saveTestCredential(t, provider, userID, "c")
-		if _, err := provider.DeleteUserCredential(nil, cred.ID); err != nil {
+		req := httptest.NewRequest(http.MethodDelete, "/api/integrations/credentials", nil)
+		req = req.WithContext(context.WithValue(req.Context(), UserCtxKey, &User{ID: userID}))
+
+		if _, err := provider.DeleteUserCredential(req, cred.ID); err != nil {
 			t.Fatalf("first delete: %v", err)
 		}
 		first := credentialDeletedAt(t, provider, cred.ID)
 
 		time.Sleep(10 * time.Millisecond)
-		_, err := provider.DeleteUserCredential(nil, cred.ID)
+		_, err := provider.DeleteUserCredential(req, cred.ID)
 		if errors.GetCode(err) != ErrResultNotFoundCode {
 			t.Fatalf("err = %v, want code %s", err, ErrResultNotFoundCode)
 		}

@@ -1791,16 +1791,20 @@ func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential 
 }
 
 func (l *DefaultLocalProvider) DeleteUserCredential(req *http.Request, credentialID core.Uuid) (*Credential, error) {
-	delCredential := &Credential{}
-	query := l.GetGenericPersister().Model(&Credential{}).Where("id = ? AND deleted_at is NULL", credentialID)
-	if req != nil {
-		if user, ok := req.Context().Value(UserCtxKey).(*User); ok && user != nil && user.ID != uuid.Nil {
-			query = query.Where("user_id = ?", user.ID)
-		}
+	// Fail-closed: require an authenticated user in the request context. An unscoped delete is never permitted.
+	if req == nil {
+		return nil, ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
 	}
-	// Only a live credential can be deleted. Matching deleted rows too would
-	// report success for an id that is already gone and move its deleted_at.
-	result := query.Update("deleted_at", time.Now())
+	user, ok := req.Context().Value(UserCtxKey).(*User)
+	if !ok || user == nil || user.ID == uuid.Nil {
+		return nil, ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
+	}
+
+	delCredential := &Credential{}
+	// Only a live credential matching both credentialID and the caller's user_id can be deleted.
+	result := l.GetGenericPersister().Model(&Credential{}).
+		Where("id = ? AND user_id = ? AND deleted_at is NULL", credentialID, user.ID).
+		Update("deleted_at", time.Now())
 	if result.Error != nil {
 		return nil, result.Error
 	}

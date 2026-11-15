@@ -294,17 +294,22 @@ func TestGetUserCredentialByID_RejectsMissingOrInvalidID(t *testing.T) {
 }
 
 // TestGetUserCredentialByID_ValidID verifies that a valid UUID successfully
-// queries the provider and returns 200 OK.
+// queries the provider and returns 200 OK for the owning user.
 func TestGetUserCredentialByID_ValidID(t *testing.T) {
 	validID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
+	authUser := &models.User{ID: uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))}
 	h := newTestHandler(t, map[string]models.Provider{}, "")
 	p := newCredentialSpyProvider()
+	p.stubbedCredential = &models.Credential{
+		ID:     validID,
+		UserId: authUser.ID,
+	}
 
 	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials/"+validID.String(), nil)
 	req = mux.SetURLVars(req, map[string]string{"credentialID": validID.String()})
 	rec := httptest.NewRecorder()
 
-	h.GetUserCredentialByID(rec, req, nil, &models.User{}, p)
+	h.GetUserCredentialByID(rec, req, nil, authUser, p)
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
@@ -315,6 +320,53 @@ func TestGetUserCredentialByID_ValidID(t *testing.T) {
 	}
 	if *observed != validID {
 		t.Fatalf("provider queried with %v, want %v", *observed, validID)
+	}
+}
+
+// TestGetUserCredentialByID_UnownedCredentialReturns404 verifies that requesting
+// a legacy unowned credential (UserId == uuid.Nil) returns 404 Not Found (fail-closed).
+func TestGetUserCredentialByID_UnownedCredentialReturns404(t *testing.T) {
+	credID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
+	authUser := &models.User{ID: uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))}
+
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := newCredentialSpyProvider()
+	p.stubbedCredential = &models.Credential{
+		ID:     credID,
+		UserId: uuid.Nil,
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials/"+credID.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"credentialID": credID.String()})
+	rec := httptest.NewRecorder()
+
+	h.GetUserCredentialByID(rec, req, nil, authUser, p)
+
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("expected 404, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+}
+
+// TestGetUserCredentialByID_NilUserReturns404 verifies that calling GetUserCredentialByID
+// when the caller is unauthenticated/unresolved (user is nil) returns 404 Not Found (fail-closed).
+func TestGetUserCredentialByID_NilUserReturns404(t *testing.T) {
+	credID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
+
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := newCredentialSpyProvider()
+	p.stubbedCredential = &models.Credential{
+		ID:     credID,
+		UserId: uuid.Must(uuid.NewV4()),
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials/"+credID.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"credentialID": credID.String()})
+	rec := httptest.NewRecorder()
+
+	h.GetUserCredentialByID(rec, req, nil, nil, p)
+
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("expected 404, got %d (body=%q)", rec.Code, rec.Body.String())
 	}
 }
 
