@@ -340,6 +340,59 @@ func TestExportDesignFileExtension(t *testing.T) {
 	}
 }
 
+// TestExportDesignSanitizesName checks that the design name is made safe
+// before it is used in the file path, so a name with path separators or ".."
+// cannot write outside --output or into a new subdirectory.
+func TestExportDesignSanitizesName(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	utils.TokenFlag = utils.GetToken(t)
+
+	const design = "a12b3c4d-5e6f-4890-abcd-ef1234567890"
+	tests := []struct {
+		name, designName, wantFile string
+	}{
+		{"parent directory reference", "../escape", ".._escape_ef1234567890.yaml"},
+		{"path separator and space", "team/web app", "team_web_app_ef1234567890.yaml"},
+		{"windows separator", `team\web`, "team_web_ef1234567890.yaml"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			patternBytes, err := json.Marshal(models.MesheryPattern{Name: tt.designName})
+			if err != nil {
+				t.Fatal(err)
+			}
+			httpmock.RegisterResponder("GET", fmt.Sprintf("%s/api/pattern/%s", testContext.BaseURL, design),
+				httpmock.NewBytesResponder(http.StatusOK, patternBytes))
+			httpmock.RegisterResponder("GET", fmt.Sprintf("%s/api/pattern/download/%s", testContext.BaseURL, design),
+				httpmock.NewStringResponder(http.StatusOK, "content"))
+
+			root := t.TempDir()
+			prevOutputDir := outputDir
+			outputDir = filepath.Join(root, "out")
+			defer func() { outputDir = prevOutputDir }()
+
+			if err := exportDesign(testContext.BaseURL, design, "current"); err != nil {
+				t.Fatalf("exportDesign: %v", err)
+			}
+
+			var written []string
+			_ = filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
+				if err == nil && !d.IsDir() {
+					rel, _ := filepath.Rel(root, path)
+					written = append(written, rel)
+				}
+				return nil
+			})
+			want := filepath.Join("out", tt.wantFile)
+			if len(written) != 1 || written[0] != want {
+				t.Fatalf("expected only %s to be written, got %v", want, written)
+			}
+		})
+	}
+}
+
 // TestExportCmdRejectsUnknownType checks that an unknown --type fails before
 // any request is made, instead of silently exporting the current design.
 func TestExportCmdRejectsUnknownType(t *testing.T) {

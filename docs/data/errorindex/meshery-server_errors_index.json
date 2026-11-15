@@ -2596,7 +2596,7 @@
       },
       "numericCode": "1160",
       "severity": "alert",
-      "shortDescription": "Unable to create rest config from kube congif"
+      "shortDescription": "Unable to create rest config from kube config"
     },
     {
       "code": "meshery-server-1161",
@@ -3220,7 +3220,7 @@
       },
       "numericCode": "1198",
       "severity": "alert",
-      "shortDescription": "failed to find the resource. invalid resource type. resource doens't exists",
+      "shortDescription": "failed to find the resource. invalid resource type. resource doesn't exist",
       "longDescription": "invalid kubernetes resource type or couldn't find the specified resource"
     },
     {
@@ -3382,7 +3382,7 @@
         "The machine context has become invalid."
       ],
       "suggestedRemediation": [
-        "Retry the opereation or try archiving and reinitializing the connection"
+        "Retry the operation or try archiving and reinitializing the connection"
       ]
     },
     {
@@ -3450,7 +3450,7 @@
       },
       "numericCode": "1222",
       "severity": "alert",
-      "shortDescription": "Unable to prase the Page Numer"
+      "shortDescription": "Unable to parse the Page Number"
     },
     {
       "code": "meshery-server-1223",
@@ -3473,7 +3473,7 @@
       },
       "numericCode": "1224",
       "severity": "alert",
-      "shortDescription": "Invalid peformance profile ID"
+      "shortDescription": "Invalid performance profile ID"
     },
     {
       "code": "meshery-server-1225",
@@ -4056,13 +4056,13 @@
       "numericCode": "1273",
       "severity": "alert",
       "shortDescription": "Capability is not supported by your Provider",
-      "longDescription": "You dont have access to the capability",
+      "longDescription": "You don't have access to the capability",
       "probableCause": [
-        "Not logged in to the vaild remote Provider"
+        "Not logged in to the valid remote Provider"
       ],
       "suggestedRemediation": [
-        "Connect to the vaild remote Provider",
-        "Ask the Provider Adim for access"
+        "Connect to the valid remote Provider",
+        "Ask the Provider Admin for access"
       ]
     },
     {
@@ -5525,7 +5525,7 @@
       },
       "numericCode": "1370",
       "severity": "alert",
-      "shortDescription": "Error in meshsync data hadler",
+      "shortDescription": "Error in meshsync data handler",
       "probableCause": [
         "not deployed operator",
         "issue with connection to broker"
