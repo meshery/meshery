@@ -35,9 +35,13 @@ setup() {
     assert_output --partial "Meshery is not running"
 
     # ... and the namespace the command deletes is actually gone. The output
-    # assertion matters: a bare assert_failure would also pass if kubectl were
-    # missing from PATH or failed for an unrelated reason.
+    # assertions matter: a bare assert_failure would also pass if kubectl were
+    # missing from PATH (exit 127) or failed for any other reason. Matching the
+    # API server's NotFound response proves kubectl reached the cluster and that
+    # the server answered for this namespace, while a shell error such as
+    # "kubectl: command not found" or an unreachable API server matches neither.
     run kubectl get namespace meshery
     assert_failure
-    assert_output --partial "not found"
+    assert_output --partial "Error from server (NotFound)"
+    assert_output --partial 'namespaces "meshery" not found'
 }
