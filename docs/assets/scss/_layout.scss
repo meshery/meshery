@@ -133,11 +133,30 @@ ol {
   & #breadcrumbs {
     font-size: .9rem;
     line-height: 1.15rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    & .breadcrumb-item {
+      display: inline-flex;
+      align-items: center;
+    }
+    & .breadcrumb-item + .breadcrumb-item::before {
+      content: "";
+      display: inline-block;
+      margin: 0 .35rem;
+      transform: rotate(15deg);
+      border-right: 1.5px solid var(--color-grey-dark);
+      height: .75rem;
+    }
     & a {
       color: var(--color-grey-dark);
       transition: all 0.3s;
       &:hover {
         color: var(--color-secondary-dark);
+      }
+      &:focus-visible {
+        outline: 2px solid var(--color-secondary-dark);
+        outline-offset: 2px;
       }
     }
   }
