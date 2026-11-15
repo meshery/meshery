@@ -25,6 +25,12 @@ type MesheryK8sContextPage struct {
 
 // GetMesheryK8sContexts returns all of the contexts
 func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order string, page, pageSize uint64) ([]byte, error) {
+	return mkcp.GetMesheryK8sContextsWithStatus(search, order, page, pageSize, "")
+}
+
+// GetMesheryK8sContextsWithStatus returns contexts filtered optionally by their connection status.
+// When status is empty, no connection status filter is applied.
+func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContextsWithStatus(search, order string, page, pageSize uint64, status string) ([]byte, error) {
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
@@ -39,6 +45,10 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order stri
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
 		query = query.Where("(lower(name) like ?)", like)
+	}
+
+	if status != "" && mkcp.DB.Migrator().HasTable(&connections.Connection{}) {
+		query = query.Joins("JOIN connections ON connections.id = k8s_contexts.connection_id").Where("connections.status = ?", status)
 	}
 
 	if err := query.Model(K8sContext{}).Count(&count).Error; err != nil {
