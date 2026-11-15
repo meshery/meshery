@@ -264,6 +264,10 @@ func (h *Handler) GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, r *h
 	q := r.URL.Query()
 	resp, err := provider.GetConnectionsOfEnvironment(r, environmentID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
 		handlerErr := ErrEnvironmentConnection(err, "list the connections of")
 		h.log.Error(handlerErr)
 		writeMeshkitError(w, handlerErr, providerStatus(err))

@@ -235,3 +235,93 @@ func TestWorkspacePersisterGetWorkspaces_InvalidPagination(t *testing.T) {
 		})
 	}
 }
+
+// invalidPaginationCases is the shared table for the per-function
+// invalid-pagination tests: a negative page must surface ErrPageNumberCode and
+// a non-numeric pagesize (with a valid page) must surface ErrPageSizeCode.
+var invalidPaginationCases = []struct {
+	name     string
+	page     string
+	pageSize string
+	wantCode string
+}{
+	{"invalid page", "-1", "10", ErrPageNumberCode},
+	{"invalid pagesize", "0", "abc", ErrPageSizeCode},
+}
+
+func newWorkspacePaginationTestPersister(t *testing.T) *WorkspacePersister {
+	t.Helper()
+	dbHandler := newWorkspaceTestDB(t)
+	if err := dbHandler.AutoMigrate(&workspace.Workspace{}); err != nil {
+		t.Fatalf("failed to auto-migrate schemas workspace: %v", err)
+	}
+	return &WorkspacePersister{DB: dbHandler}
+}
+
+func TestWorkspacePersisterGetWorkspaceEnvironments_InvalidPagination(t *testing.T) {
+	persister := newWorkspacePaginationTestPersister(t)
+	workspaceID := uuid.Must(uuid.NewV4())
+
+	for _, tc := range invalidPaginationCases {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := persister.GetWorkspaceEnvironments(workspaceID, "", "", tc.page, tc.pageSize, "")
+			if err == nil {
+				t.Fatalf("expected an error for page=%q pagesize=%q, got nil", tc.page, tc.pageSize)
+			}
+			if got := meshkiterrors.GetCode(err); got != tc.wantCode {
+				t.Errorf("error code = %q, want %q (err: %v)", got, tc.wantCode, err)
+			}
+		})
+	}
+}
+
+func TestWorkspacePersisterGetWorkspaceDesigns_InvalidPagination(t *testing.T) {
+	persister := newWorkspacePaginationTestPersister(t)
+	workspaceID := uuid.Must(uuid.NewV4())
+
+	for _, tc := range invalidPaginationCases {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := persister.GetWorkspaceDesigns(workspaceID, "", "", tc.page, tc.pageSize, "", nil)
+			if err == nil {
+				t.Fatalf("expected an error for page=%q pagesize=%q, got nil", tc.page, tc.pageSize)
+			}
+			if got := meshkiterrors.GetCode(err); got != tc.wantCode {
+				t.Errorf("error code = %q, want %q (err: %v)", got, tc.wantCode, err)
+			}
+		})
+	}
+}
+
+func TestWorkspacePersisterGetWorkspaceViews_InvalidPagination(t *testing.T) {
+	persister := newWorkspacePaginationTestPersister(t)
+	workspaceID := uuid.Must(uuid.NewV4())
+
+	for _, tc := range invalidPaginationCases {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := persister.GetWorkspaceViews(workspaceID, "", "", tc.page, tc.pageSize, "")
+			if err == nil {
+				t.Fatalf("expected an error for page=%q pagesize=%q, got nil", tc.page, tc.pageSize)
+			}
+			if got := meshkiterrors.GetCode(err); got != tc.wantCode {
+				t.Errorf("error code = %q, want %q (err: %v)", got, tc.wantCode, err)
+			}
+		})
+	}
+}
+
+func TestWorkspacePersisterGetWorkspaceTeams_InvalidPagination(t *testing.T) {
+	persister := newWorkspacePaginationTestPersister(t)
+	workspaceID := uuid.Must(uuid.NewV4())
+
+	for _, tc := range invalidPaginationCases {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := persister.GetWorkspaceTeams(workspaceID, "", "", tc.page, tc.pageSize, "")
+			if err == nil {
+				t.Fatalf("expected an error for page=%q pagesize=%q, got nil", tc.page, tc.pageSize)
+			}
+			if got := meshkiterrors.GetCode(err); got != tc.wantCode {
+				t.Errorf("error code = %q, want %q (err: %v)", got, tc.wantCode, err)
+			}
+		})
+	}
+}

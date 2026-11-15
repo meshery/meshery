@@ -304,6 +304,22 @@ func (m *workspaceFailingProvider) DeleteWorkspace(_ *http.Request, _ string) ([
 	return nil, m.err
 }
 
+func (m *workspaceFailingProvider) GetEnvironmentsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *workspaceFailingProvider) GetDesignsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string, _ []string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *workspaceFailingProvider) GetViewsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *workspaceFailingProvider) GetTeamsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
 // TestSaveWorkspaceHandler_PropagatesProviderStatus mirrors the environment
 // coverage: the workspace handlers carried the identical defect (ErrGetResult
 // + hardcoded 404 on every provider failure), so they get the identical
@@ -450,4 +466,66 @@ func TestSaveWorkspaceHandler_SetsContentTypeOnSuccess(t *testing.T) {
 	if ct := rec.Header().Get("Content-Type"); ct != "application/json" {
 		t.Errorf("Content-Type = %q, want application/json", ct)
 	}
+}
+
+// invalidWorkspaceResourcePaginationCases drives the per-resource
+// invalid-pagination tests below: the provider rejects the page or pagesize
+// and the handler must answer 400 with that error's code.
+var invalidWorkspaceResourcePaginationCases = []struct {
+	name     string
+	query    string
+	provider error
+	wantCode string
+}{
+	{"page", "page=-1", models.ErrPageNumber(errors.New("bad page")), models.ErrPageNumberCode},
+	{"pagesize", "pagesize=abc", models.ErrPageSize(errors.New("bad pagesize")), models.ErrPageSizeCode},
+}
+
+// runWorkspaceResourceInvalidPagination calls one workspace sub-resource
+// handler with each invalid pagination case and asserts 400 plus the code.
+func runWorkspaceResourceInvalidPagination(t *testing.T, resource string, call func(h *Handler, w http.ResponseWriter, req *http.Request, provider models.Provider)) {
+	t.Helper()
+	for _, tc := range invalidWorkspaceResourcePaginationCases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := newWorkspaceFailingProvider(tc.provider)
+
+			req := httptest.NewRequest(http.MethodGet, "/api/workspaces/workspace-1/"+resource+"?"+tc.query, nil)
+			req = mux.SetURLVars(req, map[string]string{"id": "workspace-1"})
+			rec := httptest.NewRecorder()
+
+			call(h, rec, req, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+			}
+			if !strings.Contains(rec.Body.String(), tc.wantCode) {
+				t.Errorf("body = %q, want it to contain code %q", rec.Body.String(), tc.wantCode)
+			}
+		})
+	}
+}
+
+func TestGetEnvironmentsOfWorkspaceHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	runWorkspaceResourceInvalidPagination(t, "environments", func(h *Handler, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+		h.GetEnvironmentsOfWorkspaceHandler(w, req, nil, nil, provider)
+	})
+}
+
+func TestGetDesignsOfWorkspaceHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	runWorkspaceResourceInvalidPagination(t, "designs", func(h *Handler, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+		h.GetDesignsOfWorkspaceHandler(w, req, nil, nil, provider)
+	})
+}
+
+func TestGetViewsOfWorkspaceHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	runWorkspaceResourceInvalidPagination(t, "views", func(h *Handler, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+		h.GetViewsOfWorkspaceHandler(w, req, nil, nil, provider)
+	})
+}
+
+func TestGetTeamsOfWorkspaceHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	runWorkspaceResourceInvalidPagination(t, "teams", func(h *Handler, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+		h.GetTeamsOfWorkspaceHandler(w, req, nil, nil, provider)
+	})
 }
