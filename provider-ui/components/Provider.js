@@ -678,7 +678,11 @@ export default function Provider() {
     setIsLoading(true);
     const existingQueryString = window.location.search;
     const existingQueryParams = new URLSearchParams(existingQueryString);
-    existingQueryParams.append("provider", encodeURIComponent(provider));
+    // URLSearchParams encodes the value itself; pre-encoding it made the
+    // server receive e.g. "TATA%20Labs" and fail to resolve the provider.
+    // set() rather than append() so a stale ?provider= in the URL cannot
+    // shadow the one just chosen (the server reads the first value).
+    existingQueryParams.set("provider", provider);
     window.location.href = `/api/provider?${existingQueryParams.toString()}`;
   };
 
