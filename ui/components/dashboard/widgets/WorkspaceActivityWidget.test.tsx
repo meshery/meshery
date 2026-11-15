@@ -174,7 +174,10 @@ describe('WorkspaceActivityWidget', () => {
     render(<WorkspaceActivityWidget />);
 
     expect(canSpy).toHaveBeenCalledWith(Keys.WorkspaceManagementViewWorkspace);
-    expect(useGetWorkspacesQuerySpy).toHaveBeenCalledWith({ orgId: 'org-1' }, { skip: true });
+    expect(useGetWorkspacesQuerySpy).toHaveBeenCalledWith(
+      { orgId: 'org-1', pagesize: 'all' },
+      { skip: true },
+    );
     expect(useGetEventsOfWorkspaceQuerySpy).toHaveBeenCalledWith(
       { workspaceId: '', pagesize: 5 },
       { skip: true },
@@ -184,5 +187,13 @@ describe('WorkspaceActivityWidget', () => {
     expect(card).toHaveAttribute('data-activities', '0');
     expect(card).toHaveAttribute('data-loading', 'false');
     expect(screen.queryByTestId('widget-error-fallback')).not.toBeInTheDocument();
+  });
+
+  it('requests all workspaces with pagesize: "all" for the current org', () => {
+    render(<WorkspaceActivityWidget />);
+    expect(useGetWorkspacesQuerySpy).toHaveBeenCalledWith(
+      { orgId: 'org-1', pagesize: 'all' },
+      { skip: false },
+    );
   });
 });
