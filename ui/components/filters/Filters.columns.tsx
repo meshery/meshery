@@ -71,8 +71,10 @@ export function buildFiltersColumns({
             />
           );
         },
-        customBodyRender: function CustomBody(value) {
-          return <Moment format="LLLL">{value}</Moment>;
+        customBodyRender: function CustomBody(value, tableMeta) {
+          const rowData = filters?.[tableMeta?.rowIndex];
+          const date = rowData?.createdAt || value;
+          return <Moment format="LLLL">{date}</Moment>;
         },
       },
     },
@@ -93,8 +95,10 @@ export function buildFiltersColumns({
             />
           );
         },
-        customBodyRender: function CustomBody(value) {
-          return <Moment format="LLLL">{value}</Moment>;
+        customBodyRender: function CustomBody(value, tableMeta) {
+          const rowData = filters?.[tableMeta?.rowIndex];
+          const date = rowData?.updatedAt || value;
+          return <Moment format="LLLL">{date}</Moment>;
         },
       },
     },
