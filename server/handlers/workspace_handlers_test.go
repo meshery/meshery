@@ -160,8 +160,8 @@ func TestGetWorkspaceByIdHandler_AcceptsOrgIdAndLegacyOrgID(t *testing.T) {
 			h := newTestHandler(t, map[string]models.Provider{}, "")
 			provider := newWorkspaceSpyProvider()
 
-			req := httptest.NewRequest(http.MethodGet, "/api/workspaces/workspace-1?"+tc.rawQuery, nil)
-			req = mux.SetURLVars(req, map[string]string{"id": "workspace-1"})
+			req := httptest.NewRequest(http.MethodGet, "/api/workspaces/11111111-1111-1111-1111-111111111111?"+tc.rawQuery, nil)
+			req = mux.SetURLVars(req, map[string]string{"id": "11111111-1111-1111-1111-111111111111"})
 			rec := httptest.NewRecorder()
 
 			h.GetWorkspaceByIdHandler(rec, req, nil, nil, provider)
@@ -490,8 +490,8 @@ func runWorkspaceResourceInvalidPagination(t *testing.T, resource string, call f
 			h := newTestHandler(t, map[string]models.Provider{}, "")
 			provider := newWorkspaceFailingProvider(tc.provider)
 
-			req := httptest.NewRequest(http.MethodGet, "/api/workspaces/workspace-1/"+resource+"?"+tc.query, nil)
-			req = mux.SetURLVars(req, map[string]string{"id": "workspace-1"})
+			req := httptest.NewRequest(http.MethodGet, "/api/workspaces/11111111-1111-1111-1111-111111111111/"+resource+"?"+tc.query, nil)
+			req = mux.SetURLVars(req, map[string]string{"id": "11111111-1111-1111-1111-111111111111"})
 			rec := httptest.NewRecorder()
 
 			call(h, rec, req, provider)
