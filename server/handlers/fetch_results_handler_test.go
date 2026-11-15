@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -343,6 +344,37 @@ func TestFetchAllResultsHandler_Success(t *testing.T) {
 	}
 	if rec.Body.String() != `{"results":[],"page":1}` {
 		t.Errorf("unexpected body: %s", rec.Body.String())
+	}
+}
+
+func TestFetchAllResultsHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	cases := []struct {
+		name     string
+		query    string
+		provider error
+	}{
+		{"page", "page=-1", models.ErrPageNumber(fmt.Errorf("bad page"))},
+		{"pagesize", "pagesize=abc", models.ErrPageSize(fmt.Errorf("bad pagesize"))},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := &mockFetchResultsProvider{
+				DefaultLocalProvider: &models.DefaultLocalProvider{},
+				fetchAllResultsFn: func(tokenVal, page, pageSize, search, order, from, to string) ([]byte, error) {
+					return nil, tc.provider
+				},
+			}
+			req := httptest.NewRequest(http.MethodGet, "/api/perf/profile/result?"+tc.query, nil)
+			req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "valid-token"))
+			rec := httptest.NewRecorder()
+
+			h.FetchAllResultsHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
+			}
+		})
 	}
 }
 
