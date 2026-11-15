@@ -72,11 +72,16 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 		savePath := ""
 
 		if modelViewFlags.Save {
-			modelString := strings.ReplaceAll(
-				fmt.Sprintf("%v", selectedModel.DisplayName),
-				" ",
-				"_",
-			)
+			modelString := utils.SanitizeFileName(fmt.Sprintf("%v", selectedModel.DisplayName))
+			if modelString == "" {
+				modelString = utils.SanitizeFileName(selectedModel.Name)
+			}
+			if modelString == "" {
+				modelString = utils.SanitizeFileName(selectedModel.ID.String())
+			}
+			if modelString == "" {
+				modelString = "unknown"
+			}
 
 			savePath = filepath.Join(
 				utils.MesheryFolder,

@@ -2,6 +2,7 @@ package system
 
 import (
 	"bytes"
+	stderrors "errors"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -12,6 +13,7 @@ import (
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestTokenCreateCmd(t *testing.T) {
@@ -131,11 +133,11 @@ func TestTokenDeleteCmd(t *testing.T) {
 	currDir := filepath.Dir(filename)
 	tests := []utils.CmdTestInput{
 		{
-			Name:                 "delete the passed token",
+			Name:                 "delete a token that a context still uses",
 			Args:                 []string{"token", "delete", "default"},
 			ExpectedResponse:     "delete_default.golden",
 			ExpectedResponseYaml: "delete_default.yaml",
-			ExpectError:          false,
+			ExpectError:          true,
 		},
 		{
 			Name:                 "delete the passed token(with a token name that doesn't exist)",
@@ -468,7 +470,7 @@ func TestTokenCreateUsesActiveConfigPath(t *testing.T) {
 	utils.DefaultConfigPath = defaultConfigPath
 	tokenPath = ""
 	set = false
-	ctx = ""
+	tempContext = ""
 
 	b := utils.SetupMeshkitLoggerTesting(t, false)
 	SystemCmd.SetOut(b)
@@ -655,4 +657,390 @@ func TestTokenViewCmd_ConflictingAllFlag(t *testing.T) {
 	assert.Contains(t, err.Error(), viewTokenUsageMsg)
 	viewAllTokens = false
 	BreakupFunc()
+}
+
+func TestTokenCmdRespectsContextFlag(t *testing.T) {
+	baseConfig := `contexts:
+  local:
+    endpoint: http://localhost:9081
+    token: token-local
+    platform: docker
+    provider: Meshery
+  local2:
+    endpoint: http://localhost:9082
+    token: token-local2
+    platform: kubernetes
+    provider: Meshery
+current-context: local
+tokens:
+  - location: auth-local.json
+    name: token-local
+  - location: auth-local2.json
+    name: token-local2
+`
+
+	setupTempConfig := func(t *testing.T) string {
+		t.Helper()
+		configPath := filepath.Join(t.TempDir(), "config.yaml")
+		if err := os.WriteFile(configPath, []byte(baseConfig), 0o644); err != nil {
+			t.Fatal(err)
+		}
+
+		origCfg := utils.CfgFile
+		origDefault := utils.DefaultConfigPath
+		viper.Reset()
+		utils.CfgFile = configPath
+		utils.DefaultConfigPath = configPath
+
+		t.Cleanup(func() {
+			utils.CfgFile = origCfg
+			utils.DefaultConfigPath = origDefault
+			tokenPath = ""
+			set = false
+			viewAllTokens = false
+			viper.Reset()
+			BreakupFunc()
+		})
+		return configPath
+	}
+
+	readMeshConfig := func(t *testing.T, configPath string) *config.MesheryCtlConfig {
+		t.Helper()
+		viper.Reset()
+		viper.SetConfigFile(configPath)
+		if err := viper.ReadInConfig(); err != nil {
+			t.Fatalf("read config: %v", err)
+		}
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			t.Fatalf("parse meshconfig: %v", err)
+		}
+		return mctlCfg
+	}
+
+	t.Run("set respects -c, --context, parent -c, and active default", func(t *testing.T) {
+		cases := []struct {
+			name            string
+			args            []string
+			wantLocalToken  string
+			wantLocal2Token string
+			wantErr         bool
+		}{
+			{
+				name:            "set with -c targets local2",
+				args:            []string{"token", "set", "token-local", "-c", "local2"},
+				wantLocalToken:  "token-local",
+				wantLocal2Token: "token-local",
+			},
+			{
+				name:            "set with --context targets local2",
+				args:            []string{"token", "set", "token-local", "--context", "local2"},
+				wantLocalToken:  "token-local",
+				wantLocal2Token: "token-local",
+			},
+			{
+				name:            "set with parent -c targets local2",
+				args:            []string{"-c", "local2", "token", "set", "token-local"},
+				wantLocalToken:  "token-local",
+				wantLocal2Token: "token-local",
+			},
+			{
+				name:            "set without flag updates current-context from configPath even when viper is fresh",
+				args:            []string{"token", "set", "token-local2"},
+				wantLocalToken:  "token-local2",
+				wantLocal2Token: "token-local2",
+			},
+			{
+				name:    "set with unknown -c returns error without mutating config",
+				args:    []string{"token", "set", "token-local2", "-c", "missing-ctx"},
+				wantErr: true,
+			},
+		}
+
+		for _, tc := range cases {
+			t.Run(tc.name, func(t *testing.T) {
+				configPath := setupTempConfig(t)
+				b := utils.SetupMeshkitLoggerTesting(t, false)
+				var errBuf bytes.Buffer
+				utils.Log.UpdateErrorLogOutput(&errBuf)
+				t.Cleanup(func() {
+					utils.Log.UpdateErrorLogOutput(os.Stderr)
+				})
+				SystemCmd.SetOut(b)
+				SystemCmd.SetArgs(tc.args)
+				err := SystemCmd.Execute()
+				if tc.wantErr {
+					assert.Error(t, err)
+					assert.Equal(t, ErrAssignTokenCode, meshkiterrors.GetCode(err))
+					assert.Contains(t, errBuf.String(), "Short Description: Unable to assign token to context")
+					assert.Contains(t, errBuf.String(), "Suggested Remediation:")
+					cfg := readMeshConfig(t, configPath)
+					assert.Equal(t, "token-local", cfg.Contexts["local"].Token)
+					assert.Equal(t, "token-local2", cfg.Contexts["local2"].Token)
+					return
+				}
+				assert.NoError(t, err)
+				cfg := readMeshConfig(t, configPath)
+				assert.Equal(t, tc.wantLocalToken, cfg.Contexts["local"].Token)
+				assert.Equal(t, tc.wantLocal2Token, cfg.Contexts["local2"].Token)
+			})
+		}
+	})
+
+	t.Run("create --set respects -c and --context", func(t *testing.T) {
+		createCases := []struct {
+			name string
+			args []string
+		}{
+			{
+				name: "create --set with -c",
+				args: []string{"token", "create", "ci-tok", "-f", "ci.json", "--set", "-c", "local2"},
+			},
+			{
+				name: "create --set with --context",
+				args: []string{"token", "create", "ci-tok", "-f", "ci.json", "--set", "--context", "local2"},
+			},
+		}
+		for _, tc := range createCases {
+			t.Run(tc.name, func(t *testing.T) {
+				configPath := setupTempConfig(t)
+				b := utils.SetupMeshkitLoggerTesting(t, false)
+				SystemCmd.SetOut(b)
+				SystemCmd.SetArgs(tc.args)
+				err := SystemCmd.Execute()
+				assert.NoError(t, err)
+				assert.Contains(t, b.String(), "Token: ci-tok set on context local2.")
+
+				cfg := readMeshConfig(t, configPath)
+				assert.Equal(t, "token-local", cfg.Contexts["local"].Token)
+				assert.Equal(t, "ci-tok", cfg.Contexts["local2"].Token)
+			})
+		}
+
+		t.Run("create --set with unknown -c rolls back token", func(t *testing.T) {
+			configPath := setupTempConfig(t)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
+			var errBuf bytes.Buffer
+			utils.Log.UpdateErrorLogOutput(&errBuf)
+			t.Cleanup(func() {
+				utils.Log.UpdateErrorLogOutput(os.Stderr)
+			})
+			SystemCmd.SetOut(b)
+			SystemCmd.SetArgs([]string{"token", "create", "orphan-tok", "-f", "orphan.json", "--set", "-c", "missing-ctx"})
+			err := SystemCmd.Execute()
+			assert.Error(t, err)
+			assert.Equal(t, ErrAssignTokenCode, meshkiterrors.GetCode(err))
+			assert.Contains(t, errBuf.String(), "Short Description: Unable to assign token to context")
+			assert.Contains(t, errBuf.String(), "Suggested Remediation:")
+			assert.Contains(t, err.Error(), "orphan-tok")
+			assert.Contains(t, err.Error(), "missing-ctx")
+			cfg := readMeshConfig(t, configPath)
+			assert.Len(t, cfg.Tokens, 2, "failed create --set -c should not leave an orphaned token")
+			assert.Equal(t, "token-local", cfg.Contexts["local"].Token)
+		})
+	})
+
+	t.Run("view respects -c, --context, parent -c, and errors on missing context", func(t *testing.T) {
+		viewCases := []struct {
+			name string
+			args []string
+		}{
+			{
+				name: "view with -c",
+				args: []string{"token", "view", "-c", "local2"},
+			},
+			{
+				name: "view with --context",
+				args: []string{"token", "view", "--context", "local2"},
+			},
+			{
+				name: "view with parent -c",
+				args: []string{"-c", "local2", "token", "view"},
+			},
+		}
+		for _, tc := range viewCases {
+			t.Run(tc.name, func(t *testing.T) {
+				setupTempConfig(t)
+				b := utils.SetupMeshkitLoggerTesting(t, false)
+				SystemCmd.SetOut(b)
+				SystemCmd.SetArgs(tc.args)
+				err := SystemCmd.Execute()
+				assert.NoError(t, err)
+				out := b.String()
+				assert.Contains(t, out, "token: token-local2")
+				assert.Contains(t, out, "location: auth-local2.json")
+				assert.NotContains(t, out, "token: token-local\n")
+			})
+		}
+
+		t.Run("view with unknown -c returns error", func(t *testing.T) {
+			setupTempConfig(t)
+			b := utils.SetupMeshkitLoggerTesting(t, false)
+			SystemCmd.SetOut(b)
+			SystemCmd.SetArgs([]string{"token", "view", "-c", "missing-ctx"})
+			err := SystemCmd.Execute()
+			assert.Error(t, err)
+			assert.Equal(t, ErrTokenContextCode, meshkiterrors.GetCode(err))
+		})
+	})
+
+	t.Run("assignTokenWithRollback succeeds without calling deleteFn", func(t *testing.T) {
+		deleteCalled := false
+		err := assignTokenWithRollback(
+			"orphan-tok",
+			"/tmp/config.yaml",
+			"local2",
+			func(_, _, _ string) error { return nil },
+			func(_, _ string) error {
+				deleteCalled = true
+				return nil
+			},
+		)
+		assert.NoError(t, err)
+		assert.False(t, deleteCalled)
+	})
+
+	t.Run("assignTokenWithRollback returns MeshKit assign error when rollback succeeds", func(t *testing.T) {
+		setErr := stderrors.New("context missing-ctx does not exist")
+		var deletedToken, deletedConfigPath string
+
+		err := assignTokenWithRollback(
+			"orphan-tok",
+			"/tmp/config.yaml",
+			"missing-ctx",
+			func(_, _, _ string) error { return setErr },
+			func(tokenName, configPath string) error {
+				deletedToken = tokenName
+				deletedConfigPath = configPath
+				return nil
+			},
+		)
+		assert.Error(t, err)
+		assert.Equal(t, "orphan-tok", deletedToken)
+		assert.Equal(t, "/tmp/config.yaml", deletedConfigPath)
+		assert.ErrorIs(t, err, setErr)
+		assert.Equal(t, ErrAssignTokenCode, meshkiterrors.GetCode(err))
+		assert.NotEqual(t, "None", meshkiterrors.GetCause(err))
+		assert.NotEqual(t, "None", meshkiterrors.GetRemedy(err))
+		assert.Contains(t, err.Error(), "orphan-tok")
+		assert.Contains(t, err.Error(), "missing-ctx")
+		assert.Contains(t, err.Error(), `Could not set token "orphan-tok" on context missing-ctx`)
+		assert.NotContains(t, err.Error(), "manual cleanup may be required")
+	})
+
+	t.Run("assignTokenWithRollback returns MeshKit rollback error preserving both causes", func(t *testing.T) {
+		setErr := stderrors.New("context missing-ctx does not exist")
+		cleanupErr := stderrors.New("permission denied")
+
+		err := assignTokenWithRollback(
+			"orphan-tok",
+			"/tmp/config.yaml",
+			"missing-ctx",
+			func(_, _, _ string) error { return setErr },
+			func(_, _ string) error { return cleanupErr },
+		)
+		assert.Error(t, err)
+		assert.ErrorIs(t, err, setErr)
+		assert.ErrorIs(t, err, cleanupErr)
+		assert.Equal(t, ErrTokenRollbackCode, meshkiterrors.GetCode(err))
+		assert.NotEqual(t, "None", meshkiterrors.GetCause(err))
+		assert.Contains(t, meshkiterrors.GetRemedy(err), "token delete")
+		assert.Contains(t, err.Error(), "orphan-tok")
+		assert.Contains(t, err.Error(), "missing-ctx")
+		assert.Contains(t, err.Error(), "manual cleanup may be required")
+		assert.Contains(t, err.Error(), `Could not set token "orphan-tok" on context missing-ctx`)
+	})
+
+	t.Run("token MeshKit error builders handle nil inputs safely", func(t *testing.T) {
+		assert.NoError(t, ErrAssignToken(nil, "tok", "local"))
+		assert.NoError(t, ErrTokenRollback("tok", "local", nil, nil))
+	})
+}
+
+// TestTokenSetAndDeleteKeepContextTokensResolvable covers the two ways a context
+// could end up naming a token that meshconfig does not define. Requests then fell
+// back to ~/.meshery/auth.json, sending that token to the context's server.
+func TestTokenSetAndDeleteKeepContextTokensResolvable(t *testing.T) {
+	baseConfig := `contexts:
+  local:
+    endpoint: http://localhost:9081
+    token: token-local
+    platform: docker
+    provider: Meshery
+  prod:
+    endpoint: http://localhost:9082
+    token: token-prod
+    platform: kubernetes
+    provider: Meshery
+current-context: local
+tokens:
+  - location: auth-local.json
+    name: token-local
+  - location: auth-prod.json
+    name: token-prod
+  - location: auth-spare.json
+    name: token-spare
+`
+
+	run := func(t *testing.T, args ...string) (string, *config.MesheryCtlConfig, error) {
+		t.Helper()
+		configPath := filepath.Join(t.TempDir(), "config.yaml")
+		if err := os.WriteFile(configPath, []byte(baseConfig), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		origCfg, origDefault := utils.CfgFile, utils.DefaultConfigPath
+		viper.Reset()
+		utils.CfgFile = configPath
+		utils.DefaultConfigPath = configPath
+		t.Cleanup(func() {
+			utils.CfgFile = origCfg
+			utils.DefaultConfigPath = origDefault
+			utils.Log.UpdateErrorLogOutput(os.Stderr)
+			viper.Reset()
+			BreakupFunc()
+		})
+
+		b := utils.SetupMeshkitLoggerTesting(t, false)
+		var errBuf bytes.Buffer
+		utils.Log.UpdateErrorLogOutput(&errBuf)
+		SystemCmd.SetOut(b)
+		SystemCmd.SetArgs(args)
+		err := SystemCmd.Execute()
+
+		v := viper.New()
+		v.SetConfigFile(configPath)
+		if readErr := v.ReadInConfig(); readErr != nil {
+			t.Fatal(readErr)
+		}
+		cfg, cfgErr := config.GetMesheryCtl(v)
+		if cfgErr != nil {
+			t.Fatal(cfgErr)
+		}
+		return b.String() + errBuf.String(), cfg, err
+	}
+
+	t.Run("set rejects a token name that is not in meshconfig", func(t *testing.T) {
+		out, cfg, err := run(t, "token", "set", "token-prodd", "-c", "prod")
+		require.Error(t, err)
+		assert.Equal(t, ErrAssignTokenCode, meshkiterrors.GetCode(err))
+		assert.Contains(t, err.Error(), `token "token-prodd" does not exist`)
+		assert.Contains(t, out, "Short Description: Unable to assign token to context")
+		assert.Equal(t, "token-prod", cfg.Contexts["prod"].Token)
+		assert.Len(t, cfg.Tokens, 3)
+	})
+
+	t.Run("delete refuses a token that a context still uses", func(t *testing.T) {
+		_, cfg, err := run(t, "token", "delete", "token-prod")
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), `token "token-prod" is still used by context(s) prod`)
+		assert.Len(t, cfg.Tokens, 3)
+		assert.Equal(t, "token-prod", cfg.Contexts["prod"].Token)
+	})
+
+	t.Run("delete removes a token that no context uses", func(t *testing.T) {
+		out, cfg, err := run(t, "token", "delete", "token-spare")
+		assert.NoError(t, err)
+		assert.Contains(t, out, "Token token-spare deleted.")
+		assert.Len(t, cfg.Tokens, 2)
+	})
 }

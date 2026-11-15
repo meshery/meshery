@@ -1,9 +1,13 @@
 import React from 'react';
 import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { Keys } from '@meshery/schemas/permissions';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const notify = vi.fn();
 const dispatch = vi.fn();
+const mockUseHasPermission = vi.fn(() => true);
+const mockUseGetProviderCapabilitiesQuery = vi.fn(() => capabilitiesReturn);
+const mockUseGetUserPrefQuery = vi.fn(() => userDataReturn);
 const updateUserPref = vi.fn().mockImplementation(() => ({
   unwrap: () => Promise.resolve({}),
 }));
@@ -28,9 +32,8 @@ let capabilitiesReturn: any = {
 let catalogMutationReturn: any = {};
 
 vi.mock('@sistent/sistent', () => ({
-  // This suite exercises preference toggles, not authorization: grant every
-  // capability so the permission gate never masks the behaviour under test.
-  useHasPermission: () => true,
+  // Default to granted so existing toggle specs aren't masked; deny specs override mockUseHasPermission.
+  useHasPermission: (permissionKey: any) => mockUseHasPermission(permissionKey),
   Tab: ({ label, ...rest }: any) => <button {...rest}>{label}</button>,
   Tabs: ({ children, value, onChange }: any) => (
     <div data-testid="tabs" data-value={value} onClick={(e) => onChange?.(e, 0)}>
@@ -89,7 +92,9 @@ vi.mock('@sistent/sistent', () => ({
 }));
 
 vi.mock('../general/error-404/index', () => ({
-  default: ({ permissionKey }: any) => <div data-testid="default-error">{permissionKey}</div>,
+  default: ({ permissionKey }: any) => (
+    <div data-testid="default-error" data-permission-key={JSON.stringify(permissionKey)} />
+  ),
 }));
 
 vi.mock('../../assets/icons/CopyIcon', () => ({
@@ -154,8 +159,8 @@ vi.mock('@/utils/dimension', () => ({
 }));
 
 vi.mock('@/rtk-query/user', () => ({
-  useGetProviderCapabilitiesQuery: () => capabilitiesReturn,
-  useGetUserPrefQuery: () => userDataReturn,
+  useGetProviderCapabilitiesQuery: (...args: any[]) => mockUseGetProviderCapabilitiesQuery(...args),
+  useGetUserPrefQuery: (...args: any[]) => mockUseGetUserPrefQuery(...args),
   useUpdateUserPrefMutation: () => [updateUserPref, catalogMutationReturn],
   useUpdateUserPrefWithContextMutation: () => [updateUserPrefWithContext],
 }));
@@ -190,6 +195,10 @@ describe('UserPreference', () => {
   beforeEach(() => {
     notify.mockReset();
     dispatch.mockReset();
+    mockUseHasPermission.mockReset();
+    mockUseHasPermission.mockReturnValue(true);
+    mockUseGetUserPrefQuery.mockClear();
+    mockUseGetProviderCapabilitiesQuery.mockClear();
     updateUserPref.mockClear();
     updateUserPrefWithContext.mockClear();
     catalogMutationReturn = {};
@@ -323,5 +332,19 @@ describe('UserPreference', () => {
     expect(toggle).toBeDisabled();
     fireEvent.click(toggle);
     expect(updateUserPref).not.toHaveBeenCalled();
+  });
+
+  it('skips preference queries, ignores cached preferences, and renders DefaultError when permission is denied', () => {
+    mockUseHasPermission.mockReturnValue(false);
+    render(<UserPreference />);
+
+    expect(mockUseHasPermission).toHaveBeenCalledWith(Keys.ExtensibilityViewMesheryUserPreferences);
+    expect(mockUseGetUserPrefQuery).toHaveBeenCalledWith(undefined, { skip: true });
+    expect(mockUseGetProviderCapabilitiesQuery).toHaveBeenCalledWith(undefined, { skip: true });
+    expect(screen.getByTestId('default-error')).toHaveAttribute(
+      'data-permission-key',
+      JSON.stringify(Keys.ExtensibilityViewMesheryUserPreferences),
+    );
+    expect(screen.queryByTestId('CatalogContentPreference')).not.toBeInTheDocument();
   });
 });

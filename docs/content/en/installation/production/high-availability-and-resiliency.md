@@ -140,10 +140,10 @@ scaling decisions safe.
 
 | Component | Failure behavior | Recovery |
 | :--- | :--- | :--- |
-| **Meshery Server** | Pod restarted by liveness probe / Kubernetes. Local cache rebuilt. | Durable state from Remote Provider; cluster snapshot rebuilt by MeshSync. |
+| **Meshery Server** | Pod restarted by liveness probe / Kubernetes. On `SIGTERM` (or `SIGINT`) it shuts down gracefully: it de-registers from and logs out of the Remote Provider and closes its database before exiting. Local cache rebuilt. | Durable state from Remote Provider; cluster snapshot rebuilt by MeshSync. |
 | **Meshery Operator** | Stateless; rescheduled by Kubernetes. | Reconciles Broker and MeshSync back to desired state on restart. |
 | **MeshSync** | Stateless; managed by the Operator. | Resumes discovery and re-syncs the snapshot on restart. |
-| **Meshery Broker** | Deployed as a StatefulSet; rescheduled on failure. In-memory messages not yet consumed may be lost. | NATS topic persistence bridges brief interruptions; MeshSync re-syncs to restore the snapshot. |
+| **Meshery Broker** | Deployed as a StatefulSet; rescheduled on failure. In-memory messages not yet consumed may be lost. | NATS topic persistence bridges brief interruptions; MeshSync re-syncs to restore the snapshot. If the Broker is recreated with a new endpoint or auth token, Meshery Server rebuilds its connection after about 45 seconds of outage - no Server restart. |
 | **Meshery Adapter** | Stateless; if the Server is unavailable it backs off and retries to reconnect perpetually. | Reconnects and re-registers capabilities automatically. |
 | **Remote Provider** | External dependency for auth and durable state. | Provided by the Remote Provider's own availability; see below. |
 
