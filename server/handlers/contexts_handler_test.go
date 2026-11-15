@@ -25,9 +25,10 @@ import (
 
 type mockContextsProvider struct {
 	*models.DefaultLocalProvider
-	getK8sContextFn func(token, id string) (models.K8sContext, error)
-	persistEventFn  func(event events.Event, token string) error
-	persistedEvents []events.Event
+	getK8sContextFn   func(token, id string) (models.K8sContext, error)
+	getK8sContextsErr error
+	persistEventFn    func(event events.Event, token string) error
+	persistedEvents   []events.Event
 }
 
 // GetK8sContext returns the stubbed context lookup, or an empty context when none is set.
@@ -36,6 +37,14 @@ func (m *mockContextsProvider) GetK8sContext(token, id string) (models.K8sContex
 		return m.getK8sContextFn(token, id)
 	}
 	return models.K8sContext{}, nil
+}
+
+// GetK8sContexts supplies an empty snapshot unless a test needs its own provider.
+func (m *mockContextsProvider) GetK8sContexts(_, _, _, _, _, _ string, _ bool) ([]byte, error) {
+	if m.getK8sContextsErr != nil {
+		return nil, m.getK8sContextsErr
+	}
+	return []byte(`{"contexts":[],"totalCount":0}`), nil
 }
 
 // PersistEvent records the event and returns the stubbed persistence result.
@@ -222,6 +231,27 @@ func TestGetAllContexts_DatabaseFailure(t *testing.T) {
 	}
 	if !strings.Contains(rec.Body.String(), ErrGetK8sContextsCode) {
 		t.Fatalf("expected error code %s in body, got %s", ErrGetK8sContextsCode, rec.Body.String())
+	}
+}
+
+// A rejected page or pagesize is a client error. Uses the real local provider,
+// which parses both values before it touches the database.
+func TestGetAllContexts_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	for _, query := range []string{"page=-1", "pagesize=abc"} {
+		t.Run(query, func(t *testing.T) {
+			provider := &models.DefaultLocalProvider{}
+			h := &Handler{log: newTestLogger(t)}
+
+			req := httptest.NewRequest(http.MethodGet, "/api/system/kubernetes/contexts?"+query, nil)
+			req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+			rec := httptest.NewRecorder()
+
+			h.GetAllContexts(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected status %d, got %d. body: %s", http.StatusBadRequest, rec.Code, rec.Body.String())
+			}
+		})
 	}
 }
 
@@ -752,5 +782,27 @@ func TestDeleteContext_InitializationErrorReturns500(t *testing.T) {
 	}
 	if !strings.Contains(rec.Body.String(), ErrFailToDeleteCode) {
 		t.Fatalf("expected error code %s in response body, got %s", ErrFailToDeleteCode, rec.Body.String())
+	}
+}
+
+// A failed snapshot must not be reported as an accepted deletion.
+func TestDeleteContext_SnapshotFailureReturnsError(t *testing.T) {
+	id := uuid.Must(uuid.NewV4())
+	provider := &mockContextsProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		getK8sContextFn:      func(_, _ string) (models.K8sContext, error) { return models.K8sContext{ID: id.String()}, nil },
+		getK8sContextsErr:    errors.New("snapshot unavailable"),
+	}
+	h := &Handler{log: newTestLogger(t)}
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+id.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"id": id.String()})
+	req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "token"))
+	rec := httptest.NewRecorder()
+	h.DeleteContext(rec, req, nil, nil, provider)
+	if rec.Code != http.StatusInternalServerError || !strings.Contains(rec.Body.String(), ErrGetK8sContextsCode) {
+		t.Fatalf("expected snapshot error, got status %d: %s", rec.Code, rec.Body.String())
+	}
+	if len(provider.persistedEvents) != 0 {
+		t.Fatal("deletion was started after snapshot failure")
 	}
 }
