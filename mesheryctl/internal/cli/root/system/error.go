@@ -262,7 +262,7 @@ func ErrFailedGetEphemeralPort(err error) error {
 		errors.Fatal,
 		[]string{"Failed to get a free port"},
 		[]string{err.Error(), "Failed to start port-forwarding"},
-		[]string{"Unable to provide a free port to connect to a kuberentes cluster"},
+		[]string{"Unable to provide a free port to connect to a kubernetes cluster"},
 		[]string{"Ensure your Meshery Server is running,", "Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system check`"},
 	)
 }
@@ -311,7 +311,7 @@ func ErrSwitchChannelResponse() error {
 	return errors.New(
 		ErrSwitchChannelResponseCode,
 		errors.Alert,
-		[]string{"Unable to exectute command"},
+		[]string{"Unable to execute command"},
 		[]string{"Channel switch aborted"},
 		[]string{"No user response provided"},
 		[]string{"Provide a response or use the -y flag for confirmation. " + FormatErrorReference()})
