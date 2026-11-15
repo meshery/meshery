@@ -18,16 +18,34 @@ type Router struct {
 	srv  *http.Server
 }
 
-// newHTTPServer builds the HTTP server for the router, carrying the timeouts
-// the old ListenAndServe call did not have, so the listener can be drained on
-// graceful shutdown instead of serving until main returns.
+const (
+	// httpReadHeaderTimeout bounds how long a client may take to send the
+	// request line and headers, so a slow or stalled client cannot hold a
+	// connection open indefinitely.
+	httpReadHeaderTimeout = 5 * time.Second
+	// httpIdleTimeout closes keep-alive connections that sit idle between
+	// requests.
+	httpIdleTimeout = 2 * time.Minute
+)
+
+// newHTTPServer builds the HTTP server for the router, so the listener can be
+// drained on graceful shutdown instead of serving until main returns.
+//
+// It deliberately sets no ReadTimeout or WriteTimeout. Both are absolute
+// deadlines measured from the start of each request, and Meshery serves
+// requests that legitimately outlast any fixed bound: Server-Sent Event
+// streams that stay open for minutes to hours (a load test run, the provider
+// status stream, adapter events) and uploads whose duration depends on the
+// client's link. Streams that must bound a stalled client set a deadline per
+// write through http.ResponseController instead (see
+// handlers/events_stream_handler.go).
 func newHTTPServer(port int, handler http.Handler) *http.Server {
 	return &http.Server{
-		Addr:           fmt.Sprintf(":%d", port),
-		Handler:        handler,
-		ReadTimeout:    5 * time.Second,
-		WriteTimeout:   2 * time.Minute,
-		MaxHeaderBytes: 1 << 20,
+		Addr:              fmt.Sprintf(":%d", port),
+		Handler:           handler,
+		ReadHeaderTimeout: httpReadHeaderTimeout,
+		IdleTimeout:       httpIdleTimeout,
+		MaxHeaderBytes:    1 << 20,
 	}
 }
 
