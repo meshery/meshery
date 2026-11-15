@@ -1,39 +1,43 @@
 export const PROVIDER_URL = "https://cloud.meshery.io"; // AUTO-GENERATED from install/providers.env - run `make providers-propagate`
 
+// Ports of the local Node dev servers that proxy /user/login to the Meshery
+// server: the main UI's (ui/ui_dev_server.js, 3000) and provider-ui's own
+// (ui_dev_server.js, 3001). Behind the Go server a reload re-runs its auth
+// redirect instead.
+const NODE_DEV_SERVER_PORTS = ["3000", "3001"];
+
 // This can be migrated as a custom hook in React
 const dataFetch = (url, options = {}, successFn, errorFn) => {
-  // const controller = new AbortController();
-  // const signal = controller.signal;
-  // options.signal = signal;
-  // setTimeout(() => controller.abort(), 10000); // nice to have but will mess with the load test
   if (errorFn === undefined) {
     errorFn = (err) => {
       console.error(`Error fetching ${url} --DataFetch`, err);
     };
   }
   fetch(url, options)
-    .then((res) => {
+    .then(async (res) => {
       if (res.status === 401 || res.redirected) {
-        if (window.location.host.endsWith("3000")) {
-          window.location = "/user/login"; // for local dev thru node server
+        if (NODE_DEV_SERVER_PORTS.includes(window.location.port)) {
+          window.location = "/user/login";
         } else {
-          window.location.reload(); // for use with Go server
+          window.location.reload();
         }
+        return;
+      }
+      // Read the body once as text: res.json() rejects asynchronously, so a
+      // try/catch around it never reached the text fallback.
+      const body = await res.text();
+      if (!res.ok) {
+        errorFn(body);
+        return;
       }
       let result;
-      if (res.ok) {
-        // console.log(`res type: ${res.type}`);
-        try {
-          result = res.json();
-        } catch {
-          result = res.text();
-        }
-        return result;
-      } else {
-        res.text().then(errorFn);
+      try {
+        result = JSON.parse(body);
+      } catch {
+        result = body;
       }
+      successFn(result);
     })
-    .then(successFn)
     .catch(errorFn);
 };
 
