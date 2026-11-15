@@ -483,13 +483,20 @@ func startKubernetesDeployment(currCtx *config.Context, mesheryImageVersion, cal
 	spinner.Start()
 	defer spinner.Stop()
 
-	if err := utils.CreateManifestsFolder(); err != nil {
-		utils.Log.Error(utils.ErrCreateManifestsFolder(err))
-		return err
-	}
+	// Check if Meshery deployments already exist and can be resumed from system stop
+	resumed, err := resumeMesheryDeployments(kubeClient)
+	if err == nil && resumed {
+		utils.Log.Info("Resumed existing Meshery deployments.")
+	} else {
+		// Fresh install path when deployments do not exist
+		if err := utils.CreateManifestsFolder(); err != nil {
+			utils.Log.Error(utils.ErrCreateManifestsFolder(err))
+			return err
+		}
 
-	if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.INSTALL, callbackURL, providerURL); err != nil {
-		return err
+		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.INSTALL, callbackURL, providerURL); err != nil {
+			return err
+		}
 	}
 
 	time.Sleep(20 * time.Second)
@@ -506,7 +513,6 @@ func startKubernetesDeployment(currCtx *config.Context, mesheryImageVersion, cal
 
 	return nil
 }
-
 func init() {
 	startCmd.PersistentFlags().StringVarP(&utils.PlatformFlag, "platform", "p", "", "platform to deploy Meshery to.")
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")

@@ -194,28 +194,15 @@ func scaleMesheryDeployments(client *meshkitkube.Client, targetReplicas int32, s
 			return err
 		}
 
+		// Only record desired replicas if current replicas are > 0 (prevents overwriting on repeated stops)
 		if saveDesired && targetReplicas == 0 {
-			desired := int32(1)
-			if dep.Spec.Replicas != nil && *dep.Spec.Replicas > 0 {
-				desired = *dep.Spec.Replicas
-			}
 			if dep.Annotations == nil {
 				dep.Annotations = map[string]string{}
 			}
-			dep.Annotations[desiredReplicasAnnotation] = strconv.Itoa(int(desired))
-			dep, err = deploymentInterface.Update(context.TODO(), dep, metav1.UpdateOptions{})
-			if err != nil {
-				return err
-			}
-		}
-
-		if targetReplicas > 0 {
-			if dep.Annotations != nil {
-				if v, ok := dep.Annotations[desiredReplicasAnnotation]; ok {
-					if parsed, err := strconv.Atoi(v); err == nil && parsed > 0 {
-						targetReplicas = int32(parsed)
-					}
-				}
+			if dep.Spec.Replicas != nil && *dep.Spec.Replicas > 0 {
+				dep.Annotations[desiredReplicasAnnotation] = strconv.Itoa(int(*dep.Spec.Replicas))
+			} else if _, exists := dep.Annotations[desiredReplicasAnnotation]; !exists {
+				dep.Annotations[desiredReplicasAnnotation] = "1"
 			}
 		}
 
@@ -232,6 +219,51 @@ func scaleMesheryDeployments(client *meshkitkube.Client, targetReplicas int32, s
 		return errors.New("no Meshery deployments found to scale in namespace " + utils.MesheryNamespace)
 	}
 	return nil
+}
+
+// resumeMesheryDeployments scales stopped Meshery deployments back up using the
+// meshery.io/desired-replicas annotation when present (default 1).
+func resumeMesheryDeployments(client *meshkitkube.Client) (bool, error) {
+	deploymentInterface := client.KubeClient.AppsV1().Deployments(utils.MesheryNamespace)
+	deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return false, err
+	}
+
+	resumed := 0
+	for _, deployment := range deploymentList.Items {
+		if !strings.Contains(deployment.GetName(), "meshery") {
+			continue
+		}
+
+		dep, err := deploymentInterface.Get(context.TODO(), deployment.Name, metav1.GetOptions{})
+		if err != nil {
+			return false, err
+		}
+
+		// Only resume deployments that are stopped (0 replicas)
+		if dep.Spec.Replicas != nil && *dep.Spec.Replicas > 0 {
+			continue
+		}
+
+		desired := int32(1)
+		if dep.Annotations != nil {
+			if v, ok := dep.Annotations[desiredReplicasAnnotation]; ok {
+				if parsed, err := strconv.Atoi(v); err == nil && parsed > 0 {
+					desired = int32(parsed)
+				}
+			}
+		}
+
+		dep.Spec.Replicas = &desired
+		if _, err := deploymentInterface.Update(context.TODO(), dep, metav1.UpdateOptions{}); err != nil {
+			return false, err
+		}
+		resumed++
+		utils.Log.Debug(fmt.Sprintf("Resumed deployment %s to %d replicas", dep.Name, desired))
+	}
+
+	return resumed > 0, nil
 }
 
 // invokeDeleteCRs is a wrapper of deleteCR to delete CR instances (brokers and meshsyncs)

@@ -45,37 +45,7 @@ mesheryctl system stop --reset
 </div>
 </pre> 
 
-(optional) keep the Meshery namespace during uninstallation
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-<div class='clipboardjs'>
-mesheryctl system stop --keep-namespace
 
-</div>
-</div>
-</pre> 
-
-Stop Meshery forcefully (use it when system stop doesn't work)
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-<div class='clipboardjs'>
-mesheryctl system stop --force
-
-</div>
-</div>
-</pre> 
-
-## Options
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-      --force            (optional) uninstall Meshery resources forcefully
-  -h, --help             help for stop
-      --keep-namespace   (optional) keep the Meshery namespace during uninstallation
-      --reset            (optional) reset Meshery's configuration file to default settings.
-
-</div>
-</pre>
 
 ## Options inherited from parent commands
 

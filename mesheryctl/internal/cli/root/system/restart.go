@@ -126,8 +126,7 @@ func restart() error {
 			if utils.SilentFlag {
 				userResponse = true
 			} else {
-				// ask user for confirmation
-				userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
+				userResponse = utils.AskForConfirmation("Meshery deployments will be stopped and restarted. Are you sure you want to continue")
 			}
 			if !userResponse {
 				utils.Log.Info("Restart aborted.")
@@ -137,10 +136,10 @@ func restart() error {
 			utils.SilentFlag = true
 		}
 
-		silentFlagSet = utils.SilentFlag
 		utils.Log.Info("Restarting Meshery...")
 
 		if err := stop(); err != nil {
+			utils.SilentFlag = silentFlagSet
 			return ErrRestartMeshery(err)
 		}
 

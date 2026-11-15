@@ -250,11 +250,14 @@ func AreMesheryComponentsRunning(currPlatform string) (bool, error) {
 			}
 			for _, deployment := range deploymentList.Items {
 				if strings.Contains(string(deployment.GetName()), "meshery") {
-					return true, nil
+					// Components are only considered running if replicas > 0
+					if deployment.Spec.Replicas != nil && *deployment.Spec.Replicas > 0 {
+						return true, nil
+					}
 				}
 			}
 
-			return false, err
+			return false, nil
 		}
 	}
 
