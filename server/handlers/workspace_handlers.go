@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/gofrs/uuid"
-	"github.com/gorilla/mux"
 	"github.com/meshery/meshkit/errors"
 
 	"github.com/meshery/meshery/server/models"
@@ -103,6 +102,10 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 	}
 	resp, err := provider.GetWorkspaces(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
 		handlerErr := ErrGetWorkspaces(err)
 		h.log.Error(handlerErr)
 		writeMeshkitError(w, handlerErr, providerStatus(err))
@@ -116,7 +119,10 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 }
 
 func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(r)["id"]
+	workspaceID, ok := h.requirePathUUID(w, r, "id")
+	if !ok {
+		return
+	}
 	q := r.URL.Query()
 	// Canonical form is `orgId`; `orgID` is dual-accepted during the Phase 2
 	// deprecation window. Retire once Phase 3 consumer migration completes.
@@ -184,7 +190,10 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 }
 
 func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(r)["id"]
+	workspaceID, ok := h.requirePathUUID(w, r, "id")
+	if !ok {
+		return
+	}
 	resp, err := provider.DeleteWorkspace(r, workspaceID)
 	if err != nil {
 		// Deleting an id the provider never issued is "not found", not a
@@ -208,7 +217,10 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 }
 
 func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(req)["id"]
+	workspaceID, ok := h.requirePathUUID(w, req, "id")
+	if !ok {
+		return
+	}
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
@@ -255,10 +267,17 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 }
 
 func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(req)["id"]
+	workspaceID, ok := h.requirePathUUID(w, req, "id")
+	if !ok {
+		return
+	}
 	q := req.URL.Query()
 	resp, err := provider.GetEnvironmentsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
 		handlerErr := ErrWorkspaceResource(err, "list the environments of")
 		h.log.Error(handlerErr)
 		writeMeshkitError(w, handlerErr, providerStatus(err))
@@ -272,10 +291,17 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 }
 
 func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(req)["id"]
+	workspaceID, ok := h.requirePathUUID(w, req, "id")
+	if !ok {
+		return
+	}
 	q := req.URL.Query()
 	resp, err := provider.GetDesignsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), q["visibility"])
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
 		handlerErr := ErrWorkspaceResource(err, "list the designs of")
 		h.log.Error(handlerErr)
 		writeMeshkitError(w, handlerErr, providerStatus(err))
@@ -289,8 +315,14 @@ func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.
 }
 
 func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(req)["id"]
-	environmentID := mux.Vars(req)["environmentID"]
+	workspaceID, ok := h.requirePathUUID(w, req, "id")
+	if !ok {
+		return
+	}
+	environmentID, ok := h.requirePathUUID(w, req, "environmentID")
+	if !ok {
+		return
+	}
 	resp, err := provider.AddEnvironmentToWorkspace(req, workspaceID, environmentID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "assign an environment to")
@@ -305,8 +337,14 @@ func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *h
 }
 
 func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(req)["id"]
-	environmentID := mux.Vars(req)["environmentID"]
+	workspaceID, ok := h.requirePathUUID(w, req, "id")
+	if !ok {
+		return
+	}
+	environmentID, ok := h.requirePathUUID(w, req, "environmentID")
+	if !ok {
+		return
+	}
 	resp, err := provider.RemoveEnvironmentFromWorkspace(req, workspaceID, environmentID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "remove an environment from")
@@ -321,8 +359,14 @@ func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, r
 }
 
 func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(req)["id"]
-	designID := mux.Vars(req)["designID"]
+	workspaceID, ok := h.requirePathUUID(w, req, "id")
+	if !ok {
+		return
+	}
+	designID, ok := h.requirePathUUID(w, req, "designID")
+	if !ok {
+		return
+	}
 	resp, err := provider.AddDesignToWorkspace(req, workspaceID, designID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "assign a design to")
@@ -337,8 +381,14 @@ func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.R
 }
 
 func (h *Handler) RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(req)["id"]
-	designID := mux.Vars(req)["designID"]
+	workspaceID, ok := h.requirePathUUID(w, req, "id")
+	if !ok {
+		return
+	}
+	designID, ok := h.requirePathUUID(w, req, "designID")
+	if !ok {
+		return
+	}
 	resp, err := provider.RemoveDesignFromWorkspace(req, workspaceID, designID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "remove a design from")
@@ -353,10 +403,17 @@ func (h *Handler) RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *h
 }
 
 func (h *Handler) GetViewsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(req)["id"]
+	workspaceID, ok := h.requirePathUUID(w, req, "id")
+	if !ok {
+		return
+	}
 	q := req.URL.Query()
 	resp, err := provider.GetViewsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
 		handlerErr := ErrWorkspaceResource(err, "list the views of")
 		h.log.Error(handlerErr)
 		writeMeshkitError(w, handlerErr, providerStatus(err))
@@ -369,8 +426,14 @@ func (h *Handler) GetViewsOfWorkspaceHandler(w http.ResponseWriter, req *http.Re
 }
 
 func (h *Handler) AddViewToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(req)["id"]
-	viewID := mux.Vars(req)["viewID"]
+	workspaceID, ok := h.requirePathUUID(w, req, "id")
+	if !ok {
+		return
+	}
+	viewID, ok := h.requirePathUUID(w, req, "viewID")
+	if !ok {
+		return
+	}
 	resp, err := provider.AddViewToWorkspace(req, workspaceID, viewID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "assign a view to")
@@ -385,8 +448,14 @@ func (h *Handler) AddViewToWorkspaceHandler(w http.ResponseWriter, req *http.Req
 }
 
 func (h *Handler) RemoveViewFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(req)["id"]
-	viewID := mux.Vars(req)["viewID"]
+	workspaceID, ok := h.requirePathUUID(w, req, "id")
+	if !ok {
+		return
+	}
+	viewID, ok := h.requirePathUUID(w, req, "viewID")
+	if !ok {
+		return
+	}
 	resp, err := provider.RemoveViewFromWorkspace(req, workspaceID, viewID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "remove a view from")
@@ -401,10 +470,17 @@ func (h *Handler) RemoveViewFromWorkspaceHandler(w http.ResponseWriter, req *htt
 }
 
 func (h *Handler) GetTeamsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(req)["id"]
+	workspaceID, ok := h.requirePathUUID(w, req, "id")
+	if !ok {
+		return
+	}
 	q := req.URL.Query()
 	resp, err := provider.GetTeamsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
 		handlerErr := ErrWorkspaceResource(err, "list the teams of")
 		h.log.Error(handlerErr)
 		writeMeshkitError(w, handlerErr, providerStatus(err))
@@ -417,8 +493,14 @@ func (h *Handler) GetTeamsOfWorkspaceHandler(w http.ResponseWriter, req *http.Re
 }
 
 func (h *Handler) AddTeamToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(req)["id"]
-	teamID := mux.Vars(req)["teamID"]
+	workspaceID, ok := h.requirePathUUID(w, req, "id")
+	if !ok {
+		return
+	}
+	teamID, ok := h.requirePathUUID(w, req, "teamID")
+	if !ok {
+		return
+	}
 	resp, err := provider.AddTeamToWorkspace(req, workspaceID, teamID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "assign a team to")
@@ -433,8 +515,14 @@ func (h *Handler) AddTeamToWorkspaceHandler(w http.ResponseWriter, req *http.Req
 }
 
 func (h *Handler) RemoveTeamFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(req)["id"]
-	teamID := mux.Vars(req)["teamID"]
+	workspaceID, ok := h.requirePathUUID(w, req, "id")
+	if !ok {
+		return
+	}
+	teamID, ok := h.requirePathUUID(w, req, "teamID")
+	if !ok {
+		return
+	}
 	resp, err := provider.RemoveTeamFromWorkspace(req, workspaceID, teamID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "remove a team from")
