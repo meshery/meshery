@@ -234,7 +234,7 @@ mesheryctl system logs meshery-istio
 						if err != nil {
 							return utils.ErrReadResponseBody(err)
 						}
-						printLogs(string(logBuf), name)
+						printLogs(string(logBuf), fmt.Sprintf("%s/%s", name, containerName))
 					} else {
 						wg.Add(1)
 						go func(stream io.ReadCloser, podName string) {
@@ -255,7 +255,7 @@ mesheryctl system logs meshery-istio
 									break
 								}
 							}
-						}(logs, name)
+						}(logs, fmt.Sprintf("%s/%s", name, containerName))
 					}
 				}
 			}
