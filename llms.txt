@@ -1612,6 +1612,7 @@ Bookinfo The sample BookInfo …
 - [ErrUnDeployingAdapterCode-1168](/reference/error-codes/component-meshery-server/errundeployingadaptercode-1168/index.md)
 - [ErrUnDeployingAdapterInDockerEnvCode-1166](/reference/error-codes/component-meshery-server/errundeployingadapterindockerenvcode-1166/index.md)
 - [ErrUnDeployingAdapterInK8sEnvCode-1164](/reference/error-codes/component-meshery-server/errundeployingadapterink8senvcode-1164/index.md)
+- [ErrUninstallMesheryCode-1264](/reference/error-codes/client-mesheryctl/erruninstallmesherycode-1264/index.md)
 - [ErrUnknownConnectionKindCode-1394](/reference/error-codes/component-meshery-server/errunknownconnectionkindcode-1394/index.md)
 - [ErrUnknownHostCode-11255](/reference/error-codes/library-meshkit/errunknownhostcode-11255/index.md)
 - [ErrUnknownHostInMapCode-11260](/reference/error-codes/library-meshkit/errunknownhostinmapcode-11260/index.md)
@@ -1907,6 +1908,8 @@ Synopsis Set token for current context or context specified with …
 - [mesheryctl-system-token-view](/reference/mesheryctl/system/token/view/index.md):  mesheryctl system token view View token
 Synopsis View a specific token in meshery config
 mesheryctl system token view …
+- [mesheryctl-system-uninstall](/reference/mesheryctl/system/uninstall/index.md):  mesheryctl system uninstall Uninstall Meshery
+Synopsis Uninstall Meshery and completely remove the Meshery …
 - [mesheryctl-system-update](/reference/mesheryctl/system/update/index.md):  mesheryctl system update Pull new Meshery images/manifest files.
 Synopsis Pull new Meshery container images and …
 - [mesheryctl-version](/reference/mesheryctl/version/index.md):  mesheryctl version Show Meshery CLI and Server versions

@@ -244,6 +244,20 @@ Installation, troubleshooting and debugging of Meshery and its adapters
         <td>--reset</td>
         <td>Reset Meshery’s configuration file to default settings.</td>
       </tr>
+      <tr><td><a href="/reference/mesheryctl/system/uninstall/">uninstall</a></td>
+        <td></td>
+        <td>Uninstall Meshery</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--force</td>
+        <td>(optional) forcefully delete Kubernetes resources; has no effect for Docker installations</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--keep-namespace</td>
+        <td>(optional) keep the Meshery namespace during uninstallation</td>
+      </tr>
       <tr><td><a href="/reference/mesheryctl/system/update/">update</a></td>
         <td></td>
         <td>Pull new Meshery images from Docker Hub. Does not update `mesheryctl`. This command may be executed while Meshery is running.</td>

@@ -22370,6 +22370,31 @@ Pass a registration key to --provider instead of the display name</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrUninstallMesheryCode-1264" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrUninstallMesheryCode-more-info" onclick="toggle_visibility('mesheryctl-ErrUninstallMesheryCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1264" class="error-name-code">
+              <a href="/reference/error-codes/client-mesheryctl/erruninstallmesherycode-1264/"><code>ErrUninstallMesheryCode-1264</code></a>
+            </td>
+            <td>Error uninstalling Meshery</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrUninstallMesheryCode-1264" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="mesheryctl-ErrUninstallMesheryCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Meshery may be partially removed from the cluster: some Meshery resources are still present</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details"></p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>

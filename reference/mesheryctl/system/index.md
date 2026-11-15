@@ -65,4 +65,5 @@ Section pages:
 - [mesheryctl-system-status](/reference/mesheryctl/system/status/)
 - [mesheryctl-system-stop](/reference/mesheryctl/system/stop/)
 - [mesheryctl-system-token](/reference/mesheryctl/system/token/)
+- [mesheryctl-system-uninstall](/reference/mesheryctl/system/uninstall/)
 - [mesheryctl-system-update](/reference/mesheryctl/system/update/)

@@ -1086,6 +1086,7 @@ Section pages:
 - [ErrUnDeployingAdapterCode-1168](/reference/error-codes/component-meshery-server/errundeployingadaptercode-1168/)
 - [ErrUnDeployingAdapterInDockerEnvCode-1166](/reference/error-codes/component-meshery-server/errundeployingadapterindockerenvcode-1166/)
 - [ErrUnDeployingAdapterInK8sEnvCode-1164](/reference/error-codes/component-meshery-server/errundeployingadapterink8senvcode-1164/)
+- [ErrUninstallMesheryCode-1264](/reference/error-codes/client-mesheryctl/erruninstallmesherycode-1264/)
 - [ErrUnknownConnectionKindCode-1394](/reference/error-codes/component-meshery-server/errunknownconnectionkindcode-1394/)
 - [ErrUnknownHostCode-11255](/reference/error-codes/library-meshkit/errunknownhostcode-11255/)
 - [ErrUnknownHostInMapCode-11260](/reference/error-codes/library-meshkit/errunknownhostinmapcode-11260/)

@@ -40,4 +40,5 @@ Section pages:
 - [mesheryctl-system-token-list](/reference/mesheryctl/system/token/list/)
 - [mesheryctl-system-token-set](/reference/mesheryctl/system/token/set/)
 - [mesheryctl-system-token-view](/reference/mesheryctl/system/token/view/)
+- [mesheryctl-system-uninstall](/reference/mesheryctl/system/uninstall/)
 - [mesheryctl-system-update](/reference/mesheryctl/system/update/)
