@@ -1,6 +1,9 @@
 package models
 
 import (
+	"context"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 
@@ -109,6 +112,23 @@ func TestLocalDeleteUserCredential(t *testing.T) {
 		_, err := provider.DeleteUserCredential(nil, uuid.Must(uuid.NewV4()))
 		if errors.GetCode(err) != ErrResultNotFoundCode {
 			t.Fatalf("err = %v, want code %s", err, ErrResultNotFoundCode)
+		}
+	})
+
+	t.Run("another user's credential is not deleted", func(t *testing.T) {
+		provider := newTestProviderWithCredentialDB(t)
+		cred := saveTestCredential(t, provider, userID, "c")
+
+		otherUser := &User{ID: uuid.Must(uuid.NewV4())}
+		req := httptest.NewRequest(http.MethodDelete, "/api/integrations/credentials", nil)
+		req = req.WithContext(context.WithValue(req.Context(), UserCtxKey, otherUser))
+
+		_, err := provider.DeleteUserCredential(req, cred.ID)
+		if errors.GetCode(err) != ErrResultNotFoundCode {
+			t.Fatalf("err = %v, want code %s", err, ErrResultNotFoundCode)
+		}
+		if credentialDeletedAt(t, provider, cred.ID).Valid {
+			t.Fatal("deleted_at was unexpectedly set for another user's credential")
 		}
 	})
 

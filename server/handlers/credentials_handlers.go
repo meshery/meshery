@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -64,6 +65,13 @@ func (h *Handler) GetUserCredentialByID(w http.ResponseWriter, req *http.Request
 	if err != nil {
 		h.log.Error(ErrGetUserCredential(err))
 		writeMeshkitError(w, ErrGetUserCredential(err), statusCode)
+		return
+	}
+
+	// Enforce user ownership: an authenticated user cannot read another user's credential.
+	if user != nil && user.ID != uuid.Nil && credential.UserId != uuid.Nil && credential.UserId != user.ID {
+		notOwned := models.ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
+		writeMeshkitError(w, notOwned, http.StatusNotFound)
 		return
 	}
 
@@ -159,7 +167,7 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
 
 	// The canonical query param is camelCase `credentialId` (schemas
@@ -183,6 +191,10 @@ func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request,
 		h.log.Error(invalidID)
 		writeMeshkitError(w, invalidID, http.StatusBadRequest)
 		return
+	}
+
+	if user != nil {
+		req = req.WithContext(context.WithValue(req.Context(), models.UserCtxKey, user))
 	}
 
 	_, err = provider.DeleteUserCredential(req, credentialID)
