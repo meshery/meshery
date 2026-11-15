@@ -44,7 +44,7 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContextsWithStatus(search, 
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
-		query = query.Where("(lower(name) like ?)", like)
+		query = query.Where("(lower(k8s_contexts.name) like ?)", like)
 	}
 
 	if status != "" && mkcp.DB.Migrator().HasTable(&connections.Connection{}) {
