@@ -579,34 +579,60 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			log.Error(ErrPersistEvent(perr))
 		}
 	}
-	// Gets all the available kubernetes contexts
 
 	ctxName := k8sContext.Name
 	serverURL := k8sContext.Server
+	token, _ := ctx.Value(TokenCtxKey).(string)
+
+	// Resolve the cluster server ID directly from k8sContext if populated.
+	var sid string
+	if k8sContext.KubernetesServerID != nil {
+		sid = k8sContext.KubernetesServerID.String()
+	}
+
+	// Retrieve contexts from context; if missing (e.g. background context or connection deletion),
+	// load from the provider so cluster reference counting remains accurate.
 	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]*K8sContext)
-	if !ok || len(k8sctxs) == 0 {
-		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher")
-		if userUUID != uuid.Nil {
-			event = event.FromOwner(userUUID)
+	if (!ok || len(k8sctxs) == 0) && provider != nil {
+		if loaded, err := provider.LoadAllK8sContext(token); err == nil && len(loaded) > 0 {
+			k8sctxs = loaded
+			ok = true
 		}
-		builtEvent := event.Build()
-		persistAndPublish(builtEvent)
+	}
+
+	if sid == "" && len(k8sctxs) > 0 {
+		for _, k8ctx := range k8sctxs {
+			if k8ctx == nil {
+				continue
+			}
+			if k8ctx.ID == ctxID && k8ctx.KubernetesServerID != nil {
+				sid = k8ctx.KubernetesServerID.String()
+				break
+			}
+		}
+	}
+
+	if sid == "" && provider != nil {
+		if storedCtx, err := provider.GetK8sContext(token, ctxID); err == nil && storedCtx.KubernetesServerID != nil {
+			sid = storedCtx.KubernetesServerID.String()
+		}
+	}
+
+	if sid == "" {
+		if !ok || len(k8sctxs) == 0 {
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher")
+			if userUUID != uuid.Nil {
+				event = event.FromOwner(userUUID)
+			}
+			builtEvent := event.Build()
+			persistAndPublish(builtEvent)
+		}
 		return
 	}
-	var sid string
-	var refCount int
-	// Gets the serverID for the passed contextID
-	for _, k8ctx := range k8sctxs {
-		if k8ctx == nil {
-			continue
-		}
-		if k8ctx.ID == ctxID && k8ctx.KubernetesServerID != nil {
-			sid = k8ctx.KubernetesServerID.String()
-			break
-		}
-	}
-	// Counts the reference of the serverID
-	// As multiple context can have same serverID
+
+	// Counts the reference of the serverID across all active contexts.
+	// As multiple contexts can refer to the same serverID, only flush if this is the last context.
+	refCount := 0
 	for _, k8ctx := range k8sctxs {
 		if k8ctx == nil {
 			continue
@@ -615,9 +641,10 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			refCount++
 		}
 	}
-	// If the reference count is 1 then only flush the meshsync data
-	// because this means its the last contextID referring to that Kubernetes Server
-	if refCount == 1 {
+
+	// If refCount <= 1 (or 0 when contexts list was empty/unretrievable), this is the
+	// last context referring to that Kubernetes Server, so flush the MeshSync data.
+	if refCount <= 1 {
 		if provider == nil || provider.GetGenericPersister() == nil {
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).WithMetadata(map[string]interface{}{
 				"error": ErrEmptyMeshSyncHandler(),
