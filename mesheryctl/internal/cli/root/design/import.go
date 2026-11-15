@@ -17,6 +17,7 @@ package design
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/url"
 	"os"
@@ -144,6 +145,9 @@ func importPattern(sourceType string, file string, patternURL string) (*models.M
 			return nil, utils.ErrParsingUrl(err)
 		}
 		fileName = path.Base(parsed.Path)
+		if name == "" && (fileName == "." || fileName == "/") {
+			return nil, utils.ErrParsingUrl(fmt.Errorf("URL %q has no file name in its path; pass --name to set the design name", file))
+		}
 	}
 	if name == "" {
 		patternName = fileName

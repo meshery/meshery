@@ -234,3 +234,17 @@ func TestImportPatternURLDefaultNameExcludesQuery(t *testing.T) {
 	assert.Equal(t, "design.yaml", captured["name"])
 	assert.Equal(t, "https://example.com/design.yaml?token=secret#fragment", captured["url"])
 }
+
+func TestImportPatternURLWithoutPathNameRequiresNameFlag(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	defer resetVariables()
+	utils.TokenFlag = utils.GetToken(t)
+	oldName := name
+	name = ""
+	defer func() { name = oldName }()
+	_, err := importPattern("", "https://example.com?token=secret", testContext.BaseURL+"/api/pattern/import")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "--name")
+}
