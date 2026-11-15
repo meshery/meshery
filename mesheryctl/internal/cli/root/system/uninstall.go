@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path"
 	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -35,7 +36,7 @@ import (
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/kubernetes"
-	controllerConfig "sigs.k8s.io/controller-runtime/pkg/client/config"
+	"k8s.io/client-go/rest"
 )
 
 // uninstallCmd represents the uninstall command
@@ -165,6 +166,11 @@ func uninstallMeshery() error {
 	case platformDocker:
 		return uninstallDockerInstallation()
 	case platformKubernetes:
+		// The Kubernetes configuration is resolved here, once, and every teardown
+		// stage works from this client: the custom resources through its dynamic
+		// client, the CRDs through its REST configuration and the namespace through
+		// its clientset. Nothing reloads the kubeconfig afterwards, so a context
+		// switch mid-uninstall cannot point a later stage at another cluster.
 		client, err := meshkitkube.New([]byte(""))
 		if err != nil {
 			return err
@@ -328,19 +334,19 @@ func kubernetesUninstallStages(client *meshkitkube.Client, currCtx *config.Conte
 			run:         utils.ForceCleanupCluster,
 		})
 	} else {
-		// Delete meshery components by uninstalling the helm release
+		// Delete meshery components by uninstalling the helm releases
 		stages = append(stages, uninstallStage{
 			description: "cannot uninstall the Meshery Helm release",
-			run: func() error {
-				return applyHelmCharts(client, currCtx, currCtx.GetVersion(), false, meshkitkube.UNINSTALL, "", "")
-			},
+			run:         func() error { return uninstallHelmReleases(client.KubeClient, client, currCtx) },
 		})
 	}
 
 	stages = append(stages,
 		uninstallStage{
 			description: "cannot delete Meshery custom resource definitions",
-			run:         deleteMesheryCRDs,
+			// The configuration resolved when the command started is reused, so
+			// every stage targets the cluster the teardown began on.
+			run: func() error { return deleteMesheryCRDs(&client.RestConfig) },
 		},
 		uninstallStage{
 			description: "cannot delete the Meshery namespace",
@@ -351,6 +357,116 @@ func kubernetesUninstallStages(client *meshkitkube.Client, currCtx *config.Conte
 	)
 
 	return stages
+}
+
+// The Meshery Helm releases, and the labels Helm's Secret storage driver puts on
+// every release revision it keeps in the cluster.
+const (
+	mesheryReleaseName         = "meshery"
+	mesheryOperatorReleaseName = "meshery-operator"
+
+	helmReleaseOwnerLabel      = "owner"
+	helmReleaseOwnerLabelValue = "helm"
+	helmReleaseNameLabel       = "name"
+)
+
+// applyHelmChart uninstalls a single Helm release. It is a variable so tests can
+// observe which releases are uninstalled, and with what, without a cluster.
+var applyHelmChart = func(client *meshkitkube.Client, cfg meshkitkube.ApplyHelmChartConfig) error {
+	return client.ApplyHelmChart(cfg)
+}
+
+// uninstallHelmReleases uninstalls the Meshery and Meshery Operator Helm
+// releases, treating a release Helm no longer stores as successfully
+// uninstalled.
+//
+// Each release is uninstalled on its own so that one already-absent release
+// cannot mask the outcome of the other, and the genuine failures are reported
+// together the way applyHelmCharts reports them for install. Uninstall has to be
+// re-runnable: an earlier attempt can remove the releases and then fail while
+// deleting the custom resource definitions, and the retry must reach the
+// remaining stages instead of stopping here.
+func uninstallHelmReleases(kubeClient kubernetes.Interface, chartClient *meshkitkube.Client, currCtx *config.Context) error {
+	var failures []error
+
+	for _, release := range []struct {
+		releaseName string
+		chartName   string
+	}{
+		{mesheryReleaseName, utils.HelmChartName},
+		{mesheryOperatorReleaseName, utils.HelmChartOperatorName},
+	} {
+		if err := uninstallHelmRelease(kubeClient, chartClient, currCtx, release.releaseName, release.chartName); err != nil {
+			failures = append(failures, errors.Wrapf(err, "cannot uninstall the %s Helm release", release.releaseName))
+		}
+	}
+
+	return utilerrors.NewAggregate(failures)
+}
+
+// uninstallHelmRelease uninstalls one Meshery Helm release, skipping the
+// uninstall when the release is not installed.
+//
+// MeshKit's uninstall action leaves Helm's IgnoreNotFound unset, so uninstalling
+// an absent release fails with Helm's "release: not found", and MeshKit renders
+// that cause into the message of a generic apply-chart error instead of wrapping
+// it, leaving nothing to match with errors.Is. The release is therefore looked up
+// before it is uninstalled instead of its failure being recognised afterwards.
+func uninstallHelmRelease(kubeClient kubernetes.Interface, chartClient *meshkitkube.Client, currCtx *config.Context, releaseName, chartName string) error {
+	installed, err := isHelmReleaseInstalled(kubeClient, utils.MesheryNamespace, releaseName)
+	if err != nil {
+		return errors.Wrapf(err, "cannot tell whether the %s release is installed", releaseName)
+	}
+	if !installed {
+		return nil
+	}
+
+	// The install path passes no chart version for "latest", which makes MeshKit
+	// resolve the latest published chart; reuse whatever the context pins.
+	chartVersion := ""
+	if version := currCtx.GetVersion(); version != "latest" {
+		chartVersion = version
+	}
+
+	return applyHelmChart(chartClient, meshkitkube.ApplyHelmChartConfig{
+		Namespace:       utils.MesheryNamespace,
+		ReleaseName:     releaseName,
+		CreateNamespace: true,
+		ChartLocation: meshkitkube.HelmChartLocation{
+			Repository: utils.HelmChartURL,
+			Chart:      chartName,
+			Version:    chartVersion,
+		},
+		Action: meshkitkube.UNINSTALL,
+		// Keep the download location the install path uses, so a chart an
+		// earlier start already downloaded is reused rather than fetched again.
+		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
+	})
+}
+
+// isHelmReleaseInstalled is the lookup uninstallHelmRelease performs. It is a
+// variable so the Helm stage can be exercised without a cluster.
+var isHelmReleaseInstalled = helmReleaseExists
+
+// helmReleaseExists reports whether Helm still stores a release of the given
+// name in the namespace.
+//
+// Helm records every release revision as a Secret in the release namespace - the
+// Secret driver is MeshKit's default - labelled owner=helm, name=<release>. That
+// label pair is the same one Helm's storage query uses to decide that a release
+// does not exist, so asking the cluster for it answers the question uninstall
+// needs without matching error strings.
+func helmReleaseExists(client kubernetes.Interface, namespace, releaseName string) (bool, error) {
+	secrets, err := client.CoreV1().Secrets(namespace).List(context.TODO(), metav1.ListOptions{
+		LabelSelector: fmt.Sprintf("%s=%s,%s=%s",
+			helmReleaseOwnerLabel, helmReleaseOwnerLabelValue,
+			helmReleaseNameLabel, releaseName),
+	})
+	if err != nil {
+		return false, err
+	}
+
+	return len(secrets.Items) > 0, nil
 }
 
 // deleteMesheryCRs deletes the Broker and MeshSync custom resource instances,
@@ -435,27 +551,23 @@ func deleteCRInstance(resourceName, instanceName string, client *meshkitkube.Cli
 	return nil
 }
 
-// apiExtensionsClient builds the client used to delete Meshery's CRDs. It is a
-// variable so tests can substitute a fake clientset.
-var apiExtensionsClient = func() (apiextension.Interface, error) {
-	cfg, err := controllerConfig.GetConfig()
-	if err != nil {
-		return nil, errors.Wrap(err, "cannot load the Kubernetes configuration")
-	}
-
+// apiExtensionsClient builds the client used to delete Meshery's CRDs from the
+// REST configuration the rest of the teardown already resolved. It is a variable
+// so tests can substitute a fake clientset.
+var apiExtensionsClient = func(cfg *rest.Config) (apiextension.Interface, error) {
 	return apiextension.NewForConfig(cfg)
 }
 
 // deleteMesheryCRDs deletes the Broker and MeshSync CRDs, attempting both and
 // reporting every genuine failure together. As with the custom resources, an
 // already deleted CRD is not a failure.
-func deleteMesheryCRDs() error {
+func deleteMesheryCRDs(cfg *rest.Config) error {
 	const (
 		brokerCRDName   = "brokers.meshery.io"
 		meshsyncCRDName = "meshsyncs.meshery.io"
 	)
 
-	client, err := apiExtensionsClient()
+	client, err := apiExtensionsClient(cfg)
 	if err != nil {
 		return err
 	}

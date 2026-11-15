@@ -10,6 +10,7 @@ import (
 	"time"
 
 	mesheryoperator "github.com/meshery/meshery-operator/api/v1alpha1"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	mesheryerrors "github.com/meshery/meshkit/errors"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
@@ -25,7 +26,9 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	dynamicfake "k8s.io/client-go/dynamic/fake"
+	"k8s.io/client-go/kubernetes"
 	k8sfake "k8s.io/client-go/kubernetes/fake"
+	"k8s.io/client-go/rest"
 	k8stesting "k8s.io/client-go/testing"
 )
 
@@ -546,7 +549,10 @@ func TestDeleteCRInstanceWaitsForDeletion(t *testing.T) {
 		err := deleteCRInstance(brokerResource, brokerInstance, client)
 		require.Error(t, err, "an instance that never disappears must not be reported as deleted")
 		assert.Contains(t, err.Error(), "cannot confirm deletion of "+brokerInstance)
-		assert.Greater(t, gets, 1, "the wait must poll more than once")
+		// A timeout is allowed to land after the single immediate poll: only one
+		// invocation is guaranteed. Repeated polling is pinned by the
+		// disappearance test above.
+		assert.GreaterOrEqual(t, gets, 1, "the wait must poll at least once")
 	})
 
 	t.Run("reports an API error instead of waiting for the timeout", func(t *testing.T) {
@@ -647,7 +653,7 @@ func TestDeleteMesheryCRDs(t *testing.T) {
 
 	withClient := func(t *testing.T, client apiextension.Interface) {
 		t.Helper()
-		apiExtensionsClient = func() (apiextension.Interface, error) { return client, nil }
+		apiExtensionsClient = func(*rest.Config) (apiextension.Interface, error) { return client, nil }
 		t.Cleanup(func() { apiExtensionsClient = previousClient })
 	}
 
@@ -666,7 +672,7 @@ func TestDeleteMesheryCRDs(t *testing.T) {
 		client := newCRDClient("brokers.meshery.io", "meshsyncs.meshery.io")
 		withClient(t, client)
 
-		require.NoError(t, deleteMesheryCRDs())
+		require.NoError(t, deleteMesheryCRDs(&rest.Config{}))
 
 		for _, name := range []string{"brokers.meshery.io", "meshsyncs.meshery.io"} {
 			_, err := client.ApiextensionsV1().CustomResourceDefinitions().Get(t.Context(), name, metav1.GetOptions{})
@@ -677,7 +683,7 @@ func TestDeleteMesheryCRDs(t *testing.T) {
 	t.Run("succeeds when both CRDs are already gone", func(t *testing.T) {
 		withClient(t, newCRDClient())
 
-		assert.NoError(t, deleteMesheryCRDs())
+		assert.NoError(t, deleteMesheryCRDs(&rest.Config{}))
 	})
 
 	t.Run("reports every genuine failure", func(t *testing.T) {
@@ -692,21 +698,244 @@ func TestDeleteMesheryCRDs(t *testing.T) {
 		})
 		withClient(t, client)
 
-		err := deleteMesheryCRDs()
+		err := deleteMesheryCRDs(&rest.Config{})
 		require.Error(t, err)
 		assert.Equal(t, 2, attempts, "both CRDs must be attempted")
 		assert.Contains(t, err.Error(), "brokers.meshery.io")
 		assert.Contains(t, err.Error(), "meshsyncs.meshery.io")
 	})
 
+	t.Run("deletes through the configuration it is given", func(t *testing.T) {
+		cfg := &rest.Config{Host: "https://cluster-a.example:6443"}
+		var got *rest.Config
+		apiExtensionsClient = func(cfg *rest.Config) (apiextension.Interface, error) {
+			got = cfg
+			return newCRDClient(), nil
+		}
+		t.Cleanup(func() { apiExtensionsClient = previousClient })
+
+		require.NoError(t, deleteMesheryCRDs(cfg))
+		assert.Same(t, cfg, got, "the CRD client must be built from the supplied configuration")
+	})
+
 	t.Run("reports a client that cannot be built", func(t *testing.T) {
-		apiExtensionsClient = func() (apiextension.Interface, error) {
+		apiExtensionsClient = func(*rest.Config) (apiextension.Interface, error) {
 			return nil, errors.New("no kubeconfig")
 		}
 		t.Cleanup(func() { apiExtensionsClient = previousClient })
 
-		err := deleteMesheryCRDs()
+		err := deleteMesheryCRDs(&rest.Config{})
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "no kubeconfig")
+	})
+}
+
+// helmReleaseSecret builds the Secret Helm's Secret storage driver keeps a
+// release revision in: the labels matter, the payload does not.
+func helmReleaseSecret(releaseName string) *corev1.Secret {
+	return &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      releaseName + ".v1",
+			Namespace: utils.MesheryNamespace,
+			Labels: map[string]string{
+				"owner": "helm",
+				"name":  releaseName,
+			},
+		},
+	}
+}
+
+// TestHelmReleaseExists checks the lookup uninstall uses to tell an installed
+// release from one a previous attempt already removed.
+func TestHelmReleaseExists(t *testing.T) {
+	t.Run("reports a stored release", func(t *testing.T) {
+		client := k8sfake.NewClientset(helmReleaseSecret(mesheryReleaseName))
+
+		installed, err := helmReleaseExists(client, utils.MesheryNamespace, mesheryReleaseName)
+
+		require.NoError(t, err)
+		assert.True(t, installed)
+	})
+
+	t.Run("does not count another release", func(t *testing.T) {
+		client := k8sfake.NewClientset(helmReleaseSecret(mesheryOperatorReleaseName))
+
+		installed, err := helmReleaseExists(client, utils.MesheryNamespace, mesheryReleaseName)
+
+		require.NoError(t, err)
+		assert.False(t, installed, "a different release must not be mistaken for this one")
+	})
+
+	t.Run("reports an absent release", func(t *testing.T) {
+		installed, err := helmReleaseExists(k8sfake.NewClientset(), utils.MesheryNamespace, mesheryReleaseName)
+
+		require.NoError(t, err)
+		assert.False(t, installed)
+	})
+
+	t.Run("reports a failed lookup", func(t *testing.T) {
+		client := k8sfake.NewClientset()
+		client.PrependReactor("list", "secrets", func(k8stesting.Action) (bool, runtime.Object, error) {
+			return true, nil, apierrors.NewForbidden(
+				schema.GroupResource{Resource: "secrets"}, utils.MesheryNamespace, errors.New("list is forbidden"))
+		})
+
+		_, err := helmReleaseExists(client, utils.MesheryNamespace, mesheryReleaseName)
+
+		require.Error(t, err)
+	})
+}
+
+// TestUninstallHelmReleases pins the re-runnability of the Helm stage: a release
+// that is already gone is not a failure, so a retry after an interrupted
+// uninstall reaches the CRD and namespace stages instead of stopping here.
+func TestUninstallHelmReleases(t *testing.T) {
+	previousApply := applyHelmChart
+	t.Cleanup(func() { applyHelmChart = previousApply })
+
+	type call struct {
+		releaseName string
+		chartName   string
+	}
+
+	previousLookup := isHelmReleaseInstalled
+	t.Cleanup(func() { isHelmReleaseInstalled = previousLookup })
+
+	// installedSpec substitutes the release lookup with a fixed answer per
+	// release, and optionally a lookup failure.
+	installedSpec := func(t *testing.T, installed ...string) {
+		t.Helper()
+		isHelmReleaseInstalled = func(_ kubernetes.Interface, namespace, releaseName string) (bool, error) {
+			assert.Equal(t, utils.MesheryNamespace, namespace, "releases must be looked up where they were installed")
+			return slices.Contains(installed, releaseName), nil
+		}
+		t.Cleanup(func() { isHelmReleaseInstalled = previousLookup })
+	}
+
+	// recordUninstalls substitutes a Helm uninstall, failing the given releases.
+	recordUninstalls := func(t *testing.T, failures map[string]error) *[]call {
+		t.Helper()
+		calls := new([]call)
+		applyHelmChart = func(_ *meshkitkube.Client, cfg meshkitkube.ApplyHelmChartConfig) error {
+			assert.Equal(t, meshkitkube.UNINSTALL, cfg.Action, "the Helm stage must only uninstall")
+			*calls = append(*calls, call{cfg.ReleaseName, cfg.ChartLocation.Chart})
+			return failures[cfg.ReleaseName]
+		}
+		t.Cleanup(func() { applyHelmChart = previousApply })
+		return calls
+	}
+
+	releases := []string{mesheryReleaseName, mesheryOperatorReleaseName}
+	currCtx := &config.Context{Version: "v0.8.0"}
+
+	t.Run("succeeds when every release is already absent", func(t *testing.T) {
+		calls := recordUninstalls(t, nil)
+		installedSpec(t)
+
+		require.NoError(t, uninstallHelmReleases(nil, nil, currCtx))
+		assert.Empty(t, *calls, "an absent release must not be uninstalled")
+	})
+
+	t.Run("uninstalls the release that is still installed", func(t *testing.T) {
+		calls := recordUninstalls(t, nil)
+		installedSpec(t, mesheryReleaseName)
+
+		require.NoError(t, uninstallHelmReleases(nil, nil, currCtx), "an absent release must not fail the stage")
+		assert.Equal(t, []call{{mesheryReleaseName, utils.HelmChartName}}, *calls)
+	})
+
+	t.Run("uninstalls both releases", func(t *testing.T) {
+		calls := recordUninstalls(t, nil)
+		installedSpec(t, releases...)
+
+		require.NoError(t, uninstallHelmReleases(nil, nil, currCtx))
+		assert.Equal(t, []call{
+			{mesheryReleaseName, utils.HelmChartName},
+			{mesheryOperatorReleaseName, utils.HelmChartOperatorName},
+		}, *calls)
+	})
+
+	t.Run("reports a genuine uninstall failure", func(t *testing.T) {
+		calls := recordUninstalls(t, map[string]error{
+			mesheryReleaseName: errors.New("the release could not be uninstalled"),
+		})
+		installedSpec(t, releases...)
+
+		err := uninstallHelmReleases(nil, nil, currCtx)
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "the release could not be uninstalled", "the Helm error must be preserved")
+		assert.Contains(t, err.Error(), mesheryReleaseName)
+		assert.Len(t, *calls, len(releases), "a failing release must not stop the other release")
+	})
+
+	t.Run("reports a release lookup failure", func(t *testing.T) {
+		recordUninstalls(t, nil)
+		kubeClient := k8sfake.NewClientset()
+		kubeClient.PrependReactor("list", "secrets", func(k8stesting.Action) (bool, runtime.Object, error) {
+			return true, nil, apierrors.NewForbidden(
+				schema.GroupResource{Resource: "secrets"}, utils.MesheryNamespace, errors.New("list is forbidden"))
+		})
+		err := uninstallHelmReleases(kubeClient, nil, currCtx)
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "cannot tell whether the")
+	})
+}
+
+// TestKubernetesUninstallStagesUseOneConfiguration verifies that the Helm and CRD
+// stages work against the configuration the command resolved once, instead of
+// re-reading the kubeconfig and possibly targeting a different cluster.
+func TestKubernetesUninstallStagesUseOneConfiguration(t *testing.T) {
+	previousForceDelete, previousApply := forceDelete, applyHelmChart
+	previousClient := apiExtensionsClient
+	t.Cleanup(func() {
+		forceDelete = previousForceDelete
+		applyHelmChart = previousApply
+		apiExtensionsClient = previousClient
+	})
+	forceDelete = false
+
+	stage := func(t *testing.T, stages []uninstallStage, description string) uninstallStage {
+		t.Helper()
+		for _, candidate := range stages {
+			if candidate.description == description {
+				return candidate
+			}
+		}
+		t.Fatalf("the %q stage is missing", description)
+		return uninstallStage{}
+	}
+
+	client := &meshkitkube.Client{RestConfig: rest.Config{Host: "https://cluster-a.example:6443"}}
+
+	// A release that is already absent must not be uninstalled, which also keeps
+	// the Helm stage from needing the chart repository at all.
+	t.Run("the Helm stage skips absent releases", func(t *testing.T) {
+		previousLookup := isHelmReleaseInstalled
+		isHelmReleaseInstalled = func(kubernetes.Interface, string, string) (bool, error) { return false, nil }
+		t.Cleanup(func() { isHelmReleaseInstalled = previousLookup })
+		applyHelmChart = func(*meshkitkube.Client, meshkitkube.ApplyHelmChartConfig) error {
+			t.Fatal("an absent release must not be uninstalled")
+			return nil
+		}
+		stages := kubernetesUninstallStages(&meshkitkube.Client{}, &config.Context{})
+
+		require.NoError(t, stage(t, stages, "cannot uninstall the Meshery Helm release").run())
+	})
+
+	t.Run("the CRD stage deletes through the resolved configuration", func(t *testing.T) {
+		var got *rest.Config
+		apiExtensionsClient = func(cfg *rest.Config) (apiextension.Interface, error) {
+			got = cfg
+			return apiextensionfake.NewClientset(), nil
+		}
+
+		stages := kubernetesUninstallStages(client, &config.Context{})
+		require.NoError(t, stage(t, stages, "cannot delete Meshery custom resource definitions").run())
+
+		require.NotNil(t, got, "the CRD stage must build its client from a configuration")
+		assert.Same(t, &client.RestConfig, got,
+			"CRD deletion must reuse the configuration every other stage targets")
 	})
 }
