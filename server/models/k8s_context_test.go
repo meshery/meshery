@@ -47,6 +47,14 @@ func (f *flushFakeProvider) PersistSystemEvent(event events.Event) (PersistedEve
 	return PersistedEvent{Event: &event, Disposition: EventCreated}, nil
 }
 
+func (f *flushFakeProvider) LoadAllK8sContext(string) ([]*K8sContext, error) {
+	return nil, nil
+}
+
+func (f *flushFakeProvider) GetK8sContext(string, string) (K8sContext, error) {
+	return K8sContext{}, nil
+}
+
 // TestFlushMeshSyncDataEmptyUserIDAndNilMesheryInstanceID verifies that FlushMeshSyncData
 // does not panic when userID is empty or mesheryInstanceID is nil, and handles event persistence safely.
 func TestFlushMeshSyncDataEmptyUserIDAndNilMesheryInstanceID(t *testing.T) {

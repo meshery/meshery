@@ -594,7 +594,12 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 	// load from the provider so cluster reference counting remains accurate.
 	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]*K8sContext)
 	if (!ok || len(k8sctxs) == 0) && provider != nil {
-		if loaded, err := provider.LoadAllK8sContext(token); err == nil && len(loaded) > 0 {
+		if loaded, err := provider.LoadAllK8sContext(token); err != nil {
+			if log != nil {
+				log.Error(err)
+			}
+			return
+		} else if len(loaded) > 0 {
 			k8sctxs = loaded
 			ok = true
 		}
@@ -630,21 +635,20 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 		return
 	}
 
-	// Counts the reference of the serverID across all active contexts.
-	// As multiple contexts can refer to the same serverID, only flush if this is the last context.
-	refCount := 0
+	// Counts the reference of the serverID across all active contexts other than the one being deleted.
+	// As multiple contexts can refer to the same serverID, only flush if no other active context references it.
+	otherRefCount := 0
 	for _, k8ctx := range k8sctxs {
-		if k8ctx == nil {
+		if k8ctx == nil || k8ctx.ID == ctxID {
 			continue
 		}
 		if k8ctx.KubernetesServerID != nil && k8ctx.KubernetesServerID.String() == sid {
-			refCount++
+			otherRefCount++
 		}
 	}
 
-	// If refCount <= 1 (or 0 when contexts list was empty/unretrievable), this is the
-	// last context referring to that Kubernetes Server, so flush the MeshSync data.
-	if refCount <= 1 {
+	// Flush only when no other active context references this Kubernetes server.
+	if otherRefCount == 0 {
 		if provider == nil || provider.GetGenericPersister() == nil {
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).WithMetadata(map[string]interface{}{
 				"error": ErrEmptyMeshSyncHandler(),
