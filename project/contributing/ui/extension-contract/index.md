@@ -92,7 +92,7 @@ The contract exists to convert that class of failure into a compile error or a f
 ## Where the contract lives
 
 The contract is declared **once**, in the `mesheryExtensionContract` module of
-[`@sistent/sistent`](https://github.com/meshery/sistent). Read that module for the
+[`@sistent/sistent`](https://github.com/layer5io/sistent). Read that module for the
 authoritative definitions. The exports Meshery UI consumes:
 
 | Export | Kind | Purpose |

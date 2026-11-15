@@ -400,6 +400,6 @@ Once validated and tested:
 
 - [Contributing to Model Relationships](/project/contributing/contributing-relationships)
 - [Meshery Relationship Schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1alpha3/relationship)
-- [Existing Relationships](https://github.com/meshery/meshery/tree/master/server/meshmodel)
-- [OPA Policies](https://github.com/meshery/meshery/tree/master/server/meshmodel/meshery-core)
+- [Existing Relationships](https://github.com/meshery/meshery/tree/master/models)
+- [OPA Policies](https://github.com/meshery/meshery/tree/master/models/meshery-core)
 - [Issue #17096: AWS Relationships Epic](https://github.com/meshery/meshery/issues/17096)
