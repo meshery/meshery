@@ -6,10 +6,9 @@
   "scripts": {
     "dev": "node ui_dev_server.js",
     "build": "npm run clean && next build",
-    "start": "NODE_ENV=production node server.js",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix",
-    "clean": "rm -rf .next,out"
+    "clean": "rm -rf .next out"
   },
   "keywords": [],
   "author": "Meshery Authors",
