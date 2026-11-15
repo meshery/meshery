@@ -171,23 +171,24 @@ export function buildFiltersColumns({
               >
                 <InfoOutlinedIcon data-cy="information-button" />
               </TooltipIcon>
-              {canPublishFilter && visibility !== VISIBILITY.PUBLISHED ? (
-                <TooltipIcon
-                  title="Publish"
-                  onClick={(ev) => handlePublishModal(ev, rowData)}
-                  permissionKey={Keys.CatalogManagementPublishWasmFilter}
-                >
-                  <PublicIcon fill="#F91313" data-cy="publish-button" />
-                </TooltipIcon>
-              ) : (
-                <TooltipIcon
-                  title="Unpublish"
-                  onClick={(ev) => handleUnpublishModal(ev, rowData)?.()}
-                  permissionKey={Keys.CatalogManagementUnpublishWasmFilter}
-                >
-                  <PublicIcon fill="#F91313" data-cy="unpublish-button" />
-                </TooltipIcon>
-              )}
+              {canPublishFilter &&
+                (visibility !== VISIBILITY.PUBLISHED ? (
+                  <TooltipIcon
+                    title="Publish"
+                    onClick={(ev) => handlePublishModal(ev, rowData)}
+                    permissionKey={Keys.CatalogManagementPublishWasmFilter}
+                  >
+                    <PublicIcon fill="#F91313" data-cy="publish-button" />
+                  </TooltipIcon>
+                ) : (
+                  <TooltipIcon
+                    title="Unpublish"
+                    onClick={(ev) => handleUnpublishModal(ev, rowData)?.()}
+                    permissionKey={Keys.CatalogManagementUnpublishWasmFilter}
+                  >
+                    <PublicIcon fill="#F91313" data-cy="unpublish-button" />
+                  </TooltipIcon>
+                ))}
             </ActionsBox>
           );
         },
