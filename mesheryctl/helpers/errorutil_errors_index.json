@@ -4092,19 +4092,19 @@
     },
     {
       "code": "mesheryctl-1263",
-      "moniker": "ErrAmbiguousDesignNameCode",
+      "moniker": "ErrRedirectChangesMethodCode",
       "component": {
         "name": "mesheryctl",
         "type": "client"
       },
       "numericCode": "1263",
       "severity": "alert",
-      "shortDescription": "More than one design has this name",
+      "shortDescription": "Redirect would change the request method",
       "probableCause": [
-        "Design names are not unique, so the name alone does not say which design to use."
+        "The current context's endpoint is not the address Meshery Server answers on directly (for example an http:// endpoint behind a proxy that redirects to https), or the request path is not in the form the server routes (for example it contains a doubled slash)"
       ],
       "suggestedRemediation": [
-        "Pass the design ID instead. Run 'mesheryctl design list' to see the IDs."
+        "Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"
       ]
     }
   ],

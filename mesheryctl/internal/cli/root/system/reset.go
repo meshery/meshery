@@ -94,14 +94,21 @@ func resetMesheryConfig() error {
 	utils.Log.Infof("Platform: %s\n", currCtx.GetPlatform())
 
 	// Reset the config file to the default context
-	defaultContext := utils.TemplateContext
-	defaultContext.Platform = currCtx.Platform
-	err = config.AddContextToConfig(mctlCfg.GetCurrentContextName(), defaultContext, utils.DefaultConfigPath, true, true)
+	err = resetContextInConfig(mctlCfg.GetCurrentContextName(), currCtx.Platform)
 	if err != nil {
 		return ErrSettingDefaultContextToConfig(err)
 	}
 
 	return fetchManifests(mctlCfg)
+}
+
+// resetContextInConfig replaces the named context with the default context,
+// keeping its platform. It writes to the meshconfig the command runs with:
+// the file given by --config, or the default meshconfig.
+func resetContextInConfig(contextName, platform string) error {
+	defaultContext := utils.TemplateContext
+	defaultContext.Platform = platform
+	return config.AddContextToConfig(contextName, defaultContext, utils.GetActiveConfigPath(), true, true)
 }
 
 // Fetches manifests for meshery components based on the current context
