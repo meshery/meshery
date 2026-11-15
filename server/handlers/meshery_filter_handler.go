@@ -186,7 +186,7 @@ func (h *Handler) handleFilterPOST(
 
 			h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
 
-			_, _ = provider.PersistEvent(*eventBuilder.WithSeverity(events.Informational).Build(), token)
+			h.persistAndPublish(provider, token, userID, eventBuilder.WithSeverity(events.Informational).Build())
 			return
 		}
 
