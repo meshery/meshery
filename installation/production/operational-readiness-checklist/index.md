@@ -102,7 +102,7 @@ ephemeral database.
 Plan around these known characteristics - they are by design and shape good
 production architecture:
 
-- **The database is an ephemeral, single-writer cache.** It is SQLite/Bitcask on
+- **The database is an ephemeral, single-writer cache.** It is SQLite on
   local disk, not a shared multi-writer datastore. Durable state must come from
   a [Remote Provider](/installation/production/authentication-and-identity/);
   this also shapes how Server replication behaves

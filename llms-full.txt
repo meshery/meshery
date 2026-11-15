@@ -8715,7 +8715,7 @@ Meshery's components and their persistence characteristics.
 | Component | Role | Persistence |
 | :--- | :--- | :--- |
 | **Meshery Server** | Core control plane: REST/GraphQL APIs, orchestration, capability registry. | Caches state in an on-disk database under `~/.meshery/`. Treat as a cache. |
-| **Meshery Database** | SQLite/Bitcask file database backing Server state and the MeshSync snapshot. | Ephemeral; tied to the Server instance lifetime. Not a system of record. |
+| **Meshery Database** | SQLite file database backing Server state and the MeshSync snapshot. | Ephemeral; tied to the Server instance lifetime. Not a system of record. |
 | **Meshery UI** | React/Next.js web interface served by the Server. | Stateless. |
 | **Meshery Operator** | Kubernetes operator that manages MeshSync and Broker; one per managed cluster. | Stateless. |
 | **MeshSync** | Custom controller performing continuous, tiered discovery of cluster state. | Stateless; its working snapshot lives in the Server's database. |
@@ -8996,7 +8996,7 @@ data and events between each cluster and the Server. Production guidance:
 
 ## Known performance bounds and caveats
 
-- **The database is a single-writer SQLite/Bitcask cache.** It is excellent for
+- **The database is a single-writer SQLite cache.** It is excellent for
   a cached working set but is not a horizontally shared, multi-writer datastore.
   This shapes how far a single Server instance scales and how replicas behave
   (see [HA & Resiliency](/installation/production/high-availability-and-resiliency/)).
@@ -9172,7 +9172,7 @@ failed pods. To raise availability further:
 
 ### Replication and the database caveat
 
-The Meshery database is a **single-writer SQLite/Bitcask file cache**, not a
+The Meshery database is a **single-writer SQLite file cache**, not a
 shared multi-writer datastore. This is the central caveat for horizontal
 scaling:
 
@@ -11276,7 +11276,7 @@ ephemeral database.
 Plan around these known characteristics - they are by design and shape good
 production architecture:
 
-- **The database is an ephemeral, single-writer cache.** It is SQLite/Bitcask on
+- **The database is an ephemeral, single-writer cache.** It is SQLite on
   local disk, not a shared multi-writer datastore. Durable state must come from
   a [Remote Provider](/installation/production/authentication-and-identity/);
   this also shapes how Server replication behaves
@@ -15309,11 +15309,10 @@ See the figure below for additional details of the data formats supported and ty
 
 ### Components
 
-Meshery Database has several kinds of database implementations to support various usecases. They are listed below:
+Meshery Server stores its data in a SQLite database file, `mesherydb.sql`, in the directory set by the [`USER_DATA_FOLDER`](/installation/advanced/environment-variables/) environment variable (default: `~/.meshery/config`). It is implemented with the libraries listed below:
 
 | Component      | Library                               |
 | :------------- | :------------------------------------ |
-| Bitcask        | git.mills.io/prologic/bitcask         |
 | SQLite         | gorm.io/gorm, gorm.io/driver/sqlite   |
 
 

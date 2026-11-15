@@ -75,7 +75,7 @@ Meshery's components and their persistence characteristics.
 | Component | Role | Persistence |
 | :--- | :--- | :--- |
 | **Meshery Server** | Core control plane: REST/GraphQL APIs, orchestration, capability registry. | Caches state in an on-disk database under `~/.meshery/`. Treat as a cache. |
-| **Meshery Database** | SQLite/Bitcask file database backing Server state and the MeshSync snapshot. | Ephemeral; tied to the Server instance lifetime. Not a system of record. |
+| **Meshery Database** | SQLite file database backing Server state and the MeshSync snapshot. | Ephemeral; tied to the Server instance lifetime. Not a system of record. |
 | **Meshery UI** | React/Next.js web interface served by the Server. | Stateless. |
 | **Meshery Operator** | Kubernetes operator that manages MeshSync and Broker; one per managed cluster. | Stateless. |
 | **MeshSync** | Custom controller performing continuous, tiered discovery of cluster state. | Stateless; its working snapshot lives in the Server's database. |

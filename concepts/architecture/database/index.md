@@ -18,9 +18,8 @@ See the figure below for additional details of the data formats supported and ty
 
 ### Components
 
-Meshery Database has several kinds of database implementations to support various usecases. They are listed below:
+Meshery Server stores its data in a SQLite database file, `mesherydb.sql`, in the directory set by the [`USER_DATA_FOLDER`](/installation/advanced/environment-variables/) environment variable (default: `~/.meshery/config`). It is implemented with the libraries listed below:
 
 | Component      | Library                               |
 | :------------- | :------------------------------------ |
-| Bitcask        | git.mills.io/prologic/bitcask         |
 | SQLite         | gorm.io/gorm, gorm.io/driver/sqlite   |
