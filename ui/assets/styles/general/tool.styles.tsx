@@ -11,6 +11,11 @@ export const ToolWrapper = styled(Box)(({ theme }) => ({
   borderRadius: '0.5rem',
   position: 'relative',
   zIndex: '101',
+  [theme.breakpoints.down('sm')]: {
+    height: 'auto',
+    flexWrap: 'wrap',
+    gap: '0.5rem',
+  },
 }));
 
 export const WorkloadsContainer = styled('div')(() => ({
