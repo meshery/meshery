@@ -143,9 +143,17 @@ Renders one `<li>` per model category, each with a parenthetical count of the mo
 
 **Use when** listing categories inside an existing list. This shortcode emits list items only — **you must supply the surrounding `<ul>` or `<ol>` yourself**, or the items will render unwrapped.
 
-Counts are derived from the `integrations-category` param on each model page, so they stay accurate as models are added or recategorized. Category names are plain labels rather than links, because the models index is a single alphabetized page with no per-category filtering.
+Counts are derived from the `integrations-category` param on each model page, so they stay accurate as models are added or recategorized. Each category name links to the corresponding section on the [models index]({{< ref "extensions/models/_index.md" >}}).
 
 Takes no parameters and no body.
+
+### models-list-by-category
+
+Renders the full models index grouped by `integrations-category`, with jump links per category. Used on the models index page; do not wrap in a list.
+
+### models-list-by-name
+
+Renders the alphabetical models index (A–Z jump links). Used on the models index page; do not wrap in a list.
 
 #### Syntax
 

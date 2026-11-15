@@ -1,0 +1,12 @@
+{{/*
+  Collects model documentation pages under extensions/models/ for the current section.
+  Sets scratch key "modelPages" (slice) on the passed page context.
+*/}}
+{{ $modelPages := slice }}
+{{ $models := where site.RegularPages "Section" .Section }}
+{{ range sort $models "Title" }}
+  {{ if and (ne .Kind "section") (strings.Contains .File.Dir "/models/") }}
+    {{ $modelPages = $modelPages | append . }}
+  {{ end }}
+{{ end }}
+{{ .Scratch.Set "modelPages" $modelPages }}

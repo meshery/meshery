@@ -5,14 +5,13 @@
   accurate as models are added, removed, or recategorized. Categories are
   ordered by count (descending) so the largest are surfaced first.
 
-  Category names are plain labels, not links: the models index is a single
-  alphabetized page with no per-category filtering, so a category link would
-  resolve to the same unfiltered page for every category. The "See all models"
-  link in the parent list provides navigation to that index.
+  Each category links to the matching section on the models index
+  (`extensions/models/#models-category-…`).
 */ -}}
 {{- $models := where site.RegularPages ".File.Dir" "like" `^extensions/models/` -}}
 {{- $groups := $models.GroupByParam "integrations-category" -}}
 {{- $categories := slice -}}
+{{- $modelsIndex := site.GetPage "extensions/models" -}}
 {{- range $groups -}}
   {{- if .Key -}}
     {{- $categories = $categories | append (dict "name" .Key "count" (len .Pages)) -}}
@@ -20,5 +19,12 @@
 {{- end -}}
 {{- $categories = sort $categories "count" "desc" -}}
 {{- range $categories -}}
-<li>{{ .name }} ({{ .count }})</li>
+<li>
+  {{- if $modelsIndex -}}
+    <a href="{{ $modelsIndex.RelPermalink }}#models-category-{{ .name | anchorize }}">{{ .name }}</a>
+  {{- else -}}
+    {{ .name }}
+  {{- end -}}
+  ({{ .count }})
+</li>
 {{- end -}}

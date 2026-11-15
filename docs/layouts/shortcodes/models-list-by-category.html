@@ -1,0 +1,41 @@
+{{- $models := where site.RegularPages ".File.Dir" "like" `extensions/models/` -}}
+{{- $modelPages := slice -}}
+{{- range $models -}}
+  {{- if and (ne .Kind "section") (strings.Contains .File.Dir "/models/") -}}
+    {{- $modelPages = $modelPages | append . -}}
+  {{- end -}}
+{{- end -}}
+{{- $pages := where $modelPages "Kind" "page" -}}
+{{- if gt (len $pages) 0 -}}
+<div class="models-list models-list-by-category" id="models-by-category">
+  {{- $groups := $pages.GroupByParam "integrations-category" -}}
+  {{- $categories := slice -}}
+  {{- range $groups -}}
+    {{- if .Key -}}
+      {{- $categories = $categories | append (dict "name" .Key "pages" (sort .Pages "Title")) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $categories = sort $categories "name" -}}
+  <nav aria-label="Browse models by category">
+    <p>
+      Jump to:
+      {{- range $categories -}}
+        <a href="#models-category-{{ .name | anchorize }}">{{ .name }}</a>{{ " " }}
+      {{- end -}}
+    </p>
+  </nav>
+  {{- range $categories -}}
+    <section id="models-category-{{ .name | anchorize }}">
+      <h3>{{ .name }}</h3>
+      <ul>
+        {{- range .pages -}}
+          <li style="list-style-type: disc !important; margin: 2px 0 !important">
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          </li>
+        {{- end -}}
+      </ul>
+      <p><a href="#models-by-category">Back to category index</a></p>
+    </section>
+  {{- end -}}
+</div>
+{{- end -}}
