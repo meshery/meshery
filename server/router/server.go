@@ -35,10 +35,18 @@ const (
 // deadlines measured from the start of each request, and Meshery serves
 // requests that legitimately outlast any fixed bound: Server-Sent Event
 // streams that stay open for minutes to hours (a load test run, the provider
-// status stream, adapter events) and uploads whose duration depends on the
-// client's link. Streams that must bound a stalled client set a deadline per
-// write through http.ResponseController instead (see
-// handlers/events_stream_handler.go).
+// status stream, events, adapter events, controller status) and uploads whose
+// duration depends on the client's link.
+//
+// The tradeoff is that the server no longer bounds how long writing a
+// response may take. Every SSE stream bounds its own writes instead: it sets
+// a fresh deadline through http.ResponseController before each frame, so a
+// client that stops reading fails that write rather than pinning the handler
+// (see handlers/events_stream_handler.go). Ordinary responses, including
+// large downloads and exports, have no write bound, as was the case before
+// the server set any timeouts: a client that stays connected but stops
+// reading holds its handler until it disconnects. A new streaming or
+// long-lived response must set per-write deadlines the same way.
 func newHTTPServer(port int, handler http.Handler) *http.Server {
 	return &http.Server{
 		Addr:              fmt.Sprintf(":%d", port),
