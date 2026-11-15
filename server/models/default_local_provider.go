@@ -2250,7 +2250,7 @@ func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.Even
 		Where("status = ? AND (owner = ? OR owner = ?)", events.Read, userID, sysID).
 		Count(&readCount).Error
 	if err != nil {
-		return nil, err
+		return nil, ErrDBRead(err)
 	}
 
 	return &EventsResponse{

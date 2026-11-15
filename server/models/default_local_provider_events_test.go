@@ -31,20 +31,32 @@ func TestLocalGetEventsReportsReadCount(t *testing.T) {
 		}
 	}
 
-	persistWithStatus(userID, events.Read)
-	persistWithStatus(userID, events.Read)
+	// Before anything is read, readCount is zero.
 	persistWithStatus(userID, events.Unread)
-	persistWithStatus(sysID, events.Read)
-	persistWithStatus(otherID, events.Read)
-
-	// The Notification Center header asks for unread events and reads
-	// readCount from the same response.
 	resp, err := provider.GetEvents("", &events.EventsFilter{Status: events.Unread, Limit: 10}, 0, userID, sysID)
 	if err != nil {
 		t.Fatalf("GetEvents: %v", err)
 	}
-	if resp.TotalCount != 1 {
-		t.Errorf("totalCount = %d, want 1 unread event", resp.TotalCount)
+	if resp.ReadCount != 0 {
+		t.Errorf("readCount = %d, want 0 before any event is read", resp.ReadCount)
+	}
+
+	persistWithStatus(userID, events.Read)
+	persistWithStatus(userID, events.Read)
+	persistWithStatus(sysID, events.Read)
+	// An unread system event must not be counted: the owner check is
+	// grouped, so the status condition applies to both owners.
+	persistWithStatus(sysID, events.Unread)
+	persistWithStatus(otherID, events.Read)
+
+	// The Notification Center header asks for unread events and reads
+	// readCount from the same response.
+	resp, err = provider.GetEvents("", &events.EventsFilter{Status: events.Unread, Limit: 10}, 0, userID, sysID)
+	if err != nil {
+		t.Fatalf("GetEvents: %v", err)
+	}
+	if resp.TotalCount != 2 {
+		t.Errorf("totalCount = %d, want 2 unread events (one user, one system)", resp.TotalCount)
 	}
 	if resp.ReadCount != 3 {
 		t.Errorf("readCount = %d, want 3 (two user events and one system event)", resp.ReadCount)
