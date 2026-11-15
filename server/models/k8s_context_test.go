@@ -47,6 +47,14 @@ func (f *flushFakeProvider) PersistSystemEvent(event events.Event) (PersistedEve
 	return PersistedEvent{Event: &event, Disposition: EventCreated}, nil
 }
 
+func (f *flushFakeProvider) LoadAllK8sContext(string) ([]*K8sContext, error) {
+	return nil, nil
+}
+
+func (f *flushFakeProvider) GetK8sContext(string, string) (K8sContext, error) {
+	return K8sContext{}, nil
+}
+
 // TestFlushMeshSyncDataEmptyUserIDAndNilMesheryInstanceID verifies that FlushMeshSyncData
 // does not panic when userID is empty or mesheryInstanceID is nil, and handles event persistence safely.
 func TestFlushMeshSyncDataEmptyUserIDAndNilMesheryInstanceID(t *testing.T) {
@@ -396,4 +404,87 @@ func TestFlushMeshSyncDataSharedAndLastContext(t *testing.T) {
 			}
 		})
 	}
+}
+
+type flushMockContextLoaderProvider struct {
+	flushDatabaseProvider
+	allContexts []*K8sContext
+}
+
+func (p *flushMockContextLoaderProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
+	return p.allContexts, nil
+}
+
+// TestFlushMeshSyncDataWithoutContextAllKubeClusterKey verifies that when AllKubeClusterKey
+// is absent from the request context (as in DeleteContext / DeleteConnection background teardown),
+// FlushMeshSyncData falls back to k8sContext.KubernetesServerID and provider context loading
+// to reliably flush MeshSync resources instead of aborting with a false error.
+func TestFlushMeshSyncDataWithoutContextAllKubeClusterKey(t *testing.T) {
+	serverID := uuid.Must(uuid.NewV4())
+	ctxID := uuid.Must(uuid.NewV4()).String()
+
+	t.Run("flushes when KubernetesServerID is present without AllKubeClusterKey in context", func(t *testing.T) {
+		db := newMeshSyncTestDB(t)
+		seedMeshSyncResource(t, db, "resource-1", serverID.String())
+
+		current := K8sContext{
+			ID:                 ctxID,
+			Name:               "deleted-cluster",
+			Server:             "https://k8s.example.com",
+			KubernetesServerID: &serverID,
+		}
+
+		fp := &flushDatabaseProvider{db: db}
+		// Passing an empty background context without AllKubeClusterKey
+		FlushMeshSyncData(context.Background(), current, fp, nil, "", nil, nil)
+
+		var count int64
+		if err := db.Model(&meshsyncmodel.KubernetesResource{}).Where("cluster_id = ?", serverID.String()).Count(&count).Error; err != nil {
+			t.Fatal(err)
+		}
+		if count != 0 {
+			t.Fatalf("expected 0 resources remaining after flush, got %d", count)
+		}
+		if len(fp.persistedEvents) != 1 {
+			t.Fatalf("expected 1 persisted success event, got %d", len(fp.persistedEvents))
+		}
+		if fp.persistedEvents[0].Severity != events.Informational {
+			t.Errorf("expected Informational event, got %s", fp.persistedEvents[0].Severity)
+		}
+	})
+
+	t.Run("preserves resources when provider reports multiple active contexts sharing the server", func(t *testing.T) {
+		db := newMeshSyncTestDB(t)
+		seedMeshSyncResource(t, db, "shared-resource", serverID.String())
+
+		current := K8sContext{
+			ID:                 ctxID,
+			Name:               "deleted-cluster-1",
+			Server:             "https://k8s.example.com",
+			KubernetesServerID: &serverID,
+		}
+
+		otherCtx := &K8sContext{
+			ID:                 uuid.Must(uuid.NewV4()).String(),
+			Name:               "active-cluster-2",
+			Server:             "https://k8s.example.com",
+			KubernetesServerID: &serverID,
+		}
+
+		mockProvider := &flushMockContextLoaderProvider{
+			flushDatabaseProvider: flushDatabaseProvider{db: db},
+			allContexts:           []*K8sContext{&current, otherCtx},
+		}
+
+		// Empty context without AllKubeClusterKey
+		FlushMeshSyncData(context.Background(), current, mockProvider, nil, "", nil, nil)
+
+		var count int64
+		if err := db.Model(&meshsyncmodel.KubernetesResource{}).Where("cluster_id = ?", serverID.String()).Count(&count).Error; err != nil {
+			t.Fatal(err)
+		}
+		if count != 1 {
+			t.Fatalf("expected 1 resource preserved for shared server, got %d", count)
+		}
+	})
 }

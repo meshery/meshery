@@ -516,3 +516,69 @@ func TestGetConnectionsOfEnvironmentHandler_InvalidPagination_ReturnsBadRequest(
 		})
 	}
 }
+
+// TestIsNotFoundError verifies that isNotFoundError returns true for:
+// - wrapped models.ErrResultNotFound
+// - raw gorm.ErrRecordNotFound
+// - HTTP 404 status from provider
+// and returns false for other errors and statuses.
+func TestIsNotFoundError(t *testing.T) {
+	cases := []struct {
+		name   string
+		err    error
+		status int
+		want   bool
+	}{
+		{
+			name:   "wrapped ErrResultNotFound with 404 status",
+			err:    models.ErrResultNotFound(gorm.ErrRecordNotFound),
+			status: http.StatusNotFound,
+			want:   true,
+		},
+		{
+			name:   "wrapped ErrResultNotFound with fallback status",
+			err:    models.ErrResultNotFound(errors.New("record not found")),
+			status: http.StatusInternalServerError,
+			want:   true,
+		},
+		{
+			name:   "raw gorm.ErrRecordNotFound with fallback status",
+			err:    gorm.ErrRecordNotFound,
+			status: http.StatusInternalServerError,
+			want:   true,
+		},
+		{
+			name:   "generic error with 404 status",
+			err:    errors.New("upstream reported 404"),
+			status: http.StatusNotFound,
+			want:   true,
+		},
+		{
+			name:   "generic error with 500 status",
+			err:    errors.New("database failure"),
+			status: http.StatusInternalServerError,
+			want:   false,
+		},
+		{
+			name:   "generic error with 502 status",
+			err:    errors.New("bad gateway"),
+			status: http.StatusBadGateway,
+			want:   false,
+		},
+		{
+			name:   "nil error with 200 status",
+			err:    nil,
+			status: http.StatusOK,
+			want:   false,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			got := isNotFoundError(tc.err, tc.status)
+			if got != tc.want {
+				t.Errorf("isNotFoundError(%v, %d) = %v, want %v", tc.err, tc.status, got, tc.want)
+			}
+		})
+	}
+}
