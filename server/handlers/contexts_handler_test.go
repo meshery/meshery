@@ -38,6 +38,11 @@ func (m *mockContextsProvider) GetK8sContext(token, id string) (models.K8sContex
 	return models.K8sContext{}, nil
 }
 
+// GetK8sContexts supplies an empty snapshot unless a test needs its own provider.
+func (m *mockContextsProvider) GetK8sContexts(_, _, _, _, _, _ string, _ bool) ([]byte, error) {
+	return []byte(`{"contexts":[],"totalCount":0}`), nil
+}
+
 // PersistEvent records the event and returns the stubbed persistence result.
 func (m *mockContextsProvider) PersistEvent(event events.Event, token string) (models.PersistedEvent, error) {
 	m.persistedEvents = append(m.persistedEvents, event)
