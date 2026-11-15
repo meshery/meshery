@@ -637,6 +637,10 @@ func IsServerRunning(serverAddr string) error {
 const tokenFileMode os.FileMode = 0o600
 
 // WriteTokenFile writes an auth token file and restricts it to its owner.
+// On non-Windows systems it restricts the file before truncating it, so a
+// permission failure leaves existing credentials intact and no new token is
+// written to a broadly accessible file. On Windows it writes to a private
+// temporary file and replaces the destination only after the write succeeds.
 func WriteTokenFile(path string, data []byte) error {
 	return writeTokenFile(path, data)
 }
