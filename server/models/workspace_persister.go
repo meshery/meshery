@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"strconv"
 	"strings"
 	"time"
@@ -219,11 +220,14 @@ func (wp *WorkspacePersister) UpdateWorkspaceByID(selectedWorkspace *workspace.W
 	return selectedWorkspace, nil
 }
 
-// GetWorkspace returns a workspace by ID
+// GetWorkspace returns a workspace by ID. A missing workspace is returned as ErrResultNotFound.
 func (wp *WorkspacePersister) GetWorkspace(id core.Uuid) (*workspace.Workspace, error) {
 	workspace := workspace.Workspace{}
 	query := wp.DB.Where("id = ?", id)
 	err := query.First(&workspace).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, ErrResultNotFound(err)
+	}
 	return &workspace, err
 }
 
@@ -267,9 +271,6 @@ func (wp *WorkspacePersister) UpdateWorkspace(workspaceID core.Uuid, payload *wo
 func (wp *WorkspacePersister) DeleteWorkspaceByID(workspaceID core.Uuid) ([]byte, error) {
 	ws, err := wp.GetWorkspace(workspaceID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, ErrResultNotFound(err)
-		}
 		return nil, err
 	}
 
