@@ -179,3 +179,36 @@ func TestFilterPOSTResponseCarriesRemoteProviderFilters(t *testing.T) {
 	assert.Equal(t, "rate-limit", saved[0].Name)
 	assert.NotContains(t, rec.Body.String(), "internalNote", "fields outside MesheryFilter must not be echoed")
 }
+
+// TestFilterPOSTResponseUndecodableProviderResponse pins the behavior when a
+// remote provider returns HTTP 200 with an undecodable body: formatFilterOutput
+// writes an internal server error to the caller, while the event retains the
+// fallback description set before formatting.
+func TestFilterPOSTResponseUndecodableProviderResponse(t *testing.T) {
+	h, _, db := newFilterPOSTFixture(t)
+	cloud := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte("invalid-json-response"))
+	}))
+	t.Cleanup(cloud.Close)
+
+	remote := &models.RemoteProvider{
+		ProviderProperties: models.ProviderProperties{
+			ProviderType: models.RemoteProviderType,
+			Capabilities: models.Capabilities{{Feature: models.PersistMesheryFilters, Endpoint: "/api/content/filters"}},
+		},
+		RemoteProviderURL: cloud.URL,
+		Log:               h.log,
+		EventsPersister:   &models.EventsPersister{DB: &db},
+	}
+
+	rec := postFilter(t, h, remote, models.MesheryFilterRequestBody{
+		Save:       true,
+		FilterData: &models.MesheryFilterPayload{Name: "rate-limit", FilterFile: []byte("wasm-bytes")},
+	})
+	require.Equal(t, http.StatusInternalServerError, rec.Code, rec.Body.String())
+
+	var eventCount int64
+	require.NoError(t, db.Model(&events.Event{}).Where("description = ?", "Filter rate-limit saved").Count(&eventCount).Error)
+	assert.Equal(t, int64(1), eventCount, "fallback description must be persisted even if decoding fails")
+}
