@@ -87,6 +87,18 @@ const (
 	queryParamTrue  = "true"
 )
 
+// paginationParam defaults malformed provider pagination values while preserving
+// omitted values and the supported "all" page-size sentinel.
+func paginationParam(value string, pageSize bool) string {
+	if value == "" || (pageSize && value == "all") {
+		return value
+	}
+	if _, err := strconv.ParseUint(value, 10, 32); err != nil {
+		return ""
+	}
+	return value
+}
+
 func getPaginationParams(req *http.Request) (page, offset, limit int, search, order, sortOnCol, status string) {
 
 	urlValues := req.URL.Query()
