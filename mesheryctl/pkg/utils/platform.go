@@ -823,6 +823,15 @@ func ForceCleanupCluster() error {
 	return cleanupCluster(client.KubeClient)
 }
 
+// ForceCleanupClusterWithClient deletes the Meshery resources visible through
+// an already-resolved client, so callers that resolved their configuration
+// once (for example, `system uninstall`) do not re-read the kubeconfig and
+// risk cleaning up a different cluster than the teardown began on. Callers
+// without a resolved client keep using ForceCleanupCluster.
+func ForceCleanupClusterWithClient(kube kubernetes.Interface) error {
+	return cleanupCluster(kube)
+}
+
 // cleanupCluster deletes the Meshery resources visible through kube. A list or
 // deletion failure does not abort the cleanup: every resource kind is attempted
 // and all genuine failures are aggregated, while resources that are already
