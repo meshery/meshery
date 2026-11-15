@@ -32,6 +32,17 @@ permissions:
   contents: read
 
 jobs:
+  token-file-windows:
+    name: Windows token file tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - name: Test token file permissions
+        run: go test ./mesheryctl/pkg/utils -run '^(TestWriteTokenFile|TestTokenFileOwner)' -count=1
+
   golangci-server:
     strategy:
       matrix:
