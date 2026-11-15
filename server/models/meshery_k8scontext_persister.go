@@ -7,6 +7,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 // MesheryK8sContextPersister is the persister for persisting
@@ -33,16 +34,26 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order stri
 func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContextsWithStatus(search, order string, page, pageSize uint64, status string) ([]byte, error) {
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
-	if order == "" {
-		order = "k8s_contexts." + defaultOrderUpdatedAtDesc
-	} else {
-		order = "k8s_contexts." + order
+	orderCol := clause.OrderByColumn{
+		Column: clause.Column{
+			Table: "k8s_contexts",
+			Name:  "updated_at",
+		},
+		Desc: true,
+	}
+
+	if order != "" {
+		parts := strings.Split(order, " ")
+		if len(parts) == 2 {
+			orderCol.Column.Name = parts[0]
+			orderCol.Desc = strings.ToLower(parts[1]) == "desc"
+		}
 	}
 
 	count := int64(0)
 	contexts := []*K8sContext{}
 
-	query := mkcp.DB.Order(order)
+	query := mkcp.DB.Order(orderCol)
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
