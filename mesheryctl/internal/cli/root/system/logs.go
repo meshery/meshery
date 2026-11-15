@@ -45,12 +45,77 @@ func IsPodRequired(requiredPods []string, pod string) bool {
 	return false
 }
 
+// printLogs formats and logs messages line-by-line prefixed with the pod name.
 func printLogs(logs string, podName string) {
 	for _, logMsg := range strings.Split(logs, "\n") {
 		logStr := fmt.Sprintf("%s\t|\t%s", podName, logMsg)
 
 		utils.Log.Info(logStr)
 	}
+}
+
+// processLogStream consumes logs from an io.ReadCloser until EOF or an error occurs.
+// It ensures that any returned bytes are processed before inspecting errors,
+// quietly terminates on io.EOF or context cancellation, and always closes the stream.
+func processLogStream(logs io.ReadCloser, podName string, printLog func(string, string)) error {
+	defer func() { _ = logs.Close() }()
+
+	buf := make([]byte, BYTE_SIZE)
+	for {
+		numBytes, err := logs.Read(buf)
+		if numBytes > 0 {
+			printLog(string(buf[:numBytes]), podName)
+		}
+		if err != nil {
+			if errors.Is(err, io.EOF) || errors.Is(err, context.Canceled) {
+				return nil
+			}
+			return err
+		}
+	}
+}
+
+// streamLogSource represents a target pod container whose logs can be streamed.
+// It encapsulates the pod name and a factory function that opens an io.ReadCloser
+// stream bound to the provided context.
+type streamLogSource struct {
+	podName string
+	open    func(ctx context.Context) (io.ReadCloser, error)
+}
+
+// followLogStreams coordinates concurrent follow-mode log tailing across multiple sources.
+// It establishes a cancelable child context derived from parentCtx that governs all streams.
+// If any stream fails to open, earlier active streams are canceled and their reader goroutines
+// terminate before returning the error, preventing orphaned goroutines and leaked connections.
+// When all streams open successfully, it blocks until all streams finish.
+func followLogStreams(
+	parentCtx context.Context,
+	sources []streamLogSource,
+	printLog func(string, string),
+) error {
+	wg := &sync.WaitGroup{}
+	ctx, cancel := context.WithCancel(parentCtx)
+	defer func() {
+		cancel()
+		wg.Wait()
+	}()
+
+	for _, src := range sources {
+		logs, err := src.open(ctx)
+		if err != nil {
+			return err
+		}
+		wg.Add(1)
+		go func(logs io.ReadCloser, podName string) {
+			defer wg.Done()
+			if err := processLogStream(logs, podName, printLog); err != nil {
+				utils.Log.Errorf("error occurred while processing logs: %v", err)
+			}
+		}(logs, src.podName)
+	}
+
+	wg.Wait()
+	return nil
 }
 
 type cmdSystemLogsFlags struct {
@@ -196,7 +261,35 @@ mesheryctl system logs meshery-istio
 			}
 
 			utils.Log.Info("Starting Meshery logging...")
-			wg := &sync.WaitGroup{}
+
+			if systemLogsFlags.Follow {
+				var sources []streamLogSource
+				for _, pod := range podList.Items {
+					name := pod.GetName()
+					if len(requiredPodsMap) > 0 {
+						if _, ok := requiredPodsMap[name]; !ok {
+							continue
+						}
+					}
+					for container := range pod.Spec.Containers {
+						containerName := pod.Spec.Containers[container].Name
+						podLogOpts := apiCorev1.PodLogOptions{
+							Container: containerName,
+							Follow:    true,
+						}
+						podName := name
+						opts := podLogOpts
+						sources = append(sources, streamLogSource{
+							podName: podName,
+							open: func(ctx context.Context) (io.ReadCloser, error) {
+								req := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).GetLogs(podName, &opts)
+								return req.Stream(ctx)
+							},
+						})
+					}
+				}
+				return followLogStreams(cmd.Context(), sources, printLogs)
+			}
 
 			// List all the pods similar to kubectl get pods -n MesheryNamespace
 			for _, pod := range podList.Items {
@@ -219,47 +312,29 @@ mesheryctl system logs meshery-istio
 					// Get the logs from a container within the pod
 					podLogOpts := apiCorev1.PodLogOptions{
 						Container: containerName,
-						Follow:    systemLogsFlags.Follow,
+						Follow:    false,
 					}
 
 					req := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).GetLogs(name, &podLogOpts)
 
-					logs, err := req.Stream(context.TODO())
+					logs, err := req.Stream(cmd.Context())
 					if err != nil {
 						return err
 					}
-					if !systemLogsFlags.Follow {
+					err = func() error {
+						defer func() { _ = logs.Close() }()
 						logBuf, err := io.ReadAll(logs)
-						_ = logs.Close()
 						if err != nil {
 							return utils.ErrReadResponseBody(err)
 						}
 						printLogs(string(logBuf), name)
-					} else {
-						wg.Add(1)
-						go func(stream io.ReadCloser, podName string) {
-							defer wg.Done()
-							defer func() { _ = stream.Close() }()
-							buf := make([]byte, BYTE_SIZE)
-							for {
-								numBytes, err := stream.Read(buf)
-								if numBytes > 0 {
-									logBuf := buf[0:numBytes]
-									printLogs(string(logBuf), podName)
-								}
-								if err == io.EOF {
-									break
-								}
-								if err != nil {
-									utils.Log.Errorf("error occurred while processing logs %v", err)
-									break
-								}
-							}
-						}(logs, name)
+						return nil
+					}()
+					if err != nil {
+						return err
 					}
 				}
 			}
-			wg.Wait()
 		}
 		return nil
 	},
