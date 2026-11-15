@@ -10,6 +10,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
 )
 
 func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
@@ -79,7 +80,13 @@ func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _
 	page, _ := strconv.Atoi(q.Get("page"))
 	order := q.Get("order")
 	search := q.Get("search")
-	pageSize, _ := strconv.Atoi(q.Get("page_size"))
+	// The generated client sends the canonical camelCase pageSize; keep
+	// page_size as a legacy fallback so older callers keep working.
+	pageSizeParam := q.Get("pageSize")
+	if pageSizeParam == "" {
+		pageSizeParam = q.Get("page_size")
+	}
+	pageSize, _ := strconv.Atoi(pageSizeParam)
 
 	if pageSize > 25 {
 		pageSize = 25
@@ -137,6 +144,12 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 
 	_, err = provider.UpdateUserCredential(req, credential)
 	if err != nil {
+		// The local provider reports a missing or deleted credential with
+		// ErrResultNotFound, the remote provider with its own 404.
+		if errors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			writeMeshkitError(w, err, http.StatusNotFound)
+			return
+		}
 		h.log.Error(ErrUpdateUserCredential(err))
 		writeMeshkitError(w, ErrUpdateUserCredential(err), http.StatusInternalServerError)
 		return
@@ -174,6 +187,10 @@ func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request,
 
 	_, err = provider.DeleteUserCredential(req, credentialID)
 	if err != nil {
+		if errors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			writeMeshkitError(w, err, http.StatusNotFound)
+			return
+		}
 		deleteErr := ErrDeleteUserCredential(err)
 		h.log.Error(deleteErr)
 		writeMeshkitError(w, deleteErr, http.StatusInternalServerError)

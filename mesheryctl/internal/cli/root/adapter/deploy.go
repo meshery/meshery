@@ -56,7 +56,7 @@ mesheryctl adapter deploy linkerd --watch
 				return utils.ErrLoadConfig(err)
 			}
 
-			if err = validateAdapter(mctlCfg, meshName); err != nil {
+			if err = parseAndValidateMesh(mctlCfg, args); err != nil {
 				return err
 			}
 			return nil

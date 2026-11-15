@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	"sort"
 	"time"
 
@@ -628,7 +627,9 @@ func (h *Handler) brokerNetworkingDiagnostic(
 
 	managedAddr := machinectx.MesheryCtrlsHelper.GetBrokerPortForwardAddr()
 	endpoint, _ := broker.GetPublicEndpoint()
-	inCluster := os.Getenv("KUBERNETES_SERVICE_HOST") != ""
+	// Running in *a* cluster is not the question: only Meshery running in this
+	// connection's own cluster reaches the broker's ClusterIP directly.
+	sameCluster := machinectx.MesheryCtrlsHelper.TargetsHostCluster(machinectx.K8sContext)
 
 	var transport, description, ep string
 	switch {
@@ -636,13 +637,13 @@ func (h *Handler) brokerNetworkingDiagnostic(
 		transport = "Managed port-forward"
 		ep = managedAddr
 		description = fmt.Sprintf(
-			"Meshery reaches the Meshery Broker (NATS) through a managed port-forward at %s, tunneled to the in-cluster NATS pod through the Kubernetes API server. This is automatic for out-of-cluster Meshery; set MESHERY_MANAGED_BROKER_PORTFORWARD=false on the server to disable it. The transport follows the connection's MeshSync mode — operator mode uses the in-cluster broker; embedded mode uses none.",
+			"Meshery reaches the Meshery Broker (NATS) through a managed port-forward at %s, tunneled to the in-cluster NATS pod through the Kubernetes API server. This is automatic whenever Meshery runs outside this connection's cluster (on a host, in Docker, or in a different cluster); set MESHERY_MANAGED_BROKER_PORTFORWARD=false on the server to disable it. The transport follows the connection's MeshSync mode - operator mode uses the in-cluster broker; embedded mode uses none.",
 			managedAddr,
 		)
-	case inCluster:
+	case sameCluster:
 		transport = "In-cluster (ClusterIP)"
 		ep = endpoint
-		description = "Meshery runs inside the cluster and reaches the Meshery Broker (NATS) directly at its cluster-internal (ClusterIP) address."
+		description = "Meshery runs inside this connection's cluster and reaches the Meshery Broker (NATS) directly at its cluster-internal (ClusterIP) address."
 	default:
 		transport = "Direct endpoint"
 		ep = endpoint

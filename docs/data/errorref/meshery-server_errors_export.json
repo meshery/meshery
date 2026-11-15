@@ -1412,7 +1412,7 @@
         "code": "1160",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Unable to create rest config from kube congif",
+        "short_description": "Unable to create rest config from kube config",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -1754,7 +1754,7 @@
         "code": "1198",
         "severity": "Alert",
         "long_description": "invalid kubernetes resource type or couldn't find the specified resource",
-        "short_description": "failed to find the resource\ninvalid resource type\nresource doens't exists",
+        "short_description": "failed to find the resource\ninvalid resource type\nresource doesn't exist",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -1855,7 +1855,7 @@
         "long_description": "",
         "short_description": "type assertion of context to *kubernetes.MachineCtx failed",
         "probable_cause": "The machine context has become invalid.",
-        "suggested_remediation": "Retry the opereation or try archiving and reinitializing the connection"
+        "suggested_remediation": "Retry the operation or try archiving and reinitializing the connection"
       },
       "1218": {
         "name": "ErrInvalidTypeCode",
@@ -1898,7 +1898,7 @@
         "code": "1222",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Unable to prase the Page Numer",
+        "short_description": "Unable to parse the Page Number",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -1916,7 +1916,7 @@
         "code": "1224",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Invalid peformance profile ID",
+        "short_description": "Invalid performance profile ID",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -2356,10 +2356,10 @@
         "name": "ErrInvalidCapabilityCode",
         "code": "1273",
         "severity": "Alert",
-        "long_description": "You dont have access to the capability",
+        "long_description": "You don't have access to the capability",
         "short_description": "Capability is not supported by your Provider",
-        "probable_cause": "Not logged in to the vaild remote Provider",
-        "suggested_remediation": "Connect to the vaild remote Provider\nAsk the Provider Adim for access"
+        "probable_cause": "Not logged in to the valid remote Provider",
+        "suggested_remediation": "Connect to the valid remote Provider\nAsk the Provider Admin for access"
       },
       "1274": {
         "name": "ErrResultDataCode",
@@ -3271,7 +3271,7 @@
         "code": "1370",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error in meshsync data hadler",
+        "short_description": "Error in meshsync data handler",
         "probable_cause": "not deployed operator\nissue with connection to broker",
         "suggested_remediation": "check that operator is deployed\ncheck that server can establish connection to broker"
       },
@@ -4363,6 +4363,15 @@
         "short_description": "Meshery Server could not create the indexes the Notification Center queries use",
         "probable_cause": "The database is read-only, locked by another process or not reachable",
         "suggested_remediation": "Make sure Meshery Server can write to its database, then restart Meshery Server"
+      },
+      "1492": {
+        "name": "ErrNilProviderCode",
+        "code": "1492",
+        "severity": "Alert",
+        "long_description": "Provider instance passed to the handler is nil",
+        "short_description": "Provider not initialized",
+        "probable_cause": "The handler was invoked without an initialized provider instance",
+        "suggested_remediation": "Ensure the provider is properly initialized before handling the request"
       }
     }
   }

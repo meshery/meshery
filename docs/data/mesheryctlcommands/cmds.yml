@@ -10,7 +10,7 @@ global:
   flags:
     config:
       name: --config
-      description: configures Meshery with the meshconfig, generated with the help of user details to provide cluster access for public clouds(GKE/EKS).
+      description: configures Meshery with the meshconfig, generated with the help of user details to provide cluster access for public clouds (GKE/EKS).
       usage: mesheryctl [command] --config=[path to config file]
       example: mesheryctl system reset --config="~/.meshery/config.yaml"
     help:
@@ -625,7 +625,7 @@ design:
           example: mesheryctl design apply -f "bookInfo.yaml"
     delete:
       name: delete
-      description: Deprovision cloud native infrastructure using a design /design file
+      description: Deprovision cloud native infrastructure using a design file
       usage: mesheryctl design delete [flags]
       flags:
         file:

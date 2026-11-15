@@ -379,10 +379,17 @@ func NewK8sContext(
 //
 // If the context remains the same, it is guaranteed that the ID will be same
 func K8sContextGenerateID(kc K8sContext) (string, error) {
+	// MesheryInstanceID is optional (e.g., redacted contexts or direct callers
+	// may leave it nil), so guard before formatting rather than panicking.
+	var mesheryInstanceID string
+	if kc.MesheryInstanceID != nil {
+		mesheryInstanceID = kc.MesheryInstanceID.String()
+	}
+
 	data := map[string]interface{}{
 		"cluster": kc.Cluster,
 		"auth":    kc.Auth,
-		"meshery": kc.MesheryInstanceID.String(),
+		"meshery": mesheryInstanceID,
 		"name":    kc.Name,
 	}
 
@@ -572,45 +579,76 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			log.Error(ErrPersistEvent(perr))
 		}
 	}
-	// Gets all the available kubernetes contexts
 
 	ctxName := k8sContext.Name
 	serverURL := k8sContext.Server
+	token, _ := ctx.Value(TokenCtxKey).(string)
+
+	// Resolve the cluster server ID directly from k8sContext if populated.
+	var sid string
+	if k8sContext.KubernetesServerID != nil {
+		sid = k8sContext.KubernetesServerID.String()
+	}
+
+	// Retrieve contexts from context; if missing (e.g. background context or connection deletion),
+	// load from the provider so cluster reference counting remains accurate.
 	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]*K8sContext)
-	if !ok || len(k8sctxs) == 0 {
-		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher")
-		if userUUID != uuid.Nil {
-			event = event.FromOwner(userUUID)
+	if (!ok || len(k8sctxs) == 0) && provider != nil {
+		if loaded, err := provider.LoadAllK8sContext(token); err != nil {
+			if log != nil {
+				log.Error(err)
+			}
+			return
+		} else if len(loaded) > 0 {
+			k8sctxs = loaded
+			ok = true
 		}
-		builtEvent := event.Build()
-		persistAndPublish(builtEvent)
+	}
+
+	if sid == "" && len(k8sctxs) > 0 {
+		for _, k8ctx := range k8sctxs {
+			if k8ctx == nil {
+				continue
+			}
+			if k8ctx.ID == ctxID && k8ctx.KubernetesServerID != nil {
+				sid = k8ctx.KubernetesServerID.String()
+				break
+			}
+		}
+	}
+
+	if sid == "" && provider != nil {
+		if storedCtx, err := provider.GetK8sContext(token, ctxID); err == nil && storedCtx.KubernetesServerID != nil {
+			sid = storedCtx.KubernetesServerID.String()
+		}
+	}
+
+	if sid == "" {
+		if !ok || len(k8sctxs) == 0 {
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher")
+			if userUUID != uuid.Nil {
+				event = event.FromOwner(userUUID)
+			}
+			builtEvent := event.Build()
+			persistAndPublish(builtEvent)
+		}
 		return
 	}
-	var sid string
-	var refCount int
-	// Gets the serverID for the passed contextID
+
+	// Counts the reference of the serverID across all active contexts other than the one being deleted.
+	// As multiple contexts can refer to the same serverID, only flush if no other active context references it.
+	otherRefCount := 0
 	for _, k8ctx := range k8sctxs {
-		if k8ctx == nil {
-			continue
-		}
-		if k8ctx.ID == ctxID && k8ctx.KubernetesServerID != nil {
-			sid = k8ctx.KubernetesServerID.String()
-			break
-		}
-	}
-	// Counts the reference of the serverID
-	// As multiple context can have same serverID
-	for _, k8ctx := range k8sctxs {
-		if k8ctx == nil {
+		if k8ctx == nil || k8ctx.ID == ctxID {
 			continue
 		}
 		if k8ctx.KubernetesServerID != nil && k8ctx.KubernetesServerID.String() == sid {
-			refCount++
+			otherRefCount++
 		}
 	}
-	// If the reference count is 1 then only flush the meshsync data
-	// because this means its the last contextID referring to that Kubernetes Server
-	if refCount == 1 {
+
+	// Flush only when no other active context references this Kubernetes server.
+	if otherRefCount == 0 {
 		if provider == nil || provider.GetGenericPersister() == nil {
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).WithMetadata(map[string]interface{}{
 				"error": ErrEmptyMeshSyncHandler(),

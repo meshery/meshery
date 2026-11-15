@@ -29,7 +29,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var availableSubcommands []*cobra.Command
@@ -40,8 +39,6 @@ var errEventStreamClosed = errors.New("event stream closed before the operation 
 // AdapterCmd represents the Performance Management CLI command
 var (
 	adapterURL string
-	err        error
-	mctlCfg    *config.MesheryCtlConfig
 	namespace  string
 	watch      bool
 	AdapterCmd = &cobra.Command{
@@ -50,37 +47,9 @@ var (
 		Long: `Provisioning, configuration, and on-going operational management of cloud and cloud native infrastructure.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			// if `mesh` command is ran without any subcommands, show Help and exit
+			// if `adapter` command is run without any subcommands, show Help and exit
 			if cmd.HasSubCommands() {
 				return cmd.Help()
-			}
-
-			// get the meshery config
-			mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
-			if err != nil {
-				return err
-			}
-
-			if len(args) > 0 {
-				// if a mesh name was provided, convert it the same format as adapter.Name
-				// all args are joined, converted to upper case, and non-word characters replaced with "_"
-				// examples:
-				//     args = Linkerd -> ["LINKERD"] -> "LINKERD"
-				//     args = nginx service mesh -> ["nginx", "service", "mesh"] -> "NGINX_SERVICE_MESH"
-				r, _ := regexp.Compile(`\W`)
-				meshName = r.ReplaceAllString(strings.ToUpper(strings.Join(args, "_")), "_")
-			}
-
-			// verify the specified mesh is valid
-			// if no mesh was specified, the user will be prompted to select one
-			meshName, err = validateMesh(mctlCfg, meshName)
-			if err != nil {
-				return err
-			}
-
-			// ensure the mesh's adapter is available and update adapterURL if so
-			if err = validateAdapter(mctlCfg, meshName); err != nil {
-				return err
 			}
 			return nil
 		},
@@ -153,6 +122,31 @@ func validateMesh(mctlCfg *config.MesheryCtlConfig, meshName string) (string, er
 
 	// return the selected mesh name
 	return meshNames[i], nil
+}
+
+// parseAndValidateMesh parses positional args into a normalized mesh name,
+// prompts the user if no mesh was specified, and validates that an adapter is available.
+func parseAndValidateMesh(mctlCfg *config.MesheryCtlConfig, args []string) error {
+	meshName = ""
+	if len(args) > 0 {
+		// if a mesh name was provided, convert it to the same format as adapter.Name
+		// all args are joined, converted to upper case, and non-word characters replaced with "_"
+		// examples:
+		//     args = Linkerd -> ["LINKERD"] -> "LINKERD"
+		//     args = nginx service mesh -> ["nginx", "service", "mesh"] -> "NGINX_SERVICE_MESH"
+		r, _ := regexp.Compile(`\W`)
+		meshName = r.ReplaceAllString(strings.ToUpper(strings.Join(args, "_")), "_")
+	}
+
+	var err error
+	// verify the specified mesh is valid; if no mesh was specified, prompt the user
+	meshName, err = validateMesh(mctlCfg, meshName)
+	if err != nil {
+		return err
+	}
+
+	// ensure the mesh's adapter is available and update adapterURL if so
+	return validateAdapter(mctlCfg, meshName)
 }
 
 func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool, spec string) (string, error) {
