@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-eventbridge-controller",
+              "name": "eventbridge-controller",
               "registrant": {
                 "kind": "artifacthub"
               },
@@ -74,7 +74,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-lambda-controller",
+              "name": "lambda-controller",
               "registrant": {
                 "kind": "artifacthub"
               },
