@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshkit/errors"
 )
@@ -19,11 +18,6 @@ import (
 // its own error, not be followed into the GET handler and not be reported as
 // "Unable to connect to Meshery server".
 func TestDeleteReportsMethodChangingRedirect(t *testing.T) {
-	// TestMakeRequest_Failures activates httpmock through utils.InitTestEnvironment
-	// and never deactivates it, so when it runs first httpmock would intercept
-	// this test's requests.
-	httpmock.Deactivate()
-
 	var getHits, deleteHits atomic.Int32
 	r := mux.NewRouter()
 	r.HandleFunc("/api/items/{id}", func(w http.ResponseWriter, _ *http.Request) {
