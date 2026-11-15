@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -45,6 +46,10 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	// Don't fetch credentials as UI has no use case.
 	vals, err := provider.GetK8sContexts(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), "", false)
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
 		h.log.Error(ErrGetK8sContexts(err))
 		writeMeshkitError(w, ErrGetK8sContexts(err), http.StatusInternalServerError)
 		return
@@ -170,6 +175,17 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		return
 	}
 
+	// Refuse to start a deletion when cleanup cannot obtain its context list.
+	// Returning an error here leaves the operation retryable and makes the
+	// skipped cleanup visible to the caller.
+	contexts, listErr := loadContextsForDeletion(provider, token)
+	if listErr != nil {
+		handlerErr := ErrGetK8sContexts(listErr)
+		h.log.Error(handlerErr)
+		writeMeshkitError(w, handlerErr, http.StatusInternalServerError)
+		return
+	}
+
 	description := fmt.Sprintf("Delete request received for kubernetes context \"%s\"", k8scontext.Name)
 
 	event := newEvent().WithSeverity(events.Informational).WithDescription(description).Build()
@@ -214,6 +230,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		// Detach from the request context so cancellation on HTTP handler exit
 		// does not abort background state machine transitions, bounded by a timeout.
 		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), defaultFSMTransitionTimeout)
+		detachedCtx = context.WithValue(detachedCtx, models.AllKubeClusterKey, contexts)
 		go func(inst *machines.StateMachine) {
 			defer cancel()
 			if smInstanceTracker != nil {
@@ -247,4 +264,51 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+// loadContextsForDeletion obtains an unfiltered snapshot before the delete
+// transition, so cluster data is retained while any other context refers to it.
+func loadContextsForDeletion(provider interface {
+	GetK8sContexts(token, page, pageSize, search, order, status string, withCredentials bool) ([]byte, error)
+}, token string) ([]*models.K8sContext, error) {
+	const pageSize = 100
+	var contexts []*models.K8sContext
+	var expectedTotal int
+	seen := make(map[string]struct{})
+	for page := 0; ; page++ {
+		data, err := provider.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", "", true)
+		if err != nil {
+			return nil, err
+		}
+		var result models.MesheryK8sContextPage
+		if err := json.Unmarshal(data, &result); err != nil {
+			return nil, err
+		}
+		// Changing totals or repeated IDs show that offset pagination shifted.
+		// A stable count still cannot guarantee a transactional snapshot.
+		if page == 0 {
+			expectedTotal = result.TotalCount
+		} else if result.TotalCount != expectedTotal {
+			return nil, fmt.Errorf("Kubernetes context count changed during pagination")
+		}
+		for _, item := range result.Contexts {
+			if item == nil || item.ID == "" {
+				return nil, fmt.Errorf("invalid Kubernetes context in snapshot")
+			}
+			if _, exists := seen[item.ID]; exists {
+				return nil, fmt.Errorf("duplicate Kubernetes context in snapshot")
+			}
+			seen[item.ID] = struct{}{}
+		}
+		contexts = append(contexts, result.Contexts...)
+		if len(contexts) > expectedTotal {
+			return nil, fmt.Errorf("inconsistent Kubernetes context count")
+		}
+		if len(contexts) == expectedTotal {
+			return contexts, nil
+		}
+		if len(result.Contexts) == 0 {
+			return nil, fmt.Errorf("incomplete Kubernetes context list")
+		}
+	}
 }
