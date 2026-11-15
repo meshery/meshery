@@ -89,7 +89,9 @@ jobs:
         with:
           node-version: 22
       - name: Run coverage
-        run: go test -json --short ./server/... -race -coverprofile=server-coverage.txt -covermode=atomic > server-test-output.json
+        run: |
+          set -o pipefail
+          go test -json --short ./server/... -race -coverprofile=server-coverage.txt -covermode=atomic | tee server-test-output.json
       - name: Convert Go test results to Allure
         if: ${{ !cancelled() }}
         run: |
