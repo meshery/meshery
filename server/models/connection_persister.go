@@ -53,7 +53,7 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 	}
 
 	if len(connType) != 0 {
-		query = query.Where("type IN (?)", connType)
+		query = query.Where("connection_type IN (?)", connType)
 	}
 
 	// Accept the public type alias while querying the persisted connection_type column.
