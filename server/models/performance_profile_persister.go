@@ -114,7 +114,7 @@ func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ core.Uuid, prof
 		return ErrDBConnection
 	}
 	if profile == nil {
-		return fmt.Errorf("performance profile cannot be nil")
+		return ErrInvalidPerformanceProfile(fmt.Errorf("performance profile cannot be nil"))
 	}
 
 	res := ppp.DB.Model(profile).Select("*").Omit("created_at").Updates(profile)

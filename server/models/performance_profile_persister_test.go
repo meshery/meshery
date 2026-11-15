@@ -284,12 +284,17 @@ func TestDeletePerformanceProfile_DBError(t *testing.T) {
 }
 
 // TestSavePerformanceProfile_NilGuard verifies that passing a nil profile to
-// SavePerformanceProfile returns an error instead of panicking.
+// SavePerformanceProfile returns an ErrInvalidPerformanceProfile coded error
+// rather than panicking or returning an uncoded error.
 func TestSavePerformanceProfile_NilGuard(t *testing.T) {
 	db := newMigratedDB(t)
 	ppp := &PerformanceProfilePersister{DB: db}
 
-	if err := ppp.SavePerformanceProfile(mustUUID(t), nil); err == nil {
+	err := ppp.SavePerformanceProfile(mustUUID(t), nil)
+	if err == nil {
 		t.Fatalf("expected error when saving nil profile, got nil")
+	}
+	if code := mkerrors.GetCode(err); code != ErrInvalidPerformanceProfileCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrInvalidPerformanceProfileCode, err)
 	}
 }
