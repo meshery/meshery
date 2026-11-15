@@ -15,8 +15,10 @@
 package design
 
 import (
+	"fmt"
 	"io"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -55,6 +57,22 @@ func TestMultiplePatternsConfirmationShowsEachDesign(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, 1, index)
-	assert.Contains(t, string(out), "version: 0.0.1")
-	assert.Contains(t, string(out), "version: 0.0.2")
+
+	// Each entry has to show its own file, in the order the designs were
+	// given, so the index the user types picks the file they saw.
+	entries := strings.Split(string(out), "---------------------")
+	require.GreaterOrEqual(t, len(entries), 2)
+	for i, want := range []struct {
+		id      string
+		version string
+	}{
+		{first.String(), "version: 0.0.1"},
+		{second.String(), "version: 0.0.2"},
+	} {
+		assert.Contains(t, entries[i], fmt.Sprintf("Index: %d\n", i))
+		assert.Contains(t, entries[i], "ID: "+want.id)
+		assert.Contains(t, entries[i], want.version)
+	}
+	assert.NotContains(t, entries[0], "version: 0.0.2")
+	assert.NotContains(t, entries[1], "version: 0.0.1")
 }
