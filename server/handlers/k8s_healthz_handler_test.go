@@ -47,12 +47,14 @@ func TestK8sHealthzHandler(t *testing.T) {
 	}
 
 	tests := []struct {
-		name             string
-		verbose          bool
-		setupProviders   func() map[string]models.Provider
-		expectedStatus   int
-		expectedBody     string
-		expectedContains []string // strings that should be in the response
+		name               string
+		urlPath            string
+		verbose            bool
+		setupProviders     func() map[string]models.Provider
+		setupStartupStatus func(*models.HandlerConfig)
+		expectedStatus     int
+		expectedBody       string
+		expectedContains   []string // strings that should be in the response
 	}{
 		{
 			name:    "Healthy - capabilities loaded",
@@ -111,6 +113,70 @@ func TestK8sHealthzHandler(t *testing.T) {
 			expectedStatus:   http.StatusServiceUnavailable,
 			expectedContains: []string{"[-]capabilities failed", "not loaded", "[i]extension"},
 		},
+		{
+			name:    "Liveness - path is live, returns OK even when startup tasks in progress",
+			urlPath: "/healthz/live",
+			setupProviders: func() map[string]models.Provider {
+				return map[string]models.Provider{}
+			},
+			setupStartupStatus: func(cfg *models.HandlerConfig) {
+				cfg.StartupStatus.SeedingComplete.Store(false)
+				cfg.StartupStatus.ProviderTrackerComplete.Store(false)
+			},
+			expectedStatus: http.StatusOK,
+			expectedBody:   "ok",
+		},
+		{
+			name:    "Readiness - seeding in progress, returns 503",
+			urlPath: "/healthz/ready",
+			setupProviders: func() map[string]models.Provider {
+				provider := &models.DefaultLocalProvider{}
+				provider.Initialize()
+				return map[string]models.Provider{
+					"Local": provider,
+				}
+			},
+			setupStartupStatus: func(cfg *models.HandlerConfig) {
+				cfg.StartupStatus.SeedingComplete.Store(false)
+				cfg.StartupStatus.ProviderTrackerComplete.Store(true)
+			},
+			expectedStatus:   http.StatusServiceUnavailable,
+			expectedContains: []string{"seeding", "in progress"},
+		},
+		{
+			name:    "Readiness - provider verification in progress, returns 503",
+			urlPath: "/healthz/ready",
+			setupProviders: func() map[string]models.Provider {
+				provider := &models.DefaultLocalProvider{}
+				provider.Initialize()
+				return map[string]models.Provider{
+					"Local": provider,
+				}
+			},
+			setupStartupStatus: func(cfg *models.HandlerConfig) {
+				cfg.StartupStatus.SeedingComplete.Store(true)
+				cfg.StartupStatus.ProviderTrackerComplete.Store(false)
+			},
+			expectedStatus:   http.StatusServiceUnavailable,
+			expectedContains: []string{"provider_verification", "in progress"},
+		},
+		{
+			name:    "Readiness - both startup tasks complete, capabilities ok, returns 200",
+			urlPath: "/healthz/ready",
+			setupProviders: func() map[string]models.Provider {
+				provider := &models.DefaultLocalProvider{}
+				provider.Initialize()
+				return map[string]models.Provider{
+					"Local": provider,
+				}
+			},
+			setupStartupStatus: func(cfg *models.HandlerConfig) {
+				cfg.StartupStatus.SeedingComplete.Store(true)
+				cfg.StartupStatus.ProviderTrackerComplete.Store(true)
+			},
+			expectedStatus: http.StatusOK,
+			expectedBody:   "ok",
+		},
 	}
 
 	for _, tt := range tests {
@@ -120,6 +186,13 @@ func TestK8sHealthzHandler(t *testing.T) {
 			handlerConfig := &models.HandlerConfig{
 				Providers: providers,
 			}
+			if tt.setupStartupStatus != nil {
+				tt.setupStartupStatus(handlerConfig)
+			} else {
+				// Default to fully loaded for backward compatibility of existing tests
+				handlerConfig.StartupStatus.SeedingComplete.Store(true)
+				handlerConfig.StartupStatus.ProviderTrackerComplete.Store(true)
+			}
 			handler := &Handler{
 				config: handlerConfig,
 				log:    log,
@@ -127,8 +200,15 @@ func TestK8sHealthzHandler(t *testing.T) {
 
 			// Create test request with optional verbose parameter
 			url := "/healthz/ready"
+			if tt.urlPath != "" {
+				url = tt.urlPath
+			}
 			if tt.verbose {
-				url += "?verbose=1"
+				if strings.Contains(url, "?") {
+					url += "&verbose=1"
+				} else {
+					url += "?verbose=1"
+				}
 			}
 			req := httptest.NewRequest(http.MethodGet, url, nil)
 			w := httptest.NewRecorder()
@@ -231,6 +311,8 @@ func TestK8sHealthzHandler_ExtensionInfo(t *testing.T) {
 			"test": provider,
 		},
 	}
+	handlerConfig.StartupStatus.SeedingComplete.Store(true)
+	handlerConfig.StartupStatus.ProviderTrackerComplete.Store(true)
 	handler := &Handler{
 		config: handlerConfig,
 		log:    log,

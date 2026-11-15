@@ -338,6 +338,7 @@ func main() {
 				rego = *r
 			}
 		})
+		hc.StartupStatus.SeedingComplete.Store(true)
 	}()
 
 	models.RunSeedStage(log, "content", func() {
@@ -461,6 +462,7 @@ func main() {
 			}
 			rp.SyncPreferences()
 		}
+		hc.StartupStatus.ProviderTrackerComplete.Store(true)
 	}()
 
 	// Defer StopSyncPreferences for every remote, regardless of whether
