@@ -4106,6 +4106,23 @@
       "suggestedRemediation": [
         "Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"
       ]
+    },
+    {
+      "code": "mesheryctl-1264",
+      "moniker": "ErrAmbiguousDesignNameCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1264",
+      "severity": "alert",
+      "shortDescription": "More than one design has this name",
+      "probableCause": [
+        "Design names are not unique, so the name alone does not say which design to use."
+      ],
+      "suggestedRemediation": [
+        "Pass the design ID instead. Run 'mesheryctl design list' to see the IDs."
+      ]
     }
   ],
   "schemaVersion": 2

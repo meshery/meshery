@@ -185,34 +185,43 @@ mesheryctl design delete -f [file | URL]
 // match wins, and only without one does a match that differs in case count.
 // Two designs that match equally well are reported as ambiguous instead of
 // picking one.
-func findDesignIDByExactName(baseURL, name string) (string, error) {
-	searchURL := fmt.Sprintf("%s/api/pattern?search=%s&pagesize=10000", baseURL, url.QueryEscape(name))
-	req, err := utils.NewRequest(http.MethodGet, searchURL, nil)
-	if err != nil {
-		return "", err
-	}
-	resp, err := utils.MakeRequest(req)
-	if err != nil {
-		return "", err
-	}
-	defer func() { _ = resp.Body.Close() }()
+// designSearchPageSize is the page size of the name lookup; tests lower it to
+// exercise pagination.
+var designSearchPageSize = 10000
 
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("failed to look up design %q by name: %w", name, utils.ErrResponseStatus(resp.StatusCode))
+func findDesignIDByExactName(baseURL, name string) (string, error) {
+	const maxPages = 50
+	pageSize := designSearchPageSize
+
+	// Collect every page of search results before deciding, so a duplicate
+	// name further down the list still counts as ambiguous.
+	var patterns []models.MesheryPattern
+	var total uint
+	completed := false
+	for page := 0; page < maxPages; page++ {
+		searchURL := fmt.Sprintf("%s/api/pattern?search=%s&pagesize=%d", baseURL, url.QueryEscape(name), pageSize)
+		if page > 0 {
+			searchURL += fmt.Sprintf("&page=%d", page)
+		}
+		response, err := fetchDesignSearchPage(searchURL, name)
+		if err != nil {
+			return "", err
+		}
+		patterns = append(patterns, response.Patterns...)
+		total = response.TotalCount
+		if len(response.Patterns) < pageSize || uint(len(patterns)) >= total {
+			completed = true
+			break
+		}
 	}
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", utils.ErrReadFromBody(err)
-	}
-	var response models.PatternsAPIResponse
-	if err := encoding.Unmarshal(body, &response); err != nil {
-		return "", utils.ErrUnmarshal(err)
+	if !completed {
+		return "", utils.ErrIDLookupIncomplete(int64(total), int64(len(patterns)))
 	}
 
 	// The server's search ignores case, so fall back to a case-insensitive
 	// match when no name matches exactly.
 	var ids, foldIDs []string
-	for _, p := range response.Patterns {
+	for _, p := range patterns {
 		switch {
 		case p.Name == name:
 			ids = append(ids, utils.FormatUUID(p.ID, ""))
@@ -231,6 +240,31 @@ func findDesignIDByExactName(baseURL, name string) (string, error) {
 	default:
 		return "", ErrAmbiguousDesignName(name, ids)
 	}
+}
+
+func fetchDesignSearchPage(searchURL, name string) (*models.PatternsAPIResponse, error) {
+	req, err := utils.NewRequest(http.MethodGet, searchURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to look up design %q by name: %w", name, utils.ErrResponseStatus(resp.StatusCode))
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, utils.ErrReadFromBody(err)
+	}
+	var response models.PatternsAPIResponse
+	if err := encoding.Unmarshal(body, &response); err != nil {
+		return nil, utils.ErrUnmarshal(err)
+	}
+	return &response, nil
 }
 
 func init() {

@@ -319,3 +319,57 @@ func TestDeleteCmd(t *testing.T) {
 	// Run tests
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
 }
+
+func TestDeleteByNameReadsEverySearchPage(t *testing.T) {
+	testContext := utils.NewTestHelper(t)
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+
+	// With one result per page, the second "test-design" is only on page 1,
+	// so the lookup has to read past the first page to see the duplicate.
+	designSearchPageSize = 1
+	t.Cleanup(func() { designSearchPageSize = 10000 })
+
+	tests := []utils.MesheryMultiURLCommamdTest{
+		{
+			Name:             "given duplicate name on a later search page when design delete then ambiguity error is thrown and nothing is deleted",
+			Args:             []string{"delete", "test-design"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=test-design&pagesize=1",
+					Response:     "delete.nameSearchPage0.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=test-design&pagesize=1&page=1",
+					Response:     "delete.nameSearchPage1.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/a12b3c4d-5e6f-4890-abcd-ef1234567890",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrAmbiguousDesignName("test-design", []string{"a12b3c4d-5e6f-4890-abcd-ef1234567890", "c56d7e8f-9a01-4b23-8cde-f12345678901"}),
+		},
+	}
+
+	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}
