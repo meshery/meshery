@@ -31,4 +31,22 @@ func TestGetRequiredPodsSelection(t *testing.T) {
 			}
 		})
 	}
+
+	// Exact matches win over clean-name matches: a bare pod named
+	// "meshery-operator" resolves directly even though the operator
+	// replicas also clean-match that name.
+	t.Run("exact beats clean", func(t *testing.T) {
+		pods := []v1core.Pod{
+			{ObjectMeta: metav1.ObjectMeta{Name: "meshery-operator"}},
+			{ObjectMeta: metav1.ObjectMeta{Name: "meshery-operator-5f6b-qwert"}},
+			{ObjectMeta: metav1.ObjectMeta{Name: "meshery-operator-5f6b-asdfg"}},
+		}
+		got, err := GetRequiredPods([]string{"meshery-operator"}, pods)
+		if err != nil {
+			t.Fatalf("got error %v, want the exact pod", err)
+		}
+		if len(got) != 1 || got["meshery-operator"] != "meshery-operator" {
+			t.Fatalf("got %v, want meshery-operator", got)
+		}
+	})
 }
