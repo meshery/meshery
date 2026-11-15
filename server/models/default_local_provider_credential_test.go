@@ -63,7 +63,9 @@ func TestLocalUpdateUserCredential(t *testing.T) {
 	t.Run("deleted credential is not found and stays unchanged", func(t *testing.T) {
 		provider := newTestProviderWithCredentialDB(t)
 		cred := saveTestCredential(t, provider, userID, "before")
-		if _, err := provider.DeleteUserCredential(nil, cred.ID); err != nil {
+		req := httptest.NewRequest(http.MethodDelete, "/api/integrations/credentials", nil)
+		req = req.WithContext(context.WithValue(req.Context(), UserCtxKey, &User{ID: userID}))
+		if _, err := provider.DeleteUserCredential(req, cred.ID); err != nil {
 			t.Fatalf("delete: %v", err)
 		}
 
