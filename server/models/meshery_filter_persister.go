@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -162,8 +164,14 @@ func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string, cloneFilt
 		return nil, ErrInvalidUUID(err)
 	}
 	err = mfp.DB.First(&mesheryFilter, filterUUID).Error
-	if err != nil || mesheryFilter.ID == nil || *mesheryFilter.ID == uuid.Nil {
-		return nil, ErrResultNotFound(fmt.Errorf("unable to get filter: %w", err))
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
+		return nil, ErrDBRead(err)
+	}
+	if mesheryFilter.ID == nil || *mesheryFilter.ID == uuid.Nil {
+		return nil, ErrResultNotFound(fmt.Errorf("filter %s not found", filterID))
 	}
 
 	id, err := uuid.NewV4()

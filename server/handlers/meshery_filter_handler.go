@@ -340,6 +340,12 @@ func (h *Handler) CloneMesheryFilterHandler(
 		return
 	}
 
+	if r.Body == nil {
+		h.log.Error(ErrRequestBody(fmt.Errorf("request body is nil")))
+		writeMeshkitError(rw, ErrRequestBody(fmt.Errorf("request body is nil")), http.StatusBadRequest)
+		return
+	}
+
 	var parsedBody *models.MesheryCloneFilterRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || parsedBody == nil {
 		h.log.Error(ErrRequestBody(err))
