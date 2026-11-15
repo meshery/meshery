@@ -1,38 +1,14 @@
 import React, { useState } from 'react';
 import { useGetSelectedOrganization } from '@/rtk-query/user';
 import { useLazyGetWorkspacesQuery } from '@/rtk-query/workspace';
-
-export const WorkspaceModalContext = React.createContext({
-  open: false,
-  openModal: () => {},
-  closeModal: () => {},
-  selectedWorkspace: { id: '', name: '' },
-  setSelectedWorkspace: () => {},
-  openModalWithDefault: () => {},
-  multiSelectedContent: [],
-  setMultiSelectedContent: () => {},
-  createNewWorkspaceModalOpen: false,
-  setCreateNewWorkspaceModalOpen: () => {},
-  currentLoadedResource: {
-    id: '',
-    org: {
-      id: '',
-      name: '',
-    },
-    workspace: {
-      id: '',
-      name: '',
-    },
-  },
-  onLoadResource: () => {},
-});
+import { WorkspaceModalContext, type WorkspaceMultiSelectItem } from './workspaceModalContext';
 
 const WorkspaceModalContextProvider = ({ children }) => {
   const { allOrganizations } = useGetSelectedOrganization();
   const [getWorkspaces] = useLazyGetWorkspacesQuery();
   const [workspaceModal, setWorkspaceModal] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState({ id: '', name: '' });
-  const [multiSelectedContent, setMultiSelectedContent] = useState([]);
+  const [multiSelectedContent, setMultiSelectedContent] = useState<WorkspaceMultiSelectItem[]>([]);
   const [createNewWorkspaceModalOpen, setCreateNewWorkspaceModalOpen] = useState(false);
   // stores the context for currently loaded resource . sometime a user might be viewing a resource
   // from differnt org/workpace than the currently selected one

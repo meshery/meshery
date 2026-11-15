@@ -34,7 +34,7 @@ import {
 } from '@/rtk-query/user';
 import { MobileOrgWksSwither } from './MobileViewSwitcher';
 import WorkspaceFormModal from '../WorkspaceFormModal';
-import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { WorkspaceModalContext } from '@/utils/context/workspaceModalContext';
 import { BottomSheetInlineSelect } from './BottomSheetInlineSelect';
 
 export const SlideInMenu = styled('div')(() => ({

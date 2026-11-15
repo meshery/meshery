@@ -34,7 +34,7 @@ import { selectK8sConfig, selectSelectedK8sClusters } from '@/store/slices/meshe
 import { useSelector } from 'react-redux';
 import { store } from '../../../store';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
-import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { WorkspaceModalContext } from '@/utils/context/workspaceModalContext';
 import { RelationshipEvaluationTraceFormatter } from '../NotificationCenter/formatters/relationship_evaluation';
 import { useRegistryModal } from '@/utils/hooks/useRegistryModal';
 import { MESHERY_EXTENSION_CONTRACT_VERSION } from '@sistent/sistent';

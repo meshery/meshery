@@ -33,7 +33,7 @@ import { Router, useRouter } from 'next/router';
 import { Keys } from '@meshery/schemas/permissions';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import { useSelector } from 'react-redux';
-import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { WorkspaceModalContext } from '@/utils/context/workspaceModalContext';
 import {
   useAssignDesignToWorkspaceMutation,
   useAssignViewToWorkspaceMutation,
