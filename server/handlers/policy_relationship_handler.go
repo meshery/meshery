@@ -350,19 +350,27 @@ func (h *Handler) EvaluateDesign(
 	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&relationshipPolicyEvalPayload.Design); bridgeErr == nil && bridged != nil {
 		if h.registryManager != nil {
 			if hydrateErrs := patternHelpers.HydratePattern(bridged, h.registryManager); len(hydrateErrs) > 0 {
-				h.log.Warnf("failed to hydrate pattern for evaluation: %v", hydrateErrs)
+				if h.log != nil {
+					h.log.Warnf("failed to hydrate pattern for evaluation: %v", hydrateErrs)
+				}
 			}
 		}
 		if roundtripped, rtErr := utils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
 			relationshipPolicyEvalPayload.Design = *roundtripped
 		} else if rtErr != nil {
-			h.log.Warnf("failed v1beta3→v1beta1 round-trip after Hydrate; evaluation will proceed against the pre-hydration design: %v", rtErr)
+			if h.log != nil {
+				h.log.Warnf("failed v1beta3→v1beta1 round-trip after Hydrate; evaluation will proceed against the pre-hydration design: %v", rtErr)
+			}
 		}
 	} else if bridgeErr != nil {
-		h.log.Warnf("failed to bridge pattern for evaluation: %v", bridgeErr)
+		if h.log != nil {
+			h.log.Warnf("failed to bridge pattern for evaluation: %v", bridgeErr)
+		}
 	}
 
-	defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
+	if h.log != nil {
+		defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
+	}
 
 	var lastEvaluationResponse pattern.EvaluationResponse
 	lastEvaluationResponse.Design = relationshipPolicyEvalPayload.Design
@@ -454,10 +462,14 @@ func (h *Handler) EvaluateDesign(
 		if roundtripped, rtErr := utils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
 			lastEvaluationResponse.Design = *roundtripped
 		} else if rtErr != nil {
-			h.log.Warnf("failed v1beta3→v1beta1 round-trip after Dehydrate; response will ship un-dehydrated: %v", rtErr)
+			if h.log != nil {
+				h.log.Warnf("failed v1beta3→v1beta1 round-trip after Dehydrate; response will ship un-dehydrated: %v", rtErr)
+			}
 		}
 	} else if bridgeErr != nil {
-		h.log.Warnf("failed to bridge pattern for dehydration: %v", bridgeErr)
+		if h.log != nil {
+			h.log.Warnf("failed to bridge pattern for dehydration: %v", bridgeErr)
+		}
 	}
 
 	return lastEvaluationResponse, nil
