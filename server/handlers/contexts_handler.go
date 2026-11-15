@@ -175,6 +175,17 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		return
 	}
 
+	// Refuse to start a deletion when cleanup cannot obtain its context list.
+	// Returning an error here leaves the operation retryable and makes the
+	// skipped cleanup visible to the caller.
+	contexts, listErr := loadContextsForDeletion(provider, token)
+	if listErr != nil {
+		handlerErr := ErrGetK8sContexts(listErr)
+		h.log.Error(handlerErr)
+		writeMeshkitError(w, handlerErr, http.StatusInternalServerError)
+		return
+	}
+
 	description := fmt.Sprintf("Delete request received for kubernetes context \"%s\"", k8scontext.Name)
 
 	event := newEvent().WithSeverity(events.Informational).WithDescription(description).Build()
@@ -218,12 +229,6 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	} else {
 		// Detach from the request context so cancellation on HTTP handler exit
 		// does not abort background state machine transitions, bounded by a timeout.
-		// Read every status before returning: disconnected contexts can still
-		// refer to the cluster. A failed read must not authorize a flush.
-		contexts, listErr := loadContextsForDeletion(provider, token)
-		if listErr != nil {
-			h.log.Error(ErrGetK8sContexts(listErr))
-		}
 		detachedCtx, cancel := context.WithTimeout(context.WithoutCancel(req.Context()), defaultFSMTransitionTimeout)
 		detachedCtx = context.WithValue(detachedCtx, models.AllKubeClusterKey, contexts)
 		go func(inst *machines.StateMachine) {
