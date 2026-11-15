@@ -483,37 +483,6 @@ func TestFormatUUID(t *testing.T) {
 	}
 }
 
-func TestStringContainedInSlice(t *testing.T) {
-	tests := []struct {
-		name  string
-		str   string
-		slice []string
-		want  int
-	}{
-		{
-			name:  "test with present string",
-			str:   "data2",
-			slice: []string{"data1", "data2"},
-			want:  1,
-		},
-		{
-			name:  "test with absent string",
-			str:   "data3",
-			slice: []string{"data1", "data2"},
-			want:  -1,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := StringContainedInSlice(tt.str, tt.slice)
-			if got != tt.want {
-				t.Errorf("StringContainedInSlice got = %v want = %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestStringInSlice(t *testing.T) {
 	tests := []struct {
 		name  string
