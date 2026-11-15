@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "PullThroughCacheRule referencing an IAM Role",
+    "description": "RepositoryCreationTemplate referencing an IAM Role",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -15,7 +15,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.8.1"
+      "version": "v1.12.0"
     },
     "name": "aws-ecr-controller",
     "registrant": {
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "PullThroughCacheRule",
+            "kind": "RepositoryCreationTemplate",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
