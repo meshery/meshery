@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -440,12 +441,20 @@ func (mpp *MesheryPatternPersister) ReplaceSeededPatterns(seeded []*MesheryPatte
 	})
 }
 
+// GetMesheryPattern returns the stored design. A design that does not exist
+// is reported as ErrResultNotFound, which carries a 404 for the handler; no
+// body is returned alongside an error.
 func (mpp *MesheryPatternPersister) GetMesheryPattern(id core.Uuid) ([]byte, error) {
 	var mesheryPattern MesheryPattern
 
-	err := mpp.DB.First(&mesheryPattern, id).Error
+	if err := mpp.DB.First(&mesheryPattern, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
+		return nil, err
+	}
 	stampLocalProviderOwner(&mesheryPattern)
-	return marshalMesheryPattern(&mesheryPattern), err
+	return marshalMesheryPattern(&mesheryPattern), nil
 }
 
 func (mpp *MesheryPatternPersister) GetMesheryPatternSource(id core.Uuid) ([]byte, error) {

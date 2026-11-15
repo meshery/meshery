@@ -457,7 +457,12 @@ STOP:
 	}
 }
 
-func writeEventStream(ctx context.Context, w io.Writer, respChan <-chan []byte, log logger.Handler, flusher http.Flusher) {
+func writeEventStream(ctx context.Context, w http.ResponseWriter, respChan <-chan []byte, log logger.Handler, flusher http.Flusher) {
+	// responseController bounds each frame write with a deadline so a client
+	// that stops reading cannot wedge this goroutine on the write.
+	// SetWriteDeadline reports ErrNotSupported for writers that don't
+	// implement it; there writes stay unbounded, as before.
+	responseController := http.NewResponseController(w)
 	for {
 		select {
 		case data, ok := <-respChan:
@@ -467,10 +472,12 @@ func writeEventStream(ctx context.Context, w io.Writer, respChan <-chan []byte, 
 			}
 
 			log.Debug("received new data on response channel")
+			_ = responseController.SetWriteDeadline(time.Now().Add(eventStreamWriteTimeout))
 			if _, err := fmt.Fprintf(w, "data: %s\n\n", data); err != nil {
 				// A write failure here almost always means the client
-				// disconnected (broken pipe) — stop the loop so we don't
-				// spin publishing into a dead socket.
+				// disconnected (broken pipe) or stalled past the write
+				// deadline — stop the loop so we don't spin publishing into
+				// a dead socket.
 				log.Error(fmt.Errorf("failed to write event stream: %w", err))
 				return
 			}

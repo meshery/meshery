@@ -3,11 +3,13 @@ package models
 import (
 	"database/sql"
 	"encoding/json"
+	"net/http"
 	"testing"
 	"time"
 
 	"github.com/gofrs/uuid"
 	isql "github.com/meshery/meshery/server/internal/sql"
+	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
 	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/catalog/v1alpha1"
@@ -438,5 +440,52 @@ func TestSaveMesheryPattern_ResponseShowsStoredRow(t *testing.T) {
 	}
 	if got.UserID == nil {
 		t.Errorf("response is missing the stamped owner")
+	}
+}
+
+// TestGetMesheryPattern_MissingDesignReturnsResultNotFound pins that a lookup
+// for a design that is not stored fails with ErrResultNotFound and no body,
+// so a handler cannot mistake an empty design for a result.
+func TestGetMesheryPattern_MissingDesignReturnsResultNotFound(t *testing.T) {
+	db, persister := newPatternPersisterTestDB(t)
+	storedID, _ := seedImportedPattern(t, db)
+
+	tests := []struct {
+		name     string
+		id       uuid.UUID
+		wantCode string
+	}{
+		{name: "stored design", id: storedID},
+		{name: "missing design", id: uuid.Must(uuid.NewV4()), wantCode: ErrResultNotFoundCode},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			body, err := persister.GetMesheryPattern(tc.id)
+
+			if tc.wantCode == "" {
+				if err != nil {
+					t.Fatalf("GetMesheryPattern: %v", err)
+				}
+				var got MesheryPattern
+				if err := json.Unmarshal(body, &got); err != nil {
+					t.Fatalf("unmarshal design: %v", err)
+				}
+				if got.ID == nil || *got.ID != tc.id {
+					t.Errorf("design id = %v, want %s", got.ID, tc.id)
+				}
+				return
+			}
+
+			if got := mkerrors.GetCode(err); got != tc.wantCode {
+				t.Errorf("error code = %q, want %q (err: %v)", got, tc.wantCode, err)
+			}
+			if got := httputil.StatusForProviderError(err, 0); got != http.StatusNotFound {
+				t.Errorf("provider status = %d, want %d", got, http.StatusNotFound)
+			}
+			if body != nil {
+				t.Errorf("body = %q, want none", body)
+			}
+		})
 	}
 }
