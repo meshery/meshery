@@ -1,33 +1,5 @@
 import { describe, expect, it, vi, beforeAll, beforeEach, afterEach } from 'vitest';
 
-// Mock @/utils/utils so we don't transitively pull React-component imports
-// (SVG/JS-as-JSX) into Node-test environment. We only need the two encode
-// helpers used by view.ts.
-vi.mock('@/utils/utils', () => ({
-  urlEncodeArrayParam: (key: string, array: unknown) => {
-    if (!array) return '';
-    if (typeof array === 'string') {
-      return `${encodeURIComponent(key)}=${encodeURIComponent(array)}`;
-    }
-    if (!Array.isArray(array)) return '';
-    return array
-      .map((item) => `${encodeURIComponent(key)}=${encodeURIComponent(String(item))}`)
-      .join('&');
-  },
-  urlEncodeParams: (params: Record<string, unknown>) => {
-    const usp = new URLSearchParams();
-    Object.entries(params).forEach(([k, v]) => {
-      if (v === undefined || v === null) return;
-      if (Array.isArray(v)) {
-        v.forEach((vv) => usp.append(k, String(vv)));
-      } else {
-        usp.append(k, String(v));
-      }
-    });
-    return usp.toString();
-  },
-}));
-
 // Mock the rtk-query helper `initiateQuery` so we don't transitively pull
 // `../store` into the test environment.
 vi.mock('../utils', () => ({
@@ -182,7 +154,17 @@ describe('view endpoints', () => {
     const url = new URL(req.url);
     expect(url.search).toContain('visibility=public%20%26%20shared');
     expect(url.search).toContain('visibility=x%2Fy');
+    expect(url.search).not.toContain('visibility=public%20&');
     expect(url.searchParams.getAll('visibility')).toEqual(['public & shared', 'x/y']);
+  });
+
+  it('fetchViews percent-encodes a string visibility', async () => {
+    const { api, store } = await setupStore();
+    await store.dispatch(api.endpoints.fetchViews.initiate({ visibility: 'public&shared' }));
+    const req = fetchMock.mock.calls[0][0] as Request;
+    const url = new URL(req.url);
+    expect(url.search).toContain('visibility=public%26shared');
+    expect(url.searchParams.getAll('visibility')).toEqual(['public&shared']);
   });
 
   it('getView helper delegates to initiateQuery with the getView endpoint', async () => {

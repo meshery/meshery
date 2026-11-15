@@ -1,4 +1,4 @@
-import { urlEncodeArrayParam, urlEncodeParams } from '@/utils/utils';
+import { urlEncodeArrayParam, urlEncodeParams } from '@/utils/queryEncoding';
 import { api, mesheryApiPath } from './index';
 import { initiateQuery } from './utils';
 import _ from 'lodash';
