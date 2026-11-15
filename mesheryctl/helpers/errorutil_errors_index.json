@@ -776,7 +776,7 @@
       "severity": "alert",
       "shortDescription": "Failed to unmarshal configuration file",
       "probableCause": [
-        "Unable to covert JSON format from yml file"
+        "Unable to convert JSON format from yml file"
       ],
       "suggestedRemediation": [
         "Ensure a valid data is provided in your yml file"
@@ -1207,7 +1207,7 @@
       "shortDescription": "Failed to get a free port",
       "longDescription": "Failed to start port-forwarding",
       "probableCause": [
-        "Unable to provide a free port to connect to a kuberentes cluster"
+        "Unable to provide a free port to connect to a kubernetes cluster"
       ],
       "suggestedRemediation": [
         "Ensure your Meshery Server is running,",
@@ -1290,7 +1290,7 @@
       },
       "numericCode": "1082",
       "severity": "alert",
-      "shortDescription": "Unable to exectute command",
+      "shortDescription": "Unable to execute command",
       "longDescription": "Channel switch aborted",
       "probableCause": [
         "No user response provided"
@@ -4088,6 +4088,23 @@
       ],
       "suggestedRemediation": [
         "Provide the full ID instead of a short prefix, or retry the command."
+      ]
+    },
+    {
+      "code": "mesheryctl-1263",
+      "moniker": "ErrRedirectChangesMethodCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1263",
+      "severity": "alert",
+      "shortDescription": "Redirect would change the request method",
+      "probableCause": [
+        "The current context's endpoint is not the address Meshery Server answers on directly (for example an http:// endpoint behind a proxy that redirects to https), or the request path is not in the form the server routes (for example it contains a doubled slash)"
+      ],
+      "suggestedRemediation": [
+        "Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"
       ]
     }
   ],

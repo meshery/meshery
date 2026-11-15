@@ -71,6 +71,10 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 	}
 	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
 		handlerErr := ErrGetEnvironments(err)
 		h.log.Error(handlerErr)
 		writeMeshkitError(w, handlerErr, providerStatus(err))
@@ -81,6 +85,14 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 	if _, err := fmt.Fprint(w, string(resp)); err != nil {
 		h.log.Error(err)
 	}
+}
+
+// isNotFoundError reports whether err represents a missing record, either by
+// MeshKit error code, raw GORM ErrRecordNotFound, or HTTP 404 provider status.
+func isNotFoundError(err error, status int) bool {
+	return meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode ||
+		errors.Is(err, gorm.ErrRecordNotFound) ||
+		status == http.StatusNotFound
 }
 
 func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -97,7 +109,7 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 		handlerErr := ErrGetEnvironment(err)
 		h.log.Error(handlerErr)
 		status := providerStatus(err)
-		if meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode || errors.Is(err, gorm.ErrRecordNotFound) || status == http.StatusNotFound {
+		if isNotFoundError(err, status) {
 			writeMeshkitError(w, handlerErr, http.StatusNotFound)
 			return
 		}
@@ -155,7 +167,7 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 		handlerErr := ErrDeleteEnvironment(err)
 		h.log.Error(handlerErr)
 		status := providerStatus(err)
-		if meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode || errors.Is(err, gorm.ErrRecordNotFound) || status == http.StatusNotFound {
+		if isNotFoundError(err, status) {
 			writeMeshkitError(w, handlerErr, http.StatusNotFound)
 			return
 		}
@@ -194,7 +206,7 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 		handlerErr := ErrUpdateEnvironment(err)
 		h.log.Error(handlerErr)
 		status := providerStatus(err)
-		if meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode || errors.Is(err, gorm.ErrRecordNotFound) || status == http.StatusNotFound {
+		if isNotFoundError(err, status) {
 			writeMeshkitError(w, handlerErr, http.StatusNotFound)
 			return
 		}
@@ -260,6 +272,10 @@ func (h *Handler) GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, r *h
 	q := r.URL.Query()
 	resp, err := provider.GetConnectionsOfEnvironment(r, environmentID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
 		handlerErr := ErrEnvironmentConnection(err, "list the connections of")
 		h.log.Error(handlerErr)
 		writeMeshkitError(w, handlerErr, providerStatus(err))

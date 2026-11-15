@@ -601,7 +601,7 @@ func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order s
 		return nil, ErrPageSize(err)
 	}
 
-	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
+	return l.MesheryK8sContextPersister.GetMesheryK8sContextsWithStatus(search, order, pg, pgs, withStatus)
 }
 
 // GetK8sContext returns the Kubernetes context associated with the given ID or ConnectionID.
