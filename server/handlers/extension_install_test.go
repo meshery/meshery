@@ -298,8 +298,8 @@ func TestInstallExtensionHandler_Success_ReturnsEmptyJSON(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rec.Code)
 	assert.Contains(t, rec.Header().Get("Content-Type"), "application/json")
 	assert.Equal(t, "{}", strings.TrimSpace(rec.Body.String()))
-	require.Len(t, provider.Extensions.Acccount, 1)
-	assert.Equal(t, "Custom Account Extension", provider.Extensions.Acccount[0].Title)
+	require.Len(t, provider.Extensions.Account, 1)
+	assert.Equal(t, "Custom Account Extension", provider.Extensions.Account[0].Title)
 }
 
 // TestRemoveExtensionHandler_Success_ReturnsEmptyJSON verifies that removing an
@@ -309,7 +309,7 @@ func TestRemoveExtensionHandler_Success_ReturnsEmptyJSON(t *testing.T) {
 	provider := newTestLocalProvider()
 	err := provider.InstallExtension("account", "", map[string]interface{}{"title": "Custom Account Extension"})
 	require.NoError(t, err)
-	require.Len(t, provider.Extensions.Acccount, 1)
+	require.Len(t, provider.Extensions.Account, 1)
 
 	h := newTestHandler(t, map[string]models.Provider{}, "")
 	payload := `{"extType":"account","title":"Custom Account Extension"}`
@@ -325,7 +325,7 @@ func TestRemoveExtensionHandler_Success_ReturnsEmptyJSON(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rec.Code)
 	assert.Contains(t, rec.Header().Get("Content-Type"), "application/json")
 	assert.Equal(t, "{}", strings.TrimSpace(rec.Body.String()))
-	assert.Empty(t, provider.Extensions.Acccount)
+	assert.Empty(t, provider.Extensions.Account)
 }
 
 // TestRemoveExtensionHandler_ExtensionNotFound_ReturnsInternalServerError verifies that
