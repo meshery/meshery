@@ -140,9 +140,12 @@ func (c *wsConn) WriteMessage(messageType int, data []byte) error {
 	return c.Conn.WriteMessage(messageType, data)
 }
 
-// urlQuery matches the query part of any URL quoted in a string, such as an
-// error message.
-var urlQuery = regexp.MustCompile(`\?[^\s"']*`)
+// urlQuery matches the query part of a URL quoted in a string, such as an
+// error message. Go quotes URLs in errors with %q, so the query runs until an
+// unescaped double quote; escaped characters, apostrophes and spaces inside
+// it are all consumed. Outside a quoted string it runs to the end, which only
+// redacts more.
+var urlQuery = regexp.MustCompile(`\?(?:\\.|[^"\\])*`)
 
 // redactTokens masks the whole query of every URL quoted in s. It does not
 // look for a "token" name, because a name can be percent-encoded (%74oken)
