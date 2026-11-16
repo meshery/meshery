@@ -106,6 +106,8 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 		return
 	}
 
+	val.RedactCredentials()
+
 	if err := json.NewEncoder(w).Encode(val); err != nil {
 		h.log.Error(ErrEncodeK8sContexts(err))
 		writeMeshkitError(w, ErrEncodeK8sContexts(err), http.StatusInternalServerError)
@@ -223,8 +225,8 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	// the tracker entry for a connection the user just deleted - so drop the
 	// entry directly instead. See mhelpers.HasMachineContext.
 	if !mhelpers.HasMachineContext(inst) {
-		if smInstanceTracker != nil {
-			smInstanceTracker.Remove(connectionUUID)
+		if smInstanceTracker != nil && inst != nil {
+			smInstanceTracker.CompareAndDelete(connectionUUID, inst)
 		}
 	} else {
 		// Detach from the request context so cancellation on HTTP handler exit
@@ -234,7 +236,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		go func(inst *machines.StateMachine) {
 			defer cancel()
 			if smInstanceTracker != nil {
-				defer smInstanceTracker.Remove(connectionUUID)
+				defer smInstanceTracker.CompareAndDelete(connectionUUID, inst)
 			}
 			event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
 			if err != nil {

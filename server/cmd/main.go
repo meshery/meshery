@@ -540,8 +540,9 @@ func main() {
 	log.Info(fmt.Sprintf("Received %s, shutting down Meshery Server gracefully", sig))
 	// Drain the HTTP listener before cleanup closes the resources in-flight
 	// requests use, so no request runs against a closed provider session or
-	// database. Shutdown waits up to httpShutdownTimeout for active requests
-	// to finish, then forces the listener closed.
+	// database. Shutdown ends open SSE streams at once, waits up to
+	// httpShutdownTimeout for other active requests to finish, then closes
+	// the connections still open.
 	shutdownCtx, cancelShutdown := context.WithTimeout(context.Background(), httpShutdownTimeout)
 	defer cancelShutdown()
 	if err := r.Shutdown(shutdownCtx); err != nil {

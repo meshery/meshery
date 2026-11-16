@@ -4109,12 +4109,26 @@
     },
     {
       "code": "mesheryctl-1264",
-      "moniker": "ErrAmbiguousDesignNameCode",
+      "moniker": "ErrUninstallMesheryCode",
       "component": {
         "name": "mesheryctl",
         "type": "client"
       },
       "numericCode": "1264",
+      "severity": "alert",
+      "shortDescription": "Error uninstalling Meshery",
+      "probableCause": [
+        "Meshery may be partially removed from the cluster: some Meshery resources are still present"
+      ]
+    },
+    {
+      "code": "mesheryctl-1265",
+      "moniker": "ErrAmbiguousDesignNameCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1265",
       "severity": "alert",
       "shortDescription": "More than one design has this name",
       "probableCause": [

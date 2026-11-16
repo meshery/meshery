@@ -2191,8 +2191,17 @@
         "suggested_remediation": "Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"
       },
       "1264": {
-        "name": "ErrAmbiguousDesignNameCode",
+        "name": "ErrUninstallMesheryCode",
         "code": "1264",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error uninstalling Meshery",
+        "probable_cause": "Meshery may be partially removed from the cluster: some Meshery resources are still present",
+        "suggested_remediation": ""
+      },
+      "1265": {
+        "name": "ErrAmbiguousDesignNameCode",
+        "code": "1265",
         "severity": "Alert",
         "long_description": "",
         "short_description": "More than one design has this name",
