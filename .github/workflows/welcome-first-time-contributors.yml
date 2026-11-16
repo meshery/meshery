@@ -135,18 +135,27 @@ jobs:
               return;
             }
 
-            const { data: items } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              creator: author,
-              state: 'all',
-              per_page: 100
-            });
-
-            // Filter for pull requests opened prior to this one
-            const priorPRs = items.filter(
-              item => item.pull_request && item.number < context.issue.number
-            );
+            // Issues and PRs share one list, so a single page can be full of
+            // the other type. Page through the author's history until a prior
+            // PR is found or the history ends.
+            let priorPRs = [];
+            for await (const page of github.paginate.iterator(
+              github.rest.issues.listForRepo,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                creator: author,
+                state: 'all',
+                per_page: 100
+              }
+            )) {
+              priorPRs = page.data.filter(
+                item => item.pull_request && item.number < context.issue.number
+              );
+              if (priorPRs.length > 0) {
+                break;
+              }
+            }
 
             if (priorPRs.length > 0) {
               console.log(`User ${author} has previously opened pull requests (${priorPRs.length} prior). Skipping welcome.`);
