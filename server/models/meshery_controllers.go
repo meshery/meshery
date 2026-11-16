@@ -1337,6 +1337,10 @@ func (mch *MesheryControllersHelper) SetOperatorDeployment(ot *OperatorTracker, 
 		mch.setOperatorError(deployErr)
 		return deployErr
 	}
+	// DeployUndeployedOperators claims as well; this path is the one an
+	// explicit install takes, and without a claim here the connection is
+	// invisible to otherOperatorConsumers.
+	ot.claimOperator(k8sctx)
 	return nil
 }
 
@@ -1375,13 +1379,20 @@ func (mch *MesheryControllersHelper) uninstallOperator(ot *OperatorTracker, k8sc
 		return err
 	}
 
-	affected := ot.otherOperatorConsumers(k8sctx)
 	var undeployErr error
 	ot.withOperatorClusterLock(k8sctx, func() { undeployErr = operatorHandler.Undeploy() })
 	if undeployErr != nil {
 		mch.setOperatorError(undeployErr)
 		return undeployErr
 	}
+	// Release this connection's claim only after the operator is gone, so a
+	// later explicit uninstall does not list it as still using the operator.
+	// Re-read the remaining consumers after the uninstall, outside the Helm
+	// lock: a connection that claimed while the lock was held would otherwise
+	// be missing from the warning event, and otherOperatorConsumers takes
+	// OperatorTracker.mx, which must stay outside the innermost Helm lock.
+	ot.releaseOperatorClaim(k8sctx)
+	affected := ot.otherOperatorConsumers(k8sctx)
 	if len(affected) == 0 {
 		return nil
 	}

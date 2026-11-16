@@ -339,6 +339,9 @@ func TestExplicitUndeployOfASharedOperatorNamesTheAffectedConnections(t *testing
 	if _, _, uninstalls, _ := cluster.snapshot(); uninstalls != 1 {
 		t.Fatalf("explicit undeploy ran %d uninstalls, want 1", uninstalls)
 	}
+	if got, want := ot.OperatorConsumers(firstCtx), []string{secondCtx.ConnectionID}; !reflect.DeepEqual(got, want) {
+		t.Fatalf("consumers after explicit undeploy = %v, want only the other connection (the requester's claim must be released) %v", got, want)
+	}
 	select {
 	case msg := <-published:
 		event, ok := msg.(*events.Event)
@@ -373,10 +376,32 @@ func TestExplicitUndeployOfAnUnsharedOperatorIsQuiet(t *testing.T) {
 	if _, _, uninstalls, _ := cluster.snapshot(); uninstalls != 1 {
 		t.Fatalf("explicit undeploy ran %d uninstalls, want 1", uninstalls)
 	}
+	if got := ot.OperatorConsumers(onlyCtx); len(got) != 0 {
+		t.Fatalf("consumers after explicit undeploy = %v, want none (the requester's claim must be released)", got)
+	}
 	select {
 	case msg := <-published:
 		t.Fatalf("published %v for a removal that affected no other connection", msg)
 	default:
+	}
+}
+
+
+// TestSetOperatorDeploymentClaimsTheConnection: an explicit install goes
+// through SetOperatorDeployment, not DeployUndeployedOperators, and must still
+// record the connection as a consumer so a later explicit uninstall by another
+// connection can name it.
+func TestSetOperatorDeploymentClaimsTheConnection(t *testing.T) {
+	ot := NewOperatorTracker(false)
+	cluster := newFakeCluster()
+	ctx := connectionTo(core.Uuid(uuid.Must(uuid.NewV4())), "explicit")
+	mch := operatorModeConsumer(t, cluster)
+
+	if err := mch.SetOperatorDeployment(ot, ctx, true); err != nil {
+		t.Fatalf("explicit deploy failed: %v", err)
+	}
+	if got, want := ot.OperatorConsumers(ctx), []string{ctx.ConnectionID}; !reflect.DeepEqual(got, want) {
+		t.Fatalf("consumers after explicit deploy = %v, want %v", got, want)
 	}
 }
 
