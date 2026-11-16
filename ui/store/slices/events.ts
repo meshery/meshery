@@ -31,6 +31,34 @@ const initialState = {
   isNotificationCenterOpen: false,
 };
 
+export const isSerializable = (value, seen = new Set()) => {
+  if (value === null || value === undefined) {
+    return true;
+  }
+  const type = typeof value;
+  if (type === 'string' || type === 'number' || type === 'boolean') {
+    return true;
+  }
+  if (type !== 'object' || seen.has(value)) {
+    return false;
+  }
+  const isArray = Array.isArray(value);
+  const prototype = Object.getPrototypeOf(value);
+  if (!isArray && prototype !== Object.prototype && prototype !== null) {
+    return false;
+  }
+  seen.add(value);
+  // Arrays can also carry named properties (e.g. list.onSelect = fn), which
+  // iterating the array itself would miss, so read them through its keys.
+  const entries = isArray ? Object.keys(value).map((key) => value[key]) : Object.values(value);
+  const result = entries.every((entry) => isSerializable(entry, seen));
+  seen.delete(value);
+  return result;
+};
+
+const serializableUi = (ui) =>
+  Object.fromEntries(Object.entries(ui || {}).filter(([, value]) => isSerializable(value)));
+
 const defaultEventProperties = {
   severity: SEVERITY.INFO,
   status: STATUS.UNREAD,
@@ -227,16 +255,18 @@ export const eventsSlice = createSlice({
     openNotificationCenter: (state, action) => {
       console.log('Opening notification center with view:', action.payload);
       state.isNotificationCenterOpen = true;
-      state.view_to_fetch_on_open =
-        action.payload.view_to_open || initialState.view_to_fetch_on_open;
-      if (action.payload.view_to_open) {
-        state.current_view = action.payload.view_to_open;
+      const viewToOpen = isSerializable(action.payload.view_to_open)
+        ? action.payload.view_to_open
+        : undefined;
+      state.view_to_fetch_on_open = viewToOpen || initialState.view_to_fetch_on_open;
+      if (viewToOpen) {
+        state.current_view = viewToOpen;
       }
 
       if (action.payload.ui) {
         state.ui = {
           ...state.ui,
-          ...action.payload.ui,
+          ...serializableUi(action.payload.ui),
         };
       }
     },
@@ -257,6 +287,7 @@ export const {
   updateEvent,
   toggleNotificationCenter,
   closeNotificationCenter,
+  openNotificationCenter,
   updateEvents,
 } = eventsSlice.actions;
 

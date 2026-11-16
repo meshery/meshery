@@ -37,6 +37,11 @@ func TestContextViewCmd(t *testing.T) {
 			ExpectedResponse: "viewWithContextExpected.golden",
 		},
 		{
+			Name:             "view with mixed-case context name through context flag",
+			Args:             []string{"context", "view", "--context", "Local2"},
+			ExpectedResponse: "viewWithContextExpected.golden",
+		},
+		{
 			Name:             "Error for viewing a non-existing context",
 			Args:             []string{"context", "view", "local3"},
 			IsOutputGolden:   false,

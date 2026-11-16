@@ -26,6 +26,11 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
+// loadTestStreamWriteTimeout bounds each frame write on a load test run's SSE
+// stream. The server sets no WriteTimeout, so without it a client that stops
+// reading could block a write indefinitely.
+const loadTestStreamWriteTimeout = 30 * time.Second
+
 // LoadTestUsingSMPHandler runs the load test with the given parameters and SMP
 func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, provider models.Provider) {
 	// if req.Method != http.MethodPost && req.Method != http.MethodGet {
@@ -71,8 +76,9 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	// testName - should be loaded from the file and updated with a random string appended to the end of the name
 	testName := perfTest.Config.Name
 	if testName == "" {
-		h.log.Error(ErrBlankName(err))
-		writeMeshkitError(w, ErrBlankName(err), http.StatusForbidden)
+		blankNameErr := ErrBlankName(nil)
+		h.log.Error(blankNameErr)
+		writeMeshkitError(w, blankNameErr, http.StatusBadRequest)
 		return
 	}
 
@@ -265,8 +271,9 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	testName := q.Get("name")
 	if testName == "" {
-		h.log.Error(ErrBlankName(err))
-		writeMeshkitError(w, ErrBlankName(err), http.StatusForbidden)
+		blankNameErr := ErrBlankName(nil)
+		h.log.Error(blankNameErr)
+		writeMeshkitError(w, blankNameErr, http.StatusBadRequest)
 		return
 	}
 	meshName := q.Get("mesh")
@@ -376,6 +383,14 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 	respChan := make(chan *models.LoadTestResponse, 100)
 	endChan := make(chan struct{})
 
+	// responseController bounds each frame write with a deadline so a client
+	// that stops reading cannot wedge the streaming goroutine (and writeMu)
+	// on the write. The deadline is reset before every frame, so a run longer
+	// than loadTestStreamWriteTimeout still delivers its final result.
+	// SetWriteDeadline reports ErrNotSupported for writers that don't
+	// implement it; there writes stay unbounded, as before.
+	responseController := http.NewResponseController(w)
+
 	go func() {
 		defer close(endChan)
 		defer func() {
@@ -415,10 +430,12 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 						// stream stays well-formed even if envelope marshal fails.
 						errPayload = []byte(`{"status":"error","message":"failed to marshal load test result"}`)
 					}
+					_ = responseController.SetWriteDeadline(time.Now().Add(loadTestStreamWriteTimeout))
 					_, _ = fmt.Fprintf(w, "data: %s\n\n", errPayload)
 					flusher.Flush()
 				} else {
 					h.log.Debug("received new data on response channel")
+					_ = responseController.SetWriteDeadline(time.Now().Add(loadTestStreamWriteTimeout))
 					_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
 					flusher.Flush()
 					h.log.Debug("Flushed the messages on the wire...")

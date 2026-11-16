@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/http"
 	"sync"
 	"testing"
 	"time"
@@ -45,6 +46,25 @@ type notFoundProbeTestProvider struct {
 	connection       *connections.Connection
 	filterByStatus   bool
 	contextsErr      error // when set, GetK8sContexts fails the load
+
+	// conditionalCalls counts UpdateConnectionStatusIf calls, counted
+	// when the call returns, so waiting for the count means the write
+	// has already been evaluated.
+	// flipStatusOnStatusWrite, when set, moves the stored status to that
+	// value at the start of the next UpdateConnectionStatusIf call, before
+	// the condition is evaluated: it simulates a user disconnect landing
+	// between SendEvent's status read and its conditional write
+	// (issue #23248). It is cleared after one use.
+	conditionalCalls        int
+	flipStatusOnStatusWrite connections.ConnectionStatus
+
+	// connectionErr, when set, makes GetConnectionByID fail with this
+	// error for the next connectionErrCalls calls, reported with
+	// connectionErrCode as the status code, so a test can pin how the
+	// reporting gate treats a status it cannot read.
+	connectionErr      error
+	connectionErrCode  int
+	connectionErrCalls int
 }
 
 func (p *notFoundProbeTestProvider) Name() string {
@@ -87,6 +107,10 @@ func (p *notFoundProbeTestProvider) GetK8sContexts(_, _, _, _, _, withStatus str
 func (p *notFoundProbeTestProvider) GetConnectionByID(_ string, _ core.Uuid) (*connections.Connection, int, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
+	if p.connectionErrCalls > 0 {
+		p.connectionErrCalls--
+		return nil, p.connectionErrCode, p.connectionErr
+	}
 	return p.connection, 0, nil
 }
 
@@ -99,6 +123,33 @@ func (p *notFoundProbeTestProvider) UpdateConnectionById(_ string, conn *connect
 	updated.Status = conn.Status
 	p.connection = &updated
 	return p.connection, nil
+}
+
+// UpdateConnectionStatusIf mirrors the local store's conditional write:
+// the status moves to newStatus only when it is currently one of
+// fromStatuses, and reports whether the write applied.
+func (p *notFoundProbeTestProvider) UpdateConnectionStatusIf(_ string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	// Counted on return, so a test waiting for the count knows the
+	// write has been evaluated, not merely started.
+	defer func() { p.conditionalCalls++ }()
+	if p.flipStatusOnStatusWrite != "" {
+		p.connection.Status = p.flipStatusOnStatusWrite
+		p.flipStatusOnStatusWrite = ""
+	}
+	if p.connection == nil {
+		return false, nil, nil
+	}
+	for _, fromStatus := range fromStatuses {
+		if p.connection.Status == fromStatus {
+			updated := *p.connection
+			updated.Status = newStatus
+			p.connection = &updated
+			return true, p.connection, nil
+		}
+	}
+	return false, nil, nil
 }
 
 // connectionStatus returns the fake connection's current status, serialized
@@ -123,6 +174,12 @@ func (p *notFoundProbeTestProvider) getContextsCallCount() int {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	return len(p.getContextsCalls)
+}
+
+func (p *notFoundProbeTestProvider) conditionalCallCount() int {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return p.conditionalCalls
 }
 
 func (p *notFoundProbeTestProvider) persistedCount() int {
@@ -316,6 +373,24 @@ func waitForPersisted(t *testing.T, provider *notFoundProbeTestProvider, n int) 
 		}
 		if time.Now().After(deadline) {
 			t.Fatalf("timed out waiting for %d persisted events, got %d", n, provider.persistedCount())
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+}
+
+// waitForConditionalWrites blocks until the provider has finished
+// evaluating n conditional status writes, or fails the test. The write
+// happens inside SendEvent on the probe goroutine, after the probe
+// action has run, so waiting for the probe alone is not enough.
+func waitForConditionalWrites(t *testing.T, provider *notFoundProbeTestProvider, n int) {
+	t.Helper()
+	deadline := time.Now().Add(10 * time.Second)
+	for {
+		if count := provider.conditionalCallCount(); count >= n {
+			return
+		}
+		if time.Now().After(deadline) {
+			t.Fatalf("timed out waiting for %d conditional writes, got %d", n, provider.conditionalCallCount())
 		}
 		time.Sleep(10 * time.Millisecond)
 	}
@@ -896,5 +971,120 @@ func TestK8sFSMMiddlewarePrunesExpiredEntriesBeforeLoad(t *testing.T) {
 	runFSM(t, h, provider, user)
 	if got := provider.getContextsCallCount(); got != 2 {
 		t.Errorf("GetK8sContexts calls after third pass = %d, want 2 (load still gated)", got)
+	}
+}
+
+// TestK8sFSMMiddlewareProbeDoesNotResolveDisconnectedConnection is the
+// end-to-end test for issue #23248 on the NOTFOUND probe path: a probe
+// that finds the cluster reachable again must not resolve the
+// connection's unreachable condition — or move the connection to
+// CONNECTED — when the user disconnected the connection while the probe
+// was in flight. The disconnect lands inside the conditional write,
+// after SendEvent read NOTFOUND and before the write, so the write
+// refuses and SendEvent reports nothing.
+func TestK8sFSMMiddlewareProbeDoesNotResolveDisconnectedConnection(t *testing.T) {
+	probed := make(chan struct{}, 16)
+	action := &resolvingProbeAction{probed: probed}
+	h, provider, _, _, user, broadcastCh := newNotFoundProbeFixture(t, action)
+
+	provider.mu.Lock()
+	provider.flipStatusOnStatusWrite = connections.DISCONNECTED
+	provider.mu.Unlock()
+
+	runFSM(t, h, provider, user)
+	waitForProbes(t, probed, 1)
+	waitForConditionalWrites(t, provider, 1)
+	// No sleep is needed here: the conditional write is the probe
+	// goroutine's last provider interaction. After it, SendEvent
+	// returns no event (the write refused), so the reporting path has
+	// nothing to persist or broadcast. The write is counted when it
+	// returns, so waiting for it means the stored status has already
+	// been evaluated and the disconnect has won.
+
+	if got := provider.persistedCount(); got != 0 {
+		t.Errorf("persisted events = %d, want 0 (no resolution for a disconnected connection)", got)
+	}
+	if got := provider.connectionStatus(); got != connections.DISCONNECTED {
+		t.Errorf("connection status after probe = %q, want %q (the disconnect must win)", got, connections.DISCONNECTED)
+	}
+	// The resolution is dropped, so nothing is broadcast either.
+	select {
+	case data := <-broadcastCh:
+		t.Errorf("probe broadcast %T, want no new notification", data)
+	case <-time.After(500 * time.Millisecond):
+	}
+}
+
+// TestReportBackgroundDiscoveryDropsStaleResolution covers the second
+// guard in issue #23248: the resolution is persisted in the reporting
+// goroutine, after SendEvent returns, so a disconnect landing in between
+// must still stop it. A resolution is reported only while the stored
+// status still matches the state the Discovery settled in; otherwise it
+// is dropped, for both the connected path and the NOTFOUND probe, which
+// share this reporting path.
+func TestReportBackgroundDiscoveryDropsStaleResolution(t *testing.T) {
+	for _, c := range []struct {
+		name          string
+		storedStatus  connections.ConnectionStatus
+		settledStatus interface{} // machines.StateType in-process, string after a JSON round trip
+		wantPersisted bool
+		// failReads makes GetConnectionByID fail this many times with
+		// a non-404 error before it answers: the gate must retry a
+		// transient failure, and drop the resolution when the status
+		// stays unreadable.
+		failReads int
+	}{
+		{"stored connected, settled connected", connections.CONNECTED, machines.CONNECTED, true, 0},
+		{"stored connected, settled connected as a string", connections.CONNECTED, string(machines.CONNECTED), true, 0},
+		{"stored disconnected, settled connected", connections.DISCONNECTED, machines.CONNECTED, false, 0},
+		{"stored not found, settled connected", connections.NOTFOUND, machines.CONNECTED, false, 0},
+		{"status read fails once, then stored connected, settled connected", connections.CONNECTED, machines.CONNECTED, true, 1},
+		{"status read keeps failing, stored connected, settled connected", connections.CONNECTED, machines.CONNECTED, false, 10},
+		{"status read fails once, then stored disconnected, settled connected", connections.DISCONNECTED, machines.CONNECTED, false, 1},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			h, provider, _, connectionID, user, broadcastCh := newNotFoundProbeFixture(t, &resolvingProbeAction{probed: make(chan struct{}, 1)})
+			provider.setConnectionStatus(c.storedStatus)
+			if c.failReads > 0 {
+				provider.connectionErr = errors.New("provider unavailable")
+				provider.connectionErrCode = http.StatusInternalServerError
+				provider.connectionErrCalls = c.failReads
+			}
+
+			now := time.Now()
+			key := models.ConditionKey("k8s-connection", connectionID.String(), "unreachable")
+			resolution := events.NewEvent().
+				WithDescription("connection is reachable again").
+				ActedUpon(connectionID).
+				FromOwner(user.ID).
+				WithCategory("connection").
+				WithAction("update").
+				WithMetadata(map[string]interface{}{"currentStatus": c.settledStatus}).
+				Build()
+			resolution.ResolvedAt = &now
+			resolution.CorrelationKey = &key
+
+			h.reportBackgroundDiscovery(provider, "", user.ID, resolution, nil)
+
+			if c.wantPersisted {
+				if got := provider.persistedCount(); got != 1 {
+					t.Fatalf("persisted events = %d, want 1 (a resolution for a still-connected connection is reported)", got)
+				}
+				// The resolution is notified: drain the broadcast it sends.
+				broadcast := receiveEvent(t, broadcastCh)
+				if broadcast.ResolvedAt == nil {
+					t.Error("broadcast resolution has no ResolvedAt")
+				}
+			} else {
+				if got := provider.persistedCount(); got != 0 {
+					t.Fatalf("persisted events = %d, want 0 (a stale resolution must be dropped)", got)
+				}
+				select {
+				case data := <-broadcastCh:
+					t.Errorf("stale resolution broadcast %T, want no notification", data)
+				case <-time.After(500 * time.Millisecond):
+				}
+			}
+		})
 	}
 }

@@ -340,8 +340,11 @@ mesheryctl system context view --all
 			return nil
 		}
 		if len(args) != 0 {
-			contextViewFlags.Context = strings.ToLower(args[0])
+			contextViewFlags.Context = args[0]
 		}
+		// Context names are stored in lowercase, so normalize the name given
+		// through --context the same way as the positional argument.
+		contextViewFlags.Context = strings.ToLower(contextViewFlags.Context)
 		if contextViewFlags.Context == "" {
 			contextViewFlags.Context = viper.GetString("current-context")
 		}

@@ -8,7 +8,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
-	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 )
 
 // indirectType returns the struct type behind a model entry, whether it was
@@ -68,6 +68,10 @@ func TestAutoMigrateSystemTablesSurvivesConnectionsQuery(t *testing.T) {
 		}
 	}
 
+	if !db.Migrator().HasColumn("environments", "purpose") {
+		t.Fatalf("AutoMigrateSystemTables did not create the \"purpose\" column on environments table")
+	}
+
 	// The environment_connection_mappings join only runs when the page holds at
 	// least one connection, so seed a row - otherwise an empty page short-
 	// circuits the join and the missing-table regression would slip through.
@@ -122,4 +126,58 @@ func TestAutoMigrateSystemTablesIndexesEventQueries(t *testing.T) {
 		}
 	}
 	t.Fatalf("the severity count query does not use idx_events_owner_status_severity; plan: %+v", plan)
+}
+
+// TestAutoMigrateSystemTablesMigratesPurposeOnExistingTable reproduces the migration
+// scenario where an existing database created before the purpose column was introduced
+// (e.g. v1beta1 Environment schema on stable-v1.0.76) undergoes migration. AutoMigrateSystemTables
+// must add the purpose column, and pre-existing rows with empty purpose must be read
+// without error and evaluate to non-administrative / user.
+func TestAutoMigrateSystemTablesMigratesPurposeOnExistingTable(t *testing.T) {
+	db, err := database.New(database.Options{Engine: database.SQLITE, Filename: ":memory:"})
+	if err != nil {
+		t.Fatalf("open database: %v", err)
+	}
+
+	// Create legacy environments table without the purpose column (matching stable-v1.0.76 schema)
+	legacyDDL := "CREATE TABLE `environments` (`id` text,`name` text,`description` text,`organization_id` text,`owner` text,`created_at` datetime,`metadata` text,`updated_at` datetime,`deleted_at` datetime,PRIMARY KEY (`id`));"
+	if err := db.Exec(legacyDDL).Error; err != nil {
+		t.Fatalf("create legacy environments table: %v", err)
+	}
+
+	// Seed pre-existing environment with no purpose column
+	envID := uuid.Must(uuid.NewV4()).String()
+	insertSQL := "INSERT INTO `environments` (`id`, `name`, `description`, `organization_id`) VALUES (?, ?, ?, ?);"
+	if err := db.Exec(insertSQL, envID, "legacy-env", "legacy description", uuid.Must(uuid.NewV4()).String()).Error; err != nil {
+		t.Fatalf("seed legacy environment: %v", err)
+	}
+
+	if db.Migrator().HasColumn("environments", "purpose") {
+		t.Fatal("expected purpose column to not exist prior to migration")
+	}
+
+	// Run migration
+	if err := AutoMigrateSystemTables(&db); err != nil {
+		t.Fatalf("AutoMigrateSystemTables on legacy database failed: %v", err)
+	}
+
+	if !db.Migrator().HasColumn("environments", "purpose") {
+		t.Fatal("AutoMigrateSystemTables did not add purpose column to existing environments table")
+	}
+
+	// Read back the pre-existing row
+	var migratedEnv environment.Environment
+	if err := db.Table("environments").Where("id = ?", envID).First(&migratedEnv).Error; err != nil {
+		t.Fatalf("read migrated environment: %v", err)
+	}
+
+	if migratedEnv.Purpose != "" && migratedEnv.Purpose != environment.EnvironmentPurposeUser {
+		t.Fatalf("expected legacy row to read empty or default user Purpose, got %q", migratedEnv.Purpose)
+	}
+	if migratedEnv.IsAdministrative() {
+		t.Fatal("legacy row must not evaluate as administrative")
+	}
+	if got := migratedEnv.EffectivePurpose(); got != environment.EnvironmentPurposeUser {
+		t.Fatalf("expected EffectivePurpose() to be %q, got %q", environment.EnvironmentPurposeUser, got)
+	}
 }
