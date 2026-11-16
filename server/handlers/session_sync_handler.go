@@ -31,21 +31,49 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	// 	return
 	// }
 
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	// To get fresh copy of User
 	_, _ = provider.GetUserDetails(req)
 
-	meshAdapters := []*models.Adapter{}
-
-	adapters := h.config.AdapterTracker.GetAdapters(req.Context())
-
-	for _, adapter := range adapters {
-		meshAdapters, _ = h.addAdapter(req.Context(), meshAdapters, prefObj, adapter.Location, provider)
+	if prefObj == nil {
+		var err error
+		prefObj, err = provider.ReadFromPersister(user.ID.String())
+		if err != nil || prefObj == nil {
+			if h.log != nil {
+				h.log.Error(ErrReadSessionPersistor)
+			}
+			writeMeshkitError(w, ErrReadSessionPersistor, http.StatusInternalServerError)
+			return
+		}
 	}
-	h.log.Debug("final list of active adapters: ", meshAdapters)
-	prefObj.MeshAdapters = meshAdapters
-	err := provider.RecordPreferences(req, user.ID.String(), prefObj)
-	if err != nil { // ignoring errors in this context
-		h.log.Error(ErrSaveSession(err))
+
+	if h.config != nil && h.config.AdapterTracker != nil {
+		meshAdapters := []*models.Adapter{}
+		adapters := h.config.AdapterTracker.GetAdapters(req.Context())
+		for _, adapter := range adapters {
+			meshAdapters, _ = h.addAdapter(req.Context(), meshAdapters, prefObj, adapter.Location, provider)
+		}
+		if h.log != nil {
+			h.log.Debug("final list of active adapters: ", meshAdapters)
+		}
+		prefObj.MeshAdapters = meshAdapters
+		err := provider.RecordPreferences(req, user.ID.String(), prefObj)
+		if err != nil { // ignoring errors in this context
+			if h.log != nil {
+				h.log.Error(ErrSaveSession(err))
+			}
+		}
 	}
 	s := []SessionSyncDataK8sConfig{}
 	k8scontexts, ok := req.Context().Value(models.AllKubeClusterKey).([]*models.K8sContext)
@@ -74,10 +102,12 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 		K8sConfigs: s,
 	}
 
-	err = json.NewEncoder(w).Encode(data)
+	err := json.NewEncoder(w).Encode(data)
 	if err != nil {
 		obj := "user config data"
-		h.log.Error(models.ErrMarshal(err, obj))
+		if h.log != nil {
+			h.log.Error(models.ErrMarshal(err, obj))
+		}
 		writeMeshkitError(w, models.ErrMarshal(err, obj), http.StatusInternalServerError)
 		return
 	}
