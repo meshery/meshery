@@ -331,7 +331,7 @@ func (h *Handler) handleProviderPatternGetError(rw http.ResponseWriter, eventBui
 
 	} else {
 		h.log.Error(ErrGetPattern(err))
-		writeMeshkitError(rw, ErrGetPattern(err), http.StatusBadRequest)
+		writeMeshkitError(rw, ErrGetPattern(err), providerStatusOrInternal(err))
 		event = eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrGetPattern(err),
 		}).WithDescription(ErrGetPattern(err).Error()).Build()
@@ -704,6 +704,10 @@ func (h *Handler) GetMesheryPatternsHandler(
 	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics, populate)
 
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(rw, err, http.StatusBadRequest)
+			return
+		}
 		h.log.Error(ErrFetchPattern(err))
 		writeMeshkitError(rw, ErrFetchPattern(err), http.StatusInternalServerError)
 		return
@@ -1268,11 +1272,8 @@ func (h *Handler) CloneMesheryPatternHandler(
 		_ = r.Body.Close()
 	}()
 
-	patternID := mux.Vars(r)["id"]
-	if patternID == "" {
-		cloneErr := ErrClonePattern(fmt.Errorf("missing design ID"))
-		h.log.Error(cloneErr)
-		writeMeshkitError(rw, cloneErr, http.StatusBadRequest)
+	patternID, ok := h.requirePathUUID(rw, r, "id")
+	if !ok {
 		return
 	}
 
@@ -1608,7 +1609,10 @@ func (h *Handler) GetMesheryPatternHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	patternID := mux.Vars(r)["id"]
+	patternID, ok := h.requirePathUUID(rw, r, "id")
+	if !ok {
+		return
+	}
 	patternUUID := uuid.FromStringOrNil(patternID)
 	userID := user.ID
 	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("view").ActedUpon(patternUUID)

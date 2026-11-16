@@ -184,9 +184,10 @@ func (h *Handler) handleFilterPOST(
 				return
 			}
 
+			eventBuilder.WithDescription(fmt.Sprintf("Filter %s saved", parsedBody.FilterData.Name))
 			h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
 
-			eventBuilder.WithSeverity(events.Informational).Build()
+			h.persistAndPublish(provider, token, userID, eventBuilder.WithSeverity(events.Informational).Build())
 			return
 		}
 
@@ -245,6 +246,10 @@ func (h *Handler) GetMesheryFiltersHandler(
 
 	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), filter.Visibility)
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(rw, err, http.StatusBadRequest)
+			return
+		}
 		h.log.Error(ErrFetchFilter(err))
 		writeMeshkitError(rw, ErrFetchFilter(err), http.StatusInternalServerError)
 		return
@@ -517,10 +522,12 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ s
 
 		return
 	}
+	// A provider answering null decodes to a nil slice; keep the wire shape a list.
+	if contentMesheryFilterSlice == nil {
+		contentMesheryFilterSlice = []models.MesheryFilter{}
+	}
 
-	result := []models.MesheryFilter{}
-
-	data, err := json.Marshal(&result)
+	data, err := json.Marshal(contentMesheryFilterSlice)
 	if err != nil {
 		obj := "filter file"
 		writeMeshkitError(rw, models.ErrMarshal(err, obj), http.StatusInternalServerError)

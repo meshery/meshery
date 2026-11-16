@@ -110,7 +110,7 @@ failed pods. To raise availability further:
 
 ### Replication and the database caveat
 
-The Meshery database is a **single-writer SQLite/Bitcask file cache**, not a
+The Meshery database is a **single-writer SQLite file cache**, not a
 shared multi-writer datastore. This is the central caveat for horizontal
 scaling:
 
