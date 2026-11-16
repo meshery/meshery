@@ -3,7 +3,7 @@ import { Box, Button, Grid2, Typography } from '@sistent/sistent';
 import { alpha, useTheme } from '@/theme';
 
 interface NotificationProps {
-  type: 'success' | 'error' | string;
+  type: 'success' | 'error';
   message: string;
   retry?: boolean;
   onRetry?: () => void;
