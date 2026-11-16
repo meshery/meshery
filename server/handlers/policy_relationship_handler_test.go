@@ -1139,7 +1139,9 @@ func TestEvaluateRelationshipPolicy_NilUser_ReturnsUnauthorized(t *testing.T) {
 	h.EvaluateRelationshipPolicy(rec, req, nil, nil, provider)
 
 	require.Equal(t, http.StatusUnauthorized, rec.Code)
-	assert.Contains(t, rec.Body.String(), "user unauthorized")
+	var unauthResp map[string]string
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &unauthResp))
+	assert.Equal(t, map[string]string{"error": "user unauthorized"}, unauthResp)
 }
 
 func TestEvaluateRelationshipPolicy_NilProvider_ReturnsInternalServerError(t *testing.T) {
@@ -1151,7 +1153,8 @@ func TestEvaluateRelationshipPolicy_NilProvider_ReturnsInternalServerError(t *te
 	h.EvaluateRelationshipPolicy(rec, req, nil, user, nil)
 
 	require.Equal(t, http.StatusInternalServerError, rec.Code)
-	assert.Contains(t, rec.Body.String(), ErrNilProviderCode)
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrNilProviderCode, decoded.Code)
 }
 
 func TestEvaluateRelationshipPolicy_EmptyRequestBody_ReturnsBadRequest(t *testing.T) {
@@ -1166,6 +1169,8 @@ func TestEvaluateRelationshipPolicy_EmptyRequestBody_ReturnsBadRequest(t *testin
 	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
 
 	require.Equal(t, http.StatusBadRequest, rec.Code)
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrRequestBodyCode, decoded.Code)
 }
 
 func TestEvaluateRelationshipPolicy_PayloadTooLarge_ReturnsRequestEntityTooLarge(t *testing.T) {
@@ -1182,6 +1187,8 @@ func TestEvaluateRelationshipPolicy_PayloadTooLarge_ReturnsRequestEntityTooLarge
 	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
 
 	require.Equal(t, http.StatusRequestEntityTooLarge, rec.Code)
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrRequestBodyCode, decoded.Code)
 }
 
 func TestEvaluateRelationshipPolicy_MalformedJSON_ReturnsBadRequest(t *testing.T) {
@@ -1196,6 +1203,8 @@ func TestEvaluateRelationshipPolicy_MalformedJSON_ReturnsBadRequest(t *testing.T
 	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
 
 	require.Equal(t, http.StatusBadRequest, rec.Code)
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrDecodingCode, decoded.Code)
 }
 
 func TestEvaluateRelationshipPolicy_NilSystemID_DoesNotPanic(t *testing.T) {
@@ -1217,6 +1226,8 @@ func TestEvaluateRelationshipPolicy_NilSystemID_DoesNotPanic(t *testing.T) {
 	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
 
 	require.Equal(t, http.StatusInternalServerError, rec.Code)
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrPolicyEvalCode, decoded.Code)
 }
 
 type panickingPersistEventProvider struct {
@@ -1271,4 +1282,19 @@ func TestEvaluateRelationshipPolicy_PersistEventPanicRecovered(t *testing.T) {
 
 	// Verify that the handler returns HTTP 200 OK without crashing the process
 	require.Equal(t, http.StatusOK, rec.Code)
+
+	var envelope map[string]json.RawMessage
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &envelope))
+	assert.Contains(t, envelope, "design")
+	assert.Contains(t, envelope, "trace")
+	assert.Contains(t, envelope, "actions")
+
+	var evalResp struct {
+		Design  map[string]any   `json:"design"`
+		Trace   pattern.Trace    `json:"trace"`
+		Actions []pattern.Action `json:"actions"`
+	}
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &evalResp))
+	assert.NotNil(t, evalResp.Design)
+	assert.Equal(t, "test", evalResp.Design["name"])
 }
