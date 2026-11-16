@@ -95,11 +95,15 @@ func (p *Proxy) setToken(token string) {
 	if p.authWsChan == nil {
 		return
 	}
+	// Replace any pending notification with the latest auth state, so a
+	// logout is never lost behind a login notification still waiting to be
+	// read. The channel is buffered (size 1) and setToken is its only
+	// sender, so once drained the send below cannot block.
 	select {
-	case p.authWsChan <- token != "":
+	case <-p.authWsChan:
 	default:
-		log.Println("Auth state notification dropped: websocket client is busy")
 	}
+	p.authWsChan <- token != ""
 }
 
 func handleWsMessage(conn *websocket.Conn) {
@@ -162,17 +166,15 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			for res := range authWsChan {
 				log.Println("Got msg from authChan: ", res)
 				if res == true {
-					err = ws.WriteMessage(1, []byte(AuthenticatedMsg))
+					if werr := ws.WriteMessage(1, []byte(AuthenticatedMsg)); werr != nil {
+						log.Println(werr)
+					}
 					log.Println("Sent message to ws client: ", AuthenticatedMsg)
-					if err != nil {
-						log.Println(err)
-					}
 				} else {
-					err = ws.WriteMessage(1, []byte(UnauthenticatedMsg))
-					log.Println("Sent message to ws client: ", UnauthenticatedMsg)
-					if err != nil {
-						log.Println(err)
+					if werr := ws.WriteMessage(1, []byte(UnauthenticatedMsg)); werr != nil {
+						log.Println(werr)
 					}
+					log.Println("Sent message to ws client: ", UnauthenticatedMsg)
 				}
 			}
 		}()
