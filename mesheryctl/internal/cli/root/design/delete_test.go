@@ -373,3 +373,56 @@ func TestDeleteByNameReadsEverySearchPage(t *testing.T) {
 
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
 }
+
+func TestDeleteByNameKeepsReadingWhenServerCapsPageSize(t *testing.T) {
+	testContext := utils.NewTestHelper(t)
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+
+	// The lookup asks for 10000 results per page, but the server returns one
+	// per page and reports a total of two. The short first page must not end
+	// the lookup, or the duplicate on page 1 is missed and the first design
+	// gets deleted.
+	tests := []utils.MesheryMultiURLCommamdTest{
+		{
+			Name:             "given server caps page size when design delete by duplicate name then ambiguity error is thrown and nothing is deleted",
+			Args:             []string{"delete", "test-design"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=test-design&pagesize=10000",
+					Response:     "delete.nameSearchPage0.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=test-design&pagesize=10000&page=1",
+					Response:     "delete.nameSearchPage1.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/a12b3c4d-5e6f-4890-abcd-ef1234567890",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrAmbiguousDesignName("test-design", []string{"a12b3c4d-5e6f-4890-abcd-ef1234567890", "c56d7e8f-9a01-4b23-8cde-f12345678901"}),
+		},
+	}
+
+	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}

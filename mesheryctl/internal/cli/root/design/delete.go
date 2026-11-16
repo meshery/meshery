@@ -109,6 +109,10 @@ mesheryctl design delete -f [file | URL]
 					// Not a file, URL or ID: look the target up as a design name.
 					pattern, err = findDesignIDByExactName(mctlCfg.GetBaseMesheryURL(), target)
 					if err != nil {
+						// Log the full error first: cobra prints only the short
+						// description, and the ambiguity error lists the
+						// matching design IDs in its details.
+						utils.Log.Error(err)
 						return err
 					}
 					isID = true
@@ -209,7 +213,10 @@ func findDesignIDByExactName(baseURL, name string) (string, error) {
 		}
 		patterns = append(patterns, response.Patterns...)
 		total = response.TotalCount
-		if len(response.Patterns) < pageSize || uint(len(patterns)) >= total {
+		// Stop on the total count rather than on a short page: a server that
+		// caps the page size below what was asked for returns short pages
+		// while more results remain. An empty page means nothing is left.
+		if uint(len(patterns)) >= total || len(response.Patterns) == 0 {
 			completed = true
 			break
 		}
