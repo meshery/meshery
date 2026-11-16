@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshery/server/machines"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
@@ -651,6 +653,94 @@ func TestGetContext_NilProvider(t *testing.T) {
 
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("expected status %d, got %d", http.StatusInternalServerError, rec.Code)
+	}
+}
+
+func TestGetContext_RedactsCredentials(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+
+	contextID := uuid.Must(uuid.NewV4())
+	expectedName := "production-cluster"
+	expectedServer := "https://10.0.0.1:6443"
+
+	mockP := &mockContextsProvider{
+		getK8sContextFn: func(token, id string) (models.K8sContext, error) {
+			return models.K8sContext{
+				ID:             id,
+				Name:           expectedName,
+				Server:         expectedServer,
+				ConnectionID:   id,
+				DeploymentType: "out_cluster",
+				Version:        "v1.30.0",
+				Auth: sql.Map{
+					"client-key-data":         "super-secret-private-key",
+					"token":                   "admin-bearer-token",
+					"client-certificate-data": "client-cert-data",
+				},
+				Cluster: sql.Map{
+					"certificate-authority-data": "ca-cert-data",
+					"server":                     expectedServer,
+				},
+			}, nil
+		},
+	}
+
+	reqCtx := context.WithValue(context.Background(), models.TokenCtxKey, "test-token")
+	req := httptest.NewRequest(http.MethodGet, "/api/system/kubernetes/contexts/"+contextID.String(), nil)
+	req = req.WithContext(reqCtx)
+	req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
+	rec := httptest.NewRecorder()
+
+	h.GetContext(rec, req, nil, nil, mockP)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d. body: %s", http.StatusOK, rec.Code, rec.Body.String())
+	}
+
+	body := rec.Body.String()
+	if strings.Contains(body, "super-secret-private-key") {
+		t.Fatalf("expected response body to redact private key, but found it in body: %s", body)
+	}
+	if strings.Contains(body, "admin-bearer-token") {
+		t.Fatalf("expected response body to redact bearer token, but found it in body: %s", body)
+	}
+	if strings.Contains(body, "client-cert-data") {
+		t.Fatalf("expected response body to redact client cert data, but found it in body: %s", body)
+	}
+	if strings.Contains(body, "ca-cert-data") {
+		t.Fatalf("expected response body to redact ca cert data, but found it in body: %s", body)
+	}
+
+	var res models.K8sContext
+	if err := json.Unmarshal(rec.Body.Bytes(), &res); err != nil {
+		t.Fatalf("failed to unmarshal response: %v", err)
+	}
+
+	if res.ID != contextID.String() {
+		t.Errorf("expected ID %s, got %s", contextID.String(), res.ID)
+	}
+	if res.Name != expectedName {
+		t.Errorf("expected Name %s, got %s", expectedName, res.Name)
+	}
+	if res.Server != expectedServer {
+		t.Errorf("expected Server %s, got %s", expectedServer, res.Server)
+	}
+	if res.ConnectionID != contextID.String() {
+		t.Errorf("expected ConnectionID %s, got %s", contextID.String(), res.ConnectionID)
+	}
+	if res.DeploymentType != "out_cluster" {
+		t.Errorf("expected DeploymentType out_cluster, got %s", res.DeploymentType)
+	}
+	if res.Version != "v1.30.0" {
+		t.Errorf("expected Version v1.30.0, got %s", res.Version)
+	}
+	if len(res.Auth) != 0 {
+		t.Errorf("expected empty Auth map, got %+v", res.Auth)
+	}
+	if len(res.Cluster) != 0 {
+		t.Errorf("expected empty Cluster map, got %+v", res.Cluster)
 	}
 }
 
