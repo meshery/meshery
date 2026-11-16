@@ -785,10 +785,42 @@ func DeleteMeshSyncResourceByID(db *database.Handler, id string) (bool, error) {
 	return deleted, nil
 }
 
+// RedactCredentials removes sensitive client authentication data and cluster
+// secrets in-place, while preserving context identifiers and public endpoint metadata.
+func (c *K8sContext) RedactCredentials() {
+	if c == nil {
+		return
+	}
+	c.Auth = sql.Map{}
+	c.Cluster = sql.Map{}
+}
+
+// Redacted returns a shallow copy of the context with sensitive credentials
+// redacted, preserving context identifiers and public endpoint metadata.
+func (c *K8sContext) Redacted() K8sContext {
+	if c == nil {
+		return K8sContext{
+			Auth:    sql.Map{},
+			Cluster: sql.Map{},
+		}
+	}
+	cp := *c
+	cp.RedactCredentials()
+	return cp
+}
+
+// RedactCredentialsForContext returns a copy of the context with sensitive
+// credentials redacted. It preserves backwards compatibility for event metadata
+// callers by also clearing identifying fields, and guards against nil dereferences.
 func RedactCredentialsForContext(ctx *K8sContext) (redactedContext K8sContext) {
+	if ctx == nil {
+		return K8sContext{
+			Auth:    sql.Map{},
+			Cluster: sql.Map{},
+		}
+	}
 	redactedContext = *ctx
-	redactedContext.Auth = sql.Map{}
-	redactedContext.Cluster = sql.Map{}
+	redactedContext.RedactCredentials()
 	redactedContext.DeploymentType = ""
 	redactedContext.ID = ""
 	redactedContext.Name = ""
@@ -797,17 +829,6 @@ func RedactCredentialsForContext(ctx *K8sContext) (redactedContext K8sContext) {
 	redactedContext.KubernetesServerID = nil
 	redactedContext.MesheryInstanceID = nil
 	return
-}
-
-// RedactCredentials removes sensitive client authentication data and cluster
-// secrets before serializing the context for external API responses, while
-// preserving context identifiers and public endpoint metadata.
-func (c *K8sContext) RedactCredentials() {
-	if c == nil {
-		return
-	}
-	c.Auth = sql.Map{}
-	c.Cluster = sql.Map{}
 }
 
 func GenerateK8sClientSet(context *K8sContext, eb *events.EventBuilder, eventMetadata map[string]interface{}, log logger.Handler) (*kubernetes.Client, error) {
