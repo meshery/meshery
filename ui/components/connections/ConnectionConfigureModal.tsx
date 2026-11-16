@@ -9,7 +9,7 @@ import {
   ModalFooter,
 } from '@sistent/sistent';
 import { Modal } from '@/components/shared/Modal';
-import { useListConnectionDefinitionsQuery } from '@meshery/schemas/mesheryApi';
+import { useGetConnectionDefinitionsQuery } from '@/rtk-query/meshModel';
 import {
   buildConnectionWizardKindConfigs,
   DEFAULT_CONNECTION_DOCS_URL,
@@ -63,8 +63,8 @@ const ConnectionConfigureModal = ({
   onClose,
   connection,
 }: ConnectionConfigureModalProps) => {
-  const { data: connectionDefinitionsResponse } = useListConnectionDefinitionsQuery(
-    { pageSize: 'all' as any },
+  const { data: connectionDefinitionsResponse } = useGetConnectionDefinitionsQuery(
+    {},
     { skip: !isOpen },
   );
 
