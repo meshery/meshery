@@ -1,28 +1,40 @@
-// Notification.js
 import React from 'react';
-import { Grid2, Typography, Button } from '@sistent/sistent';
+import { Box, Button, Grid2, Typography } from '@sistent/sistent';
+import { alpha, useTheme } from '@/theme';
 
-const Notification = ({ type, message, retry, onRetry }) => {
+interface NotificationProps {
+  type: 'success' | 'error' | string;
+  message: string;
+  retry?: boolean;
+  onRetry?: () => void;
+}
+
+const Notification: React.FC<NotificationProps> = ({ type, message, retry, onRetry }) => {
+  const theme = useTheme();
+  const isSuccess = type === 'success';
+
   return (
-    <div
-      style={{
-        background: type === 'success' ? '#00B39F40' : '#ff000010',
+    <Box
+      sx={{
+        backgroundColor: isSuccess
+          ? alpha(theme.palette.success.main, 0.15)
+          : alpha(theme.palette.error.main, 0.1),
         borderRadius: '0.5rem',
         padding: '0.5rem',
         display: 'flex',
         marginBottom: '1rem',
       }}
     >
-      <Grid2 style={{ width: '80%' }}>
+      <Grid2 sx={{ width: '80%' }}>
         <Typography variant="body2">
-          <b>{type === 'success' ? 'Success' : 'Verification Failed'}</b>
+          <b>{isSuccess ? 'Success' : 'Verification Failed'}</b>
         </Typography>
-        <Typography variant="body2" sx={{ color: '#00000020' }}>
+        <Typography variant="body2" color="text.secondary">
           {message}
         </Typography>
       </Grid2>
       <Grid2
-        style={{
+        sx={{
           width: '20%',
           display: 'flex',
           justifyContent: 'flex-end',
@@ -31,21 +43,17 @@ const Notification = ({ type, message, retry, onRetry }) => {
       >
         {retry && (
           <Button
-            style={{
-              backgroundColor: '#ff0000',
-              padding: '0.5rem',
-              borderRadius: '0.5rem',
-              border: '0',
-              color: '#fff',
-              height: '2rem',
-            }}
+            variant="contained"
+            color="error"
+            size="small"
             onClick={onRetry}
+            sx={{ height: '2rem' }}
           >
             <Typography variant="body2">Retry</Typography>
           </Button>
         )}
       </Grid2>
-    </div>
+    </Box>
   );
 };
 
