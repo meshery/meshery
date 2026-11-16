@@ -8,12 +8,23 @@ jobs:
         if: github.repository == 'meshery/meshery'
         runs-on: ubuntu-24.04 
         steps:
+        # ssh-action skips host-key verification when fingerprint is empty,
+        # so fail closed rather than connect to an unverified bastion.
+        - name: Require bastion host-key fingerprint
+          env:
+              OCI_BASTION_FINGERPRINT: ${{ secrets.OCI_BASTION_FINGERPRINT }}
+          run: |
+              if [ -z "$OCI_BASTION_FINGERPRINT" ]; then
+                echo "::error::OCI_BASTION_FINGERPRINT secret is not set; refusing to SSH without host-key verification."
+                exit 1
+              fi
         - name: Upgrade Meshery Helm Release
           uses: appleboy/ssh-action@v1.0.3
           with:
               host: ${{ secrets.OCI_BASTION_HOST }}
               username: ${{ secrets.OCI_BASTION_USERNAME }}
               key: ${{ secrets.OCI_BASTION_KEY }}
+              fingerprint: ${{ secrets.OCI_BASTION_FINGERPRINT }}
               script: |
                 kubectl config use-context staging
                 kubectl -n staging rollout restart deployment/playground
