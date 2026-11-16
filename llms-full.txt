@@ -10156,6 +10156,15 @@ Grant only what is needed.
   defaults to `false`. Some managed platforms (AKS, AWS, GCP) require permission
   to watch nodes for full discovery; enable `rbac.nodes: true` **only** on the
   clusters that need it rather than globally.
+- **Know the operator-mode identities.** On clusters running Meshery
+  Operator, the operator's `meshery-operator` ServiceAccount manages the
+  Broker and MeshSync workloads (and the configmaps, secrets, and services
+  those workloads need), and MeshSync reads the cluster through the
+  read-only `meshery-meshsync-role`, which can list and watch every type but
+  write nothing (`pods/exec` is opt-in via `meshsync.rbac.extraRules`). Until
+  the chart's `meshsync.serviceAccount.dedicated` is on (it needs an operator
+  release with `MESHSYNC_SERVICE_ACCOUNT` support), that role is bound to
+  `meshery-operator`, which MeshSync runs as.
 - **Separate duty by cluster.** In out-of-cluster and multi-cloud topologies,
   use a distinct, minimally scoped credential per managed cluster so a single
   compromised credential cannot reach every cluster. See
@@ -10845,7 +10854,10 @@ NodePort.
 The practical implications across a fleet:
 
 - Ensure each cluster's Broker Service type (`LoadBalancer` or `NodePort`) is
-  supported and that the resulting endpoint is reachable from the Server.
+  supported and that the resulting endpoint is reachable from the Server. Where
+  you install the `meshery-operator` chart yourself, declare it per cluster with
+  `meshery-broker.service.type` in that cluster's values (`loadBalancerSourceRanges`
+  applies only with `type: LoadBalancer`).
 - Restrict that exposure to the Server's network origin (security groups,
   load-balancer source ranges, private connectivity). See
   [Networking & Connectivity](/installation/production/networking-and-connectivity/).
@@ -14880,9 +14892,15 @@ spec:
 - **`externalEndpointOverride`** — advertises a fixed `host:port` instead of
   the derived one, for Brokers behind an ingress/gateway, NAT, or in
   air-gapped topologies.
-- Invalid combinations (for example `loadBalancerClass` without
-  `type: LoadBalancer`) are rejected at admission by validation rules on the
-  CRD.
+- `loadBalancerClass` and `loadBalancerSourceRanges` apply only to
+  `type: LoadBalancer`. The CRD rejects them alongside any other explicit
+  `type`; with `type` omitted it admits them, and the Operator ignores them on
+  the resulting `ClusterIP` Service.
+- To set these fields at install time, use the `meshery-operator` Helm chart's
+  `meshery-broker.service.*` values (for example
+  `--set meshery-broker.service.type=NodePort`); unset values are left out of
+  the resource, and the chart refuses load-balancer fields without
+  `type: LoadBalancer`.
 
 The Operator publishes the resulting addresses on the resource's status:
 
@@ -16083,6 +16101,8 @@ See [Meshery Broker](/concepts/architecture/broker/) for more information.
 ### MeshSync Controller
 
 MeshSync Controller manages the lifecycle of MeshSync that is deployed for resource synchronization for the cluster. It derives the Broker's address from the `Broker` resource's status and injects it into MeshSync as `BROKER_URL` (a `nats://host:port` URL); when the Broker's endpoint changes, the controller re-reconciles MeshSync so it reconnects.
+
+MeshSync reads the cluster through its own read-only ClusterRole, `meshery-meshsync-role`, while the Operator's own role can manage Broker and MeshSync workloads but not read the rest of the cluster. Operator releases up to 1.0.6 run MeshSync as `meshery-operator`, so the Helm chart binds the read-only role to that ServiceAccount. Operator releases that include the `MESHSYNC_SERVICE_ACCOUNT` setting run it as the dedicated `meshery-meshsync` ServiceAccount instead, once the chart's `meshsync.serviceAccount.dedicated` is on. On `helm uninstall`, a pre-delete hook deletes the `Broker` and `MeshSync` resources while the Operator is still running, so their finalizers are processed. See the [chart README](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery-operator#meshsync-identity-and-rbac).
 
 See [MeshSync](/concepts/architecture/meshsync/) for more information.
 
@@ -17366,7 +17386,7 @@ MeshSync's configuration spans three mechanisms: fields on the `MeshSync` custom
 <div class="alert alert-dark" role="alert"><div class="h4 alert-heading" role="heading">Discovery is read-only; exec and log streaming are not</div>
 
 
-MeshSync's discovery never creates, modifies, or deletes anything in your cluster - it only lists and watches. Two <em>on-request</em> operations served over the Broker go further: pod log streaming (reads <code>pods/log</code>) and interactive exec sessions (opens a shell in a target container via <code>pods/exec</code>). These power Meshery's log viewer and interactive terminal, run only when a client requests them, and are never part of discovery (file/snapshot mode does not start them at all). Factor them into your RBAC review if your security posture distinguishes read from exec.
+MeshSync's discovery never creates, modifies, or deletes anything in your cluster - it only lists and watches. Two <em>on-request</em> operations served over the Broker go further: pod log streaming (reads <code>pods/log</code>) and interactive exec sessions (opens a shell in a target container via <code>pods/exec</code>). These power Meshery's log viewer and interactive terminal, run only when a client requests them, and are never part of discovery (file/snapshot mode does not start them at all). In operator mode MeshSync reads through the chart's read-only <code>meshery-meshsync-role</code>, which grants <code>get</code> on <code>pods/log</code> but not <code>create</code> on <code>pods/exec</code>; add that rule with the chart value <code>meshsync.rbac.extraRules</code> to enable the terminal.
 </div>
 
 
@@ -17553,6 +17573,8 @@ Meshery Broker is NATS, deployed by the Operator from the `Broker` custom resour
 | Service annotations | `Broker` CR `spec.service.annotations` | None | Cloud load balancer hints, MetalLB pools, internal-LB switches |
 | Load balancer class / source ranges | `spec.service.loadBalancerClass`, `spec.service.loadBalancerSourceRanges` | None | LoadBalancer-type only; CRD validation rejects them for other types |
 | Advertised external endpoint | `spec.service.externalEndpointOverride` | Derived from the Service | Pins the advertised `host:port` for ingress, gateway, NAT, or air-gapped topologies |
+
+If you install the `meshery-operator` Helm chart yourself, you can set the version and every `spec.service` field at install time as `meshery-broker.version` and `meshery-broker.service.*` (see the [chart README](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery-operator#broker-exposure)). Fields you leave unset are omitted from the `Broker`, so the Operator defaults and Meshery Server's controllers configuration still apply. Set each field in one place: when both the chart and Meshery Server set it, a Helm 4 upgrade fails on the field-ownership conflict and Helm 3 keeps whichever wrote last. To return to the default exposure, set `meshery-broker.service.type=ClusterIP` in the same upgrade that removes the other `meshery-broker.service.*` values instead of unsetting them all: with Operator 1.0.6, a Helm 4 upgrade that removes the last chart-set `spec.service` field fails with `spec.service ... must be of type object: "null"`. Helm 3, or Helm 4 with `--server-side=false`, is not affected.
 
 ### Broker service networking
 
@@ -17748,9 +17770,9 @@ Two honest footnotes, verified against Meshery Server's Kubernetes state machine
 MeshSync's code performs no writes against your cluster - it lists and watches. Its effective *reach*, and the enforcement of that read-only posture, depend on the deployment mode:
 
 - **Embedded mode** runs discovery under the identity in the kubeconfig you upload. Its RBAC is that identity's RBAC - no more, no less. For a locked-down cluster, this is the least-privilege path: create a dedicated read-only user or ServiceAccount context scoped to exactly the namespaces and resource types you want discovered, and upload that. If the identity cannot read a resource type, that type is simply not discovered.
-- **Operator mode** installs the meshery-operator Helm chart, whose ClusterRole is deliberately narrow - no wildcards. It grants create/delete/get/list/patch/update/watch on core `configmaps`, `secrets`, and `services`, and on `deployments` and `statefulsets` (apps) - the resources the operator manages to run Broker and MeshSync - plus full control of its own `brokers.meshery.io` and `meshsyncs.meshery.io` custom resources and `create` on `tokenreviews` and `subjectaccessreviews`.
+- **Operator mode** installs the meshery-operator Helm chart, which gives the operator and MeshSync separate roles. The operator's own `meshery-operator-role` is deliberately narrow - no wildcards: it manages core `configmaps`, `secrets`, and `services`, `deployments` and `statefulsets` (apps), and its own `brokers.meshery.io` and `meshsyncs.meshery.io` custom resources - the objects it needs to run Broker and MeshSync - and grants no reads of the rest of the cluster.
 
-  Two consequences follow. First, MeshSync's Deployment runs under the same `meshery-operator` ServiceAccount - there is no separate, read-only MeshSync role - so MeshSync's read-only behavior is a property of its code, not of a dedicated RBAC boundary. If you require RBAC-enforced read-only discovery, use embedded mode with a read-only identity. Second, discovery in operator mode is bounded by that same role: resource types it does not authorize (Pods, Nodes, Namespaces, CRDs, and much of MeshSync's default watch list) are not readable, and therefore not discovered, until a cluster administrator explicitly grants additional `get`/`list`/`watch` permissions to the `meshery-operator` ServiceAccount. Nothing self-escalates; widening discovery is a deliberate act.
+  MeshSync reads through the read-only `meshery-meshsync-role`: `list` and `watch` on every resource type (the watch-list is yours to configure, so the role cannot know in advance which types it covers), plus `get` on its own MeshSync resource, Namespaces, and `pods/log`. It holds no write verbs and no wildcard `get`, which would also open the exec, attach, port-forward, and proxy subresources. Narrow discovery with the watch-list; to bound it by RBAC instead, use embedded mode with a read-only identity scoped to the namespaces and types you want discovered. Operator releases up to 1.0.6 run MeshSync as `meshery-operator`, so the chart binds that role to `meshery-operator`; with an operator release that supports `MESHSYNC_SERVICE_ACCOUNT` and the chart's `meshsync.serviceAccount.dedicated` on, MeshSync runs as its own `meshery-meshsync` ServiceAccount instead, and only then is its read-only posture enforced by RBAC rather than by its code alone - as `meshery-operator` it also holds the operator's write permissions (see the [chart README](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery-operator#meshsync-identity-and-rbac)).
 - **In-cluster Meshery Server** (the `meshery` Helm chart) is the opposite end of the spectrum: its ServiceAccount is bound to a ClusterRole granting `*` on `*`. If Meshery Server itself runs in a cluster, discovery of that local cluster is effectively unrestricted, and the server holds write access it uses for deploying designs. Factor this into which cluster hosts your Meshery Server.
 
 ### Network reachability
@@ -17777,7 +17799,7 @@ MeshSync's default watch list includes `secrets.v1.`, and Secret **values are pu
 
 - **Redact**: set `MESHSYNC_REDACT_SECRETS=true` on the MeshSync process to replace every value in a discovered Secret's `data` with `[REDACTED]` while preserving the keys - the inventory still shows that Secrets exist and how they are shaped, without their contents.
 - **Exclude**: blacklist `secrets.v1.` in the `watch-list` so Secrets are not discovered at all.
-- **Deny by RBAC**: in embedded mode, upload an identity that has no `get`/`list`/`watch` on Secrets; in operator mode, do not grant Secret read access beyond what the chart requires. What cannot be read cannot be published.
+- **Deny by RBAC**: in embedded mode, upload an identity that has no `get`/`list`/`watch` on Secrets. What cannot be read cannot be published. In operator mode MeshSync's chart role can list Secrets (it covers every type), so use redaction or exclusion there.
 
 ### Multi-cluster and multi-user realities
 
@@ -17809,11 +17831,11 @@ MeshSync's default watch list includes `secrets.v1.`, and Secret **values are pu
 
 ## Caveats and limitations
 
-- **Discovery is read-only, with one active-operation exception.** MeshSync itself never creates, updates, or deletes cluster resources. Separately from discovery, Meshery's pod-level troubleshooting features (interactive `exec` sessions and log streaming, available in operator mode via the Broker) are active operations inside your workloads - user-initiated, on demand, and only possible if MeshSync's ServiceAccount is granted `create` on `pods/exec` and `get` on `pods/log`, which the current chart RBAC does not include by default.
+- **Discovery is read-only, with one active-operation exception.** MeshSync itself never creates, updates, or deletes cluster resources. Separately from discovery, Meshery's pod-level troubleshooting features (interactive `exec` sessions and log streaming, available in operator mode via the Broker) are active operations inside your workloads - user-initiated and on demand. Log streaming needs `get` on `pods/log`, which the chart grants; `exec` needs `create` on `pods/exec`, which it does not - add it with the chart value `meshsync.rbac.extraRules` if you want Meshery's interactive terminal.
 - **Inventory freshness is best-effort between syncs.** MeshSync publishes over core NATS (at-most-once delivery). If Meshery Server is disconnected when an event fires, that event is not replayed; the snapshot is rebuilt on the next resync or re-list. Treat the inventory as an operational cache, not an audit log.
 - **Disconnecting is non-destructive; deleting flushes.** Disconnecting a cluster (or undeploying Meshery's components) leaves every workload untouched and retains the collected inventory - which then goes stale. Deleting the Connection removes the collected inventory from Meshery, though only when it is the last Connection referencing that cluster (several kubeconfig contexts can point at the same cluster). Either way, the cluster itself is unaffected.
 - **Drift is surfaced, not prevented.** Resources changed or created outside Meshery keep flowing into the inventory - that is the design. A design you deployed reflects what you declared; the inventory reflects what is observed. Meshery does not block out-of-band changes, and a design does not "adopt" the live resources it happens to describe.
-- **Operator-mode discovery breadth is RBAC-bounded.** As noted [above](#rbac-what-mesherys-components-can-actually-do), the current meshery-operator chart authorizes reads on fewer resource types than MeshSync's default watch list requests; resource types without granted read access are not discovered until you extend the ServiceAccount's permissions.
+- **Operator-mode discovery breadth is watch-list-bounded.** As noted [above](#rbac-what-mesherys-components-can-actually-do), MeshSync can list and watch every resource type in operator mode; what it discovers is what its watch-list names.
 - **Watch-list changes require a MeshSync restart**, and the Maintenance connection state is not currently implemented for Kubernetes Connections (both noted in the sections above).
 
 ## Related
