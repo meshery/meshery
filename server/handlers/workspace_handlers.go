@@ -164,7 +164,7 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 
 	if err != nil {
 		h.log.Error(models.ErrUnmarshal(err, obj))
-		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
 		return
 	}
 
@@ -234,7 +234,7 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 
 	if err != nil {
 		h.log.Error(models.ErrUnmarshal(err, obj))
-		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusInternalServerError)
+		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
 		return
 	}
 
