@@ -372,6 +372,10 @@ extension before enabling it, and enable only what your deployment actually need
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
           </a>
@@ -382,10 +386,6 @@ extension before enabling it, and enable only what your deployment actually need
         </li><li>
           <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
             New comer here and looking for Meshmates
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
-            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
           </a>
         </li><li>
           <a href="https://discuss.meshery.io/t/request-to-reactivate-my-slack-account/8168" target="_blank" rel="noopener noreferrer">
