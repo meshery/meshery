@@ -140,13 +140,15 @@ func (c *wsConn) WriteMessage(messageType int, data []byte) error {
 	return c.Conn.WriteMessage(messageType, data)
 }
 
-// tokenParam matches a token query parameter anywhere in a string, including
-// inside error messages that quote a URL.
-var tokenParam = regexp.MustCompile(`(?i)(token=)[^&\s"';]*`)
+// urlQuery matches the query part of any URL quoted in a string, such as an
+// error message.
+var urlQuery = regexp.MustCompile(`\?[^\s"']*`)
 
-// redactTokens masks every token query parameter in s.
+// redactTokens masks the whole query of every URL quoted in s. It does not
+// look for a "token" name, because a name can be percent-encoded (%74oken)
+// and still be decoded by the receiver.
 func redactTokens(s string) string {
-	return tokenParam.ReplaceAllString(s, "${1}REDACTED")
+	return urlQuery.ReplaceAllString(s, "?REDACTED")
 }
 
 func handleWsMessage(conn *wsConn) {

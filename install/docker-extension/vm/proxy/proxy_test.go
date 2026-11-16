@@ -318,6 +318,9 @@ func TestServeHTTP_EchoAndAuthWritesDoNotRace(t *testing.T) {
 	defer srv.Close()
 
 	ws := dialWS(t, srv.URL, proxy.UnauthenticatedMsg)
+	// dialWS leaves a short read deadline on the connection; clear it so a
+	// slow run doesn't stop the drainer and stall the server's echo writes.
+	_ = ws.SetReadDeadline(time.Time{})
 
 	// Drain everything the server sends so its writes never block.
 	go func() {
@@ -356,6 +359,7 @@ func TestServeHTTP_EchoAndAuthWritesDoNotRace(t *testing.T) {
 		resp.Body.Close()
 	}
 	close(stop)
+	ws.Close() // unblock a sender stuck in WriteMessage
 	<-sendDone
 }
 
@@ -380,7 +384,7 @@ func TestServeHTTP_TokenNotLoggedOnMalformedRedirect(t *testing.T) {
 	if strings.Contains(buf.String(), secret) {
 		t.Fatalf("auth token leaked into logs:\n%s", buf.String())
 	}
-	if !strings.Contains(buf.String(), "token=REDACTED") {
-		t.Fatalf("expected the redirect error to be logged with a redacted token:\n%s", buf.String())
+	if !strings.Contains(buf.String(), "?REDACTED") {
+		t.Fatalf("expected the redirect error to be logged with its query redacted:\n%s", buf.String())
 	}
 }

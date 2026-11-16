@@ -35,9 +35,12 @@ func TestRedactURL(t *testing.T) {
 func TestRedactTokens(t *testing.T) {
 	cases := []struct{ in, want string }{
 		{`failed to parse Location header "/next%zz?token=secret": invalid URL escape "%zz"`,
-			`failed to parse Location header "/next%zz?token=REDACTED": invalid URL escape "%zz"`},
+			`failed to parse Location header "/next%zz?REDACTED": invalid URL escape "%zz"`},
+		// A percent-encoded parameter name is still masked.
+		{`failed to parse Location header "/next%zz?%74oken=secret": invalid URL escape "%zz"`,
+			`failed to parse Location header "/next%zz?REDACTED": invalid URL escape "%zz"`},
 		{"dial tcp 127.0.0.1:1: connect: connection refused", "dial tcp 127.0.0.1:1: connect: connection refused"},
-		{"/a?page=1&TOKEN=secret&x=1", "/a?page=1&TOKEN=REDACTED&x=1"},
+		{"/a?page=1&TOKEN=secret&x=1", "/a?REDACTED"},
 	}
 	for _, c := range cases {
 		if got := redactTokens(c.in); got != c.want {
