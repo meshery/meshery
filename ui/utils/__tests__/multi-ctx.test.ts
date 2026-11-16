@@ -116,6 +116,14 @@ describe('getK8sClusterNamesFromCtxId', () => {
   it('skips unmatched context ids', () => {
     expect(getK8sClusterNamesFromCtxId(['ctx-1', 'bogus'], sampleConfig)).toEqual(['minikube']);
   });
+
+  it('handles empty or missing inputs gracefully', () => {
+    expect(getK8sClusterNamesFromCtxId(null, sampleConfig)).toEqual([]);
+    expect(getK8sClusterNamesFromCtxId(undefined, sampleConfig)).toEqual([]);
+    expect(getK8sClusterNamesFromCtxId(['ctx-1'], null)).toEqual([]);
+    expect(getK8sClusterNamesFromCtxId(['ctx-1'], undefined)).toEqual([]);
+    expect(getK8sClusterNamesFromCtxId(['ctx-1'], {} as any)).toEqual([]);
+  });
 });
 
 describe('getK8sContextFromClusterId', () => {
@@ -157,6 +165,12 @@ describe('getClusterNameFromConnectionId', () => {
   it('returns an empty string when no match is found', () => {
     expect(getClusterNameFromConnectionId('nope', sampleConfig)).toBe('');
   });
+
+  it('returns empty string when k8sConfig is not an array', () => {
+    expect(getClusterNameFromConnectionId('conn-1', undefined)).toBe('');
+    expect(getClusterNameFromConnectionId('conn-1', null)).toBe('');
+    expect(getClusterNameFromConnectionId('conn-1', {} as any)).toBe('');
+  });
 });
 
 describe('getConnectionIdFromClusterId', () => {
@@ -167,6 +181,12 @@ describe('getConnectionIdFromClusterId', () => {
   it('returns an empty string when no match is found', () => {
     expect(getConnectionIdFromClusterId('missing', sampleConfig)).toBe('');
   });
+
+  it('returns empty string when k8sConfig is not an array', () => {
+    expect(getConnectionIdFromClusterId('srv-1', undefined)).toBe('');
+    expect(getConnectionIdFromClusterId('srv-1', null)).toBe('');
+    expect(getConnectionIdFromClusterId('srv-1', {} as any)).toBe('');
+  });
 });
 
 describe('getClusterNameFromCtxId', () => {
@@ -176,6 +196,12 @@ describe('getClusterNameFromCtxId', () => {
 
   it('returns an empty string when no match is found', () => {
     expect(getClusterNameFromCtxId('missing', sampleConfig)).toBe('');
+  });
+
+  it('returns empty string when k8sConfig is not an array', () => {
+    expect(getClusterNameFromCtxId('ctx-1', undefined)).toBe('');
+    expect(getClusterNameFromCtxId('ctx-1', null)).toBe('');
+    expect(getClusterNameFromCtxId('ctx-1', {} as any)).toBe('');
   });
 });
 
@@ -193,6 +219,14 @@ describe('getConnectionIDsFromContextIds', () => {
 
   it('returns an empty array when contexts list is empty', () => {
     expect(getConnectionIDsFromContextIds([], sampleConfig)).toEqual([]);
+  });
+
+  it('returns an empty array when inputs are missing or not arrays', () => {
+    expect(getConnectionIDsFromContextIds(undefined, sampleConfig)).toEqual([]);
+    expect(getConnectionIDsFromContextIds(null, sampleConfig)).toEqual([]);
+    expect(getConnectionIDsFromContextIds(['ctx-1'], undefined)).toEqual([]);
+    expect(getConnectionIDsFromContextIds(['ctx-1'], null)).toEqual([]);
+    expect(getConnectionIDsFromContextIds(['ctx-1'], {} as any)).toEqual([]);
   });
 });
 

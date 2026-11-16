@@ -123,7 +123,7 @@ export function getK8sConfigIdsFromK8sConfig(k8sConfig) {
 }
 
 export const getK8sClusterNamesFromCtxId = (selectedContexts, k8sconfig) => {
-  if (selectedContexts.length === 0) {
+  if (!Array.isArray(selectedContexts) || !Array.isArray(k8sconfig) || selectedContexts.length === 0) {
     return [];
   }
 
@@ -134,7 +134,7 @@ export const getK8sClusterNamesFromCtxId = (selectedContexts, k8sconfig) => {
   const clusterNames = [];
 
   selectedContexts.forEach((context) => {
-    const name = k8sconfig.find((cfg) => cfg.id === context)?.name;
+    const name = k8sconfig.find((cfg) => cfg?.id === context)?.name;
     if (name) {
       clusterNames.push(name);
     }
@@ -184,7 +184,10 @@ export function getClusterNameFromClusterId(clusterId, k8sConfig) {
  * @returns {string} Kubernetes cluster name
  */
 export function getClusterNameFromConnectionId(connId, k8sConfig) {
-  const cluster = k8sConfig.find((cfg) => cfg.connectionId === connId);
+  if (!Array.isArray(k8sConfig)) {
+    return '';
+  }
+  const cluster = k8sConfig.find((cfg) => cfg?.connectionId === connId);
   if (!cluster) {
     return '';
   }
@@ -198,7 +201,10 @@ export function getClusterNameFromConnectionId(connId, k8sConfig) {
  * @returns {string} Kubernetes connection ID
  */
 export function getConnectionIdFromClusterId(clusterId, k8sConfig) {
-  const cluster = k8sConfig.find((cfg) => cfg.kubernetesServerId === clusterId);
+  if (!Array.isArray(k8sConfig)) {
+    return '';
+  }
+  const cluster = k8sConfig.find((cfg) => cfg?.kubernetesServerId === clusterId);
   if (!cluster) {
     return '';
   }
@@ -212,7 +218,10 @@ export function getConnectionIdFromClusterId(clusterId, k8sConfig) {
  * @returns {string} Kubernetes cluster name
  */
 export function getClusterNameFromCtxId(ctxId, k8sConfig) {
-  const cluster = k8sConfig.find((cfg) => cfg.id === ctxId);
+  if (!Array.isArray(k8sConfig)) {
+    return '';
+  }
+  const cluster = k8sConfig.find((cfg) => cfg?.id === ctxId);
   if (!cluster) {
     return '';
   }
@@ -226,8 +235,11 @@ export function getClusterNameFromCtxId(ctxId, k8sConfig) {
  * @returns {Array<string>} array of connection ID for given kubernetes contexts
  */
 export function getConnectionIDsFromContextIds(contexts, k8sConfig) {
+  if (!Array.isArray(contexts) || !Array.isArray(k8sConfig)) {
+    return [];
+  }
   const filteredK8sConnfigs = k8sConfig.filter((config) =>
-    contexts.some((context) => context == config.id),
+    contexts.some((context) => context == config?.id),
   );
   return filteredK8sConnfigs.map((config) => config.connectionId);
 }
