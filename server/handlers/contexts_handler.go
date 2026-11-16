@@ -106,6 +106,8 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 		return
 	}
 
+	val.RedactCredentials()
+
 	if err := json.NewEncoder(w).Encode(val); err != nil {
 		h.log.Error(ErrEncodeK8sContexts(err))
 		writeMeshkitError(w, ErrEncodeK8sContexts(err), http.StatusInternalServerError)
