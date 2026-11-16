@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   IconButton,
   Accordion as MuiAccordion,
@@ -14,17 +14,6 @@ import { iconSmall } from '../../../../css/icons.styles';
 import { safeStringTitle } from '../helper';
 
 export default function SimpleAccordion(props) {
-  useEffect(() => {
-    // for managing focus
-    if (accordionDetailsRef.current) {
-      accordionDetailsRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-      });
-    }
-  }, []);
-  // React Hook useEffect has an unnecessary dependency: 'accordionDetailsRef.current'. Either exclude it or remove the dependency array. Mutable values like 'accordionDetailsRef.current' aren't valid dependencies because mutating them doesn't re-render the component.
-
   const accordionDetailsRef = React.useRef(null);
   const theme = useTheme();
   return (
