@@ -110,18 +110,28 @@ jobs:
           Disallow: /
           ROBOTS
 
-      - name: Save PR Metadata
+      - name: Stage preview artifact
+        # upload-artifact v4 flattens a path list of one directory, so a closed
+        # run that uploaded only pr/ put number and action at the artifact root.
+        # deploy-docs-preview.yml reads docs-preview-build/pr/number, so those
+        # closed runs never removed the preview. Stage everything under one
+        # directory and keep a second top-level file so the layout stays
+        # pr/number (and, on open runs, docs/public) for both open and closed.
         run: |
-            mkdir -p ./pr
-            echo "${{ github.event.number }}" > ./pr/number
-            echo "${{ github.event.pull_request.head.sha }}" > ./pr/sha
-            echo "${{ github.event.action }}" > ./pr/action
+          set -eu
+          mkdir -p ./docs-preview-artifact/pr
+          echo docs-preview-artifact > ./docs-preview-artifact/artifact-root
+          echo "${{ github.event.number }}" > ./docs-preview-artifact/pr/number
+          echo "${{ github.event.pull_request.head.sha }}" > ./docs-preview-artifact/pr/sha
+          echo "${{ github.event.action }}" > ./docs-preview-artifact/pr/action
+          if [ "${{ github.event.action }}" != "closed" ]; then
+            mkdir -p ./docs-preview-artifact/docs
+            mv docs/public ./docs-preview-artifact/docs/public
+          fi
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: docs-preview-build
-          path: |
-            ${{ github.event.action != 'closed' && 'docs/public' || '' }}
-            pr/
+          path: docs-preview-artifact
           if-no-files-found: error

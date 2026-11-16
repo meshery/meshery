@@ -8,6 +8,12 @@
 {{/* When the sidebar is cached, "active" class is set client side. */ -}}
 {{ $shouldDelayActive := $cacheSidebar -}}
 
+{{ if $cacheSidebar -}}
+{{/* Outside #td-sidebar-menu: that element keeps d-none until JS reveals it, which would also hide this notice. */ -}}
+<noscript>
+  <p class="td-sidebar-nav__noscript">The navigation menu needs JavaScript. <a href="{{ site.Home.RelPermalink }}">Go to the docs home</a>.</p>
+</noscript>
+{{ end -}}
 <div id="td-sidebar-menu" class="td-sidebar__inner{{ if $shouldDelayActive }} d-none{{ end }}">
   {{ if not .Site.Params.ui.sidebar_search_disable -}}
 
@@ -65,11 +71,7 @@
       {{ partial "navbar-lang-selector.html" . }}
     </div>
     {{ end -}}
-    {{ if $treeSrc -}}
-      <noscript>
-        <p class="td-sidebar-nav__noscript">The navigation menu needs JavaScript. <a href="{{ site.Home.RelPermalink }}">Go to the docs home</a>.</p>
-      </noscript>
-    {{- else -}}
+    {{ if not $treeSrc -}}
       {{ partial "sidebar-nav-tree.html" $treeArgs }}
     {{- end }}
   </nav>
