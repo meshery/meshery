@@ -14,8 +14,8 @@ const selectors = {
     status: 'unread',
     metadata: {},
     checked: false,
-    userID: 'u1',
-    systemID: 's1',
+    owner: 'u1',
+    systemId: 's1',
     createdAt: '2024-01-01T00:00:00.000Z',
   } as any,
   visible: true,
@@ -42,10 +42,13 @@ vi.mock('../../../rtk-query/notificationCenter', () => ({
   useDeleteEventMutation: () => [deleteEventMutation],
 }));
 
+// Like the real hook, a missing id skips the lookup and returns no user.
+const useGetUserByIdQueryMock = vi.fn((id?: string) => ({
+  data: id ? { firstName: 'Alice', lastName: 'Doe', avatarUrl: '/a.png' } : undefined,
+}));
+
 vi.mock('../../../rtk-query/user', () => ({
-  useGetUserByIdQuery: () => ({
-    data: { firstName: 'Alice', lastName: 'Doe', avatarUrl: '/a.png' },
-  }),
+  useGetUserByIdQuery: (id?: string) => useGetUserByIdQueryMock(id),
 }));
 
 vi.mock('@sistent/sistent', () => {
@@ -299,8 +302,8 @@ describe('Notification component', () => {
       status: 'unread',
       metadata: {},
       checked: false,
-      userID: 'u1',
-      systemID: 's1',
+      owner: 'u1',
+      systemId: 's1',
       createdAt: '2024-01-01T00:00:00.000Z',
     };
     selectors.visible = true;
@@ -366,6 +369,21 @@ describe('Notification component', () => {
     expect(screen.getByTestId('condition-badges')).toHaveTextContent('Resolved');
     fireEvent.click(screen.getByTestId('notification-summary'));
     expect(screen.getByTestId('condition-summary')).toHaveTextContent('2024-01-03T00:00:00.000Z');
+  });
+
+  it('shows the owner and the Meshery system as the actors of a wire event', () => {
+    // GET /api/system/events and the events stream send MeshKit's
+    // events.Event: the user is `owner` and the instance is `systemId`.
+    useGetUserByIdQueryMock.mockClear();
+
+    render(<Notification event_id="evt-1" />);
+    fireEvent.click(screen.getByTestId('notification-summary'));
+
+    const avatars = screen.getAllByTestId('avatar');
+    expect(avatars.map((avatar) => avatar.getAttribute('alt'))).toEqual(['Alice Doe', 'Meshery']);
+    expect(avatars[0]).toHaveAttribute('src', '/a.png');
+    expect(avatars[1]).toHaveAttribute('src', '/static/img/meshery-logo/meshery-logo.png');
+    expect(useGetUserByIdQueryMock).toHaveBeenCalledWith('u1');
   });
 
   it('prefers history_title over description when in history mode', () => {

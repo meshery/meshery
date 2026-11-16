@@ -310,7 +310,10 @@ export const Notification = ({ event_id }) => {
 
   const uiConfig = useSelector((state) => state.events.ui);
 
-  const { data: user } = useGetUserByIdQuery(event.userID);
+  // MeshKit's events.Event names the acting user `owner` and the Meshery
+  // instance `systemId` (schemas v1beta3 Event); `userID` / `systemID` were
+  // the spellings of an older MeshKit and are never sent.
+  const { data: user } = useGetUserByIdQuery(event.owner);
 
   const userName = `${user?.firstName || ''} ${user?.lastName || ''}`;
   const userAvatarUrl = user?.avatarUrl || '';
@@ -326,15 +329,15 @@ export const Notification = ({ event_id }) => {
   };
 
   const eventActors = [
-    ...(event.userID && user
+    ...(event.owner && user
       ? [{ name: userName, avatarUrl: userAvatarUrl, tooltip: userName }]
       : []),
-    ...(event.systemID
+    ...(event.systemId
       ? [
           {
             name: 'Meshery',
             avatarUrl: '/static/img/meshery-logo/meshery-logo.png',
-            tooltip: `System ID: ${event.systemID}`,
+            tooltip: `System ID: ${event.systemId}`,
           },
         ]
       : []),
