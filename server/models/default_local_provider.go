@@ -144,7 +144,7 @@ func (l *DefaultLocalProvider) InstallExtension(extType string, packageUrl strin
 		}
 
 		l.mu.Lock()
-		l.Extensions.Acccount = upsertAccountExtension(l.Extensions.Acccount, parsed)
+		l.Extensions.Account = upsertAccountExtension(l.Extensions.Account, parsed)
 		l.mu.Unlock()
 
 	default:
@@ -213,9 +213,9 @@ func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
 		}
 		l.Extensions.Navigator = filtered
 	case "account":
-		filtered := make(AccountExtensions, 0, len(l.Extensions.Acccount))
+		filtered := make(AccountExtensions, 0, len(l.Extensions.Account))
 		removed := false
-		for _, extension := range l.Extensions.Acccount {
+		for _, extension := range l.Extensions.Account {
 			if strings.EqualFold(strings.TrimSpace(extension.Title), title) {
 				removed = true
 				continue
@@ -225,7 +225,7 @@ func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
 		if !removed {
 			return fmt.Errorf("RemoveExtension: account extension %q not found", title)
 		}
-		l.Extensions.Acccount = filtered
+		l.Extensions.Account = filtered
 	default:
 		return fmt.Errorf("RemoveExtension: unsupported extension type %q (supported types: navigator, account)", extType)
 	}
