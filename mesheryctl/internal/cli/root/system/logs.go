@@ -15,6 +15,7 @@
 package system
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"io"
@@ -53,13 +54,28 @@ func printLogs(logs string, podName string) {
 	}
 }
 
+// printLogStream buffers across reads so a stream read boundary does not split a log line.
+func printLogStream(stream io.Reader, podName string) error {
+	reader := bufio.NewReader(stream)
+	for {
+		line, err := reader.ReadString('\n')
+		if len(line) > 0 {
+			printLogs(strings.TrimSuffix(line, "\n"), podName)
+		}
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+	}
+}
+
 type cmdSystemLogsFlags struct {
 	Follow bool `json:"follow" validate:"boolean"`
 }
 
 var systemLogsFlags cmdSystemLogsFlags
-
-const BYTE_SIZE = 2000
 
 // logsCmd represents the logs command
 var logsCmd = &cobra.Command{
@@ -240,20 +256,8 @@ mesheryctl system logs meshery-istio
 						go func(stream io.ReadCloser, podName string) {
 							defer wg.Done()
 							defer func() { _ = stream.Close() }()
-							buf := make([]byte, BYTE_SIZE)
-							for {
-								numBytes, err := stream.Read(buf)
-								if numBytes > 0 {
-									logBuf := buf[0:numBytes]
-									printLogs(string(logBuf), podName)
-								}
-								if err == io.EOF {
-									break
-								}
-								if err != nil {
-									utils.Log.Errorf("error occurred while processing logs %v", err)
-									break
-								}
+							if err := printLogStream(stream, podName); err != nil {
+								utils.Log.Errorf("error occurred while processing logs %v", err)
 							}
 						}(logs, name)
 					}
