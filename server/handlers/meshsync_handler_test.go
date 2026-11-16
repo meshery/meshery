@@ -511,3 +511,47 @@ func TestDeleteMeshSyncResource_RemovesChildRows(t *testing.T) {
 		}
 	}
 }
+
+// TestGetMeshSyncResources_EmptyClusterFilter verifies that when clusterIds
+// query param is omitted, resources across all clusters are returned rather
+// than being dropped by an empty IN (?) clause.
+func TestGetMeshSyncResources_EmptyClusterFilter(t *testing.T) {
+	h, provider, db := newMeshSyncTestFixture(t)
+
+	resID := uuid.Must(uuid.NewV4()).String()
+	meta := model.KubernetesResourceObjectMeta{
+		ID:   resID,
+		Name: "test-resource",
+		UID:  resID,
+	}
+	if err := db.Create(&meta).Error; err != nil {
+		t.Fatalf("failed to seed resource meta: %v", err)
+	}
+
+	resource := model.KubernetesResource{
+		ID:        resID,
+		ClusterID: "test-cluster",
+		ComponentMetadata: map[string]interface{}{
+			"name": "test-resource",
+		},
+	}
+	if err := db.Table("kubernetes_resources").Create(&resource).Error; err != nil {
+		t.Fatalf("failed to seed resource: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/system/meshsync/resources", nil)
+	rec := httptest.NewRecorder()
+	h.GetMeshSyncResources(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status 200, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+
+	var resp models.MeshSyncResourcesAPIResponse
+	if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("failed to unmarshal response: %v", err)
+	}
+	if len(resp.Resources) == 0 {
+		t.Fatalf("expected resources to be returned when clusterIds is omitted, got 0")
+	}
+}
