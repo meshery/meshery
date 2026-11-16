@@ -309,6 +309,8 @@ Please do! We're a warm and welcoming community of open source contributors. Ple
 
 ### Cloning this repository (sparse clone recommended)
 
+> **Note:** Ensure Git is installed on your system before running `git clone`. You can verify by typing `git --version` in your terminal.
+
 This repository is large - a full clone is tens of gigabytes and grows over time, mostly from the generated model registry (`models/`, 400+ models) and archived documentation snapshots (`docs/static/v*/`). Unless you specifically need those, **clone sparsely** to get a working tree a fraction of the size while keeping the full commit history:
 
 ```bash
