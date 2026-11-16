@@ -55,11 +55,28 @@ func GetAutoRegistrationSingleton() *AutoRegistrationHelper {
 	return autoRegistrationSingleton
 }
 
+// processRegistration listens for incoming registration data from MeshSyncRegistrationQueue
+// and initiates automatic connection registration for connection-feasible Kubernetes resources.
 func (arh *AutoRegistrationHelper) processRegistration() {
 	if arh == nil {
 		return
 	}
-	sysID := viper.Get("INSTANCE_ID").(*core.Uuid)
+	var sysID *core.Uuid
+	if id, ok := viper.Get("INSTANCE_ID").(*core.Uuid); ok && id != nil {
+		sysID = id
+	} else if idStr := viper.GetString("INSTANCE_ID"); idStr != "" {
+		if parsed, err := uuid.FromString(idStr); err == nil {
+			u := core.Uuid(parsed)
+			sysID = &u
+		}
+	}
+	if sysID == nil {
+		defaultID := core.Uuid(uuid.Nil)
+		sysID = &defaultID
+		if arh.log != nil {
+			arh.log.Warnf("INSTANCE_ID is missing or not a valid UUID; auto-registration will use the nil system ID")
+		}
+	}
 	regChan := models.GetMeshSyncRegistrationQueue().RegChan
 
 	for regData := range regChan {
@@ -121,17 +138,24 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 						if err != nil {
 							event.Description = fmt.Sprintf("Failed to auto register \"%s\" connection at %s", connectionName, url)
 							// Do not publish the event if auto registration fails.
-							_ = data.MeshsyncDataHandler.Provider.PersistSystemEvent(*event)
+							if data.MeshsyncDataHandler.Provider != nil {
+								_, _ = data.MeshsyncDataHandler.Provider.PersistSystemEvent(*event)
+							}
 							continue
 						}
 
 						// Delete the meshsync resource which has been upgraded to Connection.
-						_ = arh.dbHandler.Model(&meshsyncmodel.KubernetesResource{}).Delete(&meshsyncmodel.KubernetesResource{ID: data.Obj.ID})
+						if arh.dbHandler != nil {
+							_ = arh.dbHandler.Model(&meshsyncmodel.KubernetesResource{}).Delete(&meshsyncmodel.KubernetesResource{ID: data.Obj.ID})
+						}
 
 						event = events.NewEvent().WithCategory("connection").WithAction("register").FromOwner(data.MeshsyncDataHandler.UserID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
 
-						go arh.eventBroadcast.Publish(data.MeshsyncDataHandler.UserID, event)
-						_ = data.MeshsyncDataHandler.Provider.PersistSystemEvent(*event)
+						var persister models.SystemEventPersister
+						if data.MeshsyncDataHandler.Provider != nil {
+							persister = data.MeshsyncDataHandler.Provider
+						}
+						_ = models.PersistAndPublishSystemEvent(persister, arh.eventBroadcast, data.MeshsyncDataHandler.UserID, event)
 					}
 				}
 

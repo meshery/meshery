@@ -36,7 +36,7 @@ To customize the callback URL that your Provider redirects to after sign-in, set
 
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">
- $ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
+ $ MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token mesheryctl system start
 
 </div></div>
 </pre>

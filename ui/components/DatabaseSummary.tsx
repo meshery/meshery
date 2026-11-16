@@ -84,7 +84,9 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
       name: 'count',
       label: 'Count',
       options: {
-        sort: true,
+        // Counts are computed per table after the page is fetched, so the
+        // server can only order tables by name.
+        sort: false,
       },
     },
   ];
@@ -112,8 +114,8 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
       if (searchText) setPage(0);
       setSearchText(searchText != null ? searchText : '');
     }),
-    onColumnSortChange: (_, direction) => {
-      setSortOrder(`name ${direction}`);
+    onColumnSortChange: (changedColumn, direction) => {
+      setSortOrder(`${changedColumn} ${direction}`);
     },
   };
 
@@ -159,6 +161,7 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
         <div>
           <SearchBar
             onSearch={(value) => {
+              setPage(0);
               setSearchText(value);
             }}
             expanded={isSearchExpanded}

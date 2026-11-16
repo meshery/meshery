@@ -43,7 +43,7 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 				return err
 			}
 
-			if err = validateAdapter(mctlCfg, meshName); err != nil {
+			if err = parseAndValidateMesh(mctlCfg, args); err != nil {
 				return err
 			}
 			return nil

@@ -99,7 +99,7 @@ func ErrFailUnmarshalFile(err error) error {
 	return errors.New(ErrFailUnmarshalFileCode, errors.Alert,
 		[]string{"Failed to unmarshal configuration file"},
 		[]string{err.Error()},
-		[]string{"Unable to covert JSON format from yml file"},
+		[]string{"Unable to convert JSON format from yml file"},
 		[]string{"Ensure a valid data is provided in your yml file", formatErrorWithReference()})
 }
 
@@ -154,7 +154,7 @@ func ErrHealthChecker(err error) error {
 func ErrPerformanceProfileResult(err error) error {
 	return errors.New(ErrPerformanceProfileResultCode, errors.Alert,
 		[]string{"Error displaying performance"},
-		[]string{"Unable to display performance Profile" + err.Error()},
+		[]string{"Unable to display performance Profile: " + err.Error()},
 		[]string{"Failed to fetch results for a specific profile"},
 		[]string{"Check your network connection and ensure Meshery is running .", formatErrorWithReference()})
 }

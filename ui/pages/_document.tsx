@@ -128,6 +128,126 @@ class MesheryDocument extends Document<MyDocumentProps> {
             }}
           />
           {/* End Google Tag Manager (noscript) */}
+
+          {/* Fallback displayed when JavaScript is disabled */}
+          <noscript
+            dangerouslySetInnerHTML={{
+              __html: `
+                <style type="text/css">
+                  #PRE_REACT_LOADER {
+                    display: none !important;
+                  }
+                  .noscript-overlay {
+                    position: fixed;
+                    inset: 0;
+                    z-index: 999999;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: safe center;
+                    overflow-y: auto;
+                    background-color: #1e2529;
+                    color: #ffffff;
+                    font-family: 'Qanelas Soft', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+                    text-align: center;
+                    padding: 24px;
+                    box-sizing: border-box;
+                  }
+                  .noscript-card {
+                    max-width: 540px;
+                    width: 100%;
+                    background-color: #263238;
+                    border: 1px solid rgba(255, 255, 255, 0.12);
+                    border-radius: 12px;
+                    padding: 36px 28px;
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+                  }
+                  .noscript-logo {
+                    width: 64px;
+                    height: 64px;
+                    margin-bottom: 20px;
+                  }
+                  .noscript-title {
+                    font-size: 1.5rem;
+                    font-weight: 600;
+                    color: #00B39F;
+                    margin: 0 0 16px 0;
+                  }
+                  .noscript-desc {
+                    font-size: 0.95rem;
+                    line-height: 1.6;
+                    color: #c4cdd5;
+                    margin: 0 0 16px 0;
+                  }
+                  .noscript-instruction {
+                    font-size: 0.95rem;
+                    font-weight: 500;
+                    color: #ffffff;
+                    margin: 0 0 24px 0;
+                  }
+                  .noscript-links {
+                    display: flex;
+                    gap: 12px;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                  }
+                  .noscript-btn {
+                    display: inline-block;
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    font-size: 0.875rem;
+                    font-weight: 500;
+                    text-decoration: none;
+                    color: #00D3A9;
+                    border: 1px solid rgba(0, 211, 169, 0.4);
+                    background-color: rgba(0, 211, 169, 0.08);
+                  }
+                </style>
+                <div class="noscript-overlay">
+                  <div class="noscript-card">
+                    <img
+                      class="noscript-logo"
+                      src="/static/img/meshery-logo/meshery-logo.png"
+                      alt="Meshery Logo"
+                    />
+                    <h1 class="noscript-title">JavaScript is required</h1>
+                    <p class="noscript-desc">
+                      Meshery is an interactive cloud native management plane and requires JavaScript to load and function properly.
+                    </p>
+                    <p class="noscript-instruction">
+                      Please enable JavaScript in your browser settings and reload this page to continue.
+                    </p>
+                    <div class="noscript-links">
+                      <a
+                        class="noscript-btn"
+                        href="https://docs.meshery.io"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Documentation
+                      </a>
+                      <a
+                        class="noscript-btn"
+                        href="https://meshery.io"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Website
+                      </a>
+                      <a
+                        class="noscript-btn"
+                        href="https://github.com/meshery/meshery"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        GitHub
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              `,
+            }}
+          />
           {/* Pre-React script - must be sync to run before React hydration */}
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script src="/loadingMessages.js"></script>

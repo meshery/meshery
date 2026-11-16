@@ -37,6 +37,8 @@ type cmdWorkspaceCreateFlags struct {
 
 var workspaceCreateFlags cmdWorkspaceCreateFlags
 
+var createUsageMsg = "Usage: mesheryctl workspace create --orgId [orgId] --name [name] --description [description]\nRun 'mesheryctl workspace create --help' to see detailed help message"
+
 var createWorkspaceCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new workspace under an organization",
@@ -46,6 +48,12 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace
 // Create a new workspace in an organization
 mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
 `,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", createUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceCreateFlags)
 	},
@@ -65,13 +73,14 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 			return utils.ErrMarshal(err)
 		}
 
-		_, err = api.Add(workspacesApiPath, bytes.NewBuffer(payloadBytes), nil)
+		resp, err := api.Add(workspacesApiPath, bytes.NewBuffer(payloadBytes), nil)
 		if err != nil {
 			if mErrors.GetCode(err) == utils.ErrNotFoundCode {
 				return returnFailedCreateWorkspaceError(workspaceCreateFlags.Name, workspaceCreateFlags.OrganizationID)
 			}
 			return err
 		}
+		defer utils.SafeClose(resp.Body)
 
 		utils.Log.Infof("Workspace %s created in organization %s", workspaceCreateFlags.Name, workspaceCreateFlags.OrganizationID)
 		return nil

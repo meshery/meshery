@@ -18,6 +18,97 @@ container image forward via `.github/workflows/cncf-playground-deploy-meshery.ya
 Out-of-band edits on the cluster will be overwritten on the next deploy - put the change
 in this manifest instead.
 
+### Sandbox cluster: Meshery Operator, MeshSync and Broker
+
+The playground Pod runs on the `prod` cluster, but the kubeconfig it mounts from the
+`playground` ConfigMap (at `/home/appuser/.kube`) names a **different** cluster - the
+sandbox cluster (kube-context `staging`). Every cluster the playground shows its users,
+and every operator status it reports, is the sandbox cluster's. The `meshery` namespace
+on `prod` also carries a Meshery Operator release, but no playground connection uses it,
+so check the **sandbox** cluster when the playground reports an unhealthy operator.
+
+With `MESHSYNC_DEFAULT_DEPLOYMENT_MODE=operator`, Meshery Server installs the
+`meshery-operator` chart into the sandbox cluster's `meshery` namespace (release
+`meshery-operator`) and subscribes to its Broker. Two things the chart does not provide
+today must be in place for discovery data to reach the playground:
+
+| Requirement | Why | Manifest (apply to the sandbox cluster) |
+| --- | --- | --- |
+| Broker reachable from the `prod` cluster | The Server runs out of the sandbox cluster, and current releases skip the managed kube-API port-forward whenever the Server itself runs in any Kubernetes cluster, so a `ClusterIP` Broker is unreachable | [`sandbox-cluster/broker-service-exposure.yaml`](kubernetes/sandbox-cluster/broker-service-exposure.yaml) - `LoadBalancer`, restricted to the `prod` cluster's NAT egress address; NATS still requires its token, but the traffic is not TLS-encrypted: the range and the token limit who can connect, not what a network observer can read. The LoadBalancer also exposes the unauthenticated NATS monitoring port 8222 (`/connz`); the Broker resource offers no port selection, so keeping it off the LoadBalancer needs an operator-side change. Prefer the managed port-forward where it applies; expose the Broker only over a private path |
+| MeshSync can read the cluster | MeshSync runs as ServiceAccount `meshery/meshery-operator`, which the v1.0.x chart scopes to the operator's own needs, so every watch fails with `forbidden` | [`sandbox-cluster/meshsync-discovery-interim-rbac.yaml`](kubernetes/sandbox-cluster/meshsync-discovery-interim-rbac.yaml) - read-only, interim: cluster-wide `get`/`list`/`watch`, including Secrets and their credentials, and `get` on subresources such as `nodes/proxy`, which Kubernetes documents as usable to execute commands in Pods through the kubelet API. Remove it once the chart gives MeshSync its own ServiceAccount |
+
+Apply both from `install/playground` with
+[`kubernetes/sandbox-cluster/apply.sh <sandbox-context> <egress-ip>`](kubernetes/sandbox-cluster/apply.sh).
+It validates the address, applies with server-side apply under the
+`meshery-playground-ops` field manager (which Meshery Server's own applies, field manager
+`meshery-server`, never withdraw), restarts MeshSync and waits for the Broker's external
+endpoint. The egress address is the public IP of the `prod` cluster VCN's NAT gateway
+(`oci network nat-gateway list ... --query 'data[].{name:"display-name",ip:"nat-ip"}'`).
+
+> [!WARNING]
+> Do not switch a sandbox connection's MeshSync deployment mode, disconnect it, or delete
+> it from the playground. In current releases each of those uninstalls the shared
+> `meshery-operator` release for **every** connection to the sandbox cluster, and the
+> uninstall leaves the Broker and MeshSync custom resources stuck `Terminating` (their
+> finalizers need the operator that was just removed).
+
+#### Verifying
+
+```bash
+kubectl --context staging -n meshery get deploy,sts,pods            # operator, meshery-nats, meshery-meshsync Ready
+kubectl --context staging -n meshery get broker meshery-broker -o jsonpath='{.status.endpoint}'  # external endpoint present
+kubectl --context staging -n meshery logs deploy/meshery-meshsync | grep -c forbidden            # 0
+kubectl --context staging -n meshery exec meshery-nats-0 -c nats -- \
+  wget -qO- 'http://127.0.0.1:8222/connz' | jq '[.connections[] | {ip, name}]'  # a client from the prod NAT address
+kubectl --context prod -n meshery logs deploy/playground -c meshery | grep 'Connected to Meshery Broker'
+```
+
+#### Recovering the operator on the sandbox cluster
+
+1. **Remove a stray operator only after confirming it is unmanaged.** Meshery manages only `meshery/meshery-operator`.
+   A `meshery-operator` Deployment in any other namespace can be a manual install or a Helm release in another namespace.
+   Run `helm --kube-context staging list -A` and confirm that no release owns the Deployment. Confirm that its objects carry no `meta.helm.sh/release-name` annotation and that no other installation uses it. Then delete it together with its ServiceAccount, Service, Role and RoleBinding.
+2. **Clear stuck custom resources.** If `broker meshery-broker` or `meshsync meshery-meshsync`
+   has a `deletionTimestamp` and no operator is running, remove their finalizers. Their
+   owned objects (NATS StatefulSet, Services, ConfigMap, Secret, MeshSync Deployment) carry
+   ownerReferences, so garbage collection removes them exactly as the finalizer would.
+   Reinstalling first instead makes Helm adopt the terminating resources, and the new
+   operator then finalizes them away, leaving an operator with no Broker.
+   Wait until the custom resources are gone and their owned objects are deleted
+   before reinstalling - garbage collection removes them asynchronously, so an
+   immediate reinstall can race it:
+   ```bash
+   kubectl --context staging -n meshery wait --for=delete broker/meshery-broker meshsync/meshery-meshsync --timeout=5m
+   kubectl --context staging -n meshery wait --for=delete sts/meshery-nats deploy/meshery-meshsync --timeout=5m
+   kubectl --context staging -n meshery get svc
+   ```
+   Only proceed once the Broker and MeshSync custom resources are absent and the
+   NATS StatefulSet, MeshSync Deployment and their Services are deleted.
+3. **Reinstall the chart Meshery Server expects** (the version matching the playground
+   release, from `https://meshery.github.io/meshery.io/charts`), using Helm v3 - the major
+   version Meshery Server embeds:
+   `helm install meshery-operator <chart> -n meshery --kube-context staging --set fullnameOverride=meshery-operator --wait`.
+   Do not pass `--atomic`: a rollback-uninstall recreates the stuck state in step 2.
+   If a previous `--wait` install timed out, Helm keeps the failed release, and
+   another `helm install` with the same name fails. Inspect it first with
+   `helm --kube-context staging list -n meshery -a`, then recover it according
+   to whether a previous revision exists:
+   - **Failed first install (no previous revision):** there is nothing to roll
+     back to, so remove the failed release
+     (`helm uninstall meshery-operator -n meshery --kube-context staging`),
+     then repeat step 2 and wait for the Broker and MeshSync custom resources
+     and their owned objects to be deleted before reinstalling.
+   - **Failed upgrade (a previous revision exists):** roll it back
+     (`helm rollback meshery-operator -n meshery --kube-context staging`) to
+     restore the previous revision. Do not retry `helm install` after a
+     rollback: the release still exists under that name, so the install still
+     fails. Use `helm upgrade` for a new attempt, or uninstall the release
+     first (and repeat step 2) if a fresh install is needed.
+4. **Re-apply the sandbox settings** with `kubernetes/sandbox-cluster/apply.sh <sandbox-context> <egress-ip>`.
+5. **Restart the playground Deployment** (`kubectl --context prod -n meshery rollout restart
+   deploy/playground`). Its Broker connections keep the endpoint and token they resolved at
+   connect time, so a recreated Broker is not picked up until they reconnect.
+
 _The bare-metal/Equinix notes below describe an earlier topology and are retained for reference._
 
 ### DNS

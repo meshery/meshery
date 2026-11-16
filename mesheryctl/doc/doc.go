@@ -28,6 +28,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 // GenMarkdownTreeCustom is a modified version of GenMarkdownTree from spf13/cobra
@@ -160,21 +161,40 @@ func writeCodeBlock(buf *bytes.Buffer, code string) {
 		codeEscaper.Replace(code))
 }
 
+// withPortableConfigDefault runs fn with the "config" flag's displayed default
+// temporarily set to a machine-neutral path, restoring the original default after.
+func withPortableConfigDefault(flags *pflag.FlagSet, fn func()) {
+	configFlag := flags.Lookup("config")
+	if configFlag == nil {
+		fn()
+		return
+	}
+	originalDefault := configFlag.DefValue
+	configFlag.DefValue = "~/.meshery/config.yaml"
+	defer func() { configFlag.DefValue = originalDefault }()
+	fn()
+}
+
 // printOptions prints the options for a command
 func printOptions(buf *bytes.Buffer, cmd *cobra.Command) error {
 	flags := cmd.NonInheritedFlags()
 	flags.SetOutput(buf)
 	if flags.HasAvailableFlags() {
-		buf.WriteString("## Options\n\n<pre class='codeblock-pre'>\n<div class='codeblock'>\n")
-		flags.PrintDefaults()
+		withPortableConfigDefault(flags, func() {
+			buf.WriteString("## Options\n\n<pre class='codeblock-pre'>\n<div class='codeblock'>\n")
+			flags.PrintDefaults()
+		})
 		buf.WriteString("\n</div>\n</pre>\n\n")
 	}
 
 	parentFlags := cmd.InheritedFlags()
 	parentFlags.SetOutput(buf)
+
 	if parentFlags.HasAvailableFlags() {
-		buf.WriteString("## Options inherited from parent commands\n\n<pre class='codeblock-pre'>\n<div class='codeblock'>\n")
-		parentFlags.PrintDefaults()
+		withPortableConfigDefault(parentFlags, func() {
+			buf.WriteString("## Options inherited from parent commands\n\n<pre class='codeblock-pre'>\n<div class='codeblock'>\n")
+			parentFlags.PrintDefaults()
+		})
 		buf.WriteString("\n</div>\n</pre>\n\n")
 	}
 	return nil
@@ -270,7 +290,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 				}
 			})
 		}
-		buf.WriteString(`Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.`)
+		buf.WriteString(`Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.`)
 		buf.WriteString("\n")
 	}
 
@@ -400,6 +420,8 @@ func isGeneratedShortcode(shortcodeContent string) bool {
 	return shortcodeContent == `ref "reference/mesheryctl/_index.md"` ||
 		shortcodeContent == `ref "reference/references/mesheryctl/_index.md"` ||
 		shortcodeContent == `ref "reference/reference/mesheryctl/_index.md"` ||
+		shortcodeContent == `ref "project/contributing/cli/cli.md#documenting"` ||
+		shortcodeContent == `ref "project/contributing/cli/index.md#documenting"` ||
 		shortcodeContent == `ref "project/contributing/cli/cli.md#preserving-manually-added-documentation"` ||
 		shortcodeContent == `ref "project/contributing/cli/index.md#preserving-manually-added-documentation"`
 }

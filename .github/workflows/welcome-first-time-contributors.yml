@@ -113,7 +113,7 @@ jobs:
 
             Here are a few things that will help your PR get merged smoothly:
 
-            - ✅ **DCO sign-off** — make sure every commit is signed off (`git commit -s`) as required by our [Developer Certificate of Origin](https://docs.meshery.io/project/contributing/contributing-github#signing-off-on-commits-developer-certificate-of-origin).
+            - ✅ **DCO sign-off** — make sure every commit is signed off (`git commit -s`) as required by our [Developer Certificate of Origin](https://docs.meshery.io/project/contributing).
             - 🧪 **Tests** — if your change affects functionality, please include or update tests.
             - 📝 **Description** — a clear PR description helps reviewers understand your intent quickly.
 

@@ -10,20 +10,12 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	core "github.com/meshery/schemas/models/core"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 )
 
 var tempProfileID = "a2a555cf-ae16-479c-b5d2-a35656ba741e"
-
-// PerformanceResultsAPIResponse is a local struct for testing unmarshal errors.
-//
-// The JSON tag mirrors the real perfprofile.PerformanceResultPage.PageSize
-// tag (`pageSize`) so the error message produced by json.Unmarshal references
-// the same field name the production code would surface.
-type PerformanceResultsAPIResponse struct {
-	PageSize uint `json:"pageSize"`
-}
 
 func TestResultCmd(t *testing.T) {
 	testContext := utils.NewTestHelper(t)
@@ -114,11 +106,13 @@ func TestResultCmd(t *testing.T) {
 			ExpectedError: func() error {
 				cmdUsed = "result"
 
-				// Replicate the exact JSON unmarshal error. Body matches the
-				// canonical camelCase wire form in the
-				// `result.invalidJSON.response.golden` fixture so the inner
-				// json.Unmarshal error references `pageSize`, not `page_size`.
-				var response PerformanceResultsAPIResponse
+				// Replicate the exact JSON unmarshal error by decoding the way
+				// fetchPerformanceProfileResults does: into a pointer to the
+				// production response type. encoding/json names the struct in
+				// its message, so a stand-in type or a value target drifts from
+				// what the command prints. Body matches the camelCase wire form
+				// in the `result.invalidJSON.response.golden` fixture.
+				var response *models.PerformanceResultsAPIResponse
 				innerErr := json.Unmarshal([]byte(`{"pageSize": "25"}`), &response)
 
 				return ErrPerformanceProfileResult(ErrFailUnmarshal(innerErr))
