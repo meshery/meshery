@@ -10,6 +10,7 @@ import (
 	"github.com/jarcoal/httpmock"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -151,6 +152,46 @@ func TestSwitchProviderCmdValidatesProviderBeforeConfirmation(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestSwitchProviderCmdValidatesProviderOnContextInFocus checks that
+// `system provider switch --context X` asks X's Meshery server for its
+// providers, not the server of the current context.
+func TestSwitchProviderCmdValidatesProviderOnContextInFocus(t *testing.T) {
+	setupContextTestEnv(t)
+	t.Cleanup(BreakupFunc)
+	viper.Set("contexts.gke.endpoint", "http://gke.example.com:9081")
+	tempContext = "gke"
+
+	httpmock.Activate()
+	t.Cleanup(httpmock.DeactivateAndReset)
+	// The current context's server offers no providers, so validating against
+	// it would reject Local.
+	httpmock.RegisterResponder(http.MethodGet, "http://localhost:9081/api/providers",
+		httpmock.NewStringResponder(http.StatusOK, `{}`))
+	httpmock.RegisterResponder(http.MethodGet, "http://gke.example.com:9081/api/providers",
+		httpmock.NewStringResponder(http.StatusOK, `{"Local":{"providerName":"Local"}}`))
+
+	// Decline the confirmation prompt that follows a successful validation.
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, _ = w.WriteString("n\n")
+	_ = w.Close()
+	stdin := os.Stdin
+	os.Stdin = r
+	t.Cleanup(func() {
+		os.Stdin = stdin
+		_ = r.Close()
+	})
+
+	err = switchProviderCmd.RunE(switchProviderCmd, []string{"Local"})
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "provider switch aborted")
+	}
+	assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET http://gke.example.com:9081/api/providers"])
+	assert.Equal(t, 0, httpmock.GetCallCountInfo()["GET http://localhost:9081/api/providers"])
 }
 
 func TestListProviderCmd(t *testing.T) {
