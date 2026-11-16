@@ -201,8 +201,7 @@ func (h *Handler) handleFilterPOST(
 			return
 		}
 
-		h.formatFilterOutput(rw, byt, format, &res, eventBuilder)
-		_, _ = provider.PersistEvent(*eventBuilder.Build(), token)
+		_, _ = h.writeFilterOutput(rw, byt)
 		return
 	}
 
@@ -215,8 +214,13 @@ func (h *Handler) handleFilterPOST(
 			return
 		}
 
-		h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
-		_, _ = provider.PersistEvent(*eventBuilder.Build(), token)
+		if parsedBody.Save {
+			h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
+			h.persistAndPublish(provider, token, userID, eventBuilder.WithSeverity(events.Informational).Build())
+			return
+		}
+
+		_, _ = h.writeFilterOutput(rw, resp)
 		return
 	}
 }
@@ -535,13 +539,12 @@ func (h *Handler) GetMesheryFilterHandler(
 	}
 }
 
-func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ string, res *meshes.EventsResponse, eventBuilder *events.EventBuilder) {
+// writeFilterOutput validates, normalizes, and writes a filter JSON payload to rw.
+func (h *Handler) writeFilterOutput(rw http.ResponseWriter, content []byte) ([]models.MesheryFilter, error) {
 	contentMesheryFilterSlice := make([]models.MesheryFilter, 0)
-	names := []string{}
 	if err := json.Unmarshal(content, &contentMesheryFilterSlice); err != nil {
 		writeMeshkitError(rw, ErrDecodeFilter(err), http.StatusInternalServerError)
-
-		return
+		return nil, err
 	}
 	// A provider answering null decodes to a nil slice; keep the wire shape a list.
 	if contentMesheryFilterSlice == nil {
@@ -552,15 +555,23 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ s
 	if err != nil {
 		obj := "filter file"
 		writeMeshkitError(rw, models.ErrMarshal(err, obj), http.StatusInternalServerError)
-
-		return
+		return nil, err
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(data)); err != nil {
 		h.log.Error(err)
 	}
-	for _, filter := range contentMesheryFilterSlice {
+	return contentMesheryFilterSlice, nil
+}
+
+func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ string, res *meshes.EventsResponse, eventBuilder *events.EventBuilder) {
+	filters, err := h.writeFilterOutput(rw, content)
+	if err != nil {
+		return
+	}
+	names := []string{}
+	for _, filter := range filters {
 		names = append(names, filter.Name)
 		if filter.ID != nil {
 			eventBuilder.ActedUpon(*filter.ID)
