@@ -392,7 +392,9 @@ func BackupConfigFile(cfgFile string) {
 	if err != nil {
 		Log.Fatal(err)
 	}
-	_ = f.Close()
+	if err := f.Close(); err != nil {
+		Log.Fatal(err)
+	}
 }
 
 const (
@@ -585,11 +587,13 @@ func AskForConfirmation(s string) (bool, error) {
 // CreateConfigFile creates config file in Meshery Folder
 func CreateConfigFile() error {
 	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
-		f, err := os.Create(DefaultConfigPath)
+		file, err := os.Create(DefaultConfigPath)
 		if err != nil {
 			return err
 		}
-		_ = f.Close()
+		if err := file.Close(); err != nil {
+			return err
+		}
 	}
 	return nil
 }

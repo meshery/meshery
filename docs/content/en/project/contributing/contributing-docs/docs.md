@@ -282,26 +282,54 @@ The following is a concise summary of the steps to contribute to Meshery documen
 
 ### Navigation Sidebar
 
-The sidebar is generated from the content tree; there is no table-of-contents data file to edit. Each section directory (one with an `_index.md`) becomes a parent entry, and its pages and subsections become its children, to any depth.
+The sidebar is generated from the content tree under `content/en/`. There is no navigation data file to edit: a page appears in the sidebar because of where its file lives.
 
-Control a page's place in the sidebar with its front matter:
+- A directory with an `_index.md` is a **section**. It shows as a parent entry in the sidebar.
+- Pages and subdirectories inside that directory show as its children. Nesting directories nests sidebar entries.
 
-| Front matter | Effect |
+For example, these files, with each `title` set to the label shown below:
+
+```
+content/en/group1/_index.md
+content/en/group1/thing1/_index.md
+content/en/group1/thing1/subthing1_1.md
+content/en/group1/thing1/subthing1_2.md
+content/en/group1/thing2.md
+content/en/group1/thing3.md
+```
+
+produce this sidebar:
+
+```
+    Group 1
+      Thing 1
+       Subthing 1.1
+       Subthing 1.2
+      Thing 2
+      Thing 3
+```
+
+Use front matter to control how a page or section is listed. `layouts/partials/sidebar-nav-tree.html` prints `.LinkTitle` and sorts siblings by `weight`, then by title.
+
+| Field | Effect |
 |---|---|
-| `weight` | Sort order among siblings, lowest first. Siblings with equal weight sort by title. |
-| `linkTitle` | Shorter label for the sidebar entry (the page heading still uses `title`). |
-| `toc_hide: true` | Leaves the page out of the sidebar. It is still built and reachable by URL. |
-| `manualLink` | Points the sidebar entry at another URL instead of the page itself. |
+| `title` | The sidebar label, unless `linkTitle` is set. Also the page heading. |
+| `linkTitle` | A shorter label for the sidebar. The page heading still uses `title`. |
+| `weight` | Order within the parent section, lowest first. Entries with the same weight are sorted by title. An entry with no weight counts as `0`, so it sorts after negative weights and before positive ones. |
+| `toc_hide: true` | Keeps the page or section out of the sidebar. The page is still published and reachable by URL. |
+| `manualLink` | Points the sidebar entry at another URL instead of the page itself. Use `manualLinkRelref` instead for a docs path; Hugo resolves it with `relref`. If both are set, `manualLink` wins. The visible label stays `linkTitle` or `title`. |
 
 ```yaml
 ---
-title: Installing Meshery on Kubernetes
-linkTitle: Kubernetes
+title: Contributing to Meshery Docs
+linkTitle: Docs
 weight: 20
 ---
 ```
 
-The tree is rendered by `layouts/partials/sidebar-nav-tree.html`. Because it is the same on every page, the build publishes it once as `sidebar/nav-*.html`, and `layouts/partials/sidebar.html` fetches it, mounts it and marks the current page active in the browser. A sidebar change therefore shows up on every page at once, and a page's own HTML does not grow with the size of the docs. See [Publishing Meshery Docs]({{< ref "project/contributing/build-and-release.md#publishing-meshery-docs" >}}) for why this matters.
+To add a page to the sidebar, create the Markdown file in the section it belongs to and set `weight` if its position matters.
+
+`layouts/partials/sidebar-nav-tree.html` renders the tree. `layouts/partials/sidebar-tree.html` calls that partial. When the site has at least `sidebar_cache_limit` pages (2,000 by default; the published docs site does), `sidebar-tree.html` publishes the tree once as a fingerprinted `sidebar/nav-*.html`. `layouts/partials/sidebar.html` fetches that file, mounts it, and marks the current page active in the browser. Below the limit the same tree is rendered inline, and the active entry is marked during the build. A sidebar change therefore shows up on every page at once, and a page's own HTML does not grow with the size of the docs. See [Publishing Meshery Docs]({{< ref "project/contributing/build-and-release.md#publishing-meshery-docs" >}}) for why this matters.
 
 ### Alerts
 
