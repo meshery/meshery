@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/gorilla/websocket"
 )
@@ -72,8 +73,33 @@ func appendHostToXForwardHeader(header http.Header, host string) {
 }
 
 type Proxy struct {
+	// mu guards token and authWsChan, which are shared by concurrent requests.
+	mu         sync.Mutex
 	token      string
 	authWsChan chan bool
+}
+
+func (p *Proxy) getToken() string {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return p.token
+}
+
+// setToken stores the token and tells the connected /ws client, if any, about
+// the new auth state. It never blocks: without a client there is nobody to
+// notify, and the UI reads the current state from /token when it connects.
+func (p *Proxy) setToken(token string) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.token = token
+	if p.authWsChan == nil {
+		return
+	}
+	select {
+	case p.authWsChan <- token != "":
+	default:
+		log.Println("Auth state notification dropped: websocket client is busy")
+	}
 }
 
 func handleWsMessage(conn *websocket.Conn) {
@@ -103,9 +129,6 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 
 	switch req.URL.Path {
 	case "/ws":
-		if p.authWsChan == nil {
-			p.authWsChan = make(chan bool)
-		}
 		upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
 		ws, err := upgrader.Upgrade(wr, req, nil)
@@ -114,9 +137,20 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		p.mu.Lock()
+		if p.authWsChan == nil {
+			p.authWsChan = make(chan bool, 1)
+		}
+		authWsChan := p.authWsChan
+		p.mu.Unlock()
+
 		ws.SetCloseHandler(func(code int, text string) error {
-			close(p.authWsChan)
-			p.authWsChan = nil
+			p.mu.Lock()
+			if p.authWsChan == authWsChan {
+				close(p.authWsChan)
+				p.authWsChan = nil
+			}
+			p.mu.Unlock()
 			err := ws.Close()
 			if err != nil {
 				return err
@@ -125,7 +159,7 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		})
 		go handleWsMessage(ws)
 		go func() {
-			for res := range p.authWsChan {
+			for res := range authWsChan {
 				log.Println("Got msg from authChan: ", res)
 				if res == true {
 					err = ws.WriteMessage(1, []byte(AuthenticatedMsg))
@@ -156,11 +190,10 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 				token = values["token"][0]
 			}
 			if token != "" {
-				p.token = token
-				p.authWsChan <- true
+				p.setToken(token)
 				log.Println("Setting the value of token to be: ", token)
 			}
-			if p.token == "" {
+			if p.getToken() == "" {
 				wr.WriteHeader(http.StatusUnauthorized)
 				return
 			} else {
@@ -188,18 +221,16 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 
 	case "/token":
 		if req.Method == http.MethodGet {
-			if p.token != "" {
-				fmt.Fprint(wr, p.token)
+			if token := p.getToken(); token != "" {
+				fmt.Fprint(wr, token)
 			} else {
 				fmt.Fprint(wr, "null")
 			}
 			return
 		}
 		if req.Method == http.MethodDelete {
-			p.token = ""
-			log.Println("Deleting the existing token: ", p.token)
-			log.Printf("AuthChan: %v", p.authWsChan)
-			p.authWsChan <- false
+			p.setToken("")
+			log.Println("Deleted the existing token")
 			wr.Write([]byte(""))
 			return
 		}
@@ -218,13 +249,14 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			appendHostToXForwardHeader(req.Header, clientIP)
 		}
 
-		if p.token == "" {
+		token := p.getToken()
+		if token == "" {
 			log.Println("Sending request without auth token")
 		} else {
 			log.Println("Setting token cookie to the request")
 			req.AddCookie(&http.Cookie{
 				Name:     "token",
-				Value:    string(p.token),
+				Value:    token,
 				Path:     "/",
 				HttpOnly: true,
 			})
