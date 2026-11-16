@@ -51,7 +51,7 @@ const ConnectionWizardModal = ({
 }: ConnectionWizardModalProps) => {
   const { connectionMetadataState } = useSelector((state: RootState) => state.ui);
   const { data: connectionDefinitionsResponse, isFetching: isLoadingKinds } =
-    useListConnectionDefinitionsQuery({}, { skip: !isOpen });
+    useListConnectionDefinitionsQuery({ pageSize: 'all' as any }, { skip: !isOpen });
 
   // The endpoint returns the page under `connectionDefinitions`; the wizard
   // builds its selectable kinds from that list instead of a hardcoded set.
