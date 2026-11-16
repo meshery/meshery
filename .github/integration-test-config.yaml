@@ -22,7 +22,5 @@ test:
         - 'https://meshery.io'
   duration: 2s
 
-# Service mesh under test in Service Mesh Performance Spec format
-# See: https://github.com/service-mesh-performance/service-mesh-performance/blob/master/protos/service_mesh.proto
-mesh:
-  type: 3
+# Meshery Registry model name under test
+mesh: istio
