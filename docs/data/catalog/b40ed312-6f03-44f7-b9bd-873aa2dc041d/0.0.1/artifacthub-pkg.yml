@@ -1,0 +1,20 @@
+version: 0.0.1
+name: php-guestbook-redis
+displayName: PHP Guestbook with Redis
+createdAt: "2026-11-16T14:39:14Z"
+description: PHP Guestbook application with Redis — a classic three-tier Kubernetes sample (PHP frontend, Redis leader/follower) published as a Meshery design.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/b40ed312-6f03-44f7-b9bd-873aa2dc041d/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Deploy with: mesheryctl design import -f design.yml, then deploy from Meshery UI. The frontend Service is type LoadBalancer — on a local cluster use kubectl port-forward svc/frontend 8080:80. Redis leader is the single writer; followers replicate reads. Data is ephemeral unless you add a PersistentVolume. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 0f2ea3e8-17e5-43cb-9484-47d586f9dbe5
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
