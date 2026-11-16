@@ -348,3 +348,44 @@ func TestRemoveTeamFromWorkspaceHandler_NilProvider_ReturnsInternalServerError(t
 		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
 	}
 }
+
+func TestWorkspaceHandler_TypedNilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newWorkspaceNilGuardsFixture(t)
+	var rp *models.RemoteProvider = nil
+	var typedNil models.Provider = rp
+
+	req := httptest.NewRequest(http.MethodGet, "/api/workspaces", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetWorkspacesHandler(rec, req, nil, nil, typedNil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for typed-nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestWorkspaceHandler_NilLogger_DoesNotPanic(t *testing.T) {
+	h := &Handler{log: nil}
+	req := httptest.NewRequest(http.MethodGet, "/api/workspaces", nil)
+	rec := httptest.NewRecorder()
+
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("GetWorkspacesHandler panicked with nil logger: %v", r)
+		}
+	}()
+
+	h.GetWorkspacesHandler(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider with nil logger, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}

@@ -79,11 +79,7 @@ func (p *workspaceUpdatePayloadWire) UnmarshalJSON(data []byte) error {
 }
 
 func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -133,11 +129,7 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 }
 
 func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -179,11 +171,7 @@ func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request
 }
 
 func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -236,11 +224,7 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 }
 
 func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -275,11 +259,7 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 }
 
 func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -337,17 +317,15 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 	w.WriteHeader(http.StatusOK)
 	if _, err = w.Write(respJSON); err != nil {
 		// Headers already committed; log only. Writing another body would corrupt the stream.
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		return
 	}
 }
 
 func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -379,11 +357,7 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 }
 
 func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -415,11 +389,7 @@ func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.
 }
 
 func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -449,11 +419,7 @@ func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *h
 }
 
 func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -483,11 +449,7 @@ func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, r
 }
 
 func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -517,11 +479,7 @@ func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.R
 }
 
 func (h *Handler) RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -551,11 +509,7 @@ func (h *Handler) RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *h
 }
 
 func (h *Handler) GetViewsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -586,11 +540,7 @@ func (h *Handler) GetViewsOfWorkspaceHandler(w http.ResponseWriter, req *http.Re
 }
 
 func (h *Handler) AddViewToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -620,11 +570,7 @@ func (h *Handler) AddViewToWorkspaceHandler(w http.ResponseWriter, req *http.Req
 }
 
 func (h *Handler) RemoveViewFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -654,11 +600,7 @@ func (h *Handler) RemoveViewFromWorkspaceHandler(w http.ResponseWriter, req *htt
 }
 
 func (h *Handler) GetTeamsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -689,11 +631,7 @@ func (h *Handler) GetTeamsOfWorkspaceHandler(w http.ResponseWriter, req *http.Re
 }
 
 func (h *Handler) AddTeamToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -723,11 +661,7 @@ func (h *Handler) AddTeamToWorkspaceHandler(w http.ResponseWriter, req *http.Req
 }
 
 func (h *Handler) RemoveTeamFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
