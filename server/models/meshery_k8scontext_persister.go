@@ -7,6 +7,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 // MesheryK8sContextPersister is the persister for persisting
@@ -25,25 +26,51 @@ type MesheryK8sContextPage struct {
 
 // GetMesheryK8sContexts returns all of the contexts
 func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order string, page, pageSize uint64) ([]byte, error) {
+	return mkcp.GetMesheryK8sContextsWithStatus(search, order, page, pageSize, "")
+}
+
+// GetMesheryK8sContextsWithStatus returns contexts filtered optionally by their connection status.
+// When status is empty, no connection status filter is applied.
+func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContextsWithStatus(search, order string, page, pageSize uint64, status string) ([]byte, error) {
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
-	if order == "" {
-		order = defaultOrderUpdatedAtDesc
+	orderCol := clause.OrderByColumn{
+		Column: clause.Column{
+			Table: "k8s_contexts",
+			Name:  "updated_at",
+		},
+		Desc: true,
+	}
+
+	if order != "" {
+		parts := strings.Split(order, " ")
+		if len(parts) == 2 {
+			orderCol.Column.Name = parts[0]
+			orderCol.Desc = strings.ToLower(parts[1]) == "desc"
+		}
 	}
 
 	count := int64(0)
 	contexts := []*K8sContext{}
 
-	query := mkcp.DB.Order(order)
+	query := mkcp.DB.Order(orderCol)
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
-		query = query.Where("(lower(name) like ?)", like)
+		query = query.Where("(lower(k8s_contexts.name) like ?)", like)
 	}
 
-	query.Model(K8sContext{}).Count(&count)
+	if status != "" && mkcp.DB.Migrator().HasTable(&connections.Connection{}) {
+		query = query.Joins("JOIN connections ON connections.id = k8s_contexts.connection_id").Where("connections.status = ?", status)
+	}
 
-	Paginate(uint(page), uint(pageSize))(query).Find(&contexts)
+	if err := query.Model(K8sContext{}).Count(&count).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
+
+	if err := Paginate(uint(page), uint(pageSize))(query).Find(&contexts).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
 
 	mesheryK8sContextPage := MesheryK8sContextPage{
 		Page:       page,
@@ -52,10 +79,15 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order stri
 		Contexts:   contexts,
 	}
 
-	resp, _ := json.Marshal(mesheryK8sContextPage)
+	resp, err := json.Marshal(mesheryK8sContextPage)
+	if err != nil {
+		return nil, ErrMarshal(err, "k8s context page")
+	}
 	return resp, nil
 }
 
+// SaveMesheryK8sContext persists the context, deriving its ID when unset. It returns
+// ErrContextAlreadyPersisted when a context with that ID already exists.
 func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (connections.Connection, error) {
 	conn := connections.Connection{}
 	if mkc.ID == "" {
@@ -82,9 +114,15 @@ func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (c
 	return conn, err
 }
 
+// GetMesheryK8sContext returns the context matching the given ID, or falling back
+// to matching ConnectionID if no direct ID match is found.
 func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContext(id string) (K8sContext, error) {
 	var mesheryK8sContext K8sContext
 
-	err := mkcp.DB.First(&mesheryK8sContext, "id = ?", id).Error
+	err := mkcp.DB.Where("id = ?", id).First(&mesheryK8sContext).Error
+	if err == nil {
+		return mesheryK8sContext, nil
+	}
+	err = mkcp.DB.Where("connection_id = ?", id).First(&mesheryK8sContext).Error
 	return mesheryK8sContext, err
 }

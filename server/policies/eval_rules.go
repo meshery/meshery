@@ -23,43 +23,66 @@ func componentDeclarationByID(design *pattern.PatternFile, id string) *component
 
 // fromComponentID returns the from component ID from a relationship definition.
 func fromComponentID(rel *relationship.RelationshipDefinition) string {
-	if rel.Selectors == nil || len(*rel.Selectors) == 0 {
+	if rel == nil || rel.Selectors == nil {
 		return ""
 	}
-	ss := (*rel.Selectors)[0]
-	if len(ss.Allow.From) == 0 {
-		return ""
+	for _, ss := range *rel.Selectors {
+		for _, item := range ss.Allow.From {
+			if item.ID != nil && item.ID.String() != "" {
+				return item.ID.String()
+			}
+		}
 	}
-	if ss.Allow.From[0].ID == nil {
-		return ""
-	}
-	return ss.Allow.From[0].ID.String()
+	return ""
 }
 
 // toComponentID returns the to component ID from a relationship definition.
 func toComponentID(rel *relationship.RelationshipDefinition) string {
-	if rel.Selectors == nil || len(*rel.Selectors) == 0 {
+	if rel == nil || rel.Selectors == nil {
 		return ""
 	}
-	ss := (*rel.Selectors)[0]
-	if len(ss.Allow.To) == 0 {
-		return ""
+	for _, ss := range *rel.Selectors {
+		for _, item := range ss.Allow.To {
+			if item.ID != nil && item.ID.String() != "" {
+				return item.ID.String()
+			}
+		}
 	}
-	if ss.Allow.To[0].ID == nil {
-		return ""
-	}
-	return ss.Allow.To[0].ID.String()
+	return ""
 }
 
 // fromAndToComponentsExist checks if both from and to components still exist in the design.
+// It inspects all selectors and all referenced component IDs across From and To clauses
+// to guarantee that no dangling component references linger in multi-component or
+// multi-selector relationships.
 func fromAndToComponentsExist(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
-	fromID := fromComponentID(rel)
-	toID := toComponentID(rel)
-	if fromID == "" || toID == "" {
+	if rel == nil || rel.Selectors == nil || len(*rel.Selectors) == 0 || design == nil {
 		return false
 	}
-	return componentDeclarationByID(design, fromID) != nil &&
-		componentDeclarationByID(design, toID) != nil
+
+	for _, ss := range *rel.Selectors {
+		if len(ss.Allow.From) == 0 || len(ss.Allow.To) == 0 {
+			return false
+		}
+		for _, fromSel := range ss.Allow.From {
+			if fromSel.ID == nil || fromSel.ID.String() == "" {
+				return false
+			}
+			if componentDeclarationByID(design, fromSel.ID.String()) == nil {
+				return false
+			}
+		}
+		for _, toSel := range ss.Allow.To {
+			if toSel.ID == nil || toSel.ID.String() == "" {
+				return false
+			}
+			if componentDeclarationByID(design, toSel.ID.String()) == nil {
+				return false
+			}
+		}
+	}
+
+	return true
 }
 
 // fromOrToComponentsDontExist returns true when one or both sides are missing.
@@ -150,55 +173,76 @@ func patchMutatorsAction(rel *relationship.RelationshipDefinition, design *patte
 	var actions []PolicyAction
 
 	for _, ss := range *rel.Selectors {
-		if len(ss.Allow.From) == 0 || len(ss.Allow.To) == 0 {
+		fromCount := len(ss.Allow.From)
+		toCount := len(ss.Allow.To)
+		if fromCount == 0 || toCount == 0 {
 			continue
 		}
-		fromSel := ss.Allow.From[0]
-		toSel := ss.Allow.To[0]
-		if fromSel.RelationshipDefinitionSelectorsPatch == nil || toSel.RelationshipDefinitionSelectorsPatch == nil {
-			continue
+		pairCount := fromCount
+		if toCount < pairCount {
+			pairCount = toCount
+		}
+		// If one side has 1 element and the other side has N elements, fan out across all N targets.
+		if fromCount == 1 || toCount == 1 {
+			pairCount = max(fromCount, toCount)
 		}
 
-		fromID := selectorItemID(fromSel)
-		toID := selectorItemID(toSel)
-		fromComp := componentDeclarationByID(design, fromID)
-		toComp := componentDeclarationByID(design, toID)
-		if fromComp == nil || toComp == nil {
-			continue
-		}
-
-		mutatorRefs, mutatedRefs, mutatorComp, mutatedComp := resolveMutatorMutatedRefs(fromSel.RelationshipDefinitionSelectorsPatch, toSel.RelationshipDefinitionSelectorsPatch, fromComp, toComp)
-		if mutatorRefs == nil || mutatedRefs == nil {
-			continue
-		}
-
-		mutatedID := toID
-		if mutatedComp.ID == fromComp.ID {
-			mutatedID = fromID
-		}
-
-		count := len(mutatorRefs)
-		if len(mutatedRefs) < count {
-			count = len(mutatedRefs)
-		}
-
-		for i := 0; i < count; i++ {
-			mutatorValue := configurationForComponentAtPath(mutatorRefs[i], mutatorComp, design)
-			oldValue := configurationForComponentAtPath(mutatedRefs[i], mutatedComp, design)
-			if mutatorValue == nil {
+		for p := 0; p < pairCount; p++ {
+			fromIdx := p
+			if fromIdx >= fromCount {
+				fromIdx = 0
+			}
+			toIdx := p
+			if toIdx >= toCount {
+				toIdx = 0
+			}
+			fromSel := ss.Allow.From[fromIdx]
+			toSel := ss.Allow.To[toIdx]
+			if fromSel.RelationshipDefinitionSelectorsPatch == nil || toSel.RelationshipDefinitionSelectorsPatch == nil {
 				continue
 			}
-			if reverse {
-				if !deepEqual(mutatorValue, oldValue) {
+
+			fromID := selectorItemID(fromSel)
+			toID := selectorItemID(toSel)
+			fromComp := componentDeclarationByID(design, fromID)
+			toComp := componentDeclarationByID(design, toID)
+			if fromComp == nil || toComp == nil {
+				continue
+			}
+
+			mutatorRefs, mutatedRefs, mutatorComp, mutatedComp := resolveMutatorMutatedRefs(fromSel.RelationshipDefinitionSelectorsPatch, toSel.RelationshipDefinitionSelectorsPatch, fromComp, toComp)
+			if mutatorRefs == nil || mutatedRefs == nil {
+				continue
+			}
+
+			mutatedID := toID
+			if mutatedComp.ID == fromComp.ID {
+				mutatedID = fromID
+			}
+
+			count := len(mutatorRefs)
+			if len(mutatedRefs) < count {
+				count = len(mutatedRefs)
+			}
+
+			for i := 0; i < count; i++ {
+				mutatorValue := configurationForComponentAtPath(mutatorRefs[i], mutatorComp, design)
+				oldValue := configurationForComponentAtPath(mutatedRefs[i], mutatedComp, design)
+				if mutatorValue == nil {
 					continue
 				}
-				actions = append(actions, cleanupActionForPath(mutatedID, mutatedRefs[i], mutatedComp))
-				continue
+				if reverse {
+					if !deepEqual(mutatorValue, oldValue) {
+						continue
+					}
+					actions = append(actions, cleanupActionForPath(mutatedID, mutatedRefs[i], mutatedComp))
+					continue
+				}
+				if deepEqual(mutatorValue, oldValue) {
+					continue
+				}
+				actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedRefs[i]), mutatedID, mutatedRefs[i], mutatorValue))
 			}
-			if deepEqual(mutatorValue, oldValue) {
-				continue
-			}
-			actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedRefs[i]), mutatedID, mutatedRefs[i], mutatorValue))
 		}
 	}
 	return actions
@@ -283,7 +327,51 @@ func sameRelationshipSelectorClause(a, b relationship.SelectorItem) bool {
 		deepEqual(a.RelationshipDefinitionSelectorsPatch, b.RelationshipDefinitionSelectorsPatch)
 }
 
-// RelationshipsAreSame checks if two relationships are equivalent.
+// sameSelectorSlice checks if two slices of SelectorItem match in multiset comparison.
+func sameSelectorSlice(sliceA, sliceB []relationship.SelectorItem) bool {
+	if len(sliceA) != len(sliceB) {
+		return false
+	}
+	used := make([]bool, len(sliceB))
+	for _, itemA := range sliceA {
+		matched := false
+		for j, itemB := range sliceB {
+			if !used[j] && sameRelationshipSelectorClause(itemA, itemB) {
+				used[j] = true
+				matched = true
+				break
+			}
+		}
+		if !matched {
+			return false
+		}
+	}
+	return true
+}
+
+// sameSelectorSetItem checks if two SelectorSetItem values match across both Allow and Deny clauses.
+func sameSelectorSetItem(ssA, ssB relationship.SelectorSetItem) bool {
+	if !sameSelectorSlice(ssA.Allow.From, ssB.Allow.From) {
+		return false
+	}
+	if !sameSelectorSlice(ssA.Allow.To, ssB.Allow.To) {
+		return false
+	}
+	if (ssA.Deny == nil) != (ssB.Deny == nil) {
+		return false
+	}
+	if ssA.Deny != nil {
+		if !sameSelectorSlice(ssA.Deny.From, ssB.Deny.From) {
+			return false
+		}
+		if !sameSelectorSlice(ssA.Deny.To, ssB.Deny.To) {
+			return false
+		}
+	}
+	return true
+}
+
+// RelationshipsAreSame checks if two relationships are equivalent across their full selector sets.
 func RelationshipsAreSame(relA, relB *relationship.RelationshipDefinition) bool {
 	if !sameRelationshipIdentifier(relA, relB) {
 		return false
@@ -291,19 +379,25 @@ func RelationshipsAreSame(relA, relB *relationship.RelationshipDefinition) bool 
 	if relA.Selectors == nil || relB.Selectors == nil {
 		return false
 	}
+	if len(*relA.Selectors) != len(*relB.Selectors) {
+		return false
+	}
+
+	used := make([]bool, len(*relB.Selectors))
 	for _, ssA := range *relA.Selectors {
-		for _, ssB := range *relB.Selectors {
-			if len(ssA.Allow.From) == 0 || len(ssB.Allow.From) == 0 ||
-				len(ssA.Allow.To) == 0 || len(ssB.Allow.To) == 0 {
-				continue
-			}
-			if sameRelationshipSelectorClause(ssA.Allow.From[0], ssB.Allow.From[0]) &&
-				sameRelationshipSelectorClause(ssA.Allow.To[0], ssB.Allow.To[0]) {
-				return true
+		matched := false
+		for j, ssB := range *relB.Selectors {
+			if !used[j] && sameSelectorSetItem(ssA, ssB) {
+				used[j] = true
+				matched = true
+				break
 			}
 		}
+		if !matched {
+			return false
+		}
 	}
-	return false
+	return true
 }
 
 // relationshipAlreadyExists checks if a relationship already exists in the design.

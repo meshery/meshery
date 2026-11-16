@@ -12,8 +12,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Query results must be referentially stable across renders: the component
 // copies them into state inside an effect keyed on the data object.
-const { getProfilesQuery, PROFILES_QUERY_RESULT } = vi.hoisted(() => ({
+const { getProfilesQuery, canSpy, PROFILES_QUERY_RESULT } = vi.hoisted(() => ({
   getProfilesQuery: vi.fn(),
+  canSpy: vi.fn(() => true),
   PROFILES_QUERY_RESULT: {
     data: {
       profiles: [{ id: 'p1', name: 'profile-1' }],
@@ -29,8 +30,8 @@ const { getProfilesQuery, PROFILES_QUERY_RESULT } = vi.hoisted(() => ({
 
 vi.mock('@/rtk-query/performance-profile', () => ({
   useDeletePerformanceProfileMutation: () => [vi.fn()],
-  useGetPerformanceProfilesQuery: (args: unknown) => {
-    getProfilesQuery(args);
+  useGetPerformanceProfilesQuery: (args: unknown, options: unknown) => {
+    getProfilesQuery(args, options);
     return PROFILES_QUERY_RESULT;
   },
 }));
@@ -90,7 +91,7 @@ vi.mock('@sistent/sistent', async (importOriginal) => {
         search
       </button>
     ),
-    useHasPermission: () => true,
+    useHasPermission: (key: any) => canSpy(key),
   };
 });
 
@@ -100,6 +101,7 @@ const lastQueryArgs = () => getProfilesQuery.mock.calls.at(-1)?.[0];
 
 describe('PerformanceProfiles', () => {
   beforeEach(() => {
+    canSpy.mockReturnValue(true);
     getProfilesQuery.mockClear();
   });
 
@@ -114,5 +116,16 @@ describe('PerformanceProfiles', () => {
     await user.click(screen.getByTestId('search-load'));
     expect(lastQueryArgs()).toMatchObject({ page: 0, search: 'load' });
     expect(screen.getByTestId('grid-page')).toHaveTextContent('0');
+  });
+
+  it('renders 404 fallback and skips query when view permission is denied', () => {
+    canSpy.mockReturnValue(false);
+    render(<PerformanceProfiles />);
+
+    expect(screen.getByText('no access')).toBeInTheDocument();
+    expect(getProfilesQuery).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ skip: true }),
+    );
   });
 });

@@ -31,6 +31,7 @@ var workspaceMappingKinds = []struct {
 	{"environment", "workspaces_environments_mappings", "environment_id", (*WorkspacePersister).AddEnvironmentToWorkspace, (*WorkspacePersister).DeleteEnvironmentFromWorkspace},
 	{"view", "workspaces_views_mappings", "view_id", (*WorkspacePersister).AddViewToWorkspace, (*WorkspacePersister).DeleteViewFromWorkspace},
 	{"team", "workspaces_teams_mappings", "team_id", (*WorkspacePersister).AddTeamToWorkspace, (*WorkspacePersister).DeleteTeamFromWorkspace},
+	{"design", "workspaces_designs_mappings", "design_id", (*WorkspacePersister).AddDesignToWorkspace, (*WorkspacePersister).DeleteDesignFromWorkspace},
 }
 
 func countWorkspaceMappings(t *testing.T, db *database.Handler, table, column string, workspaceID, memberID core.Uuid) int64 {

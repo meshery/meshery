@@ -72424,8 +72424,11 @@ paths:
         exists, is set to `maintenance`. Servers must link the API token that authenticated the registration to the
         connection (`metadata.tokenId`, server-written) and revoke that token when the connection is deregistered or
         deleted. When a later registration of the same connection authenticates with a different token, the server
-        revokes the token previously linked to it. Registrations beyond the organization's device limit are accepted;
-        the organization is flagged through the capabilities document's `session.deviceUsage` instead.
+        revokes the token previously linked to it. One sign-in can back one install's connections in several
+        organizations, so a token is revoked only once no live connection of the same owner still links it: removing or
+        superseding one organization's connection must not sign the install out of another. Registrations beyond the
+        organization's device limit are accepted; the organization is flagged through the capabilities document's
+        `session.deviceUsage` instead.
       parameters:
         - name: X-Current-Orgid
           in: header
@@ -77801,7 +77804,9 @@ paths:
         - Connection_API_Connections
       operationId: deleteConnection
       summary: Delete a connection
-      description: Delete a specific connection. Deleting a connection that has a `metadata.tokenId` revokes that token.
+      description: >-
+        Delete a specific connection. Deleting a connection that has a `metadata.tokenId` revokes that token, unless
+        another live connection of the same owner still links it.
       parameters:
         - name: connectionId
           in: path

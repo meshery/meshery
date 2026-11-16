@@ -99,7 +99,7 @@ func ErrFailUnmarshalFile(err error) error {
 	return errors.New(ErrFailUnmarshalFileCode, errors.Alert,
 		[]string{"Failed to unmarshal configuration file"},
 		[]string{err.Error()},
-		[]string{"Unable to covert JSON format from yml file"},
+		[]string{"Unable to convert JSON format from yml file"},
 		[]string{"Ensure a valid data is provided in your yml file", formatErrorWithReference()})
 }
 

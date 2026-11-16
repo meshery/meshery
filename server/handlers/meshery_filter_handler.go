@@ -13,6 +13,7 @@ import (
 	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
+	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/model"
@@ -26,12 +27,15 @@ func (h *Handler) GetMesheryFilterFileHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	filterID := mux.Vars(r)["id"]
+	filterID, ok := h.requirePathUUID(rw, r, "id")
+	if !ok {
+		return
+	}
 
 	resp, err := provider.GetMesheryFilterFile(r, filterID)
 	if err != nil {
 		h.log.Error(ErrGetFilter(err))
-		writeMeshkitError(rw, ErrGetFilter(err), http.StatusNotFound)
+		writeMeshkitError(rw, ErrGetFilter(err), providerStatusOrInternal(err))
 		return
 	}
 
@@ -183,9 +187,10 @@ func (h *Handler) handleFilterPOST(
 				return
 			}
 
+			eventBuilder.WithDescription(fmt.Sprintf("Filter %s saved", parsedBody.FilterData.Name))
 			h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
 
-			eventBuilder.WithSeverity(events.Informational).Build()
+			h.persistAndPublish(provider, token, userID, eventBuilder.WithSeverity(events.Informational).Build())
 			return
 		}
 
@@ -244,6 +249,10 @@ func (h *Handler) GetMesheryFiltersHandler(
 
 	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), filter.Visibility)
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(rw, err, http.StatusBadRequest)
+			return
+		}
 		h.log.Error(ErrFetchFilter(err))
 		writeMeshkitError(rw, ErrFetchFilter(err), http.StatusInternalServerError)
 		return
@@ -286,11 +295,24 @@ func (h *Handler) DeleteMesheryFilterHandler(
 	provider models.Provider,
 ) {
 	filterID := mux.Vars(r)["id"]
+	filterUUID, err := uuid.FromString(filterID)
+	if err != nil || filterUUID == uuid.Nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid filter ID: %s", filterID))
+		h.log.Warn(invalidIDErr)
+		writeMeshkitError(rw, invalidIDErr, http.StatusBadRequest)
+		return
+	}
 
 	resp, err := provider.DeleteMesheryFilter(r, filterID)
 	if err != nil {
+		if errors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			h.log.Warnf("No filter with ID %q found to delete", filterID)
+			writeMeshkitError(rw, err, http.StatusNotFound)
+			return
+		}
+
 		h.log.Error(ErrDeleteFilter(err))
-		writeMeshkitError(rw, ErrDeleteFilter(err), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrDeleteFilter(err), providerStatusOrInternal(err))
 		return
 	}
 
@@ -307,18 +329,33 @@ func (h *Handler) CloneMesheryFilterHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	filterID := mux.Vars(r)["id"]
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	filterID, ok := h.requirePathUUID(rw, r, "id")
+	if !ok {
+		return
+	}
+
 	var parsedBody *models.MesheryCloneFilterRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || filterID == "" {
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
+	if parsedBody == nil || parsedBody.Name == "" {
+		cloneErr := ErrCloneFilter(fmt.Errorf("filter name is required"))
+		h.log.Error(cloneErr)
+		writeMeshkitError(rw, cloneErr, http.StatusBadRequest)
 		return
 	}
 
 	resp, err := provider.CloneMesheryFilter(r, filterID, parsedBody)
 	if err != nil {
 		h.log.Error(ErrCloneFilter(err))
-		writeMeshkitError(rw, ErrCloneFilter(err), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrCloneFilter(err), providerStatusOrInternal(err))
 		return
 	}
 
@@ -480,12 +517,15 @@ func (h *Handler) GetMesheryFilterHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	filterID := mux.Vars(r)["id"]
+	filterID, ok := h.requirePathUUID(rw, r, "id")
+	if !ok {
+		return
+	}
 
 	resp, err := provider.GetMesheryFilter(r, filterID)
 	if err != nil {
 		h.log.Error(ErrGetFilter(err))
-		writeMeshkitError(rw, ErrGetFilter(err), http.StatusNotFound)
+		writeMeshkitError(rw, ErrGetFilter(err), providerStatusOrInternal(err))
 		return
 	}
 
@@ -503,10 +543,12 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ s
 
 		return
 	}
+	// A provider answering null decodes to a nil slice; keep the wire shape a list.
+	if contentMesheryFilterSlice == nil {
+		contentMesheryFilterSlice = []models.MesheryFilter{}
+	}
 
-	result := []models.MesheryFilter{}
-
-	data, err := json.Marshal(&result)
+	data, err := json.Marshal(contentMesheryFilterSlice)
 	if err != nil {
 		obj := "filter file"
 		writeMeshkitError(rw, models.ErrMarshal(err, obj), http.StatusInternalServerError)

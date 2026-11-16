@@ -8,13 +8,18 @@ const ping = vi.fn();
 const setView = vi.fn();
 const normalizeStaticImagePath = vi.fn((src?: string) => src);
 const useGetConnectionsQuery = vi.fn();
+const canSpy = vi.fn(() => true);
+const getK8sContextFromClusterId = vi.fn((id: string) => ({
+  name: `ctx-${id}`,
+  server: 'srv',
+  connectionId: 'conn',
+}));
 
 vi.mock('next/router', () => ({
   useRouter: () => ({ back, pathname: '/foo', push: vi.fn() }),
 }));
 
 vi.mock('@sistent/sistent', () => {
-  const styled = () => (Component: any) => Component;
   return {
     ArrowBackIcon: () => <svg data-testid="arrow-back" />,
     Box: ({ children }: any) => <div>{children}</div>,
@@ -25,6 +30,7 @@ vi.mock('@sistent/sistent', () => {
     Paper: ({ children }: any) => <div>{children}</div>,
     styled: (Component: any) => () => Component,
     Typography: ({ children }: any) => <span>{children}</span>,
+    useHasPermission: (key: unknown) => canSpy(key),
     useResourceCleanData: () => ({ getResourceCleanData: ({ resource }: any) => resource }),
   };
 });
@@ -43,11 +49,7 @@ vi.mock('css/icons.styles', () => ({
 }));
 
 vi.mock('@/utils/multi-ctx', () => ({
-  getK8sContextFromClusterId: (id: string) => ({
-    name: `ctx-${id}`,
-    server: 'srv',
-    connectionId: 'conn',
-  }),
+  getK8sContextFromClusterId: (...args: any[]) => getK8sContextFromClusterId(...args),
 }));
 
 vi.mock('@/utils/hooks/useKubernetesHook', () => ({
@@ -55,8 +57,12 @@ vi.mock('@/utils/hooks/useKubernetesHook', () => ({
 }));
 
 vi.mock('../connections/ConnectionChip', () => ({
-  TooltipWrappedConnectionChip: ({ title, status }: any) => (
-    <div data-testid="connection-chip" data-status={status}>
+  TooltipWrappedConnectionChip: ({ title, status, handlePing }: any) => (
+    <div
+      data-testid="connection-chip"
+      data-status={status}
+      data-has-ping={String(Boolean(handlePing))}
+    >
       {title}
     </div>
   ),
@@ -92,6 +98,7 @@ vi.mock('../../utils/TooltipButton', () => ({
 
 vi.mock('./resources/config', () => ({ ALL_VIEW: 'all' }));
 
+import { Keys } from '@meshery/schemas/permissions';
 import { CONNECTION_STATES } from '@/utils/Enum';
 import View, { Title } from './view';
 
@@ -102,13 +109,25 @@ describe('View', () => {
     setView.mockReset();
     normalizeStaticImagePath.mockReset();
     useGetConnectionsQuery.mockReset();
+    canSpy.mockClear();
+    canSpy.mockReturnValue(true);
+    getK8sContextFromClusterId.mockReset();
+    getK8sContextFromClusterId.mockImplementation((id: string) => ({
+      name: `ctx-${id}`,
+      server: 'srv',
+      connectionId: 'conn',
+    }));
     normalizeStaticImagePath.mockImplementation((src) => src);
     useGetConnectionsQuery.mockReturnValue({ data: { connections: [] } });
   });
 
-  it('returns null when no resource is provided', () => {
+  it('returns null and skips connections query when no resource is provided', () => {
     const { container } = render(<View setView={setView} resource={null} k8sConfig={{}} />);
     expect(container.firstChild).toBeNull();
+    expect(useGetConnectionsQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'kubernetes', pageSize: 100 }),
+      { skip: true },
+    );
   });
 
   it('renders the back button, image, and resource title for a resource', () => {
@@ -130,9 +149,11 @@ describe('View', () => {
     expect(img).toHaveAttribute('src', '/icon.svg');
     expect(screen.getByText('pod-1')).toBeInTheDocument();
     expect(screen.getByTestId('connection-chip')).toHaveTextContent('ctx-cluster-1');
+    expect(canSpy).toHaveBeenCalledWith(Keys.WorkspaceManagementViewConnections);
     // #20617: plain ?kind=kubernetes, not JSON.stringify(['kubernetes'])
     expect(useGetConnectionsQuery).toHaveBeenCalledWith(
       expect.objectContaining({ kind: 'kubernetes', pageSize: 100 }),
+      { skip: false },
     );
   });
 
@@ -170,6 +191,58 @@ describe('View', () => {
       />,
     );
     expect(screen.getByText('pod-1')).toBeInTheDocument();
+    expect(screen.getByTestId('connection-chip')).toHaveAttribute(
+      'data-status',
+      CONNECTION_STATES.DISCONNECTED,
+    );
+  });
+
+  it('renders cleanly without ping handler when resolved cluster context is undefined or empty', () => {
+    for (const resolved of [undefined, {}]) {
+      getK8sContextFromClusterId.mockReturnValueOnce(resolved as never);
+      const { unmount } = render(
+        <View
+          setView={setView}
+          resource={{
+            kind: 'Pod',
+            cluster_id: 'missing-cluster',
+            metadata: { name: 'pod-orphan' },
+            component_metadata: { styles: {} },
+          }}
+          k8sConfig={[]}
+        />,
+      );
+      expect(screen.getByText('pod-orphan')).toBeInTheDocument();
+      const chip = screen.getByTestId('connection-chip');
+      expect(chip).toHaveAttribute('data-status', CONNECTION_STATES.DISCONNECTED);
+      expect(chip).toHaveAttribute('data-has-ping', 'false');
+      unmount();
+    }
+  });
+
+  it('skips useGetConnectionsQuery and ignores cached connection status when WorkspaceManagementViewConnections is denied', () => {
+    canSpy.mockReturnValue(false);
+    useGetConnectionsQuery.mockReturnValue({
+      data: { connections: [{ id: 'conn', status: CONNECTION_STATES.CONNECTED }] },
+    });
+
+    render(
+      <View
+        setView={setView}
+        resource={{
+          kind: 'Pod',
+          cluster_id: 'cluster-1',
+          metadata: { name: 'pod-denied' },
+          component_metadata: { styles: {} },
+        }}
+        k8sConfig={[]}
+      />,
+    );
+
+    expect(useGetConnectionsQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'kubernetes', pageSize: 100 }),
+      { skip: true },
+    );
     expect(screen.getByTestId('connection-chip')).toHaveAttribute(
       'data-status',
       CONNECTION_STATES.DISCONNECTED,
