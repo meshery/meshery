@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 import { Modal } from '@/components/shared/Modal';
 import ConnectionIcon from '@/assets/icons/Connection';
 import type { RootState } from '../../store';
-import { useListConnectionDefinitionsQuery } from '@meshery/schemas/mesheryApi';
+import { useGetConnectionDefinitionsQuery } from '@/rtk-query/meshModel';
 import {
   buildConnectionWizardKindConfigs,
   DEFAULT_CONNECTION_DOCS_URL,
@@ -51,7 +51,7 @@ const ConnectionWizardModal = ({
 }: ConnectionWizardModalProps) => {
   const { connectionMetadataState } = useSelector((state: RootState) => state.ui);
   const { data: connectionDefinitionsResponse, isFetching: isLoadingKinds } =
-    useListConnectionDefinitionsQuery({ pageSize: 'all' as any }, { skip: !isOpen });
+    useGetConnectionDefinitionsQuery({}, { skip: !isOpen });
 
   // The endpoint returns the page under `connectionDefinitions`; the wizard
   // builds its selectable kinds from that list instead of a hardcoded set.
