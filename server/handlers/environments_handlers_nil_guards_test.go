@@ -171,3 +171,44 @@ func TestGetConnectionsOfEnvironmentHandler_NilProvider_ReturnsInternalServerErr
 		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
 	}
 }
+
+func TestEnvironmentHandler_TypedNilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newEnvironmentNilGuardsFixture(t)
+	var rp *models.RemoteProvider = nil
+	var typedNil models.Provider = rp
+
+	req := httptest.NewRequest(http.MethodGet, "/api/environments", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetEnvironments(rec, req, nil, nil, typedNil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for typed-nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestEnvironmentHandler_NilLogger_DoesNotPanic(t *testing.T) {
+	h := &Handler{log: nil}
+	req := httptest.NewRequest(http.MethodGet, "/api/environments", nil)
+	rec := httptest.NewRecorder()
+
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("GetEnvironments panicked with nil logger: %v", r)
+		}
+	}()
+
+	h.GetEnvironments(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider with nil logger, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}

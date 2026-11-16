@@ -54,11 +54,7 @@ func (p *environmentPayloadWire) UnmarshalJSON(data []byte) error {
 }
 
 func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -109,11 +105,7 @@ func isNotFoundError(err error, status int) bool {
 }
 
 func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -154,11 +146,7 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 }
 
 func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -209,11 +197,7 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 }
 
 func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -245,11 +229,7 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 }
 
 func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -320,11 +300,7 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 }
 
 func (h *Handler) AddConnectionToEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -355,11 +331,7 @@ func (h *Handler) AddConnectionToEnvironmentHandler(w http.ResponseWriter, r *ht
 }
 
 func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
@@ -390,11 +362,7 @@ func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, 
 }
 
 func (h *Handler) GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(w, provider) {
 		return
 	}
 
