@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -158,7 +159,13 @@ func (h *Handler) ProvidersStreamHandler(w http.ResponseWriter, r *http.Request)
 	// state. The call is non-blocking from the SSE writer's perspective:
 	// VerifyAll publishes to all subscribers as it runs, and overlapping
 	// runs are coalesced by the tracker's refresh mutex.
-	go h.config.ProviderTracker.VerifyAll(ctx)
+	//
+	// The refresh is shared, so it must not end with this request: a
+	// subscriber that connects while it runs gets no refresh of its own, and
+	// if this client disconnected mid-probe the cancelled probe would be
+	// published to everyone, and cached, as the remote being offline. Each
+	// probe is still bounded by its own timeout in VerifyAll.
+	go h.config.ProviderTracker.VerifyAll(context.WithoutCancel(ctx))
 
 	for {
 		select {
