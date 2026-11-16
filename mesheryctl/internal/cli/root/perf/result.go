@@ -152,7 +152,6 @@ mesheryctl perf result saturday-profile --view
 			if err != nil {
 				return err
 			}
-			outputFormatter = outputFormatter.WithOutput(cmd.OutOrStdout())
 
 			if err := outputFormatter.Display(); err != nil {
 				return err
