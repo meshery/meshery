@@ -64,7 +64,7 @@ const ConnectionConfigureModal = ({
   connection,
 }: ConnectionConfigureModalProps) => {
   const { data: connectionDefinitionsResponse } = useListConnectionDefinitionsQuery(
-    {},
+    { pageSize: 'all' as any },
     { skip: !isOpen },
   );
 
