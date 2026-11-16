@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
@@ -293,8 +294,12 @@ func (h *Handler) DeleteMesheryFilterHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	filterID, ok := h.requirePathUUID(rw, r, "id")
-	if !ok {
+	filterID := mux.Vars(r)["id"]
+	filterUUID, err := uuid.FromString(filterID)
+	if err != nil || filterUUID == uuid.Nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid filter ID: %s", filterID))
+		h.log.Warn(invalidIDErr)
+		writeMeshkitError(rw, invalidIDErr, http.StatusBadRequest)
 		return
 	}
 
