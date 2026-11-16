@@ -64,7 +64,10 @@ Because of that, Meshery manages the Operator at cluster scope:
 
 - **Installing is serialized per cluster.** When several connections to one
   cluster connect at once, one installs the Operator and the others find it
-  installed, instead of racing each other into `helm install`.
+  installed, instead of racing each other into `helm install`. The
+  serialization only covers connections whose cluster keys match: connections
+  reaching the same cluster through different addresses, with no server ID to
+  tie them together, can still race to install the Operator.
 - **Disconnecting, deleting, or switching a connection to embedded mode never
   uninstalls the Operator.** Each only ends that connection's use of it. The
   Operator stays installed even after the last connection on this Meshery
@@ -75,13 +78,18 @@ Because of that, Meshery manages the Operator at cluster scope:
   `changeOperatorStatus` mutation (target status `DISABLED`). It removes the
   Operator for every connection to the cluster. When other connections on the
   same Meshery Server were using it, Meshery raises a warning event, **Meshery
-  Operator removed from a cluster other connections use**, that names them in
-  `affectedConnectionIDs`. Those connections reinstall the Operator the next
+  Operator removed from a cluster other connections use**, that names the ones
+  it can match in `affectedConnectionIDs`. A connection reaching the same
+  cluster through a different address, with no server ID to tie it to this
+  cluster, is not listed. Those connections reinstall the Operator the next
   time they connect in operator mode; switch them to embedded mode to keep it
   off.
 
-To remove the Operator from a cluster nothing uses any more, run
-`helm uninstall meshery-operator -n meshery`.
+To remove the Operator from a cluster nothing uses any more, first check the
+target cluster with `kubectl config current-context`, then run
+`helm uninstall meshery-operator -n meshery --kube-context <context>` with
+that cluster's context, so the removal cannot land on whatever cluster the
+active context happens to select.
 
 ### Which Operator version gets installed
 

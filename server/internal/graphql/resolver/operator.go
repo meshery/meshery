@@ -208,13 +208,19 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		return model.StatusDisabled, err
 	}
 
+	// Snapshot the context before the asynchronous callback: K8sContext is
+	// replaced whole under setupLock by RefreshK8sContext, so reading it
+	// directly inside the goroutine could hand SetOperatorDeployment a
+	// half-replaced context and the wrong cluster identity.
+	k8sCtx := machinectx.K8sContextSnapshot()
+
 	go func(del bool, kubeclient *mesherykube.Client) {
 		// SetOperatorDeployment carries the same guard the connect-time path
 		// uses, so an unresolvable chart version is refused identically here
 		// rather than being handed to Helm as an opaque chart-not-found. It also
 		// re-resolves that version first, so clicking deploy again after the
 		// chart repository recovers is a retry that can actually succeed.
-		err := machinectx.MesheryCtrlsHelper.SetOperatorDeployment(r.Config.OperatorTracker, machinectx.K8sContext, !del)
+		err := machinectx.MesheryCtrlsHelper.SetOperatorDeployment(r.Config.OperatorTracker, k8sCtx, !del)
 		if err != nil {
 			if r.Log != nil {
 				r.Log.Error(err)
