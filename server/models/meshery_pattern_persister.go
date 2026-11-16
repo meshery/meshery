@@ -220,8 +220,17 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, cloneP
 // DeleteMesheryPattern deletes a pattern by ID and removes any associated
 // workspace design mappings in a database transaction.
 func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id core.Uuid) ([]byte, error) {
-	pattern := MesheryPattern{ID: &id}
+	pattern := MesheryPattern{}
+	notFound := false
 	err := mpp.DB.Transaction(func(tx *gorm.DB) error {
+		res := tx.Where("id = ?", id).Limit(1).Find(&pattern)
+		if res.Error != nil {
+			return res.Error
+		}
+		if res.RowsAffected == 0 {
+			notFound = true
+			return nil
+		}
 		if err := tx.Delete(&pattern).Error; err != nil {
 			return err
 		}
@@ -234,6 +243,9 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id core.Uuid) ([]byte, 
 	})
 	if err != nil {
 		return nil, ErrDBDelete(err, "")
+	}
+	if notFound {
+		return nil, ErrResultNotFound(fmt.Errorf("design %s not found", id.String()))
 	}
 
 	return marshalMesheryPattern(&pattern), nil

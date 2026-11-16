@@ -792,6 +792,10 @@ func (h *Handler) DeleteMesheryPatternHandler(
 
 	resp, err := provider.DeleteMesheryPattern(r, patternID)
 	if err != nil {
+		status := http.StatusInternalServerError
+		if errors.GetCode(err) == models.ErrResultNotFoundCode {
+			status = http.StatusNotFound
+		}
 		errPatternDelete := ErrDeletePattern(err)
 
 		h.log.Error(errPatternDelete)
@@ -799,7 +803,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 			"error": errPatternDelete,
 		}).WithDescription("Error: Could not delete design.").Build()
 		h.persistAndPublish(provider, token, userID, event)
-		writeMeshkitError(rw, errPatternDelete, http.StatusInternalServerError)
+		writeMeshkitError(rw, errPatternDelete, status)
 		return
 	}
 
