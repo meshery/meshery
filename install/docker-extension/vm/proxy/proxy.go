@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 
@@ -108,15 +109,19 @@ func (p *Proxy) setToken(token string) {
 }
 
 // redactURL returns u as a string with the token query parameter masked, so
-// the auth token used by /token/store never ends up in the logs.
+// the auth token used by /token/store never ends up in the logs. A query that
+// does not parse cleanly is dropped entirely: url.Query silently skips
+// malformed pairs, so a token inside one would otherwise be logged as is.
 func redactURL(u *url.URL) string {
-	q := u.Query()
-	if !q.Has("token") {
-		return u.String()
-	}
-	q.Set("token", "REDACTED")
 	redacted := *u
-	redacted.RawQuery = q.Encode()
+	q, err := url.ParseQuery(u.RawQuery)
+	switch {
+	case err != nil:
+		redacted.RawQuery = "REDACTED"
+	case q.Has("token"):
+		q.Set("token", "REDACTED")
+		redacted.RawQuery = q.Encode()
+	}
 	return redacted.String()
 }
 
@@ -165,6 +170,12 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			close(p.authWsChan)
 		}
 		p.authWsChan = authWsChan
+		// Queue the current state for the new connection. A login that
+		// happened after the UI last read /token but before this channel was
+		// installed would otherwise never reach it.
+		if p.token != "" {
+			authWsChan <- true
+		}
 		p.mu.Unlock()
 
 		ws.SetCloseHandler(func(code int, text string) error {
@@ -181,6 +192,14 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			return nil
 		})
 		go handleWsMessage(ws)
+		// Send the handshake before starting the listener: a gorilla websocket
+		// allows only one concurrent writer, and the listener may already have
+		// a queued auth state to write.
+		err = ws.WriteMessage(1, []byte(InitiationSuccessful))
+		log.Println("Sent message to ws client: ", InitiationSuccessful)
+		if err != nil {
+			log.Println(err)
+		}
 		go func() {
 			for res := range authWsChan {
 				log.Println("Got msg from authChan: ", res)
@@ -197,11 +216,6 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 				}
 			}
 		}()
-		err = ws.WriteMessage(1, []byte(InitiationSuccessful))
-		log.Println("Sent message to ws client: ", InitiationSuccessful)
-		if err != nil {
-			log.Println(err)
-		}
 
 	case "/token/store":
 		if req.Method == http.MethodGet {
@@ -298,7 +312,14 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		resp, err := client.Do(req)
 		if err != nil {
 			http.Error(wr, "Server Error", http.StatusInternalServerError)
-			log.Println("proxy: backend request failed:", err)
+			// err is a *url.Error that embeds the full request URL, which can
+			// carry a token query parameter, so log the redacted URL and only
+			// the underlying cause.
+			var uerr *url.Error
+			if errors.As(err, &uerr) {
+				err = uerr.Err
+			}
+			log.Println("proxy: backend request failed:", req.Method, redactURL(req.URL), err)
 			return
 		}
 		defer resp.Body.Close()

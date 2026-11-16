@@ -232,3 +232,51 @@ func TestServeHTTP_TokenNotLogged(t *testing.T) {
 		t.Fatalf("expected the /token/store request to be logged with a redacted token:\n%s", buf.String())
 	}
 }
+
+// When the backend is unreachable, the client error embeds the request URL,
+// so a token in the query must not reach the log through it.
+func TestServeHTTP_TokenNotLoggedOnBackendError(t *testing.T) {
+	old := proxy.MesheryServerHost
+	proxy.MesheryServerHost = "127.0.0.1:1" // connection refused
+	t.Cleanup(func() { proxy.MesheryServerHost = old })
+
+	var buf bytes.Buffer
+	log.SetOutput(&buf)
+	t.Cleanup(func() { log.SetOutput(os.Stderr) })
+
+	const secret = "s3cr3t-token-value"
+	rec := serveWithTimeout(t, &proxy.Proxy{}, httptest.NewRequest(http.MethodGet, "http://localhost/api/system/version?token="+secret, nil))
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected status %d, got %d", http.StatusInternalServerError, rec.Code)
+	}
+	if strings.Contains(buf.String(), secret) {
+		t.Fatalf("auth token leaked into logs:\n%s", buf.String())
+	}
+	if !strings.Contains(buf.String(), "backend request failed") {
+		t.Fatalf("expected the backend failure to be logged:\n%s", buf.String())
+	}
+}
+
+// A client that connects after the token was stored is told it is
+// authenticated, so a login that lands between the UI reading /token and
+// opening /ws is not lost.
+func TestServeHTTP_WSClientGetsCurrentStateOnConnect(t *testing.T) {
+	srv := httptest.NewServer(&proxy.Proxy{})
+	defer srv.Close()
+
+	resp, err := http.Get(srv.URL + "/token/store?token=abc")
+	if err != nil {
+		t.Fatalf("store token: %v", err)
+	}
+	resp.Body.Close()
+
+	ws := dialWS(t, srv.URL) // also asserts the handshake comes first
+	_ = ws.SetReadDeadline(time.Now().Add(2 * time.Second))
+	_, msg, err := ws.ReadMessage()
+	if err != nil {
+		t.Fatalf("expected %q on connect: %v", proxy.AuthenticatedMsg, err)
+	}
+	if string(msg) != proxy.AuthenticatedMsg {
+		t.Fatalf("expected %q, got %q", proxy.AuthenticatedMsg, msg)
+	}
+}
