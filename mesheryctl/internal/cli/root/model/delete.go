@@ -16,6 +16,7 @@ package model
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -56,8 +57,11 @@ mesheryctl model delete [model-name]
 			return nil
 		}
 
-		// Delete model by name, for multiple matches use pagination selection prompt
-		selectedModel, err := promptModelSelection(modelArg, modelsApiPath)
+		// Look the name up with the exact-name route, not ?search=: search matches any
+		// model whose name contains the argument, and a single such match is selected
+		// without a prompt, so a model the user did not name would be deleted.
+		// Versions of the named model still go through the selection prompt.
+		selectedModel, err := promptModelSelection("", fmt.Sprintf("%s/%s", modelsApiPath, url.PathEscape(modelArg)))
 		if err != nil {
 			return err
 		}
