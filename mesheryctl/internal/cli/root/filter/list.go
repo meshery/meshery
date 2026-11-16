@@ -171,7 +171,7 @@ func processFilterData(response *models.FiltersAPIResponse, isVerbose, isLocal b
 	var data [][]string
 	for _, v := range response.Filters {
 		filterID := utils.FormatUUID(v.ID, "N/A")
-		if !isVerbose || !isLocal {
+		if !isVerbose {
 			filterID = utils.TruncateID(filterID)
 		}
 		filterName := utils.TrimFileExtension(v.Name)

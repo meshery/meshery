@@ -181,12 +181,12 @@ func TestProcessFilterData(t *testing.T) {
 			wantFooter: []string{"Total", "1", "", "", ""},
 		},
 		{
-			name:       "remote verbose formats full owner and timestamp",
+			name:       "remote verbose formats full filter id, owner, and timestamp",
 			isVerbose:  true,
 			isLocal:    false,
 			filter:     models.MesheryFilter{ID: &filterID, Owner: &longOwner, Name: "full-filter.wasm", CreatedAt: &ts, UpdatedAt: &ts},
 			wantHeader: []string{"FILTER ID", "OWNER", "NAME", "CREATED", "UPDATED"},
-			wantRow:    []string{"12345678", longOwner, "full-filter", "1-2-2025 3:4:5", "1-2-2025 3:4:5"},
+			wantRow:    []string{"12345678-90ab-cdef-1234-567890abcdef", longOwner, "full-filter", "1-2-2025 3:4:5", "1-2-2025 3:4:5"},
 			wantFooter: []string{"Total", "1", "", "", ""},
 		},
 		{
