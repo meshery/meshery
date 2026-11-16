@@ -138,8 +138,8 @@ mesheryctl perf result saturday-profile --view
 			return ErrPerformanceProfileResult(err)
 		}
 
-		if len(data) == 0 {
-			utils.Log.Info("No Test Results to display")
+		if len(results) == 0 {
+			utils.Log.Info("No test results to display")
 			return nil
 		}
 
@@ -156,6 +156,7 @@ mesheryctl perf result saturday-profile --view
 			if err != nil {
 				return err
 			}
+			outputFormatter = outputFormatter.WithOutput(cmd.OutOrStdout())
 
 			if err := outputFormatter.Display(); err != nil {
 				return err
@@ -172,15 +173,30 @@ mesheryctl perf result saturday-profile --view
 				}
 			}
 			a := expandedData[index]
-			fmt.Printf("Name: %v\n", a.Name)
-			fmt.Printf("Owner: %s\n", a.Owner.String())
-			fmt.Printf("Endpoint: %v\n", a.URL)
-			fmt.Printf("QPS: %v\n", a.QPS)
-			fmt.Printf("Test run duration: %v\n", a.Duration)
-			fmt.Printf("Latencies _ms: Avg: %v, Max: %v, Min: %v, P50: %v, P90: %v, P99: %v\n", a.LatenciesMs.Average, a.LatenciesMs.Max, a.LatenciesMs.Min, a.LatenciesMs.P50, a.LatenciesMs.P90, a.LatenciesMs.P99)
-			fmt.Printf("Start Time: %v\n", fmt.Sprintf("%d-%d-%d %d:%d:%d", int(a.StartTime.Month()), a.StartTime.Day(), a.StartTime.Year(), a.StartTime.Hour(), a.StartTime.Minute(), a.StartTime.Second()))
-			fmt.Printf("Meshery ID: %v\n", a.MesheryID.String())
-			fmt.Printf("Load Generator: %v\n", a.LoadGenerator)
+			out := cmd.OutOrStdout()
+			fmt.Fprintf(out, "Name: %v\n", a.Name)
+			ownerStr := "None"
+			if a.Owner != nil && *a.Owner != uuid.Nil {
+				ownerStr = a.Owner.String()
+			}
+			fmt.Fprintf(out, "Owner: %s\n", ownerStr)
+			fmt.Fprintf(out, "Endpoint: %v\n", a.URL)
+			fmt.Fprintf(out, "QPS: %v\n", a.QPS)
+			fmt.Fprintf(out, "Test run duration: %v\n", a.Duration)
+			if a.LatenciesMs != nil {
+				fmt.Fprintf(out, "Latencies _ms: Avg: %v, Max: %v, Min: %v, P50: %v, P90: %v, P99: %v\n", a.LatenciesMs.Average, a.LatenciesMs.Max, a.LatenciesMs.Min, a.LatenciesMs.P50, a.LatenciesMs.P90, a.LatenciesMs.P99)
+			}
+			startTimeStr := "None"
+			if a.StartTime != nil {
+				startTimeStr = a.StartTime.Format("2006-01-02 15:04:05")
+			}
+			fmt.Fprintf(out, "Start Time: %s\n", startTimeStr)
+			mesheryIDStr := "None"
+			if a.MesheryID != nil && *a.MesheryID != uuid.Nil {
+				mesheryIDStr = a.MesheryID.String()
+			}
+			fmt.Fprintf(out, "Meshery ID: %v\n", mesheryIDStr)
+			fmt.Fprintf(out, "Load Generator: %v\n", a.LoadGenerator)
 		}
 		return nil
 	},
@@ -252,7 +268,10 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 		if v, ok := percentileValue(99.9); ok {
 			p99_9 = fmt.Sprintf("%.8f", v*millisecondsPerSecond)
 		}
-		startTime := result.TestStartTime.Format("2006-01-02 15:04:05")
+		startTime := "None"
+		if result.TestStartTime != nil {
+			startTime = result.TestStartTime.Format("2006-01-02 15:04:05")
+		}
 		data = append(data, []string{result.Name, serviceMesh, qps, duration, p50, p99_9, startTime})
 
 		if v, ok := percentileValue(50); ok {

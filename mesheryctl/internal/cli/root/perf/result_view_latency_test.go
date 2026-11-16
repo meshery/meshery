@@ -10,6 +10,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -25,6 +26,81 @@ func TestResultViewPrintsLatenciesInMilliseconds(t *testing.T) {
 		{"Percentile": 99.9, "Value": 0.0095}
 	]`)
 	assert.Contains(t, output, "Latencies _ms: Avg: 2, Max: 10, Min: 1, P50: 1.5, P90: 3, P99: 8")
+}
+
+// TestResultViewStandardizedTimestamp verifies that a valid testStartTime
+// is formatted with the standard Year-Month-Day format (2006-01-02 15:04:05).
+func TestResultViewStandardizedTimestamp(t *testing.T) {
+	output := runResultViewWithPercentiles(t, `[{"Percentile": 50, "Value": 0.001}]`)
+	assert.Contains(t, output, "Start Time: 2026-11-06 10:00:00")
+}
+
+// TestResultViewToleratesNilTestStartTime verifies that a performance result
+// with a null testStartTime does not panic and reports "None".
+func TestResultViewToleratesNilTestStartTime(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	_, filename, _, ok := runtime.Caller(0)
+	require.True(t, ok, "not able to get current working directory")
+	origToken := utils.TokenFlag
+	utils.TokenFlag = filepath.Join(filepath.Dir(filename), "fixtures", "auth.json")
+	defer func() { utils.TokenFlag = origToken }()
+
+	const profileID = "906f8876-33b5-4a97-906e-7a409d3b8ae9"
+	httpmock.RegisterResponder(http.MethodGet, testContext.BaseURL+"/api/performance/profiles",
+		httpmock.NewStringResponder(http.StatusOK,
+			`{"profiles":[{"id":"`+profileID+`","name":"my-profile","endpoints":["https://meshery.io"]}],"totalCount":1}`))
+	httpmock.RegisterResponder(http.MethodGet, testContext.BaseURL+"/api/user/performance/profiles/"+profileID+"/results",
+		httpmock.NewStringResponder(http.StatusOK, `{"results":[{
+			"name": "my-result",
+			"testStartTime": null,
+			"runnerResults": {
+				"DurationHistogram": {
+					"Avg": 0.002, "Max": 0.01, "Min": 0.001,
+					"Percentiles": [{"Percentile": 50, "Value": 0.001}]
+				}
+			}
+		}]}`))
+
+	resetVariables()
+	defer resetVariables()
+	viewSingleResult = true
+	defer func() { viewSingleResult = false }()
+
+	reader, writer, err := os.Pipe()
+	require.NoError(t, err)
+	stdout := os.Stdout
+	os.Stdout = writer
+	defer func() { os.Stdout = stdout }()
+
+	runErr := resultCmd.RunE(resultCmd, []string{"my-profile"})
+
+	require.NoError(t, writer.Close())
+	os.Stdout = stdout
+	output, err := io.ReadAll(reader)
+	require.NoError(t, err)
+	require.NoError(t, runErr)
+
+	assert.Contains(t, string(output), "Start Time: None")
+}
+
+// TestPerformanceResultsToStringArrays_NilStartTime verifies that
+// performanceResultsToStringArrays handles a result with nil TestStartTime
+// safely without panicking.
+func TestPerformanceResultsToStringArrays_NilStartTime(t *testing.T) {
+	results := []models.PerformanceResult{
+		{
+			Name:          "nil-time-test",
+			TestStartTime: nil,
+		},
+	}
+	data, expanded := performanceResultsToStringArrays(results)
+	require.Len(t, data, 1)
+	require.Len(t, expanded, 1)
+	assert.Equal(t, "None", data[0][6])
+	assert.Nil(t, expanded[0].StartTime)
 }
 
 // TestResultViewMatchesPercentilesByField runs `perf result --view` against a
