@@ -799,6 +799,17 @@ func RedactCredentialsForContext(ctx *K8sContext) (redactedContext K8sContext) {
 	return
 }
 
+// RedactCredentials removes sensitive client authentication data and cluster
+// secrets before serializing the context for external API responses, while
+// preserving context identifiers and public endpoint metadata.
+func (c *K8sContext) RedactCredentials() {
+	if c == nil {
+		return
+	}
+	c.Auth = sql.Map{}
+	c.Cluster = sql.Map{}
+}
+
 func GenerateK8sClientSet(context *K8sContext, eb *events.EventBuilder, eventMetadata map[string]interface{}, log logger.Handler) (*kubernetes.Client, error) {
 	metadata := map[string]interface{}{}
 
