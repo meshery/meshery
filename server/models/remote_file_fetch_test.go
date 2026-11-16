@@ -175,7 +175,7 @@ func TestFetchRemoteFileRedirects(t *testing.T) {
 	chain := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		n, err := strconv.Atoi(strings.TrimPrefix(r.URL.Path, "/"))
 		if err != nil {
-			http.Error(w, "bad path", http.StatusBadRequest)
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		if n == 0 {
