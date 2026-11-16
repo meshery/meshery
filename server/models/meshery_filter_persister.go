@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -160,8 +162,10 @@ func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string, cloneFilt
 	if err != nil {
 		return nil, ErrInvalidUUID(err)
 	}
-	err = mfp.DB.First(&mesheryFilter, filterUUID).Error
-	if err != nil || *mesheryFilter.ID == uuid.Nil {
+	if err := mfp.DB.First(&mesheryFilter, filterUUID).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
 		return nil, fmt.Errorf("unable to get filter: %w", err)
 	}
 
@@ -314,19 +318,34 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilters(filters []MesheryFilter) (
 	return marshalMesheryFilters(finalFilters), mfp.DB.Create(finalFilters).Error
 }
 
+// GetMesheryFilter returns the stored filter. A filter that does not exist
+// is reported as ErrResultNotFound, which carries a 404 for the handler; no
+// body is returned alongside an error.
 func (mfp *MesheryFilterPersister) GetMesheryFilter(id core.Uuid) ([]byte, error) {
 	var mesheryFilter MesheryFilter
 
-	err := mfp.DB.First(&mesheryFilter, id).Error
+	if err := mfp.DB.First(&mesheryFilter, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
+		return nil, err
+	}
 	stampLocalProviderFilterOwner(&mesheryFilter)
-	return marshalMesheryFilter(&mesheryFilter), err
+	return marshalMesheryFilter(&mesheryFilter), nil
 }
 
+// GetMesheryFilterFile returns the WASM file bytes of the stored filter. A
+// filter that does not exist is reported as ErrResultNotFound.
 func (mfp *MesheryFilterPersister) GetMesheryFilterFile(id core.Uuid) ([]byte, error) {
 	var mesheryFilter MesheryFilter
 
-	err := mfp.DB.First(&mesheryFilter, id).Error
-	return []byte(mesheryFilter.FilterFile), err
+	if err := mfp.DB.First(&mesheryFilter, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
+		return nil, err
+	}
+	return []byte(mesheryFilter.FilterFile), nil
 }
 
 func marshalMesheryFilterPage(mfp *MesheryFilterPage) []byte {
