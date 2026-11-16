@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -54,6 +55,20 @@ func writeJSONMessage(w http.ResponseWriter, payload any, status int) {
 
 func writeJSONEmptyObject(w http.ResponseWriter, status int) {
 	httputil.WriteJSONEmptyObject(w, status)
+}
+
+// requireProvider verifies that provider is non-nil (guarding both untyped nil
+// and typed nil pointers). When provider is nil, it logs via h.log (if non-nil),
+// writes ErrNilProvider() with HTTP 500, and returns false.
+func (h *Handler) requireProvider(w http.ResponseWriter, provider models.Provider) bool {
+	if provider == nil || (reflect.ValueOf(provider).Kind() == reflect.Ptr && reflect.ValueOf(provider).IsNil()) {
+		if h != nil && h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return false
+	}
+	return true
 }
 
 // providerStatus returns the HTTP status to surface for a failure that came

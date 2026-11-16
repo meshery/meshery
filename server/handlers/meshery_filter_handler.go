@@ -27,11 +27,7 @@ func (h *Handler) GetMesheryFilterFileHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(rw, provider) {
 		return
 	}
 
@@ -93,11 +89,7 @@ func (h *Handler) handleFilterPOST(
 		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
 		return
 	}
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(rw, provider) {
 		return
 	}
 
@@ -115,9 +107,11 @@ func (h *Handler) handleFilterPOST(
 		event := eventBuilder.WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
 			"error": ErrRetrieveUserToken(err),
 		}).WithDescription("No auth token provided in the request.").Build()
-		if h.config != nil && h.config.EventBroadcaster != nil {
-			_ = models.PersistAndPublishSystemEvent(provider, h.config.EventBroadcaster, userID, event)
+		var broadcaster *models.Broadcast
+		if h.config != nil {
+			broadcaster = h.config.EventBroadcaster
 		}
+		_ = models.PersistAndPublishSystemEvent(provider, broadcaster, userID, event)
 		writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
@@ -277,11 +271,7 @@ func (h *Handler) GetMesheryFiltersHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(rw, provider) {
 		return
 	}
 
@@ -338,11 +328,7 @@ func (h *Handler) GetCatalogMesheryFiltersHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(rw, provider) {
 		return
 	}
 
@@ -381,11 +367,7 @@ func (h *Handler) DeleteMesheryFilterHandler(
 		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
 		return
 	}
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(rw, provider) {
 		return
 	}
 
@@ -436,11 +418,7 @@ func (h *Handler) CloneMesheryFilterHandler(
 		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
 		return
 	}
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(rw, provider) {
 		return
 	}
 
@@ -499,11 +477,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
 		return
 	}
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(rw, provider) {
 		return
 	}
 
@@ -598,11 +572,7 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
 		return
 	}
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(rw, provider) {
 		return
 	}
 
@@ -692,11 +662,7 @@ func (h *Handler) GetMesheryFilterHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	if provider == nil {
-		if h.log != nil {
-			h.log.Error(ErrNilProvider())
-		}
-		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+	if !h.requireProvider(rw, provider) {
 		return
 	}
 
@@ -792,7 +758,7 @@ func (h *Handler) generateFilterComponent(config string) (string, error) {
 		if config == "" {
 			return "", nil
 		}
-		return "", fmt.Errorf("the WASMFilter component of the %s model is not registered, so the filter configuration cannot be stored", wasmFilterModelName)
+		return "", fmt.Errorf("the registry manager is unavailable, so the filter configuration cannot be stored")
 	}
 
 	// Look the component up by kind and model. ComponentFilter matches
@@ -820,7 +786,7 @@ func (h *Handler) generateFilterComponent(config string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		return "", fmt.Errorf("the WASMFilter component of the %s model is not registered, so the filter configuration cannot be stored", wasmFilterModelName)
+		return "", fmt.Errorf("the registry manager is unavailable, so the filter configuration cannot be stored")
 	}
 
 	filterSvc := component.ComponentDefinition{

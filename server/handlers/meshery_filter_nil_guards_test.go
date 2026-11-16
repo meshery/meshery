@@ -415,4 +415,48 @@ func TestGenerateFilterComponent_NilRegistryManager_DoesNotPanic(t *testing.T) {
 	if err == nil {
 		t.Fatalf("expected error for non-empty config with nil registryManager")
 	}
+	if !strings.Contains(err.Error(), "registry manager is unavailable") {
+		t.Fatalf("expected error mentioning unavailable registry manager, got %v", err)
+	}
+}
+
+func TestFilterHandler_TypedNilProvider_ReturnsInternalServerError(t *testing.T) {
+	h, _ := newFilterNilGuardsFixture(t)
+	var rp *models.RemoteProvider = nil
+	var typedNil models.Provider = rp
+
+	req := httptest.NewRequest(http.MethodGet, "/api/filter/00000000-0000-0000-0000-000000000000", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetMesheryFilterFileHandler(rec, req, nil, nil, typedNil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for typed-nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestFilterHandler_NilLogger_DoesNotPanic(t *testing.T) {
+	h := &Handler{log: nil}
+	req := httptest.NewRequest(http.MethodGet, "/api/filter/00000000-0000-0000-0000-000000000000", nil)
+	rec := httptest.NewRecorder()
+
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("GetMesheryFilterFileHandler panicked with nil logger: %v", r)
+		}
+	}()
+
+	h.GetMesheryFilterFileHandler(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider with nil logger, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
 }
