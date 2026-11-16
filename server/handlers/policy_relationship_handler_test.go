@@ -1157,6 +1157,8 @@ func TestEvaluateRelationshipPolicy_NilProvider_ReturnsInternalServerError(t *te
 	errBody := decodeErrorBody(t, rec.Body.Bytes())
 	assert.Equal(t, ErrNilProviderCode, errBody.Code)
 	assert.NotEmpty(t, errBody.Error)
+	assert.NotEmpty(t, errBody.ProbableCause)
+	assert.NotEmpty(t, errBody.SuggestedRemediation)
 }
 
 func TestEvaluateRelationshipPolicy_EmptyRequestBody_ReturnsBadRequest(t *testing.T) {
@@ -1174,6 +1176,8 @@ func TestEvaluateRelationshipPolicy_EmptyRequestBody_ReturnsBadRequest(t *testin
 	errBody := decodeErrorBody(t, rec.Body.Bytes())
 	assert.Equal(t, ErrRequestBodyCode, errBody.Code)
 	assert.NotEmpty(t, errBody.Error)
+	assert.NotEmpty(t, errBody.ProbableCause)
+	assert.NotEmpty(t, errBody.SuggestedRemediation)
 }
 
 func TestEvaluateRelationshipPolicy_PayloadTooLarge_ReturnsRequestEntityTooLarge(t *testing.T) {
@@ -1210,6 +1214,8 @@ func TestEvaluateRelationshipPolicy_MalformedJSON_ReturnsBadRequest(t *testing.T
 	errBody := decodeErrorBody(t, rec.Body.Bytes())
 	assert.Equal(t, ErrDecodingCode, errBody.Code)
 	assert.NotEmpty(t, errBody.Error)
+	assert.NotEmpty(t, errBody.ProbableCause)
+	assert.NotEmpty(t, errBody.SuggestedRemediation)
 }
 
 func TestEvaluateRelationshipPolicy_NilSystemID_DoesNotPanic(t *testing.T) {
@@ -1252,6 +1258,31 @@ func (p *panickingPersistEventProvider) PersistEvent(event events.Event, token s
 	panic("synthetic panic in PersistEvent")
 }
 
+// assertSuccessResponseKeys verifies the raw JSON envelope contains the
+// required success payload keys and that trace/actions decode with the
+// expected shape. A typed decode into pattern.EvaluationResponse alone
+// cannot prove key presence: absent keys decode to zero values without
+// error. Empty results are valid, so actions may be null.
+func assertSuccessResponseKeys(t *testing.T, body []byte) {
+	t.Helper()
+
+	var raw map[string]json.RawMessage
+	require.NoError(t, json.Unmarshal(body, &raw))
+	for _, key := range []string{"design", "trace", "actions"} {
+		_, ok := raw[key]
+		assert.True(t, ok, "response JSON must contain %q key", key)
+	}
+
+	var trace pattern.Trace
+	if payload, ok := raw["trace"]; ok {
+		require.NoError(t, json.Unmarshal(payload, &trace), "trace must decode as an object")
+	}
+	var actions []pattern.Action
+	if payload, ok := raw["actions"]; ok {
+		require.NoError(t, json.Unmarshal(payload, &actions), "actions must decode as an array")
+	}
+}
+
 func TestEvaluateRelationshipPolicy_PersistEventPanicRecovered(t *testing.T) {
 	viper.Set("USE_GO_POLICY_ENGINE", true)
 	t.Cleanup(func() {
@@ -1289,10 +1320,45 @@ func TestEvaluateRelationshipPolicy_PersistEventPanicRecovered(t *testing.T) {
 	// Verify that the handler returns HTTP 200 OK without crashing the process
 	require.Equal(t, http.StatusOK, rec.Code)
 
-	var rawMap map[string]json.RawMessage
-	err := json.Unmarshal(rec.Body.Bytes(), &rawMap)
-	require.NoError(t, err, "successful evaluation response body must decode as valid JSON")
-	assert.Contains(t, rawMap, "design", "design field must be present in response")
-	assert.Contains(t, rawMap, "trace", "trace field must be present in response")
-	assert.Contains(t, rawMap, "actions", "actions field must be present in response")
+	var resp pattern.EvaluationResponse
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &resp))
+	assert.Equal(t, "test", resp.Design.Name)
+	assert.Equal(t, "1.0.1", resp.Design.Version)
+	assert.NotNil(t, resp.Timestamp)
+	assertSuccessResponseKeys(t, rec.Body.Bytes())
+}
+
+func TestEvaluateRelationshipPolicy_Success_ResponsePayloadStructure(t *testing.T) {
+	viper.Set("USE_GO_POLICY_ENGINE", true)
+	t.Cleanup(func() {
+		viper.Set("USE_GO_POLICY_ENGINE", false)
+	})
+
+	logger := newTestLogger(t)
+	h := &Handler{
+		log:         logger,
+		evalTracker: newEvaluationTracker(),
+		GoEngine:    gopolicies.NewGoEngine(logger),
+	}
+
+	provider := &models.DefaultLocalProvider{}
+	provider.Initialize()
+
+	designID := uuid.Must(uuid.NewV4())
+	validJSON := fmt.Sprintf(`{"design":{"id":"%s","name":"eval-payload-test","version":"1.0.0"}}`, designID)
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(validJSON))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	var resp pattern.EvaluationResponse
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &resp))
+	assert.Equal(t, designID, resp.Design.ID)
+	assert.Equal(t, "eval-payload-test", resp.Design.Name)
+	assert.Equal(t, "1.0.1", resp.Design.Version)
+	assert.NotNil(t, resp.Timestamp)
+	assertSuccessResponseKeys(t, rec.Body.Bytes())
 }
