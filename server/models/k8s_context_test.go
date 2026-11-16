@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshkit/database"
 	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
@@ -488,3 +489,55 @@ func TestFlushMeshSyncDataWithoutContextAllKubeClusterKey(t *testing.T) {
 		}
 	})
 }
+
+func TestK8sContext_RedactCredentials(t *testing.T) {
+	ctx := &K8sContext{
+		ID:           "test-id",
+		Name:         "test-name",
+		Server:       "https://cluster.example.com",
+		ConnectionID: "conn-123",
+		DeploymentType: "out_cluster",
+		Version:      "v1.30.0",
+		Auth: sql.Map{
+			"client-key-data":         "super-secret-key",
+			"token":                   "secret-token",
+			"client-certificate-data": "client-cert",
+		},
+		Cluster: sql.Map{
+			"certificate-authority-data": "ca-cert",
+			"server":                     "https://cluster.example.com",
+		},
+	}
+
+	ctx.RedactCredentials()
+
+	if len(ctx.Auth) != 0 {
+		t.Errorf("expected Auth to be empty, got: %v", ctx.Auth)
+	}
+	if len(ctx.Cluster) != 0 {
+		t.Errorf("expected Cluster to be empty, got: %v", ctx.Cluster)
+	}
+	if ctx.ID != "test-id" {
+		t.Errorf("expected ID to be preserved, got %s", ctx.ID)
+	}
+	if ctx.Name != "test-name" {
+		t.Errorf("expected Name to be preserved, got %s", ctx.Name)
+	}
+	if ctx.Server != "https://cluster.example.com" {
+		t.Errorf("expected Server to be preserved, got %s", ctx.Server)
+	}
+	if ctx.ConnectionID != "conn-123" {
+		t.Errorf("expected ConnectionID to be preserved, got %s", ctx.ConnectionID)
+	}
+	if ctx.DeploymentType != "out_cluster" {
+		t.Errorf("expected DeploymentType to be preserved, got %s", ctx.DeploymentType)
+	}
+	if ctx.Version != "v1.30.0" {
+		t.Errorf("expected Version to be preserved, got %s", ctx.Version)
+	}
+
+	// Nil receiver safety check
+	var nilCtx *K8sContext
+	nilCtx.RedactCredentials() // must not panic
+}
+

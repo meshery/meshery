@@ -110,7 +110,7 @@ type Extensions struct {
 	Navigator    NavigatorExtensions    `json:"navigator,omitempty"`
 	UserPrefs    UserPrefsExtensions    `json:"userPrefs,omitempty"`
 	GraphQL      GraphQLExtensions      `json:"graphql,omitempty"`
-	Acccount     AccountExtensions      `json:"account,omitempty"`
+	Account      AccountExtensions      `json:"account,omitempty"`
 	Collaborator CollaboratorExtensions `json:"collaborator,omitempty"`
 }
 
