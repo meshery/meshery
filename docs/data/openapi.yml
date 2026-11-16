@@ -111,6 +111,8 @@ tags:
     description: APIs for profiles.
   - name: ProviderCapability_capabilities
     description: Operations related to the provider's capabilities document.
+  - name: Request_requests
+    description: Operations related to requests for a decision.
   - name: Schedule_schedules
     description: Operations related to organization schedules.
   - name: Subscription_Subscriptions
@@ -61445,10 +61447,11 @@ paths:
                                 schedulePause:
                                   x-go-type: SchedulePause
                                   description: >-
-                                    Organization-wide schedule pause. Only organization admins may set or lift it; a
-                                    write from anyone else that changes it is refused with 403. Omitting schedulePause
-                                    from a preferences write keeps the current pause unchanged; it does not lift the
-                                    pause.
+                                    Organization-wide schedule pause. Changing it through updateOrg or
+                                    patchOrgPreferences requires organization admin; a write from anyone else that
+                                    changes it is refused with 403. updateOrgSchedulePause sets it under the Pause
+                                    schedules key instead. Omitting schedulePause from a preferences write keeps the
+                                    current pause unchanged; it does not lift the pause.
                                   type: object
                                   additionalProperties: false
                                   properties:
@@ -61778,9 +61781,10 @@ paths:
                     schedulePause:
                       x-go-type: SchedulePausePayload
                       description: >-
-                        Organization-wide schedule pause. Only organization admins may set or lift it; a write from
-                        anyone else that changes it is refused with 403. Omitting schedulePause from a preferences write
-                        keeps the current pause unchanged; it does not lift the pause.
+                        Organization-wide schedule pause. Changing it through updateOrg or patchOrgPreferences requires
+                        organization admin; a write from anyone else that changes it is refused with 403.
+                        updateOrgSchedulePause sets it under the Pause schedules key instead. Omitting schedulePause
+                        from a preferences write keeps the current pause unchanged; it does not lift the pause.
                       type: object
                       additionalProperties: false
                       required:
@@ -62099,10 +62103,11 @@ paths:
                                 schedulePause:
                                   x-go-type: SchedulePause
                                   description: >-
-                                    Organization-wide schedule pause. Only organization admins may set or lift it; a
-                                    write from anyone else that changes it is refused with 403. Omitting schedulePause
-                                    from a preferences write keeps the current pause unchanged; it does not lift the
-                                    pause.
+                                    Organization-wide schedule pause. Changing it through updateOrg or
+                                    patchOrgPreferences requires organization admin; a write from anyone else that
+                                    changes it is refused with 403. updateOrgSchedulePause sets it under the Pause
+                                    schedules key instead. Omitting schedulePause from a preferences write keeps the
+                                    current pause unchanged; it does not lift the pause.
                                   type: object
                                   additionalProperties: false
                                   properties:
@@ -62656,10 +62661,11 @@ paths:
                                 schedulePause:
                                   x-go-type: SchedulePause
                                   description: >-
-                                    Organization-wide schedule pause. Only organization admins may set or lift it; a
-                                    write from anyone else that changes it is refused with 403. Omitting schedulePause
-                                    from a preferences write keeps the current pause unchanged; it does not lift the
-                                    pause.
+                                    Organization-wide schedule pause. Changing it through updateOrg or
+                                    patchOrgPreferences requires organization admin; a write from anyone else that
+                                    changes it is refused with 403. updateOrgSchedulePause sets it under the Pause
+                                    schedules key instead. Omitting schedulePause from a preferences write keeps the
+                                    current pause unchanged; it does not lift the pause.
                                   type: object
                                   additionalProperties: false
                                   properties:
@@ -63082,9 +63088,10 @@ paths:
                     schedulePause:
                       x-go-type: SchedulePausePayload
                       description: >-
-                        Organization-wide schedule pause. Only organization admins may set or lift it; a write from
-                        anyone else that changes it is refused with 403. Omitting schedulePause from a preferences write
-                        keeps the current pause unchanged; it does not lift the pause.
+                        Organization-wide schedule pause. Changing it through updateOrg or patchOrgPreferences requires
+                        organization admin; a write from anyone else that changes it is refused with 403.
+                        updateOrgSchedulePause sets it under the Pause schedules key instead. Omitting schedulePause
+                        from a preferences write keeps the current pause unchanged; it does not lift the pause.
                       type: object
                       additionalProperties: false
                       required:
@@ -63403,10 +63410,11 @@ paths:
                                 schedulePause:
                                   x-go-type: SchedulePause
                                   description: >-
-                                    Organization-wide schedule pause. Only organization admins may set or lift it; a
-                                    write from anyone else that changes it is refused with 403. Omitting schedulePause
-                                    from a preferences write keeps the current pause unchanged; it does not lift the
-                                    pause.
+                                    Organization-wide schedule pause. Changing it through updateOrg or
+                                    patchOrgPreferences requires organization admin; a write from anyone else that
+                                    changes it is refused with 403. updateOrgSchedulePause sets it under the Pause
+                                    schedules key instead. Omitting schedulePause from a preferences write keeps the
+                                    current pause unchanged; it does not lift the pause.
                                   type: object
                                   additionalProperties: false
                                   properties:
@@ -63940,9 +63948,10 @@ paths:
                     schedulePause:
                       x-go-type: SchedulePausePayload
                       description: >-
-                        Organization-wide schedule pause. Only organization admins may set or lift it; a write from
-                        anyone else that changes it is refused with 403. Omitting schedulePause from a preferences write
-                        keeps the current pause unchanged; it does not lift the pause.
+                        Organization-wide schedule pause. Changing it through updateOrg or patchOrgPreferences requires
+                        organization admin; a write from anyone else that changes it is refused with 403.
+                        updateOrgSchedulePause sets it under the Pause schedules key instead. Omitting schedulePause
+                        from a preferences write keeps the current pause unchanged; it does not lift the pause.
                       type: object
                       additionalProperties: false
                       required:
@@ -64261,10 +64270,11 @@ paths:
                                 schedulePause:
                                   x-go-type: SchedulePause
                                   description: >-
-                                    Organization-wide schedule pause. Only organization admins may set or lift it; a
-                                    write from anyone else that changes it is refused with 403. Omitting schedulePause
-                                    from a preferences write keeps the current pause unchanged; it does not lift the
-                                    pause.
+                                    Organization-wide schedule pause. Changing it through updateOrg or
+                                    patchOrgPreferences requires organization admin; a write from anyone else that
+                                    changes it is refused with 403. updateOrgSchedulePause sets it under the Pause
+                                    schedules key instead. Omitting schedulePause from a preferences write keeps the
+                                    current pause unchanged; it does not lift the pause.
                                   type: object
                                   additionalProperties: false
                                   properties:
@@ -64618,9 +64628,10 @@ paths:
                       schedulePause:
                         x-go-type: SchedulePause
                         description: >-
-                          Organization-wide schedule pause. Only organization admins may set or lift it; a write from
-                          anyone else that changes it is refused with 403. Omitting schedulePause from a preferences
-                          write keeps the current pause unchanged; it does not lift the pause.
+                          Organization-wide schedule pause. Changing it through updateOrg or patchOrgPreferences
+                          requires organization admin; a write from anyone else that changes it is refused with 403.
+                          updateOrgSchedulePause sets it under the Pause schedules key instead. Omitting schedulePause
+                          from a preferences write keeps the current pause unchanged; it does not lift the pause.
                         type: object
                         additionalProperties: false
                         properties:
@@ -64945,9 +64956,10 @@ paths:
                 schedulePause:
                   x-go-type: SchedulePausePayload
                   description: >-
-                    Organization-wide schedule pause. Only organization admins may set or lift it; a write from anyone
-                    else that changes it is refused with 403. Omitted keeps the current pause unchanged; it does not
-                    lift the pause.
+                    Organization-wide schedule pause. Changing it through updateOrg or patchOrgPreferences requires
+                    organization admin; a write from anyone else that changes it is refused with 403.
+                    updateOrgSchedulePause sets it under the Pause schedules key instead. Omitted keeps the current
+                    pause unchanged; it does not lift the pause.
                   type: object
                   additionalProperties: false
                   required:
@@ -65209,9 +65221,10 @@ paths:
                       schedulePause:
                         x-go-type: SchedulePause
                         description: >-
-                          Organization-wide schedule pause. Only organization admins may set or lift it; a write from
-                          anyone else that changes it is refused with 403. Omitting schedulePause from a preferences
-                          write keeps the current pause unchanged; it does not lift the pause.
+                          Organization-wide schedule pause. Changing it through updateOrg or patchOrgPreferences
+                          requires organization admin; a write from anyone else that changes it is refused with 403.
+                          updateOrgSchedulePause sets it under the Pause schedules key instead. Omitting schedulePause
+                          from a preferences write keeps the current pause unchanged; it does not lift the pause.
                         type: object
                         additionalProperties: false
                         properties:
@@ -67190,7 +67203,27 @@ paths:
       tags:
         - User_users
       operationId: getUser
+      x-mcp:
+        expose: true
+        title: Get the current user profile
+        scope: account:read
       summary: Get current user profile
+      description: |
+        Returns the profile of the signed-in user. An `X-Current-Orgid` that is not a UUID answers 400.
+      parameters:
+        - name: X-Current-Orgid
+          in: header
+          required: false
+          description: >-
+            Organization the call acts in, by ID (a UUID). When present, the server resolves the session organization
+            from it instead of the caller's selected organization, and runs its membership and permission checks there.
+            A caller who is not a live member of the named organization receives the same 404 as an unknown resource.
+            Omitted, the caller's selected organization applies.
+          schema:
+            type: string
+            minLength: 36
+            maxLength: 36
+            pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
       responses:
         '200':
           description: Current user profile and role context
@@ -67803,6 +67836,12 @@ paths:
                           db: total_count
                           json: totalCount
                 additionalProperties: false
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
         '401':
           description: Expired JWT token used or insufficient privilege
           content:
@@ -67811,6 +67850,12 @@ paths:
                 type: string
         '403':
           description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Result not found
           content:
             text/plain:
               schema:
@@ -67989,10 +68034,17 @@ paths:
       tags:
         - Connection_API_Connections
       operationId: getConnections
+      x-mcp:
+        expose: true
+        title: Get connections
+        scope: connections:read
       summary: Get all connections
-      description: >-
+      description: >
         Returns a paginated list of connections for the authenticated user with filtering, sorting and pagination
-        support
+        support. When `X-Current-Orgid` is also sent, it must name the same organization as the `orgId` query; a
+        mismatch is refused with a 400 (the organization selector in docs/mcp-operation-contract.md). When
+        `X-Current-Orgid` is omitted, the `orgId` query must name the organization the call acts in (the session's
+        selected organization); a mismatch is refused with a 403.
       parameters:
         - name: page
           in: query
@@ -68031,6 +68083,19 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: X-Current-Orgid
+          in: header
+          required: false
+          description: >-
+            Organization the call acts in, by ID (a UUID). When present, the server resolves the session organization
+            from it instead of the caller's selected organization, and runs its membership and permission checks there.
+            A caller who is not a live member of the named organization receives the same 404 as an unknown resource.
+            Omitted, the caller's selected organization applies.
+          schema:
+            type: string
+            minLength: 36
+            maxLength: 36
+            pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
         - name: filter
           in: query
           description: Filter connections (general filter string)
@@ -69117,8 +69182,26 @@ paths:
                     x-oapi-codegen-extra-tags:
                       json: statusSummary,omitempty
                     x-order: 5
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
         '401':
           description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Result not found
           content:
             text/plain:
               schema:

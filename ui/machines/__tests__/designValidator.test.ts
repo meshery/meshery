@@ -1,4 +1,5 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { createActor } from 'xstate';
 
 // designValidator pulls in `@/rtk-query/meshModel`, `@/rtk-query/design`, and
 // `@/rtk-query/utils` which transitively boot the redux store + RTK query API
@@ -23,7 +24,10 @@ vi.mock('@/utils/utils', () => ({
   processDesign: vi.fn(() => ({ components: [] })),
 }));
 
+import { getComponentDefinition } from '@/rtk-query/meshModel';
+import { processDesign } from '@/utils/utils';
 import {
+  designValidationMachine,
   designValidatorCommands,
   designValidatorEvents,
   formatDryRunResponse,
@@ -259,5 +263,88 @@ describe('selectComponentDryRunResults', () => {
       },
     };
     expect(selectComponentDryRunResults(state, 'compA')?.compName).toBe('compA');
+  });
+});
+
+describe('designValidationMachine TAP_ON_ERROR', () => {
+  afterEach(() => {
+    vi.mocked(getComponentDefinition).mockReset();
+    vi.mocked(processDesign).mockReset();
+    vi.mocked(processDesign).mockImplementation(() => ({ components: [] }));
+  });
+
+  const tap = designValidatorEvents.tapOnError({
+    error: { instancePath: '/spec/replicas', keyword: 'type' },
+    type: 'schemaValidation',
+    component: { id: 'c-1' },
+  });
+
+  it('emits a tap while idle', () => {
+    const actor = createActor(designValidationMachine).start();
+    const listener = vi.fn();
+    actor.on(DESIGN_VALIDATOR_EVENTS.TAP_ON_ERROR, listener);
+
+    actor.send(tap);
+
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener.mock.calls[0][0]).toEqual(tap);
+    actor.stop();
+  });
+
+  // ValidateDesign requests a validation when it mounts and lists the previous
+  // results while component definitions load, so its errors are tappable while the
+  // machine is still resolving that request. A tap handled only in idle was
+  // silently dropped for the whole definition fetch.
+  it('emits a tap while a design validation is resolving component definitions', () => {
+    vi.mocked(processDesign).mockImplementation(() => ({
+      components: [
+        {
+          component: { kind: 'Deployment', version: 'apps/v1' },
+          modelReference: { name: 'kubernetes' },
+        },
+      ],
+    }));
+    vi.mocked(getComponentDefinition).mockImplementation(() => new Promise(() => {}));
+
+    const actor = createActor(designValidationMachine).start();
+    const listener = vi.fn();
+    actor.on(DESIGN_VALIDATOR_EVENTS.TAP_ON_ERROR, listener);
+
+    actor.send(designValidatorCommands.validateDesignSchema({ design: { components: [] } }));
+    expect(actor.getSnapshot().matches('validateDesignSchema')).toBe(true);
+
+    actor.send(tap);
+
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener.mock.calls[0][0]).toEqual(tap);
+    // The tap must not cancel the validation it interrupted.
+    expect(actor.getSnapshot().matches('validateDesignSchema')).toBe(true);
+    actor.stop();
+  });
+
+  // Kanvas validates a component every time its configuration changes, which is
+  // what follows opening the configurator from a tap.
+  it('emits a tap while a component validation is resolving its definition', () => {
+    vi.mocked(getComponentDefinition).mockImplementation(() => new Promise(() => {}));
+
+    const actor = createActor(designValidationMachine).start();
+    const listener = vi.fn();
+    actor.on(DESIGN_VALIDATOR_EVENTS.TAP_ON_ERROR, listener);
+
+    actor.send(
+      designValidatorCommands.validateDesignComponent({
+        component: {
+          id: 'c-1',
+          component: { kind: 'Deployment', version: 'apps/v1' },
+          modelReference: { name: 'kubernetes' },
+        },
+      }),
+    );
+    expect(actor.getSnapshot().matches('validateComponentSchema')).toBe(true);
+
+    actor.send(tap);
+
+    expect(listener).toHaveBeenCalledTimes(1);
+    actor.stop();
   });
 });
