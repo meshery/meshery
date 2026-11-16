@@ -154,7 +154,11 @@ func redactTokens(s string) string {
 	return urlQuery.ReplaceAllString(s, "?REDACTED")
 }
 
-func handleWsMessage(conn *wsConn) {
+// handleWsMessage echoes client messages until the connection fails, then
+// calls onExit. ReadMessage is what notices a dead connection - a close frame,
+// a reset, or EOF - so this is where the connection's cleanup starts.
+func handleWsMessage(conn *wsConn, onExit func()) {
+	defer onExit()
 	for {
 		// read in a message
 		messageType, p, err := conn.ReadMessage()
@@ -206,20 +210,28 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		authWsChan <- p.token != ""
 		p.mu.Unlock()
 
-		ws.SetCloseHandler(func(code int, text string) error {
+		// detach stops this connection's auth listener by closing its channel,
+		// unless a newer connection has already replaced (and closed) it.
+		detach := func() {
 			p.mu.Lock()
 			if p.authWsChan == authWsChan {
 				close(p.authWsChan)
 				p.authWsChan = nil
 			}
 			p.mu.Unlock()
-			err := ws.Close()
-			if err != nil {
-				return err
-			}
-			return nil
+		}
+
+		ws.SetCloseHandler(func(code int, text string) error {
+			detach()
+			return ws.Close()
 		})
-		go handleWsMessage(ws)
+		// When the read loop ends the connection is gone, with or without a
+		// close frame, so detach then too; otherwise the listener would keep
+		// running and log a failed write on every auth change.
+		go handleWsMessage(ws, func() {
+			detach()
+			_ = ws.Close()
+		})
 		// Send the handshake before starting the listener, so the client sees
 		// it before the queued auth state.
 		err = ws.WriteMessage(1, []byte(InitiationSuccessful))
@@ -230,17 +242,18 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		go func() {
 			for res := range authWsChan {
 				log.Println("Got msg from authChan: ", res)
-				if res == true {
-					if werr := ws.WriteMessage(1, []byte(AuthenticatedMsg)); werr != nil {
-						log.Println(werr)
-					}
-					log.Println("Sent message to ws client: ", AuthenticatedMsg)
-				} else {
-					if werr := ws.WriteMessage(1, []byte(UnauthenticatedMsg)); werr != nil {
-						log.Println(werr)
-					}
-					log.Println("Sent message to ws client: ", UnauthenticatedMsg)
+				msg := UnauthenticatedMsg
+				if res {
+					msg = AuthenticatedMsg
 				}
+				if werr := ws.WriteMessage(1, []byte(msg)); werr != nil {
+					// The connection is broken. Closing it ends the read loop,
+					// which detaches this channel and ends this loop.
+					log.Println(werr)
+					_ = ws.Close()
+					continue
+				}
+				log.Println("Sent message to ws client: ", msg)
 			}
 		}()
 
