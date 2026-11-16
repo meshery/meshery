@@ -1,15 +1,17 @@
 export const podNameMapper = (serviceMeshName, podName) => {
   switch (serviceMeshName) {
     case 'istio':
-      if (podName.includes('istio-galley')) return 'Istio Galley';
-      if (podName.includes('istio-ingressgateway')) return 'Istio Ingress Gateway';
-      if (podName.includes('istio-egressgateway')) return 'Istio Egress Gateway';
-      if (podName.includes('istio-policy')) return 'Istio Policy';
-      if (podName.includes('istio-citadel')) return 'Istio Citadel';
-      if (podName.includes('istio-telemetry')) return 'Istio Telemetry';
-      if (podName.includes('istio-pilot')) return 'Istio Pilot';
-      if (podName.includes('istio-tracing')) return 'Istio Tracing';
-      if (podName.includes('istio-sidecar-injector')) return 'Istio Sidecar Injector';
+      if (typeof podName === 'string') {
+        if (podName.includes('istio-galley')) return 'Istio Galley';
+        if (podName.includes('istio-ingressgateway')) return 'Istio Ingress Gateway';
+        if (podName.includes('istio-egressgateway')) return 'Istio Egress Gateway';
+        if (podName.includes('istio-policy')) return 'Istio Policy';
+        if (podName.includes('istio-citadel')) return 'Istio Citadel';
+        if (podName.includes('istio-telemetry')) return 'Istio Telemetry';
+        if (podName.includes('istio-pilot')) return 'Istio Pilot';
+        if (podName.includes('istio-tracing')) return 'Istio Tracing';
+        if (podName.includes('istio-sidecar-injector')) return 'Istio Sidecar Injector';
+      }
       break;
     case 'kiali':
       return 'Kiali';
@@ -20,12 +22,18 @@ export const podNameMapper = (serviceMeshName, podName) => {
     default:
       break;
   }
+
+  if (!podName || typeof podName !== 'string') {
+    return '';
+  }
+
   const podNameArr = podName.split('-');
 
   if (Array.isArray(podNameArr)) {
     const prettifiedPodName = podNameArr
       .slice(0, -2)
-      .map((word) => word[0].toUpperCase() + word.substr(1))
+      .filter(Boolean)
+      .map((word) => word[0].toUpperCase() + word.slice(1))
       .join(' ');
 
     return prettifiedPodName;
@@ -33,8 +41,12 @@ export const podNameMapper = (serviceMeshName, podName) => {
   return podName;
 };
 
-export const versionMapper = (versionName) =>
-  versionName.charAt(0) === 'v' ? versionName : `v${versionName}`;
+export const versionMapper = (versionName) => {
+  if (!versionName || typeof versionName !== 'string') {
+    return '';
+  }
+  return versionName.charAt(0) === 'v' ? versionName : `v${versionName}`;
+};
 
 export const TelemetryComps = {
   GRAFANA: 'grafana',
@@ -43,10 +55,14 @@ export const TelemetryComps = {
 
 // maps objects to telemetry comp if name is one of "TelemetryComps"
 export function isTelemetryComponent(name) {
+  if (!name || typeof name !== 'string') {
+    return '';
+  }
   const comps = Object.values(TelemetryComps);
-  for (const comp in comps) {
-    if (name?.toLowerCase().includes(comps[comp])) {
-      return comps[comp];
+  const lowerName = name.toLowerCase();
+  for (const comp of comps) {
+    if (lowerName.includes(comp)) {
+      return comp;
     }
   }
   return '';
