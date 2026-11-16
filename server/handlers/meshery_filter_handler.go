@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
-	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/utils"
@@ -27,12 +26,15 @@ func (h *Handler) GetMesheryFilterFileHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	filterID := mux.Vars(r)["id"]
+	filterID, ok := h.requirePathUUID(rw, r, "id")
+	if !ok {
+		return
+	}
 
 	resp, err := provider.GetMesheryFilterFile(r, filterID)
 	if err != nil {
 		h.log.Error(ErrGetFilter(err))
-		writeMeshkitError(rw, ErrGetFilter(err), http.StatusNotFound)
+		writeMeshkitError(rw, ErrGetFilter(err), providerStatusOrInternal(err))
 		return
 	}
 
@@ -291,12 +293,8 @@ func (h *Handler) DeleteMesheryFilterHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	filterID := mux.Vars(r)["id"]
-	filterUUID, err := uuid.FromString(filterID)
-	if err != nil || filterUUID == uuid.Nil {
-		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid filter ID: %s", filterID))
-		h.log.Warn(invalidIDErr)
-		writeMeshkitError(rw, invalidIDErr, http.StatusBadRequest)
+	filterID, ok := h.requirePathUUID(rw, r, "id")
+	if !ok {
 		return
 	}
 
@@ -326,18 +324,33 @@ func (h *Handler) CloneMesheryFilterHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	filterID := mux.Vars(r)["id"]
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	filterID, ok := h.requirePathUUID(rw, r, "id")
+	if !ok {
+		return
+	}
+
 	var parsedBody *models.MesheryCloneFilterRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || filterID == "" {
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
+	if parsedBody == nil || parsedBody.Name == "" {
+		cloneErr := ErrCloneFilter(fmt.Errorf("filter name is required"))
+		h.log.Error(cloneErr)
+		writeMeshkitError(rw, cloneErr, http.StatusBadRequest)
 		return
 	}
 
 	resp, err := provider.CloneMesheryFilter(r, filterID, parsedBody)
 	if err != nil {
 		h.log.Error(ErrCloneFilter(err))
-		writeMeshkitError(rw, ErrCloneFilter(err), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrCloneFilter(err), providerStatusOrInternal(err))
 		return
 	}
 
@@ -499,12 +512,15 @@ func (h *Handler) GetMesheryFilterHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	filterID := mux.Vars(r)["id"]
+	filterID, ok := h.requirePathUUID(rw, r, "id")
+	if !ok {
+		return
+	}
 
 	resp, err := provider.GetMesheryFilter(r, filterID)
 	if err != nil {
 		h.log.Error(ErrGetFilter(err))
-		writeMeshkitError(rw, ErrGetFilter(err), http.StatusNotFound)
+		writeMeshkitError(rw, ErrGetFilter(err), providerStatusOrInternal(err))
 		return
 	}
 
