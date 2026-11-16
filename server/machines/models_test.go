@@ -25,6 +25,7 @@ type stubAction struct {
 	execNext  EventType
 	execEvent *events.Event
 	execErr   error
+	execCount int
 }
 
 func (a *stubAction) ExecuteOnEntry(context.Context, interface{}, interface{}) (EventType, *events.Event, error) {
@@ -32,6 +33,7 @@ func (a *stubAction) ExecuteOnEntry(context.Context, interface{}, interface{}) (
 }
 
 func (a *stubAction) Execute(context.Context, interface{}, interface{}) (EventType, *events.Event, error) {
+	a.execCount++
 	return a.execNext, a.execEvent, a.execErr
 }
 
@@ -57,6 +59,17 @@ type fakeProvider struct {
 
 	updateCalls  int
 	lastUpdateTo connections.ConnectionStatus
+
+	// conditionalCalls counts UpdateConnectionStatusIf calls, and
+	// lastConditionalApplied records whether the last one applied.
+	// flipStatusOnStatusWrite, when set, moves the stored status to that
+	// value at the start of the next UpdateConnectionStatusIf call, before
+	// the condition is evaluated: it simulates a status change (for
+	// example a user disconnect) landing between SendEvent's status read
+	// and its conditional write. It is cleared after one use.
+	conditionalCalls        int
+	lastConditionalApplied  bool
+	flipStatusOnStatusWrite connections.ConnectionStatus
 }
 
 func (f *fakeProvider) GetConnectionByID(_ string, connectionID core.Uuid) (*connections.Connection, int, error) {
@@ -82,6 +95,38 @@ func (f *fakeProvider) UpdateConnectionById(_ string, conn *connections.Connecti
 		Kind:   conn.Kind,
 		Status: conn.Status,
 	}, nil
+}
+
+// UpdateConnectionStatusIf mirrors the local store's conditional write:
+// the status moves to newStatus only when it is currently one of
+// fromStatuses, and reports whether the write applied. It mirrors
+// UpdateConnectionById's observable behavior for the tests that rely on
+// it: a configured updateErr is returned (the write is ambiguous), and
+// lastUpdateTo records the status the machine tried to persist.
+func (f *fakeProvider) UpdateConnectionStatusIf(_ string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
+	f.conditionalCalls++
+	if f.updateErr != nil {
+		f.lastUpdateTo = newStatus
+		return false, nil, f.updateErr
+	}
+	if f.flipStatusOnStatusWrite != "" {
+		f.status = f.flipStatusOnStatusWrite
+		f.flipStatusOnStatusWrite = ""
+	}
+	for _, fromStatus := range fromStatuses {
+		if f.status == fromStatus {
+			f.status = newStatus
+			f.lastUpdateTo = newStatus
+			f.lastConditionalApplied = true
+			return true, &connections.Connection{
+				ID:     connectionID,
+				Kind:   "kubernetes",
+				Status: newStatus,
+			}, nil
+		}
+	}
+	f.lastConditionalApplied = false
+	return false, nil, nil
 }
 
 // newTestMachine builds a minimal three-state machine:
@@ -220,7 +265,9 @@ func TestSendEvent_FailureReturnsOriginalErrorEvent(t *testing.T) {
 	if sm.CurrentState != NOTFOUND {
 		t.Fatalf("expected machine to settle in %q, got %q", NOTFOUND, sm.CurrentState)
 	}
-	if provider.updateCalls == 0 {
+	// A Discovery writes through the conditional method now, so the
+	// "an update ran" guard reads its counter, not UpdateConnectionById's.
+	if provider.conditionalCalls == 0 {
 		t.Fatal("expected the connection status to be updated even on failure")
 	}
 	if provider.lastUpdateTo != connections.NOTFOUND {
@@ -801,6 +848,85 @@ func TestSendEvent_PriorStatusResolvesAManualReconnect(t *testing.T) {
 	}
 }
 
+// A background Discovery that completes after the user disconnected the
+// connection must not move it back to connected and must not persist a
+// resolution: the stored status (DISCONNECTED) is outside the set a
+// background Discovery may manage, so the conditional write applies to
+// zero rows and SendEvent reports nothing (issue #23248).
+func TestSendEvent_DiscoveryDoesNotMoveDisconnectedConnection(t *testing.T) {
+	provider := &fakeProvider{status: connections.DISCONNECTED}
+	sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+	sm.ConditionComponent = "k8s-connection"
+
+	event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+	if err != nil || event != nil {
+		t.Fatalf("got event %v, err %v; want no event and no error", event, err)
+	}
+	if provider.conditionalCalls != 1 || provider.lastConditionalApplied {
+		t.Fatalf("conditional write calls = %d, applied = %v; want 1 call that did not apply", provider.conditionalCalls, provider.lastConditionalApplied)
+	}
+	if provider.updateCalls != 0 {
+		t.Fatalf("unconditional UpdateConnectionById calls = %d; want 0 (a Discovery must never take the unconditional path)", provider.updateCalls)
+	}
+	if provider.status != connections.DISCONNECTED {
+		t.Fatalf("stored status = %q; want %q", provider.status, connections.DISCONNECTED)
+	}
+	if sm.CurrentState != InitialState {
+		t.Fatalf("machine state = %q; want the pre-transition state %q (rolled back)", sm.CurrentState, InitialState)
+	}
+}
+
+// The happy path is unchanged: a Discovery that completes while the
+// connection is still NOTFOUND writes its state back and resolves the
+// unreachable condition, as before.
+func TestSendEvent_DiscoveryResolvesNotFoundConnection(t *testing.T) {
+	provider := &fakeProvider{status: connections.ConnectionStatus(NOTFOUND)}
+	sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+	sm.ConditionComponent = "k8s-connection"
+
+	event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+	if err != nil || event == nil {
+		t.Fatalf("got event %v, err %v; want the resolution", event, err)
+	}
+	want := models.ConditionKey("k8s-connection", sm.ID.String(), ConditionUnreachable)
+	if event.CorrelationKey == nil || *event.CorrelationKey != want || event.ResolvedAt == nil {
+		t.Fatalf("got key %v resolvedAt %v; want a resolution of %q", event.CorrelationKey, event.ResolvedAt, want)
+	}
+	if provider.conditionalCalls != 1 || !provider.lastConditionalApplied {
+		t.Fatalf("conditional write calls = %d, applied = %v; want 1 call that applied", provider.conditionalCalls, provider.lastConditionalApplied)
+	}
+	if provider.status != connections.DISCOVERED {
+		t.Fatalf("stored status = %q; want %q", provider.status, connections.DISCOVERED)
+	}
+}
+
+// The race itself: the user disconnects between SendEvent's status read
+// and its conditional write. The write must see the new stored status
+// (DISCONNECTED) and refuse, leaving the connection disconnected with no
+// resolution — a plain check-then-write would have overwritten it.
+func TestSendEvent_DiscoveryStatusChangeMidWriteIsNotOverwritten(t *testing.T) {
+	provider := &fakeProvider{
+		status:                  connections.ConnectionStatus(NOTFOUND),
+		flipStatusOnStatusWrite: connections.DISCONNECTED,
+	}
+	sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+	sm.ConditionComponent = "k8s-connection"
+
+	event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+	if err != nil || event != nil {
+		t.Fatalf("got event %v, err %v; want no event and no error", event, err)
+	}
+	if provider.conditionalCalls != 1 || provider.lastConditionalApplied {
+		t.Fatalf("conditional write calls = %d, applied = %v; want 1 call that did not apply", provider.conditionalCalls, provider.lastConditionalApplied)
+	}
+	if provider.status != connections.DISCONNECTED {
+		t.Fatalf("stored status = %q; want %q (the disconnect must win)", provider.status, connections.DISCONNECTED)
+	}
+	if sm.CurrentState != InitialState {
+		t.Fatalf("machine state = %q; want the pre-transition state %q (rolled back)", sm.CurrentState, InitialState)
+	}
+}
+
 // IsRecurrence holds only for an event without an error that carries an open
 // condition's key.
 func TestIsRecurrence(t *testing.T) {
@@ -835,6 +961,9 @@ func TestSendEvent_StatusUpdateFailureIsAnError(t *testing.T) {
 		"update":   {status: connections.CONNECTED, updateErr: errors.New("database is locked")},
 	} {
 		sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+		initialState := sm.CurrentState
+		initialPrevState := sm.PreviousState
+
 		event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
 		if err == nil || event == nil {
 			t.Fatalf("%s: SendEvent = (%v, %v), want a failure event and an error", name, event, err)
@@ -842,5 +971,72 @@ func TestSendEvent_StatusUpdateFailureIsAnError(t *testing.T) {
 		if event.Severity != events.Error {
 			t.Errorf("%s: severity = %q, want %q", name, event.Severity, events.Error)
 		}
+		if sm.CurrentState != initialState {
+			t.Errorf("%s: currentState = %q, want rolled back state %q", name, sm.CurrentState, initialState)
+		}
+		if sm.PreviousState != initialPrevState {
+			t.Errorf("%s: previousState = %q, want rolled back state %q", name, sm.PreviousState, initialPrevState)
+		}
+	}
+}
+
+// TestSendEvent_StatusUpdateFailureRollbackEnablesRetry verifies that when a
+// database status update fails, in-memory state rolls back so subsequent retry
+// events do not fail with ErrInvalidTransitionEvent.
+func TestSendEvent_StatusUpdateFailureRollbackEnablesRetry(t *testing.T) {
+	provider := &fakeProvider{status: connections.CONNECTED, updateErr: errors.New("database is locked")}
+	action := &stubAction{execNext: NoOp}
+	sm := newTestMachine(t, provider, action)
+
+	// First attempt fails during status persistence.
+	_, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+	if err == nil {
+		t.Fatal("expected SendEvent to fail when DB update errors")
+	}
+	if sm.CurrentState != InitialState {
+		t.Fatalf("expected state to roll back to %q, got %q", InitialState, sm.CurrentState)
+	}
+	if action.execCount != 1 {
+		t.Fatalf("expected action to have executed once on first attempt, got %d", action.execCount)
+	}
+
+	// Resolve the transient database error and retry the same event.
+	provider.updateErr = nil
+	event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+	if err != nil {
+		t.Fatalf("expected retry SendEvent to succeed after DB recovery, got error: %v", err)
+	}
+	if event == nil || event.Severity != events.Informational {
+		t.Fatalf("expected informational success event on retry, got %v", event)
+	}
+	if sm.CurrentState != DISCOVERED {
+		t.Fatalf("expected currentState = %q after successful retry, got %q", DISCOVERED, sm.CurrentState)
+	}
+	if action.execCount != 2 {
+		t.Fatalf("expected action to have re-executed safely on retry, got %d", action.execCount)
+	}
+}
+
+// TestSendEvent_AmbiguousUpdateSucceededDoesNotRollback verifies that when
+// UpdateConnectionById returns an error (e.g. read-back or transport error) but
+// the database write actually succeeded, SendEvent reconciles the persisted state
+// and does not roll back in-memory state.
+func TestSendEvent_AmbiguousUpdateSucceededDoesNotRollback(t *testing.T) {
+	provider := &fakeProvider{
+		status:    connections.DISCOVERED, // simulated state persisted in database
+		updateErr: errors.New("read-back failed after write"),
+	}
+	action := &stubAction{execNext: NoOp}
+	sm := newTestMachine(t, provider, action)
+
+	event, err := sm.SendEvent(newTestContext(t), Discovery, nil)
+	if err != nil {
+		t.Fatalf("expected SendEvent to reconcile and succeed without error, got %v", err)
+	}
+	if sm.CurrentState != DISCOVERED {
+		t.Fatalf("expected currentState to remain %q, got %q", DISCOVERED, sm.CurrentState)
+	}
+	if event == nil || event.Severity != events.Informational {
+		t.Fatalf("expected informational success event, got %v", event)
 	}
 }

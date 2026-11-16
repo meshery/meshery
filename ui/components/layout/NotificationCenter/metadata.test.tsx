@@ -43,10 +43,6 @@ vi.mock('../../data-formatter', () => ({
   reorderObjectProperties: (obj: any) => obj,
 }));
 
-vi.mock('../../../utils/objects', () => ({
-  isEmptyAtAllDepths: (obj: any) => !obj || Object.keys(obj).length === 0,
-}));
-
 vi.mock('./notification', () => ({
   canTruncateDescription: (s: string) => (s || '').length > 62,
 }));
@@ -215,6 +211,17 @@ describe('LinkFormatters and PropertyLinkFormatters', () => {
 });
 
 describe('FormattedMetadata', () => {
+  it('keeps metadata containing only numeric and boolean values', () => {
+    render(
+      <FormattedMetadata
+        event={{ category: 'connection', action: 'update', metadata: { count: 0, enabled: false } }}
+      />,
+    );
+    expect(screen.queryByTestId('empty-state')).not.toBeInTheDocument();
+    expect(screen.getByTestId('fsd-data')).toHaveTextContent('"count":0');
+    expect(screen.getByTestId('fsd-data')).toHaveTextContent('"enabled":false');
+  });
+
   it('hands the error formatter the event it renders', () => {
     // The error formatter once read a free `event` identifier, which resolved
     // to the browser's window.event instead of the notification's event.

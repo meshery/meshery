@@ -45,7 +45,7 @@ func waitWithDeadline(t *testing.T, wait func() error) error {
 func TestWaitForResponseOnEventStream(t *testing.T) {
 	const sse = "text/event-stream"
 
-	type waitFunc func(*config.MesheryCtlConfig, string) (string, error)
+	type waitFunc func(*config.MesheryCtlConfig, string, string) (string, error)
 	commands := []struct {
 		name       string
 		wait       waitFunc
@@ -104,7 +104,7 @@ func TestWaitForResponseOnEventStream(t *testing.T) {
 					eventStreamResponder(tt.status, tt.contentType, tt.body))
 
 				err = waitWithDeadline(t, func() error {
-					_, err := command.wait(mctlCfg, "mesh is now installed")
+					_, err := command.wait(mctlCfg, "mesh is now installed", "")
 					return err
 				})
 
@@ -116,4 +116,36 @@ func TestWaitForResponseOnEventStream(t *testing.T) {
 			})
 		}
 	}
+}
+
+// TestWaitIgnoresOtherOperations verifies that a result is only accepted from
+// the operation the command started, when the server reports its ID.
+func TestWaitIgnoresOtherOperations(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	utils.TokenFlag = utils.GetToken(t)
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	require.NoError(t, err)
+
+	// Another operation fails first, then this command's operation succeeds.
+	body := `data: {"summary":"failed","details":"Error installing","operation_id":"other-op"}` + "\n\n" +
+		`data: {"summary":"done","details":"mesh is now installed","operation_id":"my-op"}` + "\n\n"
+	httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/system/adapter/events?client=cli_deploy",
+		eventStreamResponder(http.StatusOK, "text/event-stream", body))
+
+	err = waitWithDeadline(t, func() error {
+		_, err := waitForDeployResponse(mctlCfg, "mesh is now installed", "my-op")
+		return err
+	})
+	assert.NoError(t, err)
+}
+
+// TestOperationIDFromResponse verifies reading the operation ID returned by the
+// server, and that an older server's empty response gives no ID.
+func TestOperationIDFromResponse(t *testing.T) {
+	assert.Equal(t, "my-op", operationIDFromResponse(`{"operationId":"my-op"}`))
+	assert.Equal(t, "", operationIDFromResponse(""))
+	assert.Equal(t, "", operationIDFromResponse("not json"))
 }

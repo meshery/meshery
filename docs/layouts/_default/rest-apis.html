@@ -589,7 +589,9 @@
                         {{ end }}
                       </div>
                     {{ else }}
-                      <p class="rest-api-muted">Schema: <code>{{ $schemaType }}</code></p>
+                      {{ if index $schema "description" }}
+                        <p class="rest-api-muted">Schema: <code>{{ $schemaType }}</code></p>
+                      {{ end }}
                     {{ end }}
 
                     {{ if $example }}
@@ -742,7 +744,9 @@
                               {{ end }}
                             </div>
                           {{ else }}
-                            <p class="rest-api-muted">Schema: <code>{{ $schemaType }}</code></p>
+                            {{ if index $schema "description" }}
+                              <p class="rest-api-muted">Schema: <code>{{ $schemaType }}</code></p>
+                            {{ end }}
                           {{ end }}
 
                           {{ if $example }}
