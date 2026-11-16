@@ -422,12 +422,21 @@ func resolveComponentPath(path []string, comp *component.ComponentDefinition, ma
 // converts the component with toGenericMap on every call for such paths, so
 // routing them through maps keeps the one-conversion-per-pass guarantee for
 // non-configuration refs too (e.g. ["displayName"]). Configuration paths
-// are unchanged: they read the live configuration, including alias resolution.
+// are unchanged, except that an aliased component's parent is also read from
+// the cache: getComponentConfiguration converts the parent on every call,
+// so without this the parent would be converted once per candidate pair. A
+// failed conversion still yields nil, as before.
 func valueForComponentAtPath(path []string, comp *component.ComponentDefinition, design *pattern.PatternFile, maps componentMapCache) interface{} {
-	if len(path) > 0 && path[0] != "configuration" {
-		return objectGetNested(maps.get(comp), path, nil)
+	if len(path) == 0 {
+		return nil
 	}
-	return configurationForComponentAtPath(path, comp, design)
+	if path[0] == "configuration" {
+		if parent, refPath := resolveComponentAlias(comp.ID.String(), design); parent != nil {
+			return objectGetNested(objectGetNested(maps.get(parent), refPath, nil), popFirst(path), nil)
+		}
+		return configurationForComponentAtPath(path, comp, design)
+	}
+	return objectGetNested(maps.get(comp), path, nil)
 }
 
 // isValidBindingTyped checks if two components match via a binding selector's match field.

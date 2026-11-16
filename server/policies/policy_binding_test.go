@@ -5,6 +5,7 @@ import (
 	"sort"
 	"testing"
 
+	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
@@ -262,6 +263,62 @@ func TestIsValidBindingCachesNonConfigurationLookups(t *testing.T) {
 		if c > 1 {
 			t.Errorf("component %s was converted %d times for non-configuration lookups, want at most 1", owner, c)
 		}
+	}
+}
+
+// TestIsValidBindingCachesAliasParentLookups checks that a configuration
+// lookup on an aliased component converts the alias parent at most once per
+// pass: the parent's map comes from the same per-pass cache, not from a
+// fresh conversion on every candidate check.
+func TestIsValidBindingCachesAliasParentLookups(t *testing.T) {
+	counts := map[string]int{}
+	design, relDef := buildWildcardBindingFixture(1, counts)
+
+	var role, rb *component.ComponentDefinition
+	for _, c := range design.Components {
+		switch c.Component.Kind {
+		case "Role":
+			role = c
+		case "RoleBinding":
+			rb = c
+		}
+	}
+
+	// Alias role-0 to a parent component whose configuration names the role
+	// the RoleBinding references, so the ["configuration", "name"] lookup on
+	// role-0 reads the parent's configuration through the alias.
+	parent := &component.ComponentDefinition{
+		Component:     component.Component{Kind: "Role"},
+		Configuration: map[string]interface{}{"name": "role-0", "probe": marshalProbe{owner: "parent-0", counts: counts}},
+	}
+	parent.ID = staticUUID("parent-0")
+	design.Components = append(design.Components, parent)
+
+	aliases := map[string]core.ResolvedAlias{
+		role.ID.String(): {
+			AliasComponentId:     role.ID,
+			ResolvedParentId:     parent.ID,
+			ResolvedRefFieldPath: []string{"configuration"},
+		},
+	}
+	design.Metadata = &pattern.PatternFile_Metadata{ResolvedAliases: &aliases}
+
+	// Role -> RoleBinding uses configuration/name and configuration/roleRef/name.
+	fromSel := (*relDef.Selectors)[0].Allow.From[0]
+
+	maps := componentMapCache{}
+	for i := 0; i < 4; i++ {
+		if !isValidBinding(role, rb, fromSel, design, maps) {
+			t.Fatal("expected role-0 and rb-0 to be a valid binding through the alias")
+		}
+	}
+	for owner, c := range counts {
+		if c > 1 {
+			t.Errorf("component %s was converted %d times for alias-parent lookups, want at most 1", owner, c)
+		}
+	}
+	if counts["parent-0"] != 1 {
+		t.Errorf("alias parent was converted %d times, want exactly 1", counts["parent-0"])
 	}
 }
 
