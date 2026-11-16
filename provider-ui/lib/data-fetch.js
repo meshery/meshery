@@ -30,6 +30,13 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
         errorFn(body);
         return;
       }
+      // An empty 2xx body (e.g. 204 No Content) is a success with no
+      // payload: pass undefined rather than "", so callers can tell "no
+      // data" apart from a text response.
+      if (body === "") {
+        successFn(undefined);
+        return;
+      }
       let result;
       try {
         result = JSON.parse(body);
