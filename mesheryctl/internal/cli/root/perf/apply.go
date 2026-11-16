@@ -58,6 +58,112 @@ var (
 	disableCert        bool
 )
 
+func loadSMPConfigFile(path string) (*servermodels.PerformanceTestConfigFile, error) {
+	// Read the test configuration file
+	smpConfig, err := os.ReadFile(path)
+	if err != nil {
+		return nil, ErrReadFilepath(errors.Wrap(err, "Unable to read test configuration file. \n"))
+	}
+
+	testConfig := servermodels.PerformanceTestConfigFile{}
+
+	err = yaml.Unmarshal(smpConfig, &testConfig)
+	if err != nil {
+		return nil, ErrFailUnmarshalFile(err)
+	}
+
+	if testConfig.Config == nil || len(testConfig.Config.Clients) == 0 {
+		return nil, ErrInvalidTestConfigFile()
+	}
+
+	return &testConfig, nil
+}
+
+func consolidateSMPConfig(testConfig *servermodels.PerformanceTestConfigFile) {
+	testClient := testConfig.Config.Clients[0]
+
+	// Override values from configuration if passed on as flags
+	if testName == "" {
+		testName = testConfig.Config.Name
+	}
+
+	if testURL == "" {
+		testURL = firstString(testClient.EndpointUrls)
+	}
+
+	if testMesh == "" {
+		testMesh = testConfig.ServiceMesh
+	}
+
+	if qps == "" {
+		qps = strconv.Itoa(testClient.Rps)
+	}
+
+	if concurrentRequests == "" {
+		concurrentRequests = strconv.Itoa(testClient.Connections)
+	}
+
+	if testDuration == "" {
+		testDuration = testConfig.Config.Duration
+	}
+
+	if loadGenerator == "" {
+		loadGenerator = testClient.LoadGenerator
+	}
+
+	if loadTestBody == "" {
+		loadTestBody = testClient.Body
+	}
+}
+
+func consolidateExistingProfileConfig(profile *perfprofile.PerformanceProfile, hasSMPFile bool) (string, string, string) {
+	if testURL == "" {
+		testURL = firstString(profile.Endpoints)
+	}
+
+	// reset profile name without %20
+	// pull test configuration from the profile only if a test configuration is not provided and flag is not set
+	if !hasSMPFile {
+		profileName = profile.Name
+
+		if loadGenerator == "" {
+			loadGenerator = firstString(profile.LoadGenerators)
+		}
+
+		if concurrentRequests == "" {
+			concurrentRequests = strconv.Itoa(profile.ConcurrentRequest)
+		}
+
+		if qps == "" {
+			qps = strconv.Itoa(profile.QPS)
+		}
+
+		if testDuration == "" {
+			testDuration = profile.Duration
+		}
+
+		if testMesh == "" {
+			testMesh = profile.ServiceMesh
+		}
+
+		if loadTestBody == "" {
+			loadTestBody = profile.RequestBody
+		}
+
+	}
+	return profile.RequestHeaders, profile.RequestCookies, profile.ContentType
+}
+
+func validateTestURL(rawURL string) error {
+	if rawURL == "" {
+		return ErrNoTestURL()
+	}
+	if !govalidator.IsURL(rawURL) {
+		return ErrNotValidURL()
+	}
+	return nil
+}
+
 var linkDocPerfApply = map[string]string{
 	"link":    "![perf-apply-usage](../../../images/perf-apply.png)",
 	"caption": "Usage of mesheryctl perf apply",
@@ -140,60 +246,12 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			return err
 		}
 
-		// Importing SMP Configuration from the file
-		// TODO: Refactor: Move checks to a single location and consolidate for file, flags and performance profile
 		if filePath != "" {
-			// Read the test configuration file
-			smpConfig, err := os.ReadFile(filePath)
+			testConfig, err := loadSMPConfigFile(filePath)
 			if err != nil {
-				return ErrReadFilepath(errors.Wrap(err, "Unable to read test configuration file. \n"))
+				return err
 			}
-
-			testConfig := servermodels.PerformanceTestConfigFile{}
-
-			err = yaml.Unmarshal(smpConfig, &testConfig)
-			if err != nil {
-				return ErrFailUnmarshalFile(err)
-			}
-
-			if testConfig.Config == nil || len(testConfig.Config.Clients) == 0 {
-				return ErrInvalidTestConfigFile()
-			}
-
-			testClient := testConfig.Config.Clients[0]
-
-			// Override values from configuration if passed on as flags
-			if testName == "" {
-				testName = testConfig.Config.Name
-			}
-
-			if testURL == "" {
-				testURL = firstString(testClient.EndpointUrls)
-			}
-
-			if testMesh == "" {
-				testMesh = testConfig.ServiceMesh
-			}
-
-			if qps == "" {
-				qps = strconv.Itoa(testClient.Rps)
-			}
-
-			if concurrentRequests == "" {
-				concurrentRequests = strconv.Itoa(testClient.Connections)
-			}
-
-			if testDuration == "" {
-				testDuration = testConfig.Config.Duration
-			}
-
-			if loadGenerator == "" {
-				loadGenerator = testClient.LoadGenerator
-			}
-
-			if loadTestBody == "" {
-				loadTestBody = testClient.Body
-			}
+			consolidateSMPConfig(testConfig)
 		}
 
 		// Run test based on flags
@@ -261,58 +319,15 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				profileID = profiles[index].ID.String()
 			}
 			isExistingProfile = true
-			// what if user passed profile-name but didn't passed the url
-			// we use url from performance profile
-			if testURL == "" {
-				testURL = firstString(profiles[index].Endpoints)
-			}
-
-			// reset profile name without %20
-			// pull test configuration from the profile only if a test configuration is not provided and flag is not set
-			if filePath == "" {
-				profileName = profiles[index].Name
-
-				if loadGenerator == "" {
-					loadGenerator = firstString(profiles[index].LoadGenerators)
-				}
-
-				if concurrentRequests == "" {
-					concurrentRequests = strconv.Itoa(profiles[index].ConcurrentRequest)
-				}
-
-				if qps == "" {
-					qps = strconv.Itoa(profiles[index].QPS)
-				}
-
-				if testDuration == "" {
-					testDuration = profiles[index].Duration
-				}
-
-				if testMesh == "" {
-					testMesh = profiles[index].ServiceMesh
-				}
-
-				if loadTestBody == "" {
-					loadTestBody = profiles[index].RequestBody
-				}
-
-				requestHeaders = profiles[index].RequestHeaders
-				requestCookies = profiles[index].RequestCookies
-				contentType = profiles[index].ContentType
-			}
+			requestHeaders, requestCookies, contentType = consolidateExistingProfileConfig(&profiles[index], filePath != "")
 		}
 
-		if testURL == "" {
-			return ErrNoTestURL()
+		if err := validateTestURL(testURL); err != nil {
+			return err
 		}
 
 		utils.Log.Debugf("performance profile is: %s", profileName)
 		utils.Log.Debugf("test-url set to %s", testURL)
-
-		// Method to check if the entered Test URL is valid or not
-		if validURL := govalidator.IsURL(testURL); !validURL {
-			return ErrNotValidURL()
-		}
 
 		req, err = utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/performance/profiles/"+profileID+"/run", nil)
 		if err != nil {
@@ -397,14 +412,8 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		return "", "", ErrNoProfileName()
 	}
 
-	// ask for test url first
-	if testURL == "" {
-		return "", "", ErrNoTestURL()
-	}
-
-	// Method to check if the entered Test URL is valid or not
-	if validURL := govalidator.IsURL(testURL); !validURL {
-		return "", "", ErrNotValidURL()
+	if err := validateTestURL(testURL); err != nil {
+		return "", "", err
 	}
 
 	if testMesh == "" {

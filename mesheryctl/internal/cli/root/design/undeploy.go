@@ -54,6 +54,18 @@ mesheryctl design undeploy -f [filepath]
 			)
 		}
 
+		if len(args) > 0 && strings.TrimSpace(args[0]) == "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("target cannot be empty"))
+		}
+
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("expected at most one positional argument, got %d", len(args)))
+		}
+
+		if len(args) > 0 && file != "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a positional argument and the --file flag"))
+		}
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {

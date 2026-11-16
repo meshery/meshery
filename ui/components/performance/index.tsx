@@ -35,6 +35,10 @@ export { generatePerformanceProfile } from './performance-helpers';
 let eventStream = null;
 const PERFORMANCE_RTK_TAG = 'Performance_Profile_performance';
 
+/**
+ * MesheryPerformanceComponent_ renders the performance test configuration wizard and runner.
+ * Gated on `Keys.PerformanceManagementViewPerformanceProfiles`. Skips queries when denied.
+ */
 const MesheryPerformanceComponent_ = (props) => {
   const hasPermission = useHasPermission(Keys.PerformanceManagementViewPerformanceProfiles);
   const {
@@ -96,8 +100,12 @@ const MesheryPerformanceComponent_ = (props) => {
   });
   const { notify } = useNotification();
   const dispatch = useDispatch();
-  const { data: userData, isSuccess: isUserDataFetched } =
-    useGetUserPrefWithContextQuery(selectedK8sContexts);
+  const { data: userData, isSuccess: isUserDataFetched } = useGetUserPrefWithContextQuery(
+    selectedK8sContexts,
+    {
+      skip: !hasPermission,
+    },
+  );
 
   const [savePerformanceProfile] = useSavePerformanceProfileMutation();
   const {
@@ -105,7 +113,9 @@ const MesheryPerformanceComponent_ = (props) => {
     isSuccess: isSMPMeshesFetched,
     isError: isSMPMeshError,
     error: smpMeshError,
-  } = useGetMeshQuery();
+  } = useGetMeshQuery(undefined, {
+    skip: !hasPermission,
+  });
 
   // Report a failed mesh list fetch on its own: going through handleError
   // would also stop a running test and close its event stream.
@@ -116,13 +126,17 @@ const MesheryPerformanceComponent_ = (props) => {
   }, [isSMPMeshError, smpMeshError]);
 
   useEffect(() => {
+    if (!hasPermission) return;
+    /**
+     * Fetches available mesh models to populate test form selections.
+     */
     const fetchMeshModels = async () => {
       const { models } = await getMeshModels();
       const modelNames = models.map((model) => model.displayName);
       setMeshModels(modelNames);
     };
     fetchMeshModels();
-  }, []);
+  }, [hasPermission]);
 
   const handleChange = createPerformanceFormChangeHandler({
     setProfileName,
@@ -373,11 +387,12 @@ const MesheryPerformanceComponent_ = (props) => {
     }
   }
   useEffect(() => {
+    if (!hasPermission) return;
     scanForMeshes();
     getLoadTestPrefs();
     getSMPMeshes();
     if (props.runTestOnMount) handleSubmit();
-  }, [userData, isUserDataFetched, smpMeshes]);
+  }, [userData, isUserDataFetched, smpMeshes, hasPermission]);
 
   const getLoadTestPrefs = () => {
     if (!isUserDataFetched || !userData) return;

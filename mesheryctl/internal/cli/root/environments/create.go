@@ -17,6 +17,7 @@ package environments
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
@@ -35,6 +36,8 @@ type cmdEnvironmentCreateFlags struct {
 
 var createEnvironmentFlags cmdEnvironmentCreateFlags
 
+var createUsageMsg = "Usage: mesheryctl environment create --orgId [orgId] --name [name] --description [description]\nRun 'mesheryctl environment create --help' to see detailed help message"
+
 var createEnvironmentCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new environment",
@@ -43,6 +46,12 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/environme
 	Example: `
 // Create a new environment
 mesheryctl environment create --orgId [orgId] --name [name] --description [description]`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", createUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &createEnvironmentFlags)
 	},

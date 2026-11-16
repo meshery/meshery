@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -11,6 +12,7 @@ import (
 	"gorm.io/gorm/clause"
 
 	"github.com/meshery/schemas/models/core"
+	schemasWorkspace "github.com/meshery/schemas/models/v1beta3/workspace"
 
 	"github.com/gofrs/uuid"
 	"gopkg.in/yaml.v2"
@@ -162,7 +164,10 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, se
 	return marshalledResponse, nil
 }
 
-// CloneMesheryPattern clones meshery pattern to private
+// CloneMesheryPattern saves a private copy of a design under a new ID. The copy
+// is a new design: it keeps the source's content and import source, but gets
+// its own creation time, zero usage counters and no catalog data, and its
+// design file carries the copy's id and name at the first version.
 func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
 	var mesheryPattern MesheryPattern
 	patternUUID, err := uuid.FromString(patternID)
@@ -179,29 +184,83 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, cloneP
 		return nil, err
 	}
 
-	mesheryPattern.Visibility = Private
-	mesheryPattern.ID = &id
-	mesheryPattern.Name = clonePatternRequest.Name
+	pf, err := patterns.GetPatternFormat(mesheryPattern.PatternFile)
+	if err != nil {
+		return nil, err
+	}
+	pf.ID = id
+	pf.Name = clonePatternRequest.Name
+	patterns.AssignVersion(pf)
+	patternFile, err := yaml.Marshal(pf)
+	if err != nil {
+		return nil, err
+	}
 
-	return mpp.SaveMesheryPattern(&mesheryPattern)
+	// Build the row from scratch so nothing that belongs to the source row,
+	// such as created_at or the usage counters, carries over. Timestamps are
+	// left nil for gorm to set on insert. It is inserted directly because
+	// SaveMesheryPattern would bump the version of a file already at 0.0.1.
+	clone := MesheryPattern{
+		ID:            &id,
+		Name:          clonePatternRequest.Name,
+		PatternFile:   string(patternFile),
+		Location:      mesheryPattern.Location,
+		Visibility:    Private,
+		Type:          mesheryPattern.Type,
+		SourceContent: mesheryPattern.SourceContent,
+	}
+	if err := mpp.DB.Create(&clone).Error; err != nil {
+		return nil, ErrDBCreate(err)
+	}
+
+	stampLocalProviderOwner(&clone)
+	return marshalMesheryPatterns([]MesheryPattern{clone}), nil
 }
 
-// DeleteMesheryPattern takes in a profile id and delete it if it already exists
+// DeleteMesheryPattern deletes a pattern by ID and removes any associated
+// workspace design mappings in a database transaction.
 func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id core.Uuid) ([]byte, error) {
 	pattern := MesheryPattern{ID: &id}
-	mpp.DB.Delete(&pattern)
+	err := mpp.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Delete(&pattern).Error; err != nil {
+			return err
+		}
+		if tx.Migrator().HasTable(&schemasWorkspace.WorkspacesDesignsMapping{}) {
+			if err := tx.Where("design_id = ?", id).Delete(&schemasWorkspace.WorkspacesDesignsMapping{}).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, ErrDBDelete(err, "")
+	}
 
 	return marshalMesheryPattern(&pattern), nil
 }
 
-// DeleteMesheryPatterns takes in a meshery-patterns and delete those if exist
+// DeleteMesheryPatterns batch deletes the specified patterns and cleans up their
+// associated workspace design mappings within a database transaction.
 func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
 	var deletedMaptterns []MesheryPattern
-	for _, pObj := range patterns.Patterns {
-		id := uuid.FromStringOrNil(pObj.ID)
-		pattern := MesheryPattern{ID: &id}
-		mpp.DB.Delete(&pattern)
-		deletedMaptterns = append(deletedMaptterns, pattern)
+	err := mpp.DB.Transaction(func(tx *gorm.DB) error {
+		for _, pObj := range patterns.Patterns {
+			id := uuid.FromStringOrNil(pObj.ID)
+			pattern := MesheryPattern{ID: &id}
+			if err := tx.Delete(&pattern).Error; err != nil {
+				return err
+			}
+			if tx.Migrator().HasTable(&schemasWorkspace.WorkspacesDesignsMapping{}) {
+				if err := tx.Where("design_id = ?", id).Delete(&schemasWorkspace.WorkspacesDesignsMapping{}).Error; err != nil {
+					return err
+				}
+			}
+			deletedMaptterns = append(deletedMaptterns, pattern)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, ErrDBDelete(err, "")
 	}
 
 	return marshalMesheryPatterns(deletedMaptterns), nil
@@ -382,12 +441,20 @@ func (mpp *MesheryPatternPersister) ReplaceSeededPatterns(seeded []*MesheryPatte
 	})
 }
 
+// GetMesheryPattern returns the stored design. A design that does not exist
+// is reported as ErrResultNotFound, which carries a 404 for the handler; no
+// body is returned alongside an error.
 func (mpp *MesheryPatternPersister) GetMesheryPattern(id core.Uuid) ([]byte, error) {
 	var mesheryPattern MesheryPattern
 
-	err := mpp.DB.First(&mesheryPattern, id).Error
+	if err := mpp.DB.First(&mesheryPattern, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
+		return nil, err
+	}
 	stampLocalProviderOwner(&mesheryPattern)
-	return marshalMesheryPattern(&mesheryPattern), err
+	return marshalMesheryPattern(&mesheryPattern), nil
 }
 
 func (mpp *MesheryPatternPersister) GetMesheryPatternSource(id core.Uuid) ([]byte, error) {

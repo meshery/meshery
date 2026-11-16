@@ -25,6 +25,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/version"
 )
 
 type K8sContext struct {
@@ -172,7 +173,7 @@ func NewK8sContextWithServerID(
 		return nil, err
 	}
 
-	err = ctx.AssignVersion(handler)
+	err = ctx.AssignVersion(context.Background(), handler)
 	if err != nil {
 		return nil, err
 	}
@@ -249,7 +250,7 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 			continue
 		}
 
-		if err := kc.AssignServerID(handler); err != nil {
+		if err := kc.AssignServerID(context.Background(), handler); err != nil {
 
 			metadata["error"] = err
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
@@ -275,7 +276,7 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 		// context is reachable even if a later (non-fatal) version lookup fails.
 		kc.Reachable = true
 
-		err = kc.AssignVersion(handler)
+		err = kc.AssignVersion(context.Background(), handler)
 		if err != nil {
 
 			// Preventing the publishing of event as the event details would be present in the reciept.
@@ -378,10 +379,17 @@ func NewK8sContext(
 //
 // If the context remains the same, it is guaranteed that the ID will be same
 func K8sContextGenerateID(kc K8sContext) (string, error) {
+	// MesheryInstanceID is optional (e.g., redacted contexts or direct callers
+	// may leave it nil), so guard before formatting rather than panicking.
+	var mesheryInstanceID string
+	if kc.MesheryInstanceID != nil {
+		mesheryInstanceID = kc.MesheryInstanceID.String()
+	}
+
 	data := map[string]interface{}{
 		"cluster": kc.Cluster,
 		"auth":    kc.Auth,
-		"meshery": kc.MesheryInstanceID.String(),
+		"meshery": mesheryInstanceID,
 		"name":    kc.Name,
 	}
 
@@ -435,10 +443,14 @@ func (kc *K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
 	return kubernetes.New(cfg)
 }
 
-func (kc *K8sContext) AssignVersion(handler *kubernetes.Client) error {
-	res, err := handler.KubeClient.ServerVersion()
+func (kc *K8sContext) AssignVersion(ctx context.Context, handler *kubernetes.Client) error {
+	body, err := handler.KubeClient.Discovery().RESTClient().Get().AbsPath("/version").Do(ctx).Raw()
 	if err != nil {
 		return ErrUnreachableKubeAPI(err, kc.Server)
+	}
+	var res version.Info
+	if err := json.Unmarshal(body, &res); err != nil {
+		return ErrUnreachableKubeAPI(fmt.Errorf("unable to parse the server version: %w", err), kc.Server)
 	}
 
 	kc.Version = res.GitVersion
@@ -463,9 +475,9 @@ func (kc K8sContext) PingTest() error {
 
 // AssignServerID will attempt to assign kubernetes
 // server ID to the kubernetes context
-func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
+func (kc *K8sContext) AssignServerID(ctx context.Context, handler *kubernetes.Client) error {
 	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
-	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
+	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(ctx, "kube-system", v1.GetOptions{})
 	if err != nil {
 		return ErrUnreachableKubeAPI(err, kc.Server)
 	}
@@ -567,45 +579,76 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			log.Error(ErrPersistEvent(perr))
 		}
 	}
-	// Gets all the available kubernetes contexts
 
 	ctxName := k8sContext.Name
 	serverURL := k8sContext.Server
+	token, _ := ctx.Value(TokenCtxKey).(string)
+
+	// Resolve the cluster server ID directly from k8sContext if populated.
+	var sid string
+	if k8sContext.KubernetesServerID != nil {
+		sid = k8sContext.KubernetesServerID.String()
+	}
+
+	// Retrieve contexts from context; if missing (e.g. background context or connection deletion),
+	// load from the provider so cluster reference counting remains accurate.
 	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]*K8sContext)
-	if !ok || len(k8sctxs) == 0 {
-		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher")
-		if userUUID != uuid.Nil {
-			event = event.FromOwner(userUUID)
+	if (!ok || len(k8sctxs) == 0) && provider != nil {
+		if loaded, err := provider.LoadAllK8sContext(token); err != nil {
+			if log != nil {
+				log.Error(err)
+			}
+			return
+		} else if len(loaded) > 0 {
+			k8sctxs = loaded
+			ok = true
 		}
-		builtEvent := event.Build()
-		persistAndPublish(builtEvent)
+	}
+
+	if sid == "" && len(k8sctxs) > 0 {
+		for _, k8ctx := range k8sctxs {
+			if k8ctx == nil {
+				continue
+			}
+			if k8ctx.ID == ctxID && k8ctx.KubernetesServerID != nil {
+				sid = k8ctx.KubernetesServerID.String()
+				break
+			}
+		}
+	}
+
+	if sid == "" && provider != nil {
+		if storedCtx, err := provider.GetK8sContext(token, ctxID); err == nil && storedCtx.KubernetesServerID != nil {
+			sid = storedCtx.KubernetesServerID.String()
+		}
+	}
+
+	if sid == "" {
+		if !ok || len(k8sctxs) == 0 {
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher")
+			if userUUID != uuid.Nil {
+				event = event.FromOwner(userUUID)
+			}
+			builtEvent := event.Build()
+			persistAndPublish(builtEvent)
+		}
 		return
 	}
-	var sid string
-	var refCount int
-	// Gets the serverID for the passed contextID
+
+	// Counts the reference of the serverID across all active contexts other than the one being deleted.
+	// As multiple contexts can refer to the same serverID, only flush if no other active context references it.
+	otherRefCount := 0
 	for _, k8ctx := range k8sctxs {
-		if k8ctx == nil {
-			continue
-		}
-		if k8ctx.ID == ctxID && k8ctx.KubernetesServerID != nil {
-			sid = k8ctx.KubernetesServerID.String()
-			break
-		}
-	}
-	// Counts the reference of the serverID
-	// As multiple context can have same serverID
-	for _, k8ctx := range k8sctxs {
-		if k8ctx == nil {
+		if k8ctx == nil || k8ctx.ID == ctxID {
 			continue
 		}
 		if k8ctx.KubernetesServerID != nil && k8ctx.KubernetesServerID.String() == sid {
-			refCount++
+			otherRefCount++
 		}
 	}
-	// If the reference count is 1 then only flush the meshsync data
-	// because this means its the last contextID referring to that Kubernetes Server
-	if refCount == 1 {
+
+	// Flush only when no other active context references this Kubernetes server.
+	if otherRefCount == 0 {
 		if provider == nil || provider.GetGenericPersister() == nil {
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).WithMetadata(map[string]interface{}{
 				"error": ErrEmptyMeshSyncHandler(),
@@ -674,13 +717,7 @@ func FlushMeshSyncResourcesForCluster(db *database.Handler, clusterID string) er
 
 		// Child rows keyed by the parent resource's id, deleted before the parent so
 		// the subquery still resolves.
-		childModels := []any{
-			&meshsyncmodel.KubernetesKeyValue{},
-			&meshsyncmodel.KubernetesResourceSpec{},
-			&meshsyncmodel.KubernetesResourceStatus{},
-			&meshsyncmodel.KubernetesResourceObjectMeta{},
-		}
-		for _, child := range childModels {
+		for _, child := range meshSyncResourceChildModels() {
 			if err := tx.Where("id IN (?)", resourceIDs).Delete(child).Error; err != nil {
 				return err
 			}
@@ -689,6 +726,63 @@ func FlushMeshSyncResourcesForCluster(db *database.Handler, clusterID string) er
 		// Finally remove the parent resources for the cluster.
 		return tx.Where("cluster_id = ?", clusterID).Delete(&meshsyncmodel.KubernetesResource{}).Error
 	})
+}
+
+// meshSyncResourceChildModels lists the MeshSync tables whose rows share their
+// parent KubernetesResource's id: labels and annotations, spec, status and object
+// meta. Their foreign keys do not cascade (SQLite runs without foreign keys
+// enforced, and SET NULL cannot clear a primary key), so every delete of a
+// resource must remove these rows itself.
+func meshSyncResourceChildModels() []any {
+	return []any{
+		&meshsyncmodel.KubernetesKeyValue{},
+		&meshsyncmodel.KubernetesResourceSpec{},
+		&meshsyncmodel.KubernetesResourceStatus{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
+	}
+}
+
+// DeleteMeshSyncResourceByID removes one MeshSync resource and every child row
+// that shares its id, in a single transaction. It reports whether the resource
+// existed; when it did not, nothing is deleted. Leaving the children behind would
+// orphan them, and because MeshSync ids are deterministic they would reattach to
+// the resource the next time it is discovered.
+//
+// The children are deleted before the parent, as in
+// FlushMeshSyncResourcesForCluster: their foreign keys are ON DELETE SET NULL on
+// their own primary key, so deleting the parent first fails on Postgres, which
+// always enforces foreign keys, and nulls the child ids on SQLite when foreign
+// keys are enabled.
+func DeleteMeshSyncResourceByID(db *database.Handler, id string) (bool, error) {
+	if db == nil || db.DB == nil {
+		return false, ErrEmptyMeshSyncHandler()
+	}
+
+	deleted := false
+	err := db.Transaction(func(tx *gorm.DB) error {
+		var exists int64
+		if err := tx.Model(&meshsyncmodel.KubernetesResource{}).Where("id = ?", id).Count(&exists).Error; err != nil {
+			return err
+		}
+		if exists == 0 {
+			return nil
+		}
+		for _, child := range meshSyncResourceChildModels() {
+			if err := tx.Where("id = ?", id).Delete(child).Error; err != nil {
+				return err
+			}
+		}
+		res := tx.Where("id = ?", id).Delete(&meshsyncmodel.KubernetesResource{})
+		if res.Error != nil {
+			return res.Error
+		}
+		deleted = res.RowsAffected > 0
+		return nil
+	})
+	if err != nil {
+		return false, err
+	}
+	return deleted, nil
 }
 
 func RedactCredentialsForContext(ctx *K8sContext) (redactedContext K8sContext) {
