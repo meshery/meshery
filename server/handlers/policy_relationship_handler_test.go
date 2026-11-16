@@ -1,13 +1,24 @@
 package handlers
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
+	"github.com/meshery/meshery/server/models"
+	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/models/events"
+	policyv1beta1 "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/category"
@@ -15,8 +26,10 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	modelv1beta2 "github.com/meshery/schemas/models/v1beta2/model"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	v1beta3comp "github.com/meshery/schemas/models/v1beta3/component"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -456,8 +469,8 @@ func TestProcessEvaluationResponse_PreservesUserCustomizationsOnExistingComponen
 	t.Parallel()
 
 	rm, _ := newTestRegistryManager(t)
-	seedTestComponent(t, rm)        // Job, registry BackgroundColor "#123456"
-	seedNamespaceComponent(t, rm)   // Namespace, registry BackgroundColor "#326CE5"
+	seedTestComponent(t, rm)      // Job, registry BackgroundColor "#123456"
+	seedNamespaceComponent(t, rm) // Namespace, registry BackgroundColor "#326CE5"
 
 	existingPodID, err := uuid.NewV4()
 	require.NoError(t, err)
@@ -477,9 +490,9 @@ func TestProcessEvaluationResponse_PreservesUserCustomizationsOnExistingComponen
 
 	// New component the evaluator just added — bare, no styles.
 	addedNamespace := &component.ComponentDefinition{
-		ID:          addedNamespaceID,
-		Component:   component.Component{Kind: "Namespace", Version: "v1"},
-		DisplayName: "default",
+		ID:             addedNamespaceID,
+		Component:      component.Component{Kind: "Namespace", Version: "v1"},
+		DisplayName:    "default",
 		ModelReference: model.ModelReference{Name: "kubernetes"},
 	}
 
@@ -537,8 +550,8 @@ func TestProcessEvaluationResponse_HydratesMultipleAddedComponents(t *testing.T)
 	t.Parallel()
 
 	rm, _ := newTestRegistryManager(t)
-	seedTestComponent(t, rm)       // Job → BackgroundColor "#123456"
-	seedNamespaceComponent(t, rm)  // Namespace → BackgroundColor "#326CE5"
+	seedTestComponent(t, rm)      // Job → BackgroundColor "#123456"
+	seedNamespaceComponent(t, rm) // Namespace → BackgroundColor "#326CE5"
 
 	jobID, err := uuid.NewV4()
 	require.NoError(t, err)
@@ -825,33 +838,52 @@ func TestParseRelationshipToAlias(t *testing.T) {
 
 // TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys pins
 // the canonical camelCase keys emitted into event_trackers.metadata on the
-// relationship-evaluation success event. Production carried 125,840 rows
-// each of the legacy snake_case spellings before this flip; this test
-// guards against regression and ensures legacy spellings cannot be
-// re-introduced silently.
+// relationship-evaluation success event, and that the event carries the
+// design's identity and an evaluation summary - never the design, its trace
+// or the raw evaluation response (#22764).
 func TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) {
 	now := time.Now()
+	designID := uuid.Must(uuid.NewV4())
 	resp := pattern.EvaluationResponse{
 		Design: pattern.PatternFile{
+			ID:      designID,
+			Name:    "evaluated-design",
 			Version: "1.2.3",
+			Components: []*component.ComponentDefinition{
+				{DisplayName: "must-not-leak"},
+			},
 		},
-		Actions:   make([]pattern.Action, 7),
-		Trace:     pattern.Trace{},
+		Actions: []pattern.Action{
+			{Op: gopolicies.AddRelationshipOp},
+			{Op: gopolicies.AddRelationshipOp},
+			{Op: gopolicies.DeleteRelationshipOp},
+			{Op: gopolicies.UpdateRelationshipOp},
+			{Op: gopolicies.UpdateRelationshipOp},
+			{Op: gopolicies.UpdateRelationshipOp},
+			{Op: gopolicies.AddComponentOp},
+		},
+		Trace: pattern.Trace{
+			PolicyActions: []string{"must-not-leak"},
+		},
 		Timestamp: &now,
 	}
 
-	metadata := buildPolicyEvaluationEventMetadata(resp)
+	metadata := buildPolicyEvaluationEventMetadata(resp, "http://meshery.test", 1500*time.Millisecond)
 
-	// Canonical camelCase keys MUST be present.
-	require.Contains(t, metadata, "historyTitle")
-	require.Contains(t, metadata, "trace")
-	require.Contains(t, metadata, "evaluationResponse")
-	require.Contains(t, metadata, "evaluatedAt")
+	for _, key := range []string{
+		"historyTitle", "evaluatedAt", "relationshipsAdded", "relationshipsRemoved",
+		"relationshipsUpdated", "evaluationStatus", "evaluationDurationMs",
+		"designId", "designName", "designVersion", "designLink",
+	} {
+		require.Contains(t, metadata, key)
+	}
 
 	// Legacy snake_case keys MUST NOT be present.
 	require.NotContains(t, metadata, "history_title")
 	require.NotContains(t, metadata, "evaluation_response")
 	require.NotContains(t, metadata, "evaluated_at")
+	assertNoBannedDesignEventMetadataKeys(t, metadata)
+	assertMetadataExcludes(t, metadata, "must-not-leak")
 
 	// Spot-check that historyTitle reflects the action count + version
 	// so future contributors don't repurpose the helper without keeping
@@ -859,4 +891,408 @@ func TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys(t *testin
 	assert.Contains(t, metadata["historyTitle"], "7 changes")
 	assert.Contains(t, metadata["historyTitle"], "1.2.3")
 	assert.Equal(t, now, metadata["evaluatedAt"])
+	assert.Equal(t, 2, metadata["relationshipsAdded"])
+	assert.Equal(t, 1, metadata["relationshipsRemoved"])
+	assert.Equal(t, 3, metadata["relationshipsUpdated"])
+	assert.Equal(t, "completed", metadata["evaluationStatus"])
+	assert.Equal(t, int64(1500), metadata["evaluationDurationMs"])
+	assert.Equal(t, designID, metadata["designId"])
+	assert.Equal(t, "evaluated-design", metadata["designName"])
+	assert.Equal(t, "1.2.3", metadata["designVersion"])
+	assert.Equal(t, "http://meshery.test/extension/meshmap?mode=design&design="+designID.String(), metadata["designLink"])
+}
+
+// TestBuildPolicyEvaluationEventMetadata_NilTimestamp pins that a response
+// without a timestamp no longer panics and simply omits evaluatedAt, and that
+// an empty design version is omitted.
+func TestBuildPolicyEvaluationEventMetadata_NilTimestamp(t *testing.T) {
+	var metadata map[string]interface{}
+	require.NotPanics(t, func() {
+		metadata = buildPolicyEvaluationEventMetadata(pattern.EvaluationResponse{}, "", 0)
+	})
+	assert.NotContains(t, metadata, "evaluatedAt")
+	assert.NotContains(t, metadata, "designVersion")
+	assert.Equal(t, 0, metadata["relationshipsAdded"])
+}
+
+func seedAnnotationComponent(t *testing.T, rm *registry.RegistryManager) {
+	t.Helper()
+	conn := connection.Connection{
+		Name:    "test-registrant",
+		Kind:    "meshery",
+		Type:    "core",
+		SubType: "whiteboard",
+		Status:  connection.ConnectionStatusConnected,
+	}
+	enabled := v1beta3comp.Enabled
+	comp := v1beta3comp.ComponentDefinition{
+		DisplayName:   "Comment",
+		SchemaVersion: "core.meshery.io/v1beta1",
+		Status:        &enabled,
+		Component: v1beta3comp.Component{
+			Kind:    "Comment",
+			Version: "v1.0.0",
+			Schema:  `{"properties":{}}`,
+		},
+		Model: &model.ModelDefinition{
+			Name:          "meshery-core",
+			DisplayName:   "Meshery Core",
+			SchemaVersion: "models.meshery.io/v1beta1",
+			Version:       "v1.0.0",
+			Model:         model.Model{Version: "v1.0.0"},
+			Category:      category.CategoryDefinition{Name: "Core"},
+			Status:        model.Enabled,
+		},
+		Metadata: v1beta3comp.ComponentDefinition_Metadata{
+			IsAnnotation: true,
+		},
+	}
+	id, err := comp.GenerateID()
+	require.NoError(t, err)
+	comp.ID = id
+	_, _, err = rm.RegisterEntity(registry.RegistrantHostToV1beta3(conn), &comp)
+	require.NoError(t, err, "seedAnnotationComponent: RegisterEntity failed")
+}
+
+// TestProcessEvaluationResponse_PreservesRegistryAnnotationClassification tests that
+// component hydration preserves the authoritative IsAnnotation classification from the registry
+// in both directions:
+// 1. Workload components (registry IsAnnotation=false) retain IsAnnotation=false even if synthesized without annotation flag.
+// 2. Genuine annotation components (registry IsAnnotation=true) retain IsAnnotation=true even if synthesized without annotation flag.
+func TestProcessEvaluationResponse_PreservesRegistryAnnotationClassification(t *testing.T) {
+	t.Parallel()
+
+	rm, _ := newTestRegistryManager(t)
+	seedTestComponent(t, rm)       // Job -> Metadata.IsAnnotation = false
+	seedAnnotationComponent(t, rm) // Comment -> Metadata.IsAnnotation = true
+
+	jobID, err := uuid.NewV4()
+	require.NoError(t, err)
+	commentID, err := uuid.NewV4()
+	require.NoError(t, err)
+
+	// Synthesized workload component with IsAnnotation: false
+	bareJob := &component.ComponentDefinition{
+		ID:             jobID,
+		Component:      component.Component{Kind: "Job", Version: "batch/v1"},
+		DisplayName:    "spec.template.spec.containers.0",
+		ModelReference: model.ModelReference{Name: "kubernetes"},
+		Metadata:       component.ComponentDefinition_Metadata{IsAnnotation: false},
+	}
+
+	// Synthesized annotation component with IsAnnotation: false (simulating synthesized component without explicit annotation flag)
+	bareComment := &component.ComponentDefinition{
+		ID:             commentID,
+		Component:      component.Component{Kind: "Comment", Version: "v1.0.0"},
+		DisplayName:    "user-note",
+		ModelReference: model.ModelReference{Name: "meshery-core"},
+		Metadata:       component.ComponentDefinition_Metadata{IsAnnotation: false},
+	}
+
+	resp := &pattern.EvaluationResponse{
+		Design: pattern.PatternFile{
+			Version:    "0.0.1",
+			Components: []*component.ComponentDefinition{bareJob, bareComment},
+		},
+		Trace: pattern.Trace{
+			ComponentsAdded: []component.ComponentDefinition{*bareJob, *bareComment},
+		},
+	}
+
+	got := processEvaluationResponse(rm, pattern.EvaluationRequest{}, resp)
+	require.Empty(t, got)
+	require.Len(t, resp.Design.Components, 2)
+
+	byID := map[core.Uuid]*component.ComponentDefinition{}
+	for _, c := range resp.Design.Components {
+		byID[c.ID] = c
+	}
+
+	// 1. Workload component Job must preserve IsAnnotation=false from registry
+	assert.False(t, byID[jobID].Metadata.IsAnnotation, "Workload component Job must preserve IsAnnotation=false from registry")
+
+	// 2. Genuine annotation component Comment must preserve IsAnnotation=true from registry
+	assert.True(t, byID[commentID].Metadata.IsAnnotation, "Annotation component Comment must preserve IsAnnotation=true from registry")
+}
+
+func seedTestPolicies(t *testing.T, rm *registry.RegistryManager) {
+	t.Helper()
+
+	conn := connection.Connection{
+		Name:    "test-policy-registrant",
+		Kind:    "kubernetes",
+		Type:    "platform",
+		SubType: "orchestration",
+		Status:  connection.ConnectionStatusConnected,
+	}
+
+	host := registry.RegistrantHostToV1beta3(conn)
+
+	for _, version := range []string{"v1", "v2"} {
+		policy := policyv1beta1.PolicyDefinition{
+			Kind:    "TestPolicy",
+			Version: version,
+			Model: modelv1beta2.ModelDefinition{
+				Name:          "test-policy-model",
+				DisplayName:   "Test Policy Model",
+				SchemaVersion: "models.meshery.io/v1beta1",
+				Version:       "1.0.0",
+				Model:         modelv1beta2.Model{Version: "1.0.0"},
+				Category:      category.CategoryDefinition{Name: "Orchestration"},
+				Status:        modelv1beta2.Enabled,
+			},
+		}
+
+		_, _, err := rm.RegisterEntity(host, &policy)
+		require.NoError(t, err, "failed to register test policy")
+	}
+}
+
+func TestGetAllMeshmodelPoliciesPagination(t *testing.T) {
+	tests := []struct {
+		name    string
+		handler func(*Handler, http.ResponseWriter, *http.Request)
+		vars    map[string]string
+	}{
+		{
+			name:    "all policies",
+			handler: (*Handler).GetAllMeshmodelPolicies,
+			vars:    map[string]string{"model": "test-policy-model"},
+		},
+		{
+			name:    "policies by name",
+			handler: (*Handler).GetAllMeshmodelPoliciesByName,
+			vars: map[string]string{
+				"model": "test-policy-model",
+				"name":  "TestPolicy",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rm, _ := newTestRegistryManager(t)
+			seedTestPolicies(t, rm)
+
+			h := &Handler{
+				registryManager: rm,
+				log:             newTestLogger(t),
+			}
+
+			request := func(page int) struct {
+				Page       int               `json:"page"`
+				PageSize   int               `json:"pageSize"`
+				TotalCount int64             `json:"totalCount"`
+				Policies   []json.RawMessage `json:"policies"`
+			} {
+				req := httptest.NewRequest(
+					http.MethodGet,
+					fmt.Sprintf("/?page=%d&pageSize=1", page),
+					nil,
+				)
+				req = mux.SetURLVars(req, tt.vars)
+
+				recorder := httptest.NewRecorder()
+				tt.handler(h, recorder, req)
+
+				require.Equal(t, http.StatusOK, recorder.Code)
+
+				var response struct {
+					Page       int               `json:"page"`
+					PageSize   int               `json:"pageSize"`
+					TotalCount int64             `json:"totalCount"`
+					Policies   []json.RawMessage `json:"policies"`
+				}
+
+				require.NoError(t, json.Unmarshal(recorder.Body.Bytes(), &response))
+				return response
+			}
+
+			firstPage := request(0)
+			secondPage := request(1)
+
+			assert.Equal(t, 0, firstPage.Page)
+			assert.Equal(t, 1, firstPage.PageSize)
+			assert.Equal(t, int64(2), firstPage.TotalCount)
+			require.Len(t, firstPage.Policies, 1)
+
+			assert.Equal(t, 1, secondPage.Page)
+			assert.Equal(t, 1, secondPage.PageSize)
+			assert.Equal(t, int64(2), secondPage.TotalCount)
+			require.Len(t, secondPage.Policies, 1)
+
+			assert.NotEqual(
+				t,
+				string(firstPage.Policies[0]),
+				string(secondPage.Policies[0]),
+			)
+		})
+	}
+}
+
+func TestEvaluateRelationshipPolicy_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	provider := &models.DefaultLocalProvider{}
+	h.EvaluateRelationshipPolicy(rec, req, nil, nil, provider)
+
+	require.Equal(t, http.StatusUnauthorized, rec.Code)
+	var jsonErr map[string]string
+	err := json.Unmarshal(rec.Body.Bytes(), &jsonErr)
+	require.NoError(t, err, "unauthorized response body must decode as valid JSON")
+	assert.Equal(t, "user unauthorized", jsonErr["error"])
+}
+
+func TestEvaluateRelationshipPolicy_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, nil)
+
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+	errBody := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrNilProviderCode, errBody.Code)
+	assert.NotEmpty(t, errBody.Error)
+}
+
+func TestEvaluateRelationshipPolicy_EmptyRequestBody_ReturnsBadRequest(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(""))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &models.DefaultLocalProvider{}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusBadRequest, rec.Code)
+	errBody := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrRequestBodyCode, errBody.Code)
+	assert.NotEmpty(t, errBody.Error)
+}
+
+func TestEvaluateRelationshipPolicy_PayloadTooLarge_ReturnsRequestEntityTooLarge(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+	// 4MB + 1 byte payload
+	largePayload := bytes.Repeat([]byte("a"), (4<<20)+1)
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", bytes.NewReader(largePayload))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &models.DefaultLocalProvider{}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusRequestEntityTooLarge, rec.Code)
+	errBody := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrRequestBodyCode, errBody.Code)
+	assert.NotEmpty(t, errBody.Error)
+}
+
+func TestEvaluateRelationshipPolicy_MalformedJSON_ReturnsBadRequest(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader("invalid json"))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &models.DefaultLocalProvider{}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusBadRequest, rec.Code)
+	errBody := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrDecodingCode, errBody.Code)
+	assert.NotEmpty(t, errBody.Error)
+}
+
+func TestEvaluateRelationshipPolicy_NilSystemID_DoesNotPanic(t *testing.T) {
+	h := &Handler{
+		log:         newTestLogger(t),
+		evalTracker: newEvaluationTracker(),
+	}
+	validJSON := `{"design":{"id":"11111111-1111-1111-1111-111111111111","name":"test","version":"v1"}}`
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(validJSON))
+	ctx, cancel := context.WithCancel(req.Context())
+	cancel()
+	req = req.WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &models.DefaultLocalProvider{}
+
+	// SystemID is nil on h; must not panic and must return 500 on canceled context
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+	errBody := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrPolicyEvalCode, errBody.Code)
+	assert.NotEmpty(t, errBody.Error)
+}
+
+type panickingPersistEventProvider struct {
+	*models.DefaultLocalProvider
+	persisted chan struct{}
+}
+
+func (p *panickingPersistEventProvider) PersistEvent(event events.Event, token string) (models.PersistedEvent, error) {
+	if p.persisted != nil {
+		select {
+		case <-p.persisted:
+		default:
+			close(p.persisted)
+		}
+	}
+	panic("synthetic panic in PersistEvent")
+}
+
+func TestEvaluateRelationshipPolicy_PersistEventPanicRecovered(t *testing.T) {
+	viper.Set("USE_GO_POLICY_ENGINE", true)
+	t.Cleanup(func() {
+		viper.Set("USE_GO_POLICY_ENGINE", false)
+	})
+
+	logger := newTestLogger(t)
+	h := &Handler{
+		log:         logger,
+		evalTracker: newEvaluationTracker(),
+		GoEngine:    gopolicies.NewGoEngine(logger),
+	}
+
+	persistedCh := make(chan struct{})
+	provider := &panickingPersistEventProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		persisted:            persistedCh,
+	}
+
+	validJSON := `{"design":{"id":"11111111-1111-1111-1111-111111111111","name":"test","version":"v1"}}`
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(validJSON))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	// Wait for the detached persistence goroutine to run and panic (which is safely recovered)
+	select {
+	case <-persistedCh:
+	case <-time.After(2 * time.Second):
+		t.Fatal("PersistEvent was never called before timeout")
+	}
+
+	// Verify that the handler returns HTTP 200 OK without crashing the process
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	var rawMap map[string]json.RawMessage
+	err := json.Unmarshal(rec.Body.Bytes(), &rawMap)
+	require.NoError(t, err, "successful evaluation response body must decode as valid JSON")
+	assert.Contains(t, rawMap, "design", "design field must be present in response")
+	assert.Contains(t, rawMap, "trace", "trace field must be present in response")
+	assert.Contains(t, rawMap, "actions", "actions field must be present in response")
 }

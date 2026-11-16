@@ -4,6 +4,7 @@ package models
 import (
 	stderrors "errors"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/meshery/meshery/server/models/httputil"
@@ -150,6 +151,8 @@ const (
 	ErrNoSystemEventSinkCode              = "meshery-server-1482"
 	ErrSeedingStagePanicCode              = "meshery-server-1483"
 	ErrKeysRegisterColumnMissingCode      = "meshery-server-1486"
+	ErrMigrateEventCorrelationIndexCode   = "meshery-server-1487"
+	ErrAttachEventErrorCode               = "meshery-server-1488"
 	ErrImportFailureCode                  = "meshery-server-1359"
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
@@ -171,6 +174,8 @@ const (
 	ErrOperatorChartNotPublishedCode      = "meshery-server-1470"
 	ErrOperatorChartSubstitutedCode       = "meshery-server-1471"
 	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
+	ErrInvalidExtensionProxyPathCode      = "meshery-server-1490"
+	ErrMigrateEventIndexesCode            = "meshery-server-1491"
 )
 
 var (
@@ -251,11 +256,11 @@ func ErrPageSize(err error) error {
 }
 
 func ErrPageNumber(err error) error {
-	return errors.New(ErrPageNumberCode, errors.Alert, []string{"Unable to prase the Page Numer"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrPageNumberCode, errors.Alert, []string{"Unable to parse the Page Number"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrPerfID(err error) error {
-	return errors.New(ErrPerfIDCode, errors.Alert, []string{"Invalid peformance profile ID"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrPerfIDCode, errors.Alert, []string{"Invalid performance profile ID"}, []string{err.Error()}, []string{}, []string{})
 }
 func ErrPublish(err error, obj string) error {
 	return errors.New(ErrPublishCode, errors.Alert, []string{fmt.Sprintf("Error while publishing %s to catlog", obj)}, []string{err.Error()}, []string{}, []string{})
@@ -537,7 +542,7 @@ func ErrJWKsKeys(err error) error {
 }
 
 func ErrInvalidCapability(capability string, provider string) error {
-	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capability is not supported by your Provider", capability}, []string{"You dont have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the vaild remote Provider"}, []string{"Connect to the vaild remote Provider", "Ask the Provider Adim for access"})
+	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capability is not supported by your Provider", capability}, []string{"You don't have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the valid remote Provider"}, []string{"Connect to the valid remote Provider", "Ask the Provider Admin for access"})
 }
 
 func ErrFetchData(err error) error {
@@ -579,8 +584,66 @@ func ErrInvalidEventData() error {
 	return errors.New(ErrInvalidEventDataCode, errors.Alert, []string{"The event provided is not valid"}, []string{"ActedUpon, Action, Category and Severity are required fields of an event"}, []string{}, []string{"Ensure that ActedUpon, Action, Category and Severity are present in the event"})
 }
 
+// Probable cause ids of ErrUnreachableKubeAPI. They are stable once
+// published: events name them in metadata.error.matchedCauses and the error
+// code reference anchors them. Keep them equal to the ids in the NewV3 call
+// below (TestErrUnreachableKubeAPICauses pins them).
+const (
+	KubeAPICauseUnreachable          = "api-server-unreachable"
+	KubeAPICauseCredentialsRejected  = "credentials-rejected"
+	KubeAPICauseCertificateUntrusted = "certificate-untrusted"
+)
+
+// remRetryKubeConnection answers every cause of ErrUnreachableKubeAPI once the
+// cause itself is fixed, so it is declared once and repeated under each cause.
+var remRetryKubeConnection = errors.Remediation{
+	ID:          "retry-connection",
+	Description: "Once the cause is fixed, reconnect the cluster's connection from Connections, or wait for Meshery Server to discover it again.",
+}
+
+// ErrUnreachableKubeAPI reports that Meshery Server could not talk to a
+// cluster's API server. Its causes carry their own remediations (errors.NewV3),
+// and the returned error records which cause err points at, so an event that
+// reports it names that cause (see MatchedCauses).
 func ErrUnreachableKubeAPI(err error, server string) error {
-	return errors.New(ErrUnreachableKubeAPICode, errors.Alert, []string{fmt.Sprintf("Error communicating with KubeAPI at %s.", server)}, []string{err.Error()}, []string{"The Kubernetes API server is not reachable.", "Credentials are invalid."}, []string{"Verify network connectivity and Kubernetes API responsiveness between Meshery Server and your cluster.", "Ensure client credential is not expired and is properly formed.", "Remove the cluster credential and enable 'insecure-skip-tls-verify'."})
+	// errorutil reads the descriptions as string literals, so the instance
+	// text - the API server's address and the client error - is appended
+	// after NewV3 returns.
+	kubeAPIErr := errors.NewV3(ErrUnreachableKubeAPICode, errors.Alert,
+		[]string{"Error communicating with the Kubernetes API server."},
+		[]string{"Meshery Server did not get an answer from the cluster's API server."},
+		[]errors.Cause{
+			{
+				ID:          "api-server-unreachable",
+				Description: "The Kubernetes API server is not reachable.",
+				Remediations: []errors.Remediation{
+					{ID: "check-network", Description: "Verify network connectivity and Kubernetes API responsiveness between Meshery Server and your cluster."},
+					remRetryKubeConnection,
+				},
+			},
+			{
+				ID:          "credentials-rejected",
+				Description: "Credentials are invalid.",
+				Remediations: []errors.Remediation{
+					{ID: "renew-credential", Description: "Ensure client credential is not expired and is properly formed."},
+					remRetryKubeConnection,
+				},
+			},
+			{
+				ID:          "certificate-untrusted",
+				Description: "The cluster's serving certificate is not trusted by Meshery Server.",
+				Remediations: []errors.Remediation{
+					{ID: "skip-tls-verify", Description: "Remove the cluster credential and enable 'insecure-skip-tls-verify'."},
+					remRetryKubeConnection,
+				},
+			},
+		},
+	)
+	kubeAPIErr.LongDescription = append(kubeAPIErr.LongDescription, fmt.Sprintf("API server: %s", server))
+	if err != nil {
+		kubeAPIErr.LongDescription = append(kubeAPIErr.LongDescription, err.Error())
+	}
+	return withMatchedCause(kubeAPIErr, classifyKubeAPIError(err))
 }
 
 func ErrFlushMeshSyncData(err error, contextName, server string) error {
@@ -596,7 +659,10 @@ func ErrUpdateConnectionStatus(err error, statusCode int) error {
 }
 
 func ErrResultNotFound(err error) error {
-	return errors.New(ErrResultNotFoundCode, errors.Alert, []string{err.Error()}, []string{"The record in the database does not exist."}, []string{"The record might have been deleted."}, []string{""})
+	return httputil.WithProviderStatus(
+		errors.New(ErrResultNotFoundCode, errors.Alert, []string{err.Error()}, []string{"The record in the database does not exist."}, []string{"The record might have been deleted."}, []string{""}),
+		http.StatusNotFound,
+	)
 }
 
 func ErrPersistCredential(err error) error {
@@ -633,11 +699,15 @@ func ErrInitializeDBHandler(err error) error {
 }
 
 func ErrDoRequest(err error, method, endpoint string) error {
-	return errors.New(ErrDoRequestCode, errors.Alert, []string{fmt.Sprintf("unable to make %s request to %s", method, endpoint)}, []string{err.Error()}, []string{"Requested resource is not reachable.", "Unable to instantiate TCP connection"}, []string{"Ensure correct URL is specified", "Ensure network connectivity to the resource from your network"})
+	cause := ""
+	if err != nil {
+		cause = err.Error()
+	}
+	return errors.New(ErrDoRequestCode, errors.Alert, []string{fmt.Sprintf("unable to make %s request to %s", method, endpoint)}, []string{cause}, []string{"Requested resource is not reachable.", "Unable to instantiate TCP connection"}, []string{"Ensure correct URL is specified", "Ensure network connectivity to the resource from your network"})
 }
 
 func ErrMarshalYAML(err error, obj string) error {
-	return errors.New(ErrMarshalYAMLCode, errors.Alert, []string{"unable to marshal yaml \"%s\""}, []string{err.Error()}, []string{"Object has invalid yaml format"}, []string{"Make sure to input a valid yaml object"})
+	return errors.New(ErrMarshalYAMLCode, errors.Alert, []string{"Unable to marshal yaml", fmt.Sprintf("object: %s", obj)}, []string{err.Error()}, []string{"Object has invalid yaml format"}, []string{"Make sure to input a valid yaml object"})
 }
 func ErrDeleteK8sResource(err error, name, namespace string) error {
 	return errors.New(ErrDeleteK8sResourceCode, errors.Alert,
@@ -774,7 +844,7 @@ func ErrMarshallingDesignIntoYAML(err error) error {
 }
 
 func ErrMeshsyncDataHandler(err error) error {
-	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data hadler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
+	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data handler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
 }
 
 // ErrReconcileServerID wraps a failure to back-fill an already-persisted
@@ -884,6 +954,25 @@ func ErrNoMesheryReleasesFound() error {
 	return errors.New(ErrNoMesheryReleasesFoundCode, errors.Alert, []string{"No Meshery releases were found"}, []string{"The GitHub releases listing for meshery/meshery returned no tags."}, []string{"GitHub returned an empty or filtered release listing, possibly because the request was rate-limited."}, []string{"Retry later. This only affects the reported latest-version comparison; Meshery continues to run."})
 }
 
+// ErrInvalidExtensionProxyPath is returned when a requested extension proxy path
+// does not match the expected '/api/extensions' prefix or contains malformed boundary characters.
+func ErrInvalidExtensionProxyPath(path string) error {
+	return errors.New(
+		ErrInvalidExtensionProxyPathCode,
+		errors.Alert,
+		[]string{"Invalid extension proxy path"},
+		[]string{fmt.Sprintf("The requested path '%s' is not a valid extension proxy path", path)},
+		[]string{
+			"The path does not start with '/api/extensions' or has an invalid delimiter",
+			"The URL format might be malformed or manipulated",
+		},
+		[]string{
+			"Ensure the request path starts with '/api/extensions' followed by a valid subpath (e.g. '/api/extensions/users')",
+			"Check client routing and extension configuration",
+		},
+	)
+}
+
 // ErrOperatorChartSubstituted reports that the Meshery Operator chart
 // version derived from this Meshery Server's release was replaced by one the
 // chart repository publishes and that can actually run. It is a warning, not a
@@ -899,4 +988,37 @@ func ErrOperatorChartSubstituted(reason string) error {
 // (deploy, undeploy, chart-version reconcile) have nothing to act through.
 func ErrOperatorHandlerNotAttached(contextID string) error {
 	return errors.New(ErrOperatorHandlerNotAttachedCode, errors.Alert, []string{"No Meshery Operator controller handler is attached"}, []string{"Controller handlers are attached when a Kubernetes connection connects; for context " + contextID + " attaching them failed or has not happened yet."}, []string{"The connection's kubeconfig could not be generated, or the Kubernetes client could not be created."}, []string{"Reconnect the Kubernetes connection and retry; the configuration is re-applied on connect."})
+}
+
+func ErrMigrateEventCorrelationIndex(err error) error {
+	return errors.New(
+		ErrMigrateEventCorrelationIndexCode,
+		errors.Alert,
+		[]string{"Meshery Server could not create the index that keeps one open event per condition"},
+		[]string{err.Error()},
+		[]string{"The events table has more than one open event (no resolved_at) with the same owner and correlation_key, which an earlier Meshery Server could have recorded", "The database is read-only, locked by another process or not reachable"},
+		[]string{"Resolve or delete the duplicate open events for that owner and correlation_key, then restart Meshery Server", "Make sure Meshery Server can write to its database, or perform a hard reset"},
+	)
+}
+
+func ErrMigrateEventIndexes(err error) error {
+	return errors.New(
+		ErrMigrateEventIndexesCode,
+		errors.Alert,
+		[]string{"Meshery Server could not create the indexes the Notification Center queries use"},
+		[]string{err.Error()},
+		[]string{"The database is read-only, locked by another process or not reachable"},
+		[]string{"Make sure Meshery Server can write to its database, then restart Meshery Server"},
+	)
+}
+
+func ErrAttachEventError(err error) error {
+	return errors.New(
+		ErrAttachEventErrorCode,
+		errors.Alert,
+		[]string{"An event's metadata.error was kept in its legacy form"},
+		[]string{err.Error()},
+		[]string{"The error the event reports carries no MeshKit error code", "The MeshKit error's causes or matched causes break the schemas EventError contract"},
+		[]string{"Report the error the event reports as a MeshKit error with a code", "Fix the probable causes of the MeshKit error, or the matched cause ids its producer names, so they satisfy the EventError contract"},
+	)
 }
