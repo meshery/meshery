@@ -379,7 +379,10 @@ func TestDownloadMesheryPatternHandler_NilSystemID_DoesNotPanic(t *testing.T) {
 	fixture.h.SystemID = nil
 	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
 
-	req := httptest.NewRequest(http.MethodGet, "/api/pattern/download/00000000-0000-0000-0000-000000000000", nil)
+	patID := uuid.Must(uuid.NewV4())
+
+	req := httptest.NewRequest(http.MethodGet, "/api/pattern/download/"+patID.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"id": patID.String()})
 	rec := httptest.NewRecorder()
 
 	defer func() {
@@ -389,6 +392,10 @@ func TestDownloadMesheryPatternHandler_NilSystemID_DoesNotPanic(t *testing.T) {
 	}()
 
 	fixture.h.DownloadMesheryPatternHandler(rec, req, nil, authUser, fixture.provider)
+
+	if rec.Code == http.StatusBadRequest {
+		t.Fatalf("expected the handler to reach the nil-SystemID path, got 400 Bad Request (route id not set?)")
+	}
 }
 
 func TestGetMesheryPatternHandler_NilSystemID_DoesNotPanic(t *testing.T) {
@@ -396,7 +403,10 @@ func TestGetMesheryPatternHandler_NilSystemID_DoesNotPanic(t *testing.T) {
 	fixture.h.SystemID = nil
 	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
 
-	req := httptest.NewRequest(http.MethodGet, "/api/pattern/00000000-0000-0000-0000-000000000000", nil)
+	patID := uuid.Must(uuid.NewV4())
+
+	req := httptest.NewRequest(http.MethodGet, "/api/pattern/"+patID.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"id": patID.String()})
 	rec := httptest.NewRecorder()
 
 	defer func() {
@@ -406,4 +416,8 @@ func TestGetMesheryPatternHandler_NilSystemID_DoesNotPanic(t *testing.T) {
 	}()
 
 	fixture.h.GetMesheryPatternHandler(rec, req, nil, authUser, fixture.provider)
+
+	if rec.Code == http.StatusBadRequest {
+		t.Fatalf("expected the handler to reach the nil-SystemID path, got 400 Bad Request (route id not set?)")
+	}
 }
