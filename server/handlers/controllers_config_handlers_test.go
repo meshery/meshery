@@ -706,3 +706,146 @@ func TestReconcileInheritedDeploymentMode_SkipsConnectionWithUnparseableOverride
 		t.Fatalf("the unreadable override must be left intact for deliberate correction, got %#v", raw)
 	}
 }
+
+func TestUpdateControllersDefaultConfig_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h, provider := newControllersConfigTestHandler(t)
+	req := httptest.NewRequest(http.MethodPut, "/api/system/controllers/config", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	h.UpdateControllersDefaultConfig(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for nil user, got %d", rec.Code)
+	}
+	var body map[string]string
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("unmarshaling error response: %v", err)
+	}
+	if body["error"] != "user unauthorized" {
+		t.Fatalf("expected 'user unauthorized', got %q", body["error"])
+	}
+}
+
+func TestUpdateControllersDefaultConfig_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h, _ := newControllersConfigTestHandler(t)
+	req := httptest.NewRequest(http.MethodPut, "/api/system/controllers/config", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	h.UpdateControllersDefaultConfig(rec, req, nil, user, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestUpdateControllersDefaultConfig_NilSystemID_DoesNotPanic(t *testing.T) {
+	h, provider := newControllersConfigTestHandler(t)
+	h.SystemID = nil
+
+	req := httptest.NewRequest(http.MethodPut, "/api/system/controllers/config", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	h.UpdateControllersDefaultConfig(rec, req, nil, user, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200 OK, got %d", rec.Code)
+	}
+	if len(provider.events) == 0 {
+		t.Fatal("expected at least one event to be persisted")
+	}
+	for _, ev := range provider.events {
+		if ev.SystemID != uuid.Nil {
+			t.Fatalf("expected event SystemID to be uuid.Nil when h.SystemID is nil, got %s", ev.SystemID)
+		}
+	}
+}
+
+func TestUpdateConnectionControllersConfig_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h, provider := newControllersConfigTestHandler(t)
+	connID := uuid.Must(uuid.NewV4())
+	req := httptest.NewRequest(http.MethodPut, "/api/integrations/connections/"+connID.String()+"/controllers/config", strings.NewReader(`{}`))
+	req = mux.SetURLVars(req, map[string]string{"connectionId": connID.String()})
+	rec := httptest.NewRecorder()
+
+	h.UpdateConnectionControllersConfig(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for nil user, got %d", rec.Code)
+	}
+	var body map[string]string
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("unmarshaling error response: %v", err)
+	}
+	if body["error"] != "user unauthorized" {
+		t.Fatalf("expected 'user unauthorized', got %q", body["error"])
+	}
+}
+
+func TestUpdateConnectionControllersConfig_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h, _ := newControllersConfigTestHandler(t)
+	connID := uuid.Must(uuid.NewV4())
+	req := httptest.NewRequest(http.MethodPut, "/api/integrations/connections/"+connID.String()+"/controllers/config", strings.NewReader(`{}`))
+	req = mux.SetURLVars(req, map[string]string{"connectionId": connID.String()})
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	h.UpdateConnectionControllersConfig(rec, req, nil, user, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestUpdateConnectionControllersConfig_NilSystemID_DoesNotPanic(t *testing.T) {
+	h, provider := newControllersConfigTestHandler(t)
+	h.SystemID = nil
+
+	connID := seedKubernetesConnection(provider, nil)
+
+	req := withToken(httptest.NewRequest(http.MethodPut, "/api/integrations/connections/"+connID.String()+"/controllers/config", strings.NewReader(`{}`)))
+	req = mux.SetURLVars(req, map[string]string{"connectionId": connID.String()})
+	rec := httptest.NewRecorder()
+	user := testUser()
+
+	h.UpdateConnectionControllersConfig(rec, req, nil, user, provider)
+
+	if rec.Code != http.StatusOK && rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 200 OK or 500 InternalServerError, got %d; body: %s", rec.Code, rec.Body.String())
+	}
+	if len(provider.events) == 0 {
+		t.Fatal("expected at least one event to be persisted")
+	}
+	for _, ev := range provider.events {
+		if ev.SystemID != uuid.Nil {
+			t.Fatalf("expected event SystemID to be uuid.Nil when h.SystemID is nil, got %s", ev.SystemID)
+		}
+	}
+}
+
+func TestGetConnectionControllersConfig_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h, _ := newControllersConfigTestHandler(t)
+	connID := uuid.Must(uuid.NewV4())
+	req := httptest.NewRequest(http.MethodGet, "/api/integrations/connections/"+connID.String()+"/controllers/config", nil)
+	req = mux.SetURLVars(req, map[string]string{"connectionId": connID.String()})
+	rec := httptest.NewRecorder()
+
+	h.GetConnectionControllersConfig(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}

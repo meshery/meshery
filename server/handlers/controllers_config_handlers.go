@@ -26,7 +26,9 @@ import (
 func (h *Handler) GetControllersDefaultConfig(w http.ResponseWriter, _ *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	cfg, err := models.GetControllersConfigDefaults(h.dbHandler)
 	if err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
@@ -37,7 +39,9 @@ func (h *Handler) GetControllersDefaultConfig(w http.ResponseWriter, _ *http.Req
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(cfg); err != nil {
-		h.log.Error(models.ErrMarshal(err, "controllers config defaults"))
+		if h.log != nil {
+			h.log.Error(models.ErrMarshal(err, "controllers config defaults"))
+		}
 	}
 }
 
@@ -46,6 +50,17 @@ func (h *Handler) GetControllersDefaultConfig(w http.ResponseWriter, _ *http.Req
 // configuration to every connected Kubernetes connection that inherits the
 // changed fields. An empty document clears the stored defaults.
 func (h *Handler) UpdateControllersDefaultConfig(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
 	userID := user.ID
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 
@@ -54,12 +69,18 @@ func (h *Handler) UpdateControllersDefaultConfig(w http.ResponseWriter, req *htt
 		return
 	}
 
+	var sysID uuid.UUID
+	if h.SystemID != nil {
+		sysID = *h.SystemID
+	}
 	newEvent := func() *events.EventBuilder {
-		return events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+		return events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(sysID).WithCategory("connection").WithAction("update")
 	}
 
 	if err := models.SaveControllersConfigDefaults(h.dbHandler, cfg); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		event := newEvent().WithSeverity(events.Error).WithDescription("Failed to persist server-wide controllers configuration defaults.").WithMetadata(map[string]interface{}{"error": err}).Build()
 		h.persistAndPublish(provider, token, userID, event)
 		writeMeshkitError(w, err, http.StatusInternalServerError)
@@ -77,7 +98,9 @@ func (h *Handler) UpdateControllersDefaultConfig(w http.ResponseWriter, req *htt
 
 	stored, err := models.GetControllersConfigDefaults(h.dbHandler)
 	if err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
@@ -87,7 +110,9 @@ func (h *Handler) UpdateControllersDefaultConfig(w http.ResponseWriter, req *htt
 	stored.SchemaVersion = connections.ControllersConfigSchemaVersion
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(stored); err != nil {
-		h.log.Error(models.ErrMarshal(err, "controllers config defaults"))
+		if h.log != nil {
+			h.log.Error(models.ErrMarshal(err, "controllers config defaults"))
+		}
 	}
 }
 
@@ -97,6 +122,13 @@ func (h *Handler) UpdateControllersDefaultConfig(w http.ResponseWriter, req *htt
 // per-connection override, the server-wide default, and the resolved
 // effective configuration.
 func (h *Handler) GetConnectionControllersConfig(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 
 	connection, ok := h.fetchKubernetesConnection(w, req, token, provider)
@@ -106,14 +138,18 @@ func (h *Handler) GetConnectionControllersConfig(w http.ResponseWriter, req *htt
 
 	response, err := h.buildConnectionControllersConfig(connection)
 	if err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		h.log.Error(models.ErrMarshal(err, "connection controllers config"))
+		if h.log != nil {
+			h.log.Error(models.ErrMarshal(err, "connection controllers config"))
+		}
 	}
 }
 
@@ -124,6 +160,17 @@ func (h *Handler) GetConnectionControllersConfig(w http.ResponseWriter, req *htt
 // fields inherit the server-wide default; an empty document removes the
 // override entirely.
 func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
 	userID := user.ID
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 
@@ -138,8 +185,12 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 	}
 	connectionID := connection.ID
 
+	var sysID uuid.UUID
+	if h.SystemID != nil {
+		sysID = *h.SystemID
+	}
 	newEvent := func() *events.EventBuilder {
-		return events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+		return events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(sysID).WithCategory("connection").WithAction("update")
 	}
 
 	metadata := connection.Metadata
@@ -147,7 +198,9 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 		metadata = core.Map{}
 	}
 	if err := connections.SetControllersConfigToMetadata(metadata, override); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		writeMeshkitError(w, err, http.StatusBadRequest)
 		return
 	}
@@ -162,7 +215,9 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 	// the value the user just saved.
 	serverDefaults, err := models.GetControllersConfigDefaults(h.dbHandler)
 	if err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
@@ -186,7 +241,9 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 	// MeshSync data pipeline). Delegated to the existing mode-change path so
 	// both entry points behave identically.
 	if _, _, modeChanged, err := h.handleMeshSyncDeploymentModeChange(req.Context(), connectionID, payload, token, userID, provider); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		event := newEvent().WithSeverity(events.Error).WithDescription("Failed to apply MeshSync deployment mode change.").WithMetadata(map[string]interface{}{"error": err}).Build()
 		h.persistAndPublish(provider, token, userID, event)
 		writeMeshkitError(w, err, http.StatusInternalServerError)
@@ -197,7 +254,9 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 	}
 
 	if _, err := provider.UpdateConnectionById(token, payload, connectionID.String()); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		event := newEvent().WithSeverity(events.Error).WithDescription("Failed to persist the connection's controllers configuration override.").WithMetadata(map[string]interface{}{"error": err}).Build()
 		h.persistAndPublish(provider, token, userID, event)
 		writeMeshkitError(w, err, http.StatusInternalServerError)
@@ -211,13 +270,17 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 	connection.Metadata = metadata
 	response, err := h.buildConnectionControllersConfig(connection)
 	if err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		h.log.Error(models.ErrMarshal(err, "connection controllers config"))
+		if h.log != nil {
+			h.log.Error(models.ErrMarshal(err, "connection controllers config"))
+		}
 	}
 }
 
@@ -227,13 +290,17 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 func (h *Handler) readControllersConfigPayload(w http.ResponseWriter, req *http.Request) (*controllersconfig.MesheryControllersConfig, bool) {
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
 		return nil, false
 	}
 	payload := &controllersconfig.MesheryControllersConfigPayload{}
 	if err := json.Unmarshal(body, payload); err != nil {
-		h.log.Error(models.ErrUnmarshal(err, "controllers config"))
+		if h.log != nil {
+			h.log.Error(models.ErrUnmarshal(err, "controllers config"))
+		}
 		writeMeshkitError(w, models.ErrUnmarshal(err, "controllers config"), http.StatusBadRequest)
 		return nil, false
 	}
@@ -244,7 +311,9 @@ func (h *Handler) readControllersConfigPayload(w http.ResponseWriter, req *http.
 		Broker:        payload.Broker,
 	}
 	if err := connections.ValidateControllersConfig(cfg); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		writeMeshkitError(w, err, http.StatusBadRequest)
 		return nil, false
 	}
@@ -255,16 +324,27 @@ func (h *Handler) readControllersConfigPayload(w http.ResponseWriter, req *http.
 // Kubernetes connection. On failure it writes the HTTP error response and
 // returns ok=false.
 func (h *Handler) fetchKubernetesConnection(w http.ResponseWriter, req *http.Request, token string, provider models.Provider) (*connections.Connection, bool) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return nil, false
+	}
 	connectionID, err := uuid.FromString(mux.Vars(req)["connectionId"])
 	if err != nil || connectionID == uuid.Nil {
 		idErr := ErrEmptyConnectionID()
-		h.log.Error(idErr)
+		if h.log != nil {
+			h.log.Error(idErr)
+		}
 		writeMeshkitError(w, idErr, http.StatusBadRequest)
 		return nil, false
 	}
 	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		if statusCode < http.StatusContinue {
 			statusCode = http.StatusInternalServerError
 		}
@@ -273,7 +353,9 @@ func (h *Handler) fetchKubernetesConnection(w http.ResponseWriter, req *http.Req
 	}
 	if connection.Kind != "kubernetes" {
 		err := connections.ErrControllersConfigInvalid("controllers configuration applies to Kubernetes connections only")
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		writeMeshkitError(w, err, http.StatusBadRequest)
 		return nil, false
 	}
@@ -334,7 +416,9 @@ func (h *Handler) applyControllersConfigToConnection(
 	}
 	machineCtx, err := kubernetes.GetMachineCtx(machine.GetContext(), nil)
 	if err != nil || machineCtx == nil {
-		h.log.Warnf("controllers config: no machine context for connection %s; configuration applies on next connect", connectionID)
+		if h.log != nil {
+			h.log.Warnf("controllers config: no machine context for connection %s; configuration applies on next connect", connectionID)
+		}
 		return
 	}
 	ctrlHelper := machineCtx.MesheryCtrlsHelper
@@ -361,7 +445,11 @@ func (h *Handler) applyControllersConfigToConnection(
 		// watch-list are re-read.
 		contextID := machineCtx.K8sContext.ID
 		ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
-		ctrlHelper.AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, *h.SystemID, provider)
+		var sysID uuid.UUID
+		if h.SystemID != nil {
+			sysID = *h.SystemID
+		}
+		ctrlHelper.AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, sysID, provider)
 		h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Informational, "Controllers configuration applied: embedded MeshSync restarted with the updated configuration.", map[string]interface{}{"connectionId": connectionID})
 	case connections.MeshsyncDeploymentModeOperator:
 		// operator.version fixes the Helm chart version the operator is
@@ -369,7 +457,9 @@ func (h *Handler) applyControllersConfigToConnection(
 		// so a changed version has to be redeployed here rather than waiting
 		// for the connection to reconnect.
 		if chartVersion, redeployed, verr := ctrlHelper.ReconcileOperatorChartVersion(machineCtx.K8sContext, machineCtx.OperatorTracker); verr != nil {
-			h.log.Error(verr)
+			if h.log != nil {
+				h.log.Error(verr)
+			}
 			h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Error, "Failed to deploy Meshery Operator at the configured chart version.", map[string]interface{}{"error": verr, "connectionId": connectionID, "operatorChartVersion": chartVersion})
 		} else if redeployed {
 			h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Informational, fmt.Sprintf("Meshery Operator redeployed at chart version %q.", chartVersion), map[string]interface{}{"connectionId": connectionID, "operatorChartVersion": chartVersion})
@@ -399,20 +489,28 @@ func (h *Handler) reapplyControllersConfigToTrackedConnections(token string, use
 	}
 	serverDefaults, err := models.GetControllersConfigDefaults(h.dbHandler)
 	if err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		return
+	}
+	var sysID uuid.UUID
+	if h.SystemID != nil {
+		sysID = *h.SystemID
 	}
 	h.ConnectionToStateMachineInstanceTracker.Range(func(connectionID core.Uuid, _ *machines.StateMachine) bool {
 		connection, _, err := provider.GetConnectionByID(token, connectionID)
 		if err != nil {
-			h.log.Warnf("controllers config: skipping re-apply for connection %s: %v", connectionID, err)
+			if h.log != nil {
+				h.log.Warnf("controllers config: skipping re-apply for connection %s: %v", connectionID, err)
+			}
 			return true
 		}
 		if connection.Kind != "kubernetes" {
 			return true
 		}
 		newEvent := func() *events.EventBuilder {
-			return events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+			return events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(sysID).WithCategory("connection").WithAction("update")
 		}
 		// A deployment-mode change is not just a document to re-apply: it
 		// deploys or undeploys the operator and re-attaches the MeshSync data
@@ -454,7 +552,9 @@ func (h *Handler) reconcileInheritedDeploymentMode(
 		// user never chose, on the strength of corrupt data. Skip this
 		// connection instead and leave it exactly as it is; the per-connection
 		// GET surfaces the parse failure so it can be corrected deliberately.
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		h.emitControllersConfigApplyEvent(
 			newEvent, provider, token, userID, events.Error,
 			"Skipped reconciling this connection's MeshSync deployment mode: its stored controllers configuration could not be parsed.",
@@ -482,13 +582,17 @@ func (h *Handler) reconcileInheritedDeploymentMode(
 		CredentialID: connection.CredentialID,
 	}
 	if _, err := provider.UpdateConnectionById(token, payload, connection.ID.String()); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Error, "Failed to persist the MeshSync deployment mode inherited from the server-wide default.", map[string]interface{}{"error": err, "connectionId": connection.ID})
 		return
 	}
 
 	if err := h.reconcileMeshsyncDeploymentMode(context.Background(), connection.ID, desired.Mode, merged, userID, provider); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Error, "Failed to redeploy MeshSync for the deployment mode inherited from the server-wide default.", map[string]interface{}{"error": err, "connectionId": connection.ID})
 		return
 	}
