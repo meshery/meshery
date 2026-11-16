@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 
@@ -106,6 +107,19 @@ func (p *Proxy) setToken(token string) {
 	p.authWsChan <- token != ""
 }
 
+// redactURL returns u as a string with the token query parameter masked, so
+// the auth token used by /token/store never ends up in the logs.
+func redactURL(u *url.URL) string {
+	q := u.Query()
+	if !q.Has("token") {
+		return u.String()
+	}
+	q.Set("token", "REDACTED")
+	redacted := *u
+	redacted.RawQuery = q.Encode()
+	return redacted.String()
+}
+
 func handleWsMessage(conn *websocket.Conn) {
 	for {
 		// read in a message
@@ -125,7 +139,7 @@ func handleWsMessage(conn *websocket.Conn) {
 }
 
 func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
-	log.Println(req.RemoteAddr, " ", req.Method, " ", req.URL)
+	log.Println(req.RemoteAddr, " ", req.Method, " ", redactURL(req.URL))
 
 	client := &http.Client{}
 
@@ -141,11 +155,16 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		// Each connection gets its own channel, and only the newest connection
+		// receives auth notifications. Closing the previous channel stops that
+		// connection's listener, so two connections never split notifications
+		// between them.
+		authWsChan := make(chan bool, 1)
 		p.mu.Lock()
-		if p.authWsChan == nil {
-			p.authWsChan = make(chan bool, 1)
+		if p.authWsChan != nil {
+			close(p.authWsChan)
 		}
-		authWsChan := p.authWsChan
+		p.authWsChan = authWsChan
 		p.mu.Unlock()
 
 		ws.SetCloseHandler(func(code int, text string) error {
@@ -193,7 +212,7 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			}
 			if token != "" {
 				p.setToken(token)
-				log.Println("Setting the value of token to be: ", token)
+				log.Println("Stored a new auth token")
 			}
 			if p.getToken() == "" {
 				wr.WriteHeader(http.StatusUnauthorized)
@@ -275,7 +294,7 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 				HttpOnly: true,
 			})
 		}
-		log.Println(*req)
+		log.Println("proxy: forwarding", req.Method, redactURL(req.URL))
 		resp, err := client.Do(req)
 		if err != nil {
 			http.Error(wr, "Server Error", http.StatusInternalServerError)

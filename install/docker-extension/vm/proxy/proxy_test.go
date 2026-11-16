@@ -1,8 +1,11 @@
 package proxy_test
 
 import (
+	"bytes"
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -147,4 +150,85 @@ func TestServeHTTP_WSClientNotifiedOfAuthChanges(t *testing.T) {
 	}
 	resp.Body.Close()
 	expectMsg(proxy.UnauthenticatedMsg)
+}
+
+// dialWS opens a websocket to the proxy's /ws endpoint and consumes the
+// initial handshake message.
+func dialWS(t *testing.T, srvURL string) *websocket.Conn {
+	t.Helper()
+	ws, _, err := websocket.DefaultDialer.Dial("ws"+strings.TrimPrefix(srvURL, "http")+"/ws", nil)
+	if err != nil {
+		t.Fatalf("dial /ws: %v", err)
+	}
+	t.Cleanup(func() { ws.Close() })
+	_ = ws.SetReadDeadline(time.Now().Add(2 * time.Second))
+	if _, msg, err := ws.ReadMessage(); err != nil || string(msg) != proxy.InitiationSuccessful {
+		t.Fatalf("expected %q, got %q (err %v)", proxy.InitiationSuccessful, msg, err)
+	}
+	return ws
+}
+
+// When the UI reconnects while its old websocket is still open, every auth
+// change must reach the newest connection instead of being split between the
+// two listeners.
+func TestServeHTTP_NewestWSClientGetsAllAuthChanges(t *testing.T) {
+	srv := httptest.NewServer(&proxy.Proxy{})
+	defer srv.Close()
+
+	older := dialWS(t, srv.URL)
+	newer := dialWS(t, srv.URL)
+
+	for i := 0; i < 4; i++ {
+		req, _ := http.NewRequest(http.MethodGet, srv.URL+"/token/store?token=abc", nil)
+		want := proxy.AuthenticatedMsg
+		if i%2 == 1 {
+			req, _ = http.NewRequest(http.MethodDelete, srv.URL+"/token", nil)
+			want = proxy.UnauthenticatedMsg
+		}
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			t.Fatalf("%s %s: %v", req.Method, req.URL.Path, err)
+		}
+		resp.Body.Close()
+
+		_ = newer.SetReadDeadline(time.Now().Add(2 * time.Second))
+		_, msg, err := newer.ReadMessage()
+		if err != nil {
+			t.Fatalf("change %d: newest client got no notification: %v", i, err)
+		}
+		if string(msg) != want {
+			t.Fatalf("change %d: expected %q, got %q", i, want, msg)
+		}
+	}
+
+	_ = older.SetReadDeadline(time.Now().Add(200 * time.Millisecond))
+	if _, msg, err := older.ReadMessage(); err == nil {
+		t.Fatalf("replaced client should get no auth notifications, got %q", msg)
+	}
+}
+
+// The auth token is a credential, so neither /token/store nor a proxied
+// request carrying the token cookie may write it to the log.
+func TestServeHTTP_TokenNotLogged(t *testing.T) {
+	backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	defer backend.Close()
+	old := proxy.MesheryServerHost
+	proxy.MesheryServerHost = strings.TrimPrefix(backend.URL, "http://")
+	t.Cleanup(func() { proxy.MesheryServerHost = old })
+
+	var buf bytes.Buffer
+	log.SetOutput(&buf)
+	t.Cleanup(func() { log.SetOutput(os.Stderr) })
+
+	const secret = "s3cr3t-token-value"
+	p := &proxy.Proxy{}
+	serveWithTimeout(t, p, httptest.NewRequest(http.MethodGet, "http://localhost/token/store?token="+secret, nil))
+	serveWithTimeout(t, p, httptest.NewRequest(http.MethodGet, "http://localhost/api/system/version", nil))
+
+	if strings.Contains(buf.String(), secret) {
+		t.Fatalf("auth token leaked into logs:\n%s", buf.String())
+	}
+	if !strings.Contains(buf.String(), "token=REDACTED") {
+		t.Fatalf("expected the /token/store request to be logged with a redacted token:\n%s", buf.String())
+	}
 }
