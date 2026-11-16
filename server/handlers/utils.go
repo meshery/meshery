@@ -61,7 +61,14 @@ func writeJSONEmptyObject(w http.ResponseWriter, status int) {
 // and typed nil pointers). When provider is nil, it logs via h.log (if non-nil),
 // writes ErrNilProvider() with HTTP 500, and returns false.
 func (h *Handler) requireProvider(w http.ResponseWriter, provider models.Provider) bool {
-	if provider == nil || (reflect.ValueOf(provider).Kind() == reflect.Ptr && reflect.ValueOf(provider).IsNil()) {
+	if provider == nil {
+		if h != nil && h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return false
+	}
+	if val := reflect.ValueOf(provider); val.Kind() == reflect.Pointer && val.IsNil() {
 		if h != nil && h.log != nil {
 			h.log.Error(ErrNilProvider())
 		}
