@@ -228,6 +228,14 @@ describe('getConnectionIDsFromContextIds', () => {
     expect(getConnectionIDsFromContextIds(['ctx-1'], null)).toEqual([]);
     expect(getConnectionIDsFromContextIds(['ctx-1'], {} as any)).toEqual([]);
   });
+
+  it('safely handles nullish entries inside contexts and k8sConfig arrays', () => {
+    expect(getConnectionIDsFromContextIds([null as any], [null as any])).toEqual([]);
+    expect(getConnectionIDsFromContextIds([undefined as any], [null as any])).toEqual([]);
+    expect(
+      getConnectionIDsFromContextIds(['ctx-1', null as any], [null as any, ...sampleConfig]),
+    ).toEqual(['conn-1']);
+  });
 });
 
 describe('getControllerPollConnectionIDsFromContextIds', () => {

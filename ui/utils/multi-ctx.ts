@@ -123,7 +123,11 @@ export function getK8sConfigIdsFromK8sConfig(k8sConfig) {
 }
 
 export const getK8sClusterNamesFromCtxId = (selectedContexts, k8sconfig) => {
-  if (!Array.isArray(selectedContexts) || !Array.isArray(k8sconfig) || selectedContexts.length === 0) {
+  if (
+    !Array.isArray(selectedContexts) ||
+    !Array.isArray(k8sconfig) ||
+    selectedContexts.length === 0
+  ) {
     return [];
   }
 
@@ -239,7 +243,7 @@ export function getConnectionIDsFromContextIds(contexts, k8sConfig) {
     return [];
   }
   const filteredK8sConnfigs = k8sConfig.filter((config) =>
-    contexts.some((context) => context == config?.id),
+    contexts.some((context) => context != null && config != null && context == config.id),
   );
   return filteredK8sConnfigs.map((config) => config.connectionId);
 }
