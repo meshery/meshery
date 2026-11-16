@@ -717,13 +717,7 @@ func FlushMeshSyncResourcesForCluster(db *database.Handler, clusterID string) er
 
 		// Child rows keyed by the parent resource's id, deleted before the parent so
 		// the subquery still resolves.
-		childModels := []any{
-			&meshsyncmodel.KubernetesKeyValue{},
-			&meshsyncmodel.KubernetesResourceSpec{},
-			&meshsyncmodel.KubernetesResourceStatus{},
-			&meshsyncmodel.KubernetesResourceObjectMeta{},
-		}
-		for _, child := range childModels {
+		for _, child := range meshSyncResourceChildModels() {
 			if err := tx.Where("id IN (?)", resourceIDs).Delete(child).Error; err != nil {
 				return err
 			}
@@ -732,6 +726,63 @@ func FlushMeshSyncResourcesForCluster(db *database.Handler, clusterID string) er
 		// Finally remove the parent resources for the cluster.
 		return tx.Where("cluster_id = ?", clusterID).Delete(&meshsyncmodel.KubernetesResource{}).Error
 	})
+}
+
+// meshSyncResourceChildModels lists the MeshSync tables whose rows share their
+// parent KubernetesResource's id: labels and annotations, spec, status and object
+// meta. Their foreign keys do not cascade (SQLite runs without foreign keys
+// enforced, and SET NULL cannot clear a primary key), so every delete of a
+// resource must remove these rows itself.
+func meshSyncResourceChildModels() []any {
+	return []any{
+		&meshsyncmodel.KubernetesKeyValue{},
+		&meshsyncmodel.KubernetesResourceSpec{},
+		&meshsyncmodel.KubernetesResourceStatus{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
+	}
+}
+
+// DeleteMeshSyncResourceByID removes one MeshSync resource and every child row
+// that shares its id, in a single transaction. It reports whether the resource
+// existed; when it did not, nothing is deleted. Leaving the children behind would
+// orphan them, and because MeshSync ids are deterministic they would reattach to
+// the resource the next time it is discovered.
+//
+// The children are deleted before the parent, as in
+// FlushMeshSyncResourcesForCluster: their foreign keys are ON DELETE SET NULL on
+// their own primary key, so deleting the parent first fails on Postgres, which
+// always enforces foreign keys, and nulls the child ids on SQLite when foreign
+// keys are enabled.
+func DeleteMeshSyncResourceByID(db *database.Handler, id string) (bool, error) {
+	if db == nil || db.DB == nil {
+		return false, ErrEmptyMeshSyncHandler()
+	}
+
+	deleted := false
+	err := db.Transaction(func(tx *gorm.DB) error {
+		var exists int64
+		if err := tx.Model(&meshsyncmodel.KubernetesResource{}).Where("id = ?", id).Count(&exists).Error; err != nil {
+			return err
+		}
+		if exists == 0 {
+			return nil
+		}
+		for _, child := range meshSyncResourceChildModels() {
+			if err := tx.Where("id = ?", id).Delete(child).Error; err != nil {
+				return err
+			}
+		}
+		res := tx.Where("id = ?", id).Delete(&meshsyncmodel.KubernetesResource{})
+		if res.Error != nil {
+			return res.Error
+		}
+		deleted = res.RowsAffected > 0
+		return nil
+	})
+	if err != nil {
+		return false, err
+	}
+	return deleted, nil
 }
 
 func RedactCredentialsForContext(ctx *K8sContext) (redactedContext K8sContext) {
@@ -746,6 +797,17 @@ func RedactCredentialsForContext(ctx *K8sContext) (redactedContext K8sContext) {
 	redactedContext.KubernetesServerID = nil
 	redactedContext.MesheryInstanceID = nil
 	return
+}
+
+// RedactCredentials removes sensitive client authentication data and cluster
+// secrets before serializing the context for external API responses, while
+// preserving context identifiers and public endpoint metadata.
+func (c *K8sContext) RedactCredentials() {
+	if c == nil {
+		return
+	}
+	c.Auth = sql.Map{}
+	c.Cluster = sql.Map{}
 }
 
 func GenerateK8sClientSet(context *K8sContext, eb *events.EventBuilder, eventMetadata map[string]interface{}, log logger.Handler) (*kubernetes.Client, error) {
