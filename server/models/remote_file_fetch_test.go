@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/netip"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -33,6 +34,16 @@ func TestIsBlockedRemoteFileAddr(t *testing.T) {
 		{"100.64.0.1", true},
 		{"224.0.0.1", true},
 		{"240.0.0.1", true},
+		{"192.0.2.1", true},
+		{"198.51.100.1", true},
+		{"203.0.113.1", true},
+		{"2001:db8::1", true},
+		// Zoned addresses must be judged without their zone.
+		{"::%lo", true},
+		{"::1%lo", true},
+		{"fe80::1%eth0", true},
+		{"2001:db8::1%eth0", true},
+		{"2606:4700:4700::1111%eth0", false},
 		{"8.8.8.8", false},
 		{"1.1.1.1", false},
 		{"2606:4700:4700::1111", false},
@@ -156,6 +167,36 @@ func TestFetchRemoteFileRedirects(t *testing.T) {
 		defer srv.Close()
 		if _, err := fetchRemoteFileWith(client, srv.URL, 1024); err == nil || !strings.Contains(err.Error(), "unsupported URL scheme") {
 			t.Fatalf("expected scheme error, got %v", err)
+		}
+	})
+
+	// chain serves a redirect chain: /n redirects to /n-1 until /0, which
+	// returns a body. Fetching /n therefore follows exactly n redirects.
+	chain := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		n, err := strconv.Atoi(strings.TrimPrefix(r.URL.Path, "/"))
+		if err != nil {
+			http.Error(w, "bad path", http.StatusBadRequest)
+			return
+		}
+		if n == 0 {
+			_, _ = w.Write([]byte("name: ok"))
+			return
+		}
+		http.Redirect(w, r, "/"+strconv.Itoa(n-1), http.StatusFound)
+	}))
+	defer chain.Close()
+
+	t.Run("redirects up to the limit are followed", func(t *testing.T) {
+		u := chain.URL + "/" + strconv.Itoa(maxRemoteFileRedirects)
+		if _, err := fetchRemoteFileWith(client, u, 1024); err != nil {
+			t.Fatalf("expected %d redirects to be followed, got %v", maxRemoteFileRedirects, err)
+		}
+	})
+
+	t.Run("one redirect past the limit is rejected", func(t *testing.T) {
+		u := chain.URL + "/" + strconv.Itoa(maxRemoteFileRedirects+1)
+		if _, err := fetchRemoteFileWith(client, u, 1024); err == nil || !strings.Contains(err.Error(), "redirects") {
+			t.Fatalf("expected redirect limit error, got %v", err)
 		}
 	})
 

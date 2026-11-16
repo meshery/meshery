@@ -35,11 +35,15 @@ const (
 // blockedRemoteFilePrefixes lists address ranges that are not covered by the
 // netip.Addr predicates used in isBlockedRemoteFileAddr.
 var blockedRemoteFilePrefixes = []netip.Prefix{
-	netip.MustParsePrefix("0.0.0.0/8"),     // "this network"
-	netip.MustParsePrefix("100.64.0.0/10"), // carrier-grade NAT
-	netip.MustParsePrefix("192.0.0.0/24"),  // IETF protocol assignments
-	netip.MustParsePrefix("198.18.0.0/15"), // benchmarking
-	netip.MustParsePrefix("240.0.0.0/4"),   // reserved
+	netip.MustParsePrefix("0.0.0.0/8"),       // "this network"
+	netip.MustParsePrefix("100.64.0.0/10"),   // carrier-grade NAT
+	netip.MustParsePrefix("192.0.0.0/24"),    // IETF protocol assignments
+	netip.MustParsePrefix("198.18.0.0/15"),   // benchmarking
+	netip.MustParsePrefix("240.0.0.0/4"),     // reserved
+	netip.MustParsePrefix("192.0.2.0/24"),    // TEST-NET-1 documentation
+	netip.MustParsePrefix("198.51.100.0/24"), // TEST-NET-2 documentation
+	netip.MustParsePrefix("203.0.113.0/24"),  // TEST-NET-3 documentation
+	netip.MustParsePrefix("2001:db8::/32"),   // IPv6 documentation
 }
 
 // isBlockedRemoteFileAddr reports whether the server must refuse to connect to
@@ -47,8 +51,11 @@ var blockedRemoteFilePrefixes = []netip.Prefix{
 // includes cloud metadata endpoints such as 169.254.169.254), multicast,
 // unspecified and other non-public ranges.
 func isBlockedRemoteFileAddr(addr netip.Addr) bool {
-	// Unmap so ::ffff:127.0.0.1 is judged as 127.0.0.1.
-	addr = addr.Unmap()
+	// Drop any IPv6 zone first: netip's predicates compare against zoneless
+	// addresses, so "::%lo" would otherwise not count as unspecified even though
+	// connecting to it reaches loopback. Then unmap so ::ffff:127.0.0.1 is
+	// judged as 127.0.0.1.
+	addr = addr.WithZone("").Unmap()
 	if !addr.IsValid() ||
 		addr.IsLoopback() ||
 		addr.IsPrivate() ||
@@ -105,7 +112,9 @@ func newRemoteFileClient(timeout time.Duration, blocked func(netip.Addr) bool) *
 			DisableKeepAlives:     true,
 		},
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			if len(via) >= maxRemoteFileRedirects {
+			// via holds every request made so far, including the original one,
+			// so len(via) is the number of redirects already followed plus one.
+			if len(via) > maxRemoteFileRedirects {
 				return fmt.Errorf("stopped after %d redirects", maxRemoteFileRedirects)
 			}
 			return validateRemoteFileURL(req.URL)
