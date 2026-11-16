@@ -25,7 +25,7 @@ test.describe.skip('Service Mesh Lifecycle Tests', { tag: '@unstable' }, () => {
       await dashboardPage.navigateToDashboard();
       await dashboardPage.navigateToSettings();
 
-      await page.getByRole('tab', { name: 'Adapters', exact: true }).click({ force: true });
+      await page.getByRole('tab', { name: 'Adapters', exact: true }).click();
 
       await page
         .locator('label')
