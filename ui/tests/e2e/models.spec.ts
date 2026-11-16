@@ -38,14 +38,6 @@ const model_import: {
 };
 
 test.describe.serial('Model Workflow Tests', () => {
-  // "Create a Model" downloads a model from GitHub during the test body
-  // and extends its own timeout to 600s via test.setTimeout. The shared
-  // beforeEach calls navigateToDashboard() + navigateToSettings() + waits
-  // on settings-tab-registry, each with their own 120s inner timeouts.
-  // Default BASE_TIMEOUT=60s is too short for the hook on slow CI.
-  // Configure 240s as the describe default so the hook has enough room on
-  // every test in this group; Create a Model still extends further in its
-  // body for the GitHub fetch.
   test.describe.configure({ timeout: 240_000 });
 
   test.beforeEach(async ({ page }) => {
@@ -57,15 +49,14 @@ test.describe.serial('Model Workflow Tests', () => {
   });
 
   test('Create a Model', async ({ page }) => {
-    // Model generation downloads from GitHub and can be very slow in CI.
-    // test.slow() triples the default timeout (60s → 180s).
     test.slow();
     test.setTimeout(600_000);
 
     await page.getByTestId('TabBar-Button-CreateModel').click();
 
-    await page.locator('#model-name').fill(model.MODEL_NAME);
-    await page.locator('#model-display-name').fill(model.MODEL_DISPLAY_NAME);
+    // UPGRADE 1: Replaced fragile #id locators with robust getByRole selectors
+    await page.getByRole('textbox', { name: /model name/i }).fill(model.MODEL_NAME);
+    await page.getByRole('textbox', { name: /model display name/i }).fill(model.MODEL_DISPLAY_NAME);
 
     await page.getByTestId('UrlStepper-Button-Next').click();
 
@@ -84,7 +75,7 @@ test.describe.serial('Model Workflow Tests', () => {
     await page.getByTestId('UrlStepper-Button-Next').click();
 
     await page.getByTestId('UrlStepper-Select-Source-GitHub').check();
-    await page.locator('#model-url').fill(model.MODEL_URL);
+    await page.getByRole('textbox', { name: /url/i }).fill(model.MODEL_URL);
 
     await page.getByTestId('UrlStepper-Button-Next').click();
     await page.getByTestId('UrlStepper-Visual-Annotation-Checkbox').check();
@@ -92,7 +83,6 @@ test.describe.serial('Model Workflow Tests', () => {
 
     await page.getByTestId('UrlStepper-Button-Generate').click();
 
-    // Model generation fetches from GitHub — wait with extended timeout
     await expect(
       page.getByTestId(`ModelImportedSection-ModelHeader-${model.MODEL_NAME}`),
     ).toBeVisible({ timeout: 540_000 });
@@ -103,24 +93,28 @@ test.describe.serial('Model Workflow Tests', () => {
 
   test('Search a Model and Export it', async ({ page }) => {
     await page.getByTestId('search-icon').click();
-    await page.locator('#searchClick').click();
-    await page.locator('#searchClick').fill(model.MODEL_DISPLAY_NAME);
-    await page.getByText(model.MODEL_DISPLAY_NAME).click();
+    
+    // UPGRADE 2: Replaced #searchClick with semantic getByRole searchbox
+    await page.getByRole('searchbox', { name: /search/i }).fill(model.MODEL_DISPLAY_NAME);
+    
+    // UPGRADE 3: Added { exact: true } to prevent matching partial text elsewhere on the page
+    await page.getByText(model.MODEL_DISPLAY_NAME, { exact: true }).click();
 
     const downloadPromise = page.waitForEvent('download');
     await page.getByTestId('export-model-button').click();
     const download = await downloadPromise;
     expect(download).toBeDefined();
-    await page.getByRole('combobox', { name: 'Model status' }).click();
-    await page.getByRole('option', { name: 'ignored' }).click();
-    await expect(page.getByRole('combobox', { name: 'Model status' })).toHaveText(/ignored/i);
+    
+    await page.getByRole('combobox', { name: /model status/i }).click();
+    await page.getByRole('option', { name: /ignored/i }).click();
+    await expect(page.getByRole('combobox', { name: /model status/i })).toHaveText(/ignored/i);
   });
 
   test('Import a Model via File Import', async ({ page }) => {
     await page.getByTestId('TabBar-Button-ImportModel').click();
     await page.getByRole('heading', { name: 'File Import', exact: true }).click();
 
-    await page.setInputFiles('input[type="file"]', model_import.MODEL_FILE_IMPORT);
+    await page.locator('input[type="file"]').setInputFiles(model_import.MODEL_FILE_IMPORT);
 
     await page.getByRole('button', { name: 'Next' }).click();
 
@@ -135,8 +129,7 @@ test.describe.serial('Model Workflow Tests', () => {
     await page.getByTestId('TabBar-Button-ImportModel').click();
     await page.getByRole('heading', { name: 'URL Import', exact: true }).click();
 
-    await page.getByRole('textbox', { name: 'URL' }).click();
-    await page.getByRole('textbox', { name: 'URL' }).fill(model_import.MODEL_URL_IMPORT);
+    await page.getByRole('textbox', { name: /url/i }).fill(model_import.MODEL_URL_IMPORT);
 
     await page.getByRole('button', { name: 'Next' }).click();
 
@@ -153,11 +146,11 @@ test.describe.serial('Model Workflow Tests', () => {
 
     await page.getByRole('button', { name: 'Next' }).click();
 
-    await page.setInputFiles('input[type="file"]', model_import.MODEL_CSV_IMPORT.Models);
+    await page.locator('input[type="file"]').setInputFiles(model_import.MODEL_CSV_IMPORT.Models);
     await page.getByRole('button', { name: 'Next' }).click();
-    await page.setInputFiles('input[type="file"]', model_import.MODEL_CSV_IMPORT.Components);
+    await page.locator('input[type="file"]').setInputFiles(model_import.MODEL_CSV_IMPORT.Components);
     await page.getByRole('button', { name: 'Next' }).click();
-    await page.setInputFiles('input[type="file"]', model_import.MODEL_CSV_IMPORT.Relationships);
+    await page.locator('input[type="file"]').setInputFiles(model_import.MODEL_CSV_IMPORT.Relationships);
 
     await page.getByRole('button', { name: 'Generate' }).click();
 
