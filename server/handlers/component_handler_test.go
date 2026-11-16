@@ -533,3 +533,59 @@ func TestDeleteModel_Success(t *testing.T) {
 	dbHandler.Model(&model.ModelDefinition{}).Where("id = ?", modelID).Count(&count)
 	assert.Equal(t, int64(0), count, "model record must be deleted from database")
 }
+
+func TestUpdateEntityStatus_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/meshmodels/status", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	provider := &models.DefaultLocalProvider{}
+	h.UpdateEntityStatus(rec, req, nil, nil, provider)
+
+	require.Equal(t, http.StatusUnauthorized, rec.Code)
+	var body map[string]string
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &body))
+	assert.Equal(t, "user unauthorized", body["error"])
+}
+
+func TestUpdateEntityStatus_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/meshmodels/status", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	h.UpdateEntityStatus(rec, req, nil, user, nil)
+
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrNilProviderCode, decoded.Code)
+	assert.NotEmpty(t, decoded.Error)
+}
+
+func TestRegisterMeshmodels_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/meshmodels/register", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	provider := &models.DefaultLocalProvider{}
+	h.RegisterMeshmodels(rec, req, nil, nil, provider)
+
+	require.Equal(t, http.StatusUnauthorized, rec.Code)
+	var body map[string]string
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &body))
+	assert.Equal(t, "user unauthorized", body["error"])
+}
+
+func TestRegisterMeshmodels_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/meshmodels/register", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	h.RegisterMeshmodels(rec, req, nil, user, nil)
+
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrNilProviderCode, decoded.Code)
+	assert.NotEmpty(t, decoded.Error)
+}
