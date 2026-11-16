@@ -40,6 +40,7 @@ jobs:
     outputs:
       pr-number: ${{ steps.pr.outputs.PULL_REQUEST }}
       action: ${{ steps.pr.outputs.ACTION }}
+      skip: ${{ steps.pr.outputs.SKIP }}
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
@@ -67,8 +68,15 @@ jobs:
 
       - name: Retrieve PR metadata
         id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Set by GitHub from the triggering run; the pull_request run that
+          # wrote the artifact cannot change them.
+          RUN_PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
+          RUN_HEAD_REPOSITORY: ${{ github.event.workflow_run.head_repository.full_name }}
+          RUN_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
         run: |
-          set -eu
+          set -euo pipefail
           number="$(cat ./docs-preview-build/pr/number)"
           action="$(cat ./docs-preview-build/pr/action)"
           # The artifact comes from a pull_request run; validate before use.
@@ -80,11 +88,44 @@ jobs:
             echo "::error::PR action in the build artifact is invalid: '$action'"
             exit 1
           fi
+
+          # Bind the artifact's PR number to the run GitHub triggered, so a PR
+          # cannot make the jobs below write to (or remove) another PR's
+          # preview. workflow_run.pull_requests lists only open PRs from this
+          # repository's own branches: it is empty for every fork PR and every
+          # closed PR, so it cannot be the only check. When it is set, the
+          # number must match it; in every case, GitHub's record of that PR
+          # must name the head repository and branch the build ran on.
+          if [ -n "$RUN_PR_NUMBER" ] && [ "$number" != "$RUN_PR_NUMBER" ]; then
+            echo "::error::The build artifact names PR #${number}, but the triggering run belongs to PR #${RUN_PR_NUMBER}."
+            exit 1
+          fi
+          pr="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${number}")"
+          pr_head_repository="$(jq -r '.head.repo.full_name // ""' <<<"$pr")"
+          pr_head_branch="$(jq -r '.head.ref' <<<"$pr")"
+          pr_state="$(jq -r '.state' <<<"$pr")"
+          if [ "$pr_head_repository" != "$RUN_HEAD_REPOSITORY" ] || [ "$pr_head_branch" != "$RUN_HEAD_BRANCH" ]; then
+            echo "::error::The build artifact names PR #${number}, whose head is '${pr_head_repository}:${pr_head_branch}', but the triggering run built '${RUN_HEAD_REPOSITORY}:${RUN_HEAD_BRANCH}'."
+            exit 1
+          fi
+
+          # A re-run replays the recorded action. If a close run is retried
+          # after the PR was reopened, removing the preview would be wrong, and
+          # the close-run artifact has no site to deploy, so do neither.
+          skip=false
+          if [ "$action" = "closed" ] && [ "$pr_state" = "open" ]; then
+            echo "::notice::PR #${number} was closed when this run was built but is open now. Not removing its preview, and not deploying the close-run artifact."
+            skip=true
+          fi
+
           echo "PULL_REQUEST=$number" >> "$GITHUB_OUTPUT"
           echo "ACTION=$action" >> "$GITHUB_OUTPUT"
+          echo "SKIP=$skip" >> "$GITHUB_OUTPUT"
 
   deploy:
     needs: read-metadata
+    # Skipping deploy also skips prune, which needs it.
+    if: needs.read-metadata.outputs.skip != 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
