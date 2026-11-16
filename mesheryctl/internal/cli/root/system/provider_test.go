@@ -192,6 +192,16 @@ func TestSwitchProviderCmdValidatesProviderOnContextInFocus(t *testing.T) {
 	}
 	assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET http://gke.example.com:9081/api/providers"])
 	assert.Equal(t, 0, httpmock.GetCallCountInfo()["GET http://localhost:9081/api/providers"])
+
+	// The switch to gke is only for this command: current-context stays local,
+	// both in the loaded config and in the meshconfig file on disk.
+	assert.Equal(t, "local", viper.GetString("current-context"))
+	saved := viper.New()
+	saved.SetConfigFile(viper.ConfigFileUsed())
+	if err := saved.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, "local", saved.GetString("current-context"))
 }
 
 func TestListProviderCmd(t *testing.T) {
