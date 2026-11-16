@@ -54,13 +54,16 @@ vi.mock('@sistent/sistent', () => ({
     children,
     value,
     onChange,
+    inputProps,
   }: {
     children?: React.ReactNode;
     value?: string;
     onChange?: (event: { target: { value: string } }) => void;
+    inputProps?: { 'aria-label'?: string };
   }) => (
     <select
       data-testid="namespace-select"
+      aria-label={inputProps?.['aria-label']}
       value={value}
       onChange={(e) => onChange?.({ target: { value: e.target.value } } as never)}
     >
@@ -136,6 +139,7 @@ describe('WorkloadChart', () => {
     );
     const select = screen.getByTestId('namespace-select');
     expect(select).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Namespace' })).toBeInTheDocument();
     fireEvent.change(select, { target: { value: 'kube-system' } });
     expect(handleSetNamespace).toHaveBeenCalledWith('kube-system');
   });
