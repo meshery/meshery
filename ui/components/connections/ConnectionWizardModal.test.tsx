@@ -2,13 +2,12 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
-const useListConnectionDefinitionsQuerySpy = vi.fn();
+const useGetConnectionDefinitionsQuerySpy = vi.fn();
 const useConnectionWizardSpy = vi.fn();
 
-vi.mock('@meshery/schemas/mesheryApi', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@meshery/schemas/mesheryApi')>()),
-  useListConnectionDefinitionsQuery: (...args: unknown[]) =>
-    useListConnectionDefinitionsQuerySpy(...args),
+vi.mock('@/rtk-query/meshModel', () => ({
+  useGetConnectionDefinitionsQuery: (...args: unknown[]) =>
+    useGetConnectionDefinitionsQuerySpy(...args),
 }));
 
 vi.mock('react-redux', () => ({
@@ -43,7 +42,7 @@ import ConnectionWizardModal from './ConnectionWizardModal';
 describe('ConnectionWizardModal', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    useListConnectionDefinitionsQuerySpy.mockReturnValue({
+    useGetConnectionDefinitionsQuerySpy.mockReturnValue({
       data: { connectionDefinitions: [] },
       isFetching: false,
     });
@@ -63,21 +62,15 @@ describe('ConnectionWizardModal', () => {
     });
   });
 
-  it('queries connection definitions with pageSize all when open', () => {
+  it('queries connection definitions via useGetConnectionDefinitionsQuery when open', () => {
     render(<ConnectionWizardModal isOpen={true} onClose={() => {}} />);
 
-    expect(useListConnectionDefinitionsQuerySpy).toHaveBeenCalledWith(
-      expect.objectContaining({ pageSize: 'all' }),
-      { skip: false },
-    );
+    expect(useGetConnectionDefinitionsQuerySpy).toHaveBeenCalledWith({}, { skip: false });
   });
 
   it('skips querying connection definitions when modal is closed', () => {
     render(<ConnectionWizardModal isOpen={false} onClose={() => {}} />);
 
-    expect(useListConnectionDefinitionsQuerySpy).toHaveBeenCalledWith(
-      expect.objectContaining({ pageSize: 'all' }),
-      { skip: true },
-    );
+    expect(useGetConnectionDefinitionsQuerySpy).toHaveBeenCalledWith({}, { skip: true });
   });
 });
