@@ -174,29 +174,38 @@ mesheryctl perf result saturday-profile --view
 			}
 			a := expandedData[index]
 			out := cmd.OutOrStdout()
-			fmt.Fprintf(out, "Name: %v\n", a.Name)
+			var writeErr error
+			printf := func(format string, args ...any) {
+				if writeErr == nil {
+					_, writeErr = fmt.Fprintf(out, format, args...)
+				}
+			}
+			printf("Name: %v\n", a.Name)
 			ownerStr := "None"
 			if a.Owner != nil && *a.Owner != uuid.Nil {
 				ownerStr = a.Owner.String()
 			}
-			fmt.Fprintf(out, "Owner: %s\n", ownerStr)
-			fmt.Fprintf(out, "Endpoint: %v\n", a.URL)
-			fmt.Fprintf(out, "QPS: %v\n", a.QPS)
-			fmt.Fprintf(out, "Test run duration: %v\n", a.Duration)
+			printf("Owner: %s\n", ownerStr)
+			printf("Endpoint: %v\n", a.URL)
+			printf("QPS: %v\n", a.QPS)
+			printf("Test run duration: %v\n", a.Duration)
 			if a.LatenciesMs != nil {
-				fmt.Fprintf(out, "Latencies _ms: Avg: %v, Max: %v, Min: %v, P50: %v, P90: %v, P99: %v\n", a.LatenciesMs.Average, a.LatenciesMs.Max, a.LatenciesMs.Min, a.LatenciesMs.P50, a.LatenciesMs.P90, a.LatenciesMs.P99)
+				printf("Latencies _ms: Avg: %v, Max: %v, Min: %v, P50: %v, P90: %v, P99: %v\n", a.LatenciesMs.Average, a.LatenciesMs.Max, a.LatenciesMs.Min, a.LatenciesMs.P50, a.LatenciesMs.P90, a.LatenciesMs.P99)
 			}
 			startTimeStr := "None"
 			if a.StartTime != nil {
 				startTimeStr = a.StartTime.Format("2006-01-02 15:04:05")
 			}
-			fmt.Fprintf(out, "Start Time: %s\n", startTimeStr)
+			printf("Start Time: %s\n", startTimeStr)
 			mesheryIDStr := "None"
 			if a.MesheryID != nil && *a.MesheryID != uuid.Nil {
 				mesheryIDStr = a.MesheryID.String()
 			}
-			fmt.Fprintf(out, "Meshery ID: %v\n", mesheryIDStr)
-			fmt.Fprintf(out, "Load Generator: %v\n", a.LoadGenerator)
+			printf("Meshery ID: %v\n", mesheryIDStr)
+			printf("Load Generator: %v\n", a.LoadGenerator)
+			if writeErr != nil {
+				return writeErr
+			}
 		}
 		return nil
 	},

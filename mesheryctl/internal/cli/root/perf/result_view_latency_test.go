@@ -1,9 +1,8 @@
 package perf
 
 import (
-	"io"
+	"bytes"
 	"net/http"
-	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -69,21 +68,14 @@ func TestResultViewToleratesNilTestStartTime(t *testing.T) {
 	viewSingleResult = true
 	defer func() { viewSingleResult = false }()
 
-	reader, writer, err := os.Pipe()
-	require.NoError(t, err)
-	stdout := os.Stdout
-	os.Stdout = writer
-	defer func() { os.Stdout = stdout }()
+	var buf bytes.Buffer
+	resultCmd.SetOut(&buf)
+	defer resultCmd.SetOut(nil)
 
 	runErr := resultCmd.RunE(resultCmd, []string{"my-profile"})
-
-	require.NoError(t, writer.Close())
-	os.Stdout = stdout
-	output, err := io.ReadAll(reader)
-	require.NoError(t, err)
 	require.NoError(t, runErr)
 
-	assert.Contains(t, string(output), "Start Time: None")
+	assert.Contains(t, buf.String(), "Start Time: None")
 }
 
 // TestPerformanceResultsToStringArrays_NilStartTime verifies that
@@ -154,19 +146,12 @@ func runResultViewWithPercentiles(t *testing.T, percentilesJSON string) string {
 	viewSingleResult = true
 	defer func() { viewSingleResult = false }()
 
-	reader, writer, err := os.Pipe()
-	require.NoError(t, err)
-	stdout := os.Stdout
-	os.Stdout = writer
-	defer func() { os.Stdout = stdout }()
+	var buf bytes.Buffer
+	resultCmd.SetOut(&buf)
+	defer resultCmd.SetOut(nil)
 
 	runErr := resultCmd.RunE(resultCmd, []string{"my-profile"})
-
-	require.NoError(t, writer.Close())
-	os.Stdout = stdout
-	output, err := io.ReadAll(reader)
-	require.NoError(t, err)
 	require.NoError(t, runErr)
 
-	return string(output)
+	return buf.String()
 }
