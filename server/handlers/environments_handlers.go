@@ -54,6 +54,14 @@ func (p *environmentPayloadWire) UnmarshalJSON(data []byte) error {
 }
 
 func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		writeMeshkitError(w, ErrFetchToken(fmt.Errorf("token not found in request context")), http.StatusInternalServerError)
@@ -64,7 +72,9 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 
 	orgID := q.Get("orgId")
 	if orgID == "" {
-		h.log.Error(errors.New("orgId is required"))
+		if h.log != nil {
+			h.log.Error(errors.New("orgId is required"))
+		}
 		writeJSONError(w, "orgId is required", http.StatusBadRequest)
 		return
 	}
@@ -75,14 +85,18 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 			return
 		}
 		handlerErr := ErrGetEnvironments(err)
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
@@ -95,6 +109,14 @@ func isNotFoundError(err error, status int) bool {
 }
 
 func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	environmentID, ok := h.requirePathUUID(w, r, "id")
 	if !ok {
 		return
@@ -102,14 +124,18 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 	q := r.URL.Query()
 	orgID := q.Get("orgId")
 	if orgID == "" {
-		h.log.Error(errors.New("orgId is required"))
+		if h.log != nil {
+			h.log.Error(errors.New("orgId is required"))
+		}
 		writeJSONError(w, "orgId is required", http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetEnvironmentByID(r, environmentID, orgID)
 	if err != nil {
 		handlerErr := ErrGetEnvironment(err)
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		status := providerStatus(err)
 		if isNotFoundError(err, status) {
 			writeMeshkitError(w, handlerErr, http.StatusNotFound)
@@ -121,14 +147,26 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
 		return
 	}
@@ -138,7 +176,9 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 	obj := "environment"
 
 	if err != nil {
-		h.log.Error(models.ErrUnmarshal(err, obj))
+		if h.log != nil {
+			h.log.Error(models.ErrUnmarshal(err, obj))
+		}
 		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusInternalServerError)
 		return
 	}
@@ -147,22 +187,36 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 	resp, err := provider.SaveEnvironment(req, &environment, "", false)
 	if err != nil {
 		handlerErr := ErrSaveEnvironment(err)
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
 	description := fmt.Sprintf("Environment %s created.", environment.Name)
 
-	h.log.Info(description)
+	if h.log != nil {
+		h.log.Info(description)
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	environmentID, ok := h.requirePathUUID(w, r, "id")
 	if !ok {
 		return
@@ -170,7 +224,9 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 	resp, err := provider.DeleteEnvironment(r, environmentID)
 	if err != nil {
 		handlerErr := ErrDeleteEnvironment(err)
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		status := providerStatus(err)
 		if isNotFoundError(err, status) {
 			writeMeshkitError(w, handlerErr, http.StatusNotFound)
@@ -182,18 +238,30 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	environmentID, ok := h.requirePathUUID(w, req, "id")
 	if !ok {
 		return
 	}
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
 		return
 	}
@@ -203,7 +271,9 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 	obj := "environment"
 
 	if err != nil {
-		h.log.Error(models.ErrUnmarshal(err, obj))
+		if h.log != nil {
+			h.log.Error(models.ErrUnmarshal(err, obj))
+		}
 		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusInternalServerError)
 		return
 	}
@@ -212,7 +282,9 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 	resp, err := provider.UpdateEnvironment(req, &environment, environmentID)
 	if err != nil {
 		handlerErr := ErrUpdateEnvironment(err)
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		status := providerStatus(err)
 		if isNotFoundError(err, status) {
 			writeMeshkitError(w, handlerErr, http.StatusNotFound)
@@ -225,23 +297,37 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 	respJSON, err := json.Marshal(resp)
 	if err != nil {
 		marshalErr := models.ErrMarshal(err, "environment update response")
-		h.log.Error(marshalErr)
+		if h.log != nil {
+			h.log.Error(marshalErr)
+		}
 		writeMeshkitError(w, marshalErr, http.StatusInternalServerError)
 		return
 	}
 	description := fmt.Sprintf("Environment %s updated.", environment.Name)
-	h.log.Info(description)
+	if h.log != nil {
+		h.log.Info(description)
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	if _, err = w.Write(respJSON); err != nil {
 		// Headers already committed; log only. Writing another body would corrupt the stream.
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		return
 	}
 }
 
 func (h *Handler) AddConnectionToEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	environmentID, ok := h.requirePathUUID(w, r, "environmentID")
 	if !ok {
 		return
@@ -253,18 +339,30 @@ func (h *Handler) AddConnectionToEnvironmentHandler(w http.ResponseWriter, r *ht
 	resp, err := provider.AddConnectionToEnvironment(r, environmentID, connectionID)
 	if err != nil {
 		handlerErr := ErrEnvironmentConnection(err, "assign connection to")
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	environmentID, ok := h.requirePathUUID(w, r, "environmentID")
 	if !ok {
 		return
@@ -276,18 +374,30 @@ func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, 
 	resp, err := provider.RemoveConnectionFromEnvironment(r, environmentID, connectionID)
 	if err != nil {
 		handlerErr := ErrEnvironmentConnection(err, "remove connection from")
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	environmentID, ok := h.requirePathUUID(w, r, "environmentID")
 	if !ok {
 		return
@@ -300,12 +410,16 @@ func (h *Handler) GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, r *h
 			return
 		}
 		handlerErr := ErrEnvironmentConnection(err, "list the connections of")
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
