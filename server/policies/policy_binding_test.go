@@ -220,6 +220,51 @@ func TestIsValidBindingTypedSkipsConversionWithoutWildcard(t *testing.T) {
 	}
 }
 
+// TestIsValidBindingCachesNonConfigurationLookups checks that a pair whose
+// ref paths do not start with "configuration" is validated without
+// converting either component more than once per pass: those lookups go
+// through the same per-pass cache as wildcard resolution.
+func TestIsValidBindingCachesNonConfigurationLookups(t *testing.T) {
+	counts := map[string]int{}
+	design, _ := buildWildcardBindingFixture(1, counts)
+
+	var role, rb *component.ComponentDefinition
+	for _, c := range design.Components {
+		switch c.Component.Kind {
+		case "Role":
+			role = c
+		case "RoleBinding":
+			rb = c
+		}
+	}
+
+	// Both components share a display name, so a ["displayName"] ref pair
+	// matches. DisplayName lives outside "configuration", so without the
+	// cache it would be converted once per candidate check.
+	role.DisplayName = "shared-name"
+	rb.DisplayName = "shared-name"
+
+	sel := relationship.SelectorItem{
+		Kind: strPtr("RoleBinding"),
+		Match: &relationship.MatchSelector{
+			From: &[]relationship.MatchSelectorItem{{Kind: "self", MutatorRef: &relationship.MutatorRef{[]string{"displayName"}}}},
+			To:   &[]relationship.MatchSelectorItem{{Kind: "RoleBinding", MutatedRef: &relationship.MutatedRef{[]string{"displayName"}}}},
+		},
+	}
+
+	maps := componentMapCache{}
+	for i := 0; i < 4; i++ {
+		if !isValidBinding(role, rb, sel, design, maps) {
+			t.Fatal("expected role-0 and rb-0 to be a valid binding on displayName")
+		}
+	}
+	for owner, c := range counts {
+		if c > 1 {
+			t.Errorf("component %s was converted %d times for non-configuration lookups, want at most 1", owner, c)
+		}
+	}
+}
+
 // BenchmarkIdentifyBindingWildcard is BenchmarkIdentifyBinding with a "_"
 // wildcard in the RoleBinding -> ServiceAccount refs, so the generic-map
 // conversion that wildcard resolution needs is part of the measured work.

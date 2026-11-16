@@ -417,6 +417,19 @@ func resolveComponentPath(path []string, comp *component.ComponentDefinition, ma
 	return resolvePath(path, maps.get(comp))
 }
 
+// valueForComponentAtPath reads the value at path in comp. Lookups outside
+// "configuration" go through the pass cache: configurationForComponentAtPath
+// converts the component with toGenericMap on every call for such paths, so
+// routing them through maps keeps the one-conversion-per-pass guarantee for
+// non-configuration refs too (e.g. ["displayName"]). Configuration paths
+// are unchanged: they read the live configuration, including alias resolution.
+func valueForComponentAtPath(path []string, comp *component.ComponentDefinition, design *pattern.PatternFile, maps componentMapCache) interface{} {
+	if len(path) > 0 && path[0] != "configuration" {
+		return objectGetNested(maps.get(comp), path, nil)
+	}
+	return configurationForComponentAtPath(path, comp, design)
+}
+
 // isValidBindingTyped checks if two components match via a binding selector's match field.
 func isValidBindingTyped(comp1, comp2 *component.ComponentDefinition, sel relationship.SelectorItem, design *pattern.PatternFile) bool {
 	return isValidBinding(comp1, comp2, sel, design, nil)
@@ -440,8 +453,8 @@ func isValidBinding(comp1, comp2 *component.ComponentDefinition, sel relationshi
 	for i := range count {
 		resolvedFrom := resolveComponentPath(mutatorPaths[i], mutatorComp, maps)
 		resolvedTo := resolveComponentPath(mutatedPaths[i], mutatedComp, maps)
-		val1 := configurationForComponentAtPath(resolvedFrom, mutatorComp, design)
-		val2 := configurationForComponentAtPath(resolvedTo, mutatedComp, design)
+		val1 := valueForComponentAtPath(resolvedFrom, mutatorComp, design, maps)
+		val2 := valueForComponentAtPath(resolvedTo, mutatedComp, design, maps)
 		if val1 != nil && val2 != nil && !deepEqual(val1, val2) {
 			return false
 		}
