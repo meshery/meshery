@@ -112,6 +112,7 @@ mesheryctl design apply [design-name]
 			}
 
 			index := 0
+			response.Patterns = exactNameMatches(response.Patterns, strings.Join(args, " "))
 			if len(response.Patterns) == 0 {
 				return ErrDesignNotFound(patternName)
 			} else if len(response.Patterns) == 1 {
