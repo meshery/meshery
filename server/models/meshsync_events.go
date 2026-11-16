@@ -275,9 +275,16 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 		}
 		return nil
 	case broker.Delete:
-		result := mh.dbHandler.Delete(&obj)
-		if result.Error != nil {
-			return ErrDBDelete(result.Error, "")
+		// Remove the rows that share the resource's id along with it. Deleting
+		// only the resource row orphaned its object meta, spec, status, labels
+		// and annotations, and since MeshSync ids are deterministic, the next
+		// object created with the same kind, namespace and name inherited them.
+		meshsyncmodel.SetID(&obj)
+		if obj.ID == "" {
+			return ErrDBDelete(fmt.Errorf("cannot delete MeshSync resource without an identity"), "")
+		}
+		if _, err := DeleteMeshSyncResourceByID(&mh.dbHandler, obj.ID); err != nil {
+			return ErrDBDelete(err, "")
 		}
 	}
 
