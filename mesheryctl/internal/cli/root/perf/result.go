@@ -145,10 +145,6 @@ mesheryctl perf result saturday-profile --view
 
 		// get performance results in format of string arrays and resultStruct
 		data, expandedData := performanceResultsToStringArrays(results)
-		if len(expandedData) == 0 {
-			utils.Log.Info("No test results to display")
-			return nil
-		}
 
 		if outputFormatFlag != "" {
 			outputFormatterFactory := display.OutputFormatterFactory[[]models.PerformanceResult]{}
@@ -189,9 +185,7 @@ mesheryctl perf result saturday-profile --view
 			printf("Endpoint: %v\n", a.URL)
 			printf("QPS: %v\n", a.QPS)
 			printf("Test run duration: %v\n", a.Duration)
-			if a.LatenciesMs != nil {
-				printf("Latencies _ms: Avg: %v, Max: %v, Min: %v, P50: %v, P90: %v, P99: %v\n", a.LatenciesMs.Average, a.LatenciesMs.Max, a.LatenciesMs.Min, a.LatenciesMs.P50, a.LatenciesMs.P90, a.LatenciesMs.P99)
-			}
+			printf("Latencies _ms: Avg: %v, Max: %v, Min: %v, P50: %v, P90: %v, P99: %v\n", a.LatenciesMs.Average, a.LatenciesMs.Max, a.LatenciesMs.Min, a.LatenciesMs.P50, a.LatenciesMs.P90, a.LatenciesMs.P99)
 			startTimeStr := "None"
 			if a.StartTime != nil {
 				startTimeStr = a.StartTime.Format("2006-01-02 15:04:05")
