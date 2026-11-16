@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 
 const { listConnectionDefinitions, lazyTrigger, lazyResult, lazyLastInfo } = vi.hoisted(() => ({
@@ -20,10 +20,14 @@ import {
 } from '../meshModel';
 
 describe('useGetConnectionDefinitionsQuery wrapper', () => {
-  it('defaults pageSize to "all" when called with no arguments', () => {
-    useGetConnectionDefinitionsQuery();
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
-    expect(listConnectionDefinitions).toHaveBeenLastCalledWith(
+  it('defaults pageSize to "all" when called with no arguments', () => {
+    renderHook(() => useGetConnectionDefinitionsQuery());
+
+    expect(listConnectionDefinitions).toHaveBeenCalledWith(
       expect.objectContaining({
         pageSize: 'all',
         page: 0,
@@ -36,9 +40,11 @@ describe('useGetConnectionDefinitionsQuery wrapper', () => {
 
   it('forwards custom params while maintaining pageSize: "all" default', () => {
     const options = { skip: true };
-    useGetConnectionDefinitionsQuery({ params: { search: 'kubernetes', page: 2 } }, options);
+    renderHook(() =>
+      useGetConnectionDefinitionsQuery({ params: { search: 'kubernetes', page: 2 } }, options),
+    );
 
-    expect(listConnectionDefinitions).toHaveBeenLastCalledWith(
+    expect(listConnectionDefinitions).toHaveBeenCalledWith(
       expect.objectContaining({
         search: 'kubernetes',
         page: 2,
@@ -50,10 +56,10 @@ describe('useGetConnectionDefinitionsQuery wrapper', () => {
   });
 
   it('maps legacy pagesize parameter to canonical pageSize wire key', () => {
-    useGetConnectionDefinitionsQuery({ params: { pagesize: 25 } });
+    renderHook(() => useGetConnectionDefinitionsQuery({ params: { pagesize: 25 } }));
 
-    const lastCallArg = listConnectionDefinitions.mock.lastCall?.[0];
-    expect(lastCallArg).toEqual(
+    const callArg = listConnectionDefinitions.mock.calls[0]?.[0];
+    expect(callArg).toEqual(
       expect.objectContaining({
         pageSize: 25,
         page: 0,
@@ -61,11 +67,15 @@ describe('useGetConnectionDefinitionsQuery wrapper', () => {
         trim: false,
       }),
     );
-    expect(lastCallArg).not.toHaveProperty('pagesize');
+    expect(callArg).not.toHaveProperty('pagesize');
   });
 });
 
 describe('useLazyGetConnectionDefinitionsQuery wrapper', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('maps arguments through listArg with pageSize: "all" on lazy trigger invocation', () => {
     const { result } = renderHook(() => useLazyGetConnectionDefinitionsQuery());
     const [trigger, queryResult, lastInfo] = result.current;
@@ -77,7 +87,7 @@ describe('useLazyGetConnectionDefinitionsQuery wrapper', () => {
       trigger({ params: { search: 'prometheus' } }, true);
     });
 
-    expect(lazyTrigger).toHaveBeenLastCalledWith(
+    expect(lazyTrigger).toHaveBeenCalledWith(
       expect.objectContaining({
         search: 'prometheus',
         page: 0,
