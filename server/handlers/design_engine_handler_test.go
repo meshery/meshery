@@ -531,7 +531,6 @@ func TestPatternFileHandler_NilSystemID_DoesNotPanic(t *testing.T) {
 		h.PatternFileHandler(rec, req, nil, user, provider)
 	})
 	require.Equal(t, http.StatusInternalServerError, rec.Code)
-	if provider.lastEvent != nil {
-		assert.Equal(t, uuid.Nil, provider.lastEvent.SystemID, "event SystemID should be uuid.Nil when h.SystemID is nil")
-	}
+	require.NotNil(t, provider.lastEvent)
+	assert.Equal(t, uuid.Nil, provider.lastEvent.SystemID, "event SystemID should be uuid.Nil when h.SystemID is nil")
 }
