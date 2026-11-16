@@ -1,0 +1,60 @@
+# mesheryctl-workspace-create
+
+LLMS index: [llms.txt](/docs-preview/pr-preview/pr-23341/llms.txt)
+
+---
+
+# mesheryctl workspace create
+
+Create a new workspace under an organization
+
+## Synopsis
+
+Create a new workspace by providing the name, description, and organization ID
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl workspace create [flags]
+
+</div>
+</div>
+</pre> 
+
+## Examples
+
+Create a new workspace in an organization
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
+
+</div>
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  -d, --description string   (Optional) Description of the workspace
+  -h, --help                 help for create
+  -n, --name string          Name of the workspace
+  -o, --orgId string         Organization ID
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string   path to config file (default "~/.meshery/config.yaml")
+  -v, --verbose         verbose output
+
+</div>
+</pre>
+
+## See Also
+
+Go back to [command reference index](/docs-preview/pr-preview/pr-23341/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/docs-preview/pr-preview/pr-23341/project/contributing/cli/cli/#documenting) for guidance.
