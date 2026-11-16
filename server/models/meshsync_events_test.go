@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 	"testing"
@@ -134,7 +135,7 @@ func newTestMeshsyncHandler(t *testing.T, broker meshkitBroker.Handler, stopFunc
 
 	return NewMeshsyncDataHandler(
 		broker,
-		database.Handler{DB: db},
+		database.Handler{DB: db, Mutex: &sync.Mutex{}},
 		mockLogger,
 		nil,
 		uuid.Nil,
@@ -600,6 +601,86 @@ func TestReplaceMeshsyncResourceMetadata(t *testing.T) {
 	}
 	if len(rows) != 1 || rows[0].Key != "app" || rows[0].Value != "v2" {
 		t.Fatalf("unexpected metadata: %+v", rows)
+	}
+}
+
+func TestMeshsyncEventsAccumulatorTombstonesAndRestoresResource(t *testing.T) {
+	handler := newTestMeshsyncHandler(t, &testMeshsyncBroker{}, nil)
+	db := handler.dbHandler.DB
+	if err := db.AutoMigrate(
+		&meshsyncmodel.KubernetesResource{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
+		&meshsyncmodel.KubernetesKeyValue{},
+		&meshsyncmodel.KubernetesResourceSpec{},
+		&meshsyncmodel.KubernetesResourceStatus{},
+	); err != nil {
+		t.Fatalf("migrate MeshSync resources: %v", err)
+	}
+
+	resource := meshsyncmodel.KubernetesResource{
+		APIVersion: "v1",
+		Kind:       "Pod",
+		ClusterID:  "cluster-1",
+		KubernetesResourceMeta: &meshsyncmodel.KubernetesResourceObjectMeta{
+			Name:      "recreated-pod",
+			Namespace: "default",
+			Labels: []*meshsyncmodel.KubernetesKeyValue{
+				{Kind: meshsyncmodel.KindLabel, Key: "version", Value: "old"},
+			},
+		},
+	}
+	identified := resource
+	meshsyncmodel.SetID(&identified)
+
+	if err := handler.meshsyncEventsAccumulator(&meshkitBroker.Message{EventType: meshkitBroker.Add, Object: resource}); err != nil {
+		t.Fatalf("persist initial add event: %v", err)
+	}
+	if err := handler.meshsyncEventsAccumulator(&meshkitBroker.Message{EventType: meshkitBroker.Delete, Object: resource}); err != nil {
+		t.Fatalf("persist delete event: %v", err)
+	}
+
+	var scoped meshsyncmodel.KubernetesResource
+	if err := db.First(&scoped, "id = ?", identified.ID).Error; !errors.Is(err, gorm.ErrRecordNotFound) {
+		t.Fatalf("normal query after delete returned %v, want gorm.ErrRecordNotFound", err)
+	}
+
+	var tombstoned meshsyncmodel.KubernetesResource
+	if err := db.Unscoped().Preload("KubernetesResourceMeta").First(&tombstoned, "id = ?", identified.ID).Error; err != nil {
+		t.Fatalf("find tombstoned resource: %v", err)
+	}
+	if !tombstoned.DeletedAt.Valid {
+		t.Fatal("delete event did not set DeletedAt")
+	}
+	if tombstoned.KubernetesResourceMeta == nil {
+		t.Fatal("soft delete removed the resource metadata")
+	}
+
+	recreated := resource
+	recreated.KubernetesResourceMeta = &meshsyncmodel.KubernetesResourceObjectMeta{
+		Name:      "recreated-pod",
+		Namespace: "default",
+		Labels: []*meshsyncmodel.KubernetesKeyValue{
+			{Kind: meshsyncmodel.KindLabel, Key: "version", Value: "new"},
+		},
+	}
+	if err := handler.meshsyncEventsAccumulator(&meshkitBroker.Message{EventType: meshkitBroker.Add, Object: recreated}); err != nil {
+		t.Fatalf("persist recreated add event: %v", err)
+	}
+
+	var restored meshsyncmodel.KubernetesResource
+	if err := db.Preload("KubernetesResourceMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
+		First(&restored, "id = ?", identified.ID).Error; err != nil {
+		t.Fatalf("find restored resource: %v", err)
+	}
+	if restored.DeletedAt.Valid {
+		t.Fatal("recreated resource is still tombstoned")
+	}
+	if restored.KubernetesResourceMeta == nil || len(restored.KubernetesResourceMeta.Labels) != 1 {
+		t.Fatalf("unexpected restored metadata: %+v", restored.KubernetesResourceMeta)
+	}
+	label := restored.KubernetesResourceMeta.Labels[0]
+	if label.Key != "version" || label.Value != "new" {
+		t.Fatalf("restored resource kept stale labels: %+v", label)
 	}
 }
 

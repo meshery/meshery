@@ -320,6 +320,15 @@ func (mh *MeshsyncDataHandler) replaceMeshsyncResource(obj *meshsyncmodel.Kubern
 		if err := tx.Where("id = ?", obj.ID).Delete(&meshsyncmodel.KubernetesKeyValue{}).Error; err != nil {
 			return err
 		}
+		// SetID is deterministic, so a resource recreated with the same cluster,
+		// kind, version, namespace, and name reuses the tombstoned row's primary
+		// key. Restore that row before applying the replacement; a scoped update
+		// cannot see it and would otherwise succeed with zero affected rows.
+		if err := tx.Unscoped().Model(&meshsyncmodel.KubernetesResource{}).
+			Where("id = ?", obj.ID).
+			Update("deleted_at", nil).Error; err != nil {
+			return err
+		}
 		return tx.Session(&gorm.Session{FullSaveAssociations: true}).Updates(obj).Error
 	})
 }
