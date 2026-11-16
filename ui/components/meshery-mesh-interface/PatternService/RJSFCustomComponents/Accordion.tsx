@@ -14,7 +14,6 @@ import { iconSmall } from '../../../../css/icons.styles';
 import { safeStringTitle } from '../helper';
 
 export default function SimpleAccordion(props) {
-  const accordionDetailsRef = React.useRef(null);
   const theme = useTheme();
   return (
     <Box sx={{ width: '100%', marginBottom: '0rem' }}>
@@ -47,7 +46,7 @@ export default function SimpleAccordion(props) {
             </IconButton>
           )}
         </MuiAccordionSummary>
-        <MuiAccordionDetails ref={accordionDetailsRef}>{props.children}</MuiAccordionDetails>
+        <MuiAccordionDetails>{props.children}</MuiAccordionDetails>
       </MuiAccordion>
     </Box>
   );
