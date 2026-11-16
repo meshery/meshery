@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 	"sync"
 
@@ -125,7 +126,30 @@ func redactURL(u *url.URL) string {
 	return redacted.String()
 }
 
-func handleWsMessage(conn *websocket.Conn) {
+// wsConn serializes writes to a websocket. Gorilla allows only one concurrent
+// writer and panics otherwise, and three goroutines write to each connection:
+// the handshake, the auth-state listener, and the echo loop.
+type wsConn struct {
+	*websocket.Conn
+	writeMu sync.Mutex
+}
+
+func (c *wsConn) WriteMessage(messageType int, data []byte) error {
+	c.writeMu.Lock()
+	defer c.writeMu.Unlock()
+	return c.Conn.WriteMessage(messageType, data)
+}
+
+// tokenParam matches a token query parameter anywhere in a string, including
+// inside error messages that quote a URL.
+var tokenParam = regexp.MustCompile(`(?i)(token=)[^&\s"';]*`)
+
+// redactTokens masks every token query parameter in s.
+func redactTokens(s string) string {
+	return tokenParam.ReplaceAllString(s, "${1}REDACTED")
+}
+
+func handleWsMessage(conn *wsConn) {
 	for {
 		// read in a message
 		messageType, p, err := conn.ReadMessage()
@@ -154,11 +178,12 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	case "/ws":
 		upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
-		ws, err := upgrader.Upgrade(wr, req, nil)
+		upgraded, err := upgrader.Upgrade(wr, req, nil)
 		if err != nil {
 			log.Println(err)
 			return
 		}
+		ws := &wsConn{Conn: upgraded}
 
 		// Each connection gets its own channel, and only the newest connection
 		// receives auth notifications. Closing the previous channel stops that
@@ -170,12 +195,10 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			close(p.authWsChan)
 		}
 		p.authWsChan = authWsChan
-		// Queue the current state for the new connection. A login that
-		// happened after the UI last read /token but before this channel was
-		// installed would otherwise never reach it.
-		if p.token != "" {
-			authWsChan <- true
-		}
+		// Queue the current state for the new connection. A login or logout
+		// that happened after the UI last read /token but before this channel
+		// was installed would otherwise never reach it.
+		authWsChan <- p.token != ""
 		p.mu.Unlock()
 
 		ws.SetCloseHandler(func(code int, text string) error {
@@ -192,9 +215,8 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			return nil
 		})
 		go handleWsMessage(ws)
-		// Send the handshake before starting the listener: a gorilla websocket
-		// allows only one concurrent writer, and the listener may already have
-		// a queued auth state to write.
+		// Send the handshake before starting the listener, so the client sees
+		// it before the queued auth state.
 		err = ws.WriteMessage(1, []byte(InitiationSuccessful))
 		log.Println("Sent message to ws client: ", InitiationSuccessful)
 		if err != nil {
@@ -319,7 +341,9 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			if errors.As(err, &uerr) {
 				err = uerr.Err
 			}
-			log.Println("proxy: backend request failed:", req.Method, redactURL(req.URL), err)
+			// The underlying error can still quote a URL, for example a
+			// malformed redirect Location, so mask tokens in its text as well.
+			log.Println("proxy: backend request failed:", req.Method, redactURL(req.URL), redactTokens(err.Error()))
 			return
 		}
 		defer resp.Body.Close()
