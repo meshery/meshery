@@ -144,7 +144,7 @@ func (l *DefaultLocalProvider) InstallExtension(extType string, packageUrl strin
 		}
 
 		l.mu.Lock()
-		l.Extensions.Acccount = upsertAccountExtension(l.Extensions.Acccount, parsed)
+		l.Extensions.Account = upsertAccountExtension(l.Extensions.Account, parsed)
 		l.mu.Unlock()
 
 	default:
@@ -213,9 +213,9 @@ func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
 		}
 		l.Extensions.Navigator = filtered
 	case "account":
-		filtered := make(AccountExtensions, 0, len(l.Extensions.Acccount))
+		filtered := make(AccountExtensions, 0, len(l.Extensions.Account))
 		removed := false
-		for _, extension := range l.Extensions.Acccount {
+		for _, extension := range l.Extensions.Account {
 			if strings.EqualFold(strings.TrimSpace(extension.Title), title) {
 				removed = true
 				continue
@@ -225,7 +225,7 @@ func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
 		if !removed {
 			return fmt.Errorf("RemoveExtension: account extension %q not found", title)
 		}
-		l.Extensions.Acccount = filtered
+		l.Extensions.Account = filtered
 	default:
 		return fmt.Errorf("RemoveExtension: unsupported extension type %q (supported types: navigator, account)", extType)
 	}
@@ -601,7 +601,7 @@ func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order s
 		return nil, ErrPageSize(err)
 	}
 
-	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
+	return l.MesheryK8sContextPersister.GetMesheryK8sContextsWithStatus(search, order, pg, pgs, withStatus)
 }
 
 // GetK8sContext returns the Kubernetes context associated with the given ID or ConnectionID.
@@ -1790,11 +1790,21 @@ func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential 
 	return updatedCredential, nil
 }
 
-func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialID core.Uuid) (*Credential, error) {
+func (l *DefaultLocalProvider) DeleteUserCredential(req *http.Request, credentialID core.Uuid) (*Credential, error) {
+	// Fail-closed: require an authenticated user in the request context. An unscoped delete is never permitted.
+	if req == nil {
+		return nil, ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
+	}
+	user, ok := req.Context().Value(UserCtxKey).(*User)
+	if !ok || user == nil || user.ID == uuid.Nil {
+		return nil, ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
+	}
+
 	delCredential := &Credential{}
-	// Only a live credential can be deleted. Matching deleted rows too would
-	// report success for an id that is already gone and move its deleted_at.
-	result := l.GetGenericPersister().Model(&Credential{}).Where("id = ? AND deleted_at is NULL", credentialID).Update("deleted_at", time.Now())
+	// Only a live credential matching both credentialID and the caller's user_id can be deleted.
+	result := l.GetGenericPersister().Model(&Credential{}).
+		Where("id = ? AND user_id = ? AND deleted_at is NULL", credentialID, user.ID).
+		Update("deleted_at", time.Now())
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -1821,12 +1831,18 @@ func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order
 		return nil, ErrPageNumber(err)
 	}
 
-	pgs, err := strconv.ParseUint(pageSize, 10, 32)
-	if err != nil {
-		return nil, ErrPageSize(err)
+	// "all" lists every organization unpaginated, as the workspace and
+	// environment listings already do. mesheryctl organization --count sends it.
+	all := pageSize == "all"
+	var pgs uint64
+	if !all {
+		pgs, err = strconv.ParseUint(pageSize, 10, 32)
+		if err != nil {
+			return nil, ErrPageSize(err)
+		}
 	}
 
-	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, updatedAfter)
+	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, all, updatedAfter)
 }
 
 // GetUsersKeys returns the list of keys

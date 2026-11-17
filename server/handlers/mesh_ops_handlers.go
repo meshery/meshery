@@ -243,6 +243,10 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 		return meshAdapters, ErrValidAdapter
 	}
 
+	if h.config != nil && h.config.AdapterTracker != nil {
+		h.config.AdapterTracker.RemoveAdapter(req.Context(), *meshAdapters[aID])
+	}
+
 	newMeshAdapters := []*models.Adapter{}
 	switch aID {
 	case 0:
@@ -316,6 +320,8 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		// Generate Kube Handler
 		kc, err := c.GenerateKubeConfig()
 		if err != nil {
+			h.log.Error(ErrInvalidKubeConfig(err, c.Name))
+			writeMeshkitError(w, ErrInvalidKubeConfig(err, c.Name), http.StatusBadRequest)
 			return
 		}
 		configs = append(configs, string(kc))
