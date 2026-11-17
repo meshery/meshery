@@ -2096,8 +2096,9 @@ func (l *RemoteProvider) BulkUpdateEventStatus(token string, eventIDs []*core.Uu
 }
 
 func (l *RemoteProvider) MarkAllEventsRead(ctx context.Context, token string, _ core.Uuid) error {
-	if !l.Capabilities.IsSupported(PersistEvents) {
-		err := ErrInvalidCapability("PersistEvents", l.ProviderName)
+	providerProperties := l.GetProviderProperties()
+	if !providerProperties.Capabilities.IsSupported(PersistEvents) {
+		err := ErrInvalidCapability("PersistEvents", providerProperties.ProviderName)
 		l.Log.Error(err)
 		return err
 	}
