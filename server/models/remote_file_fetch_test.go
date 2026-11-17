@@ -9,7 +9,6 @@ import (
 	"sync/atomic"
 	"testing"
 	"time"
-
 )
 
 func allowAllAddrs(netip.Addr) bool { return false }
