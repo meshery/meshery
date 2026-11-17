@@ -17,6 +17,7 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/core"
+	"gopkg.in/yaml.v2"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -785,12 +786,11 @@ users:
 	})
 
 	t.Run("a well-formed exec kubeconfig is skipped before the API probe", func(t *testing.T) {
-		got, err := discoverForTest(t, []byte(`apiVersion: v1
+		kubeconfig := []byte(`apiVersion: v1
 kind: Config
 current-context: eks
 clusters:
 - cluster:
-    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCg==
     server: https://127.0.0.1:1
   name: eks
 contexts:
@@ -805,7 +805,23 @@ users:
       apiVersion: client.authentication.k8s.io/v1beta1
       command: aws
       args: ["eks", "get-token"]
-`))
+`)
+		// Control: the fixture builds a kube handler on its own, so the skip
+		// below proves the pre-probe guard fired and not a broken fixture.
+		// A PEM fragment as CA data fails client construction, and the
+		// handler-error branch would report the same "exec plugin" reason,
+		// so without this the test would pass even with the guard removed.
+		instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+		kcfg := InternalKubeConfig{}
+		if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
+			t.Fatalf("fixture is not a kubeconfig: %v", err)
+		}
+		kc, _ := kcfg.K8sContext("eks", &instanceID, testKubeLogger(t))
+		if _, err := kc.GenerateKubeHandler(); err != nil {
+			t.Fatalf("fixture cannot build a kube handler: %v", err)
+		}
+
+		got, err := discoverForTest(t, kubeconfig)
 		if err != nil {
 			t.Fatalf("discover: %v", err)
 		}
