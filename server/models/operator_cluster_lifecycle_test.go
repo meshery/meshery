@@ -28,10 +28,14 @@ type fakeCluster struct {
 	maxInFlight int
 	// hold, when set, blocks every install until it is closed.
 	hold chan struct{}
+	// started receives one value each time a Helm action starts, so a test
+	// that needs one install to hold its lock before another starts can wait
+	// on it instead of racing it.
+	started chan struct{}
 }
 
 func newFakeCluster() *fakeCluster {
-	return &fakeCluster{status: controllers.NotDeployed}
+	return &fakeCluster{status: controllers.NotDeployed, started: make(chan struct{}, 1)}
 }
 
 func (c *fakeCluster) snapshot() (status controllers.MesheryControllerStatus, installs, uninstalls, maxInFlight int) {
@@ -50,6 +54,13 @@ func (c *fakeCluster) helmAction(apply func()) {
 	}
 	hold := c.hold
 	c.mu.Unlock()
+
+	// Signal that a Helm action started: a test that needs one install to
+	// hold its lock before another starts waits on this instead of racing it.
+	select {
+	case c.started <- struct{}{}:
+	default:
+	}
 
 	if hold != nil {
 		<-hold
@@ -174,6 +185,14 @@ func TestHelmLockIsPerClusterNotGlobal(t *testing.T) {
 	slowConsumer := operatorModeConsumer(t, slow)
 	fastConsumer := operatorModeConsumer(t, fast)
 	go slowConsumer.DeployUndeployedOperators(ot, connectionTo(core.Uuid(uuid.Must(uuid.NewV4())), "slow"))
+
+	// Wait until the slow install holds its lock: launching the fast install
+	// first would let the test pass even behind one global lock.
+	select {
+	case <-slow.started:
+	case <-time.After(5 * time.Second):
+		t.Fatal("slow install never started")
+	}
 
 	done := make(chan struct{})
 	go func() {
