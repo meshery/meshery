@@ -32,6 +32,7 @@ var (
 	}
 	restrictedIPv6Nets = []net.IPNet{
 		{IP: net.ParseIP("2001:db8::"), Mask: net.CIDRMask(32, 128)},
+		{IP: net.ParseIP("2001:2::"), Mask: net.CIDRMask(48, 128)},
 	}
 )
 
@@ -136,7 +137,7 @@ func ValidateSafeURL(rawURL string) (*url.URL, error) {
 	// zone identifier first; it is not part of the address and must not bypass
 	// checks for scoped link-local or loopback literals.
 	ipHost := hostname
-	if zone := strings.LastIndexByte(ipHost, '%'); zone >= 0 {
+	if zone := strings.IndexByte(ipHost, '%'); zone >= 0 {
 		ipHost = ipHost[:zone]
 	}
 	if ip := net.ParseIP(ipHost); ip != nil {

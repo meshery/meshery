@@ -52,6 +52,7 @@ func TestIsRestrictedIP(t *testing.T) {
 		{"TEST-NET-3 documentation 203.0.113.1", "203.0.113.1", true},
 		{"Reserved IPv4 240.0.0.1", "240.0.0.1", true},
 		{"IPv6 documentation 2001:db8::1", "2001:db8::1", true},
+		{"IPv6 benchmarking 2001:2::1", "2001:2::1", true},
 
 		// Multicast
 		{"IPv4 Multicast 224.0.0.1", "224.0.0.1", true},
@@ -147,6 +148,8 @@ func TestValidateSafeURL(t *testing.T) {
 		{"TEST-NET literal", "http://192.0.2.1/design.yaml", true},
 		{"Reserved IPv4 literal", "http://240.0.0.1/design.yaml", true},
 		{"IPv6 documentation literal", "http://[2001:db8::1]/design.yaml", true},
+		{"IPv6 benchmarking literal", "http://[2001:2::1]/design.yaml", true},
+		{"Scoped IPv6 loopback with multiple percent escapes", "http://[::1%25eth0%25x]/api", true},
 	}
 
 	for _, tt := range tests {
@@ -215,6 +218,20 @@ func TestSafeHTTPClient_BlocksRedirectToRestrictedTarget(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "redirect blocked") && !strings.Contains(err.Error(), "restricted") {
 		t.Errorf("expected redirect blocking error, got: %v", err)
+	}
+}
+
+func TestSafeCheckRedirectBlocksIPv6BenchmarkingTarget(t *testing.T) {
+	from, err := http.NewRequest(http.MethodGet, "https://example.com/start", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	to, err := http.NewRequest(http.MethodGet, "http://[2001:2::1]/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := SafeCheckRedirect(to, []*http.Request{from}); err == nil {
+		t.Fatal("expected redirect to IPv6 benchmarking range to be blocked")
 	}
 }
 
