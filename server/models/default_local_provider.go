@@ -2132,18 +2132,8 @@ func githubRepoFilterScan(
 	return result, err
 }
 
-func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPattern, error) {
-	resp, err := http.Get(fileURL)
-	if err != nil {
-		return nil, err
-	}
-	defer SafeClose(resp.Body, log)
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("file not found")
-	}
-
-	body, err := io.ReadAll(resp.Body)
+func genericHTTPPatternFile(fileURL string, _ logger.Handler) ([]MesheryPattern, error) {
+	body, err := fetchRemoteFile(fileURL)
 	if err != nil {
 		return nil, err
 	}
@@ -2169,18 +2159,8 @@ func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPatter
 	return []MesheryPattern{pf}, nil
 }
 
-func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter, error) {
-	resp, err := http.Get(fileURL)
-	if err != nil {
-		return nil, err
-	}
-	defer SafeClose(resp.Body, log)
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("file not found")
-	}
-
-	body, err := io.ReadAll(resp.Body)
+func genericHTTPFilterFile(fileURL string, _ logger.Handler) ([]MesheryFilter, error) {
+	body, err := fetchRemoteFile(fileURL)
 	if err != nil {
 		return nil, err
 	}

@@ -13,6 +13,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/events"
 	_events "github.com/meshery/meshkit/utils/events"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -123,6 +124,9 @@ func TestFormatFilterOutputKeepsEmptyListForNull(t *testing.T) {
 func TestFilterPOSTResponseCarriesURLImportedFilter(t *testing.T) {
 	h, provider, db := newFilterPOSTFixture(t)
 	provider.Log = h.log
+	// The source is a loopback server; URL imports refuse such addresses unless opted in.
+	viper.Set(models.ALLOW_PRIVATE_REMOTE_FILE_IMPORTS_ENV, true)
+	t.Cleanup(func() { viper.Set(models.ALLOW_PRIVATE_REMOTE_FILE_IMPORTS_ENV, nil) })
 	source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte("name: from-url\n"))
 	}))
