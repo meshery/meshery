@@ -24,7 +24,7 @@ func (h *Handler) UserTestPreferenceHandler(w http.ResponseWriter, req *http.Req
 	case http.MethodGet:
 		h.UserTestPreferenceGet(w, req, prefObj, user, provider)
 	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
+		writeJSONError(w, "method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
@@ -47,7 +47,7 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 		return
 	}
 	if len(body) > maxPerformancePayloadSize {
-		err := fmt.Errorf("request body exceeds maximum allowed size of %dMB", maxPerformancePayloadSize/(1024*1024))
+		err := ErrRequestTooLarge(maxPerformancePayloadSize)
 		if h.log != nil {
 			h.log.Error(err)
 		}

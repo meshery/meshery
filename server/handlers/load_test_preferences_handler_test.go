@@ -96,6 +96,11 @@ func TestUserTestPreferenceHandler_MethodDispatcher(t *testing.T) {
 		rec := httptest.NewRecorder()
 		h.UserTestPreferenceHandler(rec, req, nil, nil, provider)
 		assert.Equal(t, http.StatusMethodNotAllowed, rec.Code)
+		assert.Contains(t, rec.Header().Get("Content-Type"), "application/json")
+		var body map[string]string
+		err := json.Unmarshal(rec.Body.Bytes(), &body)
+		require.NoError(t, err)
+		assert.Equal(t, "method not allowed", body["error"])
 	})
 }
 
@@ -150,6 +155,7 @@ func TestUserTestPreferenceStore_PayloadTooLarge_ReturnsEntityTooLarge(t *testin
 	assert.Equal(t, http.StatusRequestEntityTooLarge, rec.Code)
 	assert.Contains(t, rec.Header().Get("Content-Type"), "application/json")
 	errBody := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrRequestBodyCode, errBody.Code)
 	assert.Contains(t, errBody.Error, "request body exceeds maximum allowed size")
 }
 
