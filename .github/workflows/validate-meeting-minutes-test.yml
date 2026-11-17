@@ -1,0 +1,34 @@
+name: Meeting-Minutes Validation Tests
+
+# Runs the unit tests for the auto-merge-meeting-minutes validation logic so the
+# multi-page / rename regression protection is exercised on every change to the
+# script or the workflow that uses it. See issue #22684.
+
+on:
+  pull_request:
+    paths:
+      - ".github/scripts/validate-meeting-minutes.js"
+      - ".github/scripts/validate-meeting-minutes.test.js"
+      - ".github/workflows/auto-merge-meeting-minutes.yml"
+      - ".github/workflows/validate-meeting-minutes-test.yml"
+  push:
+    branches:
+      - master
+    paths:
+      - ".github/scripts/validate-meeting-minutes.js"
+      - ".github/scripts/validate-meeting-minutes.test.js"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Unit test meeting-minutes validation
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Run validation unit tests
+        run: node --test .github/scripts/validate-meeting-minutes.test.js
