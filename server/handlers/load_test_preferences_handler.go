@@ -3,36 +3,58 @@ package handlers
 
 import (
 	"encoding/json"
+	stderrors "errors"
+	"fmt"
 	"io"
 	"net/http"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
+	"gorm.io/gorm"
 )
+
+func parseTestPreferenceUUID(raw string) (string, error) {
+	uid, err := uuid.FromString(raw)
+	if err != nil || uid == uuid.Nil {
+		return "", models.ErrInvalidUUID(fmt.Errorf("invalid test config uuid: %q", raw))
+	}
+	return uid.String(), nil
+}
+
+func testPreferenceErrorStatus(err error) int {
+	switch errors.GetCode(err) {
+	case models.ErrInvalidUUIDValueCode, models.ErrPageNumberCode, models.ErrPageSizeCode:
+		return http.StatusBadRequest
+	case models.ErrResultNotFoundCode:
+		return http.StatusNotFound
+	}
+	if stderrors.Is(err, gorm.ErrRecordNotFound) {
+		return http.StatusNotFound
+	}
+	return providerStatusOrInternal(err)
+}
 
 // UserTestPreferenceHandler is used for persisting load test preferences
 func (h *Handler) UserTestPreferenceHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	// if req.Method != http.MethodPost && req.Method != http.MethodGet && req.Method != http.MethodDelete {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
-
-	if req.Method == http.MethodPost {
+	switch req.Method {
+	case http.MethodPost:
 		h.UserTestPreferenceStore(w, req, prefObj, user, provider)
-		return
-	}
-	if req.Method == http.MethodDelete {
+	case http.MethodDelete:
 		h.UserTestPreferenceDelete(w, req, prefObj, user, provider)
-		return
-	}
-	if req.Method == http.MethodGet {
+	case http.MethodGet:
 		h.UserTestPreferenceGet(w, req, prefObj, user, provider)
-		return
+	default:
+		writeMeshkitError(w, ErrMethodNotAllowed(req.Method), http.StatusMethodNotAllowed)
 	}
 }
 
 // UserTestPreferenceStore is used for persisting load test preferences
 func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	defer func() {
+		_ = req.Body.Close()
+	}()
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
@@ -55,7 +77,7 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 	if err != nil {
 		obj := "user preference"
 		h.log.Error(ErrFailToSave(err, obj))
-		writeMeshkitError(w, ErrFailToSave(err, obj), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrFailToSave(err, obj), testPreferenceErrorStatus(err))
 		return
 	}
 	writeJSONMessage(w, map[string]string{"test_uuid": tid}, http.StatusOK)
@@ -66,7 +88,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 	q := req.URL.Query()
 	testUUID := q.Get("uuid")
 	h.log.Debug(testUUID)
-	if testUUID == "" {
+	if !q.Has("uuid") {
 		testPage := q.Get("page")
 		testPageSize := q.Get("pagesize")
 		testSearch := q.Get("search")
@@ -74,36 +96,61 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		h.log.Debug(testPage, testPageSize)
 		testObjJSON, err := provider.SMPTestConfigFetch(req, testPage, testPageSize, testSearch, testOrder)
 		if err != nil {
-			h.log.Error(ErrTestConfigs)
-			writeMeshkitError(w, ErrTestConfigs, http.StatusInternalServerError)
+			status := testPreferenceErrorStatus(err)
+			if status == http.StatusBadRequest {
+				h.log.Warn(err)
+				writeMeshkitError(w, err, status)
+				return
+			}
+			fetchErr := ErrTestConfigs(err)
+			h.log.Error(fetchErr)
+			writeMeshkitError(w, fetchErr, status)
 			return
 		}
-		_, _ = w.Write(testObjJSON)
-	} else {
-		testObj, err := provider.SMPTestConfigGet(req, testUUID)
-		if err != nil {
-			h.log.Error(ErrTestConfigs)
-			writeMeshkitError(w, ErrTestConfigs, http.StatusInternalServerError)
-			return
-		}
-		if testObj == nil {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		data, err := json.Marshal(testObj)
-		if err != nil {
-			h.log.Error(ErrReadConfig(err))
-			writeMeshkitError(w, ErrReadConfig(err), http.StatusInternalServerError)
-			return
-		}
-		_, err = w.Write(data)
-		if err != nil {
-			// Response body has already been written (json.Marshal
-			// succeeded and w.Write is partway through) — a fresh error
-			// response would corrupt the in-flight body, so log only.
+		w.Header().Set("Content-Type", "application/json")
+		if _, err := w.Write(testObjJSON); err != nil {
 			h.log.Error(ErrWriteResponse(err))
+		}
+		return
+	}
+
+	validUUID, err := parseTestPreferenceUUID(testUUID)
+	if err != nil {
+		h.log.Warn(err)
+		writeMeshkitError(w, err, http.StatusBadRequest)
+		return
+	}
+
+	testObj, err := provider.SMPTestConfigGet(req, validUUID)
+	if err != nil {
+		status := testPreferenceErrorStatus(err)
+		if status == http.StatusNotFound {
+			h.log.Warnf("Test config with UUID %q not found", validUUID)
+			writeMeshkitError(w, err, http.StatusNotFound)
 			return
 		}
+		fetchErr := ErrTestConfigs(err)
+		h.log.Error(fetchErr)
+		writeMeshkitError(w, fetchErr, status)
+		return
+	}
+	if testObj == nil {
+		writeMeshkitError(w, models.ErrResultNotFound(fmt.Errorf("test config %s not found", validUUID)), http.StatusNotFound)
+		return
+	}
+	data, err := json.Marshal(testObj)
+	if err != nil {
+		h.log.Error(ErrReadConfig(err))
+		writeMeshkitError(w, ErrReadConfig(err), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if _, err = w.Write(data); err != nil {
+		// Response body has already been written (json.Marshal
+		// succeeded and w.Write is partway through) — a fresh error
+		// response would corrupt the in-flight body, so log only.
+		h.log.Error(ErrWriteResponse(err))
+		return
 	}
 }
 
@@ -116,10 +163,23 @@ func (h *Handler) UserTestPreferenceDelete(w http.ResponseWriter, req *http.Requ
 		writeMeshkitError(w, ErrQueryGet(obj), http.StatusBadRequest)
 		return
 	}
-	if err := provider.SMPTestConfigDelete(req, testUUID); err != nil {
-		obj := "testConfig"
-		h.log.Error(ErrFailToDelete(err, obj))
-		writeMeshkitError(w, ErrFailToDelete(err, obj), http.StatusInternalServerError)
+	validUUID, err := parseTestPreferenceUUID(testUUID)
+	if err != nil {
+		h.log.Warn(err)
+		writeMeshkitError(w, err, http.StatusBadRequest)
 		return
 	}
+	if err := provider.SMPTestConfigDelete(req, validUUID); err != nil {
+		status := testPreferenceErrorStatus(err)
+		if status == http.StatusNotFound {
+			h.log.Warnf("No test config with UUID %q found to delete", validUUID)
+			writeMeshkitError(w, err, http.StatusNotFound)
+			return
+		}
+		obj := "testConfig"
+		h.log.Error(ErrFailToDelete(err, obj))
+		writeMeshkitError(w, ErrFailToDelete(err, obj), status)
+		return
+	}
+	writeJSONEmptyObject(w, http.StatusOK)
 }

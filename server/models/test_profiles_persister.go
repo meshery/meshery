@@ -3,6 +3,8 @@ package models
 import (
 	"bytes"
 	"encoding/json"
+	stderrors "errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -10,6 +12,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/core"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
+	"gorm.io/gorm"
 )
 
 // TestProfilesPersister assists with persisting session in store
@@ -187,10 +190,14 @@ func (s *TestProfilesPersister) GetTestConfigs(page, pageSize uint64) ([]byte, e
 	order := defaultOrderUpdatedAtDesc
 	query := s.DB.Order(order)
 	total := int64(0)
-	s.DB.Model(&PerformanceTestConfig{}).Count(&total)
+	if err := s.DB.Model(&PerformanceTestConfig{}).Count(&total).Error; err != nil {
+		return nil, err
+	}
 	testConfigs := []*perfprofile.PerformanceTestConfig{}
 	var p []*PerformanceTestConfig
-	Paginate(uint(page), uint(pageSize))(query).Find(&p)
+	if err := Paginate(uint(page), uint(pageSize))(query).Find(&p).Error; err != nil {
+		return nil, err
+	}
 	for _, config := range p {
 		testConfig, err := decodePerformanceTestConfig(config.PerformanceTestConfigBytes)
 		if err != nil {
@@ -219,6 +226,9 @@ func (s *TestProfilesPersister) GetTestConfig(key core.Uuid) (*perfprofile.Perfo
 	var u PerformanceTestConfig
 	err := s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).First(&u).Error
 	if err != nil {
+		if stderrors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(fmt.Errorf("test config %s not found", key.String()))
+		}
 		return nil, err
 	}
 	testConfig, err := decodePerformanceTestConfig(u.PerformanceTestConfigBytes)
@@ -234,7 +244,14 @@ func (s *TestProfilesPersister) DeleteTestConfig(key core.Uuid) error {
 		return ErrDBConnection
 	}
 
-	return s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).Delete(&PerformanceTestConfig{}).Error
+	res := s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).Delete(&PerformanceTestConfig{})
+	if res.Error != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return ErrResultNotFound(fmt.Errorf("test config %s not found", key.String()))
+	}
+	return nil
 }
 
 // WriteTestConfig persists the result
