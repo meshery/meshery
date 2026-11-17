@@ -84,6 +84,10 @@ func TestGetSMPServiceMeshes_MethodValidation(t *testing.T) {
 			}()
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
+			assert.Equal(t, http.MethodGet, rec.Header().Get("Allow"))
+			errBody := decodeErrorBody(t, rec.Body.Bytes())
+			assert.Equal(t, ErrMethodNotAllowedCode, errBody.Code)
+			assert.NotEmpty(t, errBody.Error)
 		})
 	}
 }

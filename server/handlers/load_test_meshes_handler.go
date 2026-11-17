@@ -22,7 +22,8 @@ type SMPMeshes struct {
 // model and are not constrained to service-mesh technologies.
 func (h *Handler) GetSMPServiceMeshes(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	if req != nil && req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Header().Set("Allow", http.MethodGet)
+		writeMeshkitError(w, ErrMethodNotAllowed(req.Method), http.StatusMethodNotAllowed)
 		return
 	}
 
