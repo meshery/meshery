@@ -47,8 +47,8 @@ mesheryctl perf profile sam-test
 mesheryctl perf result sam-test
 
 // Display Perf profile in JSON or YAML:
-mesheryctl perf result -o json
-mesheryctl perf result -o yaml
+mesheryctl perf profile -o json
+mesheryctl perf profile -o yaml
 `,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -56,7 +56,7 @@ mesheryctl perf result -o yaml
 			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			availableSubCmds := []string{"apply", "profile", "result"}
+			availableSubCmds := []string{"apply", "delete", "profile", "result"}
 
 			suggestedCmd := utils.FindClosestArg(args[0], availableSubCmds)
 			if suggestedCmd != "" && suggestedCmd[0] == args[0][0] {
@@ -73,6 +73,6 @@ func init() {
 	PerfCmd.PersistentFlags().StringVarP(&outputFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
 	PerfCmd.PersistentFlags().BoolVarP(&utils.SilentFlag, "yes", "y", false, "(optional) assume yes for user interactive prompts.")
 
-	availableSubcommands = []*cobra.Command{profileCmd, resultCmd, applyCmd}
+	availableSubcommands = []*cobra.Command{profileCmd, resultCmd, applyCmd, deleteCmd}
 	PerfCmd.AddCommand(availableSubcommands...)
 }

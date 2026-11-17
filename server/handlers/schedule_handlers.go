@@ -21,10 +21,25 @@ func (h *Handler) SaveScheduleHandler(
 		_ = r.Body.Close()
 	}()
 
+	if !h.requireProvider(rw, provider) {
+		return
+	}
+
 	var parsedBody *models.Schedule
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		//failed to read request body
-		h.log.Error(ErrRequestBody(err))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
+	if parsedBody == nil {
+		err := fmt.Errorf("request body cannot be empty")
+		if h != nil && h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
@@ -32,9 +47,10 @@ func (h *Handler) SaveScheduleHandler(
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
 		//failed to get user token
-		h.log.Error(ErrRetrieveUserToken(err))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrRetrieveUserToken(err))
+		}
 		writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
-
 		return
 	}
 
@@ -42,15 +58,18 @@ func (h *Handler) SaveScheduleHandler(
 	if err != nil {
 		obj := "schedule"
 		//Failed to save the schedule
-		h.log.Error(ErrFailToSave(err, obj))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrFailToSave(err, obj))
+		}
 		writeMeshkitError(rw, ErrFailToSave(err, obj), http.StatusInternalServerError)
-
 		return
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
-		h.log.Error(err)
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
@@ -61,20 +80,28 @@ func (h *Handler) GetSchedulesHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
+	if !h.requireProvider(rw, provider) {
+		return
+	}
+
 	q := r.URL.Query()
 
 	resp, err := provider.GetSchedules(r, q.Get("page"), q.Get("pagesize"), q.Get("order"))
 	if err != nil {
 		obj := "schedules"
 		//unable to get schedules
-		h.log.Error(ErrQueryGet(obj))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrQueryGet(obj))
+		}
 		writeMeshkitError(rw, ErrQueryGet(obj), http.StatusInternalServerError)
 		return
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
-		h.log.Error(err)
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
@@ -86,20 +113,36 @@ func (h *Handler) DeleteScheduleHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	ScheduleID := mux.Vars(r)["id"]
+	if !h.requireProvider(rw, provider) {
+		return
+	}
 
-	resp, err := provider.DeleteSchedule(r, ScheduleID)
+	scheduleID := mux.Vars(r)["id"]
+	if scheduleID == "" {
+		missingIDErr := ErrMissingRouteVariable("id")
+		if h != nil && h.log != nil {
+			h.log.Error(missingIDErr)
+		}
+		writeMeshkitError(rw, missingIDErr, http.StatusBadRequest)
+		return
+	}
+
+	resp, err := provider.DeleteSchedule(r, scheduleID)
 	if err != nil {
 		obj := "schedule"
 		//unable to delete schedules
-		h.log.Error(ErrFailToDelete(err, obj))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrFailToDelete(err, obj))
+		}
 		writeMeshkitError(rw, ErrFailToDelete(err, obj), http.StatusInternalServerError)
 		return
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
-		h.log.Error(err)
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
@@ -111,19 +154,35 @@ func (h *Handler) GetScheduleHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-	ScheduleID := mux.Vars(r)["id"]
+	if !h.requireProvider(rw, provider) {
+		return
+	}
 
-	resp, err := provider.GetSchedule(r, ScheduleID)
+	scheduleID := mux.Vars(r)["id"]
+	if scheduleID == "" {
+		missingIDErr := ErrMissingRouteVariable("id")
+		if h != nil && h.log != nil {
+			h.log.Error(missingIDErr)
+		}
+		writeMeshkitError(rw, missingIDErr, http.StatusBadRequest)
+		return
+	}
+
+	resp, err := provider.GetSchedule(r, scheduleID)
 	if err != nil {
 		obj := "schedule"
 		//failed to get schedules
-		h.log.Error(ErrQueryGet(obj))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrQueryGet(obj))
+		}
 		writeMeshkitError(rw, ErrQueryGet(obj), http.StatusInternalServerError)
 		return
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
-		h.log.Error(err)
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }

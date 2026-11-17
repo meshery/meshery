@@ -2,6 +2,7 @@ package design
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -20,6 +21,8 @@ func TestUndeployCmd(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
+
+	_, expectedFileReadErr := os.ReadFile(invalidFilePath)
 
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
@@ -44,13 +47,42 @@ func TestUndeployCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
+			Name:             "given valid relative file when design undeploy then design is undeployed",
+			Args:             []string{"undeploy", "-f", filepath.Join("fixtures", "sampleDesign.golden")},
+			ExpectedResponse: "undeploy.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          "/api/pattern",
+					Response:     "apply.designSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          "/api/pattern/deploy",
+					Response:     "undeploy.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
+		{
 			Name:             "given invalid file path when design undeploy then error is thrown",
 			Args:             []string{"undeploy", "-f", invalidFilePath},
 			ExpectedResponse: "",
 			URLs:             []utils.MockURL{},
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrFileRead(fmt.Errorf("open %s: no such file or directory", invalidFilePath)),
+			ExpectedError:    utils.ErrFileRead(expectedFileReadErr),
+		},
+		{
+			Name:             "given URL when design undeploy then error is thrown",
+			Args:             []string{"undeploy", "-f", "https://raw.githubusercontent.com/meshery/meshery/master/samples/test.yaml"},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("URLs are not currently supported")),
 		},
 		{
 			Name:             "given no args when design undeploy then usage error is returned",
@@ -62,6 +94,44 @@ func TestUndeployCmd(t *testing.T) {
 			ExpectedError: ErrUndeployDesign(
 				fmt.Errorf("provide either a design ID or -f [filepath]"),
 			),
+		},
+		{
+			Name:             "given empty file flag when design undeploy then error is thrown",
+			Args:             []string{"undeploy", "-f", ""},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError: ErrUndeployDesign(
+				fmt.Errorf("Usage: mesheryctl design undeploy -f [filepath]"),
+			),
+		},
+		{
+			Name:             "given empty target when design undeploy then error is thrown",
+			Args:             []string{"undeploy", "   "},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("target cannot be empty")),
+		},
+		{
+			Name:             "given too many positional arguments when design undeploy then error is thrown",
+			Args:             []string{"undeploy", "design1", "design2"},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("expected at most one positional argument, got 2")),
+		},
+		{
+			Name:             "given both positional argument and file flag when design undeploy then error is thrown",
+			Args:             []string{"undeploy", "my-design", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			ExpectedResponse: "",
+			URLs:             []utils.MockURL{},
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a positional argument and the --file flag")),
 		},
 		{
 			Name:             "given nonexistent design provided when design undeploy then error is thrown",

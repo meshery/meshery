@@ -79,6 +79,7 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
   const handleApplyFilter = () => {
     const namespaceFilter = selectedFilters.namespace === 'All' ? null : selectedFilters.namespace;
     setNamespaceFilter(namespaceFilter);
+    setPage(0);
   };
   const clusterIds = getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   const { data: clusterSummary } = useGetMeshSyncResourceKindsQuery(
@@ -309,6 +310,7 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
                   <SearchBar
                     onSearch={(value) => {
                       setSearch(value);
+                      setPage(0);
                     }}
                     expanded={isSearchExpanded}
                     setExpanded={setIsSearchExpanded}

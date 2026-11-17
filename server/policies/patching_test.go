@@ -432,11 +432,33 @@ func TestAliasSideEffects(t *testing.T) {
 		if a.Op == AddComponentOp && a.Component != nil {
 			if a.Component.Component.Kind == "Container" {
 				found = true
+				if a.Component.Metadata.IsAnnotation {
+					t.Errorf("Expected workload alias component Container to have IsAnnotation=false, got true")
+				}
 			}
 		}
 	}
 	if !found {
 		t.Error("Expected Container component to be added as alias side effect")
+	}
+
+	// When relationship metadata defines isAnnotation=true, alias component should inherit IsAnnotation=true
+	isAnnoTrue := true
+	rel.RelationshipMetadata = &relationship.RelationshipMetadata{
+		IsAnnotation: &isAnnoTrue,
+	}
+	actionsWithAnno := p.SideEffects(rel, design)
+	foundAnno := false
+	for _, a := range actionsWithAnno {
+		if a.Op == AddComponentOp && a.Component != nil && a.Component.Component.Kind == "Container" {
+			foundAnno = true
+			if !a.Component.Metadata.IsAnnotation {
+				t.Errorf("Expected alias component to have IsAnnotation=true when relationship defines IsAnnotation=true")
+			}
+		}
+	}
+	if !foundAnno {
+		t.Error("Expected Container component with annotation metadata")
 	}
 }
 
@@ -1677,5 +1699,135 @@ func TestCleanupConcurrentRelationshipsSameField(t *testing.T) {
 	if _, present := podSpec["serviceAccountName"]; present {
 		t.Logf("serviceAccountName preserved by concurrent active relationship; " +
 			"multi-mutator tracking may have been added, update this test")
+	}
+}
+
+// TestCleanupOnDeleteDottedKeysFullPipeline verifies that deleting a relationship
+// whose mutated path ends in a Kubernetes-style dotted annotation or label key
+// removes that exact literal key through the full evaluation pipeline. Such keys
+// carry dots of their own, so a cleanup path that treats them as nested object
+// separators silently leaves the injected value behind.
+func TestCleanupOnDeleteDottedKeysFullPipeline(t *testing.T) {
+	cases := []struct {
+		name     string
+		group    string
+		key      string
+		mutator  string
+		mutating string
+	}{
+		{"dotted annotation key", "annotations", "eks.amazonaws.com/role-arn", "arn:aws:iam::123456789012:role/demo", "arn:aws:iam::123456789012:role/demo"},
+		{"dotted label key", "labels", "kubernetes.io/service-name", "web", "web"},
+		{"compose annotation key", "annotations", "io.kompose.service", "frontend", "frontend"},
+		{"plain key control", "annotations", "roleArn", "plain-value", "plain-value"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			deployID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+			podTplID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+			relID, _ := uuid.FromString("00000000-0000-0000-0000-000000000010")
+
+			deploy := &component.ComponentDefinition{
+				Component:      component.Component{Kind: "Deployment"},
+				ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+				Configuration: map[string]interface{}{
+					"spec": map[string]interface{}{
+						"template": map[string]interface{}{
+							"metadata": map[string]interface{}{
+								tc.group: map[string]interface{}{tc.key: tc.mutator},
+							},
+						},
+					},
+				},
+			}
+			deploy.ID = deployID
+
+			// The mutated field already holds the mutator's value, simulating a
+			// previous evaluation that applied the relationship's patch.
+			podTpl := &component.ComponentDefinition{
+				Component:      component.Component{Kind: "PodTemplate"},
+				ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+				Configuration: map[string]interface{}{
+					"metadata": map[string]interface{}{
+						tc.group: map[string]interface{}{
+							tc.key:    tc.mutating,
+							"keep-me": "untouched",
+						},
+					},
+				},
+			}
+			podTpl.ID = podTplID
+
+			mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "template", "metadata", tc.group, tc.key}}
+			mutatedRef := relationship.MutatedRef{[]string{"configuration", "metadata", tc.group, tc.key}}
+			relStatus := relationship.RelationshipDefinitionStatus("deleted")
+			selectorSet := relationship.SelectorSet{
+				relationship.SelectorSetItem{
+					Allow: relationship.Selector{
+						From: []relationship.SelectorItem{
+							{
+								ID:   &deployID,
+								Kind: strPtr("Deployment"),
+								RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+									MutatorRef: &mutatorRef,
+								},
+							},
+						},
+						To: []relationship.SelectorItem{
+							{
+								ID:   &podTplID,
+								Kind: strPtr("PodTemplate"),
+								RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+									MutatedRef: &mutatedRef,
+								},
+							},
+						},
+					},
+				},
+			}
+
+			rel := &relationship.RelationshipDefinition{
+				Kind:             relationship.Hierarchical,
+				RelationshipType: "parent",
+				SubType:          "wallet",
+				Status:           &relStatus,
+				Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+				Selectors:        &selectorSet,
+			}
+			rel.ID = relID
+
+			design := makePatternFile(
+				[]*component.ComponentDefinition{deploy, podTpl},
+				[]*relationship.RelationshipDefinition{rel},
+			)
+
+			log, _ := logger.New("test", logger.Options{Format: logger.SyslogLogFormat})
+			resp, err := NewGoEngine(log).EvaluateDesign(*design, nil)
+			if err != nil {
+				t.Fatalf("EvaluateDesign failed: %v", err)
+			}
+
+			for _, comp := range resp.Design.Components {
+				if comp.Component.Kind != "PodTemplate" {
+					continue
+				}
+				meta, ok := comp.Configuration["metadata"].(map[string]interface{})
+				if !ok {
+					t.Fatal("PodTemplate metadata missing after evaluation")
+				}
+				group, ok := meta[tc.group].(map[string]interface{})
+				if !ok {
+					t.Fatalf("PodTemplate metadata.%s missing after evaluation", tc.group)
+				}
+				if v, present := group[tc.key]; present {
+					t.Errorf("Expected %s %q to be removed after relationship delete, still holds %v", tc.group, tc.key, v)
+				}
+				if group["keep-me"] != "untouched" {
+					t.Errorf("Expected sibling key to survive cleanup, got %v", group["keep-me"])
+				}
+				return
+			}
+			t.Fatal("PodTemplate not found in evaluation response")
+		})
 	}
 }
