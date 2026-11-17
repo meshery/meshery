@@ -31,7 +31,7 @@
         function applyTheme(dark) {
           document.body.classList.toggle("dark-mode", dark);
 
-          document.querySelectorAll(".logo-dark-light").forEach(logo => {
+          document.querySelectorAll(".logo-dark-light, #logo-dark-light").forEach(logo => {
             logo.src = dark
               ? logo.dataset.logoForDark
               : logo.dataset.logoForLight;

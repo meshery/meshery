@@ -18,7 +18,7 @@
             {{ if .name }}
             <div class="maincontainer">
                 <div class="componentimg">
-                    <img id="logo-dark-light"
+                    <img class="logo-dark-light"
                         src="{{ strings.TrimPrefix "/" .colorIcon | relURL }}"
                         alt="{{ .name }}"
                         onerror="handleImageError(this)"
