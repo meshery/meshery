@@ -892,7 +892,7 @@ func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
 	if mch.ctxMeshsyncDataHandler != nil {
 		return mch.ctxMeshsyncDataHandler.Resync()
 	}
-	return nil
+	return fmt.Errorf("MeshSync data handler is not initialized")
 }
 
 // AddCtxControllerHandlers attaches a MesheryController for each context if

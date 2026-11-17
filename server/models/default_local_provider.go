@@ -2184,16 +2184,15 @@ func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter,
 	if err != nil {
 		return nil, err
 	}
-	result := string(body)
 
-	name, err := GetFilterName(result)
+	name, err := filterNameForURLImport(fileURL, body)
 	if err != nil {
 		return nil, err
 	}
 
 	ff := MesheryFilter{
 		Name:       name,
-		FilterFile: []byte(result),
+		FilterFile: body,
 		Location: map[string]interface{}{
 			"type":   "http",
 			"host":   fileURL,
