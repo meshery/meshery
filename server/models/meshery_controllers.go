@@ -1337,6 +1337,9 @@ func (mch *MesheryControllersHelper) SetOperatorDeployment(ot *OperatorTracker, 
 		mch.setOperatorError(deployErr)
 		return deployErr
 	}
+	// A deploy that succeeds clears a failure recorded by an earlier attempt,
+	// so the diagnostics API reports the completed action, not the old failure.
+	mch.setOperatorError(nil)
 	// DeployUndeployedOperators claims as well; this path is the one an
 	// explicit install takes, and without a claim here the connection is
 	// invisible to otherOperatorConsumers.
