@@ -543,6 +543,10 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		if err != nil {
 			return errors.Errorf("\n  Unable to unmarshal data: %v", err)
 		}
+		// A body of null decodes without error but leaves serverVersion nil.
+		if serverVersion == nil {
+			return errors.New("\n  Invalid response: the server returned no version information")
+		}
 
 		isOutdated, _, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
 		if err != nil {

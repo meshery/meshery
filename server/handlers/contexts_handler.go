@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -14,8 +15,10 @@ import (
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
+	"gorm.io/gorm"
 )
 
 // defaultFSMTransitionTimeout is the maximum duration permitted for asynchronous
@@ -75,13 +78,17 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 	contextID, err := uuid.FromString(mux.Vars(req)["id"])
 	if err != nil {
 		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid context ID: %w", err))
-		h.log.Error(invalidIDErr)
+		if h.log != nil {
+			h.log.Error(invalidIDErr)
+		}
 		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
 	}
 	if contextID == uuid.Nil {
 		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid context ID: %s", contextID))
-		h.log.Error(invalidIDErr)
+		if h.log != nil {
+			h.log.Error(invalidIDErr)
+		}
 		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
 	}
@@ -94,14 +101,26 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 
 	if provider == nil {
 		err := ErrGetK8sContexts(fmt.Errorf("provider not initialized"))
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	val, err := provider.GetK8sContext(token, contextID.String())
 	if err != nil {
-		h.log.Error(ErrGetK8sContexts(err))
+		if errors.Is(err, gorm.ErrRecordNotFound) || meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			notFoundErr := models.ErrResultNotFound(err)
+			if h.log != nil {
+				h.log.Error(notFoundErr)
+			}
+			writeMeshkitError(w, notFoundErr, http.StatusNotFound)
+			return
+		}
+		if h.log != nil {
+			h.log.Error(ErrGetK8sContexts(err))
+		}
 		writeMeshkitError(w, ErrGetK8sContexts(err), http.StatusInternalServerError)
 		return
 	}
@@ -109,7 +128,9 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 	val.RedactCredentials()
 
 	if err := json.NewEncoder(w).Encode(val); err != nil {
-		h.log.Error(ErrEncodeK8sContexts(err))
+		if h.log != nil {
+			h.log.Error(ErrEncodeK8sContexts(err))
+		}
 		writeMeshkitError(w, ErrEncodeK8sContexts(err), http.StatusInternalServerError)
 		return
 	}
@@ -119,13 +140,17 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	contextUUID, err := uuid.FromString(mux.Vars(req)["id"])
 	if err != nil {
 		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid context ID: %w", err))
-		h.log.Error(invalidIDErr)
+		if h.log != nil {
+			h.log.Error(invalidIDErr)
+		}
 		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
 	}
 	if contextUUID == uuid.Nil {
 		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid context ID: %s", contextUUID))
-		h.log.Error(invalidIDErr)
+		if h.log != nil {
+			h.log.Error(invalidIDErr)
+		}
 		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
 	}
@@ -154,7 +179,9 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 
 	if provider == nil {
 		err := ErrGetK8sContexts(fmt.Errorf("provider not initialized"))
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
@@ -162,6 +189,14 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	k8scontext, err := provider.GetK8sContext(token, contextID)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) || meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			notFoundErr := models.ErrResultNotFound(err)
+			if h.log != nil {
+				h.log.Error(notFoundErr)
+			}
+			writeMeshkitError(w, notFoundErr, http.StatusNotFound)
+			return
+		}
 		ctxName := k8scontext.Name
 		if ctxName == "" {
 			ctxName = contextID
@@ -172,7 +207,9 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 				"error": err,
 			}).Build()
 		h.persistAndPublish(provider, token, userID, event)
-		h.log.Error(ErrGetK8sContexts(err))
+		if h.log != nil {
+			h.log.Error(ErrGetK8sContexts(err))
+		}
 		writeMeshkitError(w, ErrGetK8sContexts(err), http.StatusInternalServerError)
 		return
 	}
@@ -183,7 +220,9 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	contexts, listErr := loadContextsForDeletion(provider, token)
 	if listErr != nil {
 		handlerErr := ErrGetK8sContexts(listErr)
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, http.StatusInternalServerError)
 		return
 	}
@@ -240,9 +279,13 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			}
 			event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
 			if err != nil {
-				h.log.Error(err)
+				if h.log != nil {
+					h.log.Error(err)
+				}
 				h.reportMachineOutcome(provider, token, userID, event, err)
-				h.log.Debug(event)
+				if h.log != nil {
+					h.log.Debug(event)
+				}
 				return
 			}
 
@@ -256,7 +299,9 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	}
 
 	if err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		event := newEvent().WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", contextID)).WithMetadata(map[string]interface{}{
 			"error": err,
 		}).Build()
