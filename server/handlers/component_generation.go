@@ -15,8 +15,8 @@ import (
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 
 	meshkitmodels "github.com/meshery/meshkit/generators/models"
-	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta3/component"
 )
 
 // maxComponentGenerationPayloadSize limits the maximum allowed request body size (4 MB)
