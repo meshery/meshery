@@ -240,11 +240,13 @@ export const userApi = api
       // Hand-written since @meshery/schemas 1.3.25: the teams endpoints were
       // reclassified as cloud-only in the schemas spec (meshery/schemas#1015),
       // which removed getTeams from the generated mesheryApi surface. Meshery
-      // Server still proxies the endpoint for providers that serve it, so the
-      // query lives here now, mirroring the generated hook's argument shape.
+      // Server has no route for /api/identity/orgs/{orgId}/teams (a GET there
+      // falls through to the UI catch-all and returns HTML), so the query goes
+      // through the extensions proxy to the remote provider, like
+      // removeUserFromTeam and handleUserInvite below.
       getTeams: builder.query({
         query: (queryArg) => ({
-          url: `/api/identity/orgs/${queryArg.orgId}/teams`,
+          url: mesheryApiPath(`extensions/api/identity/orgs/${queryArg.orgId}/teams`),
           params: {
             search: queryArg.search,
             order: queryArg.order,
