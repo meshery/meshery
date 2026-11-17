@@ -155,7 +155,7 @@ func TestUserTestPreferenceStore_PayloadTooLarge_ReturnsEntityTooLarge(t *testin
 	assert.Equal(t, http.StatusRequestEntityTooLarge, rec.Code)
 	assert.Contains(t, rec.Header().Get("Content-Type"), "application/json")
 	errBody := decodeErrorBody(t, rec.Body.Bytes())
-	assert.Equal(t, ErrRequestBodyCode, errBody.Code)
+	assert.Equal(t, ErrRequestTooLargeCode, errBody.Code)
 	assert.Contains(t, errBody.Error, "request body exceeds maximum allowed size")
 }
 

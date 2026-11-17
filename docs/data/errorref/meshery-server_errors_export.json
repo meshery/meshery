@@ -4372,6 +4372,15 @@
         "short_description": "Provider not initialized",
         "probable_cause": "The handler was invoked without an initialized provider instance",
         "suggested_remediation": "Ensure the provider is properly initialized before handling the request"
+      },
+      "1493": {
+        "name": "ErrRequestTooLargeCode",
+        "code": "1493",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Request payload exceeds maximum allowed size",
+        "suggested_remediation": "Reduce request payload size to within acceptable limits"
       }
     }
   }
