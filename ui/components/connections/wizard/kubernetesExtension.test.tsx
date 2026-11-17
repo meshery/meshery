@@ -158,13 +158,7 @@ describe('kubernetes connection wizard', () => {
         ctx={makeCtx({
           discoveredContexts: [
             { id: 'up', name: 'prod', server: 'https://up.example', reachable: true },
-            {
-              id: 'down',
-              name: 'dev',
-              server: 'https://down.example',
-              reachable: false,
-              authNote: 'uses an exec credential plugin',
-            },
+            { id: 'down', name: 'dev', server: 'https://down.example', reachable: false },
           ],
           contextChoices: {
             up: { selected: true, name: 'prod', meshsyncDeploymentMode: 'embedded' },
@@ -176,7 +170,6 @@ describe('kubernetes connection wizard', () => {
 
     expect(screen.getByText('Reachable')).toBeInTheDocument();
     expect(screen.getByText('Unreachable')).toBeInTheDocument();
-    expect(screen.getByText(/uses an exec credential plugin/)).toBeInTheDocument();
     expect(screen.queryByText('discovered')).not.toBeInTheDocument();
     expect(screen.queryByText('not found')).not.toBeInTheDocument();
   });
@@ -281,18 +274,14 @@ describe('kubernetes connection wizard', () => {
     skipped.services.discoverKubeContexts = vi.fn().mockResolvedValue({
       contexts: [],
       skippedContexts: [
-        {
-          name: 'eks',
-          reason:
-            'The context could not be read from the kubeconfig (uses an exec credential plugin).',
-        },
+        { name: 'eks', reason: 'Authentication method is not supported (exec plugin).' },
       ],
     });
     expect(await kubernetesExtension.detailsStep.onNext(skipped)).toBe(false);
     expect(skipped.services.notify).toHaveBeenCalledWith(
       expect.objectContaining({
         message: expect.stringContaining(
-          'eks: The context could not be read from the kubeconfig (uses an exec credential plugin).',
+          'eks: Authentication method is not supported (exec plugin).',
         ),
       }),
     );

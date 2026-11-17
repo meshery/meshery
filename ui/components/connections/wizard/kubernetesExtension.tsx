@@ -277,7 +277,6 @@ const ReviewContextsStepBody = ({ ctx }: { ctx: WizardContext }) => {
                 />
                 <Typography variant="caption" color="text.secondary" noWrap component="div">
                   {context.server || 'unknown server'}
-                  {context.authNote ? ` · ${context.authNote}` : ''}
                 </Typography>
               </Box>
               {/* MeshSync mode per context; hover shows details + docs link. */}

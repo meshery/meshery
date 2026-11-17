@@ -333,7 +333,6 @@ export type KubeconfigDiscoveryContext = {
   server: string;
   reachable: boolean;
   connectionId?: string;
-  authNote?: string;
 };
 
 export type SkippedKubeContext = {
@@ -362,10 +361,6 @@ const asDiscoveryContext = (value: unknown): KubeconfigDiscoveryContext | null =
     server: typeof record.server === 'string' ? record.server : '',
     reachable: Boolean(record.reachable),
     connectionId: typeof record.connectionId === 'string' ? record.connectionId : undefined,
-    authNote:
-      typeof record.authNote === 'string' && record.authNote.length > 0
-        ? record.authNote
-        : undefined,
   };
 };
 

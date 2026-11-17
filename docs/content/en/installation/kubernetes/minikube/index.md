@@ -157,7 +157,7 @@ Then connect Meshery to your cluster:
 2. Select **Connections**.
 3. Click **Create Connection** and choose **Kubernetes**.
 4. In the **Import Kubeconfig** step, upload your kubeconfig file.
-5. On **Review Contexts**, choose the contexts to import.
+5. On **Review Contexts**, choose the contexts to import, then click **Import** to save them as connections.
 
 For details, see [Registering a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}).
 

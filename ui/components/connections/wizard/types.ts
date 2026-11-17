@@ -62,8 +62,6 @@ export type DiscoveredKubeContext = {
   server: string;
   reachable: boolean;
   connectionId?: string;
-  /** Short, non-secret hint when the context uses an exec plugin or auth-provider. */
-  authNote?: string;
 };
 
 /** Per-context options forwarded to the kubeconfig upload endpoint. */

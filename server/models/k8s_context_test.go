@@ -706,18 +706,17 @@ users:
 		if skipped.Name != "eks" {
 			t.Fatalf("skipped name = %q, want eks", skipped.Name)
 		}
-		if !strings.Contains(skipped.Reason, "exec credential plugin") {
-			t.Fatalf("reason = %q, want it to name the exec credential plugin", skipped.Reason)
+		if !strings.Contains(skipped.Reason, "exec plugin") {
+			t.Fatalf("reason = %q, want it to name the exec plugin", skipped.Reason)
 		}
 	})
 
-	t.Run("auth-provider contexts are skipped with a reason only when a client cannot be built", func(t *testing.T) {
+	t.Run("auth-provider contexts are skipped with a reason", func(t *testing.T) {
 		got, err := discoverForTest(t, []byte(`apiVersion: v1
 kind: Config
 current-context: gke
 clusters:
 - cluster:
-    certificate-authority: /no/such/ca.crt
     server: https://127.0.0.1:1
   name: gke
 contexts:
@@ -785,13 +784,13 @@ users:
 		}
 	})
 
-	t.Run("a well-formed exec kubeconfig stays importable and is annotated", func(t *testing.T) {
+	t.Run("a well-formed exec kubeconfig is skipped before the API probe", func(t *testing.T) {
 		got, err := discoverForTest(t, []byte(`apiVersion: v1
 kind: Config
 current-context: eks
 clusters:
 - cluster:
-    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lVRDZFZmhaOVlJaThuR2VzMmFtcDAwRERmZ05rd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0VqRVFNQTRHQTFVRUF3d0hkR1Z6ZEMxallUQWVGdzB5TmpFeE1UY3hOVFF6TkRsYUZ3MHlOakV4TVRneApOVFF6TkRsYU1CSXhFREFPQmdOVkJBTU1CM1JsYzNRdFkyRXdnZ0VpTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElCCkR3QXdnZ0VLQW9JQkFRQ2lCZ3VoMDB5aTFtRUNlL1llRTY2WGVySEJ1d2o4Y0lSa1hUaFRad1FZQUFXQzliZkMKVFJLMUFuTXRnWnJSamdVQ0p3SGJxTUdNLys1MjYzNzQ4NmhoS3ZxTnM1RWF4cU9MUzlLMmNvTWpvdVhXYUQzWApiOEV4M3VUNjVqaW1veHNxdVU5M2lEOEZ2KzFaQTlZUHd1THp1UUtpc0NQeko3S1REMGVidUE3TytxaWZsSjdZCnp1SkhONEhzR05CRStFTnRYaDRUd05rTVpOMHkxV1l4Ymw1SXgyTWxsZC9XeWZxODdPUy9wcVVLZnpQbkh1ZEMKclRkdnZOd3U2cC9kYTcvSGg1NU9YdzFmYlRxVVlkM2xZSEtYTkR6clZ2YTR5SDcrYndjaUZMVitBSTJOWjYxOQpiVkpBN0VQNFowMkx4VWttNGhXaFNxVFF0YU1rcjcyNzJEeEJBZ01CQUFHalV6QlJNQjBHQTFVZERnUVdCQlQ0ClJsNiswT0pjL0Y0c3VvRGJaQ3hPSzlWSE1qQWZCZ05WSFNNRUdEQVdnQlQ0Umw2KzBPSmMvRjRzdW9EYlpDeE8KSzlWSE1qQVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQmU5SXJnbVIzaApKcmhvMldoYmRUL0ZxaWx4TnJlMW5sM21YWkI1enVZb0VJQTRIVjRWQzVGc0Q3UDBsNkE3Y1pHVFhpN2tyLy94CjhJNjBzZmo3TmJ4QlVKdXlvV0RlRCs4T09tUkFod2ptd1pZVGsraGhldXBUUjFSK1BKWmJtM2tqdnowcEZ4NVQKUHZFYUV4Zlo0eEZsM1BqVFBGbk9BWkVzQjRHNll2NVloRERVUjZpK0dlNVVQbGgycXp3ZFNzc3h6enRqeGhYMgpha01YRFpjeWsvRlJ2c2xrMTcyak51MktvNjF0WG1KMXBrSFJIZEJCTlFoRGtKNGFDWXg4MWEyVDNPSDFPNldBCm5kb1VxWHVaN0dxenpsVFVhMENkM2xqT1UvN1VqTmFQeWx6ak5EZzBkM3RkeFpuYWFFbllzSWN2bHBodmljcWYKemY2RFZSR054UWk1Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCg==
     server: https://127.0.0.1:1
   name: eks
 contexts:
@@ -810,14 +809,21 @@ users:
 		if err != nil {
 			t.Fatalf("discover: %v", err)
 		}
-		if len(got.SkippedContexts) != 0 {
-			t.Fatalf("skipped = %#v, want none; exec contexts stay importable when a client can be built", got.SkippedContexts)
+		if len(got.Contexts) != 0 {
+			t.Fatalf("imported %d contexts, want the exec context skipped even when a client can be built", len(got.Contexts))
 		}
-		if len(got.Contexts) != 1 || got.Contexts[0].Name != "eks" {
-			t.Fatalf("contexts = %#v, want eks", got.Contexts)
+		if len(got.SkippedContexts) != 1 {
+			t.Fatalf("skipped %d, want 1", len(got.SkippedContexts))
 		}
-		if got.Contexts[0].AuthNote != "uses an exec credential plugin" {
-			t.Fatalf("authNote = %q, want uses an exec credential plugin", got.Contexts[0].AuthNote)
+		skipped := got.SkippedContexts[0]
+		if skipped.Name != "eks" {
+			t.Fatalf("skipped name = %q, want eks", skipped.Name)
+		}
+		if !strings.Contains(skipped.Reason, "exec plugin") {
+			t.Fatalf("reason = %q, want it to name the exec plugin", skipped.Reason)
+		}
+		if !strings.Contains(skipped.Reason, "Meshery Server host") {
+			t.Fatalf("reason = %q, want it to say the plugin would run on the Meshery Server host", skipped.Reason)
 		}
 	})
 }

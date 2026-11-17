@@ -61,10 +61,6 @@ type K8sContext struct {
 	// ImportError is a human-readable reason set when this context was not
 	// imported (the save failed, or the connection is ignored). It is not persisted.
 	ImportError string `json:"error,omitempty" yaml:"-" gorm:"-"`
-	// AuthNote is a short, non-secret hint for the connection wizard when this
-	// context uses an exec plugin or an auth-provider. It is not persisted and
-	// does not block import.
-	AuthNote string `json:"authNote,omitempty" yaml:"-" gorm:"-"`
 }
 
 // ErrKubeconfigUnreadable is returned when discovery is given bytes that are
@@ -314,12 +310,28 @@ func DiscoverKubeconfigContexts(ctx context.Context, _ Provider, _ string, _ *Br
 
 		metadata["context"] = RedactCredentialsForContext(&kc)
 
-		// Exec plugins and auth-provider blocks stay importable: MeshKit can
-		// mint tokens in process for recognized EKS and GKE stanzas, and a
-		// client can still be built when the plugin is present. Only note the
-		// method for the wizard; skip below only if a client cannot be built.
-		if kind := kubeconfigAuthKind(kc); kind != "" {
-			kc.AuthNote = kubeconfigAuthNote(kind)
+		// Skip exec and auth-provider contexts before building a client.
+		// client-go stores an exec plugin without running it until the API
+		// probe, so a well-formed exec kubeconfig would otherwise be offered
+		// as importable (Reachable or Unreachable). Uploaded kubeconfigs must
+		// not cause Meshery Server to execute a command named in the file.
+		if kind := unsupportedKubeconfigAuth(kc); kind != "" {
+			reason := kubeconfigUnsupportedAuthReason(kind, nil)
+			if log != nil {
+				log.Warn(ErrGenerateK8sHandler(stderrors.New(reason), kc.Name))
+			}
+			// Record the skip in the receipt event without an "error" key:
+			// k8sEventMetadataHasError scans every eventMetadata entry, so an
+			// error key would raise the whole import receipt to Error
+			// severity even when every selected context succeeded.
+			metadata["description"] = fmt.Sprintf("Skipped context \"%s\" at %s: %s", kc.Name, kc.Server, reason)
+			eventMetadata[name] = metadata
+			result.SkippedContexts = append(result.SkippedContexts, SkippedKubeContext{
+				Name:   kc.Name,
+				Server: kc.Server,
+				Reason: reason,
+			})
+			continue
 		}
 
 		handler, err := kc.GenerateKubeHandler()
@@ -424,9 +436,11 @@ func asStringKeyMap(value interface{}) map[string]interface{} {
 	}
 }
 
-// kubeconfigAuthKind reports whether the context uses an exec plugin or an
-// auth-provider. Those methods stay importable; this is only a label.
-func kubeconfigAuthKind(kc K8sContext) string {
+// kubeconfigSkipReason explains why a context was left out of discovery.
+// Exec plugins and auth-provider blocks are called out as unsupported; every
+// other failure keeps the underlying error so a missing certificate file is
+// not described as an auth-plugin problem.
+func unsupportedKubeconfigAuth(kc K8sContext) string {
 	var user map[string]interface{}
 	if auth := asStringKeyMap(kc.Auth); auth != nil {
 		user = asStringKeyMap(auth["user"])
@@ -435,7 +449,7 @@ func kubeconfigAuthKind(kc K8sContext) string {
 		return ""
 	}
 	if _, ok := user["exec"]; ok {
-		return "exec credential plugin"
+		return "exec plugin"
 	}
 	if _, ok := user["auth-provider"]; ok {
 		return "auth-provider"
@@ -443,29 +457,21 @@ func kubeconfigAuthKind(kc K8sContext) string {
 	return ""
 }
 
-func kubeconfigAuthNote(kind string) string {
-	return "uses an " + kind
+func kubeconfigUnsupportedAuthReason(kind string, cause error) string {
+	reason := fmt.Sprintf("Authentication method is not supported (%s).", kind)
+	reason += " Meshery does not run this method from an imported kubeconfig, because it would execute on the Meshery Server host."
+	if cause != nil && cause.Error() != "" {
+		return reason + " " + cause.Error()
+	}
+	return reason
 }
 
-// kubeconfigSkipReason explains why a context was left out of discovery.
-// A context is skipped only when a client cannot be built from it. Exec
-// plugins and auth-provider blocks are named in that case so a missing
-// certificate is not mistaken for an auth-method problem, but they are not
-// treated as unsupported.
 func kubeconfigSkipReason(kc K8sContext, cause error) string {
-	detail := ""
-	if cause != nil {
-		detail = cause.Error()
+	if kind := unsupportedKubeconfigAuth(kc); kind != "" {
+		return kubeconfigUnsupportedAuthReason(kind, cause)
 	}
-	if kind := kubeconfigAuthKind(kc); kind != "" {
-		reason := fmt.Sprintf("The context could not be read from the kubeconfig (uses an %s).", kind)
-		if detail != "" {
-			return reason + " " + detail
-		}
-		return reason
-	}
-	if detail != "" {
-		return detail
+	if cause != nil && cause.Error() != "" {
+		return cause.Error()
 	}
 	return "The context could not be read from the kubeconfig."
 }
