@@ -143,4 +143,10 @@ describe('findWorkloadByName', () => {
       target,
     );
   });
+
+  it('does not match nullish items when searching for "Un-Named"', () => {
+    const realUnnamed = { workload: { oam_definition: { metadata: {} } } };
+    expect(findWorkloadByName('Un-Named', [null, undefined, realUnnamed])).toBe(realUnnamed);
+    expect(findWorkloadByName('Un-Named', [null, undefined])).toBeUndefined();
+  });
 });

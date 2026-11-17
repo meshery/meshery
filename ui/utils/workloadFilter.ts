@@ -17,11 +17,9 @@ export function groupWorkloadByVersion(meshfilteredWorkloads) {
       wtSet.workload?.oam_definition?.spec?.metadata?.meshVersion ||
       wtSet.workload?.oam_definition?.spec?.metadata?.version ||
       'Meshery';
-    if (version) {
-      const versionedFilteredMesh = versionedFilteredWorkloads[version] || [];
-      versionedFilteredMesh.push(wtSet);
-      versionedFilteredWorkloads[version] = versionedFilteredMesh;
-    }
+    const versionedFilteredMesh = versionedFilteredWorkloads[version] || [];
+    versionedFilteredMesh.push(wtSet);
+    versionedFilteredWorkloads[version] = versionedFilteredMesh;
   });
 
   return versionedFilteredWorkloads;
@@ -35,5 +33,5 @@ export function findWorkloadByName(name, workloads) {
   if (!Array.isArray(workloads)) {
     return undefined;
   }
-  return workloads.find((workload) => getUnformattedName(workload) === name);
+  return workloads.find((workload) => workload && getUnformattedName(workload) === name);
 }
