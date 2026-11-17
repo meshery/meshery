@@ -40,7 +40,11 @@ export default function ConnectionControllersConfigModal({
     isLoaded: Boolean(data),
     source: data?.override,
     loadError: error,
-    save: (body) => updateOverride({ connectionId, body }).unwrap(),
+    save: (body) =>
+      updateOverride({
+        connectionId,
+        mesheryControllersConfigurationMesheryControllersConfigPayload: body,
+      }).unwrap(),
     messages: {
       loadError: 'Failed to load the controllers configuration for this connection.',
       saveError: 'Failed to apply the controllers configuration override.',

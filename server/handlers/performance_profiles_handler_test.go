@@ -29,7 +29,7 @@ func TestSavePerformanceProfileHandler_NilProvider_ReturnsInternalServerError(t 
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("expected status 500 Internal Server Error, got %d (body: %s)", rec.Code, rec.Body.String())
 	}
-	if !strings.Contains(rec.Body.String(), "provider not initialized") {
+	if !strings.Contains(strings.ToLower(rec.Body.String()), "provider not initialized") {
 		t.Errorf("expected 'provider not initialized', got %s", rec.Body.String())
 	}
 }
@@ -45,7 +45,7 @@ func TestGetPerformanceProfilesHandler_NilProvider_ReturnsInternalServerError(t 
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("expected status 500 Internal Server Error, got %d (body: %s)", rec.Code, rec.Body.String())
 	}
-	if !strings.Contains(rec.Body.String(), "provider not initialized") {
+	if !strings.Contains(strings.ToLower(rec.Body.String()), "provider not initialized") {
 		t.Errorf("expected 'provider not initialized', got %s", rec.Body.String())
 	}
 }
@@ -78,7 +78,7 @@ func TestDeletePerformanceProfileHandler_NilProvider_ReturnsInternalServerError(
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("expected status 500 Internal Server Error, got %d (body: %s)", rec.Code, rec.Body.String())
 	}
-	if !strings.Contains(rec.Body.String(), "provider not initialized") {
+	if !strings.Contains(strings.ToLower(rec.Body.String()), "provider not initialized") {
 		t.Errorf("expected 'provider not initialized', got %s", rec.Body.String())
 	}
 }
@@ -242,7 +242,7 @@ func TestGetPerformanceProfileHandler_NilProvider_ReturnsInternalServerError(t *
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("expected status 500 Internal Server Error, got %d (body: %s)", rec.Code, rec.Body.String())
 	}
-	if !strings.Contains(rec.Body.String(), "provider not initialized") {
+	if !strings.Contains(strings.ToLower(rec.Body.String()), "provider not initialized") {
 		t.Errorf("expected 'provider not initialized', got %s", rec.Body.String())
 	}
 }
@@ -503,6 +503,40 @@ func TestGetPerformanceProfilesHandler_Success(t *testing.T) {
 	}
 	if rec.Body.String() != string(mockResp) {
 		t.Errorf("expected body %s, got %s", string(mockResp), rec.Body.String())
+	}
+}
+
+func TestGetPerformanceProfilesHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	cases := []struct {
+		name     string
+		query    string
+		provider error
+	}{
+		{"page", "page=-1", models.ErrPageNumber(fmt.Errorf("bad page"))},
+		{"pagesize", "pagesize=abc", models.ErrPageSize(fmt.Errorf("bad pagesize"))},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			base := &models.DefaultLocalProvider{}
+			base.Initialize()
+			provider := &perfProfilesMockProvider{
+				DefaultLocalProvider: base,
+				getProfilesFn: func(tokenVal, page, pageSize, search, order string) ([]byte, error) {
+					return nil, tc.provider
+				},
+			}
+
+			req := httptest.NewRequest(http.MethodGet, "/api/user/performance/profiles?"+tc.query, nil)
+			req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "valid-token"))
+			rec := httptest.NewRecorder()
+
+			h.GetPerformanceProfilesHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected status 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
+			}
+		})
 	}
 }
 

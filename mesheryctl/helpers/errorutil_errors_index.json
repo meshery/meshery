@@ -4106,6 +4106,38 @@
       "suggestedRemediation": [
         "Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"
       ]
+    },
+    {
+      "code": "mesheryctl-1264",
+      "moniker": "ErrUninstallMesheryCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1264",
+      "severity": "alert",
+      "shortDescription": "Error uninstalling Meshery",
+      "probableCause": [
+        "Meshery may be partially removed from the cluster: some Meshery resources are still present"
+      ]
+    },
+    {
+      "code": "mesheryctl-1265",
+      "moniker": "ErrProfileTraversalCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1265",
+      "severity": "alert",
+      "shortDescription": "Unable to complete performance profile lookup",
+      "longDescription": "The matching performance profile pages changed or were inconsistent during lookup",
+      "probableCause": [
+        "Profiles were added, deleted, or reordered during lookup, or the provider returned inconsistent pagination data"
+      ],
+      "suggestedRemediation": [
+        "Rerun the command to refresh the matching profile list"
+      ]
     }
   ],
   "schemaVersion": 2

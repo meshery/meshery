@@ -2189,6 +2189,24 @@
         "short_description": "Redirect would change the request method",
         "probable_cause": "The current context's endpoint is not the address Meshery Server answers on directly (for example an http:// endpoint behind a proxy that redirects to https), or the request path is not in the form the server routes (for example it contains a doubled slash)",
         "suggested_remediation": "Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"
+      },
+      "1264": {
+        "name": "ErrUninstallMesheryCode",
+        "code": "1264",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error uninstalling Meshery",
+        "probable_cause": "Meshery may be partially removed from the cluster: some Meshery resources are still present",
+        "suggested_remediation": ""
+      },
+      "1265": {
+        "name": "ErrProfileTraversalCode",
+        "code": "1265",
+        "severity": "Alert",
+        "long_description": "The matching performance profile pages changed or were inconsistent during lookup",
+        "short_description": "Unable to complete performance profile lookup",
+        "probable_cause": "Profiles were added, deleted, or reordered during lookup, or the provider returned inconsistent pagination data",
+        "suggested_remediation": "Rerun the command to refresh the matching profile list"
       }
     }
   }
