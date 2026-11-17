@@ -1,0 +1,26 @@
+# v0.8.11
+
+LLMS index: [llms.txt](/pr-preview/pr-22648/llms.txt)
+
+---
+
+## What's New
+## 🔤 General
+- \[Chore\] Update dependencies in go.mod to latest versions @leecalcote (#13244)
+
+## 🖥 Meshery UI
+
+- fix: crds tabs are broken in production issue @amitamrutiya (#13245)
+
+## 🧰 Maintenance
+
+- \[CI\]\[Chore\] Upgrade to ubuntu-24.04 @leecalcote (#13243)
+
+## 📖 Documentation
+
+- \[Docs\] Update Catalog page location @leecalcote (#13209)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@amitamrutiya, @leecalcote and @winkletinkle
