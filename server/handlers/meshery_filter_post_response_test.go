@@ -173,6 +173,37 @@ func TestFilterPOSTResponseCarriesURLImportedFilterWithoutSave(t *testing.T) {
 	assert.Zero(t, eventCount, "an unsaved URL import must not persist an event")
 }
 
+// TestFilterPOSTImportsRawWASMFromURL pins an import from a URL that serves
+// the compiled .wasm module itself, as the docs and `mesheryctl filter import`
+// describe. A module carries no name, so the filter must be named after the
+// file in the URL and must store the module byte for byte.
+func TestFilterPOSTImportsRawWASMFromURL(t *testing.T) {
+	h, provider, db := newFilterPOSTFixture(t)
+	provider.Log = h.log
+	// The smallest valid WebAssembly module: the magic number and version 1.
+	module := []byte("\x00asm\x01\x00\x00\x00")
+	source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/wasm")
+		_, _ = w.Write(module)
+	}))
+	t.Cleanup(source.Close)
+
+	rec := postFilter(t, h, provider, models.MesheryFilterRequestBody{Save: true, URL: source.URL + "/filters/rate-limit.wasm"})
+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+
+	var imported []models.MesheryFilter
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &imported))
+	require.Len(t, imported, 1, "the response must carry the imported filter, got %s", rec.Body.String())
+	assert.Equal(t, "rate-limit", imported[0].Name)
+	require.NotNil(t, imported[0].ID)
+
+	var stored models.MesheryFilter
+	require.NoError(t, db.Where("id = ?", *imported[0].ID).First(&stored).Error,
+		"the returned id must be the stored row's id")
+	assert.Equal(t, "rate-limit", stored.Name)
+	assert.Equal(t, module, stored.FilterFile, "the stored filter file must be the downloaded module")
+}
+
 // TestFilterPOSTResponseCarriesRemoteProviderFilters pins the save path with
 // the remote provider: the body carries the filters Cloud answered with,
 // re-encoded through MesheryFilter, so fields outside that model are dropped.
