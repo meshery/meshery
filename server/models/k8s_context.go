@@ -310,6 +310,24 @@ func DiscoverKubeconfigContexts(ctx context.Context, _ Provider, _ string, _ *Br
 
 		metadata["context"] = RedactCredentialsForContext(&kc)
 
+		// Skip exec and auth-provider contexts before building a client.
+		// client-go stores an exec plugin without running it until the API
+		// probe, so a well-formed exec kubeconfig would otherwise be offered
+		// as importable (Reachable or Unreachable). Uploaded kubeconfigs must
+		// not cause Meshery Server to execute a command named in the file.
+		if kind := unsupportedKubeconfigAuth(kc); kind != "" {
+			reason := kubeconfigUnsupportedAuthReason(kind, nil)
+			if log != nil {
+				log.Warn(ErrGenerateK8sHandler(stderrors.New(reason), kc.Name))
+			}
+			result.SkippedContexts = append(result.SkippedContexts, SkippedKubeContext{
+				Name:   kc.Name,
+				Server: kc.Server,
+				Reason: reason,
+			})
+			continue
+		}
+
 		handler, err := kc.GenerateKubeHandler()
 		if err != nil {
 			reason := kubeconfigSkipReason(kc, err)
@@ -416,32 +434,38 @@ func asStringKeyMap(value interface{}) map[string]interface{} {
 // Exec plugins and auth-provider blocks are called out as unsupported; every
 // other failure keeps the underlying error so a missing certificate file is
 // not described as an auth-plugin problem.
-func kubeconfigSkipReason(kc K8sContext, cause error) string {
-	detail := ""
-	if cause != nil {
-		detail = cause.Error()
-	}
+func unsupportedKubeconfigAuth(kc K8sContext) string {
 	var user map[string]interface{}
 	if auth := asStringKeyMap(kc.Auth); auth != nil {
 		user = asStringKeyMap(auth["user"])
 	}
-	kind := ""
-	if user != nil {
-		if _, ok := user["exec"]; ok {
-			kind = "exec plugin"
-		} else if _, ok := user["auth-provider"]; ok {
-			kind = "auth-provider"
-		}
+	if user == nil {
+		return ""
 	}
-	if kind != "" {
-		reason := fmt.Sprintf("Authentication method is not supported (%s).", kind)
-		if detail != "" {
-			return reason + " " + detail
-		}
-		return reason
+	if _, ok := user["exec"]; ok {
+		return "exec plugin"
 	}
-	if detail != "" {
-		return detail
+	if _, ok := user["auth-provider"]; ok {
+		return "auth-provider"
+	}
+	return ""
+}
+
+func kubeconfigUnsupportedAuthReason(kind string, cause error) string {
+	reason := fmt.Sprintf("Authentication method is not supported (%s).", kind)
+	reason += " Meshery does not run this method from an imported kubeconfig, because it would execute on the Meshery Server host."
+	if cause != nil && cause.Error() != "" {
+		return reason + " " + cause.Error()
+	}
+	return reason
+}
+
+func kubeconfigSkipReason(kc K8sContext, cause error) string {
+	if kind := unsupportedKubeconfigAuth(kc); kind != "" {
+		return kubeconfigUnsupportedAuthReason(kind, cause)
+	}
+	if cause != nil && cause.Error() != "" {
+		return cause.Error()
 	}
 	return "The context could not be read from the kubeconfig."
 }

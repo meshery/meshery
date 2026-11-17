@@ -291,7 +291,9 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
 
   const isKindAllowed = !data.kindConfig || kindPermission(data.kindConfig);
   const canProceed = isKindAllowed && (activeStep?.canProceed ? activeStep.canProceed(ctx) : true);
-  const canGoBack = safeIndex > 0;
+  const hideBackFlag = activeStep?.hideBack;
+  const backHidden = typeof hideBackFlag === 'function' ? hideBackFlag(ctx) : Boolean(hideBackFlag);
+  const canGoBack = safeIndex > 0 && !backHidden;
   const nextLabel = activeStep?.nextLabel ? activeStep.nextLabel(ctx) : isLast ? 'Finish' : 'Next';
 
   const next = async () => {

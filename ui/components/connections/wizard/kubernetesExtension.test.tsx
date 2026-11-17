@@ -34,6 +34,12 @@ vi.mock('@/utils/hooks/useNotification', () => ({
   useNotification: () => ({ notify: vi.fn() }),
 }));
 
+// Master loads credentials through a Redux-backed hook. This file already
+// stubs the connection RTK hooks and does not exercise the credential step.
+vi.mock('@/utils/hooks/useAllUserCredentials', () => ({
+  useAllUserCredentials: () => ({ credentials: [], isLoading: false, isError: false }),
+}));
+
 vi.mock('next/link', () => ({
   default: ({ children, href }: { children: React.ReactNode; href: string }) => (
     <a href={href}>{children}</a>

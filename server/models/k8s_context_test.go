@@ -783,6 +783,49 @@ users:
 			t.Fatalf("skipped = %#v, want bad", got.SkippedContexts)
 		}
 	})
+
+	t.Run("a well-formed exec kubeconfig is skipped before the API probe", func(t *testing.T) {
+		got, err := discoverForTest(t, []byte(`apiVersion: v1
+kind: Config
+current-context: eks
+clusters:
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCg==
+    server: https://127.0.0.1:1
+  name: eks
+contexts:
+- context:
+    cluster: eks
+    user: eks-user
+  name: eks
+users:
+- name: eks-user
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      command: aws
+      args: ["eks", "get-token"]
+`))
+		if err != nil {
+			t.Fatalf("discover: %v", err)
+		}
+		if len(got.Contexts) != 0 {
+			t.Fatalf("imported %d contexts, want the exec context skipped even when a client can be built", len(got.Contexts))
+		}
+		if len(got.SkippedContexts) != 1 {
+			t.Fatalf("skipped %d, want 1", len(got.SkippedContexts))
+		}
+		skipped := got.SkippedContexts[0]
+		if skipped.Name != "eks" {
+			t.Fatalf("skipped name = %q, want eks", skipped.Name)
+		}
+		if !strings.Contains(skipped.Reason, "exec plugin") {
+			t.Fatalf("reason = %q, want it to name the exec plugin", skipped.Reason)
+		}
+		if !strings.Contains(skipped.Reason, "Meshery Server host") {
+			t.Fatalf("reason = %q, want it to say the plugin would run on the Meshery Server host", skipped.Reason)
+		}
+	})
 }
 
 // Existing callers (import, component registration) keep receiving a context
