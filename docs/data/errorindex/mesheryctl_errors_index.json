@@ -4106,6 +4106,20 @@
       "suggestedRemediation": [
         "Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"
       ]
+    },
+    {
+      "code": "mesheryctl-1264",
+      "moniker": "ErrUninstallMesheryCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1264",
+      "severity": "alert",
+      "shortDescription": "Error uninstalling Meshery",
+      "probableCause": [
+        "Meshery may be partially removed from the cluster: some Meshery resources are still present"
+      ]
     }
   ],
   "schemaVersion": 2

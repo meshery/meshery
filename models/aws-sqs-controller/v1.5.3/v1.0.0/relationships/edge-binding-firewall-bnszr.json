@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "sns-controller",
+              "name": "aws-sns-controller",
               "registrant": {
                 "kind": "artifacthub"
               },
@@ -75,7 +75,7 @@
               "model": {
                 "version": ""
               },
-              "name": "sqs-controller",
+              "name": "aws-sqs-controller",
               "registrant": {
                 "kind": "artifacthub"
               },
