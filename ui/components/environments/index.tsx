@@ -124,6 +124,7 @@ const Environments = () => {
 
   const {
     data: connections,
+    currentData: currentConnections,
     isError: isConnectionsError,
     error: connectionsError,
   } = useGetEnvironmentConnectionsQuery(
@@ -140,6 +141,7 @@ const Environments = () => {
 
   const {
     data: environmentConnections,
+    currentData: currentEnvironmentConnections,
     isError: isEnvironmentConnectionsError,
     error: environmentConnectionsError,
   } = useGetEnvironmentConnectionsQuery(
@@ -154,9 +156,9 @@ const Environments = () => {
   );
 
   const environments = environmentsData?.environments ? environmentsData.environments : [];
-  const connectionsDataRtk = connections?.connections ? connections.connections : [];
-  const environmentConnectionsDataRtk = environmentConnections?.connections
-    ? environmentConnections.connections
+  const connectionsDataRtk = currentConnections?.connections ? currentConnections.connections : [];
+  const environmentConnectionsDataRtk = currentEnvironmentConnections?.connections
+    ? currentEnvironmentConnections.connections
     : [];
 
   useEffect(() => {
@@ -172,7 +174,7 @@ const Environments = () => {
       }
       return next;
     });
-  }, [connections]);
+  }, [currentConnections]);
 
   useEffect(() => {
     if (!environmentConnectionsDataRtk || environmentConnectionsDataRtk.length === 0) return;
@@ -187,7 +189,7 @@ const Environments = () => {
       }
       return next;
     });
-  }, [environmentConnections]);
+  }, [currentEnvironmentConnections]);
 
   useEffect(() => {
     if (isEnvironmentsError) {

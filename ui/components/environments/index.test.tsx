@@ -82,7 +82,13 @@ vi.mock('../../rtk-query/environments', () => ({
   },
   useGetEnvironmentConnectionsQuery: (args: unknown, options: unknown) => {
     getEnvironmentConnectionsQuery(args, options);
-    return (options as any)?.skip ? { data: undefined } : CONNECTIONS_QUERY_RESULT;
+    const isSkipped = Boolean((options as any)?.skip);
+    return {
+      data: CONNECTIONS_QUERY_RESULT.data,
+      currentData: isSkipped ? undefined : CONNECTIONS_QUERY_RESULT.data,
+      isError: CONNECTIONS_QUERY_RESULT.isError,
+      error: CONNECTIONS_QUERY_RESULT.error,
+    };
   },
   useAddConnectionToEnvironmentMutation: () => NOOP_MUTATION,
   useRemoveConnectionFromEnvironmentMutation: () => NOOP_MUTATION,
@@ -484,9 +490,12 @@ describe('Environments connection assignment modal', () => {
     await waitFor(() => {
       expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
     });
-    expect(getEnvironmentConnectionsQuery).toHaveBeenLastCalledWith(
-      expect.objectContaining({ page: 0 }),
-      expect.anything(),
+
+    const assignableCalls = getEnvironmentConnectionsQuery.mock.calls.filter(
+      ([args, options]: [any, any]) => args?.filter === '{"assigned":false}' && !options?.skip,
     );
+    expect(assignableCalls.length).toBeGreaterThan(0);
+    const lastAssignableCall = assignableCalls.at(-1);
+    expect(lastAssignableCall?.[0]).toMatchObject({ page: 0 });
   });
 });
