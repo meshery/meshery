@@ -34,11 +34,23 @@ var availableSubcommands []*cobra.Command
 var FilterCmd = &cobra.Command{
 	Use:   "filter",
 	Short: "Manage WebAssembly filters",
-	Long: `Cloud Native Filter Management
-Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
+	Long: `View, list, delete, and import WebAssembly filters
+Find more information at: https://docs.meshery.io/reference/mesheryctl/filter`,
 	Example: `
-// Base command for WASM filters:
-mesheryctl filter [subcommands]
+// Display total count of all available filters
+mesheryctl filter --count
+
+// List all available filters
+mesheryctl filter list
+
+// View a specific filter by name or ID
+mesheryctl filter view [filter-name | ID]
+
+// Delete a filter by name or ID
+mesheryctl filter delete [filter-name | ID]
+
+// Import a WASM filter from a local file or remote URI
+mesheryctl filter import [filepath | URI]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &filterFlagsProvided)
