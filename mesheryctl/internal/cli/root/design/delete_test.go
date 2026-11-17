@@ -426,3 +426,95 @@ func TestDeleteByNameKeepsReadingWhenServerCapsPageSize(t *testing.T) {
 
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
 }
+
+func TestDeleteByNameRefusesWhenSearchEndsEarly(t *testing.T) {
+	testContext := utils.NewTestHelper(t)
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+
+	// Page 0 holds one exact match out of a total of two, and page 1 comes
+	// back empty. The second design was never seen, so the match cannot be
+	// confirmed as unique and nothing may be deleted.
+	tests := []utils.MesheryMultiURLCommamdTest{
+		{
+			Name:             "given search page is empty before total is reached when design delete by name then lookup incomplete error is thrown and nothing is deleted",
+			Args:             []string{"delete", "test-design"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=test-design&pagesize=10000",
+					Response:     "delete.nameSearchPage0.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=test-design&pagesize=10000&page=1",
+					Response:     "delete.nameSearchEmptyPage1.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  utils.ErrIDLookupIncomplete(2, 1),
+		},
+	}
+
+	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}
+
+func TestDeleteByNameReadsLegacyTotalCount(t *testing.T) {
+	testContext := utils.NewTestHelper(t)
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+
+	// The search response carries only the legacy total_count key. The total
+	// must still be read, or the lookup stops after page 0 and misses the
+	// duplicate on page 1.
+	tests := []utils.MesheryMultiURLCommamdTest{
+		{
+			Name:             "given search response has only total_count when design delete by duplicate name then ambiguity error is thrown",
+			Args:             []string{"delete", "test-design"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=test-design&pagesize=10000",
+					Response:     "delete.nameSearchLegacyPage0.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=test-design&pagesize=10000&page=1",
+					Response:     "delete.nameSearchLegacyPage1.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrAmbiguousDesignName("test-design", []string{"a12b3c4d-5e6f-4890-abcd-ef1234567890", "c56d7e8f-9a01-4b23-8cde-f12345678901"}),
+		},
+	}
+
+	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}

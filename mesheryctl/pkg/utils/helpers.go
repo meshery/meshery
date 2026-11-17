@@ -743,7 +743,7 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 			idList = append(idList, id)
 		}
 
-		if count, ok := parseTotalCount(dat); ok {
+		if count, ok := ParseTotalCount(dat); ok {
 			totalCount, hasTotalCount = count, true
 		}
 		if hasTotalCount {
@@ -767,9 +767,9 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 	return idList, nil
 }
 
-// parseTotalCount reads the total item count from a paginated list response,
+// ParseTotalCount reads the total item count from a paginated list response,
 // accepting both the current "totalCount" field and the legacy "total_count" field.
-func parseTotalCount(dat map[string]interface{}) (int64, bool) {
+func ParseTotalCount(dat map[string]interface{}) (int64, bool) {
 	for _, key := range []string{"totalCount", "total_count"} {
 		if v, ok := dat[key]; ok && v != nil {
 			switch val := v.(type) {

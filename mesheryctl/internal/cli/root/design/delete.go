@@ -207,17 +207,22 @@ func findDesignIDByExactName(baseURL, name string) (string, error) {
 		if page > 0 {
 			searchURL += fmt.Sprintf("&page=%d", page)
 		}
-		response, err := fetchDesignSearchPage(searchURL, name)
+		pagePatterns, pageTotal, err := fetchDesignSearchPage(searchURL, name)
 		if err != nil {
 			return "", err
 		}
-		patterns = append(patterns, response.Patterns...)
-		total = response.TotalCount
+		patterns = append(patterns, pagePatterns...)
+		total = pageTotal
 		// Stop on the total count rather than on a short page: a server that
 		// caps the page size below what was asked for returns short pages
-		// while more results remain. An empty page means nothing is left.
-		if uint(len(patterns)) >= total || len(response.Patterns) == 0 {
+		// while more results remain.
+		if uint(len(patterns)) >= total {
 			completed = true
+			break
+		}
+		// An empty page before the total is reached means the results could
+		// not all be read, so uniqueness cannot be confirmed.
+		if len(pagePatterns) == 0 {
 			break
 		}
 	}
@@ -249,29 +254,40 @@ func findDesignIDByExactName(baseURL, name string) (string, error) {
 	}
 }
 
-func fetchDesignSearchPage(searchURL, name string) (*models.PatternsAPIResponse, error) {
+// fetchDesignSearchPage returns one page of design search results and the
+// total number of matches. The total is read from either totalCount or the
+// legacy total_count key, the same way GetID does.
+func fetchDesignSearchPage(searchURL, name string) ([]models.MesheryPattern, uint, error) {
 	req, err := utils.NewRequest(http.MethodGet, searchURL, nil)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to look up design %q by name: %w", name, utils.ErrResponseStatus(resp.StatusCode))
+		return nil, 0, fmt.Errorf("failed to look up design %q by name: %w", name, utils.ErrResponseStatus(resp.StatusCode))
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, utils.ErrReadFromBody(err)
+		return nil, 0, utils.ErrReadFromBody(err)
 	}
 	var response models.PatternsAPIResponse
 	if err := encoding.Unmarshal(body, &response); err != nil {
-		return nil, utils.ErrUnmarshal(err)
+		return nil, 0, utils.ErrUnmarshal(err)
 	}
-	return &response, nil
+	var raw map[string]interface{}
+	if err := encoding.Unmarshal(body, &raw); err != nil {
+		return nil, 0, utils.ErrUnmarshal(err)
+	}
+	total := response.TotalCount
+	if count, ok := utils.ParseTotalCount(raw); ok && count > 0 {
+		total = uint(count)
+	}
+	return response.Patterns, total, nil
 }
 
 func init() {
