@@ -10,7 +10,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/spf13/viper"
 )
 
 func allowAllAddrs(netip.Addr) bool { return false }
@@ -72,21 +71,6 @@ func TestFetchRemoteFileRejectsLoopback(t *testing.T) {
 	}
 	if hit.Load() {
 		t.Fatal("request reached the loopback server")
-	}
-}
-
-func TestFetchRemoteFileAllowsLoopbackWhenOptedIn(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		_, _ = w.Write([]byte("name: x"))
-	}))
-	defer srv.Close()
-
-	viper.Set(ALLOW_PRIVATE_REMOTE_FILE_IMPORTS_ENV, true)
-	t.Cleanup(func() { viper.Set(ALLOW_PRIVATE_REMOTE_FILE_IMPORTS_ENV, nil) })
-
-	body, err := fetchRemoteFile(srv.URL)
-	if err != nil || string(body) != "name: x" {
-		t.Fatalf("expected opted-in loopback fetch to succeed, got %q, %v", body, err)
 	}
 }
 

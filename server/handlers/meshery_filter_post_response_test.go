@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"sync/atomic"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -13,7 +14,6 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/events"
 	_events "github.com/meshery/meshkit/utils/events"
-	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -47,14 +47,6 @@ func postFilter(t *testing.T, h *Handler, provider models.Provider, body models.
 
 	h.FilterFileRequestHandler(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
 	return rec
-}
-
-func allowPrivateRemoteFileImports(t *testing.T) {
-	t.Helper()
-	key := models.ALLOW_PRIVATE_REMOTE_FILE_IMPORTS_ENV
-	previous := viper.GetBool(key)
-	viper.Set(key, true)
-	t.Cleanup(func() { viper.Set(key, previous) })
 }
 
 // TestFilterPOSTResponseCarriesSavedFilter pins the body of a save: it must
@@ -127,92 +119,23 @@ func TestFormatFilterOutputKeepsEmptyListForNull(t *testing.T) {
 	assert.JSONEq(t, "[]", rec.Body.String())
 }
 
-// TestFilterPOSTResponseCarriesURLImportedFilter pins the body of an import
-// from a URL: it must carry the imported filter as stored.
-func TestFilterPOSTResponseCarriesURLImportedFilter(t *testing.T) {
-	h, provider, db := newFilterPOSTFixture(t)
-	provider.Log = h.log
-	allowPrivateRemoteFileImports(t)
-	source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		_, _ = w.Write([]byte("name: from-url\n"))
-	}))
-	t.Cleanup(source.Close)
+func TestFilterPOSTRejectsLoopbackURLImports(t *testing.T) {
+	for _, save := range []bool{false, true} {
+		t.Run(map[bool]string{false: "without save", true: "with save"}[save], func(t *testing.T) {
+			h, provider, _ := newFilterPOSTFixture(t)
+			provider.Log = h.log
+			var reached atomic.Bool
+			source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				reached.Store(true)
+				_, _ = w.Write([]byte("name: from-url\n"))
+			}))
+			t.Cleanup(source.Close)
 
-	rec := postFilter(t, h, provider, models.MesheryFilterRequestBody{Save: true, URL: source.URL + "/filter.yaml"})
-	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
-
-	var imported []models.MesheryFilter
-	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &imported))
-	require.Len(t, imported, 1, "the response must carry the imported filter, got %s", rec.Body.String())
-	assert.Equal(t, "from-url", imported[0].Name)
-	require.NotNil(t, imported[0].ID)
-
-	var stored models.MesheryFilter
-	require.NoError(t, db.Where("id = ?", *imported[0].ID).First(&stored).Error,
-		"the returned id must be the stored row's id")
-
-	var eventCount int64
-	require.NoError(t, db.Model(&events.Event{}).Where("description = ?", "Filter from-url saved").Count(&eventCount).Error)
-	assert.Equal(t, int64(1), eventCount, "saving an imported filter must persist an event in the events table")
-}
-
-// TestFilterPOSTResponseCarriesURLImportedFilterWithoutSave pins the unsaved URL import path:
-// it must return the filter without persisting the filter or an event.
-func TestFilterPOSTResponseCarriesURLImportedFilterWithoutSave(t *testing.T) {
-	h, provider, db := newFilterPOSTFixture(t)
-	provider.Log = h.log
-	allowPrivateRemoteFileImports(t)
-	source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		_, _ = w.Write([]byte("name: from-url-unsaved\n"))
-	}))
-	t.Cleanup(source.Close)
-
-	rec := postFilter(t, h, provider, models.MesheryFilterRequestBody{Save: false, URL: source.URL + "/filter.yaml"})
-	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
-
-	var imported []models.MesheryFilter
-	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &imported))
-	require.Len(t, imported, 1, "the response must carry the imported filter, got %s", rec.Body.String())
-	assert.Equal(t, "from-url-unsaved", imported[0].Name)
-
-	var filterCount int64
-	require.NoError(t, db.Model(&models.MesheryFilter{}).Count(&filterCount).Error)
-	assert.Zero(t, filterCount, "an unsaved URL import must not persist the filter")
-
-	var eventCount int64
-	require.NoError(t, db.Model(&events.Event{}).Count(&eventCount).Error)
-	assert.Zero(t, eventCount, "an unsaved URL import must not persist an event")
-}
-
-// TestFilterPOSTImportsRawWASMFromURL pins an import from a URL that serves
-// the compiled .wasm module itself, as the docs and `mesheryctl filter import`
-// describe. A module carries no name, so the filter must be named after the
-// file in the URL and must store the module byte for byte.
-func TestFilterPOSTImportsRawWASMFromURL(t *testing.T) {
-	h, provider, db := newFilterPOSTFixture(t)
-	provider.Log = h.log
-	// The smallest valid WebAssembly module: the magic number and version 1.
-	module := []byte("\x00asm\x01\x00\x00\x00")
-	source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		w.Header().Set("Content-Type", "application/wasm")
-		_, _ = w.Write(module)
-	}))
-	t.Cleanup(source.Close)
-
-	rec := postFilter(t, h, provider, models.MesheryFilterRequestBody{Save: true, URL: source.URL + "/filters/rate-limit.wasm"})
-	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
-
-	var imported []models.MesheryFilter
-	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &imported))
-	require.Len(t, imported, 1, "the response must carry the imported filter, got %s", rec.Body.String())
-	assert.Equal(t, "rate-limit", imported[0].Name)
-	require.NotNil(t, imported[0].ID)
-
-	var stored models.MesheryFilter
-	require.NoError(t, db.Where("id = ?", *imported[0].ID).First(&stored).Error,
-		"the returned id must be the stored row's id")
-	assert.Equal(t, "rate-limit", stored.Name)
-	assert.Equal(t, module, stored.FilterFile, "the stored filter file must be the downloaded module")
+			rec := postFilter(t, h, provider, models.MesheryFilterRequestBody{Save: save, URL: source.URL + "/filter.yaml"})
+			require.Equal(t, http.StatusInternalServerError, rec.Code, rec.Body.String())
+			assert.False(t, reached.Load(), "URL import must not connect to loopback")
+		})
+	}
 }
 
 // TestFilterPOSTResponseCarriesRemoteProviderFilters pins the save path with

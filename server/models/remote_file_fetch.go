@@ -10,16 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/spf13/viper"
 )
 
 const (
-	// ALLOW_PRIVATE_REMOTE_FILE_IMPORTS_ENV, when true, lets design and filter
-	// imports by URL connect to loopback, private and link-local addresses. It is
-	// off by default because those destinations include the server's own
-	// loopback services, cluster-internal services and cloud metadata endpoints.
-	ALLOW_PRIVATE_REMOTE_FILE_IMPORTS_ENV = "ALLOW_PRIVATE_REMOTE_FILE_IMPORTS"
-
 	// maxRemoteFileSize bounds how much of a user-supplied URL's response body is
 	// read into memory when importing a design or filter by URL (10 MiB).
 	maxRemoteFileSize int64 = 10 * 1024 * 1024
@@ -138,11 +131,7 @@ func validateRemoteFileURL(u *url.URL) error {
 // follows a bounded number of redirects, times out,
 // and reads at most maxRemoteFileSize bytes.
 func fetchRemoteFile(rawURL string) ([]byte, error) {
-	blocked := isBlockedRemoteFileAddr
-	if viper.GetBool(ALLOW_PRIVATE_REMOTE_FILE_IMPORTS_ENV) {
-		blocked = func(netip.Addr) bool { return false }
-	}
-	return fetchRemoteFileWith(newRemoteFileClient(remoteFileFetchTimeout, blocked), rawURL, maxRemoteFileSize)
+	return fetchRemoteFileWith(newRemoteFileClient(remoteFileFetchTimeout, isBlockedRemoteFileAddr), rawURL, maxRemoteFileSize)
 }
 
 func fetchRemoteFileWith(client *http.Client, rawURL string, maxBytes int64) ([]byte, error) {
