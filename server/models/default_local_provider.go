@@ -2057,6 +2057,9 @@ func githubRepoPatternScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
+		UseGithubAPI().
+		Timeout(remoteFileFetchTimeout).
+		MaxFileSize(maxRemoteFileSize).
 		RegisterFileInterceptor(func(f walker.File) error {
 			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
@@ -2101,6 +2104,9 @@ func githubRepoFilterScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
+		UseGithubAPI().
+		Timeout(remoteFileFetchTimeout).
+		MaxFileSize(maxRemoteFileSize).
 		RegisterFileInterceptor(func(f walker.File) error {
 			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
