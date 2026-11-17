@@ -84,3 +84,92 @@ func TestAssignVersionWithContext(t *testing.T) {
 		t.Fatalf("version = %q, want v1.32.1", kc.Version)
 	}
 }
+
+// TestK8sContextsFromKubeconfigWithContext_CancelsOnContextDone verifies that
+// when the caller's context is canceled, K8sContextsFromKubeconfigWithContext
+// bails out immediately without processing remaining contexts.
+func TestK8sContextsFromKubeconfigWithContext_CancelsOnContextDone(t *testing.T) {
+	kubeconfig := []byte(`apiVersion: v1
+kind: Config
+clusters:
+- cluster:
+    server: https://127.0.0.1:59901
+  name: cluster-1
+- cluster:
+    server: https://127.0.0.1:59902
+  name: cluster-2
+contexts:
+- context:
+    cluster: cluster-1
+    user: user-1
+  name: ctx-1
+- context:
+    cluster: cluster-2
+    user: user-2
+  name: ctx-2
+users:
+- name: user-1
+  user:
+    token: tok-1
+- name: user-2
+  user:
+    token: tok-2
+`)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel() // pre-cancel context
+
+	eventMetadata := map[string]interface{}{}
+	contexts := K8sContextsFromKubeconfigWithContext(ctx, nil, "user-id", nil, kubeconfig, nil, eventMetadata, nil, true)
+	if len(contexts) != 0 {
+		t.Fatalf("expected 0 contexts on canceled context, got %d", len(contexts))
+	}
+}
+
+// TestAssignServerID_TimeoutOnHangingServer verifies that AssignServerID
+// returns an ErrUnreachableKubeAPI error when the cluster API server hangs.
+func TestAssignServerID_TimeoutOnHangingServer(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Hang until client aborts
+		<-r.Context().Done()
+	}))
+	defer server.Close()
+
+	clientset, err := k8sclient.NewForConfig(&rest.Config{Host: server.URL})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	kc := &K8sContext{Server: server.URL}
+	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
+	defer cancel()
+
+	err = kc.AssignServerID(ctx, &mkkube.Client{KubeClient: clientset})
+	if err == nil {
+		t.Fatal("expected AssignServerID to fail on timeout, got nil")
+	}
+}
+
+// TestAssignVersion_TimeoutOnHangingServer verifies that AssignVersion
+// returns an ErrUnreachableKubeAPI error when the cluster API server hangs.
+func TestAssignVersion_TimeoutOnHangingServer(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Hang until client aborts
+		<-r.Context().Done()
+	}))
+	defer server.Close()
+
+	clientset, err := k8sclient.NewForConfig(&rest.Config{Host: server.URL})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	kc := &K8sContext{Server: server.URL}
+	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
+	defer cancel()
+
+	err = kc.AssignVersion(ctx, &mkkube.Client{KubeClient: clientset})
+	if err == nil {
+		t.Fatal("expected AssignVersion to fail on timeout, got nil")
+	}
+}
