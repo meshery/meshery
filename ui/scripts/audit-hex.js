@@ -32,22 +32,14 @@ const ts = require('typescript');
 
 const UI_ROOT = path.resolve(__dirname, '..');
 
-// Directories under ui/ that are scanned.
-const SCAN_DIRS = [
-  'components',
-  'pages',
-  'utils',
-  'store',
-  'rtk-query',
-  'machines',
-  'hooks',
-  'api',
-  'css',
-];
+// UI-root paths excluded by the companion ESLint color-literal rule.
+const IGNORED_ROOT_DIRS = new Set(['theme', 'assets', 'lib', 'public', 'tests', 'scripts']);
+
+const IGNORED_ROOT_FILES = new Set(['eslint.config.js']);
 
 // Directories skipped at every depth because they contain generated,
-// temporary, or test-only content. UI-root opt-outs are handled by
-// SCAN_DIRS, so nested production directories with the same names remain scanned.
+// temporary, or test-only content. UI-root exclusions are handled separately,
+// so nested production directories with the same names remain scanned.
 const IGNORED_DIRS = new Set([
   'node_modules',
   '__tests__',
@@ -86,6 +78,13 @@ function walk(dir, out, scanErrors) {
   }
 
   for (const entry of entries) {
+    if (
+      dir === UI_ROOT &&
+      (IGNORED_ROOT_DIRS.has(entry.name) || IGNORED_ROOT_FILES.has(entry.name))
+    ) {
+      continue;
+    }
+
     if (IGNORED_DIRS.has(entry.name)) {
       continue;
     }
@@ -186,9 +185,7 @@ function main() {
 
   const files = [];
   const scanErrors = [];
-  for (const dir of SCAN_DIRS) {
-    walk(path.join(UI_ROOT, dir), files, scanErrors);
-  }
+  walk(UI_ROOT, files, scanErrors);
 
   const offenders = [];
   let totalHex = 0;
@@ -247,10 +244,10 @@ function main() {
   process.stdout.write('meshery-ui color-literal audit\n');
   process.stdout.write('==============================\n');
   process.stdout.write('Patterns: #RGB/#RGBA/#RRGGBB/#RRGGBBAA, rgb(), rgba()\n');
-  process.stdout.write(`Scope:    ${SCAN_DIRS.join(', ')}\n`);
+  process.stdout.write('Scope:    all eligible UI source files\n');
   process.stdout.write(`Ignored at any depth: ${[...IGNORED_DIRS].join(', ')}\n`);
   process.stdout.write(
-    'UI-root directories outside scan scope: theme, assets, lib, public, tests\n\n',
+    `Ignored at UI root: ${[...IGNORED_ROOT_DIRS, ...IGNORED_ROOT_FILES].join(', ')}\n\n`,
   );
 
   const limit = showAll ? offenders.length : Math.min(20, offenders.length);
