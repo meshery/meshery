@@ -36,6 +36,24 @@ describe('ctxUrl', () => {
   it('handles a single context', () => {
     expect(ctxUrl('/api/foo', ['only'])).toBe('/api/foo?contexts=only');
   });
+
+  it('starts the query string with the extra parameters when there are no contexts', () => {
+    expect(ctxUrl('/api/foo', [], ['dryRun=true'])).toBe('/api/foo?dryRun=true');
+    expect(ctxUrl('/api/foo', undefined, ['dryRun=true', 'skipCRD=true'])).toBe(
+      '/api/foo?dryRun=true&skipCRD=true',
+    );
+  });
+
+  it('adds the extra parameters after the contexts', () => {
+    expect(ctxUrl('/api/foo', ['a', 'b'], ['verify=true', 'dryRun=true'])).toBe(
+      '/api/foo?contexts=a&contexts=b&verify=true&dryRun=true',
+    );
+  });
+
+  it('adds nothing for an empty list of extra parameters', () => {
+    expect(ctxUrl('/api/foo', ['a'], [])).toBe('/api/foo?contexts=a');
+    expect(ctxUrl('/api/foo', [], [])).toBe('/api/foo');
+  });
 });
 
 describe('getK8sClusterIdsFromCtxId', () => {

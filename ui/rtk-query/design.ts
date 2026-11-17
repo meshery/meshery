@@ -8,6 +8,12 @@ const TAGS = {
   DESIGNS: 'designs',
 } as const;
 
+// The names of the flags that are on, as `name=true` query parameters.
+const queryFlags = (flags: Record<string, boolean>) =>
+  Object.keys(flags)
+    .filter((name) => flags[name])
+    .map((name) => `${name}=true`);
+
 export const designsApi = api
   .enhanceEndpoints({
     addTagTypes: [TAGS.DESIGNS],
@@ -91,9 +97,7 @@ export const designsApi = api
           skipCRD = false,
         }) => ({
           url: mesheryApiPath(
-            `${ctxUrl('pattern/deploy', selectedK8sContexts)}${verify ? '&verify=true' : ''}${
-              dryRun ? '&dryRun=true' : ''
-            }${skipCRD ? '&skipCRD=true' : ''}`,
+            ctxUrl('pattern/deploy', selectedK8sContexts, queryFlags({ verify, dryRun, skipCRD })),
           ),
           method: 'POST',
           body: {
@@ -112,9 +116,7 @@ export const designsApi = api
           dryRun = false,
         }) => ({
           url: mesheryApiPath(
-            `${ctxUrl('pattern/deploy', selectedK8sContexts)}${verify ? '&verify=true' : ''}${
-              dryRun ? '&dryRun=true' : ''
-            }`,
+            ctxUrl('pattern/deploy', selectedK8sContexts, queryFlags({ verify, dryRun })),
           ),
           method: 'DELETE',
           body: {
