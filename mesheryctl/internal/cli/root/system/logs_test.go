@@ -51,3 +51,9 @@ func TestIsPodRequired(t *testing.T) {
 		})
 	}
 }
+
+func TestFormatLogSource(t *testing.T) {
+	if got, want := formatLogSource("meshery-server-abc", "meshery"); got != want {
+		t.Fatalf("formatLogSource() = %q, want %q", got, want)
+	}
+}
