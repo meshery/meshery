@@ -219,7 +219,6 @@ func TestGetProviderInfo_BodyClosed(t *testing.T) {
 
 		transport := installTrackingTransport(t)
 		mctCfg := newTestMctCfg(server.URL)
-
 		providers, err := GetProviderInfo(mctCfg)
 		if err != nil {
 			t.Fatalf("expected no error, got: %v", err)
@@ -394,6 +393,44 @@ func TestInitiateLogin_PersistsRegistrationKey(t *testing.T) {
 		}
 	}))
 	defer server.Close()
+
+	mesheryDir := IsolateMesheryHome(t)
+	configPath := filepath.Join(mesheryDir, "config.yaml")
+
+	configContents := fmt.Sprintf(`contexts:
+  test:
+    endpoint: %q
+    token: default
+    platform: docker
+current-context: test
+tokens:
+  - name: default
+    location: auth.json
+`, server.URL)
+
+	if err := os.WriteFile(configPath, []byte(configContents), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	origDefaultConfigPath, origCfgFile, origTokenFlag := DefaultConfigPath, CfgFile, TokenFlag
+
+	t.Cleanup(func() {
+		DefaultConfigPath = origDefaultConfigPath
+		CfgFile = origCfgFile
+		TokenFlag = origTokenFlag
+		viper.Reset()
+	})
+
+	DefaultConfigPath = configPath
+	CfgFile = configPath
+	TokenFlag = ""
+
+	viper.Reset()
+	viper.SetConfigFile(configPath)
+
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
 
 	mctCfg := newTestMctCfg(server.URL)
 	data, err := InitiateLogin(mctCfg, "cloud-b")
