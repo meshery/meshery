@@ -51,6 +51,7 @@ Meshery stores Envoy WebAssembly (WASM) filters alongside your designs, so you c
 </li>
 <li>Click <strong>Import</strong>.</li>
 </ol>
+<p>URL imports are restricted to public HTTP(S) destinations and have bounded response size and request time. See <a href="/installation/production/security-hardening/#remote-url-imports">Remote URL imports</a> for the limits.</p>
 
     </div>
     <div class="tab-body tab-pane fade"

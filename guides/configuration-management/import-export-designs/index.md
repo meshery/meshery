@@ -51,6 +51,7 @@ Meshery Server identifies the format from the file itself. It converts Helm char
 <li><code>-n</code> names the design. Without it, <code>mesheryctl</code> uses the file name.</li>
 <li><code>-s</code> is optional because Meshery Server detects the format. If you pass it, use one of <code>&quot;Kubernetes Manifest&quot;</code>, <code>&quot;Helm Chart&quot;</code>, <code>&quot;Docker Compose&quot;</code>, or <code>&quot;Design&quot;</code> (case-insensitive).</li>
 </ul>
+<p>URL imports are restricted to public HTTP(S) destinations and have bounded response size and request time. See <a href="/installation/production/security-hardening/#remote-url-imports">Remote URL imports</a> for the limits.</p>
 <p>For example, to import a Kubernetes manifest:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mesheryctl design import -f ./app-deployment.yaml -n my-app
 </span></span></code></pre></div><p><code>mesheryctl</code> prints the new design&rsquo;s name and ID.</p>

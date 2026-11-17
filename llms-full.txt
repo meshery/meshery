@@ -10259,6 +10259,22 @@ configuration safe to store and share.
   that relax security (for example insecure tracing endpoints) belong in
   non-production only.
 
+## Remote URL imports
+
+Meshery Server accepts HTTP and HTTPS URLs for design, filter, and pattern
+imports. It refuses connections to non-public addresses, including loopback,
+private, link-local, and cloud metadata addresses. The address check applies to
+each connection, including redirects. Filter and pattern fetches allow at most
+five redirects; design URL imports stop redirect chains at ten. The server
+reads at most 10 MiB from a response. Design URL imports have a 60-second
+request timeout; filter and pattern URL fetches have a 30-second timeout.
+These limits apply to server-side imports; they do not replace an egress policy
+for controlling which public hosts the Server can reach.
+
+See [Importing and Exporting Designs](/guides/configuration-management/import-export-designs/)
+and [Envoy WASM Filter Management](/guides/infrastructure-management/filter-management/)
+for the import workflows.
+
 ## Broker exposure risk
 
 When Meshery Server is out-of-cluster, the Broker (`4222/tcp`) is exposed beyond
@@ -20263,6 +20279,7 @@ Meshery stores Envoy WebAssembly (WASM) filters alongside your designs, so you c
 </li>
 <li>Click <strong>Import</strong>.</li>
 </ol>
+<p>URL imports are restricted to public HTTP(S) destinations and have bounded response size and request time. See <a href="/installation/production/security-hardening/#remote-url-imports">Remote URL imports</a> for the limits.</p>
 
     </div>
     <div class="tab-body tab-pane fade"
@@ -21415,6 +21432,7 @@ Meshery Server identifies the format from the file itself. It converts Helm char
 <li><code>-n</code> names the design. Without it, <code>mesheryctl</code> uses the file name.</li>
 <li><code>-s</code> is optional because Meshery Server detects the format. If you pass it, use one of <code>&quot;Kubernetes Manifest&quot;</code>, <code>&quot;Helm Chart&quot;</code>, <code>&quot;Docker Compose&quot;</code>, or <code>&quot;Design&quot;</code> (case-insensitive).</li>
 </ul>
+<p>URL imports are restricted to public HTTP(S) destinations and have bounded response size and request time. See <a href="/installation/production/security-hardening/#remote-url-imports">Remote URL imports</a> for the limits.</p>
 <p>For example, to import a Kubernetes manifest:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mesheryctl design import -f ./app-deployment.yaml -n my-app
 </span></span></code></pre></div><p><code>mesheryctl</code> prints the new design&rsquo;s name and ID.</p>
