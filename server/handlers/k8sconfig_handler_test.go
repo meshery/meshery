@@ -252,6 +252,20 @@ func TestKubernetesPingHandler_NilProvider_ReturnsInternalServerError(t *testing
 	}
 }
 
+func TestKubernetesPingHandler_MissingToken_ReturnsUnauthorized(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := &models.DefaultLocalProvider{}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/system/kubernetes/ping", nil)
+	rec := httptest.NewRecorder()
+
+	h.KubernetesPingHandler(rec, req, nil, nil, p)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for missing token, got %d", rec.Code)
+	}
+}
+
 func TestK8sRegistrationHandler_NilUser_ReturnsUnauthorized(t *testing.T) {
 	h := newTestHandler(t, map[string]models.Provider{}, "")
 	p := &models.DefaultLocalProvider{}

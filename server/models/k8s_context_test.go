@@ -541,3 +541,78 @@ func TestK8sContext_RedactCredentials(t *testing.T) {
 	nilCtx.RedactCredentials() // must not panic
 }
 
+func TestK8sContext_Redacted(t *testing.T) {
+	orig := &K8sContext{
+		ID:             "ctx-copy-id",
+		Name:           "ctx-copy-name",
+		Server:         "https://cluster-copy.example.com",
+		ConnectionID:   "conn-copy-123",
+		DeploymentType: "out_cluster",
+		Version:        "v1.30.0",
+		Auth: sql.Map{
+			"client-key-data": "secret-key",
+			"token":           "secret-token",
+		},
+		Cluster: sql.Map{
+			"certificate-authority-data": "secret-ca",
+		},
+	}
+
+	redacted := orig.Redacted()
+
+	// Redacted copy must have credentials wiped
+	if len(redacted.Auth) != 0 {
+		t.Errorf("expected redacted Auth to be empty, got: %v", redacted.Auth)
+	}
+	if len(redacted.Cluster) != 0 {
+		t.Errorf("expected redacted Cluster to be empty, got: %v", redacted.Cluster)
+	}
+	// Redacted copy must preserve metadata
+	if redacted.ID != "ctx-copy-id" || redacted.Name != "ctx-copy-name" || redacted.Server != "https://cluster-copy.example.com" {
+		t.Errorf("expected metadata to be preserved in copy, got %+v", redacted)
+	}
+	if redacted.ConnectionID != "conn-copy-123" || redacted.DeploymentType != "out_cluster" || redacted.Version != "v1.30.0" {
+		t.Errorf("expected metadata to be preserved in copy, got %+v", redacted)
+	}
+
+	// Original must remain untouched (copy semantics)
+	if len(orig.Auth) == 0 {
+		t.Errorf("expected original Auth to remain untouched, got empty")
+	}
+	if len(orig.Cluster) == 0 {
+		t.Errorf("expected original Cluster to remain untouched, got empty")
+	}
+
+	// Nil receiver safety
+	var nilCtx *K8sContext
+	nilRes := nilCtx.Redacted() // must not panic
+	if len(nilRes.Auth) != 0 || len(nilRes.Cluster) != 0 {
+		t.Errorf("expected empty maps from nil receiver, got %+v", nilRes)
+	}
+}
+
+func TestRedactCredentialsForContext_NilSafety(t *testing.T) {
+	// Calling with nil must not panic
+	res := RedactCredentialsForContext(nil)
+	if len(res.Auth) != 0 || len(res.Cluster) != 0 {
+		t.Errorf("expected empty maps for nil input, got %+v", res)
+	}
+
+	// Calling with populated context
+	ctx := &K8sContext{
+		ID:     "legacy-id",
+		Name:   "legacy-name",
+		Server: "https://legacy.example.com",
+		Auth: sql.Map{
+			"token": "secret",
+		},
+	}
+	resPop := RedactCredentialsForContext(ctx)
+	if len(resPop.Auth) != 0 {
+		t.Errorf("expected empty Auth, got %+v", resPop.Auth)
+	}
+	if resPop.MesheryInstanceID != nil {
+		t.Errorf("expected nil MesheryInstanceID, got %+v", resPop.MesheryInstanceID)
+	}
+}
+

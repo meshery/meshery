@@ -100,7 +100,9 @@ mesheryctl design apply [design-name]
 				return err
 			}
 
-			var response *models.PatternsAPIResponse
+			// Decode into a value, not a pointer: a response body of null leaves a value as
+			// an empty list, but would leave a pointer nil for the lines below to crash on.
+			var response models.PatternsAPIResponse
 			defer func() { _ = resp.Body.Close() }()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
