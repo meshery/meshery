@@ -132,12 +132,11 @@ mesheryctl system update --skip-reset
 				return err
 			}
 			mesheryImageVersion := currCtx.GetVersion()
-			providerURL := viper.GetString(c.ProviderURLsENV)
 			// If the user skips reset, then just restart the pods else fetch updated manifest files and apply them
 			if !utils.SkipResetFlag {
 
 				// Apply the latest helm chart along with the default image tag specified in the charts "stable-latest"
-				if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.UPGRADE, "", providerURL); err != nil {
+				if err = upgradeMesheryHelmCharts(kubeClient, currCtx, mesheryImageVersion); err != nil {
 					return errors.Wrap(err, "cannot update Meshery")
 				}
 			}
@@ -184,6 +183,19 @@ mesheryctl system update --skip-reset
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		utils.CheckMesheryctlClientVersion(constants.GetMesheryctlVersion())
 	},
+}
+
+// applyHelmChartsFn applies the Meshery Helm charts. Tests replace it.
+var applyHelmChartsFn = applyHelmCharts
+
+// upgradeMesheryHelmCharts upgrades the Meshery Helm releases with the same
+// callback and provider URLs that system start installs them with. A Helm
+// upgrade with new values does not keep the release's previous values, so
+// leaving the URLs out would drop them from the Meshery deployment.
+func upgradeMesheryHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string) error {
+	callbackURL := viper.GetString(c.CallbackURLENV)
+	providerURL := viper.GetString(c.ProviderURLsENV)
+	return applyHelmChartsFn(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.UPGRADE, callbackURL, providerURL)
 }
 
 func init() {
