@@ -3,6 +3,9 @@ package policies
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
+	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -139,14 +142,20 @@ func schemaDefaultAtPath(comp *component.ComponentDefinition, path []string) (in
 	cursor := schema
 	for _, seg := range segs {
 		props, ok := cursor["properties"].(map[string]interface{})
-		if !ok {
-			return nil, false
+		if ok {
+			if next, found := props[seg].(map[string]interface{}); found {
+				cursor = next
+				continue
+			}
 		}
-		next, ok := props[seg].(map[string]interface{})
-		if !ok {
-			return nil, false
+		// Numeric segments index an array; descend into its item schema.
+		if _, err := strconv.Atoi(seg); err == nil {
+			if items, isArray := cursor["items"].(map[string]interface{}); isArray {
+				cursor = items
+				continue
+			}
 		}
-		cursor = next
+		return nil, false
 	}
 	def, ok := cursor["default"]
 	return def, ok
@@ -226,26 +235,164 @@ func patchMutatorsAction(rel *relationship.RelationshipDefinition, design *patte
 			}
 
 			for i := 0; i < count; i++ {
-				mutatorValue := configurationForComponentAtPath(mutatorRefs[i], mutatorComp, design)
-				oldValue := configurationForComponentAtPath(mutatedRefs[i], mutatedComp, design)
-				if mutatorValue == nil {
-					continue
-				}
-				if reverse {
-					if !deepEqual(mutatorValue, oldValue) {
+				origMutatorPath := mutatorRefs[i]
+				origMutatedPath := mutatedRefs[i]
+
+				resolvedMutatorPaths := resolveComponentPaths(origMutatorPath, mutatorComp, design)
+				resolvedMutatedPaths := resolveComponentPaths(origMutatedPath, mutatedComp, design)
+
+				for j, mutatedPath := range resolvedMutatedPaths {
+					oldValue := configurationForComponentAtPath(mutatedPath, mutatedComp, design)
+					if reverse {
+						if !matchesAnyMutatorValue(oldValue, resolvedMutatorPaths, mutatorComp, design) {
+							continue
+						}
+						actions = append(actions, cleanupActionForPath(mutatedID, mutatedPath, mutatedComp))
 						continue
 					}
-					actions = append(actions, cleanupActionForPath(mutatedID, mutatedRefs[i], mutatedComp))
-					continue
+					mutatorValue := selectMutatorValue(resolvedMutatorPaths, j, len(resolvedMutatedPaths), mutatorComp, design)
+					if mutatorValue == nil {
+						continue
+					}
+					if deepEqual(mutatorValue, oldValue) {
+						continue
+					}
+					actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedPath), mutatedID, mutatedPath, mutatorValue))
 				}
-				if deepEqual(mutatorValue, oldValue) {
-					continue
-				}
-				actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedRefs[i]), mutatedID, mutatedRefs[i], mutatorValue))
 			}
 		}
 	}
+	if reverse {
+		actions = orderCleanupActions(actions)
+	}
 	return actions
+}
+
+// resolveComponentPaths resolves wildcards ("_") in a path against a component's effective data.
+// For paths starting with "configuration", it navigates the component's effective configuration
+// (resolving aliases against design). For other paths, it navigates the component map.
+func resolveComponentPaths(path []string, comp *component.ComponentDefinition, design *pattern.PatternFile) [][]string {
+	if comp == nil || len(path) == 0 {
+		return [][]string{path}
+	}
+	if !slices.Contains(path, "_") && !slices.Contains(path, "*") {
+		return [][]string{path}
+	}
+	if path[0] == "configuration" {
+		config := getComponentConfiguration(comp, design)
+		var configMap map[string]interface{}
+		if config != nil {
+			if m, ok := config.(map[string]interface{}); ok {
+				configMap = m
+			} else if m, err := toGenericMap(config); err == nil {
+				configMap = m
+			}
+		}
+		root := map[string]interface{}{
+			"configuration": configMap,
+		}
+		return resolvePaths(path, root)
+	}
+	compMap, err := toGenericMap(comp)
+	if err != nil {
+		return [][]string{path}
+	}
+	return resolvePaths(path, compMap)
+}
+
+// matchesAnyMutatorValue checks whether val matches the value at any of the mutator paths,
+// ensuring cleanup ownership remains valid even if target elements were moved or reordered.
+func matchesAnyMutatorValue(val interface{}, mutatorPaths [][]string, comp *component.ComponentDefinition, design *pattern.PatternFile) bool {
+	if val == nil {
+		return false
+	}
+	for _, mp := range mutatorPaths {
+		mVal := configurationForComponentAtPath(mp, comp, design)
+		if mVal != nil && deepEqual(val, mVal) {
+			return true
+		}
+	}
+	return false
+}
+
+// selectMutatorValue stably selects a source mutator value for the target path at targetIdx,
+// preventing alternating/oscillating updates when multiple source paths exist.
+func selectMutatorValue(resolvedMutatorPaths [][]string, targetIdx int, targetCount int, comp *component.ComponentDefinition, design *pattern.PatternFile) interface{} {
+	if len(resolvedMutatorPaths) == 0 {
+		return nil
+	}
+	if len(resolvedMutatorPaths) == targetCount {
+		return configurationForComponentAtPath(resolvedMutatorPaths[targetIdx], comp, design)
+	}
+	if len(resolvedMutatorPaths) == 1 {
+		return configurationForComponentAtPath(resolvedMutatorPaths[0], comp, design)
+	}
+	srcIdx := targetIdx
+	if srcIdx >= len(resolvedMutatorPaths) {
+		srcIdx = 0
+	}
+	return configurationForComponentAtPath(resolvedMutatorPaths[srcIdx], comp, design)
+}
+
+// orderCleanupActions ensures that within any sequence of cleanup removals
+// targeting the same component and parent array, actions are applied in
+// descending numeric index order (e.g. index 2 before index 1 before index 0).
+// This prevents earlier index removals from shifting the positions of subsequent targets.
+// Non-removal actions and actions targeting different arrays maintain their relative order.
+func orderCleanupActions(actions []PolicyAction) []PolicyAction {
+	if len(actions) <= 1 {
+		return actions
+	}
+
+	type arrayRemovalIndex struct {
+		slotIndex int
+		numIndex  int
+		action    PolicyAction
+	}
+
+	groups := make(map[string][]arrayRemovalIndex)
+	for i, a := range actions {
+		if a.Op != RemoveComponentConfigurationOp || len(a.UpdatePath) == 0 {
+			continue
+		}
+		lastSeg := a.UpdatePath[len(a.UpdatePath)-1]
+		numIdx, err := strconv.Atoi(lastSeg)
+		if err != nil || numIdx < 0 {
+			continue
+		}
+		parentKey := a.ID + ":" + strings.Join(a.UpdatePath[:len(a.UpdatePath)-1], "/")
+		groups[parentKey] = append(groups[parentKey], arrayRemovalIndex{
+			slotIndex: i,
+			numIndex:  numIdx,
+			action:    a,
+		})
+	}
+
+	if len(groups) == 0 {
+		return actions
+	}
+
+	result := make([]PolicyAction, len(actions))
+	copy(result, actions)
+
+	for _, group := range groups {
+		if len(group) <= 1 {
+			continue
+		}
+		sort.SliceStable(group, func(i, j int) bool {
+			return group[i].numIndex > group[j].numIndex
+		})
+		slotIndices := make([]int, len(group))
+		for k, item := range group {
+			slotIndices[k] = item.slotIndex
+		}
+		sort.Ints(slotIndices)
+		for k, slot := range slotIndices {
+			result[slot] = group[k].action
+		}
+	}
+
+	return result
 }
 
 // selectorItemID returns the ID string from a SelectorItem, or empty if nil.
@@ -587,10 +734,29 @@ func matchingMutators(
 	strategies := getMatchStrategyForSelector(fromClause)
 
 	for i := 0; i < count; i++ {
-		mutatorValue := configurationForComponentAtPath(mutatorRefs[i], mutatorComp, design)
-		mutatedValue := configurationForComponentAtPath(mutatedRefs[i], mutatedComp, design)
+		origMutatorPath := mutatorRefs[i]
+		origMutatedPath := mutatedRefs[i]
+
+		resolvedMutatorPaths := resolveComponentPaths(origMutatorPath, mutatorComp, design)
+		resolvedMutatedPaths := resolveComponentPaths(origMutatedPath, mutatedComp, design)
+
 		strategy := getStrategyForValueAt(strategies, i)
-		if !matchValuesWithStrategies(mutatorValue, mutatedValue, strategy) {
+
+		matchedAny := false
+		for _, mutatorPath := range resolvedMutatorPaths {
+			for _, mutatedPath := range resolvedMutatedPaths {
+				mutatorValue := configurationForComponentAtPath(mutatorPath, mutatorComp, design)
+				mutatedValue := configurationForComponentAtPath(mutatedPath, mutatedComp, design)
+				if matchValuesWithStrategies(mutatorValue, mutatedValue, strategy) {
+					matchedAny = true
+					break
+				}
+			}
+			if matchedAny {
+				break
+			}
+		}
+		if !matchedAny {
 			return false
 		}
 	}

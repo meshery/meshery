@@ -128,6 +128,8 @@ func SystemLifeCycleError(msg string, cmd string) string {
 		return formatError(msg, cmdSystemStatus)
 	case "restart":
 		return formatError(msg, cmdSystemRestart)
+	case "uninstall":
+		return formatError(msg, cmdSystemUninstall)
 	default:
 		return formatError(msg, cmdSystem)
 	}
@@ -321,6 +323,7 @@ var cmdUsageURLs = map[cmdType]string{
 	cmdSystemReset:              systemResetURL,
 	cmdSystemStatus:             systemStatusURL,
 	cmdSystemRestart:            systemRestartURL,
+	cmdSystemUninstall:          systemUninstallURL,
 	cmdExp:                      expUsageURL,
 	cmdFilter:                   filterUsageURL,
 	cmdFilterImport:             filterImportURL,
