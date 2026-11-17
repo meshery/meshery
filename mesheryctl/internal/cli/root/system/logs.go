@@ -46,9 +46,9 @@ func IsPodRequired(requiredPods []string, pod string) bool {
 	return false
 }
 
-func printLogs(logs string, podName string) {
+func printLogs(logs string, source string) {
 	for _, logMsg := range strings.Split(logs, "\n") {
-		logStr := fmt.Sprintf("%s\t|\t%s", podName, logMsg)
+		logStr := fmt.Sprintf("%s\t|\t%s", source, logMsg)
 
 		utils.Log.Info(logStr)
 	}
