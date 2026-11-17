@@ -3,120 +3,54 @@ package models
 import (
 	"fmt"
 	"io"
-	"net"
 	"net/http"
-	"net/netip"
 	"net/url"
-	"syscall"
+	"strings"
 	"time"
+
+	serverutils "github.com/meshery/meshery/server/helpers/utils"
 )
 
 const (
-	// maxRemoteFileSize bounds how much of a user-supplied URL's response body is
-	// read into memory when importing a design, filter, or pattern by URL (10 MiB).
+	// maxRemoteFileSize bounds response bodies for filter and pattern URL imports.
 	maxRemoteFileSize int64 = 10 * 1024 * 1024
 
 	// remoteFileFetchTimeout bounds the whole request, including redirects and
-	// reading the body.
+	// reading the response body.
 	remoteFileFetchTimeout = 30 * time.Second
 
 	// maxRemoteFileRedirects is the number of redirects a fetch may follow.
 	maxRemoteFileRedirects = 5
 )
 
-// blockedRemoteFilePrefixes lists address ranges that are not covered by the
-// netip.Addr predicates used in isBlockedRemoteFileAddr.
-var blockedRemoteFilePrefixes = []netip.Prefix{
-	netip.MustParsePrefix("0.0.0.0/8"),       // "this network"
-	netip.MustParsePrefix("100.64.0.0/10"),   // carrier-grade NAT
-	netip.MustParsePrefix("192.0.0.0/24"),    // IETF protocol assignments
-	netip.MustParsePrefix("198.18.0.0/15"),   // benchmarking
-	netip.MustParsePrefix("240.0.0.0/4"),     // reserved
-	netip.MustParsePrefix("192.0.2.0/24"),    // TEST-NET-1 documentation
-	netip.MustParsePrefix("198.51.100.0/24"), // TEST-NET-2 documentation
-	netip.MustParsePrefix("203.0.113.0/24"),  // TEST-NET-3 documentation
-	netip.MustParsePrefix("2001:db8::/32"),   // IPv6 documentation
-}
-
-// isBlockedRemoteFileAddr reports whether the server must refuse to connect to
-// addr when fetching a user-supplied URL: loopback, private, link-local (which
-// includes cloud metadata endpoints such as 169.254.169.254), multicast,
-// unspecified and other non-public ranges.
-func isBlockedRemoteFileAddr(addr netip.Addr) bool {
-	// Drop any IPv6 zone first: netip's predicates compare against zoneless
-	// addresses, so "::%lo" would otherwise not count as unspecified even though
-	// connecting to it reaches loopback. Then unmap so ::ffff:127.0.0.1 is
-	// judged as 127.0.0.1.
-	addr = addr.WithZone("").Unmap()
-	if !addr.IsValid() ||
-		addr.IsLoopback() ||
-		addr.IsPrivate() ||
-		addr.IsLinkLocalUnicast() ||
-		addr.IsLinkLocalMulticast() ||
-		addr.IsInterfaceLocalMulticast() ||
-		addr.IsMulticast() ||
-		addr.IsUnspecified() {
-		return true
-	}
-	for _, prefix := range blockedRemoteFilePrefixes {
-		if prefix.Contains(addr) {
-			return true
-		}
-	}
-	return false
-}
-
 // newRemoteFileClient builds the HTTP client used to fetch user-supplied URLs.
-//
-// The destination address is validated in the dialer's Control hook, i.e. on the
-// IP address actually about to be connected to. That covers every redirect hop
-// and defeats DNS rebinding, which a check of the URL host before the request
-// would not. Proxies from the environment are deliberately not used: through a
-// proxy the dialer only sees the proxy's address, so the check would not apply
-// to the real destination.
-func newRemoteFileClient(timeout time.Duration, blocked func(netip.Addr) bool) *http.Client {
-	dialer := &net.Dialer{
-		Timeout: 10 * time.Second,
-		Control: func(_, address string, _ syscall.RawConn) error {
-			host, _, err := net.SplitHostPort(address)
-			if err != nil {
-				return err
-			}
-			addr, err := netip.ParseAddr(host)
-			if err != nil {
-				return fmt.Errorf("refusing to connect to %q: not an IP address", host)
-			}
-			if blocked(addr) {
-				return fmt.Errorf("refusing to connect to non-public address %s", addr)
-			}
-			return nil
-		},
+// The shared safe transport validates resolved addresses and pins the dial to a
+// validated public IP. This client adds the redirect limit used by filter and
+// pattern imports. allowPrivate is only enabled by tests using httptest servers.
+func newRemoteFileClient(timeout time.Duration, allowPrivate bool) *http.Client {
+	client := serverutils.NewSafeHTTPClientWithAllowPrivate(timeout, allowPrivate)
+	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		// via includes the original request, so len(via)-1 is the redirect count.
+		if len(via) > maxRemoteFileRedirects {
+			return fmt.Errorf("stopped after %d redirects", maxRemoteFileRedirects)
+		}
+		if req == nil || req.URL == nil {
+			return fmt.Errorf("redirect request has no URL")
+		}
+		if _, err := serverutils.ValidateSafeURL(req.URL.String()); err != nil {
+			return fmt.Errorf("redirect blocked: %w", err)
+		}
+		return nil
 	}
-
-	return &http.Client{
-		Timeout: timeout,
-		Transport: &http.Transport{
-			Proxy:                 nil,
-			DialContext:           dialer.DialContext,
-			TLSHandshakeTimeout:   10 * time.Second,
-			ResponseHeaderTimeout: timeout,
-			MaxIdleConns:          1,
-			DisableKeepAlives:     true,
-		},
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			// via holds every request made so far, including the original one,
-			// so len(via) is the number of redirects already followed plus one.
-			if len(via) > maxRemoteFileRedirects {
-				return fmt.Errorf("stopped after %d redirects", maxRemoteFileRedirects)
-			}
-			return validateRemoteFileURL(req.URL)
-		},
-	}
+	return client
 }
 
-// validateRemoteFileURL accepts only absolute http and https URLs.
 func validateRemoteFileURL(u *url.URL) error {
-	if u.Scheme != "http" && u.Scheme != "https" {
+	if u == nil {
+		return fmt.Errorf("URL is missing")
+	}
+	scheme := strings.ToLower(u.Scheme)
+	if scheme != "http" && scheme != "https" {
 		return fmt.Errorf("unsupported URL scheme %q: only http and https are allowed", u.Scheme)
 	}
 	if u.Hostname() == "" {
@@ -125,11 +59,21 @@ func validateRemoteFileURL(u *url.URL) error {
 	return nil
 }
 
-// fetchRemoteFile downloads a user-supplied URL for import. It only talks to
-// public http(s) destinations, follows a bounded number of redirects, times
-// out, and reads at most maxRemoteFileSize bytes.
+var remoteFileFetchClient = newRemoteFileClient(remoteFileFetchTimeout, false)
+
+// SetRemoteFileFetchClientForTest overrides the client and returns a function
+// that restores the previous client. Use only in tests with local HTTP servers.
+func SetRemoteFileFetchClientForTest(client *http.Client) func() {
+	previous := remoteFileFetchClient
+	remoteFileFetchClient = client
+	return func() { remoteFileFetchClient = previous }
+}
+
+// fetchRemoteFile downloads a user-supplied URL for import. It only uses public
+// HTTP(S) destinations, follows a bounded number of redirects, times out, and
+// reads at most maxRemoteFileSize bytes.
 func fetchRemoteFile(rawURL string) ([]byte, error) {
-	return fetchRemoteFileWith(newRemoteFileClient(remoteFileFetchTimeout, isBlockedRemoteFileAddr), rawURL, maxRemoteFileSize)
+	return fetchRemoteFileWith(remoteFileFetchClient, rawURL, maxRemoteFileSize)
 }
 
 func fetchRemoteFileWith(client *http.Client, rawURL string, maxBytes int64) ([]byte, error) {

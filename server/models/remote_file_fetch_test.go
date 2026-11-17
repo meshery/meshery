@@ -1,9 +1,9 @@
 package models
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"net/netip"
 	"strconv"
 	"strings"
 	"sync/atomic"
@@ -11,49 +11,17 @@ import (
 	"time"
 )
 
-func allowAllAddrs(netip.Addr) bool { return false }
-
-func TestIsBlockedRemoteFileAddr(t *testing.T) {
-	tests := []struct {
-		addr    string
-		blocked bool
-	}{
-		{"127.0.0.1", true},
-		{"::1", true},
-		{"::ffff:127.0.0.1", true},
-		{"10.1.2.3", true},
-		{"172.16.0.1", true},
-		{"192.168.1.1", true},
-		{"169.254.169.254", true},
-		{"fe80::1", true},
-		{"fd00:ec2::254", true},
-		{"0.0.0.0", true},
-		{"0.1.2.3", true},
-		{"::", true},
-		{"100.64.0.1", true},
-		{"224.0.0.1", true},
-		{"240.0.0.1", true},
-		{"192.0.2.1", true},
-		{"198.51.100.1", true},
-		{"203.0.113.1", true},
-		{"2001:db8::1", true},
-		// Zoned addresses must be judged without their zone.
-		{"::%lo", true},
-		{"::1%lo", true},
-		{"fe80::1%eth0", true},
-		{"2001:db8::1%eth0", true},
-		{"2606:4700:4700::1111%eth0", false},
-		{"8.8.8.8", false},
-		{"1.1.1.1", false},
-		{"2606:4700:4700::1111", false},
+// testRemoteFileClient allows local test servers and limits redirects while
+// preserving the production client's HTTP(S)-only validation.
+func testRemoteFileClient(timeout time.Duration) *http.Client {
+	client := newRemoteFileClient(timeout, true)
+	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		if len(via) > maxRemoteFileRedirects {
+			return fmt.Errorf("stopped after %d redirects", maxRemoteFileRedirects)
+		}
+		return validateRemoteFileURL(req.URL)
 	}
-	for _, tc := range tests {
-		t.Run(tc.addr, func(t *testing.T) {
-			if got := isBlockedRemoteFileAddr(netip.MustParseAddr(tc.addr)); got != tc.blocked {
-				t.Fatalf("isBlockedRemoteFileAddr(%s) = %v, want %v", tc.addr, got, tc.blocked)
-			}
-		})
-	}
+	return client
 }
 
 func TestFetchRemoteFileRejectsLoopback(t *testing.T) {
@@ -65,8 +33,8 @@ func TestFetchRemoteFileRejectsLoopback(t *testing.T) {
 	defer srv.Close()
 
 	_, err := fetchRemoteFile(srv.URL)
-	if err == nil || !strings.Contains(err.Error(), "non-public address") {
-		t.Fatalf("expected non-public address error, got %v", err)
+	if err == nil || !strings.Contains(err.Error(), "restricted") {
+		t.Fatalf("expected restricted-address error, got %v", err)
 	}
 	if hit.Load() {
 		t.Fatal("request reached the loopback server")
@@ -87,8 +55,7 @@ func TestFetchRemoteFileReturnsBody(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := newRemoteFileClient(5*time.Second, allowAllAddrs)
-	body, err := fetchRemoteFileWith(client, srv.URL, 1024)
+	body, err := fetchRemoteFileWith(testRemoteFileClient(5*time.Second), srv.URL, 1024)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -101,8 +68,7 @@ func TestFetchRemoteFileNonOKStatus(t *testing.T) {
 	srv := httptest.NewServer(http.NotFoundHandler())
 	defer srv.Close()
 
-	client := newRemoteFileClient(5*time.Second, allowAllAddrs)
-	if _, err := fetchRemoteFileWith(client, srv.URL, 1024); err == nil || err.Error() != "file not found" {
+	if _, err := fetchRemoteFileWith(testRemoteFileClient(5*time.Second), srv.URL, 1024); err == nil || err.Error() != "file not found" {
 		t.Fatalf("expected 'file not found', got %v", err)
 	}
 }
@@ -113,7 +79,7 @@ func TestFetchRemoteFileEnforcesSizeLimit(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := newRemoteFileClient(5*time.Second, allowAllAddrs)
+	client := testRemoteFileClient(5 * time.Second)
 	if _, err := fetchRemoteFileWith(client, srv.URL, 1024); err == nil || !strings.Contains(err.Error(), "maximum allowed size") {
 		t.Fatalf("expected size error, got %v", err)
 	}
@@ -131,7 +97,7 @@ func TestFetchRemoteFileTimesOut(t *testing.T) {
 	defer srv.Close()
 	defer close(release)
 
-	client := newRemoteFileClient(100*time.Millisecond, allowAllAddrs)
+	client := testRemoteFileClient(100 * time.Millisecond)
 	start := time.Now()
 	if _, err := fetchRemoteFileWith(client, srv.URL, 1024); err == nil {
 		t.Fatal("expected timeout error")
@@ -142,7 +108,7 @@ func TestFetchRemoteFileTimesOut(t *testing.T) {
 }
 
 func TestFetchRemoteFileRedirects(t *testing.T) {
-	client := newRemoteFileClient(5*time.Second, allowAllAddrs)
+	client := testRemoteFileClient(5 * time.Second)
 
 	t.Run("redirect to unsupported scheme is rejected", func(t *testing.T) {
 		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -195,9 +161,6 @@ func TestFetchRemoteFileRedirects(t *testing.T) {
 	})
 }
 
-// A redirect from a public host to an internal address must be refused by the
-// dialer, not just by inspecting the initial URL. The first dial (the entry
-// hop) is allowed and every later dial (the redirect hop) is refused.
 func TestRemoteFileClientBlocksInternalRedirectTarget(t *testing.T) {
 	internal := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte("name: secret"))
@@ -209,12 +172,8 @@ func TestRemoteFileClientBlocksInternalRedirectTarget(t *testing.T) {
 	}))
 	defer entry.Close()
 
-	dials := 0
-	client := newRemoteFileClient(5*time.Second, func(netip.Addr) bool {
-		dials++
-		return dials > 1
-	})
-	if _, err := fetchRemoteFileWith(client, entry.URL, 1024); err == nil || !strings.Contains(err.Error(), "non-public address") {
-		t.Fatalf("expected the redirect hop to be refused, got %v", err)
+	client := newRemoteFileClient(5*time.Second, true)
+	if _, err := fetchRemoteFileWith(client, entry.URL, 1024); err == nil || !strings.Contains(err.Error(), "redirect blocked") {
+		t.Fatalf("expected the redirect target to be refused, got %v", err)
 	}
 }

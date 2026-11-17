@@ -2057,7 +2057,6 @@ func githubRepoPatternScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
-		UseGithubAPI().
 		Timeout(remoteFileFetchTimeout).
 		MaxFileSize(maxRemoteFileSize).
 		RegisterFileInterceptor(func(f walker.File) error {
@@ -2104,7 +2103,6 @@ func githubRepoFilterScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
-		UseGithubAPI().
 		Timeout(remoteFileFetchTimeout).
 		MaxFileSize(maxRemoteFileSize).
 		RegisterFileInterceptor(func(f walker.File) error {
