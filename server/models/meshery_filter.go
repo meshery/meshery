@@ -156,7 +156,10 @@ func filterNameForURLImport(fileURL string, body []byte) (string, error) {
 	if ext := path.Ext(name); strings.EqualFold(ext, ".wasm") {
 		name = strings.TrimSuffix(name, ext)
 	}
-	if name == "" || name == "." || name == "/" {
+	// A path ending in a slash names a directory, not a file, so it also
+	// falls back to the host: path.Base strips the slash and would return
+	// the directory name instead.
+	if name == "" || name == "." || name == "/" || strings.HasSuffix(u.Path, "/") {
 		name = u.Hostname()
 	}
 	if name == "" {

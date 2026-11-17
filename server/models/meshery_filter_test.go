@@ -163,6 +163,7 @@ func TestFilterNameForURLImport(t *testing.T) {
 		{name: "escaped path is decoded", url: "https://example.com/my%20filter.wasm", body: module, want: "my filter"},
 		{name: "file without the wasm extension", url: "https://example.com/download/filter", body: module, want: "filter"},
 		{name: "no file in the path falls back to the host", url: "https://filters.example.com/", body: module, want: "filters.example.com"},
+		{name: "directory path falls back to the host", url: "https://example.com/downloads/", body: module, want: "example.com"},
 		{name: "yaml keeps its name field", url: "https://example.com/filter.yaml", body: []byte("name: from-yaml\n"), want: "from-yaml"},
 		{name: "yaml without a name is rejected", url: "https://example.com/filter.yaml", body: []byte("kind: filter\n"), wantErr: ErrFilterFileName},
 	}
