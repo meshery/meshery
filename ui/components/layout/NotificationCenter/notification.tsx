@@ -81,7 +81,7 @@ const AvatarStack = ({ avatars, direction }) => {
       }}
     >
       {avatars.map((avatar, index) => (
-        <CustomTooltip title={avatar.name} placement="top" key={index}>
+        <CustomTooltip title={avatar.tooltip || avatar.name} placement="top" key={index}>
           <Box
             sx={{
               zIndex: avatars.length - index,

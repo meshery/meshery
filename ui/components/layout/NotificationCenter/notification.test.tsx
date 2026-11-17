@@ -383,6 +383,13 @@ describe('Notification component', () => {
     expect(avatars.map((avatar) => avatar.getAttribute('alt'))).toEqual(['Alice Doe', 'Meshery']);
     expect(avatars[0]).toHaveAttribute('src', '/a.png');
     expect(avatars[1]).toHaveAttribute('src', '/static/img/meshery-logo/meshery-logo.png');
+    // Each avatar's tooltip comes from its `tooltip` field: the owner's name,
+    // and the id of the Meshery instance that raised the event.
+    expect(
+      avatars.map((avatar) =>
+        avatar.closest('[data-testid="tooltip"]')?.getAttribute('data-title'),
+      ),
+    ).toEqual(['Alice Doe', 'System ID: s1']);
     expect(useGetUserByIdQueryMock).toHaveBeenCalledWith('u1');
   });
 
