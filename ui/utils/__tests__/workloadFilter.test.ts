@@ -68,6 +68,26 @@ describe('groupWorkloadByVersion', () => {
   it('returns an empty object for an empty workload list', () => {
     expect(groupWorkloadByVersion([])).toEqual({});
   });
+
+  it('safely handles nullish and non-array input without throwing', () => {
+    expect(groupWorkloadByVersion(null)).toEqual({});
+    expect(groupWorkloadByVersion(undefined)).toEqual({});
+    expect(groupWorkloadByVersion('not an array' as unknown as unknown[])).toEqual({});
+  });
+
+  it('skips nullish elements and handles null workload properties gracefully', () => {
+    const valid = makeWorkload();
+    const result = groupWorkloadByVersion([
+      null,
+      undefined,
+      { workload: null },
+      { workload: undefined },
+      valid,
+    ]);
+    expect(result['v1.0.0']).toHaveLength(1);
+    expect(result['v1.0.0'][0]).toBe(valid);
+    expect(result.Meshery).toHaveLength(2);
+  });
 });
 
 describe('getUnformattedName', () => {
@@ -84,6 +104,13 @@ describe('getUnformattedName', () => {
 
   it('returns "Un-Named" when oam_definition is missing', () => {
     expect(getUnformattedName({ workload: {} })).toBe('Un-Named');
+  });
+
+  it('returns "Un-Named" when input is null, undefined, or workload is null', () => {
+    expect(getUnformattedName(null)).toBe('Un-Named');
+    expect(getUnformattedName(undefined)).toBe('Un-Named');
+    expect(getUnformattedName({ workload: null })).toBe('Un-Named');
+    expect(getUnformattedName({ workload: undefined })).toBe('Un-Named');
   });
 });
 
@@ -108,5 +135,12 @@ describe('findWorkloadByName', () => {
   it('returns undefined when workloads is null/undefined', () => {
     expect(findWorkloadByName('whatever', null)).toBeUndefined();
     expect(findWorkloadByName('whatever', undefined)).toBeUndefined();
+  });
+
+  it('safely skips nullish items in workloads array without throwing', () => {
+    const target = makeWorkload();
+    expect(findWorkloadByName('WorkloadA', [null, undefined, { workload: null }, target])).toBe(
+      target,
+    );
   });
 });
