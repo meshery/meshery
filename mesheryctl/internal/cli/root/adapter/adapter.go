@@ -36,7 +36,7 @@ var availableSubcommands []*cobra.Command
 // errEventStreamClosed is the cause when the stream ends without a result.
 var errEventStreamClosed = errors.New("event stream closed before the operation finished")
 
-// AdapterCmd represents the Performance Management CLI command
+// AdapterCmd represents the adapter CLI command
 var (
 	adapterURL string
 	namespace  string
@@ -45,7 +45,17 @@ var (
 		Use:   "adapter",
 		Short: "Connect and use Meshery adapters",
 		Long: `Provisioning, configuration, and on-going operational management of cloud and cloud native infrastructure.
-	Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/adapter`,
+		Example: `
+// Deploy infrastructure using an adapter
+mesheryctl adapter deploy [mesh-name]
+
+// Validate conformance to predefined standards
+mesheryctl adapter validate [mesh-name] --adapter [adapter-name] --spec smi
+
+// Remove deployed infrastructure
+mesheryctl adapter remove [mesh-name]
+`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			// if `adapter` command is run without any subcommands, show Help and exit
 			if cmd.HasSubCommands() {
