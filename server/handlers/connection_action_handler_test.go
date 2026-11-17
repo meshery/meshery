@@ -3,17 +3,17 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"net/http/httptest"
+	"strings"
+	"sync"
+	"testing"
+	"time"
 
 	k8smachine "github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshkit/database"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"net/http/httptest"
-	"strings"
-	"sync"
-	"testing"
-	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"

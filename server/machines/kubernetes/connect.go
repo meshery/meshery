@@ -113,11 +113,13 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		connections.MeshsyncDeploymentModeFromString(viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE")),
 	).Mode
 
+	machinectx.lifecycleLock.Lock()
 	machinectx.setupLock.Lock()
 	machinectx.disconnected = false
 	if machinectx.setupInProgress {
 		machinectx.retryPending = true
 		machinectx.setupLock.Unlock()
+		machinectx.lifecycleLock.Unlock()
 		if machinectx.log != nil {
 			machinectx.log.Infof("Kubernetes connection setup already in progress for %s, queued retry after current setup finishes", machinectx.K8sContext.Name)
 		}
@@ -125,6 +127,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 	}
 	machinectx.setupInProgress = true
 	machinectx.setupLock.Unlock()
+	machinectx.lifecycleLock.Unlock()
 
 	go func() {
 		workerExitedCleanly := false
