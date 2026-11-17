@@ -101,6 +101,10 @@ func TestFilterPOSTResponseCarriesUnsavedFilter(t *testing.T) {
 	var count int64
 	require.NoError(t, db.Model(&models.MesheryFilter{}).Count(&count).Error)
 	assert.Zero(t, count, "a request without save must not persist the filter")
+
+	var eventCount int64
+	require.NoError(t, db.Model(&events.Event{}).Count(&eventCount).Error)
+	assert.Zero(t, eventCount, "a request without save must not persist an event")
 }
 
 // TestFormatFilterOutputKeepsEmptyListForNull pins the wire shape when a
@@ -136,6 +140,37 @@ func TestFilterPOSTResponseCarriesURLImportedFilter(t *testing.T) {
 	var stored models.MesheryFilter
 	require.NoError(t, db.Where("id = ?", *imported[0].ID).First(&stored).Error,
 		"the returned id must be the stored row's id")
+
+	var eventCount int64
+	require.NoError(t, db.Model(&events.Event{}).Where("description = ?", "Filter from-url saved").Count(&eventCount).Error)
+	assert.Equal(t, int64(1), eventCount, "saving an imported filter must persist an event in the events table")
+}
+
+// TestFilterPOSTResponseCarriesURLImportedFilterWithoutSave pins the unsaved URL import path:
+// it must return the filter without persisting the filter or an event.
+func TestFilterPOSTResponseCarriesURLImportedFilterWithoutSave(t *testing.T) {
+	h, provider, db := newFilterPOSTFixture(t)
+	provider.Log = h.log
+	source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte("name: from-url-unsaved\n"))
+	}))
+	t.Cleanup(source.Close)
+
+	rec := postFilter(t, h, provider, models.MesheryFilterRequestBody{Save: false, URL: source.URL + "/filter.yaml"})
+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+
+	var imported []models.MesheryFilter
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &imported))
+	require.Len(t, imported, 1, "the response must carry the imported filter, got %s", rec.Body.String())
+	assert.Equal(t, "from-url-unsaved", imported[0].Name)
+
+	var filterCount int64
+	require.NoError(t, db.Model(&models.MesheryFilter{}).Count(&filterCount).Error)
+	assert.Zero(t, filterCount, "an unsaved URL import must not persist the filter")
+
+	var eventCount int64
+	require.NoError(t, db.Model(&events.Event{}).Count(&eventCount).Error)
+	assert.Zero(t, eventCount, "an unsaved URL import must not persist an event")
 }
 
 // TestFilterPOSTResponseCarriesRemoteProviderFilters pins the save path with
