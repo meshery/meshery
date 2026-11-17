@@ -2,6 +2,7 @@ package dataloader
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 
@@ -53,7 +54,7 @@ func (l *ControlPlaneBatchLoader) Load(clusterID string, selectors []model.MeshT
 
 	if l.timer == nil {
 		l.timer = time.AfterFunc(l.batchWait, func() {
-			l.dispatch(selectors)
+			l.dispatch()
 		})
 	}
 	l.mu.Unlock()
@@ -104,7 +105,8 @@ func (l *ControlPlaneBatchLoader) LoadMany(clusterIDs []string, selectors []mode
 	return resultMap, nil
 }
 
-func (l *ControlPlaneBatchLoader) dispatch(selectors []model.MeshType) {
+// dispatch processes all queued cluster IDs by executing a batched query for all mesh types.
+func (l *ControlPlaneBatchLoader) dispatch() {
 	l.mu.Lock()
 	queue := l.queue
 	l.queue = make(map[string][]chan batchResult)
@@ -125,11 +127,14 @@ func (l *ControlPlaneBatchLoader) dispatch(selectors []model.MeshType) {
 		provider = l.providerGetter(l.ctx)
 	}
 
-	if len(selectors) == 0 {
-		selectors = model.AllMeshType
-	}
+	// Always load every mesh type: the batch window merges Load calls, and the
+	// timer closure only captures the first caller's selectors, so a per-call
+	// selector set would silently serve the wrong results to later callers
+	// (and the per-cluster cache is selector-blind too). The resolver already
+	// filters by selector name.
+	selectors := model.AllMeshType
 
-	resultsByCluster, err := model.BatchGetControlPlaneState(l.ctx, selectors, provider, clusterIDs)
+	resultsByCluster, err := l.safeBatch(selectors, provider, clusterIDs)
 
 	l.mu.Lock()
 	defer l.mu.Unlock()
@@ -149,3 +154,12 @@ func (l *ControlPlaneBatchLoader) dispatch(selectors []model.MeshType) {
 	}
 }
 
+// safeBatch wraps BatchGetControlPlaneState with panic recovery to protect the timer goroutine.
+func (l *ControlPlaneBatchLoader) safeBatch(selectors []model.MeshType, provider models.Provider, clusterIDs []string) (res map[string][]*model.ControlPlane, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("control plane batch loader panic: %v", r)
+		}
+	}()
+	return model.BatchGetControlPlaneState(l.ctx, selectors, provider, clusterIDs)
+}

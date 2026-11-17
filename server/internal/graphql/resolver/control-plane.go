@@ -21,6 +21,16 @@ func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provide
 		cids = filter.K8sClusterIDs
 	}
 
+	seenCids := make(map[string]struct{}, len(cids))
+	uniqCids := make([]string, 0, len(cids))
+	for _, c := range cids {
+		if _, ok := seenCids[c]; !ok {
+			seenCids[c] = struct{}{}
+			uniqCids = append(uniqCids, c)
+		}
+	}
+	cids = uniqCids
+
 	loader := dataloader.For(ctx)
 	if loader != nil && loader.ControlPlaneLoader != nil && len(cids) > 0 {
 		clusterResults, err := loader.ControlPlaneLoader.LoadMany(cids, selectors)

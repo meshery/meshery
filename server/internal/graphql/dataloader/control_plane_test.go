@@ -3,6 +3,7 @@ package dataloader_test
 import (
 	"context"
 	"net/http"
+	"net/http/httptest"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -100,7 +101,7 @@ func TestControlPlaneDataLoader_BatchingAndQueryReduction(t *testing.T) {
 	}
 
 	prov := &mockProvider{dbHandler: dbHandler}
-	selectors := []model.MeshType{model.MeshTypeIstio}
+	selectors := model.AllMeshType
 
 	// 1. Without DataLoader (Legacy N queries pattern):
 	// Loops over each cluster ID and runs separate queries for each.
@@ -123,9 +124,10 @@ func TestControlPlaneDataLoader_BatchingAndQueryReduction(t *testing.T) {
 	handler := loaderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		loader = dataloader.For(r.Context())
 	}))
-	req := &http.Request{}
+	req := httptest.NewRequest("POST", "/graphql", nil)
 	req = req.WithContext(ctx)
-	handler.ServeHTTP(nil, req)
+	w := httptest.NewRecorder()
+	handler.ServeHTTP(w, req)
 
 	require.NotNil(t, loader)
 	require.NotNil(t, loader.ControlPlaneLoader)
@@ -139,9 +141,16 @@ func TestControlPlaneDataLoader_BatchingAndQueryReduction(t *testing.T) {
 	for _, cid := range clusterIDs {
 		cps := result[cid]
 		require.NotEmpty(t, cps, "expected control planes for %s", cid)
-		assert.Equal(t, "istio", cps[0].Name)
-		require.NotEmpty(t, cps[0].Members)
-		assert.Equal(t, "istiod-"+cid, cps[0].Members[0].Name)
+		var istioCp *model.ControlPlane
+		for _, cp := range cps {
+			if cp.Name == "istio" {
+				istioCp = cp
+				break
+			}
+		}
+		require.NotNil(t, istioCp, "expected istio control plane for %s", cid)
+		require.NotEmpty(t, istioCp.Members)
+		assert.Equal(t, "istiod-"+cid, istioCp.Members[0].Name)
 	}
 
 	queriesWithLoader := atomic.LoadInt64(queryCount)
@@ -160,4 +169,81 @@ func TestControlPlaneDataLoader_BatchingAndQueryReduction(t *testing.T) {
 
 	queriesFromCache := atomic.LoadInt64(queryCount)
 	assert.Equal(t, int64(0), queriesFromCache, "Subsequent lookups within the same request must be served from cache with 0 queries")
+}
+
+func TestControlPlaneDataLoader_SelectorIsolation(t *testing.T) {
+	dbHandler, _ := setupTestDB(t)
+
+	// Seed cluster-iso with both an Istio pod and a Linkerd pod
+	seedPod(t, dbHandler, "pod-istio", "cluster-iso", "istiod-iso", "istio-system", "docker.io/istio/pilot:1.20.0")
+	seedPod(t, dbHandler, "pod-linkerd", "cluster-iso", "linkerd-controller", "linkerd-system", "docker.io/linkerd/controller:2.14.0")
+
+	prov := &mockProvider{dbHandler: dbHandler}
+	middleware := dataloader.Middleware(func(ctx context.Context) models.Provider {
+		return prov
+	})
+
+	var loader *dataloader.Loaders
+	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		loader = dataloader.For(r.Context())
+	}))
+
+	ctx := context.Background()
+	req := httptest.NewRequest("POST", "/graphql", nil).WithContext(ctx)
+	w := httptest.NewRecorder()
+	handler.ServeHTTP(w, req)
+
+	require.NotNil(t, loader)
+	require.NotNil(t, loader.ControlPlaneLoader)
+
+	// First load for Istio
+	istioResults, err := loader.ControlPlaneLoader.Load("cluster-iso", []model.MeshType{model.MeshTypeIstio})
+	require.NoError(t, err)
+	require.NotEmpty(t, istioResults)
+
+	var istioCp *model.ControlPlane
+	for _, cp := range istioResults {
+		if cp.Name == "istio" {
+			istioCp = cp
+			break
+		}
+	}
+	require.NotNil(t, istioCp, "expected istio control plane")
+	require.NotEmpty(t, istioCp.Members)
+	assert.Equal(t, "istiod-iso", istioCp.Members[0].Name)
+
+	// Second load for Linkerd within the same request lifecycle (reusing cache/batch loader)
+	linkerdResults, err := loader.ControlPlaneLoader.Load("cluster-iso", []model.MeshType{model.MeshTypeLinkerd})
+	require.NoError(t, err)
+	require.NotEmpty(t, linkerdResults)
+
+	var linkerdCp *model.ControlPlane
+	for _, cp := range linkerdResults {
+		if cp.Name == "linkerd" {
+			linkerdCp = cp
+			break
+		}
+	}
+	require.NotNil(t, linkerdCp, "expected linkerd control plane")
+	require.NotEmpty(t, linkerdCp.Members)
+	assert.Equal(t, "linkerd-controller", linkerdCp.Members[0].Name)
+}
+
+func TestControlPlane_DuplicateClusterIDs(t *testing.T) {
+	dbHandler, _ := setupTestDB(t)
+
+	// Seed 1 cluster with an Istio pod
+	seedPod(t, dbHandler, "pod-dup", "cluster-dup", "istiod-dup", "istio-system", "docker.io/istio/pilot:1.20.0")
+
+	prov := &mockProvider{dbHandler: dbHandler}
+	selectors := []model.MeshType{model.MeshTypeIstio}
+
+	// Query with duplicate cluster IDs in the filter slice
+	res, err := model.GetControlPlaneState(context.Background(), selectors, prov, []string{"cluster-dup", "cluster-dup"})
+	require.NoError(t, err)
+	require.Len(t, res, 1)
+	assert.Equal(t, "istio", res[0].Name)
+	// Duplicate cluster IDs must not duplicate the control plane members
+	assert.Len(t, res[0].Members, 1)
+	assert.Equal(t, "istiod-dup", res[0].Members[0].Name)
 }

@@ -12,8 +12,19 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
+// GetControlPlaneState fetches the control plane state across the specified clusters and mesh types.
 func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider models.Provider, cid []string) ([]*ControlPlane, error) {
 	if len(cid) > 0 {
+		seen := make(map[string]struct{}, len(cid))
+		uniq := make([]string, 0, len(cid))
+		for _, c := range cid {
+			if _, ok := seen[c]; !ok {
+				seen[c] = struct{}{}
+				uniq = append(uniq, c)
+			}
+		}
+		cid = uniq
+
 		batchMap, err := BatchGetControlPlaneState(ctx, selectors, provider, cid)
 		if err != nil {
 			return nil, err
@@ -103,6 +114,18 @@ func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider mo
 // BatchGetControlPlaneState fetches control plane data for multiple clusters in a single batched query
 // grouping results by clusterID.
 func BatchGetControlPlaneState(ctx context.Context, selectors []MeshType, provider models.Provider, clusterIDs []string) (map[string][]*ControlPlane, error) {
+	if len(clusterIDs) > 0 {
+		seen := make(map[string]struct{}, len(clusterIDs))
+		uniq := make([]string, 0, len(clusterIDs))
+		for _, c := range clusterIDs {
+			if _, ok := seen[c]; !ok {
+				seen[c] = struct{}{}
+				uniq = append(uniq, c)
+			}
+		}
+		clusterIDs = uniq
+	}
+
 	resultMap := make(map[string][]*ControlPlane)
 	for _, cid := range clusterIDs {
 		resultMap[cid] = make([]*ControlPlane, 0)
@@ -176,6 +199,8 @@ func BatchGetControlPlaneState(ctx context.Context, selectors []MeshType, provid
 
 	return resultMap, nil
 }
+
+// haveCommonElements returns true if any element of slice a exists in map b.
 func haveCommonElements(a []string, b map[string]bool) bool {
 	for _, ae := range a {
 		if b[ae] {

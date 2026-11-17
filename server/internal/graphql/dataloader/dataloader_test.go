@@ -47,7 +47,7 @@ func TestDataLoaderMiddleware_PerRequestIsolation(t *testing.T) {
 	assert.NotEqual(t, loader1.ControlPlaneLoader, loader2.ControlPlaneLoader, "loaders must not be shared across requests")
 }
 
-func TestControlPlaneBatchLoader_EmptyClusterIDs(t *testing.T) {
+func TestWithLoaders_RoundTrip(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
@@ -82,4 +82,3 @@ func TestControlPlaneBatchLoader_LoadEmptyKey(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Empty(t, resMany)
 }
-
