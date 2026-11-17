@@ -222,26 +222,28 @@ const (
 	// cause "Result Identifier provided is not valid") - a performance-results
 	// code with nothing to do with any of them. The codes below exist so the
 	// error a user and a maintainer see actually describes what failed.
-	ErrGetEnvironmentsCode       = "meshery-server-1446"
-	ErrGetEnvironmentCode        = "meshery-server-1447"
-	ErrSaveEnvironmentCode       = "meshery-server-1448"
-	ErrUpdateEnvironmentCode     = "meshery-server-1449"
-	ErrDeleteEnvironmentCode     = "meshery-server-1450"
-	ErrEnvironmentConnectionCode = "meshery-server-1451"
-	ErrGetWorkspacesCode         = "meshery-server-1452"
-	ErrGetWorkspaceCode          = "meshery-server-1453"
-	ErrSaveWorkspaceCode         = "meshery-server-1454"
-	ErrUpdateWorkspaceCode       = "meshery-server-1455"
-	ErrDeleteWorkspaceCode       = "meshery-server-1456"
-	ErrWorkspaceResourceCode     = "meshery-server-1457"
-	ErrGetOrganizationsCode      = "meshery-server-1458"
-	ErrGetUsersCode              = "meshery-server-1459"
-	ErrGetUserCode               = "meshery-server-1460"
-	ErrGetUsersKeysCode          = "meshery-server-1461"
-	ErrFetchProfilesCode         = "meshery-server-1464"
-	ErrResetInProgressCode       = "meshery-server-1481"
-	ErrInvalidClientEventCode    = "meshery-server-1489"
-	ErrNilProviderCode           = "meshery-server-1492"
+	ErrGetEnvironmentsCode          = "meshery-server-1446"
+	ErrGetEnvironmentCode           = "meshery-server-1447"
+	ErrSaveEnvironmentCode          = "meshery-server-1448"
+	ErrUpdateEnvironmentCode        = "meshery-server-1449"
+	ErrDeleteEnvironmentCode        = "meshery-server-1450"
+	ErrEnvironmentConnectionCode    = "meshery-server-1451"
+	ErrGetWorkspacesCode            = "meshery-server-1452"
+	ErrGetWorkspaceCode             = "meshery-server-1453"
+	ErrSaveWorkspaceCode            = "meshery-server-1454"
+	ErrUpdateWorkspaceCode          = "meshery-server-1455"
+	ErrDeleteWorkspaceCode          = "meshery-server-1456"
+	ErrWorkspaceResourceCode        = "meshery-server-1457"
+	ErrGetOrganizationsCode         = "meshery-server-1458"
+	ErrGetUsersCode                 = "meshery-server-1459"
+	ErrGetUserCode                  = "meshery-server-1460"
+	ErrGetUsersKeysCode             = "meshery-server-1461"
+	ErrFetchProfilesCode            = "meshery-server-1464"
+	ErrGetConnectionDefinitionsCode = "meshery-server-1493"
+	ErrGetConnectionDefinitionCode  = "meshery-server-1494"
+	ErrResetInProgressCode          = "meshery-server-1481"
+	ErrInvalidClientEventCode       = "meshery-server-1489"
+	ErrNilProviderCode              = "meshery-server-1492"
 )
 
 var (
@@ -1287,5 +1289,27 @@ func ErrNilProvider() error {
 		[]string{"Provider instance passed to the handler is nil"},
 		[]string{"The handler was invoked without an initialized provider instance"},
 		[]string{"Ensure the provider is properly initialized before handling the request"},
+	)
+}
+
+func ErrGetConnectionDefinitions(err error) error {
+	return errors.New(
+		ErrGetConnectionDefinitionsCode,
+		errors.Alert,
+		[]string{"Unable to get connection definitions"},
+		[]string{err.Error()},
+		[]string{"Database or registry was unreachable or returned an error", "Data in the registry was inconsistent"},
+		[]string{"Make sure the registry is available and try again", "Check server logs for database connectivity issues"},
+	)
+}
+
+func ErrGetConnectionDefinition(err error) error {
+	return errors.New(
+		ErrGetConnectionDefinitionCode,
+		errors.Alert,
+		[]string{"Unable to get connection definition"},
+		[]string{err.Error()},
+		[]string{"Database or registry was unreachable or returned an error", "Connection definition with given ID does not exist or failed during retrieval"},
+		[]string{"Check if the connection definition ID is valid", "Make sure the registry is available and try again"},
 	)
 }
