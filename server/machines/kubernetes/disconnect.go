@@ -14,6 +14,7 @@ func (da *DisconnectAction) ExecuteOnEntry(ctx context.Context, machineCtx inter
 	return machines.NoOp, nil, nil
 
 }
+
 // Execute cleanly tears down MeshSync data handlers and disconnects from the Kubernetes cluster.
 func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	userUUID, systemID := machines.ResolveUserAndSystemID(ctx)
@@ -26,10 +27,7 @@ func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{},
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	machinectx.setupLock.Lock()
-	machinectx.disconnected = true
-	machinectx.retryPending = false
-	machinectx.setupLock.Unlock()
+	machinectx.SetDisconnected(true)
 
 	contextID := machinectx.K8sContext.ID
 	go func() {
