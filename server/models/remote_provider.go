@@ -5342,6 +5342,13 @@ func extractTarGz(gzipStream io.Reader, destination string) error {
 		// Skipping such a record would extract the wrong layout, so only the
 		// inert "comment" record is accepted.
 		if header.Typeflag == tar.TypeXGlobalHeader {
+			// Go drops every record of a global header when one of them cannot be
+			// parsed (a non-numeric size, say) and reports no error, so the loop
+			// below would see nothing to reject. A header that real tools write
+			// always carries its comment, so an empty one is refused.
+			if len(header.PAXRecords) == 0 {
+				return fmt.Errorf("unsupported global pax header: no readable records")
+			}
 			for key := range header.PAXRecords {
 				if key != "comment" {
 					return fmt.Errorf("unsupported global pax header record %q", key)
