@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -16,6 +18,11 @@ import (
 	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 )
+
+// maxComponentGenerationPayloadSize limits the maximum allowed request body size (4 MB)
+// for component generation requests, preventing unbounded memory allocation and denial-of-service
+// vulnerabilities via oversized payloads.
+const maxComponentGenerationPayloadSize = 4 << 20 // 4MB
 
 type generationPayloadItem struct {
 	Name     string `json:"name"`
@@ -36,18 +43,53 @@ type componentGenerationResponseDataItem struct {
 // request body should be of format - {data: [{name: string, register: boolean}]}
 // response format - {data: [{name: string, components: [component], errors: [string] }]}
 func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Request) {
-	// Parse the request body
-	body, err := io.ReadAll(r.Body)
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	// Parse the request body bounded by maxComponentGenerationPayloadSize
+	body, err := io.ReadAll(http.MaxBytesReader(rw, r.Body, maxComponentGenerationPayloadSize))
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			if h.log != nil {
+				h.log.Error(ErrRequestBody(err))
+			}
+			writeMeshkitError(rw, ErrRequestBody(err), http.StatusRequestEntityTooLarge)
+			return
+		}
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
+	body = bytes.Trim(body, " \t\r\n")
+	if len(body) == 0 || bytes.Equal(body, []byte("null")) {
+		err := fmt.Errorf("component generation request body is empty or null")
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
 	// Unmarshal request body
 	pld := componentGenerationPayload{}
 	err = json.Unmarshal(body, &pld)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
+	if len(pld.Data) == 0 {
+		err := fmt.Errorf("component generation request body contains no data items")
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
