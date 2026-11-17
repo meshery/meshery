@@ -52,8 +52,11 @@ func TestResultPageFlagPagesResultsNotTheProfileLookup(t *testing.T) {
 		t.Fatalf("perf result abhishek --page 2: %v", err)
 	}
 
-	calls := httpmock.GetCallCountInfo()
-	if n := calls["GET "+resultURL+"?page=1&pagesize=25"]; n != 1 {
-		t.Errorf("expected page 2 of the results (page=1) to be fetched once, got %d calls: %v", n, calls)
-	}
+calls := httpmock.GetCallCountInfo()
+if n := calls["GET "+profileURL+"?page=0&pagesize=25&search=abhishek"]; n != 1 {
+	t.Errorf("expected the profile lookup to hit page 0 once, got %d calls: %v", n, calls)
+}
+if n := calls["GET "+resultURL+"?page=1&pagesize=25"]; n != 1 {
+	t.Errorf("expected page 2 of the results (page=1) to be fetched once, got %d calls: %v", n, calls)
+}
 }
