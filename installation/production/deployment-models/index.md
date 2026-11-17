@@ -168,6 +168,10 @@ deployment, harden it, make it resilient, and observe it.
             Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/new-contributor-intro-chitrashree-nanjundachitra100-del-looking-for-a-meshmate-ui-web-dev/8306" target="_blank" rel="noopener noreferrer">
+            New Contributor Intro: Chitrashree (@nanjundachitra100-del) | Looking for a MeshMate (UI &amp; Web Dev)
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
           </a>
@@ -190,10 +194,6 @@ deployment, harden it, make it resilient, and observe it.
         </li><li>
           <a href="https://discuss.meshery.io/t/new-contributor-intro-vedit-agrawal-bughunterx2101-looking-to-pair-with-a-meshmate-for-meshery-ui-ai-adapter/8172" target="_blank" rel="noopener noreferrer">
             New Contributor Intro: Vedit Agrawal (@BugHunterX2101) | Looking to pair with a MeshMate for Meshery UI &amp; AI Adapter
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-frontend-backend-cloud-native-development/8161" target="_blank" rel="noopener noreferrer">
-            Looking for a MeshMate — Frontend, Backend &amp; Cloud-Native Development
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
