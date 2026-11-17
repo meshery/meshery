@@ -220,7 +220,9 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	contexts, listErr := loadContextsForDeletion(provider, token)
 	if listErr != nil {
 		handlerErr := ErrGetK8sContexts(listErr)
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, http.StatusInternalServerError)
 		return
 	}
@@ -277,9 +279,13 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			}
 			event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
 			if err != nil {
-				h.log.Error(err)
+				if h.log != nil {
+					h.log.Error(err)
+				}
 				h.reportMachineOutcome(provider, token, userID, event, err)
-				h.log.Debug(event)
+				if h.log != nil {
+					h.log.Debug(event)
+				}
 				return
 			}
 
@@ -293,7 +299,9 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	}
 
 	if err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		event := newEvent().WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", contextID)).WithMetadata(map[string]interface{}{
 			"error": err,
 		}).Build()
