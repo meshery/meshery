@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -146,7 +147,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	eventMetadata := map[string]interface{}{}
 	// Include unreachable contexts so they are still registered as discovered
 	// connections; reachability is only required to transition to connected.
-	contexts := models.K8sContextsFromKubeconfigWithOptions(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, log, true)
+	contexts := models.K8sContextsFromKubeconfigWithContext(req.Context(), provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, log, true)
 
 	// Parse contexts configuration if provided
 	var contextsConfig map[string]ContextOptions
@@ -494,7 +495,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	// Discovery surfaces unreachable contexts too (flagged Reachable=false) so
 	// the wizard can let the user register them as discovered connections;
 	// reachability only gates connecting.
-	contexts := models.K8sContextsFromKubeconfigWithOptions(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, log, true)
+	contexts := models.K8sContextsFromKubeconfigWithContext(req.Context(), provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, log, true)
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
 	h.persistAndPublish(provider, token, userUUID, event)
@@ -546,8 +547,9 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 			writeMeshkitError(w, ErrInvalidKubeConfig(err, ""), http.StatusBadRequest)
 			return
 		}
-		version, err := kubeclient.KubeClient.ServerVersion()
-		if err != nil {
+		pingCtx, cancel := context.WithTimeout(req.Context(), models.DefaultK8sDiscoveryTimeout)
+		defer cancel()
+		if err := k8sContext.AssignVersion(pingCtx, kubeclient); err != nil {
 			log.Error(ErrKubeVersion(err))
 			writeMeshkitError(w, ErrKubeVersion(err), http.StatusInternalServerError)
 			return
@@ -555,7 +557,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		// The schemas KubernetesPingResponse preserves this endpoint's published
 		// snake_case `server_version` wire field.
 		if err = json.NewEncoder(w).Encode(systemv1beta1.KubernetesPingResponse{
-			ServerVersion: version.String(),
+			ServerVersion: k8sContext.Version,
 		}); err != nil {
 			// Response body has already started streaming via json.Encoder —
 			// a partial JSON envelope is on the wire and a fresh error
