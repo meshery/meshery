@@ -164,34 +164,38 @@ const Environments = () => {
     : [];
 
   useEffect(() => {
-    if (!connectionsDataRtk || connectionsDataRtk.length === 0) return;
-    setConnectionsData((prevData) => {
-      const seen = new Set(prevData.map((conn) => conn.id));
-      const next = [...prevData];
-      for (const conn of connectionsDataRtk) {
-        if (conn?.id && !seen.has(conn.id)) {
-          seen.add(conn.id);
-          next.push(conn);
+    if (!currentConnections) return;
+    if (connectionsDataRtk.length > 0) {
+      setConnectionsData((prevData) => {
+        const seen = new Set(prevData.map((conn) => conn.id));
+        const next = [...prevData];
+        for (const conn of connectionsDataRtk) {
+          if (conn?.id && !seen.has(conn.id)) {
+            seen.add(conn.id);
+            next.push(conn);
+          }
         }
-      }
-      return next;
-    });
+        return next;
+      });
+    }
     setLoadedAssignablePage(connectionsPage);
   }, [currentConnections]);
 
   useEffect(() => {
-    if (!environmentConnectionsDataRtk || environmentConnectionsDataRtk.length === 0) return;
-    setEnvironmentConnectionsData((prevData) => {
-      const seen = new Set(prevData.map((conn) => conn.id));
-      const next = [...prevData];
-      for (const conn of environmentConnectionsDataRtk) {
-        if (conn?.id && !seen.has(conn.id)) {
-          seen.add(conn.id);
-          next.push(conn);
+    if (!currentEnvironmentConnections) return;
+    if (environmentConnectionsDataRtk.length > 0) {
+      setEnvironmentConnectionsData((prevData) => {
+        const seen = new Set(prevData.map((conn) => conn.id));
+        const next = [...prevData];
+        for (const conn of environmentConnectionsDataRtk) {
+          if (conn?.id && !seen.has(conn.id)) {
+            seen.add(conn.id);
+            next.push(conn);
+          }
         }
-      }
-      return next;
-    });
+        return next;
+      });
+    }
     setLoadedAssignedPage(connectionsOfEnvironmentPage);
   }, [currentEnvironmentConnections]);
 
@@ -499,17 +503,20 @@ const Environments = () => {
     : assignedTotalCount;
 
   const handleAssignablePage = () => {
-    if (connectionsPage < assignablePagesCount - 1) {
-      setConnectionsPage((prevConnectionsPage) => prevConnectionsPage + 1);
-    }
+    setConnectionsPage((prevConnectionsPage) =>
+      prevConnectionsPage < assignablePagesCount - 1 && loadedAssignablePage >= prevConnectionsPage
+        ? prevConnectionsPage + 1
+        : prevConnectionsPage,
+    );
   };
 
   const handleAssignedPage = () => {
-    if (connectionsOfEnvironmentPage < assignedPagesCount - 1) {
-      setConnectionsOfEnvironmentPage(
-        (prevConnectionsOfEnvironmentPage) => prevConnectionsOfEnvironmentPage + 1,
-      );
-    }
+    setConnectionsOfEnvironmentPage((prevConnectionsOfEnvironmentPage) =>
+      prevConnectionsOfEnvironmentPage < assignedPagesCount - 1 &&
+      loadedAssignedPage >= prevConnectionsOfEnvironmentPage
+        ? prevConnectionsOfEnvironmentPage + 1
+        : prevConnectionsOfEnvironmentPage,
+    );
   };
 
   return (

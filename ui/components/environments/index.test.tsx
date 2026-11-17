@@ -60,6 +60,7 @@ const {
     },
     CONNECTIONS_QUERY_RESULT: {
       data: { connections: [], totalCount: 0 },
+      currentData: undefined as any,
       isError: false,
       error: undefined,
     },
@@ -83,9 +84,15 @@ vi.mock('../../rtk-query/environments', () => ({
   useGetEnvironmentConnectionsQuery: (args: unknown, options: unknown) => {
     getEnvironmentConnectionsQuery(args, options);
     const isSkipped = Boolean((options as any)?.skip);
+    const resolvedCurrentData =
+      CONNECTIONS_QUERY_RESULT.currentData !== undefined
+        ? CONNECTIONS_QUERY_RESULT.currentData
+        : isSkipped
+          ? undefined
+          : CONNECTIONS_QUERY_RESULT.data;
     return {
       data: CONNECTIONS_QUERY_RESULT.data,
-      currentData: isSkipped ? undefined : CONNECTIONS_QUERY_RESULT.data,
+      currentData: resolvedCurrentData,
       isError: CONNECTIONS_QUERY_RESULT.isError,
       error: CONNECTIONS_QUERY_RESULT.error,
     };
@@ -414,6 +421,7 @@ describe('Environments connection assignment modal', () => {
   afterEach(() => {
     ENVIRONMENTS_QUERY_RESULT.data = originalEnvData;
     CONNECTIONS_QUERY_RESULT.data = originalConnData;
+    CONNECTIONS_QUERY_RESULT.currentData = undefined;
   });
 
   it('cleans up connection state on close and does not duplicate connections when reopening', async () => {
@@ -562,13 +570,78 @@ describe('Environments connection assignment modal', () => {
     expect(transferList.getAttribute('data-original-left-count')).toBe('50');
     expect(transferList.getAttribute('data-move-all-left-disabled')).toBe('true');
 
-    // Simulate advance to page 1 while the response has not successfully accumulated
-    CONNECTIONS_QUERY_RESULT.data = { connections: [], totalCount: 50 } as any;
+    // Simulate advance to page 1 while the response is pending (currentData is null/pending)
+    CONNECTIONS_QUERY_RESULT.currentData = null;
 
     await user.click(screen.getByTestId('paginate-assignable-btn'));
 
     // Move-all must remain disabled because page 1 has not successfully accumulated
     expect(transferList.getAttribute('data-original-left-count')).toBe('50');
     expect(transferList.getAttribute('data-move-all-left-disabled')).toBe('true');
+  });
+
+  it('does not advance to subsequent page until current page response has accumulated', async () => {
+    // 75 total connections: 3 pages of 25 items each
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: [{ id: 'conn-0', name: 'Cluster 0' }],
+      totalCount: 75,
+    } as any;
+
+    const user = userEvent.setup();
+    render(<Environments />);
+
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    // Advance to page 1
+    await user.click(screen.getByTestId('paginate-assignable-btn'));
+    await waitFor(() => {
+      expect(getEnvironmentConnectionsQuery).toHaveBeenCalledWith(
+        expect.objectContaining({ page: 1 }),
+        expect.anything(),
+      );
+    });
+
+    // While page 1 has not accumulated yet, click paginate again
+    await user.click(screen.getByTestId('paginate-assignable-btn'));
+
+    // Should NOT have requested page 2 because page 1 has not accumulated
+    expect(getEnvironmentConnectionsQuery).not.toHaveBeenCalledWith(
+      expect.objectContaining({ page: 2 }),
+      expect.anything(),
+    );
+  });
+
+  it('marks empty page response as loaded so pagination and completion do not stall', async () => {
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: [{ id: 'conn-0', name: 'Cluster 0' }],
+      totalCount: 50,
+    } as any;
+
+    const user = userEvent.setup();
+    const { rerender } = render(<Environments />);
+
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    // Advance to page 1
+    await user.click(screen.getByTestId('paginate-assignable-btn'));
+
+    // Simulate page 1 returning an empty list
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: [],
+      totalCount: 50,
+    } as any;
+    rerender(<Environments />);
+
+    await waitFor(() => {
+      const transferList = screen.getByTestId('mock-transfer-list');
+      // Because page 1 was accumulated (even though empty), list is marked fully loaded
+      expect(transferList.getAttribute('data-original-left-count')).toBe('1');
+    });
   });
 });
