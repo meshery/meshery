@@ -524,7 +524,16 @@ func TestGetMeshSyncResources_EmptyClusterFilter(t *testing.T) {
 		Name: "test-resource",
 		UID:  resID,
 	}
+	resID2 := uuid.Must(uuid.NewV4()).String()
+	meta2 := model.KubernetesResourceObjectMeta{
+		ID:   resID2,
+		Name: "test-resource-2",
+		UID:  resID2,
+	}
 	if err := db.Create(&meta).Error; err != nil {
+		t.Fatalf("failed to seed resource meta: %v", err)
+	}
+	if err := db.Create(&meta2).Error; err != nil {
 		t.Fatalf("failed to seed resource meta: %v", err)
 	}
 
@@ -535,7 +544,17 @@ func TestGetMeshSyncResources_EmptyClusterFilter(t *testing.T) {
 			"name": "test-resource",
 		},
 	}
+	resource2 := model.KubernetesResource{
+		ID:        resID2,
+		ClusterID: "test-cluster-2",
+		ComponentMetadata: map[string]interface{}{
+			"name": "test-resource-2",
+		},
+	}
 	if err := db.Table("kubernetes_resources").Create(&resource).Error; err != nil {
+		t.Fatalf("failed to seed resource: %v", err)
+	}
+	if err := db.Table("kubernetes_resources").Create(&resource2).Error; err != nil {
 		t.Fatalf("failed to seed resource: %v", err)
 	}
 
@@ -551,7 +570,11 @@ func TestGetMeshSyncResources_EmptyClusterFilter(t *testing.T) {
 	if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
 		t.Fatalf("failed to unmarshal response: %v", err)
 	}
-	if len(resp.Resources) == 0 {
-		t.Fatalf("expected resources to be returned when clusterIds is omitted, got 0")
+	clusterIDs := map[string]bool{}
+	for _, r := range resp.Resources {
+		clusterIDs[r.ClusterID] = true
+	}
+	if !clusterIDs["test-cluster"] || !clusterIDs["test-cluster-2"] {
+		t.Fatalf("expected resources from both clusters when clusterIds is omitted, got clusters %v", clusterIDs)
 	}
 }
