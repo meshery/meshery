@@ -86,8 +86,10 @@ const Environments = () => {
   const [assignedConnections, setAssignedConnections] = useState([]);
   const [connectionsData, setConnectionsData] = useState([]);
   const [connectionsPage, setConnectionsPage] = useState(0);
+  const [loadedAssignablePage, setLoadedAssignablePage] = useState(-1);
   const [environmentConnectionsData, setEnvironmentConnectionsData] = useState([]);
   const [connectionsOfEnvironmentPage, setConnectionsOfEnvironmentPage] = useState(0);
+  const [loadedAssignedPage, setLoadedAssignedPage] = useState(-1);
   const [skip, setSkip] = useState(true);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [disableTranferButton, setDisableTranferButton] = useState(true);
@@ -174,6 +176,7 @@ const Environments = () => {
       }
       return next;
     });
+    setLoadedAssignablePage(connectionsPage);
   }, [currentConnections]);
 
   useEffect(() => {
@@ -189,6 +192,7 @@ const Environments = () => {
       }
       return next;
     });
+    setLoadedAssignedPage(connectionsOfEnvironmentPage);
   }, [currentEnvironmentConnections]);
 
   useEffect(() => {
@@ -430,7 +434,9 @@ const Environments = () => {
     setConnectionsData([]);
     setEnvironmentConnectionsData([]);
     setConnectionsPage(0);
+    setLoadedAssignablePage(-1);
     setConnectionsOfEnvironmentPage(0);
+    setLoadedAssignedPage(-1);
     setAssignedConnections([]);
     setDisableTranferButton(true);
     setConnectionAssignEnv(environment);
@@ -443,7 +449,9 @@ const Environments = () => {
     setConnectionsData([]);
     setEnvironmentConnectionsData([]);
     setConnectionsPage(0);
+    setLoadedAssignablePage(-1);
     setConnectionsOfEnvironmentPage(0);
+    setLoadedAssignedPage(-1);
     setAssignedConnections([]);
     setDisableTranferButton(true);
   };
@@ -478,12 +486,14 @@ const Environments = () => {
 
   const assignableTotalCount = Number(connections?.totalCount ?? 0);
   const assignablePagesCount = Math.ceil(assignableTotalCount / connectionPageSize);
-  const isAssignableFullyLoaded = connectionsPage >= assignablePagesCount - 1;
+  const isAssignableFullyLoaded =
+    assignablePagesCount > 0 && loadedAssignablePage >= assignablePagesCount - 1;
   const originalLeftCount = isAssignableFullyLoaded ? connectionsData.length : assignableTotalCount;
 
   const assignedTotalCount = Number(environmentConnections?.totalCount ?? 0);
   const assignedPagesCount = Math.ceil(assignedTotalCount / connectionPageSize);
-  const isAssignedFullyLoaded = connectionsOfEnvironmentPage >= assignedPagesCount - 1;
+  const isAssignedFullyLoaded =
+    assignedPagesCount > 0 && loadedAssignedPage >= assignedPagesCount - 1;
   const originalRightCount = isAssignedFullyLoaded
     ? environmentConnectionsData.length
     : assignedTotalCount;

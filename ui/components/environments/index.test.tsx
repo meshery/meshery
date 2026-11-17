@@ -540,4 +540,35 @@ describe('Environments connection assignment modal', () => {
     // Move-all is enabled because assignableData.length (2) is not less than originalLeftCount (2):
     expect(transferList.getAttribute('data-move-all-left-disabled')).toBe('false');
   });
+
+  it('keeps move-all disabled while final-page request is pending or if it fails', async () => {
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: Array.from({ length: 25 }, (_, i) => ({
+        id: `conn-${i}`,
+        name: `Cluster ${i}`,
+      })),
+      totalCount: 50,
+    } as any;
+
+    const user = userEvent.setup();
+    render(<Environments />);
+
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    const transferList = screen.getByTestId('mock-transfer-list');
+    expect(transferList.getAttribute('data-original-left-count')).toBe('50');
+    expect(transferList.getAttribute('data-move-all-left-disabled')).toBe('true');
+
+    // Simulate advance to page 1 while the response has not successfully accumulated
+    CONNECTIONS_QUERY_RESULT.data = { connections: [], totalCount: 50 } as any;
+
+    await user.click(screen.getByTestId('paginate-assignable-btn'));
+
+    // Move-all must remain disabled because page 1 has not successfully accumulated
+    expect(transferList.getAttribute('data-original-left-count')).toBe('50');
+    expect(transferList.getAttribute('data-move-all-left-disabled')).toBe('true');
+  });
 });
