@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"runtime"
 	"sort"
@@ -392,7 +393,9 @@ func BackupConfigFile(cfgFile string) {
 	if err != nil {
 		Log.Fatal(err)
 	}
-	_ = f.Close()
+	if err := f.Close(); err != nil {
+		Log.Fatal(err)
+	}
 }
 
 const (
@@ -414,10 +417,24 @@ func StringWithCharset(length int) string {
 	return string(b)
 }
 
-// SafeClose is a helper function help to close the io
+// SafeClose closes the given io.Closer safely. If co is nil or a typed nil pointer,
+// SafeClose returns immediately. If closing returns an error and Log is initialized,
+// the error is logged; if Log is nil, the error is dropped silently.
 func SafeClose(co io.Closer) {
+	if co == nil {
+		return
+	}
+	val := reflect.ValueOf(co)
+	switch val.Kind() {
+	case reflect.Chan, reflect.Func, reflect.Map, reflect.Pointer, reflect.Slice, reflect.UnsafePointer:
+		if val.IsNil() {
+			return
+		}
+	}
 	if cerr := co.Close(); cerr != nil {
-		Log.Error(cerr)
+		if Log != nil {
+			Log.Error(cerr)
+		}
 	}
 }
 
@@ -585,11 +602,13 @@ func AskForConfirmation(s string) (bool, error) {
 // CreateConfigFile creates config file in Meshery Folder
 func CreateConfigFile() error {
 	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
-		f, err := os.Create(DefaultConfigPath)
+		file, err := os.Create(DefaultConfigPath)
 		if err != nil {
 			return err
 		}
-		_ = f.Close()
+		if err := file.Close(); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -646,17 +665,6 @@ func ClearLine() {
 		Log.Error(ErrClearLine(err))
 		return
 	}
-}
-
-// StringContainedInSlice returns the index in which a string is a substring in a list of strings
-func StringContainedInSlice(str string, slice []string) int {
-	for index, ele := range slice {
-		// Return index even if only a part of the string is present
-		if strings.Contains(ele, str) {
-			return index
-		}
-	}
-	return -1
 }
 
 // StringInSlice checks if a string is present in a slice
