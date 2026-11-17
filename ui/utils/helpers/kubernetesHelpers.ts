@@ -22,17 +22,34 @@ export const isKubernetesConnected = (isClusterConfigured, kubernetesPingStatus)
  * @returns {object} - k8's credentials
  */
 export function extractKubernetesCredentials(data) {
+  if (!data || typeof data !== 'object') {
+    return {
+      credentialName: undefined,
+      secret: {
+        clusterName: undefined,
+        clusterServerURL: undefined,
+        auth: {
+          clusterUserName: undefined,
+          clusterToken: undefined,
+          clusterClientCertificateData: undefined,
+          clusterCertificateAuthorityData: undefined,
+          clusterClientKeyData: undefined,
+        },
+      },
+    };
+  }
+
   const credentials = {
     credentialName: data.name,
     secret: {
-      clusterName: data.cluster.name,
-      clusterServerURL: data.cluster.cluster.server,
+      clusterName: data.cluster?.name,
+      clusterServerURL: data.cluster?.cluster?.server,
       auth: {
-        clusterUserName: data.auth.name,
-        clusterToken: data.auth.user.token,
-        clusterClientCertificateData: data.auth.user['client-certificate-data'],
-        clusterCertificateAuthorityData: data.cluster.cluster['certificate-authority-data'],
-        clusterClientKeyData: data.auth.user['client-key-data'],
+        clusterUserName: data.auth?.name,
+        clusterToken: data.auth?.user?.token,
+        clusterClientCertificateData: data.auth?.user?.['client-certificate-data'],
+        clusterCertificateAuthorityData: data.cluster?.cluster?.['certificate-authority-data'],
+        clusterClientKeyData: data.auth?.user?.['client-key-data'],
       },
     },
   };

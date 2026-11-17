@@ -77,4 +77,47 @@ describe('extractKubernetesCredentials', () => {
     expect(creds.secret.auth.clusterCertificateAuthorityData).toBeUndefined();
     expect(creds.secret.auth.clusterClientKeyData).toBeUndefined();
   });
+
+  it('safely handles missing auth and cluster sections without throwing', () => {
+    const noAuth = {
+      name: 'no-auth-cluster',
+      cluster: { name: 'c2', cluster: { server: 'https://c2' } },
+    };
+    const credsNoAuth = extractKubernetesCredentials(noAuth);
+    expect(credsNoAuth.credentialName).toBe('no-auth-cluster');
+    expect(credsNoAuth.secret.clusterName).toBe('c2');
+    expect(credsNoAuth.secret.auth.clusterUserName).toBeUndefined();
+    expect(credsNoAuth.secret.auth.clusterToken).toBeUndefined();
+
+    const noCluster = {
+      name: 'no-cluster',
+      auth: { name: 'u2' },
+    };
+    const credsNoCluster = extractKubernetesCredentials(noCluster);
+    expect(credsNoCluster.credentialName).toBe('no-cluster');
+    expect(credsNoCluster.secret.clusterName).toBeUndefined();
+    expect(credsNoCluster.secret.clusterServerURL).toBeUndefined();
+    expect(credsNoCluster.secret.auth.clusterUserName).toBe('u2');
+  });
+
+  it('safely handles nullish and non-object inputs without throwing', () => {
+    expect(() => extractKubernetesCredentials(null)).not.toThrow();
+    expect(extractKubernetesCredentials(null)).toEqual({
+      credentialName: undefined,
+      secret: {
+        clusterName: undefined,
+        clusterServerURL: undefined,
+        auth: {
+          clusterUserName: undefined,
+          clusterToken: undefined,
+          clusterClientCertificateData: undefined,
+          clusterCertificateAuthorityData: undefined,
+          clusterClientKeyData: undefined,
+        },
+      },
+    });
+
+    expect(() => extractKubernetesCredentials(undefined)).not.toThrow();
+    expect(() => extractKubernetesCredentials('not an object')).not.toThrow();
+  });
 });
