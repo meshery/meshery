@@ -127,9 +127,8 @@ func validateRemoteFileURL(u *url.URL) error {
 }
 
 // fetchRemoteFile downloads a user-supplied URL for import. It only talks to
-// public http(s) destinations (unless ALLOW_PRIVATE_REMOTE_FILE_IMPORTS is set),
-// follows a bounded number of redirects, times out,
-// and reads at most maxRemoteFileSize bytes.
+// public http(s) destinations, follows a bounded number of redirects, times
+// out, and reads at most maxRemoteFileSize bytes.
 func fetchRemoteFile(rawURL string) ([]byte, error) {
 	return fetchRemoteFileWith(newRemoteFileClient(remoteFileFetchTimeout, isBlockedRemoteFileAddr), rawURL, maxRemoteFileSize)
 }
