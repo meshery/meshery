@@ -160,11 +160,33 @@ const Environments = () => {
     : [];
 
   useEffect(() => {
-    setConnectionsData((prevData) => [...prevData, ...connectionsDataRtk]);
+    if (!connectionsDataRtk || connectionsDataRtk.length === 0) return;
+    setConnectionsData((prevData) => {
+      const seen = new Set(prevData.map((conn) => conn.id));
+      const next = [...prevData];
+      for (const conn of connectionsDataRtk) {
+        if (conn?.id && !seen.has(conn.id)) {
+          seen.add(conn.id);
+          next.push(conn);
+        }
+      }
+      return next;
+    });
   }, [connections]);
 
   useEffect(() => {
-    setEnvironmentConnectionsData((prevData) => [...prevData, ...environmentConnectionsDataRtk]);
+    if (!environmentConnectionsDataRtk || environmentConnectionsDataRtk.length === 0) return;
+    setEnvironmentConnectionsData((prevData) => {
+      const seen = new Set(prevData.map((conn) => conn.id));
+      const next = [...prevData];
+      for (const conn of environmentConnectionsDataRtk) {
+        if (conn?.id && !seen.has(conn.id)) {
+          seen.add(conn.id);
+          next.push(conn);
+        }
+      }
+      return next;
+    });
   }, [environmentConnections]);
 
   useEffect(() => {
@@ -403,10 +425,12 @@ const Environments = () => {
   const handleonAssignConnectionModalOpen = (e, environment) => {
     e.stopPropagation();
     setAssignConnectionModal(true);
-    if (connectionAssignEnv.id !== environment.id) {
-      setConnectionsData([]);
-      setEnvironmentConnectionsData([]);
-    }
+    setConnectionsData([]);
+    setEnvironmentConnectionsData([]);
+    setConnectionsPage(0);
+    setConnectionsOfEnvironmentPage(0);
+    setAssignedConnections([]);
+    setDisableTranferButton(true);
     setConnectionAssignEnv(environment);
     setSkip(false);
   };
@@ -414,6 +438,12 @@ const Environments = () => {
   const handleonAssignConnectionModalClose = () => {
     setAssignConnectionModal(false);
     setSkip(true);
+    setConnectionsData([]);
+    setEnvironmentConnectionsData([]);
+    setConnectionsPage(0);
+    setConnectionsOfEnvironmentPage(0);
+    setAssignedConnections([]);
+    setDisableTranferButton(true);
   };
 
   const handleAssignConnectionData = (updatedAssignedData) => {
@@ -429,7 +459,7 @@ const Environments = () => {
 
   const getAddedAndRemovedConnection = (allAssignedConnections) => {
     const originalConnectionsIds = environmentConnectionsData.map((conn) => conn.id);
-    const updatedConnectionsIds = allAssignedConnections.map((conn) => conn.id);
+    const updatedConnectionsIds = (allAssignedConnections || []).map((conn) => conn.id);
 
     const addedConnectionsIds = updatedConnectionsIds.filter(
       (id) => !originalConnectionsIds.includes(id),

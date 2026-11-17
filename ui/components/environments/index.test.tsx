@@ -82,7 +82,7 @@ vi.mock('../../rtk-query/environments', () => ({
   },
   useGetEnvironmentConnectionsQuery: (args: unknown, options: unknown) => {
     getEnvironmentConnectionsQuery(args, options);
-    return CONNECTIONS_QUERY_RESULT;
+    return (options as any)?.skip ? { data: undefined } : CONNECTIONS_QUERY_RESULT;
   },
   useAddConnectionToEnvironmentMutation: () => NOOP_MUTATION,
   useRemoveConnectionFromEnvironmentMutation: () => NOOP_MUTATION,
@@ -120,7 +120,18 @@ vi.mock('../shared/Modal/Modal', () => ({
   ),
 }));
 
-vi.mock('./environment-card', () => ({ default: () => null }));
+vi.mock('./environment-card', () => ({
+  default: ({ onAssignConnection, environmentDetails }: any) => (
+    <div data-testid={`env-card-${environmentDetails?.id}`}>
+      <button
+        data-testid={`assign-btn-${environmentDetails?.id}`}
+        onClick={(e) => onAssignConnection(e, environmentDetails)}
+      >
+        Assign
+      </button>
+    </div>
+  ),
+}));
 vi.mock('./styles', () => ({
   CreateButtonWrapper: ({ children }: any) => <div>{children}</div>,
   BulkActionWrapper: ({ children }: any) => <div>{children}</div>,
@@ -161,14 +172,28 @@ vi.mock('@sistent/sistent', () => ({
     </button>
   ),
   PaginationItem: () => null,
-  PrimaryActionButtons: () => null,
+  PrimaryActionButtons: ({ secondaryButtonProps }: any) => (
+    <button data-testid="cancel-connection-modal" onClick={secondaryButtonProps?.onClick}>
+      Cancel
+    </button>
+  ),
   PROMPT_VARIANTS: { DANGER: 'danger' },
   SearchBar: ({ onSearch }: any) => (
     <button data-testid="search-prod" onClick={() => onSearch('prod')}>
       search
     </button>
   ),
-  TransferList: () => null,
+  TransferList: ({ assignableData, originalAssignedData, assignablePage }: any) => (
+    <div
+      data-testid="mock-transfer-list"
+      data-assignable-ids={(assignableData || []).map((c: any) => c.id).join(',')}
+      data-assigned-ids={(originalAssignedData || []).map((c: any) => c.id).join(',')}
+    >
+      <button data-testid="paginate-assignable-btn" onClick={assignablePage}>
+        Next Page
+      </button>
+    </div>
+  ),
   Typography: ({ children }: any) => <span>{children}</span>,
   createAndEditEnvironmentSchema: {},
   createAndEditEnvironmentUiSchema: {},
@@ -344,6 +369,124 @@ describe('Environments permissions and wire query skipping', () => {
     expect(getEnvironmentsQuery).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({ skip: false }),
+    );
+  });
+});
+
+describe('Environments connection assignment modal', () => {
+  const originalEnvData = ENVIRONMENTS_QUERY_RESULT.data;
+  const originalConnData = CONNECTIONS_QUERY_RESULT.data;
+
+  beforeEach(() => {
+    ENVIRONMENTS_QUERY_RESULT.data = {
+      environments: [{ id: 'env-1', name: 'production' }],
+      totalCount: 1,
+    } as any;
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: [
+        { id: 'conn-1', name: 'Cluster A' },
+        { id: 'conn-2', name: 'Cluster B' },
+      ],
+      totalCount: 2,
+    } as any;
+  });
+
+  afterEach(() => {
+    ENVIRONMENTS_QUERY_RESULT.data = originalEnvData;
+    CONNECTIONS_QUERY_RESULT.data = originalConnData;
+  });
+
+  it('cleans up connection state on close and does not duplicate connections when reopening', async () => {
+    const user = userEvent.setup();
+    render(<Environments />);
+
+    // Open connection modal
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    const transferList = screen.getByTestId('mock-transfer-list');
+    expect(transferList.getAttribute('data-assignable-ids')).toBe('conn-1,conn-2');
+
+    // Close connection modal
+    await user.click(screen.getByTestId('cancel-connection-modal'));
+    await waitFor(() => {
+      expect(screen.queryByTestId('mock-transfer-list')).not.toBeInTheDocument();
+    });
+
+    // Reopen connection modal for the same environment
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    // Should still have exactly conn-1,conn-2 without duplicates
+    const reopenedTransferList = screen.getByTestId('mock-transfer-list');
+    expect(reopenedTransferList.getAttribute('data-assignable-ids')).toBe('conn-1,conn-2');
+  });
+
+  it('deduplicates incoming connections with identical ids', async () => {
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: [
+        { id: 'conn-1', name: 'Cluster A' },
+        { id: 'conn-1', name: 'Cluster A Duplicate' },
+        { id: 'conn-2', name: 'Cluster B' },
+      ],
+      totalCount: 3,
+    } as any;
+
+    const user = userEvent.setup();
+    render(<Environments />);
+
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    const transferList = screen.getByTestId('mock-transfer-list');
+    expect(transferList.getAttribute('data-assignable-ids')).toBe('conn-1,conn-2');
+  });
+
+  it('resets pagination offsets back to 0 when modal is closed and reopened', async () => {
+    // 50 total connections: 2 pages of 25 items each
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: [{ id: 'conn-1', name: 'Cluster A' }],
+      totalCount: 50,
+    } as any;
+
+    const user = userEvent.setup();
+    render(<Environments />);
+
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    // Advance to next page (page 1)
+    await user.click(screen.getByTestId('paginate-assignable-btn'));
+    await waitFor(() => {
+      expect(getEnvironmentConnectionsQuery).toHaveBeenCalledWith(
+        expect.objectContaining({ page: 1 }),
+        expect.anything(),
+      );
+    });
+
+    // Close modal
+    await user.click(screen.getByTestId('cancel-connection-modal'));
+    await waitFor(() => {
+      expect(screen.queryByTestId('mock-transfer-list')).not.toBeInTheDocument();
+    });
+
+    // Reopen modal: should query starting from page 0 again
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+    expect(getEnvironmentConnectionsQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 0 }),
+      expect.anything(),
     );
   });
 });
