@@ -9,12 +9,11 @@ import (
 	"net/url"
 	"syscall"
 	"time"
-
 )
 
 const (
 	// maxRemoteFileSize bounds how much of a user-supplied URL's response body is
-	// read into memory when importing a design or filter by URL (10 MiB).
+	// read into memory when importing a design, filter, or pattern by URL (10 MiB).
 	maxRemoteFileSize int64 = 10 * 1024 * 1024
 
 	// remoteFileFetchTimeout bounds the whole request, including redirects and
