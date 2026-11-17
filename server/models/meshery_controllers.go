@@ -895,6 +895,26 @@ func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
 	return fmt.Errorf("MeshSync data handler is not initialized")
 }
 
+// FlushAndResyncMeshsync serializes a cache flush with MeshSync handler
+// teardown and replacement. The cache must not be flushed unless a handler
+// is available to request repopulation.
+func (mch *MesheryControllersHelper) FlushAndResyncMeshsync(flush func() error) (flushErr error, resyncErr error) {
+	mch.meshsyncMutex.Lock()
+	defer mch.meshsyncMutex.Unlock()
+
+	if mch.ctxMeshsyncDataHandler == nil {
+		return nil, fmt.Errorf("MeshSync data handler is not initialized")
+	}
+	if flush == nil {
+		return fmt.Errorf("MeshSync cache flush callback is nil"), nil
+	}
+	if err := flush(); err != nil {
+		return err, nil
+	}
+
+	return nil, mch.ctxMeshsyncDataHandler.Resync()
+}
+
 // AddCtxControllerHandlers attaches a MesheryController for each context if
 // 1. the config is valid
 // 2. if it is not already attached

@@ -193,3 +193,32 @@ func TestResyncMeshsyncReturnsErrorWhenHandlerIsNil(t *testing.T) {
 		t.Fatal("expected an error when MeshSync data handler is nil")
 	}
 }
+
+func TestFlushAndResyncMeshsyncPreservesCacheWhenHandlerIsNil(t *testing.T) {
+	log, _ := logger.New("test", logger.Options{})
+
+	mch := NewMesheryControllersHelper(
+		log,
+		controllers.OperatorDeploymentConfig{},
+		nil,
+		nil,
+		nil,
+		nil,
+	)
+
+	flushCalled := false
+	flushErr, resyncErr := mch.FlushAndResyncMeshsync(func() error {
+		flushCalled = true
+		return nil
+	})
+
+	if flushCalled {
+		t.Fatal("cache flush callback must not run when MeshSync handler is nil")
+	}
+	if flushErr != nil {
+		t.Fatalf("flush error = %v, want nil", flushErr)
+	}
+	if resyncErr == nil {
+		t.Fatal("expected an error when MeshSync data handler is nil")
+	}
+}
