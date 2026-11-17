@@ -286,6 +286,11 @@ func (h *Handler) flushMeshsyncAction(
 		return
 	}
 
+	if machineCtx.IsDisconnected() {
+		writeJSONError(w, fmt.Sprintf("connection %s is disconnected; reconnect the cluster before flushing MeshSync", connectionID), http.StatusConflict)
+		return
+	}
+
 	// One snapshot of the context under setupLock: a credential refresh can
 	// replace machineCtx.K8sContext while this handler runs, so every read
 	// below uses the same copy instead of re-reading a field that may change.
