@@ -5192,6 +5192,11 @@ func TarXZF(srcURL, destination string, log logger.Handler) error {
 		}
 	}()
 
+	// The headers are in, so connecting is over. From here the timer runs only
+	// while a body read is waiting (see stallGuardReader), not during the setup
+	// TarXZ does before its first read.
+	stallTimer.Stop()
+
 	if resp.StatusCode != http.StatusOK {
 		return ErrFetch(fmt.Errorf("failed GET request"), "TarTZF file :"+srcURL, resp.StatusCode)
 	}
@@ -5202,7 +5207,14 @@ func TarXZF(srcURL, destination string, log logger.Handler) error {
 	return nil
 }
 
-// stallGuardReader pushes the stall timer back whenever data arrives.
+// stallGuardReader runs the stall timer only while a Read is waiting on the
+// package host. The timer is armed when a Read starts and stopped when it
+// returns, so the time the extractor spends handling data it already received
+// (a slow disk, a busy machine) is never counted as the host going silent.
+//
+// If the timer fires just as a Read returns, the bytes that Read produced are
+// still handed back; the cancellation it caused ends the download on the next
+// Read. That is a genuine stall: the host was silent for the whole timeout.
 type stallGuardReader struct {
 	r       io.Reader
 	timer   *time.Timer
@@ -5210,10 +5222,9 @@ type stallGuardReader struct {
 }
 
 func (s *stallGuardReader) Read(p []byte) (int, error) {
+	s.timer.Reset(s.timeout)
 	n, err := s.r.Read(p)
-	if n > 0 {
-		s.timer.Reset(s.timeout)
-	}
+	s.timer.Stop()
 	return n, err
 }
 
