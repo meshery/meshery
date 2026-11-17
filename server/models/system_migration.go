@@ -5,9 +5,9 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/events"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
-	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	schemasOrganization "github.com/meshery/schemas/models/v1beta2/organization"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 )
 
 // SystemDatabaseModels is the single, authoritative list of every system table

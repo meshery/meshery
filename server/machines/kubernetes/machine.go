@@ -146,6 +146,17 @@ func (m *MachineCtx) IsDisconnected() bool {
 	return m.disconnected
 }
 
+// K8sContextSnapshot returns a copy of K8sContext taken under setupLock, so a
+// reader outside the setup goroutine does not race a RefreshK8sContext write.
+// RefreshK8sContext replaces the whole struct (it never mutates the stored
+// value in place), so the copy's scalar fields stay consistent even if a
+// refresh lands after the snapshot is taken.
+func (m *MachineCtx) K8sContextSnapshot() models.K8sContext {
+	m.setupLock.Lock()
+	defer m.setupLock.Unlock()
+	return m.K8sContext
+}
+
 const (
 	machineName = "kubernetes"
 
@@ -164,7 +175,7 @@ func UnreachableConditionKey(connectionID core.Uuid) string {
 
 func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
-	log.Info("initialising K8s machine for connetion Id", connectionID)
+	log.Info("initialising K8s machine for connection Id", connectionID)
 	if err != nil {
 		return nil, machines.ErrInititalizeK8sMachine(err)
 	}

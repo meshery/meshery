@@ -72,14 +72,19 @@ mesheryctl environment view --orgId [orgId]
 			return err
 		}
 
+		if environmentResponse == nil {
+			utils.Log.Info("No environment(s) found for the given ID: ", environmentViewFlagsProvided.orgId)
+			return nil
+		}
+
 		var selectedEnvironment environment.Environment
 
-		switch environmentResponse.TotalCount {
+		switch len(environmentResponse.Environments) {
 		case 0:
 			utils.Log.Info("No environment(s) found for the given ID: ", environmentViewFlagsProvided.orgId)
 			return nil
 		case 1:
-			selectedEnvironment = environmentResponse.Environments[0] // Update the type of selectedModel
+			selectedEnvironment = environmentResponse.Environments[0]
 		default:
 			selectedEnvironment, err = selectEnvironmentPrompt(environmentResponse.Environments)
 			if err != nil {
@@ -107,7 +112,13 @@ mesheryctl environment view --orgId [orgId]
 				return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
 			}
 
-			environmentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedEnvironment.Name), " ", "_")
+			environmentString := utils.SanitizeFileName(fmt.Sprintf("%v", selectedEnvironment.Name))
+			if environmentString == "" {
+				environmentString = utils.SanitizeFileName(selectedEnvironment.ID.String())
+				if environmentString == "" {
+					environmentString = "unknown"
+				}
+			}
 			fileName := fmt.Sprintf("environment_%s.%s", environmentString, strings.ToLower(environmentViewFlagsProvided.outputFormat))
 			file := filepath.Join(homeDir, ".meshery", fileName)
 			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[environment.Environment]{}

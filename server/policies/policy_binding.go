@@ -1,13 +1,14 @@
 package policies
 
 import (
+	"slices"
 	"sort"
 	"strings"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // EdgeBindingPolicy handles edge binding relationships (3-party: from, binding, to).
@@ -168,6 +169,10 @@ func identifyBindingRelationships(relDef *relationship.RelationshipDefinition, d
 	}
 	var identified []*relationship.RelationshipDefinition
 
+	// Every component takes part in O(N) candidate pairs below. Share its
+	// generic-map form across all of them instead of re-encoding it per pair.
+	maps := componentMapCache{}
+
 	for _, ss := range *relDef.Selectors {
 		fromSelByKind := make(map[string]relationship.SelectorItem)
 		for _, fromSel := range ss.Allow.From {
@@ -213,7 +218,7 @@ func identifyBindingRelationships(relDef *relationship.RelationshipDefinition, d
 					if !exists {
 						continue
 					}
-					if !isValidBindingTyped(bindingDecl, toDecl, toSel, design) {
+					if !isValidBinding(bindingDecl, toDecl, toSel, design, maps) {
 						continue
 					}
 					validToDecls[bindingDecl.ID] = append(validToDecls[bindingDecl.ID], toMatch{decl: toDecl, sel: toSel})
@@ -231,7 +236,7 @@ func identifyBindingRelationships(relDef *relationship.RelationshipDefinition, d
 					if fromDecl.ID == bindingDecl.ID {
 						continue
 					}
-					if !isValidBindingTyped(fromDecl, bindingDecl, fromSel, design) {
+					if !isValidBinding(fromDecl, bindingDecl, fromSel, design, maps) {
 						continue
 					}
 
@@ -242,13 +247,11 @@ func identifyBindingRelationships(relDef *relationship.RelationshipDefinition, d
 							continue
 						}
 
-						newFromSel := fromSel
+						newFromSel := patchBindingSelectorIDsTyped(&fromSel, fromDecl.ID.String(), bindingDecl.ID.String())
 						newFromSel.ID = &fromDecl.ID
-						patchBindingSelectorIDsTyped(&newFromSel, fromDecl.ID.String(), bindingDecl.ID.String())
 
-						newToSel := toSel
+						newToSel := patchBindingSelectorIDsTyped(&toSel, bindingDecl.ID.String(), toDecl.ID.String())
 						newToSel.ID = &toDecl.ID
-						patchBindingSelectorIDsTyped(&newToSel, bindingDecl.ID.String(), toDecl.ID.String())
 
 						selectorSetItem := relationship.SelectorSetItem{
 							Allow: relationship.Selector{
@@ -322,27 +325,128 @@ func indexToSelectorsByKindPairTyped(toSels []relationship.SelectorItem) map[str
 	return result
 }
 
-// patchBindingSelectorIDsTyped sets the IDs in a binding selector's match field.
-func patchBindingSelectorIDsTyped(sel *relationship.SelectorItem, matchFromID, matchToID string) {
-	if sel.Match == nil {
-		return
+// copyMatchSelector creates a deep copy of a MatchSelector, isolating MatchSelectorItem
+// slices and their inner ID pointers so that ID patching does not mutate shared
+// definitions or corrupt sibling relationships in multi-binding designs.
+func copyMatchSelector(m *relationship.MatchSelector) *relationship.MatchSelector {
+	if m == nil {
+		return nil
 	}
+	cp := &relationship.MatchSelector{}
+	if m.From != nil {
+		fromSlice := make([]relationship.MatchSelectorItem, len(*m.From))
+		for i, item := range *m.From {
+			fromSlice[i] = item
+			if item.ID != nil {
+				id := *item.ID
+				fromSlice[i].ID = &id
+			}
+		}
+		cp.From = &fromSlice
+	}
+	if m.To != nil {
+		toSlice := make([]relationship.MatchSelectorItem, len(*m.To))
+		for i, item := range *m.To {
+			toSlice[i] = item
+			if item.ID != nil {
+				id := *item.ID
+				toSlice[i].ID = &id
+			}
+		}
+		cp.To = &toSlice
+	}
+	if m.Refs != nil {
+		refsSlice := make([][]string, len(*m.Refs))
+		for i, inner := range *m.Refs {
+			innerCopy := make([]string, len(inner))
+			copy(innerCopy, inner)
+			refsSlice[i] = innerCopy
+		}
+		cp.Refs = &refsSlice
+	}
+	return cp
+}
+
+// patchBindingSelectorIDsTyped deep-copies the selector item and sets the IDs in its match field,
+// ensuring the source template and previously identified relationships remain unmodified.
+func patchBindingSelectorIDsTyped(sel *relationship.SelectorItem, matchFromID, matchToID string) relationship.SelectorItem {
+	cp := *sel
+	if cp.Match == nil {
+		return cp
+	}
+	cp.Match = copyMatchSelector(cp.Match)
 	fromUUID, _ := uuidFromString(matchFromID)
 	toUUID, _ := uuidFromString(matchToID)
-	if sel.Match.From != nil {
-		for i := range *sel.Match.From {
-			(*sel.Match.From)[i].ID = &fromUUID
+	if cp.Match.From != nil {
+		for i := range *cp.Match.From {
+			(*cp.Match.From)[i].ID = &fromUUID
 		}
 	}
-	if sel.Match.To != nil {
-		for i := range *sel.Match.To {
-			(*sel.Match.To)[i].ID = &toUUID
+	if cp.Match.To != nil {
+		for i := range *cp.Match.To {
+			(*cp.Match.To)[i].ID = &toUUID
 		}
 	}
+	return cp
+}
+
+// componentMapCache memoizes toGenericMap per component for the lifetime of
+// one identification pass. toGenericMap is a JSON round-trip, and the result
+// is only read (by resolvePath), so a component's map can be shared by every
+// candidate pair it appears in. A nil cache disables memoization.
+type componentMapCache map[*component.ComponentDefinition]map[string]interface{}
+
+func (c componentMapCache) get(comp *component.ComponentDefinition) map[string]interface{} {
+	if m, ok := c[comp]; ok {
+		return m
+	}
+	m, _ := toGenericMap(comp)
+	if c != nil {
+		c[comp] = m
+	}
+	return m
+}
+
+// resolveComponentPath resolves "_" wildcards in path against comp. The
+// generic map is only built when the path actually contains a wildcard;
+// otherwise resolvePath would return the path unchanged without reading it.
+func resolveComponentPath(path []string, comp *component.ComponentDefinition, maps componentMapCache) []string {
+	if !slices.Contains(path, "_") {
+		return path
+	}
+	return resolvePath(path, maps.get(comp))
+}
+
+// valueForComponentAtPath reads the value at path in comp. Lookups outside
+// "configuration" go through the pass cache: configurationForComponentAtPath
+// converts the component with toGenericMap on every call for such paths, so
+// routing them through maps keeps the one-conversion-per-pass guarantee for
+// non-configuration refs too (e.g. ["displayName"]). Configuration paths
+// are unchanged, except that an aliased component's parent is also read from
+// the cache: getComponentConfiguration converts the parent on every call,
+// so without this the parent would be converted once per candidate pair. A
+// failed conversion still yields nil, as before.
+func valueForComponentAtPath(path []string, comp *component.ComponentDefinition, design *pattern.PatternFile, maps componentMapCache) interface{} {
+	if len(path) == 0 {
+		return nil
+	}
+	if path[0] == "configuration" {
+		if parent, refPath := resolveComponentAlias(comp.ID.String(), design); parent != nil {
+			return objectGetNested(objectGetNested(maps.get(parent), refPath, nil), popFirst(path), nil)
+		}
+		return configurationForComponentAtPath(path, comp, design)
+	}
+	return objectGetNested(maps.get(comp), path, nil)
 }
 
 // isValidBindingTyped checks if two components match via a binding selector's match field.
 func isValidBindingTyped(comp1, comp2 *component.ComponentDefinition, sel relationship.SelectorItem, design *pattern.PatternFile) bool {
+	return isValidBinding(comp1, comp2, sel, design, nil)
+}
+
+// isValidBinding is isValidBindingTyped with a caller-owned componentMapCache,
+// so a caller checking many pairs converts each component at most once.
+func isValidBinding(comp1, comp2 *component.ComponentDefinition, sel relationship.SelectorItem, design *pattern.PatternFile, maps componentMapCache) bool {
 	if sel.Match == nil {
 		return false
 	}
@@ -353,16 +457,13 @@ func isValidBindingTyped(comp1, comp2 *component.ComponentDefinition, sel relati
 		return false
 	}
 
-	mutatorMap, _ := toGenericMap(mutatorComp)
-	mutatedMap, _ := toGenericMap(mutatedComp)
-
 	count := min(len(mutatorPaths), len(mutatedPaths))
 
 	for i := range count {
-		resolvedFrom := resolvePath(mutatorPaths[i], mutatorMap)
-		resolvedTo := resolvePath(mutatedPaths[i], mutatedMap)
-		val1 := configurationForComponentAtPath(resolvedFrom, mutatorComp, design)
-		val2 := configurationForComponentAtPath(resolvedTo, mutatedComp, design)
+		resolvedFrom := resolveComponentPath(mutatorPaths[i], mutatorComp, maps)
+		resolvedTo := resolveComponentPath(mutatedPaths[i], mutatedComp, maps)
+		val1 := valueForComponentAtPath(resolvedFrom, mutatorComp, design, maps)
+		val2 := valueForComponentAtPath(resolvedTo, mutatedComp, design, maps)
 		if val1 != nil && val2 != nil && !deepEqual(val1, val2) {
 			return false
 		}

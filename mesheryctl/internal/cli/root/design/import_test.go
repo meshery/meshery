@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"path/filepath"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
@@ -109,6 +110,29 @@ func Test_importPattern_SendsCamelCaseFileName(t *testing.T) {
 	assert.Equal(t, "sampleDesign.golden", capturedBody["fileName"])
 }
 
+// Test_importPattern_PlatformFileName checks the filename and default name.
+func Test_importPattern_PlatformFileName(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	defer resetVariables()
+	defer utils.ResetCommandFlags(DesignCmd, t)
+	utils.TokenFlag = utils.GetToken(t)
+	var body map[string]interface{}
+	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/pattern/import", func(req *http.Request) (*http.Response, error) {
+		if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
+			return nil, err
+		}
+		return httpmock.NewStringResponse(200, `[{"id":"3817ec9a-1d83-4f6f-9154-0fd4408ba9f0","name":"SampleApp"}]`), nil
+	})
+	DesignCmd.SetArgs([]string{"import", "-f", filepath.Join("fixtures", "sampleDesign.golden")})
+	if err := DesignCmd.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, "sampleDesign.golden", body["fileName"])
+	assert.Equal(t, "sampleDesign.golden", body["name"])
+}
+
 // Test_importPattern_SendsContractUrlPayload covers the URL oneOf arm, the one
 // the camelCase regression test above cannot reach. Both arms are now built from
 // the same generated MesheryPatternImportRequestBody, so the URL arm has to carry
@@ -188,4 +212,39 @@ func mapKeys(m map[string]interface{}) []string {
 		keys = append(keys, k)
 	}
 	return keys
+}
+
+func TestImportPatternURLDefaultNameExcludesQuery(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	defer resetVariables()
+	utils.TokenFlag = utils.GetToken(t)
+	var captured map[string]interface{}
+	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/pattern/import", func(req *http.Request) (*http.Response, error) {
+		if err := json.NewDecoder(req.Body).Decode(&captured); err != nil {
+			return nil, err
+		}
+		return httpmock.NewStringResponse(200, `[{"id":"3817ec9a-1d83-4f6f-9154-0fd4408ba9f0","name":"sample"}]`), nil
+	})
+	_, err := importPattern("", "https://example.com/design.yaml?token=secret#fragment", testContext.BaseURL+"/api/pattern/import")
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, "design.yaml", captured["name"])
+	assert.Equal(t, "https://example.com/design.yaml?token=secret#fragment", captured["url"])
+}
+
+func TestImportPatternURLWithoutPathNameRequiresNameFlag(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	defer resetVariables()
+	utils.TokenFlag = utils.GetToken(t)
+	oldName := name
+	name = ""
+	defer func() { name = oldName }()
+	_, err := importPattern("", "https://example.com?token=secret", testContext.BaseURL+"/api/pattern/import")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "--name")
 }
