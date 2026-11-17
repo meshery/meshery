@@ -577,6 +577,20 @@ func TestTarXZ_GlobalPaxRecords(t *testing.T) {
 		}
 	})
 
+	// A record Go's reader cannot parse is dropped along with the whole
+	// PAXRecords map, so the header reaches the extractor looking empty. It must
+	// not pass as if it held only a comment.
+	t.Run("a malformed numeric record is rejected", func(t *testing.T) {
+		destination := filepath.Join(t.TempDir(), "pkg")
+		err := TarXZ(bytes.NewReader(build(map[string]string{"size": "invalid"})), destination)
+		if err == nil {
+			t.Fatal("a global header with an unparseable size record was accepted")
+		}
+		if _, statErr := os.Stat(destination); !os.IsNotExist(statErr) {
+			t.Error("a rejected package left an install behind")
+		}
+	})
+
 	for _, key := range []string{"path", "size"} {
 		t.Run(key+" is rejected", func(t *testing.T) {
 			destination := filepath.Join(t.TempDir(), "pkg")
