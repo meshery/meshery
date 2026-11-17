@@ -70,6 +70,10 @@ func (s *stubActionProvider) DryRun(_ []*component.ComponentDefinition) (map[str
 	return nil, nil
 }
 
+func (s *stubActionProvider) ResourceCapacity(_ []*component.ComponentDefinition) (map[string]*patterncore.ResourceCapacityPreview, error) {
+	return nil, nil
+}
+
 func (s *stubActionProvider) Mutate(_ *pattern.PatternFile) {}
 
 func (s *stubActionProvider) Provision(ccp CompConfigPair) ([]patterns.DeploymentMessagePerContext, error) {

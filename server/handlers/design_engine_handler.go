@@ -39,6 +39,7 @@ import (
 	"k8s.io/client-go/restmapper"
 
 	patternHelpers "github.com/meshery/meshkit/models/patterns"
+	"gorm.io/gorm"
 )
 
 // PatternFileHandler handles the requested related to pattern files
@@ -267,6 +268,7 @@ func _processPattern(opts *patterncore.ProcessPatternOptions) (map[string]interf
 			Add(stages.Validator(sip, sap, opts.Validate)) // not required as client side RJSF validation is enough, but for mesheryctl client it's required
 		if opts.DryRun {
 			chain.Add(stages.DryRun(sip, sap))
+			chain.Add(stages.ResourceCapacity(sip, sap))
 		}
 		if !opts.DryRun {
 			chain.
@@ -282,7 +284,7 @@ func _processPattern(opts *patterncore.ProcessPatternOptions) (map[string]interf
 					if strings.HasSuffix(k, stages.ProvisionSuffixKey) {
 						key, _ = strings.CutSuffix(k, stages.ProvisionSuffixKey)
 					}
-					if k == stages.DryRunResponseKey {
+					if k == stages.DryRunResponseKey || k == stages.ResourceCapacityResponseKey {
 						key = k
 					}
 					resp[key] = v
@@ -446,6 +448,46 @@ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition)
 		}
 	}
 	return
+}
+
+// ResourceCapacity computes the resource capacity and scheduling preview across all target Kubernetes contexts.
+// It inspects workloads in the design, queries MeshSync cluster records, and estimates CPU & Memory fit.
+func (sap *serviceActionProvider) ResourceCapacity(comps []*component.ComponentDefinition) (map[string]*patterncore.ResourceCapacityPreview, error) {
+	resp := make(map[string]*patterncore.ResourceCapacityPreview)
+
+	if len(sap.ctxTokubeconfig) == 0 {
+		return resp, nil
+	}
+
+	var db *gorm.DB
+	if sap.provider != nil {
+		db = sap.provider.GetGenericPersister()
+	}
+
+	for ctxID := range sap.ctxTokubeconfig {
+		clusterName := ctxID
+		clusterIDs := []string{ctxID}
+
+		if sap.provider != nil {
+			if k8sCtx, err := sap.provider.GetK8sContext(sap.token, ctxID); err == nil {
+				if k8sCtx.Name != "" {
+					clusterName = k8sCtx.Name
+				}
+				if k8sCtx.KubernetesServerID != nil && k8sCtx.KubernetesServerID.String() != "" {
+					clusterIDs = append(clusterIDs, k8sCtx.KubernetesServerID.String())
+				}
+				if k8sCtx.ConnectionID != "" && k8sCtx.ConnectionID != ctxID {
+					clusterIDs = append(clusterIDs, k8sCtx.ConnectionID)
+				}
+			}
+		}
+
+		clusterCap := patterncore.GetClusterNodeCapacityFromPersister(db, clusterIDs)
+		preview := patterncore.CalculateResourceCapacity(ctxID, clusterName, comps, clusterCap)
+		resp[ctxID] = preview
+	}
+
+	return resp, nil
 }
 
 // collectDeclaredNamespaces returns the names of the Namespace components declared in the design.
