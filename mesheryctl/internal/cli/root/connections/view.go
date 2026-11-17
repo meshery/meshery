@@ -75,6 +75,10 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 			if err != nil {
 				return err
 			}
+			if fetchedConnection == nil {
+				utils.Log.Info("No connection(s) found for the given name or ID: ", connectionNameOrID)
+				return nil
+			}
 			selectedConnection = fetchedConnection
 		} else {
 			fetchedConnection, err := fetchConnectionByName(connectionNameOrID)
@@ -88,6 +92,11 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 			}
 
 			selectedConnection = fetchedConnection
+		}
+
+		if selectedConnection == nil {
+			utils.Log.Info("No connection(s) found for the given name or ID: ", connectionNameOrID)
+			return nil
 		}
 
 		savePath := ""
@@ -168,7 +177,7 @@ func isArgumentUUID(arg string) bool {
 	return err == nil
 }
 
-func fetchConnectionByID(connectionID string) (*connection.Connection, error) {
+var fetchConnectionByID = func(connectionID string) (*connection.Connection, error) {
 	url := fmt.Sprintf("%s/%s", connectionApiPath, connectionID)
 	fetchedConnection, err := api.Fetch[connection.Connection](url)
 	if err != nil {

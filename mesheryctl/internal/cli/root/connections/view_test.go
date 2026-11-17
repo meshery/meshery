@@ -416,3 +416,40 @@ func TestSelectConnectionPromptNilEntries(t *testing.T) {
 		})
 	}
 }
+
+func TestConnectionViewNotFoundByName(t *testing.T) {
+	run := utils.MesheryCommandRun{
+		Cmd:        ConnectionsCmd,
+		Args:       []string{"view", "nonexistent-connection"},
+		CommandDir: utils.CallerDir(t),
+		Mocks: []utils.MockURL{
+			{
+				URL:      "/api/integrations/connections?pagesize=all&search=nonexistent-connection",
+				Response: "view.connection.api.empty.response.golden",
+			},
+		},
+	}
+	_, err := utils.RunMesheryctlCommand(t, run)
+	if err != nil {
+		t.Fatalf("view for non-existent connection name should succeed without error: %v", err)
+	}
+}
+
+func TestConnectionViewNotFoundByUUID(t *testing.T) {
+	origFetch := fetchConnectionByID
+	defer func() { fetchConnectionByID = origFetch }()
+	fetchConnectionByID = func(id string) (*connection.Connection, error) {
+		return nil, nil
+	}
+
+	testUUID := "00000000-0000-0000-0000-000000000000"
+	run := utils.MesheryCommandRun{
+		Cmd:        ConnectionsCmd,
+		Args:       []string{"view", testUUID},
+		CommandDir: utils.CallerDir(t),
+	}
+	_, err := utils.RunMesheryctlCommand(t, run)
+	if err != nil {
+		t.Fatalf("view for not-found UUID should succeed without error: %v", err)
+	}
+}
