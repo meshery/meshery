@@ -157,6 +157,11 @@ func TestMarkAllEventsReadPropagatesProviderStatus(t *testing.T) {
 		wantStatus  int
 	}{
 		{
+			name:        "remote bad request",
+			providerErr: models.ErrPost(stderrors.New("bad request"), "mark all events read", http.StatusBadRequest),
+			wantStatus:  http.StatusBadRequest,
+		},
+		{
 			name:        "remote unauthorized",
 			providerErr: models.ErrPost(stderrors.New("unauthorized"), "mark all events read", http.StatusUnauthorized),
 			wantStatus:  http.StatusUnauthorized,
@@ -188,6 +193,37 @@ func TestMarkAllEventsReadPropagatesProviderStatus(t *testing.T) {
 
 			if recorder.Code != tc.wantStatus {
 				t.Fatalf("status = %d, want %d; body=%s", recorder.Code, tc.wantStatus, recorder.Body.String())
+			}
+		})
+	}
+}
+
+func TestMarkAllEventsReadRejectsMissingDependencies(t *testing.T) {
+	tests := []struct {
+		name     string
+		user     *models.User
+		provider models.Provider
+	}{
+		{
+			name: "missing provider",
+			user: &models.User{ID: uuid.Must(uuid.NewV4())},
+		},
+		{
+			name:     "missing user",
+			provider: &models.DefaultLocalProvider{},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			handler := &Handler{log: newTestLogger(t)}
+			req := httptest.NewRequest(http.MethodPost, "/api/events/mark-all-read", nil)
+			recorder := httptest.NewRecorder()
+
+			handler.MarkAllEventsRead(recorder, req, nil, tc.user, tc.provider)
+
+			if recorder.Code != http.StatusInternalServerError {
+				t.Fatalf("status = %d, want 500; body=%s", recorder.Code, recorder.Body.String())
 			}
 		})
 	}

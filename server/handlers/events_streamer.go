@@ -246,6 +246,19 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 }
 
 func (h *Handler) MarkAllEventsRead(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if provider == nil {
+		markAllErr := ErrMarkAllRead(fmt.Errorf("provider not initialized"))
+		h.log.Error(markAllErr)
+		writeMeshkitError(w, markAllErr, http.StatusInternalServerError)
+		return
+	}
+	if user == nil {
+		markAllErr := ErrMarkAllRead(fmt.Errorf("authenticated user not initialized"))
+		h.log.Error(markAllErr)
+		writeMeshkitError(w, markAllErr, http.StatusInternalServerError)
+		return
+	}
+
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	if err := provider.MarkAllEventsRead(req.Context(), token, user.ID); err != nil {
 		status := providerStatusOrInternal(err)

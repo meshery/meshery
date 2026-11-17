@@ -219,13 +219,12 @@ func TestMarkAllEventsReadUpdatesOnlyAuthenticatedUsersUnreadEvents(t *testing.T
 	provider, db := newTestProviderWithEventDB(t)
 	userID := uuid.Must(uuid.NewV4())
 	otherUserID := uuid.Must(uuid.NewV4())
-	systemID := uuid.Must(uuid.NewV4())
 
 	testEvents := []events.Event{
 		{ID: uuid.Must(uuid.NewV4()), Owner: &userID, Status: events.Unread},
 		{ID: uuid.Must(uuid.NewV4()), Owner: &userID, Status: events.Read},
 		{ID: uuid.Must(uuid.NewV4()), Owner: &otherUserID, Status: events.Unread},
-		{ID: uuid.Must(uuid.NewV4()), Owner: &systemID, Status: events.Unread},
+		{ID: uuid.Must(uuid.NewV4()), Owner: nil, Status: events.Unread},
 	}
 	if err := db.Create(&testEvents).Error; err != nil {
 		t.Fatalf("failed to seed events: %v", err)

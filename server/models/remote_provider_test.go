@@ -56,7 +56,7 @@ func TestRemoteProviderMarkAllEventsReadForwardsRequest(t *testing.T) {
 }
 
 func TestRemoteProviderMarkAllEventsReadPreservesFailureStatus(t *testing.T) {
-	for _, status := range []int{http.StatusUnauthorized, http.StatusTooManyRequests, http.StatusInternalServerError} {
+	for _, status := range []int{http.StatusBadRequest, http.StatusUnauthorized, http.StatusTooManyRequests, http.StatusInternalServerError} {
 		t.Run(http.StatusText(status), func(t *testing.T) {
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(status)
