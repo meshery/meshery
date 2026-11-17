@@ -2310,8 +2310,8 @@ func (l *DefaultLocalProvider) BulkUpdateEventStatus(token string, eventIDs []*c
 
 }
 
-func (l *DefaultLocalProvider) MarkAllEventsRead(_ context.Context, _ string, userID core.Uuid) error {
-	return l.EventsPersister.DB.
+func (l *DefaultLocalProvider) MarkAllEventsRead(ctx context.Context, _ string, userID core.Uuid) error {
+	return l.EventsPersister.DB.WithContext(ctx).
 		Model(&events.Event{Status: events.Read}).
 		Where("owner = ? AND status = ?", userID, events.Unread).
 		Update("status", events.Read).
