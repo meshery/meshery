@@ -1,4 +1,4 @@
-import { urlEncodeArrayParam, urlEncodeParams } from '@/utils/utils';
+import { urlEncodeArrayParam, urlEncodeParams } from '@/utils/queryEncoding';
 import { api, mesheryApiPath } from './index';
 import { initiateQuery } from './utils';
 import _ from 'lodash';
@@ -41,21 +41,23 @@ export const viewsApi = api
         invalidatesTags: (result, error, { id }) => [{ type: TAGS.VIEWS, id }],
       }),
       fetchViews: builder.query({
-        query: (queryArg) =>
-          mesheryApiPath(
-            `extensions/api/content/views?${urlEncodeArrayParam(
-              'visibility',
-              queryArg.visibility,
-            )}&${urlEncodeParams({
-              page: queryArg.page,
-              pagesize: queryArg.pagesize,
-              search: queryArg.search || '',
-              order: queryArg.order || '',
-              trim: queryArg.trim || false,
-              shared: queryArg.shared || false,
-              userId: queryArg.userId,
-            })}`,
-          ),
+        query: (queryArg) => {
+          const visibility = urlEncodeArrayParam('visibility', queryArg.visibility);
+          const otherParams = urlEncodeParams({
+            page: queryArg.page,
+            pagesize: queryArg.pagesize,
+            search: queryArg.search || '',
+            order: queryArg.order || '',
+            trim: queryArg.trim || false,
+            shared: queryArg.shared || false,
+            userId: queryArg.userId,
+          });
+          const queryString = [visibility, otherParams].filter(Boolean).join('&');
+
+          return mesheryApiPath(
+            `extensions/api/content/views${queryString ? `?${queryString}` : ''}`,
+          );
+        },
 
         // Only have one cache entry
         serializeQueryArgs: ({ endpointName }) => {

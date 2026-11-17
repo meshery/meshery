@@ -537,12 +537,23 @@ describe('getDesignVersion', () => {
 });
 
 describe('urlEncodeArrayParam / urlEncodeParams', () => {
-  it('passes through a string parameter value unchanged', () => {
-    expect(urlEncodeArrayParam('id', 'abc')).toBe('abc');
+  it('encodes a string as a key=value pair', () => {
+    expect(urlEncodeArrayParam('view id', 'public & shared')).toBe(
+      'view%20id=public%20%26%20shared',
+    );
   });
 
   it('builds repeated key=value pairs from an array', () => {
     expect(urlEncodeArrayParam('id', ['a', 'b'])).toBe('id=a&id=b');
+    expect(urlEncodeArrayParam('view id', ['a&b', 'x y'])).toBe('view%20id=a%26b&view%20id=x%20y');
+  });
+
+  it('returns no parameter for missing, empty, or non-array values', () => {
+    expect(urlEncodeArrayParam('id', undefined)).toBe('');
+    expect(urlEncodeArrayParam('id', null)).toBe('');
+    expect(urlEncodeArrayParam('id', '')).toBe('');
+    expect(urlEncodeArrayParam('id', [])).toBe('');
+    expect(urlEncodeArrayParam('id', 42)).toBe('');
   });
 
   it('produces a query string from a record', () => {

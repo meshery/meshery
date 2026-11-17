@@ -452,29 +452,7 @@ export const getDesignVersion = (design) => {
     }
   }
 };
-export const urlEncodeArrayParam = (key, array) => {
-  if (typeof array === 'string') {
-    return array;
-  }
-  return array.map((item) => `${key}=${item}`).join('&');
-};
-
-export const urlEncodeParams = (params) => {
-  const urlSearchParams = new URLSearchParams();
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (_.isNil(value)) {
-      return;
-    }
-    if (Array.isArray(value)) {
-      value.forEach((val) => urlSearchParams.append(key, val));
-    } else {
-      urlSearchParams.append(key, value);
-    }
-  });
-
-  return urlSearchParams.toString();
-};
+export { urlEncodeArrayParam, urlEncodeParams } from './queryEncoding';
 
 export function isExtensionOpen() {
   return window.location.pathname.startsWith(mesheryExtensionRoute);

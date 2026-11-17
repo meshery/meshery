@@ -1,28 +1,5 @@
 import { describe, expect, it, vi, beforeAll, beforeEach, afterEach } from 'vitest';
 
-// Mock @/utils/utils so we don't transitively pull React-component imports
-// (SVG/JS-as-JSX) into Node-test environment. We only need the two encode
-// helpers used by view.ts.
-vi.mock('@/utils/utils', () => ({
-  urlEncodeArrayParam: (key: string, array: unknown) => {
-    if (typeof array === 'string') return `${key}=${array}`;
-    if (!Array.isArray(array)) return '';
-    return array.map((item) => `${key}=${item}`).join('&');
-  },
-  urlEncodeParams: (params: Record<string, unknown>) => {
-    const usp = new URLSearchParams();
-    Object.entries(params).forEach(([k, v]) => {
-      if (v === undefined || v === null) return;
-      if (Array.isArray(v)) {
-        v.forEach((vv) => usp.append(k, String(vv)));
-      } else {
-        usp.append(k, String(v));
-      }
-    });
-    return usp.toString();
-  },
-}));
-
 // Mock the rtk-query helper `initiateQuery` so we don't transitively pull
 // `../store` into the test environment.
 vi.mock('../utils', () => ({
@@ -132,6 +109,7 @@ describe('view endpoints', () => {
     expect(req.url).toContain('page=1');
     expect(req.url).toContain('pagesize=25');
     expect(req.url).toContain('search=foo');
+    expect(req.url).toContain('order=name');
     expect(req.url).toContain('userId=user-1');
     expect(req.url).toContain('trim=true');
     expect(req.url).toContain('shared=true');
@@ -152,6 +130,41 @@ describe('view endpoints', () => {
     expect(req.url).toContain('order=');
     expect(req.url).toContain('trim=false');
     expect(req.url).toContain('shared=false');
+  });
+
+  it.each([undefined, null, [], 42])(
+    'fetchViews omits invalid or empty visibility without a malformed query prefix (%s)',
+    async (visibility) => {
+      const { api, store } = await setupStore();
+      await store.dispatch(api.endpoints.fetchViews.initiate({ visibility, page: 1 }));
+      const req = fetchMock.mock.calls[0][0] as Request;
+      const url = new URL(req.url);
+      expect(url.search).not.toMatch(/^\?&/);
+      expect(url.searchParams.has('visibility')).toBe(false);
+      expect(url.searchParams.get('page')).toBe('1');
+    },
+  );
+
+  it('fetchViews percent-encodes visibility values', async () => {
+    const { api, store } = await setupStore();
+    await store.dispatch(
+      api.endpoints.fetchViews.initiate({ visibility: ['public & shared', 'x/y'] }),
+    );
+    const req = fetchMock.mock.calls[0][0] as Request;
+    const url = new URL(req.url);
+    expect(url.search).toContain('visibility=public%20%26%20shared');
+    expect(url.search).toContain('visibility=x%2Fy');
+    expect(url.search).not.toContain('visibility=public%20&');
+    expect(url.searchParams.getAll('visibility')).toEqual(['public & shared', 'x/y']);
+  });
+
+  it('fetchViews percent-encodes a string visibility', async () => {
+    const { api, store } = await setupStore();
+    await store.dispatch(api.endpoints.fetchViews.initiate({ visibility: 'public&shared' }));
+    const req = fetchMock.mock.calls[0][0] as Request;
+    const url = new URL(req.url);
+    expect(url.search).toContain('visibility=public%26shared');
+    expect(url.searchParams.getAll('visibility')).toEqual(['public&shared']);
   });
 
   it('getView helper delegates to initiateQuery with the getView endpoint', async () => {
