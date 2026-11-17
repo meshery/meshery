@@ -1,12 +1,15 @@
 package filter
 
 import (
+	"bytes"
 	"fmt"
 	"path/filepath"
 	"reflect"
 	"runtime"
 	"testing"
 	"time"
+
+	"github.com/jarcoal/httpmock"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -216,5 +219,33 @@ func TestProcessFilterData(t *testing.T) {
 				t.Errorf("gotFooter = %#v, want %#v", gotFooter, tt.wantFooter)
 			}
 		})
+	}
+}
+
+// A failed fetch is returned to Cobra, which prints it. Logging it here as well
+// made the error appear twice on the terminal.
+func TestListCmdFetchErrorIsNotLoggedTwice(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.ResetCommandFlags(FilterCmd, t)
+
+	utils.TokenFlag = utils.GetToken(t)
+	httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/filter?pagesize=25&page=0",
+		httpmock.NewStringResponder(500, "internal error"))
+
+	// Logger errors go to the logger's error output, not to the command's output.
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	var logged bytes.Buffer
+	utils.Log.UpdateErrorLogOutput(&logged)
+
+	mesheryctlflags.InitValidators(FilterCmd)
+	FilterCmd.SetArgs([]string{"list"})
+	FilterCmd.SetOut(&bytes.Buffer{})
+	FilterCmd.SetErr(&bytes.Buffer{})
+
+	if err := FilterCmd.Execute(); err == nil {
+		t.Fatal("expected an error when the server replies 500")
+	}
+	if logged.Len() != 0 {
+		t.Errorf("the fetch error must only be returned, not also logged; logged: %q", logged.String())
 	}
 }
