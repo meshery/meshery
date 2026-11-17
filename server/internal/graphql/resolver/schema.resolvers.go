@@ -10,24 +10,38 @@ import (
 
 	"github.com/meshery/meshery/server/internal/graphql/generated"
 	"github.com/meshery/meshery/server/internal/graphql/model"
-	"github.com/meshery/meshery/server/models"
 )
 
 // ChangeOperatorStatus is the resolver for the changeOperatorStatus field.
 func (r *mutationResolver) ChangeOperatorStatus(ctx context.Context, input *model.OperatorStatusInput) (model.Status, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if input == nil {
+		return model.StatusUnknown, ErrInvalidRequest
+	}
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return model.StatusUnknown, err
+	}
 	return r.changeOperatorStatus(ctx, provider, input.TargetStatus, input.ContextID)
 }
 
 // ChangeAdapterStatus is the resolver for the changeAdapterStatus field.
 func (r *mutationResolver) ChangeAdapterStatus(ctx context.Context, input *model.AdapterStatusInput) (model.Status, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if input == nil {
+		return model.StatusUnknown, ErrInvalidRequest
+	}
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return model.StatusUnknown, err
+	}
 	return r.changeAdapterStatus(ctx, provider, input.TargetStatus, input.Adapter, input.TargetPort)
 }
 
 // GetAvailableAddons is the resolver for the getAvailableAddons field.
 func (r *queryResolver) GetAvailableAddons(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.AddonList, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return nil, err
+	}
 	if filter != nil {
 		return r.getAvailableAddons(ctx, provider, filter)
 	}
@@ -37,7 +51,10 @@ func (r *queryResolver) GetAvailableAddons(ctx context.Context, filter *model.Se
 
 // GetControlPlanes is the resolver for the getControlPlanes field.
 func (r *queryResolver) GetControlPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.ControlPlane, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return nil, err
+	}
 	if filter != nil {
 		return r.getControlPlanes(ctx, provider, filter)
 	}
@@ -47,7 +64,10 @@ func (r *queryResolver) GetControlPlanes(ctx context.Context, filter *model.Serv
 
 // GetDataPlanes is the resolver for the getDataPlanes field.
 func (r *queryResolver) GetDataPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return nil, err
+	}
 	if filter != nil {
 		return r.getDataPlanes(ctx, provider, filter)
 	}
@@ -57,44 +77,64 @@ func (r *queryResolver) GetDataPlanes(ctx context.Context, filter *model.Service
 
 // ResyncCluster is the resolver for the resyncCluster field.
 func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyncActions, k8scontextID string) (model.Status, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return model.StatusUnknown, err
+	}
 	return r.resyncCluster(ctx, provider, selector, k8scontextID)
 }
 
 // GetAvailableNamespaces is the resolver for the getAvailableNamespaces field.
 func (r *queryResolver) GetAvailableNamespaces(ctx context.Context, k8sClusterIDs []string) ([]*model.NameSpace, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return r.getAvailableNamespaces(ctx, provider, k8sClusterIDs)
 }
 
 // GetPerfResult is the resolver for the getPerfResult field.
 func (r *queryResolver) GetPerfResult(ctx context.Context, id string) (*model.MesheryResult, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return r.getPerfResult(ctx, provider, id)
-	// panic(fmt.Errorf("not implemented"))
 }
 
 // FetchResults is the resolver for the fetchResults field.
 func (r *queryResolver) FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (*model.PerfPageResult, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return r.fetchResults(ctx, provider, selector, profileID)
 }
 
 // GetPerformanceProfiles is the resolver for the getPerformanceProfiles field.
 func (r *queryResolver) GetPerformanceProfiles(ctx context.Context, selector model.PageFilter) (*model.PerfPageProfiles, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return r.getPerformanceProfiles(ctx, provider, selector)
 }
 
 // FetchAllResults is the resolver for the fetchAllResults field.
 func (r *queryResolver) FetchAllResults(ctx context.Context, selector model.PageFilter) (*model.PerfPageResult, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return r.fetchAllResults(ctx, provider, selector)
 }
 
 // FetchPatterns is the resolver for the fetchPatterns field.
 func (r *queryResolver) FetchPatterns(ctx context.Context, selector model.PageFilter) (*model.PatternPageResult, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return r.fetchPatterns(ctx, provider, selector)
 }
 
@@ -105,25 +145,37 @@ func (r *queryResolver) GetKubectlDescribe(ctx context.Context, name string, kin
 
 // FetchPatternCatalogContent is the resolver for the fetchPatternCatalogContent field.
 func (r *queryResolver) FetchPatternCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogPattern, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return r.fetchCatalogPattern(ctx, provider, selector)
 }
 
 // FetchFilterCatalogContent is the resolver for the fetchFilterCatalogContent field.
 func (r *queryResolver) FetchFilterCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogFilter, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return r.fetchCatalogFilter(ctx, provider, selector)
 }
 
 // GetMeshModelSummary is the resolver for the getMeshModelSummary field.
 func (r *queryResolver) GetMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (*model.MeshModelSummary, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return r.getMeshModelSummary(ctx, provider, selector)
 }
 
 // FetchTelemetryComponents is the resolver for the fetchTelemetryComponents field.
 func (r *queryResolver) FetchTelemetryComponents(ctx context.Context, contexts []string) ([]*model.TelemetryComp, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, err := getProvider(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return r.getTelemetryComps(ctx, provider, contexts)
 }
 

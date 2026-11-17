@@ -319,8 +319,8 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true, style }) => {
   const { propertyFormatters } = useContext(FormatterContext);
   const level = useContext(LevelContext);
 
-  if (_.isString(data)) {
-    return <SectionBody body={data} style={style}></SectionBody>;
+  if (_.isString(data) || _.isNumber(data) || _.isBoolean(data)) {
+    return <SectionBody body={String(data)} style={style}></SectionBody>;
   }
 
   if (_.isArray(data)) {
@@ -329,7 +329,7 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true, style }) => {
 
   if (_.isObject(data)) {
     return Object.entries(data).map(([title, data]) => {
-      if (!title.trim() || !data || _.isEmpty(data)) {
+      if (!title.trim() || isEmptyAtAllDepths(data)) {
         return null;
       }
 
@@ -341,7 +341,7 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true, style }) => {
         );
       }
 
-      if (typeof data == 'string') {
+      if (_.isString(data) || _.isNumber(data) || _.isBoolean(data)) {
         return (
           <Grid
             item
@@ -355,7 +355,7 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true, style }) => {
               marginRight: '1rem',
             }}
           >
-            <KeyValue key={title} Key={title} Value={data} style={style} />
+            <KeyValue key={title} Key={title} Value={String(data)} style={style} />
           </Grid>
         );
       }
@@ -391,7 +391,7 @@ export const FormatStructuredData = ({
   isLevel,
   style,
 }) => {
-  if (!data || isEmptyAtAllDepths(data)) {
+  if (isEmptyAtAllDepths(data)) {
     return null;
   }
 

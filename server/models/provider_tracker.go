@@ -88,30 +88,30 @@ func (t *ProviderTracker) Snapshot() map[string]ProviderStatusEvent {
 // followed by every future Publish. The returned unsubscribe must be called
 // when the listener is done; calling it twice is safe.
 //
-// Sends to a subscriber that is not draining its channel are dropped
-// (logged at debug) rather than blocking the publisher. A slow SSE client
-// will simply miss intermediate updates and pick up state on its next
-// reconnection.
+// The snapshot is enqueued synchronously, under the tracker mutex, before
+// the channel is registered for live publishes, and the channel is sized to
+// hold the whole snapshot: a subscriber always sees the complete snapshot
+// first and no snapshot event is ever dropped because the channel was full
+// or overtaken by a newer live update. Live sends to a subscriber that is
+// not draining its channel are still dropped (logged at debug) rather than
+// blocking the publisher. A slow SSE client will simply miss intermediate
+// updates and pick up state on its next reconnection.
 func (t *ProviderTracker) Subscribe(ctx context.Context) (<-chan ProviderStatusEvent, func()) {
-	ch := make(chan ProviderStatusEvent, 32)
-
 	t.mu.Lock()
-	t.subs[ch] = struct{}{}
 	snapshot := make([]ProviderStatusEvent, 0, len(t.statuses))
 	for _, evt := range t.statuses {
 		snapshot = append(snapshot, evt)
 	}
+	// Buffer the whole snapshot plus headroom for live publishes, so the
+	// synchronous enqueue below can never block or drop, and a Publish
+	// that lands before the subscriber starts draining still fits.
+	buf := len(snapshot) + 32
+	ch := make(chan ProviderStatusEvent, buf)
+	for _, evt := range snapshot {
+		ch <- evt
+	}
+	t.subs[ch] = struct{}{}
 	t.mu.Unlock()
-
-	go func() {
-		for _, evt := range snapshot {
-			select {
-			case ch <- evt:
-			case <-ctx.Done():
-				return
-			}
-		}
-	}()
 
 	var once sync.Once
 	unsubscribe := func() {
@@ -128,19 +128,17 @@ func (t *ProviderTracker) Subscribe(ctx context.Context) (<-chan ProviderStatusE
 }
 
 // Publish records the new event in the status map and broadcasts it to every
-// subscriber. Sends are non-blocking; a subscriber whose channel is full is
-// skipped for this event so a single stalled SSE writer cannot stall the
-// tracker for everyone else.
+// subscriber. Sends are non-blocking and run under the same mutex that guards
+// unsubscribe so that any channel present in subs is guaranteed still open
+// (so the send can never panic on a closed channel). A subscriber whose channel
+// is full is skipped for this event so a single stalled SSE writer cannot stall
+// the tracker for everyone else.
 func (t *ProviderTracker) Publish(evt ProviderStatusEvent) {
 	t.mu.Lock()
-	t.statuses[evt.Key] = evt
-	subs := make([]chan ProviderStatusEvent, 0, len(t.subs))
-	for ch := range t.subs {
-		subs = append(subs, ch)
-	}
-	t.mu.Unlock()
+	defer t.mu.Unlock()
 
-	for _, ch := range subs {
+	t.statuses[evt.Key] = evt
+	for ch := range t.subs {
 		select {
 		case ch <- evt:
 		default:

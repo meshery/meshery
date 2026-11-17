@@ -15,6 +15,8 @@ export default function ActionButton({
   options,
   permissionKey,
   permissionAction,
+  'data-testid': dataTestId,
+  ...rest
 }) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
@@ -43,6 +45,8 @@ export default function ActionButton({
         style={{ boxShadow: 'none' }}
         ref={anchorRef}
         aria-label="Button group with a nested menu"
+        data-testid={dataTestId}
+        {...rest}
       >
         <Button
           sx={{
@@ -89,7 +93,7 @@ export default function ActionButton({
             <MenuList id="split-button-menu" autoFocusItem>
               {options.map((option, index) => (
                 <MenuItem
-                  data-testid={`action-btn-option-${option.label}`}
+                  data-testid={option['data-testid'] || `action-btn-option-${option.label}`}
                   disabled={option.disabled}
                   permissionKey={option.permissionKey}
                   permissionAction={option.permissionAction}

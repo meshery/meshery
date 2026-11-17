@@ -17,15 +17,46 @@ import { Keys } from '@meshery/schemas/permissions';
 import { useRouter } from 'next/router';
 import { Grid2, InfoOutlinedIcon, Typography, useHasPermission, useTheme } from '@sistent/sistent';
 
+/**
+ * Renders a Next.js Link only when `enabled` is true so denied users cannot focus or activate it via keyboard.
+ */
+function OptionalRegistryLink({
+  enabled,
+  href,
+  children,
+}: {
+  enabled: boolean;
+  href: string;
+  children: React.ReactNode;
+}) {
+  return enabled ? (
+    <Link href={href} style={{ textDecoration: 'none' }}>
+      {children}
+    </Link>
+  ) : (
+    <>{children}</>
+  );
+}
+
+/**
+ * Displays aggregate counts of registered models, components, relationships, and registrants.
+ * Skips registry queries and disables click navigation unless `Keys.MesherySystemViewRegistry` is granted.
+ */
 function MeshModelContructs() {
+  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
   const params = {
     page: 0,
     pagesize: '1',
   };
-  const modelCount = useGetMeshModelsQuery({ params }).data?.totalCount || 0;
-  const componentCount = useGetComponentsQuery({ params }).data?.totalCount || 0;
-  const relationshipCount = useGetRelationshipsQuery({ params }).data?.totalCount || 0;
-  const registrantsConut = useGetRegistrantsQuery({ params }).data?.totalCount || 0;
+  const modelsQuery = useGetMeshModelsQuery({ params }, { skip: !canViewRegistry });
+  const componentsQuery = useGetComponentsQuery({ params }, { skip: !canViewRegistry });
+  const relationshipsQuery = useGetRelationshipsQuery({ params }, { skip: !canViewRegistry });
+  const registrantsQuery = useGetRegistrantsQuery({ params }, { skip: !canViewRegistry });
+
+  const modelCount = canViewRegistry ? modelsQuery.data?.totalCount || 0 : 0;
+  const componentCount = canViewRegistry ? componentsQuery.data?.totalCount || 0 : 0;
+  const relationshipCount = canViewRegistry ? relationshipsQuery.data?.totalCount || 0 : 0;
+  const registrantsConut = canViewRegistry ? registrantsQuery.data?.totalCount || 0 : 0;
   const theme = useTheme();
 
   // Data Cleanup
@@ -43,6 +74,7 @@ function MeshModelContructs() {
         type: donut(),
         colors: dataToColors(data, theme),
         onclick: function (d: { name: string }) {
+          if (!canViewRegistry) return;
           router.push(`/settings?settingsCategory=Registry&tab=${d.name}`);
         },
       },
@@ -63,19 +95,11 @@ function MeshModelContructs() {
         },
       },
     }),
-    [data, theme],
+    [data, theme, canViewRegistry, router],
   );
 
-  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
-
   return (
-    <Link
-      href="/settings?settingsCategory=Registry"
-      style={{
-        textDecoration: 'none',
-        pointerEvents: !canViewRegistry ? 'none' : 'auto',
-      }}
-    >
+    <OptionalRegistryLink enabled={canViewRegistry} href="/settings?settingsCategory=Registry">
       <DashboardSection>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom>
@@ -101,18 +125,23 @@ function MeshModelContructs() {
           <BBChart options={chartOptions} />
         </div>
       </DashboardSection>
-    </Link>
+    </OptionalRegistryLink>
   );
 }
 
+/**
+ * Displays counts of registered MeshModels grouped by category.
+ * Skips category summary queries and disables navigation unless `Keys.MesherySystemViewRegistry` is granted.
+ */
 function MeshModelCategories() {
   const router = useRouter();
-  const categoryMap = useGetCategoriesSummary();
+  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
+  const categoryMap = useGetCategoriesSummary({ skip: !canViewRegistry });
   const theme = useTheme();
 
   const cleanedData = useMemo(
-    () => Object.keys(categoryMap).map((key) => [key, categoryMap[key]]),
-    [categoryMap],
+    () => (canViewRegistry ? Object.keys(categoryMap).map((key) => [key, categoryMap[key]]) : []),
+    [categoryMap, canViewRegistry],
   );
 
   const chartOptions = useMemo(
@@ -122,6 +151,7 @@ function MeshModelCategories() {
         colors: dataToColors(cleanedData, theme),
         type: donut(),
         onclick: function () {
+          if (!canViewRegistry) return;
           router.push('/settings?settingsCategory=Registry&tab=Models');
         },
       },
@@ -150,11 +180,14 @@ function MeshModelCategories() {
         show: false,
       },
     }),
-    [cleanedData, theme],
+    [cleanedData, theme, canViewRegistry, router],
   );
 
   return (
-    <Link href="/settings?settingsCategory=Registry&tab=Models" style={{ textDecoration: 'none' }}>
+    <OptionalRegistryLink
+      enabled={canViewRegistry}
+      href="/settings?settingsCategory=Registry&tab=Models"
+    >
       <DashboardSection>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom>
@@ -179,10 +212,13 @@ function MeshModelCategories() {
           <BBChart options={chartOptions} />
         </div>
       </DashboardSection>
-    </Link>
+    </OptionalRegistryLink>
   );
 }
 
+/**
+ * Renders the Dashboard MeshModel category and construct summary charts side by side.
+ */
 const MeshModelGraph = () => {
   return (
     <Grid2 container spacing={2} size="grow">

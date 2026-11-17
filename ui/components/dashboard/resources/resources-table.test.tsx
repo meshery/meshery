@@ -1,14 +1,21 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the leaf dependencies that the SUT pulls in. The SUT itself is NOT
 // mocked — we import it and exercise its real exports below.
+// The fetch echoes the requested page back, like the server does.
+const { fetchResources, clusterIds } = vi.hoisted(() => ({
+  fetchResources: vi.fn((args: { page: number }) => ({
+    unwrap: () =>
+      Promise.resolve({ resources: [], page: Number(args.page), totalCount: 40, pageSize: 10 }),
+  })),
+  clusterIds: { current: [] as string[] },
+}));
+
 vi.mock('@/rtk-query/meshsync', () => ({
-  useLazyGetMeshSyncResourcesQuery: () => [
-    vi.fn().mockResolvedValue({ resources: [], total_count: 0 }),
-    { data: undefined, isFetching: false },
-  ],
+  useLazyGetMeshSyncResourcesQuery: () => [fetchResources, { data: undefined, isFetching: false }],
   useGetMeshSyncResourceKindsQuery: () => ({ data: { kinds: [] } }),
 }));
 
@@ -30,7 +37,7 @@ vi.mock('../../../utils/hooks/useNotification', () => ({
 }));
 
 vi.mock('../../../utils/multi-ctx', () => ({
-  getK8sClusterIdsFromCtxId: () => [],
+  getK8sClusterIdsFromCtxId: () => clusterIds.current,
 }));
 
 vi.mock('../../../utils/responsive-column', () => ({
@@ -42,7 +49,7 @@ vi.mock('../../../utils/dimension', () => ({
 }));
 
 vi.mock('../../../utils/utils', () => ({
-  camelcaseToSnakecase: (s: string) => s.replace(/([A-Z])/g, '_$1').toLowerCase(),
+  camelcaseToSnakecase: (s?: string) => s?.replace(/([A-Z])/g, '_$1').toLowerCase(),
 }));
 
 vi.mock('../view', () => ({
@@ -56,11 +63,36 @@ vi.mock('./config', () => ({
 
 vi.mock('@sistent/sistent', () => ({
   CustomColumnVisibilityControl: () => <div data-testid="column-visibility" />,
-  ResponsiveDataTable: () => <div data-testid="responsive-data-table" />,
-  SearchBar: () => <div data-testid="search-bar" />,
+  ResponsiveDataTable: ({ options }: any) => (
+    <div data-testid="responsive-data-table">
+      <button
+        data-testid="go-to-page-3"
+        onClick={() => options.onTableChange('changePage', { page: 2 })}
+      >
+        page 3
+      </button>
+    </div>
+  ),
+  SearchBar: ({ onSearch }: any) => (
+    <button data-testid="search-nginx" onClick={() => onSearch('nginx')}>
+      search
+    </button>
+  ),
   Slide: ({ children, in: visible }: any) =>
     visible ? <div data-testid="slide">{children}</div> : null,
-  UniversalFilter: () => <div data-testid="universal-filter" />,
+  UniversalFilter: ({ setSelectedFilters, handleApplyFilter }: any) => (
+    <div data-testid="universal-filter">
+      <button
+        data-testid="select-namespace"
+        onClick={() => setSelectedFilters({ namespace: 'default' })}
+      >
+        select
+      </button>
+      <button data-testid="apply-filter" onClick={handleApplyFilter}>
+        apply
+      </button>
+    </div>
+  ),
 }));
 
 // Now import the real SUT.
@@ -107,5 +139,58 @@ describe('resources-table module', () => {
       />,
     );
     expect(screen.getByTestId('responsive-data-table')).toBeInTheDocument();
+  });
+});
+
+describe('resources-table paging', () => {
+  const renderTable = () =>
+    render(
+      <ResourcesTable
+        updateProgress={vi.fn()}
+        k8sConfig={{}}
+        useResourceConfig={() => ({ name: 'Pod', columns: [], options: {} })}
+        submenu={false}
+        workloadType="pods"
+        selectedK8sContexts={[]}
+      />,
+    );
+
+  const lastFetchArgs = () => fetchResources.mock.calls.at(-1)?.[0];
+
+  const goToPage3 = async (user: ReturnType<typeof userEvent.setup>) => {
+    await user.click(screen.getByTestId('go-to-page-3'));
+    await waitFor(() => expect(Number(lastFetchArgs()?.page)).toBe(2));
+  };
+
+  beforeEach(() => {
+    routerState.isReady = true;
+    routerState.query = {};
+    clusterIds.current = ['cluster-1'];
+    fetchResources.mockClear();
+  });
+
+  afterEach(() => {
+    clusterIds.current = [];
+  });
+
+  it('goes back to the first page when the search changes', async () => {
+    const user = userEvent.setup();
+    renderTable();
+    await goToPage3(user);
+
+    await user.click(screen.getByTestId('search-nginx'));
+
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ page: 0, search: 'nginx' }));
+  });
+
+  it('goes back to the first page when a namespace filter is applied', async () => {
+    const user = userEvent.setup();
+    renderTable();
+    await goToPage3(user);
+
+    await user.click(screen.getByTestId('select-namespace'));
+    await user.click(screen.getByTestId('apply-filter'));
+
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ page: 0, namespace: 'default' }));
   });
 });

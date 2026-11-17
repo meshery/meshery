@@ -18,7 +18,7 @@ View a specific token in meshery config
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token view [flags]
+mesheryctl system token view [token-name] [flags]
 
 </div>
 </div>
@@ -26,6 +26,7 @@ mesheryctl system token view [flags]
 
 ## Examples
 
+View a specific token
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -35,10 +36,21 @@ mesheryctl system token view [token-name]
 </div>
 </pre> 
 
+View token of current context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token view (show token of current context)
+mesheryctl system token view
+
+</div>
+</div>
+</pre> 
+
+View all available tokens
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl system token view --all
 
 </div>
 </div>
@@ -58,7 +70,7 @@ mesheryctl system token view (show token of current context)
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string    path to config file (default "~/.meshery/config.yaml")
   -c, --context string   (optional) temporarily change the current context.
   -v, --verbose          verbose output
   -y, --yes              (optional) assume yes for user interactive prompts.
@@ -68,4 +80,4 @@ mesheryctl system token view (show token of current context)
 
 ## See Also
 
-Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.
