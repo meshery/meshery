@@ -24,9 +24,31 @@ type ConnectionPersister struct {
 	DB *database.Handler
 }
 
+// connectionSortColumns are the columns the connections table can be sorted
+// by. They match the sortable columns of the UI connections table.
+var connectionSortColumns = []string{"created_at", "updated_at", "name", "kind", "connection_type", "sub_type", "status", "id"}
+
+// connectionOrderColumn maps the column names the connections table sends but
+// that do not fold onto a database column by themselves: the public `type`
+// alias is stored as connection_type, and the table's ConnectionID column is
+// the row id. Other names pass through to SanitizeOrderInput unchanged.
+func connectionOrderColumn(order string) string {
+	field, direction, ok := strings.Cut(order, " ")
+	if !ok {
+		return order
+	}
+	switch field {
+	case "type":
+		field = "connection_type"
+	case "ConnectionID", "connectionId", "connection_id":
+		field = "id"
+	}
+	return field + " " + direction
+}
+
 // GetConnections returns all of the connections
 func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSize int, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(connectionOrderColumn(order), connectionSortColumns)
 
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
