@@ -60,6 +60,7 @@ const {
     },
     CONNECTIONS_QUERY_RESULT: {
       data: { connections: [], totalCount: 0 },
+      currentData: undefined as any,
       isError: false,
       error: undefined,
     },
@@ -82,7 +83,19 @@ vi.mock('../../rtk-query/environments', () => ({
   },
   useGetEnvironmentConnectionsQuery: (args: unknown, options: unknown) => {
     getEnvironmentConnectionsQuery(args, options);
-    return CONNECTIONS_QUERY_RESULT;
+    const isSkipped = Boolean((options as any)?.skip);
+    const resolvedCurrentData =
+      CONNECTIONS_QUERY_RESULT.currentData !== undefined
+        ? CONNECTIONS_QUERY_RESULT.currentData
+        : isSkipped
+          ? undefined
+          : CONNECTIONS_QUERY_RESULT.data;
+    return {
+      data: CONNECTIONS_QUERY_RESULT.data,
+      currentData: resolvedCurrentData,
+      isError: CONNECTIONS_QUERY_RESULT.isError,
+      error: CONNECTIONS_QUERY_RESULT.error,
+    };
   },
   useAddConnectionToEnvironmentMutation: () => NOOP_MUTATION,
   useRemoveConnectionFromEnvironmentMutation: () => NOOP_MUTATION,
@@ -120,7 +133,18 @@ vi.mock('../shared/Modal/Modal', () => ({
   ),
 }));
 
-vi.mock('./environment-card', () => ({ default: () => null }));
+vi.mock('./environment-card', () => ({
+  default: ({ onAssignConnection, environmentDetails }: any) => (
+    <div data-testid={`env-card-${environmentDetails?.id}`}>
+      <button
+        data-testid={`assign-btn-${environmentDetails?.id}`}
+        onClick={(e) => onAssignConnection(e, environmentDetails)}
+      >
+        Assign
+      </button>
+    </div>
+  ),
+}));
 vi.mock('./styles', () => ({
   CreateButtonWrapper: ({ children }: any) => <div>{children}</div>,
   BulkActionWrapper: ({ children }: any) => <div>{children}</div>,
@@ -161,14 +185,42 @@ vi.mock('@sistent/sistent', () => ({
     </button>
   ),
   PaginationItem: () => null,
-  PrimaryActionButtons: () => null,
+  PrimaryActionButtons: ({ secondaryButtonProps }: any) => (
+    <button data-testid="cancel-connection-modal" onClick={secondaryButtonProps?.onClick}>
+      Cancel
+    </button>
+  ),
   PROMPT_VARIANTS: { DANGER: 'danger' },
   SearchBar: ({ onSearch }: any) => (
     <button data-testid="search-prod" onClick={() => onSearch('prod')}>
       search
     </button>
   ),
-  TransferList: () => null,
+  TransferList: ({
+    assignableData,
+    originalAssignedData,
+    assignablePage,
+    originalLeftCount,
+    originalRightCount,
+  }: any) => (
+    <div
+      data-testid="mock-transfer-list"
+      data-assignable-ids={(assignableData || []).map((c: any) => c.id).join(',')}
+      data-assigned-ids={(originalAssignedData || []).map((c: any) => c.id).join(',')}
+      data-original-left-count={originalLeftCount}
+      data-original-right-count={originalRightCount}
+      data-move-all-left-disabled={
+        originalLeftCount !== undefined && (assignableData?.length ?? 0) < originalLeftCount
+      }
+      data-move-all-right-disabled={
+        originalRightCount !== undefined && (originalAssignedData?.length ?? 0) < originalRightCount
+      }
+    >
+      <button data-testid="paginate-assignable-btn" onClick={assignablePage}>
+        Next Page
+      </button>
+    </div>
+  ),
   Typography: ({ children }: any) => <span>{children}</span>,
   createAndEditEnvironmentSchema: {},
   createAndEditEnvironmentUiSchema: {},
@@ -345,5 +397,251 @@ describe('Environments permissions and wire query skipping', () => {
       expect.anything(),
       expect.objectContaining({ skip: false }),
     );
+  });
+});
+
+describe('Environments connection assignment modal', () => {
+  const originalEnvData = ENVIRONMENTS_QUERY_RESULT.data;
+  const originalConnData = CONNECTIONS_QUERY_RESULT.data;
+
+  beforeEach(() => {
+    ENVIRONMENTS_QUERY_RESULT.data = {
+      environments: [{ id: 'env-1', name: 'production' }],
+      totalCount: 1,
+    } as any;
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: [
+        { id: 'conn-1', name: 'Cluster A' },
+        { id: 'conn-2', name: 'Cluster B' },
+      ],
+      totalCount: 2,
+    } as any;
+  });
+
+  afterEach(() => {
+    ENVIRONMENTS_QUERY_RESULT.data = originalEnvData;
+    CONNECTIONS_QUERY_RESULT.data = originalConnData;
+    CONNECTIONS_QUERY_RESULT.currentData = undefined;
+  });
+
+  it('cleans up connection state on close and does not duplicate connections when reopening', async () => {
+    const user = userEvent.setup();
+    render(<Environments />);
+
+    // Open connection modal
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    const transferList = screen.getByTestId('mock-transfer-list');
+    expect(transferList.getAttribute('data-assignable-ids')).toBe('conn-1,conn-2');
+
+    // Close connection modal
+    await user.click(screen.getByTestId('cancel-connection-modal'));
+    await waitFor(() => {
+      expect(screen.queryByTestId('mock-transfer-list')).not.toBeInTheDocument();
+    });
+
+    // Reopen connection modal for the same environment
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    // Should still have exactly conn-1,conn-2 without duplicates
+    const reopenedTransferList = screen.getByTestId('mock-transfer-list');
+    expect(reopenedTransferList.getAttribute('data-assignable-ids')).toBe('conn-1,conn-2');
+  });
+
+  it('deduplicates incoming connections with identical ids', async () => {
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: [
+        { id: 'conn-1', name: 'Cluster A' },
+        { id: 'conn-1', name: 'Cluster A Duplicate' },
+        { id: 'conn-2', name: 'Cluster B' },
+      ],
+      totalCount: 3,
+    } as any;
+
+    const user = userEvent.setup();
+    render(<Environments />);
+
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    const transferList = screen.getByTestId('mock-transfer-list');
+    expect(transferList.getAttribute('data-assignable-ids')).toBe('conn-1,conn-2');
+  });
+
+  it('resets pagination offsets back to 0 when modal is closed and reopened', async () => {
+    // 50 total connections: 2 pages of 25 items each
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: [{ id: 'conn-1', name: 'Cluster A' }],
+      totalCount: 50,
+    } as any;
+
+    const user = userEvent.setup();
+    render(<Environments />);
+
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    // Advance to next page (page 1)
+    await user.click(screen.getByTestId('paginate-assignable-btn'));
+    await waitFor(() => {
+      expect(getEnvironmentConnectionsQuery).toHaveBeenCalledWith(
+        expect.objectContaining({ page: 1 }),
+        expect.anything(),
+      );
+    });
+
+    // Close modal
+    await user.click(screen.getByTestId('cancel-connection-modal'));
+    await waitFor(() => {
+      expect(screen.queryByTestId('mock-transfer-list')).not.toBeInTheDocument();
+    });
+
+    // Reopen modal: should query starting from page 0 again
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    const assignableCalls = getEnvironmentConnectionsQuery.mock.calls.filter(
+      ([args, options]: [any, any]) => args?.filter === '{"assigned":false}' && !options?.skip,
+    );
+    expect(assignableCalls.length).toBeGreaterThan(0);
+    const lastAssignableCall = assignableCalls.at(-1);
+    expect(lastAssignableCall?.[0]).toMatchObject({ page: 0 });
+  });
+
+  it('enables move-all when deduplicated list is complete even if server totalCount includes duplicates', async () => {
+    // 1 page of connections on server, but totalCount is 3 due to duplicate IDs:
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: [
+        { id: 'conn-1', name: 'Cluster A' },
+        { id: 'conn-1', name: 'Cluster A Duplicate' },
+        { id: 'conn-2', name: 'Cluster B' },
+      ],
+      totalCount: 3,
+    } as any;
+
+    const user = userEvent.setup();
+    render(<Environments />);
+
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    const transferList = screen.getByTestId('mock-transfer-list');
+    // Deduplicated list has 2 items:
+    expect(transferList.getAttribute('data-assignable-ids')).toBe('conn-1,conn-2');
+    // Once all pages are loaded (page 0 of 1), the count given to TransferList uses the deduplicated length:
+    expect(transferList.getAttribute('data-original-left-count')).toBe('2');
+    // Move-all is enabled because assignableData.length (2) is not less than originalLeftCount (2):
+    expect(transferList.getAttribute('data-move-all-left-disabled')).toBe('false');
+  });
+
+  it('keeps move-all disabled while final-page request is pending or if it fails', async () => {
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: Array.from({ length: 25 }, (_, i) => ({
+        id: `conn-${i}`,
+        name: `Cluster ${i}`,
+      })),
+      totalCount: 50,
+    } as any;
+
+    const user = userEvent.setup();
+    render(<Environments />);
+
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    const transferList = screen.getByTestId('mock-transfer-list');
+    expect(transferList.getAttribute('data-original-left-count')).toBe('50');
+    expect(transferList.getAttribute('data-move-all-left-disabled')).toBe('true');
+
+    // Simulate advance to page 1 while the response is pending (currentData is null/pending)
+    CONNECTIONS_QUERY_RESULT.currentData = null;
+
+    await user.click(screen.getByTestId('paginate-assignable-btn'));
+
+    // Move-all must remain disabled because page 1 has not successfully accumulated
+    expect(transferList.getAttribute('data-original-left-count')).toBe('50');
+    expect(transferList.getAttribute('data-move-all-left-disabled')).toBe('true');
+  });
+
+  it('does not advance to subsequent page until current page response has accumulated', async () => {
+    // 75 total connections: 3 pages of 25 items each
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: [{ id: 'conn-0', name: 'Cluster 0' }],
+      totalCount: 75,
+    } as any;
+
+    const user = userEvent.setup();
+    render(<Environments />);
+
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    // Advance to page 1
+    await user.click(screen.getByTestId('paginate-assignable-btn'));
+    await waitFor(() => {
+      expect(getEnvironmentConnectionsQuery).toHaveBeenCalledWith(
+        expect.objectContaining({ page: 1 }),
+        expect.anything(),
+      );
+    });
+
+    // While page 1 has not accumulated yet, click paginate again
+    await user.click(screen.getByTestId('paginate-assignable-btn'));
+
+    // Should NOT have requested page 2 because page 1 has not accumulated
+    expect(getEnvironmentConnectionsQuery).not.toHaveBeenCalledWith(
+      expect.objectContaining({ page: 2 }),
+      expect.anything(),
+    );
+  });
+
+  it('marks empty page response as loaded so pagination and completion do not stall', async () => {
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: [{ id: 'conn-0', name: 'Cluster 0' }],
+      totalCount: 50,
+    } as any;
+
+    const user = userEvent.setup();
+    const { rerender } = render(<Environments />);
+
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    // Advance to page 1
+    await user.click(screen.getByTestId('paginate-assignable-btn'));
+
+    // Simulate page 1 returning an empty list
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: [],
+      totalCount: 50,
+    } as any;
+    rerender(<Environments />);
+
+    await waitFor(() => {
+      const transferList = screen.getByTestId('mock-transfer-list');
+      // Because page 1 was accumulated (even though empty), list is marked fully loaded
+      expect(transferList.getAttribute('data-original-left-count')).toBe('1');
+    });
   });
 });

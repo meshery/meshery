@@ -9,6 +9,10 @@ import (
 )
 
 func (h *Handler) GetOrganizations(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		writeMeshkitError(w, models.ErrGetToken(errors.New("token missing from request context")), http.StatusInternalServerError)
@@ -19,13 +23,17 @@ func (h *Handler) GetOrganizations(w http.ResponseWriter, req *http.Request, _ *
 	resp, err := provider.GetOrganizations(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		handlerErr := ErrGetOrganizations(err)
-		h.log.Error(handlerErr)
+		if h != nil && h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }

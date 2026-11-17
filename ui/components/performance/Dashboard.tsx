@@ -4,6 +4,7 @@ import PerformanceCalendar from './PerformanceCalendar';
 import MesheryPerformanceComponent from './index';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
+import { formatApiError } from '@/utils/helpers/meshkitError';
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '@/components/general/error-404/index';
 import {
@@ -140,10 +141,12 @@ function Dashboard() {
   function handleError(msg) {
     return function (error) {
       dispatch(updateProgressAction({ showProgress: false }));
+      // RTK Query errors are objects ({ status, data }), so interpolating
+      // them directly would show "[object Object]".
+      const { message } = formatApiError(error, msg);
       notify({
-        message: `${msg}: ${error}`,
+        message,
         event_type: EVENT_TYPES.ERROR,
-        details: error.toString(),
       });
     };
   }

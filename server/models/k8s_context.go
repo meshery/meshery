@@ -28,6 +28,11 @@ import (
 	"k8s.io/apimachinery/pkg/version"
 )
 
+// DefaultK8sDiscoveryTimeout bounds remote Kubernetes API calls during context
+// discovery, server ID assignment, and ping probes to prevent hanging on
+// unreachable or partitioned clusters.
+const DefaultK8sDiscoveryTimeout = 5 * time.Second
+
 type K8sContext struct {
 	ID                 string     `json:"id,omitempty" yaml:"id,omitempty"`
 	Name               string     `json:"name,omitempty" yaml:"name,omitempty"`
@@ -173,13 +178,16 @@ func NewK8sContextWithServerID(
 		return nil, err
 	}
 
-	err = ctx.AssignVersion(context.Background(), handler)
+	callCtx, cancel := context.WithTimeout(context.Background(), DefaultK8sDiscoveryTimeout)
+	defer cancel()
+
+	err = ctx.AssignVersion(callCtx, handler)
 	if err != nil {
 		return nil, err
 	}
 
 	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
-	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
+	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(callCtx, "kube-system", v1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -204,7 +212,14 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, broadcast *Broa
 // returned with Reachable=false so callers (the connection wizard's discover &
 // import flow) can register them as discovered connections and let the user
 // decide; reachability only gates the transition to the connected state.
-func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, includeUnreachable bool) []*K8sContext {
+func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, broadcast *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, includeUnreachable bool) []*K8sContext {
+	return K8sContextsFromKubeconfigWithContext(context.Background(), provider, userID, broadcast, kubeconfig, instanceID, eventMetadata, log, includeUnreachable)
+}
+
+// K8sContextsFromKubeconfigWithContext parses the kubeconfig into per-context
+// K8sContexts using the caller's context to support request cancellation and
+// deadline propagation across multi-cluster discovery loops.
+func K8sContextsFromKubeconfigWithContext(ctx context.Context, provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, includeUnreachable bool) []*K8sContext {
 	kcs := []*K8sContext{}
 
 	// Enumerate contexts from the raw kubeconfig rather than via
@@ -221,6 +236,13 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 	}
 
 	for _, ctxEntry := range kcfg.Contexts {
+		if ctx.Err() != nil {
+			if log != nil {
+				log.Warn(fmt.Errorf("context discovery cancelled: %w", ctx.Err()))
+			}
+			break
+		}
+
 		ctxEntry = utils.RecursiveCastMapStringInterfaceToMapStringInterface(ctxEntry)
 		name, _ := ctxEntry["name"].(string)
 		if name == "" {
@@ -243,14 +265,16 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 			// 	// Publishing again would lead to duplicate events and confusion to the user.
 			// 	// _ = provider.PersistEvent(token,*event)
 			// 	// eventChan.Publish(userUUID, event)
-			log.Warn(ErrGenerateK8sHandler(err, kc.Name))
+			if log != nil {
+				log.Warn(ErrGenerateK8sHandler(err, kc.Name))
+			}
 			// The kube handler could not even be constructed from the context's
 			// credentials, so there is nothing reachable to register; skip it
 			// regardless of includeUnreachable.
 			continue
 		}
 
-		if err := kc.AssignServerID(context.Background(), handler); err != nil {
+		if err := kc.AssignServerID(ctx, handler); err != nil {
 
 			metadata["error"] = err
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
@@ -260,7 +284,9 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 			// 	// Publishing again would lead to duplicate events and confusion to the user.
 			// 	// _ = provider.PersistEvent(token,*event)
 			// 	// eventChan.Publish(userUUID, event)
-			log.Warn(ErrRetrieveK8sClusterID(err, kc.Name))
+			if log != nil {
+				log.Warn(ErrRetrieveK8sClusterID(err, kc.Name))
+			}
 			// Failing to read the kube-system namespace UID means the API server
 			// is unreachable. Historically the context was dropped; when the
 			// caller opts in we instead return it flagged unreachable so it can be
@@ -276,7 +302,7 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 		// context is reachable even if a later (non-fatal) version lookup fails.
 		kc.Reachable = true
 
-		err = kc.AssignVersion(context.Background(), handler)
+		err = kc.AssignVersion(ctx, handler)
 		if err != nil {
 
 			// Preventing the publishing of event as the event details would be present in the reciept.
@@ -286,7 +312,9 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 			metadata["error"] = err
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
 			eventMetadata[name] = metadata
-			log.Warn(ErrRetrieveK8sClusterID(err, kc.Name))
+			if log != nil {
+				log.Warn(ErrRetrieveK8sClusterID(err, kc.Name))
+			}
 			kcs = append(kcs, &kc)
 			continue
 		}
@@ -444,6 +472,12 @@ func (kc *K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
 }
 
 func (kc *K8sContext) AssignVersion(ctx context.Context, handler *kubernetes.Client) error {
+	if _, hasDeadline := ctx.Deadline(); !hasDeadline {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, DefaultK8sDiscoveryTimeout)
+		defer cancel()
+	}
+
 	body, err := handler.KubeClient.Discovery().RESTClient().Get().AbsPath("/version").Do(ctx).Raw()
 	if err != nil {
 		return ErrUnreachableKubeAPI(err, kc.Server)
@@ -465,7 +499,10 @@ func (kc K8sContext) PingTest() error {
 		return err
 	}
 
-	res := h.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Timeout(1 * time.Second).Do(context.TODO())
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	res := h.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Timeout(1 * time.Second).Do(ctx)
 	if res.Error() != nil {
 		return ErrUnreachableKubeAPI(res.Error(), kc.Server)
 	}
@@ -474,8 +511,15 @@ func (kc K8sContext) PingTest() error {
 }
 
 // AssignServerID will attempt to assign kubernetes
-// server ID to the kubernetes context
+// server ID to the kubernetes context. If the provided context has no deadline,
+// DefaultK8sDiscoveryTimeout is applied as a guardrail.
 func (kc *K8sContext) AssignServerID(ctx context.Context, handler *kubernetes.Client) error {
+	if _, hasDeadline := ctx.Deadline(); !hasDeadline {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, DefaultK8sDiscoveryTimeout)
+		defer cancel()
+	}
+
 	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
 	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(ctx, "kube-system", v1.GetOptions{})
 	if err != nil {
@@ -717,13 +761,7 @@ func FlushMeshSyncResourcesForCluster(db *database.Handler, clusterID string) er
 
 		// Child rows keyed by the parent resource's id, deleted before the parent so
 		// the subquery still resolves.
-		childModels := []any{
-			&meshsyncmodel.KubernetesKeyValue{},
-			&meshsyncmodel.KubernetesResourceSpec{},
-			&meshsyncmodel.KubernetesResourceStatus{},
-			&meshsyncmodel.KubernetesResourceObjectMeta{},
-		}
-		for _, child := range childModels {
+		for _, child := range meshSyncResourceChildModels() {
 			if err := tx.Where("id IN (?)", resourceIDs).Delete(child).Error; err != nil {
 				return err
 			}
@@ -734,10 +772,99 @@ func FlushMeshSyncResourcesForCluster(db *database.Handler, clusterID string) er
 	})
 }
 
+// meshSyncResourceChildModels lists the MeshSync tables whose rows share their
+// parent KubernetesResource's id: labels and annotations, spec, status and object
+// meta. Their foreign keys do not cascade (SQLite runs without foreign keys
+// enforced, and SET NULL cannot clear a primary key), so every delete of a
+// resource must remove these rows itself.
+func meshSyncResourceChildModels() []any {
+	return []any{
+		&meshsyncmodel.KubernetesKeyValue{},
+		&meshsyncmodel.KubernetesResourceSpec{},
+		&meshsyncmodel.KubernetesResourceStatus{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
+	}
+}
+
+// DeleteMeshSyncResourceByID removes one MeshSync resource and every child row
+// that shares its id, in a single transaction. It reports whether the resource
+// existed; when it did not, nothing is deleted. Leaving the children behind would
+// orphan them, and because MeshSync ids are deterministic they would reattach to
+// the resource the next time it is discovered.
+//
+// The children are deleted before the parent, as in
+// FlushMeshSyncResourcesForCluster: their foreign keys are ON DELETE SET NULL on
+// their own primary key, so deleting the parent first fails on Postgres, which
+// always enforces foreign keys, and nulls the child ids on SQLite when foreign
+// keys are enabled.
+func DeleteMeshSyncResourceByID(db *database.Handler, id string) (bool, error) {
+	if db == nil || db.DB == nil {
+		return false, ErrEmptyMeshSyncHandler()
+	}
+
+	deleted := false
+	err := db.Transaction(func(tx *gorm.DB) error {
+		var exists int64
+		if err := tx.Model(&meshsyncmodel.KubernetesResource{}).Where("id = ?", id).Count(&exists).Error; err != nil {
+			return err
+		}
+		if exists == 0 {
+			return nil
+		}
+		for _, child := range meshSyncResourceChildModels() {
+			if err := tx.Where("id = ?", id).Delete(child).Error; err != nil {
+				return err
+			}
+		}
+		res := tx.Where("id = ?", id).Delete(&meshsyncmodel.KubernetesResource{})
+		if res.Error != nil {
+			return res.Error
+		}
+		deleted = res.RowsAffected > 0
+		return nil
+	})
+	if err != nil {
+		return false, err
+	}
+	return deleted, nil
+}
+
+// RedactCredentials removes sensitive client authentication data and cluster
+// secrets in-place, while preserving context identifiers and public endpoint metadata.
+func (c *K8sContext) RedactCredentials() {
+	if c == nil {
+		return
+	}
+	c.Auth = sql.Map{}
+	c.Cluster = sql.Map{}
+}
+
+// Redacted returns a shallow copy of the context with sensitive credentials
+// redacted, preserving context identifiers and public endpoint metadata.
+func (c *K8sContext) Redacted() K8sContext {
+	if c == nil {
+		return K8sContext{
+			Auth:    sql.Map{},
+			Cluster: sql.Map{},
+		}
+	}
+	cp := *c
+	cp.RedactCredentials()
+	return cp
+}
+
+// RedactCredentialsForContext returns a copy of the context with sensitive
+// credentials redacted. It preserves backwards compatibility for event metadata
+// callers by also clearing identifying fields, and guards against nil dereferences.
 func RedactCredentialsForContext(ctx *K8sContext) (redactedContext K8sContext) {
+	if ctx == nil {
+		return K8sContext{
+			Auth:    sql.Map{},
+			Cluster: sql.Map{},
+		}
+	}
 	redactedContext = *ctx
-	redactedContext.Auth = sql.Map{}
-	redactedContext.Cluster = sql.Map{}
+	redactedContext.RedactCredentials()
 	redactedContext.DeploymentType = ""
 	redactedContext.ID = ""
 	redactedContext.Name = ""

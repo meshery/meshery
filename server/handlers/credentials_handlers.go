@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -14,10 +15,24 @@ import (
 )
 
 func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	bd, err := io.ReadAll(req.Body)
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+
+	bd, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
 		return
 	}
@@ -29,7 +44,9 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 
 	err = json.Unmarshal(bd, &credential)
 	if err != nil {
-		h.log.Error(ErrDecoding(err, "credential"))
+		if h.log != nil {
+			h.log.Error(ErrDecoding(err, "credential"))
+		}
 		writeMeshkitError(w, ErrDecoding(err, "credential"), http.StatusBadRequest)
 		return
 	}
@@ -41,40 +58,76 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 
 	createdCredential, err := provider.SaveUserCredential(token, &credential)
 	if err != nil {
-		h.log.Error(ErrSaveUserCredential(err))
+		if h.log != nil {
+			h.log.Error(ErrSaveUserCredential(err))
+		}
 		writeMeshkitError(w, ErrSaveUserCredential(err), http.StatusInternalServerError)
 		return
 	}
 
-	h.log.Info("Credential saved.", createdCredential.Name, createdCredential.ID)
+	if h.log != nil {
+		h.log.Info("Credential saved.", createdCredential.Name, createdCredential.ID)
+	}
 	w.WriteHeader(http.StatusCreated)
 }
 
 func (h *Handler) GetUserCredentialByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
 	raw := mux.Vars(req)["credentialID"]
 	credentialID, err := uuid.FromString(raw)
 	if err != nil || credentialID.IsNil() {
 		invalidID := models.ErrInvalidUUID(fmt.Errorf("credentialID must be a valid UUID"))
-		h.log.Error(invalidID)
+		if h.log != nil {
+			h.log.Error(invalidID)
+		}
 		writeMeshkitError(w, invalidID, http.StatusBadRequest)
 		return
 	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	credential, statusCode, err := provider.GetCredentialByID(token, credentialID)
 	if err != nil {
-		h.log.Error(ErrGetUserCredential(err))
+		if h.log != nil {
+			h.log.Error(ErrGetUserCredential(err))
+		}
 		writeMeshkitError(w, ErrGetUserCredential(err), statusCode)
 		return
 	}
 
+	// Enforce user ownership: fail closed. Only the explicit owner can read a credential;
+	// unowned credentials (credential.UserId == uuid.Nil) or requests without a resolved caller are rejected with 404.
+	if user == nil || user.ID == uuid.Nil || credential.UserId == uuid.Nil || credential.UserId != user.ID {
+		notOwned := models.ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
+		writeMeshkitError(w, notOwned, http.StatusNotFound)
+		return
+	}
+
 	if err := json.NewEncoder(w).Encode(credential); err != nil {
-		h.log.Error(ErrEncodeUserCredential(err))
+		if h.log != nil {
+			h.log.Error(ErrEncodeUserCredential(err))
+		}
 		writeMeshkitError(w, ErrEncodeUserCredential(err), http.StatusInternalServerError)
 		return
 	}
 }
 
 func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
 	q := req.URL.Query()
 
 	page, _ := strconv.Atoi(q.Get("page"))
@@ -101,26 +154,45 @@ func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _
 		order = "created_at desc"
 	}
 
-	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
+	if h.log != nil {
+		h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
+	}
 
 	credentialsPage, err := provider.GetUserCredentials(req, user.ID.String(), page, pageSize, search, order)
 	if err != nil {
-		h.log.Error(ErrGetUserCredential(err))
+		if h.log != nil {
+			h.log.Error(ErrGetUserCredential(err))
+		}
 		writeMeshkitError(w, ErrGetUserCredential(err), http.StatusInternalServerError)
 		return
 	}
 
 	if err := json.NewEncoder(w).Encode(credentialsPage); err != nil {
-		h.log.Error(ErrEncodeUserCredential(err))
+		if h.log != nil {
+			h.log.Error(ErrEncodeUserCredential(err))
+		}
 		writeMeshkitError(w, ErrEncodeUserCredential(err), http.StatusInternalServerError)
 		return
 	}
 }
 
 func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
 		return
 	}
@@ -131,7 +203,9 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 	}
 	err = json.Unmarshal(bd, credential)
 	if err != nil {
-		h.log.Error(ErrDecoding(err, "credential"))
+		if h.log != nil {
+			h.log.Error(ErrDecoding(err, "credential"))
+		}
 		writeMeshkitError(w, ErrDecoding(err, "credential"), http.StatusBadRequest)
 		return
 	}
@@ -150,16 +224,27 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 			writeMeshkitError(w, err, http.StatusNotFound)
 			return
 		}
-		h.log.Error(ErrUpdateUserCredential(err))
+		if h.log != nil {
+			h.log.Error(ErrUpdateUserCredential(err))
+		}
 		writeMeshkitError(w, ErrUpdateUserCredential(err), http.StatusInternalServerError)
 		return
 	}
 
-	h.log.Info("Credential updated.")
+	if h.log != nil {
+		h.log.Info("Credential updated.")
+	}
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
 	q := req.URL.Query()
 
 	// The canonical query param is camelCase `credentialId` (schemas
@@ -180,9 +265,15 @@ func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request,
 		// and the response duplicates the message, which is how the two drift
 		// apart when only one is later edited.
 		invalidID := models.ErrInvalidUUID(fmt.Errorf("credentialId must be a valid UUID"))
-		h.log.Error(invalidID)
+		if h.log != nil {
+			h.log.Error(invalidID)
+		}
 		writeMeshkitError(w, invalidID, http.StatusBadRequest)
 		return
+	}
+
+	if user != nil {
+		req = req.WithContext(context.WithValue(req.Context(), models.UserCtxKey, user))
 	}
 
 	_, err = provider.DeleteUserCredential(req, credentialID)
@@ -192,11 +283,15 @@ func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request,
 			return
 		}
 		deleteErr := ErrDeleteUserCredential(err)
-		h.log.Error(deleteErr)
+		if h.log != nil {
+			h.log.Error(deleteErr)
+		}
 		writeMeshkitError(w, deleteErr, http.StatusInternalServerError)
 		return
 	}
 
-	h.log.Info("Credential deleted.")
+	if h.log != nil {
+		h.log.Info("Credential deleted.")
+	}
 	w.WriteHeader(http.StatusOK)
 }
