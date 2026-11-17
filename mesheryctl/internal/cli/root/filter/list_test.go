@@ -45,6 +45,18 @@ func TestListCmd(t *testing.T) {
 			HttpStatusCode:   200,
 		},
 		{
+			// A server, proxy or provider can answer 200 with the JSON value null (what
+			// json.Marshal writes for a nil slice). It must read as "no filters".
+			Name:             "Fetch Filter List when the server replies null",
+			Args:             []string{"list"},
+			ExpectedResponse: "list.filter.output.golden",
+			Fixture:          "filter.list.null.api.response.golden",
+			URL:              "/api/filter",
+			ExpectError:      false,
+			HttpMethod:       "GET",
+			HttpStatusCode:   200,
+		},
+		{
 			Name:             "List filters with invalid page number",
 			Args:             []string{"list", "--page", "0"},
 			ExpectedResponse: "",
@@ -87,6 +99,14 @@ func TestListCmdCount(t *testing.T) {
 			Args:             []string{"list", "--count"},
 			ExpectedResponse: "list.filter.count.output.golden",
 			Fixture:          "filter.list.api.response.golden",
+			URL:              "/api/filter",
+			ExpectError:      false,
+		},
+		{
+			Name:             "Fetch Filter Count when the server replies null",
+			Args:             []string{"list", "--count"},
+			ExpectedResponse: "list.filter.count.empty.output.golden",
+			Fixture:          "filter.list.null.api.response.golden",
 			URL:              "/api/filter",
 			ExpectError:      false,
 		},
