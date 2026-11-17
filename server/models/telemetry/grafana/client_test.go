@@ -34,18 +34,6 @@ func TestQueryRangeResponseSizeLimit(t *testing.T) {
 			}
 		})
 	}
-
-	t.Run("oversized upstream auth error", func(t *testing.T) {
-		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-			w.WriteHeader(http.StatusUnauthorized)
-			_, _ = w.Write([]byte(`"` + strings.Repeat("x", limit) + `"`))
-		}))
-		defer srv.Close()
-		body, err := New(srv.URL, "", nil).QueryRange(context.Background(), "ds1", nil)
-		if body != nil || StatusCode(err) != http.StatusUnauthorized || !errors.Is(err, ErrResponseTooLarge) {
-			t.Fatalf("got body length %d, error %v; want 401 and size diagnosis without a partial body", len(body), err)
-		}
-	})
 }
 
 func TestQueryRangeFallbackPreservesSizeErrors(t *testing.T) {

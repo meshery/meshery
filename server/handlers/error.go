@@ -3,6 +3,7 @@ package handlers
 import (
 	stderrors "errors"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/meshery/meshery/server/models/telemetry/grafana"
@@ -1000,6 +1001,9 @@ func ErrUpdateConnection(err error) error {
 // (health, board search/fetch, datasource listing, or datasource query proxy).
 // The op string identifies the operation that failed. Emitted with HTTP 502.
 func ErrTelemetryGrafana(err error, op string) error {
+	if status := grafana.StatusCode(err); status == http.StatusUnauthorized || status == http.StatusForbidden {
+		return ErrTelemetryGrafanaAuth(err)
+	}
 	if stderrors.Is(err, grafana.ErrResponseTooLarge) {
 		return ErrTelemetrySize(err)
 	}
@@ -1028,6 +1032,9 @@ func ErrTelemetryGrafanaAuth(err error) error {
 // connection (health, metric/label discovery, metadata, or query/query_range).
 // The op string identifies the operation that failed. Emitted with HTTP 502.
 func ErrTelemetryPrometheus(err error, op string) error {
+	if status := prometheus.StatusCode(err); status == http.StatusUnauthorized || status == http.StatusForbidden {
+		return ErrTelemetryPrometheusAuth(err)
+	}
 	if stderrors.Is(err, prometheus.ErrResponseTooLarge) {
 		return ErrTelemetrySize(err)
 	}
