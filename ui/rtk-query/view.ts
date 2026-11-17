@@ -18,13 +18,19 @@ export const viewsApi = api
           url: mesheryApiPath(`extensions/api/content/views/${viewId}`),
           method: 'GET',
         }),
-        providesTags: () => [{ type: TAGS.VIEWS }],
+        providesTags: (result, error, { viewId }) => [{ type: TAGS.VIEWS, id: viewId }],
       }),
+      // The view mutations invalidate only the changed view's id, so an open
+      // getView refetches. They deliberately leave fetchViews alone: it merges
+      // every page into one cache entry, so an invalidation would refetch the
+      // current page and append it a second time. List callers refetch from
+      // page 0 themselves.
       deleteView: builder.mutation({
         query: ({ id }) => ({
           url: mesheryApiPath(`extensions/api/content/views/${id}`),
           method: 'DELETE',
         }),
+        invalidatesTags: (result, error, { id }) => [{ type: TAGS.VIEWS, id }],
       }),
       updateViewVisibility: builder.mutation({
         query: ({ id, body }) => ({
@@ -32,7 +38,7 @@ export const viewsApi = api
           method: 'PUT',
           body: body,
         }),
-        providesTags: () => [{ type: TAGS.VIEWS }],
+        invalidatesTags: (result, error, { id }) => [{ type: TAGS.VIEWS, id }],
       }),
       fetchViews: builder.query({
         query: (queryArg) =>

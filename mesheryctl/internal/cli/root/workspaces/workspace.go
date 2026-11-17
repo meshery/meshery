@@ -31,7 +31,7 @@ var WorkSpaceCmd = &cobra.Command{
 	Use:   "workspace",
 	Short: "Manage workspaces under an organization",
 	Long: `Create, list of workspaces under an organization
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/workspace`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace`,
 	Example: `
 
 // To view a list workspaces
@@ -62,6 +62,5 @@ func returnInvalidArgumentProvidedError() error {
 }
 
 func init() {
-	WorkSpaceCmd.Flags().BoolP("count", "", false, "total number of registered workspaces")
 	WorkSpaceCmd.AddCommand(availableSubcommands...)
 }

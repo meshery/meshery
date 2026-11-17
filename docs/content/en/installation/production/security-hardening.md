@@ -12,8 +12,8 @@ aliases:
 - /installation/production/hardening
 ---
 
-Meshery is a management plane with broad visibility into—and, when you use it
-for lifecycle management, control over—the infrastructure it connects to. That
+Meshery is a management plane with broad visibility into - and, when you use it
+for lifecycle management, control over - the infrastructure it connects to. That
 makes hardening it a priority. This page covers the controls that reduce
 Meshery's attack surface and blast radius in production. Identity and provider
 choices are covered separately in
@@ -40,6 +40,15 @@ Grant only what is needed.
   defaults to `false`. Some managed platforms (AKS, AWS, GCP) require permission
   to watch nodes for full discovery; enable `rbac.nodes: true` **only** on the
   clusters that need it rather than globally.
+- **Know the operator-mode identities.** On clusters running Meshery
+  Operator, the operator's `meshery-operator` ServiceAccount manages the
+  Broker and MeshSync workloads (and the configmaps, secrets, and services
+  those workloads need), and MeshSync reads the cluster through the
+  read-only `meshery-meshsync-role`, which can list and watch every type but
+  write nothing (`pods/exec` is opt-in via `meshsync.rbac.extraRules`). Until
+  the chart's `meshsync.serviceAccount.dedicated` is on (it needs an operator
+  release with `MESHSYNC_SERVICE_ACCOUNT` support), that role is bound to
+  `meshery-operator`, which MeshSync runs as.
 - **Separate duty by cluster.** In out-of-cluster and multi-cloud topologies,
   use a distinct, minimally scoped credential per managed cluster so a single
   compromised credential cannot reach every cluster. See
@@ -101,7 +110,7 @@ and providers.
   them.
 - **In-cluster credentials.** When Meshery runs in-cluster and manages its own
   cluster, it can use the in-cluster ServiceAccount rather than a kubeconfig
-  file—one fewer long-lived secret to manage.
+  file - one fewer long-lived secret to manage.
 - **Provider and OAuth secrets.** Keep Remote Provider configuration and any
   client secrets in Kubernetes Secrets (or an external secrets manager), not in
   plaintext values files committed to source control.
@@ -133,8 +142,7 @@ When Meshery Server is out-of-cluster, the Broker (`4222/tcp`) is exposed beyond
 the cluster so the Server can reach it. Treat that exposure deliberately:
 
 - Restrict the Broker's reachable endpoint to the Meshery Server's network
-  origin using load-balancer source ranges, security groups, or firewall rules—
-  do not expose `4222` to the public internet broadly.
+  origin using load-balancer source ranges, security groups, or firewall rules - do not expose `4222` to the public internet broadly.
 - Prefer private connectivity (VPC peering, private load balancers, VPN) between
   an out-of-cluster Server and managed-cluster Brokers over public exposure.
 - Pair exposure with network policies that allow Broker ingress only from the

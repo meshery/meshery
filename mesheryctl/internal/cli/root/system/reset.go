@@ -33,7 +33,7 @@ var resetCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "Reset Meshery's configuration",
 	Long: `Reset Meshery to it's default configuration.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/reset`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/reset`,
 	Example: `
 // Resets meshery.yaml file with a copy from Meshery repo
 mesheryctl system reset
@@ -52,12 +52,16 @@ mesheryctl system reset
 
 // resets meshery config, skips conirmation if skipConfirmation is true
 func resetMesheryConfig() error {
+	var err error
 	userResponse := false
 	if utils.SilentFlag {
 		userResponse = true
 	} else {
 		// ask user for confirmation
-		userResponse = utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
+		userResponse, err = utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
+		if err != nil {
+			return err
+		}
 	}
 	if !userResponse {
 		utils.Log.Info("Reset aborted.")
@@ -90,14 +94,21 @@ func resetMesheryConfig() error {
 	utils.Log.Infof("Platform: %s\n", currCtx.GetPlatform())
 
 	// Reset the config file to the default context
-	defaultContext := utils.TemplateContext
-	defaultContext.Platform = currCtx.Platform
-	err = config.AddContextToConfig(mctlCfg.GetCurrentContextName(), defaultContext, utils.DefaultConfigPath, true, true)
+	err = resetContextInConfig(mctlCfg.GetCurrentContextName(), currCtx.Platform)
 	if err != nil {
 		return ErrSettingDefaultContextToConfig(err)
 	}
 
 	return fetchManifests(mctlCfg)
+}
+
+// resetContextInConfig replaces the named context with the default context,
+// keeping its platform. It writes to the meshconfig the command runs with:
+// the file given by --config, or the default meshconfig.
+func resetContextInConfig(contextName, platform string) error {
+	defaultContext := utils.TemplateContext
+	defaultContext.Platform = platform
+	return config.AddContextToConfig(contextName, defaultContext, utils.GetActiveConfigPath(), true, true)
 }
 
 // Fetches manifests for meshery components based on the current context

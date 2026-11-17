@@ -10,6 +10,7 @@ on:
       - '.github/workflows/build-docs-preview.yml'
       - '.github/workflows/deploy-docs-preview.yml'
       - '.github/workflows/docs-preview-cleanup.yml'
+      - '!docs/meetings/**'
 
 permissions:
   contents: read

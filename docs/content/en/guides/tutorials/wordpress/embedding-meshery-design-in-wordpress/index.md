@@ -4,43 +4,39 @@ model: WordPress
 params:
    kind: design
 categories: [tutorials]
-description: Learn how to Embed a Meshery Design in a WordPress Post
+description: Embed an interactive Meshery Design in a WordPress post, using the embed export from Kanvas.
 aliases:
 - /guides/tutorials/embedding-meshery-design-in-wordpress
 ---
 
-### Introduction
+In this tutorial, you embed an interactive Meshery Design in a WordPress post. The embed export comes from [Kanvas]({{< ref "extensions/extensions/kanvas/index.md" >}}), so you need access to Kanvas, and a design to embed. If you don't have a design, use one of the public designs in Kanvas.
 
-In this tutorial, we will learn how to embed a **Meshery Design** in a WordPress post using the **Embed** option in **Meshery Design Configurator**.
+1. In Kanvas, expand the **Designs** panel on the left.
 
-This tutorial assumes that you have created a design or have an existing one. If not, you can use one of the numerous public designs available in **Meshery Design Configurator** for this tutorial.
+2. Click the **Quick actions** button (the vertical ellipsis) next to the design, and select **Export Design**.
 
-1. Expand the **Designs** menu on the left.
-
-2. Click the **Quick actions** button to the left of the design (inverted ellipsis) and select **Export Design**.
-   
-3. Click the download icon next to **Embed Design** from the list.
+3. In the list of formats, click the download icon next to **Embed Design**.
    
    ![Embed Design](images/embeddesign.png)
 
-4. This will show the `js` file to download and the HTML code snipped to copy.
+4. Kanvas downloads a `.js` file and shows the HTML snippet to copy. Copy the snippet.
    
    ![Embed Design](images/embeddesign-HTML.png)
 
-5. Now, head over to WordPress and begin by uploading the `js` file to it. Ideally you will upload it to Media.
+5. In WordPress, upload the `.js` file to the Media Library.
    
    ![Upload to WordPress](images/upload-js-wordpress.png)
 
-6. Next, click on the uploaded file in WordPress and copy the File URL. You will need this later.
+6. Click the uploaded file and copy its **File URL**. You need it in step 8.
    
    ![Copy URL](images/copy-url.png)
 
-7. Open the WordPress post where you want to embed the design in edit mode and add a _Custom HTML_ block.
+7. Open the post where you want the design in the editor, and add a _Custom HTML_ block.
 
    ![Copy URL](images/add-custom-html.png)
 
-8. Paste the following CSS code as it is, followed by the **Embed Code** copied from **Meshery Design Configurator**. Update the script source value to the URL copied from WordPress.  
-   ```
+8. Paste the following CSS into the block, followed by the HTML snippet you copied from Kanvas. Then change the `src` of the `<script>` tag to the File URL you copied from WordPress.
+   ```html
    <style>
      .embed-design-container {
        width: 100%;
@@ -55,8 +51,8 @@ This tutorial assumes that you have created a design or have an existing one. If
      }
    </style>
    ```
-    The final _Custom HTML_ should look something like this:
-    ```
+    The finished _Custom HTML_ block looks like this:
+    ```html
     <style>
      .embed-design-container {
        width: 100%;
@@ -76,8 +72,8 @@ This tutorial assumes that you have created a design or have an existing one. If
     ```
    ![Copy URL](images/meshery-design-custom-html.png)
 
-9. Click **Preview** to validate that the design is rendered.
+9. Click **Preview** and confirm that the design renders.
    
    ![Copy URL](images/embedded-design-preview.png)
 
-10. Publish the WordPress post and share.
+10. Publish the post.

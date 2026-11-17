@@ -32,12 +32,14 @@ var linkDocUpdate = map[string]string{
 	"caption": "Usage of mesheryctl system update",
 }
 
+var updateUsageMsg = "Usage: mesheryctl system update [flags]\nRun 'mesheryctl system update --help' to see detailed help message"
+
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Pull new Meshery images/manifest files.",
 	Long: `Pull new Meshery container images and manifests from artifact repository.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/update`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/update`,
 	Example: `
 // Pull new Meshery images from Docker Hub. This does not update mesheryctl. This command may be executed while Meshery is running.
 mesheryctl system update
@@ -46,6 +48,12 @@ mesheryctl system update
 mesheryctl system update --skip-reset
 	`,
 	Annotations: linkDocUpdate,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", updateUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -60,10 +68,6 @@ mesheryctl system update --skip-reset
 		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "update"))
-		}
-
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -92,7 +96,10 @@ mesheryctl system update --skip-reset
 			if utils.SilentFlag {
 				userResponse = true
 			} else {
-				userResponse = utils.AskForConfirmation("Updating Meshery container images/manifest files will supersede the version to latest. Are you sure you want to continue")
+				userResponse, err = utils.AskForConfirmation("Updating Meshery container images/manifest files will supersede the version to latest. Are you sure you want to continue")
+				if err != nil {
+					return err
+				}
 			}
 
 			if !userResponse {

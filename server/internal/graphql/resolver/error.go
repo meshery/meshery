@@ -97,7 +97,7 @@ func ErrKubectlDescribe(err error) error {
 	return errors.New(
 		ErrKubectlDescribeCode,
 		errors.Alert,
-		[]string{"failed to find the resource", "invalid resource type", "resource doens't exists"},
+		[]string{"failed to find the resource", "invalid resource type", "resource doesn't exist"},
 		[]string{err.Error(), "invalid kubernetes resource type or couldn't find the specified resource"},
 		[]string{}, []string{},
 	)

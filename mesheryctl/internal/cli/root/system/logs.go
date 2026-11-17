@@ -15,6 +15,7 @@
 package system
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"io"
@@ -53,13 +54,28 @@ func printLogs(logs string, podName string) {
 	}
 }
 
+// printLogStream buffers across reads so a stream read boundary does not split a log line.
+func printLogStream(stream io.Reader, podName string) error {
+	reader := bufio.NewReader(stream)
+	for {
+		line, err := reader.ReadString('\n')
+		if len(line) > 0 {
+			printLogs(strings.TrimSuffix(line, "\n"), podName)
+		}
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+	}
+}
+
 type cmdSystemLogsFlags struct {
 	Follow bool `json:"follow" validate:"boolean"`
 }
 
 var systemLogsFlags cmdSystemLogsFlags
-
-const BYTE_SIZE = 2000
 
 // logsCmd represents the logs command
 var logsCmd = &cobra.Command{
@@ -145,7 +161,7 @@ mesheryctl system logs meshery-istio
 				return utils.ErrDockerComposeClient(err)
 			}
 
-			if err := composeClient.Logs(context.Background(), utils.DockerComposeFile, true, os.Stdout); err != nil {
+			if err := composeClient.Logs(context.Background(), utils.DockerComposeFile, systemLogsFlags.Follow, os.Stdout, args...); err != nil {
 				return errors.Wrap(err, utils.SystemError("failed to get logs"))
 			}
 		case platformKubernetes:
@@ -228,35 +244,22 @@ mesheryctl system logs meshery-istio
 					if err != nil {
 						return err
 					}
-					defer func() { _ = logs.Close() }()
-					var logBuf []byte
 					if !systemLogsFlags.Follow {
-						logBuf, err = io.ReadAll(logs)
+						logBuf, err := io.ReadAll(logs)
+						_ = logs.Close()
 						if err != nil {
 							return utils.ErrReadResponseBody(err)
 						}
 						printLogs(string(logBuf), name)
 					} else {
 						wg.Add(1)
-						go func() {
+						go func(stream io.ReadCloser, podName string) {
 							defer wg.Done()
-							for {
-								buf := make([]byte, BYTE_SIZE)
-								numBytes, err := logs.Read(buf)
-								if numBytes == 0 {
-									continue
-								}
-								if err == io.EOF {
-									break
-								}
-								if err != nil {
-									utils.Log.Errorf("error occurred while processing logs %v", err)
-									break
-								}
-								logBuf = buf[0:numBytes]
-								printLogs(string(logBuf), name)
+							defer func() { _ = stream.Close() }()
+							if err := printLogStream(stream, podName); err != nil {
+								utils.Log.Errorf("error occurred while processing logs %v", err)
 							}
-						}()
+						}(logs, name)
 					}
 				}
 			}
