@@ -47,6 +47,7 @@ func TestRunAdapterHealthChecksUnknownAdapter(t *testing.T) {
 			if tt.expectError {
 				if assert.Error(t, err) {
 					assert.Contains(t, err.Error(), tt.adapter)
+					assert.Contains(t, err.Error(), "is not configured in the current context")
 				}
 			} else {
 				assert.NoError(t, err)
