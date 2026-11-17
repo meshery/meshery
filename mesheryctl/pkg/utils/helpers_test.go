@@ -32,6 +32,12 @@ func (m mockCloser) Close() error {
 
 }
 
+type failOnCloseCloser struct{}
+
+func (f *failOnCloseCloser) Close() error {
+	panic("unexpected Close call on typed-nil closer")
+}
+
 type trackingTransport struct {
 	base http.RoundTripper
 	body *trackingBody
@@ -115,7 +121,8 @@ func TestIsLocalProvider(t *testing.T) {
 }
 
 func TestSafeClose(t *testing.T) {
-	SetupMeshkitLoggerTesting(t, false)
+	logBuf := SetupMeshkitLoggerTesting(t, false)
+	Log.UpdateErrorLogOutput(logBuf)
 
 	t.Run("nil closer does not panic", func(t *testing.T) {
 		assert.NotPanics(t, func() {
@@ -123,8 +130,8 @@ func TestSafeClose(t *testing.T) {
 		})
 	})
 
-	t.Run("typed nil pointer closer does not panic", func(t *testing.T) {
-		var f *os.File
+	t.Run("typed nil pointer closer skips close", func(t *testing.T) {
+		var f *failOnCloseCloser
 		assert.NotPanics(t, func() {
 			SafeClose(f)
 		})
@@ -143,15 +150,15 @@ func TestSafeClose(t *testing.T) {
 	})
 
 	t.Run("closer returning error logs when logger is initialized", func(t *testing.T) {
+		logBuf.Reset()
 		expectedErr := errors.New("close error")
 		mc := &mockCloser{
 			closeFunc: func() error {
 				return expectedErr
 			},
 		}
-		assert.NotPanics(t, func() {
-			SafeClose(mc)
-		})
+		SafeClose(mc)
+		assert.Contains(t, logBuf.String(), "close error")
 	})
 
 	t.Run("closer returning error does not panic when logger is nil", func(t *testing.T) {

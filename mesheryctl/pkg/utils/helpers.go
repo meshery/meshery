@@ -417,14 +417,16 @@ func StringWithCharset(length int) string {
 	return string(b)
 }
 
-// SafeClose is a helper function help to close the io
+// SafeClose closes the given io.Closer safely. If co is nil or a typed nil pointer,
+// SafeClose returns immediately. If closing returns an error and Log is initialized,
+// the error is logged; if Log is nil, the error is dropped silently.
 func SafeClose(co io.Closer) {
 	if co == nil {
 		return
 	}
 	val := reflect.ValueOf(co)
 	switch val.Kind() {
-	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Pointer, reflect.Slice, reflect.UnsafePointer:
+	case reflect.Chan, reflect.Func, reflect.Map, reflect.Pointer, reflect.Slice, reflect.UnsafePointer:
 		if val.IsNil() {
 			return
 		}
