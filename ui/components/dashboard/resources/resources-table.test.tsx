@@ -251,4 +251,30 @@ describe('resources-table fetch errors', () => {
     await waitFor(() => expect(notify).toHaveBeenCalled());
     expect(notify.mock.calls[0][0].message).toBe(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES.error_msg);
   });
+
+  it.each([
+    ['an empty server message', { status: 500, data: { message: '' } }],
+    [
+      'a malformed MeshKit envelope',
+      { status: 500, meshkit: { message: 'boom', suggestedRemediation: 'not a list' } },
+    ],
+  ])('falls back to the action error message for %s', async (_label, rejection) => {
+    fetchResources.mockImplementationOnce(() => ({
+      unwrap: () => Promise.reject(rejection),
+    }));
+
+    render(
+      <ResourcesTable
+        updateProgress={vi.fn()}
+        k8sConfig={{}}
+        useResourceConfig={() => ({ name: 'Pod', columns: [], options: {} })}
+        submenu={false}
+        workloadType="pods"
+        selectedK8sContexts={[]}
+      />,
+    );
+
+    await waitFor(() => expect(notify).toHaveBeenCalled());
+    expect(notify.mock.calls[0][0].message).toBe(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES.error_msg);
+  });
 });
