@@ -386,7 +386,6 @@ func TestExplicitUndeployOfAnUnsharedOperatorIsQuiet(t *testing.T) {
 	}
 }
 
-
 // TestSetOperatorDeploymentClaimsTheConnection: an explicit install goes
 // through SetOperatorDeployment, not DeployUndeployedOperators, and must still
 // record the connection as a consumer so a later explicit uninstall by another
