@@ -33,6 +33,7 @@ var (
 	restrictedIPv6Nets = []net.IPNet{
 		{IP: net.ParseIP("2001:db8::"), Mask: net.CIDRMask(32, 128)},
 		{IP: net.ParseIP("2001:2::"), Mask: net.CIDRMask(48, 128)},
+		{IP: net.ParseIP("fec0::"), Mask: net.CIDRMask(10, 128)},
 	}
 )
 
@@ -153,6 +154,14 @@ func ValidateSafeURL(rawURL string) (*url.URL, error) {
 // that every returned IP address is safe/public before establishing a TCP connection.
 // If allowPrivate is true (for testing only), private/loopback address filtering is bypassed.
 func SafeDialContext(timeout time.Duration, allowPrivate bool) func(ctx context.Context, network, addr string) (net.Conn, error) {
+	return safeDialContext(timeout, allowPrivate, net.DefaultResolver)
+}
+
+type ipResolver interface {
+	LookupIP(ctx context.Context, network, host string) ([]net.IP, error)
+}
+
+func safeDialContext(timeout time.Duration, allowPrivate bool, resolver ipResolver) func(ctx context.Context, network, addr string) (net.Conn, error) {
 	dialer := &net.Dialer{
 		Timeout:   timeout,
 		KeepAlive: 30 * time.Second,
@@ -169,7 +178,7 @@ func SafeDialContext(timeout time.Duration, allowPrivate bool) func(ctx context.
 		}
 
 		// Resolve IP addresses
-		ips, err := net.DefaultResolver.LookupIP(ctx, "ip", host)
+		ips, err := resolver.LookupIP(ctx, "ip", host)
 		if err != nil {
 			return nil, fmt.Errorf("DNS resolution failed for %q: %w", host, err)
 		}

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -53,6 +54,7 @@ func TestIsRestrictedIP(t *testing.T) {
 		{"Reserved IPv4 240.0.0.1", "240.0.0.1", true},
 		{"IPv6 documentation 2001:db8::1", "2001:db8::1", true},
 		{"IPv6 benchmarking 2001:2::1", "2001:2::1", true},
+		{"Deprecated IPv6 site-local fec0::1", "fec0::1", true},
 
 		// Multicast
 		{"IPv4 Multicast 224.0.0.1", "224.0.0.1", true},
@@ -149,6 +151,7 @@ func TestValidateSafeURL(t *testing.T) {
 		{"Reserved IPv4 literal", "http://240.0.0.1/design.yaml", true},
 		{"IPv6 documentation literal", "http://[2001:db8::1]/design.yaml", true},
 		{"IPv6 benchmarking literal", "http://[2001:2::1]/design.yaml", true},
+		{"Deprecated IPv6 site-local literal", "http://[fec0::1]/design.yaml", true},
 		{"Scoped IPv6 loopback with multiple percent escapes", "http://[::1%25eth0%25x]/api", true},
 	}
 
@@ -221,17 +224,35 @@ func TestSafeHTTPClient_BlocksRedirectToRestrictedTarget(t *testing.T) {
 	}
 }
 
-func TestSafeCheckRedirectBlocksIPv6BenchmarkingTarget(t *testing.T) {
+func TestSafeCheckRedirectBlocksRestrictedIPv6Target(t *testing.T) {
 	from, err := http.NewRequest(http.MethodGet, "https://example.com/start", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-	to, err := http.NewRequest(http.MethodGet, "http://[2001:2::1]/", nil)
-	if err != nil {
-		t.Fatal(err)
+	for _, target := range []string{"http://[2001:2::1]/", "http://[fec0::1]/"} {
+		to, err := http.NewRequest(http.MethodGet, target, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := SafeCheckRedirect(to, []*http.Request{from}); err == nil {
+			t.Errorf("expected redirect to restricted IPv6 address %s to be blocked", target)
+		}
 	}
-	if err := SafeCheckRedirect(to, []*http.Request{from}); err == nil {
-		t.Fatal("expected redirect to IPv6 benchmarking range to be blocked")
+}
+
+type fixedIPResolver struct {
+	ips []net.IP
+}
+
+func (r fixedIPResolver) LookupIP(context.Context, string, string) ([]net.IP, error) {
+	return r.ips, nil
+}
+
+func TestSafeDialContextBlocksResolvedSiteLocalAddress(t *testing.T) {
+	dial := safeDialContext(time.Second, false, fixedIPResolver{ips: []net.IP{net.ParseIP("fec0::1")}})
+	_, err := dial(context.Background(), "tcp", "internal.example:80")
+	if err == nil || !strings.Contains(err.Error(), "connection to restricted IP") {
+		t.Fatalf("expected a resolved site-local address to be rejected, got %v", err)
 	}
 }
 
