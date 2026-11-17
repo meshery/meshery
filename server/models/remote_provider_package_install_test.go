@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"io"
 	"math"
 	"math/rand"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 )
@@ -603,4 +605,78 @@ func TestTarXZ_GlobalPaxRecords(t *testing.T) {
 			}
 		})
 	}
+}
+
+// The stall timer measures how long the package host is silent, not how long
+// extraction takes to handle what it already received. A slow disk or a busy
+// machine can keep the extractor away from the body for longer than the stall
+// timeout while the host still has data ready to send; that must not be
+// reported as a stalled download.
+func TestStallGuardReader_DoesNotCountTimeBetweenReads(t *testing.T) {
+	const timeout = 100 * time.Millisecond
+
+	var fired atomic.Bool
+	timer := time.AfterFunc(timeout, func() { fired.Store(true) })
+	// TarXZF stops the timer once the response headers are in.
+	timer.Stop()
+
+	r := &stallGuardReader{r: bytes.NewReader(make([]byte, 8)), timer: timer, timeout: timeout}
+	buf := make([]byte, 4)
+
+	if n, err := r.Read(buf); n != 4 || err != nil {
+		t.Fatalf("first read = %d, %v; want 4, nil", n, err)
+	}
+
+	// The extractor is busy with the first chunk for three times the timeout.
+	time.Sleep(3 * timeout)
+	if fired.Load() {
+		t.Fatal("the stall timer fired while the extractor was busy and the host was still sending")
+	}
+
+	if n, err := r.Read(buf); n != 4 || err != nil {
+		t.Fatalf("second read = %d, %v; want the data the host had ready", n, err)
+	}
+	if fired.Load() {
+		t.Fatal("the stall timer fired during a read that returned data")
+	}
+}
+
+// A host that stops sending while the extractor is waiting on it is the stall
+// the timer exists to catch.
+func TestStallGuardReader_FiresWhenAReadWaitsTooLong(t *testing.T) {
+	const timeout = 100 * time.Millisecond
+
+	var fired atomic.Bool
+	timer := time.AfterFunc(timeout, func() { fired.Store(true) })
+	timer.Stop()
+
+	release := make(chan struct{})
+	r := &stallGuardReader{r: blockingReader{release}, timer: timer, timeout: timeout}
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		_, _ = r.Read(make([]byte, 1))
+	}()
+
+	deadline := time.After(5 * time.Second)
+	for !fired.Load() {
+		select {
+		case <-deadline:
+			close(release)
+			<-done
+			t.Fatal("the stall timer did not fire although the host sent nothing during a read")
+		case <-time.After(10 * time.Millisecond):
+		}
+	}
+	close(release)
+	<-done
+}
+
+// blockingReader returns nothing until released, like a host that has gone quiet.
+type blockingReader struct{ release chan struct{} }
+
+func (b blockingReader) Read([]byte) (int, error) {
+	<-b.release
+	return 0, io.EOF
 }
