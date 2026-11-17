@@ -83,3 +83,25 @@ For flows, architecture, state, or sequence diagrams, do not hand-build boxes-an
 - Run `npx -y lavish-axi playbook <playbook_id>` for focused artifact guidance. One artifact often combines several playbooks (for example a plan that includes a comparison and a diagram), so MUST open each matching playbook before writing HTML.
 - Lavish does not auto-inject any design system - artifacts stay portable so they render identically when opened directly without lavish-axi running. Before writing any HTML: Decide the design direction in this strict priority order, and only move to the next step when the current one truly yields nothing: (1) if the user asked for a specific look or named design system, use that; (2) otherwise you must first inspect the project the artifact is about - the subject or product whose content or UI it represents, which may differ from your current working directory - and match that project's design system: Tailwind or theme config, shared CSS variables or design tokens, component library, brand assets, or existing styled pages. If the artifact previews, proposes, or mocks a specific app's UI, render it in that app's own design system so it faithfully shows the product, even when you are running in a different repo; (3) only when both steps come up empty, use the Lavish-recommended Tailwind CSS browser runtime v4 + DaisyUI v5, available via CDN, and prefer that CDN snippet over hand-writing styles unless explicitly instructed otherwise by the user. Run `npx -y lavish-axi design` for a content-to-playbook router, a copy-pasteable CDN snippet, a Mermaid CDN snippet/init for diagrams, and the DaisyUI component reference. When you deliver the artifact, state which of the three design sources you used and why.
 - Use lavish-axi when the user asks for a visual artifact, HTML explainer, interactive prototype, review surface, product or technical plan, comparison, report, or browser-based feedback loop
+
+---
+
+## Landing through no-mistakes — mandatory
+
+Every pull request that results from work under this skill must use and pass the
+no-mistakes pipeline before it merges. This is the repository landing gate in
+`AGENTS.md` ("Worktrees and landing a change"), not an optional final check.
+
+- Work in a treehouse worktree, never in the main clone: `treehouse get --lease -b <branch>`,
+  and release it with `treehouse return <path>` once the change has merged.
+- Commit, then run `no-mistakes axi run --intent "<goal>"` (a clone without a
+  `no-mistakes` remote needs `no-mistakes init` once). `no-mistakes axi status` shows
+  the step and its findings, and `no-mistakes axi respond` answers a review gate.
+- At most three no-mistakes runs per pull request. A run that stopped on a usage limit
+  counts; one cancelled before it did anything does not.
+- A pull request merges only after a no-mistakes run passes. If it has still not passed
+  after three runs, do not merge it as it stands: open an issue for anything still
+  flagged and hand the pull request to a human.
+- A green CI run, a passing test suite, or a favourable review from another tool does
+  not replace a passing no-mistakes run, and a passing no-mistakes run does not waive
+  the "Require Human Review" areas listed in `AGENTS.md`.

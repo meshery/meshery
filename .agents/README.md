@@ -21,6 +21,10 @@ the rules; this file holds the layout detail behind them.
 directory per skill, each with a `SKILL.md`. Do not enumerate them in `AGENTS.md`; list the
 directory. Add a new skill only here.
 
+Every skill carries the no-mistakes landing gate: work under a skill that lands as a
+pull request must use and pass no-mistakes before it merges (see `AGENTS.md`,
+"Worktrees and landing a change").
+
 ### Per-tool discovery
 
 No skill is ever copied per tool:
