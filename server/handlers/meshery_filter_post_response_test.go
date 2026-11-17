@@ -13,6 +13,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/events"
 	_events "github.com/meshery/meshkit/utils/events"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -46,6 +47,14 @@ func postFilter(t *testing.T, h *Handler, provider models.Provider, body models.
 
 	h.FilterFileRequestHandler(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
 	return rec
+}
+
+func allowPrivateRemoteFileImports(t *testing.T) {
+	t.Helper()
+	key := models.ALLOW_PRIVATE_REMOTE_FILE_IMPORTS_ENV
+	previous := viper.GetBool(key)
+	viper.Set(key, true)
+	t.Cleanup(func() { viper.Set(key, previous) })
 }
 
 // TestFilterPOSTResponseCarriesSavedFilter pins the body of a save: it must
@@ -123,6 +132,7 @@ func TestFormatFilterOutputKeepsEmptyListForNull(t *testing.T) {
 func TestFilterPOSTResponseCarriesURLImportedFilter(t *testing.T) {
 	h, provider, db := newFilterPOSTFixture(t)
 	provider.Log = h.log
+	allowPrivateRemoteFileImports(t)
 	source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte("name: from-url\n"))
 	}))
@@ -151,6 +161,7 @@ func TestFilterPOSTResponseCarriesURLImportedFilter(t *testing.T) {
 func TestFilterPOSTResponseCarriesURLImportedFilterWithoutSave(t *testing.T) {
 	h, provider, db := newFilterPOSTFixture(t)
 	provider.Log = h.log
+	allowPrivateRemoteFileImports(t)
 	source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte("name: from-url-unsaved\n"))
 	}))
