@@ -189,11 +189,25 @@ vi.mock('@sistent/sistent', () => ({
       search
     </button>
   ),
-  TransferList: ({ assignableData, originalAssignedData, assignablePage }: any) => (
+  TransferList: ({
+    assignableData,
+    originalAssignedData,
+    assignablePage,
+    originalLeftCount,
+    originalRightCount,
+  }: any) => (
     <div
       data-testid="mock-transfer-list"
       data-assignable-ids={(assignableData || []).map((c: any) => c.id).join(',')}
       data-assigned-ids={(originalAssignedData || []).map((c: any) => c.id).join(',')}
+      data-original-left-count={originalLeftCount}
+      data-original-right-count={originalRightCount}
+      data-move-all-left-disabled={
+        originalLeftCount !== undefined && (assignableData?.length ?? 0) < originalLeftCount
+      }
+      data-move-all-right-disabled={
+        originalRightCount !== undefined && (originalAssignedData?.length ?? 0) < originalRightCount
+      }
     >
       <button data-testid="paginate-assignable-btn" onClick={assignablePage}>
         Next Page
@@ -497,5 +511,33 @@ describe('Environments connection assignment modal', () => {
     expect(assignableCalls.length).toBeGreaterThan(0);
     const lastAssignableCall = assignableCalls.at(-1);
     expect(lastAssignableCall?.[0]).toMatchObject({ page: 0 });
+  });
+
+  it('enables move-all when deduplicated list is complete even if server totalCount includes duplicates', async () => {
+    // 1 page of connections on server, but totalCount is 3 due to duplicate IDs:
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: [
+        { id: 'conn-1', name: 'Cluster A' },
+        { id: 'conn-1', name: 'Cluster A Duplicate' },
+        { id: 'conn-2', name: 'Cluster B' },
+      ],
+      totalCount: 3,
+    } as any;
+
+    const user = userEvent.setup();
+    render(<Environments />);
+
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    });
+
+    const transferList = screen.getByTestId('mock-transfer-list');
+    // Deduplicated list has 2 items:
+    expect(transferList.getAttribute('data-assignable-ids')).toBe('conn-1,conn-2');
+    // Once all pages are loaded (page 0 of 1), the count given to TransferList uses the deduplicated length:
+    expect(transferList.getAttribute('data-original-left-count')).toBe('2');
+    // Move-all is enabled because assignableData.length (2) is not less than originalLeftCount (2):
+    expect(transferList.getAttribute('data-move-all-left-disabled')).toBe('false');
   });
 });

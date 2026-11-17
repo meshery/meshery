@@ -476,18 +476,26 @@ const Environments = () => {
     };
   };
 
+  const assignableTotalCount = Number(connections?.totalCount ?? 0);
+  const assignablePagesCount = Math.ceil(assignableTotalCount / connectionPageSize);
+  const isAssignableFullyLoaded = connectionsPage >= assignablePagesCount - 1;
+  const originalLeftCount = isAssignableFullyLoaded ? connectionsData.length : assignableTotalCount;
+
+  const assignedTotalCount = Number(environmentConnections?.totalCount ?? 0);
+  const assignedPagesCount = Math.ceil(assignedTotalCount / connectionPageSize);
+  const isAssignedFullyLoaded = connectionsOfEnvironmentPage >= assignedPagesCount - 1;
+  const originalRightCount = isAssignedFullyLoaded
+    ? environmentConnectionsData.length
+    : assignedTotalCount;
+
   const handleAssignablePage = () => {
-    const pagesCount = Math.ceil(Number(connections?.totalCount ?? 0) / connectionPageSize);
-    if (connectionsPage < pagesCount - 1) {
+    if (connectionsPage < assignablePagesCount - 1) {
       setConnectionsPage((prevConnectionsPage) => prevConnectionsPage + 1);
     }
   };
 
   const handleAssignedPage = () => {
-    const pagesCount = Math.ceil(
-      Number(environmentConnections?.totalCount ?? 0) / connectionPageSize,
-    );
-    if (connectionsOfEnvironmentPage < pagesCount - 1) {
+    if (connectionsOfEnvironmentPage < assignedPagesCount - 1) {
       setConnectionsOfEnvironmentPage(
         (prevConnectionsOfEnvironmentPage) => prevConnectionsOfEnvironmentPage + 1,
       );
@@ -655,8 +663,8 @@ const Environments = () => {
                 transferComponentType={TRANSFER_COMPONENT.CHIP}
                 assignablePage={handleAssignablePage}
                 assignedPage={handleAssignedPage}
-                originalLeftCount={connections?.totalCount}
-                originalRightCount={environmentConnections?.totalCount}
+                originalLeftCount={originalLeftCount}
+                originalRightCount={originalRightCount}
                 leftPermission={canRemoveConnFromEnv}
                 rightPermission={canAssignConnToEnv}
               />
