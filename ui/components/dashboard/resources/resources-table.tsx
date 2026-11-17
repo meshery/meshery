@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
+import { formatApiError } from '@/utils/helpers/meshkitError';
 import { useLazyGetMeshSyncResourcesQuery } from '@/rtk-query/meshsync';
 import {
   CustomColumnVisibilityControl,
@@ -169,10 +170,12 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
       .catch((err) => {
         if (cancelled) return;
         updateProgress?.({ showProgress: false });
+        // unwrap() rejects with an RTK Query error object ({ status, data }),
+        // which reads "[object Object]" when interpolated into a string.
+        const { message } = formatApiError(err, ACTION_TYPES.FETCH_MESHSYNC_RESOURCES.error_msg);
         notify({
-          message: `${ACTION_TYPES.FETCH_MESHSYNC_RESOURCES.error_msg}: ${err}`,
+          message,
           event_type: EVENT_TYPES.ERROR,
-          details: err.toString(),
         });
       });
 
