@@ -1,7 +1,11 @@
 package models
 
 import (
+	"bytes"
 	"encoding/json"
+	"net/url"
+	"path"
+	"strings"
 	"time"
 
 	"github.com/meshery/meshery/server/internal/sql"
@@ -129,5 +133,34 @@ func GetFilterName(stringifiedFile string) (string, error) {
 		return "", ErrFilterFileName
 	}
 
+	return name, nil
+}
+
+// wasmMagic is the header every WebAssembly binary module starts with.
+var wasmMagic = []byte("\x00asm")
+
+// filterNameForURLImport names a filter imported from fileURL. A WebAssembly
+// module carries no name of its own, so it is named after the file in the URL
+// path without its .wasm extension, or after the host when the path names no
+// file. Any other body is a filter YAML file, named by its name field.
+func filterNameForURLImport(fileURL string, body []byte) (string, error) {
+	if !bytes.HasPrefix(body, wasmMagic) {
+		return GetFilterName(string(body))
+	}
+
+	u, err := url.Parse(fileURL)
+	if err != nil {
+		return "", err
+	}
+	name := path.Base(u.Path)
+	if ext := path.Ext(name); strings.EqualFold(ext, ".wasm") {
+		name = strings.TrimSuffix(name, ext)
+	}
+	if name == "" || name == "." || name == "/" {
+		name = u.Hostname()
+	}
+	if name == "" {
+		return "", ErrFilterFileName
+	}
 	return name, nil
 }
