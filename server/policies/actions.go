@@ -297,6 +297,7 @@ func applyComponentConfigPatches(design *pattern.PatternFile, actions []PolicyAc
 			}
 		}
 		if len(compRemoves) > 0 {
+			compRemoves = orderCleanupActions(compRemoves)
 			comp.Configuration = applyConfigRemoves(comp.Configuration, compRemoves)
 		}
 	}
@@ -343,12 +344,15 @@ func escapeSjsonKey(key string) string {
 }
 
 // applyConfigRemoves removes fields from a component's configuration via sjson.Delete.
+// Duplicate removals targeting the same component ID and complete path are deduplicated
+// so that actions from multiple selectors do not shift and delete subsequent array elements.
 func applyConfigRemoves(config map[string]interface{}, removes []PolicyAction) map[string]interface{} {
 	data, err := json.Marshal(config)
 	if err != nil {
 		return config
 	}
 	jsonStr := string(data)
+	seen := make(map[string]bool)
 	for _, rm := range removes {
 		path := rm.UpdatePath
 		if len(path) > 0 && path[0] == "configuration" {
@@ -357,7 +361,13 @@ func applyConfigRemoves(config map[string]interface{}, removes []PolicyAction) m
 		if len(path) == 0 {
 			continue
 		}
-		jsonStr, err = sjson.Delete(jsonStr, sjsonPath(path))
+		sjPath := sjsonPath(path)
+		dedupKey := rm.ID + ":" + sjPath
+		if seen[dedupKey] {
+			continue
+		}
+		seen[dedupKey] = true
+		jsonStr, err = sjson.Delete(jsonStr, sjPath)
 		if err != nil {
 			return config
 		}
