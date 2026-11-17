@@ -337,6 +337,192 @@ func CreateTempAuthServer(fn func(http.ResponseWriter, *http.Request)) (*http.Se
 	return srv, listener.Addr().(*net.TCPAddr).Port, nil
 }
 
+func isMesheryProvider(provider Provider, providerKey string) bool {
+	return strings.EqualFold(strings.TrimSpace(providerKey), "Meshery") ||
+		strings.EqualFold(strings.TrimSpace(provider.ProviderName), "Meshery")
+}
+
+// tryExistingAuth attempts to reuse the authentication token stored in the
+// current Meshery context. It validates the token against the Meshery server
+// and persists any refreshed token returned by the server.
+//
+// Returns:
+//   - data, true, nil: existing authentication was successfully reused.
+//   - nil, false, nil: no reusable authentication exists; browser login is needed.
+//   - nil, false, err: an unexpected error occurred.
+func tryExistingAuth(
+	mctlCfg *config.MesheryCtlConfig,
+	provider Provider,
+	providerKey string,
+) ([]byte, bool, error) {
+
+	// Step 1: Resolve the auth file associated with the current context.
+	tokenPath, err := GetCurrentAuthToken()
+	if err != nil {
+		return nil, false, err
+	}
+
+	// Step 2: Read the existing authentication details.
+	tokenObj, err := ReadToken(tokenPath)
+	if err != nil {
+		// Missing or malformed auth file: proceed with normal login.
+		log.Debugf("Could not read existing authentication: %v", err)
+		return nil, false, nil
+	}
+
+	token := strings.TrimSpace(tokenObj[tokenName])
+	storedProvider := strings.TrimSpace(tokenObj[providerName])
+
+	// Step 3: Ensure the auth file contains the required credentials.
+	if token == "" || storedProvider == "" {
+		log.Debug("Existing authentication is incomplete")
+		return nil, false, nil
+	}
+
+	// Step 4: Verify that the stored credentials belong to the selected provider.
+	// The auth file may contain either the provider's display name or its
+	// registration key, depending on how the user previously logged in.
+	matchesProviderName := strings.EqualFold(
+		storedProvider,
+		strings.TrimSpace(provider.ProviderName),
+	)
+
+	matchesProviderKey := providerKey != "" &&
+		strings.EqualFold(
+			storedProvider,
+			strings.TrimSpace(providerKey),
+		)
+
+	if !matchesProviderName && !matchesProviderKey {
+		log.Debugf(
+			"Stored authentication belongs to provider %q, selected provider is %q",
+			storedProvider,
+			provider.ProviderName,
+		)
+		return nil, false, nil
+	}
+	// Step 5: Construct a request to Meshery's existing token endpoint.
+	req, err := http.NewRequest(
+		http.MethodGet,
+		mctlCfg.GetBaseMesheryURL()+"/api/token",
+		nil,
+	)
+	if err != nil {
+		return nil, false, err
+	}
+
+	// The endpoint expects these two cookies.
+	req.AddCookie(&http.Cookie{
+		Name:     tokenName,
+		Value:    token,
+		HttpOnly: true,
+	})
+
+	req.AddCookie(&http.Cookie{
+		Name:     providerName,
+		Value:    storedProvider,
+		HttpOnly: true,
+	})
+
+	// Step 6: Disable automatic redirects.
+	//
+	// An invalid session causes the server to redirect to /auth/login.
+	// We need to inspect that redirect instead of following it and
+	// accidentally receiving an HTML login page with HTTP 200.
+	client := &http.Client{
+		Timeout: 15 * time.Second,
+		CheckRedirect: func(
+			req *http.Request,
+			via []*http.Request,
+		) error {
+			return http.ErrUseLastResponse
+		},
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, false, err
+	}
+	defer SafeClose(resp.Body)
+
+	// Step 7: Handle authentication failures.
+	if resp.StatusCode == http.StatusUnauthorized {
+		log.Debug("Existing authentication is unauthorized")
+		return nil, false, nil
+	}
+
+	if resp.StatusCode >= 300 && resp.StatusCode < 400 {
+		location, err := resp.Location()
+		if err != nil {
+			return nil, false, fmt.Errorf(
+				"unexpected redirect while validating authentication: %w",
+				err,
+			)
+		}
+
+		// This is the expected redirect when the remote session is invalid.
+		if location.Path == "/auth/login" {
+			log.Debug("Existing session is invalid; browser login required")
+			return nil, false, nil
+		}
+
+		// A redirect somewhere else is not necessarily an authentication
+		// failure. Do not silently launch another login flow.
+		return nil, false, fmt.Errorf(
+			"unexpected redirect while validating authentication: %s",
+			location.String(),
+		)
+	}
+
+	// Step 8: Handle unexpected server responses.
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+
+		return nil, false, fmt.Errorf(
+			"failed to validate existing authentication: HTTP %d: %s",
+			resp.StatusCode,
+			strings.TrimSpace(string(body)),
+		)
+	}
+
+	// Step 9: Read and validate the returned token JSON.
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, false, err
+	}
+
+	var refreshedToken map[string]string
+	if err := json.Unmarshal(data, &refreshedToken); err != nil {
+		return nil, false, fmt.Errorf(
+			"invalid token response from Meshery: %w",
+			err,
+		)
+	}
+
+	if strings.TrimSpace(refreshedToken[tokenName]) == "" {
+		return nil, false, fmt.Errorf(
+			"Meshery returned an empty authentication token",
+		)
+	}
+
+	// Step 10: Preserve the registration key when explicitly selected.
+	if providerKey != "" {
+		data = rewriteTokenProvider(data, providerKey)
+	}
+
+	// Step 11: Persist the refreshed authentication details.
+	if err := WriteTokenFile(tokenPath, data); err != nil {
+		return nil, false, fmt.Errorf(
+			"failed to update authentication file: %w",
+			err,
+		)
+	}
+
+	log.Info("Existing authentication successfully reused")
+
+	return data, true, nil
+}
+
 // InitiateLogin initates the login process
 func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, error) {
 	// Get the providers info
@@ -358,6 +544,19 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, err
 
 	if err != nil {
 		return nil, err
+	}
+
+	// Check for an existing session ONLY when Meshery is selected.
+	if isMesheryProvider(provider, providerKey) {
+		data, valid, err := tryExistingAuth(mctlCfg, provider, providerKey)
+		if err != nil {
+			return nil, err
+		}
+
+		if valid {
+			log.Info("Existing Meshery authentication reused")
+			return data, nil
+		}
 	}
 
 	var token string
