@@ -19,6 +19,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
 	"k8s.io/client-go/tools/clientcmd/api"
 )
 
@@ -114,20 +115,59 @@ func TestIsLocalProvider(t *testing.T) {
 }
 
 func TestSafeClose(t *testing.T) {
-
 	SetupMeshkitLoggerTesting(t, false)
 
-	// testcases for SafeClose(co io.Closer)
-	t.Run("SafeClose", func(t *testing.T) {
-		// define a io.Closer for testing
+	t.Run("nil closer does not panic", func(t *testing.T) {
+		assert.NotPanics(t, func() {
+			SafeClose(nil)
+		})
+	})
+
+	t.Run("typed nil pointer closer does not panic", func(t *testing.T) {
+		var f *os.File
+		assert.NotPanics(t, func() {
+			SafeClose(f)
+		})
+	})
+
+	t.Run("valid closer closes successfully", func(t *testing.T) {
+		closed := false
+		mc := &mockCloser{
+			closeFunc: func() error {
+				closed = true
+				return nil
+			},
+		}
+		SafeClose(mc)
+		assert.True(t, closed, "closer should have been closed")
+	})
+
+	t.Run("closer returning error logs when logger is initialized", func(t *testing.T) {
 		expectedErr := errors.New("close error")
 		mc := &mockCloser{
 			closeFunc: func() error {
 				return expectedErr
 			},
 		}
-		SafeClose(mc)
+		assert.NotPanics(t, func() {
+			SafeClose(mc)
+		})
+	})
 
+	t.Run("closer returning error does not panic when logger is nil", func(t *testing.T) {
+		origLog := Log
+		Log = nil
+		defer func() { Log = origLog }()
+
+		expectedErr := errors.New("close error with nil logger")
+		mc := &mockCloser{
+			closeFunc: func() error {
+				return expectedErr
+			},
+		}
+		assert.NotPanics(t, func() {
+			SafeClose(mc)
+		})
 	})
 }
 

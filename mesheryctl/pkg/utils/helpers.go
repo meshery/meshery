@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"runtime"
 	"sort"
@@ -418,8 +419,20 @@ func StringWithCharset(length int) string {
 
 // SafeClose is a helper function help to close the io
 func SafeClose(co io.Closer) {
+	if co == nil {
+		return
+	}
+	val := reflect.ValueOf(co)
+	switch val.Kind() {
+	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Pointer, reflect.Slice, reflect.UnsafePointer:
+		if val.IsNil() {
+			return
+		}
+	}
 	if cerr := co.Close(); cerr != nil {
-		Log.Error(cerr)
+		if Log != nil {
+			Log.Error(cerr)
+		}
 	}
 }
 
