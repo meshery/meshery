@@ -140,8 +140,9 @@
 
 <script>
     function handleImageError(image) {
-        image.onerror = null;
-        image.src = '{{ strings.TrimPrefix "/" .Params.image | relURL }}';
+        const fallbackSrc = '{{ strings.TrimPrefix "/" .Params.image | relURL }}';
+        if (image.getAttribute('src') === fallbackSrc) return;
+        image.src = fallbackSrc;
     }
     const designLinks = document.querySelectorAll('.design-link');
     if (designLinks.length === 0) {
