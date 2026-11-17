@@ -22395,6 +22395,31 @@ Pass a registration key to --provider instead of the display name</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrProfileTraversalCode-1265" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrProfileTraversalCode-more-info" onclick="toggle_visibility('mesheryctl-ErrProfileTraversalCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1265" class="error-name-code">
+              <a href="/reference/error-codes/client-mesheryctl/errprofiletraversalcode-1265/"><code>ErrProfileTraversalCode-1265</code></a>
+            </td>
+            <td>Unable to complete performance profile lookup</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrProfileTraversalCode-1265" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="mesheryctl-ErrProfileTraversalCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">The matching performance profile pages changed or were inconsistent during lookup</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Profiles were added, deleted, or reordered during lookup, or the provider returned inconsistent pagination data</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Rerun the command to refresh the matching profile list</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>

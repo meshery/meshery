@@ -871,6 +871,7 @@ Section pages:
 - [ErrProcessOAMCode-1016](/reference/error-codes/adapter-meshery-traefik-mesh/errprocessoamcode-1016/)
 - [ErrProcessOAMCode-1023](/reference/error-codes/adapter-meshery-kuma/errprocessoamcode-1023/)
 - [ErrProcessOAMCode-1024](/reference/error-codes/adapter-meshery-istio/errprocessoamcode-1024/)
+- [ErrProfileTraversalCode-1265](/reference/error-codes/client-mesheryctl/errprofiletraversalcode-1265/)
 - [ErrPrometheusBoardsCode-1021](/reference/error-codes/component-meshery-server/errprometheusboardscode-1021/)
 - [ErrPrometheusConfigCode-1018](/reference/error-codes/component-meshery-server/errprometheusconfigcode-1018/)
 - [ErrPrometheusGetNodesCode-1250](/reference/error-codes/component-meshery-server/errprometheusgetnodescode-1250/)
