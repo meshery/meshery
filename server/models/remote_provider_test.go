@@ -78,15 +78,23 @@ func TestRemoteProviderMarkAllEventsReadPreservesFailureStatus(t *testing.T) {
 
 func TestRemoteProviderMarkAllEventsReadHonorsCancellation(t *testing.T) {
 	requestStarted := make(chan struct{})
+	cleanup := make(chan struct{})
 	server := httptest.NewServer(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
 		close(requestStarted)
-		<-r.Context().Done()
+		select {
+		case <-r.Context().Done():
+		case <-cleanup:
+		}
 	}))
-	defer server.Close()
+	t.Cleanup(func() {
+		close(cleanup)
+		server.Close()
+	})
 
 	provider := newTestRemoteProvider(t, server.URL)
 	provider.Capabilities = Capabilities{{Feature: PersistEvents, Endpoint: "/events"}}
 	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	done := make(chan error, 1)
 	go func() {
 		done <- provider.MarkAllEventsRead(ctx, "test-user-jwt", uuid.Nil)
