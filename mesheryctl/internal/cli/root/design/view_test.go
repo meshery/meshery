@@ -23,8 +23,8 @@ func TestDesignView(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
-			Name:             "given name provided when design view then design is displayed",
-			Args:             []string{"view", "desgin"},
+			Name:             "given name provided when design view then the design with that name is displayed",
+			Args:             []string{"view", "Untitled Design"},
 			ExpectedResponse: "view.design.output.golden",
 			URLs: []utils.MockURL{
 				{
@@ -44,8 +44,8 @@ func TestDesignView(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=desgin",
-					Response:     "view.design.api.response.golden",
+					URL:          testContext.BaseURL + "/api/pattern?page=0&pagesize=10000&populate=pattern_file&search=Untitled+Design",
+					Response:     "view.design.search.api.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -111,7 +111,7 @@ func TestDesignView(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=nonexistent-design",
+					URL:          testContext.BaseURL + "/api/pattern?page=0&pagesize=10000&populate=pattern_file&search=nonexistent-design",
 					Response:     "pattern.empty.response.golden",
 					ResponseCode: 200,
 				},
@@ -121,8 +121,36 @@ func TestDesignView(t *testing.T) {
 			ExpectedError:  ErrDesignNotFound("nonexistent-design"),
 		},
 		{
+			Name:             "given a name that designs only contain when design view then error is thrown",
+			Args:             []string{"view", "Untitled"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "view.design.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000&page=1",
+					Response:     "pattern.empty.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?page=0&pagesize=10000&populate=pattern_file&search=Untitled",
+					Response:     "view.design.search.api.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrDesignNotFound("Untitled"),
+		},
+		{
 			Name:             "given invalid output format when design view then error is returned",
-			Args:             []string{"view", "desgin", "--output-format", "invalid"},
+			Args:             []string{"view", "Untitled Design", "--output-format", "invalid"},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
 				{
@@ -142,8 +170,8 @@ func TestDesignView(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=desgin",
-					Response:     "view.design.api.response.golden",
+					URL:          testContext.BaseURL + "/api/pattern?page=0&pagesize=10000&populate=pattern_file&search=Untitled+Design",
+					Response:     "view.design.search.api.response.golden",
 					ResponseCode: 200,
 				},
 			},

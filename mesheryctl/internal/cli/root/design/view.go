@@ -17,6 +17,8 @@ package design
 import (
 	"fmt"
 	"net/url"
+	"strconv"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
@@ -77,36 +79,27 @@ mesheryctl design view [design-name | ID]
 			}
 		}
 
-		urlPath := getDesignViewUrlPath(design, isID, designViewFlagsProvided.All)
-
-		apiResponse, err := api.Fetch[map[string]interface{}](urlPath)
-		if err != nil {
-			return err
-		}
-
 		var designData interface{}
 
-		if isID { // Only one design will be returned when searching by ID
-			designData = apiResponse
-		}
-
-		if designViewFlagsProvided.All { // all designs will be returned when --all flag is provided
-			designData = map[string]interface{}{"patterns": (*apiResponse)["patterns"]}
-		}
-
-		if !isID && !designViewFlagsProvided.All { // only the first match will be returned when searching by name
-			patterns, ok := (*apiResponse)["patterns"]
-			if !ok {
-				return ErrDesignInvalidApiResponse("'patterns' field missing")
+		if isID || designViewFlagsProvided.All {
+			apiResponse, err := api.Fetch[map[string]interface{}](getDesignViewUrlPath(design, isID))
+			if err != nil {
+				return err
 			}
-			arr, ok := patterns.([]interface{})
-			if !ok {
-				return ErrDesignInvalidApiResponse("'patterns' field is not of expected type")
+			if isID { // Only one design will be returned when searching by ID
+				designData = apiResponse
+			} else { // all designs will be returned when --all flag is provided
+				designData = map[string]interface{}{"patterns": (*apiResponse)["patterns"]}
 			}
-			if len(arr) == 0 {
-				return ErrDesignNotFound(design)
+		} else {
+			patterns, err := fetchDesignSearch(design, api.Fetch[map[string]interface{}])
+			if err != nil {
+				return err
 			}
-			designData = arr[0]
+			designData, err = selectDesignByName(patterns, design)
+			if err != nil {
+				return err
+			}
 		}
 
 		outputFormatFactory := display.OutputFormatterFactory[interface{}]{}
@@ -120,7 +113,7 @@ mesheryctl design view [design-name | ID]
 	},
 }
 
-func getDesignViewUrlPath(design string, isID bool, viewAll bool) string {
+func getDesignViewUrlPath(design string, isID bool) string {
 	baseApiPath := "api/pattern"
 	if isID {
 		return fmt.Sprintf("%s/%s", baseApiPath, url.PathEscape(design))
@@ -128,16 +121,107 @@ func getDesignViewUrlPath(design string, isID bool, viewAll bool) string {
 
 	queryParams := url.Values{}
 	queryParams.Add("populate", "pattern_file")
-
-	if viewAll {
-		queryParams.Add("pagesize", "10000")
-	}
-
-	if !viewAll {
-		queryParams.Add("search", design)
-	}
+	queryParams.Add("pagesize", "10000")
 
 	return fmt.Sprintf("%s?%s", baseApiPath, queryParams.Encode())
+}
+
+// fetchDesignSearch collects every page of a name search. The server's search
+// is a substring match and pages its results, so the design carrying the whole
+// name can be on any page. Designs are kept as returned so that the output of
+// design view is unchanged.
+func fetchDesignSearch(name string, fetch func(string) (*map[string]interface{}, error)) ([]map[string]interface{}, error) {
+	var designs []map[string]interface{}
+	seen := map[string]bool{}
+	for page := 0; ; page++ {
+		queryParams := url.Values{}
+		queryParams.Add("populate", "pattern_file")
+		queryParams.Add("search", name)
+		queryParams.Add("pagesize", "10000")
+		queryParams.Add("page", strconv.Itoa(page))
+
+		response, err := fetch("api/pattern?" + queryParams.Encode())
+		if err != nil {
+			return nil, err
+		}
+		if response == nil {
+			return nil, ErrDesignInvalidApiResponse("empty response")
+		}
+		patterns, ok := (*response)["patterns"]
+		if !ok {
+			return nil, ErrDesignInvalidApiResponse("'patterns' field missing")
+		}
+		arr, ok := patterns.([]interface{})
+		if !ok {
+			return nil, ErrDesignInvalidApiResponse("'patterns' field is not of expected type")
+		}
+
+		added := 0
+		for _, item := range arr {
+			design, ok := item.(map[string]interface{})
+			if !ok {
+				return nil, ErrDesignInvalidApiResponse("design entry is not an object")
+			}
+			if id, _ := design["id"].(string); id != "" {
+				if seen[id] {
+					continue
+				}
+				seen[id] = true
+			}
+			designs = append(designs, design)
+			added++
+		}
+
+		// Without a total the response cannot say whether more pages exist.
+		total, ok := (*response)["totalCount"].(float64)
+		if !ok || len(designs) >= int(total) {
+			return designs, nil
+		}
+		// Each further page must add designs, or the loop would never end.
+		if added == 0 {
+			return nil, ErrDesignInvalidApiResponse(fmt.Sprintf("search for %q returned %d of %d designs", name, len(designs), int(total)))
+		}
+	}
+}
+
+var runDesignSelectPrompt = utils.RunSelectPrompt
+
+// selectDesignByName prefers case-sensitive whole-name matches, then falls
+// back to case-insensitive whole-name matches. Designs whose name only
+// contains name are ignored. Several designs with the name are offered for
+// selection instead of picking one.
+func selectDesignByName(designs []map[string]interface{}, name string) (map[string]interface{}, error) {
+	var exact, folded []map[string]interface{}
+	for _, design := range designs {
+		designName, _ := design["name"].(string)
+		if designName == name {
+			exact = append(exact, design)
+		} else if strings.EqualFold(designName, name) {
+			folded = append(folded, design)
+		}
+	}
+	matches := exact
+	if len(matches) == 0 {
+		matches = folded
+	}
+	switch len(matches) {
+	case 0:
+		return nil, ErrDesignNotFound(name)
+	case 1:
+		return matches[0], nil
+	}
+	items := make([]string, len(matches))
+	for i, design := range matches {
+		items[i] = fmt.Sprintf("Name: %v, ID: %v", design["name"], design["id"])
+	}
+	i, err := runDesignSelectPrompt("Select design", items)
+	if err != nil {
+		return nil, err
+	}
+	if i < 0 || i >= len(matches) {
+		return nil, fmt.Errorf("invalid design selection: %d", i)
+	}
+	return matches[i], nil
 }
 
 func init() {
