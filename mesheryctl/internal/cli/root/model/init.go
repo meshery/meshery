@@ -84,7 +84,13 @@ mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
 		{
 			// if model/version folder already exists return with error
 			info, err := os.Stat(modelVersionFolder)
-			if !os.IsNotExist(err) && info.IsDir() {
+			// os.IsNotExist only covers ENOENT. A --path that is a regular file,
+			// or that points below one, makes Stat fail with ENOTDIR and return a
+			// nil FileInfo. Report the invalid target instead of dereferencing it.
+			if err != nil && !os.IsNotExist(err) {
+				return ErrModelInit(fmt.Errorf("cannot use %s as a model version folder: %w", modelVersionFolder, err))
+			}
+			if err == nil && info.IsDir() {
 				return ErrModelInitFromString(
 					fmt.Sprintf(
 						errInitFolderExists,
@@ -95,9 +101,12 @@ mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
 		}
 
 		infoOnModelFolder, err := os.Stat(modelFolder)
+		if err != nil && !os.IsNotExist(err) {
+			return ErrModelInit(fmt.Errorf("cannot use %s as a model folder: %w", modelFolder, err))
+		}
 		// this indicates if model folder already exists (before we created it)
 		// this information will be used for clean up
-		isModelFolderAlreadyExists := !os.IsNotExist(err) && infoOnModelFolder.IsDir()
+		isModelFolderAlreadyExists := err == nil && infoOnModelFolder.IsDir()
 
 		utils.Log.Infof("Creating directory structure...")
 		err = os.MkdirAll(modelVersionFolder, initModelDirPerm)

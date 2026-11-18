@@ -15,13 +15,11 @@
 package perf
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -54,6 +52,7 @@ mesheryctl perf delete test-3 --yes
 
 		profiles, err := fetchAllPerformanceProfiles(baseURL, url.QueryEscape(args[0]))
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 
@@ -108,24 +107,4 @@ mesheryctl perf delete test-3 --yes
 		utils.Log.Infof("Performance profile '%s' (%s) deleted", profile.Name, profile.ID.String())
 		return nil
 	},
-}
-
-// fetchAllPerformanceProfiles returns every profile matching searchString, across all pages.
-func fetchAllPerformanceProfiles(baseURL, searchString string) ([]perfprofile.PerformanceProfile, error) {
-	var all []perfprofile.PerformanceProfile
-	for page := 0; ; page++ {
-		profiles, body, err := fetchPerformanceProfiles(baseURL, searchString, pageSize, page)
-		if err != nil {
-			return nil, err
-		}
-		all = append(all, profiles...)
-
-		var res perfprofile.PerformanceProfilePage
-		if err := json.Unmarshal(body, &res); err != nil {
-			return nil, ErrFailUnmarshal(err)
-		}
-		if len(profiles) == 0 || len(all) >= res.TotalCount {
-			return all, nil
-		}
-	}
 }
