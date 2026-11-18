@@ -23,6 +23,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
+	events "github.com/meshery/meshkit/models/events"
 	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -532,4 +533,95 @@ func TestDeleteModel_Success(t *testing.T) {
 	var count int64
 	dbHandler.Model(&model.ModelDefinition{}).Where("id = ?", modelID).Count(&count)
 	assert.Equal(t, int64(0), count, "model record must be deleted from database")
+}
+
+func TestUpdateEntityStatus_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/meshmodels/status", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	provider := &models.DefaultLocalProvider{}
+	h.UpdateEntityStatus(rec, req, nil, nil, provider)
+
+	require.Equal(t, http.StatusUnauthorized, rec.Code)
+	var body map[string]string
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &body))
+	assert.Equal(t, "user unauthorized", body["error"])
+}
+
+func TestUpdateEntityStatus_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/meshmodels/status", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	h.UpdateEntityStatus(rec, req, nil, user, nil)
+
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrNilProviderCode, decoded.Code)
+	assert.NotEmpty(t, decoded.Error)
+}
+
+func TestRegisterMeshmodels_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/meshmodels/register", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	provider := &models.DefaultLocalProvider{}
+	h.RegisterMeshmodels(rec, req, nil, nil, provider)
+
+	require.Equal(t, http.StatusUnauthorized, rec.Code)
+	var body map[string]string
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &body))
+	assert.Equal(t, "user unauthorized", body["error"])
+}
+
+func TestRegisterMeshmodels_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/meshmodels/register", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	h.RegisterMeshmodels(rec, req, nil, user, nil)
+
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrNilProviderCode, decoded.Code)
+	assert.NotEmpty(t, decoded.Error)
+}
+
+type mockComponentEventProvider struct {
+	*models.DefaultLocalProvider
+	lastEvent *events.Event
+}
+
+func (m *mockComponentEventProvider) PersistEvent(event events.Event, token string) (models.PersistedEvent, error) {
+	m.lastEvent = &event
+	return models.PersistedEvent{}, nil
+}
+
+func TestUpdateEntityStatus_NilSystemID_DoesNotPanic(t *testing.T) {
+	rm, _ := newTestRegistryDB(t)
+	h := &Handler{
+		log:             newTestLogger(t),
+		registryManager: rm,
+		SystemID:        nil,
+	}
+	payload := `{"id":"test-id","status":"enabled","displayName":"Test Entity"}`
+	req := httptest.NewRequest(http.MethodPost, "/api/meshmodels/status", strings.NewReader(payload))
+	req = mux.SetURLVars(req, map[string]string{"entityType": "models"})
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &mockComponentEventProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+	}
+
+	require.NotPanics(t, func() {
+		h.UpdateEntityStatus(rec, req, nil, user, provider)
+	})
+	if provider.lastEvent != nil {
+		assert.Equal(t, uuid.Nil, provider.lastEvent.SystemID, "event SystemID should be uuid.Nil when h.SystemID is nil")
+	}
 }

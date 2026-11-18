@@ -865,13 +865,30 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 
 // UpdateEntityStatus expects the request body to be a JSON object with id, status, displayName (and legacy displayname) fields.
 func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
 	dec := json.NewDecoder(r.Body)
 	userID := user.ID
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		h.log.Error(ErrRetrieveUserToken(err))
+		if h.log != nil {
+			h.log.Error(ErrRetrieveUserToken(err))
+		}
 		writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
+	}
+	var systemID uuid.UUID
+	if h.SystemID != nil {
+		systemID = *h.SystemID
 	}
 	entityType := mux.Vars(r)["entityType"]
 	var updateData struct {
@@ -885,7 +902,9 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	}
 	err = dec.Decode(&updateData)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
@@ -893,7 +912,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 		updateData.DisplayName = updateData.DisplayNameLegacy
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory(entityType).WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(systemID).WithCategory(entityType).WithAction("update")
 	err = h.registryManager.UpdateEntityStatus(updateData.ID, updateData.Status, entityType)
 	if err != nil {
 		wrappedErr := ErrUpdateEntityStatus(err)
@@ -936,6 +955,17 @@ func processComponentDefinitions(entities []entity.Entity) []component.Component
 // request content byte in form value and header of the type in form
 
 func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
 	var response models.RegistryAPIResponse
 	regErrorStore := models.NewRegistrationFailureLogHandler()
 	var tempFilePath string
@@ -948,7 +978,9 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		h.log.Error(ErrRetrieveUserToken(err))
+		if h.log != nil {
+			h.log.Error(ErrRetrieveUserToken(err))
+		}
 		writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
