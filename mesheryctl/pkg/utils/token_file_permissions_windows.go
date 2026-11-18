@@ -81,7 +81,12 @@ func writeTokenFile(path string, data []byte) error {
 		// Some filesystems reject the extended rename operation. The legacy
 		// rename still replaces the file object and fails closed if an open
 		// handle prevents replacement; it never writes into the old file.
-		if !errors.Is(err, windows.ERROR_INVALID_NAME) && !errors.Is(err, windows.ERROR_INVALID_PARAMETER) && !errors.Is(err, windows.ERROR_NOT_SUPPORTED) {
+		if !errors.Is(err, windows.ERROR_INVALID_NAME) &&
+			!errors.Is(err, windows.ERROR_INVALID_PARAMETER) &&
+			!errors.Is(err, windows.ERROR_NOT_SUPPORTED) &&
+			!errors.Is(err, windows.ERROR_ACCESS_DENIED) &&
+			!errors.Is(err, windows.ERROR_INVALID_FUNCTION) &&
+			!errors.Is(err, windows.ERROR_CALL_NOT_IMPLEMENTED) {
 			return fmt.Errorf("replace token file: %w", err)
 		}
 		if closeErr := f.Close(); closeErr != nil {
@@ -162,6 +167,10 @@ func restrictTokenFileToCurrentUser(file *os.File) error {
 	if err := verifyTokenFileOwner(file, user.User.Sid); err != nil {
 		return err
 	}
+
+	var pinner runtime.Pinner
+	pinner.Pin(user.User.Sid)
+	defer pinner.Unpin()
 
 	acl, err := windows.ACLFromEntries([]windows.EXPLICIT_ACCESS{{
 		AccessPermissions: windows.GENERIC_ALL,
