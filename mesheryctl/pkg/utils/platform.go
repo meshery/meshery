@@ -803,16 +803,16 @@ func InstallprereqDocker() error {
 // and resolves the download URL base. On transport error, non-200 status, read failure, or malformed JSON,
 // it safely falls back to defaultDockerComposeVersion so prerequisite installation does not abort.
 func resolveDockerComposeBinaryURL() string {
-	dockerComposeBinaryURL := dockerComposeBinaryURL
+	baseURL := dockerComposeBinaryURL
 	// checks for the latest docker-compose
 	resp, err := http.Get(dockerComposeWebURL)
 	if err != nil {
-		return dockerComposeBinaryURL + defaultDockerComposeVersion
+		return baseURL + defaultDockerComposeVersion
 	}
 	defer SafeClose(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
-		return dockerComposeBinaryURL + defaultDockerComposeVersion
+		return baseURL + defaultDockerComposeVersion
 	}
 
 	var release struct {
@@ -820,15 +820,15 @@ func resolveDockerComposeBinaryURL() string {
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return dockerComposeBinaryURL + defaultDockerComposeVersion
+		return baseURL + defaultDockerComposeVersion
 	}
 	if err := json.Unmarshal(body, &release); err != nil {
-		return dockerComposeBinaryURL + defaultDockerComposeVersion
+		return baseURL + defaultDockerComposeVersion
 	}
 	if release.TagName == "" {
-		return dockerComposeBinaryURL + defaultDockerComposeVersion
+		return baseURL + defaultDockerComposeVersion
 	}
-	return dockerComposeBinaryURL + release.TagName + "/docker-compose"
+	return baseURL + release.TagName + "/docker-compose"
 }
 
 // SetKubeConfig sets the path to user's kubeconfig file into global variables

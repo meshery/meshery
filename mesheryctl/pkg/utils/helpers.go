@@ -43,13 +43,14 @@ import (
 
 var (
 	// Meshery Docker Deployment URLs
-	dockerComposeWebURL         = "https://api.github.com/repos/docker/compose/releases/latest"
-	defaultDockerComposeVersion = "1.24.1/docker-compose"
-	dockerComposeBinaryURL      = "https://github.com/docker/compose/releases/download/"
-	dockerComposeBinary         = "/usr/local/bin/docker-compose"
+	dockerComposeWebURL = "https://api.github.com/repos/docker/compose/releases/latest"
 )
 
 const (
+	// Meshery Docker Deployment URLs
+	defaultDockerComposeVersion = "1.24.1/docker-compose"
+	dockerComposeBinaryURL      = "https://github.com/docker/compose/releases/download/"
+	dockerComposeBinary         = "/usr/local/bin/docker-compose"
 	// Meshery Kubernetes Deployment URLs
 	baseConfigURL = "https://raw.githubusercontent.com/meshery/meshery-operator/master/config/"
 	OperatorURL   = baseConfigURL + "manifests/default.yaml"
