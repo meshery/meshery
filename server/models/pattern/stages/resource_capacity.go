@@ -12,10 +12,10 @@ func ResourceCapacity(_ ServiceInfoProvider, act ServiceActionProvider) ChainSta
 			return
 		}
 
-		resp, err := act.ResourceCapacity(data.Pattern.Components)
-		if err != nil {
+		resp, capErr := act.ResourceCapacity(data.Pattern.Components)
+		if capErr != nil {
 			// Capacity preview errors are non-blocking warnings; log and proceed
-			act.Log(err.Error())
+			act.Log(capErr.Error())
 		} else {
 			data.Lock.Lock()
 			if data.Other == nil {
@@ -26,7 +26,7 @@ func ResourceCapacity(_ ServiceInfoProvider, act ServiceActionProvider) ChainSta
 		}
 
 		if next != nil {
-			next(data, err)
+			next(data, nil)
 		}
 	}
 }

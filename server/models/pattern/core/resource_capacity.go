@@ -194,11 +194,13 @@ func CalculateResourceCapacity(
 	// Refine workload estimates
 	for i := range preview.Workloads {
 		w := &preview.Workloads[i]
+		if w.HasUnspecified {
+			preview.Warnings = append(preview.Warnings, fmt.Sprintf("Workload '%s' has missing CPU or memory resource requests.", w.Name))
+		}
 		if !clusterCapacity.HasData {
 			w.Estimate = EstimateUnknown
 		} else if w.HasUnspecified {
 			w.Estimate = EstimateReview
-			preview.Warnings = append(preview.Warnings, fmt.Sprintf("Workload '%s' has missing CPU or memory resource requests.", w.Name))
 		} else if w.CPUMillicores > clusterCapacity.AvailableCPU() || w.MemoryBytes > clusterCapacity.AvailableMemory() {
 			w.Estimate = EstimateReview
 		} else {
@@ -286,7 +288,31 @@ func isWorkloadKind(kind string) bool {
 
 func extractReplicas(kind string, config map[string]interface{}, nodeCount int) int {
 	k := strings.ToLower(kind)
-	if k == "pod" || k == "cronjob" {
+	if k == "pod" {
+		return 1
+	}
+	if k == "cronjob" {
+		if spec, ok := getMap(config, "spec"); ok {
+			if susp, exists := spec["suspend"]; exists {
+				if b, ok := susp.(bool); ok && b {
+					return 0
+				}
+			}
+			if jt, ok := getMap(spec, "jobTemplate"); ok {
+				if jtSpec, ok := getMap(jt, "spec"); ok {
+					if susp, exists := jtSpec["suspend"]; exists {
+						if b, ok := susp.(bool); ok && b {
+							return 0
+						}
+					}
+					if pVal, exists := jtSpec["parallelism"]; exists && pVal != nil {
+						if p := toInt(pVal); p >= 0 {
+							return p
+						}
+					}
+				}
+			}
+		}
 		return 1
 	}
 	if k == "daemonset" {
@@ -303,15 +329,20 @@ func extractReplicas(kind string, config map[string]interface{}, nodeCount int) 
 	}
 
 	if k == "job" {
-		if pVal, exists := spec["parallelism"]; exists {
-			if p := toInt(pVal); p > 0 {
+		if susp, exists := spec["suspend"]; exists {
+			if b, ok := susp.(bool); ok && b {
+				return 0
+			}
+		}
+		if pVal, exists := spec["parallelism"]; exists && pVal != nil {
+			if p := toInt(pVal); p >= 0 {
 				return p
 			}
 		}
 		return 1
 	}
 
-	if rVal, exists := spec["replicas"]; exists {
+	if rVal, exists := spec["replicas"]; exists && rVal != nil {
 		if r := toInt(rVal); r >= 0 {
 			return r
 		}
@@ -320,14 +351,25 @@ func extractReplicas(kind string, config map[string]interface{}, nodeCount int) 
 }
 
 func extractContainerRequests(kind string, config map[string]interface{}) (int64, int64, bool) {
-	containers := findContainers(kind, config)
-	if len(containers) == 0 {
-		return 0, 0, true
+	podSpec, containers, initContainers := findPodSpec(kind, config)
+	if len(containers) == 0 && len(initContainers) == 0 {
+		hasPodLevel := false
+		if podSpec != nil {
+			if resMap, ok := getMap(podSpec, "resources"); ok {
+				if reqMap, ok := getMap(resMap, "requests"); ok && len(reqMap) > 0 {
+					hasPodLevel = true
+				}
+			}
+		}
+		if !hasPodLevel {
+			return 0, 0, true
+		}
 	}
 
-	var podCPUMillicores int64
-	var podMemoryBytes int64
-	hasUnspecified := false
+	var containersCPU int64
+	var containersMem int64
+	missingCPU := false
+	missingMem := false
 
 	for _, container := range containers {
 		cMap, ok := container.(map[string]interface{})
@@ -337,13 +379,15 @@ func extractContainerRequests(kind string, config map[string]interface{}) (int64
 
 		resMap, ok := getMap(cMap, "resources")
 		if !ok {
-			hasUnspecified = true
+			missingCPU = true
+			missingMem = true
 			continue
 		}
 
 		reqMap, ok := getMap(resMap, "requests")
 		if !ok {
-			hasUnspecified = true
+			missingCPU = true
+			missingMem = true
 			continue
 		}
 
@@ -353,18 +397,83 @@ func extractContainerRequests(kind string, config map[string]interface{}) (int64
 		cpuMilli, cpuSpecified := ParseCPU(cpuVal)
 		memBytes, memSpecified := ParseMemory(memVal)
 
-		if !cpuSpecified || !memSpecified {
-			hasUnspecified = true
+		if !cpuSpecified {
+			missingCPU = true
+		}
+		if !memSpecified {
+			missingMem = true
 		}
 
-		podCPUMillicores += cpuMilli
-		podMemoryBytes += memBytes
+		containersCPU += cpuMilli
+		containersMem += memBytes
 	}
 
-	return podCPUMillicores, podMemoryBytes, hasUnspecified
+	var maxInitCPU int64
+	var maxInitMem int64
+	for _, ic := range initContainers {
+		icMap, ok := ic.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		resMap, ok := getMap(icMap, "resources")
+		if !ok {
+			continue
+		}
+
+		reqMap, ok := getMap(resMap, "requests")
+		if !ok {
+			continue
+		}
+
+		if cpuVal, ok := reqMap["cpu"]; ok {
+			if cpuMilli, specified := ParseCPU(cpuVal); specified && cpuMilli > maxInitCPU {
+				maxInitCPU = cpuMilli
+			}
+		}
+
+		if memVal, ok := reqMap["memory"]; ok {
+			if memBytes, specified := ParseMemory(memVal); specified && memBytes > maxInitMem {
+				maxInitMem = memBytes
+			}
+		}
+	}
+
+	// In Kubernetes scheduling, effective pod request is max(sum(containers), max(initContainers))
+	effectiveCPU := containersCPU
+	if maxInitCPU > effectiveCPU {
+		effectiveCPU = maxInitCPU
+	}
+	effectiveMem := containersMem
+	if maxInitMem > effectiveMem {
+		effectiveMem = maxInitMem
+	}
+
+	// Check if explicit pod-level requests are set in spec.resources.requests (Kubernetes v1.35)
+	if podSpec != nil {
+		if resMap, ok := getMap(podSpec, "resources"); ok {
+			if reqMap, ok := getMap(resMap, "requests"); ok {
+				if cpuVal, ok := reqMap["cpu"]; ok {
+					if cpuMilli, specified := ParseCPU(cpuVal); specified {
+						effectiveCPU = cpuMilli
+						missingCPU = false
+					}
+				}
+				if memVal, ok := reqMap["memory"]; ok {
+					if memBytes, specified := ParseMemory(memVal); specified {
+						effectiveMem = memBytes
+						missingMem = false
+					}
+				}
+			}
+		}
+	}
+
+	hasUnspecified := missingCPU || missingMem
+	return effectiveCPU, effectiveMem, hasUnspecified
 }
 
-func findContainers(kind string, config map[string]interface{}) []interface{} {
+func findPodSpec(kind string, config map[string]interface{}) (map[string]interface{}, []interface{}, []interface{}) {
 	spec, _ := getMap(config, "spec")
 	if spec == nil {
 		spec = config
@@ -372,9 +481,9 @@ func findContainers(kind string, config map[string]interface{}) []interface{} {
 
 	k := strings.ToLower(kind)
 	if k == "pod" {
-		if cList, ok := spec["containers"].([]interface{}); ok {
-			return cList
-		}
+		cList, _ := spec["containers"].([]interface{})
+		icList, _ := spec["initContainers"].([]interface{})
+		return spec, cList, icList
 	}
 
 	if k == "cronjob" {
@@ -382,9 +491,9 @@ func findContainers(kind string, config map[string]interface{}) []interface{} {
 			if jtSpec, ok := getMap(jt, "spec"); ok {
 				if tpl, ok := getMap(jtSpec, "template"); ok {
 					if tplSpec, ok := getMap(tpl, "spec"); ok {
-						if cList, ok := tplSpec["containers"].([]interface{}); ok {
-							return cList
-						}
+						cList, _ := tplSpec["containers"].([]interface{})
+						icList, _ := tplSpec["initContainers"].([]interface{})
+						return tplSpec, cList, icList
 					}
 				}
 			}
@@ -394,18 +503,16 @@ func findContainers(kind string, config map[string]interface{}) []interface{} {
 	// Deployment, StatefulSet, DaemonSet, Job, ReplicaSet
 	if tpl, ok := getMap(spec, "template"); ok {
 		if tplSpec, ok := getMap(tpl, "spec"); ok {
-			if cList, ok := tplSpec["containers"].([]interface{}); ok {
-				return cList
-			}
+			cList, _ := tplSpec["containers"].([]interface{})
+			icList, _ := tplSpec["initContainers"].([]interface{})
+			return tplSpec, cList, icList
 		}
 	}
 
 	// Fallback check
-	if cList, ok := spec["containers"].([]interface{}); ok {
-		return cList
-	}
-
-	return nil
+	cList, _ := spec["containers"].([]interface{})
+	icList, _ := spec["initContainers"].([]interface{})
+	return spec, cList, icList
 }
 
 // ParseCPU parses Kubernetes CPU requests into millicores
@@ -418,6 +525,13 @@ func ParseCPU(val interface{}) (int64, bool) {
 		str := strings.TrimSpace(v)
 		if str == "" {
 			return 0, false
+		}
+		// Strip "core" / "cores" suffix so human-formatted values like "2 cores" or "1 core" round-trip
+		lower := strings.ToLower(str)
+		if strings.HasSuffix(lower, "cores") {
+			str = strings.TrimSpace(str[:len(str)-5])
+		} else if strings.HasSuffix(lower, "core") {
+			str = strings.TrimSpace(str[:len(str)-4])
 		}
 		q, err := resource.ParseQuantity(str)
 		if err == nil {
@@ -456,6 +570,17 @@ func ParseMemory(val interface{}) (int64, bool) {
 		if str == "" {
 			return 0, false
 		}
+		// Normalize "GiB" -> "Gi", "MiB" -> "Mi", "1000B" -> "1000", etc. so human-formatted values round-trip
+		lower := strings.ToLower(str)
+		if strings.HasSuffix(lower, "b") {
+			trimmed := strings.TrimSpace(str[:len(str)-1])
+			if trimmed != "" {
+				if strings.HasSuffix(strings.ToLower(trimmed), "k") && !strings.HasSuffix(strings.ToLower(trimmed), "i") {
+					trimmed = trimmed[:len(trimmed)-1] + "k"
+				}
+				str = trimmed
+			}
+		}
 		q, err := resource.ParseQuantity(str)
 		if err == nil {
 			return q.Value(), true
@@ -487,7 +612,7 @@ func parseMemoryManual(str string) (int64, bool) {
 
 	for suffix, mult := range suffixes {
 		if strings.HasSuffix(str, suffix) {
-			numStr := strings.TrimSuffix(str, suffix)
+			numStr := strings.TrimSpace(strings.TrimSuffix(str, suffix))
 			if f, err := strconv.ParseFloat(numStr, 64); err == nil {
 				return int64(f * float64(mult)), true
 			}
