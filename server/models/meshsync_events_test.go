@@ -13,6 +13,8 @@ import (
 	meshkitErrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
+	"github.com/meshery/schemas/models/core"
+	capabilityv1beta1 "github.com/meshery/schemas/models/v1beta1/capability"
 	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/stretchr/testify/assert"
@@ -310,6 +312,77 @@ func TestGetComponentMetadataReturnsAssociatedModelName(t *testing.T) {
 
 	if got := modelData["name"]; got != "kubernetes" {
 		t.Fatalf("expected returned metadata to include model name %q, got %#v", "kubernetes", got)
+	}
+}
+
+func TestGetComponentMetadataOmitsComponentSchema(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("Failed to create in-memory database: %v", err)
+	}
+
+	if err := db.AutoMigrate(&modelv1beta1.ModelDefinition{}, &component.ComponentDefinition{}); err != nil {
+		t.Fatalf("Failed to migrate schema: %v", err)
+	}
+
+	modelID := uuid.FromStringOrNil("11111111-1111-1111-1111-111111111111")
+	if err := db.Create(&modelv1beta1.ModelDefinition{ID: modelID, Name: "kubernetes"}).Error; err != nil {
+		t.Fatalf("Failed to create model definition: %v", err)
+	}
+
+	componentDef := component.ComponentDefinition{
+		ID:      uuid.FromStringOrNil("22222222-2222-2222-2222-222222222222"),
+		ModelID: &modelID,
+		Component: component.Component{
+			Kind:    "Pod",
+			Version: "v1",
+			Schema:  `{"type":"object","properties":{"spec":{"type":"object"}}}`,
+		},
+		Styles:       &core.ComponentStyles{SvgColor: "<svg></svg>"},
+		Capabilities: &[]capabilityv1beta1.Capability{{Kind: "action", DisplayName: "Connect"}},
+	}
+	if err := db.Create(&componentDef).Error; err != nil {
+		t.Fatalf("Failed to create component definition: %v", err)
+	}
+
+	mockLogger, err := logger.New("test", logger.Options{})
+	if err != nil {
+		t.Fatalf("Failed to create logger: %v", err)
+	}
+
+	handler := &MeshsyncDataHandler{
+		dbHandler: database.Handler{DB: db},
+		log:       mockLogger,
+	}
+
+	data, modelName := handler.getComponentMetadata("v1", "Pod")
+	if modelName != "kubernetes" {
+		t.Fatalf("expected associated model name to be returned, got %q", modelName)
+	}
+
+	componentData, ok := data["component"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected returned metadata to include the component, got %#v", data["component"])
+	}
+
+	if got := componentData["schema"]; got != "" {
+		t.Fatalf("expected the component schema to be left out of MeshSync metadata, got %#v", got)
+	}
+	if componentData["kind"] != "Pod" || componentData["version"] != "v1" {
+		t.Fatalf("expected component kind and version to be kept, got %#v", componentData)
+	}
+
+	// The UI reads styles and capabilities from the row, so the strip must leave them alone.
+	styles, ok := data["styles"].(map[string]interface{})
+	if !ok || styles["svgColor"] != "<svg></svg>" {
+		t.Fatalf("expected component styles to be kept, got %#v", data["styles"])
+	}
+	capabilities, ok := data["capabilities"].([]interface{})
+	if !ok || len(capabilities) != 1 {
+		t.Fatalf("expected component capabilities to be kept, got %#v", data["capabilities"])
+	}
+	if capability, ok := capabilities[0].(map[string]interface{}); !ok || capability["displayName"] != "Connect" {
+		t.Fatalf("expected capability display name to be kept, got %#v", capabilities[0])
 	}
 }
 
