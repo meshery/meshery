@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  analyzeDesignImpact,
-  DesignImpactAnalysisResult,
-} from './designImpactAnalysis';
+import { analyzeDesignImpact } from './designImpactAnalysis';
 
 describe('designImpactAnalysis', () => {
   it('returns safe empty result when design or target is missing', () => {
@@ -89,6 +86,7 @@ describe('designImpactAnalysis', () => {
     expect(result.directlyAffected[0].id).toBe('comp-deploy');
     expect(result.directlyAffected[0].name).toBe('frontend-deploy');
     expect(result.directlyAffected[0].kind).toBe('Deployment');
+    expect(result.directlyAffected[0].model).toBe('kubernetes');
     expect(result.affectedRelationships).toHaveLength(1);
     expect(result.totalAffectedCount).toBe(1);
   });
@@ -183,6 +181,57 @@ describe('designImpactAnalysis', () => {
     expect(indirectIds).toContain('c-deploy');
     expect(indirectIds).toContain('c-pvc');
     expect(result.totalAffectedCount).toBe(3);
+  });
+
+  it('resolves selector endpoints carrying both id and name to a single canonical identity', () => {
+    const design = {
+      components: [
+        { id: 'comp-a', name: 'alpha', component: { kind: 'Service' } },
+        { id: 'comp-b', name: 'beta', component: { kind: 'Deployment' } },
+        { id: 'comp-c', name: 'gamma', component: { kind: 'Pod' } },
+      ],
+      relationships: [
+        {
+          id: 'rel-a-b',
+          kind: 'Edge',
+          selectors: [
+            {
+              allow: {
+                from: [{ id: 'comp-a', name: 'alpha' }],
+                // Endpoint has both id and name
+                to: [{ id: 'comp-b', name: 'beta' }],
+              },
+            },
+          ],
+        },
+        {
+          id: 'rel-b-c',
+          kind: 'Edge',
+          selectors: [
+            {
+              allow: {
+                // Next hop references B by name only, connecting seamlessly to gamma by ID
+                from: ['beta'],
+                to: [{ id: 'comp-c' }],
+              },
+            },
+          ],
+        },
+      ],
+    };
+
+    const result = analyzeDesignImpact({
+      design,
+      target: 'comp-a',
+      modificationType: 'update',
+    });
+
+    // comp-b must appear only once in directlyAffected, and comp-c in indirectlyAffected
+    expect(result.directlyAffected).toHaveLength(1);
+    expect(result.directlyAffected[0].id).toBe('comp-b');
+    expect(result.indirectlyAffected).toHaveLength(1);
+    expect(result.indirectlyAffected[0].id).toBe('comp-c');
+    expect(result.totalAffectedCount).toBe(2);
   });
 
   it('covers component removal (modificationType: delete)', () => {

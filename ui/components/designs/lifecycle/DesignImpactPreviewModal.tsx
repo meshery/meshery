@@ -10,7 +10,6 @@ import {
   Card,
   Chip,
   DialogContent,
-  Divider,
   ModalButtonPrimary,
   ModalButtonSecondary,
   Typography,
@@ -62,7 +61,7 @@ export const DesignImpactPreviewModal: FC<DesignImpactPreviewModalProps> = ({
       onClose={onClose}
       title={`Design Impact Preview: ${actionVerb} ${targetName || 'Resource'}`}
       headerIcon={
-        totalAffectedCount > 0 ? (
+        totalAffectedCount > 0 || affectedRelationships.length > 0 ? (
           <AlertIcon width={22} height={22} fill={theme.palette.warning.main} />
         ) : (
           <CheckIcon width={22} height={22} fill={theme.palette.success.main} />
@@ -209,8 +208,7 @@ export const DesignImpactPreviewModal: FC<DesignImpactPreviewModalProps> = ({
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
                 {affectedRelationships.map((rel: ImpactedRelationship, idx: number) => {
-                  const relTitle =
-                    rel.subType || rel.type || `${rel.kind || 'Edge'} connection`;
+                  const relTitle = rel.subType || rel.type || `${rel.kind || 'Edge'} connection`;
                   return (
                     <Box
                       key={rel.id || idx}
@@ -238,7 +236,7 @@ export const DesignImpactPreviewModal: FC<DesignImpactPreviewModalProps> = ({
             </Card>
           )}
 
-          {totalAffectedCount === 0 && (
+          {totalAffectedCount === 0 && affectedRelationships.length === 0 && (
             <Box
               sx={{
                 p: 2,

@@ -7,7 +7,6 @@ vi.mock('@sistent/sistent', () => ({
   Card: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
   Chip: ({ label, ...rest }: any) => <span {...rest}>{label}</span>,
   DialogContent: ({ children }: any) => <div>{children}</div>,
-  Divider: () => <hr />,
   ModalButtonPrimary: ({ children, onClick, disabled }: any) => (
     <button type="button" onClick={onClick} disabled={disabled} data-testid="btn-proceed">
       {children}
@@ -88,7 +87,8 @@ describe('DesignImpactPreviewModal', () => {
       },
     ],
     totalAffectedCount: 2,
-    summary: 'Modifying Service/frontend-svc potentially affects 1 directly connected and 1 indirect component(s).',
+    summary:
+      'Modifying Service/frontend-svc potentially affects 1 directly connected and 1 indirect component(s).',
   };
 
   it('renders modal with target details and affected components', () => {
@@ -163,7 +163,9 @@ describe('DesignImpactPreviewModal', () => {
     );
 
     expect(
-      screen.getByText('No dependencies or connected relationships will be disrupted by this change.'),
+      screen.getByText(
+        'No dependencies or connected relationships will be disrupted by this change.',
+      ),
     ).toBeInTheDocument();
   });
 });

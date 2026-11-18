@@ -40,20 +40,38 @@ export interface AnalyzeDesignImpactOptions {
   modificationType?: 'update' | 'delete' | 'create';
 }
 
-function extractSelectorItemIds(items: any[] = []): string[] {
-  const result: string[] = [];
-  if (!Array.isArray(items)) return result;
+/**
+ * Extracts a single canonical component ID for each selector item.
+ * When a component mapping is provided, resolves by item.id or item.name to
+ * the component's canonical ID.
+ */
+function extractCanonicalSelectorIds(
+  items: any[] = [],
+  nameToIdMap?: Map<string, string>,
+): string[] {
+  const result = new Set<string>();
+  if (!Array.isArray(items)) return [];
 
   for (const item of items) {
     if (!item) continue;
+    let resolvedId: string | undefined;
+
     if (typeof item === 'string') {
-      result.push(item);
+      resolvedId = nameToIdMap?.get(item) || item;
     } else {
-      if (item.id) result.push(item.id);
-      if (item.name) result.push(item.name);
+      if (item.id) {
+        resolvedId = item.id;
+      } else if (item.name) {
+        resolvedId = nameToIdMap?.get(item.name) || item.name;
+      }
+    }
+
+    if (resolvedId) {
+      result.add(resolvedId);
     }
   }
-  return result;
+
+  return Array.from(result);
 }
 
 /**
@@ -84,10 +102,17 @@ export function analyzeDesignImpact({
   const relationships = Array.isArray(design.relationships) ? design.relationships : [];
 
   const compMap = new Map<string, any>();
+  const nameToIdMap = new Map<string, string>();
+
   for (const c of components) {
     if (!c) continue;
-    if (c.id) compMap.set(c.id, c);
-    if (c.name) compMap.set(c.name, c);
+    const cid = c.id;
+    const cname = c.name;
+    if (cid) compMap.set(cid, c);
+    if (cname) {
+      if (!compMap.has(cname)) compMap.set(cname, c);
+      if (cid) nameToIdMap.set(cname, cid);
+    }
   }
 
   const relMap = new Map<string, any>();
@@ -100,20 +125,21 @@ export function analyzeDesignImpact({
   const isCompExplicit = targetType === 'component';
 
   const isTargetObject = typeof target === 'object' && target !== null;
-  const targetId = typeof target === 'string' ? target : target.id || target.componentId || '';
+  const rawTargetId = typeof target === 'string' ? target : target.id || target.componentId || '';
 
   const isRel =
     isRelExplicit ||
     (!isCompExplicit &&
-      (relMap.has(targetId) ||
+      (relMap.has(rawTargetId) ||
         (isTargetObject &&
           (target.selectors !== undefined ||
             target.subType !== undefined ||
             target.relationshipType !== undefined))));
 
   if (!isRel) {
-    // Target is a component
-    const targetComp = compMap.get(targetId) || (isTargetObject ? target : null);
+    // Target is a component: resolve to canonical component ID
+    const targetComp = compMap.get(rawTargetId) || (isTargetObject ? target : null);
+    const targetId = targetComp?.id || rawTargetId;
     const targetName = targetComp?.name || targetComp?.displayName || targetId;
     const targetKind =
       targetComp?.component?.kind || targetComp?.kind || (targetComp ? 'Component' : 'Resource');
@@ -131,19 +157,19 @@ export function analyzeDesignImpact({
 
       for (const sel of selectors) {
         if (!sel) continue;
-        const fromList = extractSelectorItemIds(sel.allow?.from || sel.from);
-        const toList = extractSelectorItemIds(sel.allow?.to || sel.to);
+        const fromList = extractCanonicalSelectorIds(sel.allow?.from || sel.from, nameToIdMap);
+        const toList = extractCanonicalSelectorIds(sel.allow?.to || sel.to, nameToIdMap);
 
-        const fromMatches = fromList.includes(targetId) || fromList.includes(targetName);
-        const toMatches = toList.includes(targetId) || toList.includes(targetName);
+        const fromMatches = fromList.includes(targetId);
+        const toMatches = toList.includes(targetId);
 
         if (fromMatches || toMatches) {
           relInvolvesTarget = true;
           for (const f of fromList) {
-            if (f !== targetId && f !== targetName) matchedFrom.push(f);
+            if (f !== targetId) matchedFrom.push(f);
           }
           for (const t of toList) {
-            if (t !== targetId && t !== targetName) matchedTo.push(t);
+            if (t !== targetId) matchedTo.push(t);
           }
         }
       }
@@ -156,7 +182,7 @@ export function analyzeDesignImpact({
         const relDesc = `${rel.kind || 'Edge'} (${rel.type || rel.subType || 'connection'})`;
 
         for (const otherId of [...matchedFrom, ...matchedTo]) {
-          if (otherId && otherId !== targetId && otherId !== targetName) {
+          if (otherId && otherId !== targetId) {
             directlyAffectedIds.add(otherId);
             explanationMap.set(
               otherId,
@@ -170,7 +196,7 @@ export function analyzeDesignImpact({
     // Traverse multi-level relationship chains (indirect dependencies)
     const indirectlyAffectedIds = new Set<string>();
     const queue = Array.from(directlyAffectedIds);
-    const visited = new Set<string>([targetId, targetName, ...directlyAffectedIds]);
+    const visited = new Set<string>([targetId, ...directlyAffectedIds]);
 
     while (queue.length > 0) {
       const currentId = queue.shift()!;
@@ -183,14 +209,10 @@ export function analyzeDesignImpact({
         const selectors = Array.isArray(rel.selectors) ? rel.selectors : [];
         for (const sel of selectors) {
           if (!sel) continue;
-          const fromList = extractSelectorItemIds(sel.allow?.from || sel.from);
-          const toList = extractSelectorItemIds(sel.allow?.to || sel.to);
+          const fromList = extractCanonicalSelectorIds(sel.allow?.from || sel.from, nameToIdMap);
+          const toList = extractCanonicalSelectorIds(sel.allow?.to || sel.to, nameToIdMap);
 
-          const matches =
-            fromList.includes(currentId) ||
-            (currentName && fromList.includes(currentName)) ||
-            toList.includes(currentId) ||
-            (currentName && toList.includes(currentName));
+          const matches = fromList.includes(currentId) || toList.includes(currentId);
 
           if (matches) {
             for (const neighbor of [...fromList, ...toList]) {
@@ -215,7 +237,7 @@ export function analyzeDesignImpact({
         id,
         name: comp?.name || id,
         kind: comp?.component?.kind || comp?.kind || 'Component',
-        model: comp?.model?.name || comp?.model || 'kubernetes',
+        model: comp?.model?.name || comp?.model || 'Unknown',
         explanation: explanationMap.get(id) || 'Connected relationship dependency',
       };
     };
@@ -227,7 +249,7 @@ export function analyzeDesignImpact({
 
     const actionVerb = modificationType === 'delete' ? 'Removing' : 'Modifying';
     const summary =
-      totalCount === 0
+      totalCount === 0 && relList.length === 0
         ? `${actionVerb} ${targetKind}/${targetName}: no dependent components or relationships found.`
         : `${actionVerb} ${targetKind}/${targetName} potentially affects ${directList.length} directly connected and ${indirectList.length} indirect component(s).`;
 
@@ -246,15 +268,15 @@ export function analyzeDesignImpact({
   }
 
   // Target is a relationship
-  const rel = relMap.get(targetId) || (isTargetObject ? target : null);
+  const rel = relMap.get(rawTargetId) || (isTargetObject ? target : null);
   const affectedCompIds = new Set<string>();
 
   if (rel) {
     const selectors = Array.isArray(rel.selectors) ? rel.selectors : [];
     for (const sel of selectors) {
       if (!sel) continue;
-      const fromList = extractSelectorItemIds(sel.allow?.from || sel.from);
-      const toList = extractSelectorItemIds(sel.allow?.to || sel.to);
+      const fromList = extractCanonicalSelectorIds(sel.allow?.from || sel.from, nameToIdMap);
+      const toList = extractCanonicalSelectorIds(sel.allow?.to || sel.to, nameToIdMap);
       for (const id of [...fromList, ...toList]) {
         if (id) affectedCompIds.add(id);
       }
@@ -267,21 +289,21 @@ export function analyzeDesignImpact({
       id,
       name: comp?.name || id,
       kind: comp?.component?.kind || comp?.kind || 'Component',
-      model: comp?.model?.name || comp?.model || 'kubernetes',
-      explanation: `Endpoint of relationship ${rel?.kind || 'Relationship'}/${rel?.type || rel?.subType || targetId}`,
+      model: comp?.model?.name || comp?.model || 'Unknown',
+      explanation: `Endpoint of relationship ${rel?.kind || 'Relationship'}/${rel?.type || rel?.subType || rawTargetId}`,
     };
   });
 
   const actionVerb = modificationType === 'delete' ? 'Removing' : 'Modifying';
-  const relDisplayName = rel?.subType || rel?.type || rel?.kind || targetId;
+  const relDisplayName = rel?.subType || rel?.type || rel?.kind || rawTargetId;
   const summary =
     directList.length === 0
-      ? `Relationship ${targetId} has no attached components.`
+      ? `Relationship ${rawTargetId} has no attached components.`
       : `${actionVerb} relationship "${relDisplayName}" affects ${directList.length} endpoint component(s).`;
 
   return {
     targetType: 'relationship',
-    targetId,
+    targetId: rawTargetId,
     targetName: relDisplayName,
     modificationType,
     directlyAffected: directList,
