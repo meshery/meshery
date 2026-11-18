@@ -1492,7 +1492,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 	// Always persist against the connection identified by the URL id. A payload
 	// that omits `id` (e.g. an RTK mutation that only forwards status+metadata)
 	// would otherwise carry a nil id, and GORM's Save() with a zero primary key
-	// INSERTs a new row — silently creating a duplicate connection instead of
+	// INSERTs a new row - silently creating a duplicate connection instead of
 	// updating the intended one. Fail fast on an unparseable connId rather than
 	// falling back to a nil id and INSERTing that duplicate.
 	id := conn.ID
@@ -1506,7 +1506,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 	conn.ID = id
 	// A partial payload (e.g. the UI's connect action sending only {status}, or an
 	// FSM status transition sending only {kind, metadata, status}) must not
-	// clobber the columns it omits — UpdateConnection writes every column.
+	// clobber the columns it omits - UpdateConnection writes every column.
 	// Backfill omitted fields and immutable row metadata from the persisted row.
 	createdAt := time.Now()
 	var owner *core.Uuid
@@ -1518,17 +1518,22 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 		owner = existing.Owner
 	}
 	connection := connections.Connection{
-		ID:             id,
-		Name:           conn.Name,
-		ConnectionType: conn.Type,
-		SubType:        conn.SubType,
-		Kind:           conn.Kind,
-		Metadata:       conn.MetaData,
-		Status:         conn.Status,
-		Owner:          owner,
-		CreatedAt:      createdAt,
-		UpdatedAt:      time.Now(),
-		CredentialID:   conn.CredentialID,
+		ID:               id,
+		Name:             conn.Name,
+		Description:      conn.Description,
+		Url:              conn.Url,
+		ConnectionType:   conn.Type,
+		SubType:          conn.SubType,
+		Kind:             conn.Kind,
+		ModelReference:   conn.ModelReference,
+		ConnectionSchema: conn.ConnectionSchema,
+		CredentialSchema: conn.CredentialSchema,
+		Metadata:         conn.MetaData,
+		Status:           conn.Status,
+		Owner:            owner,
+		CreatedAt:        createdAt,
+		UpdatedAt:        time.Now(),
+		CredentialID:     conn.CredentialID,
 	}
 	return l.UpdateConnection(nil, &connection)
 }

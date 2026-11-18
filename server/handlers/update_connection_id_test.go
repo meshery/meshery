@@ -15,6 +15,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
+	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -317,4 +318,75 @@ func TestUpdateConnectionByIDFallsBackToPersistedKind(t *testing.T) {
 	var errorEvents int64
 	require.NoError(t, provider.EventsPersister.DB.Model(&events.Event{}).Where("severity = ?", string(events.Error)).Count(&errorEvents).Error)
 	assert.Zero(t, errorEvents, "an empty kind in the update response must fall back to the persisted kind")
+}
+
+// TestUpdateConnectionByIDPreservesV1beta3Fields guards against regression of issue
+// #23907: partial updates (e.g. status changes via HTTP PUT or FSM transitions)
+// must not wipe description, url, model reference, or connection/credential schemas.
+func TestUpdateConnectionByIDPreservesV1beta3Fields(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	desc := "Production Prometheus Monitoring Instance"
+	targetURL := "http://prometheus.monitoring:9090"
+	modelRef := &modelv1beta1.ModelReference{Name: "prometheus-model"}
+	connSchema := core.Map{"type": "object", "title": "PromConn"}
+	credSchema := core.Map{"type": "object", "title": "PromCred"}
+
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name:             "prom",
+		Kind:             "prometheus",
+		ConnectionType:   "observability",
+		SubType:          "monitoring",
+		Status:           connections.DISCOVERED,
+		Description:      &desc,
+		Url:              &targetURL,
+		ModelReference:   modelRef,
+		ConnectionSchema: connSchema,
+		CredentialSchema: credSchema,
+	})
+	require.NoError(t, err)
+
+	// Partial PUT update: only status changed
+	rec := putConnectionBody(h, provider, saved.ID.String(), `{"status":"connected"}`)
+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+
+	got, err := provider.ConnectionPersister.GetConnection(saved.ID, "")
+	require.NoError(t, err)
+	assert.Equal(t, connections.CONNECTED, got.Status)
+	if assert.NotNil(t, got.Description, "description must survive partial status update") {
+		assert.Equal(t, desc, *got.Description)
+	}
+	if assert.NotNil(t, got.Url, "url must survive partial status update") {
+		assert.Equal(t, targetURL, *got.Url)
+	}
+	assert.Equal(t, modelRef.Name, got.ModelReference.Name, "model reference must survive partial status update")
+	assert.Equal(t, connSchema, got.ConnectionSchema, "connection schema must survive partial status update")
+	assert.Equal(t, credSchema, got.CredentialSchema, "credential schema must survive partial status update")
+
+	// Direct provider.UpdateConnectionById (used by FSM transitions)
+	updated, err := provider.UpdateConnectionById("", &connections.ConnectionPayload{
+		Status: connections.MAINTENANCE,
+	}, saved.ID.String())
+	require.NoError(t, err)
+	require.NotNil(t, updated)
+	assert.Equal(t, connections.MAINTENANCE, updated.Status)
+	if assert.NotNil(t, updated.Description, "returned description must match") {
+		assert.Equal(t, desc, *updated.Description)
+	}
+	if assert.NotNil(t, updated.Url, "returned url must match") {
+		assert.Equal(t, targetURL, *updated.Url)
+	}
+
+	// Partial PUT update providing an explicit description update preserves existing url
+	newDesc := "Updated Prometheus Instance"
+	recExplicit := putConnectionBody(h, provider, saved.ID.String(), `{"description":"Updated Prometheus Instance"}`)
+	require.Equal(t, http.StatusOK, recExplicit.Code, recExplicit.Body.String())
+
+	gotExplicit, err := provider.ConnectionPersister.GetConnection(saved.ID, "")
+	require.NoError(t, err)
+	if assert.NotNil(t, gotExplicit.Description, "updated description must be set") {
+		assert.Equal(t, newDesc, *gotExplicit.Description)
+	}
+	if assert.NotNil(t, gotExplicit.Url, "existing url must survive when omitting url in explicit update") {
+		assert.Equal(t, targetURL, *gotExplicit.Url)
+	}
 }
