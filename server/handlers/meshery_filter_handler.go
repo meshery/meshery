@@ -438,9 +438,17 @@ func (h *Handler) CloneMesheryFilterHandler(
 	if !ok {
 		return
 	}
+	if parsedUUID, _ := uuid.FromString(filterID); parsedUUID == uuid.Nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid filter ID: %s", filterID))
+		if h.log != nil {
+			h.log.Warn(invalidIDErr)
+		}
+		writeMeshkitError(rw, invalidIDErr, http.StatusBadRequest)
+		return
+	}
 
 	var parsedBody *models.MesheryCloneFilterRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || parsedBody == nil {
 		if h.log != nil {
 			h.log.Error(ErrRequestBody(err))
 		}
@@ -448,7 +456,7 @@ func (h *Handler) CloneMesheryFilterHandler(
 		return
 	}
 
-	if parsedBody == nil || parsedBody.Name == "" {
+	if parsedBody.Name == "" {
 		cloneErr := ErrCloneFilter(fmt.Errorf("filter name is required"))
 		if h.log != nil {
 			h.log.Error(cloneErr)
