@@ -3,9 +3,12 @@
 package utils
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 	"unsafe"
 
@@ -242,102 +245,300 @@ func TestWriteTokenFileLongPath(t *testing.T) {
 	}
 }
 
-func TestSameWindowsFileIdentity(t *testing.T) {
-	info := windows.ByHandleFileInformation{
-		VolumeSerialNumber: 12345,
-		FileIndexHigh:      1,
-		FileIndexLow:       2,
+func TestTokenFileMutexNameCanonicalization(t *testing.T) {
+	name1, err := tokenFileMutexName(`C:\Users\test\.meshery\token.json`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	name2, err := tokenFileMutexName(`c:\users\test\.meshery\token.json`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if name1 != name2 {
+		t.Fatalf("expected identical mutex names regardless of casing: %q != %q", name1, name2)
 	}
 
-	if !sameWindowsFileIdentity(info, info) {
-		t.Fatal("expected identical file info to match")
+	diffName, err := tokenFileMutexName(`C:\Users\test\.meshery\other.json`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if name1 == diffName {
+		t.Fatal("expected distinct paths to produce different mutex names")
 	}
 
-	diffVol := info
-	diffVol.VolumeSerialNumber = 99999
-	if sameWindowsFileIdentity(info, diffVol) {
-		t.Fatal("expected different volume serial number to mismatch")
-	}
-
-	diffIdxHi := info
-	diffIdxHi.FileIndexHigh = 9
-	if sameWindowsFileIdentity(info, diffIdxHi) {
-		t.Fatal("expected different file index high to mismatch")
-	}
-
-	diffIdxLo := info
-	diffIdxLo.FileIndexLow = 9
-	if sameWindowsFileIdentity(info, diffIdxLo) {
-		t.Fatal("expected different file index low to mismatch")
-	}
-
-	zeroInfo := windows.ByHandleFileInformation{}
-	if sameWindowsFileIdentity(zeroInfo, zeroInfo) {
-		t.Fatal("expected all-zero file info to be rejected (cannot guarantee identity)")
+	if !strings.HasPrefix(name1, `Local\meshery-token-`) {
+		t.Fatalf("expected Local namespace prefix, got %q", name1)
 	}
 }
 
-func TestWriteTokenFileFallbackIdentityPreserved(t *testing.T) {
-	orig := replaceTokenFileFunc
-	replaceTokenFileFunc = func(file *os.File, destination string) error {
+func TestHandleBasedRenameFallbackToStandard(t *testing.T) {
+	origEx := replaceTokenFileExFunc
+	defer func() { replaceTokenFileExFunc = origEx }()
+
+	// Simulate a filesystem where FileRenameInfoEx (class 22) returns ERROR_NOT_SUPPORTED.
+	replaceTokenFileExFunc = func(file *os.File, name []uint16) error {
 		return windows.ERROR_NOT_SUPPORTED
 	}
-	defer func() { replaceTokenFileFunc = orig }()
 
 	path := filepath.Join(t.TempDir(), "token")
-	if err := WriteTokenFile(path, []byte("fallback token")); err != nil {
-		t.Fatalf("WriteTokenFile fallback failed: %v", err)
+	if err := WriteTokenFile(path, []byte("fallback-standard-token")); err != nil {
+		t.Fatalf("expected fallback to standard handle-based rename to succeed: %v", err)
 	}
 
 	data, err := os.ReadFile(path)
-	if err != nil || string(data) != "fallback token" {
+	if err != nil || string(data) != "fallback-standard-token" {
 		t.Fatalf("read fallback token: %q, %v", data, err)
 	}
 }
 
-func TestVerifyDestinationTokenFile_DetectsReplacement(t *testing.T) {
-	dir := t.TempDir()
-	path := filepath.Join(dir, "token")
-	if err := WriteTokenFile(path, []byte("token")); err != nil {
-		t.Fatal(err)
-	}
-	file, err := os.Open(path)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer file.Close()
+func TestHandleBasedRenameFailsClosedOnAccessDenied(t *testing.T) {
+	origEx := replaceTokenFileExFunc
+	origStd := replaceTokenFileStdFunc
+	defer func() {
+		replaceTokenFileExFunc = origEx
+		replaceTokenFileStdFunc = origStd
+	}()
 
-	var info windows.ByHandleFileInformation
-	if err := windows.GetFileInformationByHandle(windows.Handle(file.Fd()), &info); err != nil {
-		t.Fatal(err)
+	replaceTokenFileExFunc = func(file *os.File, name []uint16) error {
+		return windows.ERROR_ACCESS_DENIED
 	}
 
-	tamperedInfo := info
-	tamperedInfo.FileIndexLow++
+	stdCalled := false
+	replaceTokenFileStdFunc = func(file *os.File, name []uint16) error {
+		stdCalled = true
+		return nil
+	}
 
-	if err := verifyDestinationTokenFile(file, tamperedInfo, []byte("token")); err == nil {
-		t.Fatal("expected verification to fail on file index mismatch")
+	path := filepath.Join(t.TempDir(), "token")
+	err := WriteTokenFile(path, []byte("token"))
+	if err == nil {
+		t.Fatal("expected access denied error to fail closed")
+	}
+	if stdCalled {
+		t.Fatal("expected ERROR_ACCESS_DENIED NOT to fall back to standard rename")
 	}
 }
 
-func TestVerifyDestinationTokenFile_DetectsContentMismatch(t *testing.T) {
+func TestConcurrentWritersProduceConsistentToken(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "token")
+
+	const numWriters = 10
+	var wg sync.WaitGroup
+	wg.Add(numWriters)
+
+	validTokens := make(map[string]bool)
+	var mu sync.Mutex
+
+	for i := 0; i < numWriters; i++ {
+		tok := fmt.Sprintf("token-payload-%d", i)
+		mu.Lock()
+		validTokens[tok] = true
+		mu.Unlock()
+
+		go func(content string) {
+			defer wg.Done()
+			if err := WriteTokenFile(path, []byte(content)); err != nil {
+				t.Errorf("concurrent WriteTokenFile failed: %v", err)
+			}
+		}(tok)
+	}
+
+	wg.Wait()
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read final token file: %v", err)
+	}
+
+	if !validTokens[string(data)] {
+		t.Fatalf("destination file contains corrupted or partial token: %q", data)
+	}
+}
+
+func TestConcurrentWritersDifferentPaths(t *testing.T) {
+	dir := t.TempDir()
+	path1 := filepath.Join(dir, "token1")
+	path2 := filepath.Join(dir, "token2")
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		if err := WriteTokenFile(path1, []byte("token-1")); err != nil {
+			t.Errorf("write path1: %v", err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		if err := WriteTokenFile(path2, []byte("token-2")); err != nil {
+			t.Errorf("write path2: %v", err)
+		}
+	}()
+
+	wg.Wait()
+
+	data1, err1 := os.ReadFile(path1)
+	data2, err2 := os.ReadFile(path2)
+	if err1 != nil || string(data1) != "token-1" {
+		t.Fatalf("path1 mismatch: %q, %v", data1, err1)
+	}
+	if err2 != nil || string(data2) != "token-2" {
+		t.Fatalf("path2 mismatch: %q, %v", data2, err2)
+	}
+}
+
+func TestFailedWriterPreservesExistingDestination(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "token")
-	if err := WriteTokenFile(path, []byte("actual token")); err != nil {
-		t.Fatal(err)
+
+	if err := WriteTokenFile(path, []byte("original valid token")); err != nil {
+		t.Fatalf("initial write failed: %v", err)
 	}
-	file, err := os.Open(path)
+
+	origEx := replaceTokenFileExFunc
+	defer func() { replaceTokenFileExFunc = origEx }()
+
+	// Simulate an error during rename
+	replaceTokenFileExFunc = func(file *os.File, name []uint16) error {
+		return windows.ERROR_ACCESS_DENIED
+	}
+
+	err := WriteTokenFile(path, []byte("new token that should fail"))
+	if err == nil {
+		t.Fatal("expected write to fail")
+	}
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("failed to read destination after failed write: %v", err)
+	}
+	if string(data) != "original valid token" {
+		t.Fatalf("destination token was clobbered by failed writer: %q", data)
+	}
+
+	// Verify no orphaned temporary files remain in dir
+	entries, err := os.ReadDir(dir)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer file.Close()
+	for _, entry := range entries {
+		if strings.HasPrefix(entry.Name(), ".meshery-token-") {
+			t.Fatalf("found leftover temporary file %q after failed write", entry.Name())
+		}
+	}
+}
 
-	var info windows.ByHandleFileInformation
-	if err := windows.GetFileInformationByHandle(windows.Handle(file.Fd()), &info); err != nil {
+func TestFailedWriterDoesNotDeleteDestinationWonByAnotherWriter(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "token")
+
+	// Writer A starts and prepares temporary file.
+	// Meanwhile Writer B successfully writes its token to destination.
+	if err := WriteTokenFile(path, []byte("token from Writer B")); err != nil {
+		t.Fatalf("Writer B failed: %v", err)
+	}
+
+	// Now simulate Writer A failing during its write attempt.
+	origEx := replaceTokenFileExFunc
+	defer func() { replaceTokenFileExFunc = origEx }()
+	replaceTokenFileExFunc = func(file *os.File, name []uint16) error {
+		return windows.ERROR_ACCESS_DENIED
+	}
+
+	err := WriteTokenFile(path, []byte("token from Writer A"))
+	if err == nil {
+		t.Fatal("expected Writer A to fail")
+	}
+
+	// Assert: Writer B's destination file was NOT deleted by Writer A!
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("destination was deleted by failed Writer A: %v", err)
+	}
+	if string(data) != "token from Writer B" {
+		t.Fatalf("destination was corrupted by failed Writer A: %q", data)
+	}
+}
+
+func TestCrossProcessTokenMutex(t *testing.T) {
+	if os.Getenv("MESHERY_TEST_HELPER_MUTEX") == "1" {
+		path := os.Getenv("MESHERY_TEST_MUTEX_PATH")
+		unlock, err := acquireTokenFileLock(path)
+		if err != nil {
+			os.Exit(2)
+		}
+		// Signal parent by writing to stdout
+		fmt.Println("LOCKED")
+		// Hold lock until parent signals or stdin closes
+		buf := make([]byte, 1)
+		_, _ = os.Stdin.Read(buf)
+		unlock()
+		os.Exit(0)
+		return
+	}
+
+	dir := t.TempDir()
+	path := filepath.Join(dir, "token")
+
+	cmd := exec.Command(os.Args[0], "-test.run=TestCrossProcessTokenMutex")
+	cmd.Env = append(os.Environ(),
+		"MESHERY_TEST_HELPER_MUTEX=1",
+		"MESHERY_TEST_MUTEX_PATH="+path,
+	)
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
 		t.Fatal(err)
 	}
-
-	if err := verifyDestinationTokenFile(file, info, []byte("different token")); err == nil {
-		t.Fatal("expected verification to fail on content mismatch")
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		t.Fatal(err)
 	}
+	if err := cmd.Start(); err != nil {
+		t.Skipf("cannot start child process: %v", err)
+	}
+	defer func() {
+		_ = stdin.Close()
+		_ = cmd.Wait()
+	}()
+
+	// Wait for child to acquire the named mutex
+	ready := make([]byte, 6)
+	if _, err := stdout.Read(ready); err != nil || string(ready[:6]) != "LOCKED" {
+		t.Skip("child process did not signal lock acquisition")
+	}
+
+	// While child holds the cross-process mutex, verify parent fails to acquire it quickly
+	mutexName, err := tokenFileMutexName(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	namePtr, err := windows.UTF16PtrFromString(mutexName)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handle, err := windows.OpenMutex(windows.SYNCHRONIZE, false, namePtr)
+	if err != nil {
+		t.Fatalf("open child mutex: %v", err)
+	}
+	defer windows.CloseHandle(handle)
+
+	// Wait with 50ms timeout; must return WAIT_TIMEOUT because child holds it
+	const waitTimeout = 0x00000102
+	event, err := windows.WaitForSingleObject(handle, 50)
+	if err != nil || event != waitTimeout {
+		t.Fatalf("expected WAIT_TIMEOUT while child holds mutex, got event=%#x, err=%v", event, err)
+	}
+
+	// Release child
+	_ = stdin.Close()
+	_ = cmd.Wait()
+
+	// Now parent can acquire without timeout
+	eventAfter, err := windows.WaitForSingleObject(handle, 2000)
+	if err != nil || (eventAfter != windows.WAIT_OBJECT_0 && eventAfter != windows.WAIT_ABANDONED) {
+		t.Fatalf("expected mutex acquisition after child exit, got event=%#x, err=%v", eventAfter, err)
+	}
+	_ = windows.ReleaseMutex(handle)
 }
