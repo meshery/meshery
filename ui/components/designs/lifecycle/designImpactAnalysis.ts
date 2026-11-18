@@ -43,11 +43,12 @@ export interface AnalyzeDesignImpactOptions {
 /**
  * Extracts a single canonical component ID for each selector item.
  * When a component mapping is provided, resolves by item.id or item.name to
- * the component's canonical ID.
+ * the component's canonical ID, checking exact component IDs before alias names.
  */
 function extractCanonicalSelectorIds(
   items: any[] = [],
   nameToIdMap?: Map<string, string>,
+  knownCompIds?: Set<string>,
 ): string[] {
   const result = new Set<string>();
   if (!Array.isArray(items)) return [];
@@ -57,12 +58,20 @@ function extractCanonicalSelectorIds(
     let resolvedId: string | undefined;
 
     if (typeof item === 'string') {
-      resolvedId = nameToIdMap?.get(item) || item;
+      if (knownCompIds?.has(item)) {
+        resolvedId = item;
+      } else {
+        resolvedId = nameToIdMap?.get(item) || item;
+      }
     } else {
       if (item.id) {
         resolvedId = item.id;
       } else if (item.name) {
-        resolvedId = nameToIdMap?.get(item.name) || item.name;
+        if (knownCompIds?.has(item.name)) {
+          resolvedId = item.name;
+        } else {
+          resolvedId = nameToIdMap?.get(item.name) || item.name;
+        }
       }
     }
 
@@ -103,15 +112,21 @@ export function analyzeDesignImpact({
 
   const compMap = new Map<string, any>();
   const nameToIdMap = new Map<string, string>();
+  const knownCompIds = new Set<string>();
 
   for (const c of components) {
     if (!c) continue;
     const cid = c.id;
     const cname = c.name;
-    if (cid) compMap.set(cid, c);
+    if (cid) {
+      compMap.set(cid, c);
+      knownCompIds.add(cid);
+    }
     if (cname) {
-      if (!compMap.has(cname)) compMap.set(cname, c);
-      if (cid) nameToIdMap.set(cname, cid);
+      if (!compMap.has(cname)) {
+        compMap.set(cname, c);
+        if (cid) nameToIdMap.set(cname, cid);
+      }
     }
   }
 
@@ -157,8 +172,16 @@ export function analyzeDesignImpact({
 
       for (const sel of selectors) {
         if (!sel) continue;
-        const fromList = extractCanonicalSelectorIds(sel.allow?.from || sel.from, nameToIdMap);
-        const toList = extractCanonicalSelectorIds(sel.allow?.to || sel.to, nameToIdMap);
+        const fromList = extractCanonicalSelectorIds(
+          sel.allow?.from || sel.from,
+          nameToIdMap,
+          knownCompIds,
+        );
+        const toList = extractCanonicalSelectorIds(
+          sel.allow?.to || sel.to,
+          nameToIdMap,
+          knownCompIds,
+        );
 
         const fromMatches = fromList.includes(targetId);
         const toMatches = toList.includes(targetId);
@@ -209,8 +232,16 @@ export function analyzeDesignImpact({
         const selectors = Array.isArray(rel.selectors) ? rel.selectors : [];
         for (const sel of selectors) {
           if (!sel) continue;
-          const fromList = extractCanonicalSelectorIds(sel.allow?.from || sel.from, nameToIdMap);
-          const toList = extractCanonicalSelectorIds(sel.allow?.to || sel.to, nameToIdMap);
+          const fromList = extractCanonicalSelectorIds(
+            sel.allow?.from || sel.from,
+            nameToIdMap,
+            knownCompIds,
+          );
+          const toList = extractCanonicalSelectorIds(
+            sel.allow?.to || sel.to,
+            nameToIdMap,
+            knownCompIds,
+          );
 
           const matches = fromList.includes(currentId) || toList.includes(currentId);
 
@@ -275,8 +306,16 @@ export function analyzeDesignImpact({
     const selectors = Array.isArray(rel.selectors) ? rel.selectors : [];
     for (const sel of selectors) {
       if (!sel) continue;
-      const fromList = extractCanonicalSelectorIds(sel.allow?.from || sel.from, nameToIdMap);
-      const toList = extractCanonicalSelectorIds(sel.allow?.to || sel.to, nameToIdMap);
+      const fromList = extractCanonicalSelectorIds(
+        sel.allow?.from || sel.from,
+        nameToIdMap,
+        knownCompIds,
+      );
+      const toList = extractCanonicalSelectorIds(
+        sel.allow?.to || sel.to,
+        nameToIdMap,
+        knownCompIds,
+      );
       for (const id of [...fromList, ...toList]) {
         if (id) affectedCompIds.add(id);
       }

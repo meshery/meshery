@@ -234,6 +234,35 @@ describe('designImpactAnalysis', () => {
     expect(result.totalAffectedCount).toBe(2);
   });
 
+  it('resolves exact component IDs before consulting nameToIdMap when ID collides with another component name', () => {
+    // Component A has name 'b', while Component B has ID 'b'.
+    // Relationship from 'a' to 'b' should target component B, not resolve 'b' to A.
+    const design = {
+      components: [
+        { id: 'a', name: 'b', component: { kind: 'Service' } },
+        { id: 'b', name: 'beta', component: { kind: 'Deployment' } },
+      ],
+      relationships: [
+        {
+          id: 'rel-ab',
+          kind: 'Edge',
+          selectors: [{ allow: { from: ['a'], to: ['b'] } }],
+        },
+      ],
+    };
+
+    const result = analyzeDesignImpact({
+      design,
+      target: 'a',
+      modificationType: 'update',
+    });
+
+    expect(result.directlyAffected).toHaveLength(1);
+    expect(result.directlyAffected[0].id).toBe('b');
+    expect(result.directlyAffected[0].name).toBe('beta');
+    expect(result.totalAffectedCount).toBe(1);
+  });
+
   it('covers component removal (modificationType: delete)', () => {
     const design = {
       components: [
