@@ -205,6 +205,7 @@ func TestDeleteMultiMesheryPatternsHandler_InvalidPatternUUID(t *testing.T) {
 		{name: "not a uuid", body: `{"patterns": [{"id": "not-a-uuid"}]}`},
 		{name: "nil uuid", body: `{"patterns": [{"id": "00000000-0000-0000-0000-000000000000"}]}`},
 		{name: "empty id string", body: `{"patterns": [{"id": ""}]}`},
+		{name: "oversized garbage id truncated to 36 chars", body: `{"patterns": [{"id": "` + strings.Repeat("x", 128) + `"}]}`},
 	}
 
 	for _, tt := range tests {
@@ -221,10 +222,61 @@ func TestDeleteMultiMesheryPatternsHandler_InvalidPatternUUID(t *testing.T) {
 			if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
 				t.Errorf("expected response to contain %s, got: %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
 			}
+			if tt.name == "oversized garbage id truncated to 36 chars" {
+				expectedPrefix := strings.Repeat("x", 36)
+				if !strings.Contains(rec.Body.String(), expectedPrefix) {
+					t.Errorf("expected response to contain truncated ID of 36 chars, got: %s", rec.Body.String())
+				}
+				unexpectedExtra := strings.Repeat("x", 37)
+				if strings.Contains(rec.Body.String(), unexpectedExtra) {
+					t.Errorf("expected response to not contain more than 36 chars of invalid ID, got: %s", rec.Body.String())
+				}
+			}
 			if called {
 				t.Fatalf("provider.DeleteMesheryPatterns was invoked on invalid UUID")
 			}
 		})
+	}
+}
+
+func TestDeleteMultiMesheryPatternsHandler_DeduplicatesDuplicateIDs(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	id1 := uuid.Must(uuid.NewV4()).String()
+	id2 := uuid.Must(uuid.NewV4()).String()
+
+	called := false
+	provider := newTestDeletePatternProvider(t)
+	provider.deleteFn = func(r *http.Request, patterns models.MesheryPatternDeleteRequestBody) ([]byte, error) {
+		called = true
+		if len(patterns.Patterns) != 2 {
+			t.Fatalf("expected 2 unique patterns passed to provider after deduping, got %d", len(patterns.Patterns))
+		}
+		if patterns.Patterns[0].ID != id1 || patterns.Patterns[1].ID != id2 {
+			t.Fatalf("pattern IDs mismatch: got %v, want [%s, %s]", patterns.Patterns, id1, id2)
+		}
+		return []byte(`{"status":"deleted","count":2}`), nil
+	}
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	// Send duplicate pattern entries in batch: id1, id2, id1, id2, id1
+	payload := fmt.Sprintf(`{"patterns": [{"id": "%s"}, {"id": "%s"}, {"id": "%s"}, {"id": "%s"}, {"id": "%s"}]}`,
+		id1, id2, id1, id2, id1)
+	req := httptest.NewRequest(http.MethodDelete, "/api/patterns/delete", strings.NewReader(payload))
+	rec := httptest.NewRecorder()
+
+	h.DeleteMultiMesheryPatternsHandler(rec, req, nil, user, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status 200 OK, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !called {
+		t.Fatalf("expected provider.DeleteMesheryPatterns to be invoked")
+	}
+	if rec.Header().Get("Content-Type") != "application/json" {
+		t.Errorf("expected Content-Type application/json, got %s", rec.Header().Get("Content-Type"))
+	}
+	if rec.Body.String() != `{"status":"deleted","count":2}` {
+		t.Errorf("unexpected body: %s", rec.Body.String())
 	}
 }
 

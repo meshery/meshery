@@ -1775,17 +1775,24 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 		return
 	}
 
+	seen := make(map[uuid.UUID]struct{}, len(patterns.Patterns))
+	deduped := patterns.Patterns[:0]
 	for _, p := range patterns.Patterns {
 		parsedUUID, err := uuid.FromString(p.ID)
 		if err != nil || parsedUUID == uuid.Nil {
-			invalidErr := models.ErrInvalidUUID(fmt.Errorf("invalid pattern ID in batch delete: %s", p.ID))
+			invalidErr := models.ErrInvalidUUID(fmt.Errorf("invalid pattern ID in batch delete: %.36s", p.ID))
 			if h != nil && h.log != nil {
 				h.log.Error(invalidErr)
 			}
 			writeMeshkitError(rw, invalidErr, http.StatusBadRequest)
 			return
 		}
+		if _, exists := seen[parsedUUID]; !exists {
+			seen[parsedUUID] = struct{}{}
+			deduped = append(deduped, p)
+		}
 	}
+	patterns.Patterns = deduped
 
 	if h != nil && h.log != nil {
 		h.log.Debug("patterns to be deleted: ", patterns)
