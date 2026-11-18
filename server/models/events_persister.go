@@ -286,7 +286,9 @@ var correlatedEventsMu sync.Mutex
 
 // ResolveConnectionCondition closes the open rows for a server-generated
 // connection resolution. Each row keeps its owner, ID and occurrence history.
-// The remote provider uses its owner-scoped event API instead.
+// A row observed after the resolution stays open, so a delayed recovery cannot
+// close a newer failure. The remote provider uses its owner-scoped event API
+// instead.
 func (l *DefaultLocalProvider) ResolveConnectionCondition(event events.Event) ([]events.Event, error) {
 	if event.CorrelationKey == nil || *event.CorrelationKey == "" || event.ResolvedAt == nil {
 		return nil, nil
@@ -303,7 +305,11 @@ func (l *DefaultLocalProvider) ResolveConnectionCondition(event events.Event) ([
 			*event.CorrelationKey, uuid.Nil).Find(&open).Error; err != nil {
 			return err
 		}
+		observedAt := resolutionObservedAt(event)
 		for i := range open {
+			if seen, ok := conditionObservedAt(open[i]); ok && seen.After(observedAt) {
+				continue
+			}
 			var persisted PersistedEvent
 			updates := resolutionUpdates(&open[i], event, now)
 			if err := updateOpenEvent(tx, &open[i], updates, EventResolved, &persisted); err != nil {
@@ -400,6 +406,32 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) (PersistedE
 		return PersistedEvent{}, err
 	}
 	return persisted, nil
+}
+
+// resolutionObservedAt is when the resolution was observed. A producer that
+// sets lastSeenAt names that instant; otherwise the observation is resolvedAt,
+// the same fallback resolutionUpdates uses.
+func resolutionObservedAt(event events.Event) time.Time {
+	if event.LastSeenAt != nil {
+		return event.LastSeenAt.UTC()
+	}
+	if event.ResolvedAt != nil {
+		return event.ResolvedAt.UTC()
+	}
+	return time.Time{}
+}
+
+// conditionObservedAt is when an open condition was last observed: lastSeenAt,
+// or firstSeenAt when the row has no lastSeenAt. The boolean is false when
+// the row records neither.
+func conditionObservedAt(open events.Event) (time.Time, bool) {
+	if open.LastSeenAt != nil {
+		return open.LastSeenAt.UTC(), true
+	}
+	if open.FirstSeenAt != nil {
+		return open.FirstSeenAt.UTC(), true
+	}
+	return time.Time{}, false
 }
 
 // resolutionUpdates records what cleared and retains the latest observation.

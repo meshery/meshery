@@ -726,10 +726,24 @@ func (h *Handler) reportMachineOutcome(provider models.Provider, token string, u
 					h.config.EventBroadcaster.Publish(*resolved[i].Owner, &resolved[i])
 				}
 			}
+			// DeleteConnection records a Resolves event, so a deletion with no
+			// open condition takes this branch and would otherwise be dropped.
+			// Persist that event. A discovery recovery is not a deletion: when
+			// it closes nothing, a repeat must stay a no-op.
+			if len(resolved) == 0 && isConnectionDeletion(event) {
+				h.persistAndPublish(provider, token, userID, event)
+			}
 			return
 		}
 	}
 	h.persistAndPublish(provider, token, userID, event)
+}
+
+// isConnectionDeletion reports the success event DeleteConnection builds for a
+// removed connection. That event's action is "delete". Discovery recoveries
+// use "update", so the two paths stay distinct when a resolution closes no row.
+func isConnectionDeletion(event *events.Event) bool {
+	return event != nil && event.Action == "delete"
 }
 
 // persistAndPublish persists event and broadcasts it as stored: an occurrence

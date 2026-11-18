@@ -288,6 +288,83 @@ func TestDeleteConnectionResolvesTheUnreachableCondition(t *testing.T) {
 	}
 }
 
+// Deleting a NOTFOUND Kubernetes connection that has no open unreachable
+// condition still records and publishes the "Connection deleted" event.
+func TestDeleteConnectionRecordsEventWhenNoOpenCondition(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name: "test-connection", Kind: "kubernetes", ConnectionType: "platform",
+		Status: connections.ConnectionStatus(machines.NOTFOUND),
+	})
+	if err != nil {
+		t.Fatalf("save connection: %v", err)
+	}
+	published, stop := h.config.EventBroadcaster.Subscribe(user.ID)
+	defer stop()
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/integrations/connections/"+saved.ID.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"connectionId": saved.ID.String()})
+	rec := httptest.NewRecorder()
+	h.DeleteConnection(rec, req, nil, user, provider)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusOK, rec.Body.String())
+	}
+
+	var rows []events.Event
+	if err := provider.EventsPersister.DB.Where("correlation_key = ?", kubernetes.UnreachableConditionKey(saved.ID)).Find(&rows).Error; err != nil {
+		t.Fatalf("read events: %v", err)
+	}
+	if len(rows) != 1 {
+		t.Fatalf("got %d events, want the deletion event", len(rows))
+	}
+	row := rows[0]
+	if row.Action != "delete" || row.ResolvedAt == nil || row.Severity != events.Success ||
+		row.Owner == nil || *row.Owner != user.ID || row.Description != "Connection test-connection deleted." {
+		t.Fatalf("stored deletion event = %+v", row)
+	}
+	got := receiveEvent(t, published)
+	if got.ID != row.ID || got.Description != row.Description || got.Action != "delete" {
+		t.Fatalf("published %+v, want stored deletion %+v", got, row)
+	}
+}
+
+// Resolving an open condition on delete updates that row and does not record
+// a second deletion event.
+func TestDeleteConnectionResolvesOpenConditionWithoutASecondEvent(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name: "test-connection", Kind: "kubernetes", ConnectionType: "platform",
+		Status: connections.ConnectionStatus(machines.NOTFOUND),
+	})
+	if err != nil {
+		t.Fatalf("save connection: %v", err)
+	}
+	key := kubernetes.UnreachableConditionKey(saved.ID)
+	opened, err := provider.PersistEvent(*events.NewEvent().FromOwner(user.ID).WithCategory("connection").
+		WithAction("update").WithSeverity(events.Error).WithCorrelationKey(key).Build(), "")
+	if err != nil {
+		t.Fatalf("open the condition: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/integrations/connections/"+saved.ID.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"connectionId": saved.ID.String()})
+	rec := httptest.NewRecorder()
+	h.DeleteConnection(rec, req, nil, user, provider)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d. body: %s", rec.Code, http.StatusOK, rec.Body.String())
+	}
+
+	var rows []events.Event
+	if err := provider.EventsPersister.DB.Where("correlation_key = ?", key).Find(&rows).Error; err != nil {
+		t.Fatalf("read events: %v", err)
+	}
+	if len(rows) != 1 || rows[0].ID != opened.Event.ID || rows[0].ResolvedAt == nil || rows[0].Action != "update" {
+		t.Fatalf("conditions after delete = %+v, want the original row %s resolved", rows, opened.Event.ID)
+	}
+}
+
 func TestDeleteConnectionResolvesUnreachableConditionWhenLookupFails(t *testing.T) {
 	h, provider := newDeleteConnectionFixture(t)
 	user := &models.User{ID: uuid.Must(uuid.NewV4())}

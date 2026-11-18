@@ -288,6 +288,35 @@ func TestReportBackgroundDiscoveryResolvesSharedConnection(t *testing.T) {
 	}
 }
 
+// A discovery recovery that finds no open condition is not recorded. Repeating
+// it stays a no-op, unlike a connection deletion, which still persists its
+// success event.
+func TestReportBackgroundDiscoveryRecoveryWithoutOpenConditionIsANoOp(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	observer := uuid.Must(uuid.NewV4())
+	stream, stop := h.config.EventBroadcaster.Subscribe(observer)
+	defer stop()
+	key := models.ConditionKey("k8s-connection", uuid.Must(uuid.NewV4()).String(), "unreachable")
+	recovery := events.NewEvent().FromOwner(observer).WithCategory("connection").WithAction("update").
+		WithSeverity(events.Success).WithDescription("connection reachable").Resolves(key, time.Now().UTC()).Build()
+
+	h.reportBackgroundDiscovery(provider, "", observer, recovery, nil)
+	h.reportBackgroundDiscovery(provider, "", observer, recovery, nil)
+
+	select {
+	case unexpected := <-stream:
+		t.Fatalf("unexpected notification: %+v", unexpected)
+	default:
+	}
+	var rows []events.Event
+	if err := provider.EventsPersister.DB.Find(&rows).Error; err != nil {
+		t.Fatalf("read events: %v", err)
+	}
+	if len(rows) != 0 {
+		t.Fatalf("got %d event rows, want none", len(rows))
+	}
+}
+
 // A background Discovery reports its failure and the resolution of the
 // connection's unreachable condition, and nothing for a routine success.
 func TestReportBackgroundDiscovery(t *testing.T) {
