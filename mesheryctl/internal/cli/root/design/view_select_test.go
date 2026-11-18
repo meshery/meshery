@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"slices"
 	"testing"
 
@@ -20,6 +21,16 @@ func viewTestPage(total int, designs ...map[string]interface{}) *map[string]inte
 		patterns[i] = d
 	}
 	return &map[string]interface{}{"totalCount": float64(total), "patterns": patterns}
+}
+
+// untotalledPage is a page from a provider that reports no total: the page
+// size is then the only end marker.
+func untotalledPage(designs ...map[string]interface{}) *map[string]interface{} {
+	patterns := make([]interface{}, len(designs))
+	for i, d := range designs {
+		patterns[i] = d
+	}
+	return &map[string]interface{}{"patterns": patterns}
 }
 
 func viewSearchURL(name string, page int) string {
@@ -177,12 +188,13 @@ func TestSelectDesignByNameWithDuplicateNames(t *testing.T) {
 		utils.AssertMeshkitErrorsEqual(t, err, utils.ErrPromptCancelled())
 	})
 
-	t.Run("given two designs with the name when the prompt returns an invalid index then an error is returned", func(t *testing.T) {
-		runDesignSelectPrompt = func(string, []string) (int, error) { return 5, nil }
-		if _, err := selectDesignByName(designs, "nginx"); err == nil {
-			t.Fatal("expected an error")
-		}
-	})
+	for _, index := range []int{-1, 5} {
+		t.Run(fmt.Sprintf("given two designs with the name when the prompt returns index %d then an error is returned", index), func(t *testing.T) {
+			runDesignSelectPrompt = func(string, []string) (int, error) { return index, nil }
+			_, err := selectDesignByName(designs, "nginx")
+			utils.AssertMeshkitErrorsEqual(t, err, ErrDesignInvalidSelection(index, 2))
+		})
+	}
 }
 
 func TestFetchDesignSearch(t *testing.T) {
@@ -274,7 +286,7 @@ func TestFetchDesignSearch(t *testing.T) {
 		}
 	})
 
-	t.Run("given a response without a total when searching then the first page is used", func(t *testing.T) {
+	t.Run("given a short page without a total when searching then it is the last page", func(t *testing.T) {
 		var requests []string
 		pages := map[string]*map[string]interface{}{
 			viewSearchURL("nginx", 0): {"patterns": []interface{}{viewTestDesign("1", "nginx")}},
@@ -283,6 +295,46 @@ func TestFetchDesignSearch(t *testing.T) {
 		if err != nil || len(got) != 1 || len(requests) != 1 {
 			t.Fatalf("got %v, err %v, requests %v", got, err, requests)
 		}
+	})
+
+	t.Run("given a full page without a total when searching then the next page is requested", func(t *testing.T) {
+		var requests []string
+		first := make([]map[string]interface{}, designSearchPageSize)
+		for i := range first {
+			first[i] = viewTestDesign(fmt.Sprintf("p%05d", i), fmt.Sprintf("nginx-%05d", i))
+		}
+		pages := map[string]*map[string]interface{}{
+			viewSearchURL("nginx", 0): untotalledPage(first...),
+			viewSearchURL("nginx", 1): untotalledPage(viewTestDesign("exact", "nginx")),
+		}
+		got, err := fetchDesignSearch("nginx", fakeDesignSearch(pages, &requests))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(requests) != 2 {
+			t.Fatalf("requests %v", requests)
+		}
+		selected, err := selectDesignByName(got, "nginx")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if selected["id"] != "exact" {
+			t.Fatalf("selected %v, want id exact", selected["id"])
+		}
+	})
+
+	t.Run("given a full page without a total that only repeats designs when searching then an error is returned", func(t *testing.T) {
+		var requests []string
+		first := make([]map[string]interface{}, designSearchPageSize)
+		for i := range first {
+			first[i] = viewTestDesign(fmt.Sprintf("p%05d", i), fmt.Sprintf("nginx-%05d", i))
+		}
+		pages := map[string]*map[string]interface{}{
+			viewSearchURL("nginx", 0): untotalledPage(first...),
+			viewSearchURL("nginx", 1): untotalledPage(first...),
+		}
+		_, err := fetchDesignSearch("nginx", fakeDesignSearch(pages, &requests))
+		utils.AssertMeshkitErrorsEqual(t, err, ErrDesignInvalidApiResponse(`search for "nginx" repeated a full page of designs`))
 	})
 
 	t.Run("given a name with spaces when searching then it is query-escaped", func(t *testing.T) {
@@ -339,6 +391,14 @@ func TestDesignSearchTotal(t *testing.T) {
 		{name: "missing", response: map[string]interface{}{}},
 		{name: "null", response: map[string]interface{}{"totalCount": nil}},
 		{name: "string", response: map[string]interface{}{"totalCount": "11"}, wantErr: true},
+		{name: "zero", response: map[string]interface{}{"totalCount": float64(0)}, want: 0, wantOK: true},
+		{name: "negative float64", response: map[string]interface{}{"totalCount": float64(-1)}, wantErr: true},
+		{name: "negative int", response: map[string]interface{}{"totalCount": -1}, wantErr: true},
+		{name: "negative int64", response: map[string]interface{}{"totalCount": int64(-1)}, wantErr: true},
+		{name: "negative json.Number", response: map[string]interface{}{"totalCount": json.Number("-1")}, wantErr: true},
+		{name: "float64 above the int range", response: map[string]interface{}{"totalCount": math.MaxFloat64}, wantErr: true},
+		{name: "infinite float64", response: map[string]interface{}{"totalCount": math.Inf(1)}, wantErr: true},
+		{name: "json.Number above the int64 range", response: map[string]interface{}{"totalCount": json.Number("9223372036854775808")}, wantErr: true},
 		{name: "fractional float64", response: map[string]interface{}{"totalCount": 1.5}, wantErr: true},
 		{name: "fractional json.Number", response: map[string]interface{}{"totalCount": json.Number("1.5")}, wantErr: true},
 	}
@@ -385,10 +445,17 @@ func TestFetchDesignSearchWithNonFloatTotals(t *testing.T) {
 		})
 	}
 
+	t.Run("given a negative total when searching then an invalid response error is returned", func(t *testing.T) {
+		_, err := fetchDesignSearch("nginx", func(string) (*map[string]interface{}, error) {
+			return &map[string]interface{}{"totalCount": float64(-1), "patterns": []interface{}{}}, nil
+		})
+		utils.AssertMeshkitErrorsEqual(t, err, ErrDesignInvalidApiResponse("'totalCount' field is not a count: -1"))
+	})
+
 	t.Run("given a total that is not a number when searching then an invalid response error is returned", func(t *testing.T) {
 		_, err := fetchDesignSearch("nginx", func(string) (*map[string]interface{}, error) {
 			return &map[string]interface{}{"totalCount": "eleven", "patterns": []interface{}{}}, nil
 		})
-		utils.AssertMeshkitErrorsEqual(t, err, ErrDesignInvalidApiResponse("'totalCount' field is not a whole number: eleven"))
+		utils.AssertMeshkitErrorsEqual(t, err, ErrDesignInvalidApiResponse("'totalCount' field is not a count: eleven"))
 	})
 }
