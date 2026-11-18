@@ -128,28 +128,36 @@ func patchBindingMatchFieldsForSelector(match *relationship.MatchSelector, _ *co
 			count := min(len(*mSel.MutatorRef), len(*otherSel.MutatedRef))
 
 			for i := range count {
-				mutatorPath := (*mSel.MutatorRef)[i]
-				mutatedPath := (*otherSel.MutatedRef)[i]
+				origMutatorPath := (*mSel.MutatorRef)[i]
+				origMutatedPath := (*otherSel.MutatedRef)[i]
 
-				mutatorValue := configurationForComponentAtPath(mutatorPath, matchComp, design)
-				oldValue := configurationForComponentAtPath(mutatedPath, otherComp, design)
+				resolvedMutatorPaths := resolveComponentPaths(origMutatorPath, matchComp, design)
+				resolvedMutatedPaths := resolveComponentPaths(origMutatedPath, otherComp, design)
 
-				if mutatorValue == nil {
-					continue
-				}
-				if reverse {
-					if !deepEqual(mutatorValue, oldValue) {
+				for j, mutatedPath := range resolvedMutatedPaths {
+					oldValue := configurationForComponentAtPath(mutatedPath, otherComp, design)
+
+					if reverse {
+						if !matchesAnyMutatorValue(oldValue, resolvedMutatorPaths, matchComp, design) {
+							continue
+						}
+						actions = append(actions, cleanupActionForPath(otherComp.ID.String(), mutatedPath, otherComp))
 						continue
 					}
-					actions = append(actions, cleanupActionForPath(otherComp.ID.String(), mutatedPath, otherComp))
-					continue
+					mutatorValue := selectMutatorValue(resolvedMutatorPaths, j, len(resolvedMutatedPaths), matchComp, design)
+					if mutatorValue == nil {
+						continue
+					}
+					if deepEqual(mutatorValue, oldValue) {
+						continue
+					}
+					actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedPath), otherComp.ID.String(), mutatedPath, mutatorValue))
 				}
-				if deepEqual(mutatorValue, oldValue) {
-					continue
-				}
-				actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedPath), otherComp.ID.String(), mutatedPath, mutatorValue))
 			}
 		}
+	}
+	if reverse {
+		actions = orderCleanupActions(actions)
 	}
 	return actions
 }

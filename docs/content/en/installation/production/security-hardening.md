@@ -136,6 +136,22 @@ configuration safe to store and share.
   that relax security (for example insecure tracing endpoints) belong in
   non-production only.
 
+## Remote URL imports
+
+Meshery Server accepts HTTP and HTTPS URLs for design, filter, and pattern
+imports. It refuses connections to non-public addresses, including loopback,
+private, link-local, and cloud metadata addresses. The address check applies to
+each connection, including redirects. Filter and pattern fetches allow at most
+five redirects; design URL imports stop redirect chains at ten. The server
+reads at most 10 MiB from a response. Design URL imports have a 60-second
+request timeout; filter and pattern URL fetches have a 30-second timeout.
+These limits apply to server-side imports; they do not replace an egress policy
+for controlling which public hosts the Server can reach.
+
+See [Importing and Exporting Designs]({{< ref "guides/configuration-management/import-export-designs.md" >}})
+and [Envoy WASM Filter Management]({{< ref "guides/infrastructure-management/filter-management.md" >}})
+for the import workflows.
+
 ## Broker exposure risk
 
 When Meshery Server is out-of-cluster, the Broker (`4222/tcp`) is exposed beyond
