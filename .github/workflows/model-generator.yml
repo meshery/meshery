@@ -137,6 +137,7 @@ jobs:
           ATTACHMENTS=""
           API_ERROR=""
           LOG_DOWNLOAD_FAILED=false
+          MAX_JOB_LOG_SIZE_BYTES=$((10 * 1024 * 1024))
 
           {
             echo "The Model Component Generator and Updater workflow failed."
@@ -230,7 +231,11 @@ jobs:
 
                 {
                   echo "Failed step: ${STEP_NAME} (step ${STEP_NUMBER})"
-                  echo "Job/run link: ${JOB_URL:-$RUN_URL}"
+                  if [ -n "$JOB_URL" ]; then
+                    echo "Failed step link: ${JOB_URL}#step:${STEP_NUMBER}:1"
+                  else
+                    echo "Failed step link unavailable; use the workflow run link: ${RUN_URL}"
+                  fi
                 } >> "$EMAIL_FILE"
 
                 if curl --fail --location --silent --show-error \
@@ -258,8 +263,16 @@ jobs:
                 -H "Accept: application/vnd.github+json" \
                 "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/jobs/$JOB_ID/logs" \
                 --output "$JOB_LOG_TEMP" && [ -s "$JOB_LOG_TEMP" ] && mv "$JOB_LOG_TEMP" "$JOB_LOG"; then
-                ATTACHMENTS="${ATTACHMENTS}${ATTACHMENTS:+,}${JOB_LOG}"
-                echo "Complete job log attached as a fallback." >> "$EMAIL_FILE"
+                if JOB_LOG_SIZE_BYTES="$(stat -c%s "$JOB_LOG")" && [[ "$JOB_LOG_SIZE_BYTES" =~ ^[0-9]+$ ]]; then
+                  if [ "$JOB_LOG_SIZE_BYTES" -le "$MAX_JOB_LOG_SIZE_BYTES" ]; then
+                    ATTACHMENTS="${ATTACHMENTS}${ATTACHMENTS:+,}${JOB_LOG}"
+                    echo "Complete job log attached as a fallback (${JOB_LOG_SIZE_BYTES} bytes)." >> "$EMAIL_FILE"
+                  else
+                    echo "Complete job log was not attached because it is ${JOB_LOG_SIZE_BYTES} bytes, exceeding the 10 MiB attachment limit. The job/run link above remains available." >> "$EMAIL_FILE"
+                  fi
+                else
+                  echo "Complete job log was not attached because its size could not be determined. The job/run link above remains available." >> "$EMAIL_FILE"
+                fi
                 append_log_excerpt "$JOB_LOG" "complete job log fallback"
               else
                 rm -f "$JOB_LOG_TEMP"
