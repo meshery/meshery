@@ -241,3 +241,103 @@ func TestWriteTokenFileLongPath(t *testing.T) {
 		t.Fatalf("write long token path: %v", err)
 	}
 }
+
+func TestSameWindowsFileIdentity(t *testing.T) {
+	info := windows.ByHandleFileInformation{
+		VolumeSerialNumber: 12345,
+		FileIndexHigh:      1,
+		FileIndexLow:       2,
+	}
+
+	if !sameWindowsFileIdentity(info, info) {
+		t.Fatal("expected identical file info to match")
+	}
+
+	diffVol := info
+	diffVol.VolumeSerialNumber = 99999
+	if sameWindowsFileIdentity(info, diffVol) {
+		t.Fatal("expected different volume serial number to mismatch")
+	}
+
+	diffIdxHi := info
+	diffIdxHi.FileIndexHigh = 9
+	if sameWindowsFileIdentity(info, diffIdxHi) {
+		t.Fatal("expected different file index high to mismatch")
+	}
+
+	diffIdxLo := info
+	diffIdxLo.FileIndexLow = 9
+	if sameWindowsFileIdentity(info, diffIdxLo) {
+		t.Fatal("expected different file index low to mismatch")
+	}
+
+	zeroInfo := windows.ByHandleFileInformation{}
+	if sameWindowsFileIdentity(zeroInfo, zeroInfo) {
+		t.Fatal("expected all-zero file info to be rejected (cannot guarantee identity)")
+	}
+}
+
+func TestWriteTokenFileFallbackIdentityPreserved(t *testing.T) {
+	orig := replaceTokenFileFunc
+	replaceTokenFileFunc = func(file *os.File, destination string) error {
+		return windows.ERROR_NOT_SUPPORTED
+	}
+	defer func() { replaceTokenFileFunc = orig }()
+
+	path := filepath.Join(t.TempDir(), "token")
+	if err := WriteTokenFile(path, []byte("fallback token")); err != nil {
+		t.Fatalf("WriteTokenFile fallback failed: %v", err)
+	}
+
+	data, err := os.ReadFile(path)
+	if err != nil || string(data) != "fallback token" {
+		t.Fatalf("read fallback token: %q, %v", data, err)
+	}
+}
+
+func TestVerifyDestinationTokenFile_DetectsReplacement(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "token")
+	if err := WriteTokenFile(path, []byte("token")); err != nil {
+		t.Fatal(err)
+	}
+	file, err := os.Open(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer file.Close()
+
+	var info windows.ByHandleFileInformation
+	if err := windows.GetFileInformationByHandle(windows.Handle(file.Fd()), &info); err != nil {
+		t.Fatal(err)
+	}
+
+	tamperedInfo := info
+	tamperedInfo.FileIndexLow++
+
+	if err := verifyDestinationTokenFile(file, tamperedInfo, []byte("token")); err == nil {
+		t.Fatal("expected verification to fail on file index mismatch")
+	}
+}
+
+func TestVerifyDestinationTokenFile_DetectsContentMismatch(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "token")
+	if err := WriteTokenFile(path, []byte("actual token")); err != nil {
+		t.Fatal(err)
+	}
+	file, err := os.Open(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer file.Close()
+
+	var info windows.ByHandleFileInformation
+	if err := windows.GetFileInformationByHandle(windows.Handle(file.Fd()), &info); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := verifyDestinationTokenFile(file, info, []byte("different token")); err == nil {
+		t.Fatal("expected verification to fail on content mismatch")
+	}
+}
