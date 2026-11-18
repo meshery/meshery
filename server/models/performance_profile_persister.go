@@ -2,11 +2,13 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/core"
+	"gorm.io/gorm"
 )
 
 // PerformanceProfilePersister is the persister for persisting
@@ -30,6 +32,10 @@ const nilUUIDString = "00000000-0000-0000-0000-000000000000"
 
 // GetPerformanceProfiles returns all of the performance profiles
 func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order string, page, pageSize uint64) ([]byte, error) {
+	if ppp == nil || ppp.DB == nil {
+		return nil, ErrDBConnection
+	}
+
 	// The wire contract is camelCase (`?order=lastRun desc`) while the SELECT
 	// below aliases the aggregated subquery to the snake_case `last_run`
 	// column. SanitizeOrderInput folds the wire name onto the DB column, so
@@ -84,10 +90,14 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 // with that id is stored it returns ErrResultNotFound, so a delete of a profile
 // that never existed is distinguishable from a successful delete.
 func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id core.Uuid) ([]byte, error) {
+	if ppp == nil || ppp.DB == nil {
+		return nil, ErrDBConnection
+	}
+
 	profile := PerformanceProfile{ID: id}
 	result := ppp.DB.Delete(&profile)
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, ErrDBDelete(result.Error, id.String())
 	}
 	if result.RowsAffected == 0 {
 		return nil, ErrResultNotFound(fmt.Errorf("performance profile %s not found", id.String()))
@@ -100,6 +110,13 @@ func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id core.Uuid) (
 // none is stored. An edit from the performance form carries every form field
 // but no createdAt, so an update writes every column except created_at.
 func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ core.Uuid, profile *PerformanceProfile) error {
+	if ppp == nil || ppp.DB == nil {
+		return ErrDBConnection
+	}
+	if profile == nil {
+		return ErrInvalidPerformanceProfile(fmt.Errorf("performance profile cannot be nil"))
+	}
+
 	res := ppp.DB.Model(profile).Select("*").Omit("created_at").Updates(profile)
 	if res.Error != nil {
 		return res.Error
@@ -111,6 +128,10 @@ func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ core.Uuid, prof
 }
 
 func (ppp *PerformanceProfilePersister) GetPerformanceProfile(id core.Uuid) (*PerformanceProfile, error) {
+	if ppp == nil || ppp.DB == nil {
+		return nil, ErrDBConnection
+	}
+
 	var performanceProfile PerformanceProfile
 
 	err := ppp.DB.
@@ -126,5 +147,11 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfile(id core.Uuid) (*Pe
 		).
 		Where("id = ?", id).
 		First(&performanceProfile).Error
-	return &performanceProfile, err
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
+		return nil, ErrDBRead(err)
+	}
+	return &performanceProfile, nil
 }
