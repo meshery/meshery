@@ -3,8 +3,11 @@ package models
 import (
 	"bytes"
 	"context"
+	"crypto/rand"
+	"crypto/rsa"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -15,6 +18,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/meshery/meshkit/logger"
 	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
@@ -592,5 +596,134 @@ func TestRemoteProviderInitiateLogin_RefCookieCarriesOnlyThisAttemptsDestination
 				})
 			}
 		})
+	}
+}
+
+// Tests for RemoteProvider.VerifyToken hardening (pre-auth panic via a
+// crafted token cookie, privately reported by Himanish Puri, Nov 2026).
+// VerifyToken runs before authentication, so every field read from the
+// unverified JWT must be checked: a panic here aborts the request.
+// The two repro cases are adapted from the reporter's attached test.
+
+func buildUnsignedTestJWT(t *testing.T, header, claims map[string]interface{}) string {
+	t.Helper()
+
+	h, err := json.Marshal(header)
+	if err != nil {
+		t.Fatalf("failed to marshal test JWT header: %v", err)
+	}
+	c, err := json.Marshal(claims)
+	if err != nil {
+		t.Fatalf("failed to marshal test JWT claims: %v", err)
+	}
+	return base64.RawURLEncoding.EncodeToString(h) + "." + base64.RawURLEncoding.EncodeToString(c) + ".c2ln"
+}
+
+func TestVerifyToken_RejectsTokenWithoutKid(t *testing.T) {
+	provider := newTestRemoteProvider(t, "http://localhost:9876")
+	tok := buildUnsignedTestJWT(t,
+		map[string]interface{}{"alg": "RS256", "typ": "JWT"},
+		map[string]interface{}{"sub": "x"},
+	)
+	_, err := provider.VerifyToken(tok)
+	if err == nil {
+		t.Fatal("expected an error for a token without a kid header, got nil")
+	}
+	if !strings.Contains(err.Error(), "kid") {
+		t.Fatalf("expected error to mention the missing kid, got: %v", err)
+	}
+}
+
+func TestVerifyToken_RejectsNonStringKid(t *testing.T) {
+	provider := newTestRemoteProvider(t, "http://localhost:9876")
+	tok := buildUnsignedTestJWT(t,
+		map[string]interface{}{"alg": "RS256", "typ": "JWT", "kid": 123},
+		map[string]interface{}{"sub": "x"},
+	)
+	if _, err := provider.VerifyToken(tok); err == nil {
+		t.Fatal("expected an error for a token with a non-string kid header, got nil")
+	}
+}
+
+func TestVerifyToken_RejectsNonNumericExp(t *testing.T) {
+	provider := newTestRemoteProvider(t, "http://localhost:9876")
+	tok := buildUnsignedTestJWT(t,
+		map[string]interface{}{"alg": "RS256", "typ": "JWT", "kid": "k1"},
+		map[string]interface{}{"sub": "x", "exp": "tomorrow"},
+	)
+	if _, err := provider.VerifyToken(tok); err == nil {
+		t.Fatal("expected an error for a token with a non-numeric exp claim, got nil")
+	}
+}
+
+func TestVerifyToken_RejectsExpiredToken(t *testing.T) {
+	provider := newTestRemoteProvider(t, "http://localhost:9876")
+	tok := buildUnsignedTestJWT(t,
+		map[string]interface{}{"alg": "RS256", "typ": "JWT", "kid": "k1"},
+		map[string]interface{}{"sub": "x", "exp": time.Now().Add(-time.Hour).Unix()},
+	)
+	_, err := provider.VerifyToken(tok)
+	if !errors.Is(err, ErrTokenExpired) {
+		t.Fatalf("expected ErrTokenExpired, got: %v", err)
+	}
+}
+
+func TestVerifyToken_RejectsExpiredTokenWithBase64URLPayload(t *testing.T) {
+	provider := newTestRemoteProvider(t, "http://localhost:9876")
+	// Find an expired token whose base64url payload segment contains '-'
+	// or '_': JWTs use base64url, so decoding the payload with
+	// base64.RawStdEncoding silently failed and the expiry was missed.
+	var tok string
+	for i := 0; ; i++ {
+		claims := map[string]interface{}{"sub": strings.Repeat("~", i+1) + "?>", "exp": time.Now().Add(-time.Hour).Unix()}
+		tok = buildUnsignedTestJWT(t,
+			map[string]interface{}{"alg": "RS256", "kid": "k1"},
+			claims,
+		)
+		if strings.ContainsAny(strings.Split(tok, ".")[1], "-_") {
+			break
+		}
+	}
+	_, err := provider.VerifyToken(tok)
+	if !errors.Is(err, ErrTokenExpired) {
+		t.Fatalf("expected ErrTokenExpired for expired token with base64url payload, got: %v", err)
+	}
+}
+
+func TestVerifyToken_AcceptsValidToken(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		t.Fatalf("failed to generate test RSA key: %v", err)
+	}
+	jwk := map[string]string{
+		"kid": "test-key",
+		"kty": "RSA",
+		"n":   base64.RawURLEncoding.EncodeToString(key.PublicKey.N.Bytes()),
+		"e":   "AQAB",
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/keys" {
+			http.NotFound(w, r)
+			return
+		}
+		_ = json.NewEncoder(w).Encode(map[string]interface{}{"keys": []map[string]string{jwk}})
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+	claims := jwt.MapClaims{"sub": "user-1", "exp": time.Now().Add(time.Hour).Unix()}
+	signedToken := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	signedToken.Header["kid"] = "test-key"
+	signed, err := signedToken.SignedString(key)
+	if err != nil {
+		t.Fatalf("failed to sign test token: %v", err)
+	}
+
+	got, err := provider.VerifyToken(signed)
+	if err != nil {
+		t.Fatalf("expected valid token to verify, got error: %v", err)
+	}
+	if (*got)["sub"] != "user-1" {
+		t.Fatalf("expected sub %q, got %q", "user-1", (*got)["sub"])
 	}
 }
