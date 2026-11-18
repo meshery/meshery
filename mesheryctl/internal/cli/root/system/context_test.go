@@ -282,6 +282,24 @@ func TestContextCreateCmd(t *testing.T) {
 		},
 		{
 			CmdTestInput: utils.CmdTestInput{
+				Name:           "given an empty context name when system context create then throw error",
+				Args:           []string{"context", "create", ""},
+				ExpectError:    true,
+				ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errEmptyNameMsg, contextCreateUsageMsg)),
+				IsOutputGolden: false,
+			},
+		},
+		{
+			CmdTestInput: utils.CmdTestInput{
+				Name:           "given a blank context name when system context create then throw error",
+				Args:           []string{"context", "create", "   "},
+				ExpectError:    true,
+				ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errEmptyNameMsg, contextCreateUsageMsg)),
+				IsOutputGolden: false,
+			},
+		},
+		{
+			CmdTestInput: utils.CmdTestInput{
 				Name:                 "Create a context with a valid component succeeds",
 				Args:                 []string{"context", "create", "local-valid", "--components", "meshery-istio"},
 				ExpectedResponse:     "createContextValid.golden",
