@@ -71,7 +71,11 @@ export default function ActionButton({
           <Button
             sx={{
               padding: '6px 9px',
-              borderRadius: '8px',
+              borderTopLeftRadius: '8px',
+              borderBottomLeftRadius: '8px',
+              borderTopRightRadius: 0,
+              borderBottomRightRadius: 0,
+              height: '35px',
             }}
             onClick={handleActionButtonClick}
             variant="outlined"
@@ -85,14 +89,21 @@ export default function ActionButton({
           <Button
             sx={{
               padding: '6px 9px',
-              borderRadius: '8px',
+              borderTopLeftRadius: 0,
+              borderBottomLeftRadius: 0,
+              borderTopRightRadius: '8px',
+              borderBottomRightRadius: '8px',
+              marginLeft: '-1px',
+              height: '35px',
+              minWidth: 'auto',
             }}
-            size="small"
             onClick={handleArrowClick}
             variant="outlined"
             data-testid="action-btn-toggle"
+            permissionKey={permissionKey}
+            permissionAction={permissionAction}
           >
-            <ArrowDropDownIcon />
+            <ArrowDropDownIcon sx={{ fontSize: '20px' }} />
           </Button>
         </CustomTooltip>
       </ButtonGroup>
