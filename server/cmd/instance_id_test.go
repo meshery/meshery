@@ -58,8 +58,9 @@ func TestConfigureInstanceIDFromEnvironment(t *testing.T) {
 }
 
 // TestConfigureInstanceIDGenerated covers an unset INSTANCE_ID and values that
-// are not a usable UUID: each gets a newly generated ID, stored for every
-// reader.
+// are not a usable UUID, which each get a newly generated ID, and a valid UUID
+// with surrounding whitespace, which is trimmed and used. In every case the ID
+// is stored for every reader.
 func TestConfigureInstanceIDGenerated(t *testing.T) {
 	padded := uuid.Must(uuid.NewV4())
 
