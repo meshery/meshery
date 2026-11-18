@@ -853,6 +853,10 @@ func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
 		return err
 	}
 	defer SafeClose(res.Body)
+
+	if res.StatusCode != http.StatusOK {
+		return ErrResponseStatus(res.StatusCode)
+	}
 	return nil
 }
 

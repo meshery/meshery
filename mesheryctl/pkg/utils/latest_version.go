@@ -22,7 +22,11 @@ func GetLatestVersionForMesheryctl() (string, error) {
 		return "", err
 	}
 
-	defer func() { _ = resp.Body.Close() }()
+	defer SafeClose(resp.Body)
+
+	if resp.StatusCode != http.StatusOK {
+		return "", ErrResponseStatus(resp.StatusCode)
+	}
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {

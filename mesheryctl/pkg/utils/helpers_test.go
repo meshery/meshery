@@ -1601,20 +1601,74 @@ func TestUploadFileWithParams(t *testing.T) {
 	}
 }
 
-func TestDeleteConfiguration_BodyClosed(t *testing.T) {
+func TestDeleteConfiguration(t *testing.T) {
 	_ = SetupMeshkitLoggerTesting(t, false)
 
-	t.Run("closes body on success", func(t *testing.T) {
+	t.Run("successfully deletes configuration and closes response body", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusOK)
-			_, _ = fmt.Fprint(w, `{"status":"deleted"}`)
+			if r.Method != http.MethodDelete {
+				w.WriteHeader(http.StatusMethodNotAllowed)
+				return
+			}
+			if r.URL.Path == "/api/filter/test-filter-id" {
+				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write([]byte(`{"status":"deleted"}`))
+				return
+			}
+			w.WriteHeader(http.StatusNotFound)
 		}))
 		defer server.Close()
 		setupAuthenticatedContext(t, server.URL)
 		transport := installTrackingTransport(t)
-		if err := DeleteConfiguration(server.URL, "test-id", "pattern"); err != nil {
-			t.Fatalf("expected no error, got: %v", err)
+
+		err := DeleteConfiguration(server.URL, "test-filter-id", "filter")
+		if err != nil {
+			t.Fatalf("expected nil error on successful delete, got: %v", err)
 		}
-		assertBodyClosed(t, transport, "expected response body to be closed on delete configuration")
+		assertBodyClosed(t, transport, "expected response body to be closed on successful delete, but it was not")
+	})
+
+	t.Run("returns error on non-200 status code and closes response body", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusForbidden)
+			_, _ = w.Write([]byte(`{"error":"forbidden"}`))
+		}))
+		defer server.Close()
+		setupAuthenticatedContext(t, server.URL)
+		transport := installTrackingTransport(t)
+
+		err := DeleteConfiguration(server.URL, "forbidden-id", "filter")
+		if err == nil {
+			t.Fatal("expected error on 403 response, got nil")
+		}
+		assertBodyClosed(t, transport, "expected response body to be closed on 403 response, but it was not")
+	})
+
+	t.Run("returns error on 404 response", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusNotFound)
+			_, _ = w.Write([]byte(`{"error":"not found"}`))
+		}))
+		defer server.Close()
+		setupAuthenticatedContext(t, server.URL)
+
+		err := DeleteConfiguration(server.URL, "non-existent-id", "filter")
+		if err == nil {
+			t.Fatal("expected error on 404 response, got nil")
+		}
+	})
+
+	t.Run("returns error on server error", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = w.Write([]byte(`internal server error`))
+		}))
+		defer server.Close()
+		setupAuthenticatedContext(t, server.URL)
+
+		err := DeleteConfiguration(server.URL, "error-id", "pattern")
+		if err == nil {
+			t.Fatal("expected error on 500 response, got nil")
+		}
 	})
 }
