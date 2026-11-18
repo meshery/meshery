@@ -40,6 +40,7 @@ const (
 	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
 	ErrEvaluateDesignCode             = "mesheryctl-1247"
 	ErrEvaluateDesignResponseCode     = "mesheryctl-1248"
+	ErrDesignInvalidSelectionCode     = "mesheryctl-1266"
 )
 
 const (
@@ -174,6 +175,17 @@ func ErrDesignNameOrIDNotSpecified() error {
 		[]string{"No design name or ID was provided"},
 		[]string{"Command requires a design name or ID as argument"},
 		[]string{"Provide a design name or ID, or use '-a' flag to view all designs.\nRun 'mesheryctl design view --help' for usage details"})
+}
+
+// ErrDesignInvalidSelection reports a selection outside the designs that were
+// offered. The prompt keeps its index within range, so this guards a prompt
+// implementation that does not.
+func ErrDesignInvalidSelection(index, offered int) error {
+	return errors.New(ErrDesignInvalidSelectionCode, errors.Alert,
+		[]string{"Invalid design selection"},
+		[]string{fmt.Sprintf("Selection index %d is outside the %d designs offered", index, offered)},
+		[]string{"The selection prompt returned a design that was not offered"},
+		[]string{"Please run the command again and select one of the listed designs"})
 }
 
 func ErrDesignInvalidApiResponse(message string) error {

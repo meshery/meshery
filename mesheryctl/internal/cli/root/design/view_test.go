@@ -5,6 +5,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
@@ -163,4 +164,32 @@ func TestDesignView(t *testing.T) {
 
 	// Run tests
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}
+
+// TestDesignViewRejectsUnsupportedFormatBeforeAnyRequest pins the order: the
+// output format is checked before the name lookup, the search and the prompt
+// that several designs with one name would raise. The table above cannot pin
+// it, because RunMesheryctlMultiURLTests leaves each case's responders
+// registered for the next one, so an empty URL list does not prove that no
+// request was served.
+func TestDesignViewRejectsUnsupportedFormatBeforeAnyRequest(t *testing.T) {
+	_ = utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	defer utils.ResetCommandFlags(DesignCmd, t)
+	defer resetVariables()
+	utils.TokenFlag = utils.GetToken(t)
+
+	// Drop the responders and call counters left by earlier tests.
+	httpmock.Reset()
+
+	DesignCmd.SetArgs([]string{"view", "Untitled Design", "--output-format", "invalid"})
+	err := DesignCmd.Execute()
+	if err == nil {
+		t.Fatal("expected an error for --output-format invalid, got nil")
+	}
+	utils.AssertMeshkitErrorsEqual(t, err, display.ErrUnsupportedFormat("invalid"))
+	if n := httpmock.GetTotalCallCount(); n != 0 {
+		t.Fatalf("expected no requests before rejecting the output format, got %d", n)
+	}
 }
