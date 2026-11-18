@@ -149,32 +149,12 @@ func TestDesignView(t *testing.T) {
 			ExpectedError:  ErrDesignNotFound("Untitled"),
 		},
 		{
-			Name:             "given invalid output format when design view then error is returned",
+			Name:             "given invalid output format when design view then error is returned before any request",
 			Args:             []string{"view", "Untitled Design", "--output-format", "invalid"},
 			ExpectedResponse: "",
-			URLs: []utils.MockURL{
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
-					Response:     "view.design.api.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					// GetID paginates: the page-0 fixture reports
-					// totalCount 318 with 10 items, so a second page is
-					// requested. The empty page lets the lookup conclude.
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000&page=1",
-					Response:     "pattern.empty.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?page=0&pagesize=10000&populate=pattern_file&search=Untitled+Design",
-					Response:     "view.design.search.api.response.golden",
-					ResponseCode: 200,
-				},
-			},
+			// No responders: a request, or a prompt for one of several designs
+			// with the name, would surface as a different error.
+			URLs:           []utils.MockURL{},
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError:  display.ErrUnsupportedFormat("invalid"),

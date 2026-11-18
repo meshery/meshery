@@ -17,9 +17,11 @@ package design
 import (
 	"fmt"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 
+	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -59,6 +61,12 @@ mesheryctl design view [design-name | ID]
 
 		if len(args) == 0 && !designViewFlagsProvided.All {
 			return ErrDesignNameOrIDNotSpecified()
+		}
+
+		// Reject the format before any request, so a name shared by several
+		// designs does not prompt for a design that cannot be displayed.
+		if _, err := (&display.OutputFormatterFactory[interface{}]{}).New(designViewFlagsProvided.OutputFormat, nil); err != nil {
+			return err
 		}
 
 		return nil
@@ -184,7 +192,16 @@ func fetchDesignSearch(name string, fetch func(string) (*map[string]interface{},
 	}
 }
 
-var runDesignSelectPrompt = utils.RunSelectPrompt
+// runDesignSelectPrompt draws the prompt on stderr: stdout carries the design,
+// and `design view <name> -o json > design.json` must stay valid JSON.
+var runDesignSelectPrompt = func(label string, items []string) (int, error) {
+	prompt := promptui.Select{Label: label, Items: items, Stdout: os.Stderr}
+	i, _, err := prompt.Run()
+	if err != nil {
+		return 0, utils.ErrPromptCancelled()
+	}
+	return i, nil
+}
 
 // selectDesignByName prefers case-sensitive whole-name matches, then falls
 // back to case-insensitive whole-name matches. Designs whose name only

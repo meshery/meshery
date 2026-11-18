@@ -3,6 +3,7 @@ package design
 import (
 	"errors"
 	"fmt"
+	"slices"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -161,7 +162,7 @@ func TestSelectDesignByNameWithDuplicateNames(t *testing.T) {
 			t.Fatal(err)
 		}
 		want := []string{"Name: nginx, ID: 1", "Name: nginx, ID: 3"}
-		if fmt.Sprint(offered) != fmt.Sprint(want) {
+		if !slices.Equal(offered, want) {
 			t.Fatalf("offered %v, want %v", offered, want)
 		}
 		if got["id"] != "3" {
