@@ -156,8 +156,8 @@ type ConnectionPayload struct {
 	Description                *string                      `json:"description,omitempty"`
 	Url                        *string                      `json:"url,omitempty"`
 	ModelReference             *modelv1beta1.ModelReference `json:"modelReference,omitempty"`
-	ConnectionSchema           core.Map                     `json:"connectionSchema,omitempty"`
-	CredentialSchema           core.Map                     `json:"credentialSchema,omitempty"`
+	ConnectionSchema           core.Map                     `json:"connectionSchema,omitzero"`
+	CredentialSchema           core.Map                     `json:"credentialSchema,omitzero"`
 	MetaData                   map[string]interface{}       `json:"metadata,omitempty"`
 	Status                     ConnectionStatus             `json:"status,omitempty"`
 	CredentialSecret           map[string]interface{}       `json:"credentialSecret,omitempty"`

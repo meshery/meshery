@@ -1510,13 +1510,25 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 	// Backfill omitted fields and immutable row metadata from the persisted row.
 	createdAt := time.Now()
 	var owner *core.Uuid
-	if existing, gerr := l.ConnectionPersister.GetConnection(id, ""); gerr == nil && existing != nil {
-		connections.MergePayloadOntoExisting(conn, existing)
-		if !existing.CreatedAt.IsZero() {
-			createdAt = existing.CreatedAt
+	// The lookup must succeed before the full-row write: a failure here means
+	// the backfill cannot read the stored attributes, and persisting the merged
+	// row anyway would write zero values over columns like description, url and
+	// the schema maps. A missing row is also not creatable through this path.
+	existing, gerr := l.ConnectionPersister.GetConnection(id, "")
+	if gerr != nil {
+		if errors.Is(gerr, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(gerr)
 		}
-		owner = existing.Owner
+		return nil, ErrDBRead(gerr)
 	}
+	if existing == nil {
+		return nil, ErrResultNotFound(fmt.Errorf("connection %s not found", id))
+	}
+	connections.MergePayloadOntoExisting(conn, existing)
+	if !existing.CreatedAt.IsZero() {
+		createdAt = existing.CreatedAt
+	}
+	owner = existing.Owner
 	connection := connections.Connection{
 		ID:               id,
 		Name:             conn.Name,

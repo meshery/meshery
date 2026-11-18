@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -348,6 +349,20 @@ func TestUpdateConnectionByIDPreservesV1beta3Fields(t *testing.T) {
 	// Partial PUT update: only status changed
 	rec := putConnectionBody(h, provider, saved.ID.String(), `{"status":"connected"}`)
 	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+
+	// The response body itself must carry the preserved fields, separately
+	// from the database read below.
+	var respConnection connections.Connection
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &respConnection))
+	assert.Equal(t, connections.CONNECTED, respConnection.Status)
+	if assert.NotNil(t, respConnection.Description, "response body must carry description") {
+		assert.Equal(t, desc, *respConnection.Description)
+	}
+	if assert.NotNil(t, respConnection.Url, "response body must carry url") {
+		assert.Equal(t, targetURL, *respConnection.Url)
+	}
+	assert.Equal(t, connSchema, respConnection.ConnectionSchema, "response body must carry connection schema")
+	assert.Equal(t, credSchema, respConnection.CredentialSchema, "response body must carry credential schema")
 
 	got, err := provider.ConnectionPersister.GetConnection(saved.ID, "")
 	require.NoError(t, err)

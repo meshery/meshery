@@ -162,7 +162,10 @@ func TestMergePayloadOntoExisting(t *testing.T) {
 		assert.Equal(t, &desc2, payload.Description)
 		assert.Equal(t, &url2, payload.Url)
 		assert.Equal(t, modelRef2, payload.ModelReference)
-		assert.Equal(t, connSchema2, payload.ConnectionSchema)
-		assert.Equal(t, credSchema2, payload.CredentialSchema)
+		// Independent expected literals: the payload's schema maps reference the
+		// same maps as connSchema2/credSchema2, so comparing against those would
+		// self-pass even if the merge mutated them in place.
+		assert.Equal(t, core.Map{"version": "2.0"}, payload.ConnectionSchema)
+		assert.Equal(t, core.Map{"auth": "basic"}, payload.CredentialSchema)
 	})
 }

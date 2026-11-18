@@ -705,7 +705,13 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	event := eventBuilder.WithSeverity(events.Informational).Build()
 	h.persistAndPublish(provider, token, userID, event)
 	h.log.Info(description)
-	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(updatedConnection); err != nil {
+		if h.log != nil {
+			h.log.Error(models.ErrEncoding(err, obj))
+		}
+		writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID core.Uuid, provider models.Provider, token string, connection *connections.ConnectionPayload, kind string) (events.Event, error) {
