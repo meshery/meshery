@@ -245,6 +245,9 @@ func TestListCmdFetchErrorIsNotLoggedTwice(t *testing.T) {
 	if err := FilterCmd.Execute(); err == nil {
 		t.Fatal("expected an error when the server replies 500")
 	}
+	if httpmock.GetTotalCallCount() == 0 {
+		t.Fatal("expected the mocked filter request to be called")
+	}
 	if logged.Len() != 0 {
 		t.Errorf("the fetch error must only be returned, not also logged; logged: %q", logged.String())
 	}
