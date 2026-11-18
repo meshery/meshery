@@ -212,7 +212,15 @@ func findDesignIDByExactName(baseURL, name string) (string, error) {
 			return "", err
 		}
 		patterns = append(patterns, pagePatterns...)
-		total = pageTotal
+		// Keep the total from the first page. If a later page reports a
+		// different one, designs were added or deleted between requests and
+		// the pages may have shifted past a duplicate, so stop instead of
+		// trusting the collected results.
+		if page == 0 {
+			total = pageTotal
+		} else if pageTotal != total {
+			break
+		}
 		// Stop on the total count rather than on a short page: a server that
 		// caps the page size below what was asked for returns short pages
 		// while more results remain.

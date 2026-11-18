@@ -473,6 +473,53 @@ func TestDeleteByNameRefusesWhenSearchEndsEarly(t *testing.T) {
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
 }
 
+func TestDeleteByNameRefusesWhenSearchTotalChanges(t *testing.T) {
+	testContext := utils.NewTestHelper(t)
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+
+	// Page 0 holds one exact match out of a total of two. Page 1 is empty and
+	// reports a total of one, as if a design was deleted between requests.
+	// Trusting the new total would make the one match look unique, so the
+	// lookup must stop and nothing may be deleted.
+	tests := []utils.MesheryMultiURLCommamdTest{
+		{
+			Name:             "given search total changes between pages when design delete by name then lookup incomplete error is thrown and nothing is deleted",
+			Args:             []string{"delete", "test-design"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=test-design&pagesize=10000",
+					Response:     "delete.nameSearchPage0.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=test-design&pagesize=10000&page=1",
+					Response:     "delete.nameSearchShrunkPage1.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  utils.ErrIDLookupIncomplete(2, 1),
+		},
+	}
+
+	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}
+
 func TestDeleteByNameReadsLegacyTotalCount(t *testing.T) {
 	testContext := utils.NewTestHelper(t)
 
