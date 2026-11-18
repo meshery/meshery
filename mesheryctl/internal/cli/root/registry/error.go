@@ -25,15 +25,14 @@ var (
 	ErrGeneratePrerequisitesCode = "mesheryctl-1266"
 )
 
-func ErrGeneratePrerequisites(err error) error {
+func ErrGeneratePrerequisites(err error, cause string) error {
+	if cause == "" {
+		cause = "Prerequisites to run registry generate were not met"
+	}
 	return errors.New(ErrGeneratePrerequisitesCode, errors.Alert,
 		[]string{"Prerequisite check failed for registry generate"},
 		[]string{err.Error()},
-		[]string{
-			"Command was not executed from within a fork of the meshery/meshery repository",
-			"Git remote 'origin' does not point to a meshery repository",
-			"Command was not executed from the repository root",
-		},
+		[]string{cause},
 		[]string{
 			"Ensure the command is executed from the root of a cloned fork of https://github.com/meshery/meshery",
 			"Check your git remote configuration with 'git remote -v'",

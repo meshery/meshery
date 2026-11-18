@@ -300,10 +300,35 @@ func defaultGitRunner(dir string, args ...string) ([]byte, error) {
 	return cmd.Output()
 }
 
+func isMesheryRepoURL(rawURL string) bool {
+	u := strings.TrimSpace(rawURL)
+	if u == "" {
+		return false
+	}
+	u = strings.TrimSuffix(u, "/")
+	u = strings.TrimSuffix(u, ".git")
+	lower := strings.ToLower(u)
+	return strings.HasSuffix(lower, "/meshery") || strings.HasSuffix(lower, ":meshery")
+}
+
+func isMesheryGoMod(content string) bool {
+	for _, line := range strings.Split(content, "\n") {
+		line = strings.TrimSpace(line)
+		if idx := strings.Index(line, "//"); idx != -1 {
+			line = strings.TrimSpace(line[:idx])
+		}
+		fields := strings.Fields(line)
+		if len(fields) >= 2 && fields[0] == "module" {
+			return fields[1] == "github.com/meshery/meshery"
+		}
+	}
+	return false
+}
+
 func verifyRegistryPrerequisites() error {
 	cwd, err := os.Getwd()
 	if err != nil {
-		return ErrGeneratePrerequisites(fmt.Errorf("failed to get current working directory: %w", err))
+		return ErrGeneratePrerequisites(fmt.Errorf("failed to get current working directory: %w", err), "Unable to determine current working directory")
 	}
 	return checkRegistryPrerequisites(cwd, defaultGitRunner)
 }
@@ -312,45 +337,68 @@ func checkRegistryPrerequisites(dir string, runner gitCommandRunner) error {
 	// 1. Confirm execution is inside a git repository
 	output, err := runner(dir, "rev-parse", "--is-inside-work-tree")
 	if err != nil || strings.TrimSpace(string(output)) != "true" {
-		return ErrGeneratePrerequisites(fmt.Errorf("not in a git repository; mesheryctl registry generate must be executed from a fork of the meshery/meshery repository"))
+		return ErrGeneratePrerequisites(
+			fmt.Errorf("not in a git repository; mesheryctl registry generate must be executed from a fork of the meshery/meshery repository"),
+			"The current working directory is not a git repository",
+		)
 	}
 
 	// 2. Determine repository root
 	rootOut, err := runner(dir, "rev-parse", "--show-toplevel")
 	if err != nil {
-		return ErrGeneratePrerequisites(fmt.Errorf("failed to determine repository root: %w", err))
+		return ErrGeneratePrerequisites(
+			fmt.Errorf("failed to determine repository root: %w", err),
+			"Failed to determine repository root",
+		)
 	}
 	repoRoot := strings.TrimSpace(string(rootOut))
 
 	// 3. Confirm origin (or upstream/remotes) points to a meshery repository fork
 	originOut, _ := runner(dir, "config", "--get", "remote.origin.url")
-	remoteURL := strings.TrimSpace(string(originOut))
+	originURL := strings.TrimSpace(string(originOut))
 
-	if remoteURL == "" {
-		upstreamOut, _ := runner(dir, "config", "--get", "remote.upstream.url")
-		remoteURL = strings.TrimSpace(string(upstreamOut))
-	}
+	isMesheryRemote := isMesheryRepoURL(originURL)
+	checkedURL := originURL
 
-	if remoteURL == "" {
-		remotesOut, _ := runner(dir, "remote", "-v")
-		remoteURL = strings.TrimSpace(string(remotesOut))
-	}
-
-	isMesheryRemote := strings.Contains(strings.ToLower(remoteURL), "meshery")
+	// Check upstream when origin does not match
 	if !isMesheryRemote {
-		// Secondary fallback for offline or custom remote setups: verify root go.mod
+		upstreamOut, _ := runner(dir, "config", "--get", "remote.upstream.url")
+		upstreamURL := strings.TrimSpace(string(upstreamOut))
+		if isMesheryRepoURL(upstreamURL) {
+			isMesheryRemote = true
+			checkedURL = upstreamURL
+		}
+	}
+
+	// Fallback to checking all remotes if neither origin nor upstream matched
+	if !isMesheryRemote {
+		remotesOut, _ := runner(dir, "remote", "-v")
+		for _, line := range strings.Split(string(remotesOut), "\n") {
+			fields := strings.Fields(line)
+			if len(fields) >= 2 && isMesheryRepoURL(fields[1]) {
+				isMesheryRemote = true
+				checkedURL = fields[1]
+				break
+			}
+		}
+	}
+
+	// Secondary fallback for offline or custom remote setups: verify exact root go.mod module
+	if !isMesheryRemote {
 		goModPath := filepath.Join(repoRoot, "go.mod")
-		if data, err := os.ReadFile(goModPath); err == nil && strings.Contains(string(data), "module github.com/meshery/meshery") {
+		if data, err := os.ReadFile(goModPath); err == nil && isMesheryGoMod(string(data)) {
 			isMesheryRemote = true
 		}
 	}
 
 	if !isMesheryRemote {
-		return ErrGeneratePrerequisites(fmt.Errorf("repository does not appear to be a fork of meshery/meshery: remote URL %q does not contain 'meshery'", remoteURL))
+		return ErrGeneratePrerequisites(
+			fmt.Errorf("repository does not appear to be a fork of meshery/meshery: remote URL %q does not point to meshery", checkedURL),
+			"Git remote does not point to a meshery/meshery repository fork",
+		)
 	}
 
 	// 4. Confirm execution is at the repository root
-	// (or from an immediate subdirectory such as mesheryctl/ where ../models is resolved)
 	evalDir, errDir := filepath.EvalSymlinks(dir)
 	if errDir != nil {
 		evalDir = filepath.Clean(dir)
@@ -364,11 +412,19 @@ func checkRegistryPrerequisites(dir string, runner gitCommandRunner) error {
 		return nil
 	}
 
-	// Allow immediate subdirectory if it can reach models at ../models (e.g. mesheryctl/ in CI)
+	// For child directories, ensure the child directory does not have its own models directory
+	// (such as server/models) and that ../models resolves to the repository root models directory (e.g. mesheryctl/)
 	parentDir := filepath.Clean(filepath.Join(evalDir, ".."))
-	if parentDir == evalRoot && isDirectory(filepath.Join(evalDir, "..", "models")) {
+	hasLocalModels := isDirectory(filepath.Join(evalDir, "models"))
+	expectedRootModels := filepath.Clean(filepath.Join(evalRoot, "models"))
+	hasParentModels := isDirectory(filepath.Join(evalDir, "..", "models"))
+
+	if parentDir == evalRoot && !hasLocalModels && hasParentModels && isDirectory(expectedRootModels) {
 		return nil
 	}
 
-	return ErrGeneratePrerequisites(fmt.Errorf("mesheryctl registry generate must be executed from the root of the meshery/meshery repository fork (current directory: %s, repo root: %s)", dir, repoRoot))
+	return ErrGeneratePrerequisites(
+		fmt.Errorf("mesheryctl registry generate must be executed from the root of the meshery/meshery repository fork (current directory: %s, repo root: %s)", dir, repoRoot),
+		"Command was not executed from the repository root",
+	)
 }
