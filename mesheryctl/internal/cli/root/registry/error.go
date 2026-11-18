@@ -22,7 +22,24 @@ var (
 	ErrPurgeReadModelsDirCode    = "mesheryctl-1250"
 	ErrPurgeRemoveCode           = "mesheryctl-1251"
 	ErrPurgeUnsafePathCode       = "mesheryctl-1252"
+	ErrGeneratePrerequisitesCode = "mesheryctl-1266"
 )
+
+func ErrGeneratePrerequisites(err error) error {
+	return errors.New(ErrGeneratePrerequisitesCode, errors.Alert,
+		[]string{"Prerequisite check failed for registry generate"},
+		[]string{err.Error()},
+		[]string{
+			"Command was not executed from within a fork of the meshery/meshery repository",
+			"Git remote 'origin' does not point to a meshery repository",
+			"Command was not executed from the repository root",
+		},
+		[]string{
+			"Ensure the command is executed from the root of a cloned fork of https://github.com/meshery/meshery",
+			"Check your git remote configuration with 'git remote -v'",
+			"Navigate to the root directory of your Meshery fork before running this command",
+		})
+}
 
 func ErrUpdateRegistry(err error, path string) error {
 	return errors.New(ErrUpdateRegistryCode, errors.Alert, []string{"error updating registry at ", path}, []string{err.Error()}, []string{"Provided spreadsheet ID is incorrect", "Provided credential is incorrect"}, []string{"Ensure correct spreadsheet ID is provided", "Ensure correct credential is used"})

@@ -18,7 +18,9 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -93,8 +95,10 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		return nil
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
-		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
+		if err := verifyRegistryPrerequisites(); err != nil {
+			return err
+		}
+
 		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory | Individual CSV files ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nmesheryctl registry generate --model-csv [path] --component-csv [path] --relationship-csv [path]\nRun 'mesheryctl registry generate --help' to see detailed help message"
 
 		spreadsheetIdFlag, _ := cmd.Flags().GetString("spreadsheet-id")
@@ -286,4 +290,85 @@ func init() {
 	// New flags for per-model timeout and latest version only
 	generateCmd.PersistentFlags().DurationVar(&modelTimeout, "timeout", meshkitRegistryUtils.DefaultModelTimeout, "timeout duration for generating each model (e.g., 5m, 10m, 1h), default: 5m")
 	generateCmd.PersistentFlags().BoolVar(&latestVersionOnly, "latest-only", false, "generate only the latest version of each model")
+}
+
+type gitCommandRunner func(dir string, args ...string) ([]byte, error)
+
+func defaultGitRunner(dir string, args ...string) ([]byte, error) {
+	cmd := exec.Command("git", args...)
+	cmd.Dir = dir
+	return cmd.Output()
+}
+
+func verifyRegistryPrerequisites() error {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return ErrGeneratePrerequisites(fmt.Errorf("failed to get current working directory: %w", err))
+	}
+	return checkRegistryPrerequisites(cwd, defaultGitRunner)
+}
+
+func checkRegistryPrerequisites(dir string, runner gitCommandRunner) error {
+	// 1. Confirm execution is inside a git repository
+	output, err := runner(dir, "rev-parse", "--is-inside-work-tree")
+	if err != nil || strings.TrimSpace(string(output)) != "true" {
+		return ErrGeneratePrerequisites(fmt.Errorf("not in a git repository; mesheryctl registry generate must be executed from a fork of the meshery/meshery repository"))
+	}
+
+	// 2. Determine repository root
+	rootOut, err := runner(dir, "rev-parse", "--show-toplevel")
+	if err != nil {
+		return ErrGeneratePrerequisites(fmt.Errorf("failed to determine repository root: %w", err))
+	}
+	repoRoot := strings.TrimSpace(string(rootOut))
+
+	// 3. Confirm origin (or upstream/remotes) points to a meshery repository fork
+	originOut, _ := runner(dir, "config", "--get", "remote.origin.url")
+	remoteURL := strings.TrimSpace(string(originOut))
+
+	if remoteURL == "" {
+		upstreamOut, _ := runner(dir, "config", "--get", "remote.upstream.url")
+		remoteURL = strings.TrimSpace(string(upstreamOut))
+	}
+
+	if remoteURL == "" {
+		remotesOut, _ := runner(dir, "remote", "-v")
+		remoteURL = strings.TrimSpace(string(remotesOut))
+	}
+
+	isMesheryRemote := strings.Contains(strings.ToLower(remoteURL), "meshery")
+	if !isMesheryRemote {
+		// Secondary fallback for offline or custom remote setups: verify root go.mod
+		goModPath := filepath.Join(repoRoot, "go.mod")
+		if data, err := os.ReadFile(goModPath); err == nil && strings.Contains(string(data), "module github.com/meshery/meshery") {
+			isMesheryRemote = true
+		}
+	}
+
+	if !isMesheryRemote {
+		return ErrGeneratePrerequisites(fmt.Errorf("repository does not appear to be a fork of meshery/meshery: remote URL %q does not contain 'meshery'", remoteURL))
+	}
+
+	// 4. Confirm execution is at the repository root
+	// (or from an immediate subdirectory such as mesheryctl/ where ../models is resolved)
+	evalDir, errDir := filepath.EvalSymlinks(dir)
+	if errDir != nil {
+		evalDir = filepath.Clean(dir)
+	}
+	evalRoot, errRoot := filepath.EvalSymlinks(repoRoot)
+	if errRoot != nil {
+		evalRoot = filepath.Clean(repoRoot)
+	}
+
+	if evalDir == evalRoot {
+		return nil
+	}
+
+	// Allow immediate subdirectory if it can reach models at ../models (e.g. mesheryctl/ in CI)
+	parentDir := filepath.Clean(filepath.Join(evalDir, ".."))
+	if parentDir == evalRoot && isDirectory(filepath.Join(evalDir, "..", "models")) {
+		return nil
+	}
+
+	return ErrGeneratePrerequisites(fmt.Errorf("mesheryctl registry generate must be executed from the root of the meshery/meshery repository fork (current directory: %s, repo root: %s)", dir, repoRoot))
 }

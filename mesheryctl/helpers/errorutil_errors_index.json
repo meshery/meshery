@@ -4138,6 +4138,27 @@
       "suggestedRemediation": [
         "Rerun the command to refresh the matching profile list"
       ]
+    },
+    {
+      "code": "mesheryctl-1266",
+      "moniker": "ErrGeneratePrerequisitesCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1266",
+      "severity": "alert",
+      "shortDescription": "Prerequisite check failed for registry generate",
+      "probableCause": [
+        "Command was not executed from within a fork of the meshery/meshery repository",
+        "Git remote 'origin' does not point to a meshery repository",
+        "Command was not executed from the repository root"
+      ],
+      "suggestedRemediation": [
+        "Ensure the command is executed from the root of a cloned fork of https://github.com/meshery/meshery",
+        "Check your git remote configuration with 'git remote -v'",
+        "Navigate to the root directory of your Meshery fork before running this command"
+      ]
     }
   ],
   "schemaVersion": 2

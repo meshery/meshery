@@ -2207,6 +2207,15 @@
         "short_description": "Unable to complete performance profile lookup",
         "probable_cause": "Profiles were added, deleted, or reordered during lookup, or the provider returned inconsistent pagination data",
         "suggested_remediation": "Rerun the command to refresh the matching profile list"
+      },
+      "1266": {
+        "name": "ErrGeneratePrerequisitesCode",
+        "code": "1266",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Prerequisite check failed for registry generate",
+        "probable_cause": "Command was not executed from within a fork of the meshery/meshery repository\nGit remote 'origin' does not point to a meshery repository\nCommand was not executed from the repository root",
+        "suggested_remediation": "Ensure the command is executed from the root of a cloned fork of https://github.com/meshery/meshery\nCheck your git remote configuration with 'git remote -v'\nNavigate to the root directory of your Meshery fork before running this command"
       }
     }
   }
