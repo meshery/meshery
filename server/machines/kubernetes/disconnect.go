@@ -28,10 +28,7 @@ func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{},
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	machinectx.setupLock.Lock()
-	machinectx.disconnected = true
-	machinectx.retryPending = false
-	machinectx.setupLock.Unlock()
+	machinectx.SetDisconnected(true)
 
 	go func() {
 		machinectx.setupLock.Lock()

@@ -46,10 +46,7 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	machinectx.setupLock.Lock()
-	machinectx.disconnected = true
-	machinectx.retryPending = false
-	machinectx.setupLock.Unlock()
+	machinectx.SetDisconnected(true)
 
 	// If no active user was found in context (e.g. background deletion), resolve the owner
 	// from the persisted context so event attribution and MeshSync cleanup remain accurate.

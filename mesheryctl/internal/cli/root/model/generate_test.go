@@ -67,9 +67,17 @@ func TestModelGenerate(t *testing.T) {
 			Name:             "model generate: from URL with template",
 			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template.json"), "--skip-registration=true"},
 			URL:              apiURL,
-			Fixture:          "generate.api.ok.response.golden",
 			ExpectedResponse: "generate.dir.skipped.output.golden",
 			HttpCode:         200,
+			AssertRequest:    assertRegister(false),
+		},
+		{
+			Name:             "model generate: from CSV directory with skip-registration",
+			Args:             []string{"generate", "--file", filepath.Join(fixturesDir, "templates", "template-csvs"), "--skip-registration"},
+			URL:              apiURL,
+			ExpectedResponse: "generate.csv.skipped.output.golden",
+			HttpCode:         200,
+			AssertRequest:    assertRegister(false),
 		},
 		{
 			Name:             "model generate: from CSV directory with selected model",
@@ -120,7 +128,12 @@ func TestModelGenerate(t *testing.T) {
 			resetFlags(ModelCmd, t)
 
 			if tt.URL != "" {
-				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).LoadByte()
+				// Without a fixture the server answers with an empty body, as it
+				// does when registration is skipped.
+				var apiResponse []byte
+				if tt.Fixture != "" {
+					apiResponse = utils.NewGoldenFile(t, tt.Fixture, fixturesDir).LoadByte()
+				}
 
 				httpmock.RegisterResponder("POST", testContext.BaseURL+tt.URL, func(req *http.Request) (*http.Response, error) {
 					if tt.AssertRequest != nil {
@@ -167,4 +180,20 @@ func TestModelGenerate(t *testing.T) {
 	}
 
 	utils.StopMockery(t)
+}
+
+// assertRegister checks the register field of the import request sent to the server.
+func assertRegister(want bool) func(t *testing.T, body []byte) {
+	return func(t *testing.T, body []byte) {
+		t.Helper()
+		var payload struct {
+			Register bool `json:"register"`
+		}
+		if err := json.Unmarshal(body, &payload); err != nil {
+			t.Fatalf("failed to unmarshal request body: %v", err)
+		}
+		if payload.Register != want {
+			t.Errorf("expected register %v, got %v", want, payload.Register)
+		}
+	}
 }

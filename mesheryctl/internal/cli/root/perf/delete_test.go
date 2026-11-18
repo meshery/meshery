@@ -2,12 +2,14 @@ package perf
 
 import (
 	"fmt"
+	"net/http"
 	"path/filepath"
 	"runtime"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 )
 
 func TestDeleteCmd(t *testing.T) {
@@ -98,6 +100,33 @@ func TestDeleteCmd(t *testing.T) {
 
 	utils.RunMesheryctlMultiURLTests(t, update, PerfCmd, listTests, currDir, "perf", resetVariables)
 	utils.RunMesheryctlMultiURLTests(t, update, PerfCmd, errorTests, currDir, "perf", resetVariables)
+}
+
+func TestDeleteCmdRejectsIncompleteProfileLookup(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	previousToken := utils.TokenFlag
+	utils.TokenFlag = utils.GetToken(t)
+	t.Cleanup(func() {
+		utils.StopMockery(t)
+		utils.ResetCommandFlags(PerfCmd, t)
+		resetVariables()
+		utils.TokenFlag = previousToken
+	})
+
+	profileURL := testContext.BaseURL + "/api/performance/profiles"
+	profileID := "a947dff3-1415-4ca6-8922-e35b3232bd78"
+	firstPage := fmt.Sprintf(`{"totalCount":2,"profiles":[{"id":"%s","name":"istio-test"}]}`, profileID)
+	httpmock.RegisterResponderWithQuery("GET", profileURL, "pagesize=25&page=0&search=istio-test", httpmock.NewStringResponder(200, firstPage))
+	httpmock.RegisterResponderWithQuery("GET", profileURL, "pagesize=25&page=1&search=istio-test", httpmock.NewStringResponder(200, `{"totalCount":1,"profiles":[]}`))
+	httpmock.RegisterResponder("DELETE", profileURL+"/"+profileID, func(_ *http.Request) (*http.Response, error) {
+		t.Error("delete requested after incomplete profile lookup")
+		return httpmock.NewStringResponse(200, ""), nil
+	})
+
+	PerfCmd.SetArgs([]string{"delete", "istio-test", "--yes"})
+	if err := PerfCmd.Execute(); meshkiterrors.GetCode(err) != ErrProfileTraversalCode {
+		t.Fatalf("expected profile traversal error, got %v", err)
+	}
 }
 
 func TestFetchAllPerformanceProfilesPagesThroughResults(t *testing.T) {
