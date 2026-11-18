@@ -34,6 +34,9 @@ spec:
     spec:
       restartPolicy: Always
       volumes:
+        # kubeconfig for the cluster the playground manages - the sandbox cluster, not the
+        # cluster this Deployment runs in. Operator, MeshSync and Broker health reported by
+        # the playground is the sandbox cluster's; see ../readme.md, "Sandbox cluster".
         - name: playground
           configMap:
             name: playground

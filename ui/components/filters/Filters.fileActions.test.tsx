@@ -46,6 +46,8 @@ import {
   createHandlePublish,
   createHandleClone,
   createDeleteFilter,
+  createErrorHandler,
+  createFetchSchemaData,
 } from './Filters.fileActions';
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
@@ -87,6 +89,29 @@ describe('createHandleSubmit', () => {
       message: '"foo" filter deleted',
       event_type: 'SUCCESS',
     });
+  });
+
+  it('reports a failed delete through the error handler', async () => {
+    const errorHandler = vi.fn();
+    const handleError = vi.fn(() => errorHandler);
+    const notify = vi.fn();
+
+    const handleSubmit = createHandleSubmit({
+      notify,
+      handleError,
+      showmodal: vi.fn().mockResolvedValueOnce('Delete'),
+      resetSelectedRowData: vi.fn(() => vi.fn()),
+      deleteFilterFile: vi.fn(() => reject()),
+      uploadFilterFile: vi.fn(),
+      updateFilterFile: vi.fn(),
+    });
+
+    await handleSubmit({ data: '', name: 'foo', id: 'i-1', type: 'DELETE' });
+    await flush();
+
+    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'DELETE_FILTERS' }));
+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
+    expect(notify).not.toHaveBeenCalled();
   });
 
   it('aborts when modal cancels the delete', async () => {
@@ -163,6 +188,27 @@ describe('createHandleSubmit', () => {
       name: 'foo',
       config: { y: 2 },
     });
+  });
+
+  it('reports a failed UPDATE as an update error, not an upload error', async () => {
+    const errorHandler = vi.fn();
+    const handleError = vi.fn(() => errorHandler);
+
+    const handleSubmit = createHandleSubmit({
+      notify: vi.fn(),
+      handleError,
+      showmodal: vi.fn(),
+      resetSelectedRowData: vi.fn(() => vi.fn()),
+      deleteFilterFile: vi.fn(),
+      uploadFilterFile: vi.fn(),
+      updateFilterFile: vi.fn(() => reject()),
+    });
+
+    await handleSubmit({ data: 'cfg', name: 'n', id: 'i-1', type: 'UPDATE' });
+    await flush();
+
+    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'UPDATE_FILTERS' }));
+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
   });
 
   it('handles an UPDATE with the filter id, name and catalogData', async () => {
@@ -260,11 +306,14 @@ describe('createHandleImportFilter', () => {
     });
     await flush();
 
+    // The server decodes the binary from `filterData.filterFile`
+    // (server/models/meshery_filter.go); a snake_case `filter_file` is
+    // silently dropped and the filter is saved without its WASM file.
     const body = JSON.parse(updateFilterFile.mock.calls[0][0].updateBody);
     expect(body).toEqual({
       config: 'cfg',
       save: true,
-      filter_data: { name: 'n', filter_file: 'decoded:rawdata' },
+      filterData: { name: 'n', filterFile: 'decoded:rawdata' },
     });
     expect(notify).toHaveBeenCalledWith({
       message: '"n" filter uploaded',
@@ -291,12 +340,14 @@ describe('createHandleImportFilter', () => {
     });
     await flush();
 
+    // A URL import must not carry `filterData`: handleFilterPOST takes the
+    // local-upload branch whenever filterData is present, before it ever
+    // looks at `url`, so the remote filter would never be fetched.
     const body = JSON.parse(updateFilterFile.mock.calls[0][0].updateBody);
     expect(body).toEqual({
       config: 'cfg',
       save: true,
       url: 'http://e.com',
-      filter_data: { name: 'n' },
     });
   });
 
@@ -321,6 +372,7 @@ describe('createHandleImportFilter', () => {
     await flush();
 
     expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'UPLOAD_FILTERS' }));
+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
   });
 });
 
@@ -443,7 +495,37 @@ describe('createHandleClone', () => {
   });
 });
 
+describe('createHandleClone errors', () => {
+  it('reports a failed clone through the error handler', async () => {
+    const errorHandler = vi.fn();
+    const handleError = vi.fn(() => errorHandler);
+    const clone = createHandleClone({
+      cloneFilter: vi.fn(() => reject()),
+      notify: vi.fn(),
+      handleError,
+    });
+    clone('f-1', 'flt');
+    await flush();
+    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'CLONE_FILTER' }));
+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
+  });
+});
+
 describe('createDeleteFilter', () => {
+  it('reports a failed delete through the error handler', async () => {
+    const errorHandler = vi.fn();
+    const handleError = vi.fn(() => errorHandler);
+    const del = createDeleteFilter({
+      deleteFilterFile: vi.fn(() => reject()),
+      notify: vi.fn(),
+      handleError,
+    });
+    del('f-1');
+    await flush();
+    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'DELETE_FILTERS' }));
+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
+  });
+
   it('deletes a filter and notifies on success', async () => {
     const deleteFilterFile = vi.fn(() => wrap());
     const notify = vi.fn();
@@ -458,6 +540,92 @@ describe('createDeleteFilter', () => {
     expect(notify).toHaveBeenCalledWith({
       message: 'Filter deleted',
       event_type: 'SUCCESS',
+    });
+  });
+});
+
+describe('createFetchSchemaData', () => {
+  it('passes the fetched models to onModels', async () => {
+    const models = [{ displayName: 'istio' }];
+    const onModels = vi.fn();
+    const handleError = vi.fn(() => vi.fn());
+    const fetchSchemaData = createFetchSchemaData({
+      getMeshModels: vi.fn().mockResolvedValue({ models }),
+      onModels,
+      handleError,
+    });
+
+    await fetchSchemaData();
+
+    expect(onModels).toHaveBeenCalledWith(models);
+    expect(handleError).not.toHaveBeenCalled();
+  });
+
+  it('reports a failed model fetch through the error handler', async () => {
+    const errorHandler = vi.fn();
+    const handleError = vi.fn(() => errorHandler);
+    const onModels = vi.fn();
+    const fetchSchemaData = createFetchSchemaData({
+      getMeshModels: vi.fn().mockRejectedValue(new Error('boom')),
+      onModels,
+      handleError,
+    });
+
+    await fetchSchemaData();
+
+    expect(onModels).not.toHaveBeenCalled();
+    expect(handleError).toHaveBeenCalledWith(expect.objectContaining({ name: 'SCHEMA_FETCH' }));
+    expect(errorHandler).toHaveBeenCalledWith(expect.objectContaining({ message: 'boom' }));
+  });
+});
+
+describe('createErrorHandler', () => {
+  it('shows an error notification when a delete is rejected', async () => {
+    const notify = vi.fn();
+    const handleSubmit = createHandleSubmit({
+      notify,
+      handleError: createErrorHandler({ notify }),
+      showmodal: vi.fn().mockResolvedValueOnce('Delete'),
+      resetSelectedRowData: vi.fn(() => vi.fn()),
+      deleteFilterFile: vi.fn(() => ({
+        unwrap: () => Promise.reject({ status: 403, data: { message: 'not allowed' } }),
+      })),
+      uploadFilterFile: vi.fn(),
+      updateFilterFile: vi.fn(),
+    });
+
+    await handleSubmit({ data: '', name: 'foo', id: 'i-1', type: 'DELETE' });
+    await flush();
+
+    expect(notify).toHaveBeenCalledTimes(1);
+    expect(notify).toHaveBeenCalledWith({ message: 'not allowed', event_type: 'ERROR' });
+    expect(updateProgress).toHaveBeenCalledWith({ showProgress: false });
+  });
+
+  it('falls back to the action message when the error has none', () => {
+    const notify = vi.fn();
+    createErrorHandler({ notify })({ error_msg: 'Failed to delete filter file' })({});
+    expect(notify).toHaveBeenCalledWith({
+      message: 'Failed to delete filter file',
+      event_type: 'ERROR',
+    });
+  });
+
+  it('falls back to the action message when error formatting throws', () => {
+    const notify = vi.fn();
+    // Malformed MeshKit envelope: a message with a non-array
+    // suggestedRemediation makes formatApiError throw.
+    const malformed = {
+      meshkit: { message: 'MeshKit says no', suggestedRemediation: 'try again' },
+    };
+    expect(() =>
+      createErrorHandler({ notify })({ error_msg: 'Failed to delete filter file' })(
+        malformed as any,
+      ),
+    ).not.toThrow();
+    expect(notify).toHaveBeenCalledWith({
+      message: 'Failed to delete filter file',
+      event_type: 'ERROR',
     });
   });
 });

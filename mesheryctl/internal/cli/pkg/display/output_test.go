@@ -167,3 +167,31 @@ func TestYAMLOutputFormatterSaver_Save_WriteError(t *testing.T) {
 	err = saver.Save()
 	assert.Error(t, err)
 }
+
+// ValidateOutputFormat ignores case, so both factories must accept every
+// spelling it lets through.
+func Test_Given_MixedCaseFormat_When_Factories_New_Then_Formatter_And_Saver_Are_Created(t *testing.T) {
+	for _, format := range []string{"json", "JSON", "Json", "yaml", "YAML", "Yaml"} {
+		t.Run(format, func(t *testing.T) {
+			assert.NoError(t, ValidateOutputFormat(format))
+
+			factory := OutputFormatterFactory[testStruct]{}
+			formatter, err := factory.New(format, data)
+			assert.NoError(t, err)
+
+			saverFactory := OutputFormatterSaverFactory[testStruct]{}
+			_, err = saverFactory.New(format, formatter)
+			assert.NoError(t, err)
+		})
+	}
+}
+
+func Test_Given_UnsupportedFormat_When_Factories_New_Then_Error_Is_Returned(t *testing.T) {
+	factory := OutputFormatterFactory[testStruct]{}
+	_, err := factory.New("XML", data)
+	assert.Error(t, err)
+
+	saverFactory := OutputFormatterSaverFactory[testStruct]{}
+	_, err = saverFactory.New("XML", NewJSONOutputFormatter(data))
+	assert.Error(t, err)
+}

@@ -240,9 +240,141 @@ describe('RelationshipEvaluationEventFormatter', () => {
     expect(screen.getByText('Evaluation finished')).toBeInTheDocument();
   });
 
-  it('renders the empty state when no actions are present', () => {
+  it('renders the empty state when no relationship changes are reported', () => {
     render(<RelationshipEvaluationEventFormatter event={{ description: 'no-op', metadata: {} }} />);
 
-    expect(screen.getByText(/No changes detected/i)).toBeInTheDocument();
+    expect(screen.getByText(/No relationship changes detected/i)).toBeInTheDocument();
+  });
+
+  it('renders counts, status, duration and a design link from the slim metadata', () => {
+    render(
+      <RelationshipEvaluationEventFormatter
+        event={{
+          description: 'Relationship evaluation complete',
+          metadata: {
+            designId: 'd1',
+            designName: 'My Design',
+            designLink: 'http://meshery/extension/meshmap?mode=operator&type=view&design_id=d1',
+            relationshipsAdded: 2,
+            relationshipsRemoved: 1,
+            relationshipsUpdated: 0,
+            evaluationStatus: 'completed',
+            evaluationDurationMs: 42,
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByText(/Relationships added/)).toHaveTextContent('Relationships added: 2');
+    expect(screen.getByText(/Relationships removed/)).toHaveTextContent('Relationships removed: 1');
+    expect(screen.getByText(/Relationships updated/)).toHaveTextContent('Relationships updated: 0');
+    expect(screen.getByText('completed')).toBeInTheDocument();
+    expect(screen.getByText('42 ms')).toBeInTheDocument();
+    expect(screen.getByText(/Open design/).closest('a')).toHaveAttribute(
+      'href',
+      'http://meshery/extension/meshmap?mode=operator&type=view&design_id=d1',
+    );
+    expect(screen.queryByText(/No relationship changes detected/i)).not.toBeInTheDocument();
+  });
+  it('renders a rewritten event without evaluationStatus, evaluationDurationMs or designLink', () => {
+    const { container } = render(
+      <RelationshipEvaluationEventFormatter
+        event={{
+          description: 'Relationship evaluation complete',
+          metadata: {
+            designId: 'd1',
+            designName: 'My Design',
+            designVersion: '0.0.3',
+            historyTitle: '3 changes made at version 0.0.3',
+            relationshipsAdded: 2,
+            relationshipsRemoved: 0,
+            relationshipsUpdated: 1,
+            evaluatedAt: '2026-11-02T15:00:00Z',
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByText(/Relationships added/)).toHaveTextContent('Relationships added: 2');
+    expect(screen.getByText(/Relationships updated/)).toHaveTextContent('Relationships updated: 1');
+    expect(screen.queryByText(/Status:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Duration:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Open design/)).not.toBeInTheDocument();
+    expect(container).not.toHaveTextContent(/undefined|NaN/);
+  });
+
+  it('links the design from the legacy view_link when designLink is absent', () => {
+    render(
+      <RelationshipEvaluationEventFormatter
+        event={{
+          description: 'Relationship evaluation complete',
+          metadata: {
+            designName: 'My Design',
+            view_link: 'http://meshery/extension/meshmap?mode=operator&type=view&design_id=d1',
+            relationshipsAdded: 1,
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByText(/Open design/).closest('a')).toHaveAttribute(
+      'href',
+      'http://meshery/extension/meshmap?mode=operator&type=view&design_id=d1',
+    );
+  });
+
+  it('renders the summary rather than a legacy evaluationResponse when both are present', () => {
+    render(
+      <RelationshipEvaluationEventFormatter
+        event={{
+          description: 'Relationship evaluation complete',
+          metadata: {
+            relationshipsAdded: 1,
+            evaluationResponse: {
+              actions: [{ op: 'add_relationship', value: { item: { id: 'r1' } } }],
+              design: {},
+            },
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByText(/Relationships added/)).toHaveTextContent('Relationships added: 1');
+    expect(screen.queryByText('Relationships Added')).not.toBeInTheDocument();
+  });
+
+  it('names the design link from the legacy design_name when designName is absent', () => {
+    render(
+      <RelationshipEvaluationEventFormatter
+        event={{
+          description: 'Relationship evaluation complete',
+          metadata: {
+            design_name: 'Legacy Design',
+            designLink: 'http://meshery/design/d1',
+            relationshipsAdded: 0,
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByText(/Open design/)).toHaveTextContent('Open design "Legacy Design"');
+  });
+
+  it('prefers designName over the legacy design_name for the design link', () => {
+    render(
+      <RelationshipEvaluationEventFormatter
+        event={{
+          description: 'Relationship evaluation complete',
+          metadata: {
+            designName: 'New Name',
+            design_name: 'Old Name',
+            designLink: 'http://meshery/design/d1',
+            relationshipsAdded: 0,
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByText(/Open design/)).toHaveTextContent('Open design "New Name"');
   });
 });

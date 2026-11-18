@@ -5,9 +5,16 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	models "github.com/meshery/meshery/server/models"
 )
+
+// providerStreamWriteTimeout bounds each write on the provider status stream.
+// The route is unauthenticated and the server sets no WriteTimeout, so without
+// it a client that stops reading could block a write - and with it the handler
+// goroutine and its tracker subscription - indefinitely.
+const providerStreamWriteTimeout = 30 * time.Second
 
 // ProviderHandler - handles the choice of provider
 func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
@@ -133,6 +140,13 @@ func (h *Handler) ProvidersStreamHandler(w http.ResponseWriter, r *http.Request)
 	// X-Accel-Buffering disables buffering at any nginx hop in front of
 	// Meshery so the events reach the browser immediately.
 	w.Header().Set("X-Accel-Buffering", "no")
+
+	// responseController bounds each write with a deadline so a client that
+	// stops reading cannot pin this goroutine and its tracker subscription.
+	// SetWriteDeadline reports ErrNotSupported for writers that don't
+	// implement it; there writes stay unbounded, as before.
+	responseController := http.NewResponseController(w)
+	_ = responseController.SetWriteDeadline(time.Now().Add(providerStreamWriteTimeout))
 	w.WriteHeader(http.StatusOK)
 	flusher.Flush()
 
@@ -162,9 +176,11 @@ func (h *Handler) ProvidersStreamHandler(w http.ResponseWriter, r *http.Request)
 				h.log.Error(models.ErrMarshal(err, "provider status event"))
 				continue
 			}
+			_ = responseController.SetWriteDeadline(time.Now().Add(providerStreamWriteTimeout))
 			if _, err := fmt.Fprintf(w, "event: provider\ndata: %s\n\n", data); err != nil {
-				// Client disconnected mid-write; ctx cancellation
-				// will close the channel and we'll exit cleanly.
+				// Client disconnected or stalled past the write deadline;
+				// ctx cancellation will close the channel and we'll exit
+				// cleanly.
 				return
 			}
 			flusher.Flush()

@@ -241,6 +241,7 @@ const MeshAdapterConfigComponent = () => {
     }
 
     const adapterLabel = selectedAvailableAdapter.label.replace(/^meshery-/, '').toUpperCase();
+    const stateBeforeDeploy = adapterStates[adapterLabel];
     setAdapterStates((prevState) => ({
       ...prevState,
       [adapterLabel]: STATUS.DEPLOYING,
@@ -262,12 +263,14 @@ const MeshAdapterConfigComponent = () => {
     changeAdapterState((response, errors) => {
       updateProgress({ showProgress: false });
 
-      if (errors !== undefined) {
-        handleError('Unable to Deploy adapter');
+      // Relay passes null for errors on success, so check for a value.
+      if (errors) {
+        handleError('Unable to deploy adapter')(errors);
         setAdapterStates((prevState) => ({
           ...prevState,
-          [adapterLabel]: STATUS.UNDEPLOYED,
+          [adapterLabel]: stateBeforeDeploy,
         }));
+        return;
       }
 
       setAdapterStates((prevState) => ({
@@ -319,6 +322,7 @@ const MeshAdapterConfigComponent = () => {
       .replace(/^meshery-/, '')
       .toUpperCase();
 
+    const stateBeforeUndeploy = adapterStates[adapterLabel];
     setAdapterStates((prevState) => ({
       ...prevState,
       [adapterLabel]: STATUS.UNDEPLOYING,
@@ -333,13 +337,13 @@ const MeshAdapterConfigComponent = () => {
     changeAdapterState((response, errors) => {
       updateProgress({ showProgress: false });
 
-      if (errors !== undefined) {
-        console.error(errors);
-        handleError('Unable to Deploy adapter');
+      if (errors) {
+        handleError('Unable to undeploy adapter')(errors);
         setAdapterStates((prevState) => ({
           ...prevState,
-          [adapterLabel]: STATUS.DEPLOYED,
+          [adapterLabel]: stateBeforeUndeploy,
         }));
+        return;
       }
 
       notify({

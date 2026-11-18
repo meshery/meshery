@@ -123,7 +123,7 @@ type Error {
 
 # Input for changing Addon Status
 input AddonStatusInput {
-  # Filter by Serice Mesh
+  # Filter by Service Mesh
   selector: MeshType
   #kubernetes context ID
   k8scontextID: String!
@@ -506,7 +506,7 @@ type Query {
     k8scontextID: String!
   ): Status!  @KubernetesMiddleware
 
-  # Query available Namesapces in your cluster
+  # Query available Namespaces in your cluster
   getAvailableNamespaces(
         k8sClusterIDs: [String!]
   ): [NameSpace!]!

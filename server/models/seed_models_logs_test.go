@@ -1,10 +1,12 @@
 package models
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 
 	"github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 )
 
@@ -98,6 +100,120 @@ func TestAggregateSummariesByKind(t *testing.T) {
 				t.Errorf("summaries = %#v, want %#v", gotSummaries, tt.wantSummaries)
 			}
 		})
+	}
+}
+
+// regFailure is one entity registration failure recorded via InsertEntityRegError.
+type regFailure struct {
+	host, model string
+	kind        entity.EntityType
+	name        string
+}
+
+func failureLogFrom(failures []regFailure) *RegistrationFailureLog {
+	l := NewRegistrationFailureLogHandler()
+	for _, f := range failures {
+		l.InsertEntityRegError(f.host, f.model, f.kind, f.name, errors.New("invalid definition"))
+	}
+	return l
+}
+
+// TestGetNonRegisteredEntitiesCount guards the per-registrant failure counts that
+// feed the startup "Failed to import ..." error and the registration error event.
+// Failures of one entity type spread across several models of the same
+// registrant must be summed, not reduced to whichever model map iteration
+// happens to visit last.
+func TestGetNonRegisteredEntitiesCount(t *testing.T) {
+	tests := []struct {
+		name     string
+		failures []regFailure
+		want     map[string]v1beta1.EntitySummary
+	}{
+		{
+			name:     "no failures",
+			failures: nil,
+			want:     map[string]v1beta1.EntitySummary{},
+		},
+		{
+			name: "failures within a single model",
+			failures: []regFailure{
+				{"github", "a", entity.ComponentDefinition, "c1"},
+				{"github", "a", entity.ComponentDefinition, "c2"},
+				{"github", "a", entity.RelationshipDefinition, "r1"},
+			},
+			want: map[string]v1beta1.EntitySummary{
+				"github": {Components: 2, Relationships: 1},
+			},
+		},
+		{
+			name: "failures spread across models are summed",
+			failures: []regFailure{
+				{"github", "a", entity.ComponentDefinition, "c1"},
+				{"github", "a", entity.ComponentDefinition, "c2"},
+				{"github", "a", entity.ComponentDefinition, "c3"},
+				{"github", "b", entity.ComponentDefinition, "c4"},
+				{"github", "a", entity.RelationshipDefinition, "r1"},
+				{"github", "a", entity.RelationshipDefinition, "r2"},
+				{"github", "b", entity.PolicyDefinition, "p1"},
+				{"github", "c", entity.PolicyDefinition, "p2"},
+			},
+			want: map[string]v1beta1.EntitySummary{
+				"github": {Components: 4, Relationships: 2, Policies: 2},
+			},
+		},
+		{
+			name: "model failures are counted alongside entity failures",
+			failures: []regFailure{
+				{"github", "", entity.Model, "broken-model-1"},
+				{"github", "", entity.Model, "broken-model-2"},
+				{"github", "a", entity.ComponentDefinition, "c1"},
+				{"github", "b", entity.ComponentDefinition, "c2"},
+			},
+			want: map[string]v1beta1.EntitySummary{
+				"github": {Models: 2, Components: 2},
+			},
+		},
+		{
+			name: "registrants are counted independently",
+			failures: []regFailure{
+				{"github", "a", entity.ComponentDefinition, "c1"},
+				{"github", "b", entity.ComponentDefinition, "c2"},
+				{"artifacthub", "a", entity.ComponentDefinition, "c1"},
+				{"artifacthub", "x", entity.RelationshipDefinition, "r1"},
+			},
+			want: map[string]v1beta1.EntitySummary{
+				"github":      {Components: 2},
+				"artifacthub": {Components: 1, Relationships: 1},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := failureLogFrom(tt.failures).GetNonRegisteredEntitiesCount()
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetNonRegisteredEntitiesCount() = %#v, want %#v", got, tt.want)
+			}
+		})
+	}
+}
+
+// TestFailedMsgComputeSumsAcrossModels pins the user-visible failure message for
+// a registrant whose failures span several models.
+func TestFailedMsgComputeSumsAcrossModels(t *testing.T) {
+	l := failureLogFrom([]regFailure{
+		{"github", "a", entity.ComponentDefinition, "c1"},
+		{"github", "a", entity.ComponentDefinition, "c2"},
+		{"github", "b", entity.ComponentDefinition, "c3"},
+		{"github", "a", entity.RelationshipDefinition, "r1"},
+	})
+
+	got, err := failedMsgCompute("", "github", l)
+	if err != nil {
+		t.Fatalf("failedMsgCompute() error = %v", err)
+	}
+	if want := "Failed to import 3 components 1 relationships"; got != want {
+		t.Errorf("failedMsgCompute() = %q, want %q", got, want)
 	}
 }
 
