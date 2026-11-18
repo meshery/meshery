@@ -112,7 +112,7 @@ For both kinds you can **skip credential verification** to register the source w
 
 The wizard also reconfigures an already-registered Connection. From the [Connections](/concepts/logical/connections/) table, open a Connection's action menu and choose **Configure**. The wizard opens in configure mode and presents only the post-registration steps relevant to that kind.
 
-For a Kubernetes Connection, this is where you change the [MeshSync deployment mode](#meshsync-deployment-mode). Selecting a different mode and clicking **Apply** makes Meshery undeploy MeshSync and redeploy it in the newly selected mode (Operator or Embedded) for that cluster.
+For a Kubernetes Connection, this is where you change the [MeshSync deployment mode](#meshsync-deployment-mode). Selecting a different mode and clicking **Apply** makes Meshery tear down MeshSync for that connection and set it up again in the newly selected mode (Operator or Embedded). Moving to Embedded leaves the cluster's Meshery Operator installed, since other connections to the cluster may share it.
 
 <div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Changing a Connection's state</div>
 

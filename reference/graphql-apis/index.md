@@ -312,6 +312,14 @@ Change the Adapter Status.
 
 Change the Operator Status.
 
+Meshery Operator is installed once per cluster and shared by every connection to
+that cluster. `targetStatus: DISABLED` uninstalls it for all of them - it is the
+only way Meshery Server uninstalls the Operator; disconnecting, deleting, or
+switching a connection to embedded mode never does. When other connections on
+the same Meshery Server were using it, Meshery raises a warning event naming
+them in `affectedConnectionIDs`. See
+[One Operator per cluster](/guides/infrastructure-management/kubernetes-connection-lifecycle/#one-operator-per-cluster-shared-by-every-connection).
+
 ###### **Input type:** `OperatorStatusInput`
 
 #### **Arguments**

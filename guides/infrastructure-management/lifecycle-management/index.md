@@ -115,7 +115,7 @@ Use the **Environments** column to assign a Connection to one or more [Environme
 </div>
 
 
-Deleting a Kubernetes Connection removes it from Meshery. It does not delete anything that Meshery deployed into the cluster. To remove the Operator, MeshSync, and Broker from the cluster, uninstall them from the Connection first, as described in [Operating a connection](/guides/infrastructure-management/kubernetes-connection-lifecycle/#operating-a-connection).
+Deleting a Kubernetes Connection removes it from Meshery. It does not delete anything that Meshery deployed into the cluster: the Operator, MeshSync, and Broker are shared by every connection to the cluster, so they stay installed. To remove them once nothing uses them, see [One Operator per cluster](/guides/infrastructure-management/kubernetes-connection-lifecycle/#one-operator-per-cluster-shared-by-every-connection).
 
 ## Lifecycle FAQs
 

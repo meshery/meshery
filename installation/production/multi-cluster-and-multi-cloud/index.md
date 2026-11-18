@@ -25,12 +25,11 @@ the cluster's Kubernetes API:
   `mesheryctl system start` or uploading a kubeconfig in the UI creates the
   connection; each context becomes a managed connection.
 
-On connection, Meshery deploys one [Operator](/concepts/architecture/operator/)
+On connection in operator mode, Meshery deploys one [Operator](/concepts/architecture/operator/)
 per cluster (unless you use embedded MeshSync - see below), which manages that
 cluster's [MeshSync](/concepts/architecture/meshsync/) and
-[Broker](/concepts/architecture/broker/). On disconnect, those components are
-removed. The Operator is also controllable from the UI's on/off switch
-independently of the connection.
+[Broker](/concepts/architecture/broker/). Disconnecting a connection does not remove them.
+Lifecycle rules are in [One Operator per cluster](/guides/infrastructure-management/kubernetes-connection-lifecycle/#one-operator-per-cluster-shared-by-every-connection).
 
 ## Managed vs. unmanaged connections
 
@@ -48,8 +47,9 @@ The mode for new connections is governed by
 `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` (`operator` or `embedded`), which **defaults
 to `embedded`**, and the mode can be switched per connection on the connections
 page. Switching from operator to
-embedded undeploys the in-cluster components and starts the in-Server routine;
-switching back redeploys them. Choose per cluster based on whether in-cluster
+embedded starts the in-Server routine and leaves the shared Operator installed;
+switching back installs the Operator if the cluster does not have it yet. Choose
+per cluster based on whether in-cluster
 deployment is acceptable and on the Server's capacity to absorb embedded
 discovery (see
 [Infrastructure, Sizing & Performance](/installation/production/infrastructure-sizing-and-performance/)).
