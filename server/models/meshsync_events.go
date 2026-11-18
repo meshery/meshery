@@ -425,9 +425,9 @@ func isMissingTableError(err error, tableName string) bool {
 }
 
 func (mh *MeshsyncDataHandler) Resync() error {
-	if !mh.IsConnected() {
+	if mh.broker.Info() == broker.NotConnected {
 		mh.log.Warnf("Resync meshsync: broker is not connected")
-		return fmt.Errorf("MeshSync broker is not connected")
+		return nil
 	}
 	err := mh.broker.Publish(MeshsyncRequestSubject, &broker.Message{
 		Request: &broker.RequestObject{
