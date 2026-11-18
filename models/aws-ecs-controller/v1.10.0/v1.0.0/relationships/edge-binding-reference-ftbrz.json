@@ -51,7 +51,7 @@
         "to": [
           {
             "id": null,
-            "kind": "Taskdefination",
+            "kind": "TaskDefinition",
             "match": {},
             "match_strategy_matrix": null,
             "model": {

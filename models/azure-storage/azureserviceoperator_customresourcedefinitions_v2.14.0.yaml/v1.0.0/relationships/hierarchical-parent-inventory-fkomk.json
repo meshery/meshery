@@ -60,7 +60,7 @@
         "to": [
           {
             "id": null,
-            "kind": "StorageAccountQueueService",
+            "kind": "StorageAccountsQueueService",
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
