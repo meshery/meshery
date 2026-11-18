@@ -8361,14 +8361,6 @@ You can now design and manage any infrastructure that Meshery supports. For the 
     
   
     
-  
-    
-  
-    
-  
-    
-  
-    
       
     
   
@@ -14544,7 +14536,7 @@ The build or deployment pipeline usually injects these variables; end users rare
 | `BUILD` | Build-time value; runtime fallback `Not Set` | Meshery Server version string used in server metadata, provider capability requests, and chart selection. | `BUILD=v1.0.0 make server` |
 | `COMMITSHA` | Build-time value; runtime fallback `Not Set` | Git commit SHA reported in server metadata. | `COMMITSHA=$(git rev-parse HEAD) make server` |
 | `RELEASE_CHANNEL` | Build-time value; runtime fallback `Not Set` | Release channel reported by the server, such as `stable` or `edge`. | `RELEASE_CHANNEL=stable make server` |
-| `INSTANCE_ID` | Auto-generated UUID | Unique Meshery instance identifier used in eventing, connection metadata, and system-owned resources. | `INSTANCE_ID=$(uuidgen) make server` |
+| `INSTANCE_ID` | Auto-generated UUID | Unique Meshery instance identifier used in eventing, connection metadata, and system-owned resources. Must be a UUID; it takes precedence over an `INSTANCE_ID` in `server-config.env`. Any other value, including one that is only whitespace or the all-zero UUID, is ignored with a warning, and a new ID is generated. An empty value counts as unset: the ID from `server-config.env` is used, or a new one is generated without a warning. | `INSTANCE_ID=$(uuidgen) make server` |
 | `OS` | `meshery` | Value forwarded to remote-provider capability requests so providers can tailor responses to the caller. | `OS=meshery make server` |
 
 ## Platform-provided environment variables
@@ -75138,12 +75130,6 @@ url: /reference/error-codes/adapter-meshery-istio/erraddonfromtemplatecode-1012/
 
 
 --------------------------------------------------------------------------------
-title: "ErrAddonSubscriptionCode-1188"
-url: /reference/error-codes/component-meshery-server/erraddonsubscriptioncode-1188/index.md
---------------------------------------------------------------------------------
-
-
---------------------------------------------------------------------------------
 title: "ErrAmbiguousDependencyCode-1477"
 url: /reference/error-codes/component-meshery-server/errambiguousdependencycode-1477/index.md
 --------------------------------------------------------------------------------
@@ -76112,12 +76098,6 @@ url: /reference/error-codes/component-meshery-server/errdatabaseautomigrationcod
 --------------------------------------------------------------------------------
 title: "ErrDatabaseOpenCode-11127"
 url: /reference/error-codes/library-meshkit/errdatabaseopencode-11127/index.md
---------------------------------------------------------------------------------
-
-
---------------------------------------------------------------------------------
-title: "ErrDataPlaneSubscriptionCode-1193"
-url: /reference/error-codes/component-meshery-server/errdataplanesubscriptioncode-1193/index.md
 --------------------------------------------------------------------------------
 
 
@@ -87825,33 +87805,6 @@ Please check if Meshery server is accessible to the Database</p>
           
             
           
-          <tr id="ErrSubscribeChannelCode-1175" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSubscribeChannelCode-more-info" onclick="toggle_visibility('meshery-server-ErrSubscribeChannelCode-more-info');">
-            <td class="tbl-severity-alert">Alert</td>
-            <td id=" -1175" class="error-name-code">
-              <a href="/reference/error-codes/component-meshery-server/errsubscribechannelcode-1175/"><code>ErrSubscribeChannelCode-1175</code></a>
-            </td>
-            <td>Unable to subscribe to channel</td>
-            <td><a href="https://discuss.meshery.io/search?q=ErrSubscribeChannelCode-1175" target="_blank">search forum</a></td>
-          </tr>
-          <tr id="meshery-server-ErrSubscribeChannelCode-more-info" class="tbl-hidden-row">
-            <td style="word-break:break-all;" colspan="4">
-              <div class="error-heading">Long Description</div>
-              <p class="error-details">Unable to create a broker subscription</p>
-              <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Could be a network issue
-Meshery Broker could have crashed</p>
-              <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Check if Meshery Broker is reachable from Meshery Server
-Check if Meshery Broker is up and running inside the configured cluster</p>
-            </td>
-          </tr>
-        
-          
-          
-          
-          
-            
-          
           <tr id="ErrPublishBrokerCode-1176" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPublishBrokerCode-more-info" onclick="toggle_visibility('meshery-server-ErrPublishBrokerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1176" class="error-name-code">
@@ -88156,56 +88109,6 @@ Please check if Meshery server is accessible to the Database</p>
           
             
           
-          <tr id="ErrAddonSubscriptionCode-1188" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrAddonSubscriptionCode-more-info" onclick="toggle_visibility('meshery-server-ErrAddonSubscriptionCode-more-info');">
-            <td class="tbl-severity-alert">Alert</td>
-            <td id=" -1188" class="error-name-code">
-              <a href="/reference/error-codes/component-meshery-server/erraddonsubscriptioncode-1188/"><code>ErrAddonSubscriptionCode-1188</code></a>
-            </td>
-            <td>Addons Subscription failed</td>
-            <td><a href="https://discuss.meshery.io/search?q=ErrAddonSubscriptionCode-1188" target="_blank">search forum</a></td>
-          </tr>
-          <tr id="meshery-server-ErrAddonSubscriptionCode-more-info" class="tbl-hidden-row">
-            <td style="word-break:break-all;" colspan="4">
-              <div class="error-heading">Long Description</div>
-              <p class="error-details">GraphQL subscription for Addons stopped</p>
-              <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Could be a network issue</p>
-              <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Check if meshery server is reachable from the browser</p>
-            </td>
-          </tr>
-        
-          
-          
-          
-          
-            
-          
-          <tr id="ErrResolverControlPlaneSubscriptionCode-1189" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResolverControlPlaneSubscriptionCode-more-info" onclick="toggle_visibility('meshery-server-ErrResolverControlPlaneSubscriptionCode-more-info');">
-            <td class="tbl-severity-alert">Alert</td>
-            <td id=" -1189" class="error-name-code">
-              <a href="/reference/error-codes/component-meshery-server/errresolvercontrolplanesubscriptioncode-1189/"><code>ErrResolverControlPlaneSubscriptionCode-1189</code></a>
-            </td>
-            <td>Control Plane Subscription failed</td>
-            <td><a href="https://discuss.meshery.io/search?q=ErrResolverControlPlaneSubscriptionCode-1189" target="_blank">search forum</a></td>
-          </tr>
-          <tr id="meshery-server-ErrResolverControlPlaneSubscriptionCode-more-info" class="tbl-hidden-row">
-            <td style="word-break:break-all;" colspan="4">
-              <div class="error-heading">Long Description</div>
-              <p class="error-details">GraphQL subscription for Control Plane stopped</p>
-              <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Could be a network issue</p>
-              <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Confirm that Meshery Server is reachable from your browser.</p>
-            </td>
-          </tr>
-        
-          
-          
-          
-          
-            
-          
           <tr id="ErrMesheryClientCode-1190" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMesheryClientCode-more-info" onclick="toggle_visibility('meshery-server-ErrMesheryClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1190" class="error-name-code">
@@ -88275,31 +88178,6 @@ Check if Meshery Broker is up and running inside the configured cluster</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Enable Meshery Operator from the settings page in the UI
 Check for logs in the meshery-operator pods from inside the application for more information</p>
-            </td>
-          </tr>
-        
-          
-          
-          
-          
-            
-          
-          <tr id="ErrDataPlaneSubscriptionCode-1193" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDataPlaneSubscriptionCode-more-info" onclick="toggle_visibility('meshery-server-ErrDataPlaneSubscriptionCode-more-info');">
-            <td class="tbl-severity-alert">Alert</td>
-            <td id=" -1193" class="error-name-code">
-              <a href="/reference/error-codes/component-meshery-server/errdataplanesubscriptioncode-1193/"><code>ErrDataPlaneSubscriptionCode-1193</code></a>
-            </td>
-            <td>Data Plane Subscription failed</td>
-            <td><a href="https://discuss.meshery.io/search?q=ErrDataPlaneSubscriptionCode-1193" target="_blank">search forum</a></td>
-          </tr>
-          <tr id="meshery-server-ErrDataPlaneSubscriptionCode-more-info" class="tbl-hidden-row">
-            <td style="word-break:break-all;" colspan="4">
-              <div class="error-heading">Long Description</div>
-              <p class="error-details">GraphQL subscription for Data Plane stopped</p>
-              <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Could be a network issue</p>
-              <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Check if meshery server is reachable from the browser</p>
             </td>
           </tr>
         
@@ -109707,12 +109585,6 @@ url: /reference/error-codes/client-mesheryctl/errresetmeshconfigcode-1063/index.
 
 
 --------------------------------------------------------------------------------
-title: "ErrResolverControlPlaneSubscriptionCode-1189"
-url: /reference/error-codes/component-meshery-server/errresolvercontrolplanesubscriptioncode-1189/index.md
---------------------------------------------------------------------------------
-
-
---------------------------------------------------------------------------------
 title: "ErrResolveReferenceCode-1361"
 url: /reference/error-codes/component-meshery-server/errresolvereferencecode-1361/index.md
 --------------------------------------------------------------------------------
@@ -110267,12 +110139,6 @@ url: /reference/error-codes/adapter-meshery-kuma/errstreameventcode-1008/index.m
 --------------------------------------------------------------------------------
 title: "ErrStreamEventsCode-1025"
 url: /reference/error-codes/component-meshery-server/errstreameventscode-1025/index.md
---------------------------------------------------------------------------------
-
-
---------------------------------------------------------------------------------
-title: "ErrSubscribeChannelCode-1175"
-url: /reference/error-codes/component-meshery-server/errsubscribechannelcode-1175/index.md
 --------------------------------------------------------------------------------
 
 
@@ -113175,42 +113041,6 @@ them in `affectedConnectionIDs`. See
 ## `Subscription` type
 
 The `Subscription` type contains all the Subscriptions you can listen to.
-
-### `Subscription.listenToAddonState`
-
-Listen to changes in status of Addons available (Eg. Prometheus and Grafana).
-
-###### **Returns** [`[AddonList!]!`](#addonlist).
-
-#### **Arguments**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| <a id="subscriptionlistentoaddonstatefilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Select Mesh Type. |
-
-### `Subscription.listenToControlPlaneState`
-
-Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster.
-
-###### **Returns** [`[ControlPlane!]!`](#controlplane).
-
-#### **Arguments**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| <a id="subscriptionlistentocontrolplanestatefilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Filter Control Plane Query. |
-
-### `Subscription.listenToDataPlaneState`
-
-Listen to changes in Data Plane data for a Service Mesh (or all) in your cluster.
-
-###### **Returns** [`[DataPlane!]!`](#dataplane).
-
-#### **Arguments**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| <a id="subscriptionlistentodataplanestatefilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Filter Control Plane Query. |
 
 ### `Subscription.listenToMeshSyncEvents`
 
