@@ -92,6 +92,15 @@ That rewrites the branch, so settle it first with anyone else working on it, and
 automation that is tracking the branch by commit hash - a force push moves the tip out from
 under both.
 </li>
+
+<li>
+<code>git rebase --signoff</code> stamps whoever runs it, which leaves the DCO check red on a branch
+that carries more than one author's commits and costs a second force push. DCO wants a sign-off
+naming each commit's <em>author</em>, so derive it per commit:
+
+<pre><code>$ git rebase &lt;base-branch&gt; --exec 'git commit --amend --no-edit --trailer \
+    "Signed-off-by=$(git log -1 --pretty="%an &lt;%ae&gt;")"'</code></pre>
+</li>
 </ul>
 </details>
 
