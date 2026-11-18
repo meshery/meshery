@@ -93,6 +93,9 @@ mesheryctl design delete -f [file | URL]
 					if errors.GetCode(err) == utils.ErrNotFoundCode {
 						return ErrDesignNotFound(target)
 					}
+					if errors.GetCode(err) == utils.ErrAmbiguousIDCode {
+						return err
+					}
 					// If the server is unreachable or another network error occurs,
 					// fall through to treat target as a file path so the descriptive
 					// file-read error is surfaced instead of an obscure ID error.

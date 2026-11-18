@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"net/http/httptest"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/machines"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
@@ -29,11 +31,11 @@ type probeAction struct {
 	entered  chan struct{} // closed on entry when non-nil
 	release  chan struct{} // Execute waits on it when non-nil
 
-	calls       atomic.Int32
-	sawRow      atomic.Bool
-	sawCtx      atomic.Value
-	sawClusters atomic.Value // []*models.K8sContext under AllKubeClusterKey
-	enterOnce   sync.Once
+	calls     atomic.Int32
+	sawRow    atomic.Bool
+	sawCtx    atomic.Value
+	sawCtxVal atomic.Value // context.Context handed to the transition
+	enterOnce sync.Once
 }
 
 func (p *probeAction) ExecuteOnEntry(context.Context, interface{}, interface{}) (machines.EventType, *events.Event, error) {
@@ -43,9 +45,7 @@ func (p *probeAction) ExecuteOnEntry(context.Context, interface{}, interface{}) 
 func (p *probeAction) Execute(ctx context.Context, machineCtx interface{}, _ interface{}) (machines.EventType, *events.Event, error) {
 	p.calls.Add(1)
 	p.sawCtx.Store(machineCtx)
-	if clusters, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext); ok {
-		p.sawClusters.Store(clusters)
-	}
+	p.sawCtxVal.Store(ctx)
 	if _, _, err := p.provider.GetConnectionByID("", p.id); err == nil {
 		p.sawRow.Store(true)
 	}
@@ -155,33 +155,41 @@ func (f *lifecycleFixture) requestCtx() context.Context {
 	return context.WithValue(ctx, models.SystemIDKey, f.h.SystemID)
 }
 
-// The hard-delete route has no KubernetesMiddleware. The Delete transition
-// must still receive the connected contexts, including the one being deleted,
-// or DeleteAction's MeshSync flush cannot run its last-context check.
-func TestDeleteConnectionGivesTeardownTheConnectedContexts(t *testing.T) {
+// The hard-delete route has no KubernetesMiddleware, so the Delete transition
+// never sees AllKubeClusterKey. models.FlushMeshSyncData loads the connected
+// contexts itself in that case, using the provider and token it reads off the
+// transition's context - that is the last-context check deciding whether the
+// cluster's MeshSync data is flushed. Detaching the context for the transition
+// must therefore carry the request's values over; starting from a fresh
+// context would strand the flush with no provider and no token, silently.
+// The fallback itself is pinned by TestFlushMeshSyncDataWithoutContextAllKubeClusterKey
+// in server/models.
+func TestDeleteConnectionTeardownKeepsRequestContextValues(t *testing.T) {
 	f := newLifecycleFixture(t)
 	id := k8sConnectionID(t)
 	f.saveRow(t, id, connections.CONNECTED)
-	contextID := strings.ReplaceAll(id.String(), "-", "")
-	if _, err := f.provider.MesheryK8sContextPersister.SaveMesheryK8sContext(models.K8sContext{ID: contextID, Name: "kind-test"}); err != nil {
-		t.Fatalf("save k8s context: %v", err)
-	}
 	probe := &probeAction{provider: f.provider, id: id}
 	f.trackMachine(t, id, machines.CONNECTED, &kubernetes.MachineCtx{}, probe)
 
-	if rec := deleteConnection(t, f.h, f.provider, id); rec.Code != http.StatusOK {
+	req := httptest.NewRequest(http.MethodDelete, "/api/integrations/connections/"+id.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"connectionId": id.String()})
+	ctx := context.WithValue(req.Context(), models.ProviderCtxKey, models.Provider(f.provider))
+	req = req.WithContext(context.WithValue(ctx, models.TokenCtxKey, "lifecycle-test-token"))
+	rec := httptest.NewRecorder()
+	f.h.DeleteConnection(rec, req, nil, &models.User{ID: f.userID}, f.provider)
+	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d, want 200. body: %s", rec.Code, rec.Body.String())
 	}
 
-	clusters, _ := probe.sawClusters.Load().([]*models.K8sContext)
-	found := false
-	for _, c := range clusters {
-		if c != nil && c.ID == contextID {
-			found = true
-		}
+	seen, ok := probe.sawCtxVal.Load().(context.Context)
+	if !ok {
+		t.Fatal("delete transition never ran")
 	}
-	if !found {
-		t.Fatalf("delete transition saw contexts %v under AllKubeClusterKey, want them to include %s", clusters, contextID)
+	if p, _ := seen.Value(models.ProviderCtxKey).(models.Provider); p == nil {
+		t.Error("teardown context lost ProviderCtxKey; FlushMeshSyncData cannot load the connected contexts")
+	}
+	if token, _ := seen.Value(models.TokenCtxKey).(string); token != "lifecycle-test-token" {
+		t.Errorf("teardown context token = %q, want the request's token", token)
 	}
 }
 
@@ -329,7 +337,10 @@ func TestDeleteConnectionTeardownFailure(t *testing.T) {
 		wantWarn   bool
 	}{
 		{name: "delete action fails", state: machines.CONNECTED, machineCtx: &kubernetes.MachineCtx{}, probeErr: errors.New("undeploy failed"), wantCalls: 1, wantWarn: true},
-		{name: "state has no delete edge", state: machines.REGISTERED, machineCtx: &kubernetes.MachineCtx{}, wantCalls: 0, wantWarn: true},
+		// REGISTERED gained a Delete edge upstream (kubernetes.Registered), so
+		// it tears down like CONNECTED rather than failing the transition. The
+		// event must stay clean: no teardownError for a teardown that worked.
+		{name: "registered state tears down", state: machines.REGISTERED, machineCtx: &kubernetes.MachineCtx{}, wantCalls: 1, wantWarn: false},
 		{name: "machine context never assigned", state: machines.CONNECTED, machineCtx: nil, wantCalls: 0, wantWarn: false},
 	}
 	for _, tc := range cases {

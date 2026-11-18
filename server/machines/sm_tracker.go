@@ -24,14 +24,13 @@ func (smt *ConnectionToStateMachineInstanceTracker) Remove(id core.Uuid) {
 	delete(smt.ConnectToInstanceMap, id)
 }
 
-// RemoveIfMatch removes the entry for id only while it still holds inst, and
-// reports whether it did. Cleanup that finishes after its machine was replaced
-// - a connection deleted and re-imported under the same deterministic id -
-// must not drop the newer machine, which a bare Remove(id) would.
-func (smt *ConnectionToStateMachineInstanceTracker) RemoveIfMatch(id core.Uuid, inst *StateMachine) bool {
+// CompareAndDelete removes the state machine entry for id only if the currently
+// tracked instance matches the expected inst pointer. It returns true if the
+// entry was removed, or false if the entry was absent or held a different instance.
+func (smt *ConnectionToStateMachineInstanceTracker) CompareAndDelete(id core.Uuid, inst *StateMachine) bool {
 	smt.mx.Lock()
 	defer smt.mx.Unlock()
-	if cur, ok := smt.ConnectToInstanceMap[id]; ok && cur == inst {
+	if current, ok := smt.ConnectToInstanceMap[id]; ok && current == inst {
 		delete(smt.ConnectToInstanceMap, id)
 		return true
 	}

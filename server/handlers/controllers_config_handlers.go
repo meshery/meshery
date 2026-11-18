@@ -182,8 +182,9 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 	}
 
 	// A deployment-mode change tears down and reattaches the controller
-	// machinery for the connection (deploy/undeploy operator, restart the
-	// MeshSync data pipeline). Delegated to the existing mode-change path so
+	// machinery for the connection (deploy the operator if the cluster lacks
+	// it, or release this connection's claim on it - never uninstall - and
+	// restart the MeshSync data pipeline). Delegated to the existing mode-change path so
 	// both entry points behave identically.
 	if _, _, modeChanged, err := h.handleMeshSyncDeploymentModeChange(req.Context(), connectionID, payload, token, userID, provider); err != nil {
 		h.log.Error(err)
@@ -332,7 +333,7 @@ func (h *Handler) applyControllersConfigToConnection(
 		// nothing to apply now; ConnectAction applies on connect.
 		return
 	}
-	machineCtx, err := kubernetes.GetMachineCtx(machine.Context, nil)
+	machineCtx, err := kubernetes.GetMachineCtx(machine.GetContext(), nil)
 	if err != nil || machineCtx == nil {
 		h.log.Warnf("controllers config: no machine context for connection %s; configuration applies on next connect", connectionID)
 		return
@@ -415,8 +416,8 @@ func (h *Handler) reapplyControllersConfigToTrackedConnections(token string, use
 			return events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 		}
 		// A deployment-mode change is not just a document to re-apply: it
-		// deploys or undeploys the operator and re-attaches the MeshSync data
-		// pipeline. Reconcile it first so the subsequent apply targets the
+		// deploys the operator (or releases this connection's claim on it,
+		// never uninstalling it) and re-attaches the MeshSync data pipeline. Reconcile it first so the subsequent apply targets the
 		// cluster shape the new mode implies.
 		h.reconcileInheritedDeploymentMode(connection, serverDefaults, token, userID, provider, newEvent)
 		h.applyControllersConfigToConnection(context.Background(), connectionID, connection.Metadata, token, userID, provider, newEvent)

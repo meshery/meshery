@@ -28,7 +28,7 @@ func ErrInititalizeK8sMachine(err error) error {
 }
 
 func ErrAssertMachineCtx(err error) error {
-	return errors.New(ErrAssetMachineCtxCode, errors.Alert, []string{"type assertion of context to *kubernetes.MachineCtx failed"}, []string{err.Error()}, []string{"The machine context has become invalid."}, []string{"Retry the opereation or try archiving and reinitializing the connection"})
+	return errors.New(ErrAssetMachineCtxCode, errors.Alert, []string{"type assertion of context to *kubernetes.MachineCtx failed"}, []string{err.Error()}, []string{"The machine context has become invalid."}, []string{"Retry the operation or try archiving and reinitializing the connection"})
 }
 
 func ErrInvalidType(err error) error {

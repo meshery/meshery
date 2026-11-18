@@ -167,7 +167,7 @@ jobs:
           subject: "[${{ github.repository }}] ${{ github.workflow }} — ${{ steps.failure-details.outputs.stage || 'unknown stage' }} failed (run #${{ github.run_number }})"
           from: |
             "Model Generator and Updater" <no-reply@meshery.io>
-          to: developers@meshery.io
+          to: maintainers@meshery.io
           body: file://${{ runner.temp }}/failure-email.txt
           attachments: ${{ steps.failure-details.outputs.attachment }}
 

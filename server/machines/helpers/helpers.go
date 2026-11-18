@@ -119,7 +119,7 @@ func registerActionForKind(mtype string) machines.Action {
 // internally; a bare nil-interface comparison would silently stop working if an
 // InitFunc ever returned a partially-built context instead of a literal nil.
 func HasMachineContext(inst *machines.StateMachine) bool {
-	return inst != nil && !utils.IsInterfaceNil(inst.Context)
+	return inst != nil && !utils.IsInterfaceNil(inst.GetContext())
 }
 
 type refCountedMutex struct {

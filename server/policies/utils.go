@@ -133,6 +133,17 @@ func getMapString(m map[string]interface{}, key string) string {
 // resolvePath resolves wildcards ("_") in a path against an object.
 // Wildcards represent array indices and are resolved to the last available index.
 func resolvePath(path []string, obj map[string]interface{}) []string {
+	paths := resolvePaths(path, obj)
+	if len(paths) == 0 {
+		return path
+	}
+	return paths[len(paths)-1]
+}
+
+// resolvePaths resolves wildcards ("_") in a path against an object to concrete paths
+// for every matching array element. If the array is absent or empty, or if there are no
+// wildcards, it behaves consistently with resolvePath (defaults index to "0" or returns original path).
+func resolvePaths(path []string, obj map[string]interface{}) [][]string {
 	wildcardIdx := -1
 	for i, p := range path {
 		if p == "_" {
@@ -142,7 +153,7 @@ func resolvePath(path []string, obj map[string]interface{}) []string {
 	}
 
 	if wildcardIdx == -1 {
-		return path
+		return [][]string{path}
 	}
 
 	prefix := path[:wildcardIdx]
@@ -150,16 +161,25 @@ func resolvePath(path []string, obj map[string]interface{}) []string {
 
 	val := objectGetNested(obj, prefix, nil)
 	arr, ok := val.([]interface{})
-	idx := "0"
-	if ok && len(arr) > 0 {
-		idx = strconv.Itoa(len(arr) - 1)
+
+	if !ok || len(arr) == 0 {
+		concretePath := make([]string, 0, len(path))
+		concretePath = append(concretePath, prefix...)
+		concretePath = append(concretePath, "0")
+		concretePath = append(concretePath, suffix...)
+		return resolvePaths(concretePath, obj)
 	}
 
-	result := make([]string, 0, len(path))
-	result = append(result, prefix...)
-	result = append(result, idx)
-	result = append(result, suffix...)
-	return result
+	var results [][]string
+	for i := 0; i < len(arr); i++ {
+		concretePath := make([]string, 0, len(path))
+		concretePath = append(concretePath, prefix...)
+		concretePath = append(concretePath, strconv.Itoa(i))
+		concretePath = append(concretePath, suffix...)
+		subResolved := resolvePaths(concretePath, obj)
+		results = append(results, subResolved...)
+	}
+	return results
 }
 
 

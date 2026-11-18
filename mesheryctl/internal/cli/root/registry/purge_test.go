@@ -380,3 +380,9 @@ func TestPurgeCmdFlags(t *testing.T) {
 		})
 	}
 }
+
+func TestPurgeCmdArgs(t *testing.T) {
+	err := purgeCmd.Args(purgeCmd, []string{"extra-arg"})
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "too many arguments specified")
+}
