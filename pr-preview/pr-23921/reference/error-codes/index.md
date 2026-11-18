@@ -8286,33 +8286,6 @@ Please check if Meshery server is accessible to the Database</p>
           
             
           
-          <tr id="ErrSubscribeChannelCode-1175" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrSubscribeChannelCode-more-info" onclick="toggle_visibility('meshery-server-ErrSubscribeChannelCode-more-info');">
-            <td class="tbl-severity-alert">Alert</td>
-            <td id=" -1175" class="error-name-code">
-              <a href="/pr-preview/pr-23921/reference/error-codes/component-meshery-server/errsubscribechannelcode-1175/"><code>ErrSubscribeChannelCode-1175</code></a>
-            </td>
-            <td>Unable to subscribe to channel</td>
-            <td><a href="https://discuss.meshery.io/search?q=ErrSubscribeChannelCode-1175" target="_blank">search forum</a></td>
-          </tr>
-          <tr id="meshery-server-ErrSubscribeChannelCode-more-info" class="tbl-hidden-row">
-            <td style="word-break:break-all;" colspan="4">
-              <div class="error-heading">Long Description</div>
-              <p class="error-details">Unable to create a broker subscription</p>
-              <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Could be a network issue
-Meshery Broker could have crashed</p>
-              <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Check if Meshery Broker is reachable from Meshery Server
-Check if Meshery Broker is up and running inside the configured cluster</p>
-            </td>
-          </tr>
-        
-          
-          
-          
-          
-            
-          
           <tr id="ErrPublishBrokerCode-1176" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrPublishBrokerCode-more-info" onclick="toggle_visibility('meshery-server-ErrPublishBrokerCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1176" class="error-name-code">
@@ -8617,56 +8590,6 @@ Please check if Meshery server is accessible to the Database</p>
           
             
           
-          <tr id="ErrAddonSubscriptionCode-1188" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrAddonSubscriptionCode-more-info" onclick="toggle_visibility('meshery-server-ErrAddonSubscriptionCode-more-info');">
-            <td class="tbl-severity-alert">Alert</td>
-            <td id=" -1188" class="error-name-code">
-              <a href="/pr-preview/pr-23921/reference/error-codes/component-meshery-server/erraddonsubscriptioncode-1188/"><code>ErrAddonSubscriptionCode-1188</code></a>
-            </td>
-            <td>Addons Subscription failed</td>
-            <td><a href="https://discuss.meshery.io/search?q=ErrAddonSubscriptionCode-1188" target="_blank">search forum</a></td>
-          </tr>
-          <tr id="meshery-server-ErrAddonSubscriptionCode-more-info" class="tbl-hidden-row">
-            <td style="word-break:break-all;" colspan="4">
-              <div class="error-heading">Long Description</div>
-              <p class="error-details">GraphQL subscription for Addons stopped</p>
-              <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Could be a network issue</p>
-              <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Check if meshery server is reachable from the browser</p>
-            </td>
-          </tr>
-        
-          
-          
-          
-          
-            
-          
-          <tr id="ErrResolverControlPlaneSubscriptionCode-1189" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrResolverControlPlaneSubscriptionCode-more-info" onclick="toggle_visibility('meshery-server-ErrResolverControlPlaneSubscriptionCode-more-info');">
-            <td class="tbl-severity-alert">Alert</td>
-            <td id=" -1189" class="error-name-code">
-              <a href="/pr-preview/pr-23921/reference/error-codes/component-meshery-server/errresolvercontrolplanesubscriptioncode-1189/"><code>ErrResolverControlPlaneSubscriptionCode-1189</code></a>
-            </td>
-            <td>Control Plane Subscription failed</td>
-            <td><a href="https://discuss.meshery.io/search?q=ErrResolverControlPlaneSubscriptionCode-1189" target="_blank">search forum</a></td>
-          </tr>
-          <tr id="meshery-server-ErrResolverControlPlaneSubscriptionCode-more-info" class="tbl-hidden-row">
-            <td style="word-break:break-all;" colspan="4">
-              <div class="error-heading">Long Description</div>
-              <p class="error-details">GraphQL subscription for Control Plane stopped</p>
-              <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Could be a network issue</p>
-              <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Confirm that Meshery Server is reachable from your browser.</p>
-            </td>
-          </tr>
-        
-          
-          
-          
-          
-            
-          
           <tr id="ErrMesheryClientCode-1190" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrMesheryClientCode-more-info" onclick="toggle_visibility('meshery-server-ErrMesheryClientCode-more-info');">
             <td class="tbl-severity-alert">Alert</td>
             <td id=" -1190" class="error-name-code">
@@ -8736,31 +8659,6 @@ Check if Meshery Broker is up and running inside the configured cluster</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Enable Meshery Operator from the settings page in the UI
 Check for logs in the meshery-operator pods from inside the application for more information</p>
-            </td>
-          </tr>
-        
-          
-          
-          
-          
-            
-          
-          <tr id="ErrDataPlaneSubscriptionCode-1193" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrDataPlaneSubscriptionCode-more-info" onclick="toggle_visibility('meshery-server-ErrDataPlaneSubscriptionCode-more-info');">
-            <td class="tbl-severity-alert">Alert</td>
-            <td id=" -1193" class="error-name-code">
-              <a href="/pr-preview/pr-23921/reference/error-codes/component-meshery-server/errdataplanesubscriptioncode-1193/"><code>ErrDataPlaneSubscriptionCode-1193</code></a>
-            </td>
-            <td>Data Plane Subscription failed</td>
-            <td><a href="https://discuss.meshery.io/search?q=ErrDataPlaneSubscriptionCode-1193" target="_blank">search forum</a></td>
-          </tr>
-          <tr id="meshery-server-ErrDataPlaneSubscriptionCode-more-info" class="tbl-hidden-row">
-            <td style="word-break:break-all;" colspan="4">
-              <div class="error-heading">Long Description</div>
-              <p class="error-details">GraphQL subscription for Data Plane stopped</p>
-              <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Could be a network issue</p>
-              <div class="error-heading">Suggested Remediation</div>
-              <p class="error-details">Check if meshery server is reachable from the browser</p>
             </td>
           </tr>
         
@@ -22490,9 +22388,7 @@ Pass a registration key to --provider instead of the display name</p>
               <div class="error-heading">Long Description</div>
               <p class="error-details"></p>
               <div class="error-heading">Probable Cause</div>
-              <p class="error-details">Command was not executed from within a fork of the meshery/meshery repository
-Git remote &#39;origin&#39; does not point to a meshery repository
-Command was not executed from the repository root</p>
+              <p class="error-details"></p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Ensure the command is executed from the root of a cloned fork of https://github.com/meshery/meshery
 Check your git remote configuration with &#39;git remote -v&#39;
