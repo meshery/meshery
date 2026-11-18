@@ -237,13 +237,17 @@ func designSearchTotal(response map[string]interface{}) (int, bool, error) {
 func designSearchCount(value interface{}) (int, bool) {
 	switch n := value.(type) {
 	case float64:
-		// float64(math.MaxInt) rounds up, so a value equal to it does not
-		// fit an int. Check before converting: a conversion that overflows
-		// yields an implementation-defined result.
-		if n != math.Trunc(n) || n < 0 || n >= float64(math.MaxInt) {
+		// Bound by 1<<63 first, which float64 holds exactly, so the int64
+		// conversion cannot overflow; an overflowing conversion yields an
+		// implementation-defined result. Comparing against
+		// float64(math.MaxInt) instead would reject the valid count
+		// 2147483647 on a 32-bit build, where that conversion is exact.
+		// mesheryctl ships linux/arm, so int is 32 bits there.
+		if n != math.Trunc(n) || n < 0 || n >= 1<<63 {
 			return 0, false
 		}
-		return int(n), true
+		i := int64(n)
+		return int(i), i == int64(int(i))
 	case int:
 		return n, n >= 0
 	case int64:

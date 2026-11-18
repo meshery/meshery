@@ -396,6 +396,14 @@ func TestDesignSearchTotal(t *testing.T) {
 		{name: "negative int", response: map[string]interface{}{"totalCount": -1}, wantErr: true},
 		{name: "negative int64", response: map[string]interface{}{"totalCount": int64(-1)}, wantErr: true},
 		{name: "negative json.Number", response: map[string]interface{}{"totalCount": json.Number("-1")}, wantErr: true},
+		// math.MaxInt32 is the largest count an int holds on a 32-bit build,
+		// which mesheryctl ships as linux/arm. Bounding the float64 case by
+		// float64(math.MaxInt) rejected it there, because that conversion is
+		// exact on 32 bits. This case only differs on such a build, so it
+		// cannot fail on a 64-bit runner.
+		{name: "int32 max as float64", response: map[string]interface{}{"totalCount": float64(math.MaxInt32)}, want: math.MaxInt32, wantOK: true},
+		{name: "int32 max as json.Number", response: map[string]interface{}{"totalCount": json.Number("2147483647")}, want: math.MaxInt32, wantOK: true},
+		{name: "float64 at 1<<63", response: map[string]interface{}{"totalCount": float64(1 << 63)}, wantErr: true},
 		{name: "float64 above the int range", response: map[string]interface{}{"totalCount": math.MaxFloat64}, wantErr: true},
 		{name: "infinite float64", response: map[string]interface{}{"totalCount": math.Inf(1)}, wantErr: true},
 		{name: "json.Number above the int64 range", response: map[string]interface{}{"totalCount": json.Number("9223372036854775808")}, wantErr: true},
