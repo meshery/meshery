@@ -331,7 +331,7 @@ func (h *Handler) handleProviderPatternGetError(rw http.ResponseWriter, eventBui
 
 	} else {
 		h.log.Error(ErrGetPattern(err))
-		writeMeshkitError(rw, ErrGetPattern(err), http.StatusBadRequest)
+		writeMeshkitError(rw, ErrGetPattern(err), providerStatusOrInternal(err))
 		event = eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrGetPattern(err),
 		}).WithDescription(ErrGetPattern(err).Error()).Build()
@@ -347,6 +347,18 @@ func (h *Handler) handlePatternPOST(
 	user *models.User,
 	provider models.Provider,
 ) {
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	defer func() {
 		_ = r.Body.Close()
 	}()
@@ -354,7 +366,11 @@ func (h *Handler) handlePatternPOST(
 	var err error
 
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(models.Create).WithSeverity(events.Informational).WithDescription("Save design ")
+	systemID := uuid.Nil
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(systemID).WithCategory("pattern").WithAction(models.Create).WithSeverity(events.Informational).WithDescription("Save design ")
 
 	requestPayload := &DesignPostPayload{}
 	if err := json.NewDecoder(r.Body).Decode(&requestPayload); err != nil {
@@ -674,8 +690,16 @@ func (h *Handler) GetMesheryPatternsHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	q := r.URL.Query()
-	tokenString := r.Context().Value(models.TokenCtxKey).(string)
+	tokenString, _ := r.Context().Value(models.TokenCtxKey).(string)
 	updateAfter := q.Get("updated_after")
 	includeMetrics := q.Get("metrics")
 	err := r.ParseForm() // necessary to get r.Form["visibility"], i.e, ?visibility=public&visbility=private
@@ -704,6 +728,10 @@ func (h *Handler) GetMesheryPatternsHandler(
 	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics, populate)
 
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(rw, err, http.StatusBadRequest)
+			return
+		}
 		h.log.Error(ErrFetchPattern(err))
 		writeMeshkitError(rw, ErrFetchPattern(err), http.StatusInternalServerError)
 		return
@@ -728,8 +756,16 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	q := r.URL.Query()
-	tokenString := r.Context().Value(models.TokenCtxKey).(string)
+	tokenString, _ := r.Context().Value(models.TokenCtxKey).(string)
 
 	// Canonical form is `orgId`; `orgID` is dual-accepted during the Phase 2
 	// deprecation window. Merge both lists (canonical first, legacy appended
@@ -744,14 +780,18 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 
 	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"), q["populate"], q["class"], q["technology"], q["type"], orgIDs, q["workspaceID"], q["userid"])
 	if err != nil {
-		h.log.Error(ErrFetchPattern(err))
+		if h.log != nil {
+			h.log.Error(ErrFetchPattern(err))
+		}
 		writeMeshkitError(rw, ErrFetchPattern(err), http.StatusInternalServerError)
 		return
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
@@ -762,16 +802,34 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	patternID := mux.Vars(r)["id"]
 	patternUUID, err := uuid.FromString(patternID)
 	if err != nil || patternUUID == uuid.Nil {
 		deleteErr := ErrDeletePattern(fmt.Errorf("invalid design ID: %s", patternID))
-		h.log.Error(deleteErr)
+		if h.log != nil {
+			h.log.Error(deleteErr)
+		}
 		writeMeshkitError(rw, deleteErr, http.StatusBadRequest)
 		return
 	}
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("delete").ActedUpon(patternUUID)
+	systemID := uuid.Nil
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(systemID).WithCategory("pattern").WithAction("delete").ActedUpon(patternUUID)
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
@@ -818,16 +876,39 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
+	patternID, ok := h.requirePathUUID(rw, r, "id")
+	if !ok {
+		return
+	}
+
 	var formatConverter converter.ConvertFormat
 	userID := user.ID
+	systemID := uuid.Nil
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
 	// Every event of the download starts from its own builder.
 	newDownloadEvent := func() *events.EventBuilder {
-		return events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("download").ActedUpon(userID).WithSeverity(events.Informational)
+		return events.NewEvent().FromOwner(userID).FromSystem(systemID).WithCategory("pattern").WithAction("download").ActedUpon(userID).WithSeverity(events.Informational)
 	}
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		h.log.Error(ErrRetrieveUserToken(err))
+		if h.log != nil {
+			h.log.Error(ErrRetrieveUserToken(err))
+		}
 		event := newDownloadEvent().WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
 			"error": ErrRetrieveUserToken(err),
 		}).WithDescription("No auth token provided in the request.").Build()
@@ -837,46 +918,58 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	}
 
 	exportFormat := r.URL.Query().Get("export")
-	h.log.Info(fmt.Sprintf("Export format received: '%s'", exportFormat))
+	if h.log != nil {
+		h.log.Info(fmt.Sprintf("Export format received: '%s'", exportFormat))
+	}
 
 	if exportFormat != "" {
 		var errConvert error
-		h.log.Info(fmt.Sprintf("Attempting to create converter for format: '%s'", exportFormat))
-
-		h.log.Info(fmt.Sprintf("Available formats - K8sManifest: '%s', HelmChart: '%s'",
-			converter.K8sManifest, converter.HelmChart))
+		if h.log != nil {
+			h.log.Info(fmt.Sprintf("Attempting to create converter for format: '%s'", exportFormat))
+			h.log.Info(fmt.Sprintf("Available formats - K8sManifest: '%s', HelmChart: '%s'",
+				converter.K8sManifest, converter.HelmChart))
+		}
 
 		formatConverter, errConvert = converter.NewFormatConverter(converter.DesignFormat(exportFormat))
 		if errConvert != nil {
-			h.log.Info(fmt.Sprintf("Failed to create converter: %v", errConvert))
+			if h.log != nil {
+				h.log.Info(fmt.Sprintf("Failed to create converter: %v", errConvert))
+			}
 			err := ErrExportPatternInFormat(errConvert, exportFormat, "")
-			h.log.Error(err)
+			if h.log != nil {
+				h.log.Error(err)
+			}
 			writeMeshkitError(rw, err, http.StatusBadRequest)
 			return
 		}
-		h.log.Info(fmt.Sprintf("Successfully created converter for format: '%s'", exportFormat))
+		if h.log != nil {
+			h.log.Info(fmt.Sprintf("Successfully created converter for format: '%s'", exportFormat))
+		}
 	}
 
-	patternID := mux.Vars(r)["id"]
 	ociFormat, _ := strconv.ParseBool(r.URL.Query().Get("oci"))
 	ahpkg, _ := strconv.ParseBool(r.URL.Query().Get("pkg"))
 
 	resp, err := provider.GetMesheryPattern(r, patternID, "false")
 	if err != nil {
-		h.log.Error(ErrGetPattern(err))
+		if h.log != nil {
+			h.log.Error(ErrGetPattern(err))
+		}
 		event := newDownloadEvent().WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrGetPattern(err),
 		}).WithDescription(fmt.Sprintf("Failed to fetch design file for ID: %s.", patternID)).Build()
 		h.persistAndPublish(provider, token, userID, event)
 
-		writeMeshkitError(rw, ErrGetPattern(err), http.StatusNotFound)
+		writeMeshkitError(rw, ErrGetPattern(err), providerStatusOrInternal(err))
 		return
 	}
 	pattern := &models.MesheryPattern{}
 	err = json.Unmarshal(resp, &pattern)
 	if err != nil {
 		obj := "download pattern"
-		h.log.Error(models.ErrUnmarshal(err, obj))
+		if h.log != nil {
+			h.log.Error(models.ErrUnmarshal(err, obj))
+		}
 		event := newDownloadEvent().WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": models.ErrUnmarshal(err, obj),
 		}).WithDescription(fmt.Sprintf("Failed to unmarshal design file for ID: %s.", patternID)).Build()
@@ -887,12 +980,12 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	}
 
 	// publish a download event
-	downloadEvent := events.DesignDownloadEvent(*pattern.ID, pattern.Name, userID, *h.SystemID)
+	downloadEvent := events.DesignDownloadEvent(*pattern.ID, pattern.Name, userID, systemID)
 	h.persistAndPublish(provider, token, userID, downloadEvent)
 
 	err = h.VerifyAndConvertToDesign(r.Context(), pattern, provider)
 	if err != nil {
-		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("The \"%s\" is not in the design format, failed to convert and persist the original source content from \"%s\" to design file format", pattern.Name, pattern.Type.String)).WithMetadata(map[string]interface{}{"error": err}).Build()
+		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(systemID).FromOwner(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("The \"%s\" is not in the design format, failed to convert and persist the original source content from \"%s\" to design file format", pattern.Name, pattern.Type.String)).WithMetadata(map[string]interface{}{"error": err}).Build()
 		h.persistAndPublish(provider, token, userID, event)
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusInternalServerError)
@@ -903,7 +996,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	isOldFormat, err := patternutils.IsDesignInAlpha2Format(pattern.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
-		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("download").WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": pattern.ID}).Build()
+		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(systemID).FromOwner(userID).WithCategory("pattern").WithAction("download").WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": pattern.ID}).Build()
 		h.persistAndPublish(provider, token, userID, event)
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusInternalServerError)
@@ -912,7 +1005,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 	if isOldFormat {
 
-		eventBuilder := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("convert")
+		eventBuilder := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(systemID).FromOwner(userID).WithCategory("pattern").WithAction("convert")
 		_, patternFileStr, err := h.convertV1alpha2ToV1beta3(pattern, eventBuilder)
 		event := eventBuilder.Build()
 		h.persistAndPublish(provider, token, userID, event)
@@ -1264,15 +1357,20 @@ func (h *Handler) CloneMesheryPatternHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	defer func() {
 		_ = r.Body.Close()
 	}()
 
-	patternID := mux.Vars(r)["id"]
-	if patternID == "" {
-		cloneErr := ErrClonePattern(fmt.Errorf("missing design ID"))
-		h.log.Error(cloneErr)
-		writeMeshkitError(rw, cloneErr, http.StatusBadRequest)
+	patternID, ok := h.requirePathUUID(rw, r, "id")
+	if !ok {
 		return
 	}
 
@@ -1404,8 +1502,10 @@ func (h *Handler) CloneMesheryPatternHandler(
 
 	resp, err := provider.CloneMesheryPattern(r, patternID, parsedBody)
 	if err != nil {
-		h.log.Error(ErrClonePattern(err))
-		writeMeshkitError(rw, ErrClonePattern(err), http.StatusInternalServerError)
+		if h.log != nil {
+			h.log.Error(ErrClonePattern(err))
+		}
+		writeMeshkitError(rw, ErrClonePattern(err), providerStatusOrInternal(err))
 		return
 	}
 
@@ -1422,14 +1522,30 @@ func (h *Handler) PublishCatalogPatternHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	defer func() {
 		_ = r.Body.Close()
 	}()
 
 	userID := user.ID
+	systemID := uuid.Nil
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
 	eventBuilder := events.NewEvent().
 		FromOwner(userID).
-		FromSystem(*h.SystemID).
+		FromSystem(systemID).
 		WithCategory("pattern").
 		WithAction("publish").
 		ActedUpon(userID)
@@ -1499,14 +1615,30 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	defer func() {
 		_ = r.Body.Close()
 	}()
 
 	userID := user.ID
+	systemID := uuid.Nil
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
 	eventBuilder := events.NewEvent().
 		FromOwner(userID).
-		FromSystem(*h.SystemID).
+		FromSystem(systemID).
 		WithCategory("pattern").
 		WithAction("unpublish_request").
 		ActedUpon(userID)
@@ -1575,6 +1707,14 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(models.ErrDataRead(err, "Request Body"))
@@ -1608,10 +1748,29 @@ func (h *Handler) GetMesheryPatternHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	patternID := mux.Vars(r)["id"]
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
+	patternID, ok := h.requirePathUUID(rw, r, "id")
+	if !ok {
+		return
+	}
 	patternUUID := uuid.FromStringOrNil(patternID)
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("view").ActedUpon(patternUUID)
+	systemID := uuid.Nil
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(systemID).WithCategory("pattern").WithAction("view").ActedUpon(patternUUID)
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
@@ -1640,7 +1799,7 @@ func (h *Handler) GetMesheryPatternHandler(
 
 	err = h.VerifyAndConvertToDesign(r.Context(), pattern, provider)
 	if err != nil {
-		event := events.NewEvent().ActedUpon(patternUUID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("The \"%s\" is not in the design format, failed to convert and persist the original source content from \"%s\" to design file format", pattern.Name, pattern.Type.String)).WithMetadata(map[string]interface{}{"error": err}).Build()
+		event := events.NewEvent().ActedUpon(patternUUID).FromSystem(systemID).FromOwner(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("The \"%s\" is not in the design format, failed to convert and persist the original source content from \"%s\" to design file format", pattern.Name, pattern.Type.String)).WithMetadata(map[string]interface{}{"error": err}).Build()
 		h.persistAndPublish(provider, token, userID, event)
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusInternalServerError)
@@ -1650,7 +1809,7 @@ func (h *Handler) GetMesheryPatternHandler(
 	isOldFormat, err := patternutils.IsDesignInAlpha2Format(pattern.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
-		event := events.NewEvent().ActedUpon(patternUUID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("view").WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": pattern.ID}).Build()
+		event := events.NewEvent().ActedUpon(patternUUID).FromSystem(systemID).FromOwner(userID).WithCategory("pattern").WithAction("view").WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": pattern.ID}).Build()
 		h.persistAndPublish(provider, token, userID, event)
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusInternalServerError)
@@ -1658,7 +1817,7 @@ func (h *Handler) GetMesheryPatternHandler(
 	}
 
 	if isOldFormat {
-		eventBuilder := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("convert")
+		eventBuilder := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(systemID).FromOwner(userID).WithCategory("pattern").WithAction("convert")
 		_, patternFileStr, err := h.convertV1alpha2ToV1beta3(pattern, eventBuilder)
 		event := eventBuilder.Build()
 		h.persistAndPublish(provider, token, userID, event)
@@ -1790,11 +1949,27 @@ func (h *Handler) handlePatternUpdate(
 	user *models.User,
 	provider models.Provider,
 ) {
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	defer func() {
 		_ = r.Body.Close()
 	}()
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("update").FromOwner(userID)
+	systemID := uuid.Nil
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(systemID).WithCategory("pattern").WithAction("update").FromOwner(userID)
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
@@ -1941,22 +2116,45 @@ func (h *Handler) GetMesheryPatternSourceHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider,
 ) {
-	designID := mux.Vars(r)["id"]
-	token, ok := r.Context().Value(models.TokenCtxKey).(string)
-	if !ok {
-		tokenErr := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
-		h.log.Error(tokenErr)
-		writeMeshkitError(rw, tokenErr, http.StatusInternalServerError)
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
 		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
+	designID, ok := h.requirePathUUID(rw, r, "id")
+	if !ok {
+		return
+	}
+
+	token, _ := r.Context().Value(models.TokenCtxKey).(string)
+	if token == "" {
+		var err error
+		token, err = provider.GetProviderToken(r)
+		if err != nil {
+			if h.log != nil {
+				h.log.Error(ErrRetrieveUserToken(err))
+			}
+			writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	resp, err := provider.GetDesignSourceContent(token, designID)
 	if err != nil {
-		h.log.Error(ErrGetPattern(err))
-		writeMeshkitError(rw, ErrGetPattern(err), http.StatusNotFound)
+		if h.log != nil {
+			h.log.Error(ErrGetPattern(err))
+		}
+		writeMeshkitError(rw, ErrGetPattern(err), providerStatusOrInternal(err))
 		return
 	}
 
@@ -1964,7 +2162,7 @@ func (h *Handler) GetMesheryPatternSourceHandler(
 	sourcetype := mux.Vars(r)["sourcetype"]
 
 	switch models.DesignType(sourcetype) {
-	case models.HelmChart:
+	case models.HelmChart, "helmchart", "helm-chart":
 		mimeType = "application/x-tar"
 	default: // docker-compose, k8smanifest
 		mimeType = "application/x-yaml"
@@ -1977,7 +2175,9 @@ func (h *Handler) GetMesheryPatternSourceHandler(
 		// Headers were committed above (Content-Type: application/x-tar or
 		// application/x-yaml), so a fresh JSON error response cannot be
 		// sent. Log only.
-		h.log.Error(ErrApplicationSourceContent(err, "download"))
+		if h.log != nil {
+			h.log.Error(ErrApplicationSourceContent(err, "download"))
+		}
 	}
 }
 

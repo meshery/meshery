@@ -89,7 +89,7 @@ The contract exists to convert that class of failure into a compile error or a f
 ## Where the contract lives
 
 The contract is declared **once**, in the `mesheryExtensionContract` module of
-[`@sistent/sistent`](https://github.com/meshery/sistent). Read that module for the
+[`@sistent/sistent`](https://github.com/layer5io/sistent). Read that module for the
 authoritative definitions. The exports Meshery UI consumes:
 
 | Export | Kind | Purpose |
@@ -270,6 +270,12 @@ Never infer navigability from the validator's state. It was once derived from th
 validator's `returnAddress`, which names who receives validation *replies*, not who handles
 *taps*, and which `ValidateDesign` clears with its own mount-time validation request. Every
 error in Kanvas Designer silently stopped linking for eight months.
+
+`designValidationMachine` handles `TAP_ON_ERROR` at its root, so it re-emits a tap in every
+state. Keep it there. The errors stay on screen while the machine resolves component
+definitions for the next request, which happens when `ValidateDesign` mounts and every time
+Kanvas re-validates a component after a configuration change. A tap handled only in `idle`
+was silently dropped for that whole fetch.
 
 ### How the extension consumes it
 

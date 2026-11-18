@@ -21,6 +21,7 @@ import {
   usePrometheusMetricMetadataQuery,
 } from '@/rtk-query/telemetryPrometheus';
 import TimeSeriesChart from '../common/TimeSeriesChart';
+import TelemetryError from '../common/TelemetryError';
 import { parsePromMatrix } from '../common/time';
 import type { ChartSeries, TimeWindow } from '../common/types';
 import { PANEL_TYPES, type MetricMetadata, type MetricPanel } from './types';
@@ -77,7 +78,11 @@ const MetricExplorer: React.FC<MetricExplorerProps> = ({ connectionID, timeWindo
     return () => clearTimeout(id);
   }, [search]);
 
-  const { data: metricsData, isFetching: metricsLoading } = useListPrometheusMetricsQuery(
+  const {
+    data: metricsData,
+    isFetching: metricsLoading,
+    error: metricsError,
+  } = useListPrometheusMetricsQuery(
     { connectionID, search: debounced, limit: 50 },
     { skip: !connectionID },
   );
@@ -113,7 +118,7 @@ const MetricExplorer: React.FC<MetricExplorerProps> = ({ connectionID, timeWindo
       }).unwrap();
       setPreview(parsePromMatrix(resp));
     } catch {
-      setPreview([]);
+      setPreview(null);
     }
   };
 
@@ -140,7 +145,15 @@ const MetricExplorer: React.FC<MetricExplorerProps> = ({ connectionID, timeWindo
         fullWidth
       />
       <MetricList>
-        {metricsLoading ? (
+        {metricsError ? (
+          <Box sx={{ p: 2 }}>
+            <TelemetryError
+              error={metricsError}
+              fallback="Could not load metrics"
+              variant="caption"
+            />
+          </Box>
+        ) : metricsLoading ? (
           <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
             <CircularProgress size={18} />
           </Box>
@@ -199,9 +212,7 @@ const MetricExplorer: React.FC<MetricExplorerProps> = ({ connectionID, timeWindo
           {previewLoading ? 'Previewing…' : 'Preview'}
         </Button>
         {previewError && (
-          <Typography variant="caption" color="error">
-            {(previewError as any)?.data?.error || 'Query failed'}
-          </Typography>
+          <TelemetryError error={previewError} fallback="Query failed" variant="caption" />
         )}
       </Box>
       {preview !== null && (

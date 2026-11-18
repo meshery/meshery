@@ -47,6 +47,8 @@ Saved panels can be **edited** (title, type, unit) or **deleted** at any time. T
 - The shared **time range** picker and **refresh** controls apply to the whole grid.
 - A failing panel shows its error inline without affecting the others.
 
+Each response from Prometheus is limited to 16 MiB. Larger responses return an explicit error instead of partial JSON. If a query exceeds this limit, shorten the time range or use more selective label matchers to return fewer series.
+
 ## Related
 
 - [Grafana Dashboards]({{< ref "guides/telemetry/grafana-dashboards.md" >}}) - for browsing and rendering existing Grafana dashboards.

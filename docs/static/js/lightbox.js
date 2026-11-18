@@ -1,4 +1,4 @@
-(function initLightbox() {
+function initLightbox() {
     if (document.getElementById("lightbox")) {
         return;
     }
@@ -88,7 +88,9 @@
             closeLightbox();
         }
     });
-})();
+}
+
+initLightbox();
 
 if (window.addEventListener) {
     window.addEventListener("popstate", function() {

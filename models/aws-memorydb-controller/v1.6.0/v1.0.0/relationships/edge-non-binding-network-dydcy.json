@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "ecs-controller",
+              "name": "aws-ecs-controller",
               "registrant": {
                 "kind": "artifacthub"
               },
@@ -60,7 +60,7 @@
               "model": {
                 "version": ""
               },
-              "name": "memorydb-controller",
+              "name": "aws-memorydb-controller",
               "registrant": {
                 "kind": "artifacthub"
               },
