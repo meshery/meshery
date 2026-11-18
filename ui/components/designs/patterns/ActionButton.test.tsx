@@ -159,7 +159,7 @@ describe('ActionButton', () => {
     expect(screen.getByRole('button', { name: 'Disabled' })).toBeDisabled();
   });
 
-  it('forwards permissionKey and permissionAction to both the primary Action button and the dropdown toggle', () => {
+  it('forwards permissionKey and permissionAction to the primary Action button while keeping dropdown toggle ungated', () => {
     const keyObj = { id: 'test_key', function: 'read' };
     render(<ActionButton options={[]} permissionKey={keyObj} permissionAction="hide" />);
 
@@ -168,7 +168,7 @@ describe('ActionButton', () => {
     expect(mainBtn).toHaveAttribute('data-permission-action', 'hide');
 
     const toggleBtn = screen.getByTestId('action-btn-toggle');
-    expect(toggleBtn).toHaveAttribute('data-permission-key', JSON.stringify(keyObj));
-    expect(toggleBtn).toHaveAttribute('data-permission-action', 'hide');
+    expect(toggleBtn).not.toHaveAttribute('data-permission-key');
+    expect(toggleBtn).not.toHaveAttribute('data-permission-action');
   });
 });

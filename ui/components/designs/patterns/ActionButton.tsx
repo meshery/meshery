@@ -100,8 +100,6 @@ export default function ActionButton({
             onClick={handleArrowClick}
             variant="outlined"
             data-testid="action-btn-toggle"
-            permissionKey={permissionKey}
-            permissionAction={permissionAction}
           >
             <ArrowDropDownIcon sx={{ fontSize: '20px' }} />
           </Button>
