@@ -1463,6 +1463,7 @@ Bookinfo The sample BookInfo …
 - [ErrRequestBodyCode-1023](/reference/error-codes/component-meshery-server/errrequestbodycode-1023/index.md)
 - [ErrRequestMeshsyncStoreCode-1294](/reference/error-codes/component-meshery-server/errrequestmeshsyncstorecode-1294/index.md)
 - [ErrRequestResponseCode-1114](/reference/error-codes/client-mesheryctl/errrequestresponsecode-1114/index.md)
+- [ErrRequestTooLargeCode-1494](/reference/error-codes/component-meshery-server/errrequesttoolargecode-1494/index.md)
 - [ErrResetInProgressCode-1481](/reference/error-codes/component-meshery-server/errresetinprogresscode-1481/index.md)
 - [ErrResetMeshconfigCode-1063](/reference/error-codes/client-mesheryctl/errresetmeshconfigcode-1063/index.md)
 - [ErrResolverControlPlaneSubscriptionCode-1189](/reference/error-codes/component-meshery-server/errresolvercontrolplanesubscriptioncode-1189/index.md)

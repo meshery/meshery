@@ -937,6 +937,7 @@ Section pages:
 - [ErrRequestBodyCode-1023](/reference/error-codes/component-meshery-server/errrequestbodycode-1023/)
 - [ErrRequestMeshsyncStoreCode-1294](/reference/error-codes/component-meshery-server/errrequestmeshsyncstorecode-1294/)
 - [ErrRequestResponseCode-1114](/reference/error-codes/client-mesheryctl/errrequestresponsecode-1114/)
+- [ErrRequestTooLargeCode-1494](/reference/error-codes/component-meshery-server/errrequesttoolargecode-1494/)
 - [ErrResetInProgressCode-1481](/reference/error-codes/component-meshery-server/errresetinprogresscode-1481/)
 - [ErrResetMeshconfigCode-1063](/reference/error-codes/client-mesheryctl/errresetmeshconfigcode-1063/)
 - [ErrResolverControlPlaneSubscriptionCode-1189](/reference/error-codes/component-meshery-server/errresolvercontrolplanesubscriptioncode-1189/)
