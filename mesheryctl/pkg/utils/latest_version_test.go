@@ -18,12 +18,19 @@ import (
 	"bytes"
 	"io"
 	"net/http"
+	"strings"
 	"testing"
 )
 
 type versionTrackingBody struct {
 	io.ReadCloser
-	closed bool
+	readCalls int
+	closed    bool
+}
+
+func (b *versionTrackingBody) Read(p []byte) (n int, err error) {
+	b.readCalls++
+	return b.ReadCloser.Read(p)
 }
 
 func (b *versionTrackingBody) Close() error {
@@ -67,12 +74,15 @@ func TestGetLatestVersionForMesheryctl(t *testing.T) {
 		if version != "v0.7.20" {
 			t.Fatalf("expected version 'v0.7.20', got: %q", version)
 		}
+		if body.readCalls == 0 {
+			t.Fatal("expected response body to be read on success, but it was not")
+		}
 		if !body.closed {
 			t.Fatal("expected response body to be closed on success, but it was not")
 		}
 	})
 
-	t.Run("returns error on non-200 status code and closes response body", func(t *testing.T) {
+	t.Run("returns error on non-200 status code and closes response body without reading", func(t *testing.T) {
 		body := &versionTrackingBody{
 			ReadCloser: io.NopCloser(bytes.NewBufferString("<html>502 Bad Gateway</html>")),
 		}
@@ -90,6 +100,12 @@ func TestGetLatestVersionForMesheryctl(t *testing.T) {
 		version, err := GetLatestVersionForMesheryctl()
 		if err == nil {
 			t.Fatalf("expected error for 502 status, got version: %q", version)
+		}
+		if !strings.Contains(err.Error(), "502") || !strings.Contains(err.Error(), "docs.meshery.io") {
+			t.Fatalf("expected error identifying docs.meshery.io and 502, got: %v", err)
+		}
+		if body.readCalls != 0 {
+			t.Fatalf("expected 0 reads on 502 status code, got %d reads", body.readCalls)
 		}
 		if !body.closed {
 			t.Fatal("expected response body to be closed on non-200 status, but it was not")

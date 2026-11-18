@@ -1628,6 +1628,25 @@ func TestDeleteConfiguration(t *testing.T) {
 		assertBodyClosed(t, transport, "expected response body to be closed on successful delete, but it was not")
 	})
 
+	t.Run("returns ErrResponseStatus on 204 NoContent status and closes response body", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusNoContent)
+		}))
+		defer server.Close()
+		setupAuthenticatedContext(t, server.URL)
+		transport := installTrackingTransport(t)
+
+		err := DeleteConfiguration(server.URL, "no-content-id", "filter")
+		if err == nil {
+			t.Fatal("expected error on 204 response, got nil")
+		}
+		expectedErr := ErrResponseStatus(http.StatusNoContent)
+		if err.Error() != expectedErr.Error() {
+			t.Fatalf("expected error %q, got: %q", expectedErr.Error(), err.Error())
+		}
+		assertBodyClosed(t, transport, "expected response body to be closed on 204 response, but it was not")
+	})
+
 	t.Run("returns error on non-200 status code and closes response body", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusForbidden)
