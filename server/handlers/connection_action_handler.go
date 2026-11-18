@@ -298,7 +298,7 @@ func (h *Handler) flushMeshsyncAction(
 			}
 			return nil
 		}
-		operationFlushErr, operationResyncErr := mhelpers.FlushAndResyncResources(req.Context(), machine, flushCallback)
+		operationFlushErr, operationResyncErr := mhelpers.FlushAndResyncResources(req.Context(), machine, machineCtx, flushCallback)
 		resyncErr = operationResyncErr
 		return operationFlushErr
 	})
