@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -443,5 +444,160 @@ func TestDeleteUserCredential_PropagatesAuthenticatedUser(t *testing.T) {
 	}
 	if receivedUser.ID != authUser.ID {
 		t.Fatalf("received user ID %v, want %v", receivedUser.ID, authUser.ID)
+	}
+}
+
+func TestSaveUserCredential_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := newCredentialSpyProvider()
+
+	req := httptest.NewRequest(http.MethodPost, "/api/integrations/credentials", bytes.NewBufferString(`{}`))
+	rec := httptest.NewRecorder()
+
+	h.SaveUserCredential(rec, req, nil, nil, p)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for nil user, got %d", rec.Code)
+	}
+	var body map[string]string
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("unmarshaling error response: %v", err)
+	}
+	if body["error"] != "user unauthorized" {
+		t.Fatalf("expected 'user unauthorized', got %q", body["error"])
+	}
+}
+
+func TestSaveUserCredential_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/integrations/credentials", bytes.NewBufferString(`{}`))
+	rec := httptest.NewRecorder()
+
+	h.SaveUserCredential(rec, req, nil, authUser, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestGetUserCredentials_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := newCredentialSpyProvider()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetUserCredentials(rec, req, nil, nil, p)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for nil user, got %d", rec.Code)
+	}
+	var body map[string]string
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("unmarshaling error response: %v", err)
+	}
+	if body["error"] != "user unauthorized" {
+		t.Fatalf("expected 'user unauthorized', got %q", body["error"])
+	}
+}
+
+func TestGetUserCredentials_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetUserCredentials(rec, req, nil, authUser, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestUpdateUserCredential_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := newCredentialSpyProvider()
+
+	req := httptest.NewRequest(http.MethodPut, "/api/integrations/credentials", bytes.NewBufferString(`{}`))
+	rec := httptest.NewRecorder()
+
+	h.UpdateUserCredential(rec, req, nil, nil, p)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for nil user, got %d", rec.Code)
+	}
+	var body map[string]string
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("unmarshaling error response: %v", err)
+	}
+	if body["error"] != "user unauthorized" {
+		t.Fatalf("expected 'user unauthorized', got %q", body["error"])
+	}
+}
+
+func TestUpdateUserCredential_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	req := httptest.NewRequest(http.MethodPut, "/api/integrations/credentials", bytes.NewBufferString(`{}`))
+	rec := httptest.NewRecorder()
+
+	h.UpdateUserCredential(rec, req, nil, authUser, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestGetUserCredentialByID_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	id := uuid.Must(uuid.NewV4())
+
+	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials/"+id.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"credentialID": id.String()})
+	rec := httptest.NewRecorder()
+
+	h.GetUserCredentialByID(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestDeleteUserCredential_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	id := uuid.Must(uuid.NewV4())
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/integrations/credentials?credentialId="+id.String(), nil)
+	rec := httptest.NewRecorder()
+
+	h.DeleteUserCredential(rec, req, nil, authUser, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
 	}
 }

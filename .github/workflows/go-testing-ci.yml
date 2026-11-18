@@ -89,13 +89,24 @@ jobs:
         with:
           node-version: 22
       - name: Run coverage
-        run: go test -json --short ./server/... -race -coverprofile=server-coverage.txt -covermode=atomic > server-test-output.json
+        run: |
+          go test -json --short ./server/... -race -coverprofile=server-coverage.txt -covermode=atomic | tee server-test-output.json
+          exit "${PIPESTATUS[0]}"
       - name: Convert Go test results to Allure
         if: ${{ !cancelled() }}
         run: |
           ALLURE_OUTPUT_PATH=server-allure-results \
           ALLURE_LABELS="type=unit,env=ci" \
           node server/gotest-to-allure.js server-test-output.json
+      - name: Upload server test output
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: server-test-output
+          path: |
+            server-test-output.json
+            server-coverage.txt
+          retention-days: 7
 
       - name: Checkout QA
         uses: actions/checkout@v6

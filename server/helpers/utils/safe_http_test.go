@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -46,6 +47,14 @@ func TestIsRestrictedIP(t *testing.T) {
 		{"CGNAT 100.64.0.1", "100.64.0.1", true},
 		{"CGNAT 100.127.255.254", "100.127.255.254", true},
 		{"Benchmarking 198.18.0.1", "198.18.0.1", true},
+		{"IETF protocol assignments 192.0.0.1", "192.0.0.1", true},
+		{"TEST-NET-1 documentation 192.0.2.1", "192.0.2.1", true},
+		{"TEST-NET-2 documentation 198.51.100.1", "198.51.100.1", true},
+		{"TEST-NET-3 documentation 203.0.113.1", "203.0.113.1", true},
+		{"Reserved IPv4 240.0.0.1", "240.0.0.1", true},
+		{"IPv6 documentation 2001:db8::1", "2001:db8::1", true},
+		{"IPv6 benchmarking 2001:2::1", "2001:2::1", true},
+		{"Deprecated IPv6 site-local fec0::1", "fec0::1", true},
 
 		// Multicast
 		{"IPv4 Multicast 224.0.0.1", "224.0.0.1", true},
@@ -132,11 +141,18 @@ func TestValidateSafeURL(t *testing.T) {
 		// Restricted IP Literals
 		{"Loopback IPv4 literal", "http://127.0.0.1:9081/api", true},
 		{"Loopback IPv6 literal", "http://[::1]:9081/api", true},
+		{"Scoped IPv6 link-local literal", "http://[fe80::1%25eth0]/api", true},
 		{"AWS/GCP IMDS IP literal", "http://169.254.169.254/latest/meta-data/", true},
 		{"IPv4-mapped IPv6 IMDS", "http://[::ffff:169.254.169.254]/latest/meta-data/", true},
 		{"Private class A literal", "http://10.0.0.1/design.yaml", true},
 		{"Private class B literal", "http://172.16.0.1/design.yaml", true},
 		{"Private class C literal", "http://192.168.1.1/design.yaml", true},
+		{"TEST-NET literal", "http://192.0.2.1/design.yaml", true},
+		{"Reserved IPv4 literal", "http://240.0.0.1/design.yaml", true},
+		{"IPv6 documentation literal", "http://[2001:db8::1]/design.yaml", true},
+		{"IPv6 benchmarking literal", "http://[2001:2::1]/design.yaml", true},
+		{"Deprecated IPv6 site-local literal", "http://[fec0::1]/design.yaml", true},
+		{"Scoped IPv6 loopback with multiple percent escapes", "http://[::1%25eth0%25x]/api", true},
 	}
 
 	for _, tt := range tests {
@@ -205,6 +221,38 @@ func TestSafeHTTPClient_BlocksRedirectToRestrictedTarget(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "redirect blocked") && !strings.Contains(err.Error(), "restricted") {
 		t.Errorf("expected redirect blocking error, got: %v", err)
+	}
+}
+
+func TestSafeCheckRedirectBlocksRestrictedIPv6Target(t *testing.T) {
+	from, err := http.NewRequest(http.MethodGet, "https://example.com/start", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, target := range []string{"http://[2001:2::1]/", "http://[fec0::1]/"} {
+		to, err := http.NewRequest(http.MethodGet, target, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := SafeCheckRedirect(to, []*http.Request{from}); err == nil {
+			t.Errorf("expected redirect to restricted IPv6 address %s to be blocked", target)
+		}
+	}
+}
+
+type fixedIPResolver struct {
+	ips []net.IP
+}
+
+func (r fixedIPResolver) LookupIP(context.Context, string, string) ([]net.IP, error) {
+	return r.ips, nil
+}
+
+func TestSafeDialContextBlocksResolvedSiteLocalAddress(t *testing.T) {
+	dial := safeDialContext(time.Second, false, fixedIPResolver{ips: []net.IP{net.ParseIP("fec0::1")}})
+	_, err := dial(context.Background(), "tcp", "internal.example:80")
+	if err == nil || !strings.Contains(err.Error(), "connection to restricted IP") {
+		t.Fatalf("expected a resolved site-local address to be rejected, got %v", err)
 	}
 }
 

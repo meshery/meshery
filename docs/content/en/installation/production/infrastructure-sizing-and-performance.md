@@ -152,7 +152,7 @@ data and events between each cluster and the Server. Production guidance:
 
 ## Known performance bounds and caveats
 
-- **The database is a single-writer SQLite/Bitcask cache.** It is excellent for
+- **The database is a single-writer SQLite cache.** It is excellent for
   a cached working set but is not a horizontally shared, multi-writer datastore.
   This shapes how far a single Server instance scales and how replicas behave
   (see [HA & Resiliency]({{< ref "installation/production/high-availability-and-resiliency.md" >}})).

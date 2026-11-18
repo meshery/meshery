@@ -138,19 +138,23 @@ func TestLoadTestHandlerInvalidURL(t *testing.T) {
 func TestLoadTestUsingSMPHandlerInvalidURL(t *testing.T) {
 	testCases := []struct {
 		name string
-		url  string
+		urls []string
 	}{
 		{
 			name: "Schemeless URL",
-			url:  "example.com",
+			urls: []string{"example.com"},
 		},
 		{
 			name: "Host and port without scheme",
-			url:  "example.com:8080",
+			urls: []string{"example.com:8080"},
 		},
 		{
 			name: "Malformed URL with parse error",
-			url:  "http://[::1]:namedport",
+			urls: []string{"http://[::1]:namedport"},
+		},
+		{
+			name: "Invalid URL after a valid endpoint",
+			urls: []string{"https://meshery.io", "/relative/endpoint"},
 		},
 	}
 
@@ -166,7 +170,7 @@ func TestLoadTestUsingSMPHandlerInvalidURL(t *testing.T) {
 					"duration": "1s",
 					"clients": []map[string]interface{}{
 						{
-							"endpointUrls": []string{tc.url},
+							"endpointUrls": tc.urls,
 						},
 					},
 				},
@@ -199,6 +203,77 @@ func TestLoadTestUsingSMPHandlerInvalidURL(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestBuildLoadTestTargetsIncludesEveryClientAndEndpoint(t *testing.T) {
+	var perfTest models.PerformanceTestConfigFile
+	err := json.Unmarshal([]byte(`{
+		"test": {
+			"name": "multi-client",
+			"duration": "1s",
+			"clients": [
+				{"connections": 3, "rps": 7, "endpointUrls": ["https://one.example", "https://two.example"]},
+				{"connections": 5, "rps": 11, "endpointUrls": ["https://three.example"]}
+			]
+		}
+	}`), &perfTest)
+	require.NoError(t, err)
+
+	targets, err := buildLoadTestTargets(&perfTest, &models.LoadTestOptions{
+		Duration:      time.Second,
+		LoadGenerator: models.FortioLG,
+	})
+	require.NoError(t, err)
+	require.Len(t, targets, 3)
+
+	assert.Equal(t, 0, targets[0].clientIndex)
+	assert.Equal(t, "https://one.example", targets[0].options.URL)
+	assert.Equal(t, 3, targets[0].options.HTTPNumThreads)
+	assert.Equal(t, float64(7), targets[0].options.HTTPQPS)
+	assert.Equal(t, 0, targets[1].clientIndex)
+	assert.Equal(t, "https://two.example", targets[1].options.URL)
+	assert.Equal(t, 1, targets[2].clientIndex)
+	assert.Equal(t, "https://three.example", targets[2].options.URL)
+	assert.Equal(t, 5, targets[2].options.HTTPNumThreads)
+	assert.Equal(t, float64(11), targets[2].options.HTTPQPS)
+}
+
+func TestBuildLoadTestTargetsRejectsInvalidEndpointFromLaterClient(t *testing.T) {
+	var perfTest models.PerformanceTestConfigFile
+	err := json.Unmarshal([]byte(`{
+		"test": {
+			"name": "multi-client",
+			"clients": [
+				{"endpointUrls": ["https://one.example"]},
+				{"endpointUrls": ["/invalid"]}
+			]
+		}
+	}`), &perfTest)
+	require.NoError(t, err)
+
+	_, err = buildLoadTestTargets(&perfTest, &models.LoadTestOptions{})
+	require.Error(t, err)
+	invalidURL, ok := err.(invalidLoadTestEndpointError)
+	require.True(t, ok)
+	assert.Equal(t, "/invalid", invalidURL.endpoint)
+}
+
+func TestBuildLoadTestTargetsRejectsClientWithoutEndpoints(t *testing.T) {
+	var perfTest models.PerformanceTestConfigFile
+	err := json.Unmarshal([]byte(`{
+		"test": {
+			"name": "multi-client",
+			"clients": [
+				{"endpointUrls": ["https://one.example"]},
+				{"connections": 2}
+			]
+		}
+	}`), &perfTest)
+	require.NoError(t, err)
+
+	_, err = buildLoadTestTargets(&perfTest, &models.LoadTestOptions{})
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "client 2")
 }
 
 // mockLoadTestProvider provides configurable performance profile responses for unit tests.

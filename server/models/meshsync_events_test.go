@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 	"testing"
+	"testing/synctest"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -70,6 +71,15 @@ func (b *testMeshsyncBroker) subscribed(subject string) bool {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	return b.subjects[subject] > 0
+}
+
+// subscriptionCount reports how many active subscriptions subject has. With a
+// real connection each one delivers every message once, so more than one per
+// subject means duplicate deliveries.
+func (b *testMeshsyncBroker) subscriptionCount(subject string) int {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return b.subjects[subject]
 }
 
 func (b *testMeshsyncBroker) Info() string {
@@ -365,12 +375,7 @@ func TestMeshsyncDataHandlerPauseAndResumeSubscriptions(t *testing.T) {
 	unsubscribedBoth := func() bool {
 		return !broker.subscribed(meshsyncEventsSubject) && !broker.subscribed(MeshsyncStoreUpdatesSubject)
 	}
-	// The events listener subscribes from its own goroutine, so Run may
-	// return before it has.
-	deadline := time.Now().Add(2 * time.Second)
-	for !subscribedBoth() && time.Now().Before(deadline) {
-		time.Sleep(time.Millisecond)
-	}
+	// Run returns only after both listeners have subscribed.
 	if !subscribedBoth() {
 		t.Fatal("handler did not subscribe to both MeshSync subjects")
 	}
@@ -409,6 +414,133 @@ func TestMeshsyncDataHandlerPauseAndResumeSubscriptions(t *testing.T) {
 	}
 }
 
+// lateEventsBroker holds the MeshSync events subscription until release is
+// closed, like a listener goroutine that is scheduled late.
+type lateEventsBroker struct {
+	testMeshsyncBroker
+	release chan struct{}
+}
+
+func (b *lateEventsBroker) SubscribeWithChannel(subject, queue string, subscription chan *meshkitBroker.Message) error {
+	if subject == meshsyncEventsSubject {
+		<-b.release
+	}
+	return b.testMeshsyncBroker.SubscribeWithChannel(subject, queue, subscription)
+}
+
+// TestMeshsyncDataHandlerRunWaitsForTheEventsSubscription: Run must not return
+// before the events listener has subscribed. The supervisor may pause the
+// handler right after Run returns; an events subscription that lands after
+// that pause leaves the paused handler receiving, and the resume then
+// subscribes the subject a second time, so every event arrives twice.
+func TestMeshsyncDataHandlerRunWaitsForTheEventsSubscription(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		broker := &lateEventsBroker{release: make(chan struct{})}
+		handler := &MeshsyncDataHandler{
+			broker:     broker,
+			log:        &fakeMeshsyncLogger{},
+			stopCh:     make(chan struct{}),
+			stopOnce:   &sync.Once{},
+			listenerWg: &sync.WaitGroup{},
+		}
+		done := make(chan error, 1)
+		go func() { done <- handler.Run() }()
+
+		// Every goroutine is blocked now: Run is either waiting for the
+		// events subscription or has returned without it.
+		synctest.Wait()
+		select {
+		case err := <-done:
+			close(broker.release)
+			handler.Stop()
+			t.Fatalf("Run returned (err: %v) before the MeshSync events subscription was in place", err)
+		default:
+		}
+
+		close(broker.release)
+		if err := <-done; err != nil {
+			t.Fatalf("Run() returned error: %v", err)
+		}
+		if !broker.subscribed(meshsyncEventsSubject) || !broker.subscribed(MeshsyncStoreUpdatesSubject) {
+			t.Fatal("Run returned without both MeshSync subscriptions")
+		}
+
+		handler.PauseSubscriptions()
+		if broker.subscribed(meshsyncEventsSubject) || broker.subscribed(MeshsyncStoreUpdatesSubject) {
+			t.Fatal("a paused handler still has a MeshSync subscription")
+		}
+		handler.ResumeSubscriptions()
+		for _, subject := range []string{meshsyncEventsSubject, MeshsyncStoreUpdatesSubject} {
+			if n := broker.subscriptionCount(subject); n != 1 {
+				t.Fatalf("%d subscriptions on %s after a resume, want 1", n, subject)
+			}
+		}
+		handler.Stop()
+	})
+}
+
+// subscriptionFailureBroker fails the subscription on one subject once, like a
+// transient broker error. It closes attempted when that happens, so a test can
+// act on the handler without racing the listener goroutine.
+type subscriptionFailureBroker struct {
+	testMeshsyncBroker
+	failSubject string
+	attempted   chan struct{}
+	failed      bool
+}
+
+func (b *subscriptionFailureBroker) SubscribeWithChannel(subject, queue string, subscription chan *meshkitBroker.Message) error {
+	if subject == b.failSubject {
+		b.mu.Lock()
+		fail := !b.failed
+		b.failed = true
+		b.mu.Unlock()
+		if fail {
+			close(b.attempted)
+			return fmt.Errorf("nats: connection closed")
+		}
+	}
+	return b.testMeshsyncBroker.SubscribeWithChannel(subject, queue, subscription)
+}
+
+// TestMeshsyncDataHandlerResumeSkipsAFailedSubscription: when a subscription
+// fails, its listener exits, so a resume must not subscribe its channel:
+// nothing reads it, and the broker would block on it once it fills.
+func TestMeshsyncDataHandlerResumeSkipsAFailedSubscription(t *testing.T) {
+	subjects := []string{meshsyncEventsSubject, MeshsyncStoreUpdatesSubject}
+	for _, failSubject := range subjects {
+		t.Run(failSubject, func(t *testing.T) {
+			broker := &subscriptionFailureBroker{failSubject: failSubject, attempted: make(chan struct{})}
+			handler := &MeshsyncDataHandler{
+				broker:     broker,
+				log:        &fakeMeshsyncLogger{},
+				stopCh:     make(chan struct{}),
+				stopOnce:   &sync.Once{},
+				listenerWg: &sync.WaitGroup{},
+			}
+			if err := handler.Run(); err != nil {
+				t.Fatalf("Run() returned error: %v", err)
+			}
+			defer handler.Stop()
+			// Wait for the failed attempt, so the listener is not still starting
+			// when the subscriptions are paused and resumed.
+			<-broker.attempted
+
+			handler.PauseSubscriptions()
+			handler.ResumeSubscriptions()
+			for _, subject := range subjects {
+				want := 1
+				if subject == failSubject {
+					want = 0
+				}
+				if n := broker.subscriptionCount(subject); n != want {
+					t.Fatalf("%d subscriptions on %s after a resume, want %d", n, subject, want)
+				}
+			}
+		})
+	}
+}
+
 type fakeMeshsyncLogger struct {
 	logger.Handler
 	mu     sync.Mutex
@@ -443,10 +575,9 @@ func TestMeshsyncEventErrorWrappedWithMeshKit(t *testing.T) {
 	handler.listenerWg = &sync.WaitGroup{}
 	handler.listenerWg.Add(1)
 
-	go handler.subscribeToMeshsyncEvents()
-
-	// Give the goroutine a moment to subscribe
-	time.Sleep(100 * time.Millisecond)
+	subscribed := make(chan struct{})
+	go handler.subscribeToMeshsyncEvents(subscribed)
+	<-subscribed
 
 	broker.mu.Lock()
 	if len(broker.subscriptions) == 0 {
