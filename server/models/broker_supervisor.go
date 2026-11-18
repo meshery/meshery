@@ -302,7 +302,7 @@ func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now tim
 		stale.Stop()
 		return true
 	}
-	if !connected {
+	if !connected && !replacement.IsConnected() {
 		// The replacement never connected - the broker rejected its token, or
 		// its endpoint never came up. Discard it and keep the old handler and
 		// its supervisor, so the next tick retries the rebuild instead of the
