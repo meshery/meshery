@@ -1,0 +1,20 @@
+version: 0.0.30
+name: mongodb-with-the-mongo-express-admin-ui
+displayName: MongoDB with the Mongo Express admin UI
+createdAt: "2026-10-05T17:25:39Z"
+description: A two-tier setup that runs MongoDB with the Mongo Express web admin UI on Kubernetes. MongoDB is reachable only inside the cluster through a ClusterIP Service, while Mongo Express is exposed through a NodePort Service. Credentials are kept in a Secret and the database address in a ConfigMap, both referenced by the Deployments.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/46a60159-c454-4d97-ac3a-f06c7855bd1b/0.0.30/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "The Secret holds placeholder credentials; replace them before deploying. MongoDB runs as a single replica with no persistent volume, so data is lost when the pod restarts. Intended for learning and demos, not production. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 8c1e158c-2b4d-4bbc-a12c-615b4b7864a3
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

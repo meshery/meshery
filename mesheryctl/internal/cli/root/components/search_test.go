@@ -11,6 +11,9 @@ import (
 )
 
 func TestSearchComponent(t *testing.T) {
+	t.Cleanup(func() {
+		componentSearchFlags = cmdComponentSearchFlags{Page: 1, PageSize: 10}
+	})
 
 	mesheryctlflags.InitValidators(ComponentCmd)
 	// get current directory
@@ -57,6 +60,43 @@ func TestSearchComponent(t *testing.T) {
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "components.search.output.golden",
 			ExpectError:      false,
+		},
+		{
+			Name:             "search registered components with --page 0",
+			Args:             []string{"search", "Test", "--page", "0"},
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '0'")),
+		},
+		{
+			Name:             "search registered components with a negative --page",
+			Args:             []string{"search", "Test", "--page", "-1"},
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '-1'")),
+		},
+		{
+			Name:             "search registered components with --pagesize 0",
+			Args:             []string{"search", "Test", "--pagesize", "0"},
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '0'")),
+		},
+		{
+			Name:             "given invalid pagesize flag when component search then report actual flag name",
+			Args:             []string{"search", "Test", "--pagesize", "-1"},
+			URL:              "",
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '-1'")),
 		},
 	}
 

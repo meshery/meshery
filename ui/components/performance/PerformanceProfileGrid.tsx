@@ -40,6 +40,7 @@ function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal, t
  *  deleteHandler: (id: string) => void,
  *  setProfileForModal: (profile: any) => void,
  *  pages?: number,
+ *  page?: number,
  *  setPage: (page: number) => void
  * }} props props
  */
@@ -49,6 +50,7 @@ function PerformanceProfileGrid({
   deleteHandler,
   setProfileForModal,
   pages = 1,
+  page = 0,
   setPage,
   testHandler,
 }) {
@@ -67,7 +69,11 @@ function PerformanceProfileGrid({
       </Grid2>
       {profiles.length ? (
         <PaginationWrapper>
-          <Pagination count={pages} onChange={(_, page) => setPage(page - 1)} />
+          <Pagination
+            count={pages}
+            page={page + 1}
+            onChange={(_, newPage) => setPage(newPage - 1)}
+          />
         </PaginationWrapper>
       ) : null}
     </>

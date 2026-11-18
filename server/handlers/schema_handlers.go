@@ -11,9 +11,11 @@ import (
 
 func (h *Handler) HandleResourceSchemas(rw http.ResponseWriter, r *http.Request) {
 	rscName := mux.Vars(r)["resourceName"]
+	// Schemas are embedded in meshkit and looked up by a fixed name, so an
+	// error here means the requested resource has no schema.
 	rjsfSchema, uiSchema, err := schemas.ServeJSonFile(rscName)
 	if err != nil {
-		writeMeshkitError(rw, ErrServeSchema(err), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrServeSchema(err), http.StatusNotFound)
 		return
 	}
 
@@ -42,8 +44,9 @@ func (h *Handler) HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	if _, writeErr := rw.Write(mergedJSON); writeErr != nil {
-		writeMeshkitError(rw, ErrWriteResponse(writeErr), http.StatusInternalServerError)
-		return
+	// The status line is already sent once Write is called, so a write
+	// error can only be logged.
+	if _, writeErr := rw.Write(mergedJSON); writeErr != nil && h.log != nil {
+		h.log.Error(ErrWriteResponse(writeErr))
 	}
 }

@@ -32,17 +32,21 @@
         </li>
         {{ end }}
 
-        <a href="https://play.meshery.io">
-          <div class="nav-btn">Playground</div>
-        </a>
+        <li class="nav-item nav-item--btn">
+          <a href="https://play.meshery.io">
+            <div class="nav-btn">Playground</div>
+          </a>
+        </li>
 
         <!-- Version Selector -->
-        <select
-          onchange="window.location=this.value"
-          class="appearance-none flex-1 w-full px-0 py-1 tracking-wide focus:outline-none version-selector"
-          name="versioningSelection"
-          id="versioningSelection"
-        >
+        <li class="nav-item nav-item--select">
+          <select
+            onchange="window.location=this.value"
+            class="appearance-none flex-1 w-full px-0 py-1 tracking-wide focus:outline-none version-selector"
+            name="versioningSelection"
+            id="versioningSelection"
+            aria-label="Select documentation version"
+          >
 
           {{ $current := .RelPermalink }}
           {{ range hugo.Data.versions }}
@@ -64,12 +68,13 @@
             </option>
             {{ end }}
           {{ end }}
-        </select>
+          </select>
+        </li>
       </ul>
     </div>
 
     <div class="icon-container">
-      <button class="nav-toggle-btn nav-toggle-btn--main">
+      <button class="nav-toggle-btn nav-toggle-btn--main" aria-label="Toggle navigation menu">
         <svg
           id="menu-nav-toggle-btn"
           xmlns="http://www.w3.org/2000/svg"
@@ -80,6 +85,8 @@
           stroke-linecap="round"
           stroke-linejoin="round"
           class="feather feather-menu"
+          aria-hidden="true"
+          focusable="false"
         >
           <line x1="3" y1="12" x2="21" y2="12"></line>
           <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -87,13 +94,14 @@
         </svg>
       </button>
 
-      <button class="nav-mode-icon" id="mode-toggle-btn">
+      <button class="nav-mode-icon" id="mode-toggle-btn" aria-label="Toggle theme">
         <img
           class="logo-dark-light"
           style="visibility: hidden;"
           src="{{ "images/nav-icons/mode-toggle-icon-moon.png" | relURL }}"
           data-logo-for-dark="{{ "images/nav-icons/mode-toggle-icon-moon.png" | relURL }}"
           data-logo-for-light="{{ "images/nav-icons/mode-toggle-icon-sun.png" | relURL }}"
+          alt="Color theme toggle"
         />
       </button>
     </div>

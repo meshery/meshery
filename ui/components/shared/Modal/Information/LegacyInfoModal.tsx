@@ -408,7 +408,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
             </Grid>
             <Grid size={{ xs: 8, lg: 'grow' }}>
               <Grid container spacing={2}>
-                <Grid size={6}>
+                <Grid size={{ xs: 12, sm: 6 }} sx={{ minWidth: 0 }}>
                   <Typography gutterBottom variant="subtitle1">
                     <CustomTooltip
                       title={
@@ -427,13 +427,17 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                   </Typography>
                 </Grid>
                 <Grid
-                  size={6}
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
+                  size={{ xs: 12, sm: 6 }}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: { xs: 'flex-start', sm: 'flex-end' },
+                  }}
                 >
                   <Typography
                     gutterBottom
                     variant="subtitle1"
-                    style={{ display: 'flex', marginRight: '2rem' }}
+                    sx={{ display: 'flex', marginRight: { xs: 0, sm: '2rem' } }}
                   >
                     <VisibilityChipMenu
                       value={visibility}
@@ -546,15 +550,21 @@ const OwnerChip = ({ userProfile, hasCloudProfile = true }) => {
   const avatar = <Avatar src={userProfile.avatarUrl} />;
 
   return (
-    <Box style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+    <Box sx={{ display: 'flex', gap: 1.25, alignItems: 'center', minWidth: 0 }}>
       {hasCloudProfile ? (
-        <Link href={`${MESHERY_CLOUD_PROD}/user/${userProfile.id}`} rel="noopener noreferrer">
+        <Link
+          href={`${MESHERY_CLOUD_PROD}/user/${userProfile.id}`}
+          rel="noopener noreferrer"
+          sx={{ flexShrink: 0 }}
+        >
           {avatar}
         </Link>
       ) : (
         avatar
       )}
-      <Typography>{`${userProfile.firstName || ''} ${userProfile.lastName || ''}`}</Typography>
+      <Typography noWrap sx={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        {`${userProfile.firstName || ''} ${userProfile.lastName || ''}`}
+      </Typography>
     </Box>
   );
 };

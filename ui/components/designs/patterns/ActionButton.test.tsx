@@ -17,7 +17,7 @@ vi.mock('@sistent/sistent', () => ({
       {children}
     </button>
   ),
-  ButtonGroup: ({ children }: any) => <div>{children}</div>,
+  ButtonGroup: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
   ClickAwayListener: ({ children, onClickAway }: any) => (
     <div>
       {children}
@@ -170,5 +170,28 @@ describe('ActionButton', () => {
     const toggleBtn = screen.getByTestId('action-btn-toggle');
     expect(toggleBtn).not.toHaveAttribute('data-permission-key');
     expect(toggleBtn).not.toHaveAttribute('data-permission-action');
+  });
+
+  it('forwards data-testid to the button group and uses option data-testid when provided', () => {
+    render(
+      <ActionButton
+        data-testid="pattern-btn-action-dropdown"
+        defaultActionClick={vi.fn()}
+        options={[
+          {
+            label: 'Delete',
+            icon: <svg />,
+            onClick: vi.fn(),
+            'data-testid': 'pattern-btn-action-delete',
+          },
+          { label: 'Edit', icon: <svg />, onClick: vi.fn() },
+        ]}
+      />,
+    );
+
+    expect(screen.getByTestId('pattern-btn-action-dropdown')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('action-btn-toggle'));
+    expect(screen.getByTestId('pattern-btn-action-delete')).toBeInTheDocument();
+    expect(screen.getByTestId('action-btn-option-Edit')).toBeInTheDocument();
   });
 });

@@ -12,17 +12,27 @@ import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
 import { Box, InfoOutlinedIcon, Typography, useHasPermission, useTheme } from '@sistent/sistent';
 
+/**
+ * Displays aggregate connection counts by status.
+ * Skips the connections query unless `Keys.WorkspaceManagementViewConnections` is granted.
+ */
 export default function ConnectionStatsChart() {
-  const { data: connectionsData } = useGetConnectionsQuery({
-    page: 0,
-    pagesize: 'all',
-  });
+  const canViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
+  const { data: connectionsData } = useGetConnectionsQuery(
+    {
+      page: 0,
+      pagesize: 'all',
+    },
+    {
+      skip: !canViewConnections,
+    },
+  );
   const router = useRouter();
   const theme = useTheme();
 
   // Compute status counts from connections data
   const chartData = useMemo(() => {
-    if (!connectionsData?.connections) return [];
+    if (!canViewConnections || !connectionsData?.connections) return [];
     const statusCounts: Record<string, number> = {};
     connectionsData.connections.forEach((conn: { status?: string }) => {
       const status = conn.status || 'unknown';
@@ -31,7 +41,7 @@ export default function ConnectionStatsChart() {
     return Object.entries(statusCounts)
       .filter(([status]) => isValidColumnName(status))
       .map(([status, count]) => [status, count]);
-  }, [connectionsData]);
+  }, [canViewConnections, connectionsData]);
 
   const chartOptions = useMemo(
     () => ({
@@ -40,6 +50,7 @@ export default function ConnectionStatsChart() {
         type: donut(),
         colors: dataToColors(chartData, theme),
         onclick: function () {
+          if (!canViewConnections) return;
           router.push('/management/connections');
         },
       },
@@ -65,54 +76,52 @@ export default function ConnectionStatsChart() {
         },
       },
     }),
-    [chartData, router, theme],
+    [chartData, canViewConnections, router, theme],
   );
 
-  const canViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
-
-  return (
-    <Link
-      href="/management/connections"
-      style={{
-        textDecoration: 'none',
-        pointerEvents: !canViewConnections ? 'none' : 'auto',
-      }}
-    >
-      <DashboardSection>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h6" gutterBottom>
-            Connections
-          </Typography>
-          <div onClick={(e) => e.stopPropagation()}>
-            <CustomTextTooltip
-              title={`Meshery Connections are managed and unmanaged resources that either through discovery or manual entry can be assigned to one or more Environments. [Learn More](https://docs.meshery.io/concepts/logical/connections)`}
-              placement="left"
-            >
-              <div>
-                <InfoOutlinedIcon
-                  color={theme.palette.icon.default}
-                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                />
-              </div>
-            </CustomTextTooltip>
-          </div>
+  const section = (
+    <DashboardSection>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography variant="h6" gutterBottom>
+          Connections
+        </Typography>
+        <div onClick={(e) => e.stopPropagation()}>
+          <CustomTextTooltip
+            title={`Meshery Connections are managed and unmanaged resources that either through discovery or manual entry can be assigned to one or more Environments. [Learn More](https://docs.meshery.io/concepts/logical/connections)`}
+            placement="left"
+          >
+            <div>
+              <InfoOutlinedIcon
+                color={theme.palette.icon.default}
+                style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+              />
+            </div>
+          </CustomTextTooltip>
         </div>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            alignContent: 'center',
-            height: '100%',
-          }}
-        >
-          {chartData.length > 0 ? (
-            <BBChart options={chartOptions} />
-          ) : (
-            <ConnectCluster message={'No connections found in your clusters'} />
-          )}
-        </Box>
-      </DashboardSection>
+      </div>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignContent: 'center',
+          height: '100%',
+        }}
+      >
+        {chartData.length > 0 ? (
+          <BBChart options={chartOptions} />
+        ) : (
+          <ConnectCluster message={'No connections found in your clusters'} />
+        )}
+      </Box>
+    </DashboardSection>
+  );
+
+  return canViewConnections ? (
+    <Link href="/management/connections" style={{ textDecoration: 'none' }}>
+      {section}
     </Link>
+  ) : (
+    section
   );
 }

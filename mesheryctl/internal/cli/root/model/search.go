@@ -22,7 +22,7 @@ var searchModelCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search model(s)",
 	Long: `Search model(s) by search string
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/model/search`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/search`,
 	Example: `
 // Search model from current provider
 mesheryctl model search [query-text]
@@ -39,6 +39,9 @@ mesheryctl model search [query-text] --pagesize [pagesize-number]
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return utils.ErrInvalidArgument(errors.New(errSearchModelName))
+		}
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(errors.New(errInvalidArg))
 		}
 		return nil
 	},

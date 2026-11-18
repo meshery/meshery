@@ -1,0 +1,20 @@
+version: 0.0.10
+name: react-portfolio-on-kubernetes
+displayName: React Portfolio on Kubernetes
+createdAt: "2026-08-24T10:01:55Z"
+description: 'This My Portfolio Website Hosted and manager with my docker image '
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/abf28603-0f28-4aba-bbf8-e142eb258843/0.0.10/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This design deploys a React portfolio application using a Kubernetes Deployment and NodePort Service. The application uses the Docker image fqthedeveloper/myportfolio:latest and is deployed in the playground-sandbox namespace. Ensure the image is available to the Kubernetes cluster before deployment. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a98f604f-3859-4709-b367-22932a276a30
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

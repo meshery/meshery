@@ -43,7 +43,7 @@ The first and most consequential choice is *where MeshSync runs*. Meshery suppor
 
 The deployment mode is resolved per connection, in this order:
 
-1. **Per-connection setting** - the `meshsync_deployment_mode` entry in the connection's metadata. You set this in the UI when [importing a cluster]({{< ref "guides/infrastructure-management/registering-a-connection.md#meshsync-deployment-mode" >}}) and can change it later from the Connections page (open the connection's action menu and choose **Configure**). Switching modes redeploys MeshSync accordingly: operator to embedded undeploys the Operator and starts the in-server routine; embedded to operator stops the in-server routine and installs the Operator.
+1. **Per-connection setting** - the `meshsync_deployment_mode` entry in the connection's metadata. You set this in the UI when [importing a cluster]({{< ref "guides/infrastructure-management/registering-a-connection.md#meshsync-deployment-mode" >}}) and can change it later from the Connections page (open the connection's action menu and choose **Configure**). Switching modes redeploys MeshSync accordingly: operator to embedded stops Meshery Server's subscription to the in-cluster Broker and starts the in-server routine, leaving the Operator installed because other connections to the cluster may share it; embedded to operator stops the in-server routine and installs the Operator if the cluster does not have it yet.
 2. **Server-wide default** - the `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` environment variable on Meshery Server (`operator` or `embedded`). Connections without an explicit per-connection mode use this value.
 3. **Built-in default** - `embedded`.
 
@@ -55,7 +55,7 @@ Connection metadata overrides the server-wide default, which overrides the built
 
 Two lifecycle behaviors are worth knowing when you change modes or connections:
 
-- **Disconnecting a connection undeploys only what Meshery installed** (Operator, Broker, MeshSync). Your workloads are never touched, and the discovered inventory is retained in Meshery's database.
+- **Disconnecting or deleting a connection never uninstalls the Operator** (or the Broker and MeshSync it manages). The Operator is one Helm release per cluster, shared by every connection to that cluster - on this Meshery Server or any other - so one connection leaving does not remove it from the rest. Uninstalling is an explicit, cluster-wide request; see [One Operator per cluster]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#one-operator-per-cluster-shared-by-every-connection" >}}). Your workloads are never touched, and a disconnected connection's discovered inventory is retained in Meshery's database.
 - **Deleting a connection flushes its discovered inventory**, and only when it is the last connection referencing that cluster - multiple kubeconfig contexts pointing at the same cluster are refcounted.
 
 ## Configuring Meshery Operator
@@ -64,7 +64,7 @@ Meshery Operator itself has little to configure by design: it is a controller wh
 
 | Setting | Mechanism | Default | Behavioral impact |
 | --- | --- | --- | --- |
-| Deploy or do not deploy | Per-connection deployment mode; Settings page Operator switch; `DISABLE_OPERATOR=true` on the server | Deployed for operator-mode connections | Without the Operator, no Broker or MeshSync runs in-cluster; embedded mode (or no discovery) applies |
+| Deploy or do not deploy | Per-connection deployment mode; the GraphQL `changeOperatorStatus` mutation; `DISABLE_OPERATOR=true` on the server | Deployed once per cluster when any connection to it uses operator mode | Without the Operator, no Broker or MeshSync runs in-cluster; embedded mode (or no discovery) applies. Uninstalling affects every connection to the cluster |
 | Operator version | Tracks the Meshery Server release via the `meshery-operator` Helm chart, or `operator.version` on the connection | The published chart for your server release | Upgrading Meshery Server upgrades the Operator; manual operator upgrades on server-managed clusters are reverted by the server's reconciliation |
 | Namespace | Fixed | `meshery` | Operator, Broker, and MeshSync objects live in the `meshery` namespace |
 
@@ -72,7 +72,7 @@ Meshery Server installs the Operator from the `meshery-operator` Helm chart at [
 
 `operator.version` is the one setting here that is refused rather than corrected. Meshery may substitute the version it derived from its own release - that value is a guess, and correcting it is better than failing the deployment - but a version *you* set is deployed exactly as written or not at all. Naming an unpublished version, or a moving tag such as `stable-latest`, fails the deployment with the reason on the Operator status card and in the connection's diagnostics, so a wrong pin is something you find out about rather than something that silently runs a different chart. That deliberateness cuts both ways. The minimum-version floor applies only to the derived default, so a pin below `v1.0.51` is installed exactly as asked - and every published chart checked below that boundary renders a `kube-rbac-proxy` sidecar and sets no `ENABLE_WEBHOOKS`, leaving the Operator Pod unable to become ready (see [Meshery Operator will not start]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md#meshery-operator-will-not-start-imagepullbackoff-and-a-missing-webhook-certificate" >}})). Meshery does not second-guess a pin you set on purpose, which makes choosing a deployable chart yours to get right.
 
-You can also toggle the Operator per cluster without disconnecting the cluster: the Meshery Operator section of **Settings** in Meshery UI provides an on/off switch, and `kubectl` shows you what the Operator has deployed and which Operator image is actually running:
+You can also uninstall or reinstall the Operator on a cluster without disconnecting it, through the GraphQL `changeOperatorStatus` mutation. Uninstalling removes it for every connection to that cluster, and Meshery names the other connections on the same server that were using it in a warning event. `kubectl` shows you what the Operator has deployed and which Operator image is actually running:
 
 ```bash
 kubectl -n meshery get deploy meshery-operator
@@ -99,7 +99,7 @@ MeshSync's configuration spans three mechanisms: fields on the `MeshSync` custom
 | Broker to publish to | `MeshSync` CR `spec.broker.native` or `spec.broker.custom.url` | The cluster's `meshery-broker` | Operator re-reconciles `BROKER_URL` |
 
 {{% alert color="dark" title="Discovery is read-only; exec and log streaming are not" %}}
-MeshSync's discovery never creates, modifies, or deletes anything in your cluster - it only lists and watches. Two <em>on-request</em> operations served over the Broker go further: pod log streaming (reads <code>pods/log</code>) and interactive exec sessions (opens a shell in a target container via <code>pods/exec</code>). These power Meshery's log viewer and interactive terminal, run only when a client requests them, and are never part of discovery (file/snapshot mode does not start them at all). Factor them into your RBAC review if your security posture distinguishes read from exec.
+MeshSync's discovery never creates, modifies, or deletes anything in your cluster - it only lists and watches. Two <em>on-request</em> operations served over the Broker go further: pod log streaming (reads <code>pods/log</code>) and interactive exec sessions (opens a shell in a target container via <code>pods/exec</code>). These power Meshery's log viewer and interactive terminal, run only when a client requests them, and are never part of discovery (file/snapshot mode does not start them at all). In operator mode MeshSync reads through the chart's read-only <code>meshery-meshsync-role</code>, which grants <code>get</code> on <code>pods/log</code> but not <code>create</code> on <code>pods/exec</code>; add that rule with the chart value <code>meshsync.rbac.extraRules</code> to enable the terminal.
 {{% /alert %}}
 
 ### Scoping discovery with the watch-list
@@ -280,6 +280,8 @@ Meshery Broker is NATS, deployed by the Operator from the `Broker` custom resour
 | Load balancer class / source ranges | `spec.service.loadBalancerClass`, `spec.service.loadBalancerSourceRanges` | None | LoadBalancer-type only; CRD validation rejects them for other types |
 | Advertised external endpoint | `spec.service.externalEndpointOverride` | Derived from the Service | Pins the advertised `host:port` for ingress, gateway, NAT, or air-gapped topologies |
 
+If you install the `meshery-operator` Helm chart yourself, you can set the version and every `spec.service` field at install time as `meshery-broker.version` and `meshery-broker.service.*` (see the [chart README](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery-operator#broker-exposure)). Fields you leave unset are omitted from the `Broker`, so the Operator defaults and Meshery Server's controllers configuration still apply. Set each field in one place: when both the chart and Meshery Server set it, a Helm 4 upgrade fails on the field-ownership conflict and Helm 3 keeps whichever wrote last. To return to the default exposure, set `meshery-broker.service.type=ClusterIP` in the same upgrade that removes the other `meshery-broker.service.*` values instead of unsetting them all: with Operator 1.0.6, a Helm 4 upgrade that removes the last chart-set `spec.service` field fails with `spec.service ... must be of type object: "null"`. Helm 3, or Helm 4 with `--server-side=false`, is not affected.
+
 ### Broker service networking
 
 The Broker's exposure is declarative and **reconfigurable on a live Broker**: change `spec.service`, and the Operator updates the Service in place (no pod restart), re-derives `status.endpoint`, and re-reconciles MeshSync so it reconnects to the new address.
@@ -293,7 +295,7 @@ kubectl -n meshery get broker meshery-broker -o jsonpath='{.status.endpoint}{"\n
 Which type you need follows from where Meshery Server runs relative to the cluster:
 
 - **Meshery Server in the same cluster**: the default `ClusterIP` is correct. The Broker acquires no external address.
-- **Meshery Server outside the cluster** (Docker host, another cluster, Meshery Cloud): the server must reach the Broker's *external* endpoint. Use `NodePort` or `LoadBalancer`, or front the Broker with your own ingress/gateway and pin the advertised address with `spec.service.externalEndpointOverride: <host:port>`.
+- **Meshery Server outside the cluster** (Docker host, a Pod in another cluster, Meshery Cloud): by default Meshery Server reaches a `ClusterIP` Broker through a [managed port-forward]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#managed-port-forward-automatic" >}}) over the Kubernetes API, so no exposure is needed. To connect directly instead (for example with `MESHERY_MANAGED_BROKER_PORTFORWARD=false`), the server must reach the Broker's *external* endpoint: use `NodePort` or `LoadBalancer`, or front the Broker with your own ingress/gateway and pin the advertised address with `spec.service.externalEndpointOverride: <host:port>`.
 
 Service annotations pass load-balancer hints through to your platform - for example, requesting an internal load balancer on AWS, or a MetalLB address pool on bare metal:
 
@@ -328,7 +330,7 @@ Meshery UI exposes this configuration surface in two places today, with a broade
 
 - **Deployment mode at import** - the connection wizard lets you choose Operator or Embedded per kubeconfig context when [importing a cluster]({{< ref "guides/infrastructure-management/registering-a-connection.md#meshsync-deployment-mode" >}}).
 - **Deployment mode per connection** - the Connections table shows each Kubernetes connection's current mode. Open a connection's action menu, choose **Configure**, select the other mode, and **Apply**; Meshery tears down and re-establishes discovery for that connection in the new mode.
-- **Operator switch and diagnostics in Settings** - the Meshery Operator section of **Settings** provides a per-cluster on/off switch for the Operator, ad hoc connectivity tests for the Operator, Broker (NATS), and MeshSync, and database reset/flush actions.
+- **Diagnostics in Settings** - **Settings** provides ad hoc connectivity tests for the Operator, Broker (NATS), and MeshSync, and database reset/flush actions. Meshery UI has no Operator on/off switch; uninstalling the Operator is the cluster-wide GraphQL request described in [Configuring Meshery Operator](#configuring-meshery-operator).
 
 **Landing in an upcoming release** (tracked in [meshery/meshery#20487](https://github.com/meshery/meshery/issues/20487); the names below follow the implementation plan recorded on that issue and may evolve until it ships):
 
@@ -360,7 +362,7 @@ On large or busy clusters, tune in this order:
 | `MeshSync` `spec.watch-list` | Requires a MeshSync pod restart (`kubectl -n meshery rollout restart deploy/meshery-meshsync`) |
 | Env vars (`DEBUG`, `MESHSYNC_REDACT_SECRETS`, `MESHSYNC_BROKER_CONTENT_DEDUP`) | Setting them on the Deployment triggers an automatic rollout |
 | CRDs added/removed in the cluster | Live; MeshSync rebuilds its pipeline automatically |
-| Deployment mode (operator/embedded) | Meshery Server undeploys and redeploys MeshSync for that connection |
+| Deployment mode (operator/embedded) | Meshery Server tears down and re-establishes MeshSync for that connection; the cluster's shared Operator stays installed |
 
 ## Verifying behavior
 
@@ -398,7 +400,7 @@ Several discovery and delivery controls are designed but not yet shipped. They a
 <!-- The brownfield guide ships in a parallel PR at this agreed permalink. Convert to a
      ref-shortcode link once it exists on master, since an unresolved ref fails the Hugo build. -->
 - [Bringing Existing Infrastructure Under Meshery Management](https://docs.meshery.io/guides/infrastructure-management/managing-existing-infrastructure) - discovering and managing brownfield infrastructure.
-- [Meshery Operator CRDs reference]({{< ref "reference/references/meshery-operator-crds.md" >}}) - full `Broker` and `MeshSync` schema reference.
+- [Meshery Operator CRDs reference]({{< ref "reference/meshery-operator-crds.md" >}}) - full `Broker` and `MeshSync` schema reference.
 - [Troubleshooting Meshery Operator, MeshSync, and Broker]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}}) - failure scenarios and recovery.
 - [`kubectl meshsync snapshot`]({{< ref "extensions/extensions/kubectl-meshsync-snapshot/index.md" >}}) - file-mode cluster snapshots without a Broker.
 

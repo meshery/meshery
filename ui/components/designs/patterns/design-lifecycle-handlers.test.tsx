@@ -29,23 +29,39 @@ vi.mock('@/assets/icons/CheckIcon', () => ({
 }));
 
 vi.mock('../lifecycle/DeployStepper', () => ({
-  DeployStepper: ({ design }: any) => (
-    <div data-testid="deploy-stepper" data-design={JSON.stringify(design)} />
+  DeployStepper: ({ design, canNavigateToErrors }: any) => (
+    <div
+      data-testid="deploy-stepper"
+      data-design={JSON.stringify(design)}
+      data-navigable={String(canNavigateToErrors)}
+    />
   ),
-  UnDeployStepper: ({ design }: any) => (
-    <div data-testid="undeploy-stepper" data-design={JSON.stringify(design)} />
+  UnDeployStepper: ({ design, canNavigateToErrors }: any) => (
+    <div
+      data-testid="undeploy-stepper"
+      data-design={JSON.stringify(design)}
+      data-navigable={String(canNavigateToErrors)}
+    />
   ),
 }));
 
 vi.mock('../lifecycle/DryRun', () => ({
-  DryRunDesign: ({ design }: any) => (
-    <div data-testid="dry-run-design" data-design={JSON.stringify(design)} />
+  DryRunDesign: ({ design, canNavigateToErrors }: any) => (
+    <div
+      data-testid="dry-run-design"
+      data-design={JSON.stringify(design)}
+      data-navigable={String(canNavigateToErrors)}
+    />
   ),
 }));
 
 vi.mock('../lifecycle/ValidateDesign', () => ({
-  ValidateDesign: ({ design }: any) => (
-    <div data-testid="validate-design" data-design={JSON.stringify(design)} />
+  ValidateDesign: ({ design, canNavigateToErrors }: any) => (
+    <div
+      data-testid="validate-design"
+      data-design={JSON.stringify(design)}
+      data-navigable={String(canNavigateToErrors)}
+    />
   ),
 }));
 
@@ -101,6 +117,8 @@ describe('buildDesignLifecycleHandlers', () => {
 
     render(args.reactNode);
     expect(screen.getByTestId('deploy-stepper')).toBeInTheDocument();
+    // The designs page has no designer to deep-link errors into.
+    expect(screen.getByTestId('deploy-stepper')).toHaveAttribute('data-navigable', 'false');
   });
 
   it('openUndeployModal opens a modal with an UnDeployStepper', () => {
@@ -112,6 +130,8 @@ describe('buildDesignLifecycleHandlers', () => {
     expect(args.title).toBe('Undeploy design "X"');
     render(args.reactNode);
     expect(screen.getByTestId('undeploy-stepper')).toBeInTheDocument();
+    // The designs page has no designer to deep-link errors into.
+    expect(screen.getByTestId('undeploy-stepper')).toHaveAttribute('data-navigable', 'false');
   });
 
   it('openDryRunModal opens a modal with a DryRunDesign body', () => {
@@ -123,6 +143,8 @@ describe('buildDesignLifecycleHandlers', () => {
     expect(args.title).toBe('Dryrun design "X"');
     render(args.reactNode);
     expect(screen.getByTestId('dry-run-design')).toBeInTheDocument();
+    // The designs page has no designer to deep-link errors into.
+    expect(screen.getByTestId('dry-run-design')).toHaveAttribute('data-navigable', 'false');
   });
 
   it('openValidateModal opens a modal with a ValidateDesign body', () => {
@@ -134,6 +156,8 @@ describe('buildDesignLifecycleHandlers', () => {
     expect(args.title).toBe('Validate design "X"');
     render(args.reactNode);
     expect(screen.getByTestId('validate-design')).toBeInTheDocument();
+    // The designs page has no designer to deep-link errors into.
+    expect(screen.getByTestId('validate-design')).toHaveAttribute('data-navigable', 'false');
   });
 
   it('directDeploy executes handleDeploy and notifies the user', async () => {

@@ -18,6 +18,8 @@ export default function ActionButton({
   permissionKey,
   permissionAction,
   label = 'Action',
+  'data-testid': dataTestId,
+  ...rest
 }) {
   const [open, setOpen] = React.useState(false);
   const [interactiveMode, setInteractiveMode] = React.useState(true);
@@ -66,6 +68,8 @@ export default function ActionButton({
         style={{ boxShadow: 'none' }}
         ref={anchorRef}
         aria-label="Button group with a nested menu"
+        data-testid={dataTestId}
+        {...rest}
       >
         <CustomTooltip title="Invoke actions interactively" placement="top">
           <Button
@@ -107,7 +111,7 @@ export default function ActionButton({
       </ButtonGroup>
       <Popper
         sx={{
-          zIndex: 1300,
+          zIndex: (theme) => theme.zIndex.modal,
         }}
         open={open}
         anchorEl={anchorRef.current}
