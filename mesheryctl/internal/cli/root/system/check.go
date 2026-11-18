@@ -543,6 +543,10 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		if err != nil {
 			return errors.Errorf("\n  Unable to unmarshal data: %v", err)
 		}
+		// A body of null decodes without error but leaves serverVersion nil.
+		if serverVersion == nil {
+			return errors.New("\n  Invalid response: the server returned no version information")
+		}
 
 		isOutdated, _, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
 		if err != nil {
@@ -747,6 +751,9 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		}
 	}
 	if len(adapters) == 0 {
+		if adapterName != "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("adapter %q is not configured in the current context", adapterName))
+		}
 		utils.Log.Info("- No components configured in current context")
 		return nil
 	}

@@ -4120,6 +4120,24 @@
       "probableCause": [
         "Meshery may be partially removed from the cluster: some Meshery resources are still present"
       ]
+    },
+    {
+      "code": "mesheryctl-1265",
+      "moniker": "ErrProfileTraversalCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1265",
+      "severity": "alert",
+      "shortDescription": "Unable to complete performance profile lookup",
+      "longDescription": "The matching performance profile pages changed or were inconsistent during lookup",
+      "probableCause": [
+        "Profiles were added, deleted, or reordered during lookup, or the provider returned inconsistent pagination data"
+      ],
+      "suggestedRemediation": [
+        "Rerun the command to refresh the matching profile list"
+      ]
     }
   ],
   "schemaVersion": 2

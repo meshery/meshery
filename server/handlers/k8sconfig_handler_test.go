@@ -1,12 +1,19 @@
 package handlers
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
+	"mime/multipart"
+	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	meshkiterrors "github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
 )
@@ -147,5 +154,221 @@ func TestDiscoverK8SContextFromKubeConfigTypedNilInstanceID(t *testing.T) {
 	_, err := (&Handler{}).DiscoverK8SContextFromKubeConfig("user-1", "tok", nil)
 	if !errors.Is(err, models.ErrMesheryInstanceID) {
 		t.Fatalf("err = %v, want models.ErrMesheryInstanceID", err)
+	}
+}
+
+func TestK8SConfigHandler_Post_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := &models.DefaultLocalProvider{}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/system/kubernetes", nil)
+	rec := httptest.NewRecorder()
+
+	h.K8SConfigHandler(rec, req, nil, nil, p)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for nil user, got %d", rec.Code)
+	}
+	var body map[string]string
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("unmarshaling error response: %v", err)
+	}
+	if body["error"] != "user unauthorized" {
+		t.Fatalf("expected 'user unauthorized', got %q", body["error"])
+	}
+}
+
+func TestK8SConfigHandler_Post_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/system/kubernetes", nil)
+	rec := httptest.NewRecorder()
+
+	h.K8SConfigHandler(rec, req, nil, authUser, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestGetContextsFromK8SConfig_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := &models.DefaultLocalProvider{}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/system/kubernetes/contexts", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetContextsFromK8SConfig(rec, req, nil, nil, p)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for nil user, got %d", rec.Code)
+	}
+	var body map[string]string
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("unmarshaling error response: %v", err)
+	}
+	if body["error"] != "user unauthorized" {
+		t.Fatalf("expected 'user unauthorized', got %q", body["error"])
+	}
+}
+
+func TestGetContextsFromK8SConfig_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/system/kubernetes/contexts", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetContextsFromK8SConfig(rec, req, nil, authUser, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestKubernetesPingHandler_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	req := httptest.NewRequest(http.MethodGet, "/api/system/kubernetes/ping", nil)
+	rec := httptest.NewRecorder()
+
+	h.KubernetesPingHandler(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestKubernetesPingHandler_MissingToken_ReturnsUnauthorized(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := &models.DefaultLocalProvider{}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/system/kubernetes/ping", nil)
+	rec := httptest.NewRecorder()
+
+	h.KubernetesPingHandler(rec, req, nil, nil, p)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for missing token, got %d", rec.Code)
+	}
+}
+
+func TestK8sRegistrationHandler_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := &models.DefaultLocalProvider{}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/system/kubernetes/register", nil)
+	rec := httptest.NewRecorder()
+
+	h.K8sRegistrationHandler(rec, req, nil, nil, p)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for nil user, got %d", rec.Code)
+	}
+	var body map[string]string
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("unmarshaling error response: %v", err)
+	}
+	if body["error"] != "user unauthorized" {
+		t.Fatalf("expected 'user unauthorized', got %q", body["error"])
+	}
+}
+
+func TestK8sRegistrationHandler_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/system/kubernetes/register", nil)
+	rec := httptest.NewRecorder()
+
+	h.K8sRegistrationHandler(rec, req, nil, authUser, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+type mockK8sConfigProvider struct {
+	*models.DefaultLocalProvider
+	persistedEvents []events.Event
+}
+
+func (m *mockK8sConfigProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
+	m.persistedEvents = append(m.persistedEvents, event)
+	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
+}
+
+func TestGetContextsFromK8SConfig_NilLogger_UploadSingleContextSucceeds(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	h.log = nil
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &mockK8sConfigProvider{}
+
+	kubeconfig := []byte(`apiVersion: v1
+kind: Config
+current-context: ctx-0
+clusters:
+- cluster:
+    server: https://127.0.0.1:59900
+  name: cluster-0
+contexts:
+- context:
+    cluster: cluster-0
+    user: user-0
+  name: ctx-0
+users:
+- name: user-0
+  user:
+    token: token-0
+`)
+
+	var b bytes.Buffer
+	w := multipart.NewWriter(&b)
+	part, err := w.CreateFormFile("k8sfile", "kubeconfig")
+	if err != nil {
+		t.Fatalf("create form file: %v", err)
+	}
+	if _, err := part.Write(kubeconfig); err != nil {
+		t.Fatalf("write form file: %v", err)
+	}
+	if err := w.Close(); err != nil {
+		t.Fatalf("close writer: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/system/kubernetes/contexts", &b)
+	req.Header.Set("Content-Type", w.FormDataContentType())
+	rec := httptest.NewRecorder()
+
+	h.GetContextsFromK8SConfig(rec, req, nil, authUser, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200 OK, got %d: %s", rec.Code, rec.Body.String())
+	}
+	var contexts []models.K8sContext
+	if err := json.Unmarshal(rec.Body.Bytes(), &contexts); err != nil {
+		t.Fatalf("unmarshaling contexts response: %v", err)
+	}
+	if len(contexts) != 1 {
+		t.Fatalf("expected 1 context, got %d", len(contexts))
+	}
+	if contexts[0].Name != "ctx-0" {
+		t.Fatalf("expected context name 'ctx-0', got %q", contexts[0].Name)
 	}
 }
