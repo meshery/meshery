@@ -70,7 +70,10 @@ func getK8sVersion(versionString string) ([3]int, error) {
 		return version, ErrK8sInvalidVersionFormat(fmt.Errorf("unknown version string format [%s]", versionString))
 	}
 
-	for i, segment := range split {
+	// Only parse the first three components (major.minor.patch). Some clusters
+	// report versions with extra segments (e.g. "v1.28.3.1"); ranging over all
+	// of them would write past the end of the [3]int and panic. See #21761.
+	for i, segment := range split[:3] {
 		v, err := strconv.Atoi(strings.TrimSpace(segment))
 		if err != nil {
 			return version, ErrK8sInvalidVersionFormat(fmt.Errorf("unknown version string format [%s]", versionString))
