@@ -245,10 +245,12 @@ The documentation sidebar is generated automatically from the Hugo content tree 
 2. Ensure the parent section contains an `_index.md` file.
 3. Set the page's front matter, including `title` and `weight` where appropriate.
 4. Use `toc_hide: true` only when the page should be excluded from the sidebar.
-5. Check the sidebar implementation in `docs/layouts/partials/sidebar-nav-tree.html` and `docs/layouts/partials/sidebar.html` when investigating rendering or navigation issues.
+5. Also check the front matter of all ancestor sections. If any ancestor section has `toc_hide: true`, the sidebar excludes that section and its descendants.
+6. Check the sidebar implementation in `docs/layouts/partials/sidebar-tree.html` and `docs/layouts/partials/sidebar.html` when investigating rendering or navigation issues.
 
-The `sidebar-nav-tree.html` partial renders the navigation tree. During each build, the generated sidebar is published as `sidebar/nav-*.html`, and `sidebar.html` mounts that output into the page.
-For detailed guidance, see [Contributing Documentation](docs/content/en/project/contributing/contributing-docs/docs.md), particularly the section on navigation in the sidebar.
+The `sidebar.html` partial renders the navigation tree by calling `sidebar-tree.html` directly, using `partialCached` or `partial` depending on the page count.
+
+For detailed guidance, see [Contributing Documentation](../../docs/content/en/project/contributing/contributing-docs/docs.md), particularly the section on navigation in the sidebar.
 
 ## Documentation Contribution Workflow
 
@@ -524,7 +526,8 @@ make docs
 - **Prevention**: Run `make site` locally before committing; Hugo reports the offending file and line number on build failure
 
 #### Problem: Navigation not updating
-- **Solution**: Verify that the page is in the correct section under `docs/content/en/`, that its parent section contains an `_index.md` file, and that its front matter does not hide it with `toc_hide: true`. Check `weight` if the page appears in the wrong order.
+
+- **Solution**: Verify that the page is in the correct section under `docs/content/en/`, that its parent section contains an `_index.md` file, and that its front matter does not hide it with `toc_hide: true`. Also check the front matter of all ancestor sections, because a parent with `toc_hide: true` hides its descendants. Check `weight` if the page appears in the wrong order.
 - **Prevention**: Follow the Hugo content hierarchy when adding, moving, or renaming pages, and verify the relevant front matter and section structure before committing.
 
 #### Problem: Images not displaying
