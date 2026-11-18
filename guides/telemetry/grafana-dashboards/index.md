@@ -36,6 +36,8 @@ Pinned dashboards are stored on the Grafana connection itself, so they persist a
 - **Template variables** (for example `$datasource`, `$job`, `$instance`) and Grafana time macros (such as `$__rate_interval`) are resolved automatically before each query is sent, so dashboards that rely on variables render correctly.
 - If a single panel's query fails, the error is shown inline on that panel only - the rest of the dashboard keeps rendering.
 
+Each response from Grafana is limited to 16 MiB, including datasource query responses. Larger responses return an explicit error instead of partial JSON. If a panel's query exceeds this limit, shorten the time range or use more selective label matchers to return fewer series.
+
 <div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Rendering model</div>
 
 

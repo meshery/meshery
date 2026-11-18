@@ -16162,6 +16162,32 @@ Check client routing and extension configuration</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrTelemetrySizeCode-1493" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTelemetrySizeCode-more-info" onclick="toggle_visibility('meshery-server-ErrTelemetrySizeCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1493" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errtelemetrysizecode-1493/"><code>ErrTelemetrySizeCode-1493</code></a>
+            </td>
+            <td>Telemetry response exceeds Meshery&#39;s 16 MiB limit</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrTelemetrySizeCode-1493" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrTelemetrySizeCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The upstream response contains more data than Meshery can return.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Reduce the response size, then retry.
+For panel queries, shorten the time range or use more selective label matchers.</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>

@@ -8363,6 +8363,8 @@ You can now design and manage any infrastructure that Meshery supports. For the 
     
   
     
+  
+    
       
     
   
@@ -18403,6 +18405,8 @@ Pinned dashboards are stored on the Grafana connection itself, so they persist a
 - **Template variables** (for example `$datasource`, `$job`, `$instance`) and Grafana time macros (such as `$__rate_interval`) are resolved automatically before each query is sent, so dashboards that rely on variables render correctly.
 - If a single panel's query fails, the error is shown inline on that panel only - the rest of the dashboard keeps rendering.
 
+Each response from Grafana is limited to 16 MiB, including datasource query responses. Larger responses return an explicit error instead of partial JSON. If a panel's query exceeds this limit, shorten the time range or use more selective label matchers to return fewer series.
+
 <div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Rendering model</div>
 
 
@@ -18968,6 +18972,8 @@ Saved panels can be **edited** (title, type, unit) or **deleted** at any time. T
 - The grid renders all saved panels, fetching their data in a single batched request per refresh.
 - The shared **time range** picker and **refresh** controls apply to the whole grid.
 - A failing panel shows its error inline without affecting the others.
+
+Each response from Prometheus is limited to 16 MiB. Larger responses return an explicit error instead of partial JSON. If a query exceeds this limit, shorten the time range or use more selective label matchers to return fewer series.
 
 ## Related
 
@@ -95488,6 +95494,32 @@ Check client routing and extension configuration</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrTelemetrySizeCode-1493" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrTelemetrySizeCode-more-info" onclick="toggle_visibility('meshery-server-ErrTelemetrySizeCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1493" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errtelemetrysizecode-1493/"><code>ErrTelemetrySizeCode-1493</code></a>
+            </td>
+            <td>Telemetry response exceeds Meshery&#39;s 16 MiB limit</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrTelemetrySizeCode-1493" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrTelemetrySizeCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The upstream response contains more data than Meshery can return.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Reduce the response size, then retry.
+For panel queries, shorten the time range or use more selective label matchers.</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>
@@ -110123,6 +110155,12 @@ url: /reference/error-codes/component-meshery-server/errtelemetryprometheusauthc
 --------------------------------------------------------------------------------
 title: "ErrTelemetryPrometheusCode-1431"
 url: /reference/error-codes/component-meshery-server/errtelemetryprometheuscode-1431/index.md
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+title: "ErrTelemetrySizeCode-1493"
+url: /reference/error-codes/component-meshery-server/errtelemetrysizecode-1493/index.md
 --------------------------------------------------------------------------------
 
 

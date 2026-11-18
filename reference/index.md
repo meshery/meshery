@@ -1054,6 +1054,7 @@ Section pages:
 - [ErrTelemetryGrafanaDatasourceCode-1433](/reference/error-codes/component-meshery-server/errtelemetrygrafanadatasourcecode-1433/)
 - [ErrTelemetryPrometheusAuthCode-1435](/reference/error-codes/component-meshery-server/errtelemetryprometheusauthcode-1435/)
 - [ErrTelemetryPrometheusCode-1431](/reference/error-codes/component-meshery-server/errtelemetryprometheuscode-1431/)
+- [ErrTelemetrySizeCode-1493](/reference/error-codes/component-meshery-server/errtelemetrysizecode-1493/)
 - [ErrTemplateFileNotPresentCode-1131](/reference/error-codes/client-mesheryctl/errtemplatefilenotpresentcode-1131/)
 - [ErrTestClientCode-1280](/reference/error-codes/component-meshery-server/errtestclientcode-1280/)
 - [ErrTestConfigsCode-1054](/reference/error-codes/component-meshery-server/errtestconfigscode-1054/)
