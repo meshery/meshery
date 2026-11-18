@@ -84,75 +84,70 @@ jobs:
         with:
           github-token: ${{ secrets.COMMUNITY_MANAGER_TOKEN }}
           script: |
+            const path = require('path');
+            const {
+              listAllChangedFiles,
+              validateFiles,
+              ALLOWED_PATH_PREFIX,
+              MAX_ENUMERABLE_FILES,
+            } = require(path.join(process.env.GITHUB_WORKSPACE, '.github', 'scripts', 'validate-meeting-minutes.js'));
+
             const { owner, repo } = context.repo;
-            
+
             // Determine PR number from event or manual input
             let prNumber = context.payload.pull_request?.number;
             if (!prNumber && '${{ inputs.pr_number }}') {
               prNumber = parseInt('${{ inputs.pr_number }}', 10);
             }
-            
+
             if (!prNumber) {
               core.setFailed('No PR number found. This workflow must be triggered by a pull_request event or with a pr_number input.');
               return;
             }
-            
+
             core.info(`Validating PR #${prNumber} for ${owner}/${repo}`);
             core.setOutput('pr_number', prNumber);
-            
+
             try {
-              // Fetch all files changed in this PR
-              const { data: files } = await github.rest.pulls.listFiles({
-                owner,
-                repo,
-                pull_number: prNumber,
-                per_page: 100
-              });
-              
+              // Enumerate EVERY changed file (follows pagination). A single-page
+              // listFiles({ per_page: 100 }) would miss files beyond the first
+              // 100 and let them be auto-merged. See issue #22684.
+              const files = await listAllChangedFiles(github, owner, repo, prNumber);
               core.info(`Found ${files.length} changed file(s) in PR #${prNumber}`);
-              
-              // Define the allowed directory pattern
-              // Files MUST start with 'docs/meetings/' to be auto-merged
-              const allowedPathPrefix = 'docs/meetings/';
-              
-              // Track validation results
-              let allFilesValid = true;
-              const invalidFiles = [];
-              const validFiles = [];
-              
-              // Validate each file
-              for (const file of files) {
-                const filePath = file.filename;
-                const isValid = filePath.startsWith(allowedPathPrefix);
-                
-                if (isValid) {
-                  validFiles.push(filePath);
-                  core.info(`✅ Valid: ${filePath}`);
-                } else {
-                  invalidFiles.push(filePath);
-                  core.warning(`❌ Invalid: ${filePath} - not in ${allowedPathPrefix}`);
-                  allFilesValid = false;
-                }
+
+              const result = validateFiles(files);
+              for (const filePath of result.validFiles) {
+                core.info(`✅ Valid: ${filePath}`);
               }
-              
+              for (const filePath of result.invalidFiles) {
+                core.warning(`❌ Invalid: ${filePath} - not in ${ALLOWED_PATH_PREFIX}`);
+              }
+
               // Set outputs for subsequent steps
-              core.setOutput('files_count', files.length);
-              core.setOutput('valid_files', JSON.stringify(validFiles));
-              core.setOutput('invalid_files', JSON.stringify(invalidFiles));
-              core.setOutput('is_valid', allFilesValid.toString());
-              
-              if (!allFilesValid) {
-                core.setFailed(`PR #${prNumber} contains files outside of ${allowedPathPrefix}. Found ${invalidFiles.length} invalid file(s): ${invalidFiles.join(', ')}`);
+              core.setOutput('files_count', result.filesCount);
+              core.setOutput('valid_files', JSON.stringify(result.validFiles));
+              core.setOutput('invalid_files', JSON.stringify(result.invalidFiles));
+              core.setOutput('is_valid', result.isValid.toString());
+
+              // Fail closed: if the PR hit the listFiles enumeration ceiling we
+              // cannot prove every file is in scope, so refuse to auto-merge.
+              if (result.enumerationCapped) {
+                core.setFailed(`PR #${prNumber} changes ${result.filesCount} files, which reaches the listFiles enumeration ceiling (${MAX_ENUMERABLE_FILES}). Refusing to auto-merge a PR that cannot be fully inspected.`);
                 return;
               }
-              
-              if (files.length === 0) {
+
+              if (result.invalidFiles.length > 0) {
+                core.setFailed(`PR #${prNumber} contains files outside of ${ALLOWED_PATH_PREFIX}. Found ${result.invalidFiles.length} invalid file(s): ${result.invalidFiles.join(', ')}`);
+                return;
+              }
+
+              if (result.filesCount === 0) {
                 core.setFailed('PR contains no files. Nothing to merge.');
                 return;
               }
-              
-              core.info(`✅ All ${files.length} file(s) are within ${allowedPathPrefix}. PR is eligible for auto-merge.`);
-              
+
+              core.info(`✅ All ${result.filesCount} file(s) are within ${ALLOWED_PATH_PREFIX}. PR is eligible for auto-merge.`);
+
             } catch (error) {
               core.setFailed(`Failed to validate PR files: ${error.message}`);
             }

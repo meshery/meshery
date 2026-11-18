@@ -30,7 +30,7 @@ Validate conformance to predefined standards
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --token [path to token for authentication] --spec [specification to be used for conformance test]
 
 </div>
 </div>
@@ -76,4 +76,4 @@ Usage of mesheryctl adapter validate
 
 ## See Also
 
-Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

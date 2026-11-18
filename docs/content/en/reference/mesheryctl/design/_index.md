@@ -51,7 +51,7 @@ View design file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl design view [design name | ID]
+mesheryctl design view [design-name | ID]
 
 </div>
 </div>
@@ -62,6 +62,26 @@ List all designs:
 <div class='codeblock'>
 <div class='clipboardjs'>
 mesheryctl design list
+
+</div>
+</div>
+</pre> 
+
+Import a design:
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design import -f [file/URL] -n [name]
+
+</div>
+</div>
+</pre> 
+
+Export a design:
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design export [design-name | ID]
 
 </div>
 </div>
@@ -89,4 +109,4 @@ mesheryctl design list
 
 ## See Also
 
-Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

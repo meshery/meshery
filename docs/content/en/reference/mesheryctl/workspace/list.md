@@ -27,7 +27,7 @@ mesheryctl workspace list [flags]
 
 ## Examples
 
-List of workspace under a specific organization
+List of workspaces under a specific organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -37,7 +37,7 @@ mesheryctl workspace list --orgId [orgId]
 </div>
 </pre> 
 
-List of workspace under a specific organization for a specified page
+List of workspaces under a specific organization for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -47,7 +47,7 @@ mesheryctl workspace list --orgId [orgId] --page [page-number]
 </div>
 </pre> 
 
-Display number of available  workspace under a specific organization
+Display number of available workspaces under a specific organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -82,4 +82,4 @@ mesheryctl workspace list --orgId [orgId] --count
 
 ## See Also
 
-Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

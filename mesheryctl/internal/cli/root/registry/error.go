@@ -57,7 +57,7 @@ func ErrParsingRelationship(err error, modelName string) error {
 }
 
 func ErrPublish(err error, system string) error {
-	return errors.New(ErrPublishCode, errors.Alert, []string{fmt.Sprintf("error publishing to %s", system)}, []string{err.Error()}, []string{"Invalid system specified", "Publishing process encountered an error"}, []string{"Ensure a valid system is provided (meshery, remote-provider, website)", "Check the publishing configuration and try again"})
+	return errors.New(ErrPublishCode, errors.Alert, []string{fmt.Sprintf("error publishing to %s", system)}, []string{err.Error()}, []string{"Invalid system specified", "Publishing process encountered an error"}, []string{"Ensure a valid system is provided (remote-provider, website)", "Check the publishing configuration and try again"})
 }
 
 func ErrModelGenerationFailed(modelName string, err error) error {

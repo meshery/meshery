@@ -38,9 +38,17 @@ const flushMeshsyncAction schemasConnection.ConnectionActionRequestAction = "flu
 // client sends only the intent and the server reads the connection by its URL
 // id, so persistence always targets the correct row.
 func (h *Handler) PerformConnectionAction(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
+	connectionID, err := uuid.FromString(mux.Vars(req)["connectionId"])
+	if err != nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %w", err))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
+		return
+	}
 	if connectionID == uuid.Nil {
-		writeJSONError(w, "invalid or missing connection id", http.StatusBadRequest)
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %s", connectionID))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
 	}
 
@@ -61,8 +69,16 @@ func (h *Handler) PerformConnectionAction(w http.ResponseWriter, req *http.Reque
 
 	switch actionReq.Action {
 	case schemasConnection.SetMeshsyncMode:
+		if provider == nil {
+			writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+			return
+		}
 		h.setMeshsyncDeploymentModeAction(w, req, connectionID, actionReq, user, provider)
 	case flushMeshsyncAction:
+		if provider == nil {
+			writeJSONError(w, "provider not initialized", http.StatusInternalServerError)
+			return
+		}
 		h.flushMeshsyncAction(w, req, connectionID, user, provider)
 	default:
 		writeJSONError(w, fmt.Sprintf("unsupported connection action %q", actionReq.Action), http.StatusBadRequest)
@@ -81,9 +97,16 @@ func (h *Handler) setMeshsyncDeploymentModeAction(
 	user *models.User,
 	provider models.Provider,
 ) {
-	userID := user.ID
+	var userID core.Uuid
+	if user != nil {
+		userID = user.ID
+	}
+	var systemID uuid.UUID
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(systemID).WithCategory("connection").WithAction("update")
 
 	if actionReq.Mode == nil {
 		writeJSONError(w, "mode is required for the setMeshsyncMode action", http.StatusBadRequest)
@@ -168,8 +191,7 @@ func (h *Handler) setMeshsyncDeploymentModeAction(
 	if err != nil {
 		_err := ErrFailToSave(err, "connection")
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to persist MeshSync deployment mode").WithMetadata(map[string]any{"error": _err}).Build()
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 		h.log.Error(_err)
 		writeMeshkitError(w, _err, http.StatusInternalServerError)
 		return
@@ -196,8 +218,7 @@ func (h *Handler) setMeshsyncDeploymentModeAction(
 			event := failureBuilder.WithSeverity(events.Error).
 				WithDescription(fmt.Sprintf("MeshSync mode saved as '%s' but redeploy failed for connection %s", newMode, updated.Name)).
 				WithMetadata(map[string]any{"error": rerr, "connectionId": connectionID}).Build()
-			_ = provider.PersistEvent(*event, token)
-			h.config.EventBroadcaster.Publish(userID, event)
+			h.persistAndPublish(provider, token, userID, event)
 		}
 	}()
 
@@ -207,8 +228,7 @@ func (h *Handler) setMeshsyncDeploymentModeAction(
 		"meshsyncDeploymentModeNew": newMode,
 		"connectionId":              connectionID,
 	}).Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 	h.log.Info(description)
 
 	writeJSONMessage(w, updated, http.StatusOK)
@@ -227,9 +247,16 @@ func (h *Handler) flushMeshsyncAction(
 	user *models.User,
 	provider models.Provider,
 ) {
-	userID := user.ID
+	var userID core.Uuid
+	if user != nil {
+		userID = user.ID
+	}
+	var systemID uuid.UUID
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(systemID).WithCategory("connection").WithAction("update")
 
 	existing, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil || existing == nil {
@@ -253,31 +280,40 @@ func (h *Handler) flushMeshsyncAction(
 		writeJSONError(w, fmt.Sprintf("no active session for connection %s; connect the cluster before flushing MeshSync", connectionID), http.StatusConflict)
 		return
 	}
-	machineCtx, err := kubernetes.GetMachineCtx(machine.Context, nil)
+	machineCtx, err := kubernetes.GetMachineCtx(machine.GetContext(), nil)
 	if err != nil || machineCtx == nil {
 		writeJSONError(w, fmt.Sprintf("failed to resolve machine context for connection %s", connectionID), http.StatusInternalServerError)
 		return
 	}
 
-	// Clear the cached cluster state. Keyed on the Kubernetes server id so only
-	// this cluster's rows are removed (matches the resolver's per-cluster path).
-	if serverID := machineCtx.K8sContext.KubernetesServerID; serverID != nil {
-		if perr := models.FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), serverID.String()); perr != nil {
-			_err := models.ErrFlushMeshSyncData(perr, machineCtx.K8sContext.Name, machineCtx.K8sContext.Server)
-			event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to flush MeshSync data").WithMetadata(map[string]any{"error": _err, "connectionId": connectionID}).Build()
-			_ = provider.PersistEvent(*event, token)
-			go h.config.EventBroadcaster.Publish(userID, event)
-			h.log.Error(_err)
-			writeMeshkitError(w, _err, http.StatusInternalServerError)
-			return
+	// Keep the connection lifecycle stable while checking its state and
+	// clearing cached resources. The setup lock is released before the
+	// database operation; the lifecycle lock prevents a concurrent disconnect.
+	connected, flushErr := machineCtx.WithConnectedK8sContext(func(k8sCtx models.K8sContext) error {
+		// Clear only this cluster's cached state, keyed by its Kubernetes server ID.
+		if serverID := k8sCtx.KubernetesServerID; serverID != nil {
+			if perr := models.FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), serverID.String()); perr != nil {
+				return models.ErrFlushMeshSyncData(perr, k8sCtx.Name, k8sCtx.Server)
+			}
 		}
+		return nil
+	})
+	if !connected {
+		writeJSONError(w, fmt.Sprintf("connection %s is disconnected; reconnect the cluster before flushing MeshSync", connectionID), http.StatusConflict)
+		return
+	}
+	if flushErr != nil {
+		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to flush MeshSync data").WithMetadata(map[string]any{"error": flushErr, "connectionId": connectionID}).Build()
+		h.persistAndPublish(provider, token, userID, event)
+		h.log.Error(flushErr)
+		writeMeshkitError(w, flushErr, http.StatusInternalServerError)
+		return
 	}
 
 	// Repopulate from the live cluster. Fresh data streams back via the broker.
 	if rerr := mhelpers.ResyncResources(req.Context(), machine); rerr != nil {
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("MeshSync data flushed but resync failed for connection %s", existing.Name)).WithMetadata(map[string]any{"error": rerr, "connectionId": connectionID}).Build()
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 		h.log.Error(rerr)
 		writeJSONError(w, fmt.Sprintf("failed to resync MeshSync data: %v", rerr), http.StatusInternalServerError)
 		return
@@ -285,15 +321,15 @@ func (h *Handler) flushMeshsyncAction(
 
 	description := fmt.Sprintf("MeshSync data flushed and resync requested for connection %s", existing.Name)
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(map[string]any{"connectionId": connectionID}).Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 	h.log.Info(description)
 
 	writeJSONMessage(w, existing, http.StatusOK)
 }
 
-// reconcileMeshsyncDeploymentMode drives the FSM's controller helper to undeploy
-// the previous MeshSync setup and (re)deploy it for newMode. It reads the live
+// reconcileMeshsyncDeploymentMode drives the FSM's controller helper to tear
+// down the previous MeshSync setup and (re)deploy it for newMode. Teardown
+// never uninstalls the cluster-scoped Meshery Operator. It reads the live
 // machine context, so it must run after the connection's FSM exists (i.e. the
 // connection is connected). Safe to run in a detached goroutine.
 //
@@ -316,7 +352,7 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 	if !ok || machine == nil {
 		return ErrMeshsyncReconcile(fmt.Sprintf("no state machine for connection %s", connectionID))
 	}
-	machineCtx, err := kubernetes.GetMachineCtx(machine.Context, nil)
+	machineCtx, err := kubernetes.GetMachineCtx(machine.GetContext(), nil)
 	if err != nil {
 		return ErrMeshsyncReconcile(err.Error())
 	}
@@ -325,14 +361,14 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 	}
 
 	ctrlHelper := machineCtx.MesheryCtrlsHelper
-	contextID := machineCtx.K8sContext.ID
+	// One snapshot for the whole reconcile: teardown and redeploy must agree
+	// on the same context even if a credential refresh lands mid-reconcile.
+	k8sCtx := machineCtx.K8sContextSnapshot()
 
-	// Undeploy the previous MeshSync setup for this context.
-	ctrlHelper.
-		UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-		UndeployDeployedOperators(machineCtx.OperatorTracker, contextID).
-		RemoveCtxControllerHandler(ctx, contextID)
-	ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
+	// Tear down the previous MeshSync setup for this context. The cluster's
+	// Meshery Operator stays installed: it is cluster-scoped, and switching this
+	// connection to embedded mode does not speak for the others using it.
+	ctrlHelper.DetachFromCluster(ctx, machineCtx.OperatorTracker, k8sCtx)
 
 	// Deploy MeshSync for the new mode. The resolved configuration is stashed
 	// first: AddCtxControllerHandlers constructs the operator controller handler
@@ -342,10 +378,10 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 	}
 	ctrlHelper.
 		SetMeshsyncDeploymentMode(newMode).
-		AddCtxControllerHandlers(machineCtx.K8sContext).
+		AddCtxControllerHandlers(k8sCtx).
 		UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-		DeployUndeployedOperators(machineCtx.OperatorTracker, contextID).
-		AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
+		DeployUndeployedOperators(machineCtx.OperatorTracker, k8sCtx).
+		AddMeshsyncDataHandlers(ctx, k8sCtx, userID, mesheryInstanceID, provider)
 
 	return nil
 }

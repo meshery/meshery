@@ -51,8 +51,7 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --count   total number of registered workspaces
-  -h, --help    help for workspace
+  -h, --help   help for workspace
 
 </div>
 </pre>
@@ -69,4 +68,4 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 
 ## See Also
 
-Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

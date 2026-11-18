@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -180,12 +181,31 @@ func (h *Handler) UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Req
 	}
 	def.ID = id
 
-	// Persist only the connection definition row; associations (e.g. model) are
-	// managed through registration, not this update.
-	if err := h.dbHandler.Omit(clause.Associations).Save(&def).Error; err != nil {
-		_err := ErrFailToSave(err, obj)
+	var existing connectionv1beta3.ConnectionDefinition
+	if err := h.dbHandler.First(&existing, "id = ?", id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			writeJSONError(rw, fmt.Sprintf("connection definition with id %s not found", id), http.StatusNotFound)
+			return
+		}
+		_err := ErrQueryGet(obj)
 		h.log.Error(_err)
 		writeMeshkitError(rw, _err, http.StatusInternalServerError)
+		return
+	}
+	def.CreatedAt = existing.CreatedAt
+
+	// Persist only the connection definition row; associations (e.g. model) are
+	// managed through registration, not this update.
+	result := h.dbHandler.Model(&connectionv1beta3.ConnectionDefinition{}).Where("id = ?", id).
+		Select("*").Omit(clause.Associations, "created_at").Updates(&def)
+	if result.Error != nil {
+		_err := ErrFailToSave(result.Error, obj)
+		h.log.Error(_err)
+		writeMeshkitError(rw, _err, http.StatusInternalServerError)
+		return
+	}
+	if result.RowsAffected == 0 {
+		writeJSONError(rw, fmt.Sprintf("connection definition with id %s not found", id), http.StatusNotFound)
 		return
 	}
 
@@ -202,6 +222,9 @@ func (h *Handler) UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Req
 // responses:
 //
 //	204:
+//	400:
+//	404:
+//	500:
 func (h *Handler) DeleteConnectionDefinition(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	connectionDefinitionID := mux.Vars(r)["connectionDefinitionId"]
 	id, err := uuid.FromString(connectionDefinitionID)
@@ -216,9 +239,20 @@ func (h *Handler) DeleteConnectionDefinition(rw http.ResponseWriter, r *http.Req
 			Delete(&registry.Registry{}).Error; err != nil {
 			return err
 		}
-		return tx.Delete(&connectionv1beta3.ConnectionDefinition{}, "id = ?", id).Error
+		res := tx.Delete(&connectionv1beta3.ConnectionDefinition{}, "id = ?", id)
+		if res.Error != nil {
+			return res.Error
+		}
+		if res.RowsAffected == 0 {
+			return gorm.ErrRecordNotFound
+		}
+		return nil
 	})
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			writeJSONError(rw, fmt.Sprintf("connection definition with id %s not found", id), http.StatusNotFound)
+			return
+		}
 		_err := ErrFailToDelete(err, "connection definition")
 		h.log.Error(_err)
 		writeMeshkitError(rw, _err, http.StatusInternalServerError)

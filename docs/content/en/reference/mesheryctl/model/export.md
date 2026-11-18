@@ -87,7 +87,6 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
   -t, --output-format string     (optional) format to display in [json|yaml] (default = yaml) (default "yaml")
   -l, --output-location string   (optional) output location (default = current directory) (default "./")
   -o, --output-type string       (optional) format to display in [oci|tar] (default = oci) (default "oci")
-  -p, --page int                 (optional) page number for paginated results (default = 1) (default 1)
       --version string           (optional) model version to export (default = "", format: vX.X.X)
 
 </div>
@@ -105,4 +104,4 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 
 ## See Also
 
-Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

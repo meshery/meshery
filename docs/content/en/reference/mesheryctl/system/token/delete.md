@@ -14,7 +14,7 @@ Delete a token from your meshconfig
 
 ## Synopsis
 
-Delete the token with provided token name from your meshconfig tokens.
+Delete the token with provided token name from your meshconfig tokens. A token that a context still uses cannot be deleted; set another token on that context first.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -58,4 +58,4 @@ mesheryctl system token delete [token-name]
 
 ## See Also
 
-Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.
