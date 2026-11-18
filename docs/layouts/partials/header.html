@@ -74,7 +74,13 @@
     </div>
 
     <div class="icon-container">
-      <button class="nav-toggle-btn nav-toggle-btn--main" aria-label="Toggle navigation menu">
+      <button
+        class="nav-toggle-btn nav-toggle-btn--main"
+        aria-label="Open navigation menu"
+        aria-controls="main_navbar"
+        aria-expanded="false"
+        type="button"
+      >
         <svg
           id="menu-nav-toggle-btn"
           xmlns="http://www.w3.org/2000/svg"
@@ -88,9 +94,9 @@
           aria-hidden="true"
           focusable="false"
         >
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
+          <line class="menu-line menu-line--middle" x1="3" y1="12" x2="21" y2="12"></line>
+          <line class="menu-line menu-line--top" x1="3" y1="6" x2="21" y2="6"></line>
+          <line class="menu-line menu-line--bottom" x1="3" y1="18" x2="21" y2="18"></line>
         </svg>
       </button>
 

@@ -126,25 +126,47 @@ if (toggleBtnSidebarNav) {
 }
 
 const toggleBtnMainNav = document.querySelector(".nav-toggle-btn--main");
+const sidebarNav = document.getElementById("main_navbar");
+const menuIcon = document.getElementById("menu-nav-toggle-btn");
 
-if (toggleBtnMainNav) {
+if (toggleBtnMainNav && sidebarNav) {
+    const setMainNavState = (isOpen) => {
+        sidebarNav.classList.toggle("main-navbar--active", isOpen);
+
+        toggleBtnMainNav.setAttribute("aria-expanded", String(isOpen));
+        toggleBtnMainNav.setAttribute(
+            "aria-label",
+            isOpen ? "Close navigation menu" : "Open navigation menu"
+        );
+
+        if (menuIcon) {
+            menuIcon.classList.toggle("is-open", isOpen);
+        }
+    };
+
     toggleBtnMainNav.addEventListener("click", () => {
-        let sidebarNav = document.getElementById("main_navbar")
-        if (sidebarNav) {
-            sidebarNav.classList.toggle("main-navbar--active")
-        }      
-    })
-}
+        const isOpen = sidebarNav.classList.contains("main-navbar--active");
+        setMainNavState(!isOpen);
+    });
 
-document.addEventListener("click", (event) => {
-    let sidebarNav = document.getElementById("main_navbar")
-    if (sidebarNav) {
-        let isClickInsideSidebar = sidebarNav.contains(event.target)
-        let isClickOnToggleButton = toggleBtnMainNav && toggleBtnMainNav.contains(event.target)
+    document.addEventListener("click", (event) => {
+        const isClickInsideSidebar = sidebarNav.contains(event.target);
+        const isClickOnToggleButton = toggleBtnMainNav.contains(event.target);
 
         if (!isClickInsideSidebar && !isClickOnToggleButton) {
-            sidebarNav.classList.remove("main-navbar--active")
+            setMainNavState(false);
         }
-    }
-})
+    });
+
+    // Close the mobile navigation when Escape is pressed.
+    document.addEventListener("keydown", (event) => {
+        if (
+            event.key === "Escape" &&
+            sidebarNav.classList.contains("main-navbar--active")
+        ) {
+            setMainNavState(false);
+            toggleBtnMainNav.focus();
+        }
+    });
+}
 
