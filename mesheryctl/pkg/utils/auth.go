@@ -239,11 +239,18 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 		err = errors.Wrap(err, "could not read token: ")
 		return err
 	}
+
+	// Reject empty or whitespace-only token files.
+	if len(bytes.TrimSpace(file)) == 0 {
+		return ErrUnauthenticated()
+	}
+
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
 		err = errors.Wrap(err, "token file invalid: ")
 		return err
 	}
+
 	req.AddCookie(&http.Cookie{
 		Name:     tokenName,
 		Value:    tokenObj[tokenName],
