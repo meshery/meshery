@@ -301,6 +301,13 @@ The **Meshery UI dashboard** (`/`) is control-gated only. It renders for an orga
 This is by design, not an oversight: `/` is where Meshery lands you after login, so access-gating it would strand a newly invited member on an error screen before anyone has assigned them a role. Every other content-bearing page - including the design configurator and the user preferences page - is access-gated.
 {{% /alert %}}
 
+Where the permission-denied page is rendered depends on which layer you are in:
+
+*   In a page body **component** (`components/workspaces/index.tsx`, `components/user-preferences/index.tsx`), an early `return <DefaultError permissionKey={Keys.X} />` is correct, because the page file already wraps the component in `MesheryPage`, so the shell survives.
+*   In a **page** under `ui/pages/` (`configuration/designs/configurator.tsx`, `configuration/catalog.tsx`), render it as the alternate branch *inside* `MesheryPage`, never as an early return. Returning early skips the shell and loses both the browser tab title and the Redux page title that `usePageTitle` sets.
+
+Keep tests out of `ui/pages/`: `next.config.js` sets no `pageExtensions`, so any `.tsx` file there becomes a route and breaks `next build`. Put them under `ui/__tests__/`. Pin the **deny** path in a test, because an allow-only test passes against an ungated page too. Gating only the buttons, with no access gate, leaves the page readable by a member holding zero keys.
+
 Access gating is a presentation control, not an enforcement boundary. Meshery Server authenticates every request, and authorization is decided by the configured [Remote Provider]({{< ref "reference/extensibility/providers/index.md" >}}) and enforced per handler on the server. An ungated page therefore never implies an ungated API.
 
 ## Authorization using Local Provider
