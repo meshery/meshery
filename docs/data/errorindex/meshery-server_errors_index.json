@@ -7694,6 +7694,22 @@
         "Reduce the response size, then retry.",
         "For panel queries, shorten the time range or use more selective label matchers."
       ]
+    },
+    {
+      "code": "meshery-server-1494",
+      "moniker": "ErrRequestTooLargeCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1494",
+      "severity": "alert",
+      "probableCause": [
+        "Request payload exceeds maximum allowed size"
+      ],
+      "suggestedRemediation": [
+        "Reduce request payload size to within acceptable limits"
+      ]
     }
   ],
   "schemaVersion": 2
