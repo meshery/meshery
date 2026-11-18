@@ -15,6 +15,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/core"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -1640,9 +1641,11 @@ func TestDeleteConfiguration(t *testing.T) {
 		if err == nil {
 			t.Fatal("expected error on 204 response, got nil")
 		}
-		expectedErr := ErrResponseStatus(http.StatusNoContent)
-		if err.Error() != expectedErr.Error() {
-			t.Fatalf("expected error %q, got: %q", expectedErr.Error(), err.Error())
+		if meshkiterrors.GetCode(err) != ErrResponseStatusCode {
+			t.Fatalf("expected error code %s, got: %s", ErrResponseStatusCode, meshkiterrors.GetCode(err))
+		}
+		if !strings.Contains(err.Error(), "204") {
+			t.Fatalf("expected error to mention HTTP status 204, got: %s", err.Error())
 		}
 		assertBodyClosed(t, transport, "expected response body to be closed on 204 response, but it was not")
 	})

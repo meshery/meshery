@@ -20,6 +20,8 @@ import (
 	"net/http"
 	"strings"
 	"testing"
+
+	meshkiterrors "github.com/meshery/meshkit/errors"
 )
 
 type versionTrackingBody struct {
@@ -100,6 +102,9 @@ func TestGetLatestVersionForMesheryctl(t *testing.T) {
 		version, err := GetLatestVersionForMesheryctl()
 		if err == nil {
 			t.Fatalf("expected error for 502 status, got version: %q", version)
+		}
+		if meshkiterrors.GetCode(err) != ErrGetChannelVersionCode {
+			t.Fatalf("expected error code %s, got: %s", ErrGetChannelVersionCode, meshkiterrors.GetCode(err))
 		}
 		if !strings.Contains(err.Error(), "502") || !strings.Contains(err.Error(), "docs.meshery.io") {
 			t.Fatalf("expected error identifying docs.meshery.io and 502, got: %v", err)
