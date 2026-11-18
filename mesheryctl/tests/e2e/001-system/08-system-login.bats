@@ -12,14 +12,9 @@
 #   AUTH_FILE         saved login token (default: ~/.meshery/auth.json)
 
 DASHBOARD_PORT=9081
-
 setup() {
     load "$E2E_HELPERS_PATH/bats_libraries"
     _load_bats_libraries
-
-    # Test the binary supplied by the harness. Exported so the expect (Tcl)
-    # script can read it with $env(MESHERYCTL_BIN).
-    export MESHERYCTL_BIN="${MESHERYCTL_BIN:-mesheryctl}"
 
     # Do not open real browser windows during tests.
     export BROWSER=true
@@ -33,7 +28,7 @@ setup() {
     rm -f "${AUTH_FILE:-$HOME/.meshery/auth.json}"
 
     # Stopping an already-stopped Meshery instance is expected.
-    "$MESHERYCTL_BIN" system stop --yes >/dev/null 2>&1 || true
+    run $MESHERYCTL_BIN system stop --yes >/dev/null 2>&1 || true
 }
 
 teardown() {
