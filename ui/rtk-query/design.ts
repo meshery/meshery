@@ -110,18 +110,26 @@ export const designsApi = api
           selectedK8sContexts,
           verify = false,
           dryRun = false,
-        }) => ({
-          url: mesheryApiPath(
-            `${ctxUrl('pattern/deploy', selectedK8sContexts)}${verify ? '&verify=true' : ''}${
-              dryRun ? '&dryRun=true' : ''
-            }`,
-          ),
-          method: 'DELETE',
-          body: {
-            patternFile,
-            patternId,
-          },
-        }),
+          skipCRD = false,
+        }) => {
+          const params = [
+            verify && 'verify=true',
+            dryRun && 'dryRun=true',
+            skipCRD && 'skipCRD=true',
+          ].filter(Boolean);
+          const base = ctxUrl('pattern/deploy', selectedK8sContexts);
+          // ctxUrl only adds "?" when contexts are present, so the first
+          // parameter needs "?" when there are none.
+          const separator = selectedK8sContexts?.length ? '&' : '?';
+          return {
+            url: mesheryApiPath(params.length ? `${base}${separator}${params.join('&')}` : base),
+            method: 'DELETE',
+            body: {
+              patternFile,
+              patternId,
+            },
+          };
+        },
         invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
       clonePattern: builder.mutation({

@@ -112,30 +112,40 @@ describe('createPatternsActions', () => {
     keys.forEach((key) => expect(typeof (actions as any)[key]).toBe('function'));
   });
 
-  it('handleDeploy encodes the design file and invokes the deploy mutation', async () => {
+  it('handleDeploy encodes the design file and forwards skipCRD to the deploy mutation', async () => {
     const deps = baseDeps();
     const actions = createPatternsActions(deps);
 
-    await actions.handleDeploy({ design: { id: 'd1', body: 'x' }, selectedK8sContexts: ['ctx-1'] });
+    await actions.handleDeploy({
+      design: { id: 'd1', body: 'x' },
+      selectedK8sContexts: ['ctx-1'],
+      skipCRD: false,
+    });
 
     expect(encodeDesignFile).toHaveBeenCalledWith({ id: 'd1', body: 'x' });
     expect(deps.deployPatternMutation).toHaveBeenCalledWith({
       patternFile: 'encoded:{"id":"d1","body":"x"}',
       patternId: 'd1',
       selectedK8sContexts: ['ctx-1'],
+      skipCRD: false,
     });
   });
 
-  it('handleUndeploy invokes the undeploy mutation', async () => {
+  it('handleUndeploy invokes the undeploy mutation and forwards skipCRD', async () => {
     const deps = baseDeps();
     const actions = createPatternsActions(deps);
 
-    await actions.handleUndeploy({ design: { id: 'd2' }, selectedK8sContexts: ['ctx-2'] });
+    await actions.handleUndeploy({
+      design: { id: 'd2' },
+      selectedK8sContexts: ['ctx-2'],
+      skipCRD: true,
+    });
 
     expect(deps.undeployPatternMutation).toHaveBeenCalledWith({
       patternFile: 'encoded:{"id":"d2"}',
       patternId: 'd2',
       selectedK8sContexts: ['ctx-2'],
+      skipCRD: true,
     });
   });
 
