@@ -313,6 +313,62 @@ func TestGetComponentMetadataReturnsAssociatedModelName(t *testing.T) {
 	}
 }
 
+func TestGetComponentMetadataOmitsComponentSchema(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("Failed to create in-memory database: %v", err)
+	}
+
+	if err := db.AutoMigrate(&modelv1beta1.ModelDefinition{}, &component.ComponentDefinition{}); err != nil {
+		t.Fatalf("Failed to migrate schema: %v", err)
+	}
+
+	modelID := uuid.FromStringOrNil("11111111-1111-1111-1111-111111111111")
+	if err := db.Create(&modelv1beta1.ModelDefinition{ID: modelID, Name: "kubernetes"}).Error; err != nil {
+		t.Fatalf("Failed to create model definition: %v", err)
+	}
+
+	componentDef := component.ComponentDefinition{
+		ID:      uuid.FromStringOrNil("22222222-2222-2222-2222-222222222222"),
+		ModelID: &modelID,
+		Component: component.Component{
+			Kind:    "Pod",
+			Version: "v1",
+			Schema:  `{"type":"object","properties":{"spec":{"type":"object"}}}`,
+		},
+	}
+	if err := db.Create(&componentDef).Error; err != nil {
+		t.Fatalf("Failed to create component definition: %v", err)
+	}
+
+	mockLogger, err := logger.New("test", logger.Options{})
+	if err != nil {
+		t.Fatalf("Failed to create logger: %v", err)
+	}
+
+	handler := &MeshsyncDataHandler{
+		dbHandler: database.Handler{DB: db},
+		log:       mockLogger,
+	}
+
+	data, modelName := handler.getComponentMetadata("v1", "Pod")
+	if modelName != "kubernetes" {
+		t.Fatalf("expected associated model name to be returned, got %q", modelName)
+	}
+
+	componentData, ok := data["component"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected returned metadata to include the component, got %#v", data["component"])
+	}
+
+	if got := componentData["schema"]; got != "" {
+		t.Fatalf("expected the component schema to be left out of MeshSync metadata, got %#v", got)
+	}
+	if componentData["kind"] != "Pod" || componentData["version"] != "v1" {
+		t.Fatalf("expected component kind and version to be kept, got %#v", componentData)
+	}
+}
+
 func TestMeshsyncDataHandlerStopStopsListeners(t *testing.T) {
 	stopCalled := make(chan struct{}, 1)
 	broker := &testMeshsyncBroker{}
