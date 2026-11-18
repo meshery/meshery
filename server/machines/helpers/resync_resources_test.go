@@ -14,6 +14,7 @@ func TestFlushAndResyncResourcesRejectsUnsupportedMachine(t *testing.T) {
 	flushErr, resyncErr := FlushAndResyncResources(
 		context.Background(),
 		sm,
+		nil,
 		func() error {
 			flushCalled = true
 			return nil
