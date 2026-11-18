@@ -154,6 +154,9 @@ if (toggleBtnMainNav && sidebarNav) {
         const isClickOnToggleButton = toggleBtnMainNav.contains(event.target);
 
         if (!isClickInsideSidebar && !isClickOnToggleButton) {
+            if (sidebarNav.contains(document.activeElement)) {
+                toggleBtnMainNav.focus();
+            }
             setMainNavState(false);
         }
     });
