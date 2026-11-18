@@ -86,15 +86,26 @@ def test_breadcrumb_spacing_in_layout(root: Path | None = None):
     assert match, "Could not find .breadcrumb rule in _layout.scss"
     rule_body = match.group(1)
 
-    assert "margin: 0;" not in rule_body, (
-        ".breadcrumb in _layout.scss has 'margin: 0;', leaving no vertical whitespace under the header"
+    # Determine effective top margin by evaluating declarations in order.
+    # A positive shorthand margin (first value) sets the top margin, while a subsequent
+    # margin-top overrides it (and vice-versa).
+    effective_top_margin: float | None = None
+    decl_pattern = re.compile(r'(?:^|;)\s*(margin(?:-top)?)\s*:\s*([^;]+)', re.MULTILINE)
+    for match_decl in decl_pattern.finditer(rule_body):
+        val_str = match_decl.group(2).strip()
+        parts = val_str.split()
+        if not parts:
+            continue
+        first_token = parts[0]
+        num_match = re.match(r'^(-?\d+(?:\.\d+)?|\.\d+)', first_token)
+        if num_match:
+            effective_top_margin = float(num_match.group(1))
+
+    assert effective_top_margin is not None, (
+        "Could not parse effective margin or margin-top declaration in .breadcrumb rule"
     )
-    # Verify effective top margin is positive in either shorthand margin or margin-top declaration
-    positive_top_margin_pattern = (
-        r'(?:margin:\s*(?:[1-9]\d*(?:\.\d+)?|0?\.\d+)\w*|margin-top:\s*(?:[1-9]\d*(?:\.\d+)?|0?\.\d+)\w*)'
-    )
-    assert re.search(positive_top_margin_pattern, rule_body), (
-        ".breadcrumb in _layout.scss must specify a positive top margin (via margin shorthand or margin-top)"
+    assert effective_top_margin > 0, (
+        f".breadcrumb in _layout.scss must specify a positive top margin, but effective value is {effective_top_margin}"
     )
 
 
