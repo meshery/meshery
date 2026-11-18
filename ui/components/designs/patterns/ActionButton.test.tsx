@@ -101,8 +101,12 @@ describe('ActionButton', () => {
     fireEvent.click(screen.getByTestId('action-btn-toggle'));
     expect(screen.getByTestId('popper')).toBeInTheDocument();
     expect(screen.getByTestId('validate-icon')).toBeInTheDocument();
-    // In single-click mode, the label is inside the tooltip only, not rendered as direct text
+    // In single-click mode, the label is inside the tooltip and aria-label for accessibility
     expect(screen.queryByText('Validate')).not.toBeInTheDocument();
+    expect(screen.getByTestId('action-btn-option-Validate')).toHaveAttribute(
+      'aria-label',
+      'Validate',
+    );
   });
 
   it('invokes onClick in interactive mode', () => {

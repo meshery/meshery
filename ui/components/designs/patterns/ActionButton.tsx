@@ -121,6 +121,7 @@ export default function ActionButton({
               {options.map((option, index) => (
                 <MenuItem
                   data-testid={option['data-testid'] || `action-btn-option-${option.label}`}
+                  aria-label={option.label}
                   disabled={option.disabled}
                   permissionKey={option.permissionKey}
                   permissionAction={option.permissionAction}
