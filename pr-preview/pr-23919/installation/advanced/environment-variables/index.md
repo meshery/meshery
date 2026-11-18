@@ -78,7 +78,7 @@ The build or deployment pipeline usually injects these variables; end users rare
 | `BUILD` | Build-time value; runtime fallback `Not Set` | Meshery Server version string used in server metadata, provider capability requests, and chart selection. | `BUILD=v1.0.0 make server` |
 | `COMMITSHA` | Build-time value; runtime fallback `Not Set` | Git commit SHA reported in server metadata. | `COMMITSHA=$(git rev-parse HEAD) make server` |
 | `RELEASE_CHANNEL` | Build-time value; runtime fallback `Not Set` | Release channel reported by the server, such as `stable` or `edge`. | `RELEASE_CHANNEL=stable make server` |
-| `INSTANCE_ID` | Auto-generated UUID | Unique Meshery instance identifier used in eventing, connection metadata, and system-owned resources. Must be a UUID: any other value is ignored with a warning, and a new ID is generated. | `INSTANCE_ID=$(uuidgen) make server` |
+| `INSTANCE_ID` | Auto-generated UUID | Unique Meshery instance identifier used in eventing, connection metadata, and system-owned resources. Must be a UUID; it takes precedence over an `INSTANCE_ID` in `server-config.env`. Any other value, including one that is only whitespace or the all-zero UUID, is ignored with a warning, and a new ID is generated. An empty value counts as unset: the ID from `server-config.env` is used, or a new one is generated without a warning. | `INSTANCE_ID=$(uuidgen) make server` |
 | `OS` | `meshery` | Value forwarded to remote-provider capability requests so providers can tailor responses to the caller. | `OS=meshery make server` |
 
 ## Platform-provided environment variables
