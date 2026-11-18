@@ -15,7 +15,9 @@
 package design
 
 import (
+	"encoding/json"
 	"fmt"
+	"math"
 	"net/url"
 	"os"
 	"strconv"
@@ -180,16 +182,48 @@ func fetchDesignSearch(name string, fetch func(string) (*map[string]interface{},
 			added++
 		}
 
+		total, ok, err := designSearchTotal(*response)
+		if err != nil {
+			return nil, err
+		}
 		// Without a total the response cannot say whether more pages exist.
-		total, ok := (*response)["totalCount"].(float64)
-		if !ok || len(designs) >= int(total) {
+		if !ok || len(designs) >= total {
 			return designs, nil
 		}
 		// Each further page must add designs, or the loop would never end.
 		if added == 0 {
-			return nil, ErrDesignInvalidApiResponse(fmt.Sprintf("search for %q returned %d of %d designs", name, len(designs), int(total)))
+			return nil, ErrDesignInvalidApiResponse(fmt.Sprintf("search for %q returned %d of %d designs", name, len(designs), total))
 		}
 	}
+}
+
+// designSearchTotal reads the number of designs matching a search, from the
+// current "totalCount" field or the legacy "total_count" field. A total that
+// is present but not a whole number is an error: treating it as missing would
+// stop after the first page and could miss the design with the name.
+func designSearchTotal(response map[string]interface{}) (int, bool, error) {
+	for _, key := range []string{"totalCount", "total_count"} {
+		value, ok := response[key]
+		if !ok || value == nil {
+			continue
+		}
+		switch n := value.(type) {
+		case float64:
+			if n == math.Trunc(n) {
+				return int(n), true, nil
+			}
+		case int:
+			return n, true, nil
+		case int64:
+			return int(n), true, nil
+		case json.Number:
+			if i, err := n.Int64(); err == nil {
+				return int(i), true, nil
+			}
+		}
+		return 0, false, ErrDesignInvalidApiResponse(fmt.Sprintf("'%s' field is not a whole number: %v", key, value))
+	}
+	return 0, false, nil
 }
 
 // runDesignSelectPrompt draws the prompt on stderr: stdout carries the design,
