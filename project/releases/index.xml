@@ -6549,7 +6549,6 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 &lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;[Docs] Fix typos in Permission Keys Reference documentation @YadavAkhileshh (#16652)&lt;/li&gt;
-&lt;li&gt;Add Chigozie Monago&amp;rsquo;s introduction @ChigozieCO (#16646)&lt;/li&gt;
 &lt;li&gt;Mert Gör hwpplayer1 @hwpplayer1 (#16645)&lt;/li&gt;
 &lt;li&gt;Create Abhay Pandey @Abhay349 (#16644)&lt;/li&gt;
 &lt;li&gt;Kaif intro PR @Koifish2004 (#16641)&lt;/li&gt;
@@ -6563,7 +6562,7 @@ efactor: update fallback image paths and remove unused SVG files\ @fitzergerald 
 	👨🏽‍💻 Contributors
 &lt;/h2&gt;
 &lt;p&gt;Thank you to our contributors for making this release possible:
-@Abhay349, @ChigozieCO, @CodexRaunak, @Koifish2004, @SalmaneKhalili, @YadavAkhileshh, @aabidsofi19, @alexquincy, @fitzergerald, @hwpplayer1, @kishore08-07, @l5io, @leecalcote, @lekaf974, @meshery-ci, @miacycle, @ritesh-karankal, @ritzorama, @saurabhraghuvanshii, @sidxhdev, @thecodephilic-guy and vishalvivekm&lt;/p&gt;</description></item><item><title>v0.8.179</title><link>/project/releases/v0.8.179/</link><pubDate>Thu, 11 Dec 2025 00:00:00 +0000</pubDate><guid>/project/releases/v0.8.179/</guid><description>&lt;h2 id="whats-new"&gt;
+@Abhay349, @CodexRaunak, @Koifish2004, @SalmaneKhalili, @YadavAkhileshh, @aabidsofi19, @alexquincy, @fitzergerald, @hwpplayer1, @kishore08-07, @l5io, @leecalcote, @lekaf974, @meshery-ci, @miacycle, @ritesh-karankal, @ritzorama, @saurabhraghuvanshii, @sidxhdev, @thecodephilic-guy and vishalvivekm&lt;/p&gt;</description></item><item><title>v0.8.179</title><link>/project/releases/v0.8.179/</link><pubDate>Thu, 11 Dec 2025 00:00:00 +0000</pubDate><guid>/project/releases/v0.8.179/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
