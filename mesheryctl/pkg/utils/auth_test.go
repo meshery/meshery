@@ -738,3 +738,82 @@ tokens:
 		t.Errorf("meshconfig was rewritten:\n%s", got)
 	}
 }
+
+func TestAddAuthDetails_EmptyTokenFileReturnsUnauthenticated(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+
+	if err := os.WriteFile(tokenPath, []byte{}, 0600); err != nil {
+		t.Fatalf("failed to create token file: %v", err)
+	}
+
+	req, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
+
+	err = AddAuthDetails(req, tokenPath)
+	if err == nil {
+		t.Fatal("expected unauthenticated error for empty token file")
+	}
+
+	if got := errors.GetCode(err); got != ErrUnauthenticatedCode {
+		t.Fatalf("expected error code %s, got %s", ErrUnauthenticatedCode, got)
+	}
+}
+
+func TestAddAuthDetails_AllowsEmptyTokenForLocalProvider(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	tokenData := []byte(`{"token":"","meshery-provider":"Local"}`)
+
+	if err := os.WriteFile(tokenPath, tokenData, 0600); err != nil {
+		t.Fatalf("failed to create token file: %v", err)
+	}
+
+	req, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
+
+	if err := AddAuthDetails(req, tokenPath); err != nil {
+		t.Fatalf("expected Local provider with empty token to be allowed, got: %v", err)
+	}
+
+	tokenCookie, err := req.Cookie(tokenName)
+	if err != nil {
+		t.Fatalf("expected token cookie, got: %v", err)
+	}
+	if tokenCookie.Value != "" {
+		t.Fatalf("expected empty token value, got %q", tokenCookie.Value)
+	}
+
+	providerCookie, err := req.Cookie(providerName)
+	if err != nil {
+		t.Fatalf("expected provider cookie, got: %v", err)
+	}
+	if providerCookie.Value != "Local" {
+		t.Fatalf("expected provider Local, got %q", providerCookie.Value)
+	}
+}
+
+func TestNewRequestWithEmptyTokenFileReturnsAttachAuthTokenError(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+
+	if err := os.WriteFile(tokenPath, []byte{}, 0o600); err != nil {
+		t.Fatalf("failed to create empty token file: %v", err)
+	}
+
+	originalTokenFlag := TokenFlag
+	TokenFlag = tokenPath
+	t.Cleanup(func() {
+		TokenFlag = originalTokenFlag
+	})
+
+	_, err := NewRequest(http.MethodGet, "http://localhost", nil)
+	if err == nil {
+		t.Fatal("expected authentication error for empty token file")
+	}
+
+	if got := errors.GetCode(err); got != ErrAttachAuthTokenCode {
+		t.Fatalf("expected error code %s, got %s", ErrAttachAuthTokenCode, got)
+	}
+}
