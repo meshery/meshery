@@ -73,6 +73,8 @@ describe('meshModel – module surface', () => {
     expect(typeof mod.useGetRelationshipsQuery).toBe('function');
     expect(typeof mod.useGetRegistrantsQuery).toBe('function');
     expect(typeof mod.useLazyGetRegistrantsQuery).toBe('function');
+    expect(typeof mod.useGetConnectionDefinitionsQuery).toBe('function');
+    expect(typeof mod.useLazyGetConnectionDefinitionsQuery).toBe('function');
     expect(typeof mod.useGetComponentsFromModalQuery).toBe('function');
     expect(typeof mod.useLazyGetComponentsFromModalQuery).toBe('function');
     expect(typeof mod.useGetRelationshipsFromModalQuery).toBe('function');
