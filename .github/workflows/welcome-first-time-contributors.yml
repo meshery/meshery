@@ -119,6 +119,7 @@ jobs:
               issue_number: number,
               body
             });
+            core.info(`Posted welcome comment on #${number} for ${author}`);
 
       - name: 🚨 Alert on Failure
         if: failure()
