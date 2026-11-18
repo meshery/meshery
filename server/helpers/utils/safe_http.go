@@ -22,10 +22,23 @@ var (
 		IP:   net.ParseIP("198.18.0.0"),
 		Mask: net.CIDRMask(15, 32),
 	}
+	// These special-use ranges are not rejected by the standard net.IP predicates.
+	restrictedIPv4Nets = []net.IPNet{
+		{IP: net.ParseIP("192.0.0.0").To4(), Mask: net.CIDRMask(24, 32)},
+		{IP: net.ParseIP("192.0.2.0").To4(), Mask: net.CIDRMask(24, 32)},
+		{IP: net.ParseIP("198.51.100.0").To4(), Mask: net.CIDRMask(24, 32)},
+		{IP: net.ParseIP("203.0.113.0").To4(), Mask: net.CIDRMask(24, 32)},
+		{IP: net.ParseIP("240.0.0.0").To4(), Mask: net.CIDRMask(4, 32)},
+	}
+	restrictedIPv6Nets = []net.IPNet{
+		{IP: net.ParseIP("2001:db8::"), Mask: net.CIDRMask(32, 128)},
+		{IP: net.ParseIP("2001:2::"), Mask: net.CIDRMask(48, 128)},
+		{IP: net.ParseIP("fec0::"), Mask: net.CIDRMask(10, 128)},
+	}
 )
 
 // IsRestrictedIP checks whether an IP address belongs to a private, loopback,
-// link-local, multicast, unspecified, CGNAT, or benchmarking range.
+// link-local, multicast, unspecified, CGNAT, benchmarking, or other special-use range.
 // It explicitly unpacks IPv4-mapped IPv6 addresses so addresses such as
 // `::ffff:127.0.0.1` or `::ffff:169.254.169.254` are evaluated accurately.
 func IsRestrictedIP(ip net.IP) bool {
@@ -43,7 +56,8 @@ func IsRestrictedIP(ip net.IP) bool {
 			ip4.IsUnspecified() ||
 			ip4[0] == 0 ||
 			cgnatNet.Contains(ip4) ||
-			benchNet.Contains(ip4) {
+			benchNet.Contains(ip4) ||
+			containsIPNet(restrictedIPv4Nets, ip4) {
 			return true
 		}
 		return false
@@ -58,7 +72,19 @@ func IsRestrictedIP(ip net.IP) bool {
 		ip.IsUnspecified() {
 		return true
 	}
+	if containsIPNet(restrictedIPv6Nets, ip) {
+		return true
+	}
 
+	return false
+}
+
+func containsIPNet(nets []net.IPNet, ip net.IP) bool {
+	for i := range nets {
+		if nets[i].Contains(ip) {
+			return true
+		}
+	}
 	return false
 }
 
@@ -108,8 +134,14 @@ func ValidateSafeURL(rawURL string) (*url.URL, error) {
 		return nil, fmt.Errorf("access to host %q is restricted", hostname)
 	}
 
-	// If the host is an IP literal, validate it immediately.
-	if ip := net.ParseIP(hostname); ip != nil {
+	// If the host is an IP literal, validate it immediately. Strip an IPv6
+	// zone identifier first; it is not part of the address and must not bypass
+	// checks for scoped link-local or loopback literals.
+	ipHost := hostname
+	if zone := strings.IndexByte(ipHost, '%'); zone >= 0 {
+		ipHost = ipHost[:zone]
+	}
+	if ip := net.ParseIP(ipHost); ip != nil {
 		if IsRestrictedIP(ip) {
 			return nil, fmt.Errorf("access to IP address %q is restricted", hostname)
 		}
@@ -122,6 +154,14 @@ func ValidateSafeURL(rawURL string) (*url.URL, error) {
 // that every returned IP address is safe/public before establishing a TCP connection.
 // If allowPrivate is true (for testing only), private/loopback address filtering is bypassed.
 func SafeDialContext(timeout time.Duration, allowPrivate bool) func(ctx context.Context, network, addr string) (net.Conn, error) {
+	return safeDialContext(timeout, allowPrivate, net.DefaultResolver)
+}
+
+type ipResolver interface {
+	LookupIP(ctx context.Context, network, host string) ([]net.IP, error)
+}
+
+func safeDialContext(timeout time.Duration, allowPrivate bool, resolver ipResolver) func(ctx context.Context, network, addr string) (net.Conn, error) {
 	dialer := &net.Dialer{
 		Timeout:   timeout,
 		KeepAlive: 30 * time.Second,
@@ -138,7 +178,7 @@ func SafeDialContext(timeout time.Duration, allowPrivate bool) func(ctx context.
 		}
 
 		// Resolve IP addresses
-		ips, err := net.DefaultResolver.LookupIP(ctx, "ip", host)
+		ips, err := resolver.LookupIP(ctx, "ip", host)
 		if err != nil {
 			return nil, fmt.Errorf("DNS resolution failed for %q: %w", host, err)
 		}

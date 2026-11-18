@@ -4374,8 +4374,17 @@
         "suggested_remediation": "Ensure the provider is properly initialized before handling the request"
       },
       "1493": {
-        "name": "ErrRequestTooLargeCode",
+        "name": "ErrTelemetrySizeCode",
         "code": "1493",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Telemetry response exceeds Meshery's 16 MiB limit",
+        "probable_cause": "The upstream response contains more data than Meshery can return.",
+        "suggested_remediation": "Reduce the response size, then retry.\nFor panel queries, shorten the time range or use more selective label matchers."
+      },
+      "1494": {
+        "name": "ErrRequestTooLargeCode",
+        "code": "1494",
         "severity": "Alert",
         "long_description": "",
         "short_description": "",
