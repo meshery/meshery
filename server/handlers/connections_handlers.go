@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -422,15 +423,16 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 
 	// Filters are passed as repeated query params — the standard convention
 	// across the API (e.g. ?kind=kubernetes&kind=meshery&status=connected). No
-	// per-param JSON decoding.
+	// per-param JSON decoding. An empty value (`?status=`) means no filter,
+	// not a filter for the empty string.
 	queryParam := struct {
 		Status []string
 		Kind   []string
 		Type   []string
 	}{
-		Status: q["status"],
-		Kind:   q["kind"],
-		Type:   q["type"],
+		Status: nonEmptyValues(q["status"]),
+		Kind:   nonEmptyValues(q["kind"]),
+		Type:   nonEmptyValues(q["type"]),
 	}
 
 	connectionsPage, err := provider.GetConnections(req, user.ID.String(), page, pageSize, search, order, filter, queryParam.Status, queryParam.Kind, queryParam.Type, name)
@@ -447,6 +449,12 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
 		return
 	}
+}
+
+// nonEmptyValues drops empty entries from a repeated query param. The slice
+// comes from a fresh req.URL.Query() parse, so filtering it in place is safe.
+func nonEmptyValues(values []string) []string {
+	return slices.DeleteFunc(values, func(v string) bool { return v == "" })
 }
 
 // GetConnectionsByKind is an internal handler that fetches connections filtered by kind.
