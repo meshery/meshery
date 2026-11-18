@@ -89,8 +89,12 @@ def test_breadcrumb_spacing_in_layout(root: Path | None = None):
     assert "margin: 0;" not in rule_body, (
         ".breadcrumb in _layout.scss has 'margin: 0;', leaving no vertical whitespace under the header"
     )
-    assert re.search(r'margin:\s*[1-9]', rule_body) or "margin-top" in rule_body, (
-        ".breadcrumb in _layout.scss must specify positive vertical margin"
+    # Verify effective top margin is positive in either shorthand margin or margin-top declaration
+    positive_top_margin_pattern = (
+        r'(?:margin:\s*(?:[1-9]\d*(?:\.\d+)?|0?\.\d+)\w*|margin-top:\s*(?:[1-9]\d*(?:\.\d+)?|0?\.\d+)\w*)'
+    )
+    assert re.search(positive_top_margin_pattern, rule_body), (
+        ".breadcrumb in _layout.scss must specify a positive top margin (via margin shorthand or margin-top)"
     )
 
 
