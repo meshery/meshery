@@ -3,20 +3,15 @@ package kubernetes
 import (
 	"context"
 	"testing"
-
-	"github.com/meshery/meshery/server/machines"
 )
 
 func TestFlushAndResyncResourcesDoesNotFlushWithoutMesheryHelper(t *testing.T) {
-	sm := &machines.StateMachine{
-		Name:    "kubernetes",
-		Context: &MachineCtx{},
-	}
+	machineCtx := &MachineCtx{}
 
 	flushCalled := false
 	flushErr, resyncErr := FlushAndResyncResources(
 		context.Background(),
-		sm,
+		machineCtx,
 		func() error {
 			flushCalled = true
 			return nil

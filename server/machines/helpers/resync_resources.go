@@ -13,6 +13,7 @@ import (
 func FlushAndResyncResources(
 	ctx context.Context,
 	sm *machines.StateMachine,
+	machineCtx *kubernetes.MachineCtx,
 	flush func() error,
 ) (flushErr error, resyncErr error) {
 	if sm.Name != "kubernetes" {
@@ -24,7 +25,7 @@ func FlushAndResyncResources(
 		)
 	}
 
-	return kubernetes.FlushAndResyncResources(ctx, sm, flush)
+	return kubernetes.FlushAndResyncResources(ctx, machineCtx, flush)
 }
 
 func ResyncResources(ctx context.Context, sm *machines.StateMachine) error {
