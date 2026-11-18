@@ -19,7 +19,6 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/helpers"
@@ -97,7 +96,9 @@ func main() {
 		log.SetLevel(logrus.Level(viper.GetInt("LOG_LEVEL")))
 	})
 
-	instanceID, err := uuid.NewV4()
+	// Use INSTANCE_ID from the environment or config when it is a valid UUID,
+	// else generate one, and store it for every reader (see configureInstanceID).
+	instanceID, err := configureInstanceID(viper.GetViper(), log)
 	if err != nil {
 		log.Error(ErrCreatingUUIDInstance(err))
 		os.Exit(1)
@@ -118,7 +119,6 @@ func main() {
 	viper.SetDefault("OS", "meshery")
 	viper.SetDefault("COMMITSHA", commitsha)
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
-	viper.SetDefault("INSTANCE_ID", &instanceID)
 	viper.SetDefault(constants.ProviderENV, "")
 	// Seed the canonical active remote-provider list (install/providers.env) so a
 	// server started without PROVIDER_BASE_URLS still registers the default providers.
@@ -484,7 +484,7 @@ func main() {
 		dbHandler,
 		hc.EventBroadcaster,
 		nil,
-		&instanceID,
+		instanceID,
 	)
 	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
 		ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine, 0),
