@@ -113,7 +113,8 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 			tempCntxt.Components = contextCreateFlags.Components
 		}
 
-		contextName := strings.ToLower(args[0])
+		// Trim so a name typed with stray spaces is saved under the key later commands look up.
+		contextName := strings.ToLower(strings.TrimSpace(args[0]))
 
 		err := config.AddContextToConfig(contextName, tempCntxt, viper.ConfigFileUsed(), contextCreateFlags.Set, false)
 		if err != nil {

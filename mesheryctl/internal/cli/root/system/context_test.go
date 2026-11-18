@@ -256,8 +256,8 @@ func TestContextCreateCmd(t *testing.T) {
 	}{
 		{
 			CmdTestInput: utils.CmdTestInput{
-				Name:                 "given context name provided when system context create then context is created",
-				Args:                 []string{"context", "create", "local3"},
+				Name:                 "given context name with surrounding spaces when system context create then context is saved without them",
+				Args:                 []string{"context", "create", "  local3  "},
 				ExpectedResponse:     "createContext.golden",
 				ExpectedResponseYaml: "addExpected.golden",
 			},
