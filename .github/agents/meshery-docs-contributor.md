@@ -39,7 +39,7 @@ You are an expert-level documentation agent specialized in contributing to **Mes
 ├── hugo.toml               # Hugo configuration
 ├── content/                # Documentation content
 │   └── en/                 # English documentation
-├── data/                   # Data files (for example: toc.yml)
+├── data/                   # Hugo data files
 ├── layouts/                # Hugo templates
 │   ├── _default/
 │   ├── partials/
@@ -62,7 +62,7 @@ You are an expert-level documentation agent specialized in contributing to **Mes
 - Shared templates live under `/docs/layouts/partials/` and `/docs/layouts/shortcodes/`.
 - Shared/common files belong in `/docs/static/`.
 - Page-specific images and files should prefer page bundles.
-- Navigation is maintained in `/docs/data/toc.yml`.
+- Navigation is generated from the Hugo content tree under `/docs/content/en/`.
 - Generated output under `/docs/public/` is not the source of truth and should generally not be edited directly.
 
 ## Meshery Documentation Principles
@@ -221,30 +221,34 @@ echo "Hello, Meshery!"
 If a code block appears inside an ordered list and numbering breaks, prefer the HTML clipboard block pattern documented in [docs/content/en/project/contributing/contributing-docs.md](docs/content/en/project/contributing/contributing-docs.md).
 
 ### Navigation
-Sidebar navigation is still driven by [docs/data/toc.yml](docs/data/toc.yml).
 
-Typical structure:
+The documentation sidebar is generated automatically from the Hugo content tree under `docs/content/en/`. Navigation is not maintained in `docs/data/toc.yml`.
 
-```yaml
-- title: Group 1
-  url: group1
-  links:
-    - title: Child page
-      url: /path/to/page
-    - title: Another child
-      url: /path/to/another-page
-      links:
-        - title: Grandchild
-          url: /path/to/grandchild
-```
+**How sidebar navigation works:**
 
-Navigation hierarchy:
+- A directory containing an `_index.md` file defines a section and appears as a parent entry in the sidebar.
+- Markdown pages and subdirectories within a section appear as child entries.
+- Nested directories with their own `_index.md` files create nested sections.
+- The sidebar uses page front matter and Hugo's content hierarchy to determine labels, visibility, and ordering.
 
-- **Parent**: top-level section
-- **Children**: immediate subsection links
-- **Grandchildren**: nested links under a child
+**Relevant front matter fields:**
 
-Update [docs/data/toc.yml](docs/data/toc.yml) when adding pages that should appear in the sidebar.
+- `title`: The page or section title.
+- `linkTitle`: An optional shorter label displayed in the sidebar.
+- `weight`: Controls ordering; lower values appear first.
+- `toc_hide: true`: Hides a page or section from the sidebar while keeping it published.
+- `manualLink`: Supports manually specified navigation links where required.
+
+**Adding or updating sidebar navigation:**
+
+1. Create or move the Markdown page into the appropriate directory under `docs/content/en/`.
+2. Ensure the parent section contains an `_index.md` file.
+3. Set the page's front matter, including `title` and `weight` where appropriate.
+4. Use `toc_hide: true` only when the page should be excluded from the sidebar.
+5. Check the sidebar implementation in `docs/layouts/partials/sidebar-nav-tree.html` and `docs/layouts/partials/sidebar.html` when investigating rendering or navigation issues.
+
+The `sidebar-nav-tree.html` partial renders the navigation tree. During each build, the generated sidebar is published as `sidebar/nav-*.html`, and `sidebar.html` mounts that output into the page.
+For detailed guidance, see [Contributing Documentation](docs/content/en/project/contributing/contributing-docs/docs.md), particularly the section on navigation in the sidebar.
 
 ## Documentation Contribution Workflow
 
@@ -270,7 +274,7 @@ Notes:
 2. Create a new Markdown file or page bundle
 3. Add Hugo front matter matching nearby docs in that section
 4. Write content following style guidelines
-5. Update [docs/data/toc.yml](docs/data/toc.yml) if navigation should change
+5. Check the page's front matter and location in the Hugo content tree if sidebar navigation should change.
 6. Test locally with `make site`
 7. Verify links, images, and shortcodes
 
@@ -284,7 +288,7 @@ Notes:
      - /old/path/to/page
    ---
    ```
-4. Update navigation in `_data/toc.yml` if needed
+4. Check the page's front matter and content location if sidebar navigation should change.
 5. Test locally to verify changes
 
 #### For Integration Documentation
@@ -304,7 +308,7 @@ Before submitting documentation:
 - [ ] All code examples are tested and working
 - [ ] All links are valid (internal and external)
 - [ ] Images have alt text and descriptive names
-- [ ] Navigation is updated in `_data/toc.yml` if needed
+- [ ] Navigation follows the Hugo content hierarchy and front matter.
 - [ ] Page renders correctly locally (`make docs`)
 - [ ] No broken links or missing images
 - [ ] Spelling and grammar are correct
@@ -347,7 +351,7 @@ Pull request requirements:
    categories: [contributing]
    ---
    ```
-4. Add to TOC in `_data/toc.yml` under "Contributing" section
+4. Place the guide in the appropriate section under `/docs/content/en/project/contributing/` and ensure its parent section has an `_index.md` file.
 5. Follow structure: Overview → Prerequisites → Steps → Troubleshooting
 
 ### Adding a Concept Page
@@ -520,8 +524,8 @@ make docs
 - **Prevention**: Run `make site` locally before committing; Hugo reports the offending file and line number on build failure
 
 #### Problem: Navigation not updating
-- **Solution**: Verify `docs/data/toc.yml` has been updated with the correct `url` and that it matches the page's `relpermalink`; YAML indentation errors silently drop entire subtrees
-- **Prevention**: Always update `toc.yml` when adding, moving, or renaming a page; validate YAML with a linter before committing
+- **Solution**: Verify that the page is in the correct section under `docs/content/en/`, that its parent section contains an `_index.md` file, and that its front matter does not hide it with `toc_hide: true`. Check `weight` if the page appears in the wrong order.
+- **Prevention**: Follow the Hugo content hierarchy when adding, moving, or renaming pages, and verify the relevant front matter and section structure before committing.
 
 #### Problem: Images not displaying
 - **Solution**: Determine the correct location — page-specific images belong in the page bundle directory alongside `index.md`, shared images belong under `docs/static/img/`; reference bundle images with a relative path and static images with an absolute path from the site root (e.g. `/img/meshery-logo.png`)
@@ -537,7 +541,7 @@ make docs
   aliases:
     - /old/path/to/page
   ```
-- **Prevention**: Search the entire `docs/content/` tree for internal references before moving a page; also check `docs/data/toc.yml`
+- **Prevention**: Search the entire `docs/content/` tree for internal references before moving a page, and update any links that point to the page's previous location.
 
 #### Problem: Shortcode type confusion (`{{< >}}` vs `{{% %}}`)
 - **Solution**: Use `{{% %}}` (percent delimiters) for shortcodes whose inner content should be processed as Markdown (e.g. `alert`); use `{{< >}}` (angle-bracket delimiters) for shortcodes that receive raw string arguments (e.g. `code`). Mixing them causes either escaped HTML or unparsed Markdown in the output
@@ -713,7 +717,7 @@ make docker
 
 ### File locations
 - Content: `/docs/content/`
-- Navigation: `/docs/data/toc.yml`
+- Navigation: Hugo content tree under `/docs/content/en/`
 - Partials: `/docs/layouts/partials/`
 - Shortcodes: `/docs/layouts/shortcodes/`
 - Shared static files: `/docs/static/`
