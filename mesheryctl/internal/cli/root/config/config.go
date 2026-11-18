@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"sync"
 
@@ -123,7 +124,7 @@ func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
 		mesheryctllogger.Log.Fatal(err)
 	}
 
-	return currentContext.Endpoint
+	return currentContext.GetEndpoint()
 }
 
 func (mc *MesheryCtlConfig) GetCurrentContextName() string {
@@ -186,9 +187,13 @@ func (mc *MesheryCtlConfig) GetTokens() *[]Token {
 	return &mc.Tokens
 }
 
-// GetEndpoint returns the endpoint of the current context
+// GetEndpoint returns the endpoint of the current context, without trailing slashes.
+// Request paths are appended as "<endpoint>/api/...", so a stored endpoint ending in "/" (which
+// `system context create --url` accepts) produced "//api/...". Meshery Server redirects that path, and
+// Go's HTTP client re-sends a redirected DELETE, POST or PUT as a GET, so the request silently did
+// something else. Trimming here covers existing configs as well as new ones.
 func (ctx *Context) GetEndpoint() string {
-	return ctx.Endpoint
+	return strings.TrimRight(ctx.Endpoint, "/")
 }
 
 // SetEndpoint sets the endpoint of the current context
@@ -424,6 +429,19 @@ func DeleteTokenFromConfig(tokenName string, configPath string) error {
 
 	for i := range mctlCfg.Tokens {
 		if mctlCfg.Tokens[i].Name == tokenName {
+			// A context left naming a deleted token makes later requests fall
+			// back to the default auth.json, so its token would be sent to
+			// that context's server.
+			var inUse []string
+			for name, ctx := range mctlCfg.Contexts {
+				if ctx.Token == tokenName {
+					inUse = append(inUse, name)
+				}
+			}
+			if len(inUse) > 0 {
+				slices.Sort(inUse)
+				return fmt.Errorf("token %q is still used by context(s) %s; set another token on them first with `mesheryctl system token set <token-name> -c <context>`", tokenName, strings.Join(inUse, ", "))
+			}
 			mctlCfg.Tokens = append(mctlCfg.Tokens[:i], mctlCfg.Tokens[i+1:]...)
 			viper.Set("contexts", mctlCfg.Contexts)
 			viper.Set("current-context", mctlCfg.CurrentContext)
@@ -458,6 +476,11 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 	if err != nil {
 		return err
 	}
+	// Without this check a mistyped name is saved, and requests made with the
+	// context then fall back to the default auth.json instead of failing.
+	if !slices.ContainsFunc(mctlCfg.Tokens, func(t Token) bool { return t.Name == tokenName }) {
+		return fmt.Errorf("token %q does not exist in meshconfig", tokenName)
+	}
 	context.Token = tokenName
 	err = UpdateContextInConfig(context, ctxName)
 	if err != nil {
@@ -469,6 +492,10 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 // AddContextToConfig adds context passed to it to mesheryctl config file. If overwrite is set to true, existing
 // context with the contextName is overwritten
 func AddContextToConfig(contextName string, context Context, configPath string, set bool, overwrite bool) error {
+	if strings.Contains(contextName, ".") {
+		return fmt.Errorf("context name cannot contain %q", ".")
+	}
+
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return err
 	}

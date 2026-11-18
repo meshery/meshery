@@ -162,6 +162,8 @@ describe('normalizeUnit', () => {
     expect(normalizeUnit('memory', '1Mi')).toBe('1.05 MB');
     expect(normalizeUnit('memory', '1Gi')).toBe('1.07 GB');
     expect(normalizeUnit('memory', '1Ti')).toBe('1.1 TB');
+    expect(normalizeUnit('memory', '1Pi')).toBe('1.13 PB');
+    expect(normalizeUnit('memory', '1Ei')).toBe('1.15 EB');
   });
 
   it('handles decimal memory suffixes', () => {
@@ -169,6 +171,8 @@ describe('normalizeUnit', () => {
     expect(normalizeUnit('memory', '1M')).toBe('1 MB');
     expect(normalizeUnit('memory', '1G')).toBe('1 GB');
     expect(normalizeUnit('memory', '1T')).toBe('1 TB');
+    expect(normalizeUnit('memory', '1P')).toBe('1 PB');
+    expect(normalizeUnit('memory', '1E')).toBe('1 EB');
   });
 
   it('handles sub-byte memory suffixes', () => {
@@ -289,7 +293,7 @@ describe('getStatus', () => {
     expect(getStatus(JSON.stringify({ phase: 'Running' }))).toBe('Running');
   });
 
-  it('returns Ready when the most recent condition is a True Ready', () => {
+  it('returns Ready when the Ready condition is True', () => {
     const status = JSON.stringify({
       conditions: [
         { type: 'Available', status: 'True' },
@@ -299,19 +303,34 @@ describe('getStatus', () => {
     expect(getStatus(status)).toBe('Ready');
   });
 
-  it('returns false when most recent condition is not Ready', () => {
+  it('returns Ready when a different condition follows a True Ready condition', () => {
     const status = JSON.stringify({
       conditions: [
         { type: 'Ready', status: 'True' },
         { type: 'Available', status: 'False' },
       ],
     });
-    expect(getStatus(status)).toBe(false);
+    expect(getStatus(status)).toBe('Ready');
   });
 
   it('returns false when Ready condition status is False', () => {
     const status = JSON.stringify({
       conditions: [{ type: 'Ready', status: 'False' }],
+    });
+    expect(getStatus(status)).toBe(false);
+  });
+
+  it('returns false when there is no Ready condition', () => {
+    const status = JSON.stringify({ conditions: [{ type: 'Available', status: 'True' }] });
+    expect(getStatus(status)).toBe(false);
+  });
+
+  it('returns false when Ready is not True even if another condition is True', () => {
+    const status = JSON.stringify({
+      conditions: [
+        { type: 'Ready', status: 'Unknown' },
+        { type: 'DiskPressure', status: 'True' },
+      ],
     });
     expect(getStatus(status)).toBe(false);
   });

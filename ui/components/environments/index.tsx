@@ -86,8 +86,10 @@ const Environments = () => {
   const [assignedConnections, setAssignedConnections] = useState([]);
   const [connectionsData, setConnectionsData] = useState([]);
   const [connectionsPage, setConnectionsPage] = useState(0);
+  const [loadedAssignablePage, setLoadedAssignablePage] = useState(-1);
   const [environmentConnectionsData, setEnvironmentConnectionsData] = useState([]);
   const [connectionsOfEnvironmentPage, setConnectionsOfEnvironmentPage] = useState(0);
+  const [loadedAssignedPage, setLoadedAssignedPage] = useState(-1);
   const [skip, setSkip] = useState(true);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [disableTranferButton, setDisableTranferButton] = useState(true);
@@ -124,6 +126,7 @@ const Environments = () => {
 
   const {
     data: connections,
+    currentData: currentConnections,
     isError: isConnectionsError,
     error: connectionsError,
   } = useGetEnvironmentConnectionsQuery(
@@ -140,6 +143,7 @@ const Environments = () => {
 
   const {
     data: environmentConnections,
+    currentData: currentEnvironmentConnections,
     isError: isEnvironmentConnectionsError,
     error: environmentConnectionsError,
   } = useGetEnvironmentConnectionsQuery(
@@ -154,18 +158,46 @@ const Environments = () => {
   );
 
   const environments = environmentsData?.environments ? environmentsData.environments : [];
-  const connectionsDataRtk = connections?.connections ? connections.connections : [];
-  const environmentConnectionsDataRtk = environmentConnections?.connections
-    ? environmentConnections.connections
+  const connectionsDataRtk = currentConnections?.connections ? currentConnections.connections : [];
+  const environmentConnectionsDataRtk = currentEnvironmentConnections?.connections
+    ? currentEnvironmentConnections.connections
     : [];
 
   useEffect(() => {
-    setConnectionsData((prevData) => [...prevData, ...connectionsDataRtk]);
-  }, [connections]);
+    if (!currentConnections) return;
+    if (connectionsDataRtk.length > 0) {
+      setConnectionsData((prevData) => {
+        const seen = new Set(prevData.map((conn) => conn.id));
+        const next = [...prevData];
+        for (const conn of connectionsDataRtk) {
+          if (conn?.id && !seen.has(conn.id)) {
+            seen.add(conn.id);
+            next.push(conn);
+          }
+        }
+        return next;
+      });
+    }
+    setLoadedAssignablePage(connectionsPage);
+  }, [currentConnections]);
 
   useEffect(() => {
-    setEnvironmentConnectionsData((prevData) => [...prevData, ...environmentConnectionsDataRtk]);
-  }, [environmentConnections]);
+    if (!currentEnvironmentConnections) return;
+    if (environmentConnectionsDataRtk.length > 0) {
+      setEnvironmentConnectionsData((prevData) => {
+        const seen = new Set(prevData.map((conn) => conn.id));
+        const next = [...prevData];
+        for (const conn of environmentConnectionsDataRtk) {
+          if (conn?.id && !seen.has(conn.id)) {
+            seen.add(conn.id);
+            next.push(conn);
+          }
+        }
+        return next;
+      });
+    }
+    setLoadedAssignedPage(connectionsOfEnvironmentPage);
+  }, [currentEnvironmentConnections]);
 
   useEffect(() => {
     if (isEnvironmentsError) {
@@ -403,10 +435,14 @@ const Environments = () => {
   const handleonAssignConnectionModalOpen = (e, environment) => {
     e.stopPropagation();
     setAssignConnectionModal(true);
-    if (connectionAssignEnv.id !== environment.id) {
-      setConnectionsData([]);
-      setEnvironmentConnectionsData([]);
-    }
+    setConnectionsData([]);
+    setEnvironmentConnectionsData([]);
+    setConnectionsPage(0);
+    setLoadedAssignablePage(-1);
+    setConnectionsOfEnvironmentPage(0);
+    setLoadedAssignedPage(-1);
+    setAssignedConnections([]);
+    setDisableTranferButton(true);
     setConnectionAssignEnv(environment);
     setSkip(false);
   };
@@ -414,6 +450,14 @@ const Environments = () => {
   const handleonAssignConnectionModalClose = () => {
     setAssignConnectionModal(false);
     setSkip(true);
+    setConnectionsData([]);
+    setEnvironmentConnectionsData([]);
+    setConnectionsPage(0);
+    setLoadedAssignablePage(-1);
+    setConnectionsOfEnvironmentPage(0);
+    setLoadedAssignedPage(-1);
+    setAssignedConnections([]);
+    setDisableTranferButton(true);
   };
 
   const handleAssignConnectionData = (updatedAssignedData) => {
@@ -429,7 +473,7 @@ const Environments = () => {
 
   const getAddedAndRemovedConnection = (allAssignedConnections) => {
     const originalConnectionsIds = environmentConnectionsData.map((conn) => conn.id);
-    const updatedConnectionsIds = allAssignedConnections.map((conn) => conn.id);
+    const updatedConnectionsIds = (allAssignedConnections || []).map((conn) => conn.id);
 
     const addedConnectionsIds = updatedConnectionsIds.filter(
       (id) => !originalConnectionsIds.includes(id),
@@ -444,22 +488,35 @@ const Environments = () => {
     };
   };
 
+  const assignableTotalCount = Number(connections?.totalCount ?? 0);
+  const assignablePagesCount = Math.ceil(assignableTotalCount / connectionPageSize);
+  const isAssignableFullyLoaded =
+    assignablePagesCount > 0 && loadedAssignablePage >= assignablePagesCount - 1;
+  const originalLeftCount = isAssignableFullyLoaded ? connectionsData.length : assignableTotalCount;
+
+  const assignedTotalCount = Number(environmentConnections?.totalCount ?? 0);
+  const assignedPagesCount = Math.ceil(assignedTotalCount / connectionPageSize);
+  const isAssignedFullyLoaded =
+    assignedPagesCount > 0 && loadedAssignedPage >= assignedPagesCount - 1;
+  const originalRightCount = isAssignedFullyLoaded
+    ? environmentConnectionsData.length
+    : assignedTotalCount;
+
   const handleAssignablePage = () => {
-    const pagesCount = Math.ceil(Number(connections?.totalCount ?? 0) / connectionPageSize);
-    if (connectionsPage < pagesCount - 1) {
-      setConnectionsPage((prevConnectionsPage) => prevConnectionsPage + 1);
-    }
+    setConnectionsPage((prevConnectionsPage) =>
+      prevConnectionsPage < assignablePagesCount - 1 && loadedAssignablePage >= prevConnectionsPage
+        ? prevConnectionsPage + 1
+        : prevConnectionsPage,
+    );
   };
 
   const handleAssignedPage = () => {
-    const pagesCount = Math.ceil(
-      Number(environmentConnections?.totalCount ?? 0) / connectionPageSize,
+    setConnectionsOfEnvironmentPage((prevConnectionsOfEnvironmentPage) =>
+      prevConnectionsOfEnvironmentPage < assignedPagesCount - 1 &&
+      loadedAssignedPage >= prevConnectionsOfEnvironmentPage
+        ? prevConnectionsOfEnvironmentPage + 1
+        : prevConnectionsOfEnvironmentPage,
     );
-    if (connectionsOfEnvironmentPage < pagesCount - 1) {
-      setConnectionsOfEnvironmentPage(
-        (prevConnectionsOfEnvironmentPage) => prevConnectionsOfEnvironmentPage + 1,
-      );
-    }
   };
 
   return (
@@ -623,8 +680,8 @@ const Environments = () => {
                 transferComponentType={TRANSFER_COMPONENT.CHIP}
                 assignablePage={handleAssignablePage}
                 assignedPage={handleAssignedPage}
-                originalLeftCount={connections?.totalCount}
-                originalRightCount={environmentConnections?.totalCount}
+                originalLeftCount={originalLeftCount}
+                originalRightCount={originalRightCount}
                 leftPermission={canRemoveConnFromEnv}
                 rightPermission={canAssignConnToEnv}
               />

@@ -242,6 +242,50 @@ describe('ViewInfoModal_', () => {
     });
   });
 
+  it('shows and saves the notes of the fetched view, not the list row it was opened from', async () => {
+    const user = userEvent.setup();
+    mockViewQuery = {
+      ...mockViewQuery,
+      data: { ...mockViewQuery.data, metadata: { notes: 'saved on server' } },
+    };
+
+    render(<ViewInfoModal_ {...baseProps} metadata={{ notes: 'stale list row' }} />);
+
+    expect(screen.getByTestId('md-editor')).toHaveValue('saved on server');
+    await user.click(screen.getByTestId('save-button'));
+    expect(mockUpdateView).toHaveBeenCalledWith({
+      id: 'v1',
+      body: { metadata: { notes: 'saved on server' } },
+    });
+  });
+
+  it('saves the notes the user edited', async () => {
+    const user = userEvent.setup();
+    mockViewQuery = {
+      ...mockViewQuery,
+      data: { ...mockViewQuery.data, metadata: { notes: 'saved on server' } },
+    };
+
+    render(<ViewInfoModal_ {...baseProps} />);
+
+    await user.click(screen.getByText('change'));
+    await user.click(screen.getByTestId('save-button'));
+    expect(mockUpdateView).toHaveBeenCalledWith({
+      id: 'v1',
+      body: { metadata: { notes: 'updated' } },
+    });
+  });
+
+  it('refreshes the views list after changing visibility from the modal', async () => {
+    const user = userEvent.setup();
+    const refetch = vi.fn();
+
+    render(<ViewInfoModal_ {...baseProps} refetch={refetch} />);
+
+    await user.click(screen.getByTestId('visibility-menu'));
+    expect(refetch).toHaveBeenCalledTimes(1);
+  });
+
   it('disables copy link when view does not exist', () => {
     mockViewQuery = { ...mockViewQuery, data: undefined };
     render(<ViewInfoModal_ {...baseProps} />);

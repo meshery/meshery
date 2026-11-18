@@ -13,12 +13,14 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"runtime"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/briandowns/spinner"
 	"github.com/eiannone/keyboard"
@@ -53,15 +55,16 @@ const (
 	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 
 	// Documentation URLs
-	docsBaseURL      = "https://docs.meshery.io/"
-	rootUsageURL     = docsBaseURL + "reference/mesheryctl"
-	perfUsageURL     = docsBaseURL + "reference/mesheryctl/perf"
-	systemUsageURL   = docsBaseURL + "reference/mesheryctl/system"
-	systemStopURL    = docsBaseURL + "reference/mesheryctl/system/stop"
-	systemUpdateURL  = docsBaseURL + "reference/mesheryctl/system/update"
-	systemResetURL   = docsBaseURL + "reference/mesheryctl/system/reset"
-	systemStatusURL  = docsBaseURL + "reference/mesheryctl/system/status"
-	systemRestartURL = docsBaseURL + "reference/mesheryctl/system/restart"
+	docsBaseURL        = "https://docs.meshery.io/"
+	rootUsageURL       = docsBaseURL + "reference/mesheryctl"
+	perfUsageURL       = docsBaseURL + "reference/mesheryctl/perf"
+	systemUsageURL     = docsBaseURL + "reference/mesheryctl/system"
+	systemStopURL      = docsBaseURL + "reference/mesheryctl/system/stop"
+	systemUpdateURL    = docsBaseURL + "reference/mesheryctl/system/update"
+	systemResetURL     = docsBaseURL + "reference/mesheryctl/system/reset"
+	systemStatusURL    = docsBaseURL + "reference/mesheryctl/system/status"
+	systemRestartURL   = docsBaseURL + "reference/mesheryctl/system/restart"
+	systemUninstallURL = docsBaseURL + "reference/mesheryctl/system/uninstall"
 	// No dedicated page exists for `mesheryctl mesh`; point at the command
 	// reference index rather than a 404.
 	meshUsageURL                   = docsBaseURL + "reference/mesheryctl"
@@ -137,6 +140,7 @@ const (
 	cmdSystemReset              cmdType = "system reset"
 	cmdSystemStatus             cmdType = "system status"
 	cmdSystemRestart            cmdType = "system restart"
+	cmdSystemUninstall          cmdType = "system uninstall"
 	cmdExp                      cmdType = "exp"
 	cmdFilter                   cmdType = "filter"
 	cmdFilterImport             cmdType = "filter import"
@@ -389,7 +393,9 @@ func BackupConfigFile(cfgFile string) {
 	if err != nil {
 		Log.Fatal(err)
 	}
-	_ = f.Close()
+	if err := f.Close(); err != nil {
+		Log.Fatal(err)
+	}
 }
 
 const (
@@ -411,10 +417,24 @@ func StringWithCharset(length int) string {
 	return string(b)
 }
 
-// SafeClose is a helper function help to close the io
+// SafeClose closes the given io.Closer safely. If co is nil or a typed nil pointer,
+// SafeClose returns immediately. If closing returns an error and Log is initialized,
+// the error is logged; if Log is nil, the error is dropped silently.
 func SafeClose(co io.Closer) {
+	if co == nil {
+		return
+	}
+	val := reflect.ValueOf(co)
+	switch val.Kind() {
+	case reflect.Chan, reflect.Func, reflect.Map, reflect.Pointer, reflect.Slice, reflect.UnsafePointer:
+		if val.IsNil() {
+			return
+		}
+	}
 	if cerr := co.Close(); cerr != nil {
-		Log.Error(cerr)
+		if Log != nil {
+			Log.Error(cerr)
+		}
 	}
 }
 
@@ -582,11 +602,13 @@ func AskForConfirmation(s string) (bool, error) {
 // CreateConfigFile creates config file in Meshery Folder
 func CreateConfigFile() error {
 	if _, err := os.Stat(DefaultConfigPath); os.IsNotExist(err) {
-		f, err := os.Create(DefaultConfigPath)
+		file, err := os.Create(DefaultConfigPath)
 		if err != nil {
 			return err
 		}
-		_ = f.Close()
+		if err := file.Close(); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -645,17 +667,6 @@ func ClearLine() {
 	}
 }
 
-// StringContainedInSlice returns the index in which a string is a substring in a list of strings
-func StringContainedInSlice(str string, slice []string) int {
-	for index, ele := range slice {
-		// Return index even if only a part of the string is present
-		if strings.Contains(ele, str) {
-			return index
-		}
-	}
-	return -1
-}
-
 // StringInSlice checks if a string is present in a slice
 func StringInSlice(str string, slice []string) bool {
 	for _, ele := range slice {
@@ -668,42 +679,129 @@ func StringInSlice(str string, slice []string) bool {
 
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
 func GetID(mesheryServerUrl, configuration string) ([]string, error) {
-	url := mesheryServerUrl + "/api/" + configuration + "?"
+	populatePrefix := ""
 	if configuration == "pattern" {
-		url += "populate=pattern_file&"
+		populatePrefix = "populate=pattern_file&"
 	}
-	url += "pagesize=10000"
 	configType := configuration + "s"
 	var idList []string
-	req, err := NewRequest("GET", url, nil)
-	if err != nil {
-		return idList, err
+	seen := map[string]bool{}
+
+	const pageSize = 10000
+	const maxPages = 50
+
+	var totalCount int64
+	var hasTotalCount bool
+	completed := false
+
+	for page := 0; page < maxPages; page++ {
+		var url string
+		if page == 0 {
+			url = fmt.Sprintf("%s/api/%s?%spagesize=%d", mesheryServerUrl, configuration, populatePrefix, pageSize)
+		} else {
+			url = fmt.Sprintf("%s/api/%s?%spagesize=%d&page=%d", mesheryServerUrl, configuration, populatePrefix, pageSize, page)
+		}
+
+		req, err := NewRequest("GET", url, nil)
+		if err != nil {
+			return idList, err
+		}
+
+		res, err := MakeRequest(req)
+		if err != nil {
+			return idList, err
+		}
+
+		body, err := io.ReadAll(res.Body)
+		_ = res.Body.Close()
+		if err != nil {
+			return idList, ErrReadResponseBody(err)
+		}
+
+		var dat map[string]interface{}
+		if err = encoding.Unmarshal(body, &dat); err != nil {
+			return idList, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
+		}
+		if dat == nil {
+			if page == 0 {
+				return idList, ErrNotFound(errors.New("no data found"))
+			}
+			completed = true
+			break
+		}
+		if dat[configType] == nil {
+			if page == 0 {
+				return idList, ErrNotFound(errors.New("no results found"))
+			}
+			completed = true
+			break
+		}
+
+		configs, ok := dat[configType].([]interface{})
+		if !ok {
+			if page == 0 {
+				return idList, ErrNotFound(errors.New("no results found"))
+			}
+			return idList, ErrInvalidAPIResponse(errors.New("expected an array of results"))
+		}
+
+		for _, config := range configs {
+			m, ok := config.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			id, ok := m["id"].(string)
+			if !ok || id == "" || seen[id] {
+				continue
+			}
+			seen[id] = true
+			idList = append(idList, id)
+		}
+
+		if count, ok := parseTotalCount(dat); ok {
+			totalCount, hasTotalCount = count, true
+		}
+		if hasTotalCount {
+			if int64(len(idList)) >= totalCount || len(configs) == 0 {
+				completed = true
+				break
+			}
+		} else if len(configs) < pageSize {
+			completed = true
+			break
+		}
 	}
 
-	res, err := MakeRequest(req)
-	if err != nil {
-		return idList, err
+	if hasTotalCount && int64(len(idList)) < totalCount {
+		return idList, ErrIDLookupIncomplete(totalCount, int64(len(idList)))
+	}
+	if !completed {
+		return idList, ErrIDLookupPageLimit(int64(len(idList)))
 	}
 
-	defer func() { _ = res.Body.Close() }()
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return idList, ErrReadResponseBody(err)
-	}
-	var dat map[string]interface{}
-	if err = encoding.Unmarshal(body, &dat); err != nil {
-		return idList, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
-	}
-	if dat == nil {
-		return idList, ErrNotFound(errors.New("no data found"))
-	}
-	if dat[configType] == nil {
-		return idList, ErrNotFound(errors.New("no results found"))
-	}
-	for _, config := range dat[configType].([]interface{}) {
-		idList = append(idList, config.(map[string]interface{})["id"].(string))
-	}
 	return idList, nil
+}
+
+// parseTotalCount reads the total item count from a paginated list response,
+// accepting both the current "totalCount" field and the legacy "total_count" field.
+func parseTotalCount(dat map[string]interface{}) (int64, bool) {
+	for _, key := range []string{"totalCount", "total_count"} {
+		if v, ok := dat[key]; ok && v != nil {
+			switch val := v.(type) {
+			case float64:
+				return int64(val), true
+			case int:
+				return int64(val), true
+			case int64:
+				return val, true
+			case string:
+				if parsed, err := strconv.ParseInt(val, 10, 64); err == nil {
+					return parsed, true
+				}
+			}
+		}
+	}
+	return 0, false
 }
 
 // GetName returns a of name:id from meshery server endpoint /api/{configurations}
@@ -1409,4 +1507,28 @@ func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 // TrimFileExtension returns name with its final file extension removed
 func TrimFileExtension(name string) string {
 	return strings.TrimSuffix(name, filepath.Ext(name))
+}
+
+var fileNameSanitizer = strings.NewReplacer(
+	"/", "_",
+	"\\", "_",
+	":", "_",
+	"*", "_",
+	"?", "_",
+	"\"", "_",
+	"<", "_",
+	">", "_",
+	"|", "_",
+	" ", "_",
+)
+
+// SanitizeFileName sanitizes filesystem-unsafe characters, control characters (0x00-0x1F and 0x7F),
+// and whitespace into underscores and trims leading/trailing whitespace.
+func SanitizeFileName(name string) string {
+	return strings.Map(func(r rune) rune {
+		if unicode.IsControl(r) {
+			return '_'
+		}
+		return r
+	}, fileNameSanitizer.Replace(strings.TrimSpace(name)))
 }

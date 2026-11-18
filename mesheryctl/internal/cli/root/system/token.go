@@ -101,7 +101,7 @@ mesheryctl system token create [token-name] -f [token-path] --set
 var deleteTokenCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a token from your meshconfig",
-	Long:  "Delete the token with provided token name from your meshconfig tokens.",
+	Long:  "Delete the token with provided token name from your meshconfig tokens. A token that a context still uses cannot be deleted; set another token on that context first.",
 	Example: `
 mesheryctl system token delete [token-name]
 	`,
@@ -120,7 +120,7 @@ mesheryctl system token delete [token-name]
 var setTokenCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Set token for context",
-	Long:  "Set token for current context or context specified with --context flag.",
+	Long:  "Set token for current context or context specified with --context flag. The token must already exist in your meshconfig tokens.",
 	Example: `
 mesheryctl system token set [token-name] 
 	`,

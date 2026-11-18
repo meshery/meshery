@@ -155,6 +155,20 @@ func TestFormatSaveFileName(t *testing.T) {
 			expected:     "relationship_Kubernetes_Manifest_aaaabbbb.yaml",
 		},
 		{
+			name:         "model name with colon and question mark",
+			modelName:    "Kubernetes:Manifest?test",
+			id:           "aaaabbbb",
+			outputFormat: "json",
+			expected:     "relationship_Kubernetes_Manifest_test_aaaabbbb.json",
+		},
+		{
+			name:         "model name with quotes, asterisk, pipe and angle brackets",
+			modelName:    `model*"<pipe|test>"`,
+			id:           "aaaabbbb",
+			outputFormat: "yaml",
+			expected:     "relationship_model___pipe_test___aaaabbbb.yaml",
+		},
+		{
 			name:         "empty model name falls back to shortID",
 			modelName:    "",
 			id:           "aaaabbbb-cccc-dddd-eeee-111122223333",

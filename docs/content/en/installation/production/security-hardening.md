@@ -40,6 +40,15 @@ Grant only what is needed.
   defaults to `false`. Some managed platforms (AKS, AWS, GCP) require permission
   to watch nodes for full discovery; enable `rbac.nodes: true` **only** on the
   clusters that need it rather than globally.
+- **Know the operator-mode identities.** On clusters running Meshery
+  Operator, the operator's `meshery-operator` ServiceAccount manages the
+  Broker and MeshSync workloads (and the configmaps, secrets, and services
+  those workloads need), and MeshSync reads the cluster through the
+  read-only `meshery-meshsync-role`, which can list and watch every type but
+  write nothing (`pods/exec` is opt-in via `meshsync.rbac.extraRules`). Until
+  the chart's `meshsync.serviceAccount.dedicated` is on (it needs an operator
+  release with `MESHSYNC_SERVICE_ACCOUNT` support), that role is bound to
+  `meshery-operator`, which MeshSync runs as.
 - **Separate duty by cluster.** In out-of-cluster and multi-cloud topologies,
   use a distinct, minimally scoped credential per managed cluster so a single
   compromised credential cannot reach every cluster. See
@@ -126,6 +135,22 @@ configuration safe to store and share.
 - **Avoid the playground/insecure shortcuts in production.** Development helpers
   that relax security (for example insecure tracing endpoints) belong in
   non-production only.
+
+## Remote URL imports
+
+Meshery Server accepts HTTP and HTTPS URLs for design, filter, and pattern
+imports. It refuses connections to non-public addresses, including loopback,
+private, link-local, and cloud metadata addresses. The address check applies to
+each connection, including redirects. Filter and pattern fetches allow at most
+five redirects; design URL imports stop redirect chains at ten. The server
+reads at most 10 MiB from a response. Design URL imports have a 60-second
+request timeout; filter and pattern URL fetches have a 30-second timeout.
+These limits apply to server-side imports; they do not replace an egress policy
+for controlling which public hosts the Server can reach.
+
+See [Importing and Exporting Designs]({{< ref "guides/configuration-management/import-export-designs.md" >}})
+and [Envoy WASM Filter Management]({{< ref "guides/infrastructure-management/filter-management.md" >}})
+for the import workflows.
 
 ## Broker exposure risk
 
