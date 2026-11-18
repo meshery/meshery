@@ -433,7 +433,7 @@ The **Deployment Summary Formatter** is responsible for rendering notifications 
    This component is used to display:
    - **Event Description**: A brief description of the deployment event.
    - **Errors**: The MeshKit `error` of a failed event, rendered through `ErrorMetadataFormatter`.
-   - **Error Summary**: `status`, `errorCount`, `errors[]` and `truncated`, rendered through `DesignEventErrorsFormatter`. A rewritten deploy error may carry a `code` but no `componentId`.
+   - **Error Summary**: `status`, `errorCount`, `errors[]` and `truncated`, rendered through `DesignEventErrorsFormatter`. A completed deploy or undeploy also carries the component counts `total`, `succeeded` and `failed`, and is a `Warning` when partial and an `Error` when failed. A rewritten deploy error may carry a `code` but no `componentId`.
    - **Component Details**: For an event stored before [#22764](https://github.com/meshery/meshery/issues/22764) without an error summary, the components flattened out of the legacy per-context `summary`, or its `dryRunResponse`.
    - **Open In Operator**: A shortcut to the deployed design, shown only when the Meshery Operator is enabled and the action is neither a registration nor a dry-run - a dry-run deploys nothing to view.
 
@@ -445,6 +445,7 @@ The **Deployment Summary Formatter** is responsible for rendering notifications 
   - **severity**: The severity level of the event, used to colour the summary.
   - **metadata**:
     - **status**, **errorCount**, **errors**, **truncated**: The outcome and up to 20 `{code, componentId}` errors.
+    - **total**, **succeeded**, **failed**: Component counts of a completed deploy or undeploy; absent on a dry-run, a failed event and older rows. `failed` counts components, while `errorCount` counts failing outcomes, one per cluster.
     - **error**: The MeshKit error of a failed event.
     - **designName** and **designId** (legacy `design_name` and `design_id`): The design opened by **Open In Operator**, read through `getDesignEventIdentity`.
     - **summary**: Legacy only - the raw process response of an event stored before #22764.
