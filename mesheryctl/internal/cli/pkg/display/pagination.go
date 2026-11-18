@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/url"
 	"slices"
-	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -20,6 +19,9 @@ var serverAndNetworkErrors = []string{
 	utils.ErrFailRequestCode,
 }
 
+// HandlePaginationAsync fetches and processes paginated results from the Meshery API,
+// filling missing or empty page, pagesize, and search query values while preserving
+// non-empty values on displayData.UrlPath.
 func HandlePaginationAsync[T any](
 	displayData DisplayDataAsync,
 	pageHandlerFunc pageHandler[T],
@@ -42,26 +44,26 @@ func HandlePaginationAsync[T any](
 			utils.ClearLine()
 		}
 
-		urlPath := ""
-
-		pagesQuerySearch := url.Values{}
-		if !strings.Contains(displayData.UrlPath, "page=") {
-			pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
+		parsedURL, err := url.Parse(displayData.UrlPath)
+		if err != nil {
+			return ErrPagination(err, currentPage)
 		}
 
-		if !strings.Contains(displayData.UrlPath, "pagesize=") {
-			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
+		query := parsedURL.Query()
+		if query.Get("page") == "" {
+			query.Set("page", fmt.Sprintf("%d", currentPage))
 		}
 
-		if displayData.SearchTerm != "" {
-			pagesQuerySearch.Set("search", displayData.SearchTerm)
+		if query.Get("pagesize") == "" {
+			query.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
 		}
 
-		if strings.Contains(displayData.UrlPath, "?") {
-			urlPath = fmt.Sprintf("%s&%s", displayData.UrlPath, pagesQuerySearch.Encode())
-		} else {
-			urlPath = fmt.Sprintf("%s?%s", displayData.UrlPath, pagesQuerySearch.Encode())
+		if displayData.SearchTerm != "" && query.Get("search") == "" {
+			query.Set("search", displayData.SearchTerm)
 		}
+
+		parsedURL.RawQuery = query.Encode()
+		urlPath := parsedURL.String()
 
 		data, err := api.Fetch[T](urlPath)
 		if err != nil {

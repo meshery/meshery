@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"testing"
 
@@ -334,6 +335,156 @@ func TestPromptAsyncPagination(t *testing.T) {
 					assert.Equal(t, tt.expectItem.Name, result.Name)
 				}
 			}
+		})
+	}
+}
+
+// TestHandlePaginationAsyncPreservesExistingQueryParameters verifies that HandlePaginationAsync
+// preserves non-empty query values and replaces empty values without duplicate keys.
+func TestHandlePaginationAsyncPreservesExistingQueryParameters(t *testing.T) {
+	type items struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	}
+
+	utils.SetupContextEnv(t)
+	utils.StartMockery(t)
+
+	tests := []struct {
+		name        string
+		displayData DisplayDataAsync
+		expectedURL string
+		wantError   bool
+	}{
+		{
+			name: "does not append trailing ampersand when page and pagesize are already in UrlPath",
+			displayData: DisplayDataAsync{
+				UrlPath:          "api/workspaces?orgId=org-1&page=1&pagesize=25",
+				Page:             2,
+				PageSize:         25,
+				DisplayCountOnly: true,
+				DataType:         "workspace",
+			},
+			expectedURL: "/api/workspaces?orgId=org-1&page=1&pagesize=25",
+		},
+		{
+			name: "does not duplicate search parameter when UrlPath already includes search",
+			displayData: DisplayDataAsync{
+				UrlPath:          "api/workspaces?orgId=org-1&search=my-workspace",
+				SearchTerm:       "my-workspace",
+				Page:             1,
+				PageSize:         10,
+				DisplayCountOnly: true,
+				DataType:         "workspace",
+			},
+			expectedURL: "/api/workspaces?orgId=org-1&page=0&pagesize=10&search=my-workspace",
+		},
+		{
+			name: "adds page and pagesize even when another query parameter or value contains page= or pagesize=",
+			displayData: DisplayDataAsync{
+				UrlPath:          "api/meshmodels/models?perpage=10&filter=pagesize=custom",
+				Page:             1,
+				PageSize:         10,
+				DisplayCountOnly: true,
+				DataType:         "model",
+			},
+			expectedURL: "/api/meshmodels/models?filter=pagesize%3Dcustom&page=0&pagesize=10&perpage=10",
+		},
+		{
+			name: "populates page and pagesize when UrlPath contains empty page= or pagesize= values",
+			displayData: DisplayDataAsync{
+				UrlPath:          "api/workspaces?orgId=org-1&page=&pagesize=",
+				Page:             1,
+				PageSize:         10,
+				DisplayCountOnly: true,
+				DataType:         "workspace",
+			},
+			expectedURL: "/api/workspaces?orgId=org-1&page=0&pagesize=10",
+		},
+		{
+			name: "replaces empty search with the requested search term",
+			displayData: DisplayDataAsync{
+				UrlPath:          "api/workspaces?orgId=org-1&search=",
+				SearchTerm:       "new workspace",
+				Page:             1,
+				PageSize:         10,
+				DisplayCountOnly: true,
+				DataType:         "workspace",
+			},
+			expectedURL: "/api/workspaces?orgId=org-1&page=0&pagesize=10&search=new+workspace",
+		},
+		{
+			name: "preserves empty search when no search term is supplied",
+			displayData: DisplayDataAsync{
+				UrlPath:          "api/workspaces?orgId=org-1&search=",
+				SearchTerm:       "",
+				Page:             1,
+				PageSize:         10,
+				DisplayCountOnly: true,
+				DataType:         "workspace",
+			},
+			expectedURL: "/api/workspaces?orgId=org-1&page=0&pagesize=10&search=",
+		},
+		{
+			name: "preserves non-empty search when the caller supplies a different term",
+			displayData: DisplayDataAsync{
+				UrlPath:          "api/workspaces?orgId=org-1&search=existing",
+				SearchTerm:       "replacement",
+				Page:             1,
+				PageSize:         10,
+				DisplayCountOnly: true,
+				DataType:         "workspace",
+			},
+			expectedURL: "/api/workspaces?orgId=org-1&page=0&pagesize=10&search=existing",
+		},
+		{
+			name: "replaces repeated empty pagination values and preserves other query values",
+			displayData: DisplayDataAsync{
+				UrlPath:          "api/workspaces?orgId=org-1&page=&page=&pagesize=&filter=a&filter=b",
+				SearchTerm:       "",
+				Page:             1,
+				PageSize:         10,
+				DisplayCountOnly: true,
+				DataType:         "workspace",
+			},
+			expectedURL: "/api/workspaces?filter=a&filter=b&orgId=org-1&page=0&pagesize=10",
+		},
+		{
+			name: "rejects invalid URL escapes without sending a request",
+			displayData: DisplayDataAsync{
+				UrlPath:          "api/workspaces%zz",
+				DisplayCountOnly: true,
+				DataType:         "workspace",
+			},
+			wantError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			utils.TokenFlag = utils.GetToken(t)
+			defer func() {
+				utils.TokenFlag = "Not Set"
+			}()
+			httpmock.Reset()
+
+			var requestedURL string
+			httpmock.RegisterNoResponder(func(req *http.Request) (*http.Response, error) {
+				requestedURL = req.URL.RequestURI()
+				return httpmock.NewStringResponse(200, `[]`), nil
+			})
+
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+			err := ListAsyncPagination(tt.displayData, func(data *[]items) ([][]string, int64) {
+				return [][]string{}, 0
+			})
+			if tt.wantError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+			assert.Equal(t, tt.expectedURL, requestedURL)
 		})
 	}
 }
