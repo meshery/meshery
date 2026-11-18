@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: read
+      actions: read
     defaults:
       run:
         shell: bash
@@ -96,63 +97,85 @@ jobs:
       - name: Prepare Failure Details
         if: failure()
         id: failure-details
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          FAILED_STAGE="an unidentified stage"
-          CATEGORY="CI Infrastructure"
-          LOG_FILE=""
-
-          if [ "${{ steps.checkout.outcome }}" = "failure" ]; then
-            FAILED_STAGE="Check out code"
-          elif [ "${{ steps.setup-go.outcome }}" = "failure" ]; then
-            FAILED_STAGE="Setup Go"
-          elif [ "${{ steps.build-mesheryctl.outcome }}" = "failure" ]; then
-            FAILED_STAGE="Build mesheryctl"
-            CATEGORY="Meshery Build"
-            LOG_FILE="$RUNNER_TEMP/build.log"
-          elif [ "${{ steps.generate-models.outcome }}" = "failure" ]; then
-            FAILED_STAGE="Generate Models and Components"
-            CATEGORY="Model Generation"
-            LOG_FILE="$RUNNER_TEMP/generate.log"
-          elif [ "${{ steps.upload-artifacts.outcome }}" = "failure" ]; then
-            FAILED_STAGE="Upload artifacts"
-          elif [ "${{ steps.update-models.outcome }}" = "failure" ]; then
-            FAILED_STAGE="Run Model Updater"
-            CATEGORY="Model Generation"
-            LOG_FILE="$RUNNER_TEMP/update.log"
-          elif [ "${{ steps.pull-pre-commit.outcome }}" = "failure" ]; then
-            FAILED_STAGE="Pre-commit git pull"
-            CATEGORY="Git Synchronization"
-            LOG_FILE="$RUNNER_TEMP/pull-pre-commit.log"
-          elif [ "${{ steps.commit-changes.outcome }}" = "failure" ]; then
-            FAILED_STAGE="Commit changes"
-            CATEGORY="Git Commit"
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+          JOB_URL=""
+          if JOBS_JSON="$(curl --fail --silent --show-error \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/attempts/$GITHUB_RUN_ATTEMPT/jobs?per_page=100")"; then
+            if ! JOB_URL="$(jq -er --arg job "Generate and Update Components" \
+              '[.jobs[] | select(.name == $job) | .html_url][0] // empty' <<< "$JOBS_JSON")"; then
+              echo "Could not find the current job URL in the workflow jobs response." >&2
+              JOB_URL=""
+            fi
+          fi
+          if [ -z "$JOB_URL" ]; then
+            echo "Could not resolve the failed job URL; using the workflow run-attempt URL." >&2
+            JOB_URL="$RUN_URL"
           fi
 
-          {
-            echo "The Model Component Generator and Updater workflow failed at stage: ${FAILED_STAGE} [Category: ${CATEGORY}]."
-            echo ""
-            echo "Failed Run : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
-            echo "Trigger    : ${{ github.event_name }}"
-            echo ""
-            if [ -n "$LOG_FILE" ] && [ -s "$LOG_FILE" ]; then
-              echo "Raw Error Output (last 50 lines):"
-              echo "--------------------------------------------------"
-              tail -n 50 "$LOG_FILE" | tr -d '\r' | sed 's/\x1b\[[0-9;]*m//g'
-              echo "--------------------------------------------------"
-            else
-              echo "No local command output captured for this stage. Please refer to the run link above for full step logs."
+          FAILED_STAGES=()
+          add_failed_stage() {
+            if [ "$1" = "failure" ]; then
+              FAILED_STAGES+=("$2|$3|$4")
             fi
+          }
+
+          add_failed_stage "${{ steps.checkout.outcome }}" "Check out code" "CI Infrastructure" ""
+          add_failed_stage "${{ steps.setup-go.outcome }}" "Setup Go" "CI Infrastructure" ""
+          add_failed_stage "${{ steps.build-mesheryctl.outcome }}" "Build mesheryctl" "Meshery Build" "$RUNNER_TEMP/build.log"
+          add_failed_stage "${{ steps.generate-models.outcome }}" "Generate Models and Components" "Model Generation" "$RUNNER_TEMP/generate.log"
+          add_failed_stage "${{ steps.upload-artifacts.outcome }}" "Upload artifacts" "CI Infrastructure" ""
+          add_failed_stage "${{ steps.check-registry-generate-error.outcome }}" "Check registry-generate-error file" "Model Generation" ""
+          add_failed_stage "${{ steps.update-models.outcome }}" "Run Model Updater" "Model Generation" "$RUNNER_TEMP/update.log"
+          add_failed_stage "${{ steps.pull-pre-commit.outcome }}" "Pre-commit git pull" "Git Synchronization" "$RUNNER_TEMP/pull-pre-commit.log"
+          add_failed_stage "${{ steps.commit-changes.outcome }}" "Commit changes" "Git Commit" ""
+
+          {
+            echo "The Model Component Generator and Updater workflow failed at the following stage(s):"
+            echo ""
+            if [ "${#FAILED_STAGES[@]}" -eq 0 ]; then
+              echo "- An unidentified stage [Category: CI Infrastructure]"
+            else
+              for STAGE_DETAILS in "${FAILED_STAGES[@]}"; do
+                IFS='|' read -r FAILED_STAGE CATEGORY LOG_FILE <<< "$STAGE_DETAILS"
+                echo "- ${FAILED_STAGE} [Category: ${CATEGORY}]"
+                if [ -n "$LOG_FILE" ] && [ -s "$LOG_FILE" ]; then
+                  ERROR_LINES="$(sed 's/\x1b\[[0-9;]*m//g' "$LOG_FILE" | tr -d '\r' | grep -niE 'error|fail(ed|ure)?|fatal|panic|denied|timed out|could not|unable to|exit status' || true)"
+                  if [ -n "$ERROR_LINES" ]; then
+                    echo "Relevant error/failure lines (line numbers refer to the captured command log):"
+                    echo "$ERROR_LINES"
+                  else
+                    echo "No matching error/failure lines found."
+                  fi
+                  echo "Last 50 lines for context:"
+                  tail -n 50 "$LOG_FILE" | tr -d '\r' | sed 's/\x1b\[[0-9;]*m//g'
+                else
+                  echo "No local command output was captured for this stage; see the job log."
+                fi
+                echo ""
+              done
+            fi
+            echo "Failed job  : ${JOB_URL}"
+            echo "Failed run  : ${RUN_URL}"
+            echo "Trigger    : ${{ github.event_name }}"
           } > "$RUNNER_TEMP/failure-email.txt"
 
           cat "$RUNNER_TEMP/failure-email.txt" >> "$GITHUB_STEP_SUMMARY"
 
           ATTACHMENT=""
-          if [ -n "$LOG_FILE" ] && [ -s "$LOG_FILE" ]; then
-            ATTACHMENT="$LOG_FILE"
-          fi
+          for STAGE_DETAILS in "${FAILED_STAGES[@]}"; do
+            IFS='|' read -r _ _ LOG_FILE <<< "$STAGE_DETAILS"
+            if [ -n "$LOG_FILE" ] && [ -s "$LOG_FILE" ]; then
+              ATTACHMENT="${ATTACHMENT}${ATTACHMENT:+,}${LOG_FILE}"
+            fi
+          done
 
-          echo "stage=$FAILED_STAGE" >> "$GITHUB_OUTPUT"
-          echo "category=$CATEGORY" >> "$GITHUB_OUTPUT"
+          FAILED_STAGE="${FAILED_STAGES[0]%%|*}"
+          echo "stage=${FAILED_STAGE:-unknown stage}" >> "$GITHUB_OUTPUT"
           echo "attachment=$ATTACHMENT" >> "$GITHUB_OUTPUT"
 
       - name: Send Email on Workflow Failure
