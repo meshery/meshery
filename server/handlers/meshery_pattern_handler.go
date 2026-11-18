@@ -888,6 +888,11 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		return
 	}
 
+	patternID, ok := h.requirePathUUID(rw, r, "id")
+	if !ok {
+		return
+	}
+
 	var formatConverter converter.ConvertFormat
 	userID := user.ID
 	systemID := uuid.Nil
@@ -901,7 +906,9 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		h.log.Error(ErrRetrieveUserToken(err))
+		if h.log != nil {
+			h.log.Error(ErrRetrieveUserToken(err))
+		}
 		event := newDownloadEvent().WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
 			"error": ErrRetrieveUserToken(err),
 		}).WithDescription("No auth token provided in the request.").Build()
@@ -911,46 +918,58 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	}
 
 	exportFormat := r.URL.Query().Get("export")
-	h.log.Info(fmt.Sprintf("Export format received: '%s'", exportFormat))
+	if h.log != nil {
+		h.log.Info(fmt.Sprintf("Export format received: '%s'", exportFormat))
+	}
 
 	if exportFormat != "" {
 		var errConvert error
-		h.log.Info(fmt.Sprintf("Attempting to create converter for format: '%s'", exportFormat))
-
-		h.log.Info(fmt.Sprintf("Available formats - K8sManifest: '%s', HelmChart: '%s'",
-			converter.K8sManifest, converter.HelmChart))
+		if h.log != nil {
+			h.log.Info(fmt.Sprintf("Attempting to create converter for format: '%s'", exportFormat))
+			h.log.Info(fmt.Sprintf("Available formats - K8sManifest: '%s', HelmChart: '%s'",
+				converter.K8sManifest, converter.HelmChart))
+		}
 
 		formatConverter, errConvert = converter.NewFormatConverter(converter.DesignFormat(exportFormat))
 		if errConvert != nil {
-			h.log.Info(fmt.Sprintf("Failed to create converter: %v", errConvert))
+			if h.log != nil {
+				h.log.Info(fmt.Sprintf("Failed to create converter: %v", errConvert))
+			}
 			err := ErrExportPatternInFormat(errConvert, exportFormat, "")
-			h.log.Error(err)
+			if h.log != nil {
+				h.log.Error(err)
+			}
 			writeMeshkitError(rw, err, http.StatusBadRequest)
 			return
 		}
-		h.log.Info(fmt.Sprintf("Successfully created converter for format: '%s'", exportFormat))
+		if h.log != nil {
+			h.log.Info(fmt.Sprintf("Successfully created converter for format: '%s'", exportFormat))
+		}
 	}
 
-	patternID := mux.Vars(r)["id"]
 	ociFormat, _ := strconv.ParseBool(r.URL.Query().Get("oci"))
 	ahpkg, _ := strconv.ParseBool(r.URL.Query().Get("pkg"))
 
 	resp, err := provider.GetMesheryPattern(r, patternID, "false")
 	if err != nil {
-		h.log.Error(ErrGetPattern(err))
+		if h.log != nil {
+			h.log.Error(ErrGetPattern(err))
+		}
 		event := newDownloadEvent().WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrGetPattern(err),
 		}).WithDescription(fmt.Sprintf("Failed to fetch design file for ID: %s.", patternID)).Build()
 		h.persistAndPublish(provider, token, userID, event)
 
-		writeMeshkitError(rw, ErrGetPattern(err), http.StatusNotFound)
+		writeMeshkitError(rw, ErrGetPattern(err), providerStatusOrInternal(err))
 		return
 	}
 	pattern := &models.MesheryPattern{}
 	err = json.Unmarshal(resp, &pattern)
 	if err != nil {
 		obj := "download pattern"
-		h.log.Error(models.ErrUnmarshal(err, obj))
+		if h.log != nil {
+			h.log.Error(models.ErrUnmarshal(err, obj))
+		}
 		event := newDownloadEvent().WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": models.ErrUnmarshal(err, obj),
 		}).WithDescription(fmt.Sprintf("Failed to unmarshal design file for ID: %s.", patternID)).Build()
@@ -1338,6 +1357,14 @@ func (h *Handler) CloneMesheryPatternHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	defer func() {
 		_ = r.Body.Close()
 	}()
@@ -1475,8 +1502,10 @@ func (h *Handler) CloneMesheryPatternHandler(
 
 	resp, err := provider.CloneMesheryPattern(r, patternID, parsedBody)
 	if err != nil {
-		h.log.Error(ErrClonePattern(err))
-		writeMeshkitError(rw, ErrClonePattern(err), http.StatusInternalServerError)
+		if h.log != nil {
+			h.log.Error(ErrClonePattern(err))
+		}
+		writeMeshkitError(rw, ErrClonePattern(err), providerStatusOrInternal(err))
 		return
 	}
 
@@ -2087,22 +2116,45 @@ func (h *Handler) GetMesheryPatternSourceHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider,
 ) {
-	designID := mux.Vars(r)["id"]
-	token, ok := r.Context().Value(models.TokenCtxKey).(string)
-	if !ok {
-		tokenErr := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
-		h.log.Error(tokenErr)
-		writeMeshkitError(rw, tokenErr, http.StatusInternalServerError)
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
 		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
+	designID, ok := h.requirePathUUID(rw, r, "id")
+	if !ok {
+		return
+	}
+
+	token, _ := r.Context().Value(models.TokenCtxKey).(string)
+	if token == "" {
+		var err error
+		token, err = provider.GetProviderToken(r)
+		if err != nil {
+			if h.log != nil {
+				h.log.Error(ErrRetrieveUserToken(err))
+			}
+			writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	resp, err := provider.GetDesignSourceContent(token, designID)
 	if err != nil {
-		h.log.Error(ErrGetPattern(err))
-		writeMeshkitError(rw, ErrGetPattern(err), http.StatusNotFound)
+		if h.log != nil {
+			h.log.Error(ErrGetPattern(err))
+		}
+		writeMeshkitError(rw, ErrGetPattern(err), providerStatusOrInternal(err))
 		return
 	}
 
@@ -2110,7 +2162,7 @@ func (h *Handler) GetMesheryPatternSourceHandler(
 	sourcetype := mux.Vars(r)["sourcetype"]
 
 	switch models.DesignType(sourcetype) {
-	case models.HelmChart:
+	case models.HelmChart, "helmchart", "helm-chart":
 		mimeType = "application/x-tar"
 	default: // docker-compose, k8smanifest
 		mimeType = "application/x-yaml"
@@ -2123,7 +2175,9 @@ func (h *Handler) GetMesheryPatternSourceHandler(
 		// Headers were committed above (Content-Type: application/x-tar or
 		// application/x-yaml), so a fresh JSON error response cannot be
 		// sent. Log only.
-		h.log.Error(ErrApplicationSourceContent(err, "download"))
+		if h.log != nil {
+			h.log.Error(ErrApplicationSourceContent(err, "download"))
+		}
 	}
 }
 
