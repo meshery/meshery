@@ -127,7 +127,10 @@ func replaceTokenFile(file *os.File, destination string) error {
 	const posixSemantics = 0x2
 	var info renameInfo
 	offset := int(unsafe.Offsetof(info.FileName))
-	buffer := make([]byte, offset+len(name)*2)
+	// Windows requires the buffer to include the padded fixed structure, not
+	// merely the filename offset and bytes.
+	bufferSize := int(unsafe.Sizeof(info)) + (len(name)-1)*2
+	buffer := make([]byte, bufferSize)
 	entry := (*renameInfo)(unsafe.Pointer(&buffer[0]))
 	entry.Flags = replaceIfExists | posixSemantics
 	entry.FileNameLength = uint32(len(name) * 2)

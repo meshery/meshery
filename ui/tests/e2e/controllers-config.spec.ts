@@ -129,7 +129,11 @@ test.describe.serial('Operator, MeshSync & Broker Settings', () => {
   test.afterAll(async ({ playwright, baseURL }) => {
     // Leave the server as the run found it: the defaults are server-wide state
     // that outlives this spec and fans out to every tracked connection.
-    const cleanup = await playwright.request.newContext({ baseURL });
+    const origin = baseURL ? new URL(baseURL).origin : undefined;
+    const cleanup = await playwright.request.newContext({
+      baseURL,
+      extraHTTPHeaders: origin ? { Origin: origin } : undefined,
+    });
     try {
       await clearServerDefaults(cleanup);
     } finally {
