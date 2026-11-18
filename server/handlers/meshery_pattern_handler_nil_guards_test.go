@@ -261,7 +261,7 @@ func TestUnPublishCatalogPatternHandler_NilProvider_ReturnsInternalServerError(t
 }
 
 func TestDeleteMultiMesheryPatternsHandler_NilProvider_ReturnsInternalServerError(t *testing.T) {
-	h, _ := newDeleteConnectionFixture(t)
+	h := newTestHandler(t, map[string]models.Provider{}, "")
 	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
 
 	req := httptest.NewRequest(http.MethodDelete, "/api/pattern/delete", strings.NewReader(`{}`))
