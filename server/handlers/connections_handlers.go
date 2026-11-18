@@ -451,10 +451,11 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	}
 }
 
-// nonEmptyValues drops empty entries from a repeated query param. The slice
-// comes from a fresh req.URL.Query() parse, so filtering it in place is safe.
+// nonEmptyValues drops empty and whitespace-only entries from a repeated query
+// param. The slice comes from a fresh req.URL.Query() parse, so filtering it in
+// place is safe.
 func nonEmptyValues(values []string) []string {
-	return slices.DeleteFunc(values, func(v string) bool { return v == "" })
+	return slices.DeleteFunc(values, func(v string) bool { return strings.TrimSpace(v) == "" })
 }
 
 // GetConnectionsByKind is an internal handler that fetches connections filtered by kind.

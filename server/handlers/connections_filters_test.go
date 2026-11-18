@@ -67,6 +67,8 @@ func TestGetConnectionsRepeatedFilterParams(t *testing.T) {
 		{"status=", all},
 		{"kind=", all},
 		{"type=", all},
+		{"status=%20", all},
+		{"kind=%20%20&type=%09", all},
 		{"status=connected", connected},
 		{"kind=kubernetes", k8s},
 		{"type=telemetry", []string{"prom-connected"}},
