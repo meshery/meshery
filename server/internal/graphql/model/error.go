@@ -13,7 +13,6 @@ const (
 	ErrQueryCode                                = "meshery-server-1172"
 	ErrMeshsyncSubscriptionCode                 = "meshery-server-1173"
 	ErrMesheryClientCode                        = "meshery-server-1174"
-	ErrSubscribeChannelCode                     = "meshery-server-1175"
 	ErrPublishBrokerCode                        = "meshery-server-1176"
 	ErrEmptyHandlerCode                         = "meshery-server-1177"
 	ErrApplyHelmChartCode                       = "meshery-server-1178"
@@ -22,6 +21,10 @@ const (
 	ErrMesheryClientNilCode                     = "meshery-server-1181"
 	ErrUpdateDataCode                           = "meshery-server-1182"
 	ErrDeleteDataCode                           = "meshery-server-1183"
+
+	// Retired with the MeshSync queue subscription in SubscribeToBroker, which
+	// forwarded into a channel that was never created or read. Do not reuse 1175
+	// for new errors.
 )
 
 var (
@@ -55,10 +58,6 @@ func ErrQuery(err error) error {
 
 func ErrMeshsyncSubscription(err error) error {
 	return errors.New(ErrMeshsyncSubscriptionCode, errors.Alert, []string{"MeshSync Subscription failed", err.Error()}, []string{"GraphQL subscription for MeshSync stopped"}, []string{"Could be a network issue"}, []string{"Check if meshery server is reachable from the browser"})
-}
-
-func ErrSubscribeChannel(err error) error {
-	return errors.New(ErrSubscribeChannelCode, errors.Alert, []string{"Unable to subscribe to channel", err.Error()}, []string{"Unable to create a broker subscription"}, []string{"Could be a network issue", "Meshery Broker could have crashed"}, []string{"Check if Meshery Broker is reachable from Meshery Server", "Check if Meshery Broker is up and running inside the configured cluster"})
 }
 
 func ErrPublishBroker(err error) error {
