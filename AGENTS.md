@@ -62,16 +62,30 @@ Detail: [RTK Query integration](./docs/content/en/project/contributing/ui/schema
 - Prefer the `gh-axi` CLI over `gh`; use `chrome-devtools-axi` for browser automation; run `quota-axi` before long work; use the `lavish` skill to turn a plan or report into a reviewable HTML artifact.
 
 ```bash
-make server  make server-local  make build-server       # run (:9081) / run with local provider / build
-make server-skip-compgen  make server-without-operator  # run without k8s components / operator
-make golangci  make error                               # lint Go / generate error codes
-make ui-setup  make ui  make ui-build  make ui-lint     # UI deps / dev server (:3000) / build / lint
-make ui-integration-tests                               # UI E2E
-cd mesheryctl && make && go test --short ./...          # CLI build + unit tests; integration: go test -run Integration ./...
-make docs-mesheryctl                                    # regenerate CLI docs
-make docker-build  make docker-cloud  make docker-local-cloud
-make docs  make docs-build                              # Hugo docs (:1313)
-make graphql-build  make helm-lint  make helm-docs
+make server                   # run the server (:9081)
+make server-local             # run with the local provider
+make build-server             # build the server binary
+make server-skip-compgen      # run without Kubernetes components
+make server-without-operator  # run without the operator deployment
+make golangci                 # lint Go
+make error                    # generate error codes
+make ui-setup                 # install UI dependencies
+make ui                       # UI dev server (:3000)
+make ui-build                 # build and export the UI
+make ui-lint                  # lint the UI
+make ui-integration-tests     # UI E2E tests
+cd mesheryctl && make         # build the CLI
+cd mesheryctl && go test --short ./...             # CLI unit tests
+cd mesheryctl && go test -run Integration ./...    # CLI integration tests
+make docs-mesheryctl          # regenerate CLI docs
+make docker-build             # build the container
+make docker-cloud             # run with the production Remote Provider
+make docker-local-cloud       # run with a local Remote Provider
+make docs                     # Hugo docs (:1313)
+make docs-build               # build the docs site
+make graphql-build            # build the GraphQL schema
+make helm-lint                # lint Helm charts
+make helm-docs                # CAUTION: overwrites the hand-maintained meshery-operator README; read the note at the top of install/kubernetes/helm/meshery-operator/README.md first
 ```
 
 - A build failing `compile: version "goX.Y.Z" does not match go tool version` is a stale `GOROOT`, not a code problem.
@@ -131,7 +145,7 @@ Before committing: `make golangci` (Go), `make ui-lint` (UI).
 
 ## Security & Compliance
 
-- Report vulnerabilities privately to [security@meshery.io](mailto:security@meshery.io), never in a public issue or PR.
+- Report vulnerabilities privately to [security@meshery.io](mailto:security@meshery.io), never in a public issue or PR. Reports are acknowledged within 10 business days.
 - Never commit secrets; use env vars (`PROVIDER_BASE_URLS`, `KEYS_PATH`) and GitHub Secrets.
 - Use parameterized queries; validate/sanitize all user input; Apache 2.0 — check dependency licenses.
 
@@ -169,7 +183,7 @@ Before committing: `make golangci` (Go), `make ui-lint` (UI).
 
 `.github/workflows/*.{yml,yaml}` are called from other `meshery` and `meshery-extensions` repos via `uses: meshery/meshery/.github/workflows/<file>@master`. Two traps that have shipped as silent no-ops:
 
-- **`with:` values are not evaluated by a shell.** Use `${{ github.ref_name }}` / `${{ github.sha }}`, not `${GITHUB_REF…}`; the shell form is correct inside `run:`, so don't "fix" those.
+- **`with:` values are not evaluated by a shell.** Use `${{ github.ref_name }}` / `${{ github.sha }}`, not `${GITHUB_REF/refs\/tags\//}` or a bare `${GITHUB_SHA}`; the shell form is correct inside `run:`, so don't "fix" those.
 - **`if: github.repository == 'meshery/meshery'` disables the job for every external caller** (the `github` context is the caller's), and a skipped `needs:` skips dependents. Changing such a guard activates dormant deploys — a product decision, not a repair.
 
 Find a workflow's callers before editing it: `gh-axi api -X GET search/code --field q='<workflow-file> path:.github/workflows'`. A caller with zero runs means CI has not tested your change; verify by reading. Detail: [Build & Release](./docs/content/en/project/contributing/build-and-release.md).

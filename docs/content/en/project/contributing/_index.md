@@ -100,6 +100,11 @@ naming each commit's <em>author</em>, so derive it per commit:
 
 <pre><code>$ git rebase &lt;base-branch&gt; --exec 'git commit --amend --no-edit --trailer \
     "Signed-off-by=$(git log -1 --pretty="%an &lt;%ae&gt;")"'</code></pre>
+
+This needs Git 2.32 or newer, the release that added <code>git commit --trailer</code>; check with
+<code>git --version</code> first. On an older Git the rebase stops at the first commit with an
+unknown-option error. Run <code>git rebase --abort</code> to return to the branch as it was, upgrade
+Git, and start the rebase again.
 </li>
 </ul>
 </details>
