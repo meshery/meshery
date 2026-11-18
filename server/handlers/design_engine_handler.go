@@ -268,7 +268,9 @@ func _processPattern(opts *patterncore.ProcessPatternOptions) (map[string]interf
 			Add(stages.Validator(sip, sap, opts.Validate)) // not required as client side RJSF validation is enough, but for mesheryctl client it's required
 		if opts.DryRun {
 			chain.Add(stages.DryRun(sip, sap))
-			chain.Add(stages.ResourceCapacity(sip, sap))
+			if !opts.IsDelete {
+				chain.Add(stages.ResourceCapacity(sip, sap))
+			}
 		}
 		if !opts.DryRun {
 			chain.
@@ -460,8 +462,8 @@ func (sap *serviceActionProvider) ResourceCapacity(comps []*component.ComponentD
 	}
 
 	var db *gorm.DB
-	if sap.provider != nil {
-		db = sap.provider.GetGenericPersister()
+	if sap.provider != nil && sap.provider.GetGenericPersister() != nil {
+		db = sap.provider.GetGenericPersister().DB
 	}
 
 	for ctxID := range sap.ctxTokubeconfig {

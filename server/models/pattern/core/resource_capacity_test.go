@@ -54,6 +54,19 @@ func TestParseMemory(t *testing.T) {
 			assert.Equal(t, tt.expected, val)
 		}
 	}
+
+	// Human formatted values round trip
+	val, ok := ParseMemory("2 GiB")
+	assert.True(t, ok)
+	assert.Equal(t, int64(2*1024*1024*1024), val)
+
+	val, ok = ParseMemory("512 MiB")
+	assert.True(t, ok)
+	assert.Equal(t, int64(512*1024*1024), val)
+
+	val, ok = ParseMemory("1000B")
+	assert.True(t, ok)
+	assert.Equal(t, int64(1000), val)
 }
 
 func TestFormatCPU(t *testing.T) {
@@ -343,4 +356,163 @@ func TestCalculateResourceCapacity_MissingRequests(t *testing.T) {
 	assert.Equal(t, "Unspecified", preview.Workloads[0].CPURequest)
 	assert.Equal(t, "Unspecified", preview.Workloads[0].MemoryRequest)
 	assert.Equal(t, EstimateReview, preview.Workloads[0].Estimate)
+}
+
+func TestExtractWorkloads_InitContainers(t *testing.T) {
+	comps := []*component.ComponentDefinition{
+		{
+			DisplayName: "init-workload",
+			Component: component.Component{
+				Kind: "Deployment",
+			},
+			Configuration: map[string]interface{}{
+				"spec": map[string]interface{}{
+					"replicas": 1,
+					"template": map[string]interface{}{
+						"spec": map[string]interface{}{
+							"containers": []interface{}{
+								map[string]interface{}{
+									"name": "app",
+									"resources": map[string]interface{}{
+										"requests": map[string]interface{}{
+											"cpu":    "500m",
+											"memory": "512Mi",
+										},
+									},
+								},
+							},
+							"initContainers": []interface{}{
+								map[string]interface{}{
+									"name": "init-db",
+									"resources": map[string]interface{}{
+										"requests": map[string]interface{}{
+											"cpu":    "2",
+											"memory": "2Gi",
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	workloads, totalCPU, totalMem, totalPods := ExtractWorkloads(comps, 1)
+	assert.Equal(t, 1, len(workloads))
+	assert.Equal(t, 1, totalPods)
+	// Init container 2 cores / 2Gi exceeds app container 500m / 512Mi, so effective request is 2 cores / 2Gi
+	assert.Equal(t, int64(2000), totalCPU)
+	assert.Equal(t, int64(2*1024*1024*1024), totalMem)
+	assert.Equal(t, "2 cores", workloads[0].CPURequest)
+	assert.Equal(t, "2 GiB", workloads[0].MemoryRequest)
+}
+
+func TestExtractWorkloads_PodLevelRequests(t *testing.T) {
+	comps := []*component.ComponentDefinition{
+		{
+			DisplayName: "pod-level-workload",
+			Component: component.Component{
+				Kind: "Pod",
+			},
+			Configuration: map[string]interface{}{
+				"spec": map[string]interface{}{
+					"resources": map[string]interface{}{
+						"requests": map[string]interface{}{
+							"cpu":    "4",
+							"memory": "4Gi",
+						},
+					},
+					"containers": []interface{}{
+						map[string]interface{}{
+							"name": "c1",
+							"resources": map[string]interface{}{
+								"requests": map[string]interface{}{
+									"cpu":    "500m",
+									"memory": "512Mi",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	workloads, totalCPU, totalMem, totalPods := ExtractWorkloads(comps, 1)
+	assert.Equal(t, 1, len(workloads))
+	assert.Equal(t, 1, totalPods)
+	// Explicit pod-level request of 4 cores / 4Gi takes precedence
+	assert.Equal(t, int64(4000), totalCPU)
+	assert.Equal(t, int64(4*1024*1024*1024), totalMem)
+	assert.Equal(t, "4 cores", workloads[0].CPURequest)
+	assert.Equal(t, "4 GiB", workloads[0].MemoryRequest)
+	assert.False(t, workloads[0].HasUnspecified)
+}
+
+func TestExtractReplicas(t *testing.T) {
+	// Job with explicit parallelism 0 (paused)
+	jobPaused := map[string]interface{}{
+		"spec": map[string]interface{}{
+			"parallelism": 0,
+		},
+	}
+	assert.Equal(t, 0, extractReplicas("Job", jobPaused, 1))
+
+	// Job with suspend: true
+	jobSuspended := map[string]interface{}{
+		"spec": map[string]interface{}{
+			"suspend":     true,
+			"parallelism": 4,
+		},
+	}
+	assert.Equal(t, 0, extractReplicas("Job", jobSuspended, 1))
+
+	// Job with default parallelism
+	jobDefault := map[string]interface{}{
+		"spec": map[string]interface{}{},
+	}
+	assert.Equal(t, 1, extractReplicas("Job", jobDefault, 1))
+
+	// Deployment with explicit replicas: 0
+	deployZero := map[string]interface{}{
+		"spec": map[string]interface{}{
+			"replicas": 0,
+		},
+	}
+	assert.Equal(t, 0, extractReplicas("Deployment", deployZero, 1))
+
+	// Deployment with replicas: nil (omitted, default to 1)
+	deployNil := map[string]interface{}{
+		"spec": map[string]interface{}{
+			"replicas": nil,
+		},
+	}
+	assert.Equal(t, 1, extractReplicas("Deployment", deployNil, 1))
+
+	// CronJob with parallelism
+	cronJob := map[string]interface{}{
+		"spec": map[string]interface{}{
+			"jobTemplate": map[string]interface{}{
+				"spec": map[string]interface{}{
+					"parallelism": 3,
+				},
+			},
+		},
+	}
+	assert.Equal(t, 3, extractReplicas("CronJob", cronJob, 1))
+
+	// CronJob suspended
+	cronJobSuspended := map[string]interface{}{
+		"spec": map[string]interface{}{
+			"suspend": true,
+			"jobTemplate": map[string]interface{}{
+				"spec": map[string]interface{}{
+					"parallelism": 3,
+				},
+			},
+		},
+	}
+	assert.Equal(t, 0, extractReplicas("CronJob", cronJobSuspended, 1))
 }
