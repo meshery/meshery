@@ -100,7 +100,7 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 		writeMeshkitError(w, missingInput, http.StatusBadRequest)
 		return
 	}
-	resp, err := provider.GetWorkspaces(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
+	resp, err := provider.GetWorkspaces(token, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
 	if err != nil {
 		if isPaginationError(err) {
 			writeMeshkitError(w, err, http.StatusBadRequest)
@@ -272,7 +272,7 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 		return
 	}
 	q := req.URL.Query()
-	resp, err := provider.GetEnvironmentsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
+	resp, err := provider.GetEnvironmentsOfWorkspace(req, workspaceID, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		if isPaginationError(err) {
 			writeMeshkitError(w, err, http.StatusBadRequest)
@@ -296,7 +296,7 @@ func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.
 		return
 	}
 	q := req.URL.Query()
-	resp, err := provider.GetDesignsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), q["visibility"])
+	resp, err := provider.GetDesignsOfWorkspace(req, workspaceID, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), q.Get("filter"), q["visibility"])
 	if err != nil {
 		if isPaginationError(err) {
 			writeMeshkitError(w, err, http.StatusBadRequest)
@@ -408,7 +408,7 @@ func (h *Handler) GetViewsOfWorkspaceHandler(w http.ResponseWriter, req *http.Re
 		return
 	}
 	q := req.URL.Query()
-	resp, err := provider.GetViewsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
+	resp, err := provider.GetViewsOfWorkspace(req, workspaceID, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		if isPaginationError(err) {
 			writeMeshkitError(w, err, http.StatusBadRequest)
@@ -475,7 +475,7 @@ func (h *Handler) GetTeamsOfWorkspaceHandler(w http.ResponseWriter, req *http.Re
 		return
 	}
 	q := req.URL.Query()
-	resp, err := provider.GetTeamsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
+	resp, err := provider.GetTeamsOfWorkspace(req, workspaceID, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		if isPaginationError(err) {
 			writeMeshkitError(w, err, http.StatusBadRequest)

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -111,6 +112,22 @@ const (
 	queryParamTrue  = "true"
 )
 
+// getPageSizeParam returns the canonical camelCase "pageSize" wire param,
+// falling back to the legacy "pagesize" and "page_size" spellings still
+// sent by older clients. Handlers that pass a page-size string straight
+// through to a provider call (rather than parsing it via getPaginationParams)
+// should read it through this helper instead of calling
+// urlValues.Get("pagesize") directly.
+func getPageSizeParam(urlValues url.Values) string {
+	if v := urlValues.Get("pageSize"); v != "" {
+		return v
+	}
+	if v := urlValues.Get("pagesize"); v != "" {
+		return v
+	}
+	return urlValues.Get("page_size")
+}
+
 func getPaginationParams(req *http.Request) (page, offset, limit int, search, order, sortOnCol, status string) {
 
 	urlValues := req.URL.Query()
@@ -118,10 +135,7 @@ func getPaginationParams(req *http.Request) (page, offset, limit int, search, or
 	// pageSize is the canonical camelCase wire param (schemas registry
 	// construct); pagesize is the legacy spelling still sent by
 	// pre-/api/registry clients.
-	limitstr := urlValues.Get("pageSize")
-	if limitstr == "" {
-		limitstr = urlValues.Get("pagesize")
-	}
+	limitstr := getPageSizeParam(urlValues)
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
 		if limit <= 0 {

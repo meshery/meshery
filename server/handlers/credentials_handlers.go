@@ -133,13 +133,7 @@ func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _
 	page, _ := strconv.Atoi(q.Get("page"))
 	order := q.Get("order")
 	search := q.Get("search")
-	// The generated client sends the canonical camelCase pageSize; keep
-	// page_size as a legacy fallback so older callers keep working.
-	pageSizeParam := q.Get("pageSize")
-	if pageSizeParam == "" {
-		pageSizeParam = q.Get("page_size")
-	}
-	pageSize, _ := strconv.Atoi(pageSizeParam)
+	pageSize, _ := strconv.Atoi(getPageSizeParam(q))
 
 	if pageSize > 25 {
 		pageSize = 25

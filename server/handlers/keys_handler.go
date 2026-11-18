@@ -36,7 +36,7 @@ func (h *Handler) GetUsersKeys(w http.ResponseWriter, req *http.Request, _ *mode
 		}
 	}
 
-	resp, err := provider.GetUsersKeys(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
+	resp, err := provider.GetUsersKeys(token, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
 	if err != nil {
 		handlerErr := ErrGetUsersKeys(err)
 		h.log.Error(handlerErr)

@@ -300,7 +300,7 @@ func (h *Handler) GetMesheryFiltersHandler(
 		}
 	}
 
-	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), filter.Visibility)
+	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), filter.Visibility)
 	if err != nil {
 		if isPaginationError(err) {
 			writeMeshkitError(rw, err, http.StatusBadRequest)
@@ -339,7 +339,7 @@ func (h *Handler) GetCatalogMesheryFiltersHandler(
 		return
 	}
 
-	resp, err := provider.GetCatalogMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetCatalogMesheryFilters(tokenString, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"))
 	if err != nil {
 		if h.log != nil {
 			h.log.Error(ErrFetchFilter(err))

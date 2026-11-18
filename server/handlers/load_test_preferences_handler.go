@@ -103,7 +103,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 	}
 	if testUUID == "" {
 		testPage := q.Get("page")
-		testPageSize := q.Get("pagesize")
+		testPageSize := getPageSizeParam(q)
 		testSearch := q.Get("search")
 		testOrder := q.Get("order")
 		if h.log != nil {

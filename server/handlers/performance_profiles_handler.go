@@ -134,7 +134,7 @@ func (h *Handler) GetPerformanceProfilesHandler(
 		return
 	}
 
-	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"))
 	if err != nil {
 		if isPaginationError(err) {
 			writeMeshkitError(rw, err, http.StatusBadRequest)

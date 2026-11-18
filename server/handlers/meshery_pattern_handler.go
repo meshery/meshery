@@ -725,7 +725,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 		}
 	}
 
-	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics, populate)
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics, populate)
 
 	if err != nil {
 		if isPaginationError(err) {
@@ -778,7 +778,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 		}
 	}
 
-	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"), q["populate"], q["class"], q["technology"], q["type"], orgIDs, q["workspaceID"], q["userid"])
+	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), q.Get("metrics"), q["populate"], q["class"], q["technology"], q["type"], orgIDs, q["workspaceID"], q["userid"])
 	if err != nil {
 		if h.log != nil {
 			h.log.Error(ErrFetchPattern(err))
