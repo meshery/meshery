@@ -80,6 +80,26 @@ Collectively, Meshery repositories will generally have CI workflow for commits a
 - Helm charts lint (helm)
 - Helm charts release, tag and push(stefanprodan/helm-gh-pages@master)
 
+### No-mistakes merge gate
+
+`.github/workflows/no-mistakes-required.yml` runs on every pull request into `master`. The job name, which is the status check context, is `PR must be raised via no-mistakes`.
+
+A pull request whose every changed path is documentation, the docs website, or CI succeeds without a pipeline run. Those paths are:
+
+| Kind | Paths |
+| --- | --- |
+| Documentation and the docs website (`docs.meshery.io`) | `docs/**` |
+| Docs website hostname | root `CNAME` |
+| CI | `.github/workflows/**` |
+
+`docs/**` is both the documentation tree and the Hugo site this repository publishes. The product website, `meshery.io`, lives in `meshery/meshery.io`, not here. A rename counts both the old path and the new path, so moving a code file into `docs/` still requires the gate. The product UI, server, CLI, install manifests, and the rest of `.github/` are outside this list. GitHub's files API returns at most 3000 files; a pull request at or above that limit fails closed, because a truncated list could hide a code change.
+
+Any other pull request must show a green no-mistakes run for the current head. The check calls the pinned [`require-no-mistakes`](https://github.com/kunchenguid/no-mistakes/tree/v1.106.1/.github/actions/require-no-mistakes) action, which passes only when the pull request body has the no-mistakes signature and a v1 pipeline attestation whose `head_sha` is the current head and whose `review`, `test`, and `document` steps are each `completed`. A skipped step, a failed step, or an attestation for an older commit fails the check. A test step approved over a failing configured test passes only when that attestation also carries `allow_test_command_override`. The action's README records that this is a contributor guardrail: the attestation is the pipeline's published declaration, not a cryptographic signature.
+
+The workflow always reports the check, including on exempt pull requests, so branch protection can require it. Requiring a check that does not run blocks the pull request. `master` branch protection today requires `DCO`. After this workflow is on `master`, add `PR must be raised via no-mistakes` beside it. Adding that context before the workflow is on `master` leaves every open pull request without a reported check.
+
+Agents drive the pipeline with `.agents/skills/no-mistakes/SKILL.md`. A clone without a `no-mistakes` remote needs `no-mistakes init` once, then `no-mistakes axi run --intent "<goal>"`.
+
 ### Test result reporting (QA dashboard)
 
 Test results from across the Meshery ecosystem are published as [Allure](https://allurereport.org/) reports on the QA dashboard at [qa.meshery.io](https://qa.meshery.io). CI in each repository converts its test output to Allure results and commits them to the [`meshery/qa`](https://github.com/meshery/qa) repository, which regenerates and deploys the dashboard via GitHub Pages. Each report on the dashboard (Meshery, Mesheryctl, Kubernetes Connections, and extension reports) is a filtered view over one shared pool of results, selected by the **labels** on each result.
