@@ -4123,12 +4123,30 @@
     },
     {
       "code": "mesheryctl-1265",
-      "moniker": "ErrAmbiguousDesignNameCode",
+      "moniker": "ErrProfileTraversalCode",
       "component": {
         "name": "mesheryctl",
         "type": "client"
       },
       "numericCode": "1265",
+      "severity": "alert",
+      "shortDescription": "Unable to complete performance profile lookup",
+      "longDescription": "The matching performance profile pages changed or were inconsistent during lookup",
+      "probableCause": [
+        "Profiles were added, deleted, or reordered during lookup, or the provider returned inconsistent pagination data"
+      ],
+      "suggestedRemediation": [
+        "Rerun the command to refresh the matching profile list"
+      ]
+    },
+    {
+      "code": "mesheryctl-1266",
+      "moniker": "ErrAmbiguousDesignNameCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1266",
       "severity": "alert",
       "shortDescription": "More than one design has this name",
       "probableCause": [

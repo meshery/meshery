@@ -1,4 +1,5 @@
 @import "https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i";
+
 html {
   font-size: 100%;
   box-sizing: border-box;
@@ -96,6 +97,7 @@ ol {
   @media (max-width: 81.25em) {
     // grid-template-columns: 2.2fr 5.8fr 2fr;
   }
+
   @media (max-width: 75em) {
     // flex-direction: column;
     flex-wrap: wrap;
@@ -123,9 +125,11 @@ ol {
   @media (max-width: 1200px) {
     flex: 0 0 100%;
   }
+
   @media (max-width: 600px) {
-    padding: 1.5rem 1.5rem 1.5rem 2.5rem
+    padding: 1.5rem 1.5rem 1.5rem 3.8rem
   }
+
   & .breadcrumb {
     list-style: none;
     display: flex;
@@ -150,7 +154,7 @@ ol {
       color: var(--color-grey-dark);
       margin: 0;
 
-      & + .breadcrumb-item::before {
+      &+.breadcrumb-item::before {
         content: "";
         display: inline-block;
         margin: 0 .35rem;
@@ -193,4 +197,3 @@ ol {
     display: none;
   }
 }
-

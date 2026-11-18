@@ -154,6 +154,21 @@ describe('view endpoints', () => {
     expect(req.url).toContain('shared=false');
   });
 
+  it('fetchViews constructs a clean query string when visibility is omitted', async () => {
+    const { api, store } = await setupStore();
+    await store.dispatch(
+      api.endpoints.fetchViews.initiate({
+        page: 1,
+        pagesize: 10,
+      }),
+    );
+    const req = fetchMock.mock.calls[0][0] as Request;
+    expect(req.url).toContain('/api/extensions/api/content/views?');
+    expect(req.url).not.toContain('?&');
+    expect(req.url).toContain('page=1');
+    expect(req.url).toContain('pagesize=10');
+  });
+
   it('getView helper delegates to initiateQuery with the getView endpoint', async () => {
     const utilsMod = await import('../utils');
     const viewMod = await import('../view');
