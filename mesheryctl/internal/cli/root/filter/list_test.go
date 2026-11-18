@@ -229,8 +229,9 @@ func TestListCmdFetchErrorIsNotLoggedTwice(t *testing.T) {
 	defer utils.ResetCommandFlags(FilterCmd, t)
 
 	utils.TokenFlag = utils.GetToken(t)
-	httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/filter?pagesize=25&page=0",
-		httpmock.NewStringResponder(500, "internal error"))
+	filterURL := testContext.BaseURL + "/api/filter?pagesize=25&page=0"
+	httpmock.RegisterResponder("GET", filterURL, httpmock.NewStringResponder(500, "internal error"))
+	httpmock.ZeroCallCounters()
 
 	// Logger errors go to the logger's error output, not to the command's output.
 	_ = utils.SetupMeshkitLoggerTesting(t, false)
@@ -245,7 +246,7 @@ func TestListCmdFetchErrorIsNotLoggedTwice(t *testing.T) {
 	if err := FilterCmd.Execute(); err == nil {
 		t.Fatal("expected an error when the server replies 500")
 	}
-	if httpmock.GetTotalCallCount() == 0 {
+	if httpmock.GetCallCountInfo()["GET "+filterURL] == 0 {
 		t.Fatal("expected the mocked filter request to be called")
 	}
 	if logged.Len() != 0 {
