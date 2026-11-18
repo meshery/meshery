@@ -140,8 +140,16 @@ const DryRunDesignActor = fromPromise(async ({ input: { validationPayload } }) =
       ]
     : [];
   const validationResults = formatDryRunResponse(dryRunResults.data?.dryRunResponse);
+  const matrixEntry = dryRunResults.data?.dryRunResponse
+    ? [
+        {
+          type: 'CompatibilityMatrix',
+          rawDryRunResponse: dryRunResults.data?.dryRunResponse,
+        },
+      ]
+    : [];
   return {
-    validationResults: [...validationResults, ...requestErrors],
+    validationResults: [...validationResults, ...matrixEntry, ...requestErrors],
   };
 });
 
@@ -180,6 +188,17 @@ export const designValidationMachine = createMachine({
   initial: 'init',
   context: {},
 
+  // A tap on a listed error is re-emitted for the designer (Kanvas listens with
+  // actor.on) in every state, not only idle. ValidateDesign keeps listing the
+  // previous results while this machine resolves component definitions for a new
+  // request, and Kanvas validates a component on every configuration change, so a
+  // tap handled only in idle was silently dropped for the whole fetch.
+  on: {
+    [DESIGN_VALIDATOR_EVENTS.TAP_ON_ERROR]: {
+      actions: [emit(({ event }) => event)],
+    },
+  },
+
   states: {
     init: {
       entry: [
@@ -217,10 +236,6 @@ export const designValidationMachine = createMachine({
               returnAddress: event.returnAddress,
             }),
           ),
-        },
-
-        [DESIGN_VALIDATOR_EVENTS.TAP_ON_ERROR]: {
-          actions: [emit(({ event }) => event)],
         },
       },
     },
@@ -386,3 +401,10 @@ export const useIsValidatingDesignSchema = (validationMachine) =>
   useIsValidatingDesign(validationMachine, 'schemaValidator');
 export const useIsValidatingDryRun = (validationMachine) =>
   useIsValidatingDesign(validationMachine, 'dryRunValidator');
+
+export const useDryRunRawResponse = (validationMachine) => {
+  const results = useDryRunValidationResults(validationMachine);
+  if (!Array.isArray(results)) return null;
+  const matrixEntry = results.find((r) => r?.type === 'CompatibilityMatrix');
+  return matrixEntry?.rawDryRunResponse || null;
+};

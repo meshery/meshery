@@ -1,6 +1,7 @@
 package mesheryctlflags
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -322,13 +323,14 @@ func TestReadValidationErrorMessages_Direct(t *testing.T) {
 	})
 
 	t.Run("given relpath validation error then formats relpath error", func(t *testing.T) {
+		absPath := filepath.Join(os.TempDir(), "not-a-real-path")
 		verrs := getValidationErrors(t, struct {
 			Path string `json:"path" validate:"relpath"`
-		}{Path: "/not-a-real-path"})
+		}{Path: absPath})
 
 		err := fv.ReadValidationErrorMessages(verrs)
 		assert.Error(t, err)
-		assert.Equal(t, "Invalid value for --path '/not-a-real-path': path must be a relative path", err.Error())
+		assert.Equal(t, fmt.Sprintf("Invalid value for --path '%s': path must be a relative path", absPath), err.Error())
 	})
 
 	t.Run("given abspath validation error then formats abspath error", func(t *testing.T) {

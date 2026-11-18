@@ -56,8 +56,10 @@ mesheryctl version
 		if err != nil {
 			// get the currCtx
 			utils.Log.Error(ErrProcessingConfig(err))
-			userResponse := false
-			userResponse = utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file?")
+			userResponse, promptErr := utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file?")
+			if promptErr != nil {
+				return promptErr
+			}
 			if userResponse {
 				utils.BackupConfigFile(utils.DefaultConfigPath)
 				// Create config file if not present in meshery folder

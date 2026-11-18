@@ -141,7 +141,7 @@ To run playwright for specific project only, for example meshery-provider, you c
 {{< code code=`npx playwright test --ui --project=chromium-meshery-provider` >}}
 
 To run specific test, you can add the test file location, for example:
-{{< code code=`npx playwright test --ui --project=chromium-meshery-provider tests/e2e/service-mesh-performance.spec.js` >}}
+{{< code code=`npx playwright test --ui --project=chromium-meshery-provider tests/e2e/connections.spec.ts` >}}
 
 For more detail, you can read the [Playwright Cli docs](https://playwright.dev/docs/test-cli)
 
@@ -150,7 +150,7 @@ For more detail, you can read the [Playwright Cli docs](https://playwright.dev/d
 
 By default our test cases is running against both Meshery and Local Provider, we are utilizing playwright feature such as:
 
-- StorageState: In meshery [setup auth](https://github.com/meshery/meshery/blob/master/ui/tests/e2e/auth.setup.js), we have 2 storage state, which store a session for Meshery and Local provider.
+- StorageState: In Meshery auth setup ([local.setup.js](https://github.com/meshery/meshery/blob/master/ui/tests/e2e/local.setup.js) and [remote.setup.js](https://github.com/meshery/meshery/blob/master/ui/tests/e2e/remote.setup.js)), we have 2 storage states, which store a session for Meshery and Local provider.
 - Project: After the setup completes, it will run the project-based test depending on which storage state for the Local Provider and one for the Meshery Provider
 - Test Parameterize:  In the Local provider we are limiting some features to test against. For the missing features, we leverage this playwright feature to check or even skip the test. If it is not possible to run then you need to specify the `provider` directly from the test, and make sure the test is wrapped using:
 
@@ -217,9 +217,7 @@ End-to-end test results are stored as artifacts on every PR in Github Actions. I
 
 Watch the training session on Playwright testing and trace debugging.
 
-<div class="iframe-container">
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/x-W60mvDYuo?si=coN7RpRjkI4a_ndk&amp;start=1524" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-</div>
+{{< youtube id="x-W60mvDYuo" start="1524" class="yt-embed-container" >}}
 
 ### Find Tests here
 Refer to [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing) for test scenarios.

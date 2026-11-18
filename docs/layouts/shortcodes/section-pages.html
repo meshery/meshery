@@ -11,6 +11,12 @@
 
 {{- /* Pages to exclude from auto-listing */ -}}
 {{- $excludePages := slice "quick-start" "faq" -}}
+{{- /* Optional comma-separated list of extra path segments to exclude */ -}}
+{{- with .Get "exclude" -}}
+  {{- range split . "," -}}
+    {{- $excludePages = $excludePages | append (trim . " ") -}}
+  {{- end -}}
+{{- end -}}
 
 {{- /* Load all pages from the specified section - only 1 level deep */ -}}
 {{- $pages := slice -}}

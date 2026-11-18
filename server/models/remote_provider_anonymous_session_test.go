@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"encoding/base64"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -28,6 +29,28 @@ func newAnonymousFlowProvider(t *testing.T, handler http.HandlerFunc) (*RemotePr
 	provider.UserCapabilitiesPersister = &UserCapabilitiesPersister{DB: newMigratedDB(t)}
 
 	return provider, server.Close
+}
+
+// anonymousFlowReply is what meshery-cloud's anonymous handler encodes. The
+// userId key is the schemas v1beta2 contract pinned by
+// TestAnonymousFlowResponseDecodesSchemasContract; without it the mint is
+// refused before any destination is resolved, so a fixture that omits it never
+// reaches the exit it is standing in for.
+const anonymousFlowReply = `{"accessToken":"eyJhbGciOiJIUzI1NiJ9.e30.sig","userId":"0195b0ab-1f4d-7a3c-9c1e-3a5f8d2b6c40"}`
+
+// newAnonymousSessionProvider returns a provider whose anonymous mint succeeds,
+// so the flow runs through to the redirect that resolves the post-login
+// destination.
+func newAnonymousSessionProvider(t *testing.T) *RemoteProvider {
+	t.Helper()
+
+	provider, closeServer := newAnonymousFlowProvider(t, func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(anonymousFlowReply))
+	})
+	t.Cleanup(closeServer)
+
+	return provider
 }
 
 func newAnonymousFlowRequest() *http.Request {
@@ -84,6 +107,61 @@ func TestInterceptAnonymousSession_RefusesReplyWithoutUserID(t *testing.T) {
 			// the handler start writing one again without failing this test.
 			if ck := jwtCookie(rec); ck != nil {
 				t.Errorf("a JWT cookie was set for a refused session: %q", ck.Value)
+			}
+		})
+	}
+}
+
+// The anonymous exit resolves its own post-login destination, so it has to pass
+// the same gate as TokenHandler and the local provider. Prefix-matching
+// "/extension" on the raw ref admits a string http.Redirect then normalizes:
+// "/extension/../../api/user/token" cleans onto the token endpoint, and the
+// browser's GET of it carries no token, so TokenHandler sets an empty JWT cookie
+// and wipes the session that was just minted here.
+func TestInterceptAnonymousSession_RefusesRefsThatNormalizeOntoAnAuthPath(t *testing.T) {
+	tests := []struct {
+		name     string
+		ref      string
+		expected string
+	}{
+		{
+			name:     "traversal onto the token endpoint falls back",
+			ref:      "/extension/../../api/user/token",
+			expected: "/error",
+		},
+		{
+			name:     "traversal onto the login page falls back",
+			ref:      "/extension/../../user/login",
+			expected: "/error",
+		},
+		{
+			name:     "fragment traversal onto an auth path falls back",
+			ref:      "/extension/meshmap#/../../user/login",
+			expected: "/error",
+		},
+		{
+			name:     "in-app extension ref is honored",
+			ref:      "/extension/meshmap?mode=design",
+			expected: "/extension/meshmap?mode=design",
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			provider := newAnonymousSessionProvider(t)
+
+			req := httptest.NewRequest(http.MethodGet, "/user/login?ref="+base64.RawURLEncoding.EncodeToString([]byte(tc.ref)), nil)
+			req = req.WithContext(context.WithValue(req.Context(), MesheryServerURL, "http://localhost:9081"))
+
+			rec := httptest.NewRecorder()
+			provider.InterceptLoginAndInitiateAnonymousUserSession(req, rec)
+
+			if rec.Code != http.StatusFound {
+				t.Fatalf("status = %d, want %d", rec.Code, http.StatusFound)
+			}
+			if got := rec.Header().Get("Location"); got != tc.expected {
+				t.Fatalf("ref %q redirected to %q, want %q", tc.ref, got, tc.expected)
 			}
 		})
 	}

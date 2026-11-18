@@ -46,5 +46,5 @@ The following gallery showcases the full range of visual styles available for ed
   guide_title="Edge" 
   guide_description="Description"
   guide_svg="SVG"
-  guide_assests_folder="shapes"
+  guide_assets_folder="shapes"
 >}}

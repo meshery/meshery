@@ -43,8 +43,8 @@ export function generatePerformanceProfile(data) {
     metadata: {
       additional_options: [additional_options],
       ca_certificate: {
-        file: caCertificate.file,
-        name: caCertificate.name,
+        file: caCertificate?.file,
+        name: caCertificate?.name,
       },
     },
   };

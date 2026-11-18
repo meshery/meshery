@@ -14,10 +14,11 @@ import { useTheme, DownloadIcon, InfoIcon } from '@sistent/sistent';
 import _ from 'lodash';
 import { ChipWrapper } from '../../connections/styles';
 import { AcademyEventsFormatter } from './formatters/academy_events';
+import { DESIGN_EVENT_IDENTITY_KEYS } from './formatters/design_event_metadata';
 
 const DesignFormatter = ({ value }) => {
   const theme = useTheme();
-  const { name, id } = value;
+  const { name, id } = value || {};
 
   return (
     <TitleLink
@@ -61,7 +62,9 @@ export const PropertyFormatters = {
   },
   // MeshSync event field formatters - imported from formatters/meshsync_events.js
   ...MeshSyncPropertyFormatters,
-  error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
+  // FormattedMetadata rebinds this with the event, so the formatter can show
+  // the event's full description when its title had to be truncated.
+  error: (value) => <ErrorMetadataFormatter metadata={value} />,
   dryRunResponse: (value) => <DryRunResponse response={value} />,
   ModelImportMessage: (value) => value && <ModelImportMessages message={value} />,
   ModelDetails: (value) => value && <ModelImportedSection modelDetails={value} />,
@@ -99,6 +102,7 @@ const linkOrder = ['doclink'];
 const EventTypeFormatters = {
   [eventDetailFormatterKey(EVENT_TYPE.CatalogManagementDeployDesign)]: DeploymentSummaryFormatter,
   [eventDetailFormatterKey(EVENT_TYPE.CatalogManagementUndeployDesign)]: DeploymentSummaryFormatter,
+  [eventDetailFormatterKey(EVENT_TYPE.DRY_RUN_DESIGN)]: DeploymentSummaryFormatter,
   [eventDetailFormatterKey(EVENT_TYPE.EVALUATE_DESIGN)]: RelationshipEvaluationEventFormatter,
   [eventDetailFormatterKey(EVENT_TYPE.ACADEMY_QUIZ_EVALUATION)]: AcademyEventsFormatter,
   [eventDetailFormatterKey(EVENT_TYPE.CatalogManagementValidateDesign)]: SchemaValidationFormatter,
@@ -116,8 +120,18 @@ export const FormattedMetadata = ({ event }) => {
     return <EmptyState event={event} />;
   }
 
+  // A design-saved event names its design through the `design` {id, name}
+  // link, so its identity keys are not listed again.
+  const identityKeys = event.metadata.design ? DESIGN_EVENT_IDENTITY_KEYS : [];
   const metadata = {
-    ..._.omit(event.metadata, [...linkOrder, 'id', 'kind', 'ViewLink', 'DownloadLink']),
+    ..._.omit(event.metadata, [
+      ...linkOrder,
+      'id',
+      'kind',
+      'ViewLink',
+      'DownloadLink',
+      ...identityKeys,
+    ]),
     ShortDescription:
       event.metadata.error || !canTruncateDescription(event.description || '')
         ? null
@@ -144,9 +158,13 @@ export const FormattedMetadata = ({ event }) => {
   const orderedMetadata = hasImportedModelName
     ? reorderObjectProperties({ ...metadata, ShortDescription: null }, order) // Exclude ShortDescription
     : reorderObjectProperties(metadata, order);
+  const propertyFormatters = {
+    ...PropertyFormatters,
+    error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
+  };
   return (
     <FormatStructuredData
-      propertyFormatters={PropertyFormatters}
+      propertyFormatters={propertyFormatters}
       data={orderedMetadata}
       order={order}
       style={{

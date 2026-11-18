@@ -1,6 +1,21 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { Keys } from '@meshery/schemas/permissions';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+const {
+  mockUseHasPermission,
+  mockUseGetMeshModelsQuery,
+  mockUseGetComponentsQuery,
+  mockUseGetRelationshipsQuery,
+  mockUseGetRegistrantsQuery,
+} = vi.hoisted(() => ({
+  mockUseHasPermission: vi.fn(),
+  mockUseGetMeshModelsQuery: vi.fn(),
+  mockUseGetComponentsQuery: vi.fn(),
+  mockUseGetRelationshipsQuery: vi.fn(),
+  mockUseGetRegistrantsQuery: vi.fn(),
+}));
 
 let mediaQueryReturn = false;
 const RegistryModalContext = React.createContext<any>({});
@@ -53,9 +68,11 @@ vi.mock('@sistent/sistent', () => ({
   LeftArrowIcon: (props) =>
     React.createElement('svg', { 'data-component': 'left-arrow-icon', ...props }),
   FileIcon: () => <svg data-testid="file-icon" />,
+  AppRegistrationIcon: () => <svg data-testid="app-registration-icon" />,
   InfoIcon: () => <svg data-testid="info-icon" />,
   DatabaseIcon: () => <svg data-testid="database-icon" />,
   CustomTooltip: ({ children }: any) => <>{children}</>,
+  useHasPermission: (permissionKey: any) => mockUseHasPermission(permissionKey),
   useMediaQuery: () => mediaQueryReturn,
   useTheme: () => stableTheme,
   alpha: (value: string) => value,
@@ -94,12 +111,21 @@ vi.mock('@sistent/sistent', () => ({
 vi.mock('@/assets/icons/Connection', () => ({ default: () => <svg /> }));
 vi.mock('@/assets/icons/Component', () => ({ default: () => <svg /> }));
 vi.mock('@/components/shared/Modal', () => ({
-  Modal: ({ children, isOpen, title }: any) =>
+  Modal: ({ children, isOpen, onClose, title }: any) =>
     isOpen ? (
       <div data-testid="registry-modal" data-title={title}>
+        <button type="button" data-testid="close-registry-modal" onClick={onClose}>
+          Close
+        </button>
         {children}
       </div>
     ) : null,
+}));
+
+vi.mock('../general/error-404/index', () => ({
+  default: ({ permissionKey }: any) => (
+    <div data-testid="default-error" data-permission-key={JSON.stringify(permissionKey)} />
+  ),
 }));
 
 vi.mock('./MeshModelComponent', () => ({
@@ -132,22 +158,10 @@ vi.mock('@/utils/context/RegistryModalContextProvider', () => ({
 }));
 
 vi.mock('@/rtk-query/meshModel', () => ({
-  useGetMeshModelsQuery: () => ({
-    data: { models: [] },
-    isLoading: false,
-  }),
-  useGetComponentsQuery: () => ({
-    data: { totalCount: 7 },
-    isLoading: false,
-  }),
-  useGetRelationshipsQuery: () => ({
-    data: { totalCount: 3 },
-    isLoading: false,
-  }),
-  useGetRegistrantsQuery: () => ({
-    data: { totalCount: 5 },
-    isLoading: false,
-  }),
+  useGetMeshModelsQuery: (...args: any[]) => mockUseGetMeshModelsQuery(...args),
+  useGetComponentsQuery: (...args: any[]) => mockUseGetComponentsQuery(...args),
+  useGetRelationshipsQuery: (...args: any[]) => mockUseGetRelationshipsQuery(...args),
+  useGetRegistrantsQuery: (...args: any[]) => mockUseGetRegistrantsQuery(...args),
 }));
 
 vi.mock('./helper', () => ({
@@ -186,6 +200,28 @@ describe('RegistryModal', () => {
 
   beforeEach(() => {
     mediaQueryReturn = false;
+    mockUseHasPermission.mockReset();
+    mockUseHasPermission.mockReturnValue(true);
+    mockUseGetMeshModelsQuery.mockReset();
+    mockUseGetMeshModelsQuery.mockReturnValue({
+      data: { models: [] },
+      isLoading: false,
+    });
+    mockUseGetComponentsQuery.mockReset();
+    mockUseGetComponentsQuery.mockReturnValue({
+      data: { totalCount: 7 },
+      isLoading: false,
+    });
+    mockUseGetRelationshipsQuery.mockReset();
+    mockUseGetRelationshipsQuery.mockReturnValue({
+      data: { totalCount: 3 },
+      isLoading: false,
+    });
+    mockUseGetRegistrantsQuery.mockReset();
+    mockUseGetRegistrantsQuery.mockReturnValue({
+      data: { totalCount: 5 },
+      isLoading: false,
+    });
   });
 
   it('renders nothing when context.open is false', () => {
@@ -202,9 +238,72 @@ describe('RegistryModal', () => {
     // or the updated form.
     expect(modal.getAttribute('data-title')).toMatch(/^Registry/);
   });
+
+  it('renders DefaultError, keeps modal closable, and skips Navigation queries when denied', () => {
+    mockUseHasPermission.mockReturnValue(false);
+    const ctx = { ...baseCtx(), open: true };
+
+    render(wrap(<RegistryModal />, ctx));
+
+    const modal = screen.getByTestId('registry-modal');
+    expect(modal).toHaveAttribute('data-title', 'Registry');
+    expect(screen.getByTestId('default-error')).toHaveAttribute(
+      'data-permission-key',
+      JSON.stringify(Keys.MesherySystemViewRegistry),
+    );
+    expect(screen.queryByTestId('mesh-model-component')).not.toBeInTheDocument();
+    expect(mockUseGetMeshModelsQuery).not.toHaveBeenCalled();
+    expect(mockUseGetComponentsQuery).not.toHaveBeenCalled();
+    expect(mockUseGetRelationshipsQuery).not.toHaveBeenCalled();
+    expect(mockUseGetRegistrantsQuery).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByTestId('close-registry-modal'));
+    expect(ctx.closeModal).toHaveBeenCalledTimes(1);
+  });
+
+  it('resets modal header title and unmounts Navigation when permission is revoked while open', () => {
+    const ctx = { ...baseCtx(), open: true };
+    const { rerender } = render(wrap(<RegistryModal />, ctx));
+
+    expect(screen.getByTestId('registry-modal')).toHaveAttribute('data-title', 'Registry - Models');
+    expect(screen.getByTestId('mesh-model-component')).toBeInTheDocument();
+
+    mockUseHasPermission.mockReturnValue(false);
+    rerender(wrap(<RegistryModal />, ctx));
+
+    expect(screen.getByTestId('registry-modal')).toHaveAttribute('data-title', 'Registry');
+    expect(screen.getByTestId('default-error')).toBeInTheDocument();
+    expect(screen.queryByTestId('mesh-model-component')).not.toBeInTheDocument();
+  });
 });
 
 describe('Navigation', () => {
+  beforeEach(() => {
+    mediaQueryReturn = false;
+    mockUseHasPermission.mockReset();
+    mockUseHasPermission.mockReturnValue(true);
+    mockUseGetMeshModelsQuery.mockReset();
+    mockUseGetMeshModelsQuery.mockReturnValue({
+      data: { models: [] },
+      isLoading: false,
+    });
+    mockUseGetComponentsQuery.mockReset();
+    mockUseGetComponentsQuery.mockReturnValue({
+      data: { totalCount: 7 },
+      isLoading: false,
+    });
+    mockUseGetRelationshipsQuery.mockReset();
+    mockUseGetRelationshipsQuery.mockReturnValue({
+      data: { totalCount: 3 },
+      isLoading: false,
+    });
+    mockUseGetRegistrantsQuery.mockReset();
+    mockUseGetRegistrantsQuery.mockReturnValue({
+      data: { totalCount: 5 },
+      isLoading: false,
+    });
+  });
+
   const baseCtx = () => ({
     open: true,
     closeModal: vi.fn(),
@@ -240,5 +339,40 @@ describe('Navigation', () => {
 
     expect(ctx.setSelectedView).toHaveBeenCalledWith('Components');
     expect(setHeaderInfo).toHaveBeenCalled();
+  });
+
+  it('skips all registry count queries, ignores cached counts, and renders DefaultError when standalone Navigation is denied', () => {
+    mockUseHasPermission.mockReturnValue(false);
+    const setHeaderInfo = vi.fn();
+    mockUseGetMeshModelsQuery.mockReturnValue({
+      data: { models: [{ id: 'm1' }] },
+      isLoading: false,
+    });
+
+    render(wrap(<Navigation setHeaderInfo={setHeaderInfo} />, baseCtx()));
+
+    expect(mockUseGetMeshModelsQuery).toHaveBeenCalledWith(
+      { params: { pagesize: 'all' } },
+      { skip: true },
+    );
+    expect(mockUseGetComponentsQuery).toHaveBeenCalledWith(
+      { params: { pagesize: 'all' } },
+      { skip: true },
+    );
+    expect(mockUseGetRelationshipsQuery).toHaveBeenCalledWith(
+      { params: { pagesize: 'all' } },
+      { skip: true },
+    );
+    expect(mockUseGetRegistrantsQuery).toHaveBeenCalledWith(
+      { params: { pagesize: 'all' } },
+      { skip: true },
+    );
+    expect(setHeaderInfo).not.toHaveBeenCalled();
+    expect(screen.getByTestId('default-error')).toHaveAttribute(
+      'data-permission-key',
+      JSON.stringify(Keys.MesherySystemViewRegistry),
+    );
+    expect(screen.queryByTestId('mesh-model-component')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Components \(7\)/)).not.toBeInTheDocument();
   });
 });

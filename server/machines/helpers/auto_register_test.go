@@ -93,3 +93,9 @@ func TestToConnectionDefinitions(t *testing.T) {
 		})
 	}
 }
+
+// TestProcessRegistrationNilHelper verifies that processRegistration does not panic when called on a nil helper.
+func TestProcessRegistrationNilHelper(t *testing.T) {
+	var arh *AutoRegistrationHelper
+	arh.processRegistration()
+}

@@ -77,17 +77,17 @@ assert_invalid_view_args() {
   assert_output --partial "Run 'mesheryctl component view --help' to see detailed help message"
 }
 
-@test "given no component-name provided when mesheryctl component view then an error message is displayed" {
+@test "[cut=Component][tg=Component View] given no component-name provided when mesheryctl component view then an error message is displayed" {
   run $MESHERYCTL_BIN component view
   assert_invalid_view_args
 }
 
-@test "given a multiple component-name provided when mesheryctl component view component1 component2 then an error message is displayed" {
+@test "[cut=Component][tg=Component View] given a multiple component-name provided when mesheryctl component view component1 component2 then an error message is displayed" {
   run $MESHERYCTL_BIN component view comp1 comp2
   assert_invalid_view_args
 }
 
-@test "given an invalid format provided when mesheryctl component view component-name -o xml then an error message is displayed" {
+@test "[cut=Component][tg=Component View] given an invalid format provided when mesheryctl component view component-name -o xml then an error message is displayed" {
   run $MESHERYCTL_BIN component view some-component -o xml
 
   assert_failure
@@ -96,18 +96,18 @@ assert_invalid_view_args() {
   assert_output --partial "Invalid value for --output-format 'xml': valid values are json yaml"
 }
 
-@test "given a valid format provided when mesheryctl component view component-name -o json then the output is displayed in specified format" {
+@test "[cut=Component][tg=Component View] given a valid format provided when mesheryctl component view component-name -o json then the output is displayed in specified format" {
     test_component_view_format "json"
 }
 
-@test "given a valid format provided when mesheryctl component view component-name -o yaml then the output is displayed in specified format" {
+@test "[cut=Component][tg=Component View] given a valid format provided when mesheryctl component view component-name -o yaml then the output is displayed in specified format" {
     test_component_view_format "yaml"
 }
 
-@test "given a valid format and --save flag provided when mesheryctl component view component-name -o json --save then the output is saved in file in specified format" {
+@test "[cut=Component][tg=Component View] given a valid format and --save flag provided when mesheryctl component view component-name -o json --save then the output is saved in file in specified format" {
   test_view_save "json"
 }
 
-@test "given a valid format and --save flag provided when mesheryctl component view component-name -o yaml --save then the output is saved in file in specified format" {
+@test "[cut=Component][tg=Component View] given a valid format and --save flag provided when mesheryctl component view component-name -o yaml --save then the output is saved in file in specified format" {
   test_view_save "yaml"
 }

@@ -212,8 +212,7 @@ func (h *Handler) sendErrorEvent(userID core.Uuid, provider models.Provider, des
 	event := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithAction("register").WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
 		"error": err,
 	}).Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 }
 
 func ModelNames(response *models.RegistryAPIResponse) string {
@@ -233,24 +232,27 @@ func ModelNames(response *models.RegistryAPIResponse) string {
 	}
 	return builder.String()
 }
-func CreateTemp(filename string, data []byte) (*os.File, error) {
+
+// CreateTemp writes data to a new temporary file whose name is derived from
+// filename and returns the file's path. The file is closed before returning, so
+// callers own only its removal; on any failure the partial file is removed.
+func CreateTemp(filename string, data []byte) (string, error) {
 	tempFile, err := os.CreateTemp("", filename)
 	if err != nil {
-		err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
-		return nil, err
+		return "", meshkitutils.ErrCreateFile(err, "Error creating temp file")
 	}
+	path := tempFile.Name()
 
-	_, err = tempFile.Write(data)
-	if err != nil {
-		err = meshkitutils.ErrWriteFile(err, filename)
-		return nil, err
+	if _, err = tempFile.Write(data); err != nil {
+		_ = tempFile.Close()
+		_ = os.Remove(path)
+		return "", meshkitutils.ErrWriteFile(err, filename)
 	}
-	err = tempFile.Close()
-	if err != nil {
-		err = meshkitutils.ErrCloseFile(err)
-		return nil, err
+	if err = tempFile.Close(); err != nil {
+		_ = os.Remove(path)
+		return "", meshkitutils.ErrCloseFile(err)
 	}
-	return tempFile, nil
+	return path, nil
 }
 func (h *Handler) handleRegistrationAndError(registrationHelper registration.RegistrationHelper, mu *sync.Mutex, response *models.RegistryAPIResponse, regErrorStore *models.RegistrationFailureLog) {
 	for _, pkg := range registrationHelper.PkgUnits {
@@ -368,8 +370,7 @@ func (h *Handler) sendFileEvent(userID core.Uuid, provider models.Provider, resp
 		WithMetadata(metadata).
 		Build()
 
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 }
 func getFirst42Chars(s string) string {
 	if len(s) > 42 {
@@ -400,8 +401,7 @@ func (h *Handler) sendEventForImport(userID core.Uuid, provider models.Provider,
 		WithSeverity(events.Informational).
 		WithMetadata(metadata).
 		Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 }
 func writeMessageString(response *models.RegistryAPIResponse) string {
 	var message strings.Builder

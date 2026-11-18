@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import { Keys } from '@meshery/schemas/permissions';
 import { useRouter } from 'next/router';
+import { CoreConnectionKinds } from '@/utils/Enum';
 import { DashboardSection, LoadingContainer } from '../style';
 import ConnectCluster from './ConnectCluster';
 import {
@@ -19,22 +20,33 @@ import {
 } from '@sistent/sistent';
 import WidgetErrorFallback from '../widgets/WidgetErrorFallback';
 
+/**
+ * Displays Kubernetes cluster connection counts by status on the Dashboard.
+ * Skips the connections query unless `Keys.WorkspaceManagementViewConnections` is granted.
+ */
 export default function KubernetesConnectionStatsChart() {
+  const canViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
   const {
     data: connectionData,
     isLoading,
     isError,
-  } = useGetConnectionsQuery({
-    page: 0,
-    pagesize: 'all',
-    kind: JSON.stringify(['kubernetes']),
-  });
+  } = useGetConnectionsQuery(
+    {
+      page: 0,
+      // Plain ?kind=kubernetes (not JSON-encoded).
+      pageSize: 'all',
+      kind: CoreConnectionKinds.kubernetes,
+    },
+    {
+      skip: !canViewConnections,
+    },
+  );
   const router = useRouter();
   const theme = useTheme();
 
   const chartData = useMemo(
     () =>
-      connectionData?.connections
+      canViewConnections && connectionData?.connections
         ? Object.entries(
             connectionData.connections.reduce(
               (acc: Record<string, number>, connection: { status: string }) => {
@@ -47,7 +59,7 @@ export default function KubernetesConnectionStatsChart() {
             ),
           )
         : [],
-    [connectionData?.connections],
+    [canViewConnections, connectionData?.connections],
   );
 
   const chartOptions = useMemo(
@@ -60,6 +72,7 @@ export default function KubernetesConnectionStatsChart() {
         type: donut(),
         colors: dataToColors(chartData, theme),
         onclick: function () {
+          if (!canViewConnections) return;
           router.push('/management/connections');
         },
       },
@@ -85,10 +98,9 @@ export default function KubernetesConnectionStatsChart() {
         },
       },
     }),
-    [chartData, router, theme],
+    [chartData, canViewConnections, router, theme],
   );
 
-  const canViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
   const header = (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -113,7 +125,7 @@ export default function KubernetesConnectionStatsChart() {
     </div>
   );
 
-  if (isLoading) {
+  if (canViewConnections && isLoading) {
     return (
       <DashboardSection>
         {header}
@@ -124,7 +136,7 @@ export default function KubernetesConnectionStatsChart() {
     );
   }
 
-  if (isError) {
+  if (canViewConnections && isError) {
     return (
       <DashboardSection>
         {header}
@@ -155,28 +167,28 @@ export default function KubernetesConnectionStatsChart() {
     );
   }
 
-  return (
-    <Link
-      href="/management/connections"
-      style={{
-        textDecoration: 'none',
-        pointerEvents: !canViewConnections ? 'none' : 'auto',
-      }}
-    >
-      <DashboardSection>
-        {header}
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            alignContent: 'center',
-            height: '100%',
-          }}
-        >
-          <BBChart options={chartOptions} />
-        </Box>
-      </DashboardSection>
+  const chartSection = (
+    <DashboardSection>
+      {header}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignContent: 'center',
+          height: '100%',
+        }}
+      >
+        <BBChart options={chartOptions} />
+      </Box>
+    </DashboardSection>
+  );
+
+  return canViewConnections ? (
+    <Link href="/management/connections" style={{ textDecoration: 'none' }}>
+      {chartSection}
     </Link>
+  ) : (
+    chartSection
   );
 }

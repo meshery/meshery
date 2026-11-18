@@ -1,0 +1,20 @@
+version: 0.0.12
+name: kubernetes-sample-application
+displayName: Kubernetes Sample Application
+createdAt: "2026-08-16T14:20:55Z"
+description: A simple Kubernetes application design containing an Ingress, Service, Deployment, and ConfigMap with their relationships.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/e69a9629-1b73-4502-993c-8bf8e20368ce/0.0.12/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Example design created to demonstrate Meshery's visual design and relationship modeling capabilities. It is intended for demonstration purposes and is not a production deployment. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 49aec3dc-c9e5-4d55-bfde-7ab2dc3f1599
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

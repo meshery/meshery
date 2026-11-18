@@ -20,7 +20,7 @@ var listModelCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered models",
 	Long: `List all registered models by pagination (10 models per page)
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/model/list`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/model/list`,
 	Example: `
 // List of models
 mesheryctl model list
@@ -32,15 +32,7 @@ mesheryctl model list --page [page-number] --pagesize [pagesize]
 mesheryctl model list --count
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		flagValidator, ok := cmd.Context().Value(mesheryctlflags.FlagValidatorKey).(*mesheryctlflags.FlagValidator)
-		if !ok || flagValidator == nil {
-			return utils.ErrCommandContextMissing("flags-validator")
-		}
-		err := flagValidator.Validate(modelListFlags)
-		if err != nil {
-			return utils.ErrFlagsInvalid(err)
-		}
-		return nil
+		return mesheryctlflags.ValidateCmdFlags(cmd, &modelListFlags)
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
