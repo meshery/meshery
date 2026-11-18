@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: read
-      actions: read
     defaults:
       run:
         shell: bash
@@ -94,106 +93,6 @@ jobs:
           commit_message: "Models generated and updated"
           branch: master
 
-      - name: Prepare Failure Details
-        if: failure()
-        id: failure-details
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
-          JOB_URL=""
-          if JOBS_JSON="$(curl --fail --silent --show-error \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/attempts/$GITHUB_RUN_ATTEMPT/jobs?per_page=100")"; then
-            if ! JOB_URL="$(jq -er --arg job "Generate and Update Components" \
-              '[.jobs[] | select(.name == $job) | .html_url][0] // empty' <<< "$JOBS_JSON")"; then
-              echo "Could not find the current job URL in the workflow jobs response." >&2
-              JOB_URL=""
-            fi
-          fi
-          if [ -z "$JOB_URL" ]; then
-            echo "Could not resolve the failed job URL; using the workflow run-attempt URL." >&2
-            JOB_URL="$RUN_URL"
-          fi
-
-          FAILED_STAGES=()
-          add_failed_stage() {
-            if [ "$1" = "failure" ]; then
-              FAILED_STAGES+=("$2|$3|$4")
-            fi
-          }
-
-          add_failed_stage "${{ steps.checkout.outcome }}" "Check out code" "CI Infrastructure" ""
-          add_failed_stage "${{ steps.setup-go.outcome }}" "Setup Go" "CI Infrastructure" ""
-          add_failed_stage "${{ steps.build-mesheryctl.outcome }}" "Build mesheryctl" "Meshery Build" "$RUNNER_TEMP/build.log"
-          add_failed_stage "${{ steps.generate-models.outcome }}" "Generate Models and Components" "Model Generation" "$RUNNER_TEMP/generate.log"
-          add_failed_stage "${{ steps.upload-artifacts.outcome }}" "Upload artifacts" "CI Infrastructure" ""
-          add_failed_stage "${{ steps.check-registry-generate-error.outcome }}" "Check registry-generate-error file" "Model Generation" ""
-          add_failed_stage "${{ steps.update-models.outcome }}" "Run Model Updater" "Model Generation" "$RUNNER_TEMP/update.log"
-          add_failed_stage "${{ steps.pull-pre-commit.outcome }}" "Pre-commit git pull" "Git Synchronization" "$RUNNER_TEMP/pull-pre-commit.log"
-          add_failed_stage "${{ steps.commit-changes.outcome }}" "Commit changes" "Git Commit" ""
-
-          {
-            echo "The Model Component Generator and Updater workflow failed at the following stage(s):"
-            echo ""
-            if [ "${#FAILED_STAGES[@]}" -eq 0 ]; then
-              echo "- An unidentified stage [Category: CI Infrastructure]"
-            else
-              for STAGE_DETAILS in "${FAILED_STAGES[@]}"; do
-                IFS='|' read -r FAILED_STAGE CATEGORY LOG_FILE <<< "$STAGE_DETAILS"
-                echo "- ${FAILED_STAGE} [Category: ${CATEGORY}]"
-                if [ -n "$LOG_FILE" ] && [ -s "$LOG_FILE" ]; then
-                  ERROR_LINES="$(sed 's/\x1b\[[0-9;]*m//g' "$LOG_FILE" | tr -d '\r' | grep -niE 'error|fail(ed|ure)?|fatal|panic|denied|timed out|could not|unable to|exit status' || true)"
-                  if [ -n "$ERROR_LINES" ]; then
-                    echo "Relevant error/failure lines (line numbers refer to the captured command log):"
-                    echo "$ERROR_LINES"
-                  else
-                    echo "No matching error/failure lines found."
-                  fi
-                  echo "Last 50 lines for context:"
-                  tail -n 50 "$LOG_FILE" | tr -d '\r' | sed 's/\x1b\[[0-9;]*m//g'
-                else
-                  echo "No local command output was captured for this stage; see the job log."
-                fi
-                echo ""
-              done
-            fi
-            echo "Failed job  : ${JOB_URL}"
-            echo "Failed run  : ${RUN_URL}"
-            echo "Trigger    : ${{ github.event_name }}"
-          } > "$RUNNER_TEMP/failure-email.txt"
-
-          cat "$RUNNER_TEMP/failure-email.txt" >> "$GITHUB_STEP_SUMMARY"
-
-          ATTACHMENT=""
-          for STAGE_DETAILS in "${FAILED_STAGES[@]}"; do
-            IFS='|' read -r _ _ LOG_FILE <<< "$STAGE_DETAILS"
-            if [ -n "$LOG_FILE" ] && [ -s "$LOG_FILE" ]; then
-              ATTACHMENT="${ATTACHMENT}${ATTACHMENT:+,}${LOG_FILE}"
-            fi
-          done
-
-          FAILED_STAGE="${FAILED_STAGES[0]%%|*}"
-          echo "stage=${FAILED_STAGE:-unknown stage}" >> "$GITHUB_OUTPUT"
-          echo "attachment=$ATTACHMENT" >> "$GITHUB_OUTPUT"
-
-      - name: Send Email on Workflow Failure
-        if: failure()
-        continue-on-error: true
-        uses: dawidd6/action-send-mail@v7
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          subject: "[${{ github.repository }}] ${{ github.workflow }} — ${{ steps.failure-details.outputs.stage || 'unknown stage' }} failed (run #${{ github.run_number }})"
-          from: |
-            "Model Generator and Updater" <no-reply@meshery.io>
-          to: maintainers@meshery.io
-          body: file://${{ runner.temp }}/failure-email.txt
-          attachments: ${{ steps.failure-details.outputs.attachment }}
-
       - name: Send Email on Registry Generate Error
         if: env.registry-generate-error == 'false' #Turn it back to true when we are good with all the errors.
         uses: dawidd6/action-send-mail@v7
@@ -211,3 +110,183 @@ jobs:
 
                Learn more about the Meshery Registry - https://docs.meshery.io/concepts/logical/registry.
           attachments: ~/.meshery/logs/registry/registry-errors.log
+
+  failure-notification:
+    name: Notify on Model Generator failure
+    needs: generate-and-update-components
+    if: ${{ always() && needs.generate-and-update-components.result == 'failure' && github.repository == 'meshery/meshery' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Fetch failed-step logs and prepare email
+        id: failure-details
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+          EMAIL_FILE="$RUNNER_TEMP/failure-email.txt"
+          LOG_DIR="$RUNNER_TEMP/failed-step-logs"
+          JOB_URL=""
+          JOB_ID=""
+          FAILED_STAGE=""
+          FAILED_STEPS_JSON="[]"
+          ATTACHMENTS=""
+          API_ERROR=""
+          LOG_DOWNLOAD_FAILED=false
+
+          {
+            echo "The Model Component Generator and Updater workflow failed."
+            echo "Trigger    : ${{ github.event_name }}"
+            echo "Failed run : ${RUN_URL}"
+          } > "$EMAIL_FILE"
+
+          append_log_excerpt() {
+            local LOG_FILE="$1"
+            local LOG_LABEL="$2"
+            local NORMALIZED_LOG="${LOG_FILE}.normalized"
+            local EXCERPT_FILE="${LOG_FILE}.excerpt"
+
+            if ! sed 's/\x1b\[[0-9;]*m//g' "$LOG_FILE" | tr -d '\r' > "$NORMALIZED_LOG"; then
+              echo "Could not normalize the ${LOG_LABEL}; the complete log is attached." >> "$EMAIL_FILE"
+              return 0
+            fi
+
+            echo "Log excerpt for ${LOG_LABEL}:" >> "$EMAIL_FILE"
+            if grep -niE -C 3 \
+              'error|fail(ed|ure)?|fatal|panic|denied|timed out|could not|unable to|exit status|cannot|not found|killed|unexpected|invalid|refused' \
+              "$NORMALIZED_LOG" > "$EXCERPT_FILE"; then
+              {
+                echo "Relevant error/failure lines with surrounding context:"
+                cat "$EXCERPT_FILE"
+              } >> "$EMAIL_FILE"
+            else
+              GREP_STATUS=$?
+              if [ "$GREP_STATUS" -eq 1 ]; then
+                echo "No matching error/failure lines found in this log." >> "$EMAIL_FILE"
+              else
+                echo "Could not search this log for error/failure lines (grep exit ${GREP_STATUS})." >> "$EMAIL_FILE"
+              fi
+            fi
+
+            {
+              echo "Last 50 lines for additional context:"
+              if ! tail -n 50 "$NORMALIZED_LOG"; then
+                echo "Could not read the last lines of this log."
+              fi
+              echo ""
+            } >> "$EMAIL_FILE"
+          }
+
+          if ! mkdir -p "$LOG_DIR"; then
+            echo "Could not create the temporary log directory: $LOG_DIR" >> "$EMAIL_FILE"
+          elif ! JOBS_JSON="$(curl --fail --silent --show-error \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/attempts/$GITHUB_RUN_ATTEMPT/jobs?per_page=100")"; then
+            API_ERROR="Could not list jobs for this workflow run attempt."
+          elif ! JOB_JSON="$(jq -ce --arg job "Generate and Update Components" \
+            '[.jobs[] | select(.name == $job)][0] // empty' <<< "$JOBS_JSON")"; then
+            API_ERROR="Could not find the Model Generator job in the workflow jobs response."
+          elif ! JOB_ID="$(jq -er '.id' <<< "$JOB_JSON")"; then
+            API_ERROR="The Model Generator job response did not contain a job ID."
+          else
+            JOB_URL="$(jq -r '.html_url // empty' <<< "$JOB_JSON")"
+
+            if ! FAILED_STEPS_JSON="$(jq -c \
+              '[.steps[]? | select(.conclusion == "failure" or .conclusion == "timed_out")]' \
+              <<< "$JOB_JSON")"; then
+              API_ERROR="Could not read failed steps from the Model Generator job response."
+            fi
+          fi
+
+          {
+            if [ -n "$JOB_URL" ]; then
+              echo "Failed job : ${JOB_URL}"
+            else
+              echo "Failed job URL unavailable; workflow run: ${RUN_URL}"
+            fi
+            if [ -n "$API_ERROR" ]; then
+              echo ""
+              echo "Log retrieval issue: ${API_ERROR}"
+            fi
+            echo ""
+          } >> "$EMAIL_FILE"
+
+          if [ -n "$JOB_ID" ]; then
+            FAILED_STEP_COUNT="$(jq 'length' <<< "$FAILED_STEPS_JSON")"
+            if [ "$FAILED_STEP_COUNT" -eq 0 ]; then
+              echo "The API reported no failed step records; attempting to attach the complete job log." >> "$EMAIL_FILE"
+            else
+              FAILED_STAGE="$(jq -r '.[0].name // empty' <<< "$FAILED_STEPS_JSON")"
+              while IFS= read -r STEP_JSON; do
+                STEP_NUMBER="$(jq -r '.number' <<< "$STEP_JSON")"
+                STEP_NAME="$(jq -r '.name // "Unknown failed step"' <<< "$STEP_JSON")"
+                STEP_LOG="$LOG_DIR/failed-step-${STEP_NUMBER}.log"
+                DOWNLOAD_TEMP="${STEP_LOG}.download"
+
+                {
+                  echo "Failed step: ${STEP_NAME} (step ${STEP_NUMBER})"
+                  echo "Job/run link: ${JOB_URL:-$RUN_URL}"
+                } >> "$EMAIL_FILE"
+
+                if curl --fail --location --silent --show-error \
+                  -H "Authorization: Bearer $GH_TOKEN" \
+                  -H "Accept: application/vnd.github+json" \
+                  "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/jobs/$JOB_ID/steps/$STEP_NUMBER/logs" \
+                  --output "$DOWNLOAD_TEMP" && [ -s "$DOWNLOAD_TEMP" ] && mv "$DOWNLOAD_TEMP" "$STEP_LOG"; then
+                  ATTACHMENTS="${ATTACHMENTS}${ATTACHMENTS:+,}${STEP_LOG}"
+                  append_log_excerpt "$STEP_LOG" "${STEP_NAME} (step ${STEP_NUMBER})"
+                else
+                  rm -f "$DOWNLOAD_TEMP"
+                  LOG_DOWNLOAD_FAILED=true
+                  echo "Could not download the complete log for this failed step; see the job link above." >> "$EMAIL_FILE"
+                fi
+
+                echo "" >> "$EMAIL_FILE"
+              done <<< "$(jq -c '.[]' <<< "$FAILED_STEPS_JSON")"
+            fi
+
+            if [ "$FAILED_STEP_COUNT" -eq 0 ] || [ "$LOG_DOWNLOAD_FAILED" = true ]; then
+              JOB_LOG="$LOG_DIR/job-${JOB_ID}.log"
+              JOB_LOG_TEMP="${JOB_LOG}.download"
+              if curl --fail --location --silent --show-error \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/jobs/$JOB_ID/logs" \
+                --output "$JOB_LOG_TEMP" && [ -s "$JOB_LOG_TEMP" ] && mv "$JOB_LOG_TEMP" "$JOB_LOG"; then
+                ATTACHMENTS="${ATTACHMENTS}${ATTACHMENTS:+,}${JOB_LOG}"
+                echo "Complete job log attached as a fallback." >> "$EMAIL_FILE"
+                append_log_excerpt "$JOB_LOG" "complete job log fallback"
+              else
+                rm -f "$JOB_LOG_TEMP"
+                echo "Could not download the complete job log fallback; use the job link above." >> "$EMAIL_FILE"
+              fi
+            fi
+          fi
+
+          if [ -z "$JOB_ID" ]; then
+            echo "No failed-step logs could be downloaded; use the run link above." >> "$EMAIL_FILE"
+          fi
+
+          echo "stage=${FAILED_STAGE:-unknown stage}" >> "$GITHUB_OUTPUT"
+          echo "attachments=$ATTACHMENTS" >> "$GITHUB_OUTPUT"
+
+      - name: Send Email on Workflow Failure
+        if: ${{ always() && !cancelled() }}
+        continue-on-error: true
+        uses: dawidd6/action-send-mail@v7
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "[${{ github.repository }}] ${{ github.workflow }} — ${{ steps.failure-details.outputs.stage || 'unknown stage' }} failed (run #${{ github.run_number }})"
+          from: |
+            "Model Generator and Updater" <no-reply@meshery.io>
+          to: maintainers@meshery.io
+          body: file://${{ runner.temp }}/failure-email.txt
+          attachments: ${{ steps.failure-details.outputs.attachments }}
