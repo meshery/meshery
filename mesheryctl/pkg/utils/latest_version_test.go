@@ -103,8 +103,8 @@ func TestGetLatestVersionForMesheryctl(t *testing.T) {
 		if err == nil {
 			t.Fatalf("expected error for 502 status, got version: %q", version)
 		}
-		if meshkiterrors.GetCode(err) != ErrGetChannelVersionCode {
-			t.Fatalf("expected error code %s, got: %s", ErrGetChannelVersionCode, meshkiterrors.GetCode(err))
+		if meshkiterrors.GetCode(err) != ErrDocsReleaseCheckCode {
+			t.Fatalf("expected error code %s, got: %s", ErrDocsReleaseCheckCode, meshkiterrors.GetCode(err))
 		}
 		if !strings.Contains(err.Error(), "502") || !strings.Contains(err.Error(), "docs.meshery.io") {
 			t.Fatalf("expected error identifying docs.meshery.io and 502, got: %v", err)

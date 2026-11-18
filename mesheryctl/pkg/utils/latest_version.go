@@ -26,7 +26,7 @@ func GetLatestVersionForMesheryctl() (string, error) {
 	defer SafeClose(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
-		return "", ErrGetChannelVersion(fmt.Errorf("received status code %d from https://docs.meshery.io/project/releases/latest", resp.StatusCode))
+		return "", ErrDocsReleaseCheck(resp.StatusCode, "https://docs.meshery.io/project/releases/latest")
 	}
 
 	data, err := io.ReadAll(resp.Body)

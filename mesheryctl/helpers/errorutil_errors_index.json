@@ -4138,6 +4138,23 @@
       "suggestedRemediation": [
         "Rerun the command to refresh the matching profile list"
       ]
+    },
+    {
+      "code": "mesheryctl-1266",
+      "moniker": "ErrDocsReleaseCheckCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1266",
+      "severity": "alert",
+      "shortDescription": "Unable to fetch latest release version",
+      "probableCause": [
+        "The documentation service might be down or unreachable"
+      ],
+      "suggestedRemediation": [
+        "Check your network connection and verify https://docs.meshery.io is accessible"
+      ]
     }
   ],
   "schemaVersion": 2
