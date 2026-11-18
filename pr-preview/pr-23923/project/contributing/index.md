@@ -99,7 +99,9 @@ under both.
 <li>
 <code>git rebase --signoff</code> stamps whoever runs it, which leaves the DCO check red on a branch
 that carries more than one author's commits and costs a second force push. DCO wants a sign-off
-naming each commit's <em>author</em>, so derive it per commit:
+naming each commit's <em>author</em>, so derive it per commit. A sign-off is the author's own
+certification of the DCO, so use this only for commits whose authors have agreed to sign off, or
+have each author run it on their own commits:
 
 <pre><code>$ git rebase &lt;base-branch&gt; --exec 'git commit --amend --no-edit --trailer \
     "Signed-off-by=$(git log -1 --pretty="%an &lt;%ae&gt;")"'</code></pre>
