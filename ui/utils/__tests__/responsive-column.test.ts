@@ -85,7 +85,20 @@ describe('updateVisibleColumns', () => {
     expect(res).toEqual({ col1: true, col2: true, col3: true });
   });
 
-  it.each([NaN, Infinity, -Infinity, '800', null, undefined, -1])(
+  it('ignores blank screen sizes', () => {
+    expect(
+      updateVisibleColumns(
+        [
+          ['blank', ''],
+          ['whitespace', '   '],
+          ['valid', 'xs'],
+        ],
+        800,
+      ),
+    ).toEqual({ valid: true });
+  });
+
+  it.each([NaN, Infinity, -Infinity, -5, -1, '800', null, undefined])(
     'uses zero as the fallback for invalid or negative width: %s',
     (width) => {
       expect(updateVisibleColumns([['small', 's']], width)).toEqual({ small: false });
