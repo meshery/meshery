@@ -1093,9 +1093,10 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 		Sort:      sort,
 	})
 	if err != nil {
-		err = fmt.Errorf("failed to retrieve meshmodel policies: %w", err)
-		h.log.Error(err)
-		writeMeshkitError(rw, err, http.StatusInternalServerError)
+		var mErr error
+		mErr = ErrPolicyDefinitionFilter(err)
+		h.log.Error(mErr)
+		writeMeshkitError(rw, mErr, http.StatusInternalServerError)
 		return
 	}
 
@@ -1128,9 +1129,9 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 		Sort:      sort,
 	})
 	if err != nil {
-		err = fmt.Errorf("failed to retrieve meshmodel policies: %w", err)
-		h.log.Error(err)
-		writeMeshkitError(rw, err, http.StatusInternalServerError)
+		mErr := ErrPolicyDefinitionFilter(err)
+		h.log.Error(mErr)
+		writeMeshkitError(rw, mErr, http.StatusInternalServerError)
 		return
 	}
 
