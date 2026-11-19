@@ -68,7 +68,7 @@ export const getResponsiveColumnVisibility = (
   colViews?: unknown,
   width?: number | unknown,
 ) => {
-  if (!Array.isArray(columnNames)) {
+  if (!Array.isArray(columnNames) || !Array.isArray(colViews)) {
     return {};
   }
 

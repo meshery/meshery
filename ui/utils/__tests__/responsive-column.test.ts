@@ -97,7 +97,8 @@ describe('getResponsiveColumnVisibility', () => {
   it('defensively handles nullish and non-array columnNames or colViews', () => {
     expect(getResponsiveColumnVisibility(undefined, [['name', 'xs']], 800)).toEqual({});
     expect(getResponsiveColumnVisibility(null, [['name', 'xs']], 800)).toEqual({});
-    expect(getResponsiveColumnVisibility(['name'], undefined, 800)).toEqual({ name: undefined });
-    expect(getResponsiveColumnVisibility(['name'], null, 800)).toEqual({ name: undefined });
+    expect(getResponsiveColumnVisibility(['name'], undefined, 800)).toEqual({});
+    expect(getResponsiveColumnVisibility(['name'], null, 800)).toEqual({});
+    expect(getResponsiveColumnVisibility(['name'], 'invalid' as any, 800)).toEqual({});
   });
 });
