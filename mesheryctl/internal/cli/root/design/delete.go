@@ -105,12 +105,16 @@ mesheryctl design delete -f [file | URL]
 					// file-read error is surfaced instead of an obscure ID error.
 					targetFile = target
 				} else if !isID {
+					// A target meant as a file path that does not exist is reported
+					// as an invalid path and never looked up by name, so it cannot
+					// delete a server design that happens to have that name.
+					if looksLikeFilePath(target) {
+						return utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, target))
+					}
 					// Not a design ID: look the target up by design name.
 					pattern, err = fetchDesignIDByExactName(mctlCfg.GetBaseMesheryURL(), target)
 					if err != nil {
-						if errors.GetCode(err) == ErrDesignsNotFoundCode && looksLikeFilePath(target) {
-							return utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, target))
-						}
+						utils.Log.Error(err)
 						return err
 					}
 					isID = true
@@ -202,7 +206,8 @@ func fetchDesignIDByExactName(baseURL, designName string) (string, error) {
 }
 
 // looksLikeFilePath reports whether target was most likely meant as a file
-// path, so a missing file is reported as a bad path rather than a missing design.
+// path: it contains a path separator or has a file extension. Such a target is
+// never looked up by name; a design with such a name is deleted by its ID.
 func looksLikeFilePath(target string) bool {
 	return strings.ContainsAny(target, `/\`) || filepath.Ext(target) != ""
 }

@@ -276,9 +276,11 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectedError:  ErrDesignNotFound("missing-design"),
 		},
 		{
-			Name:             "given missing file path when server is reachable then file read error is thrown",
+			Name:             "given missing file path that is also a design name when design delete then file read error is thrown and nothing is deleted",
 			Args:             []string{"delete", "missing-design.yaml"},
 			ExpectedResponse: "",
+			// The server has a design named missing-design.yaml. A file-like
+			// target is never looked up by name, so it must not be deleted.
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -289,7 +291,13 @@ func TestDeleteCmd(t *testing.T) {
 				{
 					Method:       "GET",
 					URL:          testContext.BaseURL + "/api/pattern?search=missing-design.yaml&pagesize=10000",
-					Response:     "pattern.empty.response.golden",
+					Response:     "delete.fileNamedDesign.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/" + nonExistentID,
+					Response:     "delete.response.golden",
 					ResponseCode: 200,
 				},
 			},
