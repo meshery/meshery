@@ -90,3 +90,10 @@ func TestViewWorkspace(t *testing.T) {
 
 	utils.InvokeMesheryctlTestCommand(t, update, WorkSpaceCmd, tests, currDir, "workspace")
 }
+
+func TestFormatWorkspaceLabel_Empty(t *testing.T) {
+	labels := formatWorkspaceLabel(nil)
+	if len(labels) != 0 {
+		t.Fatalf("expected 0 labels for nil slice, got %d", len(labels))
+	}
+}
