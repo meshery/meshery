@@ -1,0 +1,184 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "reference",
+  "status": "enabled",
+  "evaluationQuery": "",
+  "metadata": {
+    "description": "Vault secret components reference a VaultAuth resource by name via spec.vaultAuthRef.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "vault-secrets",
+    "version": "1.6.0",
+    "displayName": "Vault Secrets",
+    "model": {
+      "version": "1.6.0"
+    },
+    "registrant": {
+      "kind": "artifacthub"
+    }
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "VaultStaticSecret",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "name": "vault-secrets",
+              "displayName": "",
+              "version": "",
+              "model": {
+                "version": ""
+              },
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "vaultAuthRef"
+                ]
+              ]
+            }
+          },
+          {
+            "id": null,
+            "kind": "VaultDynamicSecret",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "name": "vault-secrets",
+              "displayName": "",
+              "version": "",
+              "model": {
+                "version": ""
+              },
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "vaultAuthRef"
+                ]
+              ]
+            }
+          },
+          {
+            "id": null,
+            "kind": "VaultPKISecret",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "name": "vault-secrets",
+              "displayName": "",
+              "version": "",
+              "model": {
+                "version": ""
+              },
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "vaultAuthRef"
+                ]
+              ]
+            }
+          },
+          {
+            "id": null,
+            "kind": "CSISecrets",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "name": "vault-secrets",
+              "displayName": "",
+              "version": "",
+              "model": {
+                "version": ""
+              },
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "vaultAuthRef",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "VaultAuth",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "name": "vault-secrets",
+              "displayName": "",
+              "version": "",
+              "model": {
+                "version": ""
+              },
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
