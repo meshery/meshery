@@ -14,7 +14,7 @@ export const updateVisibleColumns = (colViews?: unknown, width?: number | unknow
   });
 
   const safeWidth =
-    typeof width === 'number' && Number.isFinite(width) && width >= 0 ? width : 0;
+    typeof width === 'number' && Number.isFinite(width) ? Math.max(0, width) : 0;
   const showCols: Record<string, boolean> = {};
 
   if (!Array.isArray(colViews)) {
@@ -39,7 +39,8 @@ export const updateVisibleColumns = (colViews?: unknown, width?: number | unknow
     if (
       typeof columnName !== 'string' ||
       columnName.trim() === '' ||
-      typeof screenSize !== 'string'
+      typeof screenSize !== 'string' ||
+      screenSize.trim() === ''
     ) {
       return;
     }
