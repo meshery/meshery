@@ -339,6 +339,20 @@ func TestGetUserCredentialByID_ValidID(t *testing.T) {
 	}
 }
 
+// assertCredentialNotFoundEnvelope decodes the response body and asserts that
+// it contains a structured MeshKit ErrResultNotFound error envelope with a
+// case-insensitive 'not found' message.
+func assertCredentialNotFoundEnvelope(t *testing.T, body []byte) {
+	t.Helper()
+	decoded := decodeErrorBody(t, body)
+	if decoded.Code != models.ErrResultNotFoundCode {
+		t.Fatalf("expected %s, got %s", models.ErrResultNotFoundCode, decoded.Code)
+	}
+	if !strings.Contains(strings.ToLower(decoded.Error), "not found") {
+		t.Fatalf("expected error containing 'not found', got %q", decoded.Error)
+	}
+}
+
 // TestGetUserCredentialByID_UnownedCredentialReturns404 verifies that requesting
 // a legacy unowned credential (UserId == uuid.Nil) returns 404 Not Found (fail-closed)
 // with a structured MeshKit error envelope.
@@ -362,13 +376,7 @@ func TestGetUserCredentialByID_UnownedCredentialReturns404(t *testing.T) {
 	if rec.Code != http.StatusNotFound {
 		t.Fatalf("expected 404, got %d (body=%q)", rec.Code, rec.Body.String())
 	}
-	decoded := decodeErrorBody(t, rec.Body.Bytes())
-	if decoded.Code != models.ErrResultNotFoundCode {
-		t.Fatalf("expected %s, got %s", models.ErrResultNotFoundCode, decoded.Code)
-	}
-	if !strings.Contains(decoded.Error, "not found") {
-		t.Fatalf("expected error containing 'not found', got %q", decoded.Error)
-	}
+	assertCredentialNotFoundEnvelope(t, rec.Body.Bytes())
 }
 
 // TestGetUserCredentialByID_NilUserReturns404 verifies that calling GetUserCredentialByID
@@ -393,13 +401,7 @@ func TestGetUserCredentialByID_NilUserReturns404(t *testing.T) {
 	if rec.Code != http.StatusNotFound {
 		t.Fatalf("expected 404, got %d (body=%q)", rec.Code, rec.Body.String())
 	}
-	decoded := decodeErrorBody(t, rec.Body.Bytes())
-	if decoded.Code != models.ErrResultNotFoundCode {
-		t.Fatalf("expected %s, got %s", models.ErrResultNotFoundCode, decoded.Code)
-	}
-	if !strings.Contains(decoded.Error, "not found") {
-		t.Fatalf("expected error containing 'not found', got %q", decoded.Error)
-	}
+	assertCredentialNotFoundEnvelope(t, rec.Body.Bytes())
 }
 
 // TestGetUserCredentialByID_ForeignUserReturns404 verifies that requesting
@@ -426,13 +428,7 @@ func TestGetUserCredentialByID_ForeignUserReturns404(t *testing.T) {
 	if rec.Code != http.StatusNotFound {
 		t.Fatalf("expected 404, got %d (body=%q)", rec.Code, rec.Body.String())
 	}
-	decoded := decodeErrorBody(t, rec.Body.Bytes())
-	if decoded.Code != models.ErrResultNotFoundCode {
-		t.Fatalf("expected %s, got %s", models.ErrResultNotFoundCode, decoded.Code)
-	}
-	if !strings.Contains(decoded.Error, "not found") {
-		t.Fatalf("expected error containing 'not found', got %q", decoded.Error)
-	}
+	assertCredentialNotFoundEnvelope(t, rec.Body.Bytes())
 }
 
 // TestGetUserCredentialByID_OwnerReturns200 verifies that the owner of a
