@@ -3,6 +3,7 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -302,7 +303,9 @@ func TestHandleBasedRenameFailsClosedOnAccessDenied(t *testing.T) {
 		replaceTokenFileStdFunc = origStd
 	}()
 
+	exCalled := false
 	replaceTokenFileExFunc = func(file *os.File, name []uint16) error {
+		exCalled = true
 		return windows.ERROR_ACCESS_DENIED
 	}
 
@@ -317,8 +320,14 @@ func TestHandleBasedRenameFailsClosedOnAccessDenied(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected access denied error to fail closed")
 	}
+	if !exCalled {
+		t.Fatal("expected extended rename stub to be called, but it was not")
+	}
 	if stdCalled {
 		t.Fatal("expected ERROR_ACCESS_DENIED NOT to fall back to standard rename")
+	}
+	if !errors.Is(err, windows.ERROR_ACCESS_DENIED) {
+		t.Fatalf("expected errors.Is(err, ERROR_ACCESS_DENIED) to be true; got: %v", err)
 	}
 }
 
