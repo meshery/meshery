@@ -268,8 +268,9 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 }
 
 // SaveMesheryPattern inserts a new design, or updates an existing one with only
-// the non-zero fields of pattern. A new design keeps the version its file
-// carries (0.0.1 when it carries none); an existing design's version is bumped.
+// the non-zero fields of pattern. A design saved without an ID keeps the version
+// its file carries (0.0.1 when it carries none); a save with an ID (an update,
+// or a clone/seed that minted its own ID) bumps the patch of the file's version.
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
 	pf, err := patterns.GetPatternFormat(pattern.PatternFile)
 	if err != nil {
@@ -349,9 +350,9 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 	return marshalMesheryPatterns([]MesheryPattern{*pattern}), err
 }
 
-// setSavedVersion sets the version a save stores: a new design keeps the
-// version it was saved with (0.0.1 when it carries none), while an existing
-// design gets a patch bump of its stored version.
+// setSavedVersion sets the version a save stores: isNew is true only for a save
+// without an ID, which keeps the version its file carries (0.0.1 when none);
+// any save with an ID gets a patch bump of the file's version.
 func setSavedVersion(pf *design.PatternFile, isNew bool) error {
 	supplied := pf.Version
 	next, err := patterns.GetNextVersion(pf)
