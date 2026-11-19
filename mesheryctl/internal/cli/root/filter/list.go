@@ -27,6 +27,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -98,6 +99,9 @@ mesheryctl filter list 'Test Filter'
 
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
+			if meshkiterrors.GetCode(err) == utils.ErrUnauthenticatedCode {
+				return err
+			}
 			return utils.ErrReadToken(err)
 		}
 		provider := tokenObj["meshery-provider"]

@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -80,6 +81,9 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	// add token to request
 	err = AddAuthDetails(req, tokenPath)
 	if err != nil {
+		if meshkiterrors.GetCode(err) == ErrUnauthenticatedCode {
+			return nil, err
+		}
 		return nil, ErrAttachAuthToken(err)
 	}
 
@@ -307,6 +311,9 @@ func ReadToken(filepath string) (map[string]string, error) {
 	if err != nil {
 		err = errors.Wrap(err, "could not read token: ")
 		return nil, ErrFileRead(err)
+	}
+	if len(bytes.TrimSpace(file)) == 0 {
+		return nil, ErrUnauthenticated()
 	}
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
