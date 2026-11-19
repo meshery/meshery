@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@sistent/sistent', () => ({
@@ -105,7 +105,13 @@ describe('DesignImpactPreviewModal', () => {
     expect(screen.getByText(/Design Impact Preview: Modify frontend-svc/)).toBeInTheDocument();
     expect(screen.getByText(/Service: frontend-svc/)).toBeInTheDocument();
     expect(screen.getByText('UPDATE')).toBeInTheDocument();
-    expect(screen.getByText(/Deployment\/frontend-deploy/)).toBeInTheDocument();
+    // Scope to the directly-affected section: the PVC explanation in the
+    // indirect section repeats the 'Deployment/frontend-deploy' label.
+    const directlyAffectedSection = screen.getByText(/Directly Affected Components/)
+      .parentElement as HTMLElement;
+    expect(
+      within(directlyAffectedSection).getByText(/Deployment\/frontend-deploy/),
+    ).toBeInTheDocument();
     expect(screen.getByText(/PersistentVolumeClaim\/frontend-pvc/)).toBeInTheDocument();
   });
 
