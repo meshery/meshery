@@ -698,7 +698,7 @@ func TestVerifyToken_AcceptsValidToken(t *testing.T) {
 	jwk := map[string]string{
 		"kid": "test-key",
 		"kty": "RSA",
-		"n":   base64.RawURLEncoding.EncodeToString(key.PublicKey.N.Bytes()),
+		"n":   base64.RawURLEncoding.EncodeToString(key.N.Bytes()),
 		"e":   "AQAB",
 	}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
