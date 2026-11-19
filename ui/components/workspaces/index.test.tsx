@@ -23,6 +23,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // object per render is a render loop.
 const {
   notify,
+  getWorkspacesQuery,
   createWorkspace,
   updateWorkspace,
   deleteWorkspace,
@@ -33,6 +34,7 @@ const {
   ColumnVisibilityControl,
 } = vi.hoisted(() => ({
   notify: vi.fn(),
+  getWorkspacesQuery: vi.fn(),
   createWorkspace: vi.fn(),
   updateWorkspace: vi.fn(),
   deleteWorkspace: vi.fn(),
@@ -57,7 +59,10 @@ vi.mock('../../rtk-query/workspace', () => ({
   useCreateWorkspaceMutation: () => [createWorkspace, { isLoading: false }],
   useUpdateWorkspaceMutation: () => [updateWorkspace, { isLoading: false }],
   useDeleteWorkspaceMutation: () => [deleteWorkspace],
-  useGetWorkspacesQuery: () => WORKSPACES_QUERY_RESULT,
+  useGetWorkspacesQuery: (args: unknown) => {
+    getWorkspacesQuery(args);
+    return WORKSPACES_QUERY_RESULT;
+  },
   useGetTeamsOfWorkspaceQuery: () => EMPTY_QUERY_RESULT,
   useGetEventsOfWorkspaceQuery: () => EMPTY_QUERY_RESULT,
   useAssignTeamToWorkspaceMutation: () => NOOP_MUTATION,
@@ -311,6 +316,54 @@ describe('Workspaces search paging', () => {
 
       await user.click(screen.getByTestId('search-prod'));
       expect(screen.getByTestId('grid-page')).toHaveTextContent('0');
+    } finally {
+      WORKSPACES_QUERY_RESULT.data = originalData;
+    }
+  });
+});
+
+describe('Workspaces grid paging after delete', () => {
+  const lastQueryArgs = () => getWorkspacesQuery.mock.calls.at(-1)?.[0];
+
+  it('steps back to the new last page when the current page becomes empty', async () => {
+    const originalData = WORKSPACES_QUERY_RESULT.data;
+    WORKSPACES_QUERY_RESULT.data = {
+      workspaces: [{ id: 'ws-21', name: 'only-on-page-3' }],
+      totalCount: 21,
+    } as any;
+    try {
+      const user = userEvent.setup();
+      const { rerender } = render(<Workspaces onSelectWorkspace={undefined} />);
+
+      await user.click(screen.getByTestId('grid-view'));
+      await user.click(await screen.findByTestId('go-to-page-3'));
+      await waitFor(() => expect(lastQueryArgs()).toMatchObject({ page: 2 }));
+
+      // The only workspace on page 3 was deleted; the refetch of page 3 comes
+      // back empty and the total drops to 20 (two full pages).
+      WORKSPACES_QUERY_RESULT.data = { workspaces: [], totalCount: 20 } as any;
+      rerender(<Workspaces onSelectWorkspace={undefined} />);
+
+      await waitFor(() => expect(lastQueryArgs()).toMatchObject({ page: 1 }));
+    } finally {
+      WORKSPACES_QUERY_RESULT.data = originalData;
+    }
+  });
+
+  it('stays on the current page while it still has workspaces', async () => {
+    const originalData = WORKSPACES_QUERY_RESULT.data;
+    WORKSPACES_QUERY_RESULT.data = {
+      workspaces: [{ id: 'ws-21', name: 'only-on-page-3' }],
+      totalCount: 21,
+    } as any;
+    try {
+      const user = userEvent.setup();
+      render(<Workspaces onSelectWorkspace={undefined} />);
+
+      await user.click(screen.getByTestId('grid-view'));
+      await user.click(await screen.findByTestId('go-to-page-3'));
+      await waitFor(() => expect(lastQueryArgs()).toMatchObject({ page: 2 }));
+      expect(screen.getByTestId('grid-page')).toHaveTextContent('2');
     } finally {
       WORKSPACES_QUERY_RESULT.data = originalData;
     }

@@ -364,6 +364,59 @@ describe('Environments search paging', () => {
   });
 });
 
+describe('Environments paging after delete', () => {
+  const lastQueryArgs = () => getEnvironmentsQuery.mock.calls.at(-1)?.[0];
+
+  it('steps back to the new last page when the current page becomes empty', async () => {
+    const originalData = ENVIRONMENTS_QUERY_RESULT.data;
+    ENVIRONMENTS_QUERY_RESULT.data = {
+      environments: [{ id: 'env-21', name: 'only-on-page-3' }],
+      totalCount: 21,
+    } as any;
+    try {
+      const user = userEvent.setup();
+      const { rerender } = render(<Environments />);
+
+      await user.click(screen.getByTestId('go-to-page-3'));
+      // The pagination handler is debounced.
+      await waitFor(() => expect(lastQueryArgs()).toMatchObject({ page: 2 }));
+
+      // The only environment on page 3 was deleted; the refetch of page 3
+      // comes back empty and the total drops to 20 (two full pages).
+      ENVIRONMENTS_QUERY_RESULT.data = { environments: [], totalCount: 20 } as any;
+      rerender(<Environments />);
+
+      await waitFor(() => expect(lastQueryArgs()).toMatchObject({ page: 1 }));
+    } finally {
+      ENVIRONMENTS_QUERY_RESULT.data = originalData;
+    }
+  });
+
+  it('does not move while a refetch is still in flight', async () => {
+    const originalData = ENVIRONMENTS_QUERY_RESULT.data;
+    ENVIRONMENTS_QUERY_RESULT.data = {
+      environments: [{ id: 'env-21', name: 'only-on-page-3' }],
+      totalCount: 21,
+    } as any;
+    try {
+      const user = userEvent.setup();
+      const { rerender } = render(<Environments />);
+
+      await user.click(screen.getByTestId('go-to-page-3'));
+      await waitFor(() => expect(lastQueryArgs()).toMatchObject({ page: 2 }));
+
+      ENVIRONMENTS_QUERY_RESULT.data = { environments: [], totalCount: 20 } as any;
+      (ENVIRONMENTS_QUERY_RESULT as any).isFetching = true;
+      rerender(<Environments />);
+
+      expect(lastQueryArgs()).toMatchObject({ page: 2 });
+    } finally {
+      ENVIRONMENTS_QUERY_RESULT.data = originalData;
+      delete (ENVIRONMENTS_QUERY_RESULT as any).isFetching;
+    }
+  });
+});
+
 describe('Environments permissions and wire query skipping', () => {
   beforeEach(() => {
     permissionOverrides.clear();

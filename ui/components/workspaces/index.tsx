@@ -185,7 +185,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
   const bulkDeleteRef = useRef(null);
   const { notify } = useNotification();
 
-  const { data: workspacesData } = useGetWorkspacesQuery(
+  const { data: workspacesData, isFetching: isFetchingWorkspaces } = useGetWorkspacesQuery(
     {
       page: page,
       pagesize: pageSize,
@@ -197,6 +197,19 @@ const Workspaces = ({ onSelectWorkspace }) => {
       skip: !organization?.id || !canViewWorkspace,
     },
   );
+
+  // Deleting the last workspace on the last grid page leaves that page empty,
+  // and the empty state hides the pager. Step back to the new last page once the
+  // refetch reports the smaller total.
+  useEffect(() => {
+    if (!workspacesData || isFetchingWorkspaces) {
+      return;
+    }
+    const lastPage = Math.max(0, Math.ceil(Number(workspacesData.totalCount ?? 0) / pageSize) - 1);
+    if (page > lastPage) {
+      setPage(lastPage);
+    }
+  }, [workspacesData, isFetchingWorkspaces, page, pageSize]);
 
   const [createWorkspace, createResult] = useCreateWorkspaceMutation();
 
