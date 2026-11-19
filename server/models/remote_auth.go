@@ -235,8 +235,8 @@ func (l *RemoteProvider) UpdateJWKs() error {
 	}
 
 	l.keysMu.Lock()
+	defer l.keysMu.Unlock()
 	l.Keys = jwks
-	l.keysMu.Unlock()
 
 	return nil
 }
