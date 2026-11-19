@@ -79,6 +79,10 @@ func (p *workspaceUpdatePayloadWire) UnmarshalJSON(data []byte) error {
 }
 
 func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		writeMeshkitError(w, ErrFetchToken(fmt.Errorf("token not found in request context")), http.StatusInternalServerError)
@@ -96,7 +100,9 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 	}
 	if orgID == "" {
 		missingInput := models.ErrWorkspaceMissingInput()
-		h.log.Error(missingInput)
+		if h.log != nil {
+			h.log.Error(missingInput)
+		}
 		writeMeshkitError(w, missingInput, http.StatusBadRequest)
 		return
 	}
@@ -107,18 +113,26 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 			return
 		}
 		handlerErr := ErrGetWorkspaces(err)
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	workspaceID, ok := h.requirePathUUID(w, r, "id")
 	if !ok {
 		return
@@ -132,28 +146,40 @@ func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request
 	}
 	if orgID == "" {
 		missingInput := models.ErrWorkspaceMissingInput()
-		h.log.Error(missingInput)
+		if h.log != nil {
+			h.log.Error(missingInput)
+		}
 		writeMeshkitError(w, missingInput, http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetWorkspaceByID(r, workspaceID, orgID)
 	if err != nil {
 		handlerErr := ErrGetWorkspace(err)
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
 		return
 	}
@@ -163,7 +189,9 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 	obj := "workspace"
 
 	if err != nil {
-		h.log.Error(models.ErrUnmarshal(err, obj))
+		if h.log != nil {
+			h.log.Error(models.ErrUnmarshal(err, obj))
+		}
 		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusInternalServerError)
 		return
 	}
@@ -172,24 +200,34 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 	bf, err := provider.SaveWorkspace(req, &workspace, "", false)
 	if err != nil {
 		handlerErr := ErrSaveWorkspace(err)
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
 	description := fmt.Sprintf("Workspace %s created.", workspace.Name)
 
-	h.log.Info(description)
+	if h.log != nil {
+		h.log.Info(description)
+	}
 	// Content-Type must be set before WriteHeader; the reverse order silently
 	// drops the header, and RTK Query's default baseQuery dispatches on it.
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	if _, err := w.Write(bf); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	workspaceID, ok := h.requirePathUUID(w, r, "id")
 	if !ok {
 		return
@@ -205,25 +243,35 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 			return
 		}
 		handlerErr := ErrDeleteWorkspace(err)
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	workspaceID, ok := h.requirePathUUID(w, req, "id")
 	if !ok {
 		return
 	}
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
 		return
 	}
@@ -233,7 +281,9 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 	obj := "workspace"
 
 	if err != nil {
-		h.log.Error(models.ErrUnmarshal(err, obj))
+		if h.log != nil {
+			h.log.Error(models.ErrUnmarshal(err, obj))
+		}
 		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusInternalServerError)
 		return
 	}
@@ -242,7 +292,9 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 	resp, err := provider.UpdateWorkspace(req, &workspacePayload, workspaceID)
 	if err != nil {
 		handlerErr := ErrUpdateWorkspace(err)
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
@@ -250,23 +302,33 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 	respJSON, err := json.Marshal(resp)
 	if err != nil {
 		marshalErr := models.ErrMarshal(err, "workspace update response")
-		h.log.Error(marshalErr)
+		if h.log != nil {
+			h.log.Error(marshalErr)
+		}
 		writeMeshkitError(w, marshalErr, http.StatusInternalServerError)
 		return
 	}
 	description := fmt.Sprintf("Workspace %s updated.", resp.Name)
-	h.log.Info(description)
+	if h.log != nil {
+		h.log.Info(description)
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	if _, err = w.Write(respJSON); err != nil {
 		// Headers already committed; log only. Writing another body would corrupt the stream.
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		return
 	}
 }
 
 func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	workspaceID, ok := h.requirePathUUID(w, req, "id")
 	if !ok {
 		return
@@ -279,18 +341,26 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 			return
 		}
 		handlerErr := ErrWorkspaceResource(err, "list the environments of")
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	workspaceID, ok := h.requirePathUUID(w, req, "id")
 	if !ok {
 		return
@@ -303,18 +373,26 @@ func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.
 			return
 		}
 		handlerErr := ErrWorkspaceResource(err, "list the designs of")
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	workspaceID, ok := h.requirePathUUID(w, req, "id")
 	if !ok {
 		return
@@ -326,17 +404,25 @@ func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *h
 	resp, err := provider.AddEnvironmentToWorkspace(req, workspaceID, environmentID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "assign an environment to")
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	workspaceID, ok := h.requirePathUUID(w, req, "id")
 	if !ok {
 		return
@@ -348,17 +434,25 @@ func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, r
 	resp, err := provider.RemoveEnvironmentFromWorkspace(req, workspaceID, environmentID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "remove an environment from")
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	workspaceID, ok := h.requirePathUUID(w, req, "id")
 	if !ok {
 		return
@@ -370,17 +464,25 @@ func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.R
 	resp, err := provider.AddDesignToWorkspace(req, workspaceID, designID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "assign a design to")
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	workspaceID, ok := h.requirePathUUID(w, req, "id")
 	if !ok {
 		return
@@ -392,17 +494,25 @@ func (h *Handler) RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *h
 	resp, err := provider.RemoveDesignFromWorkspace(req, workspaceID, designID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "remove a design from")
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) GetViewsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	workspaceID, ok := h.requirePathUUID(w, req, "id")
 	if !ok {
 		return
@@ -415,17 +525,25 @@ func (h *Handler) GetViewsOfWorkspaceHandler(w http.ResponseWriter, req *http.Re
 			return
 		}
 		handlerErr := ErrWorkspaceResource(err, "list the views of")
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) AddViewToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	workspaceID, ok := h.requirePathUUID(w, req, "id")
 	if !ok {
 		return
@@ -437,17 +555,25 @@ func (h *Handler) AddViewToWorkspaceHandler(w http.ResponseWriter, req *http.Req
 	resp, err := provider.AddViewToWorkspace(req, workspaceID, viewID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "assign a view to")
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) RemoveViewFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	workspaceID, ok := h.requirePathUUID(w, req, "id")
 	if !ok {
 		return
@@ -459,17 +585,25 @@ func (h *Handler) RemoveViewFromWorkspaceHandler(w http.ResponseWriter, req *htt
 	resp, err := provider.RemoveViewFromWorkspace(req, workspaceID, viewID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "remove a view from")
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) GetTeamsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	workspaceID, ok := h.requirePathUUID(w, req, "id")
 	if !ok {
 		return
@@ -482,17 +616,25 @@ func (h *Handler) GetTeamsOfWorkspaceHandler(w http.ResponseWriter, req *http.Re
 			return
 		}
 		handlerErr := ErrWorkspaceResource(err, "list the teams of")
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) AddTeamToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	workspaceID, ok := h.requirePathUUID(w, req, "id")
 	if !ok {
 		return
@@ -504,17 +646,25 @@ func (h *Handler) AddTeamToWorkspaceHandler(w http.ResponseWriter, req *http.Req
 	resp, err := provider.AddTeamToWorkspace(req, workspaceID, teamID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "assign a team to")
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) RemoveTeamFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(w, provider) {
+		return
+	}
+
 	workspaceID, ok := h.requirePathUUID(w, req, "id")
 	if !ok {
 		return
@@ -526,12 +676,16 @@ func (h *Handler) RemoveTeamFromWorkspaceHandler(w http.ResponseWriter, req *htt
 	resp, err := provider.RemoveTeamFromWorkspace(req, workspaceID, teamID)
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "remove a team from")
-		h.log.Error(handlerErr)
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
