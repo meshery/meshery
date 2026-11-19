@@ -18,34 +18,74 @@ import (
 	"golang.org/x/sys/windows"
 )
 
+type destLockEntry struct {
+	mu  sync.Mutex
+	ref int
+}
+
 var (
-	processTokenLock         sync.Mutex
+	destLocksMu              sync.Mutex
+	destLocks                = make(map[string]*destLockEntry)
 	acquireTokenFileLockFunc = acquireTokenFileLock
 )
 
-// tokenFileMutexName returns a session-local named mutex identifier derived from
-// the canonical lowercase destination path.
-func tokenFileMutexName(path string) (string, error) {
+func canonicalTokenPath(path string) (string, error) {
 	abs, err := filepath.Abs(path)
 	if err != nil {
 		return "", err
 	}
-	norm := strings.ToLower(filepath.Clean(abs))
+	return strings.ToLower(filepath.Clean(abs)), nil
+}
+
+func acquireDestLock(canonicalPath string) func() {
+	destLocksMu.Lock()
+	entry, ok := destLocks[canonicalPath]
+	if !ok {
+		entry = &destLockEntry{}
+		destLocks[canonicalPath] = entry
+	}
+	entry.ref++
+	destLocksMu.Unlock()
+
+	entry.mu.Lock()
+	return func() {
+		entry.mu.Unlock()
+		destLocksMu.Lock()
+		entry.ref--
+		if entry.ref == 0 {
+			delete(destLocks, canonicalPath)
+		}
+		destLocksMu.Unlock()
+	}
+}
+
+// tokenFileMutexName returns a session-local named mutex identifier derived from
+// the canonical lowercase destination path.
+func tokenFileMutexName(path string) (string, error) {
+	norm, err := canonicalTokenPath(path)
+	if err != nil {
+		return "", err
+	}
 	sum := sha256.Sum256([]byte(norm))
 	// "Local\" namespace ensures session-isolation for the current logon session.
 	return fmt.Sprintf(`Local\meshery-token-%x`, sum[:16]), nil
 }
 
-// acquireTokenFileLock acquires both a process-local lock and a cross-process Windows
+// acquireTokenFileLock acquires both a per-destination process-local lock and a cross-process Windows
 // named mutex scoped to the destination token file. The lock is held through the
 // entire critical section (creation, write, permission hardening, installation,
 // and failure cleanup).
 func acquireTokenFileLock(path string) (func(), error) {
-	processTokenLock.Lock()
-	acquiredProcessLock := true
+	norm, err := canonicalTokenPath(path)
+	if err != nil {
+		return nil, fmt.Errorf("canonicalize token path: %w", err)
+	}
+
+	releaseDestLock := acquireDestLock(norm)
+	acquiredDestLock := true
 	defer func() {
-		if acquiredProcessLock {
-			processTokenLock.Unlock()
+		if acquiredDestLock {
+			releaseDestLock()
 		}
 	}()
 
@@ -110,14 +150,14 @@ func acquireTokenFileLock(path string) (func(), error) {
 		return nil, fmt.Errorf("unexpected event %#x waiting for token mutex on %s", event, path)
 	}
 
-	acquiredProcessLock = false
+	acquiredDestLock = false
 	acquiredOSThread = false
 
 	unlock := func() {
 		_ = windows.ReleaseMutex(handle)
 		_ = windows.CloseHandle(handle)
 		runtime.UnlockOSThread()
-		processTokenLock.Unlock()
+		releaseDestLock()
 	}
 	return unlock, nil
 }
@@ -250,7 +290,13 @@ func isUnsupportedRenameClassError(err error) bool {
 	return errors.Is(err, windows.ERROR_INVALID_PARAMETER) ||
 		errors.Is(err, windows.ERROR_INVALID_FUNCTION) ||
 		errors.Is(err, windows.ERROR_NOT_SUPPORTED) ||
-		errors.Is(err, windows.ERROR_CALL_NOT_IMPLEMENTED)
+		errors.Is(err, windows.ERROR_CALL_NOT_IMPLEMENTED) ||
+		// Some filesystems (e.g. FAT32, SMB shares) return ERROR_INVALID_NAME
+		// when FileRenameInfoEx is passed the POSIX-semantics flag they do not
+		// support. The standard rename (FileRenameInfo, class 3) is a safe
+		// fallback: if the path itself is malformed it will also fail there,
+		// so this cannot mask a genuine path error.
+		errors.Is(err, windows.ERROR_INVALID_NAME)
 }
 
 func replaceTokenFileEx(file *os.File, name []uint16) error {

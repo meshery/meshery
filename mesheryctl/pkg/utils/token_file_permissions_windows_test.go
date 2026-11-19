@@ -4,12 +4,15 @@ package utils
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"testing"
+	"time"
 	"unsafe"
 
 	"golang.org/x/sys/windows"
@@ -503,10 +506,30 @@ func TestCrossProcessTokenMutex(t *testing.T) {
 		_ = cmd.Wait()
 	}()
 
-	// Wait for child to acquire the named mutex
-	ready := make([]byte, 6)
-	if _, err := stdout.Read(ready); err != nil || string(ready[:6]) != "LOCKED" {
-		t.Skip("child process did not signal lock acquisition")
+	// Wait for child to acquire the named mutex; use io.ReadFull so a short
+	// Read does not silently accept a partial "LOCKED" prefix. Apply a deadline
+	// so a silent child failure does not hang the test suite.
+	readyCh := make(chan string, 1)
+	go func() {
+		buf := make([]byte, 6)
+		if _, err := io.ReadFull(stdout, buf); err == nil {
+			readyCh <- string(buf)
+		} else {
+			readyCh <- ""
+		}
+	}()
+	var readyStr string
+	select {
+	case readyStr = <-readyCh:
+	case <-time.After(10 * time.Second):
+		_ = cmd.Process.Kill()
+		_ = cmd.Wait()
+		t.Fatal("timed out waiting for child to signal LOCKED")
+	}
+	if readyStr != "LOCKED" {
+		_ = cmd.Process.Kill()
+		_ = cmd.Wait()
+		t.Fatalf("child did not signal LOCKED: got %q", readyStr)
 	}
 
 	// While child holds the cross-process mutex, verify parent fails to acquire it quickly
@@ -535,10 +558,16 @@ func TestCrossProcessTokenMutex(t *testing.T) {
 	_ = stdin.Close()
 	_ = cmd.Wait()
 
-	// Now parent can acquire without timeout
+	// Now parent can acquire without timeout. Named mutexes have thread
+	// affinity on Windows, so pin the goroutine to its OS thread for
+	// WaitForSingleObject and ReleaseMutex.
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
 	eventAfter, err := windows.WaitForSingleObject(handle, 2000)
-	if err != nil || (eventAfter != windows.WAIT_OBJECT_0 && eventAfter != windows.WAIT_ABANDONED) {
-		t.Fatalf("expected mutex acquisition after child exit, got event=%#x, err=%v", eventAfter, err)
+	if err != nil || eventAfter != windows.WAIT_OBJECT_0 {
+		t.Fatalf("expected WAIT_OBJECT_0 after child exit, got event=%#x, err=%v", eventAfter, err)
 	}
-	_ = windows.ReleaseMutex(handle)
+	if err := windows.ReleaseMutex(handle); err != nil {
+		t.Fatalf("ReleaseMutex: %v", err)
+	}
 }
