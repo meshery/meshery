@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"io"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -85,6 +86,10 @@ func TestRecovery_PanicBecomesStructured500(t *testing.T) {
 		writeKey(nil, "boom", "x") // the kind of defect that has crashed the server
 	})
 
+	// The counters are process-wide and survive -count=N, so compare against the
+	// value before this request rather than against an absolute number.
+	before := utils.RecoveredPanicCounts()["http GET /profiles/{id}"]
+
 	rec := httptest.NewRecorder()
 	r.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/profiles/abc-123", nil))
 
@@ -99,7 +104,7 @@ func TestRecovery_PanicBecomesStructured500(t *testing.T) {
 	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
 		t.Fatalf("body is not a JSON MeshKit error: %v (body=%q)", err, rec.Body.String())
 	}
-	if want := errors.GetCode(models.ErrHandlerPanic(nil2())); body.Code != want {
+	if want := errors.GetCode(models.ErrHandlerPanic()); body.Code != want {
 		t.Errorf("error code = %q, want %q", body.Code, want)
 	}
 	if body.Error == "" {
@@ -119,15 +124,16 @@ func TestRecovery_PanicBecomesStructured500(t *testing.T) {
 	if strings.Contains(logged, "abc-123") && !strings.Contains(logged, "/profiles/{id}") {
 		t.Errorf("label should use the route template: %q", logged)
 	}
-	if n := utils.RecoveredPanicCounts()["http GET /profiles/{id}"]; n != 1 {
-		t.Errorf("count = %d, want 1", n)
+	if n := utils.RecoveredPanicCounts()["http GET /profiles/{id}"] - before; n != 1 {
+		t.Errorf("count rose by %d, want 1", n)
 	}
 }
 
-// nil2 gives ErrHandlerPanic a non-nil cause, only so the test can read its code.
-func nil2() error { return http.ErrNotSupported }
-
-func TestRecovery_PanicAfterResponseStartedKeepsTheStatus(t *testing.T) {
+// Once the client holds part of a response, returning normally would let
+// net/http finish it as if it were complete, so a truncated body looks whole.
+// The middleware must report the panic and then abort the response, as net/http
+// itself did before the middleware existed.
+func TestRecovery_PanicAfterResponseStartedAbortsTheResponse(t *testing.T) {
 	log, _ := capturingLogger(t)
 	r := newTestRouter(log)
 	r.HandleFunc("/partial", func(w http.ResponseWriter, _ *http.Request) {
@@ -137,13 +143,103 @@ func TestRecovery_PanicAfterResponseStartedKeepsTheStatus(t *testing.T) {
 	})
 
 	rec := httptest.NewRecorder()
-	r.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/partial", nil))
+	func() {
+		defer func() {
+			if got := recover(); got != http.ErrAbortHandler {
+				t.Errorf("recovered %v, want http.ErrAbortHandler so the response is aborted", got)
+			}
+		}()
+		r.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/partial", nil))
+		t.Error("a panic after the response started must abort it, not return normally")
+	}()
 
 	if rec.Code != http.StatusAccepted {
 		t.Errorf("status = %d, want the already-sent 202", rec.Code)
 	}
 	if rec.Body.String() != "partial" {
 		t.Errorf("an error body was spliced into a started response: %q", rec.Body.String())
+	}
+}
+
+// get issues a real request, so net/http enforces header rules a recorder does not.
+func get(t *testing.T, h http.Handler, path string) (*http.Response, []byte) {
+	t.Helper()
+	srv := httptest.NewServer(h)
+	t.Cleanup(srv.Close)
+	resp, err := http.Get(srv.URL + path)
+	if err != nil {
+		t.Fatalf("GET %s: %v", path, err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("read body of GET %s: %v", path, err)
+	}
+	return resp, body
+}
+
+// A handler that announced a body length or encoding and panicked before writing
+// leaves those headers behind. They describe the body the handler meant to send,
+// not the error body, so they must be dropped or the client cannot read the error.
+func TestRecovery_StaleBodyHeadersDoNotBreakTheErrorBody(t *testing.T) {
+	log, _ := capturingLogger(t)
+	r := newTestRouter(log)
+	r.HandleFunc("/stale", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Length", "1")
+		w.Header().Set("Content-Encoding", "gzip")
+		panic("before the body")
+	})
+
+	resp, body := get(t, r, "/stale")
+
+	if resp.StatusCode != http.StatusInternalServerError {
+		t.Fatalf("status = %d, want 500 (body=%q)", resp.StatusCode, body)
+	}
+	var parsed struct {
+		Code string `json:"code"`
+	}
+	if err := json.Unmarshal(body, &parsed); err != nil {
+		t.Fatalf("error body is not readable JSON: %v (body=%q)", err, body)
+	}
+	if want := errors.GetCode(models.ErrHandlerPanic()); parsed.Code != want {
+		t.Errorf("error code = %q, want %q", parsed.Code, want)
+	}
+}
+
+// 1xx statuses other than 101 are interim: the final status is still to come, so
+// a panic after one must still be answered with the 500.
+func TestRecovery_InterimStatusIsNotTheFinalResponse(t *testing.T) {
+	log, _ := capturingLogger(t)
+	r := newTestRouter(log)
+	r.HandleFunc("/early", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusEarlyHints)
+		panic("after the interim response")
+	})
+
+	resp, body := get(t, r, "/early")
+
+	if resp.StatusCode != http.StatusInternalServerError {
+		t.Errorf("status = %d, want 500 after an interim 103 (body=%q)", resp.StatusCode, body)
+	}
+}
+
+// The panic value can carry anything the handler was holding. It belongs in the
+// server log, never in the response.
+func TestRecovery_PanicValueStaysOutOfTheResponse(t *testing.T) {
+	log, out := capturingLogger(t)
+	r := newTestRouter(log)
+	r.HandleFunc("/secret", func(http.ResponseWriter, *http.Request) {
+		panic("lookup failed for token=s3cr3t-value")
+	})
+
+	rec := httptest.NewRecorder()
+	r.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/secret", nil))
+
+	if strings.Contains(rec.Body.String(), "s3cr3t-value") {
+		t.Errorf("the panic value reached the client: %q", rec.Body.String())
+	}
+	if !strings.Contains(out.String(), "s3cr3t-value") {
+		t.Errorf("the panic value should be in the server log: %q", out.String())
 	}
 }
 
@@ -235,14 +331,14 @@ func TestRecovery_HijackPassesThroughAndSuppressesTheErrorBody(t *testing.T) {
 			t.Errorf("Hijack failed: %v", err)
 			return
 		}
-		defer conn.Close()
+		defer func() { _ = conn.Close() }()
 		panic("failure after the upgrade")
 	})
 
 	rec := &hijackRecorder{ResponseRecorder: httptest.NewRecorder()}
 	r.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/ws", nil))
 	if rec.conn != nil {
-		defer rec.conn.Close()
+		defer func() { _ = rec.conn.Close() }()
 	}
 
 	if !rec.hijacked {

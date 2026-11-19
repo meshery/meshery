@@ -1025,14 +1025,15 @@ func ErrAttachEventError(err error) error {
 }
 
 // ErrHandlerPanic is returned to the client when an HTTP handler panics and the
-// recovery middleware contains it. err carries only the panic value: the stack
-// stays in the server log, never in the response.
-func ErrHandlerPanic(err error) error {
+// recovery middleware contains it. The text is fixed on purpose: the panic value
+// can carry anything the handler was holding, so it and the stack stay in the
+// server log and never reach the response.
+func ErrHandlerPanic() error {
 	return errors.New(
 		ErrHandlerPanicCode,
 		errors.Alert,
 		[]string{"Meshery Server hit an unexpected internal error while handling the request"},
-		[]string{err.Error()},
+		[]string{"The handler for this request panicked. The panic value and stack are recorded in the server log, not in this response"},
 		[]string{"A defect in Meshery Server caused the handler for this request to panic"},
 		[]string{"Retry the request", "If it keeps failing, report it at https://github.com/meshery/meshery/issues/new/choose together with the request that triggered it; the server log holds the full stack"},
 	)

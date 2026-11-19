@@ -56,13 +56,25 @@ func recoveryMiddleware(log logger.Handler) mux.MiddlewareFunc {
 
 				utils.ReportRecoveredPanic("http "+r.Method+" "+routeLabel(r), recovered, log)
 
-				// Once the response has started, or the connection has been
-				// taken over (WebSocket), the status can no longer change and a
-				// body would be spliced into the middle of what was sent.
-				if rw.wroteHeader || rw.hijacked {
+				// A hijacked connection (WebSocket) is no longer HTTP, so there is
+				// nothing to answer on it.
+				if rw.hijacked {
 					return
 				}
-				httputil.WriteMeshkitError(w, models.ErrHandlerPanic(fmt.Errorf("panic: %v", recovered)), http.StatusInternalServerError)
+				// The client already holds part of the response. Returning now
+				// would let net/http finish it as if it were complete, so a
+				// truncated body would look whole. Abort it instead, quietly,
+				// as net/http itself does for http.ErrAbortHandler.
+				if rw.wroteHeader {
+					panic(http.ErrAbortHandler)
+				}
+				// Headers the handler set describe the body it meant to send,
+				// not this error body. A stale length or encoding would stop the
+				// client from reading it.
+				h := w.Header()
+				h.Del("Content-Length")
+				h.Del("Content-Encoding")
+				httputil.WriteMeshkitError(w, models.ErrHandlerPanic(), http.StatusInternalServerError)
 			}()
 			next.ServeHTTP(rw, r)
 		})
@@ -91,7 +103,12 @@ type recoveryWriter struct {
 }
 
 func (w *recoveryWriter) WriteHeader(code int) {
-	w.wroteHeader = true
+	// Interim 1xx statuses (100, 103) are followed by the real one, so the
+	// response has not started and a 500 can still be sent. 101 Switching
+	// Protocols is final.
+	if code >= http.StatusOK || code == http.StatusSwitchingProtocols {
+		w.wroteHeader = true
+	}
 	w.ResponseWriter.WriteHeader(code)
 }
 
