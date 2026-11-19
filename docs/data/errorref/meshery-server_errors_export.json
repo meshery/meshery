@@ -4354,6 +4354,15 @@
         "short_description": "",
         "probable_cause": "Request payload exceeds maximum allowed size",
         "suggested_remediation": "Reduce request payload size to within acceptable limits"
+      },
+      "1495": {
+        "name": "ErrInvalidDesignVersionCode",
+        "code": "1495",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid design version",
+        "probable_cause": "The design file's version is not semver, so a next version cannot be computed from it\nOlder tooling wrote arbitrary version strings into design files",
+        "suggested_remediation": "Set the design file's version to a semver string such as 0.0.1 and save again"
       }
     }
   }
