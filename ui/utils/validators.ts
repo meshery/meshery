@@ -26,12 +26,18 @@ export const isValidJSON = (str: unknown): boolean => {
   }
 };
 
-export const normalizeSearchTerm = (term: string): string => term.toLowerCase().trim();
+export const normalizeSearchTerm = (term: unknown): string => {
+  if (typeof term !== 'string') return '';
+  return term.toLowerCase().trim();
+};
 
-export const matchesSearch = (text: string, searchTerm: string): boolean => {
+export const matchesSearch = (text: unknown, searchTerm: unknown): boolean => {
   const needle = normalizeSearchTerm(searchTerm);
   if (needle === '') {
     return true;
+  }
+  if (typeof text !== 'string') {
+    return false;
   }
   return text.toLowerCase().includes(needle);
 };

@@ -82,3 +82,66 @@ describe('normalizeSearchTerm / matchesSearch', () => {
     expect(matchesSearch('alpha', 'beta')).toBe(false);
   });
 });
+
+describe('normalizeSearchTerm – nullish / non-string guards', () => {
+  it('returns empty string for null', () => {
+    expect(normalizeSearchTerm(null)).toBe('');
+  });
+
+  it('returns empty string for undefined', () => {
+    expect(normalizeSearchTerm(undefined)).toBe('');
+  });
+
+  it('returns empty string for a number', () => {
+    expect(normalizeSearchTerm(42)).toBe('');
+  });
+
+  it('returns empty string for an object', () => {
+    expect(normalizeSearchTerm({ label: 'test' })).toBe('');
+  });
+
+  it('returns empty string for an array', () => {
+    expect(normalizeSearchTerm(['hello'])).toBe('');
+  });
+
+  it('still normalizes valid strings', () => {
+    expect(normalizeSearchTerm('  HELLO  ')).toBe('hello');
+    expect(normalizeSearchTerm('')).toBe('');
+  });
+});
+
+describe('matchesSearch – nullish / non-string guards', () => {
+  it('returns true when searchTerm is null (treat as empty → match all)', () => {
+    expect(matchesSearch('anything', null)).toBe(true);
+  });
+
+  it('returns true when searchTerm is undefined', () => {
+    expect(matchesSearch('anything', undefined)).toBe(true);
+  });
+
+  it('returns true when searchTerm is a number that normalizes to empty', () => {
+    // numbers → normalizeSearchTerm returns '' → needle is '' → match all
+    expect(matchesSearch('anything', 0)).toBe(true);
+  });
+
+  it('returns false when text is null and there is a real search term', () => {
+    expect(matchesSearch(null, 'cluster')).toBe(false);
+  });
+
+  it('returns false when text is undefined and there is a real search term', () => {
+    expect(matchesSearch(undefined, 'cluster')).toBe(false);
+  });
+
+  it('returns false when text is a number and there is a real search term', () => {
+    expect(matchesSearch(42, 'cluster')).toBe(false);
+  });
+
+  it('returns true when both text and searchTerm are null (empty needle → match)', () => {
+    expect(matchesSearch(null, null)).toBe(true);
+  });
+
+  it('still works correctly when both are valid strings', () => {
+    expect(matchesSearch('Production cluster', 'cluster')).toBe(true);
+    expect(matchesSearch('alpha', 'beta')).toBe(false);
+  });
+});
