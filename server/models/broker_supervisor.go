@@ -202,6 +202,20 @@ func (mch *MesheryControllersHelper) stopBrokerSupervisorLocked() {
 // replacement never connects - leaves the old handler and this supervisor in
 // place, so the next tick tries again.
 func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now time.Time, disconnectedSince *time.Time) (finished bool) {
+	return mch.recheckBrokerWithWait(
+		target,
+		now,
+		disconnectedSince,
+		waitBrokerConnected,
+	)
+}
+
+func (mch *MesheryControllersHelper) recheckBrokerWithWait(
+	target *brokerTarget,
+	now time.Time,
+	disconnectedSince *time.Time,
+	waitForConnection func(*MeshsyncDataHandler, time.Duration, <-chan struct{}) bool,
+) (finished bool) {
 	mch.meshsyncMutex.Lock()
 	current, handler := mch.brokerTarget, mch.ctxMeshsyncDataHandler
 	mch.meshsyncMutex.Unlock()
@@ -286,7 +300,7 @@ func (mch *MesheryControllersHelper) recheckBroker(target *brokerTarget, now tim
 	mch.brokerRebuildCancel = cancel
 	mch.brokerRebuildStale = stale
 	mch.meshsyncMutex.Unlock()
-	connected := waitBrokerConnected(replacement, wait, cancel)
+	connected := waitForConnection(replacement, wait, cancel)
 	mch.meshsyncMutex.Lock()
 	defer mch.meshsyncMutex.Unlock()
 	// The wait is over: removal can no longer cancel it, and a later removal

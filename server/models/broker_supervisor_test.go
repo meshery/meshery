@@ -790,7 +790,7 @@ func TestFailedDataHandlerStartClosesItsBrokerConnection(t *testing.T) {
 }
 
 // TestReplacementThatConnectsAfterTheWaitCheckIsNotRolledBack covers the
-// interval between waitBrokerConnected returning false and recheckBroker
+// interval between the connection wait returning false and recheckBroker
 // reacquiring meshsyncMutex. A replacement that connects in that interval
 // must be kept rather than discarded using the stale wait result.
 func TestReplacementThatConnectsAfterTheWaitCheckIsNotRolledBack(t *testing.T) {
@@ -807,50 +807,38 @@ func TestReplacementThatConnectsAfterTheWaitCheckIsNotRolledBack(t *testing.T) {
 		t.Fatal("the supervisor finished on the first sign of an outage")
 	}
 
-	checked := make(chan struct{})
-	release := make(chan struct{})
+	waitStarted := make(chan struct{})
+	allowWaitToReturn := make(chan struct{})
 	var releaseOnce sync.Once
-	releaseCheck := func() {
-		releaseOnce.Do(func() { close(release) })
+	releaseWait := func() {
+		releaseOnce.Do(func() { close(allowWaitToReturn) })
 	}
-	defer releaseCheck()
+	defer releaseWait()
 
-	dialer.onDial = func(c *natsConn) {
-		if c.opts.Token != "new-token" {
-			return
-		}
-
-		c.setConnected(false)
-
-		var checkMu sync.Mutex
-		falseChecks := 0
-		c.onIsConnected = func(connected bool) {
-			if connected {
-				return
-			}
-
-			checkMu.Lock()
-			falseChecks++
-			pause := falseChecks == 3
-			checkMu.Unlock()
-
-			if pause {
-				close(checked)
-				<-release
-			}
-		}
+	waitForConnection := func(
+		_ *MeshsyncDataHandler,
+		_ time.Duration,
+		_ <-chan struct{},
+	) bool {
+		close(waitStarted)
+		<-allowWaitToReturn
+		return false
 	}
 
-	mch.brokerConnectWait = 0
 	result := make(chan bool, 1)
 	go func() {
-		result <- mch.recheckBroker(target, t0.Add(mch.brokerStaleAfter), &since)
+		result <- mch.recheckBrokerWithWait(
+			target,
+			t0.Add(mch.brokerStaleAfter),
+			&since,
+			waitForConnection,
+		)
 	}()
 
 	select {
-	case <-checked:
+	case <-waitStarted:
 	case <-time.After(2 * time.Second):
-		t.Fatal("replacement did not reach its initial connection check")
+		t.Fatal("replacement did not reach the connection wait")
 	}
 
 	mch.meshsyncMutex.Lock()
@@ -861,7 +849,7 @@ func TestReplacementThatConnectsAfterTheWaitCheckIsNotRolledBack(t *testing.T) {
 	}
 	replacement := conns[1]
 	replacement.setConnected(true)
-	releaseCheck()
+	releaseWait()
 	mch.meshsyncMutex.Unlock()
 
 	select {
