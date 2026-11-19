@@ -150,6 +150,8 @@ jobs:
             local LOG_LABEL="$2"
             local NORMALIZED_LOG="${LOG_FILE}.normalized"
             local EXCERPT_FILE="${LOG_FILE}.excerpt"
+            local START_LINE_COUNT CURRENT_LINE_COUNT LINES_USED REMAINING_LINES TAIL_LINES GREP_STATUS
+            START_LINE_COUNT="$(wc -l < "$EMAIL_FILE")"
 
             if ! sed 's/\x1b\[[0-9;]*m//g' "$LOG_FILE" | tr -d '\r' > "$NORMALIZED_LOG"; then
               echo "Could not normalize the ${LOG_LABEL}; the complete log is attached." >> "$EMAIL_FILE"
@@ -160,10 +162,13 @@ jobs:
             if grep -niE -C 3 \
               'error|fail(ed|ure)?|fatal|panic|denied|timed out|could not|unable to|exit status|cannot|not found|killed|unexpected|invalid|refused' \
               "$NORMALIZED_LOG" > "$EXCERPT_FILE"; then
-              {
-                echo "Relevant error/failure lines with surrounding context:"
-                head -n 100 "$EXCERPT_FILE"
-              } >> "$EMAIL_FILE"
+              echo "Relevant error/failure lines with surrounding context:" >> "$EMAIL_FILE"
+              CURRENT_LINE_COUNT="$(wc -l < "$EMAIL_FILE")"
+              LINES_USED=$((CURRENT_LINE_COUNT - START_LINE_COUNT))
+              REMAINING_LINES=$((100 - LINES_USED))
+              if [ "$REMAINING_LINES" -gt 0 ]; then
+                head -n "$REMAINING_LINES" "$EXCERPT_FILE" >> "$EMAIL_FILE"
+              fi
             else
               GREP_STATUS=$?
               if [ "$GREP_STATUS" -eq 1 ]; then
@@ -173,13 +178,27 @@ jobs:
               fi
             fi
 
-            {
-              echo "Last 50 lines for additional context:"
-              if ! tail -n 50 "$NORMALIZED_LOG"; then
-                echo "Could not read the last lines of this log."
+            CURRENT_LINE_COUNT="$(wc -l < "$EMAIL_FILE")"
+            LINES_USED=$((CURRENT_LINE_COUNT - START_LINE_COUNT))
+            REMAINING_LINES=$((100 - LINES_USED))
+            if [ "$REMAINING_LINES" -gt 2 ]; then
+              echo "Additional context from the end of the log:" >> "$EMAIL_FILE"
+              CURRENT_LINE_COUNT="$(wc -l < "$EMAIL_FILE")"
+              LINES_USED=$((CURRENT_LINE_COUNT - START_LINE_COUNT))
+              REMAINING_LINES=$((100 - LINES_USED))
+              TAIL_LINES=$((REMAINING_LINES - 1))
+              if [ "$TAIL_LINES" -gt 50 ]; then
+                TAIL_LINES=50
               fi
-              echo ""
-            } >> "$EMAIL_FILE"
+              if [ "$TAIL_LINES" -gt 0 ]; then
+                if tail -n "$TAIL_LINES" "$NORMALIZED_LOG" > "${EXCERPT_FILE}.tail"; then
+                  cat "${EXCERPT_FILE}.tail" >> "$EMAIL_FILE"
+                else
+                  echo "Could not read the last lines of this log." >> "$EMAIL_FILE"
+                fi
+              fi
+              echo "" >> "$EMAIL_FILE"
+            fi
           }
 
           if ! mkdir -p "$LOG_DIR"; then
