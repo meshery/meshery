@@ -92,6 +92,7 @@ type HandlerInterface interface {
 	GetEventTypes(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	MarkAllEventsRead(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	BulkDeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 

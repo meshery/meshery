@@ -4354,6 +4354,15 @@
         "short_description": "",
         "probable_cause": "Request payload exceeds maximum allowed size",
         "suggested_remediation": "Reduce request payload size to within acceptable limits"
+      },
+      "1495": {
+        "name": "ErrMarkAllReadCode",
+        "code": "1495",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not mark all notifications as read.",
+        "probable_cause": "The database is unavailable.\nThe remote provider is unreachable or rejected the request.\nThe current provider does not support event persistence.",
+        "suggested_remediation": "Retry the request.\nVerify the configured provider is reachable and supports event persistence."
       }
     }
   }

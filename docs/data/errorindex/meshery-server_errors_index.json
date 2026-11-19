@@ -7636,6 +7636,26 @@
       "suggestedRemediation": [
         "Reduce request payload size to within acceptable limits"
       ]
+    },
+    {
+      "code": "meshery-server-1495",
+      "moniker": "ErrMarkAllReadCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1495",
+      "severity": "alert",
+      "shortDescription": "Could not mark all notifications as read.",
+      "probableCause": [
+        "The database is unavailable.",
+        "The remote provider is unreachable or rejected the request.",
+        "The current provider does not support event persistence."
+      ],
+      "suggestedRemediation": [
+        "Retry the request.",
+        "Verify the configured provider is reachable and supports event persistence."
+      ]
     }
   ],
   "schemaVersion": 2

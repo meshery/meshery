@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"strings"
 	"testing"
 
@@ -29,6 +30,22 @@ func newTestProviderWithCredentialDB(t *testing.T) *DefaultLocalProvider {
 	return &DefaultLocalProvider{
 		GenericPersister: &database.Handler{DB: db},
 	}
+}
+
+func newTestProviderWithEventDB(t *testing.T) (*DefaultLocalProvider, *gorm.DB) {
+	t.Helper()
+
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to open in-memory database: %v", err)
+	}
+	if err := db.AutoMigrate(&events.Event{}); err != nil {
+		t.Fatalf("failed to migrate event schema: %v", err)
+	}
+
+	return &DefaultLocalProvider{
+		EventsPersister: &EventsPersister{DB: &database.Handler{DB: db}},
+	}, db
 }
 
 // TestSaveUserCredentialReturnsPopulatedCredential verifies that SaveUserCredential
@@ -195,6 +212,37 @@ func TestEventsPersisterPersistSystemEventAcceptsStructValue(t *testing.T) {
 
 	if _, err := persister.PersistSystemEvent(*built); err != nil {
 		t.Fatalf("PersistSystemEvent returned error: %v", err)
+	}
+}
+
+func TestMarkAllEventsReadUpdatesOnlyAuthenticatedUsersUnreadEvents(t *testing.T) {
+	provider, db := newTestProviderWithEventDB(t)
+	userID := uuid.Must(uuid.NewV4())
+	otherUserID := uuid.Must(uuid.NewV4())
+
+	testEvents := []events.Event{
+		{ID: uuid.Must(uuid.NewV4()), Owner: &userID, Status: events.Unread},
+		{ID: uuid.Must(uuid.NewV4()), Owner: &userID, Status: events.Read},
+		{ID: uuid.Must(uuid.NewV4()), Owner: &otherUserID, Status: events.Unread},
+		{ID: uuid.Must(uuid.NewV4()), Owner: nil, Status: events.Unread},
+	}
+	if err := db.Create(&testEvents).Error; err != nil {
+		t.Fatalf("failed to seed events: %v", err)
+	}
+
+	if err := provider.MarkAllEventsRead(context.Background(), "test-token", userID); err != nil {
+		t.Fatalf("MarkAllEventsRead returned error: %v", err)
+	}
+
+	wantStatuses := []events.EventStatus{events.Read, events.Read, events.Unread, events.Unread}
+	for i, testEvent := range testEvents {
+		var stored events.Event
+		if err := db.First(&stored, "id = ?", testEvent.ID).Error; err != nil {
+			t.Fatalf("failed to load event %s: %v", testEvent.ID, err)
+		}
+		if stored.Status != wantStatuses[i] {
+			t.Errorf("event %s status = %q, want %q", testEvent.ID, stored.Status, wantStatuses[i])
+		}
 	}
 }
 
