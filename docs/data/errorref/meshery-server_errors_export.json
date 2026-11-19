@@ -1542,15 +1542,6 @@
         "probable_cause": "",
         "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
       },
-      "1175": {
-        "name": "ErrSubscribeChannelCode",
-        "code": "1175",
-        "severity": "Alert",
-        "long_description": "Unable to create a broker subscription",
-        "short_description": "Unable to subscribe to channel",
-        "probable_cause": "Could be a network issue\nMeshery Broker could have crashed",
-        "suggested_remediation": "Check if Meshery Broker is reachable from Meshery Server\nCheck if Meshery Broker is up and running inside the configured cluster"
-      },
       "1176": {
         "name": "ErrPublishBrokerCode",
         "code": "1176",
@@ -1659,24 +1650,6 @@
         "probable_cause": "Could be a network issue",
         "suggested_remediation": "Check if meshery server is reachable from the browser"
       },
-      "1188": {
-        "name": "ErrAddonSubscriptionCode",
-        "code": "1188",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for Addons stopped",
-        "short_description": "Addons Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Check if meshery server is reachable from the browser"
-      },
-      "1189": {
-        "name": "ErrResolverControlPlaneSubscriptionCode",
-        "code": "1189",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for Control Plane stopped",
-        "short_description": "Control Plane Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
       "1190": {
         "name": "ErrMesheryClientCode",
         "code": "1190",
@@ -1703,15 +1676,6 @@
         "short_description": "MeshSync disabled",
         "probable_cause": "Meshery Operator is not running in your cluster or is crashing",
         "suggested_remediation": "Enable Meshery Operator from the settings page in the UI\nCheck for logs in the meshery-operator pods from inside the application for more information"
-      },
-      "1193": {
-        "name": "ErrDataPlaneSubscriptionCode",
-        "code": "1193",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for Data Plane stopped",
-        "short_description": "Data Plane Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Check if meshery server is reachable from the browser"
       },
       "1194": {
         "name": "ErrBrokerNotConnectedCode",
@@ -4374,8 +4338,26 @@
         "suggested_remediation": "Ensure the provider is properly initialized before handling the request"
       },
       "1493": {
-        "name": "ErrMarkAllReadCode",
+        "name": "ErrTelemetrySizeCode",
         "code": "1493",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Telemetry response exceeds Meshery's 16 MiB limit",
+        "probable_cause": "The upstream response contains more data than Meshery can return.",
+        "suggested_remediation": "Reduce the response size, then retry.\nFor panel queries, shorten the time range or use more selective label matchers."
+      },
+      "1494": {
+        "name": "ErrRequestTooLargeCode",
+        "code": "1494",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Request payload exceeds maximum allowed size",
+        "suggested_remediation": "Reduce request payload size to within acceptable limits"
+      },
+      "1495": {
+        "name": "ErrMarkAllReadCode",
+        "code": "1495",
         "severity": "Alert",
         "long_description": "",
         "short_description": "Could not mark all notifications as read.",
