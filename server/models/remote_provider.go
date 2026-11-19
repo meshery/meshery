@@ -100,7 +100,8 @@ type RemoteProvider struct {
 	// provider for these privileged operations.
 	mostRecentToken    string
 	mostRecentTokenMut sync.RWMutex
-
+	// keysMu guards Keys.
+	keysMu sync.RWMutex
 	// propertiesMu guards full-struct writes to the embedded
 	// ProviderProperties (Initialize / SetProviderProperties /
 	// VerifyAvailability) so the boot-time concurrent verification path and
