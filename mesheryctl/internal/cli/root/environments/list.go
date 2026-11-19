@@ -16,6 +16,7 @@ package environments
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -96,7 +97,7 @@ func processEnvironmentData(environmentResponse *environment.EnvironmentPage) ([
 	rows := [][]string{}
 	for _, environment := range environmentResponse.Environments {
 		description := "N/A"
-		if environment.Description != "" {
+		if strings.TrimSpace(environment.Description) != "" {
 			description = environment.Description
 		}
 		row := []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), description, environment.CreatedAt.String(), environment.UpdatedAt.String()}

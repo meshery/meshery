@@ -73,19 +73,36 @@ func TestProcessEnvironmentData_NilResponse(t *testing.T) {
 
 func TestProcessEnvironmentData_EmptyDescriptionFallback(t *testing.T) {
 	envPage := &environment.EnvironmentPage{
-		TotalCount: 1,
+		TotalCount: 3,
 		Environments: []environment.Environment{
 			{
-				Name:        "test-env",
+				Name:        "empty-desc-env",
 				Description: "",
+			},
+			{
+				Name:        "whitespace-desc-env",
+				Description: "   \t\n  ",
+			},
+			{
+				Name:        "valid-desc-env",
+				Description: "Production Environment",
 			},
 		},
 	}
 	rows, total := processEnvironmentData(envPage)
-	if total != 1 {
-		t.Fatalf("expected total 1, got %d", total)
+	if total != 3 {
+		t.Fatalf("expected total 3, got %d", total)
 	}
-	if len(rows) != 1 || rows[0][3] != "N/A" {
-		t.Fatalf("expected description 'N/A', got %q", rows[0][3])
+	if len(rows) != 3 {
+		t.Fatalf("expected 3 rows, got %d", len(rows))
+	}
+	if rows[0][3] != "N/A" {
+		t.Fatalf("expected empty description 'N/A', got %q", rows[0][3])
+	}
+	if rows[1][3] != "N/A" {
+		t.Fatalf("expected whitespace-only description 'N/A', got %q", rows[1][3])
+	}
+	if rows[2][3] != "Production Environment" {
+		t.Fatalf("expected preserved description 'Production Environment', got %q", rows[2][3])
 	}
 }
