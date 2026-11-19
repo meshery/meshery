@@ -140,7 +140,7 @@ func (h *Handler) DeleteScheduleHandler(
 		return
 	}
 	// Additionally reject the zero UUID which the helper treats as valid.
-	if scheduleID == uuid.Nil.String() {
+	if parsedID, _ := uuid.FromString(scheduleID); parsedID == uuid.Nil {
 		invalidUUIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid schedule id: %q", scheduleID))
 		if h != nil && h.log != nil {
 			h.log.Error(invalidUUIDErr)
@@ -207,7 +207,7 @@ func (h *Handler) GetScheduleHandler(
 		return
 	}
 	// Additionally reject the zero UUID which the helper treats as valid.
-	if scheduleID == uuid.Nil.String() {
+	if parsedID, _ := uuid.FromString(scheduleID); parsedID == uuid.Nil {
 		invalidUUIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid schedule id: %q", scheduleID))
 		if h != nil && h.log != nil {
 			h.log.Error(invalidUUIDErr)

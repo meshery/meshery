@@ -205,6 +205,15 @@ func TestScheduleHandlers_InvalidUUIDValidation(t *testing.T) {
 			idVal:  uuid.Nil.String(),
 		},
 		{
+			name: "DeleteScheduleHandler with compact nil UUID",
+			handler: func(w http.ResponseWriter, r *http.Request) {
+				h.DeleteScheduleHandler(w, r, nil, nil, mockProv)
+			},
+			method: http.MethodDelete,
+			url:    "/api/user/schedules/00000000000000000000000000000000",
+			idVal:  "00000000000000000000000000000000",
+		},
+		{
 			name: "GetScheduleHandler with malformed UUID",
 			handler: func(w http.ResponseWriter, r *http.Request) {
 				h.GetScheduleHandler(w, r, nil, nil, mockProv)
@@ -221,6 +230,15 @@ func TestScheduleHandlers_InvalidUUIDValidation(t *testing.T) {
 			method: http.MethodGet,
 			url:    "/api/user/schedules/" + uuid.Nil.String(),
 			idVal:  uuid.Nil.String(),
+		},
+		{
+			name: "GetScheduleHandler with compact nil UUID",
+			handler: func(w http.ResponseWriter, r *http.Request) {
+				h.GetScheduleHandler(w, r, nil, nil, mockProv)
+			},
+			method: http.MethodGet,
+			url:    "/api/user/schedules/00000000000000000000000000000000",
+			idVal:  "00000000000000000000000000000000",
 		},
 	}
 
