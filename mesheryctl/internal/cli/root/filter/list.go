@@ -80,6 +80,9 @@ mesheryctl filter list 'Test Filter'
 
 		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, filterListFlagsProvided.PageSize, filterListFlagsProvided.Page-1)
 		if err != nil {
+			if meshkiterrors.GetCode(err) == utils.ErrUnauthenticatedCode {
+				return err
+			}
 			utils.Log.Error(err)
 			return ErrFetchFilter(err)
 		}
@@ -134,6 +137,9 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 
 	req, err := utils.NewRequest("GET", url, nil)
 	if err != nil {
+		if meshkiterrors.GetCode(err) == utils.ErrUnauthenticatedCode {
+			return nil, err
+		}
 		return nil, utils.ErrCreatingRequest(err)
 	}
 
