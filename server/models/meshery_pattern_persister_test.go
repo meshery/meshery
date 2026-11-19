@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"strings"
 	"testing"
 	"time"
 
@@ -27,6 +28,19 @@ relationships: []
 `
 
 var persisterTestCreatedAt = time.Date(2025, 1, 2, 3, 4, 5, 0, time.UTC)
+
+// persisterTestDesignWithoutVersion is a design saved before versioning, or one
+// created without a version.
+const persisterTestDesignWithoutVersion = `name: persister-test
+id: 00000000-0000-0000-0000-000000000000
+schemaVersion: designs.meshery.io/v1beta1
+components: []
+relationships: []
+`
+
+func designWithVersion(version string) string {
+	return strings.Replace(persisterTestDesign, "version: 0.0.1", "version: "+version, 1)
+}
 
 func newPatternPersisterTestDB(t *testing.T) (*gorm.DB, *MesheryPatternPersister) {
 	t.Helper()
@@ -88,6 +102,16 @@ func countPatterns(t *testing.T, db *gorm.DB) int64 {
 		t.Fatalf("count patterns: %v", err)
 	}
 	return n
+}
+
+// storedDesignVersion parses the stored design file's version.
+func storedDesignVersion(t *testing.T, db *gorm.DB, id uuid.UUID) string {
+	t.Helper()
+	pf, err := patterns.GetPatternFormat(loadPattern(t, db, id).PatternFile)
+	if err != nil {
+		t.Fatalf("parse stored design file: %v", err)
+	}
+	return string(pf.Version)
 }
 
 // postStylePattern is the record handlePatternPOST builds for an existing
@@ -264,6 +288,101 @@ func TestSaveMesheryPattern_NewDesignKeepsImportedSource(t *testing.T) {
 	got := loadPattern(t, db, *record.ID)
 	if got.Type.String != string(HelmChart) || string(got.SourceContent) != "chart-bytes" {
 		t.Errorf("type/source = %q/%q, want %q/%q", got.Type.String, got.SourceContent, HelmChart, "chart-bytes")
+	}
+}
+
+// A design created or imported without a version is stored at 0.0.1. A supplied
+// version is kept as given, unless it is not semver, which fails the save.
+func TestSaveMesheryPattern_AssignsVersionOnCreate(t *testing.T) {
+	tests := []struct {
+		name        string
+		design      string
+		wantVersion string
+		wantCode    string
+	}{
+		{name: "no version", design: persisterTestDesignWithoutVersion, wantVersion: "0.0.1"},
+		{name: "supplied version", design: designWithVersion("1.2.3"), wantVersion: "1.2.3"},
+		{name: "invalid version", design: designWithVersion("not-semver"), wantCode: ErrInvalidDesignVersionCode},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			db, mpp := newPatternPersisterTestDB(t)
+			record := &MesheryPattern{Name: "new-design", PatternFile: tc.design}
+
+			_, err := mpp.SaveMesheryPattern(record)
+			if tc.wantCode != "" {
+				if code := mkerrors.GetCode(err); code != tc.wantCode {
+					t.Fatalf("error code = %q, want %q (err: %v)", code, tc.wantCode, err)
+				}
+				if n := countPatterns(t, db); n != 0 {
+					t.Errorf("rows = %d, want the invalid design not to be stored", n)
+				}
+				return
+			}
+
+			if err != nil {
+				t.Fatalf("save: %v", err)
+			}
+			if got := storedDesignVersion(t, db, *record.ID); got != tc.wantVersion {
+				t.Errorf("stored version = %q, want %q", got, tc.wantVersion)
+			}
+		})
+	}
+}
+
+// An existing design's stored version gets a patch bump.
+func TestSaveMesheryPattern_BumpsVersionOnUpdate(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	id, _ := seedImportedPattern(t, db)
+
+	if _, err := mpp.SaveMesheryPattern(postStylePattern(id)); err != nil {
+		t.Fatalf("save: %v", err)
+	}
+
+	if got := storedDesignVersion(t, db, id); got != "0.0.2" {
+		t.Errorf("stored version = %q, want 0.0.2", got)
+	}
+}
+
+// A stored version that is not semver fails the save with a MeshKit error, not
+// the raw parse error, and leaves the stored design file alone.
+func TestSaveMesheryPattern_InvalidStoredVersionIsMeshKitError(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	id, _ := seedImportedPattern(t, db)
+	invalid := designWithVersion("not-semver")
+	if err := db.Model(&MesheryPattern{}).Where("id = ?", id).Update("pattern_file", invalid).Error; err != nil {
+		t.Fatalf("set stored version: %v", err)
+	}
+
+	// The design editor loads the stored file and saves it back, so the save
+	// carries the invalid version.
+	_, err := mpp.SaveMesheryPattern(&MesheryPattern{ID: &id, Name: "persister-test", PatternFile: invalid})
+	if code := mkerrors.GetCode(err); code != ErrInvalidDesignVersionCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrInvalidDesignVersionCode, err)
+	}
+	if got := loadPattern(t, db, id).PatternFile; got != invalid {
+		t.Errorf("pattern_file = %q, want the stored file left unchanged", got)
+	}
+}
+
+// The batch save versions designs the same way.
+func TestSaveMesheryPatterns_AssignsVersionOnCreate(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+
+	body, err := mpp.SaveMesheryPatterns([]MesheryPattern{
+		{Name: "batch-no-version", PatternFile: persisterTestDesignWithoutVersion},
+	})
+	if err != nil {
+		t.Fatalf("batch save: %v", err)
+	}
+
+	var saved []MesheryPattern
+	if err := json.Unmarshal(body, &saved); err != nil || len(saved) != 1 {
+		t.Fatalf("decode response %s: %v", body, err)
+	}
+	if got := storedDesignVersion(t, db, *saved[0].ID); got != "0.0.1" {
+		t.Errorf("stored version = %q, want 0.0.1", got)
 	}
 }
 

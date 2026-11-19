@@ -12,6 +12,7 @@ import (
 	"gorm.io/gorm/clause"
 
 	"github.com/meshery/schemas/models/core"
+	design "github.com/meshery/schemas/models/v1beta3/design"
 	schemasWorkspace "github.com/meshery/schemas/models/v1beta3/workspace"
 
 	"github.com/gofrs/uuid"
@@ -267,7 +268,8 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 }
 
 // SaveMesheryPattern inserts a new design, or updates an existing one with only
-// the non-zero fields of pattern, and bumps the design file's version.
+// the non-zero fields of pattern. A new design keeps the version its file
+// carries (0.0.1 when it carries none); an existing design's version is bumped.
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
 	pf, err := patterns.GetPatternFormat(pattern.PatternFile)
 	if err != nil {
@@ -281,21 +283,19 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 			return nil, ErrGenerateUUID(err)
 		}
 
-		patterns.AssignVersion(pf)
-
 		pattern.ID = &id
-	} else {
-		nextVersion, err := patterns.GetNextVersion(pf)
-		if err != nil {
-			return nil, err
-		}
-		pf.Version = nextVersion
-		byt, err := yaml.Marshal(pf)
-		if err != nil {
-			return nil, err
-		}
-		pattern.PatternFile = string(byt)
 	}
+
+	// A save stores the file with the version it assigned, so a design created
+	// or imported without one reports 0.0.1 instead of no version at all.
+	if err := setSavedVersion(pf, isNew); err != nil {
+		return marshalSaveError(err), err
+	}
+	byt, err := yaml.Marshal(pf)
+	if err != nil {
+		return nil, err
+	}
+	pattern.PatternFile = string(byt)
 
 	// Stamp before marshalling so the save/clone response carries the same
 	// owner contract as the GET paths. UserID/User are gorm:"-", so this is
@@ -349,6 +349,23 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 	return marshalMesheryPatterns([]MesheryPattern{*pattern}), err
 }
 
+// setSavedVersion sets the version a save stores: a new design keeps the
+// version it was saved with (0.0.1 when it carries none), while an existing
+// design gets a patch bump of its stored version.
+func setSavedVersion(pf *design.PatternFile, isNew bool) error {
+	supplied := pf.Version
+	next, err := patterns.GetNextVersion(pf)
+	if err != nil {
+		return ErrInvalidDesignVersion(supplied, err)
+	}
+	if isNew && supplied != "" {
+		pf.Version = supplied
+		return nil
+	}
+	pf.Version = next
+	return nil
+}
+
 // updateSavedColumns updates an existing design with the columns the save
 // carries. A save carries only some of them - POST /api/pattern builds the
 // record from DesignPostPayload, which has no source content, type or creation
@@ -385,20 +402,23 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 		if pattern.Visibility == "" {
 			pattern.Visibility = Private
 		}
-		if pattern.ID == nil {
+		isNew := pattern.ID == nil
+		if isNew {
 			id, err := uuid.NewV4()
 			if err != nil {
 				return nil, ErrGenerateUUID(err)
 			}
-			patterns.AssignVersion(pf)
 			pattern.ID = &id
-		} else {
-			nextVersion, err := patterns.GetNextVersion(pf)
-			if err != nil {
-				return nil, err
-			}
-			pf.Version = nextVersion
 		}
+
+		if err := setSavedVersion(pf, isNew); err != nil {
+			return nil, err
+		}
+		byt, err := yaml.Marshal(pf)
+		if err != nil {
+			return nil, err
+		}
+		pattern.PatternFile = string(byt)
 
 		stampLocalProviderOwner(&pattern)
 
@@ -477,6 +497,15 @@ func marshalMesheryPattern(mp *MesheryPattern) []byte {
 
 func marshalMesheryPatterns(mps []MesheryPattern) []byte {
 	res, _ := json.Marshal(mps)
+
+	return res
+}
+
+// marshalSaveError is what a failed save returns as its body: the design
+// handlers render a body that parses as a MeshKit error verbatim, the same
+// contract a remote provider's error body follows.
+func marshalSaveError(err error) []byte {
+	res, _ := json.Marshal(err)
 
 	return res
 }
