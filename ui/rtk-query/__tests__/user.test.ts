@@ -436,6 +436,29 @@ describe('user endpoints', () => {
     expect(req.url).toContain('filter=role%3Dadmin');
   });
 
+  it('getTeams GETs the extensions teams URL with its query params', async () => {
+    fetchMock.mockResolvedValue(okResponse({ teams: [] }));
+    const { api, store } = await setupStore();
+    await store.dispatch(
+      api.endpoints.getTeams.initiate({
+        orgId: 'org-1',
+        search: 'core',
+        order: 'name asc',
+        page: '0',
+        pagesize: '10',
+      }),
+    );
+    const req = fetchMock.mock.calls[0][0] as Request;
+    expect(req.method).toBe('GET');
+    const url = new URL(req.url);
+    // Meshery Server only serves this endpoint through the extensions proxy.
+    expect(url.pathname).toBe('/api/extensions/api/identity/orgs/org-1/teams');
+    expect(url.searchParams.get('search')).toBe('core');
+    expect(url.searchParams.get('order')).toBe('name asc');
+    expect(url.searchParams.get('page')).toBe('0');
+    expect(url.searchParams.get('pagesize')).toBe('10');
+  });
+
   it('removeUserFromTeam DELETEs the extensions team-user URL', async () => {
     fetchMock.mockResolvedValue(okResponse({}));
     const { api, store } = await setupStore();
