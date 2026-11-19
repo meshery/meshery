@@ -117,7 +117,9 @@ mesheryctl filter list 'Test Filter'
 
 // Pagination(making multiple requests) to retrieve filter Data in batches
 func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*models.FiltersAPIResponse, error) {
-	var response *models.FiltersAPIResponse
+	// Decode into a value, not a pointer: a response body of null leaves a value as
+	// an empty page, but would leave a pointer nil for the callers to crash on.
+	var response models.FiltersAPIResponse
 
 	url := baseURL + "/api/filter"
 
@@ -151,7 +153,7 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 	if err != nil {
 		return nil, utils.ErrUnmarshal(err)
 	}
-	return response, nil
+	return &response, nil
 }
 
 func init() {
