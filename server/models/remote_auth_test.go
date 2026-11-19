@@ -674,15 +674,20 @@ func TestVerifyToken_RejectsExpiredTokenWithBase64URLPayload(t *testing.T) {
 	// or '_': JWTs use base64url, so decoding the payload with
 	// base64.RawStdEncoding silently failed and the expiry was missed.
 	var tok string
-	for i := 0; ; i++ {
+	found := false
+	for i := 0; i < 100; i++ {
 		claims := map[string]interface{}{"sub": strings.Repeat("~", i+1) + "?>", "exp": time.Now().Add(-time.Hour).Unix()}
 		tok = buildUnsignedTestJWT(t,
 			map[string]interface{}{"alg": "RS256", "kid": "k1"},
 			claims,
 		)
 		if strings.ContainsAny(strings.Split(tok, ".")[1], "-_") {
+			found = true
 			break
 		}
+	}
+	if !found {
+		t.Fatal("could not build an expired token whose base64url payload contains '-' or '_'")
 	}
 	_, err := provider.VerifyToken(tok)
 	if !errors.Is(err, ErrTokenExpired) {
