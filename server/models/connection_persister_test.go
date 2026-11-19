@@ -104,6 +104,8 @@ func TestGetConnectionsSortsBySortableColumns(t *testing.T) {
 		{"subType asc", []string{"c-conn", "b-conn", "a-conn"}},
 		{"status asc", []string{"c-conn", "b-conn", "a-conn"}},
 		{"ConnectionID asc", []string{"c-conn", "a-conn", "b-conn"}},
+		{"connectionID asc", []string{"c-conn", "a-conn", "b-conn"}},
+		{"connection_id asc", []string{"c-conn", "a-conn", "b-conn"}},
 		{"kind desc", []string{"b-conn", "a-conn", "c-conn"}},
 	}
 	for _, tc := range tests {

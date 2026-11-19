@@ -40,7 +40,7 @@ func connectionOrderColumn(order string) string {
 	switch field {
 	case "type":
 		field = "connection_type"
-	case "ConnectionID", "connectionId", "connection_id":
+	case "ConnectionID", "connectionId", "connectionID", "connection_id":
 		field = "id"
 	}
 	return field + " " + direction
