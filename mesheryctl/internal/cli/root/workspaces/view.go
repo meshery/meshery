@@ -77,6 +77,11 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 				return err
 			}
 
+			if fetchedWorkspace == nil {
+				fmt.Println("No workspace(s) found for the given name or ID: ", workspaceNameOrID)
+				return nil
+			}
+
 			selectedWorkspace = *fetchedWorkspace
 		} else {
 			selectedAvailableWorkspace := new(workspace.AvailableWorkspace)
@@ -92,6 +97,9 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 				displayData,
 				formatWorkspaceLabel,
 				func(data *workspace.WorkspacePage) ([]workspace.AvailableWorkspace, int64) {
+					if data == nil {
+						return nil, 0
+					}
 					return data.Workspaces, int64(data.TotalCount)
 				},
 				selectedAvailableWorkspace,
@@ -106,6 +114,11 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 			fetchedWorkspace, err := api.Fetch[workspace.AvailableWorkspace](urlPath)
 			if err != nil {
 				return err
+			}
+
+			if fetchedWorkspace == nil {
+				fmt.Println("No workspace(s) found for the given name or ID: ", workspaceNameOrID)
+				return nil
 			}
 
 			selectedWorkspace = *fetchedWorkspace
