@@ -80,7 +80,7 @@
               "model": {
                 "version": ""
               },
-              "name": "azure-event-hub",
+              "name": "azure-event-hubs",
               "registrant": {
                 "kind": "github"
               },
