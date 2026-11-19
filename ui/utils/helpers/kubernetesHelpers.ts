@@ -24,32 +24,33 @@ export const isKubernetesConnected = (isClusterConfigured, kubernetesPingStatus)
 export function extractKubernetesCredentials(data) {
   if (!data || typeof data !== 'object') {
     return {
-      credentialName: undefined,
+      credentialName: '',
       secret: {
-        clusterName: undefined,
-        clusterServerURL: undefined,
+        clusterName: '',
+        clusterServerURL: '',
         auth: {
-          clusterUserName: undefined,
-          clusterToken: undefined,
-          clusterClientCertificateData: undefined,
-          clusterCertificateAuthorityData: undefined,
-          clusterClientKeyData: undefined,
+          clusterUserName: '',
+          clusterToken: '',
+          clusterClientCertificateData: '',
+          clusterCertificateAuthorityData: '',
+          clusterClientKeyData: '',
         },
       },
     };
   }
 
   const credentials = {
-    credentialName: data.name,
+    credentialName: data.name ?? '',
     secret: {
-      clusterName: data.cluster?.name,
-      clusterServerURL: data.cluster?.cluster?.server,
+      clusterName: data.cluster?.name ?? '',
+      clusterServerURL: data.cluster?.cluster?.server ?? '',
       auth: {
-        clusterUserName: data.auth?.name,
-        clusterToken: data.auth?.user?.token,
-        clusterClientCertificateData: data.auth?.user?.['client-certificate-data'],
-        clusterCertificateAuthorityData: data.cluster?.cluster?.['certificate-authority-data'],
-        clusterClientKeyData: data.auth?.user?.['client-key-data'],
+        clusterUserName: data.auth?.name ?? '',
+        clusterToken: data.auth?.user?.token ?? '',
+        clusterClientCertificateData: data.auth?.user?.['client-certificate-data'] ?? '',
+        clusterCertificateAuthorityData:
+          data.cluster?.cluster?.['certificate-authority-data'] ?? '',
+        clusterClientKeyData: data.auth?.user?.['client-key-data'] ?? '',
       },
     },
   };
