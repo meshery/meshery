@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/pkg/errors"
 )
 
@@ -58,4 +59,33 @@ func TestListEnvironment(t *testing.T) {
 	}
 
 	utils.InvokeMesheryctlTestListCommand(t, update, EnvironmentCmd, tests, currDir, "environments")
+}
+
+func TestProcessEnvironmentData_NilResponse(t *testing.T) {
+	rows, total := processEnvironmentData(nil)
+	if len(rows) != 0 {
+		t.Fatalf("expected 0 rows on nil response, got %d", len(rows))
+	}
+	if total != 0 {
+		t.Fatalf("expected 0 total on nil response, got %d", total)
+	}
+}
+
+func TestProcessEnvironmentData_EmptyDescriptionFallback(t *testing.T) {
+	envPage := &environment.EnvironmentPage{
+		TotalCount: 1,
+		Environments: []environment.Environment{
+			{
+				Name:        "test-env",
+				Description: "",
+			},
+		},
+	}
+	rows, total := processEnvironmentData(envPage)
+	if total != 1 {
+		t.Fatalf("expected total 1, got %d", total)
+	}
+	if len(rows) != 1 || rows[0][3] != "N/A" {
+		t.Fatalf("expected description 'N/A', got %q", rows[0][3])
+	}
 }
