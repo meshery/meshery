@@ -56,6 +56,20 @@ describe('updateVisibleColumns', () => {
   it('returns an empty object when given no columns', () => {
     expect(updateVisibleColumns([], 500)).toEqual({});
   });
+
+  it('defensively handles nullish and non-array colViews', () => {
+    expect(updateVisibleColumns(undefined, 800)).toEqual({});
+    expect(updateVisibleColumns(null, 800)).toEqual({});
+    expect(updateVisibleColumns('invalid' as unknown as unknown[], 800)).toEqual({});
+    expect(updateVisibleColumns(123 as unknown as unknown[], 800)).toEqual({});
+  });
+
+  it('skips malformed column tuples and handles non-numeric width', () => {
+    const malformed = [null, undefined, [], ['missingSize'], [123, 'xs'], ['valid', 's']];
+    expect(updateVisibleColumns(malformed as unknown as unknown[], 700)).toEqual({ valid: true });
+    expect(updateVisibleColumns([['valid', 's']], NaN)).toEqual({ valid: false });
+    expect(updateVisibleColumns([['valid', 's']], undefined)).toEqual({ valid: false });
+  });
 });
 
 describe('getResponsiveColumnVisibility', () => {
@@ -78,5 +92,12 @@ describe('getResponsiveColumnVisibility', () => {
 
   it('returns an empty object when no column names are supplied', () => {
     expect(getResponsiveColumnVisibility([], [['name', 'xs']], 800)).toEqual({});
+  });
+
+  it('defensively handles nullish and non-array columnNames or colViews', () => {
+    expect(getResponsiveColumnVisibility(undefined, [['name', 'xs']], 800)).toEqual({});
+    expect(getResponsiveColumnVisibility(null, [['name', 'xs']], 800)).toEqual({});
+    expect(getResponsiveColumnVisibility(['name'], undefined, 800)).toEqual({ name: undefined });
+    expect(getResponsiveColumnVisibility(['name'], null, 800)).toEqual({ name: undefined });
   });
 });
