@@ -106,7 +106,17 @@
       "numericCode": "1009",
       "severity": "fatal",
       "shortDescription": "ListenAndServe Error",
-      "longDescription": "ListenAndServe Error:"
+      "longDescription": "ListenAndServe Error:",
+      "probableCause": [
+        "The configured port is already in use by another process or another instance of Meshery Server",
+        "Insufficient permissions to bind to the port or network address",
+        "Invalid or unavailable network interface configuration"
+      ],
+      "suggestedRemediation": [
+        "Check if another instance of Meshery Server or process is already running on the configured port",
+        "Stop the conflicting process or change the listening port using the PORT environment variable (e.g., PORT=9082)",
+        "Ensure proper network permissions to bind to the specified address and port"
+      ]
     },
     {
       "code": "meshery-server-1010",

@@ -81,8 +81,8 @@
         "severity": "Fatal",
         "long_description": "ListenAndServe Error: ",
         "short_description": "ListenAndServe Error",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "The configured port is already in use by another process or another instance of Meshery Server",
+        "suggested_remediation": "Stop the conflicting process or change the listening port using the PORT environment variable (e.g., PORT=9082)"
       },
       "1010": {
         "name": "ErrCleaningUpLocalProviderCode",

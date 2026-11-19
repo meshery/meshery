@@ -58,7 +58,22 @@ func ErrInvalidURLSkippingProvider(url string) error {
 }
 
 func ErrListenAndServe(err error) error {
-	return errors.New(ErrListenAndServeCode, errors.Fatal, []string{"ListenAndServe Error"}, []string{"ListenAndServe Error: ", err.Error()}, []string{}, []string{})
+	return errors.New(
+		ErrListenAndServeCode,
+		errors.Fatal,
+		[]string{"ListenAndServe Error"},
+		[]string{"ListenAndServe Error: ", err.Error()},
+		[]string{
+			"The configured port is already in use by another process or another instance of Meshery Server",
+			"Insufficient permissions to bind to the port or network address",
+			"Invalid or unavailable network interface configuration",
+		},
+		[]string{
+			"Check if another instance of Meshery Server or process is already running on the configured port",
+			"Stop the conflicting process or change the listening port using the PORT environment variable (e.g., PORT=9082)",
+			"Ensure proper network permissions to bind to the specified address and port",
+		},
+	)
 }
 
 func ErrCleaningUpLocalProvider(err error) error {
