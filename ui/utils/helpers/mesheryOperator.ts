@@ -42,7 +42,12 @@ export const getOperatorStatusFromQueryResult = (res?: unknown) => {
   if (queryResult.operator?.status === 'ENABLED') {
     if (Array.isArray(queryResult.operator?.controllers)) {
       queryResult.operator.controllers.forEach((controller) => {
-        if (!controller || typeof controller !== 'object' || typeof controller.name !== 'string') {
+        if (
+          !controller ||
+          typeof controller !== 'object' ||
+          typeof controller.name !== 'string' ||
+          controller.name === ''
+        ) {
           return;
         }
 

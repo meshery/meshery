@@ -110,6 +110,7 @@ describe('getOperatorStatusFromQueryResult', () => {
           null,
           undefined,
           {},
+          { name: '' },
           { name: 123 },
           { name: 'broker', status: 'ENABLED', version: undefined },
           { name: 'meshsync', status: 'ENABLED' },
@@ -119,6 +120,7 @@ describe('getOperatorStatusFromQueryResult', () => {
     expect(result[0]).toBe(true);
     const info = result[1];
     expect(info.operatorInstalled).toBe(true);
+    expect((info as Record<string, unknown>)['']).toBeUndefined();
     expect(info.operatorVersion).toBe('N/A');
     expect(info.NATSInstalled).toBe(true);
     expect(info.NATSVersion).toBe('N/A');
