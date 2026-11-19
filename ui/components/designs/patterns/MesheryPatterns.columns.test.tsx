@@ -286,7 +286,7 @@ describe('buildPatternsTableOptions', () => {
     expect(build().sort).toBe(true);
   });
 
-  it('resets to the first page when rows per page changes', () => {
+  it('changes rows per page in one update without a separate page change', () => {
     const setPage = vi.fn();
     const setPageSize = vi.fn();
     const options = build({ setPage, setPageSize });
@@ -294,6 +294,6 @@ describe('buildPatternsTableOptions', () => {
     options.onTableChange('changeRowsPerPage', { rowsPerPage: 25, page: 2 });
 
     expect(setPageSize).toHaveBeenCalledWith(25);
-    expect(setPage).toHaveBeenCalledWith(0);
+    expect(setPage).not.toHaveBeenCalled();
   });
 });

@@ -118,10 +118,11 @@ describe('buildFiltersTableOptions', () => {
     expect(setPageSize).toHaveBeenCalledWith(50);
   });
 
-  it('onTableChange "changeRowsPerPage" resets to the first page', () => {
+  it('onTableChange "changeRowsPerPage" does not send a separate page change', () => {
     const options = build();
     options.onTableChange('changeRowsPerPage', { rowsPerPage: 50, page: 2 });
-    expect(setPage).toHaveBeenCalledWith(0);
+    expect(setPageSize).toHaveBeenCalledWith(50);
+    expect(setPage).not.toHaveBeenCalled();
   });
 
   it('onTableChange "search" debounces and eventually calls setSearch when text differs', async () => {

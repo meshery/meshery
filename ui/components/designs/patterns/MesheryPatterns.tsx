@@ -99,7 +99,10 @@ function MesheryPatterns({
 
   const { page, pageSize, sortOrder, search } = tableState;
   const setPage = useCallback((p) => updateTableState({ page: p }), [updateTableState]);
-  const setPageSize = useCallback((ps) => updateTableState({ pageSize: ps }), [updateTableState]);
+  const setPageSize = useCallback(
+    (ps) => updateTableState({ pageSize: ps, page: 0 }),
+    [updateTableState],
+  );
   const setSortOrder = useCallback((so) => updateTableState({ sortOrder: so }), [updateTableState]);
   const setSearch = useCallback(
     (s) => updateTableState({ search: s, page: 0 }),
