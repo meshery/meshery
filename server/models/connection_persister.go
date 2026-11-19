@@ -24,9 +24,29 @@ type ConnectionPersister struct {
 	DB *database.Handler
 }
 
+// mapConnectionOrderAlias maps public/wire column aliases to their persisted database column names
+// prior to order clause sanitization.
+func mapConnectionOrderAlias(order string) string {
+	parts := strings.SplitN(strings.TrimSpace(order), " ", 2)
+	if len(parts) != 2 {
+		return order
+	}
+
+	col := toSnakeCase(parts[0])
+	switch col {
+	case "type":
+		return fmt.Sprintf("connection_type %s", parts[1])
+	case "connection_id":
+		return fmt.Sprintf("id %s", parts[1])
+	default:
+		return order
+	}
+}
+
 // GetConnections returns all of the connections
 func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSize int, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = mapConnectionOrderAlias(order)
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name", "kind", "connection_type", "sub_type", "status", "id"})
 
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc

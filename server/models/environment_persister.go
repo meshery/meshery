@@ -305,7 +305,8 @@ func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connec
 // GetEnvironmentConnections returns connections for an environment
 func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uuid, search, order, page, pageSize, filter string) ([]byte, error) {
 	// Sanitize the order input
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = mapConnectionOrderAlias(order)
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name", "kind", "connection_type", "sub_type", "status", "id"})
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
 	}
