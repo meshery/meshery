@@ -1,6 +1,7 @@
 package utils
 
 import (
+	stdErrors "errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -1057,24 +1058,66 @@ func ErrRedirectChangesMethod(method, from string, statusCode int, to string) er
 		[]string{"Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"})
 }
 
+// meshkitWrappedError pairs a structured MeshKit *errors.Error with the original
+// underlying cause error, allowing errors.Is() and errors.As() traversal to inspect
+// the underlying cause while preserving MeshKit structured error inspection and codes.
+type meshkitWrappedError struct {
+	meshErr error
+	cause   error
+}
+
+func (e *meshkitWrappedError) Error() string {
+	if e.meshErr != nil {
+		return e.meshErr.Error()
+	}
+	if e.cause != nil {
+		return e.cause.Error()
+	}
+	return ""
+}
+
+func (e *meshkitWrappedError) Unwrap() error {
+	return e.cause
+}
+
+func (e *meshkitWrappedError) As(target interface{}) bool {
+	if e.meshErr != nil && stdErrors.As(e.meshErr, target) {
+		return true
+	}
+	if e.cause != nil && stdErrors.As(e.cause, target) {
+		return true
+	}
+	return false
+}
+
 // ErrAcquireTokenFileLock is returned when the Windows per-destination cross-process
 // mutex protecting the token file cannot be acquired within the timeout period.
 // The underlying OS error is preserved so callers can inspect it with errors.Is / errors.As.
 func ErrAcquireTokenFileLock(err error) error {
-	return errors.New(ErrAcquireTokenFileLockCode, errors.Alert,
+	errMsg := "unknown lock acquisition error"
+	if err != nil {
+		errMsg = err.Error()
+	}
+	meshErr := errors.New(ErrAcquireTokenFileLockCode, errors.Alert,
 		[]string{"Failed to acquire token file lock"},
-		[]string{err.Error()},
+		[]string{errMsg},
 		[]string{"Another process may be holding the token file lock longer than expected", "The named mutex may be inaccessible"},
 		[]string{"Retry the operation", "Run `mesheryctl system login` to re-authenticate"})
+	return &meshkitWrappedError{meshErr: meshErr, cause: err}
 }
 
 // ErrReplaceTokenFile is returned when the atomic handle-based rename that installs
-// the written token file fails.  The underlying OS error is preserved so callers
+// the written token file fails. The underlying OS error is preserved so callers
 // can inspect it with errors.Is / errors.As.
 func ErrReplaceTokenFile(err error) error {
-	return errors.New(ErrReplaceTokenFileCode, errors.Alert,
+	errMsg := "unknown replacement error"
+	if err != nil {
+		errMsg = err.Error()
+	}
+	meshErr := errors.New(ErrReplaceTokenFileCode, errors.Alert,
 		[]string{"Failed to replace token file"},
-		[]string{err.Error()},
+		[]string{errMsg},
 		[]string{"The destination path may be locked by another process", "The filesystem may not support atomic rename"},
 		[]string{"Retry the operation", "Run `mesheryctl system login` to re-authenticate"})
+	return &meshkitWrappedError{meshErr: meshErr, cause: err}
 }
