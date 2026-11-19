@@ -162,7 +162,7 @@ jobs:
               "$NORMALIZED_LOG" > "$EXCERPT_FILE"; then
               {
                 echo "Relevant error/failure lines with surrounding context:"
-                cat "$EXCERPT_FILE"
+                head -n 100 "$EXCERPT_FILE"
               } >> "$EMAIL_FILE"
             else
               GREP_STATUS=$?
