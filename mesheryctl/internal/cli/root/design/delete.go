@@ -21,6 +21,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -68,6 +69,9 @@ mesheryctl design delete [file | URL]
 // delete a design by ID
 mesheryctl design delete [ID]
 
+// delete a design by name
+mesheryctl design delete [name]
+
 // delete a design using --file
 mesheryctl design delete -f [file | URL]
 	`,
@@ -101,7 +105,15 @@ mesheryctl design delete -f [file | URL]
 					// file-read error is surfaced instead of an obscure ID error.
 					targetFile = target
 				} else if !isID {
-					targetFile = target
+					// Not a design ID: look the target up by design name.
+					pattern, err = fetchDesignIDByExactName(mctlCfg.GetBaseMesheryURL(), target)
+					if err != nil {
+						if errors.GetCode(err) == ErrDesignsNotFoundCode && looksLikeFilePath(target) {
+							return utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, target))
+						}
+						return err
+					}
+					isID = true
 				}
 			}
 		}
@@ -167,6 +179,32 @@ mesheryctl design delete -f [file | URL]
 
 		return nil
 	},
+}
+
+// fetchDesignIDByExactName returns the ID of the design named designName. The
+// server's name search also matches partial names, so only designs whose name
+// is exactly designName are kept: deleting must never pick a design the user
+// did not name. The user chooses when several designs share the name. All
+// matches are requested in one page so an exact match is not cut off by
+// partial matches on the first page.
+func fetchDesignIDByExactName(baseURL, designName string) (string, error) {
+	patterns, err := searchPatternsByName(baseURL, designName, 10000)
+	if err != nil {
+		return "", err
+	}
+	var exact []models.MesheryPattern
+	for _, p := range patterns {
+		if p.Name == designName {
+			exact = append(exact, p)
+		}
+	}
+	return selectPatternID(exact, designName, baseURL)
+}
+
+// looksLikeFilePath reports whether target was most likely meant as a file
+// path, so a missing file is reported as a bad path rather than a missing design.
+func looksLikeFilePath(target string) bool {
+	return strings.ContainsAny(target, `/\`) || filepath.Ext(target) != ""
 }
 
 func init() {
