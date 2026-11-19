@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"path/filepath"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
@@ -106,6 +107,11 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 			)
 			if err != nil {
 				return err
+			}
+
+			if selectedAvailableWorkspace == nil || selectedAvailableWorkspace.ID == uuid.Nil {
+				fmt.Println("No workspace(s) found for the given name or ID: ", workspaceNameOrID)
+				return nil
 			}
 
 			query := url.Values{}
