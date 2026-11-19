@@ -174,7 +174,7 @@ func createPrivateTokenFile(path string) (*os.File, error) {
 	if err != nil {
 		return nil, fmt.Errorf("create token file security descriptor: %w", err)
 	}
-	longPath, err := tokenFileLongPath(path)
+	longPath, err := tokenFileWin32Path(path)
 	if err != nil {
 		return nil, err
 	}
@@ -336,20 +336,56 @@ func replaceTokenFileStandard(file *os.File, name []uint16) error {
 }
 
 func tokenFileLongPath(path string) (string, error) {
-	if strings.HasPrefix(path, `\\?\`) || strings.HasPrefix(path, `\??\`) {
+	// SetFileInformationByHandle (FileRenameInfo / FileRenameInfoEx) requires the
+	// destination in the NT object-namespace format (\??\...) rather than the
+	// Win32 format used by most user-mode APIs. Using a plain Win32 path such as
+	// C:\path\to\file causes ERROR_INVALID_NAME on Windows.
+	//
+	// Mapping rules:
+	//   \??\ prefix    → already NT namespace, return as-is
+	//   \\?\UNC\...    → Win32 extended UNC, convert to NT \??\UNC\
+	//   \\?\...        → Win32 extended local, convert to NT \??\
+	//   \\server\share → UNC path, convert to \??\UNC\server\share
+	//   C:\...         → local drive path, convert to \??\C:\...
+	if strings.HasPrefix(path, `\??\`) {
 		return path, nil
 	}
-	path, err := filepath.Abs(path)
+	if strings.HasPrefix(path, `\\?\UNC\`) {
+		return `\??\UNC\` + path[8:], nil
+	}
+	if strings.HasPrefix(path, `\\?\`) {
+		return `\??\` + path[4:], nil
+	}
+	abs, err := filepath.Abs(path)
 	if err != nil {
 		return "", err
 	}
-	if len(path) < 248 {
+	if strings.HasPrefix(abs, `\\`) {
+		// UNC path: \\server\share\... → \??\UNC\server\share\...
+		return `\??\UNC\` + strings.TrimPrefix(abs, `\\`), nil
+	}
+	// Local drive path: C:\... → \??\C:\...
+	return `\??\` + abs, nil
+}
+
+// tokenFileWin32Path returns the Win32-extended path suitable for CreateFile.
+// Short paths (< 248 chars) are returned unchanged; longer paths are prefixed
+// with \\?\ to bypass the MAX_PATH limit.
+func tokenFileWin32Path(path string) (string, error) {
+	if strings.HasPrefix(path, `\\?\`) || strings.HasPrefix(path, `\??\`) {
 		return path, nil
 	}
-	if strings.HasPrefix(path, `\\`) {
-		return `\\?\UNC\` + strings.TrimPrefix(path, `\\`), nil
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		return "", err
 	}
-	return `\\?\` + path, nil
+	if len(abs) < 248 {
+		return abs, nil
+	}
+	if strings.HasPrefix(abs, `\\`) {
+		return `\\?\UNC\` + strings.TrimPrefix(abs, `\\`), nil
+	}
+	return `\\?\` + abs, nil
 }
 
 // restrictTokenFileToCurrentUser replaces inherited ACL entries with an ACL
