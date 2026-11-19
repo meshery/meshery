@@ -91,7 +91,7 @@ func TestMeshmodelPolicyListingReturnsRegistryErrors(t *testing.T) {
 		t.Run(handler.name, func(t *testing.T) {
 			rm, db := newTestRegistryManager(t)
 			t.Cleanup(func() { _ = db.DBClose() })
-			require.NoError(t, db.Migrator().DropTable(&meshpolicy.PolicyDefinition{}))
+			require.NoError(t, db.Migrator().DropTable(&policyv1beta1.PolicyDefinition{}))
 			h := &Handler{registryManager: rm, log: newTestLogger(t)}
 			r := httptest.NewRequest(http.MethodGet, "/models/test-model/policies", nil)
 			r = mux.SetURLVars(r, handler.vars)
