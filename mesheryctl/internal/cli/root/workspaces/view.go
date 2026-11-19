@@ -79,7 +79,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 			}
 
 			if fetchedWorkspace == nil {
-				fmt.Println("No workspace(s) found for the given name or ID: ", workspaceNameOrID)
+				fmt.Println("No workspace(s) found for the given name or ID:", workspaceNameOrID)
 				return nil
 			}
 
@@ -110,7 +110,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 			}
 
 			if selectedAvailableWorkspace.ID == uuid.Nil {
-				fmt.Println("No workspace(s) found for the given name or ID: ", workspaceNameOrID)
+				fmt.Println("No workspace(s) found for the given name or ID:", workspaceNameOrID)
 				return nil
 			}
 
@@ -123,7 +123,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 			}
 
 			if fetchedWorkspace == nil {
-				fmt.Println("No workspace(s) found for the given name or ID: ", workspaceNameOrID)
+				fmt.Println("No workspace(s) found for the given name or ID:", workspaceNameOrID)
 				return nil
 			}
 
