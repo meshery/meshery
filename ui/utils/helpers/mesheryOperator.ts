@@ -1,4 +1,5 @@
-export const isMesheryOperatorConnected = ({ operatorInstalled }) => operatorInstalled;
+export const isMesheryOperatorConnected = (params?: { operatorInstalled?: boolean } | null) =>
+  params?.operatorInstalled;
 
 /**
  * Returns the connection status of Operator, Meshsync, and Broker (NATS)
@@ -9,8 +10,8 @@ export const isMesheryOperatorConnected = ({ operatorInstalled }) => operatorIns
  * reachability of operator
  */
 
-export const getOperatorStatusFromQueryResult = (res) => {
-  var operatorInformation = {
+export const getOperatorStatusFromQueryResult = (res?: unknown) => {
+  let operatorInformation = {
     operatorInstalled: false,
     NATSInstalled: false,
     meshSyncInstalled: false,
@@ -20,35 +21,55 @@ export const getOperatorStatusFromQueryResult = (res) => {
     NATSVersion: 'N/A',
   };
 
-  if (res.operator?.error) {
+  const queryResult = res as {
+    operator?: {
+      error?: unknown;
+      status?: string;
+      version?: string;
+      controllers?: Array<{
+        name?: string;
+        status?: string;
+        version?: string;
+        [key: string]: unknown;
+      }>;
+    };
+  } | null;
+
+  if (!queryResult || typeof queryResult !== 'object' || queryResult.operator?.error) {
     return [false, operatorInformation];
   }
 
-  if (res.operator?.status === 'ENABLED') {
-    res.operator?.controllers?.forEach((controller) => {
-      operatorInformation = {
-        ...operatorInformation,
-        [controller.name]: controller,
-      };
-      if (controller.name === 'broker' && controller.status === 'ENABLED') {
+  if (queryResult.operator?.status === 'ENABLED') {
+    if (Array.isArray(queryResult.operator?.controllers)) {
+      queryResult.operator.controllers.forEach((controller) => {
+        if (!controller || typeof controller !== 'object' || typeof controller.name !== 'string') {
+          return;
+        }
+
         operatorInformation = {
           ...operatorInformation,
-          NATSInstalled: true,
-          NATSVersion: controller.version,
+          [controller.name]: controller,
         };
-      } else if (controller.name === 'meshsync' && controller.status === 'ENABLED') {
-        operatorInformation = {
-          ...operatorInformation,
-          meshSyncInstalled: true,
-          meshSyncVersion: controller.version,
-        };
-      }
-    });
+        if (controller.name === 'broker' && controller.status === 'ENABLED') {
+          operatorInformation = {
+            ...operatorInformation,
+            NATSInstalled: true,
+            NATSVersion: controller.version || 'N/A',
+          };
+        } else if (controller.name === 'meshsync' && controller.status === 'ENABLED') {
+          operatorInformation = {
+            ...operatorInformation,
+            meshSyncInstalled: true,
+            meshSyncVersion: controller.version || 'N/A',
+          };
+        }
+      });
+    }
 
     operatorInformation = {
       ...operatorInformation,
       operatorInstalled: true,
-      operatorVersion: res.operator?.version,
+      operatorVersion: queryResult.operator?.version || 'N/A',
     };
 
     return [true, operatorInformation];

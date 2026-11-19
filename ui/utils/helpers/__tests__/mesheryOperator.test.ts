@@ -8,6 +8,11 @@ describe('isMesheryOperatorConnected', () => {
     expect(isMesheryOperatorConnected({ operatorInstalled: false })).toBe(false);
     expect(isMesheryOperatorConnected({ operatorInstalled: undefined })).toBe(undefined);
   });
+
+  it('safely handles nullish and missing parameter without throwing', () => {
+    expect(isMesheryOperatorConnected(undefined)).toBeUndefined();
+    expect(isMesheryOperatorConnected(null)).toBeUndefined();
+  });
 });
 
 describe('getOperatorStatusFromQueryResult', () => {
@@ -75,5 +80,49 @@ describe('getOperatorStatusFromQueryResult', () => {
     expect(result[0]).toBe(true);
     expect(result[1].operatorInstalled).toBe(true);
     expect(result[1].operatorVersion).toBe('v0.7.0');
+  });
+
+  it('safely handles nullish, non-object, and empty query results without crashing', () => {
+    const [statusNull, infoNull] = getOperatorStatusFromQueryResult(null);
+    expect(statusNull).toBe(false);
+    expect(infoNull.operatorInstalled).toBe(false);
+    expect(infoNull.operatorVersion).toBe('N/A');
+
+    const [statusUndef, infoUndef] = getOperatorStatusFromQueryResult(undefined);
+    expect(statusUndef).toBe(false);
+    expect(infoUndef.operatorInstalled).toBe(false);
+
+    const [statusEmpty, infoEmpty] = getOperatorStatusFromQueryResult({});
+    expect(statusEmpty).toBe(false);
+    expect(infoEmpty.operatorInstalled).toBe(false);
+
+    const [statusStr, infoStr] = getOperatorStatusFromQueryResult('unexpected');
+    expect(statusStr).toBe(false);
+    expect(infoStr.operatorInstalled).toBe(false);
+  });
+
+  it('filters out malformed or nullish controller entries and falls back missing versions', () => {
+    const result = getOperatorStatusFromQueryResult({
+      operator: {
+        status: 'ENABLED',
+        version: undefined,
+        controllers: [
+          null,
+          undefined,
+          {},
+          { name: 123 },
+          { name: 'broker', status: 'ENABLED', version: undefined },
+          { name: 'meshsync', status: 'ENABLED' },
+        ],
+      },
+    });
+    expect(result[0]).toBe(true);
+    const info = result[1];
+    expect(info.operatorInstalled).toBe(true);
+    expect(info.operatorVersion).toBe('N/A');
+    expect(info.NATSInstalled).toBe(true);
+    expect(info.NATSVersion).toBe('N/A');
+    expect(info.meshSyncInstalled).toBe(true);
+    expect(info.meshSyncVersion).toBe('N/A');
   });
 });
