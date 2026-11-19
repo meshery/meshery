@@ -70,6 +70,16 @@ describe('updateVisibleColumns', () => {
     expect(updateVisibleColumns([['valid', 's']], NaN)).toEqual({ valid: false });
     expect(updateVisibleColumns([['valid', 's']], undefined)).toEqual({ valid: false });
   });
+
+  it('safely handles non-string screen sizes without TypeError', () => {
+    const nonStringSizes = [
+      ['col1', { toString: null, valueOf: null }],
+      ['col2', 12345],
+      ['col3', null],
+    ];
+    const res = updateVisibleColumns(nonStringSizes as unknown as unknown[], 800);
+    expect(res).toEqual({ col1: true, col2: true, col3: true });
+  });
 });
 
 describe('getResponsiveColumnVisibility', () => {

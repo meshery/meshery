@@ -30,7 +30,10 @@ export const updateVisibleColumns = (colViews?: unknown, width?: number | unknow
   };
 
   // Determine the minimum width for visibility based on the provided screen size
-  const getMinWidthForScreenSize = (screenSize: string) => {
+  const getMinWidthForScreenSize = (screenSize: unknown) => {
+    if (typeof screenSize !== 'string') {
+      return 0;
+    }
     return screenSizeMap[screenSize] || 0;
   };
 
@@ -47,12 +50,13 @@ export const updateVisibleColumns = (colViews?: unknown, width?: number | unknow
       return;
     }
 
-    const minScreenWidth = getMinWidthForScreenSize(screenSize);
+    const normalizedScreenSize = typeof screenSize === 'string' ? screenSize : '';
+    const minScreenWidth = getMinWidthForScreenSize(normalizedScreenSize);
 
     // Determine if the column should be visible based on screen width and rules
-    if (screenSize === 'na') {
+    if (normalizedScreenSize === 'na') {
       showCols[columnName] = false; // "na" columns are not visible in any screen size
-    } else if (screenSize === 'xs') {
+    } else if (normalizedScreenSize === 'xs') {
       showCols[columnName] = true; // "xs" columns are visible in all screen sizes
     } else {
       // For other screen sizes, check if the screen width is greater than or equal to the minimum width
