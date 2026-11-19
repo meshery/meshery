@@ -109,7 +109,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 				return err
 			}
 
-			if selectedAvailableWorkspace == nil || selectedAvailableWorkspace.ID == uuid.Nil {
+			if selectedAvailableWorkspace.ID == uuid.Nil {
 				fmt.Println("No workspace(s) found for the given name or ID: ", workspaceNameOrID)
 				return nil
 			}
