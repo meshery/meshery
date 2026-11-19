@@ -30,7 +30,19 @@ var (
 )
 
 func canonicalTokenPath(path string) (string, error) {
-	abs, err := filepath.Abs(path)
+	normalized := path
+	switch {
+	case strings.HasPrefix(normalized, `\??\UNC\`):
+		normalized = `\\` + strings.TrimPrefix(normalized, `\??\UNC\`)
+	case strings.HasPrefix(normalized, `\\?\UNC\`):
+		normalized = `\\` + strings.TrimPrefix(normalized, `\\?\UNC\`)
+	case strings.HasPrefix(normalized, `\??\`):
+		normalized = strings.TrimPrefix(normalized, `\??\`)
+	case strings.HasPrefix(normalized, `\\?\`):
+		normalized = strings.TrimPrefix(normalized, `\\?\`)
+	}
+
+	abs, err := filepath.Abs(normalized)
 	if err != nil {
 		return "", err
 	}

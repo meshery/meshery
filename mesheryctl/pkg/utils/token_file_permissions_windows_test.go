@@ -318,16 +318,63 @@ func TestTokenFileWin32PathPreservesShortPaths(t *testing.T) {
 }
 
 func TestTokenFileMutexNameCanonicalization(t *testing.T) {
-	name1, err := tokenFileMutexName(`C:\Users\test\.meshery\token.json`)
+	base := `C:\Users\test\.meshery\token.json`
+	aliases := []string{
+		base,
+		`c:\users\test\.meshery\token.json`,
+		`\\?\C:\Users\test\.meshery\token.json`,
+		`\??\C:\Users\test\.meshery\token.json`,
+	}
+
+	name1, err := tokenFileMutexName(aliases[0])
 	if err != nil {
 		t.Fatal(err)
 	}
-	name2, err := tokenFileMutexName(`c:\users\test\.meshery\token.json`)
+	for _, alias := range aliases[1:] {
+		name, err := tokenFileMutexName(alias)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if name != name1 {
+			t.Fatalf("expected identical mutex names for aliases %q and %q: %q != %q", aliases[0], alias, name1, name)
+		}
+	}
+
+	uncBase := `\\server\share\.meshery\token.json`
+	uncAliases := []string{
+		uncBase,
+		`\\?\UNC\server\share\.meshery\token.json`,
+		`\??\UNC\server\share\.meshery\token.json`,
+	}
+	uncName, err := tokenFileMutexName(uncAliases[0])
 	if err != nil {
 		t.Fatal(err)
 	}
-	if name1 != name2 {
-		t.Fatalf("expected identical mutex names regardless of casing: %q != %q", name1, name2)
+	for _, alias := range uncAliases[1:] {
+		name, err := tokenFileMutexName(alias)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if name != uncName {
+			t.Fatalf("expected identical mutex names for UNC aliases %q and %q: %q != %q", uncAliases[0], alias, uncName, name)
+		}
+	}
+
+	relative := filepath.Join(".meshery", "token.json")
+	absolute, err := filepath.Abs(relative)
+	if err != nil {
+		t.Fatal(err)
+	}
+	relativeName, err := tokenFileMutexName(relative)
+	if err != nil {
+		t.Fatal(err)
+	}
+	absoluteName, err := tokenFileMutexName(absolute)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if relativeName != absoluteName {
+		t.Fatalf("expected relative and absolute paths to share a mutex: %q != %q", relativeName, absoluteName)
 	}
 
 	diffName, err := tokenFileMutexName(`C:\Users\test\.meshery\other.json`)
