@@ -1,9 +1,12 @@
-"""Regression tests for documentation version navigation (Issue #23925).
+"""Regression tests for documentation version navigation (Issue #23925)
+and breadcrumb layout spacing (Issue #23937).
 
 Verifies that:
 1. docs/data/versions.yml only advertises published versions, avoiding 404 links.
 2. docs/layouts/partials/header.html does not match root '/' as a prefix for 'latest',
    which erroneously marks 'latest' selected on every page and causes duplicate selected options.
+3. docs/assets/scss/_layout.scss provides vertical breathing room between the site header
+   and the breadcrumb navigation.
 """
 
 from pathlib import Path
@@ -71,11 +74,47 @@ def test_header_version_selection_logic(root: Path | None = None):
     )
 
 
+def test_breadcrumb_spacing_in_layout(root: Path | None = None):
+    root = root or get_repo_root()
+    layout_file = root / "docs" / "assets" / "scss" / "_layout.scss"
+    assert layout_file.is_file(), f"Missing {layout_file}"
+    content = layout_file.read_text(encoding="utf-8")
+
+    # The breadcrumb navigation must not have zero margin, which causes it
+    # to sit flush against the fixed site header (Issue #23937).
+    match = re.search(r'\.breadcrumb\s*\{([^}]+)\}', content)
+    assert match, "Could not find .breadcrumb rule in _layout.scss"
+    rule_body = match.group(1)
+
+    # Determine effective top margin by evaluating declarations in order.
+    # A positive shorthand margin (first value) sets the top margin, while a subsequent
+    # margin-top overrides it (and vice-versa).
+    effective_top_margin: float | None = None
+    decl_pattern = re.compile(r'(?:^|;)\s*(margin(?:-top)?)\s*:\s*([^;]+)', re.MULTILINE)
+    for match_decl in decl_pattern.finditer(rule_body):
+        val_str = match_decl.group(2).strip()
+        parts = val_str.split()
+        if not parts:
+            continue
+        first_token = parts[0]
+        num_match = re.match(r'^(-?\d+(?:\.\d+)?|\.\d+)', first_token)
+        if num_match:
+            effective_top_margin = float(num_match.group(1))
+
+    assert effective_top_margin is not None, (
+        "Could not parse effective margin or margin-top declaration in .breadcrumb rule"
+    )
+    assert effective_top_margin > 0, (
+        f".breadcrumb in _layout.scss must specify a positive top margin, but effective value is {effective_top_margin}"
+    )
+
+
 def main():
     root = get_repo_root()
     test_versions_yaml(root)
     test_header_version_selection_logic(root)
-    print("All version navigation regression tests passed!")
+    test_breadcrumb_spacing_in_layout(root)
+    print("All version navigation and layout regression tests passed!")
 
 
 if __name__ == "__main__":
