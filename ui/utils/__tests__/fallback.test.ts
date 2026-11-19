@@ -6,6 +6,13 @@ describe('getFallbackImageBasedOnKind', () => {
     expect(getFallbackImageBasedOnKind('meshery')).toBe('static/img/meshery-logo/meshery-logo.png');
   });
 
+  it('matches kind case-insensitively', () => {
+    expect(getFallbackImageBasedOnKind('Kubernetes')).toBe(
+      'static/img/integrations/kubernetes.svg',
+    );
+    expect(getFallbackImageBasedOnKind('MESHERY')).toBe('static/img/meshery-logo/meshery-logo.png');
+  });
+
   it('returns the kubernetes svg for the kubernetes kind', () => {
     expect(getFallbackImageBasedOnKind('kubernetes')).toBe(
       'static/img/integrations/kubernetes.svg',
@@ -25,6 +32,13 @@ describe('normalizeStaticImagePath', () => {
     expect(normalizeStaticImagePath(null)).toBe('');
     expect(normalizeStaticImagePath('')).toBe('');
     expect(normalizeStaticImagePath('   ')).toBe('');
+  });
+
+  it('returns an empty string for non-string inputs', () => {
+    expect(normalizeStaticImagePath(123)).toBe('');
+    expect(normalizeStaticImagePath({})).toBe('');
+    expect(normalizeStaticImagePath([])).toBe('');
+    expect(normalizeStaticImagePath(true)).toBe('');
   });
 
   it('treats placeholder tokens (empty/none/null/undefined) as empty', () => {
@@ -53,7 +67,11 @@ describe('normalizeStaticImagePath', () => {
     expect(normalizeStaticImagePath(svg)).toBe(
       `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`,
     );
-    // Also handles SVGs that open with an XML prolog.
+    // Also handles SVGs with uppercase tags or opening XML prolog.
+    const uppercaseSvg = '<SVG viewBox="0 0 1 1"><path d="M0 0h1v1z"/></SVG>';
+    expect(normalizeStaticImagePath(uppercaseSvg)).toBe(
+      `data:image/svg+xml;charset=utf-8,${encodeURIComponent(uppercaseSvg)}`,
+    );
     const xmlSvg = '<?xml version="1.0"?><svg></svg>';
     expect(normalizeStaticImagePath(xmlSvg)).toBe(
       `data:image/svg+xml;charset=utf-8,${encodeURIComponent(xmlSvg)}`,

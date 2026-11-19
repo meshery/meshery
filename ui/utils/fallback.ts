@@ -1,13 +1,16 @@
-export function getFallbackImageBasedOnKind(kind) {
-  const fallbackComponent = {
+export function getFallbackImageBasedOnKind(kind?: string) {
+  if (typeof kind !== 'string') {
+    return undefined;
+  }
+  const fallbackComponent: Record<string, string> = {
     meshery: 'static/img/meshery-logo/meshery-logo.png',
     kubernetes: 'static/img/integrations/kubernetes.svg',
   };
-  return fallbackComponent[kind];
+  return fallbackComponent[kind.toLowerCase()];
 }
 
-export function normalizeStaticImagePath(path) {
-  if (!path) {
+export function normalizeStaticImagePath(path?: string | unknown) {
+  if (typeof path !== 'string') {
     return '';
   }
 
@@ -18,7 +21,8 @@ export function normalizeStaticImagePath(path) {
 
   // Inline SVG markup (e.g. a connection/component definition's styles.svgColor)
   // is encoded as a data URI so it can be used directly as an <img> src.
-  if (trimmed.startsWith('<svg') || trimmed.startsWith('<?xml')) {
+  const lower = trimmed.toLowerCase();
+  if (lower.startsWith('<svg') || lower.startsWith('<?xml')) {
     return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(trimmed)}`;
   }
 
