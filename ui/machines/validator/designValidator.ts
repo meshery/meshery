@@ -230,7 +230,10 @@ const supersedeKeyFor = (kind, data) => {
     return `${REQUEST_KIND.COMPONENT}:${data?.component?.id}`;
   }
   if (kind === REQUEST_KIND.DRY_RUN) {
-    return `${REQUEST_KIND.DRY_RUN}:${data?.dryRunType}`;
+    // Include sorted contexts so dry runs for different k8s context sets
+    // don't supersede each other (they target different clusters).
+    const contexts = [...(data?.k8sContexts ?? [])].sort().join(',');
+    return `${REQUEST_KIND.DRY_RUN}:${data?.dryRunType}:${contexts}`;
   }
   return REQUEST_KIND.DESIGN;
 };

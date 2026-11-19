@@ -412,6 +412,117 @@ describe('designValidationMachine overlapping requests', () => {
   );
 
   it(
+    'runs dry-run requests for different k8s context sets concurrently without superseding each other',
+    async () => {
+      // Two deploy dry-runs aimed at *different* clusters must both complete.
+      // Before the fix, both shared the key `DRY_RUN:Deploy` so the second
+      // request superseded the first and ctx-A's caller never got a reply.
+      const callerA = sender();
+      const callerB = sender();
+      const d = design('d1', [deployment('c1', 1)]);
+      let callCount = 0;
+      vi.mocked(initiateQuery).mockImplementation(async () => {
+        callCount++;
+        return { data: { dryRunResponse: {} } } as any;
+      });
+
+      validator.send(
+        designValidatorCommands.dryRunDesignDeployment({
+          design: d,
+          k8sContexts: ['ctx-A'],
+          includeDependencies: false,
+          returnAddress: callerA.actor,
+        }),
+      );
+      validator.send(
+        designValidatorCommands.dryRunDesignDeployment({
+          design: d,
+          k8sContexts: ['ctx-B'],
+          includeDependencies: false,
+          returnAddress: callerB.actor,
+        }),
+      );
+
+      await until(() => callerA.replies.length === 1 && callerB.replies.length === 1);
+      expect(callerA.replies).toHaveLength(1);
+      expect(callerB.replies).toHaveLength(1);
+      expect(callCount).toBe(2);
+      expect(payloadOf(callerA.replies[0]).k8sContexts).toEqual(['ctx-A']);
+      expect(payloadOf(callerB.replies[0]).k8sContexts).toEqual(['ctx-B']);
+    },
+    TEST_TIMEOUT,
+  );
+
+  it(
+    'supersedes a queued dry-run when a third request has the same type and context set',
+    async () => {
+      // With d1 in-flight (blocked), d2 queues behind it. Then d3 arrives with
+      // the same supersedeKey and replaces d2 in the queue, inheriting d2's replyTo.
+      // After d1 finishes the caller gets a reply for d1; then d3 runs and the caller
+      // gets a reply for d3. d2 is never dispatched.
+      const caller = sender();
+      const d1 = design('d1', [deployment('c1', 1)]);
+      const d2 = design('d2', [deployment('c1', 2)]);
+      const d3 = design('d3', [deployment('c1', 3)]);
+      let resolveFirst: (v: unknown) => void;
+      let callCount = 0;
+      vi.mocked(initiateQuery).mockImplementation(async (_ep, args) => {
+        callCount++;
+        if (args.patternId === d1.id) {
+          // Block d1 so d2 and d3 can queue up before it finishes
+          await new Promise((r) => {
+            resolveFirst = r as (v: unknown) => void;
+          });
+        }
+        return { data: { dryRunResponse: {} } } as any;
+      });
+
+      // d1 → goes in-flight immediately (dryRun is READY, no definition resolution)
+      validator.send(
+        designValidatorCommands.dryRunDesignDeployment({
+          design: d1,
+          k8sContexts: ['ctx-A'],
+          includeDependencies: false,
+          returnAddress: caller.actor,
+        }),
+      );
+      await until(() => callCount === 1); // d1 is now in-flight
+
+      // d2 → queues behind d1 (same supersedeKey, but d1 is in-flight not in queue)
+      validator.send(
+        designValidatorCommands.dryRunDesignDeployment({
+          design: d2,
+          k8sContexts: ['ctx-A'],
+          includeDependencies: false,
+          returnAddress: caller.actor,
+        }),
+      );
+
+      // d3 → supersedes d2 in the queue (d2 has same supersedeKey and is queued)
+      validator.send(
+        designValidatorCommands.dryRunDesignDeployment({
+          design: d3,
+          k8sContexts: ['ctx-A'],
+          includeDependencies: false,
+          returnAddress: caller.actor,
+        }),
+      );
+
+      // Unblock d1
+      resolveFirst!(undefined);
+
+      // Caller gets reply for d1, then d3 starts and finishes (d2 was dropped)
+      await until(() => caller.replies.length === 2);
+      await sleep(200);
+      expect(caller.replies).toHaveLength(2);
+      expect(callCount).toBe(2); // d1 and d3 ran; d2 was superseded before dispatch
+      expect(payloadOf(caller.replies[0]).design).toBe(d1);
+      expect(payloadOf(caller.replies[1]).design).toBe(d3);
+    },
+    TEST_TIMEOUT,
+  );
+
+  it(
     'removes the definition resolver from its children once the request settles',
     async () => {
       vi.spyOn(console, 'error').mockImplementation(() => {});
