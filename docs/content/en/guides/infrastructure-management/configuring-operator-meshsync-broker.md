@@ -241,7 +241,7 @@ The `MeshSync` resource's `status` reports where MeshSync is publishing (`publis
 MeshSync serves two HTTP endpoints on port `11000` from the moment the process starts:
 
 - `GET /healthz` - liveness. Returns `200` while the process is alive, even before (or without) a Broker connection.
-- `GET /readyz` - readiness. Returns `503` until MeshSync has established its Broker connection, then `200`.
+- `GET /readyz` - startup readiness. Returns `503` until MeshSync establishes its initial Broker connection, then `200`; it does not track later Broker disconnects.
 
 ```bash
 kubectl -n meshery port-forward deploy/meshery-meshsync 11000:11000 &
@@ -249,7 +249,7 @@ curl -sS http://127.0.0.1:11000/healthz
 curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:11000/readyz
 ```
 
-`/readyz` means "connected to the Broker", not "informer caches fully primed". Right after a restart, MeshSync can be ready while its cluster snapshot is still filling in.
+`/readyz` means "initial Broker connection established", not "currently connected to the Broker" or "informer caches fully primed". After the initial connection, NATS reconnects are handled independently, so use the connection's **Diagnostics** section and MeshSync/Meshery Server logs to check current Broker connectivity.
 
 The operator-managed Deployment currently ships an exec-based liveness probe (it periodically runs `./meshery-meshsync -h`) and intentionally no readiness probe, since no Kubernetes Service routes traffic to MeshSync. If you run MeshSync under your own management (outside the Operator), wire HTTP probes to port `11000`: `/healthz` for liveness and, if you want Broker-connection state surfaced in pod conditions, `/readyz` for readiness.
 
@@ -257,7 +257,7 @@ The port is fixed at `11000` and is not configurable.
 
 ### Broker connectivity at startup
 
-Before opening its NATS connection, MeshSync verifies the Broker is reachable by polling the Broker's HTTP monitoring endpoint, `http://<broker-host>:8222/connz`, once per second for up to 5 minutes (each probe times out after 5 seconds). While this retry loop runs, `/readyz` reports `503`. If the Broker never becomes reachable, MeshSync exits with an error; in operator mode, Kubernetes restarts the pod with backoff, so a Broker that comes up late is tolerated.
+Before opening its NATS connection, MeshSync verifies the Broker is reachable by polling the Broker's HTTP monitoring endpoint, `http://<broker-host>:8222/connz`, once per second for up to 5 minutes (each probe times out after 5 seconds). While this initial retry loop runs, `/readyz` reports `503`. If the Broker never becomes reachable, MeshSync exits with an error; in operator mode, Kubernetes restarts the pod with backoff, so a Broker that comes up late is tolerated.
 
 After a successful connection, reconnection is handled by the NATS client automatically (2-second reconnect intervals, up to 60 attempts). None of these timings are configurable.
 
