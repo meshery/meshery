@@ -8,6 +8,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/Masterminds/semver/v3"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
@@ -360,7 +361,11 @@ func setSavedVersion(pf *design.PatternFile, isNew bool) error {
 		return ErrInvalidDesignVersion(supplied, err)
 	}
 	if isNew && supplied != "" {
-		pf.Version = supplied
+		parsed, err := semver.NewVersion(supplied)
+		if err != nil {
+			return ErrInvalidDesignVersion(supplied, err)
+		}
+		pf.Version = parsed.String()
 		return nil
 	}
 	pf.Version = next

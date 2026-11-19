@@ -302,6 +302,8 @@ func TestSaveMesheryPattern_AssignsVersionOnCreate(t *testing.T) {
 	}{
 		{name: "no version", design: persisterTestDesignWithoutVersion, wantVersion: "0.0.1"},
 		{name: "supplied version", design: designWithVersion("1.2.3"), wantVersion: "1.2.3"},
+		{name: "v-prefixed version", design: designWithVersion("v1.2.3"), wantVersion: "1.2.3"},
+		{name: "short version", design: designWithVersion("1.2"), wantVersion: "1.2.0"},
 		{name: "invalid version", design: designWithVersion("not-semver"), wantCode: ErrInvalidDesignVersionCode},
 	}
 
