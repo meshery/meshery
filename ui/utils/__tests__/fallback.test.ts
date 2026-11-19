@@ -6,11 +6,17 @@ describe('getFallbackImageBasedOnKind', () => {
     expect(getFallbackImageBasedOnKind('meshery')).toBe('static/img/meshery-logo/meshery-logo.png');
   });
 
-  it('matches kind case-insensitively', () => {
+  it('matches kind case-insensitively and trims surrounding whitespace', () => {
     expect(getFallbackImageBasedOnKind('Kubernetes')).toBe(
       'static/img/integrations/kubernetes.svg',
     );
+    expect(getFallbackImageBasedOnKind('  kubernetes  ')).toBe(
+      'static/img/integrations/kubernetes.svg',
+    );
     expect(getFallbackImageBasedOnKind('MESHERY')).toBe('static/img/meshery-logo/meshery-logo.png');
+    expect(getFallbackImageBasedOnKind('\tmeshery\n')).toBe(
+      'static/img/meshery-logo/meshery-logo.png',
+    );
   });
 
   it('returns the kubernetes svg for the kubernetes kind', () => {
