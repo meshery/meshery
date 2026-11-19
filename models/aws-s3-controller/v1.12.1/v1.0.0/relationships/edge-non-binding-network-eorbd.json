@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "emrcontainers-controller",
+              "name": "aws-emrcontainers-controller",
               "registrant": {
                 "kind": "artifacthub"
               },
@@ -60,7 +60,7 @@
               "model": {
                 "version": ""
               },
-              "name": "s3-controller",
+              "name": "aws-s3-controller",
               "registrant": {
                 "kind": "artifacthub"
               },
