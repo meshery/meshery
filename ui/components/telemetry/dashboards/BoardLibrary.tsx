@@ -17,6 +17,7 @@ import {
   useTheme,
 } from '@sistent/sistent';
 import { useSearchGrafanaBoardsQuery } from '@/rtk-query/telemetryGrafana';
+import TelemetryError from '../common/TelemetryError';
 import type { BoardSummary, PinnedBoard } from './types';
 
 interface BoardLibraryProps {
@@ -64,7 +65,7 @@ const BoardLibrary: React.FC<BoardLibraryProps> = ({
     return () => clearTimeout(t);
   }, [input]);
 
-  const { data, isFetching, isError } = useSearchGrafanaBoardsQuery(
+  const { data, isFetching, isError, error } = useSearchGrafanaBoardsQuery(
     { connectionID, search },
     { skip: !connectionID },
   );
@@ -93,9 +94,10 @@ const BoardLibrary: React.FC<BoardLibraryProps> = ({
       {isError ? (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 3 }}>
           <WarningIcon style={{ color: theme.palette.warning.main }} />
-          <Typography color="textSecondary">
-            Could not reach Grafana. Check the connection and its credential.
-          </Typography>
+          <TelemetryError
+            error={error}
+            fallback="Could not reach Grafana. Check the connection and its credential."
+          />
         </Box>
       ) : !isFetching && boards.length === 0 ? (
         <Typography color="textSecondary" sx={{ mt: 3 }}>

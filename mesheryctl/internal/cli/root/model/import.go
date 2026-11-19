@@ -193,6 +193,14 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 		return err
 	}
 
+	if !register {
+		// With registration skipped, the server generates the model and
+		// answers with an empty body, so there is no registry summary to read.
+		_ = req.Body.Close()
+		utils.Log.Info("Model generated, registration skipped")
+		return nil
+	}
+
 	response, err := api.GenerateDataFromBodyResponse[models.RegistryAPIResponse](req)
 	if err != nil {
 		return err

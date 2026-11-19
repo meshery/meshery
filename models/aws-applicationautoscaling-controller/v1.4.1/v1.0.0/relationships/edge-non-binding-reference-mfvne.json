@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-applicationautoscaling-controller",
+              "name": "aws-application-autoscaling-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -70,7 +70,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-applicationautoscaling-controller",
+              "name": "aws-application-autoscaling-controller",
               "registrant": {
                 "kind": "github"
               },
