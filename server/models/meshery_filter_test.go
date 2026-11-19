@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"testing"
 )
 
@@ -141,5 +142,47 @@ func TestMesheryFilterRequestBody_UnmarshalResetsOnReuse(t *testing.T) {
 	}
 	if p.URL != "https://second" {
 		t.Errorf("URL = %q, want %q", p.URL, "https://second")
+	}
+}
+
+// TestFilterNameForURLImport pins how a filter imported from a URL is named.
+// A WebAssembly module carries no name, so it is named after the file in the
+// URL path; any other body is a filter YAML file and keeps its own name field.
+func TestFilterNameForURLImport(t *testing.T) {
+	module := []byte("\x00asm\x01\x00\x00\x00")
+	cases := []struct {
+		name    string
+		url     string
+		body    []byte
+		want    string
+		wantErr error
+	}{
+		{name: "wasm named after the file", url: "https://example.com/filters/rate-limit.wasm", body: module, want: "rate-limit"},
+		{name: "wasm extension in any case", url: "https://example.com/Header.WASM", body: module, want: "Header"},
+		{name: "query string is ignored", url: "https://example.com/f/rate_limit.wasm?token=secret", body: module, want: "rate_limit"},
+		{name: "escaped path is decoded", url: "https://example.com/my%20filter.wasm", body: module, want: "my filter"},
+		{name: "file without the wasm extension", url: "https://example.com/download/filter", body: module, want: "filter"},
+		{name: "no file in the path falls back to the host", url: "https://filters.example.com/", body: module, want: "filters.example.com"},
+		{name: "directory path falls back to the host", url: "https://example.com/downloads/", body: module, want: "example.com"},
+		{name: "yaml keeps its name field", url: "https://example.com/filter.yaml", body: []byte("name: from-yaml\n"), want: "from-yaml"},
+		{name: "yaml without a name is rejected", url: "https://example.com/filter.yaml", body: []byte("kind: filter\n"), wantErr: ErrFilterFileName},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := filterNameForURLImport(tc.url, tc.body)
+			if tc.wantErr != nil {
+				if !errors.Is(err, tc.wantErr) {
+					t.Fatalf("err = %v, want %v", err, tc.wantErr)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if got != tc.want {
+				t.Errorf("name = %q, want %q", got, tc.want)
+			}
+		})
 	}
 }

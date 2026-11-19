@@ -74,3 +74,61 @@ tokens:
 		t.Errorf("expected the default meshconfig to be unchanged, got:\n%s", defaultAfter)
 	}
 }
+
+// TestResetContextInConfigKeepsCurrentContext verifies that resetting a
+// context picked with --context does not make it the current context.
+func TestResetContextInConfigKeepsCurrentContext(t *testing.T) {
+	configPath := filepath.Join(t.TempDir(), "config.yaml")
+	meshconfig := `contexts:
+    local:
+        endpoint: http://localhost:9081
+        token: default
+        platform: docker
+        channel: stable
+        version: latest
+    staging:
+        endpoint: http://staging.example.com:9081
+        token: default
+        platform: kubernetes
+        channel: edge
+        version: v0.8.0
+current-context: local
+tokens:
+    - location: auth.json
+      name: default
+`
+	if err := os.WriteFile(configPath, []byte(meshconfig), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	prevCfgFile, prevDefaultPath := utils.CfgFile, utils.DefaultConfigPath
+	utils.CfgFile, utils.DefaultConfigPath = configPath, configPath
+	t.Cleanup(func() { utils.CfgFile, utils.DefaultConfigPath = prevCfgFile, prevDefaultPath })
+	viper.Reset()
+	t.Cleanup(viper.Reset)
+
+	if err := resetContextInConfig("staging", "kubernetes"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	v := viper.New()
+	v.SetConfigFile(configPath)
+	if err := v.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	mctlCfg, err := config.GetMesheryCtl(v)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if mctlCfg.CurrentContext != "local" {
+		t.Errorf("expected current-context to stay local, got %s", mctlCfg.CurrentContext)
+	}
+	staging := mctlCfg.Contexts["staging"]
+	if staging.Endpoint != utils.TemplateContext.Endpoint || staging.Version != utils.TemplateContext.Version ||
+		staging.Platform != "kubernetes" {
+		t.Errorf("expected staging reset to the default context on kubernetes, got %+v", staging)
+	}
+	if local := mctlCfg.Contexts["local"]; local.Endpoint != "http://localhost:9081" || local.Platform != "docker" {
+		t.Errorf("expected local to be unchanged, got %+v", local)
+	}
+}

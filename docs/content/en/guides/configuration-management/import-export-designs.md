@@ -50,6 +50,8 @@ mesheryctl design import -f <path-or-URL> [-n <design-name>] [-s <source-type>]
 - `-n` names the design. Without it, `mesheryctl` uses the file name.
 - `-s` is optional because Meshery Server detects the format. If you pass it, use one of `"Kubernetes Manifest"`, `"Helm Chart"`, `"Docker Compose"`, or `"Design"` (case-insensitive).
 
+URL imports are restricted to public HTTP(S) destinations and have bounded response size and request time. See [Remote URL imports]({{< ref "installation/production/security-hardening.md#remote-url-imports" >}}) for the limits.
+
 For example, to import a Kubernetes manifest:
 
 ```bash
