@@ -2,11 +2,15 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
+	"gorm.io/gorm"
 )
 
 // SaveScheduleHandler will save schedule using the current provider's persistence mechanism
@@ -61,7 +65,7 @@ func (h *Handler) SaveScheduleHandler(
 		if h != nil && h.log != nil {
 			h.log.Error(ErrFailToSave(err, obj))
 		}
-		writeMeshkitError(rw, ErrFailToSave(err, obj), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFailToSave(err, obj), providerStatusOrInternal(err))
 		return
 	}
 
@@ -88,12 +92,16 @@ func (h *Handler) GetSchedulesHandler(
 
 	resp, err := provider.GetSchedules(r, q.Get("page"), q.Get("pagesize"), q.Get("order"))
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(rw, err, http.StatusBadRequest)
+			return
+		}
 		obj := "schedules"
 		//unable to get schedules
 		if h != nil && h.log != nil {
 			h.log.Error(ErrQueryGet(obj))
 		}
-		writeMeshkitError(rw, ErrQueryGet(obj), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrQueryGet(obj), providerStatusOrInternal(err))
 		return
 	}
 
@@ -127,14 +135,33 @@ func (h *Handler) DeleteScheduleHandler(
 		return
 	}
 
+	key, err := uuid.FromString(scheduleID)
+	if err != nil || key == uuid.Nil {
+		invalidUUIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid schedule id: %q", scheduleID))
+		if h != nil && h.log != nil {
+			h.log.Error(invalidUUIDErr)
+		}
+		writeMeshkitError(rw, invalidUUIDErr, http.StatusBadRequest)
+		return
+	}
+
 	resp, err := provider.DeleteSchedule(r, scheduleID)
 	if err != nil {
 		obj := "schedule"
+		// a schedule that does not exist is a 404, not a server failure
+		if errors.Is(err, gorm.ErrRecordNotFound) || meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			if h != nil && h.log != nil {
+				h.log.Warnf("No %s with ID %q found to delete", obj, scheduleID)
+			}
+			writeMeshkitError(rw, err, http.StatusNotFound)
+			return
+		}
+
 		//unable to delete schedules
 		if h != nil && h.log != nil {
 			h.log.Error(ErrFailToDelete(err, obj))
 		}
-		writeMeshkitError(rw, ErrFailToDelete(err, obj), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFailToDelete(err, obj), providerStatusOrInternal(err))
 		return
 	}
 
@@ -168,14 +195,32 @@ func (h *Handler) GetScheduleHandler(
 		return
 	}
 
+	key, err := uuid.FromString(scheduleID)
+	if err != nil || key == uuid.Nil {
+		invalidUUIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid schedule id: %q", scheduleID))
+		if h != nil && h.log != nil {
+			h.log.Error(invalidUUIDErr)
+		}
+		writeMeshkitError(rw, invalidUUIDErr, http.StatusBadRequest)
+		return
+	}
+
 	resp, err := provider.GetSchedule(r, scheduleID)
 	if err != nil {
 		obj := "schedule"
+		if errors.Is(err, gorm.ErrRecordNotFound) || meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			if h != nil && h.log != nil {
+				h.log.Warnf("No %s with ID %q found", obj, scheduleID)
+			}
+			writeMeshkitError(rw, err, http.StatusNotFound)
+			return
+		}
+
 		//failed to get schedules
 		if h != nil && h.log != nil {
 			h.log.Error(ErrQueryGet(obj))
 		}
-		writeMeshkitError(rw, ErrQueryGet(obj), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrQueryGet(obj), providerStatusOrInternal(err))
 		return
 	}
 
