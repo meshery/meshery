@@ -6,7 +6,11 @@ export function getFallbackImageBasedOnKind(kind?: string) {
     meshery: 'static/img/meshery-logo/meshery-logo.png',
     kubernetes: 'static/img/integrations/kubernetes.svg',
   };
-  return fallbackComponent[kind.toLowerCase()];
+  const normalized = kind.toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(fallbackComponent, normalized)) {
+    return fallbackComponent[normalized];
+  }
+  return undefined;
 }
 
 export function normalizeStaticImagePath(path?: string | unknown) {

@@ -19,10 +19,16 @@ describe('getFallbackImageBasedOnKind', () => {
     );
   });
 
-  it('returns undefined for unknown kinds', () => {
+  it('returns undefined for unknown kinds and inherited Object properties', () => {
     expect(getFallbackImageBasedOnKind('istio')).toBeUndefined();
     expect(getFallbackImageBasedOnKind('')).toBeUndefined();
     expect(getFallbackImageBasedOnKind(undefined as unknown as string)).toBeUndefined();
+    expect(getFallbackImageBasedOnKind('constructor')).toBeUndefined();
+    expect(getFallbackImageBasedOnKind('CONSTRUCTOR')).toBeUndefined();
+    expect(getFallbackImageBasedOnKind('__proto__')).toBeUndefined();
+    expect(getFallbackImageBasedOnKind('__PROTO__')).toBeUndefined();
+    expect(getFallbackImageBasedOnKind('toString')).toBeUndefined();
+    expect(getFallbackImageBasedOnKind('valueOf')).toBeUndefined();
   });
 });
 
