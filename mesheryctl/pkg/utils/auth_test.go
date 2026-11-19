@@ -795,7 +795,7 @@ func TestAddAuthDetails_AllowsEmptyTokenForLocalProvider(t *testing.T) {
 	}
 }
 
-func TestNewRequestWithEmptyTokenFileReturnsAttachAuthTokenError(t *testing.T) {
+func TestNewRequestWithEmptyTokenFileReturnsUnauthenticatedError(t *testing.T) {
 	tokenPath := filepath.Join(t.TempDir(), "auth.json")
 
 	if err := os.WriteFile(tokenPath, []byte{}, 0o600); err != nil {
@@ -813,7 +813,32 @@ func TestNewRequestWithEmptyTokenFileReturnsAttachAuthTokenError(t *testing.T) {
 		t.Fatal("expected authentication error for empty token file")
 	}
 
-	if got := errors.GetCode(err); got != ErrAttachAuthTokenCode {
-		t.Fatalf("expected error code %s, got %s", ErrAttachAuthTokenCode, got)
+	if got := errors.GetCode(err); got != ErrUnauthenticatedCode {
+		t.Fatalf("expected error code %s, got %s", ErrUnauthenticatedCode, got)
+	}
+}
+
+func TestReadTokenEmptyAndWhitespaceFilesReturnUnauthenticated(t *testing.T) {
+	for _, test := range []struct {
+		name string
+		data []byte
+	}{
+		{name: "empty", data: []byte{}},
+		{name: "whitespace", data: []byte(" \n\t")},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			tokenPath := filepath.Join(t.TempDir(), "auth.json")
+			if err := os.WriteFile(tokenPath, test.data, 0600); err != nil {
+				t.Fatalf("failed to create token file: %v", err)
+			}
+
+			_, err := ReadToken(tokenPath)
+			if err == nil {
+				t.Fatal("expected unauthenticated error")
+			}
+			if got := errors.GetCode(err); got != ErrUnauthenticatedCode {
+				t.Fatalf("expected error code %s, got %s", ErrUnauthenticatedCode, got)
+			}
+		})
 	}
 }
