@@ -373,7 +373,7 @@ func TestUpdateConnectionByIDPreservesV1beta3Fields(t *testing.T) {
 	if assert.NotNil(t, got.Url, "url must survive partial status update") {
 		assert.Equal(t, targetURL, *got.Url)
 	}
-	assert.Equal(t, modelRef.Name, got.ModelReference.Name, "model reference must survive partial status update")
+	assert.Equal(t, modelRef, got.ModelReference, "model reference must survive partial status update")
 	assert.Equal(t, connSchema, got.ConnectionSchema, "connection schema must survive partial status update")
 	assert.Equal(t, credSchema, got.CredentialSchema, "credential schema must survive partial status update")
 
