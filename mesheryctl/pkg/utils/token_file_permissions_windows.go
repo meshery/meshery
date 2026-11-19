@@ -145,9 +145,9 @@ func acquireTokenFileLock(path string) (func(), error) {
 	case windows.WAIT_OBJECT_0, windows.WAIT_ABANDONED:
 		// Mutex ownership acquired. WAIT_ABANDONED handles a previous crashed holder safely.
 	case waitTimeout:
-		return nil, ErrAcquireTokenFileLock(fmt.Errorf("timeout waiting for token file lock on %s", path))
+		return nil, fmt.Errorf("timeout waiting for token file lock on %s", path)
 	default:
-		return nil, ErrAcquireTokenFileLock(fmt.Errorf("unexpected event %#x waiting for token mutex on %s", event, path))
+		return nil, fmt.Errorf("unexpected event %#x waiting for token mutex on %s", event, path)
 	}
 
 	acquiredDestLock = false
@@ -241,7 +241,7 @@ func writeTokenFile(path string, data []byte) error {
 	}
 
 	if err := replaceTokenFile(f, toPath); err != nil {
-		return fmt.Errorf("replace token file: %w", err)
+		return ErrReplaceTokenFile(err)
 	}
 
 	installed = true
@@ -252,6 +252,21 @@ var (
 	replaceTokenFileExFunc  = replaceTokenFileEx
 	replaceTokenFileStdFunc = replaceTokenFileStandard
 )
+
+// renameFallbackError captures both the extended rename error and the standard
+// rename error when both fail, ensuring neither native error is lost from the error chain.
+type renameFallbackError struct {
+	extended error
+	standard error
+}
+
+func (e *renameFallbackError) Error() string {
+	return fmt.Sprintf("handle-based rename: extended: %v; standard: %v", e.extended, e.standard)
+}
+
+func (e *renameFallbackError) Unwrap() []error {
+	return []error{e.extended, e.standard}
+}
 
 // replaceTokenFile uses handle-based atomic rename operations to replace the
 // destination. The source file is never closed before replacement and its identity
@@ -278,7 +293,7 @@ func replaceTokenFile(file *os.File, destination string) error {
 		if errStd == nil {
 			return nil
 		}
-		return fmt.Errorf("handle-based rename: extended: %v; standard: %w", errEx, errStd)
+		return &renameFallbackError{extended: errEx, standard: errStd}
 	}
 
 	// For all other errors (such as ERROR_ACCESS_DENIED or ERROR_SHARING_VIOLATION),

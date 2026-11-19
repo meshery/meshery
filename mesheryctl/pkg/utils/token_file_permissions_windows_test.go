@@ -547,6 +547,7 @@ func TestCrossProcessTokenMutex(t *testing.T) {
 		path := os.Getenv("MESHERY_TEST_MUTEX_PATH")
 		unlock, err := acquireTokenFileLock(path)
 		if err != nil {
+			fmt.Fprintf(os.Stderr, "CHILD_ACQUIRE_LOCK_FAILED: %v\n", err)
 			os.Exit(2)
 		}
 		// Signal parent by writing to stdout
@@ -575,12 +576,33 @@ func TestCrossProcessTokenMutex(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		t.Fatal(err)
+	}
 	if err := cmd.Start(); err != nil {
 		t.Skipf("cannot start child process: %v", err)
 	}
+
+	var stderrBuf strings.Builder
+	stderrDone := make(chan struct{})
+	go func() {
+		defer close(stderrDone)
+		_, _ = io.Copy(&stderrBuf, stderr)
+	}()
+
+	var waitOnce sync.Once
+	var waitErr error
+	waitForChild := func() error {
+		waitOnce.Do(func() {
+			_ = stdin.Close()
+			waitErr = cmd.Wait()
+			<-stderrDone
+		})
+		return waitErr
+	}
 	defer func() {
-		_ = stdin.Close()
-		_ = cmd.Wait()
+		_ = waitForChild()
 	}()
 
 	// Wait for child to acquire the named mutex; use io.ReadFull so a short
@@ -600,13 +622,13 @@ func TestCrossProcessTokenMutex(t *testing.T) {
 	case readyStr = <-readyCh:
 	case <-time.After(10 * time.Second):
 		_ = cmd.Process.Kill()
-		_ = cmd.Wait()
-		t.Fatal("timed out waiting for child to signal LOCKED")
+		wErr := waitForChild()
+		t.Fatalf("timed out waiting for child to signal LOCKED; waitErr=%v, stderr=%s", wErr, stderrBuf.String())
 	}
 	if readyStr != "LOCKED" {
 		_ = cmd.Process.Kill()
-		_ = cmd.Wait()
-		t.Fatalf("child did not signal LOCKED: got %q", readyStr)
+		wErr := waitForChild()
+		t.Fatalf("child did not signal LOCKED: got %q; exit status/waitErr=%v; stderr=%s", readyStr, wErr, stderrBuf.String())
 	}
 
 	// While child holds the cross-process mutex, verify parent fails to acquire it quickly
@@ -631,9 +653,10 @@ func TestCrossProcessTokenMutex(t *testing.T) {
 		t.Fatalf("expected WAIT_TIMEOUT while child holds mutex, got event=%#x, err=%v", event, err)
 	}
 
-	// Release child
-	_ = stdin.Close()
-	_ = cmd.Wait()
+	// Release child and collect its exit result cleanly
+	if err := waitForChild(); err != nil {
+		t.Fatalf("child exited with error after release: %v; stderr=%s", err, stderrBuf.String())
+	}
 
 	// Now parent can acquire without timeout. Named mutexes have thread
 	// affinity on Windows, so pin the goroutine to its OS thread for
