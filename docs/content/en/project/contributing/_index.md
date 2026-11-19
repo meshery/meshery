@@ -100,7 +100,7 @@ naming each commit's <em>author</em>, so derive it per commit. A sign-off is the
 certification of the DCO. Use this only when every author of a commit in the rebase range has
 agreed to sign off, because the command amends every commit in that range:
 
-<pre><code>$ git rebase &lt;base-branch&gt; --exec 'git commit --amend --no-edit --trailer \
+<pre><code>$ git rebase &lt;base-branch&gt; --exec 'git commit --amend --no-edit --allow-empty --trailer \
     "Signed-off-by=$(git log -1 --pretty="%an &lt;%ae&gt;")"'</code></pre>
 
 This needs Git 2.32 or newer, the release that added <code>git commit --trailer</code>; check with
