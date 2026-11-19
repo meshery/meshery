@@ -333,6 +333,15 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	if err != nil {
 		return nil, ErrPraseUnverified(err)
 	}
+	// GetExpirationTime reports a numeric zero exp as absent, but
+	// exp 0 means expired at the epoch, so reject it explicitly:
+	// the jwt validator treats zero the same way, and without this
+	// a signed token with exp 0 would verify as never expiring.
+	if expVal, ok := unverifiedClaims["exp"]; ok {
+		if expNum, ok := expVal.(float64); ok && expNum == 0 {
+			return nil, ErrTokenExpired
+		}
+	}
 	if expTime != nil && time.Now().After(expTime.Time) {
 		return nil, ErrTokenExpired
 	}

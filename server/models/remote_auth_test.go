@@ -690,6 +690,44 @@ func TestVerifyToken_RejectsExpiredTokenWithBase64URLPayload(t *testing.T) {
 	}
 }
 
+func TestVerifyToken_RejectsZeroExp(t *testing.T) {
+	key, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		t.Fatalf("failed to generate test RSA key: %v", err)
+	}
+	jwk := map[string]string{
+		"kid": "test-key",
+		"kty": "RSA",
+		"n":   base64.RawURLEncoding.EncodeToString(key.N.Bytes()),
+		"e":   "AQAB",
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/keys" {
+			http.NotFound(w, r)
+			return
+		}
+		_ = json.NewEncoder(w).Encode(map[string]interface{}{"keys": []map[string]string{jwk}})
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+	// exp 0 means expired at the epoch, but jwt's GetExpirationTime
+	// reports it as absent and the validator treats zero the same way,
+	// so without an explicit check this signed token would verify.
+	claims := jwt.MapClaims{"sub": "user-1", "exp": 0}
+	signedToken := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	signedToken.Header["kid"] = "test-key"
+	signed, err := signedToken.SignedString(key)
+	if err != nil {
+		t.Fatalf("failed to sign test token: %v", err)
+	}
+
+	_, err = provider.VerifyToken(signed)
+	if !errors.Is(err, ErrTokenExpired) {
+		t.Fatalf("expected ErrTokenExpired for token with exp 0, got: %v", err)
+	}
+}
+
 func TestVerifyToken_AcceptsValidToken(t *testing.T) {
 	key, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
