@@ -234,26 +234,36 @@ func (l *RemoteProvider) UpdateJWKs() error {
 		return ErrNilJWKs
 	}
 
+	l.keysMu.Lock()
 	l.Keys = jwks
+	l.keysMu.Unlock()
 
 	return nil
 }
 
-// GetJWK - Takes a keyId and returns the JWK
-func (l *RemoteProvider) GetJWK(kid string) (JWK, error) {
+// findJWK looks up a key by kid in the cached JWK set.
+func (l *RemoteProvider) findJWK(kid string) (JWK, bool) {
+	l.keysMu.RLock()
+	defer l.keysMu.RUnlock()
 	for _, key := range l.Keys {
 		if key["kid"] == kid {
-			return key, nil
+			return key, true
 		}
+	}
+	return nil, false
+}
+
+// GetJWK - Takes a keyId and returns the JWK
+func (l *RemoteProvider) GetJWK(kid string) (JWK, error) {
+	if key, ok := l.findJWK(kid); ok {
+		return key, nil
 	}
 	err := l.UpdateJWKs()
 	if err != nil {
 		return nil, err
 	}
-	for _, key := range l.Keys {
-		if key["kid"] == kid {
-			return key, nil
-		}
+	if key, ok := l.findJWK(kid); ok {
+		return key, nil
 	}
 	return nil, ErrNilKeys
 }
