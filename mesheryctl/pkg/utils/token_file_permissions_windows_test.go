@@ -249,6 +249,74 @@ func TestWriteTokenFileLongPath(t *testing.T) {
 	}
 }
 
+func TestTokenFileLongPathProducesNTNamespace(t *testing.T) {
+	for _, tc := range []struct {
+		name  string
+		input string
+		want  string
+	}{
+		{
+			name:  "local drive path",
+			input: `C:\Users\test\.meshery\token.json`,
+			want:  `\??\C:\Users\test\.meshery\token.json`,
+		},
+		{
+			name:  "Win32 extended already",
+			input: `\\?\C:\Users\test\.meshery\token.json`,
+			want:  `\??\C:\Users\test\.meshery\token.json`,
+		},
+		{
+			name:  "NT namespace already",
+			input: `\??\C:\Users\test\.meshery\token.json`,
+			want:  `\??\C:\Users\test\.meshery\token.json`,
+		},
+		{
+			name:  "Win32 extended UNC",
+			input: `\\?\UNC\server\share\token.json`,
+			want:  `\??\UNC\server\share\token.json`,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := tokenFileLongPath(tc.input)
+			if err != nil {
+				t.Fatalf("tokenFileLongPath(%q): %v", tc.input, err)
+			}
+			if got != tc.want {
+				t.Fatalf("tokenFileLongPath(%q) = %q; want %q", tc.input, got, tc.want)
+			}
+		})
+	}
+}
+
+func TestTokenFileWin32PathPreservesShortPaths(t *testing.T) {
+	for _, tc := range []struct {
+		name  string
+		input string
+		want  string
+	}{
+		{
+			name:  "short local path",
+			input: `C:\Users\test\token.json`,
+			want:  `C:\Users\test\token.json`,
+		},
+		{
+			name:  "Win32 extended unchanged",
+			input: `\\?\C:\path\token.json`,
+			want:  `\\?\C:\path\token.json`,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := tokenFileWin32Path(tc.input)
+			if err != nil {
+				t.Fatalf("tokenFileWin32Path(%q): %v", tc.input, err)
+			}
+			if got != tc.want {
+				t.Fatalf("tokenFileWin32Path(%q) = %q; want %q", tc.input, got, tc.want)
+			}
+		})
+	}
+}
+
 func TestTokenFileMutexNameCanonicalization(t *testing.T) {
 	name1, err := tokenFileMutexName(`C:\Users\test\.meshery\token.json`)
 	if err != nil {
