@@ -17,10 +17,10 @@ setup() {
     assert_success
     local brew_prefix="$output"
 
-    run brew list --versions mesheryctl
-    assert_success
-    local brew_version
-    brew_version=$(echo "$output" | awk '{print $2}')
+    local keg_path
+    keg_path=$(cd "$brew_prefix" && pwd -P)
+    local brew_version="${keg_path##*/}"
+    brew_version="${brew_version%_*}"
 
     run "$brew_prefix/bin/mesheryctl" version
     assert_success
