@@ -260,6 +260,9 @@ func TestScheduleHandlers_NotFoundAndStatusPropagation(t *testing.T) {
 		if rec.Code != http.StatusNotFound {
 			t.Errorf("DeleteScheduleHandler status = %d, want 404; body: %s", rec.Code, rec.Body.String())
 		}
+		if !strings.Contains(rec.Body.String(), models.ErrResultNotFoundCode) {
+			t.Errorf("DeleteScheduleHandler expected error to contain %s, got: %s", models.ErrResultNotFoundCode, rec.Body.String())
+		}
 	})
 
 	t.Run("GetScheduleHandler returns 404 when ErrResultNotFound", func(t *testing.T) {
@@ -276,6 +279,29 @@ func TestScheduleHandlers_NotFoundAndStatusPropagation(t *testing.T) {
 
 		if rec.Code != http.StatusNotFound {
 			t.Errorf("GetScheduleHandler status = %d, want 404; body: %s", rec.Code, rec.Body.String())
+		}
+		if !strings.Contains(rec.Body.String(), models.ErrResultNotFoundCode) {
+			t.Errorf("GetScheduleHandler expected error to contain %s, got: %s", models.ErrResultNotFoundCode, rec.Body.String())
+		}
+	})
+
+	t.Run("GetScheduleHandler returns 404 when gorm.ErrRecordNotFound", func(t *testing.T) {
+		prov := &mockScheduleProvider{
+			DefaultLocalProvider: &models.DefaultLocalProvider{},
+			getScheduleFunc: func(_ *http.Request, _ string) ([]byte, error) {
+				return nil, gorm.ErrRecordNotFound
+			},
+		}
+		req := httptest.NewRequest(http.MethodGet, "/api/user/schedules/"+validID, nil)
+		req = mux.SetURLVars(req, map[string]string{"id": validID})
+		rec := httptest.NewRecorder()
+		h.GetScheduleHandler(rec, req, nil, nil, prov)
+
+		if rec.Code != http.StatusNotFound {
+			t.Errorf("GetScheduleHandler status = %d, want 404; body: %s", rec.Code, rec.Body.String())
+		}
+		if !strings.Contains(rec.Body.String(), models.ErrResultNotFoundCode) {
+			t.Errorf("GetScheduleHandler expected error to contain %s, got: %s", models.ErrResultNotFoundCode, rec.Body.String())
 		}
 	})
 

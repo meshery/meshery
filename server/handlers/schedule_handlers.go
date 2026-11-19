@@ -135,8 +135,12 @@ func (h *Handler) DeleteScheduleHandler(
 		return
 	}
 
-	key, err := uuid.FromString(scheduleID)
-	if err != nil || key == uuid.Nil {
+	// Validate the UUID format using the shared helper.
+	if _, ok := h.requirePathUUID(rw, r, "id"); !ok {
+		return
+	}
+	// Additionally reject the zero UUID which the helper treats as valid.
+	if scheduleID == uuid.Nil.String() {
 		invalidUUIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid schedule id: %q", scheduleID))
 		if h != nil && h.log != nil {
 			h.log.Error(invalidUUIDErr)
@@ -152,6 +156,9 @@ func (h *Handler) DeleteScheduleHandler(
 		if errors.Is(err, gorm.ErrRecordNotFound) || meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
 			if h != nil && h.log != nil {
 				h.log.Warnf("No %s with ID %q found to delete", obj, scheduleID)
+			}
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				err = models.ErrResultNotFound(err)
 			}
 			writeMeshkitError(rw, err, http.StatusNotFound)
 			return
@@ -195,8 +202,12 @@ func (h *Handler) GetScheduleHandler(
 		return
 	}
 
-	key, err := uuid.FromString(scheduleID)
-	if err != nil || key == uuid.Nil {
+	// Validate the UUID format using the shared helper.
+	if _, ok := h.requirePathUUID(rw, r, "id"); !ok {
+		return
+	}
+	// Additionally reject the zero UUID which the helper treats as valid.
+	if scheduleID == uuid.Nil.String() {
 		invalidUUIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid schedule id: %q", scheduleID))
 		if h != nil && h.log != nil {
 			h.log.Error(invalidUUIDErr)
@@ -211,6 +222,9 @@ func (h *Handler) GetScheduleHandler(
 		if errors.Is(err, gorm.ErrRecordNotFound) || meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
 			if h != nil && h.log != nil {
 				h.log.Warnf("No %s with ID %q found", obj, scheduleID)
+			}
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				err = models.ErrResultNotFound(err)
 			}
 			writeMeshkitError(rw, err, http.StatusNotFound)
 			return
