@@ -136,6 +136,11 @@ func TestValidateNotBlank(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name:    "given a value with surrounding spaces when notblank then returns no error",
+			value:   "  my-name  ",
+			wantErr: false,
+		},
+		{
 			name:    "given an empty value when required,notblank then returns error",
 			value:   "",
 			wantErr: true,
@@ -163,6 +168,27 @@ func TestValidateNotBlank(t *testing.T) {
 			} else {
 				assert.NoError(t, err)
 			}
+		})
+	}
+}
+
+func TestValidateNotBlankNonString(t *testing.T) {
+	flagValidator := GetFlagValidator()
+
+	tests := []struct {
+		name  string
+		value interface{}
+	}{
+		{name: "integer", value: 42},
+		{name: "boolean", value: true},
+		{name: "slice", value: []string{"name"}},
+		{name: "map", value: map[string]string{"name": "value"}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := flagValidator.Validator.Var(tt.value, "notblank")
+			assert.Error(t, err)
 		})
 	}
 }

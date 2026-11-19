@@ -82,7 +82,8 @@ func isRelativeOrAbsolutePath(fl validator.FieldLevel) bool {
 // isNotBlank checks that a string field contains at least one non-whitespace character.
 // The built-in "required" tag only rejects the empty string, so a value such as "   " passes it.
 func isNotBlank(fl validator.FieldLevel) bool {
-	return strings.TrimSpace(fl.Field().String()) != ""
+	field := fl.Field()
+	return field.Kind() == reflect.String && strings.TrimSpace(field.String()) != ""
 }
 
 // isBoolean is a custom validation function that checks if a field is a boolean value (true or false)
