@@ -39,7 +39,7 @@ You are an expert-level documentation agent specialized in contributing to **Mes
 ├── hugo.toml               # Hugo configuration
 ├── content/                # Documentation content
 │   └── en/                 # English documentation
-├── data/                   # Data files (for example: toc.yml)
+├── data/                   # Data files
 ├── layouts/                # Hugo templates
 │   ├── _default/
 │   ├── partials/
@@ -62,7 +62,7 @@ You are an expert-level documentation agent specialized in contributing to **Mes
 - Shared templates live under `/docs/layouts/partials/` and `/docs/layouts/shortcodes/`.
 - Shared/common files belong in `/docs/static/`.
 - Page-specific images and files should prefer page bundles.
-- Navigation is maintained in `/docs/data/toc.yml`.
+- Navigation is generated from the content tree and controlled via front matter (`weight`, `linkTitle`, `toc_hide`).
 - Generated output under `/docs/public/` is not the source of truth and should generally not be edited directly.
 
 ## Meshery Documentation Principles
@@ -220,31 +220,19 @@ echo "Hello, Meshery!"
 
 If a code block appears inside an ordered list and numbering breaks, prefer the HTML clipboard block pattern documented in [docs/content/en/project/contributing/contributing-docs.md](docs/content/en/project/contributing/contributing-docs.md).
 
-### Navigation
-Sidebar navigation is still driven by [docs/data/toc.yml](docs/data/toc.yml).
+### Navigation Sidebar
+The sidebar is generated from the content tree; there is no table-of-contents data file. Each section directory (one with an `_index.md`) becomes a parent entry, and its pages and subsections become its children.
 
-Typical structure:
+Control a page's place in the sidebar with its front matter:
 
-```yaml
-- title: Group 1
-  url: group1
-  links:
-    - title: Child page
-      url: /path/to/page
-    - title: Another child
-      url: /path/to/another-page
-      links:
-        - title: Grandchild
-          url: /path/to/grandchild
-```
+| Front matter | Effect |
+|---|---|
+| `weight` | Sort order among siblings, lowest first. Siblings with equal weight sort by title. |
+| `linkTitle` | Shorter label for the sidebar entry (the page heading still uses `title`). |
+| `toc_hide: true` | Leaves the page out of the sidebar. It is still built and reachable by URL. |
+| `manualLink` | Points the sidebar entry at another URL instead of the page itself. |
 
-Navigation hierarchy:
-
-- **Parent**: top-level section
-- **Children**: immediate subsection links
-- **Grandchildren**: nested links under a child
-
-Update [docs/data/toc.yml](docs/data/toc.yml) when adding pages that should appear in the sidebar.
+The tree is rendered by `docs/layouts/partials/sidebar-tree.html` and mounted by `docs/layouts/partials/sidebar.html`.
 
 ## Documentation Contribution Workflow
 
@@ -270,7 +258,7 @@ Notes:
 2. Create a new Markdown file or page bundle
 3. Add Hugo front matter matching nearby docs in that section
 4. Write content following style guidelines
-5. Update [docs/data/toc.yml](docs/data/toc.yml) if navigation should change
+5. Configure sidebar navigation using front matter (`weight`, `linkTitle`) if needed
 6. Test locally with `make site`
 7. Verify links, images, and shortcodes
 
@@ -284,7 +272,7 @@ Notes:
      - /old/path/to/page
    ---
    ```
-4. Update navigation in `_data/toc.yml` if needed
+4. Configure sidebar navigation using front matter (`weight`, `linkTitle`) if needed
 5. Test locally to verify changes
 
 #### For Integration Documentation
@@ -304,7 +292,7 @@ Before submitting documentation:
 - [ ] All code examples are tested and working
 - [ ] All links are valid (internal and external)
 - [ ] Images have alt text and descriptive names
-- [ ] Navigation is updated in `_data/toc.yml` if needed
+- [ ] Navigation front matter (`weight`, `linkTitle`) is set correctly if needed
 - [ ] Page renders correctly locally (`make docs`)
 - [ ] No broken links or missing images
 - [ ] Spelling and grammar are correct
@@ -347,7 +335,7 @@ Pull request requirements:
    categories: [contributing]
    ---
    ```
-4. Add to TOC in `_data/toc.yml` under "Contributing" section
+4. Configure section placement with appropriate `weight` in front matter
 5. Follow structure: Overview → Prerequisites → Steps → Troubleshooting
 
 ### Adding a Concept Page
@@ -520,8 +508,8 @@ make docs
 - **Prevention**: Run `make site` locally before committing; Hugo reports the offending file and line number on build failure
 
 #### Problem: Navigation not updating
-- **Solution**: Verify `docs/data/toc.yml` has been updated with the correct `url` and that it matches the page's `relpermalink`; YAML indentation errors silently drop entire subtrees
-- **Prevention**: Always update `toc.yml` when adding, moving, or renaming a page; validate YAML with a linter before committing
+- **Solution**: Check that the parent directory has an `_index.md`, that neither the page nor any ancestor sections have `toc_hide: true`, and adjust `weight` in front matter to control sibling ordering
+- **Prevention**: Set appropriate `weight` and `linkTitle` in page front matter when adding or renaming a page
 
 #### Problem: Images not displaying
 - **Solution**: Determine the correct location — page-specific images belong in the page bundle directory alongside `index.md`, shared images belong under `docs/static/img/`; reference bundle images with a relative path and static images with an absolute path from the site root (e.g. `/img/meshery-logo.png`)
@@ -537,7 +525,7 @@ make docs
   aliases:
     - /old/path/to/page
   ```
-- **Prevention**: Search the entire `docs/content/` tree for internal references before moving a page; also check `docs/data/toc.yml`
+- **Prevention**: Search the entire `docs/content/` tree for internal references before moving a page
 
 #### Problem: Shortcode type confusion (`{{< >}}` vs `{{% %}}`)
 - **Solution**: Use `{{% %}}` (percent delimiters) for shortcodes whose inner content should be processed as Markdown (e.g. `alert`); use `{{< >}}` (angle-bracket delimiters) for shortcodes that receive raw string arguments (e.g. `code`). Mixing them causes either escaped HTML or unparsed Markdown in the output
@@ -713,7 +701,7 @@ make docker
 
 ### File locations
 - Content: `/docs/content/`
-- Navigation: `/docs/data/toc.yml`
+- Navigation: Generated from `/docs/content/` front matter (`weight`, `linkTitle`)
 - Partials: `/docs/layouts/partials/`
 - Shortcodes: `/docs/layouts/shortcodes/`
 - Shared static files: `/docs/static/`
