@@ -76,7 +76,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 				return err
 			}
 			if fetchedConnection == nil {
-				utils.Log.Info("No connection(s) found for the given name or ID: ", connectionNameOrID)
+				fmt.Println("No connection(s) found for the given name or ID: ", connectionNameOrID)
 				return nil
 			}
 			selectedConnection = fetchedConnection
@@ -92,11 +92,6 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 			}
 
 			selectedConnection = fetchedConnection
-		}
-
-		if selectedConnection == nil {
-			utils.Log.Info("No connection(s) found for the given name or ID: ", connectionNameOrID)
-			return nil
 		}
 
 		savePath := ""

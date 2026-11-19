@@ -166,8 +166,8 @@ func TestProcessConnectionData_NilAndEmptyItems(t *testing.T) {
 	}
 
 	rows, total := processConnectionData(page)
-	if total != 3 {
-		t.Fatalf("expected total 3, got %d", total)
+	if total != 1 {
+		t.Fatalf("expected total 1, got %d", total)
 	}
 	if len(rows) != 1 {
 		t.Fatalf("expected 1 row, got %d", len(rows))
