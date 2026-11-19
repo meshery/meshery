@@ -5143,9 +5143,10 @@ var maxProviderPackageExtractedBytes int64 = 512 << 20
 // TarXZF takes in a source url downloads the tar.gz file
 // uncompresses and then save the file to the destination
 //
-// The download is bounded by providerPackageDownloadTimeout. It runs inside the
-// login handler, so a host that accepts the connection and then stalls must not
-// be able to hold a user's login open.
+// The download is bounded by providerPackageDownloadTimeout and
+// providerPackageStallTimeout. It runs inside the login handler, so a host that
+// accepts the connection and then stalls must not be able to hold a user's
+// login open.
 func TarXZF(srcURL, destination string, log logger.Handler) error {
 	filename := filepath.Base(srcURL)
 
