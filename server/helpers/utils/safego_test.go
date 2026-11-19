@@ -197,6 +197,21 @@ func TestGuard_HookPanicIsContained(t *testing.T) {
 	}
 }
 
+// A hook that panics must stay visible even when there is no logger: it is
+// counted, so a faulty observer cannot fail silently forever.
+func TestGuard_HookPanicIsCountedWithoutALogger(t *testing.T) {
+	resetPanicState(t)
+
+	OnRecoveredPanic(func(RecoveredPanic) { panic("faulty observer") })
+
+	if !Guard("quiet-site", nil, func() { panic("x") }) {
+		t.Fatal("Guard did not report the panic")
+	}
+	if n := RecoveredPanicCounts()["hook-panic:quiet-site"]; n != 1 {
+		t.Errorf("hook panic count = %d, want 1 even with no logger", n)
+	}
+}
+
 func TestSafeGo_ContainsPanicInNewGoroutine(t *testing.T) {
 	resetPanicState(t)
 	log, _ := newCapturingLogger(t)

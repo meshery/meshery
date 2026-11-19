@@ -118,11 +118,18 @@ func ReportRecoveredPanic(name string, recovered any, log logger.Handler) {
 }
 
 // runHook calls one hook and contains a panic from it, so a faulty observer
-// cannot undo the containment it is observing.
+// cannot undo the containment it is observing. The panic is counted under
+// "hook-panic:<site>" even without a logger, so a faulty hook stays visible
+// instead of failing silently forever.
 func runHook(h PanicHook, p RecoveredPanic, log logger.Handler) {
 	defer func() {
-		if recovered := recover(); recovered != nil && log != nil {
-			log.Error(fmt.Errorf("panic hook for %s panicked: %v", p.Name, recovered))
+		if recovered := recover(); recovered != nil {
+			countsMu.Lock()
+			counts["hook-panic:"+p.Name]++
+			countsMu.Unlock()
+			if log != nil {
+				log.Error(fmt.Errorf("panic hook for %s panicked: %v", p.Name, recovered))
+			}
 		}
 	}()
 	h(p)
