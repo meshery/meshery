@@ -2816,26 +2816,6 @@
       ]
     },
     {
-      "code": "meshery-server-1175",
-      "moniker": "ErrSubscribeChannelCode",
-      "component": {
-        "name": "meshery-server",
-        "type": "component"
-      },
-      "numericCode": "1175",
-      "severity": "alert",
-      "shortDescription": "Unable to subscribe to channel",
-      "longDescription": "Unable to create a broker subscription",
-      "probableCause": [
-        "Could be a network issue",
-        "Meshery Broker could have crashed"
-      ],
-      "suggestedRemediation": [
-        "Check if Meshery Broker is reachable from Meshery Server",
-        "Check if Meshery Broker is up and running inside the configured cluster"
-      ]
-    },
-    {
       "code": "meshery-server-1176",
       "moniker": "ErrPublishBrokerCode",
       "component": {
@@ -3042,42 +3022,6 @@
       ]
     },
     {
-      "code": "meshery-server-1188",
-      "moniker": "ErrAddonSubscriptionCode",
-      "component": {
-        "name": "meshery-server",
-        "type": "component"
-      },
-      "numericCode": "1188",
-      "severity": "alert",
-      "shortDescription": "Addons Subscription failed",
-      "longDescription": "GraphQL subscription for Addons stopped",
-      "probableCause": [
-        "Could be a network issue"
-      ],
-      "suggestedRemediation": [
-        "Check if meshery server is reachable from the browser"
-      ]
-    },
-    {
-      "code": "meshery-server-1189",
-      "moniker": "ErrResolverControlPlaneSubscriptionCode",
-      "component": {
-        "name": "meshery-server",
-        "type": "component"
-      },
-      "numericCode": "1189",
-      "severity": "alert",
-      "shortDescription": "Control Plane Subscription failed",
-      "longDescription": "GraphQL subscription for Control Plane stopped",
-      "probableCause": [
-        "Could be a network issue"
-      ],
-      "suggestedRemediation": [
-        "Confirm that Meshery Server is reachable from your browser."
-      ]
-    },
-    {
       "code": "meshery-server-1190",
       "moniker": "ErrMesheryClientCode",
       "component": {
@@ -3129,24 +3073,6 @@
       "suggestedRemediation": [
         "Enable Meshery Operator from the settings page in the UI",
         "Check for logs in the meshery-operator pods from inside the application for more information"
-      ]
-    },
-    {
-      "code": "meshery-server-1193",
-      "moniker": "ErrDataPlaneSubscriptionCode",
-      "component": {
-        "name": "meshery-server",
-        "type": "component"
-      },
-      "numericCode": "1193",
-      "severity": "alert",
-      "shortDescription": "Data Plane Subscription failed",
-      "longDescription": "GraphQL subscription for Data Plane stopped",
-      "probableCause": [
-        "Could be a network issue"
-      ],
-      "suggestedRemediation": [
-        "Check if meshery server is reachable from the browser"
       ]
     },
     {
@@ -7693,6 +7619,22 @@
       "suggestedRemediation": [
         "Reduce the response size, then retry.",
         "For panel queries, shorten the time range or use more selective label matchers."
+      ]
+    },
+    {
+      "code": "meshery-server-1494",
+      "moniker": "ErrRequestTooLargeCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1494",
+      "severity": "alert",
+      "probableCause": [
+        "Request payload exceeds maximum allowed size"
+      ],
+      "suggestedRemediation": [
+        "Reduce request payload size to within acceptable limits"
       ]
     }
   ],
