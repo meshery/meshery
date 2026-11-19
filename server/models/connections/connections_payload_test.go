@@ -1,6 +1,7 @@
 package connections
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -167,5 +168,41 @@ func TestMergePayloadOntoExisting(t *testing.T) {
 		// self-pass even if the merge mutated them in place.
 		assert.Equal(t, core.Map{"version": "2.0"}, payload.ConnectionSchema)
 		assert.Equal(t, core.Map{"auth": "basic"}, payload.CredentialSchema)
+	})
+
+	t.Run("preserves explicit empty schemas and serializes them with omitzero", func(t *testing.T) {
+		existing := &Connection{
+			Name:             "persisted-cluster",
+			Kind:             "prometheus",
+			ConnectionSchema: core.Map{"type": "object", "title": "PromConn"},
+			CredentialSchema: core.Map{"type": "object", "title": "PromCred"},
+		}
+
+		// When schemas are explicitly set to empty maps (clearing them),
+		// MergePayloadOntoExisting must preserve the explicit empty maps rather
+		// than backfilling from the existing connection.
+		emptyPayload := &ConnectionPayload{
+			ConnectionSchema: core.Map{},
+			CredentialSchema: core.Map{},
+		}
+
+		MergePayloadOntoExisting(emptyPayload, existing)
+		assert.Equal(t, core.Map{}, emptyPayload.ConnectionSchema)
+		assert.Equal(t, core.Map{}, emptyPayload.CredentialSchema)
+
+		// When marshaled for remote PUT, explicit empty schemas must serialize
+		// as empty JSON objects ("{}"), whereas nil schemas are omitted.
+		emptyBytes, err := json.Marshal(emptyPayload)
+		assert.NoError(t, err)
+		assert.Contains(t, string(emptyBytes), `"connectionSchema":{}`)
+		assert.Contains(t, string(emptyBytes), `"credentialSchema":{}`)
+
+		nilPayload := &ConnectionPayload{
+			Status: CONNECTED,
+		}
+		nilBytes, err := json.Marshal(nilPayload)
+		assert.NoError(t, err)
+		assert.NotContains(t, string(nilBytes), "connectionSchema")
+		assert.NotContains(t, string(nilBytes), "credentialSchema")
 	})
 }
