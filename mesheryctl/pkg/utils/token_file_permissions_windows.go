@@ -145,9 +145,9 @@ func acquireTokenFileLock(path string) (func(), error) {
 	case windows.WAIT_OBJECT_0, windows.WAIT_ABANDONED:
 		// Mutex ownership acquired. WAIT_ABANDONED handles a previous crashed holder safely.
 	case waitTimeout:
-		return nil, fmt.Errorf("timeout waiting for token file lock on %s", path)
+		return nil, ErrAcquireTokenFileLock(fmt.Errorf("timeout waiting for token file lock on %s", path))
 	default:
-		return nil, fmt.Errorf("unexpected event %#x waiting for token mutex on %s", event, path)
+		return nil, ErrAcquireTokenFileLock(fmt.Errorf("unexpected event %#x waiting for token mutex on %s", event, path))
 	}
 
 	acquiredDestLock = false
@@ -202,7 +202,7 @@ func createPrivateTokenFile(path string) (*os.File, error) {
 func writeTokenFile(path string, data []byte) error {
 	unlock, err := acquireTokenFileLockFunc(path)
 	if err != nil {
-		return fmt.Errorf("acquire token file lock: %w", err)
+		return ErrAcquireTokenFileLock(err)
 	}
 	defer unlock()
 

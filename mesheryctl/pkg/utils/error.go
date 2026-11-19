@@ -90,6 +90,8 @@ var (
 	ErrIDLookupIncompleteCode         = "mesheryctl-1261"
 	ErrIDLookupPageLimitCode          = "mesheryctl-1262"
 	ErrRedirectChangesMethodCode      = "mesheryctl-1263"
+	ErrAcquireTokenFileLockCode       = "mesheryctl-1266"
+	ErrReplaceTokenFileCode           = "mesheryctl-1267"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -1053,4 +1055,26 @@ func ErrRedirectChangesMethod(method, from string, statusCode int, to string) er
 		[]string{fmt.Sprintf("The server answered %s %s with %d %s, redirecting to %s. Following it would re-send the request as a GET without its body, so it was not followed.", method, from, statusCode, http.StatusText(statusCode), to)},
 		[]string{"The current context's endpoint is not the address Meshery Server answers on directly (for example an http:// endpoint behind a proxy that redirects to https), or the request path is not in the form the server routes (for example it contains a doubled slash)"},
 		[]string{"Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"})
+}
+
+// ErrAcquireTokenFileLock is returned when the Windows per-destination cross-process
+// mutex protecting the token file cannot be acquired within the timeout period.
+// The underlying OS error is preserved so callers can inspect it with errors.Is / errors.As.
+func ErrAcquireTokenFileLock(err error) error {
+	return errors.New(ErrAcquireTokenFileLockCode, errors.Alert,
+		[]string{"Failed to acquire token file lock"},
+		[]string{err.Error()},
+		[]string{"Another process may be holding the token file lock longer than expected", "The named mutex may be inaccessible"},
+		[]string{"Retry the operation", "Run `mesheryctl system login` to re-authenticate"})
+}
+
+// ErrReplaceTokenFile is returned when the atomic handle-based rename that installs
+// the written token file fails.  The underlying OS error is preserved so callers
+// can inspect it with errors.Is / errors.As.
+func ErrReplaceTokenFile(err error) error {
+	return errors.New(ErrReplaceTokenFileCode, errors.Alert,
+		[]string{"Failed to replace token file"},
+		[]string{err.Error()},
+		[]string{"The destination path may be locked by another process", "The filesystem may not support atomic rename"},
+		[]string{"Retry the operation", "Run `mesheryctl system login` to re-authenticate"})
 }
