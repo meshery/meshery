@@ -15,6 +15,7 @@ Update the registry with latest data.
 ## Synopsis
 
 Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.
+The --input path can be relative to the current directory or absolute.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>

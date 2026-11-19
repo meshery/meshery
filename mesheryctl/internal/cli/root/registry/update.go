@@ -45,6 +45,7 @@ var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update the registry with latest data.",
 	Long: `Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.
+The --input path can be relative to the current directory or absolute.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/registry/update`,
 	Example: `
 // Update models from Meshery Integration Spreadsheet
@@ -163,7 +164,6 @@ func InvokeCompUpdate() (err error) {
 
 	// Since component update doesn't take long skip doing it concurrently
 	// weightedSem := semaphore.NewWeighted(20)
-	pwd, _ := os.Getwd()
 
 	// var wg sync.WaitGroup
 	for registrant, model := range componentCSVHelper.Components {
@@ -174,7 +174,7 @@ func InvokeCompUpdate() (err error) {
 		// Iterate all models
 		for modelName, components := range model {
 			availableComponentsPerModelPerVersion := 0
-			modelPath := filepath.Join(pwd, modelLocation, modelName)
+			modelPath := filepath.Join(modelLocation, modelName)
 			utils.Log.Info("Starting to update components of model ", modelName)
 
 			modelContents, err := os.ReadDir(modelPath)
