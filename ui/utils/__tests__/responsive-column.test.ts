@@ -3,57 +3,53 @@ import { updateVisibleColumns, getResponsiveColumnVisibility } from '../responsi
 
 describe('updateVisibleColumns', () => {
   it('marks "na" columns as never visible', () => {
-    const cols = [['hidden', 'na']];
-    expect(updateVisibleColumns(cols, 10000)).toEqual({ hidden: false });
+    expect(updateVisibleColumns([['hidden', 'na']], 10000)).toEqual({ hidden: false });
   });
 
-  it('marks "xs" columns as always visible (even when width=0)', () => {
-    const cols = [['shown', 'xs']];
-    expect(updateVisibleColumns(cols, 0)).toEqual({ shown: true });
-    expect(updateVisibleColumns(cols, 10000)).toEqual({ shown: true });
+  it('marks "xs" columns as always visible', () => {
+    expect(updateVisibleColumns([['shown', 'xs']], 0)).toEqual({ shown: true });
+    expect(updateVisibleColumns([['shown', 'xs']], 10000)).toEqual({ shown: true });
   });
 
-  it('shows "s" columns only above 690px', () => {
+  it('respects the s breakpoint', () => {
     expect(updateVisibleColumns([['c', 's']], 689)).toEqual({ c: false });
     expect(updateVisibleColumns([['c', 's']], 690)).toEqual({ c: true });
-    expect(updateVisibleColumns([['c', 's']], 800)).toEqual({ c: true });
   });
 
-  it('shows "m" columns only above 775px', () => {
+  it('respects the m breakpoint', () => {
     expect(updateVisibleColumns([['c', 'm']], 774)).toEqual({ c: false });
     expect(updateVisibleColumns([['c', 'm']], 775)).toEqual({ c: true });
   });
 
-  it('shows "l" columns only above 915px', () => {
+  it('respects the l breakpoint', () => {
     expect(updateVisibleColumns([['c', 'l']], 914)).toEqual({ c: false });
     expect(updateVisibleColumns([['c', 'l']], 915)).toEqual({ c: true });
   });
 
-  it('shows "xl" columns only above 1140px', () => {
+  it('respects the xl breakpoint', () => {
     expect(updateVisibleColumns([['c', 'xl']], 1139)).toEqual({ c: false });
     expect(updateVisibleColumns([['c', 'xl']], 1140)).toEqual({ c: true });
   });
 
-  it('treats unknown screen size as min-width 0 (always visible)', () => {
+  it('treats unknown screen sizes as minimum width zero', () => {
     expect(updateVisibleColumns([['c', 'unknown']], 0)).toEqual({ c: true });
   });
 
-  it('handles multiple columns in one call', () => {
-    const cols = [
-      ['a', 'xs'],
-      ['b', 's'],
-      ['c', 'l'],
-      ['d', 'na'],
-    ];
-    expect(updateVisibleColumns(cols, 800)).toEqual({
-      a: true,
-      b: true,
-      c: false,
-      d: false,
-    });
+  it('handles multiple columns', () => {
+    expect(
+      updateVisibleColumns(
+        [
+          ['a', 'xs'],
+          ['b', 's'],
+          ['c', 'l'],
+          ['d', 'na'],
+        ],
+        800,
+      ),
+    ).toEqual({ a: true, b: true, c: false, d: false });
   });
 
-  it('returns an empty object when given no columns', () => {
+  it('returns an empty object for an empty array', () => {
     expect(updateVisibleColumns([], 500)).toEqual({});
   });
 
@@ -88,6 +84,36 @@ describe('updateVisibleColumns', () => {
     const res = updateVisibleColumns(nonStringSizes as unknown as unknown[], 800);
     expect(res).toEqual({ col1: true, col2: true, col3: true });
   });
+
+  it.each([NaN, Infinity, -Infinity, '800', null, undefined, -1])(
+    'uses zero as the fallback for invalid or negative width: %s',
+    (width) => {
+      expect(updateVisibleColumns([['small', 's']], width)).toEqual({ small: false });
+      expect(updateVisibleColumns([['always', 'xs']], width)).toEqual({ always: true });
+    },
+  );
+
+  it('trims padded breakpoints and treats unknown padded breakpoints as zero', () => {
+    expect(updateVisibleColumns([['known', ' s ']], 689)).toEqual({ known: false });
+    expect(updateVisibleColumns([['known', ' s ']], 690)).toEqual({ known: true });
+    expect(updateVisibleColumns([['unknown', ' md ']], 0)).toEqual({ unknown: true });
+  });
+
+  it('handles prototype names safely', () => {
+    const result = updateVisibleColumns(
+      [
+        ['__proto__', 'xs'],
+        ['constructor', 'na'],
+        ['toString', 's'],
+      ],
+      800,
+    );
+
+    expect(Object.prototype.hasOwnProperty.call(result, '__proto__')).toBe(true);
+    expect(result['__proto__']).toBe(true);
+    expect(result.constructor).toBe(false);
+    expect(result.toString).toBe(true);
+  });
 });
 
 describe('getResponsiveColumnVisibility', () => {
@@ -97,13 +123,15 @@ describe('getResponsiveColumnVisibility', () => {
       ['size', 'l'],
       ['hidden', 'na'],
     ];
-    const result = getResponsiveColumnVisibility(['name', 'size', 'hidden'], colViews, 800);
-    expect(result).toEqual({ name: true, size: false, hidden: false });
+    expect(getResponsiveColumnVisibility(['name', 'size', 'hidden'], colViews, 800)).toEqual({
+      name: true,
+      size: false,
+      hidden: false,
+    });
   });
 
   it('yields undefined for columns missing from colViews', () => {
-    const colViews = [['name', 'xs']];
-    const result = getResponsiveColumnVisibility(['name', 'missing'], colViews, 800);
+    const result = getResponsiveColumnVisibility(['name', 'missing'], [['name', 'xs']], 800);
     expect(result.name).toBe(true);
     expect(result.missing).toBeUndefined();
   });
@@ -128,5 +156,39 @@ describe('getResponsiveColumnVisibility', () => {
       800,
     );
     expect(result).toEqual({ valid: true });
+  });
+
+  it.each([null, undefined, 'invalid', {}])(
+    'returns an empty object for invalid columnNames: %s',
+    (columnNames) => {
+      expect(getResponsiveColumnVisibility(columnNames, [['name', 'xs']], 800)).toEqual({});
+    },
+  );
+
+  it('ignores invalid entries in columnNames', () => {
+    expect(
+      getResponsiveColumnVisibility(
+        ['name', null, 123, '', 'hidden'],
+        [
+          ['name', 'xs'],
+          ['hidden', 'na'],
+        ],
+        800,
+      ),
+    ).toEqual({ name: true, hidden: false });
+  });
+
+  it('handles invalid colViews safely', () => {
+    expect(getResponsiveColumnVisibility(['name', 'size'], null, 800)).toEqual({
+      name: undefined,
+      size: undefined,
+    });
+  });
+
+  it('does not expose inherited prototype properties for missing column names', () => {
+    expect(getResponsiveColumnVisibility(['constructor', 'toString'], [], 800)).toEqual({
+      constructor: undefined,
+      toString: undefined,
+    });
   });
 });

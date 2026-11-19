@@ -1,44 +1,34 @@
 /**
  * updateVisibleColumns Function
  *
- * Purpose:
- * This function calculates which columns should be visible based on the provided screen sizes and the current screen width.
- *
- * Input:
- * @param {Array} colViews - An array of column views, where each element is an array containing the column name and the screen size till which it should be visible.
- * @param {number} width - The current screen width.
- *
- * Output:
- * @returns {Object} - An object representing column visibility, where keys are column names, and values are booleans indicating visibility.
+ * Calculates column visibility based on screen size and current screen width.
  */
-
 export const updateVisibleColumns = (colViews?: unknown, width?: number | unknown) => {
-  if (!Array.isArray(colViews)) {
-    return {};
-  }
-
-  const screenWidth = typeof width === 'number' && !isNaN(width) ? width : 0;
-
-  // Create a mapping of screen sizes to their minimum widths
-  const screenSizeMap: Record<string, number> = {
+  const screenSizeMap: Record<string, number> = Object.assign(Object.create(null), {
     na: 0,
     xs: 585,
     s: 690,
     m: 775,
     l: 915,
     xl: 1140,
-  };
+  });
 
-  // Determine the minimum width for visibility based on the provided screen size
-  const getMinWidthForScreenSize = (screenSize: unknown) => {
-    if (typeof screenSize !== 'string') {
-      return 0;
-    }
-    return screenSizeMap[screenSize] || 0;
-  };
-
-  // Initialize showCols as an empty object
+  const safeWidth =
+    typeof width === 'number' && Number.isFinite(width) && width >= 0 ? width : 0;
   const showCols: Record<string, boolean> = {};
+
+  if (!Array.isArray(colViews)) {
+    return showCols;
+  }
+
+  const setColumnVisibility = (columnName: string, visible: boolean) => {
+    Object.defineProperty(showCols, columnName, {
+      value: visible,
+      enumerable: true,
+      configurable: true,
+      writable: true,
+    });
+  };
 
   colViews.forEach((col) => {
     if (!Array.isArray(col) || col.length !== 2) {
@@ -46,21 +36,28 @@ export const updateVisibleColumns = (colViews?: unknown, width?: number | unknow
     }
 
     const [columnName, screenSize] = col;
-    if (typeof columnName !== 'string' || !columnName) {
+    if (
+      typeof columnName !== 'string' ||
+      columnName.trim() === '' ||
+      typeof screenSize !== 'string'
+    ) {
       return;
     }
 
-    const normalizedScreenSize = typeof screenSize === 'string' ? screenSize : '';
-    const minScreenWidth = getMinWidthForScreenSize(normalizedScreenSize);
+    const normalizedScreenSize = screenSize.trim();
+    const minScreenWidth = Object.prototype.hasOwnProperty.call(
+      screenSizeMap,
+      normalizedScreenSize,
+    )
+      ? screenSizeMap[normalizedScreenSize]
+      : 0;
 
-    // Determine if the column should be visible based on screen width and rules
     if (normalizedScreenSize === 'na') {
-      showCols[columnName] = false; // "na" columns are not visible in any screen size
+      setColumnVisibility(columnName, false);
     } else if (normalizedScreenSize === 'xs') {
-      showCols[columnName] = true; // "xs" columns are visible in all screen sizes
+      setColumnVisibility(columnName, true);
     } else {
-      // For other screen sizes, check if the screen width is greater than or equal to the minimum width
-      showCols[columnName] = screenWidth >= minScreenWidth;
+      setColumnVisibility(columnName, safeWidth >= minScreenWidth);
     }
   });
 
@@ -72,7 +69,7 @@ export const getResponsiveColumnVisibility = (
   colViews?: unknown,
   width?: number | unknown,
 ) => {
-  if (!Array.isArray(columnNames) || !Array.isArray(colViews)) {
+  if (!Array.isArray(columnNames)) {
     return {};
   }
 
@@ -80,7 +77,14 @@ export const getResponsiveColumnVisibility = (
 
   return Object.fromEntries(
     columnNames
-      .filter((colName): colName is string => typeof colName === 'string')
-      .map((columnName) => [columnName, showCols[columnName]]),
+      .filter((columnName): columnName is string =>
+        typeof columnName === 'string' && columnName.trim() !== '',
+      )
+      .map((columnName) => [
+        columnName,
+        Object.prototype.hasOwnProperty.call(showCols, columnName)
+          ? showCols[columnName]
+          : undefined,
+      ]),
   );
 };
