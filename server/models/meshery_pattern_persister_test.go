@@ -388,6 +388,25 @@ func TestSaveMesheryPatterns_AssignsVersionOnCreate(t *testing.T) {
 	}
 }
 
+// The batch save returns the same MeshKit error body as the single save, so an
+// import with an invalid version keeps the 1495 code instead of a nil body.
+func TestSaveMesheryPatterns_InvalidVersionReturnsErrorBody(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+
+	body, err := mpp.SaveMesheryPatterns([]MesheryPattern{
+		{Name: "batch-bad-version", PatternFile: designWithVersion("not-semver")},
+	})
+	if code := mkerrors.GetCode(err); code != ErrInvalidDesignVersionCode {
+		t.Fatalf("error code = %q, want %q (err: %v)", code, ErrInvalidDesignVersionCode, err)
+	}
+	if !strings.Contains(string(body), ErrInvalidDesignVersionCode) {
+		t.Errorf("body = %s, want the marshaled %s error", body, ErrInvalidDesignVersionCode)
+	}
+	if n := countPatterns(t, db); n != 0 {
+		t.Errorf("rows = %d, want the invalid design not to be stored", n)
+	}
+}
+
 // A clone is a new design: it takes the source's content, but not its creation
 // time, usage counters, catalog data or design-file identity.
 func TestCloneMesheryPattern_InsertsNewRow(t *testing.T) {

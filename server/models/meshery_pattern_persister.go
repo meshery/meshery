@@ -356,10 +356,6 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 // any save with an ID gets a patch bump of the file's version.
 func setSavedVersion(pf *design.PatternFile, isNew bool) error {
 	supplied := pf.Version
-	next, err := patterns.GetNextVersion(pf)
-	if err != nil {
-		return ErrInvalidDesignVersion(supplied, err)
-	}
 	if isNew && supplied != "" {
 		parsed, err := semver.NewVersion(supplied)
 		if err != nil {
@@ -367,6 +363,10 @@ func setSavedVersion(pf *design.PatternFile, isNew bool) error {
 		}
 		pf.Version = parsed.String()
 		return nil
+	}
+	next, err := patterns.GetNextVersion(pf)
+	if err != nil {
+		return ErrInvalidDesignVersion(supplied, err)
 	}
 	pf.Version = next
 	return nil
@@ -418,7 +418,7 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 		}
 
 		if err := setSavedVersion(pf, isNew); err != nil {
-			return nil, err
+			return marshalSaveError(err), err
 		}
 		byt, err := yaml.Marshal(pf)
 		if err != nil {
