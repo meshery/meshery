@@ -751,6 +751,9 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		}
 	}
 	if len(adapters) == 0 {
+		if adapterName != "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("adapter %q is not configured in the current context", adapterName))
+		}
 		utils.Log.Info("- No components configured in current context")
 		return nil
 	}
