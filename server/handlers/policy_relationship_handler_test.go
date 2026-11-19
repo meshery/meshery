@@ -100,7 +100,7 @@ func TestMeshmodelPolicyListingReturnsRegistryErrors(t *testing.T) {
 			handler.invoke(h, rw, r)
 
 			assert.Equal(t, http.StatusInternalServerError, rw.Code)
-			assert.Contains(t, rw.Body.String(), "failed to retrieve meshmodel policies")
+			assert.Contains(t, rw.Body.String(), "Failed to filter policy definitions")
 		})
 	}
 }
