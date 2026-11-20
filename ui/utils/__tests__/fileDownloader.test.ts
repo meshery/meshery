@@ -1,8 +1,5 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import downloadContent, {
-  downloadFileFromUrl,
-  downloadFileFromContent,
-} from '../fileDownloader';
+import downloadContent, { downloadFileFromUrl, downloadFileFromContent } from '../fileDownloader';
 import { FILTER, PATTERN } from '@/constants/navigator';
 
 describe('downloadFileFromUrl', () => {
