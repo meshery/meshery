@@ -60,8 +60,8 @@ func New(opts Options) http.Handler {
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})
 
-	dlMiddleware := dataloader.Middleware(func(ctx context.Context) models.Provider {
-		provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	dlMiddleware := dataloader.Middleware(func(ctx context.Context) models.GenericPersisterGetter {
+		provider, _ := ctx.Value(models.ProviderCtxKey).(models.GenericPersisterGetter)
 		return provider
 	})
 
