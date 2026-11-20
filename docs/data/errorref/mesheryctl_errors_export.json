@@ -2207,6 +2207,15 @@
         "short_description": "Unable to complete performance profile lookup",
         "probable_cause": "Profiles were added, deleted, or reordered during lookup, or the provider returned inconsistent pagination data",
         "suggested_remediation": "Rerun the command to refresh the matching profile list"
+      },
+      "1266": {
+        "name": "ErrDesignSelectNotInteractiveCode",
+        "code": "1266",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Cannot choose between multiple designs without an interactive terminal",
+        "probable_cause": "The command was run from a script, a pipe, a CI job, or with standard input redirected\nMore than one design shares the given name",
+        "suggested_remediation": "Pass the design ID instead of the name\nRun the command from an interactive terminal\nGive the design a unique name with 'mesheryctl design list' to find the one you want"
       }
     }
   }

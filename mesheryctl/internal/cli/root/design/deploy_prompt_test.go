@@ -31,6 +31,9 @@ import (
 // designs share a name, `design deploy` lists every design's own file so the
 // user can tell them apart before picking an index.
 func TestMultiplePatternsConfirmationShowsEachDesign(t *testing.T) {
+	// The prompt only runs with a terminal attached; stdin here is a pipe.
+	withTerminal(t, true)
+
 	stdinR, stdinW, err := os.Pipe()
 	require.NoError(t, err)
 	stdoutR, stdoutW, err := os.Pipe()
@@ -50,7 +53,8 @@ func TestMultiplePatternsConfirmationShowsEachDesign(t *testing.T) {
 		{ID: &second, Name: "nginx", PatternFile: "name: nginx\nversion: 0.0.2\n"},
 	}
 
-	index := multiplepatternsConfirmation(designs)
+	index, err := multiplepatternsConfirmation(designs, "nginx")
+	require.NoError(t, err)
 
 	require.NoError(t, stdoutW.Close())
 	out, err := io.ReadAll(stdoutR)
