@@ -1,0 +1,33 @@
+name: "PR Review Suggestions Tests"
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - ".github/scripts/pr-review-suggestions.js"
+      - ".github/scripts/pr-review-suggestions.test.js"
+      - ".github/workflows/labeler.yml"
+      - ".github/workflows/pr-review-suggestions-tests.yml"
+      - ".github/labeler.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    name: Unit & Regression Tests
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: "20"
+
+      - name: Run PR Review Suggestions Test Suite
+        run: node --test .github/scripts/pr-review-suggestions.test.js
