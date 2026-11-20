@@ -581,6 +581,7 @@ Section pages:
 - [ErrInvalidDeploymentNoSelectorsCode-11219](/reference/error-codes/library-meshkit/errinvaliddeploymentnoselectorscode-11219/)
 - [ErrInvalidDeploymentNoSelectorsLabelsCode-11218](/reference/error-codes/library-meshkit/errinvaliddeploymentnoselectorslabelscode-11218/)
 - [ErrInvalidDesignFileCode-1038](/reference/error-codes/client-mesheryctl/errinvaliddesignfilecode-1038/)
+- [ErrInvalidDesignVersionCode-1496](/reference/error-codes/component-meshery-server/errinvaliddesignversioncode-1496/)
 - [ErrInvalidDockerComposeCode-11293](/reference/error-codes/library-meshkit/errinvaliddockercomposecode-11293/)
 - [ErrInvalidEventCode-11339](/reference/error-codes/library-meshkit/errinvalideventcode-11339/)
 - [ErrInvalidEventDataCode-1357](/reference/error-codes/component-meshery-server/errinvalideventdatacode-1357/)

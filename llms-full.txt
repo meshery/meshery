@@ -8363,6 +8363,8 @@ You can now design and manage any infrastructure that Meshery supports. For the 
     
   
     
+  
+    
       
     
   
@@ -15483,7 +15485,10 @@ As the deployable unit in Meshery, a Design consists of [Components](/concepts/l
   - Designs can be embedded in web pages either as a bundle of HTML or as a React component using the [meshery-design-embed](https://www.npmjs.com/package/@meshery/meshery-design-embed) NPM package.
 - Designs can be snapshotted. Snapshots are immutable. Snapshots can be compared for differences between Design versions.
 - Designs can be published or unpublished. Published Designs are available to all users of any Meshery instance through the [Catalog](/concepts/architecture/catalog/). Unpublished Designs can still be available to other users if that Design is made public.
-- Designs are versioned. Each time a Design is saved, a new version is created.
+- Designs are versioned. A new Design keeps the version its file carries
+  (`0.0.1` when the file has none; a supplied version must be valid SemVer, or
+  the save is rejected). Each save of an existing Design bumps the patch number
+  of the file's version.
   <!-- - You can revert to any previous version of a Design. -->
 - Designs can be deployed. Deploying a Design involves incorporating one or more components into your Design, configuring their relationships, and deploying them to one or more Environments. By default, any user of a Workspace can deploy a Design. Meshery resolves how to fulfill each component separately - see [Deployment Engine](/concepts/architecture/deployment-engine/).
 - Designs can be deleted.
@@ -78223,6 +78228,12 @@ url: /reference/error-codes/client-mesheryctl/errinvaliddesignfilecode-1038/inde
 
 
 --------------------------------------------------------------------------------
+title: "ErrInvalidDesignVersionCode-1496"
+url: /reference/error-codes/component-meshery-server/errinvaliddesignversioncode-1496/index.md
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
 title: "ErrInvalidDockerComposeCode-11293"
 url: /reference/error-codes/library-meshkit/errinvaliddockercomposecode-11293/index.md
 --------------------------------------------------------------------------------
@@ -95662,6 +95673,32 @@ For panel queries, shorten the time range or use more selective label matchers.<
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Retry the request
 If it keeps failing, report it at https://github.com/meshery/meshery/issues/new/choose together with the request that triggered it; the server log holds the full stack</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrInvalidDesignVersionCode-1496" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidDesignVersionCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidDesignVersionCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1496" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errinvaliddesignversioncode-1496/"><code>ErrInvalidDesignVersionCode-1496</code></a>
+            </td>
+            <td>Invalid design version</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInvalidDesignVersionCode-1496" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrInvalidDesignVersionCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The design file&#39;s version is not semver, so a next version cannot be computed from it
+Older tooling wrote arbitrary version strings into design files</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Set the design file&#39;s version to a semver string such as 0.0.1 and save again</p>
             </td>
           </tr>
         

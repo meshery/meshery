@@ -16137,6 +16137,32 @@ If it keeps failing, report it at https://github.com/meshery/meshery/issues/new/
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrInvalidDesignVersionCode-1496" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidDesignVersionCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidDesignVersionCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1496" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errinvaliddesignversioncode-1496/"><code>ErrInvalidDesignVersionCode-1496</code></a>
+            </td>
+            <td>Invalid design version</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInvalidDesignVersionCode-1496" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrInvalidDesignVersionCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The design file&#39;s version is not semver, so a next version cannot be computed from it
+Older tooling wrote arbitrary version strings into design files</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Set the design file&#39;s version to a semver string such as 0.0.1 and save again</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>
