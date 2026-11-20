@@ -48,7 +48,7 @@ func TestDeleteModel(t *testing.T) {
 			Args:             []string{"delete", "nonexistent-model"},
 			HttpMethod:       "GET",
 			HttpStatusCode:   404,
-			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=nonexistent-model", modelsApiPath),
+			URL:              fmt.Sprintf("/%s/nonexistent-model?page=0&pagesize=10", modelsApiPath),
 			Fixture:          "delete.model.empty.response.golden",
 			ExpectedResponse: "delete.model.empty.output.golden",
 			ExpectError:      false,
