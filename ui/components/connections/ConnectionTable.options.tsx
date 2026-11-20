@@ -98,6 +98,7 @@ export const useConnectionTableOptions = ({
             break;
           case 'changeRowsPerPage':
             setPageSize(tableState.rowsPerPage);
+            setPage(0);
             break;
           case 'sort':
             if (sortInfo.length === 2 && typeof tableState.activeColumn === 'number') {
