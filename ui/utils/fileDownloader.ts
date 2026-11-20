@@ -26,7 +26,9 @@ export const downloadFileFromUrl = (url, name) => {
  * @returns {void}
  */
 export default function downloadContent({ id, type, name, source_type, params }) {
-  const downloadFn = DOWNLOAD_PATH[type];
+  const downloadFn = Object.prototype.hasOwnProperty.call(DOWNLOAD_PATH, type)
+    ? DOWNLOAD_PATH[type]
+    : undefined;
   if (typeof downloadFn !== 'function') {
     throw new Error(`Invalid type of content to download: ${type}`);
   }
@@ -41,11 +43,7 @@ export const downloadFileFromContent = (content, fileName, type) => {
   const blob = new Blob([content], { type: type });
   const url = window.URL.createObjectURL(blob);
   downloadFileFromUrl(url, fileName);
-  if (
-    typeof window !== 'undefined' &&
-    window.URL &&
-    typeof window.URL.revokeObjectURL === 'function'
-  ) {
+  setTimeout(() => {
     window.URL.revokeObjectURL(url);
-  }
+  }, 100);
 };

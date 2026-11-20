@@ -94,6 +94,12 @@ describe('downloadContent', () => {
     );
   });
 
+  it('throws for inherited properties on DOWNLOAD_PATH such as toString', () => {
+    expect(() => downloadContent({ id: 'x', type: 'toString', name: 'x' })).toThrowError(
+      'Invalid type of content to download: toString',
+    );
+  });
+
   it('throws for undefined or null content type', () => {
     expect(() =>
       downloadContent({ id: 'x', type: undefined as unknown as string, name: 'x' }),
@@ -110,6 +116,7 @@ describe('downloadFileFromContent', () => {
   let originalRevokeObjectURL: typeof window.URL.revokeObjectURL | undefined;
 
   beforeEach(() => {
+    vi.useFakeTimers();
     setAttributeSpy = vi.fn();
     createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue({
       setAttribute: setAttributeSpy,
@@ -135,6 +142,7 @@ describe('downloadFileFromContent', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     createElementSpy.mockRestore();
     if (originalCreateObjectURL) {
       Object.defineProperty(window.URL, 'createObjectURL', {
@@ -164,6 +172,8 @@ describe('downloadFileFromContent', () => {
 
   it('revokes the created object URL after initiating download to prevent memory leaks', () => {
     downloadFileFromContent('{"hello":"world"}', 'data.json', 'application/json');
+    expect(revokeObjectURLSpy).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(100);
     expect(revokeObjectURLSpy).toHaveBeenCalledWith('blob:fake-url');
   });
 });
