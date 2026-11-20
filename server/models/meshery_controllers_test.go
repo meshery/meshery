@@ -83,7 +83,7 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 		nil,
 		nil,
 	)
-	
+
 	// A successful execution of this function without panicking indicates the fix is working.
 	// We wrap in a defer-recover just to explicitly fail the test if a panic occurs.
 	defer func() {
@@ -176,3 +176,20 @@ func TestAddMeshsyncDataHandlers_EmbeddedModeDoesNotDeadlock(t *testing.T) {
 	}
 }
 
+func TestResyncMeshsyncReturnsErrorWhenHandlerIsNil(t *testing.T) {
+	log, _ := logger.New("test", logger.Options{})
+
+	mch := NewMesheryControllersHelper(
+		log,
+		controllers.OperatorDeploymentConfig{},
+		nil,
+		nil,
+		nil,
+		nil,
+	)
+
+	err := mch.ResyncMeshsync(context.Background())
+	if err == nil {
+		t.Fatal("expected an error when MeshSync data handler is nil")
+	}
+}

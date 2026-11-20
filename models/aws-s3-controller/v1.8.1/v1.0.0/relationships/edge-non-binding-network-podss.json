@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-ecs-controller",
+              "name": "ecs-controller",
               "registrant": {
                 "kind": "artifacthub"
               },
@@ -60,7 +60,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-s3-controller",
+              "name": "s3-controller",
               "registrant": {
                 "kind": "artifacthub"
               },

@@ -109,8 +109,9 @@ mesheryctl perf result saturday-profile --view
 		// Merge args to get profile-name
 		searchString = strings.Join(args, "%20")
 
-		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
+		profiles, err := fetchAllPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString)
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 
@@ -206,7 +207,9 @@ mesheryctl perf result saturday-profile --view
 
 // Fetch results for a specific profile
 func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNumber int) ([]models.PerformanceResult, []byte, error) {
-	var response *models.PerformanceResultsAPIResponse
+	// Decode into a value, not a pointer: a response body of null leaves a value
+	// as an empty page, but would leave a pointer nil for the next line to crash on.
+	var response models.PerformanceResultsAPIResponse
 
 	url := baseURL + "/api/user/performance/profiles/" + profileID + "/results"
 
