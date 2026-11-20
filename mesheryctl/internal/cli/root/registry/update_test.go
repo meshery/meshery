@@ -41,17 +41,19 @@ func TestInvokeCompUpdate_InputPaths(t *testing.T) {
 	require.NoError(t, os.WriteFile(componentCSVFilePath, []byte(csv), 0o644))
 
 	tests := []struct {
-		name    string
-		cwd     string
-		input   string
-		wantErr bool
+		name            string
+		cwd             string
+		input           string
+		wantErr         bool
+		wantDescription string
 	}{
-		{name: "relative", cwd: root, input: "models"},
-		{name: "absolute", cwd: root, input: modelsDir},
-		{name: "relative from subdirectory", cwd: subDir, input: filepath.Join("..", "models")},
-		{name: "missing relative directory", cwd: root, input: "missing-models", wantErr: true},
-		{name: "missing absolute directory", cwd: root, input: filepath.Join(root, "missing-models"), wantErr: true},
-		{name: "regular file", cwd: root, input: componentCSVFilePath, wantErr: true},
+		{name: "relative", cwd: root, input: "models", wantDescription: "after"},
+		{name: "absolute", cwd: root, input: modelsDir, wantDescription: "after"},
+		{name: "relative from subdirectory", cwd: subDir, input: filepath.Join("..", "models"), wantDescription: "after"},
+		{name: "valid directory without the model", cwd: root, input: "mesheryctl", wantDescription: "before"},
+		{name: "missing relative directory", cwd: root, input: "missing-models", wantErr: true, wantDescription: "before"},
+		{name: "missing absolute directory", cwd: root, input: filepath.Join(root, "missing-models"), wantErr: true, wantDescription: "before"},
+		{name: "regular file", cwd: root, input: componentCSVFilePath, wantErr: true, wantDescription: "before"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -61,10 +63,8 @@ func TestInvokeCompUpdate_InputPaths(t *testing.T) {
 			modelLocation = tt.input
 
 			err := InvokeCompUpdate()
-			wantDescription := "after"
 			if tt.wantErr {
 				require.ErrorContains(t, err, tt.input)
-				wantDescription = "before"
 			} else {
 				require.NoError(t, err)
 			}
@@ -73,7 +73,7 @@ func TestInvokeCompUpdate_InputPaths(t *testing.T) {
 			require.NoError(t, err)
 			var updated comp.ComponentDefinition
 			require.NoError(t, json.Unmarshal(content, &updated))
-			assert.Equal(t, wantDescription, updated.Description)
+			assert.Equal(t, tt.wantDescription, updated.Description)
 		})
 	}
 }
