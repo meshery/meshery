@@ -11,7 +11,7 @@ const (
 	ErrResolveReferenceCode       = "meshery-server-1361"
 	ErrYAMLUnmarshalCode          = "meshery-server-1436"
 	ErrDependencyNotSatisfiedCode = "meshery-server-1480"
-	ErrProvisionPanicCode         = "meshery-server-1481"
+	ErrProvisionPanicCode         = "meshery-server-1497"
 )
 
 // ErrProvisionPanic reports a component that panicked during provisioning execution.
