@@ -41,3 +41,13 @@ func TestListOrganizations(t *testing.T) {
 
 	utils.InvokeMesheryctlTestListCommand(t, update, OrgCmd, tests, currentDirectory, "organization")
 }
+
+func TestProcessOrgData_NilResponse(t *testing.T) {
+	rows, total := processOrgData(nil)
+	if len(rows) != 0 {
+		t.Fatalf("expected 0 rows for nil response, got %d", len(rows))
+	}
+	if total != 0 {
+		t.Fatalf("expected total 0 for nil response, got %d", total)
+	}
+}

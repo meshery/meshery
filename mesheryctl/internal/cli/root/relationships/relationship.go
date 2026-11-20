@@ -105,6 +105,9 @@ func init() {
 }
 
 func generateRelationshipDataToDisplay(relationshipResponse *MeshmodelRelationshipsAPIResponse) ([][]string, int64) {
+	if relationshipResponse == nil {
+		return [][]string{}, 0
+	}
 	defaultIfEmpty := func(value string) string {
 		if value == "" {
 			return "N/A"
