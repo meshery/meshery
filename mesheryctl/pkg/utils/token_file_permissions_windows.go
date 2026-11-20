@@ -347,7 +347,7 @@ func replaceTokenFileEx(file *os.File, name []uint16) error {
 
 func replaceTokenFileStandard(file *os.File, name []uint16) error {
 	type renameInfoStd struct {
-		ReplaceIfExists bool
+		ReplaceIfExists uint32
 		RootDirectory   windows.Handle
 		FileNameLength  uint32
 		FileName        [1]uint16
@@ -356,7 +356,7 @@ func replaceTokenFileStandard(file *os.File, name []uint16) error {
 	offset := int(unsafe.Offsetof(info.FileName))
 	buffer := make([]byte, offset+len(name)*2)
 	entry := (*renameInfoStd)(unsafe.Pointer(&buffer[0]))
-	entry.ReplaceIfExists = true
+	entry.ReplaceIfExists = 1
 	entry.FileNameLength = uint32(len(name) * 2)
 	copy(unsafe.Slice((*uint16)(unsafe.Pointer(&buffer[offset])), len(name)), name)
 	return windows.SetFileInformationByHandle(windows.Handle(file.Fd()), windows.FileRenameInfo, &buffer[0], uint32(len(buffer)))
@@ -378,7 +378,7 @@ func tokenFileLongPath(path string) (string, error) {
 		return path, nil
 	}
 	if strings.HasPrefix(path, `\\?\UNC\`) {
-		return `\??\UNC\` + path[8:], nil
+		return `\??\UNC\` + strings.TrimPrefix(path, `\\?\UNC\`), nil
 	}
 	if strings.HasPrefix(path, `\\?\`) {
 		return `\??\` + path[4:], nil
