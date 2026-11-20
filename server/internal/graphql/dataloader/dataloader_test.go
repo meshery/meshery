@@ -16,7 +16,7 @@ import (
 func TestDataLoaderMiddleware_PerRequestIsolation(t *testing.T) {
 	var loader1, loader2 *dataloader.Loaders
 
-	middleware := dataloader.Middleware(func(ctx context.Context) models.Provider {
+	middleware := dataloader.Middleware(func(ctx context.Context) models.GenericPersisterGetter {
 		return nil
 	})
 
@@ -61,7 +61,7 @@ func TestWithLoaders_RoundTrip(t *testing.T) {
 }
 
 func TestControlPlaneBatchLoader_LoadEmptyKey(t *testing.T) {
-	middleware := dataloader.Middleware(func(ctx context.Context) models.Provider {
+	middleware := dataloader.Middleware(func(ctx context.Context) models.GenericPersisterGetter {
 		return nil
 	})
 

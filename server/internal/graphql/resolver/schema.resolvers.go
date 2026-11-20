@@ -27,7 +27,7 @@ func (r *mutationResolver) ChangeAdapterStatus(ctx context.Context, input *model
 
 // GetAvailableAddons is the resolver for the getAvailableAddons field.
 func (r *queryResolver) GetAvailableAddons(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.AddonList, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, _ := ctx.Value(models.ProviderCtxKey).(models.GenericPersisterGetter)
 	if filter != nil {
 		return r.getAvailableAddons(ctx, provider, filter)
 	}
@@ -37,7 +37,7 @@ func (r *queryResolver) GetAvailableAddons(ctx context.Context, filter *model.Se
 
 // GetControlPlanes is the resolver for the getControlPlanes field.
 func (r *queryResolver) GetControlPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.ControlPlane, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, _ := ctx.Value(models.ProviderCtxKey).(models.GenericPersisterGetter)
 	if filter != nil {
 		return r.getControlPlanes(ctx, provider, filter)
 	}
@@ -47,7 +47,7 @@ func (r *queryResolver) GetControlPlanes(ctx context.Context, filter *model.Serv
 
 // GetDataPlanes is the resolver for the getDataPlanes field.
 func (r *queryResolver) GetDataPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	provider, _ := ctx.Value(models.ProviderCtxKey).(models.GenericPersisterGetter)
 	if filter != nil {
 		return r.getDataPlanes(ctx, provider, filter)
 	}

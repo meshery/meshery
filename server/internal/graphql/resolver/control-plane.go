@@ -9,7 +9,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 )
 
-func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.ControlPlane, error) {
+func (r *Resolver) getControlPlanes(ctx context.Context, provider models.GenericPersisterGetter, filter *model.ServiceMeshFilter) ([]*model.ControlPlane, error) {
 	selectors := make([]model.MeshType, 0)
 	if filter.Type == nil {
 		selectors = append(selectors, model.AllMeshType...)
@@ -68,7 +68,7 @@ func (r *Resolver) getControlPlanes(ctx context.Context, provider models.Provide
 }
 
 //nolint:unused // used by schema.resolvers.go
-func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) (<-chan []*model.ControlPlane, error) {
+func (r *Resolver) listenToControlPlaneState(ctx context.Context, provider models.GenericPersisterGetter, filter *model.ServiceMeshFilter) (<-chan []*model.ControlPlane, error) {
 	if r.controlPlaneChannel == nil {
 		r.controlPlaneChannel = make(chan []*model.ControlPlane)
 	}

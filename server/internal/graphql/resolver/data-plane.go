@@ -7,7 +7,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 )
 
-func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error) {
+func (r *Resolver) getDataPlanes(ctx context.Context, provider models.GenericPersisterGetter, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error) {
 	selectors := make([]model.MeshType, 0)
 	if filter.Type == nil {
 		selectors = append(selectors, model.AllMeshType...)
@@ -28,7 +28,7 @@ func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, 
 }
 
 //nolint:unused // used by schema.resolvers.go
-func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) (<-chan []*model.DataPlane, error) {
+func (r *Resolver) listenToDataPlaneState(ctx context.Context, provider models.GenericPersisterGetter, filter *model.ServiceMeshFilter) (<-chan []*model.DataPlane, error) {
 	if r.dataPlaneChannel == nil {
 		r.dataPlaneChannel = make(chan []*model.DataPlane)
 	}

@@ -573,10 +573,27 @@ type SystemEventPersister interface {
 	PersistSystemEvent(event events.Event) error
 }
 
+// GenericPersisterGetter allows consumers to access only database persistence
+// without coupling to the entire Provider lifecycle or methods.
+type GenericPersisterGetter interface {
+	GetGenericPersister() *database.Handler
+}
+
+// K8sContextGetter allows consumers to access Kubernetes contexts
+// without coupling to the entire Provider lifecycle or methods.
+type K8sContextGetter interface {
+	SaveK8sContext(token string, k8sContext K8sContext, metadata map[string]any) (connections.Connection, error)
+	GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error)
+	GetK8sContext(token, connectionID string) (K8sContext, error)
+	LoadAllK8sContext(token string) ([]*K8sContext, error)
+}
+
 // Provider - interface for providers
 type Provider interface {
 	PreferencePersister
 	CapabilitiesPersister
+	GenericPersisterGetter
+	K8sContextGetter
 	// MesheryEvents
 
 	// Initialize will initialize a provider instance
@@ -628,17 +645,10 @@ type Provider interface {
 	// These events are persisted to the local database.
 	PersistSystemEvent(event events.Event) error
 
-	SaveK8sContext(token string, k8sContext K8sContext, metadata map[string]any) (connections.Connection, error)
-	GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error)
-	GetK8sContext(token, connectionID string) (K8sContext, error)
-	LoadAllK8sContext(token string) ([]*K8sContext, error)
-
 	SMPTestConfigStore(req *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error)
 	SMPTestConfigGet(req *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error)
 	SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	SMPTestConfigDelete(req *http.Request, testUUID string) error
-
-	GetGenericPersister() *database.Handler
 
 	SetKubeClient(client *mesherykube.Client)
 	GetKubeClient() *mesherykube.Client
