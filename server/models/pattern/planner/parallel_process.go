@@ -165,13 +165,6 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 	sendSignals(ok)
 }
 
-// sendSignalToDeps sends signal on the channel
-func sendSignalToDeps(deps []*ParallelProcessGraphNode, ok bool, from string, log logger.Handler) {
-	for _, dep := range deps {
-		sendSignalToDep(dep, ok, from, log)
-	}
-}
-
 // sendSignalToDep sends signal either on the DepUpdateChannel or DepCancelChannel
 // depending upon the "ok" parameter. "from" names the node the signal is sent on
 // behalf of.

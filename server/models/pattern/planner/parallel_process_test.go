@@ -326,10 +326,10 @@ func TestParallelProcess_PanicInPrerequisiteDoesNotDeadlockDependents(t *testing
 	}
 
 	var (
-		mu              sync.Mutex
-		dependentVisited bool
+		mu                sync.Mutex
+		dependentVisited  bool
 		dependentWithheld bool
-		reportedDep     string
+		reportedDep       string
 	)
 
 	done := make(chan struct{})
@@ -492,9 +492,9 @@ func TestParallelProcess_DiamondTopologyPanicOneBranchWithholdsSink(t *testing.T
 	}
 
 	var (
-		mu           sync.Mutex
-		sinkVisited  bool
-		sinkWithheld bool
+		mu            sync.Mutex
+		sinkVisited   bool
+		sinkWithheld  bool
 		sinkFailedDep string
 	)
 
@@ -758,5 +758,3 @@ func TestParallelProcess_PartialDispatchPanicSignalsRemainingDependentsExactlyOn
 	default:
 	}
 }
-
-
