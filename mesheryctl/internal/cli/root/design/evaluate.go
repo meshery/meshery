@@ -431,14 +431,14 @@ func extractRelationshipInfo(item interface{}) (kind, subType, from, to string) 
 
 	if fromArr, ok := allow["from"].([]interface{}); ok && len(fromArr) > 0 {
 		if fromItem, ok := fromArr[0].(map[string]interface{}); ok {
-			if k, ok := fromItem["kind"].(string); ok {
+			if k, ok := fromItem["kind"].(string); ok && k != "" {
 				from = k
 			}
 		}
 	}
 	if toArr, ok := allow["to"].([]interface{}); ok && len(toArr) > 0 {
 		if toItem, ok := toArr[0].(map[string]interface{}); ok {
-			if k, ok := toItem["kind"].(string); ok {
+			if k, ok := toItem["kind"].(string); ok && k != "" {
 				to = k
 			}
 		}

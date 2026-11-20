@@ -102,6 +102,26 @@ func TestPrintDeleteActionsShowRemovedNames(t *testing.T) {
 			want: "  - edge (id: r1)\n",
 		},
 		{
+			name:  "relationship definition with an empty endpoint kind",
+			print: printDeleteRelationshipAction,
+			action: pattern.Action{Op: "delete_relationship", Value: map[string]interface{}{
+				"id": "r1",
+				"relationship": map[string]interface{}{
+					"kind":    "edge",
+					"subType": "network",
+					"selectors": []interface{}{
+						map[string]interface{}{
+							"allow": map[string]interface{}{
+								"from": []interface{}{map[string]interface{}{"kind": ""}},
+								"to":   []interface{}{map[string]interface{}{"kind": "Deployment"}},
+							},
+						},
+					},
+				},
+			}},
+			want: "  - edge (id: r1)\n",
+		},
+		{
 			name:  "relationship definition without selectors",
 			print: printDeleteRelationshipAction,
 			action: pattern.Action{Op: "delete_relationship", Value: map[string]interface{}{
