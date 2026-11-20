@@ -74,7 +74,6 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 					panicErr := ErrProvisionPanic(component.DisplayName, r)
 					data.Lock.Lock()
 					data.Other[fmt.Sprintf("%s%s", name, ProvisionSuffixKey)] = dispatchFailureMessage(component, panicErr, data.Pattern.Name, prov.IsDelete())
-					errs = append(errs, panicErr)
 					data.Lock.Unlock()
 					ok = false
 				}

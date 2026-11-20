@@ -309,11 +309,64 @@ func TestProvisionHandlesPanicInActProvision(t *testing.T) {
 	act := newStubActionProvider(t)
 	act.panics = map[string]bool{"a": true}
 
-	reported := runProvision(t, act,
-		newDesignComponent("a"),
-		newDesignComponent("b", "a"),
-		newDesignComponent("c"),
-	)
+	compA := newDesignComponent("a")
+	compB := newDesignComponent("b", "a")
+	compC := newDesignComponent("c")
+	components := []*component.ComponentDefinition{compA, compB, compC}
+
+	design := pattern.PatternFile{
+		ID:         uuid.Must(uuid.NewV4()),
+		Name:       "provision-test",
+		Version:    "1.0.0",
+		Components: components,
+	}
+
+	names := map[string]string{}
+	mapping := map[core.Uuid]component.ComponentDefinition{}
+	for _, comp := range components {
+		names[comp.ID.String()] = comp.DisplayName
+		mapping[comp.ID] = *comp
+	}
+
+	data := &Data{
+		Pattern:                       &design,
+		Other:                         map[string]interface{}{},
+		DeclartionToDefinitionMapping: mapping,
+	}
+
+	var nextErr error
+	nextCalled := false
+	next := func(d *Data, err error) {
+		nextCalled = true
+		nextErr = err
+	}
+
+	testLog, err := logger.New("provision-test", logger.Options{})
+	if err != nil {
+		t.Fatalf("failed to build a logger: %v", err)
+	}
+
+	Provision(&stubInfoProvider{}, act, testLog)(data, nil, next)
+
+	if !nextCalled {
+		t.Fatal("next was not called")
+	}
+
+	if nextErr != nil {
+		t.Errorf("next called with error %v, want nil so deployment summary is preserved in HTTP response", nextErr)
+	}
+
+	reported := map[string][]patterns.DeploymentMessagePerContext{}
+	data.Lock.Lock()
+	for key, value := range data.Other {
+		id := key[:len(key)-len(ProvisionSuffixKey)]
+		msgs, ok := value.([]patterns.DeploymentMessagePerContext)
+		if !ok {
+			t.Fatalf("data.Other[%q] holds %T, want []patterns.DeploymentMessagePerContext", key, value)
+		}
+		reported[names[id]] = msgs
+	}
+	data.Lock.Unlock()
 
 	order := act.order()
 

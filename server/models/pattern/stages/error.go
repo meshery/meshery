@@ -19,7 +19,7 @@ func ErrProvisionPanic(component string, r interface{}) error {
 	return errors.New(
 		ErrProvisionPanicCode,
 		errors.Alert,
-		[]string{fmt.Sprintf("Component %q panicked during provisioning", component)},
+		[]string{"Component panicked during provisioning"},
 		[]string{fmt.Sprintf("A panic occurred while provisioning component %q: %v", component, r)},
 		[]string{"Runtime fault occurred in component visitor execution"},
 		[]string{"Inspect component configuration and provider logs for runtime failures"},

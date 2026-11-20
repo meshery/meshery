@@ -631,4 +631,58 @@ func TestParallelProcess_FanInHalfPanickingPrereqsDoesNotDeadlock(t *testing.T) 
 	}
 }
 
+// TestParallelProcess_ExactSingleSignalPerDependent verifies that when a node
+// panics or completes, each dependent in deps receives exactly one signal
+// without duplicate transmissions or starvation.
+func TestParallelProcess_ExactSingleSignalPerDependent(t *testing.T) {
+	const numDeps = 5
+	deps := make([]*ParallelProcessGraphNode, numDeps)
+	for i := 0; i < numDeps; i++ {
+		deps[i] = &ParallelProcessGraphNode{
+			Name:        fmt.Sprintf("dep-%d", i),
+			DepCount:    1,
+			DepUpdateCh: make(chan struct{}, 1),
+			DepCancleCh: make(chan string, 1),
+		}
+	}
+
+	node := &ParallelProcessGraphNode{
+		Name:     "source",
+		Data:     &Node{Data: component.ComponentDefinition{}},
+		DepCount: 0,
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	// Panicking node
+	node.Process(deps, &wg, func(name string, comp component.ComponentDefinition) bool {
+		panic("deliberate source panic")
+	}, nil, testLogger(t))
+
+	wg.Wait()
+
+	// Verify each dependent received exactly one abort signal
+	for i, dep := range deps {
+		select {
+		case from := <-dep.DepCancleCh:
+			if from != "source" {
+				t.Errorf("dep-%d received cancel from %q, want 'source'", i, from)
+			}
+		default:
+			t.Errorf("dep-%d received no cancel signal", i)
+		}
+
+		// Ensure no extra/duplicate signals are present
+		select {
+		case extra := <-dep.DepCancleCh:
+			t.Errorf("dep-%d received unexpected duplicate cancel from %q", i, extra)
+		case <-dep.DepUpdateCh:
+			t.Errorf("dep-%d received unexpected update signal", i)
+		default:
+			// Buffer is empty as expected
+		}
+	}
+}
+
 
