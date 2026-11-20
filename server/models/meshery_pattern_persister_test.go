@@ -489,3 +489,45 @@ func TestGetMesheryPattern_MissingDesignReturnsResultNotFound(t *testing.T) {
 		})
 	}
 }
+
+// Deleting a design ID that matches no row must report not found, as
+// DeleteMesheryFilter does, instead of succeeding. The handler maps
+// ErrResultNotFoundCode to 404.
+func TestDeleteMesheryPattern_UnknownIDIsNotFound(t *testing.T) {
+	db, p := newPatternPersisterTestDB(t)
+	_, _ = seedImportedPattern(t, db)
+
+	unknown := uuid.Must(uuid.NewV4())
+	_, err := p.DeleteMesheryPattern(unknown)
+	if err == nil {
+		t.Fatalf("DeleteMesheryPattern(%s) on an unknown design returned no error; want not found", unknown)
+	}
+	if code := mkerrors.GetCode(err); code != ErrResultNotFoundCode {
+		t.Fatalf("DeleteMesheryPattern(%s) error code = %q, want %q", unknown, code, ErrResultNotFoundCode)
+	}
+	if got := countPatterns(t, db); got != 1 {
+		t.Fatalf("stored designs = %d, want 1", got)
+	}
+}
+
+// The delete response is what the handler reads the design name from for the
+// "Pattern <name> deleted." event, so it must describe the deleted design.
+func TestDeleteMesheryPattern_ResponseDescribesDeletedDesign(t *testing.T) {
+	db, p := newPatternPersisterTestDB(t)
+	id, seed := seedImportedPattern(t, db)
+
+	resp, err := p.DeleteMesheryPattern(id)
+	if err != nil {
+		t.Fatalf("DeleteMesheryPattern: %v", err)
+	}
+	var got MesheryPattern
+	if err := json.Unmarshal(resp, &got); err != nil {
+		t.Fatalf("unmarshal delete response: %v", err)
+	}
+	if got.Name != seed.Name {
+		t.Fatalf("delete response name = %q, want %q", got.Name, seed.Name)
+	}
+	if n := countPatterns(t, db); n != 0 {
+		t.Fatalf("stored designs after delete = %d, want 0", n)
+	}
+}
