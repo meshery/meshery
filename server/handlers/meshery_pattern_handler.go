@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -1700,6 +1701,11 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 	}
 }
 
+// maxPatternDeletePayloadSize limits the maximum allowed request body size (4 MB)
+// for multi-pattern deletion requests, preventing unbounded memory allocation and denial-of-service
+// vulnerabilities via oversized payloads.
+const maxPatternDeletePayloadSize = 4 << 20 // 4MB
+
 func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -1707,36 +1713,104 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
 	if provider == nil {
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(ErrNilProvider())
 		}
 		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
 		return
 	}
 
-	body, err := io.ReadAll(r.Body)
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	body, err := io.ReadAll(http.MaxBytesReader(rw, r.Body, maxPatternDeletePayloadSize))
 	if err != nil {
-		h.log.Error(models.ErrDataRead(err, "Request Body"))
-	}
-	var patterns models.MesheryPatternDeleteRequestBody
-	err = json.Unmarshal([]byte(body), &patterns)
-	if err != nil {
-		h.log.Error(models.ErrMarshal(err, "pattern"))
+		var maxBytesErr *http.MaxBytesError
+		if stderrors.As(err, &maxBytesErr) {
+			if h != nil && h.log != nil {
+				h.log.Error(ErrRequestBody(err))
+			}
+			writeMeshkitError(rw, ErrRequestBody(err), http.StatusRequestEntityTooLarge)
+			return
+		}
+		if h != nil && h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
 	}
 
-	h.log.Debug("patterns to be deleted: ", patterns)
+	body = bytes.Trim(body, " \t\r\n")
+	if len(body) == 0 || bytes.Equal(body, []byte("null")) {
+		err := fmt.Errorf("pattern delete request body is empty or null")
+		if h != nil && h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
+	var patterns models.MesheryPatternDeleteRequestBody
+	err = json.Unmarshal(body, &patterns)
+	if err != nil {
+		if h != nil && h.log != nil {
+			h.log.Error(ErrDecoding(err, "pattern delete request"))
+		}
+		writeMeshkitError(rw, ErrDecoding(err, "pattern delete request"), http.StatusBadRequest)
+		return
+	}
+
+	if len(patterns.Patterns) == 0 {
+		err := fmt.Errorf("patterns list cannot be empty")
+		if h != nil && h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
+	seen := make(map[uuid.UUID]struct{}, len(patterns.Patterns))
+	deduped := patterns.Patterns[:0]
+	for _, p := range patterns.Patterns {
+		parsedUUID, err := uuid.FromString(p.ID)
+		if err != nil || parsedUUID == uuid.Nil {
+			invalidErr := models.ErrInvalidUUID(fmt.Errorf("invalid pattern ID in batch delete: %.36s", p.ID))
+			if h != nil && h.log != nil {
+				h.log.Error(invalidErr)
+			}
+			writeMeshkitError(rw, invalidErr, http.StatusBadRequest)
+			return
+		}
+		if _, exists := seen[parsedUUID]; !exists {
+			seen[parsedUUID] = struct{}{}
+			deduped = append(deduped, p)
+		}
+	}
+	patterns.Patterns = deduped
+
+	if h != nil && h.log != nil {
+		h.log.Debug("patterns to be deleted: ", patterns)
+	}
 
 	resp, err := provider.DeleteMesheryPatterns(r, patterns)
-
 	if err != nil {
-		h.log.Error(ErrDeletePattern(err))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrDeletePattern(err))
+		}
 		writeMeshkitError(rw, ErrDeletePattern(err), http.StatusInternalServerError)
 		return
 	}
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
-		h.log.Error(err)
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
