@@ -103,6 +103,25 @@ fail before the fix and pass after it.
 Everything below - preconditions, intent, the validate-and-decide loop - applies
 the same way once the work is committed on a feature branch.
 
+## Exemptions: documentation, website, and CI-only changes
+
+Some changes never need a pipeline run. Before starting a run, check the
+changed paths (for a pull request, `gh api repos/<owner>/<repo>/pulls/<n>/files`;
+locally, `git diff --name-only <base>...<head>`). The change is exempt when
+**every** changed path is one of:
+
+- Documentation and the docs website (`docs.meshery.io`): `docs/**`
+- Docs website hostname: root `CNAME`
+- CI: `.github/workflows/**`
+
+A rename counts both the old path and the new path, so moving a code file
+into `docs/` still requires a run. Any path outside this list means the
+change is not exempt and the pipeline applies.
+
+When the change is exempt, do not start a run: the
+`PR must be raised via no-mistakes` gate passes without an attestation, so
+there is nothing for the pipeline to validate. Say so and stop.
+
 ## Before you start
 
 - The work you want validated must be **committed** on a branch. The gate
