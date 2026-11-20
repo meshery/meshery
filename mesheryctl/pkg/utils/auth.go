@@ -352,8 +352,18 @@ func emptyLocalTokenObject() (map[string]string, bool) {
 }
 
 func validateTokenObject(tokenObj map[string]string) error {
-	if len(strings.TrimSpace(tokenObj[tokenName])) == 0 &&
-		!IsLocalProvider(tokenObj[providerName]) {
+	if len(strings.TrimSpace(tokenObj[tokenName])) != 0 {
+		return nil
+	}
+	if !IsLocalProvider(tokenObj[providerName]) {
+		return ErrUnauthenticated()
+	}
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return ErrUnauthenticated()
+	}
+	ctx, ok := mctlCfg.Contexts[mctlCfg.CurrentContext]
+	if !ok || !IsLocalProvider(ctx.GetProvider()) {
 		return ErrUnauthenticated()
 	}
 	return nil

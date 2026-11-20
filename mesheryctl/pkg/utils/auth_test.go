@@ -819,6 +819,11 @@ func TestAddAuthDetails_AllowsEmptyTokenForLocalProvider(t *testing.T) {
 		t.Fatalf("failed to create token file: %v", err)
 	}
 
+	viper.Reset()
+	viper.Set("current-context", "local")
+	viper.Set("contexts.local.provider", "Local")
+	t.Cleanup(viper.Reset)
+
 	req, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
 	if err != nil {
 		t.Fatalf("failed to create request: %v", err)
@@ -842,6 +847,33 @@ func TestAddAuthDetails_AllowsEmptyTokenForLocalProvider(t *testing.T) {
 	}
 	if providerCookie.Value != "Local" {
 		t.Fatalf("expected provider Local, got %q", providerCookie.Value)
+	}
+}
+
+func TestAddAuthDetailsRejectsEmptyLocalTokenForRemoteContext(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	tokenData := []byte(`{"token":"","meshery-provider":"Local"}`)
+
+	if err := os.WriteFile(tokenPath, tokenData, 0600); err != nil {
+		t.Fatalf("failed to create token file: %v", err)
+	}
+
+	viper.Reset()
+	viper.Set("current-context", "remote")
+	viper.Set("contexts.remote.provider", "Meshery")
+	t.Cleanup(viper.Reset)
+
+	req, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
+
+	err = AddAuthDetails(req, tokenPath)
+	if err == nil {
+		t.Fatal("expected unauthenticated error for empty Local token in remote context")
+	}
+	if got := errors.GetCode(err); got != ErrUnauthenticatedCode {
+		t.Fatalf("expected error code %s, got %s", ErrUnauthenticatedCode, got)
 	}
 }
 
@@ -901,6 +933,11 @@ func TestReadTokenAllowsEmptyTokenForLocalProvider(t *testing.T) {
 		t.Fatalf("failed to create token file: %v", err)
 	}
 
+	viper.Reset()
+	viper.Set("current-context", "local")
+	viper.Set("contexts.local.provider", "Local")
+	t.Cleanup(viper.Reset)
+
 	tokenObj, err := ReadToken(tokenPath)
 	if err != nil {
 		t.Fatalf("expected Local provider with empty token to be allowed, got: %v", err)
@@ -910,6 +947,26 @@ func TestReadTokenAllowsEmptyTokenForLocalProvider(t *testing.T) {
 	}
 	if tokenObj[providerName] != "Local" {
 		t.Fatalf("expected provider Local, got %q", tokenObj[providerName])
+	}
+}
+
+func TestReadTokenRejectsEmptyLocalTokenForRemoteContext(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tokenPath, []byte(`{"token":"","meshery-provider":"Local"}`), 0600); err != nil {
+		t.Fatalf("failed to create token file: %v", err)
+	}
+
+	viper.Reset()
+	viper.Set("current-context", "remote")
+	viper.Set("contexts.remote.provider", "Meshery")
+	t.Cleanup(viper.Reset)
+
+	_, err := ReadToken(tokenPath)
+	if err == nil {
+		t.Fatal("expected unauthenticated error for empty Local token in remote context")
+	}
+	if got := errors.GetCode(err); got != ErrUnauthenticatedCode {
+		t.Fatalf("expected error code %s, got %s", ErrUnauthenticatedCode, got)
 	}
 }
 
