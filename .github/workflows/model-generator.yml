@@ -212,7 +212,7 @@ jobs:
 
           if ! mkdir -p "$LOG_DIR"; then
             echo "Could not create the temporary log directory: $LOG_DIR" >> "$EMAIL_FILE"
-          elif ! JOBS_JSON="$(curl --fail --silent --show-error \
+          elif ! JOBS_JSON="$(curl --fail --silent --show-error --connect-timeout 10 --max-time 120 \
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/attempts/$GITHUB_RUN_ATTEMPT/jobs?per_page=100")"; then
@@ -266,7 +266,7 @@ jobs:
                   fi
                 } >> "$EMAIL_FILE"
 
-                if curl --fail --location --silent --show-error \
+                if curl --fail --location --silent --show-error --connect-timeout 10 --max-time 120 \
                   -H "Authorization: Bearer $GH_TOKEN" \
                   -H "Accept: application/vnd.github+json" \
                   "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/jobs/$JOB_ID/steps/$STEP_NUMBER/logs" \
@@ -286,7 +286,7 @@ jobs:
             if [ "$FAILED_STEP_COUNT" -eq 0 ] || [ "$LOG_DOWNLOAD_FAILED" = true ]; then
               JOB_LOG="$LOG_DIR/job-${JOB_ID}.log"
               JOB_LOG_TEMP="${JOB_LOG}.download"
-              if curl --fail --location --silent --show-error \
+              if curl --fail --location --silent --show-error --connect-timeout 10 --max-time 120 \
                 -H "Authorization: Bearer $GH_TOKEN" \
                 -H "Accept: application/vnd.github+json" \
                 "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/jobs/$JOB_ID/logs" \
