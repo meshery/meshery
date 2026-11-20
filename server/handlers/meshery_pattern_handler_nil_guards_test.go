@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -484,3 +485,32 @@ func TestGetMesheryPatternSourceHandler_NilProvider_ReturnsInternalServerError(t
 	}
 }
 
+func TestPublishCatalogPatternHandler_NullBody_ReturnsBadRequest(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	ctx := context.WithValue(context.Background(), models.TokenCtxKey, "fake-token")
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/catalog/publish", strings.NewReader("null")).WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	h.PublishCatalogPatternHandler(rec, req, nil, authUser, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 Bad Request, got %d", rec.Code)
+	}
+}
+
+func TestUnPublishCatalogPatternHandler_NullBody_ReturnsBadRequest(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	ctx := context.WithValue(context.Background(), models.TokenCtxKey, "fake-token")
+	req := httptest.NewRequest(http.MethodDelete, "/api/pattern/catalog/unpublish", strings.NewReader("null")).WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	h.UnPublishCatalogPatternHandler(rec, req, nil, authUser, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 Bad Request, got %d", rec.Code)
+	}
+}
