@@ -90,7 +90,10 @@ export class ProviderUiAccessControl {
       return false;
     }
 
-    if (!Array.isArray(this.providerPayload?.extensions?.navigator) || this.providerPayload.extensions.navigator.length === 0) {
+    if (
+      !Array.isArray(this.providerPayload?.extensions?.navigator) ||
+      this.providerPayload.extensions.navigator.length === 0
+    ) {
       return false;
     }
 
