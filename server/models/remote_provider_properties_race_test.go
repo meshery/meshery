@@ -201,3 +201,18 @@ func TestCloneProviderPropertiesPreservesNilAndEmptySlices(t *testing.T) {
 		t.Fatal("clone changed a nil slice to non-nil")
 	}
 }
+
+func TestRemoteProviderDescriptionPreservesNilAndEmptySlices(t *testing.T) {
+	provider := newTestRemoteProvider(t, "https://remote.example.com")
+
+	provider.SetProviderProperties(ProviderProperties{ProviderDescription: []string{}})
+	description := provider.Description()
+	if description == nil {
+		t.Fatal("Description changed a non-nil empty slice to nil")
+	}
+
+	provider.SetProviderProperties(ProviderProperties{})
+	if description = provider.Description(); description != nil {
+		t.Fatal("Description changed a nil slice to non-nil")
+	}
+}
