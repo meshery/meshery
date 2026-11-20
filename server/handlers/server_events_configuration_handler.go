@@ -19,15 +19,19 @@ type LogLevelResponse struct {
 	// required: true
 	LogLevel string `json:"eventLogLevel"`
 
-	// List of available logging levels
-	// example: ["panic","fatal","error","warn","info","debug","trace"]
+	// List of available logging levels. These are logrus level names as logrus
+	// serializes them, so the warning level appears as `warning`, never `warn`.
+	// example: ["panic","fatal","error","warning","info","debug","trace"]
 	Available []string `json:"availableLevels,omitempty"`
 }
 
 type LogLevelRequest struct {
-	// Desired log level to set
+	// Desired log level to set. These are the canonical logrus level names, the
+	// same values availableLevels reports. `warn` is also accepted as a legacy
+	// alias of `warning`, because logrus.ParseLevel resolves both, but new
+	// clients should send `warning`.
 	// required: true
-	// enum: panic,fatal,error,warn,info,debug,trace
+	// enum: panic,fatal,error,warning,info,debug,trace
 	// example: debug
 	LogLevel string `json:"eventLogLevel"`
 }
