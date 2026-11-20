@@ -583,6 +583,7 @@ Bookinfo The sample BookInfo …
 - [Ensuring Extension Compatibility](/reference/extensibility/verify-compatibility/index.md): A guide for Meshery extension developers on maintaining compatibility with the Meshery platform, covering shared frameworks, dependencies, and build tooling.
 - [ErrAbsentFilterCode-11238](/reference/error-codes/library-meshkit/errabsentfiltercode-11238/index.md)
 - [ErrAccessDatabaseTablesCode-1402](/reference/error-codes/component-meshery-server/erraccessdatabasetablescode-1402/index.md)
+- [ErrAcquireTokenFileLockCode-1266](/reference/error-codes/client-mesheryctl/erracquiretokenfilelockcode-1266/index.md)
 - [ErrAdapterInsufficientInformationCode-1162](/reference/error-codes/component-meshery-server/erradapterinsufficientinformationcode-1162/index.md)
 - [ErrAdapterInsufficientInformationCode-1210](/reference/error-codes/component-meshery-server/erradapterinsufficientinformationcode-1210/index.md)
 - [ErrAdapterNotReachableCode-1213](/reference/error-codes/client-mesheryctl/erradapternotreachablecode-1213/index.md)
@@ -1460,6 +1461,7 @@ Bookinfo The sample BookInfo …
 - [ErrRemoteFileNotFoundCode-11168](/reference/error-codes/library-meshkit/errremotefilenotfoundcode-11168/index.md)
 - [ErrRemoteProviderAuthExhaustedCode-1421](/reference/error-codes/component-meshery-server/errremoteproviderauthexhaustedcode-1421/index.md)
 - [ErrRemoteProviderCapabilitiesCode-1420](/reference/error-codes/component-meshery-server/errremoteprovidercapabilitiescode-1420/index.md)
+- [ErrReplaceTokenFileCode-1267](/reference/error-codes/client-mesheryctl/errreplacetokenfilecode-1267/index.md)
 - [ErrRequestBodyCode-1023](/reference/error-codes/component-meshery-server/errrequestbodycode-1023/index.md)
 - [ErrRequestMeshsyncStoreCode-1294](/reference/error-codes/component-meshery-server/errrequestmeshsyncstorecode-1294/index.md)
 - [ErrRequestResponseCode-1114](/reference/error-codes/client-mesheryctl/errrequestresponsecode-1114/index.md)

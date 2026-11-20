@@ -57,6 +57,7 @@ Section pages:
 - [Command Line Reference](/reference/mesheryctl/): A guide to Meshery's CLI: mesheryctl
 - [ErrAbsentFilterCode-11238](/reference/error-codes/library-meshkit/errabsentfiltercode-11238/)
 - [ErrAccessDatabaseTablesCode-1402](/reference/error-codes/component-meshery-server/erraccessdatabasetablescode-1402/)
+- [ErrAcquireTokenFileLockCode-1266](/reference/error-codes/client-mesheryctl/erracquiretokenfilelockcode-1266/)
 - [ErrAdapterInsufficientInformationCode-1162](/reference/error-codes/component-meshery-server/erradapterinsufficientinformationcode-1162/)
 - [ErrAdapterInsufficientInformationCode-1210](/reference/error-codes/component-meshery-server/erradapterinsufficientinformationcode-1210/)
 - [ErrAdapterNotReachableCode-1213](/reference/error-codes/client-mesheryctl/erradapternotreachablecode-1213/)
@@ -934,6 +935,7 @@ Section pages:
 - [ErrRemoteFileNotFoundCode-11168](/reference/error-codes/library-meshkit/errremotefilenotfoundcode-11168/)
 - [ErrRemoteProviderAuthExhaustedCode-1421](/reference/error-codes/component-meshery-server/errremoteproviderauthexhaustedcode-1421/)
 - [ErrRemoteProviderCapabilitiesCode-1420](/reference/error-codes/component-meshery-server/errremoteprovidercapabilitiescode-1420/)
+- [ErrReplaceTokenFileCode-1267](/reference/error-codes/client-mesheryctl/errreplacetokenfilecode-1267/)
 - [ErrRequestBodyCode-1023](/reference/error-codes/component-meshery-server/errrequestbodycode-1023/)
 - [ErrRequestMeshsyncStoreCode-1294](/reference/error-codes/component-meshery-server/errrequestmeshsyncstorecode-1294/)
 - [ErrRequestResponseCode-1114](/reference/error-codes/client-mesheryctl/errrequestresponsecode-1114/)

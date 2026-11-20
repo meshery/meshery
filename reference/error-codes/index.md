@@ -22421,6 +22421,60 @@ Pass a registration key to --provider instead of the display name</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrAcquireTokenFileLockCode-1266" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrAcquireTokenFileLockCode-more-info" onclick="toggle_visibility('mesheryctl-ErrAcquireTokenFileLockCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1266" class="error-name-code">
+              <a href="/reference/error-codes/client-mesheryctl/erracquiretokenfilelockcode-1266/"><code>ErrAcquireTokenFileLockCode-1266</code></a>
+            </td>
+            <td>Failed to acquire token file lock</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrAcquireTokenFileLockCode-1266" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="mesheryctl-ErrAcquireTokenFileLockCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Another process may be holding the token file lock longer than expected
+The named mutex may be inaccessible</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Retry the operation
+Run `mesheryctl system login` to re-authenticate</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrReplaceTokenFileCode-1267" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrReplaceTokenFileCode-more-info" onclick="toggle_visibility('mesheryctl-ErrReplaceTokenFileCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1267" class="error-name-code">
+              <a href="/reference/error-codes/client-mesheryctl/errreplacetokenfilecode-1267/"><code>ErrReplaceTokenFileCode-1267</code></a>
+            </td>
+            <td>Failed to replace token file</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrReplaceTokenFileCode-1267" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="mesheryctl-ErrReplaceTokenFileCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The destination path may be locked by another process
+The filesystem may not support atomic rename</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Retry the operation
+Run `mesheryctl system login` to re-authenticate</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>
