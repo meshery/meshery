@@ -20,12 +20,14 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	encoding "github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -68,6 +70,9 @@ mesheryctl design delete [file | URL]
 // delete a design by ID
 mesheryctl design delete [ID]
 
+// delete a design by name
+mesheryctl design delete [design-name]
+
 // delete a design using --file
 mesheryctl design delete -f [file | URL]
 	`,
@@ -101,7 +106,16 @@ mesheryctl design delete -f [file | URL]
 					// file-read error is surfaced instead of an obscure ID error.
 					targetFile = target
 				} else if !isID {
-					targetFile = target
+					// Not a file, URL or ID: look the target up as a design name.
+					pattern, err = findDesignIDByExactName(mctlCfg.GetBaseMesheryURL(), target)
+					if err != nil {
+						// Log the full error first: cobra prints only the short
+						// description, and the ambiguity error lists the
+						// matching design IDs in its details.
+						utils.Log.Error(err)
+						return err
+					}
+					isID = true
 				}
 			}
 		}
@@ -167,6 +181,121 @@ mesheryctl design delete -f [file | URL]
 
 		return nil
 	},
+}
+
+// findDesignIDByExactName returns the ID of the one design named exactly name.
+// The server's search is a case-insensitive substring match, so results are
+// filtered down to whole-name matches before anything is deleted: an exact
+// match wins, and only without one does a match that differs in case count.
+// Two designs that match equally well are reported as ambiguous instead of
+// picking one.
+// designSearchPageSize is the page size of the name lookup; tests lower it to
+// exercise pagination.
+var designSearchPageSize = 10000
+
+func findDesignIDByExactName(baseURL, name string) (string, error) {
+	const maxPages = 50
+	pageSize := designSearchPageSize
+
+	// Collect every page of search results before deciding, so a duplicate
+	// name further down the list still counts as ambiguous.
+	var patterns []models.MesheryPattern
+	var total uint
+	completed := false
+	for page := 0; page < maxPages; page++ {
+		searchURL := fmt.Sprintf("%s/api/pattern?search=%s&pagesize=%d", baseURL, url.QueryEscape(name), pageSize)
+		if page > 0 {
+			searchURL += fmt.Sprintf("&page=%d", page)
+		}
+		pagePatterns, pageTotal, err := fetchDesignSearchPage(searchURL, name)
+		if err != nil {
+			return "", err
+		}
+		patterns = append(patterns, pagePatterns...)
+		// Keep the total from the first page. If a later page reports a
+		// different one, designs were added or deleted between requests and
+		// the pages may have shifted past a duplicate, so stop instead of
+		// trusting the collected results.
+		if page == 0 {
+			total = pageTotal
+		} else if pageTotal != total {
+			break
+		}
+		// Stop on the total count rather than on a short page: a server that
+		// caps the page size below what was asked for returns short pages
+		// while more results remain.
+		if uint(len(patterns)) >= total {
+			completed = true
+			break
+		}
+		// An empty page before the total is reached means the results could
+		// not all be read, so uniqueness cannot be confirmed.
+		if len(pagePatterns) == 0 {
+			break
+		}
+	}
+	if !completed {
+		return "", utils.ErrIDLookupIncomplete(int64(total), int64(len(patterns)))
+	}
+
+	// The server's search ignores case, so fall back to a case-insensitive
+	// match when no name matches exactly.
+	var ids, foldIDs []string
+	for _, p := range patterns {
+		switch {
+		case p.Name == name:
+			ids = append(ids, utils.FormatUUID(p.ID, ""))
+		case strings.EqualFold(p.Name, name):
+			foldIDs = append(foldIDs, utils.FormatUUID(p.ID, ""))
+		}
+	}
+	if len(ids) == 0 {
+		ids = foldIDs
+	}
+	switch len(ids) {
+	case 0:
+		return "", ErrDesignNotFound(name)
+	case 1:
+		return ids[0], nil
+	default:
+		return "", ErrAmbiguousDesignName(name, ids)
+	}
+}
+
+// fetchDesignSearchPage returns one page of design search results and the
+// total number of matches. The total is read from either totalCount or the
+// legacy total_count key, the same way GetID does.
+func fetchDesignSearchPage(searchURL, name string) ([]models.MesheryPattern, uint, error) {
+	req, err := utils.NewRequest(http.MethodGet, searchURL, nil)
+	if err != nil {
+		return nil, 0, err
+	}
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, 0, fmt.Errorf("failed to look up design %q by name: %w", name, utils.ErrResponseStatus(resp.StatusCode))
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, 0, utils.ErrReadFromBody(err)
+	}
+	var response models.PatternsAPIResponse
+	if err := encoding.Unmarshal(body, &response); err != nil {
+		return nil, 0, utils.ErrUnmarshal(err)
+	}
+	var raw map[string]interface{}
+	if err := encoding.Unmarshal(body, &raw); err != nil {
+		return nil, 0, utils.ErrUnmarshal(err)
+	}
+	total := response.TotalCount
+	if count, ok := utils.ParseTotalCount(raw); ok && count > 0 {
+		total = uint(count)
+	}
+	return response.Patterns, total, nil
 }
 
 func init() {
