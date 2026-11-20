@@ -855,7 +855,7 @@ func TestVerifyDestinationTokenFile_DetectsContentMismatch(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := verifyDestinationTokenFile(file, info, []byte("different token")); err == nil {
+	if err := verifyDestinationTokenFile(file, info, []byte("forged token")); err == nil {
 		t.Fatal("expected verification to fail on content mismatch")
 	}
 }
