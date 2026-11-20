@@ -59,6 +59,14 @@ func TestContextViewCmd(t *testing.T) {
 			Args:             []string{"context", "view", "--all"},
 			ExpectedResponse: "viewAllExpected.golden",
 		},
+		{
+			Name:             "Error for viewing context with too many arguments",
+			Args:             []string{"context", "view", "local2", "extra-arg"},
+			IsOutputGolden:   false,
+			ExpectedResponse: "",
+			ExpectError:      true,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", contextViewUsageMsg)),
+		},
 	}
 
 	mesheryctlflags.InitValidators(SystemCmd)
