@@ -1201,6 +1201,7 @@ type OperatorTracker struct {
 	mx                      sync.Mutex
 	ctxIDtoDeploymentStatus map[string]bool
 	clustersByKey           map[string]*operatorCluster
+	clusterKeyLinks         map[string]map[string]struct{}
 	DisableOperator         bool
 }
 
