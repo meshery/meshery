@@ -1,5 +1,0 @@
-data:{"event_type":2,"summary":"Error while running SMI Conformance test","details":"Get \"https://192.168.49.2:8443/api?timeout=32s\": dial tcp 192.168.49.2:8443: i/o timeout","operation_id":"95c27959-a4d7-4b35-95d2-50faa04ab641"}
-id:test2
-event:testevent2
-retry:foo
-

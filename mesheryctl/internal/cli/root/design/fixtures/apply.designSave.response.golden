@@ -1,1 +1,0 @@
-[{"application_data":{"application_file":"name: TestMyApplication # display name in Meshery UI\nservices:\n  myapp:\n    type: Application\n    namespace: test\n    settings:\n      replicas: 1\n      containers:\n        - name: meshy\n          image: utkarsh23/meshy:v5\n          ports:\n            - name: http\n              containerPort: 8080\n"},"save":true}]

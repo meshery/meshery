@@ -1,1 +1,0 @@
-"Hey everyone! I'm Aditya Kushwaha, a 2026 graduate passionate about cloud-native engineering and open-source software. I'm currently exploring Meshery to learn more about Kubernetes infrastructure and ecosystem management. Excited to connect and learn from the community.

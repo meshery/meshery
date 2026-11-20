@@ -1,7 +1,0 @@
-{
-  "path": "k8s-1-16-deployments",
-  "mode": "040000",
-  "type": "tree",
-  "sha": "de4c08cf5c0d30c38176cbe81dca8d9c56f80a72",
-  "url": "https://api.github.com/repos/meshery/meshery/git/trees/de4c08cf5c0d30c38176cbe81dca8d9c56f80a72"
-}

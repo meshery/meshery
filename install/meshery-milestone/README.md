@@ -1,1 +1,0 @@
-# Meshery Milestone Docker Image

@@ -1,7 +1,0 @@
-This is information txt
-
-The svgs are used as component svgs in Meshery and Meshery-Extensions
-
-1. The alternate version of these svgs are available in the ../img folder
-
-The svgs written here will mostly be of solid background instead of transparent

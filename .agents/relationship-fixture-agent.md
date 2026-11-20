@@ -1,1 +1,0 @@
-../.github/agents/relationship-fixture-agent.md

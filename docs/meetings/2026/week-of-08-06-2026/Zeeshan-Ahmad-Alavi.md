@@ -1,9 +1,0 @@
-- Hello, Zeeshan here, a go dev currently issue hunting
-- stack is: Go, Python, SQL
-- Area of intereest to work on: 
-  - mcp
-  - microservices
-  - bugs
-  - tests
-  - db
-  - design

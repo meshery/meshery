@@ -1,9 +1,0 @@
-- version: "latest"
-  url: ""
-# Archived snapshots for v0.9 and v0.8 are retained in source control under docs/static/
-# but are omitted from active navigation while the GitHub Pages 1GB artifact limit
-# prevents deploying them alongside production docs (see #23221 and #23925).
-# - version: "v0.9"
-#   url: "v0.9"
-# - version: "v0.8"
-#   url: "v0.8"
