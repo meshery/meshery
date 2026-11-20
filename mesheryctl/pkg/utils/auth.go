@@ -254,6 +254,9 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 		err = errors.Wrap(err, "token file invalid: ")
 		return err
 	}
+	if err := validateTokenObject(tokenObj); err != nil {
+		return err
+	}
 
 	req.AddCookie(&http.Cookie{
 		Name:     tokenName,
@@ -320,7 +323,18 @@ func ReadToken(filepath string) (map[string]string, error) {
 		err = errors.Wrap(err, "token file invalid: ")
 		return nil, ErrUnmarshal(err)
 	}
+	if err := validateTokenObject(tokenObj); err != nil {
+		return nil, err
+	}
 	return tokenObj, nil
+}
+
+func validateTokenObject(tokenObj map[string]string) error {
+	if len(strings.TrimSpace(tokenObj[tokenName])) == 0 &&
+		!IsLocalProvider(tokenObj[providerName]) {
+		return ErrUnauthenticated()
+	}
+	return nil
 }
 
 // CreateTempAuthServer creates a temporary http server
