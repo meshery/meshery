@@ -17,9 +17,12 @@ package design
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -100,7 +103,7 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 			return err
 		}
 
-		utils.Log.Infof("The design file '%s' has been imported. Design ID: %s", pattern.Name, utils.TruncateID(pattern.ID.String()))
+		utils.Log.Infof("The design file '%s' has been imported. Design ID: %s", pattern.Name, utils.TruncateID(utils.FormatUUID(pattern.ID, "N/A")))
 
 		return nil
 	},
@@ -129,11 +132,23 @@ func marshalDesignImportBody(variant func(*pattern.MesheryPatternImportRequestBo
 	return jsonValues, nil
 }
 
+// importPattern saves a design from a local file or a URL through
+// `POST /api/pattern/import`, named after the --name flag or else the file.
 func importPattern(sourceType string, file string, patternURL string) (*models.MesheryPattern, error) {
 	// If design name is not provided
 	// use file name as default
 	var patternName string
-	fileName := path.Base(file)
+	fileName := filepath.Base(file)
+	if utils.IsValidUrl(file) {
+		parsed, err := url.Parse(file)
+		if err != nil {
+			return nil, utils.ErrParsingUrl(err)
+		}
+		fileName = path.Base(parsed.Path)
+		if name == "" && (fileName == "." || fileName == "/") {
+			return nil, utils.ErrParsingUrl(fmt.Errorf("URL %q has no file name in its path; pass --name to set the design name", file))
+		}
+	}
 	if name == "" {
 		patternName = fileName
 	} else {
@@ -147,23 +162,7 @@ func importPattern(sourceType string, file string, patternURL string) (*models.M
 			return nil, utils.ErrFileRead(err)
 		}
 
-		jsonValues, err := marshalDesignImportBody(func(body *pattern.MesheryPatternImportRequestBody) error {
-			return body.FromMesheryPatternImportFilePayload(pattern.MesheryPatternImportFilePayload{
-				Name:     &patternName,
-				File:     content,
-				FileName: fileName,
-			})
-		})
-		if err != nil {
-			return nil, err
-		}
-
-		imported, err := postDesignImport(patternURL, jsonValues)
-		if err != nil {
-			return nil, err
-		}
-		utils.Log.Debug("design file saved")
-		return imported, nil
+		return importDesignFile(patternURL, patternName, fileName, content)
 	}
 
 	jsonValues, err := marshalDesignImportBody(func(body *pattern.MesheryPatternImportRequestBody) error {
@@ -181,6 +180,28 @@ func importPattern(sourceType string, file string, patternURL string) (*models.M
 		return nil, err
 	}
 	utils.Log.Debug("Fetched the design from the remote host")
+	return imported, nil
+}
+
+// importDesignFile saves a design from its file content through
+// `POST /api/pattern/import` and returns the saved design.
+func importDesignFile(patternURL, patternName, fileName string, content []byte) (*models.MesheryPattern, error) {
+	jsonValues, err := marshalDesignImportBody(func(body *pattern.MesheryPatternImportRequestBody) error {
+		return body.FromMesheryPatternImportFilePayload(pattern.MesheryPatternImportFilePayload{
+			Name:     &patternName,
+			File:     content,
+			FileName: fileName,
+		})
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	imported, err := postDesignImport(patternURL, jsonValues)
+	if err != nil {
+		return nil, err
+	}
+	utils.Log.Debug("design file saved")
 	return imported, nil
 }
 

@@ -1,0 +1,1 @@
+{"page":0,"pageSize":25,"totalCount":1,"profiles":[{"id":"a947dff3-1415-4ca6-8922-e35b3232bd78","name":"istio-test","owner":"107368cd-85cc-499f-a8bc-3a7ad1bc0f8b","loadGenerators":["fortio"],"endpoints":["https://localhost:10000"],"serviceMesh":"istio","qps":1,"duration":"30s","totalResults":1,"createdAt":"2021-08-26T20:57:31.049514Z","updatedAt":"2021-08-26T20:57:39.021917Z"}]}

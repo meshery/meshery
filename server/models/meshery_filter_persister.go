@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -10,6 +11,8 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 // MesheryFilterPersister is the persister for persisting
@@ -150,15 +153,19 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, sear
 	return marshalledResponse, nil
 }
 
-// CloneMesheryFilter clones meshery filter to private
+// CloneMesheryFilter saves a private copy of a filter under a new ID. The copy
+// keeps the source's file, resource and location, but gets its own creation
+// time and no catalog data.
 func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error) {
 	var mesheryFilter MesheryFilter
 	filterUUID, err := uuid.FromString(filterID)
 	if err != nil {
 		return nil, ErrInvalidUUID(err)
 	}
-	err = mfp.DB.First(&mesheryFilter, filterUUID).Error
-	if err != nil || *mesheryFilter.ID == uuid.Nil {
+	if err := mfp.DB.First(&mesheryFilter, filterUUID).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
 		return nil, fmt.Errorf("unable to get filter: %w", err)
 	}
 
@@ -167,26 +174,39 @@ func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string, cloneFilt
 		return nil, err
 	}
 
-	mesheryFilter.Visibility = Private
-	mesheryFilter.ID = &id
-	mesheryFilter.Name = cloneFilterRequest.Name
+	// Build the row from scratch so the source's created_at and catalog data
+	// do not carry over. Timestamps are left nil for gorm to set on insert.
+	clone := MesheryFilter{
+		ID:             &id,
+		Name:           cloneFilterRequest.Name,
+		FilterFile:     mesheryFilter.FilterFile,
+		Location:       mesheryFilter.Location,
+		Visibility:     Private,
+		FilterResource: mesheryFilter.FilterResource,
+	}
 
-	return mfp.SaveMesheryFilter(&mesheryFilter)
+	return mfp.SaveMesheryFilter(&clone)
 }
 
 // DeleteMesheryFilter takes in a profile id and delete it if it already exists
 func (mfp *MesheryFilterPersister) DeleteMesheryFilter(id core.Uuid) ([]byte, error) {
 	filter := MesheryFilter{ID: &id}
-	mfp.DB.Delete(&filter)
+	res := mfp.DB.Delete(&filter)
+	if res.Error != nil {
+		return nil, ErrDBDelete(res.Error, id.String())
+	}
+	if res.RowsAffected == 0 {
+		return nil, ErrResultNotFound(fmt.Errorf("filter %s not found", id.String()))
+	}
 
 	return marshalMesheryFilter(&filter), nil
 }
 
+// SaveMesheryFilter inserts a new filter, or updates an existing one with only
+// the fields the save carries.
 func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]byte, error) {
-	if filter.Visibility == "" {
-		filter.Visibility = Private
-	}
-	if filter.ID == nil {
+	isNew := filter.ID == nil
+	if isNew {
 		id, err := uuid.NewV4()
 		if err != nil {
 			return nil, ErrGenerateUUID(err)
@@ -200,7 +220,78 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilter(filter *MesheryFilter) ([]b
 	// shaping only - nothing extra is persisted.
 	stampLocalProviderFilterOwner(filter)
 
-	return marshalMesheryFilters([]MesheryFilter{*filter}), mfp.DB.Save(filter).Error
+	// An ID does not mean the row exists: clone and callers that choose their
+	// own ID save new rows under it.
+	exists := false
+	if !isNew {
+		var count int64
+		if err := mfp.DB.Model(&MesheryFilter{}).Where("id = ?", *filter.ID).Count(&count).Error; err != nil {
+			return nil, ErrDBRead(err)
+		}
+		exists = count > 0
+	}
+
+	var err error
+	updated := exists
+	if exists {
+		err = mfp.updateSavedColumns(filter)
+	} else {
+		suppliedVisibility := filter.Visibility
+		if filter.Visibility == "" {
+			filter.Visibility = Private
+		}
+		res := mfp.DB.Clauses(clause.OnConflict{DoNothing: true}).Create(filter)
+		if res.Error != nil {
+			return marshalMesheryFilters([]MesheryFilter{*filter}), ErrDBCreate(res.Error)
+		}
+		if res.RowsAffected == 0 {
+			// A concurrent save inserted this ID first: update it like any
+			// existing row, without the insert-only visibility default.
+			filter.Visibility = suppliedVisibility
+			updated = true
+			err = mfp.updateSavedColumns(filter)
+		}
+	}
+
+	// The saved struct holds only what the request carried; respond with the
+	// stored row so the response shows the columns the update preserved.
+	if updated && err == nil {
+		var stored MesheryFilter
+		if err = mfp.DB.First(&stored, "id = ?", *filter.ID).Error; err != nil {
+			err = ErrDBRead(err)
+		} else {
+			stampLocalProviderFilterOwner(&stored)
+			filter = &stored
+		}
+	}
+
+	return marshalMesheryFilters([]MesheryFilter{*filter}), err
+}
+
+// updateSavedColumns updates an existing filter with the columns the save
+// carries. POST /api/filter builds the record from the request, and a rename
+// from the UI carries only the ID, the name and empty catalog data, so Updates
+// skips zero-valued fields and those columns keep their stored values.
+// created_at is never written by a save, and an empty filter file or catalog
+// data is treated as not sent.
+func (mfp *MesheryFilterPersister) updateSavedColumns(filter *MesheryFilter) error {
+	omit := []string{"created_at"}
+	if len(filter.FilterFile) == 0 {
+		omit = append(omit, "filter_file")
+	}
+	if len(filter.CatalogData) == 0 {
+		omit = append(omit, "catalog_data")
+	}
+	res := mfp.DB.Model(filter).Omit(omit...).Updates(filter)
+	// updated_at always changes, so no affected row means the filter was
+	// deleted after the existence check.
+	if res.Error == nil && res.RowsAffected == 0 {
+		res.Error = fmt.Errorf("filter %s was deleted while saving", filter.ID)
+	}
+	if res.Error != nil {
+		return ErrDBPut(res.Error)
+	}
+	return nil
 }
 
 // SaveMesheryFilters batch inserts the given filters
@@ -227,19 +318,34 @@ func (mfp *MesheryFilterPersister) SaveMesheryFilters(filters []MesheryFilter) (
 	return marshalMesheryFilters(finalFilters), mfp.DB.Create(finalFilters).Error
 }
 
+// GetMesheryFilter returns the stored filter. A filter that does not exist
+// is reported as ErrResultNotFound, which carries a 404 for the handler; no
+// body is returned alongside an error.
 func (mfp *MesheryFilterPersister) GetMesheryFilter(id core.Uuid) ([]byte, error) {
 	var mesheryFilter MesheryFilter
 
-	err := mfp.DB.First(&mesheryFilter, id).Error
+	if err := mfp.DB.First(&mesheryFilter, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
+		return nil, err
+	}
 	stampLocalProviderFilterOwner(&mesheryFilter)
-	return marshalMesheryFilter(&mesheryFilter), err
+	return marshalMesheryFilter(&mesheryFilter), nil
 }
 
+// GetMesheryFilterFile returns the WASM file bytes of the stored filter. A
+// filter that does not exist is reported as ErrResultNotFound.
 func (mfp *MesheryFilterPersister) GetMesheryFilterFile(id core.Uuid) ([]byte, error) {
 	var mesheryFilter MesheryFilter
 
-	err := mfp.DB.First(&mesheryFilter, id).Error
-	return []byte(mesheryFilter.FilterFile), err
+	if err := mfp.DB.First(&mesheryFilter, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
+		return nil, err
+	}
+	return []byte(mesheryFilter.FilterFile), nil
 }
 
 func marshalMesheryFilterPage(mfp *MesheryFilterPage) []byte {

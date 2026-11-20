@@ -8,7 +8,7 @@ image: ./images/codespaces.png
 description: Build and contribute to Meshery using GitHub Codespaces
 ---
 
-Use Minikube in GitHub Codespaces to setup your development environment for Meshery.
+Use Minikube in GitHub Codespaces to set up a development environment for Meshery.
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisites</strong> </p> 
   <ol>
@@ -28,11 +28,11 @@ Use Minikube in GitHub Codespaces to setup your development environment for Mesh
 
 # In-cluster Installation
 
-Follow the steps below to install Meshery in your Minikube cluster.
+Follow these steps to install Meshery in your Minikube cluster.
 
 ## Preflight Checks
 
-Read through the following considerations prior to deploying Meshery on Minikube.
+Before you deploy Meshery on Minikube, check the following.
 
 ### Preflight: Cluster Connectivity
 
@@ -46,79 +46,70 @@ You can develop and run Meshery in GitHub Codespaces using your choice of tool:
 
 {{% alert color="dark" title="Choice of Codespaces Tool" %}}For the best experience, run Codespaces in your locally <a href='https://docs.github.com/en/codespaces/developing-in-codespaces/developing-in-a-codespace'>installed IDE</a>. Alternatively, you can <br /><a href='https://github.com/codespaces/new?hide_repo_select=true&ref=master&repo=157554479&machine=premiumLinux'><img alt='Open in GitHub Codespaces' src='https://github.com/codespaces/badge.svg' /></a>{{% /alert %}}
 
-Start Minikube, if it is not already running, using the following command:
+Start Minikube if it is not already running:
 
 {{< code code="minikube start --cpus 4 --memory 4096" >}}
 
-Please allocate CPUs based on the machine you selected in GitHub Codespaces. To check the status of your Minikube cluster:
+Set `--cpus` and `--memory` to fit the machine type you chose in GitHub Codespaces. To check the status of your Minikube cluster:
 
 {{< code code="minikube status" >}}
 
-Verify your kubeconfig's current context.
+Verify that `kubectl` can reach the cluster:
 
 {{< code code="kubectl cluster-info" >}}
 
 ## Installation: Using `mesheryctl`
 
-Use Meshery's CLI to streamline your connection to your Minikube cluster. Configure Meshery to connect to your Minikube cluster by executing:
+Start Meshery in your Minikube cluster:
 
-{{< code code="mesheryctl system config minikube" >}}
+{{< code code="mesheryctl system start -p kubernetes" >}}
 
-Once configured, execute the following command to start Meshery.
-
-{{< code code="mesheryctl system start" >}}
-
-If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}) to learn more.
+Meshery Server running in the cluster connects to it automatically. If the connection does not appear, sign in with `mesheryctl system login` and create it with `mesheryctl connection create --type minikube`, which uploads your kubeconfig to Meshery Server. (`mesheryctl system config minikube` is deprecated.) For more on signing in, see [Authenticate with Meshery via CLI]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}).
 
 ## Installation: Using Helm
 
-For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
+To install Meshery with Helm 3, see the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
 
 ## Installation: Manual Steps
 
-You may also manually generate and load the kubeconfig file for Meshery to use:
+You can also generate a self-contained kubeconfig for your Minikube cluster and upload it to Meshery yourself. Export the `minikube` context, with its certificates embedded:
 
-**The following configuration yaml will be used by Meshery. Copy and paste the following in your config file** :
+{{< code code="kubectl config view --minify --flatten --context minikube > config_minikube.yaml" >}}
+
+The file looks like this, with your own server address and certificate data:
 
 {{< code code=`apiVersion: v1
+kind: Config
 clusters:
-
 - cluster:
-  certificate-authority-data: < cert shortcutted >
-  server: https://192.168.99.100:8443
+    certificate-authority-data: <certificate data>
+    server: https://192.168.49.2:8443
   name: minikube
-  contexts:
+contexts:
 - context:
-  cluster: minikube
-  user: minikube
+    cluster: minikube
+    user: minikube
   name: minikube
-  current-context: minikube
-  kind: Config
-  preferences: {}
-  users:
+current-context: minikube
+preferences: {}
+users:
 - name: minikube
   user:
-  client-certificate-data: < cert shortcutted >
-  client-key-data: < key shortcutted >` >}}
+    client-certificate-data: <certificate data>
+    client-key-data: <key data>` >}}
 
-_Note_: Make sure _current-context_ is set to _minikube_.
+_Note_: Make sure that `current-context` is `minikube`.
 
-<br />
-**To allow Meshery to auto detect your config file, Run** :
-
-{{< code code="kubectl config view --minify --flatten > config_minikube.yaml" >}}
-
-<br />
-Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{< ref "guides/_index.md" >}}) for advanced usage tips.
+Then upload `config_minikube.yaml` in Meshery UI: go to **Lifecycle** > **Connections**, click **Create Connection**, choose **Kubernetes**, and upload the file in the **Import Kubeconfig** step. See [Registering a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}). Take a look at the [Meshery guides]({{< ref "guides/_index.md" >}}) for advanced usage tips.
 
 # Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Optionally, verify the health of your Meshery deployment with <a href='{{< ref "reference/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
-You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
+You're ready to use Meshery. Open Meshery UI in your browser.
 
 {{< installation/accessing-meshery-ui >}}
 
-For further information to access Meshery UI or port forwarding in GitHub Codespaces, read the [docs](https://docs.github.com/en/codespaces/developing-in-a-codespace/forwarding-ports-in-your-codespace?tool=vscode)
+To reach Meshery UI from your browser, forward its port from the codespace. See [Forwarding ports in your codespace](https://docs.github.com/en/codespaces/developing-in-a-codespace/forwarding-ports-in-your-codespace?tool=vscode).
 
 {{< related-discussions tag="meshery" >}}

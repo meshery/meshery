@@ -1,20 +1,20 @@
 ---
 title: Quick Start Guide
-description: Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or a Kubernetes cluster.
+description: Install mesheryctl and start Meshery on a Kubernetes cluster or a Docker host with a single command, then connect your clusters and start designing.
 weight: -10
 ---
 
 <a name="getting-started"></a>
 
-Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster.
+Meshery runs as a set of containers on either a Kubernetes cluster or a Docker host. This guide installs Meshery's command line interface, `mesheryctl`, and uses it to start Meshery Server, then walks you through signing in and connecting your clusters.
 
 {{% alert color="warning" title="Quick Start Assumptions" %}}
-This quick start guide enables you to download, install, and run Meshery in a single command. See all <a href='{{< ref "installation/_index.md" >}}'>supported platforms</a> for more specific (and less presumptuous) instructions.
+This guide downloads, installs, and runs Meshery with a single command, and assumes that your current kubeconfig context points at the cluster you want to use. For instructions specific to your environment, see all <a href='{{< ref "installation/_index.md" >}}'>supported platforms</a>.
 {{% /alert %}}
 
 ## 1. Download, install, and run Meshery
 
-If you are on a macOS or Linux system, you can download, install, and run both `mesheryctl` and Meshery Server by executing the following command.
+On macOS or Linux, run the following command to download and install `mesheryctl` and then deploy Meshery Server to the Kubernetes cluster in your current kubeconfig context.
 
 <!-- <pre class="codeblock-pre" style="padding: 0; font-size:0px;">
 <div class="codeblock" style="display: block;">
@@ -36,34 +36,39 @@ If you are on a macOS or Linux system, you can download, install, and run both `
 </pre>
 <br/>
 
-If you are on Windows, you can install `mesheryctl` using <a href="https://scoop.sh">Scoop</a> and start Meshery by executing:
+To run Meshery on your local Docker host instead, replace `PLATFORM=kubernetes` with `PLATFORM=docker`. If you omit `PLATFORM`, the script prompts you to choose a platform.
+
+On Windows, add the Meshery bucket to <a href="https://scoop.sh">Scoop</a>, install `mesheryctl`, and start Meshery:
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-  <div class="clipboardjs">scoop install mesheryctl
+  <div class="clipboardjs">scoop bucket add mesheryctl https://github.com/meshery/scoop-bucket.git
+scoop install mesheryctl
 mesheryctl system start</div>
   </div>
 </pre>
 
+`mesheryctl system start` deploys to the platform set in your current `mesheryctl` context, which defaults to `kubernetes`. Add `--platform docker` to deploy to Docker instead.
+
 {{% alert color="info" title="Meshery CLI" %}}
-Meshery's command line interface, <code>mesheryctl</code>, can be installed in <a href='{{< ref "installation/mesheryctl/_index.md" >}}'>various ways</a>. In addition to <a href='{{< ref "installation/mesheryctl/linux-mac/bash.md" >}}'>Bash</a>, you can also use <a href='{{< ref "installation/mesheryctl/linux-mac/brew.md" >}}'>Brew</a> or <a href='{{< ref "installation/mesheryctl/windows/scoop.md" >}}'>Scoop</a> to install <code>mesheryctl</code>. Alternatively, <code>mesheryctl</code> is also available via <a href='https://github.com/meshery/meshery/releases/latest'>direct download</a>.
+You can install <code>mesheryctl</code> in <a href='{{< ref "installation/mesheryctl/_index.md" >}}'>several ways</a>: with <a href='{{< ref "installation/mesheryctl/linux-mac/bash.md" >}}'>Bash</a>, <a href='{{< ref "installation/mesheryctl/linux-mac/brew.md" >}}'>Brew</a>, or <a href='{{< ref "installation/mesheryctl/windows/scoop.md" >}}'>Scoop</a>, or by <a href='https://github.com/meshery/meshery/releases/latest'>direct download</a> from the latest release.
 {{% /alert %}}
 
 ## 2. Access Meshery
 
-Your default browser will be opened and directed to Meshery's web-based user interface typically found at `http://localhost:9081`.
+When Meshery is ready, `mesheryctl` opens Meshery UI in your default browser. On Docker, Meshery UI listens at `http://localhost:9081`. On Kubernetes, `mesheryctl` opens the address of the `meshery` service in the `meshery` namespace. If your browser cannot reach that address, run `mesheryctl system dashboard --port-forward` to forward Meshery UI to `http://localhost:9081`. To skip opening the browser, pass `--skip-browser` to `mesheryctl system start`.
 
 {{% alert color="light" title="Accessing Meshery Server with Meshery UI" %}}
-Meshery's web-based user interface is embedded in Meshery Server and is available as soon as Meshery starts. The location and port that Meshery UI is exposed varies depending upon your mode of deployment. See <a href='{{< ref "installation/accessing-meshery-ui.md" >}}'>accessing Meshery UI</a> for deployment-specific details.
+Meshery Server serves Meshery UI, so the UI is available as soon as Meshery starts. The address and port depend on how you deployed Meshery. See <a href='{{< ref "installation/accessing-meshery-ui.md" >}}'>accessing Meshery UI</a> for deployment-specific details.
 {{% /alert %}}
 
 {{% alert color="light" title="Accessing Meshery Server with Meshery CLI" %}}
-Meshery's command line interface is a client of Meshery Server's REST API (just as Meshery UI is). Choose to use <code>mesheryctl</code> as an alternative client as it suits your needs.
+Like Meshery UI, <code>mesheryctl</code> is a client of Meshery Server's REST API. Use whichever client suits the task at hand.
 {{% /alert %}}
 
 ## 3. Select a Provider
 
-Select from the list of [Providers]({{< ref "reference/extensibility/providers/index.md" >}}) in order to log in to Meshery. Authenticate with your chosen Provider.
+Choose one of the listed [Providers]({{< ref "reference/extensibility/providers/index.md" >}}) and sign in with it.
 
 <a href="./images/meshery-server-page.png">
   <img class="center" style="width:min(100%,650px)" src="./images/meshery-server-page.png" />
@@ -72,10 +77,10 @@ Select from the list of [Providers]({{< ref "reference/extensibility/providers/i
 ## 4. Configure Connections to your Kubernetes Clusters
 
 **Out-of-Cluster Deployments**
-If you have deployed Meshery out-of-cluster, Meshery Server will automatically attempt to connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`) and in kubeconfigs uploaded through Meshery UI. By default, [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) runs embedded inside Meshery Server and nothing is installed into your cluster. Only when a connection uses operator mode does Meshery Server deploy [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}), MeshSync, and Broker into the `meshery` namespace. To switch a connection between the two, see [MeshSync deployment modes]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#meshsync-deployment-modes" >}}).
+If you deployed Meshery out-of-cluster, Meshery Server automatically tries to connect to the Kubernetes clusters in your kubeconfig (`$HOME/.kube/config`) and in any kubeconfig files you upload through Meshery UI. By default, [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) runs embedded inside Meshery Server and nothing is installed into your cluster. Only when a connection uses operator mode does Meshery Server deploy [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}), MeshSync, and Broker into the `meshery` namespace. To switch a connection between the two, see [MeshSync deployment modes]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#meshsync-deployment-modes" >}}).
 
 **In-Cluster Deployments**
-If you have deployed Meshery in-cluster, Meshery Server will automatically connect to the Kubernetes API Server available in the control plane.
+If you deployed Meshery in-cluster, Meshery Server automatically connects to the API server of the cluster it runs in.
 
 Visit <i class="fas fa-cog"></i> Settings:
 
@@ -83,13 +88,13 @@ Visit <i class="fas fa-cog"></i> Settings:
   <img class="center" style="width:min(100%,650px);" src="./images/meshery-settings.png" />
 </a>
 
-If your config has not been autodetected, you can manually upload your kubeconfig file (or any number of kubeconfig files). Meshery will attempt to connect to each reachable context contained in the imported kubeconfig files, using the default embedded mode unless that context's connection is set to operator mode. See [Managing Kubernetes Clusters]({{< ref "installation/kubernetes/_index.md" >}}) for more information.
+If Meshery did not detect your kubeconfig, upload one or more kubeconfig files yourself. Meshery tries to connect to each reachable context in the uploaded files, using embedded mode unless you set that context's connection to operator mode. For more information, see [Kubernetes connection lifecycle]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md" >}}).
 
 ## 5. Verify Deployment
 
-Run connectivity tests and verify the health of your Meshery system. Verify Meshery's connection to your Kubernetes clusters by clicking on the connection chip. A quick connectivity test will run and inform you of Meshery's ability to reach and authenticate to your Kubernetes control plane(s). You will be notified of your connection status. You can also verify any other connection between Meshery and either its components (like [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}})) or other managed infrastructure by clicking on any of the connection chips. When clicked, a chip will perform an ad hoc connectivity test.
+Run connectivity tests to verify the health of your Meshery deployment. To check Meshery's connection to a Kubernetes cluster, click its connection chip. Meshery runs a quick connectivity test and tells you whether it can reach and authenticate to that cluster's control plane. Every connection chip works the same way, whether it represents one of Meshery's own components, like [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}), or other managed infrastructure. From the command line, run `mesheryctl system check` for pre- and post-deployment health checks.
 
-If the Meshery Operator does not reach a healthy status, its status card and the connection's Diagnostics carry the reason - deploying the Operator needs outbound access to the Meshery chart repository, and Meshery retries resolution on each deploy, so a transient outage clears by redeploying. See [Meshery Operator and MeshSync troubleshooting]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}}).
+If Meshery Operator does not reach a healthy status, its status card and the connection's Diagnostics show the reason. Deploying the Operator requires outbound access to the Meshery chart repository. Meshery retries the chart lookup on each deploy, so if the repository was briefly unreachable, redeploy the Operator. See [Meshery Operator and MeshSync troubleshooting]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}}).
 
 <a href="./images/k8s-context-switcher.png" alt="Meshery Kubernetes Context Switcher">
   <img class="center" style="width:min(100%,350px);" src="./images/k8s-context-switcher.png" />
@@ -97,7 +102,7 @@ If the Meshery Operator does not reach a healthy status, its status card and the
 
 ## 6. Design and operate Kubernetes clusters and their workloads
 
-You may now proceed to manage any cloud native infrastructure supported by Meshery. See all [integrations]({{< ref "extensions/models/_index.md" >}}) for a complete list of supported infrastructure.
+You can now design and manage any infrastructure that Meshery supports. For the complete list, see all [integrations]({{< ref "extensions/models/_index.md" >}}).
 
 <a href="./images/meshery-designs.png">
   <img class="center" style="width:min(100%,650px);" src="./images/meshery-designs.png" />
@@ -105,12 +110,12 @@ You may now proceed to manage any cloud native infrastructure supported by Meshe
 
 ## Explore Tutorials
 
-🧑‍🔬 Explore these tutorials to learn how to use Meshery for collaboratively managing infrastructure.
+🧑‍🔬 Work through these tutorials to learn how to manage infrastructure collaboratively with Meshery.
 
 {{< tutorials-list >}}
 
 ## Additional Resources
 
 - [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation.md" >}})
-- [Meshery Error Code Reference]({{< ref "reference/references/error-codes.md" >}})
-- [mesheryctl system check]({{< ref "reference/references/mesheryctl/system/check.md" >}})
+- [Meshery Error Code Reference]({{< ref "reference/error-codes.md" >}})
+- [mesheryctl system check]({{< ref "reference/mesheryctl/system/check.md" >}})

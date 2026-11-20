@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@sistent/sistent', () => ({
@@ -10,7 +10,11 @@ vi.mock('@sistent/sistent', () => ({
   ),
   Accordion: ({ children }: any) => <div data-testid="accordion">{children}</div>,
   AccordionSummary: ({ children }: any) => <div data-testid="summary">{children}</div>,
-  AccordionDetails: ({ children }: any) => <div data-testid="details">{children}</div>,
+  AccordionDetails: React.forwardRef(({ children }: any, ref: any) => (
+    <div data-testid="details" ref={ref}>
+      {children}
+    </div>
+  )),
   Typography: ({ children }: any) => <span>{children}</span>,
   Box: ({ children }: any) => <div>{children}</div>,
   useTheme: () => ({
@@ -28,6 +32,19 @@ vi.mock('../helper', () => ({
 
 import SimpleAccordion from './Accordion';
 
+// jsdom does not implement Element.prototype.scrollIntoView, so stub it with
+// a spy: in a browser the accordion's mount effect calls the real method and
+// scrolls the page; here the spy records the same calls instead of throwing.
+const scrollIntoView = vi.fn();
+
+beforeEach(() => {
+  Element.prototype.scrollIntoView = scrollIntoView;
+});
+
+afterEach(() => {
+  scrollIntoView.mockClear();
+});
+
 describe('SimpleAccordion', () => {
   it('capitalizes the heading and renders children content', () => {
     render(
@@ -39,15 +56,20 @@ describe('SimpleAccordion', () => {
     expect(screen.getByTestId('child')).toBeInTheDocument();
   });
 
-  it('renders a delete button when hasRemove is true and invokes onDropIndexClick', () => {
-    const onDropIndexClick = vi.fn(() => vi.fn());
+  it('renders a delete button when hasRemove is true and invokes onRemoveItem on click', () => {
+    const onRemoveItem = vi.fn();
     render(
-      <SimpleAccordion heading="thing" childProps={{ hasRemove: true, index: 2, onDropIndexClick }}>
+      <SimpleAccordion heading="thing" childProps={{ hasRemove: true, onRemoveItem }}>
         <div>child</div>
       </SimpleAccordion>,
     );
     expect(screen.getByTestId('delete-icon')).toBeInTheDocument();
-    expect(onDropIndexClick).toHaveBeenCalledWith(2);
+    // The old contract called onDropIndexClick(index) during render; the v6
+    // contract passes onRemoveItem (already bound to this item's index by
+    // RJSF) as the click handler, so it must fire only on click.
+    expect(onRemoveItem).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('icon-button'));
+    expect(onRemoveItem).toHaveBeenCalledTimes(1);
   });
 
   it('returns an empty heading when title is nullish', () => {
@@ -58,5 +80,24 @@ describe('SimpleAccordion', () => {
     );
     // No throw, just empty heading
     expect(screen.getByTestId('accordion')).toBeInTheDocument();
+  });
+});
+
+describe('SimpleAccordion scroll behaviour', () => {
+  it('does not scroll the page when accordions mount', () => {
+    // Every array item in an RJSF design form is wrapped in a SimpleAccordion,
+    // so a mount-time scrollIntoView scrolls the page once per array item
+    // with no user interaction (meshery/meshery#23731).
+    render(
+      <>
+        <SimpleAccordion heading="first" childProps={{ hasRemove: false }}>
+          <div>one</div>
+        </SimpleAccordion>
+        <SimpleAccordion heading="second" childProps={{ hasRemove: false }}>
+          <div>two</div>
+        </SimpleAccordion>
+      </>,
+    );
+    expect(scrollIntoView).not.toHaveBeenCalled();
   });
 });

@@ -163,6 +163,16 @@ describe('getDesign helper', () => {
     expect(dispatch).toHaveBeenCalled();
   });
 
+  it('passes { forceRefetch: true } to initiate so a fresh design is fetched', async () => {
+    const initiateSpy = vi
+      .spyOn(designsApi.endpoints.getDesign, 'initiate')
+      .mockReturnValue({ type: 'getDesign/initiate' } as never);
+    dispatch.mockResolvedValueOnce({ data: { id: 'design-1' }, isSuccess: true });
+    await getDesign({ design_id: 'design-1' });
+    expect(initiateSpy).toHaveBeenCalledWith({ design_id: 'design-1' }, { forceRefetch: true });
+    initiateSpy.mockRestore();
+  });
+
   it('returns an error-shaped object when dispatch throws', async () => {
     dispatch.mockRejectedValueOnce(new Error('network down'));
     const result = await getDesign({ design_id: 'design-2' });
