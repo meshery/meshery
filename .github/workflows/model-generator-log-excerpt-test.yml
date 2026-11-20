@@ -1,0 +1,29 @@
+name: Model Generator Log Excerpt Tests
+
+on:
+  pull_request:
+    paths:
+      - ".github/scripts/model-generator-log-excerpt.test.js"
+      - ".github/workflows/model-generator.yml"
+      - ".github/workflows/model-generator-log-excerpt-test.yml"
+  push:
+    branches:
+      - master
+    paths:
+      - ".github/scripts/model-generator-log-excerpt.test.js"
+      - ".github/workflows/model-generator.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test model generator log excerpts
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Run log excerpt tests
+        run: node --test .github/scripts/model-generator-log-excerpt.test.js
