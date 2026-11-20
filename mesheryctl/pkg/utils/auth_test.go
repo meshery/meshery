@@ -388,7 +388,7 @@ func TestInitiateLogin_PersistsRegistrationKey(t *testing.T) {
 				}
 			}
 			w.Header().Set("Content-Type", "application/json")
-			_, _ = fmt.Fprint(w, `{"meshery-provider":"Meshery","meshery-token":"tok"}`)
+			_, _ = fmt.Fprint(w, `{"token":"tok","meshery-provider":"Meshery","meshery-token":"tok"}`)
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}
