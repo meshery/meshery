@@ -831,24 +831,24 @@ func DeleteMeshSyncResourceByID(db *database.Handler, id string) (bool, error) {
 
 // RedactCredentials removes sensitive client authentication data and cluster
 // secrets in-place, while preserving context identifiers and public endpoint metadata.
-func (c *K8sContext) RedactCredentials() {
-	if c == nil {
+func (kc *K8sContext) RedactCredentials() {
+	if kc == nil {
 		return
 	}
-	c.Auth = sql.Map{}
-	c.Cluster = sql.Map{}
+	kc.Auth = sql.Map{}
+	kc.Cluster = sql.Map{}
 }
 
 // Redacted returns a shallow copy of the context with sensitive credentials
 // redacted, preserving context identifiers and public endpoint metadata.
-func (c *K8sContext) Redacted() K8sContext {
-	if c == nil {
+func (kc *K8sContext) Redacted() K8sContext {
+	if kc == nil {
 		return K8sContext{
 			Auth:    sql.Map{},
 			Cluster: sql.Map{},
 		}
 	}
-	cp := *c
+	cp := *kc
 	cp.RedactCredentials()
 	return cp
 }
