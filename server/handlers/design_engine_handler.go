@@ -400,7 +400,8 @@ func (sap *serviceActionProvider) Mutate(p *pattern.PatternFile) {
 
 // DryRun executes server-side dry-run validation of the specified components across all target Kubernetes contexts.
 // It pre-scans declared namespaces in the design to handle dependencies and initializes discovery RESTMappers per cluster.
-// Returns ComponentName -> ContextID -> Response.
+// Returns ResultKey -> ContextID -> Response, where the result key is the component's display name, qualified
+// when several components share it (see dryRunResultKeys) so that no component's result is overwritten.
 func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition) (resp map[string]map[string]patterncore.DryRunResponseWrapper, err error) {
 	// 1. Scan all components in the design/pattern and collect declared namespaces
 	declaredNamespaces := collectDeclaredNamespaces(comps)
@@ -430,7 +431,9 @@ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition)
 	}
 
 	// 3. Loop over components and dry-run them across initialized clusters
-	for _, cmp := range comps {
+	keys := dryRunResultKeys(comps)
+	for i, cmp := range comps {
+		key := keys[i]
 		for ctxID, cluster := range clusters {
 			dResp, err := dryRunComponent(cluster.client, cmp, sap.opIsDelete, cluster.mapper, declaredNamespaces)
 			if err != nil {
@@ -439,13 +442,63 @@ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition)
 			if resp == nil {
 				resp = make(map[string]map[string]patterncore.DryRunResponseWrapper)
 			}
-			if resp[cmp.DisplayName] == nil {
-				resp[cmp.DisplayName] = make(map[string]patterncore.DryRunResponseWrapper)
+			if resp[key] == nil {
+				resp[key] = make(map[string]patterncore.DryRunResponseWrapper)
 			}
-			resp[cmp.DisplayName][ctxID] = dResp
+			resp[key][ctxID] = dResp
 		}
 	}
 	return
+}
+
+// dryRunResultKeys returns, for each component, the key DryRun reports its results under. A display name
+// used by one component is kept as is, the format UI consumers already read. Several components often share
+// a display name (a Deployment and a Service both named "web"), and keying them all by that name made each
+// result overwrite the previous one, so a rejected component could be reported as valid. Shared names are
+// qualified with the kind, and with the component ID when the kind is shared too. Unique display names are
+// reserved before any qualified key is chosen, and a qualified key is numbered until it is unused, so keys
+// are always distinct and a unique display name is never renamed, whatever order the components come in.
+func dryRunResultKeys(comps []*component.ComponentDefinition) []string {
+	nameCount := make(map[string]int, len(comps))
+	nameKindCount := make(map[string]int, len(comps))
+	for _, cmp := range comps {
+		if cmp == nil {
+			continue
+		}
+		nameCount[cmp.DisplayName]++
+		nameKindCount[cmp.DisplayName+"\x00"+cmp.Component.Kind]++
+	}
+
+	keys := make([]string, len(comps))
+	used := make(map[string]bool, len(comps))
+
+	// Reserve every display name only one component uses first, so a qualified key chosen below can
+	// never take a key that a uniquely named component needs, whatever order the components come in.
+	for i, cmp := range comps {
+		if cmp != nil && nameCount[cmp.DisplayName] == 1 {
+			keys[i] = cmp.DisplayName
+			used[cmp.DisplayName] = true
+		}
+	}
+
+	// Qualify shared names with the kind, then with the component ID, and number the key until it is
+	// unused, so it cannot collide with another component's display name or qualified key.
+	for i, cmp := range comps {
+		if cmp == nil || nameCount[cmp.DisplayName] == 1 {
+			continue
+		}
+		key := fmt.Sprintf("%s (%s)", cmp.DisplayName, cmp.Component.Kind)
+		if nameKindCount[cmp.DisplayName+"\x00"+cmp.Component.Kind] > 1 || used[key] {
+			key = fmt.Sprintf("%s (%s, %s)", cmp.DisplayName, cmp.Component.Kind, cmp.ID.String())
+		}
+		base := key
+		for n := 2; used[key]; n++ {
+			key = fmt.Sprintf("%s #%d", base, n)
+		}
+		used[key] = true
+		keys[i] = key
+	}
+	return keys
 }
 
 // collectDeclaredNamespaces returns the names of the Namespace components declared in the design.
