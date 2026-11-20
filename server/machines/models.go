@@ -584,6 +584,9 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		if failureEvent == nil {
 			failureEvent = events.NewEvent().WithDescription(fmt.Sprintf("%s connection action failed.", sm.Name)).ActedUpon(sm.ID).FromOwner(userUUID).FromSystem(systemID).WithCategory("connection").WithAction("update").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": failureErr}).Build()
 		}
+		// observedAt is when this send saw the failure. Stamping it on the event
+		// keeps PersistEvent from substituting the later write time.
+		observedAt := time.Now().UTC()
 		if !statusChanged && originalEventType == Discovery {
 			// A repeat of a failure that left the connection NOTFOUND is not
 			// reported to the user again, but it is another occurrence of the
@@ -592,6 +595,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			if persistedStatusKnown && sm.CurrentState == NOTFOUND {
 				if key := sm.conditionKey(ConditionUnreachable); key != "" {
 					failureEvent.CorrelationKey = &key
+					stampFailureObservation(failureEvent, observedAt)
 					return failureEvent, nil
 				}
 			}
@@ -604,6 +608,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		if originalEventType == Discovery && sm.CurrentState == NOTFOUND {
 			if key := sm.conditionKey(ConditionUnreachable); key != "" {
 				failureEvent.CorrelationKey = &key
+				stampFailureObservation(failureEvent, observedAt)
 			}
 		}
 		return failureEvent, failureErr
@@ -652,4 +657,15 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	}
 
 	return event, nil
+}
+
+// stampFailureObservation records when a failure was observed, unless the
+// event already names that time. Recovery events are not stamped here; their
+// observation stays ResolvedAt.
+func stampFailureObservation(event *events.Event, observed time.Time) {
+	if event == nil || event.LastSeenAt != nil {
+		return
+	}
+	seen := observed.UTC()
+	event.LastSeenAt = &seen
 }

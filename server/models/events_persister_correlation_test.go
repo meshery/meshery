@@ -72,6 +72,106 @@ func mustPersist(t *testing.T, p *EventsPersister, event *events.Event) Persiste
 	return persisted
 }
 
+func TestResolveConnectionConditionRollsBackOnUpdateFailure(t *testing.T) {
+	persister := newCorrelationTestPersister(t)
+	provider := &DefaultLocalProvider{EventsPersister: persister}
+	key := ConditionKey("k8s-connection", mustUUID(t).String(), "unreachable")
+	owners := []uuid.UUID{mustUUID(t), mustUUID(t)}
+	for _, owner := range owners {
+		mustPersist(t, persister, conditionEvent(owner, key, "unreachable").Build())
+	}
+
+	updates := 0
+	if err := persister.DB.Callback().Update().Before("gorm:update").Register("test:fail_second_update", func(tx *gorm.DB) {
+		updates++
+		if updates == 2 {
+			_ = tx.AddError(errors.New("second update failed"))
+		}
+	}); err != nil {
+		t.Fatalf("register update callback: %v", err)
+	}
+	recovery := events.NewEvent().WithSeverity(events.Success).Resolves(key, time.Now().UTC()).Build()
+	resolved, err := provider.ResolveConnectionCondition(*recovery)
+	if err == nil || len(resolved) != 0 || updates != 2 {
+		t.Fatalf("got %d resolved rows, %d updates and error %v, want failure on second update", len(resolved), updates, err)
+	}
+	for _, owner := range owners {
+		rows := storedEvents(t, persister, owner)
+		if len(rows) != 1 || rows[0].ResolvedAt != nil {
+			t.Errorf("owner %s should still have one open condition after rollback, got %+v", owner, rows)
+		}
+	}
+}
+
+// A recovery closes conditions observed at or before its observation time and
+// leaves a condition observed later open. lastSeenAt is that observation when
+// the resolution carries one; otherwise it is resolvedAt.
+func TestResolveConnectionConditionSkipsLaterObservations(t *testing.T) {
+	observed := time.Date(2026, 11, 13, 12, 0, 0, 0, time.UTC)
+	earlier := observed.Add(-time.Hour)
+	later := observed.Add(time.Hour)
+
+	for _, c := range []struct {
+		name       string
+		resolvedAt time.Time
+		lastSeen   *time.Time
+	}{
+		{name: "resolvedAt", resolvedAt: observed},
+		// resolvedAt is after the newer failure. lastSeenAt is the observation
+		// that decides which rows close.
+		{name: "lastSeenAt", resolvedAt: later, lastSeen: &observed},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			persister := newCorrelationTestPersister(t)
+			provider := &DefaultLocalProvider{EventsPersister: persister}
+			key := ConditionKey("k8s-connection", mustUUID(t).String(), "unreachable")
+			earlyOwner, sameOwner, laterOwner := mustUUID(t), mustUUID(t), mustUUID(t)
+
+			early := mustPersist(t, persister, conditionEvent(earlyOwner, key, "earlier failure").WithLastSeenAt(earlier).Build())
+			same := mustPersist(t, persister, conditionEvent(sameOwner, key, "observed with the recovery").WithLastSeenAt(observed).Build())
+			kept := mustPersist(t, persister, conditionEvent(laterOwner, key, "later failure").WithLastSeenAt(later).Build())
+
+			recovery := events.NewEvent().WithSeverity(events.Success).WithDescription("connection reachable").
+				Resolves(key, c.resolvedAt)
+			if c.lastSeen != nil {
+				recovery = recovery.WithLastSeenAt(*c.lastSeen)
+			}
+			resolved, err := provider.ResolveConnectionCondition(*recovery.Build())
+			if err != nil {
+				t.Fatalf("ResolveConnectionCondition: %v", err)
+			}
+
+			got := map[uuid.UUID]events.Event{}
+			for _, event := range resolved {
+				if event.Owner == nil {
+					t.Fatal("resolved event has no owner")
+				}
+				got[*event.Owner] = event
+			}
+			if _, ok := got[laterOwner]; ok || len(resolved) != 2 {
+				t.Fatalf("resolved %d rows, want the earlier and same-time rows only", len(resolved))
+			}
+			for _, want := range []struct {
+				owner uuid.UUID
+				id    uuid.UUID
+			}{
+				{earlyOwner, early.Event.ID},
+				{sameOwner, same.Event.ID},
+			} {
+				event, ok := got[want.owner]
+				if !ok || event.ID != want.id || event.ResolvedAt == nil || !event.ResolvedAt.UTC().Equal(c.resolvedAt) {
+					t.Errorf("owner %s resolved event = %+v, want %s resolved at %s", want.owner, event, want.id, c.resolvedAt)
+				}
+			}
+
+			open := storedEvents(t, persister, laterOwner)
+			if len(open) != 1 || open[0].ID != kept.Event.ID || open[0].ResolvedAt != nil {
+				t.Fatalf("later condition = %+v, want open row %s", open, kept.Event.ID)
+			}
+		})
+	}
+}
+
 // An event that sets none of the new fields is recorded as a new row every
 // time, exactly as before correlation existed; the only field it gains is the
 // server's source.
