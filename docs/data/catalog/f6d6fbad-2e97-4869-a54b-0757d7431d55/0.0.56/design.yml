@@ -1,0 +1,1117 @@
+{
+  "id": "f6d6fbad-2e97-4869-a54b-0757d7431d55",
+  "name": "AWS Serverless ML Inference with SageMaker",
+  "schemaVersion": "designs.meshery.io/v1beta3",
+  "version": "0.0.56",
+  "components": [
+    {
+      "id": "2c4fe2dd-750f-4262-bfa5-a821fd1f2d16",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "hosted-zone-bt",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "AWS Route 53",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.5.0"
+        },
+        "name": "aws-route53-controller",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 823.9158461828459,
+          "y": 607.2129468289328
+        },
+        "primaryColor": "#8C4FFF",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/aws-route53-controller/color/hostedzone-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/aws-route53-controller/white/hostedzone-white.svg",
+        "width": 24,
+        "z-index": 3
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/aws-controllers-k8s/route53-controller/main/helm"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "name": "ml.example.com"
+        }
+      },
+      "component": {
+        "version": "route53.services.k8s.aws/v1alpha1",
+        "kind": "HostedZone",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "11e6014c-dd02-4818-a7e6-b96055ea5708",
+      "schemaVersion": "",
+      "version": "",
+      "displayName": "",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "aws-route53-controller",
+        "registrant": {
+          "kind": ""
+        },
+        "version": ""
+      },
+      "styles": {
+        "position": {
+          "x": 823.9158461828459,
+          "y": 620.2129468289328
+        },
+        "primaryColor": "#8C4FFF",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/aws-route53-controller/color/recordset-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/aws-route53-controller/white/recordset-white.svg"
+      },
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "spec": {
+          "hostedZoneID": "hosted-zone-bt"
+        }
+      },
+      "component": {
+        "version": "",
+        "kind": "RecordSet",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "6805f65a-f283-45c4-8b4b-5017220844cb",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "api-wk",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "AWS API Gateway v2",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.4.0"
+        },
+        "name": "aws-apigatewayv2-controller",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 942.053272811072,
+          "y": 622.2367904358099
+        },
+        "primaryColor": "#ff9900",
+        "secondaryColor": "#F4BC79",
+        "shape": "triangle",
+        "svgColor": "ui/public/static/img/meshmodels/aws-apigatewayv2-controller/color/api-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/aws-apigatewayv2-controller/white/api-white.svg",
+        "width": 24,
+        "z-index": 4
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "apigatewayv2.services.k8s.aws/v1alpha1",
+        "kind": "API",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "537c8997-a57c-49e0-9b8a-22d4bcb40909",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "function-sc",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "AWS Lambda",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.15.0"
+        },
+        "name": "aws-lambda-controller",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 956.5031725444721,
+          "y": 740.9568994287475
+        },
+        "primaryColor": "#ED7100",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/aws-lambda-controller/color/function-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/aws-lambda-controller/white/function-white.svg",
+        "width": 24,
+        "z-index": 5
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/aws-controllers-k8s/lambda-controller/main/helm"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "code": {
+            "s3Bucket": "lambda-code-bucket",
+            "s3Key": "lambda/function.zip"
+          },
+          "name": "lambda-code-bucket"
+        }
+      },
+      "component": {
+        "version": "lambda.services.k8s.aws/v1alpha1",
+        "kind": "Function",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "59b0d96a-5771-4857-a5a0-4e57e4d42861",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "endpoint-hb",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "AWS SageMaker",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.9.0"
+        },
+        "name": "aws-sagemaker-controller",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 811.4279284361215,
+          "y": 742.3998995836143
+        },
+        "primaryColor": "#01A88D",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/aws-sagemaker-controller/color/endpoint-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/aws-sagemaker-controller/white/endpoint-white.svg",
+        "width": 24,
+        "z-index": 7
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "endpointConfigName": "ml-endpoint-config",
+          "endpointName": "ml-endpoint"
+        }
+      },
+      "component": {
+        "version": "sagemaker.services.k8s.aws/v1alpha1",
+        "kind": "Endpoint",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "e4f7f839-eac2-4354-b73a-ed0abe66e043",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "model-ie",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "AWS SageMaker",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.9.0"
+        },
+        "name": "aws-sagemaker-controller",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 807.5440561812211,
+          "y": 858.8023895402221
+        },
+        "primaryColor": "#01A88D",
+        "secondaryColor": "#00D3A9",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/aws-sagemaker-controller/color/model-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/aws-sagemaker-controller/white/model-white.svg",
+        "width": 24,
+        "z-index": 8
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm"
+      },
+      "configuration": {},
+      "component": {
+        "version": "sagemaker.services.k8s.aws/v1alpha1",
+        "kind": "Model",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "7776b103-4961-4c96-afb4-9cf46a79594d",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "bucket-rm",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "AWS Simple Storage Service (S3)",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.9.0"
+        },
+        "name": "aws-s3-controller",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-width": 0,
+        "height": 24,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 944.933932029114,
+          "y": 856.5670899067496
+        },
+        "primaryColor": "#7AA116",
+        "secondaryColor": "#00D3A9",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/aws-s3-controller/color/bucket-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/aws-s3-controller/white/bucket-white.svg",
+        "width": 24,
+        "z-index": 9
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/aws-controllers-k8s/s3-controller/main/helm"
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "name": "lambda-code-bucket"
+        }
+      },
+      "component": {
+        "version": "s3.services.k8s.aws/v1alpha1",
+        "kind": "Bucket",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "a860efb6-f6eb-4fa7-ab38-1e37960b5a6b",
+      "evaluationQuery": null,
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "AWS Route 53",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.5.0"
+        },
+        "name": "aws-route53-controller",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "2c4fe2dd-750f-4262-bfa5-a821fd1f2d16",
+                "kind": "HostedZone",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "aws-route53-controller",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "displayName"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "11e6014c-dd02-4818-a7e6-b96055ea5708",
+                "kind": "RecordSet",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "aws-route53-controller",
+                  "registrant": {
+                    "kind": "github"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "hostedZoneID"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": [],
+            "to": []
+          }
+        }
+      ],
+      "subType": "inventory",
+      "status": "pending",
+      "type": "parent",
+      "version": ""
+    },
+    {
+      "id": "9cc6ae84-025f-4da8-9669-95102bec04dc",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "11e6014c-dd02-4818-a7e6-b96055ea5708",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "6805f65a-f283-45c4-8b4b-5017220844cb",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          },
+          "deny": {
+            "from": [],
+            "to": []
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "d34d38e7-2505-4982-ae39-7e8cf1209ca4",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "6805f65a-f283-45c4-8b4b-5017220844cb",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "537c8997-a57c-49e0-9b8a-22d4bcb40909",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          },
+          "deny": {
+            "from": [],
+            "to": []
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "a3bffbe5-c00a-4e42-803d-72c2960cf7c3",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "537c8997-a57c-49e0-9b8a-22d4bcb40909",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "59b0d96a-5771-4857-a5a0-4e57e4d42861",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          },
+          "deny": {
+            "from": [],
+            "to": []
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "58c8ebb1-3dcd-41d9-b9e8-606e3408f5f4",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "59b0d96a-5771-4857-a5a0-4e57e4d42861",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "e4f7f839-eac2-4354-b73a-ed0abe66e043",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          },
+          "deny": {
+            "from": [],
+            "to": []
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "8a739503-79e9-41e3-9823-36f19ff16819",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "7776b103-4961-4c96-afb4-9cf46a79594d",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "e4f7f839-eac2-4354-b73a-ed0abe66e043",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          },
+          "deny": {
+            "from": [],
+            "to": []
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "f68500a8-07bb-5680-97da-fd5587443e6c",
+      "evaluationQuery": "",
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "AWS Simple Storage Service (S3)",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.9.0"
+        },
+        "name": "aws-s3-controller",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "relationships.meshery.io/v1beta2",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "7776b103-4961-4c96-afb4-9cf46a79594d",
+                "kind": "Bucket",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "s3-controller",
+                  "registrant": {
+                    "kind": "artifacthub"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "spec",
+                      "notification",
+                      "lambdaFunctionConfigurations"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "name"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "537c8997-a57c-49e0-9b8a-22d4bcb40909",
+                "kind": "Function",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "lambda-controller",
+                  "registrant": {
+                    "kind": "artifacthub"
+                  },
+                  "version": ""
+                },
+                "patch": {
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "status",
+                      "ackResourceMetadata",
+                      "arn"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "name"
+                    ]
+                  ],
+                  "patchStrategy": "replace"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "firewall",
+      "status": "approved",
+      "type": "non-binding",
+      "version": "v1.0.0"
+    }
+  ]
+}

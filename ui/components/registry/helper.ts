@@ -10,7 +10,14 @@ import { alpha, type Theme } from '@/theme';
  * @param {string} selectedItemUUID - Node ID of the selected element in the tree.
  * @returns {Object} - An object containing the selected component, model, and relationship, with type and data properties.
  */
-export const getFilteredDataForDetailsComponent = (data: Array<any>, selectedItemUUID: string) => {
+export const getFilteredDataForDetailsComponent = (data: Array<any>, selectedItemUUID?: string) => {
+  if (!selectedItemUUID || typeof selectedItemUUID !== 'string' || !Array.isArray(data)) {
+    return {
+      type: '',
+      data: {},
+    };
+  }
+
   const selectedIdArr = selectedItemUUID.split('.');
   const resultObject = findNestedObject(
     data,
@@ -45,16 +52,24 @@ export const getFilteredDataForDetailsComponent = (data: Array<any>, selectedIte
  * @param {object} - Relationships arrays
  */
 export const groupRelationshipsByKind = (relationships: Array<any>) => {
+  if (!Array.isArray(relationships)) {
+    return [];
+  }
+
   const groupedRelationships = {};
 
   relationships.forEach((relationship) => {
+    if (!relationship || typeof relationship !== 'object') {
+      return;
+    }
     const { id, kind } = relationship;
+    const kindKey = kind || 'unknown';
 
-    if (!groupedRelationships[kind]) {
-      groupedRelationships[kind] = { kind, relationships: [] };
+    if (!groupedRelationships[kindKey]) {
+      groupedRelationships[kindKey] = { kind: kindKey, relationships: [] };
     }
 
-    groupedRelationships[kind].relationships.push({ id, ...relationship });
+    groupedRelationships[kindKey].relationships.push({ id, ...relationship });
   });
   const resultArray = Object.values(groupedRelationships);
   return resultArray;
@@ -65,45 +80,51 @@ export const groupRelationshipsByKind = (relationships: Array<any>) => {
  * @param {object} - models data
  */
 export const removeDuplicateVersions = (data: Array<any>) => {
+  if (!Array.isArray(data)) {
+    return [];
+  }
+
   const groupedModels = _.groupBy(data, 'name');
   const result = _.reduce(
     groupedModels,
-    (acc, models, name) => {
+    (acc: Array<any>, models) => {
+      if (!models || models.length === 0) {
+        return acc;
+      }
+
       const uniqueVersions = _.groupBy(models, (modelDef) => modelDef?.model?.version);
       const arrayOfUniqueVersions = Object.values(uniqueVersions);
-      const existingModelDef = acc.find((m) => m.name === name);
 
       const mergedData = arrayOfUniqueVersions.map((modelsWithSameVersion) => {
-        let subVal = {
-          relationships: {},
-          components: {},
-        };
-        modelsWithSameVersion.map((model) => {
-          subVal.relationships = groupRelationshipsByKind(
-            _.union(subVal.relationships, model.relationships),
-          );
-          subVal.components = _.union(subVal.components, model.components);
+        let allComponents: any[] = [];
+        let allRelationships: any[] = [];
+
+        modelsWithSameVersion.forEach((model) => {
+          if (Array.isArray(model.components)) {
+            allComponents = _.union(allComponents, model.components);
+          }
+          if (Array.isArray(model.relationships)) {
+            allRelationships = _.unionBy(
+              allRelationships,
+              model.relationships,
+              (rel) => rel?.id ?? rel,
+            );
+          }
         });
+
         return {
           ...modelsWithSameVersion[0],
-          ...subVal,
+          components: allComponents,
+          relationships: groupRelationshipsByKind(allRelationships),
         };
       });
 
-      if (existingModelDef) {
-        existingModelDef.model.version = _.union(
-          existingModelDef.model.version,
-          mergedData.map((model) => model?.model?.version),
-        );
-        existingModelDef.versionBasedData = existingModelDef.versionBasedData.concat(mergedData);
-      } else {
-        const selectedModelDef = models[0];
-        acc.push({
-          ...selectedModelDef,
-          version: mergedData.map((model) => model?.model?.version),
-          versionBasedData: mergedData,
-        });
-      }
+      const selectedModelDef = models[0];
+      acc.push({
+        ...selectedModelDef,
+        version: mergedData.map((model) => model?.model?.version).filter(Boolean),
+        versionBasedData: mergedData,
+      });
 
       return acc;
     },

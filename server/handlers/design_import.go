@@ -6,13 +6,14 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mime"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
-	"strings"
 	"time"
 
+	serverutils "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
 	pCore "github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshkit/encoding"
@@ -44,15 +45,9 @@ type importVariant struct {
 }
 
 // designImportHTTPClient is the shared client used for URL-variant
-// imports. A bounded Timeout prevents a slow or unresponsive remote
-// from hanging the handler goroutine indefinitely — the default
-// http.Client has no timeout, which is the class of bug review
-// feedback on meshery/meshery#18845 called out. 60s is generous for
-// a single-file fetch (Kubernetes manifests, Helm charts, Meshery
-// designs) while still bounding damage from dead endpoints.
-var designImportHTTPClient = &http.Client{
-	Timeout: 60 * time.Second,
-}
+// imports. It enforces a bounded 60s timeout and uses a safe transport
+// that rejects private, loopback, and cloud metadata addresses (SSRF protection).
+var designImportHTTPClient = serverutils.NewSafeHTTPClient(60 * time.Second)
 
 // resolveImportVariant decodes the request body against the two oneOf
 // variants published in the schema, enforces the "exactly one of"
@@ -101,10 +96,14 @@ func resolveImportVariant(body pattern.MesheryPatternImportRequestBody) (importV
 // fetchFileFromURL performs the remote GET behind a URL-variant import
 // and derives a filename from either Content-Disposition or the path
 // segment of the URL. Uses designImportHTTPClient so every fetch is
-// bounded by a timeout, and rejects non-2xx responses explicitly so a
-// 404 HTML body isn't handed to the design parser as if it were a
-// valid import file.
+// bounded by a timeout and guarded against SSRF, and rejects non-2xx
+// responses explicitly so a 404 HTML body isn't handed to the design
+// parser as if it were a valid import file.
 func fetchFileFromURL(fileURL string) (FileToImport, error) {
+	if _, err := serverutils.ValidateSafeURL(fileURL); err != nil {
+		return FileToImport{}, models.ErrDoRequest(err, "GET", fileURL)
+	}
+
 	resp, err := designImportHTTPClient.Get(fileURL)
 	if err != nil {
 		return FileToImport{}, models.ErrDoRequest(err, "GET", fileURL)
@@ -119,9 +118,16 @@ func fetchFileFromURL(fileURL string) (FileToImport, error) {
 		// metadata, matching the http.Client.Get error path above.
 		return FileToImport{}, models.ErrDoRequest(fmt.Errorf("returned HTTP %d %s", resp.StatusCode, resp.Status), "GET", fileURL)
 	}
-	body, err := io.ReadAll(resp.Body)
+	// Cap read at 10 MB to prevent unbounded memory consumption from large remote responses.
+	// Reading up to maxImportFileSize+1 allows detecting whether the remote stream exceeds the cap,
+	// rejecting truncated downloads instead of accepting partial files.
+	const maxImportFileSize = 10 * 1024 * 1024
+	body, err := io.ReadAll(io.LimitReader(resp.Body, int64(maxImportFileSize)+1))
 	if err != nil {
 		return FileToImport{}, models.ErrDoRequest(err, "GET", fileURL)
+	}
+	if len(body) > maxImportFileSize {
+		return FileToImport{}, models.ErrDoRequest(fmt.Errorf("file size exceeds maximum allowed limit of %d bytes", maxImportFileSize), "GET", fileURL)
 	}
 	return FileToImport{Data: body, FileName: getFileNameFromResponse(resp, fileURL)}, nil
 }
@@ -134,13 +140,13 @@ func stringFromPtr(p *string) string {
 }
 
 func getFileNameFromResponse(resp *http.Response, fileURL string) string {
-	// Check Content-Disposition header
-	contentDisp := resp.Header.Get("Content-Disposition")
-	if contentDisp != "" {
-		parts := strings.Split(contentDisp, "filename=")
-		if len(parts) > 1 {
-			filename := strings.Trim(parts[1], `"`)
-			return filename
+	// Content-Disposition can carry more than the name: other parameters, or
+	// a filename* form next to filename (RFC 6266, section 4.3).
+	// ParseMediaType returns the filename parameter on its own, decoding
+	// filename* into it when present.
+	if contentDisp := resp.Header.Get("Content-Disposition"); contentDisp != "" {
+		if _, params, err := mime.ParseMediaType(contentDisp); err == nil && params["filename"] != "" {
+			return params["filename"]
 		}
 	}
 
@@ -247,8 +253,7 @@ func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider mode
 			"error": ErrRetrieveUserToken(err),
 		}).WithDescription("No auth token provided in the request.").Build()
 
-		_ = provider.PersistEvent(*event, "")
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, "", userID, event)
 	}
 
 }
@@ -263,8 +268,7 @@ func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider mo
 			"error": ErrRequestBody(err),
 		}).WithDescription("Unable to parse request body").Build()
 
-		_ = provider.PersistEvent(*event, "")
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, "", userID, event)
 	}
 }
 
@@ -321,8 +325,7 @@ func (h *Handler) DesignFileImportHandler(
 		h.log.Error(fmt.Errorf("resolve import variant: %w", err))
 		writeMeshkitError(rw, err, http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, variant, err)
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 		return
 	}
 
@@ -340,8 +343,7 @@ func (h *Handler) DesignFileImportHandler(
 		h.log.Error(fmt.Errorf("conversion: failed to convert to design %w", err))
 		writeMeshkitError(rw, wrappedErr, http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, variant, wrappedErr)
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 		return
 	}
 
@@ -368,8 +370,7 @@ func (h *Handler) DesignFileImportHandler(
 			"error": ErrSavePattern(err),
 		}).WithDescription(ErrSavePattern(err).Error()).Build()
 
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.persistAndPublish(provider, token, userID, event)
 		return
 	}
 
@@ -393,7 +394,6 @@ func (h *Handler) DesignFileImportHandler(
 	_, _ = rw.Write(savedDesignByt)
 
 	event := eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Imported design '%s' of type '%s'", design.Name, sourceFileType)).Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	h.persistAndPublish(provider, token, userID, event)
 
 }

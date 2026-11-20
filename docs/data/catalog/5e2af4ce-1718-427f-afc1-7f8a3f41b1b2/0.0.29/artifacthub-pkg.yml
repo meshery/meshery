@@ -1,0 +1,20 @@
+version: 0.0.29
+name: simple-kubernetes-web-app
+displayName: Simple Kubernetes Web App
+createdAt: "2026-10-07T18:20:01Z"
+description: A simple Kubernetes web application architecture demonstrating a Service, Deployment, and ConfigMap using Meshery Kanvas.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/5e2af4ce-1718-427f-afc1-7f8a3f41b1b2/0.0.29/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a simple demonstration design for learning Meshery and Kubernetes concepts. It is not intended as a production-ready application architecture. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a2b9122d-4916-47d8-9871-9d435f72f5e2
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

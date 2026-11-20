@@ -63,7 +63,7 @@
                             {{ $compatibility := index $meta "compatibility" }}
                             {{ if and $compatibility (in $compatibility $tech) }}
             <li class="design-link">
-                <a href="https://meshery.io/catalog/{{ $catalogType }}/{{ replace (index $meta "name") "." "-" | urlize }}-{{ index $meta "patternId" }}" target="_blank">
+                <a href="https://meshery.io/catalog/{{ $catalogType }}/{{ strings.Trim (lower (index $meta "name") | replaceRE "[^a-z0-9]+" "-") "-" }}-{{ index $meta "patternId" }}" target="_blank">
                     {{ index $meta "name" }}
                 </a>
             </li>
