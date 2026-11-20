@@ -244,15 +244,18 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 		return err
 	}
 
-	// Reject empty or whitespace-only token files.
-	if len(bytes.TrimSpace(file)) == 0 {
-		return ErrUnauthenticated()
-	}
-
 	var tokenObj map[string]string
-	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		err = errors.Wrap(err, "token file invalid: ")
-		return err
+	if len(bytes.TrimSpace(file)) == 0 {
+		var ok bool
+		tokenObj, ok = emptyLocalTokenObject()
+		if !ok {
+			return ErrUnauthenticated()
+		}
+	} else {
+		if err := json.Unmarshal(file, &tokenObj); err != nil {
+			err = errors.Wrap(err, "token file invalid: ")
+			return err
+		}
 	}
 	if err := validateTokenObject(tokenObj); err != nil {
 		return err
@@ -316,7 +319,11 @@ func ReadToken(filepath string) (map[string]string, error) {
 		return nil, ErrFileRead(err)
 	}
 	if len(bytes.TrimSpace(file)) == 0 {
-		return nil, ErrUnauthenticated()
+		tokenObj, ok := emptyLocalTokenObject()
+		if !ok {
+			return nil, ErrUnauthenticated()
+		}
+		return tokenObj, nil
 	}
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
@@ -327,6 +334,21 @@ func ReadToken(filepath string) (map[string]string, error) {
 		return nil, err
 	}
 	return tokenObj, nil
+}
+
+func emptyLocalTokenObject() (map[string]string, bool) {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return nil, false
+	}
+	ctx, ok := mctlCfg.Contexts[mctlCfg.CurrentContext]
+	if !ok || !IsLocalProvider(ctx.GetProvider()) {
+		return nil, false
+	}
+	return map[string]string{
+		tokenName:    "",
+		providerName: "Local",
+	}, true
 }
 
 func validateTokenObject(tokenObj map[string]string) error {
