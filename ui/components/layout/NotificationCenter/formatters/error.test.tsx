@@ -185,38 +185,20 @@ describe('ErrorMetadataFormatter', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('renders the universal error code link when Code is provided in metadata', () => {
+  it('renders the error reference link when referenceUrl is provided', () => {
     render(
       <ErrorMetadataFormatter
         metadata={{
-          Code: '1562',
-          LongDescription: ['Something went wrong'],
+          code: 'meshery-server-1562',
+          referenceUrl: 'https://docs.meshery.io/reference/error-codes#meshery-server-1562',
         }}
         event={{ description: 'An error occurred' }}
       />,
     );
-    const link = screen.getByTestId('title-link');
-    expect(link).toHaveAttribute(
+    const link = screen.getByText('meshery-server-1562 reference');
+    expect(link.closest('a')).toHaveAttribute(
       'href',
       'https://docs.meshery.io/reference/error-codes#meshery-server-1562',
     );
-    expect(link).toHaveTextContent('meshery-server-1562');
-  });
-
-  it('renders existing full mnemonic error code without double-prefixing', () => {
-    render(
-      <ErrorMetadataFormatter
-        metadata={{
-          Code: 'meshery-server-1133',
-        }}
-        event={{ description: 'Conversion error' }}
-      />,
-    );
-    const link = screen.getByTestId('title-link');
-    expect(link).toHaveAttribute(
-      'href',
-      'https://docs.meshery.io/reference/error-codes#meshery-server-1133',
-    );
-    expect(link).toHaveTextContent('meshery-server-1133');
   });
 });

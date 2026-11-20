@@ -429,4 +429,30 @@ describe('Notification component', () => {
     render(<Notification event_id="evt-1" />);
     expect(screen.getByText('History Title')).toBeInTheDocument();
   });
+
+  it('renders the Error Docs link when the event has numeric error codes', () => {
+    selectors.event = {
+      ...selectors.event,
+      metadata: { error: { Code: '1562' } },
+    };
+    render(<Notification event_id="evt-1" />);
+    const link = screen.getByText('Error Docs').closest('a');
+    expect(link).toHaveAttribute(
+      'href',
+      'https://docs.meshery.io/reference/error-codes#meshery-server-1562',
+    );
+  });
+
+  it('renders existing full mnemonic error code on Error Docs link without double-prefixing', () => {
+    selectors.event = {
+      ...selectors.event,
+      metadata: { error: { Code: 'meshery-server-1133' } },
+    };
+    render(<Notification event_id="evt-1" />);
+    const link = screen.getByText('Error Docs').closest('a');
+    expect(link).toHaveAttribute(
+      'href',
+      'https://docs.meshery.io/reference/error-codes#meshery-server-1133',
+    );
+  });
 });
