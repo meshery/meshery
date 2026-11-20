@@ -1,6 +1,7 @@
 package registry
 
 import (
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -296,23 +297,38 @@ func TestPreRunEValidation(t *testing.T) {
 	tests := []struct {
 		name        string
 		args        []string
-		setup       func()
+		setup       func(root string)
 		expectError bool
 		errorMsg    string
 	}{
 		{
-			name:        "No input source specified",
-			args:        []string{},
-			setup:       func() { resetGenerateFlags(generateCmd) },
+			name: "No input source specified from valid repo root",
+			args: []string{},
+			setup: func(root string) {
+				chdir(t, root)
+				resetGenerateFlags(generateCmd)
+			},
 			expectError: true,
 			errorMsg:    "isn't specified",
+		},
+		{
+			name: "Executed from outside repo root fails prerequisite check",
+			args: []string{},
+			setup: func(root string) {
+				subDir := filepath.Join(root, "mesheryctl")
+				chdir(t, subDir)
+				resetGenerateFlags(generateCmd)
+			},
+			expectError: true,
+			errorMsg:    ErrPrerequisiteFailedCode,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			root := setupMockMesheryRepo(t, false)
 			if tt.setup != nil {
-				tt.setup()
+				tt.setup(root)
 			}
 
 			generateCmd.SetArgs(tt.args)

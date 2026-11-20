@@ -93,8 +93,11 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		return nil
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
-		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
+		// Prerequisite check: verify execution is from the root of a meshery/meshery repo fork
+		if err := verifyRepoRoot(); err != nil {
+			return err
+		}
+
 		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory | Individual CSV files ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nmesheryctl registry generate --model-csv [path] --component-csv [path] --relationship-csv [path]\nRun 'mesheryctl registry generate --help' to see detailed help message"
 
 		spreadsheetIdFlag, _ := cmd.Flags().GetString("spreadsheet-id")
