@@ -61,9 +61,10 @@ mesheryctl perf result saturday-profile --view
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help       help for result
-  -p, --page int   (optional) List next set of performance results with --page (default = 1) (default 1)
-      --view       (optional) View single performance results with more info
+  -h, --help           help for result
+  -p, --page int       (optional) List next set of performance results with --page (default = 1) (default 1)
+  -s, --pagesize int   (optional) Number of performance results to be displayed per page (default = 25) (default 25)
+      --view           (optional) View single performance results with more info
 
 </div>
 </pre>
