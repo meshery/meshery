@@ -687,7 +687,7 @@ func TestContextSeenBeforeTheLinkStillSerializesWithTheLinkedContext(t *testing.
 	select {
 	case <-locked:
 		t.Fatal("C took its Helm lock while A, linked to it through B, held A's")
-	case <-time.After(100 * time.Millisecond):
+	case <-time.After(time.Second):
 	}
 	unlockA()
 	select {

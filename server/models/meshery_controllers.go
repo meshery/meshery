@@ -1201,8 +1201,11 @@ type OperatorTracker struct {
 	mx                      sync.Mutex
 	ctxIDtoDeploymentStatus map[string]bool
 	clustersByKey           map[string]*operatorCluster
-	clusterKeyLinks         map[string]map[string]struct{}
-	DisableOperator         bool
+	// clusterKeyLinks records which cluster keys a context carried together.
+	// Links are never removed, so clusters once linked stay serialized
+	// together, like clustersByKey.
+	clusterKeyLinks map[string]map[string]struct{}
+	DisableOperator bool
 }
 
 func NewOperatorTracker(disabled bool) *OperatorTracker {
