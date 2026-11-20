@@ -4,4 +4,4 @@ My name is Shelden. I am a senior in my undergrad pursuing a B.S. in Computer Sc
 
 ## profiles :
 github: [https://github.com/sheldenr](https://github.com/sheldenr)
-linkedin: [https://linkedin.com/shelden-rattray](https://linkedin.com/shelden-rattray)
+linkedin: [https://linkedin.com/in/shelden-rattray](https://linkedin.com/in/shelden-rattray)
