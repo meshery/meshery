@@ -312,3 +312,323 @@ func TestParallelProcess_MixedOutcomesWithManyPrereqs(t *testing.T) {
 	}
 }
 
+// TestParallelProcess_PanicInPrerequisiteDoesNotDeadlockDependents verifies that when
+// a prerequisite node panics during visitor execution, downstream dependents are
+// not permanently starved on channel reads, and the plan execution does not deadlock.
+func TestParallelProcess_PanicInPrerequisiteDoesNotDeadlockDependents(t *testing.T) {
+	prereq := newComponent("prereq")
+	dependent := newComponent("dependent", "prereq")
+
+	design := newDesign("panic-recovery", prereq, dependent)
+	plan, err := CreatePlan(design, nil, false)
+	if err != nil {
+		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
+	}
+
+	var (
+		mu              sync.Mutex
+		dependentVisited bool
+		dependentWithheld bool
+		reportedDep     string
+	)
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		defer func() {
+			_ = recover()
+		}()
+		_ = plan.Execute(
+			func(id string, comp component.ComponentDefinition) bool {
+				if comp.DisplayName == "prereq" {
+					panic("simulated fatal panic in component visitor")
+				}
+				mu.Lock()
+				if comp.DisplayName == "dependent" {
+					dependentVisited = true
+				}
+				mu.Unlock()
+				return true
+			},
+			func(id string, comp component.ComponentDefinition, failedDep string) {
+				mu.Lock()
+				if comp.DisplayName == "dependent" {
+					dependentWithheld = true
+					reportedDep = failedDep
+				}
+				mu.Unlock()
+			},
+			testLogger(t),
+		)
+	}()
+
+	select {
+	case <-done:
+		// Plan execution completed without deadlocking
+	case <-time.After(2 * time.Second):
+		t.Fatal("Plan.Execute() deadlocked; prerequisite panic bypassed signal propagation, permanently wedging dependent channel reads")
+	}
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	if dependentVisited {
+		t.Error("dependent node was visited despite prerequisite panic")
+	}
+	if !dependentWithheld {
+		t.Error("dependent node was not marked as withheld following prerequisite panic")
+	}
+	if reportedDep != prereq.ID.String() {
+		t.Errorf("dependent reported failed dependency %q, want %q", reportedDep, prereq.ID.String())
+	}
+}
+
+// TestParallelProcess_PanicInMiddleOfDeepChainPropagatesWithholding verifies that when
+// a middle node in a multi-hop dependency chain panics (A -> B -> C -> D, B panics),
+// subsequent nodes C and D are sequentially withheld without deadlock or starvation.
+func TestParallelProcess_PanicInMiddleOfDeepChainPropagatesWithholding(t *testing.T) {
+	nodeA := newComponent("nodeA")
+	nodeB := newComponent("nodeB", "nodeA")
+	nodeC := newComponent("nodeC", "nodeB")
+	nodeD := newComponent("nodeD", "nodeC")
+
+	design := newDesign("deep-chain-panic", nodeA, nodeB, nodeC, nodeD)
+	plan, err := CreatePlan(design, nil, false)
+	if err != nil {
+		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
+	}
+
+	var (
+		mu         sync.Mutex
+		aVisited   bool
+		cVisited   bool
+		dVisited   bool
+		cWithheld  bool
+		dWithheld  bool
+		cFailedDep string
+		dFailedDep string
+	)
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		defer func() {
+			_ = recover()
+		}()
+		_ = plan.Execute(
+			func(id string, comp component.ComponentDefinition) bool {
+				mu.Lock()
+				defer mu.Unlock()
+				switch comp.DisplayName {
+				case "nodeA":
+					aVisited = true
+					return true
+				case "nodeB":
+					panic("simulated fatal panic in nodeB")
+				case "nodeC":
+					cVisited = true
+					return true
+				case "nodeD":
+					dVisited = true
+					return true
+				}
+				return true
+			},
+			func(id string, comp component.ComponentDefinition, failedDep string) {
+				mu.Lock()
+				defer mu.Unlock()
+				switch comp.DisplayName {
+				case "nodeC":
+					cWithheld = true
+					cFailedDep = failedDep
+				case "nodeD":
+					dWithheld = true
+					dFailedDep = failedDep
+				}
+			},
+			testLogger(t),
+		)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(3 * time.Second):
+		t.Fatal("Plan.Execute() deadlocked; panic in middle of deep chain hung downstream nodes")
+	}
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	if !aVisited {
+		t.Error("nodeA was not visited, want it visited before nodeB")
+	}
+	if cVisited {
+		t.Error("nodeC was visited, want it withheld because nodeB panicked")
+	}
+	if dVisited {
+		t.Error("nodeD was visited, want it withheld because nodeC was withheld")
+	}
+	if !cWithheld || cFailedDep != nodeB.ID.String() {
+		t.Errorf("nodeC withheld=%v, failedDep=%q, want true and %q", cWithheld, cFailedDep, nodeB.ID.String())
+	}
+	if !dWithheld || dFailedDep != nodeC.ID.String() {
+		t.Errorf("nodeD withheld=%v, failedDep=%q, want true and %q", dWithheld, dFailedDep, nodeC.ID.String())
+	}
+}
+
+// TestParallelProcess_DiamondTopologyPanicOneBranchWithholdsSink verifies that in a diamond
+// DAG (Root -> BranchA, BranchB -> Sink), when BranchA panics while BranchB succeeds,
+// the Sink receives both signals, correctly determines it cannot proceed, and is withheld.
+func TestParallelProcess_DiamondTopologyPanicOneBranchWithholdsSink(t *testing.T) {
+	root := newComponent("root")
+	branchA := newComponent("branchA", "root")
+	branchB := newComponent("branchB", "root")
+	sink := newComponent("sink", "branchA", "branchB")
+
+	design := newDesign("diamond-panic", root, branchA, branchB, sink)
+	plan, err := CreatePlan(design, nil, false)
+	if err != nil {
+		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
+	}
+
+	var (
+		mu           sync.Mutex
+		sinkVisited  bool
+		sinkWithheld bool
+		sinkFailedDep string
+	)
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		defer func() {
+			_ = recover()
+		}()
+		_ = plan.Execute(
+			func(id string, comp component.ComponentDefinition) bool {
+				switch comp.DisplayName {
+				case "branchA":
+					panic("simulated fatal panic in branchA")
+				case "branchB":
+					return true
+				case "sink":
+					mu.Lock()
+					sinkVisited = true
+					mu.Unlock()
+					return true
+				}
+				return true
+			},
+			func(id string, comp component.ComponentDefinition, failedDep string) {
+				if comp.DisplayName == "sink" {
+					mu.Lock()
+					sinkWithheld = true
+					sinkFailedDep = failedDep
+					mu.Unlock()
+				}
+			},
+			testLogger(t),
+		)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(3 * time.Second):
+		t.Fatal("Plan.Execute() deadlocked; panic in diamond branch hung sink node")
+	}
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	if sinkVisited {
+		t.Error("sink node was visited, want it withheld because branchA panicked")
+	}
+	if !sinkWithheld {
+		t.Error("sink node was not reported as withheld")
+	}
+	if sinkFailedDep != branchA.ID.String() {
+		t.Errorf("sink reported failed dependency %q, want %q", sinkFailedDep, branchA.ID.String())
+	}
+}
+
+// TestParallelProcess_FanInHalfPanickingPrereqsDoesNotDeadlock verifies high-concurrency fan-in
+// when 10 upstream prerequisites succeed while 10 prerequisites panic concurrently. The target
+// node must receive all 20 signals without channel buffer deadlock or dropped signals.
+func TestParallelProcess_FanInHalfPanickingPrereqsDoesNotDeadlock(t *testing.T) {
+	const totalPrereqs = 20
+	prereqNames := make([]string, totalPrereqs)
+	components := make([]*component.ComponentDefinition, 0, totalPrereqs+1)
+
+	for i := 0; i < totalPrereqs; i++ {
+		name := fmt.Sprintf("fan-prereq-%d", i)
+		prereqNames[i] = name
+		components = append(components, newComponent(name))
+	}
+
+	target := newComponent("fan-target", prereqNames...)
+	components = append(components, target)
+
+	design := newDesign("fan-in-panics", components...)
+	plan, err := CreatePlan(design, nil, false)
+	if err != nil {
+		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
+	}
+
+	var (
+		mu             sync.Mutex
+		targetVisited  bool
+		targetWithheld bool
+	)
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		defer func() {
+			_ = recover()
+		}()
+		_ = plan.Execute(
+			func(id string, comp component.ComponentDefinition) bool {
+				if comp.DisplayName == "fan-target" {
+					mu.Lock()
+					targetVisited = true
+					mu.Unlock()
+					return true
+				}
+
+				// Even indices succeed, odd indices panic
+				var idx int
+				_, _ = fmt.Sscanf(comp.DisplayName, "fan-prereq-%d", &idx)
+				if idx%2 == 1 {
+					panic(fmt.Sprintf("panic in %s", comp.DisplayName))
+				}
+				return true
+			},
+			func(id string, comp component.ComponentDefinition, failedDep string) {
+				if comp.DisplayName == "fan-target" {
+					mu.Lock()
+					targetWithheld = true
+					mu.Unlock()
+				}
+			},
+			testLogger(t),
+		)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(5 * time.Second):
+		t.Fatal("Plan.Execute() deadlocked; high-concurrency mixed panic fan-in hung target node")
+	}
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	if targetVisited {
+		t.Error("target was visited, want it withheld because half prerequisites panicked")
+	}
+	if !targetWithheld {
+		t.Error("target was not reported as withheld")
+	}
+}
+
+
