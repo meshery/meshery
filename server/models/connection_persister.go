@@ -43,10 +43,14 @@ func mapConnectionOrderAlias(order string) string {
 	}
 }
 
+// connectionOrderColumns is the allow-list of sortable column expressions
+// shared across connection persisters to prevent ordering paths from drifting.
+var connectionOrderColumns = []string{"created_at", "updated_at", "name", "kind", "connection_type", "sub_type", "status", "id"}
+
 // GetConnections returns all of the connections
 func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSize int, filter string, status []string, kind []string, connType []string, name string) (*connections.ConnectionPage, error) {
 	order = mapConnectionOrderAlias(order)
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name", "kind", "connection_type", "sub_type", "status", "id"})
+	order = SanitizeOrderInput(order, connectionOrderColumns)
 
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc

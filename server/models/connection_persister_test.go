@@ -192,13 +192,18 @@ func TestGetConnectionsSorting(t *testing.T) {
 		t.Errorf("unexpected order for name asc: first=%s, last=%s", page.Connections[0].Name, page.Connections[2].Name)
 	}
 
-	// 7. Sort by ConnectionID / id
+	// 7. Sort by ConnectionID / id: the returned ids must be ascending
 	page, err = cp.GetConnections("", "ConnectionID asc", 0, 10, "", nil, nil, nil, "")
 	if err != nil {
 		t.Fatalf("GetConnections ConnectionID asc: %v", err)
 	}
 	if len(page.Connections) != 3 {
 		t.Fatalf("expected 3 connections, got %d", len(page.Connections))
+	}
+	for i := 1; i < len(page.Connections); i++ {
+		if page.Connections[i-1].ID.String() >= page.Connections[i].ID.String() {
+			t.Errorf("unexpected order for ConnectionID asc at position %d: %v came before %v", i, page.Connections[i-1].ID, page.Connections[i].ID)
+		}
 	}
 
 	// 8. Invalid column falls back safely to defaultOrderUpdatedAtDesc (gamma, beta, alpha)
