@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"sort"
@@ -329,19 +330,44 @@ func (h *Handler) SubscribeMesheryControllersStatusHandler(w http.ResponseWriter
 	}
 }
 
+// requireQueryConnectionID extracts and validates the connectionId query parameter.
+// It returns (parsedUUID, true) on success. When the parameter is missing,
+// malformed, or the zero UUID, it writes a 400 Bad Request response with
+// models.ErrInvalidUUID, safely logs the failure, and returns (uuid.Nil, false).
+func (h *Handler) requireQueryConnectionID(w http.ResponseWriter, req *http.Request) (uuid.UUID, bool) {
+	connectionID := req.URL.Query().Get("connectionId")
+	if connectionID == "" {
+		err := models.ErrInvalidUUID(fmt.Errorf("missing query parameter %q", "connectionId"))
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
+		writeMeshkitError(w, err, http.StatusBadRequest)
+		return uuid.Nil, false
+	}
+	connectionUUID, err := uuid.FromString(connectionID)
+	if err != nil || connectionUUID == uuid.Nil {
+		if err == nil {
+			err = errors.New("zero UUID is not a valid connection id")
+		}
+		invalidUUIDErr := models.ErrInvalidUUID(err)
+		if h != nil && h.log != nil {
+			h.log.Error(invalidUUIDErr)
+		}
+		writeMeshkitError(w, invalidUUIDErr, http.StatusBadRequest)
+		return uuid.Nil, false
+	}
+	return connectionUUID, true
+}
+
 // OperatorStatusHandler returns the operator's current status for a connection.
 // Replaces the getOperatorStatus GraphQL query.
 // GET /api/system/controllers/operator/status?connectionId=<id>
 func (h *Handler) OperatorStatusHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
-	connectionID := req.URL.Query().Get("connectionId")
-	// Reject a malformed connectionId rather than falling back to uuid.Nil: a
-	// zero UUID is never a real connection and would echo an invalid id back to
-	// the client.
-	connectionUUID, err := uuid.FromString(connectionID)
-	if err != nil {
-		writeMeshkitError(w, models.ErrInvalidUUID(err), http.StatusBadRequest)
+	connectionUUID, ok := h.requireQueryConnectionID(w, req)
+	if !ok {
 		return
 	}
+	connectionID := connectionUUID.String()
 	item := system.ControllerStatus{
 		ConnectionId: connectionUUID,
 		Controller:   internalControllerName(models.MesheryOperator),
@@ -360,13 +386,11 @@ func (h *Handler) OperatorStatusHandler(w http.ResponseWriter, req *http.Request
 // Replaces the getMeshsyncStatus GraphQL query.
 // GET /api/system/controllers/meshsync/status?connectionId=<id>
 func (h *Handler) MeshsyncStatusHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
-	connectionID := req.URL.Query().Get("connectionId")
-	// Reject a malformed connectionId rather than falling back to uuid.Nil.
-	connectionUUID, err := uuid.FromString(connectionID)
-	if err != nil {
-		writeMeshkitError(w, models.ErrInvalidUUID(err), http.StatusBadRequest)
+	connectionUUID, ok := h.requireQueryConnectionID(w, req)
+	if !ok {
 		return
 	}
+	connectionID := connectionUUID.String()
 	info := system.ControllerInfo{
 		ConnectionId: connectionUUID,
 		Name:         "MeshSync",
@@ -384,13 +408,11 @@ func (h *Handler) MeshsyncStatusHandler(w http.ResponseWriter, req *http.Request
 // Replaces the getNatsStatus GraphQL query.
 // GET /api/system/controllers/broker/status?connectionId=<id>
 func (h *Handler) BrokerStatusHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
-	connectionID := req.URL.Query().Get("connectionId")
-	// Reject a malformed connectionId rather than falling back to uuid.Nil.
-	connectionUUID, err := uuid.FromString(connectionID)
-	if err != nil {
-		writeMeshkitError(w, models.ErrInvalidUUID(err), http.StatusBadRequest)
+	connectionUUID, ok := h.requireQueryConnectionID(w, req)
+	if !ok {
 		return
 	}
+	connectionID := connectionUUID.String()
 	info := system.ControllerInfo{
 		ConnectionId: connectionUUID,
 		Name:         "MesheryBroker",
@@ -668,6 +690,9 @@ func (h *Handler) brokerNetworkingDiagnostic(
 // "Diagnostics" section of the connection detail view.
 // GET /api/system/controllers/diagnostics?connectionId=<id>
 func (h *Handler) ControllerDiagnosticsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
-	connectionID := req.URL.Query().Get("connectionId")
-	writeJSONMessage(w, h.computeConnectionDiagnostics(connectionID), http.StatusOK)
+	connectionUUID, ok := h.requireQueryConnectionID(w, req)
+	if !ok {
+		return
+	}
+	writeJSONMessage(w, h.computeConnectionDiagnostics(connectionUUID.String()), http.StatusOK)
 }
