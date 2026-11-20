@@ -338,10 +338,15 @@ func printDeleteRelationshipAction(action pattern.Action) {
 	// The server sends the removed relationship's definition as an object
 	// under "relationship", the same shape an add_relationship action carries
 	// in "item".
+	// Only a complete definition gets the full line; a partial one would print
+	// an empty subtype or "unknown" endpoints.
 	kind, subType, from, to := extractRelationshipInfo(action.Value["relationship"])
-	if kind != "" {
+	switch {
+	case kind != "" && subType != "" && from != "unknown" && to != "unknown":
 		fmt.Printf("  - %s-%s relationship from %s to %s (id: %s)\n", kind, subType, from, to, id)
-	} else {
+	case kind != "":
+		fmt.Printf("  - %s (id: %s)\n", kind, id)
+	default:
 		fmt.Printf("  - relationship (id: %s)\n", id)
 	}
 }
