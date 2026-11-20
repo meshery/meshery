@@ -852,7 +852,7 @@ registry:
       flags:
         input:
           name: --input, -i
-          description: (optional) path to capability file
+          description: (optional) relative or absolute path to an existing models directory (when unset, the repo-root models directory is auto-detected)
         spreadsheet-cred:
           name: --spreadsheet-cred
           description: base64 encoded credential to download the spreadsheet
