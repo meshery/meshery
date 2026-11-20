@@ -1,6 +1,9 @@
 package registry
 
 import (
+	"errors"
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -292,6 +295,12 @@ func TestGenerationOptionsCreation(t *testing.T) {
 }
 
 func TestPreRunEValidation(t *testing.T) {
+	// Ensure test runs from repository root so prerequisite check passes
+	repoRoot, err := filepath.Abs(filepath.Join("..", "..", "..", "..", ".."))
+	if err == nil && isDirectory(filepath.Join(repoRoot, "models")) {
+		chdir(t, repoRoot)
+	}
+
 	// Test PreRunE validation for various input scenarios
 	tests := []struct {
 		name        string
@@ -326,6 +335,279 @@ func TestPreRunEValidation(t *testing.T) {
 			} else {
 				assert.NoError(t, err)
 			}
+		})
+	}
+}
+
+func TestCheckRegistryPrerequisites(t *testing.T) {
+	tempRoot := t.TempDir()
+	tempRoot, err := filepath.EvalSymlinks(tempRoot)
+	assert.NoError(t, err)
+
+	modelsDir := filepath.Join(tempRoot, "models")
+	err = os.MkdirAll(modelsDir, 0o755)
+	assert.NoError(t, err)
+
+	subDir := filepath.Join(tempRoot, "mesheryctl")
+	err = os.MkdirAll(subDir, 0o755)
+	assert.NoError(t, err)
+
+	serverDir := filepath.Join(tempRoot, "server")
+	err = os.MkdirAll(filepath.Join(serverDir, "models"), 0o755)
+	assert.NoError(t, err)
+
+	deepSubDir := filepath.Join(tempRoot, "mesheryctl", "internal", "deep")
+	err = os.MkdirAll(deepSubDir, 0o755)
+	assert.NoError(t, err)
+
+	tests := []struct {
+		name        string
+		dir         string
+		runner      gitCommandRunner
+		expectError bool
+		errorMsg    string
+	}{
+		{
+			name: "not in a git repository",
+			dir:  tempRoot,
+			runner: func(dir string, args ...string) ([]byte, error) {
+				if len(args) > 0 && args[0] == "rev-parse" && args[1] == "--is-inside-work-tree" {
+					return nil, errors.New("fatal: not a git repository")
+				}
+				return nil, nil
+			},
+			expectError: true,
+			errorMsg:    "not in a git repository",
+		},
+		{
+			name: "remote URL does not contain meshery",
+			dir:  tempRoot,
+			runner: func(dir string, args ...string) ([]byte, error) {
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--is-inside-work-tree" {
+					return []byte("true\n"), nil
+				}
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--show-toplevel" {
+					return []byte(tempRoot + "\n"), nil
+				}
+				if len(args) >= 3 && args[0] == "config" && args[2] == "remote.origin.url" {
+					return []byte("https://github.com/someone/other-repo.git\n"), nil
+				}
+				return []byte(""), nil
+			},
+			expectError: true,
+			errorMsg:    "does not appear to be a fork of meshery/meshery",
+		},
+		{
+			name: "nonmatching repository under meshery organization is rejected",
+			dir:  tempRoot,
+			runner: func(dir string, args ...string) ([]byte, error) {
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--is-inside-work-tree" {
+					return []byte("true\n"), nil
+				}
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--show-toplevel" {
+					return []byte(tempRoot + "\n"), nil
+				}
+				if len(args) >= 3 && args[0] == "config" && args[2] == "remote.origin.url" {
+					return []byte("https://github.com/meshery/meshkit.git\n"), nil
+				}
+				return []byte(""), nil
+			},
+			expectError: true,
+			errorMsg:    "does not appear to be a fork of meshery/meshery",
+		},
+		{
+			name: "nonmatching origin with matching upstream is accepted",
+			dir:  tempRoot,
+			runner: func(dir string, args ...string) ([]byte, error) {
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--is-inside-work-tree" {
+					return []byte("true\n"), nil
+				}
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--show-toplevel" {
+					return []byte(tempRoot + "\n"), nil
+				}
+				if len(args) >= 3 && args[0] == "config" && args[2] == "remote.origin.url" {
+					return []byte("https://github.com/someone/unrelated.git\n"), nil
+				}
+				if len(args) >= 3 && args[0] == "config" && args[2] == "remote.upstream.url" {
+					return []byte("https://github.com/meshery/meshery.git\n"), nil
+				}
+				return []byte(""), nil
+			},
+			expectError: false,
+		},
+		{
+			name: "valid meshery origin remote at repository root",
+			dir:  tempRoot,
+			runner: func(dir string, args ...string) ([]byte, error) {
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--is-inside-work-tree" {
+					return []byte("true\n"), nil
+				}
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--show-toplevel" {
+					return []byte(tempRoot + "\n"), nil
+				}
+				if len(args) >= 3 && args[0] == "config" && args[2] == "remote.origin.url" {
+					return []byte("https://github.com/myfork/meshery.git\n"), nil
+				}
+				return []byte(""), nil
+			},
+			expectError: false,
+		},
+		{
+			name: "valid upstream remote with origin missing",
+			dir:  tempRoot,
+			runner: func(dir string, args ...string) ([]byte, error) {
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--is-inside-work-tree" {
+					return []byte("true\n"), nil
+				}
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--show-toplevel" {
+					return []byte(tempRoot + "\n"), nil
+				}
+				if len(args) >= 3 && args[0] == "config" && args[2] == "remote.origin.url" {
+					return nil, errors.New("not found")
+				}
+				if len(args) >= 3 && args[0] == "config" && args[2] == "remote.upstream.url" {
+					return []byte("git@github.com:meshery/meshery.git\n"), nil
+				}
+				return []byte(""), nil
+			},
+			expectError: false,
+		},
+		{
+			name: "immediate subdirectory of fork with models folder",
+			dir:  subDir,
+			runner: func(dir string, args ...string) ([]byte, error) {
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--is-inside-work-tree" {
+					return []byte("true\n"), nil
+				}
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--show-toplevel" {
+					return []byte(tempRoot + "\n"), nil
+				}
+				if len(args) >= 3 && args[0] == "config" && args[2] == "remote.origin.url" {
+					return []byte("https://github.com/meshery/meshery.git\n"), nil
+				}
+				return []byte(""), nil
+			},
+			expectError: false,
+		},
+		{
+			name: "child directory whose default output does not resolve to root models is rejected",
+			dir:  serverDir,
+			runner: func(dir string, args ...string) ([]byte, error) {
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--is-inside-work-tree" {
+					return []byte("true\n"), nil
+				}
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--show-toplevel" {
+					return []byte(tempRoot + "\n"), nil
+				}
+				if len(args) >= 3 && args[0] == "config" && args[2] == "remote.origin.url" {
+					return []byte("https://github.com/meshery/meshery.git\n"), nil
+				}
+				return []byte(""), nil
+			},
+			expectError: true,
+			errorMsg:    "must be executed from the root of the meshery/meshery repository fork",
+		},
+		{
+			name: "deep nested subdirectory outside allowed locations",
+			dir:  deepSubDir,
+			runner: func(dir string, args ...string) ([]byte, error) {
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--is-inside-work-tree" {
+					return []byte("true\n"), nil
+				}
+				if len(args) >= 2 && args[0] == "rev-parse" && args[1] == "--show-toplevel" {
+					return []byte(tempRoot + "\n"), nil
+				}
+				if len(args) >= 3 && args[0] == "config" && args[2] == "remote.origin.url" {
+					return []byte("https://github.com/meshery/meshery.git\n"), nil
+				}
+				return []byte(""), nil
+			},
+			expectError: true,
+			errorMsg:    "must be executed from the root of the meshery/meshery repository fork",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := checkRegistryPrerequisites(tt.dir, tt.runner)
+			if tt.expectError {
+				assert.Error(t, err)
+				if tt.errorMsg != "" {
+					assert.Contains(t, err.Error(), tt.errorMsg)
+				}
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestPreRunEPrerequisiteFailure(t *testing.T) {
+	// Running PreRunE in an empty directory outside a git repository should fail with prerequisite error
+	emptyDir := t.TempDir()
+	chdir(t, emptyDir)
+	resetGenerateFlags(generateCmd)
+
+	err := generateCmd.PreRunE(generateCmd, []string{})
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "not in a git repository")
+}
+
+func TestIsMesheryRepoURL(t *testing.T) {
+	tests := []struct {
+		url      string
+		expected bool
+	}{
+		{"https://github.com/meshery/meshery.git", true},
+		{"https://github.com/meshery/meshery", true},
+		{"git@github.com:meshery/meshery.git", true},
+		{"git@github.com:myfork/meshery.git", true},
+		{"git@github.com:myfork/meshery", true},
+		{"ssh://git@github.com/meshery/meshery.git", true},
+		{"https://github.com/meshery/meshkit.git", false},
+		{"https://github.com/meshery/schemas.git", false},
+		{"https://github.com/someone/other-project.git", false},
+		{"", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.url, func(t *testing.T) {
+			assert.Equal(t, tt.expected, isMesheryRepoURL(tt.url))
+		})
+	}
+}
+
+func TestIsMesheryGoMod(t *testing.T) {
+	tests := []struct {
+		name     string
+		content  string
+		expected bool
+	}{
+		{
+			name:     "exact module match",
+			content:  "module github.com/meshery/meshery\n\ngo 1.21\n",
+			expected: true,
+		},
+		{
+			name:     "prefix match is rejected",
+			content:  "module github.com/meshery/meshery-extra\n\ngo 1.21\n",
+			expected: false,
+		},
+		{
+			name:     "match inside comment is rejected",
+			content:  "// module github.com/meshery/meshery\nmodule github.com/other/pkg\n",
+			expected: false,
+		},
+		{
+			name:     "different module",
+			content:  "module github.com/meshery/meshkit\n",
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expected, isMesheryGoMod(tt.content))
 		})
 	}
 }

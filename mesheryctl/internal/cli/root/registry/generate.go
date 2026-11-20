@@ -18,7 +18,9 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -93,8 +95,10 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		return nil
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
-		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
+		if err := verifyRegistryPrerequisites(); err != nil {
+			return err
+		}
+
 		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory | Individual CSV files ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nmesheryctl registry generate --model-csv [path] --component-csv [path] --relationship-csv [path]\nRun 'mesheryctl registry generate --help' to see detailed help message"
 
 		spreadsheetIdFlag, _ := cmd.Flags().GetString("spreadsheet-id")
@@ -286,4 +290,141 @@ func init() {
 	// New flags for per-model timeout and latest version only
 	generateCmd.PersistentFlags().DurationVar(&modelTimeout, "timeout", meshkitRegistryUtils.DefaultModelTimeout, "timeout duration for generating each model (e.g., 5m, 10m, 1h), default: 5m")
 	generateCmd.PersistentFlags().BoolVar(&latestVersionOnly, "latest-only", false, "generate only the latest version of each model")
+}
+
+type gitCommandRunner func(dir string, args ...string) ([]byte, error)
+
+func defaultGitRunner(dir string, args ...string) ([]byte, error) {
+	cmd := exec.Command("git", args...)
+	cmd.Dir = dir
+	return cmd.Output()
+}
+
+func isMesheryRepoURL(rawURL string) bool {
+	u := strings.TrimSpace(rawURL)
+	if u == "" {
+		return false
+	}
+	u = strings.TrimSuffix(u, "/")
+	u = strings.TrimSuffix(u, ".git")
+	lower := strings.ToLower(u)
+	return strings.HasSuffix(lower, "/meshery") || strings.HasSuffix(lower, ":meshery")
+}
+
+func isMesheryGoMod(content string) bool {
+	for _, line := range strings.Split(content, "\n") {
+		line = strings.TrimSpace(line)
+		if idx := strings.Index(line, "//"); idx != -1 {
+			line = strings.TrimSpace(line[:idx])
+		}
+		fields := strings.Fields(line)
+		if len(fields) >= 2 && fields[0] == "module" {
+			return fields[1] == "github.com/meshery/meshery"
+		}
+	}
+	return false
+}
+
+func verifyRegistryPrerequisites() error {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return ErrGeneratePrerequisites(fmt.Errorf("failed to get current working directory: %w", err), "Unable to determine current working directory")
+	}
+	return checkRegistryPrerequisites(cwd, defaultGitRunner)
+}
+
+func checkRegistryPrerequisites(dir string, runner gitCommandRunner) error {
+	// 1. Confirm execution is inside a git repository
+	output, err := runner(dir, "rev-parse", "--is-inside-work-tree")
+	if err != nil || strings.TrimSpace(string(output)) != "true" {
+		return ErrGeneratePrerequisites(
+			fmt.Errorf("not in a git repository; mesheryctl registry generate must be executed from a fork of the meshery/meshery repository"),
+			"The current working directory is not a git repository",
+		)
+	}
+
+	// 2. Determine repository root
+	rootOut, err := runner(dir, "rev-parse", "--show-toplevel")
+	if err != nil {
+		return ErrGeneratePrerequisites(
+			fmt.Errorf("failed to determine repository root: %w", err),
+			"Failed to determine repository root",
+		)
+	}
+	repoRoot := strings.TrimSpace(string(rootOut))
+
+	// 3. Confirm origin (or upstream/remotes) points to a meshery repository fork
+	originOut, _ := runner(dir, "config", "--get", "remote.origin.url")
+	originURL := strings.TrimSpace(string(originOut))
+
+	isMesheryRemote := isMesheryRepoURL(originURL)
+	checkedURL := originURL
+
+	// Check upstream when origin does not match
+	if !isMesheryRemote {
+		upstreamOut, _ := runner(dir, "config", "--get", "remote.upstream.url")
+		upstreamURL := strings.TrimSpace(string(upstreamOut))
+		if isMesheryRepoURL(upstreamURL) {
+			isMesheryRemote = true
+			checkedURL = upstreamURL
+		}
+	}
+
+	// Fallback to checking all remotes if neither origin nor upstream matched
+	if !isMesheryRemote {
+		remotesOut, _ := runner(dir, "remote", "-v")
+		for _, line := range strings.Split(string(remotesOut), "\n") {
+			fields := strings.Fields(line)
+			if len(fields) >= 2 && isMesheryRepoURL(fields[1]) {
+				isMesheryRemote = true
+				checkedURL = fields[1]
+				break
+			}
+		}
+	}
+
+	// Secondary fallback for offline or custom remote setups: verify exact root go.mod module
+	if !isMesheryRemote {
+		goModPath := filepath.Join(repoRoot, "go.mod")
+		if data, err := os.ReadFile(goModPath); err == nil && isMesheryGoMod(string(data)) {
+			isMesheryRemote = true
+		}
+	}
+
+	if !isMesheryRemote {
+		return ErrGeneratePrerequisites(
+			fmt.Errorf("repository does not appear to be a fork of meshery/meshery: remote URL %q does not point to meshery", checkedURL),
+			"Git remote does not point to a meshery/meshery repository fork",
+		)
+	}
+
+	// 4. Confirm execution is at the repository root
+	evalDir, errDir := filepath.EvalSymlinks(dir)
+	if errDir != nil {
+		evalDir = filepath.Clean(dir)
+	}
+	evalRoot, errRoot := filepath.EvalSymlinks(repoRoot)
+	if errRoot != nil {
+		evalRoot = filepath.Clean(repoRoot)
+	}
+
+	if evalDir == evalRoot {
+		return nil
+	}
+
+	// For child directories, ensure the child directory does not have its own models directory
+	// (such as server/models) and that ../models resolves to the repository root models directory (e.g. mesheryctl/)
+	parentDir := filepath.Clean(filepath.Join(evalDir, ".."))
+	hasLocalModels := isDirectory(filepath.Join(evalDir, "models"))
+	expectedRootModels := filepath.Clean(filepath.Join(evalRoot, "models"))
+	hasParentModels := isDirectory(filepath.Join(evalDir, "..", "models"))
+
+	if parentDir == evalRoot && !hasLocalModels && hasParentModels && isDirectory(expectedRootModels) {
+		return nil
+	}
+
+	return ErrGeneratePrerequisites(
+		fmt.Errorf("mesheryctl registry generate must be executed from the root of the meshery/meshery repository fork (current directory: %s, repo root: %s)", dir, repoRoot),
+		"Command was not executed from the repository root",
+	)
 }
