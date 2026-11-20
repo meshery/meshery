@@ -8,13 +8,17 @@ import (
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 )
 
-func GetAddonsState(ctx context.Context, selectors []MeshType, provider models.Provider, cid []string) ([]*AddonList, error) {
+func GetAddonsState(ctx context.Context, selectors []MeshType, provider models.GenericPersisterGetter, cid []string) ([]*AddonList, error) {
 	addonlist := make([]*AddonList, 0)
 	objects := make([]meshsyncmodel.KubernetesResource, 0)
 	cidMap := make(map[string]bool)
 
 	for _, c := range cid {
 		cidMap[c] = true
+	}
+
+	if provider == nil || provider.GetGenericPersister() == nil {
+		return addonlist, nil
 	}
 
 	for _, selector := range selectors {
