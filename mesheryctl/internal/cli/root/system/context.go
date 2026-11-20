@@ -308,9 +308,13 @@ mesheryctl system context view --all
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &contextViewFlags)
 	},
-	Args: func(_ *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) > 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", contextViewUsageMsg))
+		}
+		isContextSpecified := len(args) > 0 || (cmd != nil && cmd.Flags().Changed("context") && contextViewFlags.Context != "")
+		if contextViewFlags.All && isContextSpecified {
+			return utils.ErrInvalidArgument(fmt.Errorf("--all flag cannot be used when context name is specified\n\n%s", contextViewUsageMsg))
 		}
 		return nil
 	},
