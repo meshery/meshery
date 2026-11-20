@@ -144,6 +144,11 @@ func InvokeCompUpdate() (err error) {
 		totalAggregateModel = 0
 		totalAggregateComponents = 0
 	}()
+
+	// Validate the input root up front: a per-model read failure below is logged
+	// and skipped, so an unusable --input would otherwise report a successful
+	// empty update and exit 0. Individual model/component failures stay
+	// non-fatal by design (the nightly registry refresh relies on that).
 	info, err := os.Stat(modelLocation)
 	if err != nil {
 		return ErrUpdateRegistry(err, modelLocation)
