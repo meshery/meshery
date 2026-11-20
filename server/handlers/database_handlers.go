@@ -3,15 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
-	"os"
-	"path"
-	"time"
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
-	"github.com/meshery/meshkit/utils"
 	system "github.com/meshery/schemas/models/v1beta1/system"
 	"github.com/spf13/viper"
 	"gorm.io/gorm/clause"
@@ -75,72 +70,38 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 // ResetSystemDatabase resets the system database to its initial state.
 func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-
-	mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
-	err := os.Mkdir(path.Join(mesherydbPath, ".archive"), os.ModePerm)
-	if err != nil && os.IsNotExist(err) {
-		writeMeshkitError(w, ErrCreateDatabaseArchiveDir(err), http.StatusInternalServerError)
-		return
-	}
-	src := path.Join(mesherydbPath, "mesherydb.sql")
-	currentTime := time.Now().Format("20060102150407")
-	newFileName := ".archive/mesherydb" + currentTime + ".sql"
-	dst := path.Join(mesherydbPath, newFileName)
-
-	fin, err := os.Open(src)
-	if err != nil {
-		writeMeshkitError(w, ErrOpenDatabaseFile(err), http.StatusInternalServerError)
-		return
-	}
-	defer func() {
-		if err := fin.Close(); err != nil {
-			h.log.Error(err)
-		}
-	}()
-
-	fout, err := os.Create(dst)
-	if err != nil {
-		writeMeshkitError(w, ErrCreateDatabaseArchiveFile(err), http.StatusInternalServerError)
-		return
-	}
-	defer func() {
-		if err := fout.Close(); err != nil {
-			h.log.Error(err)
-		}
-	}()
-
-	_, err = io.Copy(fout, fin)
-	if err != nil {
-		writeMeshkitError(w, ErrCopyDatabaseFile(err), http.StatusInternalServerError)
-		return
-	}
-
 	dbHandler := provider.GetGenericPersister()
 	if dbHandler == nil {
 		writeMeshkitError(w, ErrObtainDatabaseHandler(), http.StatusInternalServerError)
 		return
-	} else {
-		// Held for the whole workflow, including the seeding goroutine below.
-		// dbHandler's own lock is released when this function returns, which
-		// leaves the goroutine unprotected: a second reset could acquire it and
-		// drop tables mid-seed. Released by whichever goroutine finishes the
-		// work, not on handler return - hence the seedingStarted flag, which
-		// makes sure every early return below still releases.
-		if !models.TryAcquireResetLock() {
-			writeMeshkitError(w, ErrResetInProgress(), http.StatusConflict)
-			return
+	}
+
+	// Held for the whole workflow, including the seeding goroutine below.
+	// dbHandler's own lock is released when this function returns, which
+	// leaves the goroutine unprotected: a second reset could acquire it and
+	// drop tables mid-seed. Released by whichever goroutine finishes the
+	// work, not on handler return - hence the seedingStarted flag, which
+	// makes sure every early return below still releases.
+	if !models.TryAcquireResetLock() {
+		writeMeshkitError(w, ErrResetInProgress(), http.StatusConflict)
+		return
+	}
+	seedingStarted := false
+	defer func() {
+		if !seedingStarted {
+			models.ReleaseResetLock()
 		}
-		seedingStarted := false
-		defer func() {
-			if !seedingStarted {
-				models.ReleaseResetLock()
-			}
-		}()
+	}()
 
-		dbHandler.Lock()
-		defer dbHandler.Unlock()
+	dbHandler.Lock()
+	defer dbHandler.Unlock()
 
-		tables, err := dbHandler.Migrator().GetTables()
+	if _, err := models.BackupSystemDatabase(dbHandler); err != nil {
+		writeMeshkitError(w, ErrCreateDatabaseArchiveFile(err), http.StatusInternalServerError)
+		return
+	}
+
+	tables, err := dbHandler.Migrator().GetTables()
 		if err != nil {
 			writeMeshkitError(w, ErrAccessDatabaseTables(err), http.StatusInternalServerError)
 			return
@@ -215,5 +176,4 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			})
 		}()
 		writeJSONMessage(w, system.SystemMessageResponse{Message: "Database reset successful"}, http.StatusOK)
-	}
 }
