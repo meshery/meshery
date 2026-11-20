@@ -12,6 +12,7 @@ import (
 	isql "github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/encoding"
 	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/catalog/v1alpha1"
 	"github.com/meshery/meshkit/models/patterns"
@@ -37,6 +38,10 @@ schemaVersion: designs.meshery.io/v1beta1
 components: []
 relationships: []
 `
+
+// persisterTestDesignJSON is a JSON-submitted design whose metadata carries a
+// key the pattern schema does not model.
+const persisterTestDesignJSON = `{"name":"persister-test","schemaVersion":"designs.meshery.io/v1beta1","components":[],"metadata":{"owner":"x"}}`
 
 func designWithVersion(version string) string {
 	return strings.Replace(persisterTestDesign, "version: 0.0.1", "version: "+version, 1)
@@ -112,6 +117,21 @@ func storedDesignVersion(t *testing.T, db *gorm.DB, id uuid.UUID) string {
 		t.Fatalf("parse stored design file: %v", err)
 	}
 	return string(pf.Version)
+}
+
+// assertStoredMetadataOwner checks the stored design file still carries the
+// unmodelled metadata.owner key, whichever format it is stored in.
+func assertStoredMetadataOwner(t *testing.T, file string) {
+	t.Helper()
+	var doc map[string]interface{}
+	if err := encoding.Unmarshal([]byte(file), &doc); err != nil {
+		t.Fatalf("parse stored design file %q: %v", file, err)
+	}
+	metadata, _ := doc["metadata"].(map[string]interface{})
+	owner, _ := metadata["owner"].(string)
+	if owner != "x" {
+		t.Errorf("stored metadata.owner = %q, want %q (stored file: %s)", owner, "x", file)
+	}
 }
 
 // postStylePattern is the record handlePatternPOST builds for an existing
@@ -333,6 +353,22 @@ func TestSaveMesheryPattern_AssignsVersionOnCreate(t *testing.T) {
 	}
 }
 
+// A JSON design's unmodelled metadata keys (PatternFile_Metadata
+// AdditionalProperties) must survive a create, not just receive the version.
+func TestSaveMesheryPattern_KeepsSubmittedMetadataOnCreate(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	record := &MesheryPattern{Name: "new-design", PatternFile: persisterTestDesignJSON}
+
+	if _, err := mpp.SaveMesheryPattern(record); err != nil {
+		t.Fatalf("save: %v", err)
+	}
+
+	assertStoredMetadataOwner(t, loadPattern(t, db, *record.ID).PatternFile)
+	if got := storedDesignVersion(t, db, *record.ID); got != "0.0.1" {
+		t.Errorf("stored version = %q, want 0.0.1", got)
+	}
+}
+
 // An existing design's stored version gets a patch bump.
 func TestSaveMesheryPattern_BumpsVersionOnUpdate(t *testing.T) {
 	db, mpp := newPatternPersisterTestDB(t)
@@ -383,6 +419,28 @@ func TestSaveMesheryPatterns_AssignsVersionOnCreate(t *testing.T) {
 	if err := json.Unmarshal(body, &saved); err != nil || len(saved) != 1 {
 		t.Fatalf("decode response %s: %v", body, err)
 	}
+	if got := storedDesignVersion(t, db, *saved[0].ID); got != "0.0.1" {
+		t.Errorf("stored version = %q, want 0.0.1", got)
+	}
+}
+
+// The batch save keeps the submitted metadata the same way.
+func TestSaveMesheryPatterns_KeepsSubmittedMetadataOnCreate(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+
+	body, err := mpp.SaveMesheryPatterns([]MesheryPattern{
+		{Name: "batch-json", PatternFile: persisterTestDesignJSON},
+	})
+	if err != nil {
+		t.Fatalf("batch save: %v", err)
+	}
+
+	var saved []MesheryPattern
+	if err := json.Unmarshal(body, &saved); err != nil || len(saved) != 1 {
+		t.Fatalf("decode response %s: %v", body, err)
+	}
+
+	assertStoredMetadataOwner(t, loadPattern(t, db, *saved[0].ID).PatternFile)
 	if got := storedDesignVersion(t, db, *saved[0].ID); got != "0.0.1" {
 		t.Errorf("stored version = %q, want 0.0.1", got)
 	}

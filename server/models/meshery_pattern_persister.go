@@ -20,6 +20,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/models/patterns"
 )
 
@@ -293,11 +294,11 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 	if err := setSavedVersion(pf, isNew); err != nil {
 		return marshalSaveError(err), err
 	}
-	byt, err := yaml.Marshal(pf)
+	stored, err := savedPatternFile(pattern.PatternFile, pf.Version)
 	if err != nil {
 		return nil, err
 	}
-	pattern.PatternFile = string(byt)
+	pattern.PatternFile = stored
 
 	// Stamp before marshalling so the save/clone response carries the same
 	// owner contract as the GET paths. UserID/User are gorm:"-", so this is
@@ -372,6 +373,26 @@ func setSavedVersion(pf *design.PatternFile, isNew bool) error {
 	return nil
 }
 
+// savedPatternFile stamps the version into the submitted file instead of
+// re-marshalling the parsed design: yaml.Marshal drops keys the schema leaves
+// unmodelled (PatternFile_Metadata.AdditionalProperties is yaml:"-"), so the
+// save would lose submitted metadata it does not know.
+func savedPatternFile(patternFile, version string) (string, error) {
+	var doc map[string]interface{}
+	if err := encoding.Unmarshal([]byte(patternFile), &doc); err != nil {
+		return "", err
+	}
+	if doc == nil {
+		doc = map[string]interface{}{}
+	}
+	doc["version"] = version
+	byt, err := yaml.Marshal(doc)
+	if err != nil {
+		return "", err
+	}
+	return string(byt), nil
+}
+
 // updateSavedColumns updates an existing design with the columns the save
 // carries. A save carries only some of them - POST /api/pattern builds the
 // record from DesignPostPayload, which has no source content, type or creation
@@ -420,11 +441,11 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 		if err := setSavedVersion(pf, isNew); err != nil {
 			return marshalSaveError(err), err
 		}
-		byt, err := yaml.Marshal(pf)
+		stored, err := savedPatternFile(pattern.PatternFile, pf.Version)
 		if err != nil {
 			return nil, err
 		}
-		pattern.PatternFile = string(byt)
+		pattern.PatternFile = stored
 
 		stampLocalProviderOwner(&pattern)
 
