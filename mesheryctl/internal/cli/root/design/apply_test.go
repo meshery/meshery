@@ -201,7 +201,7 @@ func TestApplyCmd(t *testing.T) {
 			ExpectedError:  ErrDesignNotFound("nonexistent-design"),
 		},
 		{
-			Name:             "given multi-word design name with spaces when design apply and not found then throw error without raw percent encoding",
+			Name:             "given multi-word non existing design name with spaces when design apply then throw error without raw percent encoding",
 			Args:             []string{"apply", "my", "sample", "design"},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
