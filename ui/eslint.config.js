@@ -187,6 +187,7 @@ const legacyMaxLineOffenders = [
 // proactive warning threshold (§8.4) but stay under the hard 1000-line ceiling.
 // Allowlisted so CI stays green; entries leave the list as files get split up.
 const legacyMaxLineSoftOffenders = [
+  'components/environments/index.test.tsx',
   'components/environments/index.tsx',
   'components/layout/Navigator/Navigator.tsx',
   'components/performance/PerformanceResults.tsx',
