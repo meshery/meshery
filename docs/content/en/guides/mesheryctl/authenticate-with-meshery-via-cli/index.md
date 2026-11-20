@@ -72,6 +72,7 @@ If `mesheryctl` runs on a machine with no browser, such as a remote server or a 
 
 `mesheryctl system logout` empties the token file for the current context. Run
 `mesheryctl system login` again to get a new token.
+In a Local provider context, the empty token is valid for Local operation.
 Remote provider commands stop with an authentication error after logout; they do
 not accept the empty token as valid authentication.
 
