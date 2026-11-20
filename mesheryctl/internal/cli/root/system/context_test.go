@@ -256,8 +256,8 @@ func TestContextCreateCmd(t *testing.T) {
 	}{
 		{
 			CmdTestInput: utils.CmdTestInput{
-				Name:                 "given context name provided when system context create then context is created",
-				Args:                 []string{"context", "create", "local3"},
+				Name:                 "given context name with surrounding spaces when system context create then context is saved without them",
+				Args:                 []string{"context", "create", "  local3  "},
 				ExpectedResponse:     "createContext.golden",
 				ExpectedResponseYaml: "addExpected.golden",
 			},
@@ -277,6 +277,24 @@ func TestContextCreateCmd(t *testing.T) {
 				Args:           []string{"context", "create", "local1", "local2"},
 				ExpectError:    true,
 				ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
+				IsOutputGolden: false,
+			},
+		},
+		{
+			CmdTestInput: utils.CmdTestInput{
+				Name:           "given an empty context name when system context create then throw error",
+				Args:           []string{"context", "create", ""},
+				ExpectError:    true,
+				ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errEmptyNameMsg, contextCreateUsageMsg)),
+				IsOutputGolden: false,
+			},
+		},
+		{
+			CmdTestInput: utils.CmdTestInput{
+				Name:           "given a blank context name when system context create then throw error",
+				Args:           []string{"context", "create", "   "},
+				ExpectError:    true,
+				ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errEmptyNameMsg, contextCreateUsageMsg)),
 				IsOutputGolden: false,
 			},
 		},
