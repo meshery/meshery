@@ -247,6 +247,13 @@ mesheryctl system token view --all
 			return fmt.Errorf("token %q not found in config", tokenName)
 		}
 
+		if !utils.IsInteractiveTerminal() {
+			return utils.ErrNoTerminalForPrompt(
+				"which token to use",
+				"Pass a valid token name so no selection is needed",
+			)
+		}
+
 		utils.Log.Info("Invalid token name. Select from available tokens-")
 		prompt := promptui.Select{
 			Label: "Select a token from the list",
