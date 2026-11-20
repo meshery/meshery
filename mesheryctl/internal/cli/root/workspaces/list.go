@@ -97,6 +97,10 @@ func init() {
 }
 
 func processDataToDisplay(workspaceResponse *workspace.WorkspacePage) ([][]string, int64) {
+	if workspaceResponse == nil {
+		return [][]string{}, 0
+	}
+
 	rows := [][]string{}
 
 	for _, workspace := range workspaceResponse.Workspaces {

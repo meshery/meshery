@@ -5,6 +5,9 @@
  * @returns
  */
 export default function PascalCaseToKebab(str) {
+  if (typeof str !== 'string' || !str) {
+    return '';
+  }
   return pascalCaseToCamelCase(str).replace(/[A-Z]/g, '-$&').toLowerCase();
 }
 
