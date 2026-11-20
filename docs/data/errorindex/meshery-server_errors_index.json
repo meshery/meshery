@@ -7655,6 +7655,24 @@
         "Retry the request",
         "If it keeps failing, report it at https://github.com/meshery/meshery/issues/new/choose together with the request that triggered it; the server log holds the full stack"
       ]
+    },
+    {
+      "code": "meshery-server-1496",
+      "moniker": "ErrInvalidDesignVersionCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1496",
+      "severity": "alert",
+      "shortDescription": "Invalid design version",
+      "probableCause": [
+        "The design file's version is not semver, so a next version cannot be computed from it",
+        "Older tooling wrote arbitrary version strings into design files"
+      ],
+      "suggestedRemediation": [
+        "Set the design file's version to a semver string such as 0.0.1 and save again"
+      ]
     }
   ],
   "schemaVersion": 2
