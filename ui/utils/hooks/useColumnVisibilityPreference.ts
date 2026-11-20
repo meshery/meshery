@@ -55,7 +55,7 @@ export function useColumnVisibilityPreference(
       setColumnVisibility((prev) => {
         const next = typeof updater === 'function' ? updater(prev) : updater;
         // Persist only defined (non-undefined) values.
-        const toStore: Record<string, boolean> = {};
+        const toStore: Record<string, boolean> = Object.create(null);
         for (const [col, val] of Object.entries(next)) {
           if (val !== undefined) toStore[col] = val;
         }

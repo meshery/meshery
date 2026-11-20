@@ -304,10 +304,9 @@ const WorkspaceDataTable = ({
 
   useEffect(() => {
     let showCols = updateVisibleColumns(colViews, width);
-    const initialVisibility = {};
-    columns.forEach((col) => {
-      initialVisibility[col.name] = showCols[col.name];
-    });
+    const initialVisibility = Object.fromEntries(
+      columns.map((col) => [col.name, showCols[col.name]]),
+    );
     setColumnVisibility(initialVisibility);
   }, [width]);
 

@@ -35,6 +35,13 @@ describe('updateVisibleColumns', () => {
     expect(updateVisibleColumns([['c', 'unknown']], 0)).toEqual({ c: true });
   });
 
+  it.each(['foo', 'md '])(
+    'treats unsupported breakpoint "%s" as minimum width zero',
+    (screenSize) => {
+      expect(updateVisibleColumns([['c', screenSize]], 0)).toEqual({ c: true });
+    },
+  );
+
   it('handles multiple columns', () => {
     expect(
       updateVisibleColumns(

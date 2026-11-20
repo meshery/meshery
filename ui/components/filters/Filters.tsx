@@ -382,10 +382,9 @@ function MesheryFilters() {
 
   const responsiveColDefaults = (() => {
     const showCols = updateVisibleColumns(COLUMN_VIEWS, width);
-    const initialVisibility: Record<string, boolean> = {};
-    columns.forEach((col) => {
-      initialVisibility[col.name] = showCols[col.name];
-    });
+    const initialVisibility: Record<string, boolean> = Object.fromEntries(
+      columns.map((col) => [col.name, showCols[col.name]]),
+    );
     return initialVisibility;
   })();
 
