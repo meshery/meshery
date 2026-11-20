@@ -32,6 +32,8 @@ var linkDocUpdate = map[string]string{
 	"caption": "Usage of mesheryctl system update",
 }
 
+var updateUsageMsg = "Usage: mesheryctl system update [flags]\nRun 'mesheryctl system update --help' to see detailed help message"
+
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
@@ -46,6 +48,12 @@ mesheryctl system update
 mesheryctl system update --skip-reset
 	`,
 	Annotations: linkDocUpdate,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", updateUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -60,10 +68,6 @@ mesheryctl system update --skip-reset
 		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "update"))
-		}
-
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -128,12 +132,11 @@ mesheryctl system update --skip-reset
 				return err
 			}
 			mesheryImageVersion := currCtx.GetVersion()
-			providerURL := viper.GetString(c.ProviderURLsENV)
 			// If the user skips reset, then just restart the pods else fetch updated manifest files and apply them
 			if !utils.SkipResetFlag {
 
 				// Apply the latest helm chart along with the default image tag specified in the charts "stable-latest"
-				if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.UPGRADE, "", providerURL); err != nil {
+				if err = upgradeMesheryHelmCharts(kubeClient, currCtx, mesheryImageVersion); err != nil {
 					return errors.Wrap(err, "cannot update Meshery")
 				}
 			}
@@ -180,6 +183,19 @@ mesheryctl system update --skip-reset
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		utils.CheckMesheryctlClientVersion(constants.GetMesheryctlVersion())
 	},
+}
+
+// applyHelmChartsFn applies the Meshery Helm charts. Tests replace it.
+var applyHelmChartsFn = applyHelmCharts
+
+// upgradeMesheryHelmCharts upgrades the Meshery Helm releases with the same
+// callback and provider URLs that system start installs them with. A Helm
+// upgrade with new values does not keep the release's previous values, so
+// leaving the URLs out would drop them from the Meshery deployment.
+func upgradeMesheryHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string) error {
+	callbackURL := viper.GetString(c.CallbackURLENV)
+	providerURL := viper.GetString(c.ProviderURLsENV)
+	return applyHelmChartsFn(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.UPGRADE, callbackURL, providerURL)
 }
 
 func init() {

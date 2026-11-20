@@ -27,6 +27,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+var deleteUsageMsg = "Usage: mesheryctl system delete [flags]\nRun 'mesheryctl system delete --help' to see detailed help message"
+
 // deleteCmd represents the delete command
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
@@ -40,6 +42,12 @@ mesheryctl system delete
 // Delete Meshery containers without confirmation
 mesheryctl system delete -y
 `,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", deleteUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Check prerequisite
 		hcOptions := &HealthCheckOptions{
@@ -54,9 +62,6 @@ mesheryctl system delete -y
 		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "delete"))
-		}
 		if err := deleteContainers(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to delete Meshery containers"))
 		}

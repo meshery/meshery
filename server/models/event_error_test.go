@@ -172,7 +172,7 @@ func TestAssignServerIDFailureAttachesTheMatchedCause(t *testing.T) {
 		t.Fatalf("build clientset: %v", err)
 	}
 	kc := &K8sContext{Server: "http://127.0.0.1:1"}
-	assignErr := kc.AssignServerID(&mkkube.Client{KubeClient: clientset})
+	assignErr := kc.AssignServerID(context.Background(), &mkkube.Client{KubeClient: clientset})
 	if assignErr == nil {
 		t.Fatal("AssignServerID succeeded against a closed port")
 	}

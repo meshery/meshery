@@ -6,6 +6,7 @@ import LoadTestTimerDialog from '../load-test-timer-dialog';
 import fetchControlPlanes from '@/graphql/queries/ControlPlanesQuery';
 import { getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 import { useNotification } from '../../utils/hooks/useNotification';
+import { formatApiError } from '../../utils/helpers/meshkitError';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { buildPerformanceRunUrl, generateTestName, generateUUID } from './helper';
 
@@ -34,6 +35,10 @@ export { generatePerformanceProfile } from './performance-helpers';
 let eventStream = null;
 const PERFORMANCE_RTK_TAG = 'Performance_Profile_performance';
 
+/**
+ * MesheryPerformanceComponent_ renders the performance test configuration wizard and runner.
+ * Gated on `Keys.PerformanceManagementViewPerformanceProfiles`. Skips queries when denied.
+ */
 const MesheryPerformanceComponent_ = (props) => {
   const hasPermission = useHasPermission(Keys.PerformanceManagementViewPerformanceProfiles);
   const {
@@ -95,24 +100,43 @@ const MesheryPerformanceComponent_ = (props) => {
   });
   const { notify } = useNotification();
   const dispatch = useDispatch();
-  const { data: userData, isSuccess: isUserDataFetched } =
-    useGetUserPrefWithContextQuery(selectedK8sContexts);
+  const { data: userData, isSuccess: isUserDataFetched } = useGetUserPrefWithContextQuery(
+    selectedK8sContexts,
+    {
+      skip: !hasPermission,
+    },
+  );
 
   const [savePerformanceProfile] = useSavePerformanceProfileMutation();
   const {
     data: smpMeshes,
     isSuccess: isSMPMeshesFetched,
     isError: isSMPMeshError,
-  } = useGetMeshQuery();
+    error: smpMeshError,
+  } = useGetMeshQuery(undefined, {
+    skip: !hasPermission,
+  });
+
+  // Report a failed mesh list fetch on its own: going through handleError
+  // would also stop a running test and close its event stream.
+  useEffect(() => {
+    if (!isSMPMeshError) return;
+    const { message } = formatApiError(smpMeshError, 'Unable to fetch SMP meshes');
+    notify({ message, event_type: EVENT_TYPES.ERROR });
+  }, [isSMPMeshError, smpMeshError]);
 
   useEffect(() => {
+    if (!hasPermission) return;
+    /**
+     * Fetches available mesh models to populate test form selections.
+     */
     const fetchMeshModels = async () => {
       const { models } = await getMeshModels();
       const modelNames = models.map((model) => model.displayName);
       setMeshModels(modelNames);
     };
     fetchMeshModels();
-  }, []);
+  }, [hasPermission]);
 
   const handleChange = createPerformanceFormChangeHandler({
     setProfileName,
@@ -363,11 +387,12 @@ const MesheryPerformanceComponent_ = (props) => {
     }
   }
   useEffect(() => {
+    if (!hasPermission) return;
     scanForMeshes();
     getLoadTestPrefs();
     getSMPMeshes();
     if (props.runTestOnMount) handleSubmit();
-  }, [userData, isUserDataFetched, smpMeshes]);
+  }, [userData, isUserDataFetched, smpMeshes, hasPermission]);
 
   const getLoadTestPrefs = () => {
     if (!isUserDataFetched || !userData) return;
@@ -431,8 +456,6 @@ const MesheryPerformanceComponent_ = (props) => {
       setAvailableSMPMeshes(
         [...(smpMeshes.availableMeshes || [])].sort((m1, m2) => m1.localeCompare(m2)),
       );
-    } else if (isSMPMeshError) {
-      handleError('unable to fetch SMP meshes');
     }
   };
 

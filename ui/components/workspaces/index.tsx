@@ -67,15 +67,15 @@ const columnList = [
     label: 'ID',
   },
   {
-    name: 'owner_email',
+    name: 'ownerEmail',
     label: 'Owner Email',
   },
   {
-    name: 'owner_id',
+    name: 'ownerId',
     label: 'Owner Id',
   },
   {
-    name: 'org_name',
+    name: 'orgName',
     label: 'Org Name',
   },
   {
@@ -111,11 +111,11 @@ const columnList = [
     label: 'Environments',
   },
   {
-    name: 'created_at',
+    name: 'createdAt',
     label: 'Created At',
   },
   {
-    name: 'updated_at',
+    name: 'updatedAt',
     label: 'Updated At',
   },
   {
@@ -475,6 +475,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
                   <SearchBar
                     onSearch={(value) => {
                       setSearch(value);
+                      setPage(0);
                     }}
                     placeholder="Search Workspaces..."
                     expanded={isSearchExpanded}

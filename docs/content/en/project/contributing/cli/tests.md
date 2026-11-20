@@ -24,7 +24,7 @@ End-to-end testing of `mesheryctl` uses the [Bash Automated Testing System](http
 Before diving into `mesheryctl`'s testing environment, certain prerequisites must be met to ensure a smooth testing experience. These prerequisites include:
 
 - A working installation of Meshery CLI and Meshery Server.
-  - A verified account in your chosen provider which integrate with Meshery.
+  - A verified account in your chosen provider that integrates with Meshery.
 - A working installation of the BATS testing framework.
   - `bash` as shell terminal.
 - [Optional] A working installation of a Kubernetes cluster (Minikube, Kind, etc.) for testing Kubernetes-related functionality.
@@ -56,7 +56,7 @@ cd bats-core
 ./install.sh $HOME
 ```
 
-Some tests could use bats libraires as helpers to create the tests suite.
+Some tests could use bats libraries as helpers to create the test suite.
 
 #### Setup Dependencies
 
@@ -74,7 +74,7 @@ There are a few ways to set up the Meshery server, but for end-to-end testing, w
 make server
 ```
 
-Be aware that some test cases require the availability of a Kubernetes cluster and one or more  Meshery Adapters. In those cases, please refer to the [installation guides]({{< ref "installation/_index.md" >}})) (like that of [installing Meshery on Minikube]({{< ref "installation/kubernetes/minikube/index.md" >}})). 
+Be aware that some test cases require the availability of a Kubernetes cluster and one or more Meshery Adapters. In those cases, please refer to the [installation guides]({{< ref "installation/_index.md" >}}) (like that of [installing Meshery on Minikube]({{< ref "installation/kubernetes/minikube/index.md" >}})).
 
 ### Authentication
 
@@ -99,7 +99,7 @@ mesheryctl system login
 
 ## Writing End-to-End Test Cases
 
-Once all prerequisites have been met, you are setup to run, add, update new test cases.To keep the development of tests consistents and maintainable, we have put some guidance on implementation process which are describe above.
+Once all prerequisites have been met, you are set up to run, add, and update new test cases. To keep the development of tests consistent and maintainable, we have provided some guidance on the implementation process, which is described below.
 
 ### Folder structure
 
@@ -159,7 +159,7 @@ make e2e
 make e2e-no-build
 ```
 
-**Run a specific commmand tests suite**
+**Run a specific command test suite**
 
 
 ```bash
@@ -175,7 +175,7 @@ make e2e-no-build BATS_FOLDER_PATTERN=002-model
 ```bash
 make e2e-no-build BATS_FOLDER_PATTERN=<test folder name> BATS_FILE_PATTERN=<test command name>
 
-# Example to run mesheryctl model genereate tests
+# Example to run mesheryctl model generate tests
 make e2e-no-build BATS_FOLDER_PATTERN=002-model BATS_FILE_PATTERN=06-model-generate
 ```
 
@@ -193,7 +193,7 @@ To use these, ensure you are in the `meshery/mesheryctl/tests/e2e` directory.
 
 **Run tests with already built binary**
 
-This excludes the need to build the binary everytime there is an attempt to run all the tests.
+This excludes the need to build the binary every time there is an attempt to run all the tests.
 
 ```bash
   bash run_tests_local.sh
@@ -201,7 +201,7 @@ This excludes the need to build the binary everytime there is an attempt to run 
 
 NB: This works if there is an existing `mesheryctl` binary. If there isn't, the binary will be built. 
 
-**Enforce rebuilding the  binary**
+**Enforce rebuilding the binary**
 
 This involves parsing a flag for the binary to be built whether it exists or not. This comes in handy when you have local changes and possibly will like to test.
 
@@ -346,7 +346,7 @@ In the following example, we must have create a model with the name `model-test`
 
 Official documentation is available at [https://bats-core.readthedocs.io/en/stable/](https://bats-core.readthedocs.io/en/stable/)
 
-Github organization [https://github.com/bats-core](https://github.com/bats-core) contains bats-core repository and also bats libraries repositoires  
+Github organization [https://github.com/bats-core](https://github.com/bats-core) contains bats-core repository and also bats libraries repositories
 
 1.  **Basic Test Structure:** A Bats test file consists of one or more test cases defined using the `@test` keyword.
 

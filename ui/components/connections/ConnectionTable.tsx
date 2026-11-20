@@ -231,7 +231,9 @@ const ConnectionTable = ({
     isError: isEnvironmentsError,
     error: environmentsError,
   } = useGetEnvironmentsQuery(
-    { orgId: organization?.id },
+    // Without a page size the server returns only its default first page of
+    // 10, which would hide every later environment from this select.
+    { orgId: organization?.id, pagesize: 'all' },
     {
       skip: !organization?.id,
     },

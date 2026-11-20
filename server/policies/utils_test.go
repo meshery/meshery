@@ -172,6 +172,84 @@ func TestStringSliceToInterface(t *testing.T) {
 	}
 }
 
+func TestResolvePaths(t *testing.T) {
+	obj := map[string]interface{}{
+		"containers": []interface{}{"nginx", "sidecar", "init"},
+	}
+
+	t.Run("no wildcard", func(t *testing.T) {
+		path := []string{"name"}
+		results := resolvePaths(path, obj)
+		if len(results) != 1 || len(results[0]) != 1 || results[0][0] != "name" {
+			t.Errorf("Expected [[name]], got %v", results)
+		}
+	})
+
+	t.Run("wildcard expands all elements", func(t *testing.T) {
+		path := []string{"containers", "_", "name"}
+		results := resolvePaths(path, obj)
+		if len(results) != 3 {
+			t.Fatalf("Expected 3 paths, got %d: %v", len(results), results)
+		}
+		for i, expectedIdx := range []string{"0", "1", "2"} {
+			if results[i][1] != expectedIdx {
+				t.Errorf("Expected path %d index %s, got %s", i, expectedIdx, results[i][1])
+			}
+		}
+	})
+
+	t.Run("wildcard empty array", func(t *testing.T) {
+		emptyObj := map[string]interface{}{
+			"containers": []interface{}{},
+		}
+		path := []string{"containers", "_"}
+		results := resolvePaths(path, emptyObj)
+		if len(results) != 1 || results[0][1] != "0" {
+			t.Errorf("Expected 1 path with index 0 for empty array, got %v", results)
+		}
+	})
+}
+
+func TestOrderCleanupActions(t *testing.T) {
+	t.Run("removals on same array sorted descending by index", func(t *testing.T) {
+		actions := []PolicyAction{
+			{Op: RemoveComponentConfigurationOp, ID: "c1", UpdatePath: []string{"configuration", "subjects", "0"}},
+			{Op: RemoveComponentConfigurationOp, ID: "c1", UpdatePath: []string{"configuration", "subjects", "1"}},
+			{Op: RemoveComponentConfigurationOp, ID: "c1", UpdatePath: []string{"configuration", "subjects", "2"}},
+		}
+		ordered := orderCleanupActions(actions)
+		if len(ordered) != 3 {
+			t.Fatalf("Expected 3 actions, got %d", len(ordered))
+		}
+		expectedIndices := []string{"2", "1", "0"}
+		for i, exp := range expectedIndices {
+			gotIdx := ordered[i].UpdatePath[len(ordered[i].UpdatePath)-1]
+			if gotIdx != exp {
+				t.Errorf("At %d: expected index %s, got %s", i, exp, gotIdx)
+			}
+		}
+	})
+
+	t.Run("preserves non-removals and other targets", func(t *testing.T) {
+		actions := []PolicyAction{
+			{Op: RemoveComponentConfigurationOp, ID: "c1", UpdatePath: []string{"configuration", "subjects", "0"}},
+			{Op: UpdateComponentConfigurationOp, ID: "c1", UpdatePath: []string{"configuration", "name"}, UpdateValue: "val"},
+			{Op: RemoveComponentConfigurationOp, ID: "c1", UpdatePath: []string{"configuration", "subjects", "1"}},
+			{Op: RemoveComponentConfigurationOp, ID: "c2", UpdatePath: []string{"configuration", "volumes", "0"}},
+		}
+		ordered := orderCleanupActions(actions)
+		if ordered[1].Op != UpdateComponentConfigurationOp {
+			t.Errorf("Expected slot 1 to remain UpdateComponentConfigurationOp")
+		}
+		if ordered[0].UpdatePath[2] != "1" || ordered[2].UpdatePath[2] != "0" {
+			t.Errorf("Expected slots 0 and 2 to be reordered descending (1, 0), got %v and %v", ordered[0].UpdatePath, ordered[2].UpdatePath)
+		}
+		if ordered[3].ID != "c2" {
+			t.Errorf("Expected slot 3 to remain c2")
+		}
+	})
+}
+
 func TestResolvePath(t *testing.T) {
 	obj := map[string]interface{}{
 		"containers": []interface{}{"nginx", "sidecar", "init"},

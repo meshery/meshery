@@ -2,6 +2,7 @@ package policies
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -32,11 +33,15 @@ func identifyInventoryAdditions(
 		return nil
 	}
 	var actions []PolicyAction
+	// Shared across relationships: the registry ships one Namespace
+	// inventory relationship per kubernetes model version, and several
+	// children usually reference the same parent.
+	emitted := map[string]bool{}
 	for _, rel := range relsInScope {
 		if !isHierarchicalParentInventory(rel) {
 			continue
 		}
-		actions = append(actions, identifyInventoryAdditionsForRel(rel, design)...)
+		actions = append(actions, identifyInventoryAdditionsForRel(rel, design, emitted)...)
 	}
 	return actions
 }
@@ -54,16 +59,17 @@ func isHierarchicalParentInventory(rel *relationship.RelationshipDefinition) boo
 // identify_additions.rego: split the from/to selectors into mutated/mutator
 // pools, find existing components matching the mutated selectors, and for
 // each (mutated_component, mutator_selector) pair emit a new component
-// unless one already exists with matching mutatorRef values.
+// unless one already exists with matching mutatorRef values or an
+// equivalent candidate is already in emitted.
 func identifyInventoryAdditionsForRel(
 	rel *relationship.RelationshipDefinition,
 	design *pattern.PatternFile,
+	emitted map[string]bool,
 ) []PolicyAction {
 	if rel.Selectors == nil {
 		return nil
 	}
 	var out []PolicyAction
-	emittedIDs := map[string]bool{}
 
 	for _, ss := range *rel.Selectors {
 		mutatedSels, mutatorSels := partitionByPatchRole(ss)
@@ -98,10 +104,11 @@ func identifyInventoryAdditionsForRel(
 					if feasibleRelationshipSelectorBetween(mutatedComp, candidate, rel) == nil {
 						continue
 					}
-					if emittedIDs[candidate.ID.String()] {
+					key := inventoryCandidateKey(candidate)
+					if emitted[key] {
 						continue
 					}
-					emittedIDs[candidate.ID.String()] = true
+					emitted[key] = true
 					out = append(out, newAddComponentAction(candidate))
 				}
 			}
@@ -222,6 +229,44 @@ func jsonValuesEqual(a, b interface{}) bool {
 		return false
 	}
 	return string(aBytes) == string(bBytes)
+}
+
+// inventoryCandidateKey identifies a candidate parent by what it is rather
+// than by its ID, which buildInventoryParentCandidate generates fresh for
+// every candidate. The key is the candidate's kind, its full ModelReference
+// (name, version and the rest of the reference, as the to-side selector
+// supplied it), displayName and configuration.
+//
+// The configuration is part of the key so parents that differ in a
+// configuration patch (e.g. metadata.namespace) stay distinct. The full
+// ModelReference is part of the key so a to-side selector that pins a
+// distinct model version yields a distinct parent; the relationship's own
+// model version is deliberately not part of the key, which is what lets
+// the registry's one-Namespace-relationship-per-kubernetes-version copies
+// collapse onto a single add_component action.
+func inventoryCandidateKey(candidate *component.ComponentDefinition) string {
+	content := struct {
+		Kind          string                      `json:"kind"`
+		Model         modelv1beta1.ModelReference `json:"model"`
+		DisplayName   string                      `json:"displayName"`
+		Configuration map[string]interface{}      `json:"configuration"`
+	}{
+		Kind:          candidate.Component.Kind,
+		Model:         candidate.ModelReference,
+		DisplayName:   string(candidate.DisplayName),
+		Configuration: candidate.Configuration,
+	}
+	key, err := json.Marshal(content)
+	if err != nil {
+		// Configuration values come from JSON-decoded design content, so
+		// marshaling only fails on values JSON cannot represent (e.g. NaN).
+		// fmt's textual form is also deterministic (map keys print in
+		// sorted order), so distinct candidates keep distinct keys and
+		// identical ones still collapse.
+		return fmt.Sprintf("%v|%#v|%v|%#v",
+			candidate.Component.Kind, candidate.ModelReference, candidate.DisplayName, candidate.Configuration)
+	}
+	return string(key)
 }
 
 // buildInventoryParentCandidate constructs the new component that would be

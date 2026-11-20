@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshkit/database"
 	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
@@ -45,6 +46,14 @@ type flushFakeProvider struct {
 func (f *flushFakeProvider) PersistSystemEvent(event events.Event) (PersistedEvent, error) {
 	f.persistedEvents = append(f.persistedEvents, event)
 	return PersistedEvent{Event: &event, Disposition: EventCreated}, nil
+}
+
+func (f *flushFakeProvider) LoadAllK8sContext(string) ([]*K8sContext, error) {
+	return nil, nil
+}
+
+func (f *flushFakeProvider) GetK8sContext(string, string) (K8sContext, error) {
+	return K8sContext{}, nil
 }
 
 // TestFlushMeshSyncDataEmptyUserIDAndNilMesheryInstanceID verifies that FlushMeshSyncData
@@ -316,3 +325,294 @@ func TestK8sContextsFromKubeconfigDiscoversAllContexts(t *testing.T) {
 		}
 	}
 }
+
+func TestK8sContextGenerateIDNilMesheryInstanceID(t *testing.T) {
+	ctxWithoutInstanceID := K8sContext{
+		Name:    "minikube",
+		Cluster: map[string]interface{}{"server": "https://127.0.0.1:6443"},
+		Auth:    map[string]interface{}{"token": "test-token"},
+	}
+
+	idWithoutInstance, err := K8sContextGenerateID(ctxWithoutInstanceID)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID returned error for nil MesheryInstanceID: %v", err)
+	}
+	if idWithoutInstance == "" {
+		t.Fatal("expected non-empty deterministic ID for context with nil MesheryInstanceID")
+	}
+
+	idRepeat, err := K8sContextGenerateID(ctxWithoutInstanceID)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID repeat call returned error: %v", err)
+	}
+	if idRepeat != idWithoutInstance {
+		t.Fatalf("expected deterministic ID %q, got %q", idWithoutInstance, idRepeat)
+	}
+
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+	ctxWithInstanceID := ctxWithoutInstanceID
+	ctxWithInstanceID.MesheryInstanceID = &instanceID
+
+	idWithInstance, err := K8sContextGenerateID(ctxWithInstanceID)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID returned error for populated MesheryInstanceID: %v", err)
+	}
+	if idWithInstance == idWithoutInstance {
+		t.Fatalf("expected ID with MesheryInstanceID (%q) to differ from nil MesheryInstanceID (%q)", idWithInstance, idWithoutInstance)
+	}
+
+	// RedactCredentialsForContext clears MesheryInstanceID to nil; calling
+	// K8sContextGenerateID afterward must remain panic-free.
+	redacted := RedactCredentialsForContext(&ctxWithInstanceID)
+	if redacted.MesheryInstanceID != nil {
+		t.Fatalf("expected RedactCredentialsForContext to nil MesheryInstanceID, got %v", redacted.MesheryInstanceID)
+	}
+	if _, err := K8sContextGenerateID(redacted); err != nil {
+		t.Fatalf("K8sContextGenerateID returned error after RedactCredentialsForContext: %v", err)
+	}
+}
+
+type flushDatabaseProvider struct {
+	flushFakeProvider
+	db *database.Handler
+}
+
+func (p *flushDatabaseProvider) GetGenericPersister() *database.Handler { return p.db }
+
+func TestFlushMeshSyncDataSharedAndLastContext(t *testing.T) {
+	serverID := uuid.Must(uuid.NewV4())
+	for _, tc := range []struct {
+		name   string
+		shared bool
+		want   int64
+	}{{"last context", false, 0}, {"shared server", true, 1}} {
+		t.Run(tc.name, func(t *testing.T) {
+			db := newMeshSyncTestDB(t)
+			seedMeshSyncResource(t, db, "resource", serverID.String())
+			current := &K8sContext{ID: uuid.Must(uuid.NewV4()).String(), KubernetesServerID: &serverID}
+			contexts := []*K8sContext{current}
+			if tc.shared {
+				contexts = append(contexts, &K8sContext{ID: uuid.Must(uuid.NewV4()).String(), KubernetesServerID: &serverID})
+			}
+			ctx := context.WithValue(context.Background(), AllKubeClusterKey, contexts)
+			FlushMeshSyncData(ctx, *current, &flushDatabaseProvider{db: db}, nil, "", nil, nil)
+			var count int64
+			if err := db.Model(&meshsyncmodel.KubernetesResource{}).Where("cluster_id = ?", serverID.String()).Count(&count).Error; err != nil {
+				t.Fatal(err)
+			}
+			if count != tc.want {
+				t.Fatalf("remaining resources = %d, want %d", count, tc.want)
+			}
+		})
+	}
+}
+
+type flushMockContextLoaderProvider struct {
+	flushDatabaseProvider
+	allContexts []*K8sContext
+}
+
+func (p *flushMockContextLoaderProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
+	return p.allContexts, nil
+}
+
+// TestFlushMeshSyncDataWithoutContextAllKubeClusterKey verifies that when AllKubeClusterKey
+// is absent from the request context (as in DeleteContext / DeleteConnection background teardown),
+// FlushMeshSyncData falls back to k8sContext.KubernetesServerID and provider context loading
+// to reliably flush MeshSync resources instead of aborting with a false error.
+func TestFlushMeshSyncDataWithoutContextAllKubeClusterKey(t *testing.T) {
+	serverID := uuid.Must(uuid.NewV4())
+	ctxID := uuid.Must(uuid.NewV4()).String()
+
+	t.Run("flushes when KubernetesServerID is present without AllKubeClusterKey in context", func(t *testing.T) {
+		db := newMeshSyncTestDB(t)
+		seedMeshSyncResource(t, db, "resource-1", serverID.String())
+
+		current := K8sContext{
+			ID:                 ctxID,
+			Name:               "deleted-cluster",
+			Server:             "https://k8s.example.com",
+			KubernetesServerID: &serverID,
+		}
+
+		fp := &flushDatabaseProvider{db: db}
+		// Passing an empty background context without AllKubeClusterKey
+		FlushMeshSyncData(context.Background(), current, fp, nil, "", nil, nil)
+
+		var count int64
+		if err := db.Model(&meshsyncmodel.KubernetesResource{}).Where("cluster_id = ?", serverID.String()).Count(&count).Error; err != nil {
+			t.Fatal(err)
+		}
+		if count != 0 {
+			t.Fatalf("expected 0 resources remaining after flush, got %d", count)
+		}
+		if len(fp.persistedEvents) != 1 {
+			t.Fatalf("expected 1 persisted success event, got %d", len(fp.persistedEvents))
+		}
+		if fp.persistedEvents[0].Severity != events.Informational {
+			t.Errorf("expected Informational event, got %s", fp.persistedEvents[0].Severity)
+		}
+	})
+
+	t.Run("preserves resources when provider reports multiple active contexts sharing the server", func(t *testing.T) {
+		db := newMeshSyncTestDB(t)
+		seedMeshSyncResource(t, db, "shared-resource", serverID.String())
+
+		current := K8sContext{
+			ID:                 ctxID,
+			Name:               "deleted-cluster-1",
+			Server:             "https://k8s.example.com",
+			KubernetesServerID: &serverID,
+		}
+
+		otherCtx := &K8sContext{
+			ID:                 uuid.Must(uuid.NewV4()).String(),
+			Name:               "active-cluster-2",
+			Server:             "https://k8s.example.com",
+			KubernetesServerID: &serverID,
+		}
+
+		mockProvider := &flushMockContextLoaderProvider{
+			flushDatabaseProvider: flushDatabaseProvider{db: db},
+			allContexts:           []*K8sContext{&current, otherCtx},
+		}
+
+		// Empty context without AllKubeClusterKey
+		FlushMeshSyncData(context.Background(), current, mockProvider, nil, "", nil, nil)
+
+		var count int64
+		if err := db.Model(&meshsyncmodel.KubernetesResource{}).Where("cluster_id = ?", serverID.String()).Count(&count).Error; err != nil {
+			t.Fatal(err)
+		}
+		if count != 1 {
+			t.Fatalf("expected 1 resource preserved for shared server, got %d", count)
+		}
+	})
+}
+
+func TestK8sContext_RedactCredentials(t *testing.T) {
+	ctx := &K8sContext{
+		ID:           "test-id",
+		Name:         "test-name",
+		Server:       "https://cluster.example.com",
+		ConnectionID: "conn-123",
+		DeploymentType: "out_cluster",
+		Version:      "v1.30.0",
+		Auth: sql.Map{
+			"client-key-data":         "super-secret-key",
+			"token":                   "secret-token",
+			"client-certificate-data": "client-cert",
+		},
+		Cluster: sql.Map{
+			"certificate-authority-data": "ca-cert",
+			"server":                     "https://cluster.example.com",
+		},
+	}
+
+	ctx.RedactCredentials()
+
+	if len(ctx.Auth) != 0 {
+		t.Errorf("expected Auth to be empty, got: %v", ctx.Auth)
+	}
+	if len(ctx.Cluster) != 0 {
+		t.Errorf("expected Cluster to be empty, got: %v", ctx.Cluster)
+	}
+	if ctx.ID != "test-id" {
+		t.Errorf("expected ID to be preserved, got %s", ctx.ID)
+	}
+	if ctx.Name != "test-name" {
+		t.Errorf("expected Name to be preserved, got %s", ctx.Name)
+	}
+	if ctx.Server != "https://cluster.example.com" {
+		t.Errorf("expected Server to be preserved, got %s", ctx.Server)
+	}
+	if ctx.ConnectionID != "conn-123" {
+		t.Errorf("expected ConnectionID to be preserved, got %s", ctx.ConnectionID)
+	}
+	if ctx.DeploymentType != "out_cluster" {
+		t.Errorf("expected DeploymentType to be preserved, got %s", ctx.DeploymentType)
+	}
+	if ctx.Version != "v1.30.0" {
+		t.Errorf("expected Version to be preserved, got %s", ctx.Version)
+	}
+
+	// Nil receiver safety check
+	var nilCtx *K8sContext
+	nilCtx.RedactCredentials() // must not panic
+}
+
+func TestK8sContext_Redacted(t *testing.T) {
+	orig := &K8sContext{
+		ID:             "ctx-copy-id",
+		Name:           "ctx-copy-name",
+		Server:         "https://cluster-copy.example.com",
+		ConnectionID:   "conn-copy-123",
+		DeploymentType: "out_cluster",
+		Version:        "v1.30.0",
+		Auth: sql.Map{
+			"client-key-data": "secret-key",
+			"token":           "secret-token",
+		},
+		Cluster: sql.Map{
+			"certificate-authority-data": "secret-ca",
+		},
+	}
+
+	redacted := orig.Redacted()
+
+	// Redacted copy must have credentials wiped
+	if len(redacted.Auth) != 0 {
+		t.Errorf("expected redacted Auth to be empty, got: %v", redacted.Auth)
+	}
+	if len(redacted.Cluster) != 0 {
+		t.Errorf("expected redacted Cluster to be empty, got: %v", redacted.Cluster)
+	}
+	// Redacted copy must preserve metadata
+	if redacted.ID != "ctx-copy-id" || redacted.Name != "ctx-copy-name" || redacted.Server != "https://cluster-copy.example.com" {
+		t.Errorf("expected metadata to be preserved in copy, got %+v", redacted)
+	}
+	if redacted.ConnectionID != "conn-copy-123" || redacted.DeploymentType != "out_cluster" || redacted.Version != "v1.30.0" {
+		t.Errorf("expected metadata to be preserved in copy, got %+v", redacted)
+	}
+
+	// Original must remain untouched (copy semantics)
+	if len(orig.Auth) == 0 {
+		t.Errorf("expected original Auth to remain untouched, got empty")
+	}
+	if len(orig.Cluster) == 0 {
+		t.Errorf("expected original Cluster to remain untouched, got empty")
+	}
+
+	// Nil receiver safety
+	var nilCtx *K8sContext
+	nilRes := nilCtx.Redacted() // must not panic
+	if len(nilRes.Auth) != 0 || len(nilRes.Cluster) != 0 {
+		t.Errorf("expected empty maps from nil receiver, got %+v", nilRes)
+	}
+}
+
+func TestRedactCredentialsForContext_NilSafety(t *testing.T) {
+	// Calling with nil must not panic
+	res := RedactCredentialsForContext(nil)
+	if len(res.Auth) != 0 || len(res.Cluster) != 0 {
+		t.Errorf("expected empty maps for nil input, got %+v", res)
+	}
+
+	// Calling with populated context
+	ctx := &K8sContext{
+		ID:     "legacy-id",
+		Name:   "legacy-name",
+		Server: "https://legacy.example.com",
+		Auth: sql.Map{
+			"token": "secret",
+		},
+	}
+	resPop := RedactCredentialsForContext(ctx)
+	if len(resPop.Auth) != 0 {
+		t.Errorf("expected empty Auth, got %+v", resPop.Auth)
+	}
+	if resPop.MesheryInstanceID != nil {
+		t.Errorf("expected nil MesheryInstanceID, got %+v", resPop.MesheryInstanceID)
+	}
+}
+
