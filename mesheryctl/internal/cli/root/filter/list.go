@@ -27,6 +27,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -79,6 +80,9 @@ mesheryctl filter list 'Test Filter'
 
 		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, filterListFlagsProvided.PageSize, filterListFlagsProvided.Page-1)
 		if err != nil {
+			if meshkiterrors.GetCode(err) == utils.ErrUnauthenticatedCode {
+				return err
+			}
 			utils.Log.Error(err)
 			return ErrFetchFilter(err)
 		}
@@ -98,6 +102,9 @@ mesheryctl filter list 'Test Filter'
 
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
+			if meshkiterrors.GetCode(err) == utils.ErrUnauthenticatedCode {
+				return err
+			}
 			return utils.ErrReadToken(err)
 		}
 		provider := tokenObj["meshery-provider"]
@@ -117,7 +124,9 @@ mesheryctl filter list 'Test Filter'
 
 // Pagination(making multiple requests) to retrieve filter Data in batches
 func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*models.FiltersAPIResponse, error) {
-	var response *models.FiltersAPIResponse
+	// Decode into a value, not a pointer: a response body of null leaves a value as
+	// an empty page, but would leave a pointer nil for the callers to crash on.
+	var response models.FiltersAPIResponse
 
 	url := baseURL + "/api/filter"
 
@@ -128,6 +137,9 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 
 	req, err := utils.NewRequest("GET", url, nil)
 	if err != nil {
+		if meshkiterrors.GetCode(err) == utils.ErrUnauthenticatedCode {
+			return nil, err
+		}
 		return nil, utils.ErrCreatingRequest(err)
 	}
 
@@ -151,7 +163,7 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 	if err != nil {
 		return nil, utils.ErrUnmarshal(err)
 	}
-	return response, nil
+	return &response, nil
 }
 
 func init() {
