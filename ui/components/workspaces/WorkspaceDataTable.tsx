@@ -355,6 +355,7 @@ const WorkspaceDataTable = ({
           break;
         case 'changeRowsPerPage':
           setPageSize(tableState.rowsPerPage);
+          setPage(0);
           break;
 
         case 'sort':
