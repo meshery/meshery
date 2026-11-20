@@ -36,19 +36,22 @@ func TestInvokeCompUpdate_InputPaths(t *testing.T) {
 	require.NoError(t, os.MkdirAll(filepath.Dir(componentPath), 0o755))
 	require.NoError(t, os.MkdirAll(subDir, 0o755))
 	componentCSVFilePath = filepath.Join(root, "components.csv")
-	// Repeat the row so CSV EOF cannot win the helper's select before any update is read.
 	csv := "ignored,ignored,ignored,ignored\nregistrant,model,component,description\n" +
-		"meshery,demo,Thing,after\nmeshery,demo,Thing,after\n"
+		"meshery,demo,Thing,after\n"
 	require.NoError(t, os.WriteFile(componentCSVFilePath, []byte(csv), 0o644))
 
 	tests := []struct {
-		name  string
-		cwd   string
-		input string
+		name    string
+		cwd     string
+		input   string
+		wantErr bool
 	}{
 		{name: "relative", cwd: root, input: "models"},
 		{name: "absolute", cwd: root, input: modelsDir},
 		{name: "relative from subdirectory", cwd: subDir, input: filepath.Join("..", "models")},
+		{name: "missing relative directory", cwd: root, input: "missing-models", wantErr: true},
+		{name: "missing absolute directory", cwd: root, input: filepath.Join(root, "missing-models"), wantErr: true},
+		{name: "regular file", cwd: root, input: componentCSVFilePath, wantErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -57,13 +60,20 @@ func TestInvokeCompUpdate_InputPaths(t *testing.T) {
 			require.NoError(t, os.WriteFile(componentPath, original, 0o644))
 			modelLocation = tt.input
 
-			require.NoError(t, InvokeCompUpdate())
+			err := InvokeCompUpdate()
+			wantDescription := "after"
+			if tt.wantErr {
+				require.ErrorContains(t, err, tt.input)
+				wantDescription = "before"
+			} else {
+				require.NoError(t, err)
+			}
 
 			content, err := os.ReadFile(componentPath)
 			require.NoError(t, err)
 			var updated comp.ComponentDefinition
 			require.NoError(t, json.Unmarshal(content, &updated))
-			assert.Equal(t, "after", updated.Description)
+			assert.Equal(t, wantDescription, updated.Description)
 		})
 	}
 }
@@ -94,7 +104,7 @@ func TestInvokeCompUpdate_ComponentsSheetError(t *testing.T) {
 	sheetGID = 0
 	componentCSVFilePath = filepath.Join(t.TempDir(), "missing-components.csv")
 	modelName = ""
-	modelLocation = "./models"
+	modelLocation = t.TempDir()
 	logFile = nil
 
 	err := InvokeCompUpdate()

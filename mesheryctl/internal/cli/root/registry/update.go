@@ -46,6 +46,7 @@ var updateCmd = &cobra.Command{
 	Short: "Update the registry with latest data.",
 	Long: `Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.
 The --input path can be relative to the current directory or absolute.
+The input directory must exist. Missing paths and regular files cause the command to exit with an error.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/registry/update`,
 	Example: `
 // Update models from Meshery Integration Spreadsheet
@@ -143,6 +144,14 @@ func InvokeCompUpdate() (err error) {
 		totalAggregateModel = 0
 		totalAggregateComponents = 0
 	}()
+	info, err := os.Stat(modelLocation)
+	if err != nil {
+		return ErrUpdateRegistry(err, modelLocation)
+	}
+	if !info.IsDir() {
+		return ErrUpdateRegistry(fmt.Errorf("input path must be a directory"), modelLocation)
+	}
+
 	modelToCompUpdateTracker := store.NewGenericThreadSafeStore[[]compUpdateTracker]()
 
 	url := GoogleSpreadSheetURL + spreadsheeetID

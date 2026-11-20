@@ -16,6 +16,7 @@ Update the registry with latest data.
 
 Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.
 The --input path can be relative to the current directory or absolute.
+The input directory must exist. Missing paths and regular files cause the command to exit with an error.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
