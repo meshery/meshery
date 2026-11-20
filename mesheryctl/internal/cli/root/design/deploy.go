@@ -119,6 +119,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 			}
 
 			index := 0
+			response.Patterns = exactNameMatches(response.Patterns, patternName)
 			if len(response.Patterns) == 0 {
 				return ErrDesignNotFound(patternName)
 			} else if len(response.Patterns) == 1 {
