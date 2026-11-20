@@ -11,7 +11,20 @@ const (
 	ErrResolveReferenceCode       = "meshery-server-1361"
 	ErrYAMLUnmarshalCode          = "meshery-server-1436"
 	ErrDependencyNotSatisfiedCode = "meshery-server-1480"
+	ErrProvisionPanicCode         = "meshery-server-1481"
 )
+
+// ErrProvisionPanic reports a component that panicked during provisioning execution.
+func ErrProvisionPanic(component string, r interface{}) error {
+	return errors.New(
+		ErrProvisionPanicCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Component %q panicked during provisioning", component)},
+		[]string{fmt.Sprintf("A panic occurred while provisioning component %q: %v", component, r)},
+		[]string{"Runtime fault occurred in component visitor execution"},
+		[]string{"Inspect component configuration and provider logs for runtime failures"},
+	)
+}
 
 // ErrDependencyNotSatisfied reports a component that was not acted on because a
 // component it declared a dependency on did not succeed.
