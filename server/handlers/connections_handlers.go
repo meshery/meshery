@@ -534,10 +534,14 @@ func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ 
 	obj := "connection"
 
 	if err != nil {
-		if h.log != nil {
-			h.log.Error(ErrQueryGet(obj))
+		if statusCode == http.StatusNotFound || providerStatus(err) == http.StatusNotFound {
+			h.log.Warnf("No connection with ID %q found", connectionID)
+			writeMeshkitError(w, ErrGetConnection(err, connectionID.String()), http.StatusNotFound)
+			return
 		}
-		writeMeshkitError(w, ErrQueryGet(obj), statusCode)
+		wrappedErr := ErrGetConnection(err, connectionID.String())
+		h.log.Error(wrappedErr)
+		writeMeshkitError(w, wrappedErr, statusCode)
 		return
 	}
 
