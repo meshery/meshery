@@ -1093,8 +1093,7 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 		Sort:      sort,
 	})
 	if err != nil {
-		var mErr error
-		mErr = ErrPolicyDefinitionFilter(err)
+		mErr := ErrPolicyDefinitionFilter(err)
 		h.log.Error(mErr)
 		writeMeshkitError(rw, mErr, http.StatusInternalServerError)
 		return
