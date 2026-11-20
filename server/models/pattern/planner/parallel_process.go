@@ -102,6 +102,7 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 			log.Errorf("panic in parallel process node %s: %v", v.Name, r)
 			if !settled {
 				sendSignalToDeps(deps, false, v.Name, log)
+				settled = true
 			}
 		}
 		wg.Done()
@@ -138,8 +139,8 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 			withheld(v.Name, v.Data.Data, failedDep)
 		}
 
-		settled = true
 		sendSignalToDeps(deps, false, v.Name, log)
+		settled = true
 
 		return
 	}
@@ -150,8 +151,8 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 	log.Debug("RESPONSE GOT FOR", v.Name, ":", ok)
 
 	// Send the appropriate signal
-	settled = true
 	sendSignalToDeps(deps, ok, v.Name, log)
+	settled = true
 }
 
 // sendSignalToDeps sends signal on the channel
@@ -171,18 +172,10 @@ func sendSignalToDeps(deps []*ParallelProcessGraphNode, ok bool, from string, lo
 func sendSignalToDep(dep *ParallelProcessGraphNode, ok bool, from string, log logger.Handler) {
 	if ok {
 		log.Debug("Sending completed signal to:", dep.Name)
-		select {
-		case dep.DepUpdateCh <- struct{}{}:
-		default:
-			log.Warnf("DepUpdateCh buffer full for: %s", dep.Name)
-		}
+		dep.DepUpdateCh <- struct{}{}
 		return
 	}
 
 	log.Debug("Sending abort signal to:", dep.Name)
-	select {
-	case dep.DepCancleCh <- from:
-	default:
-		log.Warnf("DepCancleCh buffer full for: %s", dep.Name)
-	}
+	dep.DepCancleCh <- from
 }
