@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
+  CircularProgress,
   DeleteIcon,
   NoSsr,
   Pagination,
@@ -99,17 +100,14 @@ const Environments = () => {
 
   const modalRef = useRef(null);
   const organizationScopeRef = useRef({ id: organization?.id, generation: 0 });
-  if (organizationScopeRef.current.id !== organization?.id) {
-    organizationScopeRef.current = {
-      id: organization?.id,
-      generation: organizationScopeRef.current.generation + 1,
-    };
-  }
   const previousOrganizationIdRef = useRef(organization?.id);
+  const environmentFormSessionRef = useRef(0);
+  const connectionAssignmentSessionRef = useRef(0);
   const { notify } = useNotification();
 
   const {
     currentData: environmentsData,
+    isFetching: isFetchingEnvironments,
     isError: isEnvironmentsError,
     error: environmentsError,
   } = useGetEnvironmentsQuery(
@@ -133,6 +131,8 @@ const Environments = () => {
   const [deleteEnvironment] = useDeleteEnvironmentMutation();
 
   const environments = environmentsData?.environments ? environmentsData.environments : [];
+  const isEnvironmentsPending =
+    isLoadingOrganization || isFetchingEnvironments || !environmentsData;
   const isConnectionAssignmentCurrent = environments.some(
     (environment) => environment.id === connectionAssignEnv.id,
   );
@@ -260,7 +260,13 @@ const Environments = () => {
 
   useEffect(() => {
     if (previousOrganizationIdRef.current === organization?.id) return;
+    organizationScopeRef.current = {
+      id: organization?.id,
+      generation: organizationScopeRef.current.generation + 1,
+    };
     previousOrganizationIdRef.current = organization?.id;
+    environmentFormSessionRef.current += 1;
+    connectionAssignmentSessionRef.current += 1;
 
     setPage(0);
     setSelectedEnvironments([]);
@@ -316,6 +322,7 @@ const Environments = () => {
 
   const handleEnvironmentModalOpen = (e, actionType, envObject) => {
     e.stopPropagation();
+    environmentFormSessionRef.current += 1;
     if (actionType === ACTION_TYPES.EDIT) {
       setActionType(ACTION_TYPES.EDIT);
       setInitialData({
@@ -337,6 +344,7 @@ const Environments = () => {
   };
 
   const handleEnvironmentModalClose = () => {
+    environmentFormSessionRef.current += 1;
     setEnvironmentModal({
       open: false,
       schema: {},
@@ -345,7 +353,9 @@ const Environments = () => {
   };
 
   const handleCreateEnvironment = ({ name, description }) => {
-    if (isCreatingEnvironment || !organization?.id) return;
+    if (isCreatingEnvironment || isLoadingOrganization || !organization?.id) return;
+    const originatingOrganizationGeneration = organizationScopeRef.current.generation;
+    const originatingFormSession = environmentFormSessionRef.current;
     createEnvironment({
       environmentPayload: {
         name: name,
@@ -356,7 +366,12 @@ const Environments = () => {
       .unwrap()
       .then(() => {
         handleSuccess(`Environment "${name}" created`);
-        handleEnvironmentModalClose();
+        if (
+          organizationScopeRef.current.generation === originatingOrganizationGeneration &&
+          environmentFormSessionRef.current === originatingFormSession
+        ) {
+          handleEnvironmentModalClose();
+        }
       })
       .catch(handleError({ error_msg: `Unable to create environment "${name}"` }));
   };
@@ -369,6 +384,8 @@ const Environments = () => {
       setEditEnvId('');
       return;
     }
+    const originatingOrganizationGeneration = organizationScopeRef.current.generation;
+    const originatingFormSession = environmentFormSessionRef.current;
     updateEnvironment({
       environmentId: editEnvId,
       environmentPayload: {
@@ -380,7 +397,12 @@ const Environments = () => {
       .unwrap()
       .then(() => {
         handleSuccess(`Environment "${name}" updated`);
-        handleEnvironmentModalClose();
+        if (
+          organizationScopeRef.current.generation === originatingOrganizationGeneration &&
+          environmentFormSessionRef.current === originatingFormSession
+        ) {
+          handleEnvironmentModalClose();
+        }
       })
       .catch(handleError({ error_msg: `Unable to update environment "${name}"` }));
   };
@@ -462,6 +484,9 @@ const Environments = () => {
 
   const handleAssignConnection = async () => {
     if (!isConnectionAssignmentCurrent) return;
+    const originatingOrganizationGeneration = organizationScopeRef.current.generation;
+    const originatingAssignmentSession = connectionAssignmentSessionRef.current;
+    const environmentId = connectionAssignEnv.id;
 
     const { addedConnectionsIds, removedConnectionsIds } =
       getAddedAndRemovedConnection(assignedConnections);
@@ -472,18 +497,22 @@ const Environments = () => {
     // failure from aborting the rest; each rejection is reported by the
     // mutators' own .catch above.
     await Promise.allSettled([
-      ...addedConnectionsIds.map((id) => addConnectionToEnvironment(connectionAssignEnv.id, id)),
-      ...removedConnectionsIds.map((id) =>
-        removeConnectionFromEnvironment(connectionAssignEnv.id, id),
-      ),
+      ...addedConnectionsIds.map((id) => addConnectionToEnvironment(environmentId, id)),
+      ...removedConnectionsIds.map((id) => removeConnectionFromEnvironment(environmentId, id)),
     ]);
-    setEnvironmentConnectionsData([]);
-    setConnectionsData([]);
-    handleonAssignConnectionModalClose();
+    if (
+      organizationScopeRef.current.generation === originatingOrganizationGeneration &&
+      connectionAssignmentSessionRef.current === originatingAssignmentSession
+    ) {
+      setEnvironmentConnectionsData([]);
+      setConnectionsData([]);
+      handleonAssignConnectionModalClose();
+    }
   };
 
   const handleonAssignConnectionModalOpen = (e, environment) => {
     e.stopPropagation();
+    connectionAssignmentSessionRef.current += 1;
     setAssignConnectionModal(true);
     setConnectionsData([]);
     setEnvironmentConnectionsData([]);
@@ -498,6 +527,7 @@ const Environments = () => {
   };
 
   const handleonAssignConnectionModalClose = () => {
+    connectionAssignmentSessionRef.current += 1;
     setAssignConnectionModal(false);
     setConnectionAssignEnv({});
     setSkip(true);
@@ -625,7 +655,11 @@ const Environments = () => {
               </Button>
             </BulkActionWrapper>
           )}
-          {environments.length > 0 ? (
+          {isEnvironmentsPending ? (
+            <Grid2 container justifyContent="center" sx={{ padding: '2rem 0' }}>
+              <CircularProgress data-testid="environments-loading" />
+            </Grid2>
+          ) : environments.length > 0 ? (
             <>
               <Grid2 container spacing={2} sx={{ marginTop: '10px' }} size="grow">
                 {environments.map((environment) => (
@@ -695,7 +729,8 @@ const Environments = () => {
                 submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
                 initialData={initialData}
                 handleClose={handleEnvironmentModalClose}
-                isLoading={isCreatingEnvironment || isUpdatingEnvironment}
+                isSubmitting={isCreatingEnvironment || isUpdatingEnvironment}
+                submitDisabled={isLoadingOrganization}
               />
             </SisitentModal>
           )}

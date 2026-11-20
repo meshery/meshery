@@ -58,6 +58,7 @@ const {
       data: { environments: [], totalCount: 0 },
       currentData: { environments: [], totalCount: 0 },
       isLoading: false,
+      isFetching: false,
       isError: false,
       error: undefined,
     },
@@ -68,7 +69,7 @@ const {
       error: undefined,
     },
     NOOP_MUTATION: [vi.fn()],
-    UI_STATE: { ui: { organization: { id: 'org-1' } } },
+    UI_STATE: { ui: { organization: { id: 'org-1' } }, isLoadingOrganization: false },
   };
 });
 
@@ -107,7 +108,7 @@ vi.mock('../../rtk-query/environments', () => ({
 vi.mock('../../rtk-query/user', () => ({
   useGetSelectedOrganization: () => ({
     selectedOrganization: UI_STATE.ui.organization,
-    isLoading: !UI_STATE.ui.organization,
+    isLoading: UI_STATE.isLoadingOrganization || !UI_STATE.ui.organization,
   }),
 }));
 
@@ -126,10 +127,10 @@ vi.mock('@meshery/schemas/permissions', () => ({
 // The RJSF form is not under test; expose a button that submits the payload the
 // real form would produce.
 vi.mock('../shared/Modal/Modal', () => ({
-  RJSFModalWrapper: ({ handleSubmit, initialData, isSubmitting }: any) => (
+  RJSFModalWrapper: ({ handleSubmit, initialData, isSubmitting, submitDisabled }: any) => (
     <button
       data-testid="submit-environment"
-      disabled={isSubmitting}
+      disabled={isSubmitting || submitDisabled}
       onClick={() => handleSubmit({ ...initialData, name: 'prod', description: 'production' })}
     >
       Save
@@ -138,7 +139,7 @@ vi.mock('../shared/Modal/Modal', () => ({
 }));
 
 vi.mock('./environment-card', () => ({
-  default: ({ onAssignConnection, onDelete, onSelect, environmentDetails }: any) => {
+  default: ({ onAssignConnection, onDelete, onEdit, onSelect, environmentDetails }: any) => {
     getEnvironmentConnectionsQuery(
       { environmentId: environmentDetails?.id },
       { skip: !environmentDetails?.id },
@@ -153,6 +154,9 @@ vi.mock('./environment-card', () => ({
         </button>
         <button data-testid={`delete-btn-${environmentDetails?.id}`} onClick={onDelete}>
           Delete
+        </button>
+        <button data-testid={`edit-btn-${environmentDetails?.id}`} onClick={onEdit}>
+          Edit
         </button>
         <input
           data-testid={`select-${environmentDetails?.id}`}
@@ -193,6 +197,9 @@ vi.mock('@sistent/sistent', () => ({
   ),
   ChevronLeftIcon: () => null,
   ChevronRightIcon: () => null,
+  CircularProgress: (props: any) => (
+    <span data-testid={props['data-testid'] || 'circular-progress'} />
+  ),
   DeleteIcon: () => <span data-testid="bulk-delete-icon" />,
   ErrorBoundary: ({ children }: any) => <>{children}</>,
   Grid2: ({ children }: any) => <div>{children}</div>,
@@ -206,10 +213,15 @@ vi.mock('@sistent/sistent', () => ({
     </button>
   ),
   PaginationItem: () => null,
-  PrimaryActionButtons: ({ secondaryButtonProps }: any) => (
-    <button data-testid="cancel-connection-modal" onClick={secondaryButtonProps?.onClick}>
-      Cancel
-    </button>
+  PrimaryActionButtons: ({ primaryButtonProps, secondaryButtonProps }: any) => (
+    <>
+      <button data-testid="save-connection-modal" {...primaryButtonProps}>
+        Save
+      </button>
+      <button data-testid="cancel-connection-modal" onClick={secondaryButtonProps?.onClick}>
+        Cancel
+      </button>
+    </>
   ),
   PROMPT_VARIANTS: { DANGER: 'danger' },
   SearchBar: ({ onSearch }: any) => (
@@ -223,6 +235,7 @@ vi.mock('@sistent/sistent', () => ({
     assignablePage,
     originalLeftCount,
     originalRightCount,
+    assignedData,
   }: any) => (
     <div
       data-testid="mock-transfer-list"
@@ -239,6 +252,12 @@ vi.mock('@sistent/sistent', () => ({
     >
       <button data-testid="paginate-assignable-btn" onClick={assignablePage}>
         Next Page
+      </button>
+      <button
+        data-testid="assign-first-connection"
+        onClick={() => assignedData([{ id: 'conn-1', name: 'Cluster A' }])}
+      >
+        Assign
       </button>
     </div>
   ),
@@ -297,8 +316,12 @@ const notifiedEventTypes = () =>
 
 beforeEach(() => {
   UI_STATE.ui.organization = { id: 'org-1' };
+  UI_STATE.isLoadingOrganization = false;
   ENVIRONMENTS_QUERY_RESULT.data = { environments: [], totalCount: 0 };
   ENVIRONMENTS_QUERY_RESULT.currentData = ENVIRONMENTS_QUERY_RESULT.data;
+  ENVIRONMENTS_QUERY_RESULT.isFetching = false;
+  NOOP_MUTATION[0].mockReset();
+  NOOP_MUTATION[0].mockReturnValue({ unwrap: () => Promise.resolve() });
 });
 
 describe('Environments create flow notifications', () => {
@@ -363,6 +386,17 @@ describe('Environments create flow notifications', () => {
       environmentPayload: expect.objectContaining({ organizationId: 'org-1' }),
     });
   });
+
+  it('disables create submission while the selected organization is resolving', async () => {
+    UI_STATE.isLoadingOrganization = true;
+    const user = userEvent.setup();
+    render(<Environments />);
+
+    await user.click(screen.getByText('Create'));
+
+    expect(await screen.findByTestId('submit-environment')).toBeDisabled();
+    expect(createEnvironment).not.toHaveBeenCalled();
+  });
 });
 
 describe('Environments search paging', () => {
@@ -390,6 +424,24 @@ describe('Environments search paging', () => {
       ENVIRONMENTS_QUERY_RESULT.data = originalData;
       ENVIRONMENTS_QUERY_RESULT.currentData = originalData;
     }
+  });
+
+  it('shows loading instead of an empty state while refetching query arguments', () => {
+    ENVIRONMENTS_QUERY_RESULT.currentData = {
+      environments: [{ id: 'env-1', name: 'staging' }],
+      totalCount: 1,
+    } as any;
+    const { rerender } = render(<Environments />);
+
+    expect(screen.getByTestId('env-card-env-1')).toBeInTheDocument();
+
+    ENVIRONMENTS_QUERY_RESULT.currentData = undefined as any;
+    ENVIRONMENTS_QUERY_RESULT.isFetching = true;
+    rerender(<Environments />);
+
+    expect(screen.getByTestId('environments-loading')).toBeInTheDocument();
+    expect(screen.queryByText('empty')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('env-card-env-1')).not.toBeInTheDocument();
   });
 });
 
@@ -502,6 +554,53 @@ describe('Environments permissions and wire query skipping', () => {
         environmentPayload: expect.objectContaining({ organizationId: 'org-2' }),
       }),
     );
+  });
+});
+
+describe('Environment edit sessions', () => {
+  const originalEnvData = ENVIRONMENTS_QUERY_RESULT.data;
+
+  beforeEach(() => {
+    ENVIRONMENTS_QUERY_RESULT.data = {
+      environments: [{ id: 'env-1', name: 'production' }],
+      totalCount: 1,
+    } as any;
+    ENVIRONMENTS_QUERY_RESULT.currentData = ENVIRONMENTS_QUERY_RESULT.data;
+    updateEnvironment.mockReset();
+  });
+
+  afterEach(() => {
+    ENVIRONMENTS_QUERY_RESULT.data = originalEnvData;
+    ENVIRONMENTS_QUERY_RESULT.currentData = originalEnvData;
+  });
+
+  it('does not let an old update close a newer organization edit session', async () => {
+    let resolveUpdate: () => void = () => {};
+    updateEnvironment.mockReturnValue({
+      unwrap: () =>
+        new Promise<void>((resolve) => {
+          resolveUpdate = resolve;
+        }),
+    });
+    const user = userEvent.setup();
+    const { rerender } = render(<Environments />);
+
+    await user.click(screen.getByTestId('edit-btn-env-1'));
+    await user.click(await screen.findByTestId('submit-environment'));
+    expect(updateEnvironment).toHaveBeenCalledOnce();
+
+    UI_STATE.ui.organization = { id: 'org-2' };
+    ENVIRONMENTS_QUERY_RESULT.currentData = {
+      environments: [{ id: 'env-2', name: 'staging' }],
+      totalCount: 1,
+    } as any;
+    rerender(<Environments />);
+    await user.click(screen.getByTestId('edit-btn-env-2'));
+    expect(screen.getByTestId('submit-environment')).toBeInTheDocument();
+
+    await act(async () => resolveUpdate());
+
+    expect(screen.getByTestId('submit-environment')).toBeInTheDocument();
   });
 });
 
@@ -625,6 +724,36 @@ describe('Environments connection assignment modal', () => {
     // Should still have exactly conn-1,conn-2 without duplicates
     const reopenedTransferList = screen.getByTestId('mock-transfer-list');
     expect(reopenedTransferList.getAttribute('data-assignable-ids')).toBe('conn-1,conn-2');
+  });
+
+  it('does not let an old save close a newer organization assignment session', async () => {
+    let resolveAssignment: () => void = () => {};
+    NOOP_MUTATION[0].mockReturnValue({
+      unwrap: () =>
+        new Promise<void>((resolve) => {
+          resolveAssignment = resolve;
+        }),
+    });
+    const user = userEvent.setup();
+    const { rerender } = render(<Environments />);
+
+    await user.click(screen.getByTestId('assign-btn-env-1'));
+    await user.click(await screen.findByTestId('assign-first-connection'));
+    await user.click(screen.getByTestId('save-connection-modal'));
+    expect(NOOP_MUTATION[0]).toHaveBeenCalledOnce();
+
+    UI_STATE.ui.organization = { id: 'org-2' };
+    ENVIRONMENTS_QUERY_RESULT.currentData = {
+      environments: [{ id: 'env-2', name: 'staging' }],
+      totalCount: 1,
+    } as any;
+    rerender(<Environments />);
+    await user.click(screen.getByTestId('assign-btn-env-2'));
+    expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+
+    await act(async () => resolveAssignment());
+
+    expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
   });
 
   it('deduplicates incoming connections with identical ids', async () => {
