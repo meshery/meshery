@@ -108,7 +108,7 @@ vi.mock('../../rtk-query/environments', () => ({
 vi.mock('../../rtk-query/user', () => ({
   useGetSelectedOrganization: () => ({
     selectedOrganization: UI_STATE.ui.organization,
-    isLoading: UI_STATE.isLoadingOrganization || !UI_STATE.ui.organization,
+    isLoading: UI_STATE.isLoadingOrganization,
   }),
 }));
 
@@ -319,7 +319,10 @@ beforeEach(() => {
   UI_STATE.isLoadingOrganization = false;
   ENVIRONMENTS_QUERY_RESULT.data = { environments: [], totalCount: 0 };
   ENVIRONMENTS_QUERY_RESULT.currentData = ENVIRONMENTS_QUERY_RESULT.data;
+  ENVIRONMENTS_QUERY_RESULT.isLoading = false;
   ENVIRONMENTS_QUERY_RESULT.isFetching = false;
+  ENVIRONMENTS_QUERY_RESULT.isError = false;
+  ENVIRONMENTS_QUERY_RESULT.error = undefined;
   NOOP_MUTATION[0].mockReset();
   NOOP_MUTATION[0].mockReturnValue({ unwrap: () => Promise.resolve() });
 });
@@ -442,6 +445,31 @@ describe('Environments search paging', () => {
     expect(screen.getByTestId('environments-loading')).toBeInTheDocument();
     expect(screen.queryByText('empty')).not.toBeInTheDocument();
     expect(screen.queryByTestId('env-card-env-1')).not.toBeInTheDocument();
+  });
+
+  it('stops loading after an initial environments request fails', () => {
+    ENVIRONMENTS_QUERY_RESULT.currentData = undefined as any;
+    ENVIRONMENTS_QUERY_RESULT.isError = true;
+    ENVIRONMENTS_QUERY_RESULT.error = { data: { message: 'request failed' } } as any;
+
+    render(<Environments />);
+
+    expect(screen.queryByTestId('environments-loading')).not.toBeInTheDocument();
+    expect(screen.getByText('empty')).toBeInTheDocument();
+  });
+
+  it('does not remain loading when organization resolution settles without an organization', () => {
+    UI_STATE.ui.organization = undefined as any;
+    ENVIRONMENTS_QUERY_RESULT.currentData = undefined as any;
+
+    render(<Environments />);
+
+    expect(getEnvironmentsQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ orgId: undefined }),
+      expect.objectContaining({ skip: true }),
+    );
+    expect(screen.queryByTestId('environments-loading')).not.toBeInTheDocument();
+    expect(screen.getByText('empty')).toBeInTheDocument();
   });
 });
 

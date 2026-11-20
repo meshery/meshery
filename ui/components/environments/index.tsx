@@ -107,6 +107,7 @@ const Environments = () => {
 
   const {
     currentData: environmentsData,
+    isLoading: isLoadingEnvironments,
     isFetching: isFetchingEnvironments,
     isError: isEnvironmentsError,
     error: environmentsError,
@@ -132,7 +133,7 @@ const Environments = () => {
 
   const environments = environmentsData?.environments ? environmentsData.environments : [];
   const isEnvironmentsPending =
-    isLoadingOrganization || isFetchingEnvironments || !environmentsData;
+    isLoadingOrganization || isLoadingEnvironments || isFetchingEnvironments;
   const isConnectionAssignmentCurrent = environments.some(
     (environment) => environment.id === connectionAssignEnv.id,
   );

@@ -93,9 +93,10 @@ const EnvironmentCard = ({
       },
       { skip: !environmentDetails.id },
     );
-  const environmentConnectionsCount = isEnvironmentConnectionsError
-    ? '—'
-    : (environmentConnections?.totalCount ?? 0);
+  const hasEnvironmentConnectionsCount = typeof environmentConnections?.totalCount === 'number';
+  const environmentConnectionsCount = hasEnvironmentConnectionsCount
+    ? environmentConnections.totalCount
+    : '—';
 
   // this allows to handle cases when deletedAt is:
   // - null or undefined (not deleted)
@@ -181,7 +182,9 @@ const EnvironmentCard = ({
                     title={
                       isEnvironmentConnectionsError
                         ? 'Connections unavailable'
-                        : 'Assigned Connections'
+                        : hasEnvironmentConnectionsCount
+                          ? 'Assigned Connections'
+                          : 'Connections loading'
                     }
                     count={environmentConnectionsCount}
                     onAssign={onAssignConnection}
