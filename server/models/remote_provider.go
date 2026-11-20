@@ -487,7 +487,7 @@ func (l *RemoteProvider) GetProviderURL() string {
 // Description - returns a short description of the provider for display in the Provider UI.
 func (l *RemoteProvider) Description() []string {
 	description := l.GetProviderProperties().ProviderDescription
-	return append([]string(nil), description...)
+	return cloneSlice(description)
 }
 
 // GetProviderType - Returns ProviderType
@@ -4333,10 +4333,11 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	}
 
 	l.SetProviderProperties(providerProperties)
+	providerProperties = l.GetProviderProperties()
 
 	// Download the package for the user only if they have extension capability
-	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
-		l.DownloadProviderExtensionPackage(l.Log)
+	if len(providerProperties.Extensions.Navigator) > 0 {
+		providerProperties.DownloadProviderExtensionPackage(l.Log)
 	}
 
 	// Proceed to redirect once the capabilities has loaded
