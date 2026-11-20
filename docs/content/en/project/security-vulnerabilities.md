@@ -15,8 +15,8 @@ back Meshery security vulnerabilities. We investigate every report thoroughly.
 
 To make a report, please use one of the following private channels:
 
-- **GitHub Private Vulnerability Reporting (Recommended):** Submit a structured report directly through [Private Vulnerability Reporting](https://github.com/meshery/meshery/security/advisories/new).
 - **Security Mailing List:** Send an email to the private [security@meshery.io](mailto:security@meshery.io) mailing list with the vulnerability details.
+- **GitHub Private Vulnerability Reporting:** Submit a structured report directly through [Private Vulnerability Reporting](https://github.com/meshery/meshery/security/advisories/new).
 
 For normal product bugs unrelated to latent security vulnerabilities, please head to
 the appropriate repository and submit a [new issue](https://github.com/meshery/meshery/issues/new/choose).

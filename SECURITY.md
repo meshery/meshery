@@ -4,7 +4,7 @@
 
 We are very grateful to the security researchers and users that report back Meshery security vulnerabilities. We investigate every report thoroughly.
 
-To report a vulnerability privately, please email the [security@meshery.io](mailto:security@meshery.io) mailing list or submit a report through GitHub's [Private Vulnerability Reporting](https://github.com/meshery/meshery/security/advisories/new) (available once a maintainer enables the feature under **Settings → Code security → Private vulnerability reporting**).
+To report a vulnerability privately, please email the [security@meshery.io](mailto:security@meshery.io) mailing list or submit a report through GitHub's [Private Vulnerability Reporting](https://github.com/meshery/meshery/security/advisories/new).
 
 For details of published vulnerabilities, see [security vulnerabilities](https://docs.meshery.io/project/security-vulnerabilities) in Meshery Docs.
 
