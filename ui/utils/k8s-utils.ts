@@ -72,24 +72,37 @@ export function getPercentStr(value, total) {
 }
 
 export function getReadyReplicas(item) {
+  if (!item || !item.status) {
+    return 0;
+  }
   return item.status.readyReplicas || item.status.numberReady || 0;
 }
 
 export function getTotalReplicas(item) {
-  return item.spec.replicas || item.status.currentNumberScheduled || 0;
+  if (!item) {
+    return 0;
+  }
+  return item.spec?.replicas || item.status?.currentNumberScheduled || 0;
 }
 
 // compareUnits compares two units and returns true if they are equal
 export function compareUnits(quantity1, quantity2) {
+  if (typeof quantity1 !== 'string' || typeof quantity2 !== 'string') {
+    return false;
+  }
   // strip whitespace and convert to lowercase
   const qty1 = quantity1.replace(/\s/g, '').toLowerCase();
   const qty2 = quantity2.replace(/\s/g, '').toLowerCase();
 
   // compare numbers
-  return parseInt(qty1) === parseInt(qty2);
+  return parseInt(qty1, 10) === parseInt(qty2, 10);
 }
 
 export function normalizeUnit(resourceType, quantity) {
+  if (typeof resourceType !== 'string') {
+    return quantity ? String(quantity) : '';
+  }
+
   let type = resourceType;
 
   if (type.includes('.')) {
@@ -100,9 +113,9 @@ export function normalizeUnit(resourceType, quantity) {
   let bytes = 0;
   switch (type) {
     case 'cpu':
-      normalizedQuantity = quantity?.endsWith('m')
+      normalizedQuantity = typeof quantity === 'string' && quantity.endsWith('m')
         ? `${Number(quantity.substring(0, quantity.length - 1)) / 1000}`
-        : `${quantity}`;
+        : `${quantity ?? ''}`;
       if (normalizedQuantity === '1') {
         normalizedQuantity = normalizedQuantity + ' ' + 'core';
       } else {
@@ -255,7 +268,12 @@ export function getResourceStr(value, resourceType) {
     memory: unparseRam,
   };
 
-  const valueInfo = resourceFormatters[resourceType](value);
+  const formatter = resourceFormatters[resourceType];
+  if (typeof formatter !== 'function') {
+    return `${value ?? ''}`;
+  }
+
+  const valueInfo = formatter(value);
   return `${valueInfo.value}${valueInfo.unit}`;
 }
 
