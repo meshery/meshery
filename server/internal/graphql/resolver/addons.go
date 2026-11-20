@@ -7,7 +7,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 )
 
-func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.AddonList, error) {
+func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.GenericPersisterGetter, filter *model.ServiceMeshFilter) ([]*model.AddonList, error) {
 	var cids []string
 	if filter != nil && len(filter.K8sClusterIDs) != 0 {
 		cids = filter.K8sClusterIDs
