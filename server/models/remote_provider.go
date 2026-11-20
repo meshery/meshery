@@ -512,7 +512,7 @@ func (l *RemoteProvider) GetProviderProperties() ProviderProperties {
 func (l *RemoteProvider) supportsFeature(feature Feature) bool {
 	l.propertiesMu.RLock()
 	defer l.propertiesMu.RUnlock()
-	return l.ProviderProperties.Capabilities.IsSupported(feature)
+	return l.Capabilities.IsSupported(feature)
 }
 
 // endpointForFeature returns the endpoint from the current capability set
@@ -520,7 +520,7 @@ func (l *RemoteProvider) supportsFeature(feature Feature) bool {
 func (l *RemoteProvider) endpointForFeature(feature Feature) (string, bool) {
 	l.propertiesMu.RLock()
 	defer l.propertiesMu.RUnlock()
-	return l.ProviderProperties.Capabilities.GetEndpointForFeature(feature)
+	return l.Capabilities.GetEndpointForFeature(feature)
 }
 
 // SyncPreferences - used to sync preferences with the remote provider
