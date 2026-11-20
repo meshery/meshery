@@ -16111,6 +16111,32 @@ For panel queries, shorten the time range or use more selective label matchers.<
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrHandlerPanicCode-1495" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrHandlerPanicCode-more-info" onclick="toggle_visibility('meshery-server-ErrHandlerPanicCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1495" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errhandlerpaniccode-1495/"><code>ErrHandlerPanicCode-1495</code></a>
+            </td>
+            <td>Meshery Server hit an unexpected internal error while handling the request</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrHandlerPanicCode-1495" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrHandlerPanicCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">The handler for this request panicked. The panic value and stack are recorded in the server log, not in this response</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">A defect in Meshery Server caused the handler for this request to panic</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Retry the request
+If it keeps failing, report it at https://github.com/meshery/meshery/issues/new/choose together with the request that triggered it; the server log holds the full stack</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>

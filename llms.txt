@@ -1052,6 +1052,7 @@ Bookinfo The sample BookInfo …
 - [ErrGrpcSupportCode-1153](/reference/error-codes/component-meshery-server/errgrpcsupportcode-1153/index.md)
 - [ErrHandlePaginationCode-1172](/reference/error-codes/client-mesheryctl/errhandlepaginationcode-1172/index.md)
 - [ErrHandlerGenerateUUIDCode-1407](/reference/error-codes/component-meshery-server/errhandlergenerateuuidcode-1407/index.md)
+- [ErrHandlerPanicCode-1495](/reference/error-codes/component-meshery-server/errhandlerpaniccode-1495/index.md)
 - [ErrHandlerShareDesignCode-1387](/reference/error-codes/component-meshery-server/errhandlersharedesigncode-1387/index.md)
 - [ErrHandlerShareFilterCode-1388](/reference/error-codes/component-meshery-server/errhandlersharefiltercode-1388/index.md)
 - [ErrHealthCheckerCode-1053](/reference/error-codes/client-mesheryctl/errhealthcheckercode-1053/index.md)

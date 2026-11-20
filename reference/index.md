@@ -526,6 +526,7 @@ Section pages:
 - [ErrGrpcSupportCode-1153](/reference/error-codes/component-meshery-server/errgrpcsupportcode-1153/)
 - [ErrHandlePaginationCode-1172](/reference/error-codes/client-mesheryctl/errhandlepaginationcode-1172/)
 - [ErrHandlerGenerateUUIDCode-1407](/reference/error-codes/component-meshery-server/errhandlergenerateuuidcode-1407/)
+- [ErrHandlerPanicCode-1495](/reference/error-codes/component-meshery-server/errhandlerpaniccode-1495/)
 - [ErrHandlerShareDesignCode-1387](/reference/error-codes/component-meshery-server/errhandlersharedesigncode-1387/)
 - [ErrHandlerShareFilterCode-1388](/reference/error-codes/component-meshery-server/errhandlersharefiltercode-1388/)
 - [ErrHealthCheckerCode-1053](/reference/error-codes/client-mesheryctl/errhealthcheckercode-1053/)
