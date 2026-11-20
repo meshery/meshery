@@ -61,3 +61,13 @@ func TestListWorkspaces(t *testing.T) {
 	mesheryctlflags.InitValidators(WorkSpaceCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, WorkSpaceCmd, tests, currentDirectory, "organization")
 }
+
+func TestProcessDataToDisplay_NilResponse(t *testing.T) {
+	rows, total := processDataToDisplay(nil)
+	if len(rows) != 0 {
+		t.Fatalf("expected 0 rows for nil response, got %d", len(rows))
+	}
+	if total != 0 {
+		t.Fatalf("expected total 0 for nil response, got %d", total)
+	}
+}

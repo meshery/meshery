@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -745,6 +746,32 @@ func newMockCloneProvider(token string) *mockCloneProvider {
 
 func (m *mockCloneProvider) GetProviderToken(r *http.Request) (string, error) {
 	return m.token, nil
+}
+
+// An invalid design version is client input: the save handler answers 400 with
+// the MeshKit error body the persister returned, so the client sees the actual
+// cause and code.
+func TestHandleProviderPatternSaveError_InvalidVersionReturnsBadRequest(t *testing.T) {
+	userID := uuid.Must(uuid.NewV4())
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	saveErr := models.ErrInvalidDesignVersion("not-semver", fmt.Errorf("invalid semantic version"))
+	body, err := json.Marshal(saveErr)
+	if err != nil {
+		t.Fatalf("marshal error body: %v", err)
+	}
+
+	eventBuilder := _events.NewEvent().FromOwner(userID).WithCategory("pattern").WithAction(models.Create)
+	provider := &mockPatternHandlerProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
+	rec := httptest.NewRecorder()
+
+	h.handleProviderPatternSaveError(rec, eventBuilder, userID, body, saveErr, provider, "test-token")
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400 Bad Request, got %d (body: %s)", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), models.ErrInvalidDesignVersionCode) {
+		t.Errorf("expected response to contain %q, got %s", models.ErrInvalidDesignVersionCode, rec.Body.String())
+	}
 }
 
 func TestErrRequestBody_NilError(t *testing.T) {

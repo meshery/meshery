@@ -517,7 +517,7 @@ func main() {
 	})
 
 	port := viper.GetInt("PORT")
-	r := router.NewRouter(ctx, h, port, g, gp)
+	r := router.NewRouter(ctx, h, port, g, gp, router.WithLogger(log))
 	shutdown, stopShutdownNotify := notifyShutdown()
 
 	go func() {
