@@ -67,8 +67,8 @@ func TestRelationship(t *testing.T) {
 
 func TestGenerateRelationshipDataToDisplay_NilResponse(t *testing.T) {
 	rows, total := generateRelationshipDataToDisplay(nil)
-	if len(rows) != 0 {
-		t.Fatalf("expected 0 rows for nil response, got %d", len(rows))
+	if rows != nil {
+		t.Fatalf("expected nil rows for nil response, got %v", rows)
 	}
 	if total != 0 {
 		t.Fatalf("expected total 0 for nil response, got %d", total)
