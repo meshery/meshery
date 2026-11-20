@@ -90,10 +90,9 @@ export default function DesignConfigurator() {
         <Toolbar>
           <div style={{ flexGrow: 1 }}>
             {/* Category Selector */}
-            <FormControl>
+            <FormControl sx={{ mr: 2 }}>
               <TextField
                 select={true}
-                label="Select Category"
                 SelectProps={{
                   MenuProps: {
                     anchorOrigin: {
@@ -104,13 +103,14 @@ export default function DesignConfigurator() {
                   },
                 }}
                 InputProps={{ disableUnderline: true }}
-                labelId="category-selector"
                 id="category-selector"
                 data-testid="category-selector"
+                label="Select Category"
                 value={selectedCategory}
                 onChange={handleCategoryChange}
                 fullWidth
                 variant="standard"
+                sx={{ minWidth: 160 }}
               >
                 {categories.map((cat) => (
                   <MenuItem data-testid={cat.name} key={cat.name} value={cat.name}>
@@ -124,7 +124,6 @@ export default function DesignConfigurator() {
             {selectedCategory && (
               <FormControl>
                 <TextField
-                  label="Select Model"
                   select={true}
                   SelectProps={{
                     MenuProps: {
@@ -134,18 +133,17 @@ export default function DesignConfigurator() {
                       },
                       getContentAnchorEl: null,
                     },
-                    renderValue: (selected) => {
-                      return removeHyphenAndCapitalise(selected);
-                    },
+                    renderValue: (selected) => removeHyphenAndCapitalise(selected),
                   }}
                   InputProps={{ disableUnderline: true }}
-                  labelId="model-selector"
                   id="model-selector"
                   data-testid="model-selector"
+                  label="Select Model"
                   value={selectedModel}
                   onChange={handleModelChange}
                   fullWidth
                   variant="standard"
+                  sx={{ minWidth: 160 }}
                 >
                   {models?.[selectedCategory] ? (
                     models[selectedCategory].map(function renderModels(model, idx) {
