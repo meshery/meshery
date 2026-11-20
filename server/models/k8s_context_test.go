@@ -2,8 +2,11 @@ package models
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"sort"
+	"strings"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -14,6 +17,7 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/core"
+	"gopkg.in/yaml.v2"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -492,12 +496,12 @@ func TestFlushMeshSyncDataWithoutContextAllKubeClusterKey(t *testing.T) {
 
 func TestK8sContext_RedactCredentials(t *testing.T) {
 	ctx := &K8sContext{
-		ID:           "test-id",
-		Name:         "test-name",
-		Server:       "https://cluster.example.com",
-		ConnectionID: "conn-123",
+		ID:             "test-id",
+		Name:           "test-name",
+		Server:         "https://cluster.example.com",
+		ConnectionID:   "conn-123",
 		DeploymentType: "out_cluster",
-		Version:      "v1.30.0",
+		Version:        "v1.30.0",
 		Auth: sql.Map{
 			"client-key-data":         "super-secret-key",
 			"token":                   "secret-token",
@@ -616,3 +620,255 @@ func TestRedactCredentialsForContext_NilSafety(t *testing.T) {
 	}
 }
 
+func testKubeLogger(t *testing.T) logger.Handler {
+	t.Helper()
+	log, err := logger.New("test", logger.Options{Format: logger.JsonLogFormat})
+	if err != nil {
+		t.Fatalf("failed to build logger: %v", err)
+	}
+	return log
+}
+
+func discoverForTest(t *testing.T, kubeconfig []byte) (KubeconfigDiscovery, error) {
+	t.Helper()
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+	return DiscoverKubeconfigContexts(context.Background(), nil, uuid.Must(uuid.NewV4()).String(), nil, kubeconfig, &instanceID, map[string]interface{}{}, testKubeLogger(t), true)
+}
+
+func TestDiscoverKubeconfigContextsDistinguishesUnreadableEmptyAndSkipped(t *testing.T) {
+	t.Run("unparseable input is an error", func(t *testing.T) {
+		_, err := discoverForTest(t, []byte("this is not a kubeconfig {{{"))
+		if !errors.Is(err, ErrKubeconfigUnreadable) {
+			t.Fatalf("err = %v, want ErrKubeconfigUnreadable", err)
+		}
+	})
+
+	t.Run("yaml that is not a kubeconfig is an error", func(t *testing.T) {
+		_, err := discoverForTest(t, []byte("foo: bar\n"))
+		if !errors.Is(err, ErrKubeconfigUnreadable) {
+			t.Fatalf("err = %v, want ErrKubeconfigUnreadable", err)
+		}
+	})
+
+	t.Run("a manifest that only has an apiVersion is an error", func(t *testing.T) {
+		for _, doc := range []string{
+			"apiVersion: v1\n",
+			"apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: nginx\n",
+		} {
+			_, err := discoverForTest(t, []byte(doc))
+			if !errors.Is(err, ErrKubeconfigUnreadable) {
+				t.Fatalf("doc %q: err = %v, want ErrKubeconfigUnreadable", doc, err)
+			}
+		}
+	})
+
+	t.Run("a kubeconfig with no contexts is empty, not an error", func(t *testing.T) {
+		got, err := discoverForTest(t, []byte("apiVersion: v1\nkind: Config\ncontexts: []\nclusters: []\nusers: []\n"))
+		if err != nil {
+			t.Fatalf("empty kubeconfig: %v", err)
+		}
+		if len(got.Contexts) != 0 || len(got.SkippedContexts) != 0 {
+			t.Fatalf("contexts=%d skipped=%d, want both empty", len(got.Contexts), len(got.SkippedContexts))
+		}
+	})
+
+	t.Run("exec auth that cannot be loaded is skipped with a reason", func(t *testing.T) {
+		got, err := discoverForTest(t, []byte(`apiVersion: v1
+kind: Config
+current-context: eks
+clusters:
+- cluster:
+    certificate-authority: /no/such/ca.crt
+    server: https://127.0.0.1:1
+  name: eks
+contexts:
+- context:
+    cluster: eks
+    user: eks-user
+  name: eks
+users:
+- name: eks-user
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      command: aws
+      args: ["eks", "get-token"]
+`))
+		if err != nil {
+			t.Fatalf("discover: %v", err)
+		}
+		if len(got.Contexts) != 0 {
+			t.Fatalf("imported %d contexts, want the exec context skipped", len(got.Contexts))
+		}
+		if len(got.SkippedContexts) != 1 {
+			t.Fatalf("skipped %d, want 1", len(got.SkippedContexts))
+		}
+		skipped := got.SkippedContexts[0]
+		if skipped.Name != "eks" {
+			t.Fatalf("skipped name = %q, want eks", skipped.Name)
+		}
+		if !strings.Contains(skipped.Reason, "exec plugin") {
+			t.Fatalf("reason = %q, want it to name the exec plugin", skipped.Reason)
+		}
+	})
+
+	t.Run("auth-provider contexts are skipped with a reason", func(t *testing.T) {
+		got, err := discoverForTest(t, []byte(`apiVersion: v1
+kind: Config
+current-context: gke
+clusters:
+- cluster:
+    server: https://127.0.0.1:1
+  name: gke
+contexts:
+- context:
+    cluster: gke
+    user: gke
+  name: gke
+users:
+- name: gke
+  user:
+    auth-provider:
+      name: gcp
+`))
+		if err != nil {
+			t.Fatalf("discover: %v", err)
+		}
+		if len(got.Contexts) != 0 || len(got.SkippedContexts) != 1 {
+			t.Fatalf("contexts=%d skipped=%d, want 0 and 1", len(got.Contexts), len(got.SkippedContexts))
+		}
+		if !strings.Contains(got.SkippedContexts[0].Reason, "auth-provider") {
+			t.Fatalf("reason = %q, want it to name auth-provider", got.SkippedContexts[0].Reason)
+		}
+	})
+
+	t.Run("a readable token context is returned and a skipped exec context is reported beside it", func(t *testing.T) {
+		got, err := discoverForTest(t, []byte(`apiVersion: v1
+kind: Config
+current-context: good
+clusters:
+- cluster:
+    server: https://127.0.0.1:1
+  name: good
+- cluster:
+    certificate-authority: /no/such/ca.crt
+    server: https://127.0.0.1:1
+  name: bad
+contexts:
+- context:
+    cluster: good
+    user: good
+  name: good
+- context:
+    cluster: bad
+    user: bad
+  name: bad
+users:
+- name: good
+  user:
+    token: token-good
+- name: bad
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      command: aws
+      args: ["eks", "get-token"]
+`))
+		if err != nil {
+			t.Fatalf("discover: %v", err)
+		}
+		if len(got.Contexts) != 1 || got.Contexts[0].Name != "good" {
+			t.Fatalf("contexts = %#v, want only good", got.Contexts)
+		}
+		if len(got.SkippedContexts) != 1 || got.SkippedContexts[0].Name != "bad" {
+			t.Fatalf("skipped = %#v, want bad", got.SkippedContexts)
+		}
+	})
+
+	t.Run("a well-formed exec kubeconfig is skipped before the API probe", func(t *testing.T) {
+		kubeconfig := []byte(`apiVersion: v1
+kind: Config
+current-context: eks
+clusters:
+- cluster:
+    server: https://127.0.0.1:1
+  name: eks
+contexts:
+- context:
+    cluster: eks
+    user: eks-user
+  name: eks
+users:
+- name: eks-user
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      command: aws
+      args: ["eks", "get-token"]
+`)
+		// Control: the fixture builds a kube handler on its own, so the skip
+		// below proves the pre-probe guard fired and not a broken fixture.
+		// A PEM fragment as CA data fails client construction, and the
+		// handler-error branch would report the same "exec plugin" reason,
+		// so without this the test would pass even with the guard removed.
+		instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+		kcfg := InternalKubeConfig{}
+		if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
+			t.Fatalf("fixture is not a kubeconfig: %v", err)
+		}
+		kc, _ := kcfg.K8sContext("eks", &instanceID, testKubeLogger(t))
+		if _, err := kc.GenerateKubeHandler(); err != nil {
+			t.Fatalf("fixture cannot build a kube handler: %v", err)
+		}
+
+		got, err := discoverForTest(t, kubeconfig)
+		if err != nil {
+			t.Fatalf("discover: %v", err)
+		}
+		if len(got.Contexts) != 0 {
+			t.Fatalf("imported %d contexts, want the exec context skipped even when a client can be built", len(got.Contexts))
+		}
+		if len(got.SkippedContexts) != 1 {
+			t.Fatalf("skipped %d, want 1", len(got.SkippedContexts))
+		}
+		skipped := got.SkippedContexts[0]
+		if skipped.Name != "eks" {
+			t.Fatalf("skipped name = %q, want eks", skipped.Name)
+		}
+		if !strings.Contains(skipped.Reason, "exec plugin") {
+			t.Fatalf("reason = %q, want it to name the exec plugin", skipped.Reason)
+		}
+		if !strings.Contains(skipped.Reason, "Meshery Server host") {
+			t.Fatalf("reason = %q, want it to say the plugin would run on the Meshery Server host", skipped.Reason)
+		}
+	})
+}
+
+// Existing callers (import, component registration) keep receiving a context
+// slice. An unreadable file stays an empty slice for them; the discovery
+// endpoint is what turns that into an error.
+func TestK8sContextsFromKubeconfigWithOptionsKeepsUnreadableAsEmpty(t *testing.T) {
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+	got := K8sContextsFromKubeconfigWithOptions(nil, uuid.Must(uuid.NewV4()).String(), nil, []byte("not a kubeconfig {{{"), &instanceID, map[string]interface{}{}, testKubeLogger(t), true)
+	if len(got) != 0 {
+		t.Fatalf("got %d contexts, want 0", len(got))
+	}
+}
+
+func TestK8sContextImportErrorIsOptionalJSON(t *testing.T) {
+	withReason, err := json.Marshal(K8sContext{Name: "bad", ImportError: "save failed"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(withReason), `"error":"save failed"`) {
+		t.Fatalf("body = %s, want an error reason", withReason)
+	}
+
+	without, err := json.Marshal(K8sContext{Name: "ok"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(without), `"error"`) {
+		t.Fatalf("body = %s, want error omitted when empty", without)
+	}
+}

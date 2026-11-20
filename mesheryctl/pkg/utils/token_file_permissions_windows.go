@@ -112,11 +112,17 @@ func writeTokenFile(path string, data []byte) error {
 // replaceTokenFile uses POSIX rename semantics so a destination with a
 // delete-sharing metadata handle can be replaced without reusing its object.
 func replaceTokenFile(file *os.File, destination string) error {
+	// UTF16FromString includes the terminating NUL. FileNameLength is the byte
+	// count without that NUL, but the buffer must still contain it: Windows
+	// reads FileName as a C string. Omitting the NUL lets it consume the bytes
+	// after the buffer, replace the destination, and leave no file at that path.
 	name, err := windows.UTF16FromString(destination)
 	if err != nil {
 		return err
 	}
-	name = name[:len(name)-1]
+	if len(name) == 0 || name[len(name)-1] != 0 {
+		return windows.ERROR_INVALID_NAME
+	}
 	type renameInfo struct {
 		Flags          uint32
 		RootDirectory  windows.Handle
@@ -130,7 +136,7 @@ func replaceTokenFile(file *os.File, destination string) error {
 	buffer := make([]byte, offset+len(name)*2)
 	entry := (*renameInfo)(unsafe.Pointer(&buffer[0]))
 	entry.Flags = replaceIfExists | posixSemantics
-	entry.FileNameLength = uint32(len(name) * 2)
+	entry.FileNameLength = uint32((len(name) - 1) * 2)
 	copy(unsafe.Slice((*uint16)(unsafe.Pointer(&buffer[offset])), len(name)), name)
 	return windows.SetFileInformationByHandle(windows.Handle(file.Fd()), windows.FileRenameInfoEx, &buffer[0], uint32(len(buffer)))
 }

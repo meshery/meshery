@@ -8,7 +8,10 @@ import {
   useUpdateConnectionByIdMutation,
 } from '@/rtk-query/connection';
 import { useAllUserCredentials } from '@/utils/hooks/useAllUserCredentials';
-import type { ConnectionWizardKindConfig } from '../ConnectionWizard.helpers';
+import {
+  normalizeKubeconfigDiscovery,
+  type ConnectionWizardKindConfig,
+} from '../ConnectionWizard.helpers';
 import { buildSteps } from './registry';
 import { useKindPermission } from './useKindPermission';
 import type {
@@ -219,8 +222,11 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
       discoverKubeContexts: async (file) => {
         const formData = new FormData();
         formData.append('k8sfile', file);
+        // Ask for skipped contexts. Servers that still return a bare array are
+        // normalized the same way.
+        formData.append('discoveryDetail', 'true');
         const result = await discoverKubernetesContexts({ body: formData }).unwrap();
-        return Array.isArray(result) ? result : [];
+        return normalizeKubeconfigDiscovery(result);
       },
       uploadKubeconfig: (file, options) => {
         const formData = new FormData();
@@ -285,7 +291,9 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
 
   const isKindAllowed = !data.kindConfig || kindPermission(data.kindConfig);
   const canProceed = isKindAllowed && (activeStep?.canProceed ? activeStep.canProceed(ctx) : true);
-  const canGoBack = safeIndex > 0;
+  const hideBackFlag = activeStep?.hideBack;
+  const backHidden = typeof hideBackFlag === 'function' ? hideBackFlag(ctx) : Boolean(hideBackFlag);
+  const canGoBack = safeIndex > 0 && !backHidden;
   const nextLabel = activeStep?.nextLabel ? activeStep.nextLabel(ctx) : isLast ? 'Finish' : 'Next';
 
   const next = async () => {

@@ -60,10 +60,18 @@ Credentials entered in the wizard are persisted as first-class, named [Credentia
 
 Kubernetes uses a dedicated flow because a single kubeconfig can describe many clusters and its kubeconfig also serves as its credential.
 
+The Kubernetes flow has four steps: **Choose Connection**, **Import Kubeconfig**, **Review Contexts**, and **Done**.
+
 1. **Choose Connection** → **Kubernetes**.
-2. **Import Kubeconfig.** Upload a kubeconfig file. Meshery parses it and lists the contexts it contains, indicating which are reachable - nothing is persisted yet.
-3. **Select contexts.** Choose which contexts to import. For each, you can override the Connection name and choose a [MeshSync deployment mode](#meshsync-deployment-mode).
-4. **Review Import.** Confirm your selection and import. Meshery creates one Connection per selected context and reports the outcome, grouped into connected, registered, ignored, and errored buckets.
+2. **Import Kubeconfig.** Upload a kubeconfig file. Nothing is saved yet. Meshery reads the file and tells you which of these it found:
+   - A file that cannot be parsed is reported as an error.
+   - A valid kubeconfig that lists no contexts says that the file does not contain any contexts.
+   - Contexts whose authentication method is unsupported (an exec plugin or an auth-provider, for example), or whose credentials cannot be read, are skipped and listed with the reason. Meshery does not run exec plugins or auth-provider helpers from an imported kubeconfig, because they would execute on the Meshery Server host.
+3. **Review Contexts.** Each context that can be imported is marked **Reachable** or **Unreachable**. Choose which clusters to import, rename them if you want, and pick a [MeshSync deployment mode](#meshsync-deployment-mode). The checkbox is labeled: "Connect reachable clusters after import. Unreachable clusters are imported as discovered and can be connected later." When it is checked, reachable clusters are connected after they are imported. Unreachable clusters are still imported and can be connected later. Going back to Import Kubeconfig and continuing with the same file keeps these edits.
+4. **Done.** In create mode there is no Back button, so the import is not run a second time by returning to Review Contexts. The result is one of:
+   - **Success.** Every selected context was imported and none were errored, ignored, or failed to connect. A green check is shown with the heading "Kubernetes import complete".
+   - **Partial.** Some contexts were imported and some were errored, ignored, or failed to connect. The heading is "Kubernetes import completed with issues", and each of those contexts is listed with the reason when one was provided.
+   - **Failure.** Nothing was imported. The heading is "Kubernetes import failed", and errored, ignored, or failed-to-connect contexts are listed with their reasons when one was provided.
 
 Each imported cluster is created as a Kubernetes Connection that [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) keeps in sync. From there, Meshery can deploy and operate workloads, visualize the cluster, and more. See [Managing Connections]({{< ref "guides/infrastructure-management/lifecycle-management/index.md" >}}). If the cluster already runs workloads you did not deploy through Meshery, see [Bringing Existing Infrastructure Under Meshery Management]({{< ref "guides/infrastructure-management/managing-existing-infrastructure.md" >}}) for what to evaluate before importing and how discovery treats pre-existing resources.
 
