@@ -41,7 +41,7 @@ export const updateVisibleColumns = (colViews?: unknown, width?: number | unknow
   const showCols: Record<string, boolean> = {};
 
   colViews.forEach((col) => {
-    if (!Array.isArray(col) || col.length < 2) {
+    if (!Array.isArray(col) || col.length !== 2) {
       return;
     }
 

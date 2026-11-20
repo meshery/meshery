@@ -65,7 +65,15 @@ describe('updateVisibleColumns', () => {
   });
 
   it('skips malformed column tuples and handles non-numeric width', () => {
-    const malformed = [null, undefined, [], ['missingSize'], [123, 'xs'], ['valid', 's']];
+    const malformed = [
+      null,
+      undefined,
+      [],
+      ['missingSize'],
+      ['name', 'xs', 'extra'],
+      [123, 'xs'],
+      ['valid', 's'],
+    ];
     expect(updateVisibleColumns(malformed as unknown as unknown[], 700)).toEqual({ valid: true });
     expect(updateVisibleColumns([['valid', 's']], NaN)).toEqual({ valid: false });
     expect(updateVisibleColumns([['valid', 's']], undefined)).toEqual({ valid: false });
