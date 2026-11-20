@@ -389,7 +389,7 @@ func TestSaveMesheryPatterns_AssignsVersionOnCreate(t *testing.T) {
 }
 
 // The batch save returns the same MeshKit error body as the single save, so an
-// import with an invalid version keeps the 1495 code instead of a nil body.
+// import with an invalid version keeps the 1496 code instead of a nil body.
 func TestSaveMesheryPatterns_InvalidVersionReturnsErrorBody(t *testing.T) {
 	db, mpp := newPatternPersisterTestDB(t)
 
