@@ -43,6 +43,10 @@ relationships: []
 // key the pattern schema does not model.
 const persisterTestDesignJSON = `{"name":"persister-test","schemaVersion":"designs.meshery.io/v1beta1","components":[],"metadata":{"owner":"x"}}`
 
+// persisterTestDesignJSONBigNumber is a JSON-submitted design carrying a
+// metadata.buildId above float64 precision (2^53+1).
+const persisterTestDesignJSONBigNumber = `{"name":"persister-test","schemaVersion":"designs.meshery.io/v1beta1","components":[],"metadata":{"owner":"x","buildId":9007199254740993}}`
+
 func designWithVersion(version string) string {
 	return strings.Replace(persisterTestDesign, "version: 0.0.1", "version: "+version, 1)
 }
@@ -443,6 +447,68 @@ func TestSaveMesheryPatterns_KeepsSubmittedMetadataOnCreate(t *testing.T) {
 	assertStoredMetadataOwner(t, loadPattern(t, db, *saved[0].ID).PatternFile)
 	if got := storedDesignVersion(t, db, *saved[0].ID); got != "0.0.1" {
 		t.Errorf("stored version = %q, want 0.0.1", got)
+	}
+}
+
+// A JSON design's numbers above float64 precision keep their submitted form:
+// the save stamps the version into the raw JSON instead of decoding through
+// map[string]interface{}, which would store buildId as 9.007199254740992e+15.
+func TestSaveMesheryPattern_JSONNumbersKeepSubmittedForm(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	saves := []struct {
+		name string
+		save func(t *testing.T) uuid.UUID
+	}{
+		{"single save", func(t *testing.T) uuid.UUID {
+			record := &MesheryPattern{Name: "big-number", PatternFile: persisterTestDesignJSONBigNumber}
+			if _, err := mpp.SaveMesheryPattern(record); err != nil {
+				t.Fatalf("save: %v", err)
+			}
+			return *record.ID
+		}},
+		{"batch save", func(t *testing.T) uuid.UUID {
+			body, err := mpp.SaveMesheryPatterns([]MesheryPattern{
+				{Name: "batch-big-number", PatternFile: persisterTestDesignJSONBigNumber},
+			})
+			if err != nil {
+				t.Fatalf("batch save: %v", err)
+			}
+			var saved []MesheryPattern
+			if err := json.Unmarshal(body, &saved); err != nil || len(saved) != 1 {
+				t.Fatalf("decode response %s: %v", body, err)
+			}
+			return *saved[0].ID
+		}},
+	}
+
+	for _, tc := range saves {
+		t.Run(tc.name, func(t *testing.T) {
+			id := tc.save(t)
+			assertStoredJSONStamp(t, loadPattern(t, db, id).PatternFile)
+		})
+	}
+}
+
+// assertStoredJSONStamp checks the stored JSON design file: UseNumber keeps
+// numbers as json.Number so the buildId above 2^53 reads back exactly.
+func assertStoredJSONStamp(t *testing.T, file string) {
+	t.Helper()
+	var doc map[string]interface{}
+	dec := json.NewDecoder(strings.NewReader(file))
+	dec.UseNumber()
+	if err := dec.Decode(&doc); err != nil {
+		t.Fatalf("parse stored design file %q: %v", file, err)
+	}
+	if got, _ := doc["version"].(string); got != "0.0.1" {
+		t.Errorf("stored version = %q, want 0.0.1 (stored file: %s)", got, file)
+	}
+	metadata, _ := doc["metadata"].(map[string]interface{})
+	if owner, _ := metadata["owner"].(string); owner != "x" {
+		t.Errorf("stored metadata.owner = %q, want %q (stored file: %s)", owner, "x", file)
+	}
+	buildID, ok := metadata["buildId"].(json.Number)
+	if !ok || buildID.String() != "9007199254740993" {
+		t.Errorf("stored metadata.buildId = %v (%T), want number 9007199254740993 (stored file: %s)", metadata["buildId"], metadata["buildId"], file)
 	}
 }
 

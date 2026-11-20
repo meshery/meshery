@@ -377,7 +377,32 @@ func setSavedVersion(pf *design.PatternFile, isNew bool) error {
 // re-marshalling the parsed design: yaml.Marshal drops keys the schema leaves
 // unmodelled (PatternFile_Metadata.AdditionalProperties is yaml:"-"), so the
 // save would lose submitted metadata it does not know.
+//
+// JSON input is spliced as map[string]json.RawMessage, keeping every nested
+// value byte-identical: decoding into map[string]interface{} turns numbers
+// into float64, so a buildId above 2^53 was stored as 9.007199254740992e+15.
+// The stored file stays JSON; readers parse with meshkit encoding.Unmarshal,
+// which accepts JSON and YAML.
 func savedPatternFile(patternFile, version string) (string, error) {
+	if json.Valid([]byte(patternFile)) {
+		var doc map[string]json.RawMessage
+		if err := json.Unmarshal([]byte(patternFile), &doc); err != nil {
+			return "", err
+		}
+		if doc == nil {
+			doc = map[string]json.RawMessage{}
+		}
+		bytv, err := json.Marshal(version)
+		if err != nil {
+			return "", err
+		}
+		doc["version"] = bytv
+		byt, err := json.Marshal(doc)
+		if err != nil {
+			return "", err
+		}
+		return string(byt), nil
+	}
 	var doc map[string]interface{}
 	if err := encoding.Unmarshal([]byte(patternFile), &doc); err != nil {
 		return "", err
