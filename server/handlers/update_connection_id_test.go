@@ -349,6 +349,7 @@ func TestUpdateConnectionByIDPreservesV1beta3Fields(t *testing.T) {
 	// Partial PUT update: only status changed
 	rec := putConnectionBody(h, provider, saved.ID.String(), `{"status":"connected"}`)
 	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+	assert.Equal(t, "application/json", rec.Header().Get("Content-Type"))
 
 	// The response body itself must carry the preserved fields, separately
 	// from the database read below.
