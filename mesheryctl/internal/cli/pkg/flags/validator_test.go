@@ -117,6 +117,82 @@ func TestValidateBoolean(t *testing.T) {
 	}
 }
 
+func TestValidateNotBlank(t *testing.T) {
+	flagValidator := GetFlagValidator()
+
+	tests := []struct {
+		name    string
+		value   string
+		wantErr bool
+	}{
+		{
+			name:    "given a regular value when notblank then returns no error",
+			value:   "my-name",
+			wantErr: false,
+		},
+		{
+			name:    "given a value with inner spaces when notblank then returns no error",
+			value:   "my name",
+			wantErr: false,
+		},
+		{
+			name:    "given a value with surrounding spaces when notblank then returns no error",
+			value:   "  my-name  ",
+			wantErr: false,
+		},
+		{
+			name:    "given an empty value when required,notblank then returns error",
+			value:   "",
+			wantErr: true,
+		},
+		{
+			name:    "given a spaces-only value when required,notblank then returns error",
+			value:   "   ",
+			wantErr: true,
+		},
+		{
+			name:    "given a tabs and newlines only value when required,notblank then returns error",
+			value:   "\t\n ",
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			type testStruct struct {
+				Name string `json:"name" validate:"required,notblank"`
+			}
+			err := flagValidator.Validate(testStruct{Name: tt.value})
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestValidateNotBlankNonString(t *testing.T) {
+	flagValidator := GetFlagValidator()
+
+	tests := []struct {
+		name  string
+		value interface{}
+	}{
+		{name: "integer", value: 42},
+		{name: "boolean", value: true},
+		{name: "slice", value: []string{"name"}},
+		{name: "map", value: map[string]string{"name": "value"}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := flagValidator.Validator.Var(tt.value, "notblank")
+			assert.Error(t, err)
+		})
+	}
+}
+
 func TestNewValidator(t *testing.T) {
 	flagValidator := GetFlagValidator()
 	assert.NotNil(t, flagValidator)
