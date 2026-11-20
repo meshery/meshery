@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const path = require('path');
 module.exports = function override(config, env) {
     config.resolve.fallback = {
         url: require.resolve('url'),
@@ -18,6 +19,8 @@ module.exports = function override(config, env) {
     config.resolve.alias = {
         ...config.resolve.alias,
         'process/browser': require.resolve('process/browser.js'),
+        '@rjsf/core$': path.resolve(__dirname, 'node_modules/@rjsf/core/lib/index.js'),
+        '@rjsf/mui$': path.resolve(__dirname, 'node_modules/@rjsf/mui/lib/index.js'),
     };
     config.plugins.push(
         new webpack.ProvidePlugin({
