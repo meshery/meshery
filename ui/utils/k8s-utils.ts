@@ -100,7 +100,7 @@ export function compareUnits(quantity1, quantity2) {
 
 export function normalizeUnit(resourceType, quantity) {
   if (typeof resourceType !== 'string') {
-    return quantity ? String(quantity) : '';
+    return quantity !== undefined && quantity !== null ? String(quantity) : '';
   }
 
   let type = resourceType;
@@ -113,9 +113,10 @@ export function normalizeUnit(resourceType, quantity) {
   let bytes = 0;
   switch (type) {
     case 'cpu':
-      normalizedQuantity = typeof quantity === 'string' && quantity.endsWith('m')
-        ? `${Number(quantity.substring(0, quantity.length - 1)) / 1000}`
-        : `${quantity ?? ''}`;
+      normalizedQuantity =
+        typeof quantity === 'string' && quantity.endsWith('m')
+          ? `${Number(quantity.substring(0, quantity.length - 1)) / 1000}`
+          : `${quantity ?? ''}`;
       if (normalizedQuantity === '1') {
         normalizedQuantity = normalizedQuantity + ' ' + 'core';
       } else {
@@ -124,6 +125,9 @@ export function normalizeUnit(resourceType, quantity) {
       break;
 
     case 'memory':
+      if (typeof quantity !== 'string') {
+        return quantity !== undefined && quantity !== null ? String(quantity) : '';
+      }
       /**
        * Decimal: m | n | "" | k | M | G | T | P | E
        * Binary: Ki | Mi | Gi | Ti | Pi | Ei
@@ -268,7 +272,11 @@ export function getResourceStr(value, resourceType) {
     memory: unparseRam,
   };
 
-  const formatter = resourceFormatters[resourceType];
+  const formatter =
+    typeof resourceType === 'string' &&
+    Object.prototype.hasOwnProperty.call(resourceFormatters, resourceType)
+      ? resourceFormatters[resourceType]
+      : undefined;
   if (typeof formatter !== 'function') {
     return `${value ?? ''}`;
   }
