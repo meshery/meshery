@@ -685,4 +685,78 @@ func TestParallelProcess_ExactSingleSignalPerDependent(t *testing.T) {
 	}
 }
 
+// TestParallelProcess_PartialDispatchPanicSignalsRemainingDependentsExactlyOnce
+// verifies that if a panic occurs halfway through signaling dependents,
+// the deferred recovery ensures remaining unsignaled dependents still receive
+// their signal without re-transmitting to already signaled dependents.
+func TestParallelProcess_PartialDispatchPanicSignalsRemainingDependentsExactlyOnce(t *testing.T) {
+	dep0 := &ParallelProcessGraphNode{
+		Name:        "dep-0",
+		DepCount:    1,
+		DepCancleCh: make(chan string, 1),
+	}
+
+	// dep1 has a closed cancel channel, which will panic on send
+	dep1 := &ParallelProcessGraphNode{
+		Name:        "dep-1",
+		DepCount:    1,
+		DepCancleCh: make(chan string, 1),
+	}
+	close(dep1.DepCancleCh)
+
+	dep2 := &ParallelProcessGraphNode{
+		Name:        "dep-2",
+		DepCount:    1,
+		DepCancleCh: make(chan string, 1),
+	}
+
+	deps := []*ParallelProcessGraphNode{dep0, dep1, dep2}
+
+	node := &ParallelProcessGraphNode{
+		Name:     "source",
+		Data:     &Node{Data: component.ComponentDefinition{}},
+		DepCount: 0,
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	// Panicking node triggers dispatch which panics at dep1
+	node.Process(deps, &wg, func(name string, comp component.ComponentDefinition) bool {
+		panic("initial visitor panic")
+	}, nil, testLogger(t))
+
+	wg.Wait()
+
+	// Verify dep0 received exactly one signal
+	select {
+	case from := <-dep0.DepCancleCh:
+		if from != "source" {
+			t.Errorf("dep0 received from %q, want 'source'", from)
+		}
+	default:
+		t.Error("dep0 received no cancel signal")
+	}
+	select {
+	case extra := <-dep0.DepCancleCh:
+		t.Errorf("dep0 received duplicate cancel: %q", extra)
+	default:
+	}
+
+	// Verify dep2 received its signal despite dep1 panicking during dispatch
+	select {
+	case from := <-dep2.DepCancleCh:
+		if from != "source" {
+			t.Errorf("dep2 received from %q, want 'source'", from)
+		}
+	default:
+		t.Error("dep2 received no cancel signal after partial dispatch recovery")
+	}
+	select {
+	case extra := <-dep2.DepCancleCh:
+		t.Errorf("dep2 received duplicate cancel: %q", extra)
+	default:
+	}
+}
+
 

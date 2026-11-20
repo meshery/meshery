@@ -100,8 +100,15 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 	sendSignals := func(ok bool) {
 		for _, dep := range deps {
 			if !signaled[dep] {
-				sendSignalToDep(dep, ok, v.Name, log)
 				signaled[dep] = true
+				func() {
+					defer func() {
+						if r := recover(); r != nil {
+							log.Errorf("panic sending signal to dependent %s: %v", dep.Name, r)
+						}
+					}()
+					sendSignalToDep(dep, ok, v.Name, log)
+				}()
 			}
 		}
 	}
