@@ -17,6 +17,64 @@ import { isLocalProvider } from '@/utils/provider';
 const DEFAULT_PAGE_SIZE = 10;
 const ROWS_PER_PAGE_OPTIONS = [10, 20, 25];
 
+/**
+ * Extracts the runner results from a performance result record, prioritizing
+ * the server's canonical camelCase wire format (`runnerResults`) while falling
+ * back to legacy remote provider snake_case payloads (`runner_results`).
+ *
+ * @param record - The performance result object from the server.
+ * @returns The runner results object, or undefined if absent.
+ */
+export const getRunnerResults = (record) => record?.runnerResults ?? record?.runner_results;
+
+/**
+ * Formats a performance result record into a table row object with formatted
+ * duration, QPS, and percentile latency metrics. Defaults missing percentiles
+ * to 0.
+ *
+ * @param record - The performance result record to format.
+ * @returns Formatted table row object.
+ */
+export const formatResultRow = (record) => {
+  const runnerResults = getRunnerResults(record);
+  if (!runnerResults) {
+    return {
+      name: record?.name,
+      mesh: record?.mesh,
+      test_start_time: '',
+      qps: '0.0',
+      duration: '0.0',
+      threads: 0,
+      p50: 0,
+      p75: 0,
+      p90: 0,
+      p99: 0,
+      p99_9: 0,
+    };
+  }
+
+  const row = {
+    name: record.name,
+    mesh: record.mesh,
+    test_start_time: runnerResults.StartTime,
+    qps: (runnerResults.ActualQPS ?? 0).toFixed(1),
+    duration: ((runnerResults.ActualDuration ?? 0) / 1000000000).toFixed(1),
+    threads: runnerResults.NumThreads ?? 0,
+    p50: 0,
+    p75: 0,
+    p90: 0,
+    p99: 0,
+    p99_9: 0,
+  };
+
+  const percentiles = runnerResults.DurationHistogram?.Percentiles || [];
+  percentiles.forEach(({ Percentile, Value }) => {
+    row[`p${Percentile}`.replace('.', '_')] = Value.toFixed(3);
+  });
+
+  return row;
+};
+
 const MesheryResults = () => {
   const { notify } = useNotification();
   const [page, setPage] = useState(0);
@@ -51,8 +109,8 @@ const MesheryResults = () => {
           setSearch(search);
           setSortOrder(sortOrder);
           setPage(result.page || 0);
-          setPageSize(result.page_size || DEFAULT_PAGE_SIZE);
-          setCount(result.total_count || 0);
+          setPageSize((result.pageSize ?? result.page_size) || DEFAULT_PAGE_SIZE);
+          setCount(result.totalCount ?? result.total_count ?? 0);
         }
       } catch (error) {
         handleError(error);
@@ -93,32 +151,7 @@ const MesheryResults = () => {
 
   // Format results for display in the table
   const resultsForDisplay = useMemo(() => {
-    return results.map((record) => {
-      const row = {
-        name: record.name,
-        mesh: record.mesh,
-        test_start_time: record.runner_results.StartTime,
-        qps: record.runner_results.ActualQPS.toFixed(1),
-        duration: (record.runner_results.ActualDuration / 1000000000).toFixed(1),
-        threads: record.runner_results.NumThreads,
-      };
-
-      const percentiles = record.runner_results.DurationHistogram?.Percentiles || [];
-      percentiles.forEach(({ Percentile, Value }) => {
-        row[`p${Percentile}`.replace('.', '_')] = Value.toFixed(3);
-      });
-
-      // Default values for percentiles if not available
-      if (percentiles.length === 0) {
-        row.p50 = 0;
-        row.p75 = 0;
-        row.p90 = 0;
-        row.p99 = 0;
-        row.p99_9 = 0;
-      }
-
-      return row;
-    });
+    return results.map(formatResultRow);
   }, [results]);
 
   // Columns configuration for the table
@@ -343,7 +376,7 @@ const MesheryResults = () => {
       ),
       expandableRows: true,
       renderExpandableRow: (rowData, rowMeta) => {
-        const row = results[rowMeta.dataIndex].runner_results;
+        const row = getRunnerResults(results[rowMeta.dataIndex]);
         const colSpan = rowData.length + 1;
 
         return (
