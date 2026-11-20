@@ -48,9 +48,9 @@ import {
   useUpdateEnvironmentMutation,
   useDeleteEnvironmentMutation,
 } from '../../rtk-query/environments';
+import { useGetSelectedOrganization } from '../../rtk-query/user';
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '../general/error-404/index';
-import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
 const ACTION_TYPES = {
@@ -69,7 +69,8 @@ const Environments = () => {
     Keys.WorkspaceManagementRemoveConnectionsFromEnvironments,
   );
   const theme = useTheme();
-  const { organization } = useSelector((state) => state.ui);
+  const { selectedOrganization: organization, isLoading: isLoadingOrganization } =
+    useGetSelectedOrganization();
   const [environmentModal, setEnvironmentModal] = useState({
     open: false,
     schema: {},
@@ -79,7 +80,6 @@ const Environments = () => {
   const [editEnvId, setEditEnvId] = useState('');
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
-  const [orgId, setOrgId] = useState('');
   const [selectedEnvironments, setSelectedEnvironments] = useState([]);
   const [assignConnectionModal, setAssignConnectionModal] = useState(false);
   const [connectionAssignEnv, setConnectionAssignEnv] = useState({});
@@ -98,10 +98,13 @@ const Environments = () => {
   const connectionPageSize = 25;
 
   const modalRef = useRef(null);
+  const organizationIdRef = useRef(organization?.id);
+  organizationIdRef.current = organization?.id;
+  const previousOrganizationIdRef = useRef(organization?.id);
   const { notify } = useNotification();
 
   const {
-    data: environmentsData,
+    currentData: environmentsData,
     isError: isEnvironmentsError,
     error: environmentsError,
   } = useGetEnvironmentsQuery(
@@ -109,10 +112,10 @@ const Environments = () => {
       search: search,
       page: page,
       pagesize: pageSize,
-      orgId: orgId,
+      orgId: organization?.id,
     },
     {
-      skip: !orgId || !canViewEnv,
+      skip: isLoadingOrganization || !organization?.id || !canViewEnv,
     },
   );
 
@@ -123,6 +126,11 @@ const Environments = () => {
   const isUpdatingEnvironment = Boolean(updateEnvResult?.isLoading);
 
   const [deleteEnvironment] = useDeleteEnvironmentMutation();
+
+  const environments = environmentsData?.environments ? environmentsData.environments : [];
+  const isConnectionAssignmentCurrent = environments.some(
+    (environment) => environment.id === connectionAssignEnv.id,
+  );
 
   const {
     data: connections,
@@ -137,7 +145,7 @@ const Environments = () => {
       filter: '{"assigned":false}',
     },
     {
-      skip: skip || !canViewEnv,
+      skip: skip || !canViewEnv || !isConnectionAssignmentCurrent,
     },
   );
 
@@ -153,11 +161,10 @@ const Environments = () => {
       pagesize: connectionPageSize,
     },
     {
-      skip: skip || !canViewEnv,
+      skip: skip || !canViewEnv || !isConnectionAssignmentCurrent,
     },
   );
 
-  const environments = environmentsData?.environments ? environmentsData.environments : [];
   const connectionsDataRtk = currentConnections?.connections ? currentConnections.connections : [];
   const environmentConnectionsDataRtk = currentEnvironmentConnections?.connections
     ? currentEnvironmentConnections.connections
@@ -247,8 +254,30 @@ const Environments = () => {
   };
 
   useEffect(() => {
-    setOrgId(organization?.id);
-  }, [organization]);
+    if (previousOrganizationIdRef.current === organization?.id) return;
+    previousOrganizationIdRef.current = organization?.id;
+
+    setPage(0);
+    setSelectedEnvironments([]);
+    setAssignConnectionModal(false);
+    setConnectionAssignEnv({});
+    setAssignedConnections([]);
+    setConnectionsData([]);
+    setConnectionsPage(0);
+    setLoadedAssignablePage(-1);
+    setEnvironmentConnectionsData([]);
+    setConnectionsOfEnvironmentPage(0);
+    setLoadedAssignedPage(-1);
+    setSkip(true);
+    setDisableTranferButton(true);
+
+    if (actionType === ACTION_TYPES.EDIT) {
+      setEnvironmentModal({ open: false, schema: {} });
+      setActionType('');
+      setInitialData({});
+      setEditEnvId('');
+    }
+  }, [organization?.id, actionType]);
 
   const fetchSchema = () => {
     // Organization is derived from the user's active session and hidden by the
@@ -287,7 +316,7 @@ const Environments = () => {
       setInitialData({
         name: envObject.name,
         description: envObject.description,
-        organizationId: envObject.organizationId,
+        organizationId: organization?.id,
       });
       setEditEnvId(envObject.id);
     } else {
@@ -295,7 +324,7 @@ const Environments = () => {
       setInitialData({
         name: undefined,
         description: '',
-        organizationId: orgId,
+        organizationId: organization?.id,
       });
       setEditEnvId('');
     }
@@ -310,13 +339,13 @@ const Environments = () => {
     setActionType('');
   };
 
-  const handleCreateEnvironment = ({ organizationId, name, description }) => {
-    if (isCreatingEnvironment) return;
+  const handleCreateEnvironment = ({ name, description }) => {
+    if (isCreatingEnvironment || !organization?.id) return;
     createEnvironment({
       environmentPayload: {
         name: name,
         description: description,
-        organizationId: organizationId,
+        organizationId: organization.id,
       },
     })
       .unwrap()
@@ -329,6 +358,12 @@ const Environments = () => {
 
   const handleEditEnvironment = ({ name, description }) => {
     if (isUpdatingEnvironment) return;
+    if (initialData.organizationId !== organization?.id) {
+      handleEnvironmentModalClose();
+      setInitialData({});
+      setEditEnvId('');
+      return;
+    }
     updateEnvironment({
       environmentId: editEnvId,
       environmentPayload: {
@@ -347,6 +382,7 @@ const Environments = () => {
 
   const handleDeleteEnvironmentConfirm = async (e, environment) => {
     e.stopPropagation();
+    const originatingOrganizationId = organization?.id;
     let response = await modalRef.current.show({
       title: `Delete "${environment.name}" environment?`,
       subtitle: deleteEnvironmentModalContent(environment.name),
@@ -356,7 +392,7 @@ const Environments = () => {
       Learn more about the behavior of [lifecycle of environments and their resources](https://docs.meshery.io/concepts/logical/environments) in Meshery Docs.`,
       variant: PROMPT_VARIANTS.DANGER,
     });
-    if (response === 'DELETE') {
+    if (response === 'DELETE' && organizationIdRef.current === originatingOrganizationId) {
       handleDeleteEnvironment(environment.id);
     }
   };
@@ -394,13 +430,14 @@ const Environments = () => {
 
   const handleBulkDeleteEnvironmentConfirm = async (e) => {
     e.stopPropagation();
+    const originatingOrganizationId = organization?.id;
     let response = await modalRef.current.show({
       title: `Delete Environment(s) ?`,
       subtitle: `Do you want to delete ${selectedEnvironments.length} environment(s) ?`,
       primaryOption: 'DELETE',
       variant: PROMPT_VARIANTS.DANGER,
     });
-    if (response === 'DELETE') {
+    if (response === 'DELETE' && organizationIdRef.current === originatingOrganizationId) {
       handleBulkDeleteEnv();
     }
   };
@@ -413,6 +450,8 @@ const Environments = () => {
   };
 
   const handleAssignConnection = async () => {
+    if (!isConnectionAssignmentCurrent) return;
+
     const { addedConnectionsIds, removedConnectionsIds } =
       getAddedAndRemovedConnection(assignedConnections);
 
@@ -449,6 +488,7 @@ const Environments = () => {
 
   const handleonAssignConnectionModalClose = () => {
     setAssignConnectionModal(false);
+    setConnectionAssignEnv({});
     setSkip(true);
     setConnectionsData([]);
     setEnvironmentConnectionsData([]);

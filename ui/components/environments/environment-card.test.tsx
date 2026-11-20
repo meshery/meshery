@@ -170,7 +170,7 @@ describe('EnvironmentCard', () => {
     can.mockReset();
     can.mockReturnValue(true);
     getEnvironmentConnectionsQuery.mockReset();
-    getEnvironmentConnectionsQuery.mockReturnValue({ data: { totalCount: 7 } });
+    getEnvironmentConnectionsQuery.mockReturnValue({ data: { totalCount: 7 }, isError: false });
   });
 
   it('renders the environment name, description and connections count', () => {
@@ -188,6 +188,46 @@ describe('EnvironmentCard', () => {
     expect(screen.getAllByTestId('env-name')[0]).toHaveTextContent('dev');
     expect(screen.getByTestId('description')).toHaveTextContent('dev env');
     expect(screen.getByTestId('tab-count')).toHaveTextContent('7');
+  });
+
+  it('distinguishes a failed connections lookup from a genuine zero count', () => {
+    getEnvironmentConnectionsQuery.mockReturnValue({ data: undefined, isError: true });
+
+    render(
+      <EnvironmentCard
+        environmentDetails={baseEnvironment}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+
+    expect(screen.getByTestId('tab-count')).toHaveTextContent('—');
+    expect(screen.getByTestId('tab-title')).toHaveTextContent('Connections unavailable');
+    expect(screen.getByTestId('tab-count')).not.toHaveTextContent('0');
+  });
+
+  it('renders zero when the connections lookup succeeds with no assignments', () => {
+    getEnvironmentConnectionsQuery.mockReturnValue({
+      data: { totalCount: 0 },
+      isError: false,
+    });
+
+    render(
+      <EnvironmentCard
+        environmentDetails={baseEnvironment}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+
+    expect(screen.getByTestId('tab-count')).toHaveTextContent('0');
+    expect(screen.getByTestId('tab-title')).toHaveTextContent('Assigned Connections');
   });
 
   it('falls back to "No description" for environments without a description', () => {

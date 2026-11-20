@@ -54,6 +54,7 @@ const {
     canSpy: vi.fn((key?: { id?: string }) => overrides.get(key?.id ?? '') ?? true),
     ENVIRONMENTS_QUERY_RESULT: {
       data: { environments: [], totalCount: 0 },
+      currentData: { environments: [], totalCount: 0 },
       isLoading: false,
       isError: false,
       error: undefined,
@@ -101,8 +102,11 @@ vi.mock('../../rtk-query/environments', () => ({
   useRemoveConnectionFromEnvironmentMutation: () => NOOP_MUTATION,
 }));
 
-vi.mock('react-redux', () => ({
-  useSelector: (selector: (state: unknown) => unknown) => selector(UI_STATE),
+vi.mock('../../rtk-query/user', () => ({
+  useGetSelectedOrganization: () => ({
+    selectedOrganization: UI_STATE.ui.organization,
+    isLoading: !UI_STATE.ui.organization,
+  }),
 }));
 
 vi.mock('next/router', () => ({
@@ -120,13 +124,11 @@ vi.mock('@meshery/schemas/permissions', () => ({
 // The RJSF form is not under test; expose a button that submits the payload the
 // real form would produce.
 vi.mock('../shared/Modal/Modal', () => ({
-  RJSFModalWrapper: ({ handleSubmit, isSubmitting }: any) => (
+  RJSFModalWrapper: ({ handleSubmit, initialData, isSubmitting }: any) => (
     <button
       data-testid="submit-environment"
       disabled={isSubmitting}
-      onClick={() =>
-        handleSubmit({ organizationId: 'org-1', name: 'prod', description: 'production' })
-      }
+      onClick={() => handleSubmit({ ...initialData, name: 'prod', description: 'production' })}
     >
       Save
     </button>
@@ -134,16 +136,22 @@ vi.mock('../shared/Modal/Modal', () => ({
 }));
 
 vi.mock('./environment-card', () => ({
-  default: ({ onAssignConnection, environmentDetails }: any) => (
-    <div data-testid={`env-card-${environmentDetails?.id}`}>
-      <button
-        data-testid={`assign-btn-${environmentDetails?.id}`}
-        onClick={(e) => onAssignConnection(e, environmentDetails)}
-      >
-        Assign
-      </button>
-    </div>
-  ),
+  default: ({ onAssignConnection, environmentDetails }: any) => {
+    getEnvironmentConnectionsQuery(
+      { environmentId: environmentDetails?.id },
+      { skip: !environmentDetails?.id },
+    );
+    return (
+      <div data-testid={`env-card-${environmentDetails?.id}`}>
+        <button
+          data-testid={`assign-btn-${environmentDetails?.id}`}
+          onClick={(e) => onAssignConnection(e, environmentDetails)}
+        >
+          Assign
+        </button>
+      </div>
+    );
+  },
 }));
 vi.mock('./styles', () => ({
   CreateButtonWrapper: ({ children }: any) => <div>{children}</div>,
@@ -274,6 +282,12 @@ const openCreateModalAndSubmit = async () => {
 const notifiedEventTypes = () =>
   notify.mock.calls.map(([arg]) => arg?.event_type?.type ?? arg?.event_type);
 
+beforeEach(() => {
+  UI_STATE.ui.organization = { id: 'org-1' };
+  ENVIRONMENTS_QUERY_RESULT.data = { environments: [], totalCount: 0 };
+  ENVIRONMENTS_QUERY_RESULT.currentData = ENVIRONMENTS_QUERY_RESULT.data;
+});
+
 describe('Environments create flow notifications', () => {
   beforeEach(() => {
     permissionOverrides.clear();
@@ -348,6 +362,7 @@ describe('Environments search paging', () => {
       environments: [{ id: 'env-1', name: 'staging' }],
       totalCount: 40,
     } as any;
+    ENVIRONMENTS_QUERY_RESULT.currentData = ENVIRONMENTS_QUERY_RESULT.data;
     try {
       const user = userEvent.setup();
       render(<Environments />);
@@ -360,6 +375,7 @@ describe('Environments search paging', () => {
       await waitFor(() => expect(lastQueryArgs()).toMatchObject({ page: 0, search: 'prod' }));
     } finally {
       ENVIRONMENTS_QUERY_RESULT.data = originalData;
+      ENVIRONMENTS_QUERY_RESULT.currentData = originalData;
     }
   });
 });
@@ -398,6 +414,82 @@ describe('Environments permissions and wire query skipping', () => {
       expect.objectContaining({ skip: false }),
     );
   });
+
+  it('uses the selected organization on the first query render', () => {
+    render(<Environments />);
+
+    expect(getEnvironmentsQuery).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ orgId: 'org-1' }),
+      expect.objectContaining({ skip: false }),
+    );
+  });
+
+  it('does not query until the server-selected organization is available', () => {
+    UI_STATE.ui.organization = undefined as any;
+    const { rerender } = render(<Environments />);
+
+    expect(getEnvironmentsQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ orgId: undefined }),
+      expect.objectContaining({ skip: true }),
+    );
+    getEnvironmentsQuery.mockClear();
+
+    UI_STATE.ui.organization = { id: 'org-from-preference' };
+    rerender(<Environments />);
+
+    const queriedOrganizationIds = getEnvironmentsQuery.mock.calls.map(
+      ([args]) => (args as any).orgId,
+    );
+    expect(queriedOrganizationIds.length).toBeGreaterThan(0);
+    expect(queriedOrganizationIds.every((orgId) => orgId === 'org-from-preference')).toBe(true);
+    expect(getEnvironmentsQuery.mock.calls.every(([, options]) => !(options as any).skip)).toBe(
+      true,
+    );
+  });
+
+  it('does not render or query stale environments while switching organizations', () => {
+    ENVIRONMENTS_QUERY_RESULT.data = {
+      environments: [{ id: 'env-org-1', name: 'Org 1 environment' }],
+      totalCount: 1,
+    } as any;
+    ENVIRONMENTS_QUERY_RESULT.currentData = ENVIRONMENTS_QUERY_RESULT.data;
+    const { rerender } = render(<Environments />);
+    getEnvironmentsQuery.mockClear();
+    getEnvironmentConnectionsQuery.mockClear();
+
+    UI_STATE.ui.organization = { id: 'org-2' };
+    ENVIRONMENTS_QUERY_RESULT.currentData = undefined as any;
+    rerender(<Environments />);
+
+    const queriedOrganizationIds = getEnvironmentsQuery.mock.calls.map(
+      ([args]) => (args as any).orgId,
+    );
+    expect(queriedOrganizationIds.length).toBeGreaterThan(0);
+    expect(queriedOrganizationIds.every((orgId) => orgId === 'org-2')).toBe(true);
+    expect(screen.queryByTestId('env-card-env-org-1')).not.toBeInTheDocument();
+    expect(getEnvironmentConnectionsQuery).not.toHaveBeenCalledWith(
+      expect.objectContaining({ environmentId: 'env-org-1' }),
+      expect.anything(),
+    );
+  });
+
+  it('creates an environment in the organization selected while the dialog is open', async () => {
+    createEnvironment.mockReturnValue({ unwrap: () => Promise.resolve({ id: 'env-1' }) });
+    const user = userEvent.setup();
+    const { rerender } = render(<Environments />);
+
+    await user.click(screen.getByText('Create'));
+    UI_STATE.ui.organization = { id: 'org-2' };
+    rerender(<Environments />);
+    await user.click(await screen.findByTestId('submit-environment'));
+
+    await waitFor(() =>
+      expect(createEnvironment).toHaveBeenCalledWith({
+        environmentPayload: expect.objectContaining({ organizationId: 'org-2' }),
+      }),
+    );
+  });
 });
 
 describe('Environments connection assignment modal', () => {
@@ -409,6 +501,7 @@ describe('Environments connection assignment modal', () => {
       environments: [{ id: 'env-1', name: 'production' }],
       totalCount: 1,
     } as any;
+    ENVIRONMENTS_QUERY_RESULT.currentData = ENVIRONMENTS_QUERY_RESULT.data;
     CONNECTIONS_QUERY_RESULT.data = {
       connections: [
         { id: 'conn-1', name: 'Cluster A' },
@@ -420,6 +513,7 @@ describe('Environments connection assignment modal', () => {
 
   afterEach(() => {
     ENVIRONMENTS_QUERY_RESULT.data = originalEnvData;
+    ENVIRONMENTS_QUERY_RESULT.currentData = originalEnvData;
     CONNECTIONS_QUERY_RESULT.data = originalConnData;
     CONNECTIONS_QUERY_RESULT.currentData = undefined;
   });

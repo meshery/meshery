@@ -86,13 +86,16 @@ const EnvironmentCard = ({
   onAssignConnection,
 }) => {
   const theme = useTheme();
-  const { data: environmentConnections } = useGetEnvironmentConnectionsQuery(
-    {
-      environmentId: environmentDetails.id,
-    },
-    { skip: !environmentDetails.id },
-  );
-  const environmentConnectionsCount = environmentConnections?.totalCount || 0;
+  const { data: environmentConnections, isError: isEnvironmentConnectionsError } =
+    useGetEnvironmentConnectionsQuery(
+      {
+        environmentId: environmentDetails.id,
+      },
+      { skip: !environmentDetails.id },
+    );
+  const environmentConnectionsCount = isEnvironmentConnectionsError
+    ? '—'
+    : (environmentConnections?.totalCount ?? 0);
 
   // this allows to handle cases when deletedAt is:
   // - null or undefined (not deleted)
@@ -175,7 +178,11 @@ const EnvironmentCard = ({
               >
                 <AllocationButton onClick={(e) => e.stopPropagation()}>
                   <TransferButton
-                    title="Assigned Connections"
+                    title={
+                      isEnvironmentConnectionsError
+                        ? 'Connections unavailable'
+                        : 'Assigned Connections'
+                    }
                     count={environmentConnectionsCount}
                     onAssign={onAssignConnection}
                     permissionKey={Keys.WorkspaceManagementViewConnections}
