@@ -9,9 +9,9 @@ categories: [configuration]
 Meshery offers two primary ways to bring models into your system: **Create** and **[Import]({{< ref "guides/configuration-management/importing-models/index.md" >}})**.
 
 - **Import** is ideal when you already have a model definition file (e.g., JSON, CSV) and simply want to bring it into Meshery.
-- **Create** is the recommended approach if you’re starting fresh — it guides you through building a model step by step using an intuitive UI wizard.
+- **Create** is the recommended approach if you are starting fresh. A wizard in Meshery UI walks you through building a model step by step.
 
-This section walks you through the **Create** workflow — perfect for users who want full control over naming, styling, and categorizing their models while sourcing CRDs from GitHub or ArtifactHub.
+This page walks you through the **Create** workflow, which gives you full control over naming, styling, and categorizing your model while sourcing its CRDs from GitHub or ArtifactHub.
 
 > Tip: If you don’t have any files yet, start with **Create**. You can always [export]({{< ref "guides/configuration-management/exporting-models/index.md" >}}) or re-import your model later.
 
@@ -21,7 +21,7 @@ Meshery UI | fa fa-desktop
 <p>The URL Create feature allows you to create models in Meshery by providing URLs to source repositories or package registries. Here's how to use it:</p>
 
 <h4>Step 1: Open the Model Generation Interface</h4>
-<p>Go to the <a href="https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models">Registry</a> section in the Meshery UI. Click the <strong>create</strong> button to start creating a new model.</p>
+<p>Open the Registry: click your avatar in the top right and choose <strong>Registry</strong>, or go to <strong>Settings</strong> &gt; <strong>Registry</strong>. On the <strong>Models</strong> tab, click <strong>Create Model</strong>. To try it without installing Meshery, use the <a href="https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models">Registry in the Meshery Playground</a>.</p>
 
 <a href="./images/create-ui-where.gif">
     <img src="./images/create-ui-where.gif" alt="registry generate model" style="width: 50%; max-width: 400px;">
@@ -31,7 +31,7 @@ Meshery UI | fa fa-desktop
 <p>Enter the following names for your model:</p>
 <ul>
   <li><strong>Model Name:</strong> This is the unique, system identifier. Use lowercase letters and hyphens only (no spaces). <br>Example: <code>cert-manager</code></li>
-  <li><strong>Display Name:</strong> This is the friendly name displayed in the UI. It can include spaces and uppercase letters. <br>Example: <code>Cert Manager</code></li>
+  <li><strong>Model Display Name:</strong> This is the friendly name displayed in the UI. It can include spaces and uppercase letters. <br>Example: <code>Cert Manager</code></li>
 </ul>
 
 <a href="./images/create-ui-name.png">
@@ -85,8 +85,7 @@ Check the<code>sourceURL</code>column in the <a href='https://docs.google.com/sp
 
 <h4>Step 6: Additional Settings</h4>
 <ul>
-<li><strong>Immediate Registration:</strong> Enable this option to register your model instantly, making it available in your Meshery instance right away.</li>
-<li><strong>Visual Annotation Only:</strong> Mark this option if your model is intended solely for visual diagramming rather than infrastructure management.</li>
+<li><strong>Visual Annotation Only:</strong> Mark this option if your model is intended solely for visual diagramming rather than infrastructure management. Leave it off for models you will deploy. Clicking Generate registers the model immediately; the wizard has no separate Immediate Registration toggle.</li>
 </ul>
 
 <a href="./images/create-ui-details.png">
@@ -112,7 +111,7 @@ When a model is marked for visual annotation only, it means the model will be us
 <p>A notification will also appear in the <a href="{{< ref "guides/infrastructure-management/notification-management/index.md" >}}">Notification Center</a> to confirm whether the operation succeeded or failed, providing additional context if needed.</p>
 
 {{% alert color="warning" title="Note on Deletion" %}}
-Once a model is generated, it cannot be deleted from the Meshery UI. If you no longer wish to use it, you may mark it as ignored instead.
+You cannot delete a generated model from Meshery UI. To stop using it, mark it as ignored, or delete it with <code>mesheryctl model delete &lt;model-name&gt;</code>.
 {{% /alert %}}
 
 <!-- tab -->
@@ -143,9 +142,11 @@ Using Scaffold (model init) | fa fa-folder-tree
 <code>
 digitalocean-icons/
 <br />└── v0.1.0/
-<br />&nbsp;&nbsp;&nbsp;&nbsp;├── model.json          # model definition (name and displayName are pre-filled from the argument)
-<br />&nbsp;&nbsp;&nbsp;&nbsp;├── components/          # one sample component; add one JSON file per component
+<br />&nbsp;&nbsp;&nbsp;&nbsp;├── model.json          # model definition (name, displayName and version are pre-filled from the argument and --version; releases without meshery/meshery#23362: see the warning below)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;├── components/
+<br />&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── component.json  # sample component, already referencing this model (releases without meshery/meshery#23362: see the warning below); add one JSON file per component
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── relationships/
+<br />&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── relationship.json  # sample relationship (see the warning below)
 <br />&nbsp;&nbsp;&nbsp;&nbsp;├── connections/
 <br />&nbsp;&nbsp;&nbsp;&nbsp;└── credentials/
 </code>
@@ -156,7 +157,7 @@ digitalocean-icons/
   <li><code>category.name</code> and <code>subCategory</code> - e.g. <code>Platform</code> / <code>Cloud Provider</code>.</li>
   <li><code>registrant.kind</code> - e.g. <code>meshery</code>.</li>
   <li><code>description</code> - a short summary of what the model provides.</li>
-  <li><code>metadata.svgColor</code> and <code>metadata.svgWhite</code> - the model's display icon, as an inline SVG string (strip any <code>&lt;?xml ...?&gt;</code> header and collapse the SVG to a single line).</li>
+  <li><code>metadata.svgColor</code> and <code>metadata.svgWhite</code> - the model's display icon, as a JSON-escaped SVG string. The SVG's attribute quotes make raw markup invalid JSON, so generate the value with <a href="https://jqlang.org/download/" target="_blank" rel="noopener">jq</a> (install it first; macOS 15 and later include it): <code>sed 's/&lt;?xml[^&gt;]*?&gt;//' icon.svg | jq -Rs .</code>, which drops any <code>&lt;?xml ...?&gt;</code> header and escapes quotes and newlines, and paste the whole output, including its surrounding quotes.</li>
   <li><code>metadata.isAnnotation</code> - set to <code>true</code> for an annotation-only (visual diagramming) model.</li>
 </ul>
 
@@ -165,12 +166,17 @@ digitalocean-icons/
 <ul>
   <li><code>displayName</code> - the human-readable name shown in the UI (e.g. <code>DO Logo Icon Blue</code>).</li>
   <li><code>component.kind</code> - the unique identifier for the component (e.g. <code>do-logo-icon-blue</code>).</li>
-  <li><code>styles.svgColor</code> and <code>styles.svgWhite</code> - the component's inline SVG.</li>
+  <li><code>styles.svgColor</code> and <code>styles.svgWhite</code> - the component's SVG, JSON-escaped the same way.</li>
   <li><code>metadata.isAnnotation</code> - <code>true</code> for annotation components.</li>
 </ul>
 
-{{% alert color="warning" title="Component schemaVersion compatibility" %}}
-For the widest server compatibility, set each component's <code>schemaVersion</code> to <code>components.meshery.io/v1beta1</code> and the model's to <code>models.meshery.io/v1beta2</code>. Meshery Servers only accept the <code>v1beta3</code> component wire format once they ship a MeshKit new enough to recognize it; a released server that predates that support rejects <code>v1beta3</code> components with a generic "No valid component or relationship found in the Model provided" error at import time.
+{{% alert color="warning" title="Scaffold fixes required until the fixes below reach your release" %}}
+A scaffold from a mesheryctl and Meshery Server release that predates the fixes linked below does not import as generated. This is true of v1.0.76 and v1.0.77. Before building, fix these:
+<ul>
+  <li><strong>Version and model name.</strong> <code>model.json</code> is written with version <code>v0.0.1</code> whatever you pass to <code>--version</code>, so set <code>version</code> and <code>model.version</code> yourself. The nested <code>model.name</code> in the sample component and relationship is <code>untitled-model</code>; set it to your model name. Fixed in <a href="https://github.com/meshery/meshery/pull/23362">meshery/meshery#23362</a>; drop this step once you run a <code>mesheryctl</code> release that includes it.</li>
+  <li><strong>Component schemaVersion.</strong> Meshery Server rejects the scaffolded <code>components.meshery.io/v1beta3</code> component at import with "No valid component or relationship found in the Model provided". Set each component's <code>schemaVersion</code> to <code>components.meshery.io/v1beta1</code> (or <code>v1beta2</code>), and leave the model's at <code>models.meshery.io/v1beta2</code>. Fixed in <a href="https://github.com/meshery/meshkit/pull/1165">meshery/meshkit#1165</a>; drop this step once your Meshery Server includes a MeshKit release with it.</li>
+  <li><strong>Sample relationship.</strong> The scaffolded <code>relationships.meshery.io/v1beta3</code> relationship is also rejected, and the import reports "encountered error for 1 entity (1 relationship)". Delete <code>relationships/relationship.json</code>, or replace it with a <code>v1beta2</code> or <code>v1alpha3</code> relationship. Tracked in <a href="https://github.com/meshery/meshkit/issues/1164">meshery/meshkit#1164</a>.</li>
+</ul>
 {{% /alert %}}
 
 <h4>4. Package the model as an OCI image</h4>
@@ -178,7 +184,7 @@ For the widest server compatibility, set each component's <code>schemaVersion</c
 <p>This writes an OCI artifact named <code>&lt;model&gt;-&lt;version&gt;.tar</code> (e.g. <code>digitalocean-icons-v0-1-0.tar</code>) to your current directory.</p>
 
 <h4>5. Register the model into a Meshery Server</h4>
-<p>Import the packaged artifact (or the model directory) into your connected Meshery Server. This step requires a running server and an authenticated <code>mesheryctl</code> context (see <a href="{{< ref "reference/references/mesheryctl/system/login.md" >}}"><code>mesheryctl system login</code></a>):</p>
+<p>Import the packaged artifact (or the model directory) into your connected Meshery Server. This step requires a running server and an authenticated <code>mesheryctl</code> context (see <a href="{{< ref "reference/mesheryctl/system/login.md" >}}"><code>mesheryctl system login</code></a>):</p>
 <code>mesheryctl model import -f digitalocean-icons-v0-1-0.tar</code>
 <p>Verify the result:</p>
 <code>mesheryctl model view digitalocean-icons</code>
@@ -209,7 +215,7 @@ Using CSV | fa fa-list
 <p>The <code>--directory</code> flag takes the path to the folder that contains <code>Models.csv</code> and <code>Components.csv</code> (<code>Relationships.csv</code> is optional). This path is CSV-driven and does <strong>not</strong> require a Google Spreadsheet credential.</p>
 
 <h4>4. Locating Generated Files</h4>
-<p>After successful generation, your model's files will be created in the repository's <code>models/</code> directory. You can find these files at <code>meshery/models/[YOUR_MODEL_NAME]/</code>. Take time to review these generated files to ensure they accurately reflect your intended model structure.</p>
+<p>After successful generation, <code>mesheryctl</code> writes your model's files to the repository's <code>models/</code> directory, or to the directory you pass with <code>-o</code>. With the default output, find them at <code>meshery/models/[YOUR_MODEL_NAME]/</code>. Take time to review these generated files to ensure they accurately reflect your intended model structure.</p>
 
 <h4>5. Troubleshooting</h4>
 <p>If you encounter issues during the generation process, you can use these diagnostic approaches to identify and resolve problems:</p>
@@ -296,7 +302,7 @@ If <code>$SHEET_CRED</code> is empty or is not valid base64, <code>mesheryctl</c
   <li>Read your spreadsheet data</li>
   <li>Validate the model definition</li>
   <li>Generate the model files</li>
-  <li>For error logs your can checkout <code>~/.meshery/logs/registry/</code></li>
+  <li>For error logs, check <code>~/.meshery/logs/registry/</code></li>
 </ul>
 
 <h4>3. Verification</h4>
@@ -305,10 +311,10 @@ If <code>$SHEET_CRED</code> is empty or is not valid base64, <code>mesheryctl</c
 {{% alert color="info" title="Using Meshery CLI with the Meshery Registry and Meshery Models" %}}
 Meshery CLI has a set of commands that pertain to the lifecycle management of models:
 
-- `mesheryctl registry` - interact with and update spreadsheets
-- `mesheryctl models` - interact with and update Meshery Server
-- `mesheryctl component` - interact with and update Meshery Server
-- `mesheryctl relationships` - interact with and update Meshery Server
+- `mesheryctl registry` generates models from CSV files or the integration spreadsheet.
+- `mesheryctl model` lists, views, imports, exports, and deletes models in Meshery Server. `mesheryctl model build` packages a model into an OCI image locally, without Meshery Server.
+- `mesheryctl component` lists, searches, and views components in Meshery Server.
+- `mesheryctl relationship` manages relationships in Meshery Server.
 {{% /alert %}}
 
 {{< /tabs >}}

@@ -1,0 +1,1 @@
+Hi everyone, my name is Riya. I’m very eager to participate in open-source projects and passionate about software development. I’m looking forward to learning from the Meshery community, improving my skills, and making meaningful contributions.

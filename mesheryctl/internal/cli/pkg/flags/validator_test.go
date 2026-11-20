@@ -1,6 +1,7 @@
 package mesheryctlflags
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -112,6 +113,82 @@ func TestValidateBoolean(t *testing.T) {
 			} else {
 				assert.NoError(t, err)
 			}
+		})
+	}
+}
+
+func TestValidateNotBlank(t *testing.T) {
+	flagValidator := GetFlagValidator()
+
+	tests := []struct {
+		name    string
+		value   string
+		wantErr bool
+	}{
+		{
+			name:    "given a regular value when notblank then returns no error",
+			value:   "my-name",
+			wantErr: false,
+		},
+		{
+			name:    "given a value with inner spaces when notblank then returns no error",
+			value:   "my name",
+			wantErr: false,
+		},
+		{
+			name:    "given a value with surrounding spaces when notblank then returns no error",
+			value:   "  my-name  ",
+			wantErr: false,
+		},
+		{
+			name:    "given an empty value when required,notblank then returns error",
+			value:   "",
+			wantErr: true,
+		},
+		{
+			name:    "given a spaces-only value when required,notblank then returns error",
+			value:   "   ",
+			wantErr: true,
+		},
+		{
+			name:    "given a tabs and newlines only value when required,notblank then returns error",
+			value:   "\t\n ",
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			type testStruct struct {
+				Name string `json:"name" validate:"required,notblank"`
+			}
+			err := flagValidator.Validate(testStruct{Name: tt.value})
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestValidateNotBlankNonString(t *testing.T) {
+	flagValidator := GetFlagValidator()
+
+	tests := []struct {
+		name  string
+		value interface{}
+	}{
+		{name: "integer", value: 42},
+		{name: "boolean", value: true},
+		{name: "slice", value: []string{"name"}},
+		{name: "map", value: map[string]string{"name": "value"}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := flagValidator.Validator.Var(tt.value, "notblank")
+			assert.Error(t, err)
 		})
 	}
 }
@@ -322,13 +399,14 @@ func TestReadValidationErrorMessages_Direct(t *testing.T) {
 	})
 
 	t.Run("given relpath validation error then formats relpath error", func(t *testing.T) {
+		absPath := filepath.Join(os.TempDir(), "not-a-real-path")
 		verrs := getValidationErrors(t, struct {
 			Path string `json:"path" validate:"relpath"`
-		}{Path: "/not-a-real-path"})
+		}{Path: absPath})
 
 		err := fv.ReadValidationErrorMessages(verrs)
 		assert.Error(t, err)
-		assert.Equal(t, "Invalid value for --path '/not-a-real-path': path must be a relative path", err.Error())
+		assert.Equal(t, fmt.Sprintf("Invalid value for --path '%s': path must be a relative path", absPath), err.Error())
 	})
 
 	t.Run("given abspath validation error then formats abspath error", func(t *testing.T) {

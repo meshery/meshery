@@ -17,6 +17,11 @@ import { parseDesignFile } from '../../../utils/utils';
  * Each returned function preserves the exact behavior of the original
  * inline definitions in MesheryPatterns.tsx — same modal title strings,
  * same icons, same stepper / modal-body wrapping, same arg shapes.
+ *
+ * Every modal passes canNavigateToErrors={false}: the designs page has no
+ * designer listening for TAP_ON_ERROR, so validation and dry-run errors must
+ * not look like links. Kanvas Designer renders the same components with the
+ * default (true), where each error opens the failing component and property.
  */
 export function buildDesignLifecycleHandlers({
   designLifecycleModal,
@@ -35,6 +40,7 @@ export function buildDesignLifecycleHandlers({
         <DeployStepper
           handleClose={designLifecycleModal.closeModal}
           validationMachine={designValidationActorRef}
+          canNavigateToErrors={false}
           design={design}
           handleDeploy={handleDeploy}
           deployment_type={DEPLOYMENT_TYPE.DEPLOY}
@@ -54,6 +60,7 @@ export function buildDesignLifecycleHandlers({
         <UnDeployStepper
           handleClose={designLifecycleModal.closeModal}
           validationMachine={designValidationActorRef}
+          canNavigateToErrors={false}
           design={design}
           handleUndeploy={handleUndeploy}
           deployment_type={DEPLOYMENT_TYPE.UNDEPLOY}
@@ -75,6 +82,7 @@ export function buildDesignLifecycleHandlers({
           <DryRunDesign
             handleClose={designLifecycleModal.closeModal}
             validationMachine={designValidationActorRef}
+            canNavigateToErrors={false}
             design={design}
             deployment_type={DEPLOYMENT_TYPE.DEPLOY}
             selectedK8sContexts={selectedK8sContexts}
@@ -96,6 +104,7 @@ export function buildDesignLifecycleHandlers({
           <ValidateDesign
             handleClose={designLifecycleModal.closeModal}
             validationMachine={designValidationActorRef}
+            canNavigateToErrors={false}
             design={design}
             deployment_type={DEPLOYMENT_TYPE.DEPLOY}
             selectedK8sContexts={selectedK8sContexts}

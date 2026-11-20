@@ -200,7 +200,7 @@ describe('useLazyGetConnectionsQuery wrapper', () => {
     expect(lazyTriggerRef.current).toHaveBeenCalledWith(
       {
         page: '1',
-        pagesize: '50',
+        pageSize: '50',
         search: 's',
         order: 'desc',
         status: undefined,

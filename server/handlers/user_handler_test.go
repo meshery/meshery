@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gorilla/mux"
@@ -164,5 +166,113 @@ func assertJSONErrorEnvelope(t *testing.T, resp *http.Response) {
 	msg, ok := decoded["error"].(string)
 	if !ok || msg == "" {
 		t.Errorf("expected non-empty error field, got %+v", decoded)
+	}
+}
+
+
+func TestUserHandlers_NilGuards(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+
+	// GetUserByIDHandler nil provider
+	{
+		req := httptest.NewRequest(http.MethodGet, "/api/user/profile/00000000-0000-0000-0000-000000000001", nil)
+		req = mux.SetURLVars(req, map[string]string{"id": "00000000-0000-0000-0000-000000000001"})
+		rec := httptest.NewRecorder()
+		h.GetUserByIDHandler(rec, req, nil, nil, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("GetUserByIDHandler status = %d, want 500; body: %s", rec.Code, rec.Body.String())
+		}
+		if !strings.Contains(rec.Body.String(), ErrNilProviderCode) {
+			t.Errorf("expected error body to contain %s, got: %s", ErrNilProviderCode, rec.Body.String())
+		}
+	}
+
+	// GetUsers nil provider (with token in context to isolate nil-provider guard from ErrFetchToken)
+	{
+		req := httptest.NewRequest(http.MethodGet, "/api/user", nil)
+		ctx := context.WithValue(req.Context(), models.TokenCtxKey, "test-token")
+		req = req.WithContext(ctx)
+		rec := httptest.NewRecorder()
+		h.GetUsers(rec, req, nil, nil, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("GetUsers status = %d, want 500; body: %s", rec.Code, rec.Body.String())
+		}
+		if !strings.Contains(rec.Body.String(), ErrNilProviderCode) {
+			t.Errorf("expected error body to contain %s, got: %s", ErrNilProviderCode, rec.Body.String())
+		}
+	}
+
+	// UserPrefsHandler GET with nil provider succeeds (GET only encodes prefObj and does not require provider)
+	{
+		req := httptest.NewRequest(http.MethodGet, "/api/user/prefs", nil)
+		rec := httptest.NewRecorder()
+		h.UserPrefsHandler(rec, req, &models.Preference{}, nil, nil)
+		if rec.Code != http.StatusOK {
+			t.Errorf("UserPrefsHandler GET with nil provider status = %d, want 200; body: %s", rec.Code, rec.Body.String())
+		}
+	}
+
+	// UserPrefsHandler POST with nil provider returns 500
+	{
+		req := httptest.NewRequest(http.MethodPost, "/api/user/prefs", strings.NewReader(`{}`))
+		rec := httptest.NewRecorder()
+		h.UserPrefsHandler(rec, req, nil, nil, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("UserPrefsHandler POST nil provider status = %d, want 500; body: %s", rec.Code, rec.Body.String())
+		}
+		if !strings.Contains(rec.Body.String(), ErrNilProviderCode) {
+			t.Errorf("expected error body to contain %s, got: %s", ErrNilProviderCode, rec.Body.String())
+		}
+	}
+
+	// UserPrefsHandler POST with null JSON body returns 400
+	{
+		mockProv := &models.DefaultLocalProvider{}
+		req := httptest.NewRequest(http.MethodPost, "/api/user/prefs", strings.NewReader("null"))
+		rec := httptest.NewRecorder()
+		h.UserPrefsHandler(rec, req, nil, nil, mockProv)
+		if rec.Code != http.StatusBadRequest {
+			t.Errorf("UserPrefsHandler POST null body status = %d, want 400; body: %s", rec.Code, rec.Body.String())
+		}
+		if !strings.Contains(rec.Body.String(), ErrRequestBodyCode) {
+			t.Errorf("expected error body to contain %s, got: %s", ErrRequestBodyCode, rec.Body.String())
+		}
+	}
+
+	// UserPrefsHandler POST with nil user returns 400
+	{
+		mockProv := &models.DefaultLocalProvider{}
+		req := httptest.NewRequest(http.MethodPost, "/api/user/prefs", strings.NewReader(`{}`))
+		rec := httptest.NewRecorder()
+		h.UserPrefsHandler(rec, req, nil, nil, mockProv)
+		if rec.Code != http.StatusBadRequest {
+			t.Errorf("UserPrefsHandler POST with nil user status = %d, want 400; body: %s", rec.Code, rec.Body.String())
+		}
+	}
+
+	// ShareDesignHandler nil provider
+	{
+		req := httptest.NewRequest(http.MethodPost, "/api/user/design/share", nil)
+		rec := httptest.NewRecorder()
+		h.ShareDesignHandler(rec, req, nil, nil, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("ShareDesignHandler status = %d, want 500; body: %s", rec.Code, rec.Body.String())
+		}
+		if !strings.Contains(rec.Body.String(), ErrNilProviderCode) {
+			t.Errorf("expected error body to contain %s, got: %s", ErrNilProviderCode, rec.Body.String())
+		}
+	}
+
+	// ShareFilterHandler nil provider
+	{
+		req := httptest.NewRequest(http.MethodPost, "/api/user/filter/share", nil)
+		rec := httptest.NewRecorder()
+		h.ShareFilterHandler(rec, req, nil, nil, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("ShareFilterHandler status = %d, want 500; body: %s", rec.Code, rec.Body.String())
+		}
+		if !strings.Contains(rec.Body.String(), ErrNilProviderCode) {
+			t.Errorf("expected error body to contain %s, got: %s", ErrNilProviderCode, rec.Body.String())
+		}
 	}
 }

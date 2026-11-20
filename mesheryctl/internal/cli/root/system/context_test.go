@@ -8,7 +8,9 @@ import (
 	"testing"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"
 )
@@ -32,6 +34,11 @@ func TestContextViewCmd(t *testing.T) {
 		{
 			Name:             "view with specified context through context flag",
 			Args:             []string{"context", "view", "--context", "local2"},
+			ExpectedResponse: "viewWithContextExpected.golden",
+		},
+		{
+			Name:             "view with mixed-case context name through context flag",
+			Args:             []string{"context", "view", "--context", "Local2"},
 			ExpectedResponse: "viewWithContextExpected.golden",
 		},
 		{
@@ -112,6 +119,12 @@ func TestContextListCmd(t *testing.T) {
 			Args:             []string{"context", "list"},
 			ExpectedResponse: "listExpected.golden",
 		},
+		{
+			Name:          "given extra positional arguments when context list then throw error",
+			Args:          []string{"context", "list", "extra-arg"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listContextUsageMsg)),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
@@ -123,7 +136,15 @@ func TestContextListCmd(t *testing.T) {
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
-				t.Error(err)
+				if tt.ExpectError {
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
+				}
+				t.Fatal(err)
+			}
+
+			if tt.ExpectError {
+				t.Fatalf("expected error, got nil")
 			}
 
 			actualResponse := buf.String()
@@ -139,7 +160,6 @@ func TestContextListCmd(t *testing.T) {
 
 			assert.Equal(t, expectedResponse, actualResponse)
 		})
-		t.Log("ListContextCmd test passed")
 	}
 }
 
@@ -230,32 +250,69 @@ func TestContextCreateCmd(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 	utils.SetupCustomContextEnv(t, currDir+"/testdata/context/ExpectedAdd.yaml")
-	tests := []utils.CmdTestInput{
+	tests := []struct {
+		utils.CmdTestInput
+		Validation func(*testing.T)
+	}{
 		{
-			Name:                 "given context name provided when system context create then context is created",
-			Args:                 []string{"context", "create", "local3"},
-			ExpectedResponse:     "createContext.golden",
-			ExpectedResponseYaml: "addExpected.golden",
+			CmdTestInput: utils.CmdTestInput{
+				Name:                 "given context name provided when system context create then context is created",
+				Args:                 []string{"context", "create", "local3"},
+				ExpectedResponse:     "createContext.golden",
+				ExpectedResponseYaml: "addExpected.golden",
+			},
 		},
 		{
-			Name:           "given no context provided when system context create  then thorw error",
-			Args:           []string{"context", "create"},
-			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
-			IsOutputGolden: false,
+			CmdTestInput: utils.CmdTestInput{
+				Name:           "given no context provided when system context create  then thorw error",
+				Args:           []string{"context", "create"},
+				ExpectError:    true,
+				ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
+				IsOutputGolden: false,
+			},
 		},
 		{
-			Name:           "given multiple context name provided when system context create then throw error",
-			Args:           []string{"context", "create", "local1", "local2"},
-			ExpectError:    true,
-			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
-			IsOutputGolden: false,
+			CmdTestInput: utils.CmdTestInput{
+				Name:           "given multiple context name provided when system context create then throw error",
+				Args:           []string{"context", "create", "local1", "local2"},
+				ExpectError:    true,
+				ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg)),
+				IsOutputGolden: false,
+			},
+		},
+		{
+			CmdTestInput: utils.CmdTestInput{
+				Name:                 "Create a context with a valid component succeeds",
+				Args:                 []string{"context", "create", "local-valid", "--components", "meshery-istio"},
+				ExpectedResponse:     "createContextValid.golden",
+				ExpectedResponseYaml: "addExpectedValid.golden",
+			},
+		},
+		{
+			CmdTestInput: utils.CmdTestInput{
+				Name:           "Create a context with a non-existent component fails",
+				Args:           []string{"context", "create", "local4", "--components", "invalid-component"},
+				ExpectError:    true,
+				ExpectedError:  ErrInvalidComponent("invalid-component"),
+				IsOutputGolden: false,
+			},
+			Validation: func(t *testing.T) {
+				mctl, err := config.GetMesheryCtl(viper.GetViper())
+				if err != nil {
+					t.Fatalf("Failed to load configuration: %v", err)
+				}
+				if _, ok := mctl.Contexts["local4"]; ok {
+					t.Errorf("Expected context 'local4' to not be saved, but it was found")
+				}
+			},
 		},
 	}
 
 	mesheryctlflags.InitValidators(SystemCmd)
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			// Reset flags to prevent bleed-over between tests
+			contextCreateFlags = cmdContextCreateFlags{}
 			buf := utils.SetupMeshkitLoggerTesting(t, false)
 			defer buf.Reset()
 
@@ -268,6 +325,9 @@ func TestContextCreateCmd(t *testing.T) {
 				// if we're supposed to get an error
 				if tt.ExpectError {
 					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					if tt.Validation != nil {
+						tt.Validation(t)
+					}
 					return
 				}
 				t.Fatal(err)
@@ -309,6 +369,10 @@ func TestContextCreateCmd(t *testing.T) {
 			if err := utils.Populate(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
 				t.Error(err, "Could not complete test. Unable to configure delete test file")
 			}
+
+			if tt.Validation != nil {
+				tt.Validation(t)
+			}
 		})
 		t.Log("CreateContextCmd test Passed")
 	}
@@ -336,6 +400,8 @@ func TestContextAddUppercaseCmd(t *testing.T) {
 	mesheryctlflags.InitValidators(SystemCmd)
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			// Reset flags to prevent bleed-over between tests
+			contextCreateFlags = cmdContextCreateFlags{}
 			buf := utils.SetupMeshkitLoggerTesting(t, false)
 			defer buf.Reset()
 

@@ -18,10 +18,10 @@ import (
 	"fmt"
 	"net/url"
 	"path/filepath"
-	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/viewoutput"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta3/component"
@@ -40,7 +40,7 @@ var viewComponentCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View registered components",
 	Long: `View a component registered in Meshery Server
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/component/view`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/component/view`,
 	Example: `
 // View details of a specific component
 mesheryctl component view [component-name | component-id]
@@ -93,35 +93,29 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 			return err
 		}
 
-		outputFormatterFactory := display.OutputFormatterFactory[component.ComponentDefinition]{}
-		outputFormatter, err := outputFormatterFactory.New(cmdComponentViewFlags.OutputFormat, *selectedComponent)
-		if err != nil {
-			return err
-		}
-
-		err = outputFormatter.Display()
-		if err != nil {
-			return err
-		}
+		savePath := ""
 
 		if cmdComponentViewFlags.Save {
-			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[component.ComponentDefinition]{}
-			outputFormatterSaver, err := outputFormatterSaverFactory.New(cmdComponentViewFlags.OutputFormat, outputFormatter)
-			if err != nil {
-				return err
+			componentString := utils.SanitizeFileName(fmt.Sprintf("%v", selectedComponent.DisplayName))
+			if componentString == "" {
+				componentString = utils.SanitizeFileName(selectedComponent.ID.String())
+				if componentString == "" {
+					componentString = "unknown"
+				}
 			}
 
-			componentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedComponent.DisplayName), " ", "_")
-			fileName := filepath.Join(utils.MesheryFolder, fmt.Sprintf("component_%s.%s", componentString, cmdComponentViewFlags.OutputFormat))
-
-			outputFormatterSaver = outputFormatterSaver.WithFilePath(fileName)
-			err = outputFormatterSaver.Save()
-			if err != nil {
-				return err
-			}
+			savePath = filepath.Join(
+				utils.MesheryFolder,
+				fmt.Sprintf("component_%s.%s", componentString, cmdComponentViewFlags.OutputFormat),
+			)
 		}
 
-		return nil
+		return viewoutput.HandleViewOutput(
+			cmdComponentViewFlags.OutputFormat,
+			*selectedComponent,
+			cmd.OutOrStdout(),
+			savePath,
+		)
 	},
 }
 
