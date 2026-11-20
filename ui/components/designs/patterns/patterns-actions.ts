@@ -62,25 +62,28 @@ export function createPatternsActions(deps) {
     };
   }
 
-  const handleDeploy = async ({ design, selectedK8sContexts }) => {
+  const runWithProgress = async (mutation, payload) => {
     updateProgress({ showProgress: true });
-    await deployPatternMutation({
-      patternFile: encodeDesignFile(design),
-      patternId: design.id,
-      selectedK8sContexts,
-    });
-    updateProgress({ showProgress: false });
+    try {
+      return await mutation(payload).unwrap();
+    } finally {
+      updateProgress({ showProgress: false });
+    }
   };
 
-  const handleUndeploy = async ({ design, selectedK8sContexts }) => {
-    updateProgress({ showProgress: true });
-    await undeployPatternMutation({
+  const handleDeploy = ({ design, selectedK8sContexts }) =>
+    runWithProgress(deployPatternMutation, {
       patternFile: encodeDesignFile(design),
       patternId: design.id,
       selectedK8sContexts,
     });
-    updateProgress({ showProgress: false });
-  };
+
+  const handleUndeploy = ({ design, selectedK8sContexts }) =>
+    runWithProgress(undeployPatternMutation, {
+      patternFile: encodeDesignFile(design),
+      patternId: design.id,
+      selectedK8sContexts,
+    });
 
   const handleUploadImport = () => {
     setImportModal({
