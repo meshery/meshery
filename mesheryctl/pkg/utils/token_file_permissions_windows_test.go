@@ -304,6 +304,16 @@ func TestTokenFileWin32PathPreservesShortPaths(t *testing.T) {
 			input: `\\?\C:\path\token.json`,
 			want:  `\\?\C:\path\token.json`,
 		},
+		{
+			name:  "NT namespace converted",
+			input: `\??\C:\path\token.json`,
+			want:  `\\?\C:\path\token.json`,
+		},
+		{
+			name:  "NT UNC converted",
+			input: `\??\UNC\server\share\token.json`,
+			want:  `\\?\UNC\server\share\token.json`,
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			got, err := tokenFileWin32Path(tc.input)

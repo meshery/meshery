@@ -273,7 +273,7 @@ func writeTokenFile(path string, data []byte) error {
 		if closeErr := f.Close(); closeErr != nil {
 			return replacementFallbackError(err, "close temporary file", closeErr)
 		}
-		fromPath, pathErr := tokenFileLongPath(tempPath)
+		fromPath, pathErr := tokenFileWin32Path(tempPath)
 		if pathErr != nil {
 			return replacementFallbackError(err, "resolve source path", pathErr)
 		}
@@ -281,7 +281,11 @@ func writeTokenFile(path string, data []byte) error {
 		if pathErr != nil {
 			return replacementFallbackError(err, "convert source path", pathErr)
 		}
-		to, pathErr := windows.UTF16PtrFromString(toPath)
+		win32ToPath, pathErr := tokenFileWin32Path(path)
+		if pathErr != nil {
+			return replacementFallbackError(err, "resolve destination path", pathErr)
+		}
+		to, pathErr := windows.UTF16PtrFromString(win32ToPath)
 		if pathErr != nil {
 			return replacementFallbackError(err, "convert destination path", pathErr)
 		}
@@ -524,8 +528,14 @@ func tokenFileLongPath(path string) (string, error) {
 // Short paths (< 248 chars) are returned unchanged; longer paths are prefixed
 // with \\?\ to bypass the MAX_PATH limit.
 func tokenFileWin32Path(path string) (string, error) {
-	if strings.HasPrefix(path, `\\?\`) || strings.HasPrefix(path, `\??\`) {
+	if strings.HasPrefix(path, `\\?\`) {
 		return path, nil
+	}
+	if strings.HasPrefix(path, `\??\UNC\`) {
+		return `\\?\UNC\` + strings.TrimPrefix(path, `\??\UNC\`), nil
+	}
+	if strings.HasPrefix(path, `\??\`) {
+		return `\\?\` + strings.TrimPrefix(path, `\??\`), nil
 	}
 	abs, err := filepath.Abs(path)
 	if err != nil {
