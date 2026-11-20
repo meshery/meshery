@@ -3,6 +3,7 @@
 package utils
 
 import (
+	"bytes"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
@@ -251,9 +252,67 @@ func writeTokenFile(path string, data []byte) error {
 	if err != nil {
 		return err
 	}
-
-	if err := replaceTokenFile(f, toPath); err != nil {
-		return ErrReplaceTokenFile(err)
+	if err := replaceTokenFileFunc(f, toPath); err != nil {
+		// Some filesystems reject the extended rename operation. The legacy
+		// rename still replaces the file object and fails closed if an open
+		// handle prevents replacement; it never writes into the old file.
+		if !errors.Is(err, windows.ERROR_INVALID_NAME) &&
+			!errors.Is(err, windows.ERROR_INVALID_PARAMETER) &&
+			!errors.Is(err, windows.ERROR_NOT_SUPPORTED) &&
+			!errors.Is(err, windows.ERROR_INVALID_FUNCTION) &&
+			!errors.Is(err, windows.ERROR_CALL_NOT_IMPLEMENTED) {
+			return ErrReplaceTokenFile(err)
+		}
+		var beforeInfo windows.ByHandleFileInformation
+		if infoErr := windows.GetFileInformationByHandle(windows.Handle(f.Fd()), &beforeInfo); infoErr != nil {
+			return replacementFallbackError(err, "record file info", infoErr)
+		}
+		if beforeInfo.VolumeSerialNumber == 0 || (beforeInfo.FileIndexHigh == 0 && beforeInfo.FileIndexLow == 0) {
+			return replacementFallbackError(err, "file identity cannot be verified on this filesystem", nil)
+		}
+		if closeErr := f.Close(); closeErr != nil {
+			return replacementFallbackError(err, "close temporary file", closeErr)
+		}
+		fromPath, pathErr := tokenFileLongPath(tempPath)
+		if pathErr != nil {
+			return replacementFallbackError(err, "resolve source path", pathErr)
+		}
+		from, pathErr := windows.UTF16PtrFromString(fromPath)
+		if pathErr != nil {
+			return replacementFallbackError(err, "convert source path", pathErr)
+		}
+		to, pathErr := windows.UTF16PtrFromString(toPath)
+		if pathErr != nil {
+			return replacementFallbackError(err, "convert destination path", pathErr)
+		}
+		if moveErr := windows.MoveFileEx(from, to, windows.MOVEFILE_REPLACE_EXISTING|windows.MOVEFILE_WRITE_THROUGH); moveErr != nil {
+			return replacementFallbackError(err, "fallback", moveErr)
+		}
+		destHandle, openErr := windows.CreateFile(
+			to,
+			windows.GENERIC_READ|windows.READ_CONTROL,
+			windows.FILE_SHARE_READ|windows.FILE_SHARE_WRITE|windows.FILE_SHARE_DELETE,
+			nil,
+			windows.OPEN_EXISTING,
+			windows.FILE_ATTRIBUTE_NORMAL,
+			0,
+		)
+		if openErr != nil {
+			_ = windows.DeleteFile(to)
+			return replacementFallbackError(err, "verify destination file", openErr)
+		}
+		destFile := os.NewFile(uintptr(destHandle), toPath)
+		if verifyErr := verifyDestinationTokenFile(destFile, beforeInfo, data); verifyErr != nil {
+			_ = destFile.Close()
+			_ = windows.DeleteFile(to)
+			return replacementFallbackError(err, "verify destination file", verifyErr)
+		}
+		if closeErr := destFile.Close(); closeErr != nil {
+			_ = windows.DeleteFile(to)
+			return replacementFallbackError(err, "close destination file", closeErr)
+		}
+		installed = true
+		return nil
 	}
 
 	installed = true
@@ -264,6 +323,69 @@ var (
 	replaceTokenFileExFunc  = replaceTokenFileEx
 	replaceTokenFileStdFunc = replaceTokenFileStandard
 )
+var replaceTokenFileFunc = replaceTokenFile
+
+func replacementFallbackError(extended error, operation string, operationErr error) error {
+	cause := errors.Join(extended, operationErr)
+	return ErrReplaceTokenFile(fmt.Errorf(
+		"replace token file: extended rename: %v; %s: %w",
+		extended,
+		operation,
+		cause,
+	))
+}
+
+// verifyDestinationTokenFile verifies that the destination file after a MoveFileEx fallback
+// is the exact file that was created, written, and restricted.
+func verifyDestinationTokenFile(destFile *os.File, expectedInfo windows.ByHandleFileInformation, expectedData []byte) error {
+	var actualInfo windows.ByHandleFileInformation
+	if err := windows.GetFileInformationByHandle(windows.Handle(destFile.Fd()), &actualInfo); err != nil {
+		return fmt.Errorf("read destination file info: %w", err)
+	}
+	if !sameWindowsFileIdentity(expectedInfo, actualInfo) {
+		return fmt.Errorf("token file identity mismatch after move: expected (%x:%x:%x), got (%x:%x:%x)",
+			expectedInfo.VolumeSerialNumber, expectedInfo.FileIndexHigh, expectedInfo.FileIndexLow,
+			actualInfo.VolumeSerialNumber, actualInfo.FileIndexHigh, actualInfo.FileIndexLow)
+	}
+	if actualInfo.FileSizeHigh != expectedInfo.FileSizeHigh || actualInfo.FileSizeLow != expectedInfo.FileSizeLow {
+		return fmt.Errorf("token file size mismatch after move: expected %d bytes, got %d bytes",
+			uint64(expectedInfo.FileSizeHigh)<<32|uint64(expectedInfo.FileSizeLow),
+			uint64(actualInfo.FileSizeHigh)<<32|uint64(actualInfo.FileSizeLow))
+	}
+	user, err := windows.GetCurrentProcessToken().GetTokenUser()
+	if err != nil {
+		return fmt.Errorf("get current user SID: %w", err)
+	}
+	if err := verifyTokenFileOwner(destFile, user.User.Sid); err != nil {
+		return fmt.Errorf("verify destination owner: %w", err)
+	}
+	if err := verifyTokenFileACL(destFile, user.User.Sid); err != nil {
+		return fmt.Errorf("verify destination ACL: %w", err)
+	}
+	if len(expectedData) > 0 {
+		content := make([]byte, len(expectedData))
+		var bytesRead uint32
+		if err := windows.ReadFile(windows.Handle(destFile.Fd()), content, &bytesRead, nil); err != nil {
+			return fmt.Errorf("read destination content: %w", err)
+		}
+		if int(bytesRead) != len(expectedData) || !bytes.Equal(content, expectedData) {
+			return fmt.Errorf("destination content does not match expected token")
+		}
+	}
+	return nil
+}
+
+// sameWindowsFileIdentity compares the unique volume and file index identifiers.
+// If the underlying filesystem does not support unique file indexing (all zero),
+// it returns false to fail closed.
+func sameWindowsFileIdentity(a, b windows.ByHandleFileInformation) bool {
+	if a.VolumeSerialNumber == 0 || (a.FileIndexHigh == 0 && a.FileIndexLow == 0) {
+		return false
+	}
+	return a.VolumeSerialNumber == b.VolumeSerialNumber &&
+		a.FileIndexHigh == b.FileIndexHigh &&
+		a.FileIndexLow == b.FileIndexLow
+}
 
 // renameFallbackError captures both the extended rename error and the standard
 // rename error when both fail, ensuring neither native error is lost from the error chain.
@@ -304,6 +426,9 @@ func replaceTokenFile(file *os.File, destination string) error {
 		errStd := replaceTokenFileStdFunc(file, name)
 		if errStd == nil {
 			return nil
+		}
+		if errors.Is(errStd, windows.ERROR_ACCESS_DENIED) {
+			return errStd
 		}
 		return &renameFallbackError{extended: errEx, standard: errStd}
 	}

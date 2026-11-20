@@ -70,8 +70,10 @@ If `mesheryctl` runs on a machine with no browser, such as a remote server or a 
 
 ## Log out
 
-`mesheryctl system logout` empties the token file for the current context. Run `mesheryctl system login` again to get a new token.
-Remote provider commands stop with an authentication error after logout; they do not accept the empty token as valid authentication.
+`mesheryctl system logout` empties the token file for the current context. Run
+`mesheryctl system login` again to get a new token.
+Remote provider commands stop with an authentication error after logout; they do
+not accept the empty token as valid authentication.
 
 For every `mesheryctl` command and flag, see the [`mesheryctl` command reference]({{< ref "reference/mesheryctl/_index.md" >}}).
 
