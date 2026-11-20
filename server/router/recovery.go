@@ -105,11 +105,13 @@ type recoveryWriter struct {
 func (w *recoveryWriter) WriteHeader(code int) {
 	// Interim 1xx statuses (100, 103) are followed by the real one, so the
 	// response has not started and a 500 can still be sent. 101 Switching
-	// Protocols is final.
+	// Protocols is final. The flag is set only after the delegated call
+	// returns: net/http panics on a status it rejects (outside 100-999) before
+	// committing anything, and then a 500 can still be sent.
+	w.ResponseWriter.WriteHeader(code)
 	if code >= http.StatusOK || code == http.StatusSwitchingProtocols {
 		w.wroteHeader = true
 	}
-	w.ResponseWriter.WriteHeader(code)
 }
 
 func (w *recoveryWriter) Write(b []byte) (int, error) {

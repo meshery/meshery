@@ -223,6 +223,22 @@ func TestRecovery_InterimStatusIsNotTheFinalResponse(t *testing.T) {
 	}
 }
 
+// net/http rejects a status outside 100-999 by panicking before it commits
+// anything, so nothing has reached the client and the 500 can still be sent.
+func TestRecovery_RejectedStatusStillGetsTheStructured500(t *testing.T) {
+	log, _ := capturingLogger(t)
+	r := newTestRouter(log)
+	r.HandleFunc("/badstatus", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(1000)
+	})
+
+	resp, body := get(t, r, "/badstatus")
+
+	if resp.StatusCode != http.StatusInternalServerError {
+		t.Errorf("status = %d, want 500 when the status itself was rejected (body=%q)", resp.StatusCode, body)
+	}
+}
+
 // The panic value can carry anything the handler was holding. It belongs in the
 // server log, never in the response.
 func TestRecovery_PanicValueStaysOutOfTheResponse(t *testing.T) {
