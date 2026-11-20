@@ -41,7 +41,7 @@ var (
 var ComponentCmd = &cobra.Command{
 	Use:   "component",
 	Short: "Manage Meshery components",
-	Long: `List, search and view component(s) and detailed informations
+	Long: `List, search and view component(s) and detailed information
 Find more information at: https://docs.meshery.io/reference/mesheryctl/component`,
 	Example: `
 // Display number of available components in Meshery
@@ -99,6 +99,10 @@ func init() {
 }
 
 func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponentsAPIResponse) ([][]string, int64) {
+	if componentsResponse == nil {
+		return [][]string{}, 0
+	}
+
 	rows := [][]string{}
 	for _, component := range componentsResponse.Components {
 		componentID := component.ID.String()
@@ -106,7 +110,11 @@ func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponen
 		if componentName == "" {
 			componentName = "N/A"
 		}
-		modelName := component.Model.Name
+		// Model is a pointer and is null for a component that is not tied to a model.
+		modelName := ""
+		if component.Model != nil {
+			modelName = component.Model.Name
+		}
 		if modelName == "" {
 			modelName = "N/A"
 		}

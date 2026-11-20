@@ -43,10 +43,6 @@ vi.mock('../../data-formatter', () => ({
   reorderObjectProperties: (obj: any) => obj,
 }));
 
-vi.mock('../../../utils/objects', () => ({
-  isEmptyAtAllDepths: (obj: any) => !obj || Object.keys(obj).length === 0,
-}));
-
 vi.mock('./notification', () => ({
   canTruncateDescription: (s: string) => (s || '').length > 62,
 }));
@@ -72,8 +68,10 @@ vi.mock('./formatters/common', () => ({
 }));
 
 vi.mock('./formatters/error', () => ({
-  ErrorMetadataFormatter: ({ metadata }: any) => (
-    <div data-testid="error-metadata">{JSON.stringify(metadata)}</div>
+  ErrorMetadataFormatter: ({ metadata, event }: any) => (
+    <div data-testid="error-metadata" data-event-description={event?.description ?? ''}>
+      {JSON.stringify(metadata)}
+    </div>
   ),
 }));
 
@@ -150,6 +148,11 @@ describe('PropertyFormatters', () => {
     expect(link).toHaveTextContent('Saved design My Design');
   });
 
+  it('renders a saved design link without crashing on a missing design value', () => {
+    render(<>{PropertyFormatters.design(null)}</>);
+    expect(screen.getByTestId('title-link')).toHaveTextContent('Saved design');
+  });
+
   it('renders connectionName as a ChipWrapper link', () => {
     render(<>{PropertyFormatters.connectionName('my-conn name')}</>);
     const chip = screen.getByTestId('chip-wrapper');
@@ -208,6 +211,36 @@ describe('LinkFormatters and PropertyLinkFormatters', () => {
 });
 
 describe('FormattedMetadata', () => {
+  it('keeps metadata containing only numeric and boolean values', () => {
+    render(
+      <FormattedMetadata
+        event={{ category: 'connection', action: 'update', metadata: { count: 0, enabled: false } }}
+      />,
+    );
+    expect(screen.queryByTestId('empty-state')).not.toBeInTheDocument();
+    expect(screen.getByTestId('fsd-data')).toHaveTextContent('"count":0');
+    expect(screen.getByTestId('fsd-data')).toHaveTextContent('"enabled":false');
+  });
+
+  it('hands the error formatter the event it renders', () => {
+    // The error formatter once read a free `event` identifier, which resolved
+    // to the browser's window.event instead of the notification's event.
+    render(
+      <FormattedMetadata
+        event={{
+          category: 'connection',
+          action: 'update',
+          description: 'Could not assign server id, skipping context prod',
+          metadata: { error: { code: 'meshery-server-1304' } },
+        }}
+      />,
+    );
+    expect(screen.getByTestId('error-metadata')).toHaveAttribute(
+      'data-event-description',
+      'Could not assign server id, skipping context prod',
+    );
+  });
+
   it('delegates to a registered event type formatter when matched', () => {
     render(
       <FormattedMetadata
@@ -219,6 +252,60 @@ describe('FormattedMetadata', () => {
       />,
     );
     expect(screen.getByTestId('deployment-summary')).toHaveTextContent('deployed!');
+  });
+
+  it('delegates a pattern dry-run event to the deployment summary formatter', () => {
+    render(
+      <FormattedMetadata
+        event={{
+          action: 'dry-run',
+          category: 'pattern',
+          description: 'dry run done',
+          metadata: { status: 'success', errorCount: 0, errors: [], truncated: false },
+        }}
+      />,
+    );
+    expect(screen.getByTestId('deployment-summary')).toHaveTextContent('dry run done');
+  });
+
+  it('lists a design-saved event through its design link, not its identity keys', () => {
+    render(
+      <FormattedMetadata
+        event={{
+          action: 'update',
+          category: 'pattern',
+          description: 'Design saved',
+          metadata: {
+            design: { id: 'd1', name: 'My Design' },
+            designId: 'd1',
+            designName: 'My Design',
+            designVersion: '0.0.2',
+            designLink: 'http://meshery/design/d1',
+            design_name: 'My Design',
+            historyTitle: 'Version 0.0.2 - 3 components and 1 relationships',
+          },
+        }}
+      />,
+    );
+    const keys = (screen.getByTestId('fsd-keys').textContent || '').split(',');
+    expect(keys).toEqual(expect.arrayContaining(['design', 'historyTitle']));
+    for (const key of ['designId', 'designName', 'designVersion', 'designLink', 'design_name']) {
+      expect(keys).not.toContain(key);
+    }
+  });
+
+  it('keeps the identity keys of a generic event without a design link', () => {
+    render(
+      <FormattedMetadata
+        event={{
+          action: 'view',
+          category: 'pattern',
+          description: 'Failed to parse design',
+          metadata: { designId: 'd1', designName: 'My Design' },
+        }}
+      />,
+    );
+    expect(screen.getByTestId('fsd-keys')).toHaveTextContent('designId,designName');
   });
 
   it('renders EmptyState when metadata is empty or missing', () => {

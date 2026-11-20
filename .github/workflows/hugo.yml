@@ -22,6 +22,7 @@ defaults:
 
 jobs:
   deploy:
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     env:
       HUGO_VERSION: 0.157.0
@@ -97,6 +98,35 @@ jobs:
           touch docs/public/.nojekyll
           if [ -d gh-pages-maintenance/pr-preview ]; then
             cp -a gh-pages-maintenance/pr-preview docs/public/pr-preview
+          fi
+      - name: Fit the site under the GitHub Pages size limit
+        # GitHub Pages rejects an artifact over 1 GB. After #22879 a full copy
+        # of the site plus retained PR previews grew past that limit, and every
+        # pages build since Nov 6 has failed, so docs.meshery.io stopped
+        # updating (see #23221). Drop optional trees, largest first, until the
+        # publish dir is under 900 MB. Production docs still go out; dropped
+        # trees stay in git and can be published elsewhere later.
+        run: |
+          set -eu
+          LIMIT=$((900 * 1024 * 1024))
+          size_of() { du -sb "$1" | awk '{print $1}'; }
+          report() { echo "docs/public is now $(du -sh docs/public | awk '{print $1}') ($(size_of docs/public) bytes)"; }
+          report
+          trim() {
+            local path="$1"
+            local reason="$2"
+            if [ -e "$path" ] && [ "$(size_of docs/public)" -gt "$LIMIT" ]; then
+              echo "Removing $path ($reason) to stay under the 1 GB Pages limit"
+              rm -rf "$path"
+              report
+            fi
+          }
+          trim docs/public/pr-preview "retained PR previews; each is a full copy of the site"
+          trim docs/public/v0.8 "archived v0.8 snapshot; source remains in docs/static/v0.8"
+          trim docs/public/v0.9 "archived v0.9 snapshot; source remains in docs/static/v0.9"
+          if [ "$(size_of docs/public)" -gt "$LIMIT" ]; then
+            echo "::error::docs/public is still $(du -sh docs/public | awk '{print $1}') after dropping optional trees; it must be under 900 MB to publish to GitHub Pages."
+            exit 1
           fi
       - name: Deploy to GitHub Pages
         # Pinned to v4.0.0 (node20) to avoid the intermittent crash introduced in

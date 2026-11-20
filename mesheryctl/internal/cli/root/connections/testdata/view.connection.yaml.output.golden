@@ -1,7 +1,5 @@
 id: 11111111-1111-1111-1111-111111111111
 name: minikube
-description: null
-url: null
 credentialId: 00000000-9c7a-d4ce-4aab-111111111111
 type: platform
 subType: orchestrator
@@ -16,3 +14,4 @@ updatedAt: 2026-02-01T10:04:43.869192Z
 deletedAt: null
 schemaVersion: ""
 styles: null
+organizationId: 00000000-0000-0000-0000-000000000000

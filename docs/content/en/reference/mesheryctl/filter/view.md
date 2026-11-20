@@ -28,7 +28,7 @@ mesheryctl filter view [flags]
 ## Examples
 
 View the specified WASM filter
-A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.
+Provide a full filter name or a unique ID prefix.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -68,7 +68,7 @@ mesheryctl filter view --all --output-format json -s
 </div>
 </pre> 
 
-//View multi-word named filter files. Multi-word filter names should be enclosed in quotes
+View multi-word named filter files. Multi-word filter names should be enclosed in quotes
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -94,7 +94,7 @@ mesheryctl filter view "filter name"
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
@@ -103,4 +103,4 @@ mesheryctl filter view "filter name"
 
 ## See Also
 
-Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

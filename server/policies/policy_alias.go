@@ -77,27 +77,33 @@ func isAliasRelationshipValid(rel *relationship.RelationshipDefinition, design *
 		return false
 	}
 
-	ref := aliasRefFromRelationship(rel)
-	if ref == nil {
+	refs := aliasRefsFromRelationship(rel)
+	if len(refs) == 0 {
 		return false
 	}
 	config := getComponentConfiguration(toComp, design)
-	return objectGetNested(config, popFirst(ref), nil) != nil
+	for _, ref := range refs {
+		if objectGetNested(config, popFirst(ref), nil) == nil {
+			return false
+		}
+	}
+	return true
 }
 
-// aliasRefFromRelationship extracts the mutatorRef path from an alias relationship.
-func aliasRefFromRelationship(rel *relationship.RelationshipDefinition) []string {
+// aliasRefsFromRelationship extracts the mutatorRef paths from an alias relationship.
+func aliasRefsFromRelationship(rel *relationship.RelationshipDefinition) [][]string {
 	if rel.Selectors == nil {
 		return nil
 	}
+	var refs [][]string
 	for _, ss := range *rel.Selectors {
 		for _, fromSel := range ss.Allow.From {
-			if fromSel.RelationshipDefinitionSelectorsPatch != nil && fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef != nil && len(*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef) > 0 {
-				return (*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef)[0]
+			if fromSel.RelationshipDefinitionSelectorsPatch != nil && fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef != nil {
+				refs = append(refs, *fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef...)
 			}
 		}
 	}
-	return nil
+	return refs
 }
 
 // identifyAliasRelationships identifies alias relationships for a component.
@@ -113,41 +119,42 @@ func identifyAliasRelationships(comp *component.ComponentDefinition, relDef *rel
 				if fromSel.RelationshipDefinitionSelectorsPatch == nil || fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef == nil || len(*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef) == 0 {
 					continue
 				}
-				ref := (*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef)[0]
-				paths := getArrayAwareConfigPaths(ref, comp, design)
+				for _, ref := range *fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef {
+					paths := getArrayAwareConfigPaths(ref, comp, design)
 
-				for _, path := range paths {
-					mutatorRef := relationship.MutatorRef{path}
-					mutatedRef := relationship.MutatedRef{path}
-					selectorPatch := relationship.RelationshipDefinitionSelectorsPatch{
-						MutatorRef: &mutatorRef,
-						MutatedRef: &mutatedRef,
+					for _, path := range paths {
+						mutatorRef := relationship.MutatorRef{path}
+						mutatedRef := relationship.MutatedRef{path}
+						selectorPatch := relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
+							MutatedRef: &mutatedRef,
+						}
+
+						compID := staticUUID(map[string]interface{}{"c": comp.ID.String(), "s": path})
+
+						newFromSel := fromSel
+						newFromSel.ID = &compID
+						newFromSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
+
+						newToSel := toSel
+						newToSel.ID = &comp.ID
+						newToSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
+
+						selectorSetItem := relationship.SelectorSetItem{
+							Allow: relationship.Selector{
+								From: []relationship.SelectorItem{newFromSel},
+								To:   []relationship.SelectorItem{newToSel},
+							},
+						}
+
+						decl := deepCopyRelDef(relDef)
+						selectors := relationship.SelectorSet{selectorSetItem}
+						decl.Selectors = &selectors
+						decl.ID = staticUUID(selectorSetItem)
+						setRelStatus(decl, StatusIdentified)
+
+						identified = append(identified, decl)
 					}
-
-					compID := staticUUID(map[string]interface{}{"c": comp.ID.String(), "s": path})
-
-					newFromSel := fromSel
-					newFromSel.ID = &compID
-					newFromSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
-
-					newToSel := toSel
-					newToSel.ID = &comp.ID
-					newToSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
-
-					selectorSetItem := relationship.SelectorSetItem{
-						Allow: relationship.Selector{
-							From: []relationship.SelectorItem{newFromSel},
-							To:   []relationship.SelectorItem{newToSel},
-						},
-					}
-
-					decl := deepCopyRelDef(relDef)
-					selectors := relationship.SelectorSet{selectorSetItem}
-					decl.Selectors = &selectors
-					decl.ID = staticUUID(selectorSetItem)
-					setRelStatus(decl, StatusIdentified)
-
-					identified = append(identified, decl)
 				}
 			}
 		}
@@ -190,32 +197,26 @@ func getArrayAwareConfigPaths(ref []string, comp *component.ComponentDefinition,
 
 // aliasRelationshipAlreadyExists checks for duplicate alias relationships.
 func aliasRelationshipAlreadyExists(design *pattern.PatternFile, rel *relationship.RelationshipDefinition) bool {
+	if rel.Selectors == nil {
+		return false
+	}
 	for _, existing := range design.Relationships {
-		if getRelStatus(existing) == StatusDeleted || !isAliasRelationship(existing) {
+		if getRelStatus(existing) == StatusDeleted || !isAliasRelationship(existing) || existing.Selectors == nil {
 			continue
 		}
-		existingTo := getFirstToSelectorItem(existing)
-		newTo := getFirstToSelectorItem(rel)
-		if existingTo != nil && newTo != nil {
-			if sameRelationshipSelectorClause(*existingTo, *newTo) {
-				return true
+		for _, eSS := range *existing.Selectors {
+			for _, eTo := range eSS.Allow.To {
+				for _, rSS := range *rel.Selectors {
+					for _, rTo := range rSS.Allow.To {
+						if sameRelationshipSelectorClause(eTo, rTo) {
+							return true
+						}
+					}
+				}
 			}
 		}
 	}
 	return false
-}
-
-// getFirstToSelectorItem returns the first "to" selector item from a relationship.
-func getFirstToSelectorItem(rel *relationship.RelationshipDefinition) *relationship.SelectorItem {
-	if rel.Selectors == nil {
-		return nil
-	}
-	for _, ss := range *rel.Selectors {
-		if len(ss.Allow.To) > 0 {
-			return &ss.Allow.To[0]
-		}
-	}
-	return nil
 }
 
 // aliasAddComponentSideEffects creates actions to add alias components.
@@ -226,26 +227,32 @@ func aliasAddComponentSideEffects(rel *relationship.RelationshipDefinition, _ *p
 	var actions []PolicyAction
 	for _, ss := range *rel.Selectors {
 		for _, fromSel := range ss.Allow.From {
-			if fromSel.RelationshipDefinitionSelectorsPatch == nil || fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef == nil || len(*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef) == 0 {
+			if fromSel.ID == nil || fromSel.RelationshipDefinitionSelectorsPatch == nil || fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef == nil || len(*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef) == 0 {
 				continue
 			}
-			path := (*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef)[0]
-			length := len(path)
-			displayName := ""
-			if length >= 2 {
-				displayName = fmt.Sprintf("%s.%s", path[length-2], path[length-1])
-			}
+			for _, path := range *fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef {
+				length := len(path)
+				displayName := ""
+				if length >= 2 {
+					displayName = fmt.Sprintf("%s.%s", path[length-2], path[length-1])
+				}
 
-			newComp := component.ComponentDefinition{
-				ID:          *fromSel.ID,
-				DisplayName: displayName,
-				Component:   component.Component{Kind: selectorItemKind(fromSel)},
-				Metadata:    component.ComponentDefinition_Metadata{IsAnnotation: true},
+				isAnnotation := false
+				if rel.RelationshipMetadata != nil && rel.RelationshipMetadata.IsAnnotation != nil {
+					isAnnotation = *rel.RelationshipMetadata.IsAnnotation
+				}
+
+				newComp := component.ComponentDefinition{
+					ID:          *fromSel.ID,
+					DisplayName: displayName,
+					Component:   component.Component{Kind: selectorItemKind(fromSel)},
+					Metadata:    component.ComponentDefinition_Metadata{IsAnnotation: isAnnotation},
+				}
+				if fromSel.Model != nil {
+					newComp.ModelReference = *fromSel.Model
+				}
+				actions = append(actions, newAddComponentAction(&newComp))
 			}
-			if fromSel.Model != nil {
-				newComp.ModelReference = *fromSel.Model
-			}
-			actions = append(actions, newAddComponentAction(&newComp))
 		}
 	}
 	return actions

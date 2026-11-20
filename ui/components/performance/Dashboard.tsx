@@ -4,6 +4,7 @@ import PerformanceCalendar from './PerformanceCalendar';
 import MesheryPerformanceComponent from './index';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
+import { formatApiError } from '@/utils/helpers/meshkitError';
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '@/components/general/error-404/index';
 import {
@@ -77,25 +78,35 @@ function Dashboard() {
     isFetching: isFetchingProfiles,
     isError: isProfilesError,
     error: profilesError,
-  } = useGetPerformanceProfilesQuery({
-    page: 0,
-    pagesize: 10,
-    search: '',
-    order: '',
-  });
+  } = useGetPerformanceProfilesQuery(
+    {
+      page: 0,
+      pagesize: 10,
+      search: '',
+      order: '',
+    },
+    {
+      skip: !hasViewPermission,
+    },
+  );
   const {
     data: performanceResultsData,
     isFetching: isFetchingResults,
     isError: isResultsError,
     error: resultsError,
-  } = useGetPerformanceResultsQuery({
-    page: '0',
-    pagesize: '10',
-    search: '',
-    order: '',
-    from: '',
-    to: '',
-  });
+  } = useGetPerformanceResultsQuery(
+    {
+      page: '0',
+      pagesize: '10',
+      search: '',
+      order: '',
+      from: '',
+      to: '',
+    },
+    {
+      skip: !hasViewPermission,
+    },
+  );
 
   useEffect(() => {
     dispatch(updateProgressAction({ showProgress: isFetchingProfiles || isFetchingResults }));
@@ -130,10 +141,12 @@ function Dashboard() {
   function handleError(msg) {
     return function (error) {
       dispatch(updateProgressAction({ showProgress: false }));
+      // RTK Query errors are objects ({ status, data }), so interpolating
+      // them directly would show "[object Object]".
+      const { message } = formatApiError(error, msg);
       notify({
-        message: `${msg}: ${error}`,
+        message,
         event_type: EVENT_TYPES.ERROR,
-        details: error.toString(),
       });
     };
   }

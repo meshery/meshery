@@ -68,9 +68,19 @@ describe('normalizeSearchTerm / matchesSearch', () => {
     expect(normalizeSearchTerm('  HelloWorld  ')).toBe('helloworld');
   });
 
+  it('safely handles nullish and non-string search terms in normalizeSearchTerm', () => {
+    expect(normalizeSearchTerm(null)).toBe('');
+    expect(normalizeSearchTerm(undefined)).toBe('');
+    expect(normalizeSearchTerm(123)).toBe('');
+    expect(normalizeSearchTerm({})).toBe('');
+    expect(normalizeSearchTerm([])).toBe('');
+  });
+
   it('returns true for empty search term', () => {
     expect(matchesSearch('anything', '')).toBe(true);
     expect(matchesSearch('anything', '   ')).toBe(true);
+    expect(matchesSearch('anything', null)).toBe(true);
+    expect(matchesSearch('anything', undefined)).toBe(true);
   });
 
   it('matches case-insensitively', () => {
@@ -80,5 +90,14 @@ describe('normalizeSearchTerm / matchesSearch', () => {
 
   it('returns false on no match', () => {
     expect(matchesSearch('alpha', 'beta')).toBe(false);
+  });
+
+  it('safely handles nullish and non-string text in matchesSearch', () => {
+    expect(matchesSearch(null, 'cluster')).toBe(false);
+    expect(matchesSearch(undefined, 'cluster')).toBe(false);
+    expect(matchesSearch(123, 'cluster')).toBe(false);
+    expect(matchesSearch({}, 'cluster')).toBe(false);
+    expect(matchesSearch(null, null)).toBe(true);
+    expect(matchesSearch(undefined, '')).toBe(true);
   });
 });

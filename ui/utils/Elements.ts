@@ -17,8 +17,8 @@ export const hasClass = (element, className) => {
   return false;
 };
 
-// recursively got throught component and its children and add the class to each of them
-// This is required to prevent the clickaway listner from blocking the click event
+// recursively go through component and its children and add the class to each of them
+// This is required to prevent the clickaway listener from blocking the click event
 // on the notification center IconButton create it as a HOC and use react.cloneElement to add the class
 export const AddClassRecursively = ({ children, className }) => {
   return React.Children.map(children, (child) => {
