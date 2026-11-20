@@ -33,6 +33,9 @@ import (
 	"github.com/spf13/viper"
 )
 
+// millisecondsPerSecond converts fortio's durations, reported in seconds.
+const millisecondsPerSecond = 1000
+
 type resultStruct struct {
 	Name          string
 	StartTime     *time.Time
@@ -73,6 +76,9 @@ mesheryctl perf result saturday-profile --view
 `,
 	Annotations: linkDocPerfResult,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if pageNumber < 1 {
+			return utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --page '%d'", pageNumber))
+		}
 		// Check for valid output Format
 		if outputFormatFlag != "" {
 			return display.ValidateOutputFormat(outputFormatFlag)
@@ -103,8 +109,9 @@ mesheryctl perf result saturday-profile --view
 		// Merge args to get profile-name
 		searchString = strings.Join(args, "%20")
 
-		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
+		profiles, err := fetchAllPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString)
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 
@@ -132,17 +139,13 @@ mesheryctl perf result saturday-profile --view
 			return ErrPerformanceProfileResult(err)
 		}
 
-		if len(data) == 0 {
-			utils.Log.Info("No Test Results to display")
+		if len(results) == 0 {
+			utils.Log.Info("No test results to display")
 			return nil
 		}
 
 		// get performance results in format of string arrays and resultStruct
 		data, expandedData := performanceResultsToStringArrays(results)
-		if len(expandedData) == 0 {
-			utils.Log.Info("No test results to display")
-			return nil
-		}
 
 		if outputFormatFlag != "" {
 			outputFormatterFactory := display.OutputFormatterFactory[[]models.PerformanceResult]{}
@@ -155,7 +158,7 @@ mesheryctl perf result saturday-profile --view
 				return err
 			}
 		} else if !viewSingleResult { // print all results
-			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data, nil)
+			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50 (MS)", "P99.9 (MS)", "START-TIME"}, data, nil)
 		} else {
 			index := 0
 			// if more than one result exist ask for index
@@ -166,15 +169,37 @@ mesheryctl perf result saturday-profile --view
 				}
 			}
 			a := expandedData[index]
-			fmt.Printf("Name: %v\n", a.Name)
-			fmt.Printf("Owner: %s\n", a.Owner.String())
-			fmt.Printf("Endpoint: %v\n", a.URL)
-			fmt.Printf("QPS: %v\n", a.QPS)
-			fmt.Printf("Test run duration: %v\n", a.Duration)
-			fmt.Printf("Latencies _ms: Avg: %v, Max: %v, Min: %v, P50: %v, P90: %v, P99: %v\n", a.LatenciesMs.Average, a.LatenciesMs.Max, a.LatenciesMs.Min, a.LatenciesMs.P50, a.LatenciesMs.P90, a.LatenciesMs.P99)
-			fmt.Printf("Start Time: %v\n", fmt.Sprintf("%d-%d-%d %d:%d:%d", int(a.StartTime.Month()), a.StartTime.Day(), a.StartTime.Year(), a.StartTime.Hour(), a.StartTime.Minute(), a.StartTime.Second()))
-			fmt.Printf("Meshery ID: %v\n", a.MesheryID.String())
-			fmt.Printf("Load Generator: %v\n", a.LoadGenerator)
+			out := cmd.OutOrStdout()
+			var writeErr error
+			printf := func(format string, args ...any) {
+				if writeErr == nil {
+					_, writeErr = fmt.Fprintf(out, format, args...)
+				}
+			}
+			printf("Name: %v\n", a.Name)
+			ownerStr := "None"
+			if a.Owner != nil && *a.Owner != uuid.Nil {
+				ownerStr = a.Owner.String()
+			}
+			printf("Owner: %s\n", ownerStr)
+			printf("Endpoint: %v\n", a.URL)
+			printf("QPS: %v\n", a.QPS)
+			printf("Test run duration: %v\n", a.Duration)
+			printf("Latencies _ms: Avg: %v, Max: %v, Min: %v, P50: %v, P90: %v, P99: %v\n", a.LatenciesMs.Average, a.LatenciesMs.Max, a.LatenciesMs.Min, a.LatenciesMs.P50, a.LatenciesMs.P90, a.LatenciesMs.P99)
+			startTimeStr := "None"
+			if a.StartTime != nil {
+				startTimeStr = a.StartTime.Format("2006-01-02 15:04:05")
+			}
+			printf("Start Time: %s\n", startTimeStr)
+			mesheryIDStr := "None"
+			if a.MesheryID != nil && *a.MesheryID != uuid.Nil {
+				mesheryIDStr = a.MesheryID.String()
+			}
+			printf("Meshery ID: %v\n", mesheryIDStr)
+			printf("Load Generator: %v\n", a.LoadGenerator)
+			if writeErr != nil {
+				return writeErr
+			}
 		}
 		return nil
 	},
@@ -182,7 +207,9 @@ mesheryctl perf result saturday-profile --view
 
 // Fetch results for a specific profile
 func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNumber int) ([]models.PerformanceResult, []byte, error) {
-	var response *models.PerformanceResultsAPIResponse
+	// Decode into a value, not a pointer: a response body of null leaves a value
+	// as an empty page, but would leave a pointer nil for the next line to crash on.
+	var response models.PerformanceResultsAPIResponse
 
 	url := baseURL + "/api/user/performance/profiles/" + profileID + "/results"
 
@@ -227,17 +254,39 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 		}
 		qps := fmt.Sprintf("%d", int(result.RunnerResults.QPS))
 		duration := result.RunnerResults.RequestedDuration
-		if len(result.RunnerResults.DurationHistogram.Percentiles) > 0 {
-			p50 = fmt.Sprintf("%.8f", result.RunnerResults.DurationHistogram.Percentiles[0].Value)
-			p99_9 = fmt.Sprintf("%.8f", result.RunnerResults.DurationHistogram.Percentiles[len(result.RunnerResults.DurationHistogram.Percentiles)-1].Value)
+		percentiles := result.RunnerResults.DurationHistogram.Percentiles
+		// percentileValue looks a percentile up by its Percentile field
+		// instead of by slice position, so a list in any order (or with
+		// extra entries such as wrk2's 99.99/99.999) still maps each value
+		// to the right percentile.
+		percentileValue := func(want float64) (float64, bool) {
+			for _, p := range percentiles {
+				if p.Percentile == want {
+					return p.Value, true
+				}
+			}
+			return 0, false
 		}
-		startTime := result.TestStartTime.Format("2006-01-02 15:04:05")
+		if v, ok := percentileValue(50); ok {
+			p50 = fmt.Sprintf("%.8f", v*millisecondsPerSecond)
+		}
+		if v, ok := percentileValue(99.9); ok {
+			p99_9 = fmt.Sprintf("%.8f", v*millisecondsPerSecond)
+		}
+		startTime := "None"
+		if result.TestStartTime != nil {
+			startTime = result.TestStartTime.Format("2006-01-02 15:04:05")
+		}
 		data = append(data, []string{result.Name, serviceMesh, qps, duration, p50, p99_9, startTime})
 
-		if len(result.RunnerResults.DurationHistogram.Percentiles) > 3 {
-			P50 = result.RunnerResults.DurationHistogram.Percentiles[0].Value
-			P90 = result.RunnerResults.DurationHistogram.Percentiles[2].Value
-			P99 = result.RunnerResults.DurationHistogram.Percentiles[3].Value
+		if v, ok := percentileValue(50); ok {
+			P50 = v
+		}
+		if v, ok := percentileValue(90); ok {
+			P90 = v
+		}
+		if v, ok := percentileValue(99); ok {
+			P99 = v
 		}
 
 		// append data for extended output
@@ -274,12 +323,12 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 			QPS:      int(result.RunnerResults.QPS),
 			Duration: result.RunnerResults.RequestedDuration,
 			LatenciesMs: &models.LatenciesMs{
-				Average: result.RunnerResults.DurationHistogram.Average,
-				Max:     result.RunnerResults.DurationHistogram.Max,
-				Min:     result.RunnerResults.DurationHistogram.Min,
-				P50:     P50,
-				P90:     P90,
-				P99:     P99,
+				Average: result.RunnerResults.DurationHistogram.Average * millisecondsPerSecond,
+				Max:     result.RunnerResults.DurationHistogram.Max * millisecondsPerSecond,
+				Min:     result.RunnerResults.DurationHistogram.Min * millisecondsPerSecond,
+				P50:     P50 * millisecondsPerSecond,
+				P90:     P90 * millisecondsPerSecond,
+				P99:     P99 * millisecondsPerSecond,
 			},
 			StartTime:     result.TestStartTime,
 			MesheryID:     &mesheryid,

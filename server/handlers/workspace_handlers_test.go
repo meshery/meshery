@@ -9,10 +9,38 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta3/workspace"
+	"gorm.io/gorm"
 )
+
+// assertMissingOrgIDErrorEnvelope validates that a 400 Bad Request error body
+// matches the MeshKit ErrWorkspaceMissingInput envelope and mentions the canonical orgId parameter.
+func assertMissingOrgIDErrorEnvelope(t *testing.T, body []byte) {
+	t.Helper()
+	decoded := decodeErrorBody(t, body)
+	if decoded.Code != models.ErrWorkspaceMissingInputCode {
+		t.Errorf("expected error code %q, got %q", models.ErrWorkspaceMissingInputCode, decoded.Code)
+	}
+	if !strings.Contains(strings.ToLower(string(body)), "orgid") {
+		t.Errorf("expected 400 body to mention canonical orgId, got %q", string(body))
+	}
+}
+
+// assertPaginationErrorEnvelope validates that a pagination rejection surfaces
+// the expected MeshKit error code inside a structured error envelope.
+func assertPaginationErrorEnvelope(t *testing.T, body []byte, wantCode string) {
+	t.Helper()
+	decoded := decodeErrorBody(t, body)
+	if decoded.Code != wantCode {
+		t.Errorf("code = %q, want %q (body=%q)", decoded.Code, wantCode, string(body))
+	}
+}
+
+// testWorkspaceID is the canonical test workspace UUID used across spy fixtures and handler tests.
+const testWorkspaceID = "11111111-1111-1111-1111-111111111111"
 
 // workspaceSpyProvider embeds DefaultLocalProvider and records the orgID
 // that GetWorkspaces / GetWorkspaceByID are invoked with. It allows the
@@ -33,18 +61,33 @@ func newWorkspaceSpyProvider() *workspaceSpyProvider {
 func (m *workspaceSpyProvider) GetWorkspaces(_, _, _, _, _, _, orgID string) ([]byte, error) {
 	m.called = true
 	m.observedOrgID = orgID
-	return []byte(`{"workspaces":[]}`), nil
+	targetID := uuid.FromStringOrNil(testWorkspaceID)
+	return json.Marshal(&workspace.WorkspacePage{
+		Page:       0,
+		PageSize:   1,
+		TotalCount: 1,
+		Workspaces: []workspace.AvailableWorkspace{
+			{
+				ID:   targetID,
+				Name: "test-workspace",
+			},
+		},
+	})
 }
 
 func (m *workspaceSpyProvider) GetWorkspaceByID(_ *http.Request, _, orgID string) ([]byte, error) {
 	m.called = true
 	m.observedOrgID = orgID
-	return []byte(`{}`), nil
+	targetID := uuid.FromStringOrNil(testWorkspaceID)
+	return json.Marshal(&workspace.Workspace{
+		ID:   targetID,
+		Name: "test-workspace",
+	})
 }
 
 func (m *workspaceSpyProvider) SaveWorkspace(_ *http.Request, _ *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
 	m.called = true
-	return []byte(`{"id":"11111111-1111-1111-1111-111111111111"}`), nil
+	return []byte(`{"id":"` + testWorkspaceID + `"}`), nil
 }
 
 // TestGetWorkspacesHandler_AcceptsOrgIdAndLegacyOrgID asserts that the
@@ -112,10 +155,21 @@ func TestGetWorkspacesHandler_AcceptsOrgIdAndLegacyOrgID(t *testing.T) {
 				t.Fatalf("provider received orgID=%q, want %q", provider.observedOrgID, tc.wantOrgID)
 			}
 
-			if tc.wantStatus == http.StatusBadRequest {
-				if !strings.Contains(rec.Body.String(), "orgId") {
-					t.Errorf("expected 400 body to mention canonical orgId, got %q", rec.Body.String())
+			if tc.wantStatus == http.StatusOK {
+				if ct := rec.Header().Get("Content-Type"); ct != "application/json" {
+					t.Errorf("expected Content-Type application/json, got %q", ct)
 				}
+				var page workspace.WorkspacePage
+				if err := json.Unmarshal(rec.Body.Bytes(), &page); err != nil {
+					t.Fatalf("failed to unmarshal workspaces payload: %v (body=%q)", err, rec.Body.String())
+				}
+				if len(page.Workspaces) != 1 || page.Workspaces[0].Name != "test-workspace" {
+					t.Errorf("unexpected workspaces payload: %+v", page)
+				}
+			}
+
+			if tc.wantStatus == http.StatusBadRequest {
+				assertMissingOrgIDErrorEnvelope(t, rec.Body.Bytes())
 			}
 		})
 	}
@@ -153,6 +207,12 @@ func TestGetWorkspaceByIdHandler_AcceptsOrgIdAndLegacyOrgID(t *testing.T) {
 			wantOrgID:    "canonical",
 			wantProvider: true,
 		},
+		{
+			name:         "missing parameter returns 400",
+			rawQuery:     "",
+			wantStatus:   http.StatusBadRequest,
+			wantProvider: false,
+		},
 	}
 
 	for _, tc := range cases {
@@ -160,8 +220,8 @@ func TestGetWorkspaceByIdHandler_AcceptsOrgIdAndLegacyOrgID(t *testing.T) {
 			h := newTestHandler(t, map[string]models.Provider{}, "")
 			provider := newWorkspaceSpyProvider()
 
-			req := httptest.NewRequest(http.MethodGet, "/api/workspaces/workspace-1?"+tc.rawQuery, nil)
-			req = mux.SetURLVars(req, map[string]string{"id": "workspace-1"})
+			req := httptest.NewRequest(http.MethodGet, "/api/workspaces/"+testWorkspaceID+"?"+tc.rawQuery, nil)
+			req = mux.SetURLVars(req, map[string]string{"id": testWorkspaceID})
 			rec := httptest.NewRecorder()
 
 			h.GetWorkspaceByIdHandler(rec, req, nil, nil, provider)
@@ -176,6 +236,23 @@ func TestGetWorkspaceByIdHandler_AcceptsOrgIdAndLegacyOrgID(t *testing.T) {
 
 			if tc.wantProvider && provider.observedOrgID != tc.wantOrgID {
 				t.Fatalf("provider received orgID=%q, want %q", provider.observedOrgID, tc.wantOrgID)
+			}
+
+			if tc.wantStatus == http.StatusOK {
+				if ct := rec.Header().Get("Content-Type"); ct != "application/json" {
+					t.Errorf("expected Content-Type application/json, got %q", ct)
+				}
+				var ws workspace.Workspace
+				if err := json.Unmarshal(rec.Body.Bytes(), &ws); err != nil {
+					t.Fatalf("failed to unmarshal workspace payload: %v (body=%q)", err, rec.Body.String())
+				}
+				if ws.ID.String() != testWorkspaceID || ws.Name != "test-workspace" {
+					t.Errorf("unexpected workspace payload: %+v", ws)
+				}
+			}
+
+			if tc.wantStatus == http.StatusBadRequest {
+				assertMissingOrgIDErrorEnvelope(t, rec.Body.Bytes())
 			}
 		})
 	}
@@ -300,7 +377,31 @@ func (m *workspaceFailingProvider) GetWorkspaces(_, _, _, _, _, _, _ string) ([]
 	return nil, m.err
 }
 
+func (m *workspaceFailingProvider) GetWorkspaceByID(_ *http.Request, _, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *workspaceFailingProvider) UpdateWorkspace(_ *http.Request, _ *workspace.WorkspaceUpdatePayload, _ string) (*workspace.Workspace, error) {
+	return nil, m.err
+}
+
 func (m *workspaceFailingProvider) DeleteWorkspace(_ *http.Request, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *workspaceFailingProvider) GetEnvironmentsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *workspaceFailingProvider) GetDesignsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string, _ []string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *workspaceFailingProvider) GetViewsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *workspaceFailingProvider) GetTeamsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
 	return nil, m.err
 }
 
@@ -373,6 +474,37 @@ func TestSaveWorkspaceHandler_PropagatesProviderStatus(t *testing.T) {
 	}
 }
 
+// TestGetWorkspacesHandler_InvalidPagination_ReturnsBadRequest asserts that a
+// rejected page or pagesize is answered with 400, not a provider-failure status.
+func TestGetWorkspacesHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	cases := []struct {
+		name     string
+		query    string
+		provider error
+		wantCode string
+	}{
+		{"page", "page=-1", models.ErrPageNumber(errors.New("bad page")), models.ErrPageNumberCode},
+		{"pagesize", "pagesize=abc", models.ErrPageSize(errors.New("bad pagesize")), models.ErrPageSizeCode},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := newWorkspaceFailingProvider(tc.provider)
+
+			req := httptest.NewRequest(http.MethodGet, "/api/workspaces?orgId="+testWorkspaceID+"&"+tc.query, nil)
+			req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+			rec := httptest.NewRecorder()
+
+			h.GetWorkspacesHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+			}
+			assertPaginationErrorEnvelope(t, rec.Body.Bytes(), tc.wantCode)
+		})
+	}
+}
+
 // TestGetWorkspacesHandler_PropagatesProviderStatus covers the read path.
 func TestGetWorkspacesHandler_PropagatesProviderStatus(t *testing.T) {
 	h := newTestHandler(t, map[string]models.Provider{}, "")
@@ -380,7 +512,7 @@ func TestGetWorkspacesHandler_PropagatesProviderStatus(t *testing.T) {
 		models.ErrFetch(errors.New("forbidden"), "Workspaces", http.StatusForbidden),
 	)
 
-	req := httptest.NewRequest(http.MethodGet, "/api/workspaces?orgId=11111111-1111-1111-1111-111111111111", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/workspaces?orgId="+testWorkspaceID, nil)
 	req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
 	rec := httptest.NewRecorder()
 
@@ -409,7 +541,7 @@ func TestSaveWorkspaceHandler_SetsContentTypeOnSuccess(t *testing.T) {
 	h := newTestHandler(t, map[string]models.Provider{}, "")
 	provider := newWorkspaceSpyProvider()
 
-	body := `{"name":"team-space","organizationId":"11111111-1111-1111-1111-111111111111"}`
+	body := `{"name":"team-space","organizationId":"` + testWorkspaceID + `"}`
 	req := httptest.NewRequest(http.MethodPost, "/api/workspaces", strings.NewReader(body))
 	rec := httptest.NewRecorder()
 
@@ -421,4 +553,124 @@ func TestSaveWorkspaceHandler_SetsContentTypeOnSuccess(t *testing.T) {
 	if ct := rec.Header().Get("Content-Type"); ct != "application/json" {
 		t.Errorf("Content-Type = %q, want application/json", ct)
 	}
+
+	var decoded struct {
+		ID string `json:"id"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &decoded); err != nil {
+		t.Fatalf("failed to unmarshal created workspace response: %v (body=%q)", err, rec.Body.String())
+	}
+	if decoded.ID != testWorkspaceID {
+		t.Errorf("expected workspace id %q, got %q", testWorkspaceID, decoded.ID)
+	}
+}
+
+// invalidWorkspaceResourcePaginationCases drives the per-resource
+// invalid-pagination tests below: the provider rejects the page or pagesize
+// and the handler must answer 400 with that error's code.
+var invalidWorkspaceResourcePaginationCases = []struct {
+	name     string
+	query    string
+	provider error
+	wantCode string
+}{
+	{"page", "page=-1", models.ErrPageNumber(errors.New("bad page")), models.ErrPageNumberCode},
+	{"pagesize", "pagesize=abc", models.ErrPageSize(errors.New("bad pagesize")), models.ErrPageSizeCode},
+}
+
+// runWorkspaceResourceInvalidPagination calls one workspace sub-resource
+// handler with each invalid pagination case and asserts 400 plus the code.
+func runWorkspaceResourceInvalidPagination(t *testing.T, resource string, call func(h *Handler, w http.ResponseWriter, req *http.Request, provider models.Provider)) {
+	t.Helper()
+	for _, tc := range invalidWorkspaceResourcePaginationCases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := newWorkspaceFailingProvider(tc.provider)
+
+			req := httptest.NewRequest(http.MethodGet, "/api/workspaces/"+testWorkspaceID+"/"+resource+"?"+tc.query, nil)
+			req = mux.SetURLVars(req, map[string]string{"id": testWorkspaceID})
+			rec := httptest.NewRecorder()
+
+			call(h, rec, req, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+			}
+			assertPaginationErrorEnvelope(t, rec.Body.Bytes(), tc.wantCode)
+		})
+	}
+}
+
+func TestGetEnvironmentsOfWorkspaceHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	runWorkspaceResourceInvalidPagination(t, "environments", func(h *Handler, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+		h.GetEnvironmentsOfWorkspaceHandler(w, req, nil, nil, provider)
+	})
+}
+
+func TestGetDesignsOfWorkspaceHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	runWorkspaceResourceInvalidPagination(t, "designs", func(h *Handler, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+		h.GetDesignsOfWorkspaceHandler(w, req, nil, nil, provider)
+	})
+}
+
+func TestGetViewsOfWorkspaceHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	runWorkspaceResourceInvalidPagination(t, "views", func(h *Handler, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+		h.GetViewsOfWorkspaceHandler(w, req, nil, nil, provider)
+	})
+}
+
+func TestGetTeamsOfWorkspaceHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	runWorkspaceResourceInvalidPagination(t, "teams", func(h *Handler, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+		h.GetTeamsOfWorkspaceHandler(w, req, nil, nil, provider)
+	})
+}
+
+// TestWorkspaceHandlers_MissingWorkspace_ReturnsNotFound pins the 404 contract
+// for a workspace that does not exist: the persister reports ErrResultNotFound
+// and the handlers must surface it as 404 with a MeshKit code on the wire.
+func TestWorkspaceHandlers_MissingWorkspace_ReturnsNotFound(t *testing.T) {
+	const missingID = "33333333-3333-3333-3333-333333333333"
+	const orgID = "11111111-1111-1111-1111-111111111111"
+
+	assertNotFound := func(t *testing.T, rec *httptest.ResponseRecorder) {
+		t.Helper()
+		if rec.Code != http.StatusNotFound {
+			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusNotFound, rec.Body.String())
+		}
+		var decoded struct {
+			Code string `json:"code"`
+		}
+		if err := json.Unmarshal(rec.Body.Bytes(), &decoded); err != nil {
+			t.Fatalf("error body did not parse as JSON: %v (body=%q)", err, rec.Body.String())
+		}
+		if decoded.Code == "" {
+			t.Errorf("expected a non-empty error code (body=%q)", rec.Body.String())
+		}
+	}
+
+	t.Run("GetWorkspaceByIdHandler", func(t *testing.T) {
+		h := newTestHandler(t, map[string]models.Provider{}, "")
+		provider := newWorkspaceFailingProvider(models.ErrResultNotFound(gorm.ErrRecordNotFound))
+
+		req := httptest.NewRequest(http.MethodGet, "/api/workspaces/"+missingID+"?orgId="+orgID, nil)
+		req = mux.SetURLVars(req, map[string]string{"id": missingID})
+		rec := httptest.NewRecorder()
+
+		h.GetWorkspaceByIdHandler(rec, req, nil, nil, provider)
+
+		assertNotFound(t, rec)
+	})
+
+	t.Run("UpdateWorkspaceHandler", func(t *testing.T) {
+		h := newTestHandler(t, map[string]models.Provider{}, "")
+		provider := newWorkspaceFailingProvider(models.ErrResultNotFound(gorm.ErrRecordNotFound))
+
+		req := httptest.NewRequest(http.MethodPut, "/api/workspaces/"+missingID, strings.NewReader(`{"name":"x"}`))
+		req = mux.SetURLVars(req, map[string]string{"id": missingID})
+		rec := httptest.NewRecorder()
+
+		h.UpdateWorkspaceHandler(rec, req, nil, nil, provider)
+
+		assertNotFound(t, rec)
+	})
 }

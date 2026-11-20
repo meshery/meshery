@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { LaunchIcon, Typography } from '@sistent/sistent';
 import { TextWithLinks } from '../../../data-formatter';
 
@@ -59,12 +59,22 @@ export const EmptyState = ({ event }: { event: { description?: string } }) => {
 };
 
 export const DataToFileLink = ({ data }: { data: unknown }) => {
-  // convert the trace to a file
-  const dataString = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
-  const file = new File([dataString], 'trace.txt', { type: 'text/plain' });
+  const [downloadUrl, setDownloadUrl] = useState<string>('');
+
+  useEffect(() => {
+    // convert the trace to a file
+    const dataString = typeof data === 'string' ? data : JSON.stringify(data ?? '', null, 2) || '';
+    const file = new File([dataString], 'trace.txt', { type: 'text/plain' });
+    const url = URL.createObjectURL(file);
+    setDownloadUrl(url);
+
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [data]);
 
   return (
-    <TitleLink href={URL.createObjectURL(file)} download="trace.txt">
+    <TitleLink href={downloadUrl} download="trace.txt">
       Download Trace
     </TitleLink>
   );

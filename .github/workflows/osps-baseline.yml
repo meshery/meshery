@@ -15,6 +15,7 @@ concurrency:
 
 jobs:
   assess:
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:

@@ -25,20 +25,27 @@ Meshery stores Envoy WebAssembly (WASM) filters alongside your designs, so you c
    - **File Upload**: select the `.wasm` file on your machine.
    - **URL Upload**: paste the URL that serves the file.
 5. Click **Import**.
+
+URL imports are restricted to public HTTP(S) destinations and have bounded response size and request time. See [Remote URL imports]({{< ref "installation/production/security-hardening.md#remote-url-imports" >}}) for the limits.
 {{% /tab %}}
 {{% tab header="mesheryctl" %}}
 Import from a local file or a URL:
 
 ```bash
 mesheryctl filter import /path/to/filter.wasm
+mesheryctl filter import ./filter.wasm
 mesheryctl filter import https://example.com/myfilter.wasm
 ```
+
+Local paths are resolved from the current working directory, so you can pass either a relative or absolute path.
 
 Set a name, and pass the filter's configuration either as a file path or as an inline string:
 
 ```bash
 mesheryctl filter import /path/to/filter.wasm --name "rate-limit" --wasm-config ./config.json
 ```
+
+The `--name` flag applies only to local file imports. Remote URL imports do not support a name override.
 {{% /tab %}}
 {{< /tabpane >}}
 

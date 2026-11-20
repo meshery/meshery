@@ -3,6 +3,9 @@ package policies
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
+	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -23,43 +26,66 @@ func componentDeclarationByID(design *pattern.PatternFile, id string) *component
 
 // fromComponentID returns the from component ID from a relationship definition.
 func fromComponentID(rel *relationship.RelationshipDefinition) string {
-	if rel.Selectors == nil || len(*rel.Selectors) == 0 {
+	if rel == nil || rel.Selectors == nil {
 		return ""
 	}
-	ss := (*rel.Selectors)[0]
-	if len(ss.Allow.From) == 0 {
-		return ""
+	for _, ss := range *rel.Selectors {
+		for _, item := range ss.Allow.From {
+			if item.ID != nil && item.ID.String() != "" {
+				return item.ID.String()
+			}
+		}
 	}
-	if ss.Allow.From[0].ID == nil {
-		return ""
-	}
-	return ss.Allow.From[0].ID.String()
+	return ""
 }
 
 // toComponentID returns the to component ID from a relationship definition.
 func toComponentID(rel *relationship.RelationshipDefinition) string {
-	if rel.Selectors == nil || len(*rel.Selectors) == 0 {
+	if rel == nil || rel.Selectors == nil {
 		return ""
 	}
-	ss := (*rel.Selectors)[0]
-	if len(ss.Allow.To) == 0 {
-		return ""
+	for _, ss := range *rel.Selectors {
+		for _, item := range ss.Allow.To {
+			if item.ID != nil && item.ID.String() != "" {
+				return item.ID.String()
+			}
+		}
 	}
-	if ss.Allow.To[0].ID == nil {
-		return ""
-	}
-	return ss.Allow.To[0].ID.String()
+	return ""
 }
 
 // fromAndToComponentsExist checks if both from and to components still exist in the design.
+// It inspects all selectors and all referenced component IDs across From and To clauses
+// to guarantee that no dangling component references linger in multi-component or
+// multi-selector relationships.
 func fromAndToComponentsExist(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
-	fromID := fromComponentID(rel)
-	toID := toComponentID(rel)
-	if fromID == "" || toID == "" {
+	if rel == nil || rel.Selectors == nil || len(*rel.Selectors) == 0 || design == nil {
 		return false
 	}
-	return componentDeclarationByID(design, fromID) != nil &&
-		componentDeclarationByID(design, toID) != nil
+
+	for _, ss := range *rel.Selectors {
+		if len(ss.Allow.From) == 0 || len(ss.Allow.To) == 0 {
+			return false
+		}
+		for _, fromSel := range ss.Allow.From {
+			if fromSel.ID == nil || fromSel.ID.String() == "" {
+				return false
+			}
+			if componentDeclarationByID(design, fromSel.ID.String()) == nil {
+				return false
+			}
+		}
+		for _, toSel := range ss.Allow.To {
+			if toSel.ID == nil || toSel.ID.String() == "" {
+				return false
+			}
+			if componentDeclarationByID(design, toSel.ID.String()) == nil {
+				return false
+			}
+		}
+	}
+
+	return true
 }
 
 // fromOrToComponentsDontExist returns true when one or both sides are missing.
@@ -116,14 +142,20 @@ func schemaDefaultAtPath(comp *component.ComponentDefinition, path []string) (in
 	cursor := schema
 	for _, seg := range segs {
 		props, ok := cursor["properties"].(map[string]interface{})
-		if !ok {
-			return nil, false
+		if ok {
+			if next, found := props[seg].(map[string]interface{}); found {
+				cursor = next
+				continue
+			}
 		}
-		next, ok := props[seg].(map[string]interface{})
-		if !ok {
-			return nil, false
+		// Numeric segments index an array; descend into its item schema.
+		if _, err := strconv.Atoi(seg); err == nil {
+			if items, isArray := cursor["items"].(map[string]interface{}); isArray {
+				cursor = items
+				continue
+			}
 		}
-		cursor = next
+		return nil, false
 	}
 	def, ok := cursor["default"]
 	return def, ok
@@ -150,58 +182,217 @@ func patchMutatorsAction(rel *relationship.RelationshipDefinition, design *patte
 	var actions []PolicyAction
 
 	for _, ss := range *rel.Selectors {
-		if len(ss.Allow.From) == 0 || len(ss.Allow.To) == 0 {
+		fromCount := len(ss.Allow.From)
+		toCount := len(ss.Allow.To)
+		if fromCount == 0 || toCount == 0 {
 			continue
 		}
-		fromSel := ss.Allow.From[0]
-		toSel := ss.Allow.To[0]
-		if fromSel.RelationshipDefinitionSelectorsPatch == nil || toSel.RelationshipDefinitionSelectorsPatch == nil {
-			continue
+		pairCount := fromCount
+		if toCount < pairCount {
+			pairCount = toCount
+		}
+		// If one side has 1 element and the other side has N elements, fan out across all N targets.
+		if fromCount == 1 || toCount == 1 {
+			pairCount = max(fromCount, toCount)
 		}
 
-		fromID := selectorItemID(fromSel)
-		toID := selectorItemID(toSel)
-		fromComp := componentDeclarationByID(design, fromID)
-		toComp := componentDeclarationByID(design, toID)
-		if fromComp == nil || toComp == nil {
-			continue
-		}
-
-		mutatorRefs, mutatedRefs, mutatorComp, mutatedComp := resolveMutatorMutatedRefs(fromSel.RelationshipDefinitionSelectorsPatch, toSel.RelationshipDefinitionSelectorsPatch, fromComp, toComp)
-		if mutatorRefs == nil || mutatedRefs == nil {
-			continue
-		}
-
-		mutatedID := toID
-		if mutatedComp.ID == fromComp.ID {
-			mutatedID = fromID
-		}
-
-		count := len(mutatorRefs)
-		if len(mutatedRefs) < count {
-			count = len(mutatedRefs)
-		}
-
-		for i := 0; i < count; i++ {
-			mutatorValue := configurationForComponentAtPath(mutatorRefs[i], mutatorComp, design)
-			oldValue := configurationForComponentAtPath(mutatedRefs[i], mutatedComp, design)
-			if mutatorValue == nil {
+		for p := 0; p < pairCount; p++ {
+			fromIdx := p
+			if fromIdx >= fromCount {
+				fromIdx = 0
+			}
+			toIdx := p
+			if toIdx >= toCount {
+				toIdx = 0
+			}
+			fromSel := ss.Allow.From[fromIdx]
+			toSel := ss.Allow.To[toIdx]
+			if fromSel.RelationshipDefinitionSelectorsPatch == nil || toSel.RelationshipDefinitionSelectorsPatch == nil {
 				continue
 			}
-			if reverse {
-				if !deepEqual(mutatorValue, oldValue) {
-					continue
+
+			fromID := selectorItemID(fromSel)
+			toID := selectorItemID(toSel)
+			fromComp := componentDeclarationByID(design, fromID)
+			toComp := componentDeclarationByID(design, toID)
+			if fromComp == nil || toComp == nil {
+				continue
+			}
+
+			mutatorRefs, mutatedRefs, mutatorComp, mutatedComp := resolveMutatorMutatedRefs(fromSel.RelationshipDefinitionSelectorsPatch, toSel.RelationshipDefinitionSelectorsPatch, fromComp, toComp)
+			if mutatorRefs == nil || mutatedRefs == nil {
+				continue
+			}
+
+			mutatedID := toID
+			if mutatedComp.ID == fromComp.ID {
+				mutatedID = fromID
+			}
+
+			count := len(mutatorRefs)
+			if len(mutatedRefs) < count {
+				count = len(mutatedRefs)
+			}
+
+			for i := 0; i < count; i++ {
+				origMutatorPath := mutatorRefs[i]
+				origMutatedPath := mutatedRefs[i]
+
+				resolvedMutatorPaths := resolveComponentPaths(origMutatorPath, mutatorComp, design)
+				resolvedMutatedPaths := resolveComponentPaths(origMutatedPath, mutatedComp, design)
+
+				for j, mutatedPath := range resolvedMutatedPaths {
+					oldValue := configurationForComponentAtPath(mutatedPath, mutatedComp, design)
+					if reverse {
+						if !matchesAnyMutatorValue(oldValue, resolvedMutatorPaths, mutatorComp, design) {
+							continue
+						}
+						actions = append(actions, cleanupActionForPath(mutatedID, mutatedPath, mutatedComp))
+						continue
+					}
+					mutatorValue := selectMutatorValue(resolvedMutatorPaths, j, len(resolvedMutatedPaths), mutatorComp, design)
+					if mutatorValue == nil {
+						continue
+					}
+					if deepEqual(mutatorValue, oldValue) {
+						continue
+					}
+					actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedPath), mutatedID, mutatedPath, mutatorValue))
 				}
-				actions = append(actions, cleanupActionForPath(mutatedID, mutatedRefs[i], mutatedComp))
-				continue
 			}
-			if deepEqual(mutatorValue, oldValue) {
-				continue
-			}
-			actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedRefs[i]), mutatedID, mutatedRefs[i], mutatorValue))
 		}
 	}
+	if reverse {
+		actions = orderCleanupActions(actions)
+	}
 	return actions
+}
+
+// resolveComponentPaths resolves wildcards ("_") in a path against a component's effective data.
+// For paths starting with "configuration", it navigates the component's effective configuration
+// (resolving aliases against design). For other paths, it navigates the component map.
+func resolveComponentPaths(path []string, comp *component.ComponentDefinition, design *pattern.PatternFile) [][]string {
+	if comp == nil || len(path) == 0 {
+		return [][]string{path}
+	}
+	if !slices.Contains(path, "_") && !slices.Contains(path, "*") {
+		return [][]string{path}
+	}
+	if path[0] == "configuration" {
+		config := getComponentConfiguration(comp, design)
+		var configMap map[string]interface{}
+		if config != nil {
+			if m, ok := config.(map[string]interface{}); ok {
+				configMap = m
+			} else if m, err := toGenericMap(config); err == nil {
+				configMap = m
+			}
+		}
+		root := map[string]interface{}{
+			"configuration": configMap,
+		}
+		return resolvePaths(path, root)
+	}
+	compMap, err := toGenericMap(comp)
+	if err != nil {
+		return [][]string{path}
+	}
+	return resolvePaths(path, compMap)
+}
+
+// matchesAnyMutatorValue checks whether val matches the value at any of the mutator paths,
+// ensuring cleanup ownership remains valid even if target elements were moved or reordered.
+func matchesAnyMutatorValue(val interface{}, mutatorPaths [][]string, comp *component.ComponentDefinition, design *pattern.PatternFile) bool {
+	if val == nil {
+		return false
+	}
+	for _, mp := range mutatorPaths {
+		mVal := configurationForComponentAtPath(mp, comp, design)
+		if mVal != nil && deepEqual(val, mVal) {
+			return true
+		}
+	}
+	return false
+}
+
+// selectMutatorValue stably selects a source mutator value for the target path at targetIdx,
+// preventing alternating/oscillating updates when multiple source paths exist.
+func selectMutatorValue(resolvedMutatorPaths [][]string, targetIdx int, targetCount int, comp *component.ComponentDefinition, design *pattern.PatternFile) interface{} {
+	if len(resolvedMutatorPaths) == 0 {
+		return nil
+	}
+	if len(resolvedMutatorPaths) == targetCount {
+		return configurationForComponentAtPath(resolvedMutatorPaths[targetIdx], comp, design)
+	}
+	if len(resolvedMutatorPaths) == 1 {
+		return configurationForComponentAtPath(resolvedMutatorPaths[0], comp, design)
+	}
+	srcIdx := targetIdx
+	if srcIdx >= len(resolvedMutatorPaths) {
+		srcIdx = 0
+	}
+	return configurationForComponentAtPath(resolvedMutatorPaths[srcIdx], comp, design)
+}
+
+// orderCleanupActions ensures that within any sequence of cleanup removals
+// targeting the same component and parent array, actions are applied in
+// descending numeric index order (e.g. index 2 before index 1 before index 0).
+// This prevents earlier index removals from shifting the positions of subsequent targets.
+// Non-removal actions and actions targeting different arrays maintain their relative order.
+func orderCleanupActions(actions []PolicyAction) []PolicyAction {
+	if len(actions) <= 1 {
+		return actions
+	}
+
+	type arrayRemovalIndex struct {
+		slotIndex int
+		numIndex  int
+		action    PolicyAction
+	}
+
+	groups := make(map[string][]arrayRemovalIndex)
+	for i, a := range actions {
+		if a.Op != RemoveComponentConfigurationOp || len(a.UpdatePath) == 0 {
+			continue
+		}
+		lastSeg := a.UpdatePath[len(a.UpdatePath)-1]
+		numIdx, err := strconv.Atoi(lastSeg)
+		if err != nil || numIdx < 0 {
+			continue
+		}
+		parentKey := a.ID + ":" + strings.Join(a.UpdatePath[:len(a.UpdatePath)-1], "/")
+		groups[parentKey] = append(groups[parentKey], arrayRemovalIndex{
+			slotIndex: i,
+			numIndex:  numIdx,
+			action:    a,
+		})
+	}
+
+	if len(groups) == 0 {
+		return actions
+	}
+
+	result := make([]PolicyAction, len(actions))
+	copy(result, actions)
+
+	for _, group := range groups {
+		if len(group) <= 1 {
+			continue
+		}
+		sort.SliceStable(group, func(i, j int) bool {
+			return group[i].numIndex > group[j].numIndex
+		})
+		slotIndices := make([]int, len(group))
+		for k, item := range group {
+			slotIndices[k] = item.slotIndex
+		}
+		sort.Ints(slotIndices)
+		for k, slot := range slotIndices {
+			result[slot] = group[k].action
+		}
+	}
+
+	return result
 }
 
 // selectorItemID returns the ID string from a SelectorItem, or empty if nil.
@@ -283,7 +474,51 @@ func sameRelationshipSelectorClause(a, b relationship.SelectorItem) bool {
 		deepEqual(a.RelationshipDefinitionSelectorsPatch, b.RelationshipDefinitionSelectorsPatch)
 }
 
-// RelationshipsAreSame checks if two relationships are equivalent.
+// sameSelectorSlice checks if two slices of SelectorItem match in multiset comparison.
+func sameSelectorSlice(sliceA, sliceB []relationship.SelectorItem) bool {
+	if len(sliceA) != len(sliceB) {
+		return false
+	}
+	used := make([]bool, len(sliceB))
+	for _, itemA := range sliceA {
+		matched := false
+		for j, itemB := range sliceB {
+			if !used[j] && sameRelationshipSelectorClause(itemA, itemB) {
+				used[j] = true
+				matched = true
+				break
+			}
+		}
+		if !matched {
+			return false
+		}
+	}
+	return true
+}
+
+// sameSelectorSetItem checks if two SelectorSetItem values match across both Allow and Deny clauses.
+func sameSelectorSetItem(ssA, ssB relationship.SelectorSetItem) bool {
+	if !sameSelectorSlice(ssA.Allow.From, ssB.Allow.From) {
+		return false
+	}
+	if !sameSelectorSlice(ssA.Allow.To, ssB.Allow.To) {
+		return false
+	}
+	if (ssA.Deny == nil) != (ssB.Deny == nil) {
+		return false
+	}
+	if ssA.Deny != nil {
+		if !sameSelectorSlice(ssA.Deny.From, ssB.Deny.From) {
+			return false
+		}
+		if !sameSelectorSlice(ssA.Deny.To, ssB.Deny.To) {
+			return false
+		}
+	}
+	return true
+}
+
+// RelationshipsAreSame checks if two relationships are equivalent across their full selector sets.
 func RelationshipsAreSame(relA, relB *relationship.RelationshipDefinition) bool {
 	if !sameRelationshipIdentifier(relA, relB) {
 		return false
@@ -291,19 +526,25 @@ func RelationshipsAreSame(relA, relB *relationship.RelationshipDefinition) bool 
 	if relA.Selectors == nil || relB.Selectors == nil {
 		return false
 	}
+	if len(*relA.Selectors) != len(*relB.Selectors) {
+		return false
+	}
+
+	used := make([]bool, len(*relB.Selectors))
 	for _, ssA := range *relA.Selectors {
-		for _, ssB := range *relB.Selectors {
-			if len(ssA.Allow.From) == 0 || len(ssB.Allow.From) == 0 ||
-				len(ssA.Allow.To) == 0 || len(ssB.Allow.To) == 0 {
-				continue
-			}
-			if sameRelationshipSelectorClause(ssA.Allow.From[0], ssB.Allow.From[0]) &&
-				sameRelationshipSelectorClause(ssA.Allow.To[0], ssB.Allow.To[0]) {
-				return true
+		matched := false
+		for j, ssB := range *relB.Selectors {
+			if !used[j] && sameSelectorSetItem(ssA, ssB) {
+				used[j] = true
+				matched = true
+				break
 			}
 		}
+		if !matched {
+			return false
+		}
 	}
-	return false
+	return true
 }
 
 // relationshipAlreadyExists checks if a relationship already exists in the design.
@@ -493,10 +734,29 @@ func matchingMutators(
 	strategies := getMatchStrategyForSelector(fromClause)
 
 	for i := 0; i < count; i++ {
-		mutatorValue := configurationForComponentAtPath(mutatorRefs[i], mutatorComp, design)
-		mutatedValue := configurationForComponentAtPath(mutatedRefs[i], mutatedComp, design)
+		origMutatorPath := mutatorRefs[i]
+		origMutatedPath := mutatedRefs[i]
+
+		resolvedMutatorPaths := resolveComponentPaths(origMutatorPath, mutatorComp, design)
+		resolvedMutatedPaths := resolveComponentPaths(origMutatedPath, mutatedComp, design)
+
 		strategy := getStrategyForValueAt(strategies, i)
-		if !matchValuesWithStrategies(mutatorValue, mutatedValue, strategy) {
+
+		matchedAny := false
+		for _, mutatorPath := range resolvedMutatorPaths {
+			for _, mutatedPath := range resolvedMutatedPaths {
+				mutatorValue := configurationForComponentAtPath(mutatorPath, mutatorComp, design)
+				mutatedValue := configurationForComponentAtPath(mutatedPath, mutatedComp, design)
+				if matchValuesWithStrategies(mutatorValue, mutatedValue, strategy) {
+					matchedAny = true
+					break
+				}
+			}
+			if matchedAny {
+				break
+			}
+		}
+		if !matchedAny {
 			return false
 		}
 	}

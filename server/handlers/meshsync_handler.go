@@ -1,10 +1,13 @@
 package handlers
 
 import (
+	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/meshery/schemas/models/core"
 
@@ -201,33 +204,24 @@ func filterByPatternIds(query *gorm.DB, patternIDs []string) *gorm.DB {
 	return query
 }
 
-// filterByKey filters a GORM query to only include resources with specific key-value pairs in their metadata.
+// filterByKey keeps the resources whose metadata carries every one of the
+// given "key=value" pairs of the given kind (e.g. "label"). The query must
+// already join kubernetes_resource_object_meta.
 //
-// This function performs the following steps:
-// 1. Joins the `kubernetes_resources` table with `kubernetes_resource_object_meta` to access metadata for resources.
-// 2. Joins the `kubernetes_resource_object_meta` table with `kubernetes_key_values` to access key-value pairs.
-// 3. Filters the results based on:
-//   - The `kind` of the key-value pair (e.g., "label", "annotation").
-//   - A set of key-value pairs provided in the `keyValues` slice, formatted as "key=value".
-//
-// The query ensures only matching resources are returned.
-//
-// Parameters:
-// - query: The initial GORM query to apply the filters to.
-// - kind: The kind of key-value pair to filter by (e.g., "label").
-// - keyValues: A slice of strings in the format "key=value" used to match key-value pairs.
-//
-// Returns:
-// - A filtered GORM query that includes only resources with matching key-value pairs.
+// Each pair is its own EXISTS condition rather than a join on
+// kubernetes_key_values: the join returned a resource once per matching pair,
+// matched any of the pairs instead of all of them, and brought a second `kind`
+// column into scope, which made ORDER BY kind ambiguous. Key and value are
+// compared as one "key=value" string so a key never pairs with another
+// label's value.
 func filterByKey(query *gorm.DB, kind string, keyValues []string) *gorm.DB {
-	if len(keyValues) == 0 {
-		return query
+	for _, keyValue := range keyValues {
+		query = query.Where(
+			"EXISTS (SELECT 1 FROM kubernetes_key_values WHERE kubernetes_key_values.id = kubernetes_resource_object_meta.id AND kubernetes_key_values.kind = ? AND (kubernetes_key_values.key || '=' || kubernetes_key_values.value) = ?)",
+			kind, keyValue,
+		)
 	}
-	return query.
-		// Joins("join kubernetes_resource_object_meta on kubernetes_resources.id = kubernetes_resource_object_meta.id").
-		Joins("join kubernetes_key_values on kubernetes_resource_object_meta.id = kubernetes_key_values.id").
-		// We need to use the `||` operator to concatenate the key and value, so we can compare it to the key-value pairs. and not cross match with other key value pairs
-		Where("kubernetes_key_values.kind = ? AND  (kubernetes_key_values.key || '=' || kubernetes_key_values.value) IN (?)", kind, keyValues)
+	return query
 }
 
 func selectDistinctKeyValues(db *gorm.DB, kind string) *gorm.DB {
@@ -240,6 +234,10 @@ func selectDistinctKeyValues(db *gorm.DB, kind string) *gorm.DB {
 }
 
 func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(rw, provider) {
+		return
+	}
+
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	page, offset, limit, search, order, _, _ := getPaginationParams(r)
@@ -269,7 +267,9 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
 		if err != nil {
 			// Client-side payload parse — 400.
-			h.log.Error(ErrRequestBody(err))
+			if h != nil && h.log != nil {
+				h.log.Error(ErrRequestBody(err))
+			}
 			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 			return
 		}
@@ -277,7 +277,16 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		filter.ClusterIds = []string{}
 	}
 
-	query := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
+	persister := provider.GetGenericPersister()
+	if persister == nil {
+		if h != nil && h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
+	query := persister.Model(&model.KubernetesResource{}).
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
 		Preload("KubernetesResourceMeta").
 		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
@@ -319,11 +328,15 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 
 	order = models.SanitizeOrderInput(order, []string{"creation_timestamp", "name", "kind", "model", "api_version", "namespace"})
-	query.Order(order)
+	if order != "" {
+		query = query.Order(order)
+	}
 
 	err := query.Find(&resources).Error
 	if err != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrFetchMeshSyncResources(err))
+		}
 		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)
 		return
 	}
@@ -356,7 +369,9 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 
 		if error != nil {
 			design = rawDesign
-			h.log.Error(fmt.Errorf("error evaluating design: %v", error))
+			if h != nil && h.log != nil {
+				h.log.Error(fmt.Errorf("error evaluating design: %v", error))
+			}
 		} else {
 			design = evalResponse.Design // use the evaluated design
 		}
@@ -382,10 +397,14 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		if roundtripped, rtErr := patternutils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
 			design = *roundtripped
 		} else if rtErr != nil {
-			h.log.Warn(fmt.Errorf("meshsync: v1beta3→v1beta1 dehydrate round-trip failed: %w; response will not be dehydrated", rtErr))
+			if h != nil && h.log != nil {
+				h.log.Warn(fmt.Errorf("meshsync: v1beta3→v1beta1 dehydrate round-trip failed: %w; response will not be dehydrated", rtErr))
+			}
 		}
 	} else if bridgeErr != nil {
-		h.log.Warn(fmt.Errorf("meshsync: v1beta1→v1beta3 dehydrate bridge failed: %w; response will not be dehydrated", bridgeErr))
+		if h != nil && h.log != nil {
+			h.log.Warn(fmt.Errorf("meshsync: v1beta1→v1beta3 dehydrate bridge failed: %w; response will not be dehydrated", bridgeErr))
+		}
 	}
 
 	response := &models.MeshSyncResourcesAPIResponse{
@@ -400,22 +419,79 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 
 	if err := enc.Encode(response); err != nil {
 		if isClientDisconnect(err) {
-			h.log.Debug(ErrEncodeResponse(err))
+			if h != nil && h.log != nil {
+				h.log.Debug(ErrEncodeResponse(err))
+			}
 		} else {
-			h.log.Error(ErrEncodeResponse(err))
+			if h != nil && h.log != nil {
+				h.log.Error(ErrEncodeResponse(err))
+			}
 		}
 	}
 }
 
+// isValidMeshSyncResourceID validates that a resource ID is either a valid UUID or
+// a valid base64-encoded composite identifier (such as the composite keys generated by MeshSync SetID:
+// clusterID.kind.apiVersion.namespace.name).
+func isValidMeshSyncResourceID(id string) bool {
+	id = strings.TrimSpace(id)
+	if id == "" {
+		return false
+	}
+	if _, err := uuid.FromString(id); err == nil {
+		return true
+	}
+
+	var decoded string
+	if data, err := base64.StdEncoding.DecodeString(id); err == nil && len(data) > 0 {
+		decoded = string(data)
+	} else if data, err := base64.URLEncoding.DecodeString(id); err == nil && len(data) > 0 {
+		decoded = string(data)
+	} else if data, err := base64.RawURLEncoding.DecodeString(id); err == nil && len(data) > 0 {
+		decoded = string(data)
+	}
+
+	if decoded != "" {
+		parts := strings.Split(decoded, ".")
+		if len(parts) >= 5 {
+			return true
+		}
+	}
+	return false
+}
+
+// GetMeshSyncResourceByID retrieves a single Kubernetes resource from MeshSync by its ID.
+// It returns HTTP 400 if the resource ID is invalid, or HTTP 404 if the resource does not exist.
 func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(rw, provider) {
+		return
+	}
+
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
 	resourceID := mux.Vars(r)["id"]
+	if !isValidMeshSyncResourceID(resourceID) {
+		err := fmt.Errorf("invalid resource id: %s", resourceID)
+		if h != nil && h.log != nil {
+			h.log.Error(models.ErrInvalidUUID(err))
+		}
+		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
+		return
+	}
+
+	persister := provider.GetGenericPersister()
+	if persister == nil {
+		if h != nil && h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
 
 	var resource model.KubernetesResource
 
-	query := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
+	query := persister.Model(&model.KubernetesResource{}).
 		// Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
 		Preload("KubernetesResourceMeta").
 		Preload("Spec").
@@ -427,7 +503,17 @@ func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Reques
 	err := query.First(&resource).Error
 
 	if err != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err))
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			notFoundErr := models.ErrResultNotFound(err)
+			if h != nil && h.log != nil {
+				h.log.Error(notFoundErr)
+			}
+			writeMeshkitError(rw, notFoundErr, http.StatusNotFound)
+			return
+		}
+		if h != nil && h.log != nil {
+			h.log.Error(ErrFetchMeshSyncResources(err))
+		}
 		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)
 		return
 	}
@@ -435,32 +521,55 @@ func (h *Handler) GetMeshSyncResourceByID(rw http.ResponseWriter, r *http.Reques
 	componentDef, err := KubernetesResourceToComponentDef(resource, true, false)
 
 	if err != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrFetchMeshSyncResources(err))
+		}
 		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)
 		return
 	}
 
 	if err := enc.Encode(componentDef); err != nil {
 		if isClientDisconnect(err) {
-			h.log.Debug(ErrEncodeResponse(err))
+			if h != nil && h.log != nil {
+				h.log.Debug(ErrEncodeResponse(err))
+			}
 		} else {
-			h.log.Error(ErrEncodeResponse(err))
+			if h != nil && h.log != nil {
+				h.log.Error(ErrEncodeResponse(err))
+			}
 		}
 	}
 }
 
 func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(rw, provider) {
+		return
+	}
+
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
 	clusterIds := r.URL.Query()["clusterId"]
 	namespaceScope := r.URL.Query()["namespace"]
 	patternIds := r.URL.Query()["patternId"]
-	h.log.Info("Fetching meshsync resources summary", "clusterIds", clusterIds)
+	if h != nil && h.log != nil {
+		h.log.Info("Fetching meshsync resources summary", "clusterIds", clusterIds)
+	}
 
 	if len(clusterIds) == 0 {
-		h.log.Error(ErrQueryGet("clusterIds"))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrQueryGet("clusterIds"))
+		}
 		writeMeshkitError(rw, ErrQueryGet("clusterIds"), http.StatusBadRequest)
+		return
+	}
+
+	persister := provider.GetGenericPersister()
+	if persister == nil {
+		if h != nil && h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
 		return
 	}
 
@@ -468,7 +577,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	var namespaces []string
 
 	// TODO: simplify into one query if possible
-	kindsQuery := provider.GetGenericPersister().
+	kindsQuery := persister.
 		Model(&model.KubernetesResource{}).
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
 		Select("kind, model, count(*) as count").
@@ -482,10 +591,12 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	err1 := kindsQuery.Scan(&kindCounts).Error
 
 	if err1 != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err1))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrFetchMeshSyncResources(err1))
+		}
 	}
 
-	err2 := provider.GetGenericPersister().
+	err2 := persister.
 		Model(&model.KubernetesResource{}).
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
 		Select("distinct namespace").
@@ -493,12 +604,14 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 		Scan(&namespaces).Error
 
 	if err2 != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err2))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrFetchMeshSyncResources(err2))
+		}
 	}
 
 	var labels []model.KubernetesKeyValue
 
-	labelsQuery := selectDistinctKeyValues(provider.GetGenericPersister().Model(&model.KubernetesResource{}), "label")
+	labelsQuery := selectDistinctKeyValues(persister.Model(&model.KubernetesResource{}), "label")
 	labelsQuery = filterByClusters(labelsQuery, clusterIds)
 	labelsQuery = filterByNamespaces(labelsQuery, namespaceScope)
 	labelsQuery = filterByPatternIds(labelsQuery, patternIds)
@@ -506,7 +619,9 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	err := labelsQuery.Scan(&labels).Error
 
 	if err != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrFetchMeshSyncResources(err))
+		}
 	}
 
 	// only return error if both queries failed
@@ -524,21 +639,60 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 
 	if err := enc.Encode(response); err != nil {
 		if isClientDisconnect(err) {
-			h.log.Debug(ErrEncodeResponse(err))
+			if h != nil && h.log != nil {
+				h.log.Debug(ErrEncodeResponse(err))
+			}
 		} else {
-			h.log.Error(ErrEncodeResponse(err))
+			if h != nil && h.log != nil {
+				h.log.Error(ErrEncodeResponse(err))
+			}
 		}
 	}
 }
 
+// DeleteMeshSyncResource removes a single Kubernetes resource from MeshSync by its ID.
+// It returns HTTP 400 if the resource ID is invalid, or HTTP 404 if no resource was found to delete.
 func (h *Handler) DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	if !h.requireProvider(rw, provider) {
+		return
+	}
+
 	resourceID := mux.Vars(r)["id"]
-	db := provider.GetGenericPersister()
-	err := db.Model(&model.KubernetesResource{}).Delete(&model.KubernetesResource{ID: resourceID}).Error
+	if !isValidMeshSyncResourceID(resourceID) {
+		err := fmt.Errorf("invalid resource id: %s", resourceID)
+		if h != nil && h.log != nil {
+			h.log.Error(models.ErrInvalidUUID(err))
+		}
+		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
+		return
+	}
+
+	persister := provider.GetGenericPersister()
+	if persister == nil {
+		if h != nil && h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
+	// Delete the resource together with the rows that share its id (object
+	// meta, spec, status, labels and annotations), so none are orphaned.
+	deleted, err := models.DeleteMeshSyncResourceByID(persister, resourceID)
 	if err != nil {
 		deleteErr := ErrFailToDelete(err, "meshsync resource")
-		h.log.Error(deleteErr)
+		if h != nil && h.log != nil {
+			h.log.Error(deleteErr)
+		}
 		writeMeshkitError(rw, deleteErr, http.StatusInternalServerError)
+		return
+	}
+	if !deleted {
+		notFoundErr := models.ErrResultNotFound(gorm.ErrRecordNotFound)
+		if h != nil && h.log != nil {
+			h.log.Error(notFoundErr)
+		}
+		writeMeshkitError(rw, notFoundErr, http.StatusNotFound)
 		return
 	}
 
@@ -548,9 +702,13 @@ func (h *Handler) DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request
 		Deleted bool `json:"deleted"`
 	}{Deleted: true}); err != nil {
 		if isClientDisconnect(err) {
-			h.log.Debug(ErrEncodeResponse(err))
+			if h != nil && h.log != nil {
+				h.log.Debug(ErrEncodeResponse(err))
+			}
 		} else {
-			h.log.Error(ErrEncodeResponse(err))
+			if h != nil && h.log != nil {
+				h.log.Error(ErrEncodeResponse(err))
+			}
 		}
 	}
 }

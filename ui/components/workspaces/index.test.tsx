@@ -30,6 +30,7 @@ const {
   EMPTY_QUERY_RESULT,
   NOOP_MUTATION,
   UI_STATE,
+  ColumnVisibilityControl,
 } = vi.hoisted(() => ({
   notify: vi.fn(),
   createWorkspace: vi.fn(),
@@ -39,6 +40,7 @@ const {
   EMPTY_QUERY_RESULT: { data: undefined, isLoading: false },
   NOOP_MUTATION: [vi.fn()],
   UI_STATE: { ui: { organization: { id: 'org-1' } } },
+  ColumnVisibilityControl: vi.fn<(props: any) => null>(() => null),
 }));
 
 vi.mock('../../utils/hooks/useNotification', () => ({
@@ -102,8 +104,23 @@ vi.mock('../shared/Modal/Modal', () => ({
 
 vi.mock('../general/PromptComponent', () => ({ default: React.forwardRef(() => null) }));
 vi.mock('@/components/lifecycle/general', () => ({ EmptyState: () => <div>empty</div> }));
-vi.mock('@/components/general/ViewSwitch', () => ({ default: () => null }));
-vi.mock('./WorkspaceGridView', () => ({ default: () => null }));
+vi.mock('@/components/general/ViewSwitch', () => ({
+  default: ({ changeView }: any) => (
+    <button data-testid="grid-view" onClick={() => changeView('grid')}>
+      grid
+    </button>
+  ),
+}));
+vi.mock('./WorkspaceGridView', () => ({
+  default: ({ page, setPage }: any) => (
+    <div>
+      <span data-testid="grid-page">{page}</span>
+      <button data-testid="go-to-page-3" onClick={() => setPage(2)}>
+        page 3
+      </button>
+    </div>
+  ),
+}));
 vi.mock('./WorkspaceDataTable', () => ({ default: () => null }));
 vi.mock('./styles', () => ({ CreateButtonWrapper: ({ children }: any) => <div>{children}</div> }));
 vi.mock('@/assets/styles/general/tool.styles', () => ({
@@ -124,14 +141,18 @@ vi.mock('@sistent/sistent', () => ({
       {children}
     </button>
   ),
-  CustomColumnVisibilityControl: () => null,
+  CustomColumnVisibilityControl: ColumnVisibilityControl,
   ErrorBoundary: ({ children }: any) => <>{children}</>,
   Modal: ({ children, open }: any) => (open ? <div>{children}</div> : null),
   ModalFooter: ({ children }: any) => <div>{children}</div>,
   NoSsr: ({ children }: any) => <>{children}</>,
   PROMPT_VARIANTS: { DANGER: 'danger' },
   Select: ({ children, ...rest }: any) => <select {...rest}>{children}</select>,
-  SearchBar: () => null,
+  SearchBar: ({ onSearch }: any) => (
+    <button data-testid="search-prod" onClick={() => onSearch('prod')}>
+      search
+    </button>
+  ),
   TeamsIcon: () => null,
   Typography: ({ children }: any) => <span>{children}</span>,
   WorkspaceIcon: () => null,
@@ -269,5 +290,56 @@ describe('Workspaces create flow notifications', () => {
     createWorkspace.mockReturnValue({ unwrap: () => Promise.resolve({ id: 'ws-1' }) });
     await userEvent.setup().click(screen.getByTestId('submit-workspace'));
     await waitFor(() => expect(screen.queryByTestId('submit-workspace')).not.toBeInTheDocument());
+  });
+});
+
+describe('Workspaces search paging', () => {
+  it('goes back to the first page of the grid when the search changes', async () => {
+    const originalData = WORKSPACES_QUERY_RESULT.data;
+    // The grid only renders when the current page has workspaces.
+    WORKSPACES_QUERY_RESULT.data = {
+      workspaces: [{ id: 'ws-1', name: 'team' }],
+      totalCount: 40,
+    } as any;
+    try {
+      const user = userEvent.setup();
+      render(<Workspaces onSelectWorkspace={undefined} />);
+
+      await user.click(screen.getByTestId('grid-view'));
+      await user.click(await screen.findByTestId('go-to-page-3'));
+      expect(screen.getByTestId('grid-page')).toHaveTextContent('2');
+
+      await user.click(screen.getByTestId('search-prod'));
+      expect(screen.getByTestId('grid-page')).toHaveTextContent('0');
+    } finally {
+      WORKSPACES_QUERY_RESULT.data = originalData;
+    }
+  });
+});
+
+describe('Workspaces column visibility menu', () => {
+  it("toggles the table's camelCase column names", () => {
+    render(<Workspaces onSelectWorkspace={undefined} />);
+    const { columns } = ColumnVisibilityControl.mock.calls.at(-1)[0];
+    // The keys the menu writes into columnVisibility must be the column names
+    // WorkspaceDataTable declares (pinned in WorkspaceDataTable.test.tsx),
+    // or toggling them changes nothing.
+    expect(columns.map((c: any) => c.name)).toEqual([
+      'id',
+      'ownerEmail',
+      'ownerId',
+      'orgName',
+      'name',
+      'description',
+      'owner',
+      'teamCount',
+      'designCount',
+      'viewCount',
+      'environmentCount',
+      'environments',
+      'createdAt',
+      'updatedAt',
+      'actions',
+    ]);
   });
 });

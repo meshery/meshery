@@ -25,8 +25,20 @@ describe('initiateQuery', () => {
 
     const result = await initiateQuery({ initiate }, variables);
 
-    expect(initiate).toHaveBeenCalledWith(variables);
+    expect(initiate).toHaveBeenCalledWith(variables, undefined);
     expect(dispatch).toHaveBeenCalledWith({ type: 'thunk-action' });
+    expect(result).toEqual({ data: { ok: true } });
+  });
+
+  it('forwards options to query.initiate when provided', async () => {
+    dispatch.mockResolvedValue({ data: { ok: true } });
+    const initiate = vi.fn().mockReturnValue({ type: 'thunk-action' });
+    const variables = { id: 'abc' };
+    const options = { forceRefetch: true };
+
+    const result = await initiateQuery({ initiate }, variables, options);
+
+    expect(initiate).toHaveBeenCalledWith(variables, options);
     expect(result).toEqual({ data: { ok: true } });
   });
 

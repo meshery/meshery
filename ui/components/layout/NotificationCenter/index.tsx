@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { CustomTooltip, NoSsr } from '@sistent/sistent';
 import {
   alpha,
@@ -15,6 +15,7 @@ import {
 } from '@sistent/sistent';
 import Filter from './filter';
 import BellIcon from '../../../assets/icons/BellIcon';
+import { resolveNotificationIcon } from './notificationIcons';
 import { iconMedium } from '../../../css/icons.styles';
 import {
   NOTIFICATION_CENTER_TOGGLE_CLASS,
@@ -41,9 +42,11 @@ import {
   closeNotificationCenter,
   loadEvents,
   loadNextPage,
+  retryCurrentPage,
   selectAreAllEventsChecked,
   selectCheckedEvents,
   selectEvents,
+  selectLoadError,
   selectSeverity,
   toggleNotificationCenter,
   updateCheckAllEvents,
@@ -216,7 +219,7 @@ const Header = ({ handleFilter, handleClose }) => {
     });
   };
 
-  const Icon = uiConfig.icon || BellIcon;
+  const Icon = resolveNotificationIcon(uiConfig.icon);
   return (
     <NotificationContainer>
       <Title>
@@ -363,14 +366,22 @@ const BulkActions = () => {
   );
 };
 
-const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
+const EventsView = ({ handleLoadNextPage, handleRetry, isFetching, hasMore, loadError }) => {
   const events = useSelector(selectEvents);
   // const page = useSelector((state) => state.events.current_view.page);
   const lastEventRef = useRef(null);
-  const intersectionObserver = useRef(
-    new IntersectionObserver(
+
+  useEffect(() => {
+    const node = lastEventRef.current;
+    if (!node) {
+      return;
+    }
+    const observer = new IntersectionObserver(
       (entries) => {
-        if (isFetching && !hasMore) {
+        // Stop auto-loading while fetching, when there is nothing more to load,
+        // or when the last page failed. In the error case the user retries
+        // explicitly, so auto-firing here would create a request loop.
+        if (isFetching || !hasMore || loadError) {
           return;
         }
         const firstEntry = entries[0];
@@ -379,20 +390,12 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
         }
       },
       { threshold: 1 },
-    ),
-  );
-
-  useEffect(() => {
-    const currentObserver = intersectionObserver.current;
-    if (lastEventRef.current) {
-      currentObserver.observe(lastEventRef.current);
-    }
+    );
+    observer.observe(node);
     return () => {
-      if (lastEventRef.current) {
-        currentObserver.unobserve(lastEventRef.current);
-      }
+      observer.unobserve(node);
     };
-  }, [lastEventRef.current]);
+  }, [isFetching, hasMore, loadError, handleLoadNextPage]);
 
   return (
     <>
@@ -404,10 +407,27 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
         );
       })}
 
-      {events.length === 0 && <EmptyState />}
+      {events.length === 0 && !loadError && <EmptyState />}
 
       <div ref={lastEventRef}></div>
       {isFetching && hasMore && <Loading />}
+      {loadError && !isFetching && (
+        <Box
+          role="alert"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '1rem',
+          }}
+        >
+          <Typography variant="body2">Couldn&apos;t load more notifications.</Typography>
+          <Button variant="outlined" size="small" onClick={handleRetry}>
+            Retry
+          </Button>
+        </Box>
+      )}
     </>
   );
 };
@@ -422,6 +442,7 @@ const NotificationCenterDrawer = () => {
   const isNotificationCenterOpen = useSelector((state) => state.events.isNotificationCenterOpen);
   const [fetchEvents, { isFetching }] = useLazyGetEventsQuery();
   const hasMore = useSelector((state) => state.events.current_view.has_more);
+  const loadError = useSelector(selectLoadError);
   const initialViewToLoad = useSelector((state) => state.events.view_to_fetch_on_open);
 
   const [isLoadingFilters, setIsLoadingFilters] = useState(false); // whether we are loading filters and basically should show loading spinner as we are loading the whole page
@@ -432,9 +453,13 @@ const NotificationCenterDrawer = () => {
     );
   }, []);
 
-  const loadMore = () => {
+  const loadMore = useCallback(() => {
     dispatch(loadNextPage(fetchEvents));
-  };
+  }, [dispatch, fetchEvents]);
+
+  const retry = useCallback(() => {
+    dispatch(retryCurrentPage(fetchEvents));
+  }, [dispatch, fetchEvents]);
 
   const handleClose = () => {
     if (!isNotificationCenterOpen) {
@@ -493,8 +518,10 @@ const NotificationCenterDrawer = () => {
                   ) : (
                     <EventsView
                       handleLoadNextPage={loadMore}
+                      handleRetry={retry}
                       isFetching={isFetching}
                       hasMore={hasMore}
+                      loadError={loadError}
                     />
                   )}
                 </Container>
