@@ -79,7 +79,6 @@ mesheryctl filter list 'Test Filter'
 
 		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, filterListFlagsProvided.PageSize, filterListFlagsProvided.Page-1)
 		if err != nil {
-			utils.Log.Error(err)
 			return ErrFetchFilter(err)
 		}
 
