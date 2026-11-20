@@ -1,0 +1,28 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cytoscape Node Shape: Round-Rectangle -->
+  <rect x="5" y="5" width="90" height="90" rx="18" stroke="#326CE5" stroke-width="4" fill="none"/>
+  <!-- HTTP Protocol Header Badge -->
+  <rect x="33" y="13" width="34" height="13" rx="3.5" stroke="#326CE5" stroke-width="1.8" fill="none"/>
+  <path d="M38 16.5V22.5M38 19.5H42M42 16.5V22.5" stroke="#326CE5" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M45.5 16.5H50M47.7 16.5V22.5" stroke="#326CE5" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M52.5 16.5H57M54.7 16.5V22.5" stroke="#326CE5" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M60 16.5V22.5M60 16.5H63.2C64.3 16.5 64.3 19.5 63.2 19.5H60" stroke="#326CE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Ingress Gateway Entry Point -->
+  <circle cx="20" cy="54" r="4.5" fill="#326CE5"/>
+  <circle cx="20" cy="54" r="2" fill="#FFFFFF"/>
+  <!-- Ingress Trunk Line -->
+  <path d="M24.5 54H40" stroke="#326CE5" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="40" cy="54" r="4" fill="#326CE5"/>
+  <!-- Upper Route Branch -->
+  <path d="M40 54C46 54 48 38 56 38H68" fill="none" stroke="#326CE5" stroke-width="3" stroke-linecap="round"/>
+  <polygon points="67,34.5 75,38 67,41.5" fill="#326CE5"/>
+  <circle cx="81" cy="38" r="3" fill="#326CE5"/>
+  <!-- Middle Route Branch -->
+  <path d="M44 54H68" fill="none" stroke="#326CE5" stroke-width="3" stroke-linecap="round"/>
+  <polygon points="67,50.5 75,54 67,57.5" fill="#326CE5"/>
+  <circle cx="81" cy="54" r="3" fill="#326CE5"/>
+  <!-- Lower Route Branch -->
+  <path d="M40 54C46 54 48 70 56 70H68" fill="none" stroke="#326CE5" stroke-width="3" stroke-linecap="round"/>
+  <polygon points="67,66.5 75,70 67,73.5" fill="#326CE5"/>
+  <circle cx="81" cy="70" r="3" fill="#326CE5"/>
+</svg>
