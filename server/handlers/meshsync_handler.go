@@ -288,8 +288,8 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 
 	query := persister.Model(&model.KubernetesResource{}).
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
-		Preload("KubernetesResourceMeta").
-		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
+		Preload("KubernetesResourceMeta")
+	query = filterByClusters(query, filter.ClusterIds)
 
 	query = filterByNamespaces(query, namespaces)
 	query = searchResources(query, search)
