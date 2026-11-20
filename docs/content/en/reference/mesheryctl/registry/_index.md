@@ -14,7 +14,7 @@ Manage the capability registry
 
 ## Synopsis
 
-Manage the state and contents of Meshery’s internal registry of capabilities.
+Generate, publish, update, and purge models and components in Meshery's capability registry.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -27,10 +27,52 @@ mesheryctl registry [flags]
 
 ## Examples
 
+Generate models from a spreadsheet
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl registry [subcommand]
+mesheryctl registry generate --spreadsheet-id [spreadsheet-id] --spreadsheet-cred [base64-encoded-google-service-account-credential]
+
+</div>
+</div>
+</pre> 
+
+Publish models to Meshery Cloud / Remote Provider
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
+
+</div>
+</div>
+</pre> 
+
+Update models from spreadsheets or website
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl registry update --spreadsheet-id [spreadsheet-id] --spreadsheet-cred [base64-encoded-google-service-account-credential]
+
+</div>
+</div>
+</pre> 
+
+Dry run purging models directory, keeping only the latest version of each model
+Run from the root of a meshery/meshery fork; purge operates on ./models
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl registry purge --dry-run
+
+</div>
+</div>
+</pre> 
+
+Purge older model versions, retaining the latest 2 versions per model
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl registry purge --retain 2
 
 </div>
 </div>
@@ -49,7 +91,7 @@ mesheryctl registry [subcommand]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -57,4 +99,4 @@ mesheryctl registry [subcommand]
 
 ## See Also
 
-Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

@@ -474,6 +474,24 @@ touching any of them.
 - Hooks in `.agents/hooks/`: `format-frontend.sh` (post-edit Prettier) and
   `block-lockfiles.sh` (pre-edit lock-file guard).
 
+## Worktrees and landing a change
+
+- **Work in a treehouse worktree, never in the main clone.** Other agent sessions and the
+  no-mistakes pipeline share the main clone. Take a worktree with
+  `treehouse get --lease -b <branch>` (it prints the path; `--base <branch>` starts it from
+  another branch), work there, and release it with `treehouse return <path>` once the change
+  has merged. `treehouse status` lists the pool. Never make one with `git worktree add` or a
+  second clone.
+- **Land every change through no-mistakes, at most three runs per pull request.** Commit in
+  the worktree, then run `no-mistakes axi run --intent "<goal>"` (a clone without a
+  `no-mistakes` remote needs `no-mistakes init` once). `no-mistakes axi status` shows the step
+  and its findings, and `no-mistakes axi respond` answers a review gate. The pipeline reviews,
+  tests, pushes and opens the pull request. Drive it with the vendored skill at
+  `.agents/skills/no-mistakes/SKILL.md`. After the third run, open an issue for anything
+  still flagged and hand the pull request to a human. A run that stopped on a usage limit
+  counts; one cancelled before it did anything does not. Three runs do not waive the merge gate.
+- **A pull request that changes any path outside documentation, the docs website, and CI merges only with a green no-mistakes run on its current head.** Documentation and the docs website are `docs/**` plus the root `CNAME`. CI is `.github/workflows/**`. The check is `PR must be raised via no-mistakes`: `review`, `test`, and `document` must each be `completed` in a head-bound attestation. Detail: [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md#no-mistakes-merge-gate).
+
 ## Reusable Workflows Consumed by Other Repos
 
 `.github/workflows/*.{yml,yaml}` here are called by repos across `meshery` and
@@ -510,7 +528,7 @@ worked detail behind them — open the one that matches what you are working on.
 | A build that fails for an unrelated-looking reason | [Build Environment Gotchas](./docs/content/en/project/contributing/contributing-build-environment.md) |
 | MeshKit error codes | [How to write MeshKit compatible errors](./docs/content/en/project/contributing/contributing-error.md) |
 | A Go lint rule firing, or adding one | [Go Lint Rules](./docs/content/en/project/contributing/contributing-lint.md) |
-| Releases, CI secrets, the QA dashboard | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
+| Releases, CI secrets, the QA dashboard, the no-mistakes merge gate | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
 | A reusable workflow called from another repo | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
 | Connections and credential secrets | [Connections](./docs/content/en/project/contributing/models/connections.md) |
 | A permission-gated page, control or key | [Extensibility: Authorization](./docs/content/en/reference/extensibility/authorization/index.md) |

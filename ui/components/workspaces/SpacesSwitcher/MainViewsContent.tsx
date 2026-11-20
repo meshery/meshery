@@ -305,6 +305,7 @@ const MainViewsContent = ({
           viewId={selectedView?.id}
           viewName={selectedView?.name}
           metadata={selectedView?.metadata}
+          refetch={refetch}
         />
       )}
       {moveModal && (

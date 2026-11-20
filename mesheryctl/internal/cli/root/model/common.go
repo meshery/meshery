@@ -5,7 +5,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta1/model"
 )
@@ -20,8 +19,15 @@ func promptModelSelection(modelSearchTerm string, apiPath string) (*model.ModelD
 			SearchTerm: modelSearchTerm,
 		},
 		formatLabel,
-		func(data *models.MeshmodelsAPIResponse) ([]model.ModelDefinition, int64) {
-			return data.Models, data.TotalCount
+		func(data *model.MeshModelModelsPage) ([]model.ModelDefinition, int64) {
+			if data == nil || data.Models == nil {
+				return nil, 0
+			}
+			total := int64(0)
+			if data.TotalCount != nil {
+				total = int64(*data.TotalCount)
+			}
+			return *data.Models, total
 		},
 		selectedModel,
 	)

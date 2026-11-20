@@ -88,15 +88,17 @@ const Panel: React.FC<PanelProps> = ({ panel, series, loading, error }) => {
     );
   } else if (error) {
     body = (
-      <Center>
-        <Tooltip title={error}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-            <WarningIcon style={{ color: theme.palette.warning.default }} />
-            <Typography variant="caption" color="textSecondary">
-              Query failed
-            </Typography>
-          </Box>
-        </Tooltip>
+      <Center sx={{ overflow: 'auto' }}>
+        <Box role="alert" sx={{ maxHeight: '100%', overflowY: 'auto', px: 1 }}>
+          <WarningIcon style={{ color: theme.palette.warning.default }} />
+          <Typography
+            variant="caption"
+            color="error"
+            sx={{ display: 'block', overflowWrap: 'anywhere' }}
+          >
+            {error}
+          </Typography>
+        </Box>
       </Center>
     );
   } else if (!hasData) {
