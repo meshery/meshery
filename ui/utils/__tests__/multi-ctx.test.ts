@@ -126,6 +126,12 @@ describe('getK8sContextFromClusterId', () => {
   it('returns an empty object when no match is found', () => {
     expect(getK8sContextFromClusterId('does-not-exist', sampleConfig)).toEqual({});
   });
+
+  it('returns an empty object when k8sConfig is not an array', () => {
+    expect(getK8sContextFromClusterId('srv-1', undefined)).toEqual({});
+    expect(getK8sContextFromClusterId('srv-1', null)).toEqual({});
+    expect(getK8sContextFromClusterId('srv-1', {})).toEqual({});
+  });
 });
 
 describe('getClusterNameFromClusterId', () => {
@@ -135,6 +141,11 @@ describe('getClusterNameFromClusterId', () => {
 
   it('returns an empty string when no match is found', () => {
     expect(getClusterNameFromClusterId('missing', sampleConfig)).toBe('');
+  });
+
+  it('returns an empty string when k8sConfig is not an array', () => {
+    expect(getClusterNameFromClusterId('srv-1', undefined)).toBe('');
+    expect(getClusterNameFromClusterId('srv-1', {})).toBe('');
   });
 });
 

@@ -38,6 +38,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const ts = require('typescript');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
@@ -66,8 +67,8 @@ const SCANS = [
     ],
     // Top-level config files that aren't under any scanned `dirs` entry but
     // can still hold @mui imports. The next.config.js webpack alias keys
-    // (e.g. `'@mui/material': path.resolve(...)`) don't match the audit
-    // regex (no `from`/`require(` prefix), so this list is currently just
+    // (e.g. `'@mui/material': path.resolve(...)`) are not import declarations
+    // or require() calls, so this list is currently just
     // remote-component.config.js, which has many real require() calls.
     // Listed by relative path; resolved from `root`.
     files: ['remote-component.config.js'],
@@ -135,14 +136,75 @@ const IGNORED_DIRS = new Set([
 
 const EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx']);
 
-// Match any import/require from @mui/*, @material-ui/*, or @rjsf/mui.
-// Covers:
-//   import X from '@mui/material'
-//   import { X } from '@mui/material'
-//   import '@mui/material/Button'
-//   const X = require('@mui/material')
-const IMPORT_PATTERN =
-  /(?:from\s+|require\(\s*)['"](@mui\/[^'"]+|@material-ui\/[^'"]+|@rjsf\/mui)['"]/g;
+// Match imports from @mui/*, @material-ui/*, or @rjsf/mui using
+// the TypeScript parser so comments and ordinary strings are ignored.
+function isMuiModuleSpecifier(moduleName) {
+  return (
+    moduleName.startsWith('@mui/') ||
+    moduleName.startsWith('@material-ui/') ||
+    moduleName === '@rjsf/mui'
+  );
+}
+
+function findMuiImports(file, src) {
+  const scriptKindByExtension = {
+    '.js': ts.ScriptKind.JS,
+    '.jsx': ts.ScriptKind.JSX,
+    '.ts': ts.ScriptKind.TS,
+    '.tsx': ts.ScriptKind.TSX,
+  };
+
+  const sourceFile = ts.createSourceFile(
+    file,
+    src,
+    ts.ScriptTarget.Latest,
+    true,
+    scriptKindByExtension[path.extname(file)] ?? ts.ScriptKind.TSX,
+  );
+
+  const matches = [];
+
+  function visit(node) {
+    // Detect ES module imports and re-exports.
+    if (
+      (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
+      node.moduleSpecifier &&
+      ts.isStringLiteralLike(node.moduleSpecifier) &&
+      isMuiModuleSpecifier(node.moduleSpecifier.text)
+    ) {
+      matches.push(node.moduleSpecifier.text);
+    }
+
+    // Detect TypeScript import-equals declarations.
+    // Example: import Mui = require('@mui/material/Button');
+    if (
+      ts.isImportEqualsDeclaration(node) &&
+      ts.isExternalModuleReference(node.moduleReference) &&
+      node.moduleReference.expression &&
+      ts.isStringLiteralLike(node.moduleReference.expression) &&
+      isMuiModuleSpecifier(node.moduleReference.expression.text)
+    ) {
+      matches.push(node.moduleReference.expression.text);
+    }
+
+    // Detect CommonJS require() calls.
+    if (
+      ts.isCallExpression(node) &&
+      ts.isIdentifier(node.expression) &&
+      node.expression.text === 'require' &&
+      node.arguments.length > 0 &&
+      ts.isStringLiteralLike(node.arguments[0]) &&
+      isMuiModuleSpecifier(node.arguments[0].text)
+    ) {
+      matches.push(node.arguments[0].text);
+    }
+
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return matches;
+}
 
 function walk(dir, out, scanErrors) {
   let entries;
@@ -180,15 +242,7 @@ function scanFile(file, scanErrors) {
     return null;
   }
 
-  const matches = [];
-  let m;
-  IMPORT_PATTERN.lastIndex = 0;
-
-  while ((m = IMPORT_PATTERN.exec(src)) !== null) {
-    matches.push(m[1]);
-  }
-
-  return matches;
+  return findMuiImports(file, src);
 }
 function runScan(scan) {
   const files = [];
@@ -222,19 +276,40 @@ function runScan(scan) {
 
   const offenders = [];
   let totalMatches = 0;
+  let scannedFiles = 0;
   let skippedAllowlisted = 0;
+  const allowlistStatus = {
+    active: [],
+    unused: [],
+    missing: [],
+    uncovered: [],
+  };
+  const unreadableAllowlisted = new Set();
 
   for (const file of files) {
+    const rel = path.relative(scan.root, file);
     const matches = scanFile(file, scanErrors);
 
-    if (matches === null || matches.length === 0) continue;
-
-    const rel = path.relative(scan.root, file);
-
-    if (scan.allowlist.has(rel)) {
-      skippedAllowlisted += 1;
+    if (matches === null) {
+      if (scan.allowlist.has(rel)) {
+        unreadableAllowlisted.add(rel);
+      }
       continue;
     }
+    scannedFiles += 1;
+
+    if (scan.allowlist.has(rel)) {
+      if (matches.length > 0) {
+        allowlistStatus.active.push(rel);
+        skippedAllowlisted += 1;
+      } else {
+        allowlistStatus.unused.push(rel);
+      }
+
+      continue;
+    }
+
+    if (matches.length === 0) continue;
 
     offenders.push({
       scan: scan.name,
@@ -245,15 +320,45 @@ function runScan(scan) {
 
     totalMatches += matches.length;
   }
+  for (const rel of scan.allowlist) {
+    if (
+      allowlistStatus.active.includes(rel) ||
+      allowlistStatus.unused.includes(rel) ||
+      unreadableAllowlisted.has(rel)
+    ) {
+      continue;
+    }
 
+    const full = path.join(scan.root, rel);
+
+    try {
+      fs.statSync(full);
+      allowlistStatus.uncovered.push(rel);
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        allowlistStatus.missing.push(rel);
+      } else {
+        const message = `audit-mui: unable to check allowlist file ${full}: ${error.message}`;
+        process.stderr.write(`${message}\n`);
+        scanErrors.push(message);
+      }
+    }
+  }
+
+  allowlistStatus.active.sort();
+  allowlistStatus.unused.sort();
+  allowlistStatus.missing.sort();
+  allowlistStatus.uncovered.sort();
   offenders.sort((a, b) => b.count - a.count || a.file.localeCompare(b.file));
 
   return {
     name: scan.name,
     files: offenders.length,
     matches: totalMatches,
+    scannedFiles,
     skippedAllowlisted,
     allowlistSize: scan.allowlist.size,
+    allowlistStatus,
     offenders,
     scanErrors,
     scanComplete: scanErrors.length === 0,
@@ -268,6 +373,7 @@ function main() {
 
   const results = SCANS.map(runScan);
   const totalFiles = results.reduce((acc, r) => acc + r.files, 0);
+  const totalScannedFiles = results.reduce((acc, r) => acc + r.scannedFiles, 0);
   const totalMatches = results.reduce((acc, r) => acc + r.matches, 0);
   const totalAllowlist = results.reduce((acc, r) => acc + r.allowlistSize, 0);
   const scanComplete = results.every((r) => r.scanComplete);
@@ -284,14 +390,17 @@ function main() {
         {
           audit: 'mui',
           files: totalFiles,
+          scannedFiles: totalScannedFiles,
           matches: totalMatches,
           scanComplete,
           scans: results.map((r) => ({
             name: r.name,
             files: r.files,
+            scannedFiles: r.scannedFiles,
             matches: r.matches,
             allowlistSize: r.allowlistSize,
             allowlistedFilesWithMuiImports: r.skippedAllowlisted,
+            allowlistStatus: r.allowlistStatus,
             scanComplete: r.scanComplete,
             scanErrors: r.scanErrors,
             offenders: r.offenders,
@@ -350,6 +459,35 @@ function main() {
       }\n`,
     );
   }
+  const staleAllowlistEntries = results.flatMap((r) => [
+    ...r.allowlistStatus.unused.map((file) => ({
+      scan: r.name,
+      status: 'unused',
+      file,
+    })),
+    ...r.allowlistStatus.missing.map((file) => ({
+      scan: r.name,
+      status: 'missing',
+      file,
+    })),
+    ...r.allowlistStatus.uncovered.map((file) => ({
+      scan: r.name,
+      status: 'uncovered',
+      file,
+    })),
+  ]);
+
+  if (staleAllowlistEntries.length > 0) {
+    process.stdout.write('\nAllowlist maintenance:\n');
+
+    for (const entry of staleAllowlistEntries) {
+      process.stdout.write(`  [${entry.status}] [${entry.scan}] ${entry.file}\n`);
+    }
+
+    process.stdout.write(
+      '  Note: These entries are informational and do not affect --fail-on-new.\n',
+    );
+  }
 
   if (!scanComplete) {
     process.stderr.write('WARNING: Scan incomplete. Check the reported scan errors.\n');
@@ -358,6 +496,7 @@ function main() {
   process.stdout.write('\n');
   process.stdout.write('Summary:\n');
   process.stdout.write(`  Files:                ${totalFiles}\n`);
+  process.stdout.write(`  Files scanned:        ${totalScannedFiles}\n`);
   process.stdout.write(`  Matches:              ${totalMatches}\n`);
   process.stdout.write(`  Allowlisted (total):  ${totalAllowlist}\n\n`);
   process.stdout.write(`AUDIT mui files=${totalFiles} matches=${totalMatches}\n`);

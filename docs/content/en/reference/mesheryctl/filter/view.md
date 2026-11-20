@@ -28,7 +28,7 @@ mesheryctl filter view [flags]
 ## Examples
 
 View the specified WASM filter
-A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.
+Provide a full filter name or a unique ID prefix.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -68,7 +68,7 @@ mesheryctl filter view --all --output-format json -s
 </div>
 </pre> 
 
-//View multi-word named filter files. Multi-word filter names should be enclosed in quotes
+View multi-word named filter files. Multi-word filter names should be enclosed in quotes
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>

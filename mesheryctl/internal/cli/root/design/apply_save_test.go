@@ -141,7 +141,58 @@ func TestDeleteWithGithubURLUndeploysTheDownloadedDesign(t *testing.T) {
 	require.NoError(t, deleteCmd.RunE(deleteCmd, nil))
 
 	assert.Equal(t, []string{"github", "undeploy"}, requests.calls)
-	assert.Equal(t, string(content), string(requests.deployBody))
+	assertUndeployPayload(t, requests.deployBody, content)
+}
+
+// TestDeleteWithLocalFileUndeploysWithDeployPayload verifies that a design
+// given as a local file reaches DELETE /api/pattern/deploy as the JSON payload
+// the server decodes, whether it is passed with --file or positionally.
+func TestDeleteWithLocalFileUndeploysWithDeployPayload(t *testing.T) {
+	_, filename, _, _ := runtime.Caller(0)
+	localFile := filepath.Join(filepath.Dir(filename), "fixtures", "sampleDesign.golden")
+
+	tests := []struct {
+		name string
+		file string
+		args []string
+	}{
+		{name: "file flag", file: localFile},
+		{name: "positional file argument", args: []string{localFile}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			testContext := utils.InitTestEnvironment(t)
+			defer utils.StopMockery(t)
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
+			utils.TokenFlag = utils.GetToken(t)
+
+			content := sampleDesign(t)
+			requests := mockDesignServer(t, testContext.BaseURL, content)
+
+			originalFile := file
+			defer func() { file = originalFile }()
+			file = tt.file
+
+			require.NoError(t, deleteCmd.RunE(deleteCmd, tt.args))
+
+			assert.Equal(t, []string{"undeploy"}, requests.calls)
+			assertUndeployPayload(t, requests.deployBody, content)
+		})
+	}
+}
+
+// assertUndeployPayload checks that body is the JSON deploy payload the server's
+// PatternFileHandler decodes, carrying content as its patternFile. A raw design
+// body is rejected by the server with HTTP 400 (meshery-server-1049).
+func assertUndeployPayload(t *testing.T, body, content []byte) {
+	t.Helper()
+
+	var payload struct {
+		PatternFile string `json:"patternFile"`
+	}
+	require.NoError(t, json.Unmarshal(body, &payload), "undeploy body must be a JSON deploy payload, got: %.80q", body)
+	assert.Equal(t, string(content), payload.PatternFile)
 }
 
 // TestFetchDesignFromGithub verifies that both GitHub URL forms resolve to the

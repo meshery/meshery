@@ -40,8 +40,8 @@ var linkDocPatternView = map[string]string{
 }
 
 var viewCmd = &cobra.Command{
-	Use:   "view design name",
-	Short: "Display a design content",
+	Use:   "view [design-name | ID]",
+	Short: "Display design content",
 	Long: `Display the content of a specific design based on name or id.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/design/view`,
 	Args: cobra.MaximumNArgs(1),

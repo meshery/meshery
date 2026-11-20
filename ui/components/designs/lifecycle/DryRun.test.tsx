@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@sistent/sistent', () => {
   const styled = (_tag: any, _options?: any) => () => {
@@ -27,7 +27,7 @@ vi.mock('@sistent/sistent', () => {
         {children}
       </span>
     ),
-    Collapse: ({ children }: any) => <div>{children}</div>,
+    Collapse: ({ children, in: isOpen }: any) => (isOpen ? <div>{children}</div> : null),
     useTheme: () => ({
       palette: {
         text: { default: '#000' },
@@ -61,7 +61,7 @@ vi.mock('../../../machines/validator/designValidator', () => ({
     dryRunDesignUnDeployment: vi.fn(),
   },
   designValidatorEvents: {
-    tapOnError: vi.fn(),
+    tapOnError: vi.fn((data: any) => ({ type: 'TAP_ON_ERROR', data })),
   },
   useDryRunValidationResults: vi.fn(),
   useIsValidatingDryRun: vi.fn(),
@@ -89,7 +89,11 @@ vi.mock('./styles', () => ({
     </button>
   ),
   DryRunComponentStyled: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
-  DryRunErrorContainer: ({ children, onClick }: any) => <div onClick={onClick}>{children}</div>,
+  DryRunErrorContainer: ({ children, clickable, disablePadding: _dp, ...rest }: any) => (
+    <div data-clickable={String(clickable)} {...rest}>
+      {children}
+    </div>
+  ),
   DryRunSignleError: ({ primary }: any) => <div>{primary}</div>,
   DryRunRootListStyled: ({ children, subheader }: any) => (
     <div>
@@ -222,5 +226,95 @@ describe('DryRunDesign view fallback', () => {
 
     expect(screen.getByTestId('toggle-view-matrix')).toBeInTheDocument();
     expect(screen.getByTestId('compatibility-matrix')).toBeInTheDocument();
+  });
+});
+
+describe('dry-run error deep links', () => {
+  const deployment = { id: 'comp-1', displayName: 'web', styles: {} };
+  const replicasError = {
+    Type: 'FieldValueInvalid',
+    FieldPath: 'Deployment.spec.replicas',
+    Message: 'bad',
+  };
+  const componentErrors = [
+    {
+      type: 'ComponentError',
+      compName: 'web',
+      component: deployment,
+      contextId: 'ctx',
+      errors: [replicasError],
+    },
+  ];
+  const tapsSent = (send: ReturnType<typeof vi.fn>) =>
+    send.mock.calls.map(([event]) => event).filter((event) => event?.type === 'TAP_ON_ERROR');
+
+  // jsdom implements no layout, so it has no scrollIntoView.
+  const scrollIntoView = vi.fn();
+
+  beforeEach(() => {
+    scrollIntoView.mockClear();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    vi.mocked(useDryRunValidationResults).mockReturnValue(componentErrors);
+    vi.mocked(useIsValidatingDryRun).mockReturnValue(false);
+    vi.mocked(useDryRunRawResponse).mockReturnValue(null);
+  });
+
+  it('expands the component Kanvas opened the dry run for and links each error to it', () => {
+    const send = vi.fn();
+    render(
+      <DryRunDesign
+        handleClose={vi.fn()}
+        currentComponentId="comp-1"
+        design={{ name: 'd' }}
+        validationMachine={{ send }}
+        selectedK8sContexts={[]}
+        deployment_type="deploy"
+        includeDependencies={false}
+      />,
+    );
+
+    // Expanded and scrolled to: Kanvas identifies it by id, not by name.
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
+    const error = screen.getByTestId('dry-run-error');
+    expect(error).toHaveAttribute('role', 'button');
+    expect(error).toHaveAttribute('data-clickable', 'true');
+
+    fireEvent.click(error);
+    expect(tapsSent(send)).toEqual([
+      {
+        type: 'TAP_ON_ERROR',
+        data: { error: replicasError, type: 'dryRun', component: deployment },
+      },
+    ]);
+  });
+
+  it('lists errors as plain text where there is no designer to navigate into', () => {
+    const send = vi.fn();
+    render(
+      <DryRunDesign
+        handleClose={vi.fn()}
+        currentComponentId="comp-1"
+        design={{ name: 'd' }}
+        validationMachine={{ send }}
+        canNavigateToErrors={false}
+        selectedK8sContexts={[]}
+        deployment_type="deploy"
+        includeDependencies={false}
+      />,
+    );
+
+    const error = screen.getByTestId('dry-run-error');
+    expect(error).not.toHaveAttribute('role');
+    expect(error).toHaveAttribute('data-clickable', 'false');
+    fireEvent.click(error);
+    expect(tapsSent(send)).toEqual([]);
+  });
+
+  it('defaults FormatDryRunResponse to plain text, as the notification center renders stored events', () => {
+    render(<FormatDryRunResponse dryRunErrors={componentErrors} currentComponentName="web" />);
+
+    const error = screen.getByTestId('dry-run-error');
+    expect(error).not.toHaveAttribute('role');
+    expect(error).toHaveAttribute('data-clickable', 'false');
   });
 });

@@ -4,25 +4,38 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strings"
 	"sync"
 	"testing"
 
+	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
+	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/category"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/model"
+	compv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
+	connv1beta3 "github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 func newTestRegistryDB(t *testing.T) (*registry.RegistryManager, *database.Handler) {
@@ -66,6 +79,140 @@ func seedTestExportModel(t *testing.T, rm *registry.RegistryManager, modelName s
 	require.NoError(t, err, "seedTestExportModel: RegisterEntity failed")
 }
 
+// seedTestExportModelVersion seeds a model with explicit version strings,
+// so a traversal version can be registered for export testing.
+func seedTestExportModelVersion(t *testing.T, rm *registry.RegistryManager, modelName, modelVersion, innerVersion string) {
+	t.Helper()
+	conn := connection.Connection{
+		Name:    "test-registrant",
+		Kind:    modelName,
+		Type:    "platform",
+		SubType: "orchestration",
+		Status:  connection.ConnectionStatusConnected,
+	}
+	m := &model.ModelDefinition{
+		Name:          modelName,
+		DisplayName:   "Test Model",
+		SchemaVersion: "models.meshery.io/v1beta1",
+		Version:       modelVersion,
+		Model:         model.Model{Version: innerVersion},
+		Category:      category.CategoryDefinition{Name: "Orchestration"},
+		Status:        model.Enabled,
+		Metadata:      &model.ModelDefinition_Metadata{},
+	}
+	id, err := m.GenerateID()
+	require.NoError(t, err)
+	m.ID = id
+	_, _, err = rm.RegisterEntity(registry.RegistrantHostToV1beta3(conn), m)
+	require.NoError(t, err, "seedTestExportModelVersion: RegisterEntity failed")
+}
+
+// TestExportModel_VersionTraversal verifies that a model version containing
+// path separators cannot make the export write outside the per-request temp
+// directory (CWE-22). The export joins model.Model.Version and model.Version
+// into the working directory, so either field carrying ".." escapes it.
+func TestExportModel_VersionTraversal(t *testing.T) {
+	suffix := make([]byte, 8)
+	_, err := rand.Read(suffix)
+	require.NoError(t, err)
+	probeName := "meshery-traversal-probe-" + hex.EncodeToString(suffix)
+	probePath := filepath.Join(os.TempDir(), probeName)
+	t.Cleanup(func() {
+		_ = os.RemoveAll(probePath)
+	})
+
+	tests := []struct {
+		name         string
+		modelVersion string
+		innerVersion string
+	}{
+		{"model version traverses", "../../../" + probeName, "v1"},
+		{"inner model version traverses", "v1", "../../../" + probeName},
+		{"both versions traverse", "../../../" + probeName, "../../../" + probeName},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rm, _ := newTestRegistryDB(t)
+			modelName := "traversal-model"
+			seedTestExportModelVersion(t, rm, modelName, tt.modelVersion, tt.innerVersion)
+
+			log, err := logger.New("component_handler_test", logger.Options{})
+			require.NoError(t, err)
+
+			h := &Handler{
+				registryManager: rm,
+				log:             log,
+			}
+
+			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/meshmodels/models/export?name=%s&fileType=tar", modelName), nil)
+			rw := httptest.NewRecorder()
+
+			h.ExportModel(rw, req)
+
+			resp := rw.Result()
+			assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+			_, statErr := os.Stat(probePath)
+			assert.True(t, os.IsNotExist(statErr), "export wrote outside the temp dir: %s exists", probePath)
+		})
+	}
+}
+
+// TestRegisterMeshmodelComponents_VersionTraversal verifies that registration
+// rejects a component whose model version carries a traversal string, in
+// either the outer version or the embedded model version, so a hostile
+// version cannot be planted through the registration endpoint.
+func TestRegisterMeshmodelComponents_VersionTraversal(t *testing.T) {
+	tests := []struct {
+		name         string
+		version      string
+		innerVersion string
+	}{
+		{"outer version traverses", "../../../escaped", "v1"},
+		{"embedded version traverses", "v1", "../../../escaped"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rm, _ := newTestRegistryDB(t)
+
+			log, err := logger.New("component_handler_test", logger.Options{})
+			require.NoError(t, err)
+
+			h := &Handler{
+				registryManager: rm,
+				log:             log,
+			}
+
+			comp := compv1beta3.ComponentDefinition{
+				Model: &model.ModelDefinition{
+					Name:    "traversal-model",
+					Version: tt.version,
+					Model:   model.Model{Version: tt.innerVersion},
+				},
+			}
+			entityBytes, err := json.Marshal(comp)
+			require.NoError(t, err)
+
+			payload := registry.MeshModelRegistrantData{
+				Connection: connv1beta3.Connection{},
+				EntityType: entity.ComponentDefinition,
+				Entity:     entityBytes,
+			}
+			body, err := json.Marshal(payload)
+			require.NoError(t, err)
+
+			req := httptest.NewRequest(http.MethodPost, "/api/registry/components", bytes.NewReader(body))
+			rw := httptest.NewRecorder()
+
+			h.RegisterMeshmodelComponents(rw, req)
+
+			resp := rw.Result()
+			assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+		})
+	}
+}
+
 func TestExportModel_NotFound(t *testing.T) {
 	rm, _ := newTestRegistryDB(t)
 	log, err := logger.New("component_handler_test", logger.Options{})
@@ -82,6 +229,9 @@ func TestExportModel_NotFound(t *testing.T) {
 	h.ExportModel(rw, req)
 
 	resp := rw.Result()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 }
 
@@ -104,6 +254,9 @@ func TestExportModel_OCI(t *testing.T) {
 	h.ExportModel(rw, req)
 
 	resp := rw.Result()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "application/x-tar", resp.Header.Get("Content-Type"))
 	assert.NotEmpty(t, rw.Body.Bytes())
@@ -210,6 +363,9 @@ func TestExportModel_Concurrent(t *testing.T) {
 			h.ExportModel(rw, req)
 
 			resp := rw.Result()
+			defer func() {
+				_ = resp.Body.Close()
+			}()
 			if resp.StatusCode != http.StatusOK {
 				errs <- fmt.Errorf("worker %d got status %d: %s", workerID, resp.StatusCode, rw.Body.String())
 				return
@@ -267,4 +423,113 @@ func TestExportModel_Concurrent(t *testing.T) {
 	for err := range errs {
 		assert.NoError(t, err)
 	}
+}
+
+func newComponentModelTestDB(t *testing.T) *database.Handler {
+	t.Helper()
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		if strings.Contains(err.Error(), "requires cgo") {
+			t.Skip("skipping database test: sqlite requires cgo")
+		}
+		t.Fatalf("failed to open in-memory database: %v", err)
+	}
+
+	dbHandler := &database.Handler{DB: db, Mutex: &sync.Mutex{}}
+	if err := dbHandler.AutoMigrate(
+		&registry.Registry{},
+		&compv1beta3.ComponentDefinition{},
+		&relationship.RelationshipDefinition{},
+		&_models.PolicyDefinition{},
+		&model.ModelDefinition{},
+	); err != nil {
+		t.Fatalf("failed to auto migrate model definition and dependencies: %v", err)
+	}
+	return dbHandler
+}
+
+// TestDeleteModel_InvalidUUID verifies that DeleteModel returns HTTP 400 Bad Request
+// when supplied with a malformed or invalid UUID identifier.
+func TestDeleteModel_InvalidUUID(t *testing.T) {
+	h := &Handler{
+		config: &models.HandlerConfig{},
+		log:    newTestLogger(t),
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/meshmodels/models/invalid-uuid", nil)
+	req = mux.SetURLVars(req, map[string]string{
+		"id": "invalid-uuid",
+	})
+	rw := httptest.NewRecorder()
+
+	h.DeleteModel(rw, req, nil, nil, nil)
+	resp := rw.Result()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+}
+
+// TestDeleteModel_NotFound verifies that DeleteModel returns HTTP 404 Not Found
+// when attempting to delete a model whose ID does not exist in the database.
+func TestDeleteModel_NotFound(t *testing.T) {
+	dbHandler := newComponentModelTestDB(t)
+	h := &Handler{
+		config:    &models.HandlerConfig{},
+		log:       newTestLogger(t),
+		dbHandler: dbHandler,
+	}
+
+	missingID := uuid.Must(uuid.NewV4()).String()
+	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/api/meshmodels/models/%s", missingID), nil)
+	req = mux.SetURLVars(req, map[string]string{
+		"id": missingID,
+	})
+	rw := httptest.NewRecorder()
+
+	h.DeleteModel(rw, req, nil, nil, nil)
+	resp := rw.Result()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode, "deleting non-existent model must return HTTP 404")
+	assert.Contains(t, rw.Body.String(), fmt.Sprintf("model with id %s not found", missingID))
+}
+
+// TestDeleteModel_Success verifies that DeleteModel returns HTTP 204 No Content
+// and removes the model record from the database when a valid model ID is provided.
+func TestDeleteModel_Success(t *testing.T) {
+	dbHandler := newComponentModelTestDB(t)
+	h := &Handler{
+		config:    &models.HandlerConfig{},
+		log:       newTestLogger(t),
+		dbHandler: dbHandler,
+	}
+
+	modelID := uuid.Must(uuid.NewV4())
+	modelRecord := model.ModelDefinition{
+		ID:   modelID,
+		Name: "test-model",
+	}
+	require.NoError(t, dbHandler.Create(&modelRecord).Error)
+
+	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/api/meshmodels/models/%s", modelID.String()), nil)
+	req = mux.SetURLVars(req, map[string]string{
+		"id": modelID.String(),
+	})
+	rw := httptest.NewRecorder()
+
+	h.DeleteModel(rw, req, nil, nil, nil)
+	resp := rw.Result()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	assert.Equal(t, http.StatusNoContent, resp.StatusCode, "deleting existing model must return HTTP 204")
+
+	var count int64
+	dbHandler.Model(&model.ModelDefinition{}).Where("id = ?", modelID).Count(&count)
+	assert.Equal(t, int64(0), count, "model record must be deleted from database")
 }

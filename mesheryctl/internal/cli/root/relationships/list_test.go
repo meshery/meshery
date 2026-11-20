@@ -1,6 +1,7 @@
 package relationships
 
 import (
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -56,6 +57,42 @@ func TestList(t *testing.T) {
 			ExpectedResponse: "list.count.relationship.output.golden",
 			ExpectError:      false,
 			IsOutputGolden:   true,
+		},
+		{
+			Name:             "List registered relationships with --page 0",
+			Args:             []string{"list", "--page", "0"},
+			Fixture:          "list.relationship.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '0'")),
+		},
+		{
+			Name:             "List registered relationships with a negative --page",
+			Args:             []string{"list", "--page", "-1"},
+			Fixture:          "list.relationship.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '-1'")),
+		},
+		{
+			Name:             "List registered relationships with --pagesize 0",
+			Args:             []string{"list", "--pagesize", "0"},
+			Fixture:          "list.relationship.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '0'")),
+		},
+		{
+			Name:             "List registered relationships with a negative --pagesize",
+			Args:             []string{"list", "--pagesize", "-1"},
+			Fixture:          "list.relationship.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '-1'")),
 		},
 	}
 
