@@ -94,6 +94,7 @@ export default function DesignConfigurator() {
               <TextField
                 select={true}
                 SelectProps={{
+                  renderValue: (selected) => removeHyphenAndCapitalise(selected),
                   MenuProps: {
                     anchorOrigin: {
                       vertical: 'bottom',
