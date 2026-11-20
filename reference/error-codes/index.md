@@ -16163,6 +16163,31 @@ Older tooling wrote arbitrary version strings into design files</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrProvisionPanicCode-1497" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrProvisionPanicCode-more-info" onclick="toggle_visibility('meshery-server-ErrProvisionPanicCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1497" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errprovisionpaniccode-1497/"><code>ErrProvisionPanicCode-1497</code></a>
+            </td>
+            <td>Component panicked during provisioning</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrProvisionPanicCode-1497" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrProvisionPanicCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Runtime fault occurred in component visitor execution</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Inspect component configuration and provider logs for runtime failures</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>

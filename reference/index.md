@@ -888,6 +888,7 @@ Section pages:
 - [ErrProviderAmbiguousCode-1260](/reference/error-codes/client-mesheryctl/errproviderambiguouscode-1260/)
 - [ErrProviderInfoCode-1086](/reference/error-codes/client-mesheryctl/errproviderinfocode-1086/)
 - [ErrProviderNotFoundCode-1259](/reference/error-codes/client-mesheryctl/errprovidernotfoundcode-1259/)
+- [ErrProvisionPanicCode-1497](/reference/error-codes/component-meshery-server/errprovisionpaniccode-1497/)
 - [ErrPublishBrokerCode-1176](/reference/error-codes/component-meshery-server/errpublishbrokercode-1176/)
 - [ErrPublishCatalogFilterCode-1105](/reference/error-codes/component-meshery-server/errpublishcatalogfiltercode-1105/)
 - [ErrPublishCatalogPatternCode-1104](/reference/error-codes/component-meshery-server/errpublishcatalogpatterncode-1104/)
