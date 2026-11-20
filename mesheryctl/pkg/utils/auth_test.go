@@ -761,6 +761,26 @@ func TestAddAuthDetails_EmptyTokenFileReturnsUnauthenticated(t *testing.T) {
 	}
 }
 
+func TestAddAuthDetails_EmptyTokenForRemoteProviderReturnsUnauthenticated(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tokenPath, []byte(`{"token":"  ","meshery-provider":"Meshery"}`), 0600); err != nil {
+		t.Fatalf("failed to create token file: %v", err)
+	}
+
+	req, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
+
+	err = AddAuthDetails(req, tokenPath)
+	if err == nil {
+		t.Fatal("expected unauthenticated error for remote provider with empty token")
+	}
+	if got := errors.GetCode(err); got != ErrUnauthenticatedCode {
+		t.Fatalf("expected error code %s, got %s", ErrUnauthenticatedCode, got)
+	}
+}
+
 func TestAddAuthDetails_AllowsEmptyTokenForLocalProvider(t *testing.T) {
 	tokenPath := filepath.Join(t.TempDir(), "auth.json")
 	tokenData := []byte(`{"token":"","meshery-provider":"Local"}`)
@@ -825,6 +845,8 @@ func TestReadTokenEmptyAndWhitespaceFilesReturnUnauthenticated(t *testing.T) {
 	}{
 		{name: "empty", data: []byte{}},
 		{name: "whitespace", data: []byte(" \n\t")},
+		{name: "remote provider empty token", data: []byte(`{"token":"","meshery-provider":"Meshery"}`)},
+		{name: "remote provider whitespace token", data: []byte(`{"token":"  ","meshery-provider":"Meshery"}`)},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			tokenPath := filepath.Join(t.TempDir(), "auth.json")
@@ -840,5 +862,23 @@ func TestReadTokenEmptyAndWhitespaceFilesReturnUnauthenticated(t *testing.T) {
 				t.Fatalf("expected error code %s, got %s", ErrUnauthenticatedCode, got)
 			}
 		})
+	}
+}
+
+func TestReadTokenAllowsEmptyTokenForLocalProvider(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tokenPath, []byte(`{"token":"","meshery-provider":"Local"}`), 0600); err != nil {
+		t.Fatalf("failed to create token file: %v", err)
+	}
+
+	tokenObj, err := ReadToken(tokenPath)
+	if err != nil {
+		t.Fatalf("expected Local provider with empty token to be allowed, got: %v", err)
+	}
+	if tokenObj[tokenName] != "" {
+		t.Fatalf("expected empty token value, got %q", tokenObj[tokenName])
+	}
+	if tokenObj[providerName] != "Local" {
+		t.Fatalf("expected provider Local, got %q", tokenObj[providerName])
 	}
 }
