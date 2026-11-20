@@ -78,5 +78,9 @@ export const getResponsiveColumnVisibility = (
 
   const showCols = updateVisibleColumns(colViews, width);
 
-  return Object.fromEntries(columnNames.map((columnName) => [columnName, showCols[columnName]]));
+  return Object.fromEntries(
+    columnNames
+      .filter((colName): colName is string => typeof colName === 'string')
+      .map((columnName) => [columnName, showCols[columnName]]),
+  );
 };

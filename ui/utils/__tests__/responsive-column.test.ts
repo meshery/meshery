@@ -119,4 +119,14 @@ describe('getResponsiveColumnVisibility', () => {
     expect(getResponsiveColumnVisibility(['name'], null, 800)).toEqual({});
     expect(getResponsiveColumnVisibility(['name'], 'invalid' as any, 800)).toEqual({});
   });
+
+  it('skips non-string column names without throwing TypeError', () => {
+    const invalidNames = ['valid', { toString: null, valueOf: null }, 123, null, undefined];
+    const result = getResponsiveColumnVisibility(
+      invalidNames as unknown as string[],
+      [['valid', 'xs']],
+      800,
+    );
+    expect(result).toEqual({ valid: true });
+  });
 });
