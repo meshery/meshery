@@ -60,6 +60,7 @@ import {
 } from './MesheryPatterns.columns';
 import { buildDesignLifecycleHandlers } from './design-lifecycle-handlers';
 import { createPatternsActions } from './patterns-actions';
+import { useImportDesignQueryAction } from './useImportDesignQueryAction';
 
 function MesheryPatterns({
   disableCreateImportDesignButton = false,
@@ -168,6 +169,11 @@ function MesheryPatterns({
 
   const [importModal, setImportModal] = useState({
     open: false,
+  });
+
+  useImportDesignQueryAction({
+    canImport: canImportDesign,
+    openImportModal: () => setImportModal({ open: true }),
   });
   const [publishModal, setPublishModal] = useState({
     open: false,
@@ -288,10 +294,11 @@ function MesheryPatterns({
     if (viewType === 'grid') {
       setSearch('');
     }
+    const { action: _action, ...restQuery } = router.query;
     router.push(
       {
         pathname: router.pathname,
-        query: { ...router.query, view: viewType },
+        query: { ...restQuery, view: viewType },
       },
       undefined,
       { shallow: true },

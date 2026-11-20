@@ -65,6 +65,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
 import { ErrorBoundary } from '@sistent/sistent';
 import { WorkspaceModalContext } from '../../../utils/context/WorkspaceModalContextProvider';
+import CommandPaletteTrigger from '@/components/command-palette/CommandPaletteTrigger';
 
 const K8sContextConnectionChip_ = ({
   ctx,
@@ -486,6 +487,7 @@ const Header = ({
                       searchContexts={searchContexts}
                     />
                   </UserSpan>
+                  <CommandPaletteTrigger />
                   <CustomTooltip title="Notifications">
                     <div data-testid="notification-button">
                       <NotificationDrawerButton />
