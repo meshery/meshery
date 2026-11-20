@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -35,6 +35,7 @@ const {
   createEnvironment,
   updateEnvironment,
   deleteEnvironment,
+  showPrompt,
   canSpy,
   permissionOverrides,
   ENVIRONMENTS_QUERY_RESULT,
@@ -50,6 +51,7 @@ const {
     createEnvironment: vi.fn(),
     updateEnvironment: vi.fn(),
     deleteEnvironment: vi.fn(),
+    showPrompt: vi.fn(),
     permissionOverrides: overrides,
     canSpy: vi.fn((key?: { id?: string }) => overrides.get(key?.id ?? '') ?? true),
     ENVIRONMENTS_QUERY_RESULT: {
@@ -136,7 +138,7 @@ vi.mock('../shared/Modal/Modal', () => ({
 }));
 
 vi.mock('./environment-card', () => ({
-  default: ({ onAssignConnection, environmentDetails }: any) => {
+  default: ({ onAssignConnection, onDelete, onSelect, environmentDetails }: any) => {
     getEnvironmentConnectionsQuery(
       { environmentId: environmentDetails?.id },
       { skip: !environmentDetails?.id },
@@ -149,6 +151,14 @@ vi.mock('./environment-card', () => ({
         >
           Assign
         </button>
+        <button data-testid={`delete-btn-${environmentDetails?.id}`} onClick={onDelete}>
+          Delete
+        </button>
+        <input
+          data-testid={`select-${environmentDetails?.id}`}
+          type="checkbox"
+          onChange={onSelect}
+        />
       </div>
     );
   },
@@ -161,7 +171,10 @@ vi.mock('@/assets/styles/general/tool.styles', () => ({
   ToolWrapper: ({ children }: any) => <div>{children}</div>,
 }));
 vi.mock('../general/PromptComponent', () => ({
-  default: React.forwardRef(() => null),
+  default: React.forwardRef((_props, ref) => {
+    React.useImperativeHandle(ref, () => ({ show: showPrompt }));
+    return null;
+  }),
 }));
 vi.mock('../lifecycle/general', () => ({ EmptyState: () => <div>empty</div> }));
 vi.mock('../general/error-404/index', () => ({ default: () => <div>no access</div> }));
@@ -180,7 +193,7 @@ vi.mock('@sistent/sistent', () => ({
   ),
   ChevronLeftIcon: () => null,
   ChevronRightIcon: () => null,
-  DeleteIcon: () => null,
+  DeleteIcon: () => <span data-testid="bulk-delete-icon" />,
   ErrorBoundary: ({ children }: any) => <>{children}</>,
   Grid2: ({ children }: any) => <div>{children}</div>,
   Modal: ({ children, open }: any) => (open ? <div>{children}</div> : null),
@@ -489,6 +502,71 @@ describe('Environments permissions and wire query skipping', () => {
         environmentPayload: expect.objectContaining({ organizationId: 'org-2' }),
       }),
     );
+  });
+});
+
+describe('Environments destructive confirmation scope', () => {
+  const environmentData = {
+    environments: [{ id: 'env-org-1', name: 'Org 1 environment' }],
+    totalCount: 1,
+  } as any;
+
+  beforeEach(() => {
+    ENVIRONMENTS_QUERY_RESULT.data = environmentData;
+    ENVIRONMENTS_QUERY_RESULT.currentData = environmentData;
+    deleteEnvironment.mockReset();
+    showPrompt.mockReset();
+  });
+
+  const switchOrganizationAwayAndBack = (rerender: (ui: React.ReactNode) => void) => {
+    UI_STATE.ui.organization = { id: 'org-2' };
+    ENVIRONMENTS_QUERY_RESULT.currentData = undefined as any;
+    rerender(<Environments />);
+
+    UI_STATE.ui.organization = { id: 'org-1' };
+    ENVIRONMENTS_QUERY_RESULT.currentData = environmentData;
+    rerender(<Environments />);
+  };
+
+  const deferConfirmation = () => {
+    let resolveConfirmation: (value: string) => void = () => {};
+    showPrompt.mockReturnValue(
+      new Promise<string>((resolve) => {
+        resolveConfirmation = resolve;
+      }),
+    );
+    return (value: string) => act(async () => resolveConfirmation(value));
+  };
+
+  it('does not run an individual delete after an organization round trip', async () => {
+    const confirm = deferConfirmation();
+    const user = userEvent.setup();
+    const { rerender } = render(<Environments />);
+
+    await user.click(screen.getByTestId('delete-btn-env-org-1'));
+    expect(showPrompt).toHaveBeenCalledOnce();
+
+    switchOrganizationAwayAndBack(rerender);
+    await confirm('DELETE');
+
+    expect(deleteEnvironment).not.toHaveBeenCalled();
+  });
+
+  it('does not run a bulk delete after an organization round trip', async () => {
+    const confirm = deferConfirmation();
+    const user = userEvent.setup();
+    const { rerender } = render(<Environments />);
+
+    await user.click(screen.getByTestId('select-env-org-1'));
+    const bulkDeleteButton = screen.getByTestId('bulk-delete-icon').closest('button');
+    expect(bulkDeleteButton).not.toBeNull();
+    await user.click(bulkDeleteButton!);
+    expect(showPrompt).toHaveBeenCalledOnce();
+
+    switchOrganizationAwayAndBack(rerender);
+    await confirm('DELETE');
+
+    expect(deleteEnvironment).not.toHaveBeenCalled();
   });
 });
 

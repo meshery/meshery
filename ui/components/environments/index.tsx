@@ -98,8 +98,13 @@ const Environments = () => {
   const connectionPageSize = 25;
 
   const modalRef = useRef(null);
-  const organizationIdRef = useRef(organization?.id);
-  organizationIdRef.current = organization?.id;
+  const organizationScopeRef = useRef({ id: organization?.id, generation: 0 });
+  if (organizationScopeRef.current.id !== organization?.id) {
+    organizationScopeRef.current = {
+      id: organization?.id,
+      generation: organizationScopeRef.current.generation + 1,
+    };
+  }
   const previousOrganizationIdRef = useRef(organization?.id);
   const { notify } = useNotification();
 
@@ -382,7 +387,7 @@ const Environments = () => {
 
   const handleDeleteEnvironmentConfirm = async (e, environment) => {
     e.stopPropagation();
-    const originatingOrganizationId = organization?.id;
+    const originatingOrganizationGeneration = organizationScopeRef.current.generation;
     let response = await modalRef.current.show({
       title: `Delete "${environment.name}" environment?`,
       subtitle: deleteEnvironmentModalContent(environment.name),
@@ -392,7 +397,10 @@ const Environments = () => {
       Learn more about the behavior of [lifecycle of environments and their resources](https://docs.meshery.io/concepts/logical/environments) in Meshery Docs.`,
       variant: PROMPT_VARIANTS.DANGER,
     });
-    if (response === 'DELETE' && organizationIdRef.current === originatingOrganizationId) {
+    if (
+      response === 'DELETE' &&
+      organizationScopeRef.current.generation === originatingOrganizationGeneration
+    ) {
       handleDeleteEnvironment(environment.id);
     }
   };
@@ -430,14 +438,17 @@ const Environments = () => {
 
   const handleBulkDeleteEnvironmentConfirm = async (e) => {
     e.stopPropagation();
-    const originatingOrganizationId = organization?.id;
+    const originatingOrganizationGeneration = organizationScopeRef.current.generation;
     let response = await modalRef.current.show({
       title: `Delete Environment(s) ?`,
       subtitle: `Do you want to delete ${selectedEnvironments.length} environment(s) ?`,
       primaryOption: 'DELETE',
       variant: PROMPT_VARIANTS.DANGER,
     });
-    if (response === 'DELETE' && organizationIdRef.current === originatingOrganizationId) {
+    if (
+      response === 'DELETE' &&
+      organizationScopeRef.current.generation === originatingOrganizationGeneration
+    ) {
       handleBulkDeleteEnv();
     }
   };
