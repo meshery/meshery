@@ -36,7 +36,7 @@ func persistLocalProviderCapabilitiesForUser(user *models.User, provider *models
 	if user.ID.String() == "" || user.ID.String() == "00000000-0000-0000-0000-000000000000" {
 		return nil
 	}
-	return provider.WriteCapabilitiesForUser(user.ID.String(), &provider.ProviderProperties)
+	return provider.PersistCapabilitiesForUser(user.ID.String())
 }
 
 // InstallExtensionHandler installs an extension for the local provider.
