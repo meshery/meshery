@@ -70,7 +70,7 @@ export default function DesignConfigurator() {
     [design_id],
   );
 
-  function handleCategoryChange(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleCategoryChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const nextCategory = event.target.value;
     if (nextCategory === selectedCategory) {
       return;
