@@ -76,6 +76,24 @@ func TestGetSystemDatabase_Ordering(t *testing.T) {
 			assertOrder:   true,
 		},
 		{
+			name:          "Separate REST uppercase descending format",
+			query:         "?order=name&sort=DESC&search=test_",
+			expectedOrder: []string{"test_zebra", "test_mango", "test_apple"},
+			assertOrder:   true,
+		},
+		{
+			name:          "Separate REST mixed-case descending format",
+			query:         "?order=name&sort=Desc&search=test_",
+			expectedOrder: []string{"test_zebra", "test_mango", "test_apple"},
+			assertOrder:   true,
+		},
+		{
+			name:          "Separate REST descending format trims whitespace",
+			query:         "?order=name&sort=%20DESC%20&search=test_",
+			expectedOrder: []string{"test_zebra", "test_mango", "test_apple"},
+			assertOrder:   true,
+		},
+		{
 			name:          "Bare column with omitted sort defaults to ascending",
 			query:         "?order=name&search=test_",
 			expectedOrder: []string{"test_apple", "test_mango", "test_zebra"},
