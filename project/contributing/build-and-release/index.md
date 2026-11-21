@@ -100,6 +100,8 @@ The workflow always reports the check, including on exempt pull requests, so bra
 
 Agents drive the pipeline with `.agents/skills/no-mistakes/SKILL.md`. A clone without a `no-mistakes` remote needs `no-mistakes init` once, then `no-mistakes axi run --intent "<goal>"`.
 
+Human contributors should follow the step-by-step setup and daily usage guide under [Running the pre-landing Quality Gate (No-Mistakes)](/project/contributing/#no-mistakes-quality-gate).
+
 ### Test result reporting (QA dashboard)
 
 Test results from across the Meshery ecosystem are published as [Allure](https://allurereport.org/) reports on the QA dashboard at [qa.meshery.io](https://qa.meshery.io). CI in each repository converts its test output to Allure results and commits them to the [`meshery/qa`](https://github.com/meshery/qa) repository, which regenerates and deploys the dashboard via GitHub Pages. Each report on the dashboard (Meshery, Mesheryctl, Kubernetes Connections, and extension reports) is a filtered view over one shared pool of results, selected by the **labels** on each result.

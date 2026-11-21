@@ -123,6 +123,16 @@ git rebase -i master
 
 This will open up a text editor where you can specify which commits to squash.
 
+## Validate with the Quality Gate (No-Mistakes)
+
+These steps target `meshery/meshery`; for another Meshery repository, substitute that repository's parent and fork URLs throughout. Pull requests into `master` need a green no-mistakes run unless every changed path is under `docs/**`, the root `CNAME`, or `.github/workflows/**`. There is no separate lane for hand-written changes. Run the pipeline on your branch:
+
+```bash
+no-mistakes axi run --intent "<brief description of your changes>"
+```
+
+The pipeline reviews, tests, checks documentation and lint, then writes the attestation that the `PR must be raised via no-mistakes` check requires into the pull request description. Commit with `git commit -s` so the separate `DCO` check passes. See [Running the pre-landing Quality Gate](/project/contributing/#no-mistakes-quality-gate) for installation and setup.
+
 ## Submitting
 
-Once you've committed and pushed all of your changes to GitHub, go to the page for your fork on GitHub, select your development branch, and click the pull request button. If you need to make any adjustments to your pull request, just push the updates to GitHub. Your pull request will automatically track the changes in your development branch and update it.
+Once you've committed your changes, push them through the gate remote with `git push no-mistakes feature/jdoe/567`: a plain push targets `origin`, which the setup guide repointed at meshery/meshery. The gate runs the pipeline and opens the pull request for you once every check passes, so do not open one by hand. If you need to make any adjustments to your pull request, first run `no-mistakes axi status` and follow its `branch_sync.next_action`: when it says `sync`, run `no-mistakes axi sync` first, since the gate may have advanced the published branch past your local copy. Then push the updates through the gate remote, and run the gate again on the same branch so the attestation matches the new head commit. An attestation for an older commit fails the `PR must be raised via no-mistakes` check. Pull requests that change only `docs/**`, the root `CNAME`, or `.github/workflows/**` are exempt from the gate. If you never ran the gate setup, `origin` still points at your fork, so push with `git push origin feature/jdoe/567` and open the pull request from your fork's page. If you ran the setup, `origin` points at `meshery/meshery`, so add a remote for your fork first (`git remote add fork git@github.com:USERNAME/meshery.git`), push with `git push fork feature/jdoe/567`, and open the pull request from your fork's page. Your pull request will automatically track the changes in your development branch and update it.
