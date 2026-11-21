@@ -46,6 +46,30 @@ func TestFilterCmdCount(t *testing.T) {
 
 	tests := []utils.MesheryListCommandTest{
 		{
+			Name:           "Reject invalid subcommand without --count",
+			Args:           []string{"invalidCommand"},
+			Fixture:        "filter.list.api.response.golden",
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrInvalidFilterCommand("invalidCommand", ""),
+		},
+		{
+			Name:           "Reject invalid subcommand with --count",
+			Args:           []string{"invalidCommand", "--count"},
+			Fixture:        "filter.list.api.response.golden",
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrInvalidFilterCommand("invalidCommand", ""),
+		},
+		{
+			Name:           "Reject multiple invalid arguments with --count",
+			Args:           []string{"invalidCommand", "extra", "--count"},
+			Fixture:        "filter.list.api.response.golden",
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrInvalidFilterCommand("invalidCommand", ""),
+		},
+		{
 			Name:             "Fetch Filter Count on root command",
 			Args:             []string{"--count"},
 			ExpectedResponse: "list.filter.count.output.golden",

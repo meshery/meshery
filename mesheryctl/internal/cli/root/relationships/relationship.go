@@ -63,9 +63,15 @@ mesheryctl relationship view [model-name]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ := cmd.Flags().GetBool("count")
-		if len(args) == 0 && !count {
-			errMsg := "Usage: mesheryctl relationship [subcommand]\nRun 'mesheryctl relationship --help' to see detailed help message"
-			return utils.ErrInvalidArgument(fmt.Errorf("no command specified. %s", errMsg))
+		if len(args) == 0 {
+			if !count {
+				errMsg := "Usage: mesheryctl relationship [subcommand]\nRun 'mesheryctl relationship --help' to see detailed help message"
+				return utils.ErrInvalidArgument(fmt.Errorf("no command specified. %s", errMsg))
+			}
+			return nil
+		}
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [%s]. Use 'mesheryctl relationship --help' to display usage guide.\n", args[0], utils.SubcommandNames(availableSubcommands)), "relationship"))
 		}
 		return nil
 	},
@@ -83,9 +89,6 @@ mesheryctl relationship view [model-name]
 			return nil
 		}
 
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [%s]. Use 'mesheryctl relationship --help' to display usage guide.\n", args[0], utils.SubcommandNames(availableSubcommands)), "relationship"))
-		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return utils.ErrLoadConfig(err)

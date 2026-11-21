@@ -10,6 +10,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshkit/errors"
+	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -90,6 +91,47 @@ func TestOrganization(t *testing.T) {
 			expectedResponse := golden.Load()
 
 			utils.Equals(t, expectedResponse, actualResponse)
+		})
+	}
+}
+
+// TestOrganizationCountArgs verifies that --count rejects invalid subcommands
+// while remaining valid without positional arguments.
+func TestOrganizationCountArgs(t *testing.T) {
+	previousCount := count
+	t.Cleanup(func() {
+		count = previousCount
+	})
+
+	tests := []struct {
+		name    string
+		args    []string
+		wantErr bool
+	}{
+		{
+			name: "accepts count without arguments",
+		},
+		{
+			name:    "rejects invalid subcommand",
+			args:    []string{"invalid"},
+			wantErr: true,
+		},
+		{
+			name:    "rejects multiple invalid arguments",
+			args:    []string{"invalid", "extra"},
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cmd := &cobra.Command{}
+			cmd.Flags().Bool("count", true, "")
+
+			err := OrgCmd.Args(cmd, tt.args)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("Args() error = %v, wantErr = %v", err, tt.wantErr)
+			}
 		})
 	}
 }

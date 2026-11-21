@@ -40,6 +40,14 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl#command-r
 // Base command for WASM filters:
 mesheryctl filter [subcommands]
 `,
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) > 0 {
+			if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+				return ErrInvalidFilterCommand(args[0], "")
+			}
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &filterFlagsProvided)
 	},
@@ -60,9 +68,6 @@ mesheryctl filter [subcommands]
 		}
 		if len(args) == 0 {
 			return cmd.Help()
-		}
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return ErrInvalidFilterCommand(args[0], "")
 		}
 		return nil
 	},

@@ -56,6 +56,28 @@ func TestComponent(t *testing.T) {
 			ExpectedError:    utils.ErrInvalidArgument(errors.New("please provide a subcommand")),
 		},
 		{
+			Name:           "rejects invalid subcommand with --count",
+			Args:           []string{"invalidCommand", "--count"},
+			Fixture:        "components.api.response.golden",
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf(
+				"'%s' is an invalid subcommand. Please provide required options from [list, search, view]. Use 'mesheryctl component --help' to display usage guide",
+				"invalidCommand",
+			)),
+		},
+		{
+			Name:           "rejects multiple invalid arguments with --count",
+			Args:           []string{"invalidCommand", "extra", "--count"},
+			Fixture:        "components.api.response.golden",
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf(
+				"'%s' is an invalid subcommand. Please provide required options from [list, search, view]. Use 'mesheryctl component --help' to display usage guide",
+				"invalidCommand",
+			)),
+		},
+		{
 			Name:             "display components count",
 			Args:             []string{"--count"},
 			URL:              fmt.Sprintf("/%s", componentApiPath),
