@@ -40,10 +40,9 @@ The same Go codebase is built for two targets: the native server binary that shi
 In any given Meshery deployment, you can reference and search the full set of registered policies (in Meshery's internal registry) in using either of Meshery's client interfaces.
 
 {{% alert color="info" title="Viewing All Registered Relationships" %}}
-You can view all registered relationships using either Meshery UI or Meshery CLI.
+You can view all registered relationships in the Meshery UI.
 
 - **Using Meshery UI**: Navigate to *Settings*, then to *Registry*
-- **Using Meshery CLI**: `mesheryctl policy list`
 {{% /alert %}}
 
 <!-- There are different points in time in which policy evaluations are invoked
