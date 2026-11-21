@@ -8,6 +8,7 @@ import (
 
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/schemas/models/core"
+	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
 	schemasConnection "github.com/meshery/schemas/models/v1beta3/connection"
 )
 
@@ -89,8 +90,8 @@ type ConnectionPage = schemasConnection.ConnectionPage
 // MergePayloadOntoExisting backfills fields the caller left empty in payload
 // with the values from the persisted connection. UpdateConnectionById persists
 // via a full-row write (GORM Save() locally, a full PUT remotely), so a partial
-// payload — e.g. the UI's connect action sending only {status}, or an FSM status
-// transition sending only {kind, metadata, status} — would otherwise zero every
+// payload (e.g. the UI's connect action sending only {status}, or an FSM status
+// transition sending only {kind, metadata, status}) would otherwise zero every
 // field it omits. Wiping a kubernetes connection's kind to "" in particular
 // later trips the FSM's "connection is not of kind kubernetes" guard on connect.
 // It never overwrites a field the caller explicitly set, so intentional changes
@@ -120,6 +121,21 @@ func MergePayloadOntoExisting(payload *ConnectionPayload, existing *Connection) 
 	if payload.CredentialID == nil {
 		payload.CredentialID = existing.CredentialID
 	}
+	if payload.Description == nil {
+		payload.Description = existing.Description
+	}
+	if payload.Url == nil {
+		payload.Url = existing.Url
+	}
+	if payload.ModelReference == nil {
+		payload.ModelReference = existing.ModelReference
+	}
+	if payload.ConnectionSchema == nil {
+		payload.ConnectionSchema = existing.ConnectionSchema
+	}
+	if payload.CredentialSchema == nil {
+		payload.CredentialSchema = existing.CredentialSchema
+	}
 }
 
 // ConnectionStatusInfo is the element type of the status-per-kind response
@@ -133,17 +149,22 @@ type ConnectionStatusInfo = schemasConnection.ConnectionStatusInfo
 type ConnectionsStatusPage = schemasConnection.ConnectionsStatusPage
 
 type ConnectionPayload struct {
-	ID                         core.Uuid              `json:"id,omitempty"`
-	Kind                       string                 `json:"kind,omitempty"`
-	SubType                    string                 `json:"subType,omitempty"`
-	Type                       string                 `json:"type,omitempty"`
-	MetaData                   map[string]interface{} `json:"metadata,omitempty"`
-	Status                     ConnectionStatus       `json:"status,omitempty"`
-	CredentialSecret           map[string]interface{} `json:"credentialSecret,omitempty"`
-	Name                       string                 `json:"name,omitempty"`
-	CredentialID               *core.Uuid             `json:"credentialId,omitempty"`
-	Model                      string                 `json:"model,omitempty"`
-	SkipCredentialVerification bool                   `json:"skipCredentialVerification"`
+	ID                         core.Uuid                    `json:"id,omitempty"`
+	Kind                       string                       `json:"kind,omitempty"`
+	SubType                    string                       `json:"subType,omitempty"`
+	Type                       string                       `json:"type,omitempty"`
+	Description                *string                      `json:"description,omitempty"`
+	Url                        *string                      `json:"url,omitempty"`
+	ModelReference             *modelv1beta1.ModelReference `json:"modelReference,omitempty"`
+	ConnectionSchema           core.Map                     `json:"connectionSchema,omitzero"`
+	CredentialSchema           core.Map                     `json:"credentialSchema,omitzero"`
+	MetaData                   map[string]interface{}       `json:"metadata,omitempty"`
+	Status                     ConnectionStatus             `json:"status,omitempty"`
+	CredentialSecret           map[string]interface{}       `json:"credentialSecret,omitempty"`
+	Name                       string                       `json:"name,omitempty"`
+	CredentialID               *core.Uuid                   `json:"credentialId,omitempty"`
+	Model                      string                       `json:"model,omitempty"`
+	SkipCredentialVerification bool                         `json:"skipCredentialVerification"`
 }
 
 func BuildMesheryConnectionPayload(serverURL string, credential map[string]interface{}) *ConnectionPayload {
