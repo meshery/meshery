@@ -10,10 +10,9 @@
 // the pipeline in [GoEngine.evaluate]:
 //
 //  1. Validate. For every implicated existing relationship whose
-//     components no longer exist in the design
-//     (fromOrToComponentsDontExist), call
-//     [RelationshipPolicy.IsInvalid]. When both conditions hold, the
-//     relationship receives a status update to "deleted".
+//     components no longer exist in the design (fromOrToComponentsDontExist)
+//     or whose configuration is semantically invalid ([RelationshipPolicy.IsInvalid]),
+//     the relationship receives a status update to "deleted".
 //  2. Identify. For every relationship in scope, call
 //     [RelationshipPolicy.IdentifyRelationship]. Each returned relationship
 //     is deduplicated against the existing design via
