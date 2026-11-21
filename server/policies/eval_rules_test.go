@@ -1012,3 +1012,259 @@ func TestCopyMatchSelector_PreservesRefs(t *testing.T) {
 		t.Error("modifying copied Refs affected original refs slice")
 	}
 }
+
+func newTestComponentWithModel(name, kind, modelName string) *component.ComponentDefinition {
+	id := uuid.Must(uuid.NewV4())
+	return &component.ComponentDefinition{
+		ID:          id,
+		DisplayName: name,
+		Component: component.Component{
+			Kind: kind,
+		},
+		ModelReference: modelv1beta1.ModelReference{
+			Name: modelName,
+		},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{
+				"name": name,
+			},
+		},
+	}
+}
+
+// TestEdgeNonBindingPolicy_CallerPath_SelectorModelIsolation tests that mutator-based
+// relationship identification respects selector model via the exported policy caller path.
+func TestEdgeNonBindingPolicy_CallerPath_SelectorModelIsolation(t *testing.T) {
+	policy := &EdgeNonBindingPolicy{}
+
+	compRB := newTestComponentWithModel("app-rb", "RoleBinding", "kubernetes")
+	compRB.Configuration = map[string]interface{}{
+		"spec": map[string]interface{}{
+			"roleRef": map[string]interface{}{
+				"name": "app-role",
+			},
+		},
+	}
+
+	compAwsRole := newTestComponentWithModel("app-role", "Role", "aws-iam-controller")
+	compK8sRole := newTestComponentWithModel("app-role", "Role", "kubernetes")
+
+	design := makePatternFile([]*component.ComponentDefinition{compRB, compAwsRole, compK8sRole}, nil)
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "roleRef", "name"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "metadata", "name"}}
+
+	fromSel := relationship.SelectorItem{
+		Kind:  strPtr("RoleBinding"),
+		Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatorRef: &mutatorRef,
+		},
+	}
+	toSel := relationship.SelectorItem{
+		Kind:  strPtr("Role"),
+		Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatedRef: &mutatedRef,
+		},
+	}
+
+	relDef := &relationship.RelationshipDefinition{
+		ID:               uuid.Must(uuid.NewV4()),
+		Kind:             relationship.Edge,
+		RelationshipType: "non-binding",
+		SubType:          "reference",
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors: &relationship.SelectorSet{
+			{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{fromSel},
+					To:   []relationship.SelectorItem{toSel},
+				},
+			},
+		},
+	}
+
+	identified := policy.IdentifyRelationship(relDef, design)
+	if len(identified) != 1 {
+		t.Fatalf("expected exactly 1 identified relationship (positive control), got %d", len(identified))
+	}
+
+	identifiedToID := (*identified[0].Selectors)[0].Allow.To[0].ID
+	if identifiedToID == nil || *identifiedToID != compK8sRole.ID {
+		t.Errorf("expected relationship to target kubernetes Role %s, got %v", compK8sRole.ID, identifiedToID)
+	}
+	if *identifiedToID == compAwsRole.ID {
+		t.Errorf("relationship wrongly identified with aws-iam-controller Role %s", compAwsRole.ID)
+	}
+}
+
+// TestMatchComponentPairs_HelperPath_SelectorModelEnforcement tests that matchComponentPairs
+// directly enforces the selector model and ignores cross-model same-kind components.
+func TestMatchComponentPairs_HelperPath_SelectorModelEnforcement(t *testing.T) {
+	compRB := newTestComponentWithModel("app-rb", "RoleBinding", "kubernetes")
+	compRB.Configuration = map[string]interface{}{
+		"spec": map[string]interface{}{
+			"roleRef": map[string]interface{}{
+				"name": "app-role",
+			},
+		},
+	}
+
+	compAwsRole := newTestComponentWithModel("app-role", "Role", "aws-iam-controller")
+	compK8sRole := newTestComponentWithModel("app-role", "Role", "kubernetes")
+
+	design := makePatternFile([]*component.ComponentDefinition{compRB, compAwsRole, compK8sRole}, nil)
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "roleRef", "name"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "metadata", "name"}}
+
+	fromSel := relationship.SelectorItem{
+		Kind:  strPtr("RoleBinding"),
+		Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatorRef: &mutatorRef,
+		},
+	}
+	toSel := relationship.SelectorItem{
+		Kind:  strPtr("Role"),
+		Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatedRef: &mutatedRef,
+		},
+	}
+
+	relDef := &relationship.RelationshipDefinition{
+		ID:               uuid.Must(uuid.NewV4()),
+		Kind:             relationship.Edge,
+		RelationshipType: "non-binding",
+		SubType:          "reference",
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+	}
+
+	matches := matchComponentPairs(fromSel, toSel, design.Components, relDef, design)
+	if len(matches) != 1 {
+		t.Fatalf("expected 1 match (kubernetes Role), got %d", len(matches))
+	}
+
+	matchedToID := (*matches[0].Selectors)[0].Allow.To[0].ID
+	if matchedToID == nil || *matchedToID != compK8sRole.ID {
+		t.Errorf("expected match target %s, got %v", compK8sRole.ID, matchedToID)
+	}
+}
+
+// TestMatchComponentPairs_SyntheticTwoModelKindCollision verifies that when two different models
+// share the same component kind and property values, the selector's model restricts the matches.
+func TestMatchComponentPairs_SyntheticTwoModelKindCollision(t *testing.T) {
+	compFrom := newTestComponentWithModel("db-source", "Database", "provider-a")
+	compFrom.Configuration = map[string]interface{}{
+		"spec": map[string]interface{}{
+			"target": "db-prod",
+		},
+	}
+
+	compWrongModel := newTestComponentWithModel("db-target-wrong", "DatabaseInstance", "provider-b")
+	compWrongModel.Configuration = map[string]interface{}{
+		"spec": map[string]interface{}{
+			"name": "db-prod",
+		},
+	}
+
+	compRightModel := newTestComponentWithModel("db-target-right", "DatabaseInstance", "provider-a")
+	compRightModel.Configuration = map[string]interface{}{
+		"spec": map[string]interface{}{
+			"name": "db-prod",
+		},
+	}
+
+	design := makePatternFile([]*component.ComponentDefinition{compFrom, compWrongModel, compRightModel}, nil)
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "target"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "name"}}
+
+	fromSel := relationship.SelectorItem{
+		Kind:  strPtr("Database"),
+		Model: &modelv1beta1.ModelReference{Name: "provider-a"},
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatorRef: &mutatorRef,
+		},
+	}
+	toSel := relationship.SelectorItem{
+		Kind:  strPtr("DatabaseInstance"),
+		Model: &modelv1beta1.ModelReference{Name: "provider-a"},
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatedRef: &mutatedRef,
+		},
+	}
+
+	relDef := &relationship.RelationshipDefinition{
+		ID:               uuid.Must(uuid.NewV4()),
+		Kind:             relationship.Edge,
+		RelationshipType: "non-binding",
+		SubType:          "reference",
+	}
+
+	matches := matchComponentPairs(fromSel, toSel, design.Components, relDef, design)
+	if len(matches) != 1 {
+		t.Fatalf("expected exactly 1 match, got %d", len(matches))
+	}
+	toID := (*matches[0].Selectors)[0].Allow.To[0].ID
+	if toID == nil || *toID != compRightModel.ID {
+		t.Errorf("expected target to be compRightModel (%s), got %v", compRightModel.ID, toID)
+	}
+}
+
+// TestIsRelationshipFeasible_ModelSemanticsPin verifies the contract for selector model matching:
+// nil, empty string, and wildcard model references match permissively.
+func TestIsRelationshipFeasible_ModelSemanticsPin(t *testing.T) {
+	comp := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Role"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+	}
+
+	tests := []struct {
+		name     string
+		selector relationship.SelectorItem
+		want     bool
+	}{
+		{
+			name:     "nil Model is permissive",
+			selector: relationship.SelectorItem{Kind: strPtr("Role"), Model: nil},
+			want:     true,
+		},
+		{
+			name:     "empty Model.Name is permissive",
+			selector: relationship.SelectorItem{Kind: strPtr("Role"), Model: &modelv1beta1.ModelReference{Name: ""}},
+			want:     true,
+		},
+		{
+			name:     "wildcard Model.Name matches any model",
+			selector: relationship.SelectorItem{Kind: strPtr("Role"), Model: &modelv1beta1.ModelReference{Name: "*"}},
+			want:     true,
+		},
+		{
+			name:     "matching Model.Name",
+			selector: relationship.SelectorItem{Kind: strPtr("Role"), Model: &modelv1beta1.ModelReference{Name: "kubernetes"}},
+			want:     true,
+		},
+		{
+			name:     "mismatched Model.Name",
+			selector: relationship.SelectorItem{Kind: strPtr("Role"), Model: &modelv1beta1.ModelReference{Name: "aws-iam-controller"}},
+			want:     false,
+		},
+		{
+			name:     "kind mismatch even if model matches",
+			selector: relationship.SelectorItem{Kind: strPtr("Pod"), Model: &modelv1beta1.ModelReference{Name: "kubernetes"}},
+			want:     false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := isRelationshipFeasible(tt.selector, comp)
+			if got != tt.want {
+				t.Errorf("isRelationshipFeasible() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
