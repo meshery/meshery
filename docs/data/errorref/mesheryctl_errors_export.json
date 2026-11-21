@@ -2225,6 +2225,15 @@
         "short_description": "Failed to replace token file",
         "probable_cause": "The destination path may be locked by another process\nThe filesystem may not support atomic rename",
         "suggested_remediation": "Retry the operation\nRun `mesheryctl system login` to re-authenticate"
+      },
+      "1268": {
+        "name": "ErrVerifyTokenFileACLCode",
+        "code": "1268",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to verify token file ACL restrictions",
+        "probable_cause": "The token file access control list may have been modified by another process\nThe token file may inherit insecure permissions from its parent directory",
+        "suggested_remediation": "Retry the operation\nEnsure the directory containing the token file is secure\nRun `mesheryctl system login` to re-authenticate"
       }
     }
   }

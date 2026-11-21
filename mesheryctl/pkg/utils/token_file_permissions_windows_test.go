@@ -5,6 +5,7 @@ package utils
 import (
 	"errors"
 	"fmt"
+	meshErrors "github.com/meshery/meshkit/errors"
 	"io"
 	"os"
 	"os/exec"
@@ -1017,5 +1018,41 @@ func TestWriteTokenFileRewriteKeepsRestriction(t *testing.T) {
 			t.Fatalf("WriteTokenFile #%d: %v", i+1, err)
 		}
 		assertOnlyCurrentUser(t, path)
+	}
+}
+
+func TestVerifyTokenFileACL_ReturnsMeshKitError(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "insecure_auth.json")
+	if err := os.WriteFile(path, []byte("token"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	grantEveryoneRead(t, path)
+
+	f, err := os.Open(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+
+	err = verifyTokenFileACL(f, mustCurrentUserSID(t))
+	if err == nil {
+		t.Fatal("expected verifyTokenFileACL to fail for insecure file")
+	}
+
+	code := meshErrors.GetCode(err)
+	if code != ErrVerifyTokenFileACLCode {
+		t.Fatalf("expected error code %s, got %s", ErrVerifyTokenFileACLCode, code)
+	}
+}
+
+func TestVerifyTokenFileACL_NilFileReturnsError(t *testing.T) {
+	err := verifyTokenFileACL(nil, mustCurrentUserSID(t))
+	if err == nil {
+		t.Fatal("expected verifyTokenFileACL(nil, ...) to return error")
+	}
+
+	code := meshErrors.GetCode(err)
+	if code != ErrVerifyTokenFileACLCode {
+		t.Fatalf("expected error code %s, got %s", ErrVerifyTokenFileACLCode, code)
 	}
 }

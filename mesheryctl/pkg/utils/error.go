@@ -93,6 +93,7 @@ var (
 	ErrRedirectChangesMethodCode      = "mesheryctl-1263"
 	ErrAcquireTokenFileLockCode       = "mesheryctl-1266"
 	ErrReplaceTokenFileCode           = "mesheryctl-1267"
+	ErrVerifyTokenFileACLCode         = "mesheryctl-1268"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -1119,5 +1120,30 @@ func ErrReplaceTokenFile(err error) error {
 		[]string{errMsg},
 		[]string{"The destination path may be locked by another process", "The filesystem may not support atomic rename"},
 		[]string{"Retry the operation", "Run `mesheryctl system login` to re-authenticate"})
+	return &meshkitWrappedError{meshErr: meshErr, cause: err}
+}
+
+// ErrVerifyTokenFileACL is returned when the Windows token file DACL verification fails,
+// indicating the file access control list does not strictly restrict access to the owner.
+// It preserves the token file path, actual/expected access masks (if applicable), and the underlying cause.
+func ErrVerifyTokenFileACL(path string, actualMask, expectedMask uint32, err error) error {
+	errMsg := "token file ACL verification failed"
+	if err != nil {
+		errMsg = err.Error()
+	}
+	var details string
+	if actualMask != 0 || expectedMask != 0 {
+		details = fmt.Sprintf("Token file %q ACL verification failed: %s (actual access mask: %#x, expected access mask: %#x)", path, errMsg, actualMask, expectedMask)
+	} else if path != "" {
+		details = fmt.Sprintf("Token file %q ACL verification failed: %s", path, errMsg)
+	} else {
+		details = fmt.Sprintf("Token file ACL verification failed: %s", errMsg)
+	}
+
+	meshErr := errors.New(ErrVerifyTokenFileACLCode, errors.Alert,
+		[]string{"Failed to verify token file ACL restrictions"},
+		[]string{details},
+		[]string{"The token file access control list may have been modified by another process", "The token file may inherit insecure permissions from its parent directory"},
+		[]string{"Retry the operation", "Ensure the directory containing the token file is secure", "Run `mesheryctl system login` to re-authenticate"})
 	return &meshkitWrappedError{meshErr: meshErr, cause: err}
 }
