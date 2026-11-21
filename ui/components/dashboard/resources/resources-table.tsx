@@ -211,10 +211,9 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
   const [columnVisibility, setColumnVisibility] = useState(() => {
     let showCols = updateVisibleColumns(tableConfig.colViews, width);
     // Initialize column visibility based on the original columns' visibility
-    const initialVisibility = {};
-    tableConfig.columns.forEach((col) => {
-      initialVisibility[col.name] = showCols[col.name];
-    });
+    const initialVisibility = Object.fromEntries(
+      tableConfig.columns.map((col) => [col.name, showCols[col.name]]),
+    );
     return initialVisibility;
   });
   const appendNameToQuery = (name) => {

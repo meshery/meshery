@@ -450,10 +450,9 @@ const MesheryCredentialComponent: React.FC = () => {
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(() => {
     const showCols = updateVisibleColumns(colViews, width);
     // Initialize column visibility based on the original columns' visibility
-    const initialVisibility: Record<string, boolean> = {};
-    columns.forEach((col) => {
-      initialVisibility[col.name] = showCols[col.name];
-    });
+    const initialVisibility: Record<string, boolean> = Object.fromEntries(
+      columns.map((col) => [col.name, showCols[col.name]]),
+    );
     return initialVisibility;
   });
 

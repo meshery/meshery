@@ -413,12 +413,11 @@ function MesheryPatterns({
 
   const responsiveColDefaults = (() => {
     const showCols = updateVisibleColumns(PATTERN_COL_VIEWS, width);
-    const initialVisibility = {};
-    columns.forEach((col) => {
-      if (!(hideVisibility && col.name === 'visibility')) {
-        initialVisibility[col.name] = showCols[col.name];
-      }
-    });
+    const initialVisibility = Object.fromEntries(
+      columns
+        .filter((col) => !(hideVisibility && col.name === 'visibility'))
+        .map((col) => [col.name, showCols[col.name]]),
+    );
     return initialVisibility;
   })();
 
