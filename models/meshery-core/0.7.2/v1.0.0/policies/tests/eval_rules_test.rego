@@ -249,3 +249,30 @@ test_identify_mutator_matches_selector_without_model if {
 	result := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship, design_file)
 	count(result) == 2
 }
+
+test_identify_mutator_matches_heterogeneous_models if {
+	relationship := json.patch(edge_non_binding_mutator_relationship, [
+		{"op": "replace", "path": "/selectors/0/allow/to/0/model/name", "value": "istio"},
+	])
+	design_file := {"components": [
+		{
+			"id": "pod-1",
+			"component": {"kind": "Pod"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+		{
+			"id": "pod-2",
+			"component": {"kind": "Pod"},
+			"model": {"name": "istio"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+	]}
+
+	# Only the kubernetes -> istio direction matches: each side must match
+	# its own selector's model, so the check is per-selector, not
+	# per-relationship. The reverse direction (istio -> kubernetes) must
+	# not match.
+	result := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship, design_file)
+	count(result) == 1
+}
