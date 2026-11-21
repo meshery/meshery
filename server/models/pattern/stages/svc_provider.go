@@ -25,5 +25,6 @@ type ServiceActionProvider interface {
 	Provision(CompConfigPair) ([]patterns.DeploymentMessagePerContext, error)
 	GetRegistry() *registry.RegistryManager
 	DryRun([]*component.ComponentDefinition) (map[string]map[string]patterncore.DryRunResponseWrapper, error)
+	ResourceCapacity([]*component.ComponentDefinition) (map[string]*patterncore.ResourceCapacityPreview, error)
 	Mutate(*pattern.PatternFile) //Uses pre-defined policies/configuration to mutate the pattern
 }
