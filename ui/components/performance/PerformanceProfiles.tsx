@@ -456,6 +456,7 @@ function PerformanceProfile() {
           break;
         case 'changeRowsPerPage':
           setPageSize(tableState.rowsPerPage);
+          setPage(0);
           break;
         case 'search':
           if (searchTimeout.current) clearTimeout(searchTimeout.current);

@@ -272,6 +272,7 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
             break;
           case 'changeRowsPerPage':
             setPageSize(tableState.rowsPerPage.toString());
+            setPage(0);
             break;
           case 'sort':
             if (sortInfo.length == 2) {
