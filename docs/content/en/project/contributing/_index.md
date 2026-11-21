@@ -92,6 +92,31 @@ That rewrites the branch, so settle it first with anyone else working on it, and
 automation that is tracking the branch by commit hash - a force push moves the tip out from
 under both.
 </li>
+
+<li>
+<code>git rebase --signoff</code> stamps whoever runs it, which leaves the DCO check red on a branch
+that carries more than one author's commits and costs a second force push. DCO wants a sign-off
+naming each commit's <em>author</em>, so derive it per commit. A sign-off is the author's own
+certification of the DCO. Use this only when every author of a commit in the rebase range has
+agreed to sign off, because the command amends every commit in that range:
+
+<pre><code>$ git rebase &lt;base-branch&gt; --exec 'git commit --amend --no-edit --allow-empty --trailer \
+    "Signed-off-by=$(git log -1 --pretty="%an &lt;%ae&gt;")"'</code></pre>
+
+This needs Git 2.32 or newer, the release that added <code>git commit --trailer</code>; check with
+<code>git --version</code> first. On an older Git the rebase stops at the first commit with an
+unknown-option error. Run <code>git rebase --abort</code> to return to the branch as it was, upgrade
+Git, and start the rebase again.
+
+The rebase replays the range as linear commits and does not recreate merge commits, so a change
+that exists only in a merge commit (a manual conflict resolution, say) is lost when you force-push.
+Before you run it, list the merges in the range and check each for manual changes:
+
+<pre><code>$ git rev-list --merges &lt;base-branch&gt;..HEAD</code></pre>
+
+Keep any such changes before you force-push, or use a repair method that preserves the merge
+commits.
+</li>
 </ul>
 </details>
 
