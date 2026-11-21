@@ -40,7 +40,7 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	}
 	if order != "" {
 		if !strings.Contains(order, " ") {
-			if sort == "desc" {
+			if strings.EqualFold(strings.TrimSpace(sort), "desc") {
 				order = fmt.Sprintf("%s desc", order)
 			} else {
 				order = fmt.Sprintf("%s asc", order)
