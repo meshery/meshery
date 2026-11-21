@@ -5,6 +5,10 @@
 **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)**
 - [ ] Yes, I signed my commits.
 
+**[Collaborative Review](https://docs.meshery.io/project/contributing/contributing-reviews)**
+- [ ] Yes, I welcome a peer review exchange / pair-review on this PR.
+
+
 <!--
 Thank you for contributing to Meshery! 
 
