@@ -357,7 +357,7 @@ mesheryctl system reset
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl system reset
-&lt;img class="content-image" src="../../../images/reset.png" alt="reset-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-system-restart</title><link>/pr-preview/pr-24115/reference/mesheryctl/system/restart/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-24115/reference/mesheryctl/system/restart/</guid><description>&lt;h1 id="mesheryctl-system-restart"&gt;
+&lt;img class="content-image" src="../../images/reset.png" alt="reset-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-system-restart</title><link>/pr-preview/pr-24115/reference/mesheryctl/system/restart/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-24115/reference/mesheryctl/system/restart/</guid><description>&lt;h1 id="mesheryctl-system-restart"&gt;
 	mesheryctl system restart
 &lt;/h1&gt;
 &lt;p&gt;Stop, then start Meshery&lt;/p&gt;
@@ -537,7 +537,7 @@ mesheryctl system status --verbose
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl system status
-&lt;img class="content-image" src="../../../images/status.png" alt="status-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-system-stop</title><link>/pr-preview/pr-24115/reference/mesheryctl/system/stop/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-24115/reference/mesheryctl/system/stop/</guid><description>&lt;h1 id="mesheryctl-system-stop"&gt;
+&lt;img class="content-image" src="../../images/status.png" alt="status-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-system-stop</title><link>/pr-preview/pr-24115/reference/mesheryctl/system/stop/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-24115/reference/mesheryctl/system/stop/</guid><description>&lt;h1 id="mesheryctl-system-stop"&gt;
 	mesheryctl system stop
 &lt;/h1&gt;
 &lt;p&gt;Stop Meshery&lt;/p&gt;
@@ -698,4 +698,4 @@ mesheryctl system update --skip-reset
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl system update
-&lt;img class="content-image" src="../../../images/update.png" alt="update-usage" /&gt;&lt;/p&gt;</description></item></channel></rss>
+&lt;img class="content-image" src="../../images/update.png" alt="update-usage" /&gt;&lt;/p&gt;</description></item></channel></rss>

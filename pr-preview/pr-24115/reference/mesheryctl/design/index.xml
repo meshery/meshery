@@ -61,7 +61,7 @@ mesheryctl design apply [design-name]
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl design apply
-&lt;img class="content-image" src="../../../images/patternApply.png" alt="pattern-apply-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-design-delete</title><link>/pr-preview/pr-24115/reference/mesheryctl/design/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-24115/reference/mesheryctl/design/delete/</guid><description>&lt;h1 id="mesheryctl-design-delete"&gt;
+&lt;img class="content-image" src="../../images/patternApply.png" alt="pattern-apply-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-design-delete</title><link>/pr-preview/pr-24115/reference/mesheryctl/design/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-24115/reference/mesheryctl/design/delete/</guid><description>&lt;h1 id="mesheryctl-design-delete"&gt;
 	mesheryctl design delete
 &lt;/h1&gt;
 &lt;p&gt;Delete design file&lt;/p&gt;
@@ -148,7 +148,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl design deploy
-&lt;img class="content-image" src="../../../images/app-onboard.png" alt="pattern-onboard-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-design-evaluate</title><link>/pr-preview/pr-24115/reference/mesheryctl/design/evaluate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-24115/reference/mesheryctl/design/evaluate/</guid><description>&lt;h1 id="mesheryctl-design-evaluate"&gt;
+&lt;img class="content-image" src="../../images/app-onboard.png" alt="pattern-onboard-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-design-evaluate</title><link>/pr-preview/pr-24115/reference/mesheryctl/design/evaluate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-24115/reference/mesheryctl/design/evaluate/</guid><description>&lt;h1 id="mesheryctl-design-evaluate"&gt;
 	mesheryctl design evaluate
 &lt;/h1&gt;
 &lt;p&gt;Evaluate a design&lt;/p&gt;
@@ -367,4 +367,4 @@ mesheryctl design view [design-name | ID]
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl design view
-&lt;img class="content-image" src="../../../images/patternView.png" alt="pattern-view-usage" /&gt;&lt;/p&gt;</description></item></channel></rss>
+&lt;img class="content-image" src="../../images/patternView.png" alt="pattern-view-usage" /&gt;&lt;/p&gt;</description></item></channel></rss>

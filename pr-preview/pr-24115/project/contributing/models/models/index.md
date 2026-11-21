@@ -36,7 +36,7 @@ The schema defines the structure of the model, including the entities it contain
 
 > See [Registry](/pr-preview/pr-24115/concepts/logical/registry/) to learn more about Meshery's internal registry and how to use it.
 
-[![Model Entity Classification](../images/model-architecture.svg)](../images/meshery-models.png)
+[![Model Entity Classification](images/model-architecture.svg)](../images/meshery-models.png)
 _Figure: Model Entity Classification_
 
 ## Meshery Entities and their Lifecycle

@@ -79,7 +79,7 @@ Also, if the screenshot is present in the command, an `Annotation` macro variabl
 <pre class="codeblock-pre">
 	<span class="codeblock">
 		<code class="clipboardjs">var linkDocPatternApply = map[string]string{
- &#34;link&#34;:    &#34;![pattern-apply-usage](../../../images/patternApply.png)&#34;,
+ &#34;link&#34;:    &#34;![pattern-apply-usage](../../images/patternApply.png)&#34;,
  &#34;caption&#34;: &#34;Usage of mesheryctl design apply&#34;,
 }
 ...

@@ -65,7 +65,7 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl context create
-&lt;img class="content-image" src="../../../../images/newcontext.png" alt="context-create-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-delete</title><link>/pr-preview/pr-24115/reference/mesheryctl/system/context/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-24115/reference/mesheryctl/system/context/delete/</guid><description>&lt;h1 id="mesheryctl-system-context-delete"&gt;
+&lt;img class="content-image" src="../../../images/newcontext.png" alt="context-create-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-delete</title><link>/pr-preview/pr-24115/reference/mesheryctl/system/context/delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-24115/reference/mesheryctl/system/context/delete/</guid><description>&lt;h1 id="mesheryctl-system-context-delete"&gt;
 	mesheryctl system context delete
 &lt;/h1&gt;
 &lt;p&gt;Delete context&lt;/p&gt;
@@ -225,7 +225,7 @@ mesheryctl system context switch sample
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl context switch
-&lt;img class="content-image" src="../../../../images/contextswitch.png" alt="context-switch-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-view</title><link>/pr-preview/pr-24115/reference/mesheryctl/system/context/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-24115/reference/mesheryctl/system/context/view/</guid><description>&lt;h1 id="mesheryctl-system-context-view"&gt;
+&lt;img class="content-image" src="../../../images/contextswitch.png" alt="context-switch-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-view</title><link>/pr-preview/pr-24115/reference/mesheryctl/system/context/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-24115/reference/mesheryctl/system/context/view/</guid><description>&lt;h1 id="mesheryctl-system-context-view"&gt;
 	mesheryctl system context view
 &lt;/h1&gt;
 &lt;p&gt;Display the current Meshery CLI configuration context&lt;/p&gt;

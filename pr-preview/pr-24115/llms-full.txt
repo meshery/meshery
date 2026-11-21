@@ -19633,7 +19633,7 @@ See [Meshery Designs](/pr-preview/pr-24115/concepts/logical/designs/) for a full
 	Starting from an existing design
 </h2>
 <p>Instead of starting from nothing, import a design from the <a href="https://meshery.io/catalog">Meshery Catalog</a>, from a URL, or from a Kubernetes manifest, Helm chart, or Docker Compose file. See <a href="/pr-preview/pr-24115/guides/configuration-management/import-export-designs/">Importing and Exporting Designs</a>.</p>
-<img src="../images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" /></section><input id="creating-a-meshery-design-tabs-2-2" type="radio" name="creating-a-meshery-design-tabs-2">
+<img src="images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" /></section><input id="creating-a-meshery-design-tabs-2-2" type="radio" name="creating-a-meshery-design-tabs-2">
     <label for="creating-a-meshery-design-tabs-2-2"><i class="fa fa-terminal" aria-hidden="true"></i>mesheryctl
     </label>
     <section class="tabbed" id="creating-a-meshery-design-tabs-2-content-2"><h2 id="using-mesheryctl">
@@ -26665,7 +26665,7 @@ The schema defines the structure of the model, including the entities it contain
 
 > See [Registry](/pr-preview/pr-24115/concepts/logical/registry/) to learn more about Meshery's internal registry and how to use it.
 
-[![Model Entity Classification](../images/model-architecture.svg)](../images/meshery-models.png)
+[![Model Entity Classification](images/model-architecture.svg)](../images/meshery-models.png)
 _Figure: Model Entity Classification_
 
 ## Meshery Entities and their Lifecycle
@@ -65522,7 +65522,7 @@ Also, if the screenshot is present in the command, an `Annotation` macro variabl
 <pre class="codeblock-pre">
 	<span class="codeblock">
 		<code class="clipboardjs">var linkDocPatternApply = map[string]string{
- &#34;link&#34;:    &#34;![pattern-apply-usage](../../../images/patternApply.png)&#34;,
+ &#34;link&#34;:    &#34;![pattern-apply-usage](../../images/patternApply.png)&#34;,
  &#34;caption&#34;: &#34;Usage of mesheryctl design apply&#34;,
 }
 ...
@@ -66014,7 +66014,7 @@ To filter and view only CLI-related test cases using the Sheet Views feature:
 1. In the top menu bar, click Data → Change view
 2. Choose the pre-defined view labeled "CLI"
 
-![Meshery Test Plan Screenshot](../../images/meshery-test-plan-v0.8.0-ui.png)
+![Meshery Test Plan Screenshot](../images/meshery-test-plan-v0.8.0-ui.png)
 
 ## Development
 
@@ -68467,8 +68467,8 @@ After running Meshery server, you will need to select your **Cloud Provider** by
 
 **Please note**: If you get error while starting the server as **"Meshery Development Incompatible"** then follow the below guideline 👇
 
-<a href="../images/meshery-development-incompatible-error.png">
-  <img style= "max-width: 450px;" src="../images/meshery-development-incompatible-error.png" />
+<a href="images/meshery-development-incompatible-error.png">
+  <img style= "max-width: 450px;" src="images/meshery-development-incompatible-error.png" />
 </a>
 
 Potential Solution:
@@ -68955,8 +68955,8 @@ Now, Meshery will run on the default port `http://localhost:9081`.
 
 **Please note**: If you see "Meshery Development Incompatible" while trying to sign into Meshery Server, then follow these steps:
 
-<a href="../../images/meshery-development-incompatible-error.png">
-  <img style="width: 600px;" src="../../images/meshery-development-incompatible-error.png"
+<a href="../images/meshery-development-incompatible-error.png">
+  <img style="width: 600px;" src="../images/meshery-development-incompatible-error.png"
        alt="Meshery Development Incompatible error dialog" />
 </a>
 
@@ -69221,8 +69221,8 @@ Meshery stores user layout preferences either in local storage or via the provid
 
 This is how your default widget would appear in the dashboard:
 
-<a href="../images/dashboard-widgets.png">
-<img style= "width: 600px;" src="../images/dashboard-widgets.png" />
+<a href="images/dashboard-widgets.png">
+<img style= "width: 600px;" src="images/dashboard-widgets.png" />
 </a>
 
 ---
@@ -70189,7 +70189,7 @@ Each entry is rendered as Markdown. The event's full description is shown above 
 />
 ```
 
-<a href="../images/error-formatter.png"><img alt="Error Formatter" style="width:500px;height:auto;" src="../images/error-formatter.png" /></a>
+<a href="images/error-formatter.png"><img alt="Error Formatter" style="width:500px;height:auto;" src="images/error-formatter.png" /></a>
 
 **When to Use:**
 
@@ -70226,7 +70226,7 @@ The `Model Registration Formatter` formats and displays model registration detai
    - `modelName` (string): The name of the model or file being imported.
    - `error` (object): Contains `name`, `entityType`, and the nested `error` details.
 
-<a href="../images/model-register-formatter.png"><img alt="Model Register Formatter" style="width:500px;height:auto;" src="../images/model-register-formatter.png" /></a>
+<a href="images/model-register-formatter.png"><img alt="Model Register Formatter" style="width:500px;height:auto;" src="images/model-register-formatter.png" /></a>
 
 ### Relationship Evaluation Formatter
 
@@ -70253,7 +70253,7 @@ The **Relationship Evaluation Formatter** is responsible for rendering notificat
 
    Each category is rendered as a collapsible section that shows its item count and is hidden entirely when empty. Deletions read the component or relationship from the action payload itself, while additions and updates are resolved against the design.
 
-<a href="../images/relationship-evaluation-formatter.png"><img alt="Relationship Evaluation Formatter" style="width:500px;height:auto;" src="../images/relationship-evaluation-formatter.png" /></a>
+<a href="images/relationship-evaluation-formatter.png"><img alt="Relationship Evaluation Formatter" style="width:500px;height:auto;" src="images/relationship-evaluation-formatter.png" /></a>
 
 #### When to Use
 
@@ -70335,7 +70335,7 @@ The **Dry Run Formatter** is responsible for rendering notifications related to 
 
    - `event` (object): The notification event.
 
-<a href="../images/dry-run-formatter.png"><img alt="Dry Run Formatter" style="width:500px;height:auto;" src="../images/dry-run-formatter.png" /></a>
+<a href="images/dry-run-formatter.png"><img alt="Dry Run Formatter" style="width:500px;height:auto;" src="images/dry-run-formatter.png" /></a>
 
 #### When to Use
 
@@ -70442,8 +70442,8 @@ Sistent leverages Material UI libraries and provides a custom theme on top of it
 
 - This `Modal` is a Sistent Standard Modal used in validation of design.
 
-<a href="../images/sistent-modal.png">
-<img style= "width: 600px;" src="../images/sistent-modal.png" />
+<a href="images/sistent-modal.png">
+<img style= "width: 600px;" src="images/sistent-modal.png" />
 </a>
 
 ### How to use Sistent in Meshery UI
@@ -70893,7 +70893,7 @@ To filter and view only UI-related tests using the Sheet Views feature:
 1. In the top menu bar, click Data → Change view
 2. Choose the pre-defined view labeled "UI"
 
-![Meshery Test Plan Screenshot](../../images/meshery-test-plan-v0.8.0-ui.png)
+![Meshery Test Plan Screenshot](../images/meshery-test-plan-v0.8.0-ui.png)
 
 ## Linking tests to the Test Plan (traceability)
 
@@ -73176,7 +73176,9 @@ See the [Meshery Architecture deck](https://docs.google.com/presentation/d/1SQMf
 * :white_check_mark: [?] Meshery Catalog ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.gfc8b2b2554_0_0))
 
 ----
-See the [Meshery Architecture deck](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164) for additional visual designs and functional specifications (such as Meshery v0.6.5 - Data Persistence).
+See the [Meshery Architecture deck](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164) for additional visual designs and functional specifications like this one -
+
+![Meshery Architecture](/images/meshery-architecture.webp)
 
 
 --------------------------------------------------------------------------------
@@ -114326,7 +114328,7 @@ mesheryctl adapter deploy linkerd --watch
 ## Screenshots
 
 Usage of mesheryctl adapter deploy
-![mesh-deploy-usage](../../../images/deploy-mesh.png)
+![mesh-deploy-usage](../../images/deploy-mesh.png)
 
 ## See Also
 
@@ -114471,7 +114473,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 ## Screenshots
 
 Usage of mesheryctl adapter validate
-![mesh-validate-usage](../../../images/mesh-validate.png)
+![mesh-validate-usage](../../images/mesh-validate.png)
 
 ## See Also
 
@@ -115294,7 +115296,7 @@ mesheryctl design apply [design-name]
 ## Screenshots
 
 Usage of mesheryctl design apply
-![pattern-apply-usage](../../../images/patternApply.png)
+![pattern-apply-usage](../../images/patternApply.png)
 
 ## See Also
 
@@ -115445,7 +115447,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 ## Screenshots
 
 Usage of mesheryctl design deploy
-![pattern-onboard-usage](../../../images/app-onboard.png)
+![pattern-onboard-usage](../../images/app-onboard.png)
 
 ## See Also
 
@@ -115825,7 +115827,7 @@ mesheryctl design list --count
 ## Screenshots
 
 Usage of mesheryctl design list
-![pattern-list-usage](../../../images/patternList.png)
+![pattern-list-usage](../../images/patternList.png)
 
 ## See Also
 
@@ -115951,7 +115953,7 @@ mesheryctl design view [design-name | ID]
 ## Screenshots
 
 Usage of mesheryctl design view
-![pattern-view-usage](../../../images/patternView.png)
+![pattern-view-usage](../../images/patternView.png)
 
 ## See Also
 
@@ -117653,7 +117655,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 ## Screenshots
 
 Usage of mesheryctl perf apply
-![perf-apply-usage](../../../images/perf-apply.png)
+![perf-apply-usage](../../images/perf-apply.png)
 
 ## See Also
 
@@ -117895,7 +117897,7 @@ mesheryctl perf result saturday-profile --view
 ## Screenshots
 
 Usage of mesheryctl perf result
-![perf-result-usage](../../../images/perf-result.png)
+![perf-result-usage](../../images/perf-result.png)
 
 ## See Also
 
@@ -118988,7 +118990,7 @@ mesheryctl system check --operator
 ## Screenshots
 
 Usage of mesheryctl system check
-![check-usage](../../../images/check.png)
+![check-usage](../../images/check.png)
 
 ## See Also
 
@@ -119068,7 +119070,7 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 ## Screenshots
 
 Usage of mesheryctl context create
-![context-create-usage](../../../../images/newcontext.png)
+![context-create-usage](../../../images/newcontext.png)
 
 ## See Also
 
@@ -119254,7 +119256,7 @@ mesheryctl system context switch sample
 ## Screenshots
 
 Usage of mesheryctl context switch
-![context-switch-usage](../../../../images/contextswitch.png)
+![context-switch-usage](../../../images/contextswitch.png)
 
 ## See Also
 
@@ -119352,7 +119354,7 @@ mesheryctl system context view --all
 ## Screenshots
 
 Usage of mesheryctl context view
-![context-view-usage](../../../../images/context-view.png)
+![context-view-usage](../../../images/context-view.png)
 
 ## See Also
 
@@ -120103,7 +120105,7 @@ mesheryctl system reset
 ## Screenshots
 
 Usage of mesheryctl system reset
-![reset-usage](../../../images/reset.png)
+![reset-usage](../../images/reset.png)
 
 ## See Also
 
@@ -120365,7 +120367,7 @@ mesheryctl system status --verbose
 ## Screenshots
 
 Usage of mesheryctl system status
-![status-usage](../../../images/status.png)
+![status-usage](../../images/status.png)
 
 ## See Also
 
@@ -120960,7 +120962,7 @@ mesheryctl system update --skip-reset
 ## Screenshots
 
 Usage of mesheryctl system update
-![update-usage](../../../images/update.png)
+![update-usage](../../images/update.png)
 
 ## See Also
 
@@ -121022,7 +121024,7 @@ mesheryctl version
 ## Screenshots
 
 Usage of mesheryctl version
-![version-usage](../../images/version.png)
+![version-usage](../images/version.png)
 
 ## See Also
 
