@@ -22,6 +22,7 @@ var (
 	ErrPurgeReadModelsDirCode    = "mesheryctl-1250"
 	ErrPurgeRemoveCode           = "mesheryctl-1251"
 	ErrPurgeUnsafePathCode       = "mesheryctl-1252"
+	ErrPrerequisiteFailedCode    = "mesheryctl-1268"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
@@ -78,4 +79,18 @@ func ErrPurgeUnsafePath(path, modelsDir string) error {
 
 func ErrPurgeRemove(err error, path string) error {
 	return errors.New(ErrPurgeRemoveCode, errors.Alert, []string{fmt.Sprintf("error removing model version directory: %s", path)}, []string{err.Error()}, []string{"Insufficient filesystem permissions", "The directory is in use by another process"}, []string{"Ensure sufficient permissions to delete the directory", "Retry the purge after closing any process using the directory"})
+}
+
+func ErrPrerequisiteFailed(cause error, remediation string) error {
+	return errors.New(
+		ErrPrerequisiteFailedCode,
+		errors.Alert,
+		[]string{"Prerequisite check failed for registry generate command"},
+		[]string{cause.Error()},
+		[]string{
+			"Command was executed from an invalid working directory",
+			"Current directory is not the root of a meshery/meshery repository fork",
+		},
+		[]string{remediation},
+	)
 }
