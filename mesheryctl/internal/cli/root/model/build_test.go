@@ -1054,6 +1054,9 @@ func TestModelBuild_Staging_ReadOnlySourceDirectory(t *testing.T) {
 	if err := os.MkdirAll(standardDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
+	if err := os.Chmod(standardDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
 	stdCompFile := filepath.Join(standardDir, "component.json")
 	if err := os.WriteFile(stdCompFile, []byte(`{"name":"test-standard-component"}`), 0o644); err != nil {
 		t.Fatal(err)
