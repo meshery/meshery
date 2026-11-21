@@ -4176,6 +4176,26 @@
         "Retry the operation",
         "Run `mesheryctl system login` to re-authenticate"
       ]
+    },
+    {
+      "code": "mesheryctl-1268",
+      "moniker": "ErrVerifyTokenFileACLCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1268",
+      "severity": "alert",
+      "shortDescription": "Failed to verify token file ACL restrictions",
+      "probableCause": [
+        "The token file access control list may have been modified by another process",
+        "The token file may inherit insecure permissions from its parent directory"
+      ],
+      "suggestedRemediation": [
+        "Retry the operation",
+        "Ensure the directory containing the token file is secure",
+        "Run `mesheryctl system login` to re-authenticate"
+      ]
     }
   ],
   "schemaVersion": 2
