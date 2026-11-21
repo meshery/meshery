@@ -35,20 +35,20 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Gener
 	if loader != nil && loader.AddonLoader != nil && len(cids) > 0 {
 		clusterResults, err := loader.AddonLoader.LoadMany(cids, selectors)
 		if err != nil {
-			r.Log.Error(err)
+			if r.Log != nil {
+				r.Log.Error(err)
+			}
 			return nil, err
 		}
 
-		selectorSet := make(map[string]bool, len(selectors))
-		for _, s := range selectors {
-			selectorSet[s.String()] = true
-		}
-
 		addonlist := make([]*model.AddonList, 0)
-		for _, cid := range cids {
-			for _, addon := range clusterResults[cid] {
-				if selectorSet[addon.Owner] {
-					addonlist = append(addonlist, addon)
+		for _, selector := range selectors {
+			selectorOwner := selector.String()
+			for _, cid := range cids {
+				for _, addon := range clusterResults[cid] {
+					if addon.Owner == selectorOwner {
+						addonlist = append(addonlist, addon)
+					}
 				}
 			}
 		}
@@ -57,7 +57,9 @@ func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Gener
 
 	addonlist, err := model.GetAddonsState(ctx, selectors, provider, cids)
 	if err != nil {
-		r.Log.Error(err)
+		if r.Log != nil {
+			r.Log.Error(err)
+		}
 		return nil, err
 	}
 

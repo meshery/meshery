@@ -43,6 +43,10 @@ func (l *AddonBatchLoader) Load(clusterID string, selectors []model.MeshType) ([
 		return nil, nil
 	}
 
+	if l.ctx.Err() != nil {
+		return nil, l.ctx.Err()
+	}
+
 	l.mu.Lock()
 	if cached, ok := l.cache[clusterID]; ok {
 		l.mu.Unlock()
@@ -114,6 +118,20 @@ func (l *AddonBatchLoader) dispatch() {
 	l.mu.Unlock()
 
 	if len(queue) == 0 {
+		return
+	}
+
+	// Check if the request context was cancelled before the timer fired.
+	// If cancelled, abort early to prevent executing unneeded database queries.
+	if l.ctx.Err() != nil {
+		for _, chans := range queue {
+			for _, ch := range chans {
+				select {
+				case ch <- addonBatchResult{err: l.ctx.Err()}:
+				default:
+				}
+			}
+		}
 		return
 	}
 

@@ -26,9 +26,14 @@ func GetAddonsState(ctx context.Context, selectors []MeshType, provider models.G
 			return nil, err
 		}
 		addonlist := make([]*AddonList, 0)
-		for _, c := range cid {
-			if list, ok := batchMap[c]; ok {
-				addonlist = append(addonlist, list...)
+		for _, selector := range selectors {
+			selectorName := selector.String()
+			for _, c := range cid {
+				for _, addon := range batchMap[c] {
+					if addon.Owner == selectorName {
+						addonlist = append(addonlist, addon)
+					}
+				}
 			}
 		}
 		return addonlist, nil
@@ -48,6 +53,7 @@ func GetAddonsState(ctx context.Context, selectors []MeshType, provider models.G
 
 	for _, selector := range selectors {
 		result := provider.GetGenericPersister().
+			WithContext(ctx).
 			Where("cluster_id IN ?", cid).
 			Preload("KubernetesResourceMeta", "namespace IN ?", controlPlaneNamespace[selector]).
 			Preload("KubernetesResourceMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
@@ -108,6 +114,7 @@ func BatchGetAddonsState(ctx context.Context, selectors []MeshType, provider mod
 	for _, selector := range selectors {
 		objects := make([]meshsyncmodel.KubernetesResource, 0)
 		query := provider.GetGenericPersister().Model(&meshsyncmodel.KubernetesResource{}).
+			WithContext(ctx).
 			Preload("KubernetesResourceMeta", "namespace IN ?", controlPlaneNamespace[selector]).
 			Preload("KubernetesResourceMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
 			Preload("KubernetesResourceMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
