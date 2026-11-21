@@ -187,11 +187,7 @@ test.describe('Design Configurator Tests', () => {
     });
   });
 
-  test('should reset selected model and collapse component panel when category changes', async ({
-    page,
-  }: {
-    page: Page;
-  }) => {
+  test('should reset selected model and collapse component panel when category changes', async () => {
     // 1. Select the Database category
     await designConfigPage.categorySelector.click();
     await designConfigPage.databaseCategory.click();
