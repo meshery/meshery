@@ -7636,6 +7636,60 @@
       "suggestedRemediation": [
         "Reduce request payload size to within acceptable limits"
       ]
+    },
+    {
+      "code": "meshery-server-1495",
+      "moniker": "ErrHandlerPanicCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1495",
+      "severity": "alert",
+      "shortDescription": "Meshery Server hit an unexpected internal error while handling the request",
+      "longDescription": "The handler for this request panicked. The panic value and stack are recorded in the server log, not in this response",
+      "probableCause": [
+        "A defect in Meshery Server caused the handler for this request to panic"
+      ],
+      "suggestedRemediation": [
+        "Retry the request",
+        "If it keeps failing, report it at https://github.com/meshery/meshery/issues/new/choose together with the request that triggered it; the server log holds the full stack"
+      ]
+    },
+    {
+      "code": "meshery-server-1496",
+      "moniker": "ErrInvalidDesignVersionCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1496",
+      "severity": "alert",
+      "shortDescription": "Invalid design version",
+      "probableCause": [
+        "The design file's version is not semver, so a next version cannot be computed from it",
+        "Older tooling wrote arbitrary version strings into design files"
+      ],
+      "suggestedRemediation": [
+        "Set the design file's version to a semver string such as 0.0.1 and save again"
+      ]
+    },
+    {
+      "code": "meshery-server-1497",
+      "moniker": "ErrProvisionPanicCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1497",
+      "severity": "alert",
+      "shortDescription": "Component panicked during provisioning",
+      "probableCause": [
+        "Runtime fault occurred in component visitor execution"
+      ],
+      "suggestedRemediation": [
+        "Inspect component configuration and provider logs for runtime failures"
+      ]
     }
   ],
   "schemaVersion": 2
