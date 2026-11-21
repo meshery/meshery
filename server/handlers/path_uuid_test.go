@@ -151,6 +151,41 @@ func (p *pathUUIDSpyProvider) RemoveConnectionFromEnvironment(_ *http.Request, e
 	return []byte(`{}`), nil
 }
 
+func (p *pathUUIDSpyProvider) GetMesheryFilter(_ *http.Request, filterID string) ([]byte, error) {
+	p.record("GetMesheryFilter", filterID)
+	return []byte(`{}`), nil
+}
+
+func (p *pathUUIDSpyProvider) GetMesheryFilterFile(_ *http.Request, filterID string) ([]byte, error) {
+	p.record("GetMesheryFilterFile", filterID)
+	return []byte(`{}`), nil
+}
+
+func (p *pathUUIDSpyProvider) CloneMesheryFilter(_ *http.Request, filterID string, _ *models.MesheryCloneFilterRequestBody) ([]byte, error) {
+	p.record("CloneMesheryFilter", filterID)
+	return []byte(`{}`), nil
+}
+
+func (p *pathUUIDSpyProvider) GetMesheryPattern(_ *http.Request, patternID, _ string) ([]byte, error) {
+	p.record("GetMesheryPattern", patternID)
+	return []byte(`{}`), nil
+}
+
+func (p *pathUUIDSpyProvider) DeleteMesheryPattern(_ *http.Request, patternID string) ([]byte, error) {
+	p.record("DeleteMesheryPattern", patternID)
+	return []byte(`{}`), nil
+}
+
+func (p *pathUUIDSpyProvider) CloneMesheryPattern(_ *http.Request, patternID string, _ *models.MesheryClonePatternRequestBody) ([]byte, error) {
+	p.record("CloneMesheryPattern", patternID)
+	return []byte(`{}`), nil
+}
+
+func (p *pathUUIDSpyProvider) GetDesignSourceContent(_, designID string) ([]byte, error) {
+	p.record("GetDesignSourceContent", designID)
+	return []byte(`{}`), nil
+}
+
 type pathUUIDHandlerFunc func(h *Handler, w http.ResponseWriter, r *http.Request, p models.Provider)
 
 // pathUUIDCase describes one handler: the path variables it reads (in the
