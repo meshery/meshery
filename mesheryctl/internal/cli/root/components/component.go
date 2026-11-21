@@ -61,10 +61,15 @@ mesheryctl component view [component-name | component-id]
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		argsIsEmpty := len(args) == 0 || (len(args) == 1 && args[0] == "")
-		if argsIsEmpty && !componentFlagsProvided.Count {
-			return utils.ErrInvalidArgument(errors.New("please provide a subcommand"))
+		if argsIsEmpty {
+			if !componentFlagsProvided.Count {
+				return utils.ErrInvalidArgument(errors.New("please provide a subcommand"))
+			}
+			return nil
 		}
-
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [list, search, view]. Use 'mesheryctl component --help' to display usage guide", args[0]))
+		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -79,10 +84,6 @@ mesheryctl component view [component-name | component-id]
 				DisplayCountOnly: componentFlagsProvided.Count,
 			}
 			return display.ListAsyncPagination(componentData, generateComponentDataToDisplay)
-		}
-
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [list, search, view]. Use 'mesheryctl component --help' to display usage guide", args[0]))
 		}
 
 		err := cmd.Usage()
