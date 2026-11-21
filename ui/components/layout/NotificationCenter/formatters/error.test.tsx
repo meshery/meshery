@@ -184,4 +184,21 @@ describe('ErrorMetadataFormatter', () => {
     const { container } = render(<ErrorMetadataFormatter metadata="boom" />);
     expect(container).toBeEmptyDOMElement();
   });
+
+  it('renders the error reference link when referenceUrl is provided', () => {
+    render(
+      <ErrorMetadataFormatter
+        metadata={{
+          code: 'meshery-server-1562',
+          referenceUrl: 'https://docs.meshery.io/reference/error-codes#meshery-server-1562',
+        }}
+        event={{ description: 'An error occurred' }}
+      />,
+    );
+    const link = screen.getByText('meshery-server-1562 reference');
+    expect(link.closest('a')).toHaveAttribute(
+      'href',
+      'https://docs.meshery.io/reference/error-codes#meshery-server-1562',
+    );
+  });
 });

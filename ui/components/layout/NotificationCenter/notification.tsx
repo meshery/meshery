@@ -58,6 +58,9 @@ import { getDesignEventErrorSummary, isMeshkitErrorCode } from './formatters/des
 import { eventErrorCode, eventErrorReferenceUrl } from './formatters/event_error';
 import { ConditionBadges, ConditionSummary, getEventCondition } from './formatters/condition';
 import { useDispatch } from 'react-redux';
+import { formatErrorCode } from './formatters/common';
+
+export { formatErrorCode };
 
 export const eventPreventDefault = (e) => {
   e.preventDefault();
@@ -262,6 +265,14 @@ export const getErrorCodesFromEvent = (event) => {
   if (!event || !event.metadata) return null;
 
   let errorCodes = new Set();
+  const component = event.category || 'meshery-server';
+
+  const addCode = (code) => {
+    if (code !== undefined && code !== null && String(code).trim() !== '') {
+      errorCodes.add(formatErrorCode(code, component));
+    }
+  };
+
   // metadata.error is the schemas EventError (`code`) or, on rows recorded
   // before it, MeshKit's error with Go field names (`Code`).
   if (event.metadata.error) {
@@ -270,7 +281,7 @@ export const getErrorCodesFromEvent = (event) => {
       : [event.metadata.error];
     errors.forEach((err) => {
       const code = eventErrorCode(err);
-      if (code) errorCodes.add(code);
+      if (code) addCode(code);
     });
   }
 
@@ -282,17 +293,19 @@ export const getErrorCodesFromEvent = (event) => {
 
   if (event.metadata.ModelDetails) {
     Object.values(event.metadata.ModelDetails).forEach((detail) => {
-      if (Array.isArray(detail.Errors)) {
+      if (Array.isArray(detail?.Errors)) {
         detail.Errors.forEach((error) => {
-          if (error.error?.Code) {
-            errorCodes.add(error.error.Code);
+          if (error?.error?.Code) {
+            addCode(error.error.Code);
+          } else if (error?.error?.code) {
+            addCode(error.error.code);
           }
         });
       }
     });
   }
 
-  return [...errorCodes];
+  return errorCodes.size > 0 ? [...errorCodes] : null;
 };
 export const Notification = ({ event_id }) => {
   const event = useSelector((state) => selectEventById(state, event_id));
