@@ -78,6 +78,8 @@ jobs:
           start args: --cni "${{ inputs.k8s_cni }}"
       - name: Checkout Code
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
 
       # Build the image by setting appropriate environmental variables in order to access the image from minikube
       - name: Build the tagged Docker image
@@ -186,6 +188,12 @@ jobs:
         run: sleep 120
       - name: Pattern apply, second iteration. [IDEMPOTENT]
         run: |
+          echo "##################"
+          echo "Current working directory:"
+          pwd
+          echo "Listing current directory contents:"
+          ls -l
+          echo "############"
           cat ./${{ inputs.patternfile_name }}
           mesheryctl design apply -f ./${{ inputs.patternfile_name }}
       - name: Check adapter logs
