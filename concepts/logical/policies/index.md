@@ -47,10 +47,9 @@ In any given Meshery deployment, you can reference and search the full set of re
 <div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Viewing All Registered Relationships</div>
 
 
-You can view all registered relationships using either Meshery UI or Meshery CLI.
+You can view all registered relationships in the Meshery UI.
 
 - **Using Meshery UI**: Navigate to *Settings*, then to *Registry*
-- **Using Meshery CLI**: `mesheryctl policy list`
 </div>
 
 
