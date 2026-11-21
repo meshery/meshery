@@ -43,7 +43,6 @@ In any given Meshery deployment, you can reference and search the full set of re
 You can view all registered relationships using either Meshery UI or Meshery CLI.
 
 - **Using Meshery UI**: Navigate to *Settings*, then to *Registry*
-- **Using Meshery CLI**: `mesheryctl policy list`
 {{% /alert %}}
 
 <!-- There are different points in time in which policy evaluations are invoked
