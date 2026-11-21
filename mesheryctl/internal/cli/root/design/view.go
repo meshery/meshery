@@ -15,8 +15,11 @@
 package design
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
+	"strconv"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
@@ -77,36 +80,35 @@ mesheryctl design view [design-name | ID]
 			}
 		}
 
-		urlPath := getDesignViewUrlPath(design, isID, designViewFlagsProvided.All)
-
-		apiResponse, err := api.Fetch[map[string]interface{}](urlPath)
-		if err != nil {
-			return err
-		}
-
 		var designData interface{}
 
-		if isID { // Only one design will be returned when searching by ID
+		switch {
+		case isID:
+			urlPath := getDesignViewUrlPath(design, true, false)
+			apiResponse, err := api.Fetch[map[string]interface{}](urlPath)
+			if err != nil {
+				return err
+			}
 			designData = apiResponse
-		}
 
-		if designViewFlagsProvided.All { // all designs will be returned when --all flag is provided
+		case designViewFlagsProvided.All:
+			urlPath := getDesignViewUrlPath("", false, true)
+			apiResponse, err := api.Fetch[map[string]interface{}](urlPath)
+			if err != nil {
+				return err
+			}
 			designData = map[string]interface{}{"patterns": (*apiResponse)["patterns"]}
-		}
 
-		if !isID && !designViewFlagsProvided.All { // only the first match will be returned when searching by name
-			patterns, ok := (*apiResponse)["patterns"]
-			if !ok {
-				return ErrDesignInvalidApiResponse("'patterns' field missing")
+		default:
+			allPatterns, err := fetchDesignSearch(design, api.Fetch[map[string]interface{}])
+			if err != nil {
+				return err
 			}
-			arr, ok := patterns.([]interface{})
-			if !ok {
-				return ErrDesignInvalidApiResponse("'patterns' field is not of expected type")
+			selected, err := selectDesignByName(allPatterns, design)
+			if err != nil {
+				return err
 			}
-			if len(arr) == 0 {
-				return ErrDesignNotFound(design)
-			}
-			designData = arr[0]
+			designData = selected
 		}
 
 		outputFormatFactory := display.OutputFormatterFactory[interface{}]{}
@@ -138,6 +140,146 @@ func getDesignViewUrlPath(design string, isID bool, viewAll bool) string {
 	}
 
 	return fmt.Sprintf("%s?%s", baseApiPath, queryParams.Encode())
+}
+
+const designSearchPageSize = 10000
+
+var runDesignSelectPrompt = utils.RunSelectPrompt
+
+// extractInt extracts an integer from a map, handling JSON numbers that unmarshal as float64, int, int64, or json.Number.
+func extractInt(m map[string]interface{}, keys ...string) (int, bool) {
+	for _, k := range keys {
+		if v, ok := m[k]; ok && v != nil {
+			switch val := v.(type) {
+			case float64:
+				return int(val), true
+			case int:
+				return val, true
+			case int64:
+				return int(val), true
+			case json.Number:
+				if n, err := val.Int64(); err == nil {
+					return int(n), true
+				}
+			}
+		}
+	}
+	return 0, false
+}
+
+// fetchDesignSearch collects every page so that selection can consider exact
+// matches and duplicates even when the provider caps the requested page size.
+func fetchDesignSearch(name string, fetch func(string) (*map[string]interface{}, error)) ([]interface{}, error) {
+	var allPatterns []interface{}
+	var initialPageSize int
+	hasTotalCount := false
+	totalCount := 0
+
+	for pageNum := 0; ; pageNum++ {
+		values := url.Values{}
+		values.Add("page", strconv.Itoa(pageNum))
+		values.Add("pagesize", strconv.Itoa(designSearchPageSize))
+		values.Add("populate", "pattern_file")
+		values.Add("search", name)
+
+		query := fmt.Sprintf("api/pattern?%s", values.Encode())
+		page, err := fetch(query)
+		if err != nil {
+			return nil, err
+		}
+		if page == nil {
+			return nil, ErrDesignInvalidApiResponse("empty design search response")
+		}
+
+		rawPatterns, ok := (*page)["patterns"]
+		if !ok {
+			return nil, ErrDesignInvalidApiResponse("'patterns' field missing")
+		}
+		patternsArr, ok := rawPatterns.([]interface{})
+		if !ok {
+			return nil, ErrDesignInvalidApiResponse("'patterns' field is not of expected type")
+		}
+
+		if tot, ok := extractInt(*page, "totalCount", "total_count"); ok {
+			hasTotalCount = true
+			totalCount = tot
+		}
+		curPageSize, hasPageSize := extractInt(*page, "pageSize", "page_size")
+
+		if pageNum == 0 {
+			if hasTotalCount && totalCount == 0 {
+				return []interface{}{}, nil
+			}
+			if hasPageSize {
+				initialPageSize = curPageSize
+			}
+		} else if hasPageSize && curPageSize != initialPageSize {
+			return nil, ErrDesignInvalidApiResponse("design search page size changed")
+		}
+
+		allPatterns = append(allPatterns, patternsArr...)
+
+		if hasTotalCount && len(allPatterns) >= totalCount {
+			return allPatterns, nil
+		}
+		if len(patternsArr) == 0 || (hasPageSize && curPageSize == 0) {
+			if hasTotalCount && len(allPatterns) < totalCount {
+				return nil, ErrDesignInvalidApiResponse("incomplete design search results")
+			}
+			return allPatterns, nil
+		}
+	}
+}
+
+// selectDesignByName prefers case-sensitive whole-name matches, then falls
+// back to case-insensitive whole-name matches. Substring results are ignored.
+func selectDesignByName(patterns []interface{}, name string) (map[string]interface{}, error) {
+	var exact, folded []map[string]interface{}
+	for _, p := range patterns {
+		m, ok := p.(map[string]interface{})
+		if !ok || m == nil {
+			continue
+		}
+		patternName, ok := m["name"].(string)
+		if !ok {
+			continue
+		}
+		if patternName == name {
+			exact = append(exact, m)
+		} else if strings.EqualFold(patternName, name) {
+			folded = append(folded, m)
+		}
+	}
+
+	matches := exact
+	if len(matches) == 0 {
+		matches = folded
+	}
+	if len(matches) == 0 {
+		return nil, ErrDesignNotFound(name)
+	}
+	if len(matches) == 1 {
+		return matches[0], nil
+	}
+
+	items := make([]string, len(matches))
+	for i, m := range matches {
+		pName, _ := m["name"].(string)
+		pID, _ := m["id"].(string)
+		if pID == "" {
+			pID = "unknown"
+		}
+		items[i] = fmt.Sprintf("Name: %s, ID: %s", pName, pID)
+	}
+
+	idx, err := runDesignSelectPrompt("Select design", items)
+	if err != nil {
+		return nil, err
+	}
+	if idx < 0 || idx >= len(matches) {
+		return nil, fmt.Errorf("invalid design selection: %d", idx)
+	}
+	return matches[idx], nil
 }
 
 func init() {
