@@ -125,7 +125,9 @@ mesheryctl model build [model-name]/[model-version]
 
 		buildSource, cleanup, err := prepareModelBuildSource(folder)
 		if err != nil {
-			return ErrModelBuild(err)
+			err = ErrModelBuild(err)
+			utils.Log.Error(err)
+			return err
 		}
 		defer cleanup()
 
