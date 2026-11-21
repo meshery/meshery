@@ -42,8 +42,14 @@ mesheryctl connection delete [connection_id]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		countFlag, _ := cmd.Flags().GetBool("count")
-		if len(args) == 0 && !countFlag {
-			return utils.ErrInvalidArgument(errors.New("no subcommand provided for connection"))
+		if len(args) == 0 {
+			if !countFlag {
+				return utils.ErrInvalidArgument(errors.New("no subcommand provided for connection"))
+			}
+			return nil
+		}
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Use 'mesheryctl connection --help' to display usage", args[0]))
 		}
 		return nil
 	},
@@ -59,10 +65,6 @@ mesheryctl connection delete [connection_id]
 			utils.DisplayCount("connection", int64(connectionsResponse.TotalCount))
 
 			return nil
-		}
-
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Use 'mesheryctl connection --help' to display usage", args[0]))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

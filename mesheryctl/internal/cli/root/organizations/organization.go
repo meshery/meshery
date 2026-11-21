@@ -31,11 +31,17 @@ mesheryctl organization list
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ = cmd.Flags().GetBool("count")
-		if len(args) == 0 && !count {
-			if err := cmd.Usage(); err != nil {
-				return err
+		if len(args) == 0 {
+			if !count {
+				if err := cmd.Usage(); err != nil {
+					return err
+				}
+				return utils.ErrInvalidArgument(errors.New("please provide a subcommand with the command"))
 			}
-			return utils.ErrInvalidArgument(errors.New("please provide a subcommand with the command"))
+			return nil
+		}
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid command. Use 'mesheryctl organization --help' to display usage guide", args[0]))
 		}
 		return nil
 	},
@@ -48,11 +54,6 @@ mesheryctl organization list
 			utils.DisplayCount("organizations", int64(orgs.TotalCount))
 			return nil
 		}
-
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid command. Use 'mesheryctl organization --help' to display usage guide", args[0]))
-		}
-
 		return nil
 	},
 }
