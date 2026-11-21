@@ -275,4 +275,10 @@ test_identify_mutator_matches_heterogeneous_models if {
 	# not match.
 	result := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship, design_file)
 	count(result) == 1
+
+	# The single declaration must be the kubernetes -> istio direction: a
+	# reverse-only match would also satisfy the count above.
+	some declaration in result
+	declaration.selectors[0].allow.from[0].id == "pod-1"
+	declaration.selectors[0].allow.to[0].id == "pod-2"
 }
