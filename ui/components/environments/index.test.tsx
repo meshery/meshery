@@ -679,6 +679,36 @@ describe('Environments destructive confirmation scope', () => {
     expect(deleteEnvironment).not.toHaveBeenCalled();
   });
 
+  it('invalidates a pending delete before passive organization cleanup runs', async () => {
+    let resolveConfirmation: (value: string) => void = () => {};
+    showPrompt.mockReturnValue(
+      new Promise<string>((resolve) => {
+        resolveConfirmation = resolve;
+      }),
+    );
+    const user = userEvent.setup();
+    const Harness = () => {
+      const organizationId = UI_STATE.ui.organization.id;
+
+      React.useLayoutEffect(() => {
+        if (organizationId === 'org-2') resolveConfirmation('DELETE');
+      }, [organizationId]);
+
+      return <Environments />;
+    };
+    const { rerender } = render(<Harness />);
+
+    await user.click(screen.getByTestId('delete-btn-env-org-1'));
+    expect(showPrompt).toHaveBeenCalledOnce();
+
+    UI_STATE.ui.organization = { id: 'org-2' };
+    ENVIRONMENTS_QUERY_RESULT.currentData = undefined as any;
+    rerender(<Harness />);
+
+    await act(async () => Promise.resolve());
+    expect(deleteEnvironment).not.toHaveBeenCalled();
+  });
+
   it('does not run a bulk delete after an organization round trip', async () => {
     const confirm = deferConfirmation();
     const user = userEvent.setup();

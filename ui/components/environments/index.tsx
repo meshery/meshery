@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -259,15 +259,19 @@ const Environments = () => {
     });
   };
 
-  useEffect(() => {
-    if (previousOrganizationIdRef.current === organization?.id) return;
+  useLayoutEffect(() => {
+    if (organizationScopeRef.current.id === organization?.id) return;
     organizationScopeRef.current = {
       id: organization?.id,
       generation: organizationScopeRef.current.generation + 1,
     };
-    previousOrganizationIdRef.current = organization?.id;
     environmentFormSessionRef.current += 1;
     connectionAssignmentSessionRef.current += 1;
+  }, [organization?.id]);
+
+  useEffect(() => {
+    if (previousOrganizationIdRef.current === organization?.id) return;
+    previousOrganizationIdRef.current = organization?.id;
 
     setPage(0);
     setSelectedEnvironments([]);

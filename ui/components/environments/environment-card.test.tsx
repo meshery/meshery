@@ -209,6 +209,28 @@ describe('EnvironmentCard', () => {
     expect(screen.getByTestId('tab-count')).not.toHaveTextContent('0');
   });
 
+  it('hides a cached zero count when a connections refetch fails', () => {
+    getEnvironmentConnectionsQuery.mockReturnValue({
+      data: { totalCount: 0 },
+      isError: true,
+    });
+
+    render(
+      <EnvironmentCard
+        environmentDetails={baseEnvironment}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+
+    expect(screen.getByTestId('tab-count')).toHaveTextContent('—');
+    expect(screen.getByTestId('tab-title')).toHaveTextContent('Connections unavailable');
+    expect(screen.getByTestId('tab-count')).not.toHaveTextContent('0');
+  });
+
   it('does not render zero while the connections lookup is pending', () => {
     getEnvironmentConnectionsQuery.mockReturnValue({ data: undefined, isError: false });
 

@@ -93,7 +93,8 @@ const EnvironmentCard = ({
       },
       { skip: !environmentDetails.id },
     );
-  const hasEnvironmentConnectionsCount = typeof environmentConnections?.totalCount === 'number';
+  const hasEnvironmentConnectionsCount =
+    !isEnvironmentConnectionsError && typeof environmentConnections?.totalCount === 'number';
   const environmentConnectionsCount = hasEnvironmentConnectionsCount
     ? environmentConnections.totalCount
     : '—';
