@@ -44,7 +44,7 @@ The configurator lists a form for each component of the model, such as *Deployme
 
 Expand a component's form and fill in its fields. Each form is generated from the component's schema, so it marks required fields and shows nested properties you can expand. As you fill in a form, the configurator adds the component to the design and updates the YAML.
 
-Choose another category or model at any time to add components from it to the same design.
+Choose another category or model at any time to add components from it to the same design. Changing the category clears the selected model and collapses its component forms; choose a model in the new category to show its forms again.
 
 ### Step 5: Save the design
 
