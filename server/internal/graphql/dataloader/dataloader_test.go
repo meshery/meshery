@@ -45,6 +45,9 @@ func TestDataLoaderMiddleware_PerRequestIsolation(t *testing.T) {
 	assert.NotNil(t, loader1.ControlPlaneLoader)
 	assert.NotNil(t, loader2.ControlPlaneLoader)
 	assert.NotEqual(t, loader1.ControlPlaneLoader, loader2.ControlPlaneLoader, "loaders must not be shared across requests")
+	assert.NotNil(t, loader1.AddonLoader)
+	assert.NotNil(t, loader2.AddonLoader)
+	assert.NotEqual(t, loader1.AddonLoader, loader2.AddonLoader, "addon loaders must not be shared across requests")
 }
 
 func TestWithLoaders_RoundTrip(t *testing.T) {
@@ -53,6 +56,7 @@ func TestWithLoaders_RoundTrip(t *testing.T) {
 
 	loaders := &dataloader.Loaders{
 		ControlPlaneLoader: nil,
+		AddonLoader:        nil,
 	}
 	ctxWithLoaders := dataloader.WithLoaders(ctx, loaders)
 
@@ -81,4 +85,12 @@ func TestControlPlaneBatchLoader_LoadEmptyKey(t *testing.T) {
 	resMany, err := loader.ControlPlaneLoader.LoadMany([]string{}, []model.MeshType{model.MeshTypeIstio})
 	assert.NoError(t, err)
 	assert.Empty(t, resMany)
+
+	resAddon, err := loader.AddonLoader.Load("", []model.MeshType{model.MeshTypeIstio})
+	assert.NoError(t, err)
+	assert.Nil(t, resAddon)
+
+	resManyAddon, err := loader.AddonLoader.LoadMany([]string{}, []model.MeshType{model.MeshTypeIstio})
+	assert.NoError(t, err)
+	assert.Empty(t, resManyAddon)
 }
