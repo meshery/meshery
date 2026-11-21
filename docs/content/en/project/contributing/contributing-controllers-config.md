@@ -310,7 +310,9 @@ release. The cluster-scoped rules live in `server/models/operator_cluster_lifecy
   repeating it. Only a re-read showing the operator present (`Deployed` or
   `Deploying`) skips the install; an unreadable status (`Unknown`, as a
   transient API error yields) still attempts it. The lock is per cluster, never global, and is always the
-  innermost lock taken (the FSM holds `setupLock` around the connect chain):
+  innermost lock taken. Connection setup holds `setupLock` while attaching
+  controllers, and deployment-mode reconciliation uses `WithSetupLock` so its
+  teardown and redeployment wait for setup to finish:
   `withOperatorClusterLock` wraps only the Helm calls and releases the lock even
   if one panics, and consumer lookups, logging and event emission happen before
   or after it, never under it.
