@@ -29,6 +29,12 @@ func TestGenerateErrorOutput(t *testing.T) {
 		ExpectedError  error
 	}{
 		{
+			Name:           "Given extraneous positional argument, when generate runs, then it errors with invalid argument",
+			Args:           []string{"generate", "extra-arg", "--file", "relationships.csv"},
+			ExpectError:    true,
+			ErrorSubstring: "too many arguments specified",
+		},
+		{
 			Name:           "Given no input flags, when generate runs, then it errors with missing required flag",
 			Args:           []string{"generate"},
 			ExpectError:    true,
