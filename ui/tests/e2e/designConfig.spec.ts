@@ -203,13 +203,13 @@ test.describe('Design Configurator Tests', () => {
     // 3. Verify the model component panel is visible
     await expect(designConfigPage.modelContainer).toBeVisible();
 
-    // 4. Verify the editor uses the split layout
+    // 4. Capture split layout dimensions for comparison
     const splitEditorBox = await designConfigPage.codeEditor.boundingBox();
     expect(splitEditorBox).not.toBeNull();
 
     // 5. Switch to Analytics
     await designConfigPage.categorySelector.click();
-    await page.getByTestId(MOCK_CATEGORY_ANALYTICS).click();
+    await designConfigPage.analyticsCategory.click();
 
     // 6. Verify the previous model selection is cleared
     await expect(designConfigPage.modelSelector.locator('input')).toHaveValue('');
@@ -225,5 +225,14 @@ test.describe('Design Configurator Tests', () => {
         return fullEditorBox?.width ?? 0;
       })
       .toBeGreaterThan(splitEditorBox!.width * 1.5);
+
+    // 9. Round-trip: Switch back to Database
+    await designConfigPage.categorySelector.click();
+    await designConfigPage.databaseCategory.click();
+
+    // 10. Verify model remains cleared and component panel remains hidden
+    await expect(designConfigPage.modelSelector.locator('input')).toHaveValue('');
+    await expect(designConfigPage.modelSelector).not.toHaveText(/Azure DB for MySQL/i);
+    await expect(designConfigPage.modelContainer).toBeHidden();
   });
 });
