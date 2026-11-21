@@ -83,15 +83,19 @@ describe('validateLoadParams', () => {
     expect(validateLoadParams(c, qps)).toEqual({ cError: '', qpsError: '' });
   });
 
-  it.each([-10, '-10', 0, '0', 1.5, '1.5', '', '   ', 'abc', null, undefined])(
+  it.each([-10, '-10', 0, '0', 1.5, '1.5', '5.0', '1e3', '', '   ', 'abc', null, undefined])(
     'rejects concurrent requests %s',
     (c) => {
       expect(validateLoadParams(c, 0).cError).not.toBe('');
     },
   );
 
-  it.each([-5, '-5', 2.5, '', 'abc', null, undefined])('rejects QPS %s', (qps) => {
+  it.each([-5, '-5', 2.5, '5.0', '1e3', '', 'abc', null, undefined])('rejects QPS %s', (qps) => {
     expect(validateLoadParams(1, qps).qpsError).not.toBe('');
+  });
+
+  it('accepts a signed and padded decimal-integer spelling', () => {
+    expect(validateLoadParams(' 5 ', '+10')).toEqual({ cError: '', qpsError: '' });
   });
 
   it('reports each field independently', () => {

@@ -20,9 +20,9 @@ export function generateUUID(): string {
 }
 
 const isWholeNumberAtLeast = (value: string | number | null | undefined, min: number): boolean => {
-  if (value === null || value === undefined || String(value).trim() === '') return false;
-  const parsed = Number(value);
-  return Number.isInteger(parsed) && parsed >= min;
+  const text = String(value).trim();
+  if (!/^[+-]?\d+$/.test(text)) return false;
+  return Number(text) >= min;
 };
 
 /**

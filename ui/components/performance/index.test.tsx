@@ -134,7 +134,11 @@ describe('MesheryPerformanceComponent permission and query skipping', () => {
 describe('MesheryPerformanceComponent load parameter validation', () => {
   const lastFormProps = () => formPropsSpy.mock.calls.at(-1)![0];
   const lastActionsProps = () => actionsPropsSpy.mock.calls.at(-1)![0];
-  const eventSourceSpy = vi.fn(() => ({ close: vi.fn() }));
+  // Constructed with `new` by startEventStream, so the stub has to be a
+  // constructible function rather than an arrow.
+  const eventSourceSpy = vi.fn(function (this: Record<string, unknown>) {
+    this.close = vi.fn();
+  });
 
   beforeEach(() => {
     canSpy.mockReturnValue(true);
@@ -153,6 +157,11 @@ describe('MesheryPerformanceComponent load parameter validation', () => {
     ['negative concurrent requests', { c: '-10', qps: '10' }, { cError: true, qpsError: false }],
     ['zero concurrent requests', { c: '0', qps: '10' }, { cError: true, qpsError: false }],
     ['negative QPS', { c: '5', qps: '-5' }, { cError: false, qpsError: true }],
+    [
+      'a whole-valued but non-integer spelling of concurrent requests',
+      { c: '5.0', qps: '10' },
+      { cError: true, qpsError: false },
+    ],
   ])('flags %s and blocks Save Profile and Run Test', (_name, values, expected) => {
     render(
       <MesheryPerformanceComponent
