@@ -71069,7 +71069,7 @@ The pipeline reviews, tests, checks documentation and lint, then writes the atte
 
 ## Submitting
 
-Once you've committed and pushed all of your changes to GitHub, go to the page for your fork on GitHub, select your development branch, and click the pull request button. If you need to make any adjustments to your pull request, push the updates to GitHub. Then run the gate again on the same branch so the attestation matches the new head commit. An attestation for an older commit fails the `PR must be raised via no-mistakes` check. Pull requests that change only `docs/**`, the root `CNAME`, or `.github/workflows/**` are exempt. Your pull request will automatically track the changes in your development branch and update it.
+Once you've committed your changes, push them through the gate remote with `git push no-mistakes feature/your-feature`: a plain push targets `origin`, which the setup guide repointed at meshery/meshery. Then go to the page for your fork on GitHub, select your development branch, and click the pull request button. If you need to make any adjustments to your pull request, push the updates through the gate remote, then run the gate again on the same branch so the attestation matches the new head commit. An attestation for an older commit fails the `PR must be raised via no-mistakes` check. Pull requests that change only `docs/**`, the root `CNAME`, or `.github/workflows/**` are exempt. Your pull request will automatically track the changes in your development branch and update it.
 
 
 
