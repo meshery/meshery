@@ -32,6 +32,20 @@ function saveToStorage(tableKey: string, prefs: Record<string, boolean>): void {
   }
 }
 
+function mergeVisibleColumns(
+  responsiveDefaults: Record<string, boolean | undefined>,
+  storedPreferences: Record<string, boolean>,
+): Record<string, boolean | undefined> {
+  const merged: Record<string, boolean | undefined> = Object.create(null);
+  for (const [col, responsiveValue] of Object.entries(responsiveDefaults)) {
+    merged[col] =
+      Object.prototype.hasOwnProperty.call(storedPreferences, col)
+        ? storedPreferences[col]
+        : responsiveValue;
+  }
+  return merged;
+}
+
 /**
  * Persistent column visibility for data tables.
  *
@@ -58,7 +72,7 @@ export function useColumnVisibilityPreference(
   const storedPrefs = useRef<Record<string, boolean>>(loadFromStorage(tableKey));
 
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean | undefined>>(
-    () => ({ ...responsiveDefaults, ...storedPrefs.current }),
+    () => mergeVisibleColumns(responsiveDefaults, storedPrefs.current),
   );
 
   const setColumnVisibilityByUser = useCallback(
@@ -67,6 +81,7 @@ export function useColumnVisibilityPreference(
         const rawNext = typeof updater === 'function' ? updater(prev) : updater;
         const next: Record<string, boolean | undefined> = Object.create(null);
         for (const [col, val] of Object.entries(rawNext)) {
+          if (!Object.prototype.hasOwnProperty.call(responsiveDefaults, col)) continue;
           if (typeof val === 'boolean' || val === undefined) {
             next[col] = val;
           } else {
@@ -89,7 +104,7 @@ export function useColumnVisibilityPreference(
   const setColumnVisibilityByResponsive = useCallback(
     (next: Record<string, boolean | undefined>) => {
       setColumnVisibility((prev) => {
-        const merged = { ...next, ...storedPrefs.current };
+        const merged = mergeVisibleColumns(next, storedPrefs.current);
         const keys = new Set([...Object.keys(prev), ...Object.keys(merged)]);
         for (const key of keys) {
           if (prev[key] !== merged[key]) return merged;

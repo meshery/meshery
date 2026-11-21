@@ -54,4 +54,58 @@ describe('useColumnVisibilityPreference', () => {
     expect(remounted.result.current.columnVisibility.enabled).toBe(true);
     expect(remounted.result.current.columnVisibility.active).toBe(false);
   });
+
+  it('does not restore persisted columns excluded by current responsive defaults', () => {
+    window.localStorage.setItem(
+      'meshery_cols_hidden-layout',
+      JSON.stringify({ available: false, visibility: false }),
+    );
+
+    const remounted = renderHook(() =>
+      useColumnVisibilityPreference('hidden-layout', { available: true }),
+    );
+
+    expect(remounted.result.current.columnVisibility.available).toBe(false);
+    expect(
+      Object.prototype.hasOwnProperty.call(
+        remounted.result.current.columnVisibility,
+        'visibility',
+      ),
+    ).toBe(false);
+
+    act(() => {
+      remounted.result.current.setColumnVisibilityByUser({
+        available: true,
+        visibility: false,
+      });
+    });
+
+    const stored = JSON.parse(
+      window.localStorage.getItem('meshery_cols_hidden-layout') ?? '{}',
+    ) as Record<string, boolean>;
+    expect(
+      Object.prototype.hasOwnProperty.call(stored, 'visibility'),
+    ).toBe(false);
+    expect(
+      Object.prototype.hasOwnProperty.call(
+        remounted.result.current.columnVisibility,
+        'visibility',
+      ),
+    ).toBe(false);
+
+    act(() => {
+      remounted.result.current.setColumnVisibilityByResponsive({
+        available: true,
+        visibility: true,
+      });
+    });
+
+    expect(remounted.result.current.columnVisibility.available).toBe(false);
+    expect(
+      Object.prototype.hasOwnProperty.call(
+        remounted.result.current.columnVisibility,
+        'visibility',
+      ),
+    ).toBe(false);
+  });
 });
