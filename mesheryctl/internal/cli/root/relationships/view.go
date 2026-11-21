@@ -71,9 +71,8 @@ mesheryctl relationship view [model-name] --output-format json --save
 				ErrNotFoundMsg: fmt.Sprintf("No relationship(s) found for the model with name: %s", model),
 			},
 			formatLabel,
-			func(data *MeshmodelRelationshipsAPIResponse) ([]relationship.RelationshipDefinition, int64) {
-				return data.Relationships, data.Count
-			}, selectedModel)
+			extractRelationshipItems,
+			selectedModel)
 		if err != nil {
 			return err
 		}
@@ -145,4 +144,11 @@ func formatLabel(rows []relationship.RelationshipDefinition) []string {
 func init() {
 	viewCmd.Flags().StringVarP(&relationshipViewFlagsProvided.outputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	viewCmd.Flags().BoolVarP(&relationshipViewFlagsProvided.save, "save", "s", false, "(optional) save output as a JSON/YAML file")
+}
+
+func extractRelationshipItems(data *MeshmodelRelationshipsAPIResponse) ([]relationship.RelationshipDefinition, int64) {
+	if data == nil {
+		return nil, 0
+	}
+	return data.Relationships, data.Count
 }

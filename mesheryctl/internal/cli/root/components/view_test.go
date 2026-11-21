@@ -129,3 +129,13 @@ func TestComponentViewSaveFlattensSeparatorsInName(t *testing.T) {
 
 	utils.AssertFileExists(t, filepath.Join(mesheryDir, "component_apps_v1_Deployment_test.yaml"))
 }
+
+func TestExtractComponentItems_NilResponse(t *testing.T) {
+	items, total := extractComponentItems(nil)
+	if len(items) != 0 {
+		t.Fatalf("expected 0 items for nil response, got %d", len(items))
+	}
+	if total != 0 {
+		t.Fatalf("expected total 0 for nil response, got %d", total)
+	}
+}

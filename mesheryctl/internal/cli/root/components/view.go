@@ -84,9 +84,7 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 				SearchTerm:     searchTerm,
 			},
 			formatLabel,
-			func(data *models.MeshmodelComponentsAPIResponse) ([]component.ComponentDefinition, int64) {
-				return data.Components, data.TotalCount
-			},
+			extractComponentItems,
 			selectedComponent,
 		)
 		if err != nil {
@@ -133,4 +131,11 @@ func formatLabel(components []component.ComponentDefinition) []string {
 		labels = append(labels, name)
 	}
 	return labels
+}
+
+func extractComponentItems(data *models.MeshmodelComponentsAPIResponse) ([]component.ComponentDefinition, int64) {
+	if data == nil {
+		return nil, 0
+	}
+	return data.Components, data.TotalCount
 }
