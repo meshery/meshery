@@ -173,6 +173,186 @@ func TestGetCleanPodName(t *testing.T) {
 	}
 }
 
+type readErrorBody struct {
+	closed bool
+}
+
+func (b *readErrorBody) Read([]byte) (int, error) {
+	return 0, errors.New("read failed")
+}
+
+func (b *readErrorBody) Close() error {
+	b.closed = true
+	return nil
+}
+
+type readErrorTransport struct {
+	body *readErrorBody
+}
+
+func (t *readErrorTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	t.body = &readErrorBody{}
+	return &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       t.body,
+		Header:     make(http.Header),
+		Request:    req,
+	}, nil
+}
+
+func TestResolveDockerComposeBinaryURL(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	t.Run("falls back to default version and closes response body on read error", func(t *testing.T) {
+		origURL := dockerComposeWebURL
+		dockerComposeWebURL = "http://read-error.test"
+		defer func() { dockerComposeWebURL = origURL }()
+
+		transport := &readErrorTransport{}
+		previousTransport := http.DefaultTransport
+		http.DefaultTransport = transport
+		t.Cleanup(func() { http.DefaultTransport = previousTransport })
+
+		got := resolveDockerComposeBinaryURL()
+		expected := dockerComposeBinaryURL + defaultDockerComposeVersion
+		if got != expected {
+			t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
+		}
+		if transport.body == nil || !transport.body.closed {
+			t.Errorf("expected response body to be closed on read-error path")
+		}
+	})
+
+	t.Run("success returns release binary url and closes response body", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{"tag_name": "v2.24.5"}`))
+		}))
+		defer server.Close()
+
+		origURL := dockerComposeWebURL
+		dockerComposeWebURL = server.URL
+		defer func() { dockerComposeWebURL = origURL }()
+
+		transport := &trackingTransport{base: http.DefaultTransport}
+		previousTransport := http.DefaultTransport
+		http.DefaultTransport = transport
+		t.Cleanup(func() { http.DefaultTransport = previousTransport })
+
+		got := resolveDockerComposeBinaryURL()
+		expected := dockerComposeBinaryURL + "v2.24.5/docker-compose"
+		if got != expected {
+			t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
+		}
+
+		if transport.body == nil || !transport.body.closed {
+			t.Errorf("expected response body to be closed on success path")
+		}
+	})
+
+	for _, tc := range []struct {
+		name string
+		body string
+	}{
+		{"missing tag_name", `{}`},
+		{"empty tag_name", `{"tag_name": ""}`},
+		{"non-string tag_name", `{"tag_name": 123}`},
+	} {
+		t.Run("falls back to default version on "+tc.name, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write([]byte(tc.body))
+			}))
+			defer server.Close()
+
+			origURL := dockerComposeWebURL
+			dockerComposeWebURL = server.URL
+			defer func() { dockerComposeWebURL = origURL }()
+
+			transport := &trackingTransport{base: http.DefaultTransport}
+			previousTransport := http.DefaultTransport
+			http.DefaultTransport = transport
+			t.Cleanup(func() { http.DefaultTransport = previousTransport })
+
+			got := resolveDockerComposeBinaryURL()
+			expected := dockerComposeBinaryURL + defaultDockerComposeVersion
+			if got != expected {
+				t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
+			}
+
+			if transport.body == nil || !transport.body.closed {
+				t.Errorf("expected response body to be closed on %s path", tc.name)
+			}
+		})
+	}
+
+	t.Run("falls back to default version and closes response body on non-200 status code", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusForbidden)
+			_, _ = w.Write([]byte(`{"message": "API rate limit exceeded"}`))
+		}))
+		defer server.Close()
+
+		origURL := dockerComposeWebURL
+		dockerComposeWebURL = server.URL
+		defer func() { dockerComposeWebURL = origURL }()
+
+		transport := &trackingTransport{base: http.DefaultTransport}
+		previousTransport := http.DefaultTransport
+		http.DefaultTransport = transport
+		t.Cleanup(func() { http.DefaultTransport = previousTransport })
+
+		got := resolveDockerComposeBinaryURL()
+		expected := dockerComposeBinaryURL + defaultDockerComposeVersion
+		if got != expected {
+			t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
+		}
+
+		if transport.body == nil || !transport.body.closed {
+			t.Errorf("expected response body to be closed on non-200 status code path")
+		}
+	})
+
+	t.Run("falls back to default version and closes response body on malformed json", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{"invalid": "json"`))
+		}))
+		defer server.Close()
+
+		origURL := dockerComposeWebURL
+		dockerComposeWebURL = server.URL
+		defer func() { dockerComposeWebURL = origURL }()
+
+		transport := &trackingTransport{base: http.DefaultTransport}
+		previousTransport := http.DefaultTransport
+		http.DefaultTransport = transport
+		t.Cleanup(func() { http.DefaultTransport = previousTransport })
+
+		got := resolveDockerComposeBinaryURL()
+		expected := dockerComposeBinaryURL + defaultDockerComposeVersion
+		if got != expected {
+			t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
+		}
+
+		if transport.body == nil || !transport.body.closed {
+			t.Errorf("expected response body to be closed on malformed json path")
+		}
+	})
+
+	t.Run("falls back to default version on unreachable endpoint", func(t *testing.T) {
+		origURL := dockerComposeWebURL
+		dockerComposeWebURL = "http://127.0.0.1:0/unreachable"
+		defer func() { dockerComposeWebURL = origURL }()
+
+		got := resolveDockerComposeBinaryURL()
+		expected := dockerComposeBinaryURL + defaultDockerComposeVersion
+		if got != expected {
+			t.Errorf("resolveDockerComposeBinaryURL() = %q, want %q", got, expected)
+		}
+	})
+}
+
 func TestCreateManifestsFolder(t *testing.T) {
 	// a manifests folder in the working directory belongs to the user, not mesheryctl
 	t.Chdir(t.TempDir())
@@ -205,6 +385,7 @@ func TestCreateManifestsFolder(t *testing.T) {
 
 type interceptingTransport struct {
 	body    *trackingBody
+	bodies  []*trackingBody
 	handler func(req *http.Request) (*http.Response, error)
 }
 
@@ -213,6 +394,7 @@ func (t *interceptingTransport) RoundTrip(req *http.Request) (*http.Response, er
 		resp, err := t.handler(req)
 		if err == nil && resp != nil && resp.Body != nil {
 			t.body = &trackingBody{ReadCloser: resp.Body}
+			t.bodies = append(t.bodies, t.body)
 			resp.Body = t.body
 		}
 		return resp, err
@@ -238,7 +420,12 @@ func TestInstallprereqDocker_BodyClosed(t *testing.T) {
 		handler: func(req *http.Request) (*http.Response, error) {
 			rec := httptest.NewRecorder()
 			rec.WriteHeader(http.StatusOK)
-			_, _ = rec.WriteString("invalid json")
+			if strings.Contains(req.URL.Host, "api.github.com") {
+				_, _ = rec.WriteString("invalid json")
+			} else {
+				// download of the fallback default-version binary
+				_, _ = rec.WriteString("fake docker-compose binary")
+			}
 			return rec.Result(), nil
 		},
 	}
@@ -246,12 +433,19 @@ func TestInstallprereqDocker_BodyClosed(t *testing.T) {
 	http.DefaultTransport = transport
 	t.Cleanup(func() { http.DefaultTransport = previousTransport })
 
+	// A malformed release response falls back to the default version instead
+	// of aborting the install, so the install succeeds.
 	err := InstallprereqDocker()
-	if err == nil {
-		t.Fatal("expected error from unmarshal, got nil")
+	if err != nil {
+		t.Fatalf("expected install to fall back to the default version on malformed release response, got: %v", err)
 	}
-	if transport.body == nil || !transport.body.closed {
-		t.Fatal("expected response body to be closed in InstallprereqDocker")
+	if len(transport.bodies) == 0 {
+		t.Fatal("expected the release API response body to be tracked")
+	}
+	for _, body := range transport.bodies {
+		if body == nil || !body.closed {
+			t.Fatal("expected every response body to be closed in InstallprereqDocker")
+		}
 	}
 }
 
