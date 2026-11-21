@@ -318,6 +318,100 @@ func TestModelBuild(t *testing.T) {
 			},
 		},
 		{
+			Name:             "given name only with docs directory when model build then model is built",
+			Args:             []string{"build", buildTestDynamoController},
+			ExpectError:      false,
+			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedFiles: []string{
+				buildTestDynamoController + ".tar",
+			},
+			SetupHooks: []func(){
+				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
+				setupHookCreateRootDirectories(buildTestDynamoController, "docs"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					buildTestDynamoController,
+					buildTestDynamoController+".tar",
+				),
+			},
+		},
+		{
+			Name:             "given name only with .git and docs directory when model build then model is built",
+			Args:             []string{"build", buildTestDynamoController},
+			ExpectError:      false,
+			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedFiles: []string{
+				buildTestDynamoController + ".tar",
+			},
+			SetupHooks: []func(){
+				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
+				setupHookCreateRootDirectories(buildTestDynamoController, ".git", "docs"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					buildTestDynamoController,
+					buildTestDynamoController+".tar",
+				),
+			},
+		},
+		{
+			Name:             "given name only with README.md, docs and valid version directory when model build then model is built",
+			Args:             []string{"build", buildTestDynamoController},
+			ExpectError:      false,
+			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedFiles: []string{
+				buildTestDynamoController + ".tar",
+			},
+			SetupHooks: []func(){
+				setupHookModelInit("init", buildTestDynamoController, "--version", "v1.0.0"),
+				setupHookCreateRootFiles(buildTestDynamoController, "README.md"),
+				setupHookCreateRootDirectories(buildTestDynamoController, "docs"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					buildTestDynamoController,
+					buildTestDynamoController+".tar",
+				),
+			},
+		},
+		{
+			Name:             "given name only with prerelease version directory when model build then model is built",
+			Args:             []string{"build", buildTestDynamoController},
+			ExpectError:      false,
+			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedFiles: []string{
+				buildTestDynamoController + ".tar",
+			},
+			SetupHooks: []func(){
+				setupHookModelInit("init", buildTestDynamoController, "--version", "v1.0.0-alpha"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					buildTestDynamoController,
+					buildTestDynamoController+".tar",
+				),
+			},
+		},
+		{
+			Name:             "given name only with build metadata version directory when model build then model is built",
+			Args:             []string{"build", buildTestDynamoController},
+			ExpectError:      false,
+			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedFiles: []string{
+				buildTestDynamoController + ".tar",
+			},
+			SetupHooks: []func(){
+				setupHookModelInit("init", buildTestDynamoController, "--version", "v1.0.0+20130313144700"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					buildTestDynamoController,
+					buildTestDynamoController+".tar",
+				),
+			},
+		},
+		{
 			Name:             "given no params when model build then throw error",
 			Args:             []string{"build"},
 			ExpectError:      true,
@@ -388,6 +482,24 @@ func TestModelBuild(t *testing.T) {
 			ExpectedError:  ErrModelBuildFromStrings(errBuildUsage, errBuildMultiVersionNotSupported),
 		},
 		{
+			Name:             "given name, two version directories and docs directory when model build then throw error",
+			Args:             []string{"build", buildTestTwoVersions},
+			ExpectError:      true,
+			ExpectedResponse: "",
+			SetupHooks: []func(){
+				setupHookModelInit("init", buildTestTwoVersions, "--version", "v1.0.0"),
+				setupHookModelInit("init", buildTestTwoVersions, "--version", "v2.0.0"),
+				setupHookCreateRootDirectories(buildTestTwoVersions, "docs"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					buildTestTwoVersions,
+				),
+			},
+			IsOutputGolden: false,
+			ExpectedError:  ErrModelBuildFromStrings(errBuildUsage, errBuildMultiVersionNotSupported),
+		},
+		{
 			Name:             "given name and no version directories when model build then throw error",
 			Args:             []string{"build", buildTestNoVersionDir},
 			ExpectError:      true,
@@ -418,6 +530,59 @@ func TestModelBuild(t *testing.T) {
 			SetupHooks: []func(){
 				func() {
 					if err := os.MkdirAll(filepath.Join(buildTestNoVersionDir, ".git"), 0o755); err != nil {
+						t.Fatal(err)
+					}
+				},
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					buildTestNoVersionDir,
+				),
+			},
+			IsOutputGolden: false,
+			ExpectedError:  ErrModelBuildFromStrings(errBuildUsage, errBuildMultiVersionNotSupported),
+		},
+		{
+			Name:             "given name, docs directory with guide.md and README.md without valid version directory when model build then throw error",
+			Args:             []string{"build", buildTestNoVersionDir},
+			ExpectError:      true,
+			ExpectedResponse: "",
+			SetupHooks: []func(){
+				func() {
+					docsDir := filepath.Join(buildTestNoVersionDir, "docs")
+					if err := os.MkdirAll(docsDir, 0o755); err != nil {
+						t.Fatal(err)
+					}
+					if err := os.WriteFile(filepath.Join(docsDir, "guide.md"), []byte("sample guide content"), 0o644); err != nil {
+						t.Fatal(err)
+					}
+					if err := os.WriteFile(filepath.Join(buildTestNoVersionDir, "README.md"), []byte("sample docs"), 0o644); err != nil {
+						t.Fatal(err)
+					}
+				},
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					buildTestNoVersionDir,
+				),
+			},
+			IsOutputGolden: false,
+			ExpectedError:  ErrModelBuildFromStrings(errBuildUsage, errBuildMultiVersionNotSupported),
+		},
+		{
+			Name:             "given name and only regular files without valid version directory when model build then throw error",
+			Args:             []string{"build", buildTestNoVersionDir},
+			ExpectError:      true,
+			ExpectedResponse: "",
+			SetupHooks: []func(){
+				func() {
+					if err := os.MkdirAll(buildTestNoVersionDir, 0o755); err != nil {
+						t.Fatal(err)
+					}
+					if err := os.WriteFile(filepath.Join(buildTestNoVersionDir, "README.md"), []byte("sample docs"), 0o644); err != nil {
+						t.Fatal(err)
+					}
+					if err := os.WriteFile(filepath.Join(buildTestNoVersionDir, "LICENSE"), []byte("sample license"), 0o644); err != nil {
 						t.Fatal(err)
 					}
 				},
