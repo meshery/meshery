@@ -154,6 +154,53 @@ func TestListAsyncPagination(t *testing.T) {
 			expectedError:    utils.ErrInvalidToken(),
 			hasToken:         true,
 		},
+		{
+			name: "Given_PrePopulated_QueryParams_When_ListAsyncPagination_Then_Exact_URL_Without_Duplicates_Or_Trailing_Ampersand",
+			displayData: DisplayDataAsync{
+				PageSize:         25,
+				Page:             2,
+				UrlPath:          "test?orgId=org-123&page=1&pagesize=25&search=old",
+				SearchTerm:       "new",
+				DataType:         "items",
+				DisplayCountOnly: true,
+				IsPage:           false,
+				Header:           []string{"ID", "Name"},
+			},
+			processDataFunc: func(data *[]items) ([][]string, int64) {
+				return [][]string{}, 0
+			},
+			urlPath: "/test?orgId=org-123&page=1&pagesize=25&search=new",
+			apiResponse: apiResponse{
+				Code:  200,
+				Items: []items{},
+			},
+			exceptedResponse: "No items found\n",
+			expectedError:    nil,
+			hasToken:         true,
+		},
+		{
+			name: "Given_PrePopulated_PageAndPageSize_NoSearch_When_ListAsyncPagination_Then_No_Dangling_Ampersand",
+			displayData: DisplayDataAsync{
+				PageSize:         25,
+				Page:             2,
+				UrlPath:          "test?orgId=org-123&page=1&pagesize=25",
+				DataType:         "items",
+				DisplayCountOnly: true,
+				IsPage:           false,
+				Header:           []string{"ID", "Name"},
+			},
+			processDataFunc: func(data *[]items) ([][]string, int64) {
+				return [][]string{}, 0
+			},
+			urlPath: "/test?orgId=org-123&page=1&pagesize=25",
+			apiResponse: apiResponse{
+				Code:  200,
+				Items: []items{},
+			},
+			exceptedResponse: "No items found\n",
+			expectedError:    nil,
+			hasToken:         true,
+		},
 	}
 
 	utils.SetupContextEnv(t)
