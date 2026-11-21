@@ -76,7 +76,7 @@ function setMode() {
 }
 
 function updateLogos() {
-    const allLogos = document.querySelectorAll(".logo-dark-light");
+    const allLogos = document.querySelectorAll(".logo-dark-light, #logo-dark-light");
     allLogos.forEach(logo => {
         if (document.body.classList.contains("dark-mode")) {
             logo.src = logo.dataset.logoForDark;
