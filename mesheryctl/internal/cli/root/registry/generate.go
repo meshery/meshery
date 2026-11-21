@@ -57,7 +57,7 @@ var (
 	latestVersionOnly bool
 )
 
-var generateUsageMsg = "Usage: mesheryctl registry generate [flags]\nRun 'mesheryctl registry generate --help' to see detailed help message"
+var generateUsageMsg = "Usage: mesheryctl registry generate [flags]\n\nPrerequisite: Must be executed from the root of a meshery/meshery repo fork.\nRun 'mesheryctl registry generate --help' to see detailed help message"
 
 var generateCmd = &cobra.Command{
 	Use:   "generate",

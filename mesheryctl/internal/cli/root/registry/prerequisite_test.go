@@ -19,6 +19,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/meshery/meshkit/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -30,21 +31,34 @@ func setupMockMesheryRepo(t *testing.T, isWorktree bool) string {
 	root, err := filepath.EvalSymlinks(root)
 	require.NoError(t, err)
 
-	// Create .git entry (directory or file)
+	gitConfigContent := `[core]
+	repositoryformatversion = 0
+	filemode = true
+[remote "origin"]
+	url = https://github.com/meshery/meshery.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+`
+
+	// Create .git entry (directory or worktree file)
 	gitPath := filepath.Join(root, ".git")
 	if isWorktree {
-		err = os.WriteFile(gitPath, []byte("gitdir: /path/to/worktrees/mock\n"), 0o644)
+		worktreeTarget := filepath.Join(t.TempDir(), "mock-gitdir")
+		require.NoError(t, os.MkdirAll(worktreeTarget, 0o755))
+		require.NoError(t, os.WriteFile(filepath.Join(worktreeTarget, "config"), []byte(gitConfigContent), 0o644))
+
+		err = os.WriteFile(gitPath, []byte("gitdir: "+worktreeTarget+"\n"), 0o644)
 		require.NoError(t, err)
 	} else {
 		err = os.MkdirAll(gitPath, 0o755)
 		require.NoError(t, err)
+		require.NoError(t, os.WriteFile(filepath.Join(gitPath, "config"), []byte(gitConfigContent), 0o644))
 	}
 
 	// Create mesheryctl and server directories
 	require.NoError(t, os.MkdirAll(filepath.Join(root, "mesheryctl"), 0o755))
 	require.NoError(t, os.MkdirAll(filepath.Join(root, "server"), 0o755))
 
-	// Create go.mod
+	// Create go.mod with exact module declaration
 	goModContent := "module github.com/meshery/meshery\n\ngo 1.23\n"
 	require.NoError(t, os.WriteFile(filepath.Join(root, "go.mod"), []byte(goModContent), 0o644))
 
@@ -63,13 +77,23 @@ func TestVerifyRepoRoot_WorktreeFile(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestVerifyRepoRoot_WorktreeFile_NonexistentTarget(t *testing.T) {
+	root := t.TempDir()
+	gitPath := filepath.Join(root, ".git")
+	require.NoError(t, os.WriteFile(gitPath, []byte("gitdir: /nonexistent/target/path\n"), 0o644))
+
+	err := verifyRepoRootDir(root)
+	require.Error(t, err)
+	assert.Equal(t, ErrPrerequisiteFailedCode, errors.GetCode(err))
+}
+
 func TestVerifyRepoRoot_Subdirectory(t *testing.T) {
 	root := setupMockMesheryRepo(t, false)
 	subDir := filepath.Join(root, "mesheryctl")
 
 	err := verifyRepoRootDir(subDir)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), ErrPrerequisiteFailedCode)
+	assert.Equal(t, ErrPrerequisiteFailedCode, errors.GetCode(err))
 	assert.Contains(t, err.Error(), "command executed from subdirectory")
 	assert.Contains(t, err.Error(), "mesheryctl")
 }
@@ -81,7 +105,7 @@ func TestVerifyRepoRoot_NestedSubdirectory(t *testing.T) {
 
 	err := verifyRepoRootDir(nestedDir)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), ErrPrerequisiteFailedCode)
+	assert.Equal(t, ErrPrerequisiteFailedCode, errors.GetCode(err))
 	assert.Contains(t, err.Error(), "command executed from subdirectory")
 }
 
@@ -92,8 +116,7 @@ func TestVerifyRepoRoot_NonGitDirectory(t *testing.T) {
 
 	err = verifyRepoRootDir(emptyDir)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), ErrPrerequisiteFailedCode)
-	assert.Contains(t, err.Error(), "not inside a git repository")
+	assert.Equal(t, ErrPrerequisiteFailedCode, errors.GetCode(err))
 }
 
 func TestVerifyRepoRoot_ForeignGitRepository(t *testing.T) {
@@ -107,8 +130,30 @@ func TestVerifyRepoRoot_ForeignGitRepository(t *testing.T) {
 
 	err = verifyRepoRootDir(foreignRoot)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), ErrPrerequisiteFailedCode)
-	assert.Contains(t, err.Error(), "not a meshery/meshery repository")
+	assert.Equal(t, ErrPrerequisiteFailedCode, errors.GetCode(err))
+}
+
+func TestVerifyRepoRoot_ModulePrefixMismatch(t *testing.T) {
+	root := setupMockMesheryRepo(t, false)
+	// Replace go.mod with module having same prefix but different repo name
+	require.NoError(t, os.WriteFile(filepath.Join(root, "go.mod"), []byte("module github.com/meshery/meshery-other\n\ngo 1.23\n"), 0o644))
+
+	err := verifyRepoRootDir(root)
+	require.Error(t, err)
+	assert.Equal(t, ErrPrerequisiteFailedCode, errors.GetCode(err))
+}
+
+func TestVerifyRepoRoot_MissingRemote(t *testing.T) {
+	root := setupMockMesheryRepo(t, false)
+	// Overwrite config without meshery remote
+	otherConfig := `[remote "origin"]
+	url = https://github.com/someone/other-repo.git
+`
+	require.NoError(t, os.WriteFile(filepath.Join(root, ".git", "config"), []byte(otherConfig), 0o644))
+
+	err := verifyRepoRootDir(root)
+	require.Error(t, err)
+	assert.Equal(t, ErrPrerequisiteFailedCode, errors.GetCode(err))
 }
 
 func TestVerifyRepoRoot_CurrentWorkingDir(t *testing.T) {
@@ -124,5 +169,5 @@ func TestVerifyRepoRoot_CurrentWorkingDir(t *testing.T) {
 
 	err = verifyRepoRoot()
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), ErrPrerequisiteFailedCode)
+	assert.Equal(t, ErrPrerequisiteFailedCode, errors.GetCode(err))
 }
