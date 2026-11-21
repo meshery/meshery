@@ -38,8 +38,10 @@ export const appendInvalidatesTags =
  * @returns {Promise<Object>} - A Promise resolving with an object containing query execution results.
  */
 export const initiateQuery = async (query, variables, options = undefined) => {
+  let subscription;
   try {
-    return await store.dispatch(query.initiate(variables, options));
+    subscription = store.dispatch(query.initiate(variables, options));
+    return await subscription;
   } catch (error) {
     // Return an object with error details if there's an exception
     return {
@@ -50,5 +52,7 @@ export const initiateQuery = async (query, variables, options = undefined) => {
       isLoading: false,
       isError: true,
     };
+  } finally {
+    subscription?.unsubscribe?.();
   }
 };
