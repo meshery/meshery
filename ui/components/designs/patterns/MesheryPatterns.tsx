@@ -570,7 +570,7 @@ function MesheryPatterns({
               />
             )}
 
-            <SistentModal maxWidth="sm" {...designLifecycleModal}></SistentModal>
+            <SistentModal {...designLifecycleModal} maxWidth={false} />
             <SistentModal {...sistentInfoModal}>
               {canViewDesignDetails && infoModal.open && (
                 <InfoModal

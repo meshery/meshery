@@ -143,7 +143,7 @@ const ExpandableComponentErrors = ({
                 data-testid="dry-run-error"
                 {...navigationProps(err)}
               >
-                <ListItemIcon>
+                <ListItemIcon style={{ minWidth: '24px' }}>
                   {' '}
                   <ErrorIcon
                     height="24px"
@@ -157,7 +157,11 @@ const ExpandableComponentErrors = ({
                   <DryRunSignleError
                     disableTypography
                     primary={
-                      <Typography variant="subtitle2" disablePadding>
+                      <Typography
+                        variant="subtitle2"
+                        disablePadding
+                        style={{ overflowWrap: 'anywhere' }}
+                      >
                         {err}
                       </Typography>
                     }
