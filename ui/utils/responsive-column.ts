@@ -4,6 +4,10 @@
  * Calculates column visibility based on screen size and current screen width.
  */
 export const updateVisibleColumns = (colViews?: unknown, width?: number | unknown) => {
+  if (!Array.isArray(colViews)) {
+    return {};
+  }
+
   const screenSizeMap: Record<string, number> = Object.assign(Object.create(null), {
     na: 0,
     xs: 585,
@@ -15,20 +19,7 @@ export const updateVisibleColumns = (colViews?: unknown, width?: number | unknow
 
   const safeWidth =
     typeof width === 'number' && Number.isFinite(width) ? Math.max(0, width) : 0;
-  const showCols: Record<string, boolean> = {};
-
-  if (!Array.isArray(colViews)) {
-    return showCols;
-  }
-
-  const setColumnVisibility = (columnName: string, visible: boolean) => {
-    Object.defineProperty(showCols, columnName, {
-      value: visible,
-      enumerable: true,
-      configurable: true,
-      writable: true,
-    });
-  };
+  const showCols: Record<string, boolean> = Object.create(null);
 
   colViews.forEach((col) => {
     if (!Array.isArray(col) || col.length !== 2) {
@@ -45,20 +36,14 @@ export const updateVisibleColumns = (colViews?: unknown, width?: number | unknow
       return;
     }
 
-    const normalizedScreenSize = screenSize.trim();
-    const minScreenWidth = Object.prototype.hasOwnProperty.call(
-      screenSizeMap,
-      normalizedScreenSize,
-    )
-      ? screenSizeMap[normalizedScreenSize]
-      : 0;
+    const minScreenWidth = screenSizeMap[screenSize] || 0;
 
-    if (normalizedScreenSize === 'na') {
-      setColumnVisibility(columnName, false);
-    } else if (normalizedScreenSize === 'xs') {
-      setColumnVisibility(columnName, true);
+    if (screenSize === 'na') {
+      showCols[columnName] = false;
+    } else if (screenSize === 'xs') {
+      showCols[columnName] = true;
     } else {
-      setColumnVisibility(columnName, safeWidth >= minScreenWidth);
+      showCols[columnName] = safeWidth >= minScreenWidth;
     }
   });
 

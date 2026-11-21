@@ -3,12 +3,23 @@ import { useCallback, useRef, useState, type SetStateAction } from 'react';
 const STORAGE_KEY_PREFIX = 'meshery_cols_';
 
 function loadFromStorage(tableKey: string): Record<string, boolean> {
-  if (typeof window === 'undefined') return {};
+  if (typeof window === 'undefined') return Object.create(null);
   try {
     const raw = window.localStorage.getItem(`${STORAGE_KEY_PREFIX}${tableKey}`);
-    return raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
+    if (!raw) return Object.create(null);
+
+    const parsed: unknown = JSON.parse(raw);
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+      return Object.create(null);
+    }
+
+    const prefs: Record<string, boolean> = Object.create(null);
+    for (const [col, val] of Object.entries(parsed)) {
+      if (typeof val === 'boolean') prefs[col] = val;
+    }
+    return prefs;
   } catch {
-    return {};
+    return Object.create(null);
   }
 }
 
@@ -53,18 +64,26 @@ export function useColumnVisibilityPreference(
   const setColumnVisibilityByUser = useCallback(
     (updater: SetStateAction<Record<string, boolean | undefined>>) => {
       setColumnVisibility((prev) => {
-        const next = typeof updater === 'function' ? updater(prev) : updater;
+        const rawNext = typeof updater === 'function' ? updater(prev) : updater;
+        const next: Record<string, boolean | undefined> = Object.create(null);
+        for (const [col, val] of Object.entries(rawNext)) {
+          if (typeof val === 'boolean' || val === undefined) {
+            next[col] = val;
+          } else {
+            next[col] = responsiveDefaults[col];
+          }
+        }
         // Persist only defined (non-undefined) values.
         const toStore: Record<string, boolean> = Object.create(null);
         for (const [col, val] of Object.entries(next)) {
-          if (val !== undefined) toStore[col] = val;
+          if (typeof val === 'boolean') toStore[col] = val;
         }
         storedPrefs.current = toStore;
         saveToStorage(tableKey, toStore);
         return next;
       });
     },
-    [tableKey],
+    [tableKey, responsiveDefaults],
   );
 
   const setColumnVisibilityByResponsive = useCallback(

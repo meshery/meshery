@@ -40,17 +40,18 @@ describe('useColumnVisibilityPreference', () => {
     expect(remounted.result.current.columnVisibility.__proto__).toBe(false);
   });
 
-  it('preserves persisted values loaded before this preference fix', () => {
+  it('ignores malformed persisted values and falls back to responsive defaults', () => {
     window.localStorage.setItem(
       'meshery_cols_existing',
-      JSON.stringify({ name: 'stored-as-is', enabled: null }),
+      JSON.stringify({ name: 'stored-as-is', enabled: null, active: false }),
     );
 
     const remounted = renderHook(() =>
-      useColumnVisibilityPreference('existing', { name: true, enabled: true }),
+      useColumnVisibilityPreference('existing', { name: true, enabled: true, active: true }),
     );
 
-    expect(remounted.result.current.columnVisibility.name).toBe('stored-as-is');
-    expect(remounted.result.current.columnVisibility.enabled).toBeNull();
+    expect(remounted.result.current.columnVisibility.name).toBe(true);
+    expect(remounted.result.current.columnVisibility.enabled).toBe(true);
+    expect(remounted.result.current.columnVisibility.active).toBe(false);
   });
 });

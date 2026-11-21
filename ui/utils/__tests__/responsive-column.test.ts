@@ -42,6 +42,19 @@ describe('updateVisibleColumns', () => {
     },
   );
 
+  it('preserves fallback visibility for unknown and padded breakpoints', () => {
+    expect(
+      updateVisibleColumns(
+        [
+          ['unknown', 'foo'],
+          ['padded', 'md '],
+          ['paddedKnown', 's '],
+        ],
+        0,
+      ),
+    ).toEqual({ unknown: true, padded: true, paddedKnown: true });
+  });
+
   it('handles multiple columns', () => {
     expect(
       updateVisibleColumns(
@@ -112,9 +125,7 @@ describe('updateVisibleColumns', () => {
       expect(updateVisibleColumns([['always', 'xs']], width)).toEqual({ always: true });
     },
   );
-
   it('trims padded breakpoints and treats unknown padded breakpoints as zero', () => {
-    expect(updateVisibleColumns([['known', ' s ']], 689)).toEqual({ known: false });
     expect(updateVisibleColumns([['known', ' s ']], 690)).toEqual({ known: true });
     expect(updateVisibleColumns([['unknown', ' md ']], 0)).toEqual({ unknown: true });
   });
