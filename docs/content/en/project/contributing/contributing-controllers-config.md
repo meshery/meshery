@@ -171,7 +171,7 @@ operator, not to **observe** one - meshkit's `mesheryOperator` reads its
 `OperatorDeploymentConfig` in `Deploy` and `Undeploy` only, never in `GetStatus`
 or `GetVersion` - so all three handlers still attach and the operator card keeps
 reporting a healthy operator's status and image tag, which is exactly the value
-[the troubleshooting guide](/guides/troubleshooting/meshery-operator-meshsync)
+[the troubleshooting guide]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}})
 tells users to read. The failure is recorded on `operatorChartError`
 (`GetOperatorChartError`) as well as `setOperatorError`, and every install path
 refuses on it rather than handing Helm a version the repository does not

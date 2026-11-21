@@ -100,7 +100,7 @@ persist in the database". A real production log for a failed environment save
 read `Status Code: 403 .failed to save the environment | ... unable to get
 result | Probable Cause: Result Identifier provided is not valid...`, sending
 maintainers into the wrong subsystem. Add a code for your operation; see
-[Contributing to Meshery Error Codes](/project/contributing/contributing-error).
+[Contributing to Meshery Error Codes]({{< ref "project/contributing/contributing-error.md" >}}).
 
 **Never hardcode the HTTP status of a provider failure.** Those same handlers
 answered every failure with `http.StatusNotFound`, so a remote-provider 403
