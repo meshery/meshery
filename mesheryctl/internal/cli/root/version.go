@@ -40,6 +40,8 @@ var linkDoc = map[string]string{
 	"caption": "Usage of mesheryctl version",
 }
 
+var versionUsageMsg = "Usage: mesheryctl version [flags]\nRun 'mesheryctl version --help' to see detailed help message"
+
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
@@ -50,6 +52,12 @@ var versionCmd = &cobra.Command{
 mesheryctl version
 	`,
 	Annotations: linkDoc,
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", versionUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		var err error
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
