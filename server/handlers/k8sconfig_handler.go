@@ -279,7 +279,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 
 		importedCount++
 		connection, err := provider.SaveK8sContext(token, *ctx, k8sContextsMetadata)
-		if err != nil {
+		if err != nil && !errors.Is(err, models.ErrContextAlreadyPersisted) {
 			saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
 			metadata["error"] = err
@@ -636,7 +636,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		}
 		cc.DeploymentType = "in_cluster"
 		conn, err := prov.SaveK8sContext(token, *cc, nil)
-		if err != nil {
+		if err != nil && !errors.Is(err, models.ErrContextAlreadyPersisted) {
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", cc.Name, cc.Server)
 			metadata["error"] = err
 			log.Warn(ErrFailToSaveContext(err))
@@ -669,6 +669,13 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		ctx.DeploymentType = "out_of_cluster"
 		conn, err := prov.SaveK8sContext(token, *ctx, nil)
 		if err != nil {
+			if errors.Is(err, models.ErrContextAlreadyPersisted) {
+				ctx.ConnectionID = conn.ID.String()
+				if connections.ShouldConnectionBeManaged(conn) {
+					contexts = append(contexts, ctx)
+				}
+				continue
+			}
 			log.Warn(ErrFailToSaveContext(err))
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
 			metadata["error"] = err
