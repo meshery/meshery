@@ -312,7 +312,7 @@ mesheryctl system context view --all
 		if len(args) > 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", contextViewUsageMsg))
 		}
-		isContextSpecified := len(args) > 0 || (cmd != nil && cmd.Flags().Changed("context") && contextViewFlags.Context != "")
+		isContextSpecified := len(args) > 0 || (cmd != nil && cmd.Flags().Changed("context"))
 		if contextViewFlags.All && isContextSpecified {
 			return utils.ErrInvalidArgument(fmt.Errorf("--all flag cannot be used when context name is specified\n\n%s", contextViewUsageMsg))
 		}
