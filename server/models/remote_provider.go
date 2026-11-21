@@ -469,6 +469,13 @@ func (l *ProviderProperties) PackageLocation() string {
 	return path.Join(homedir.HomeDir(), ".meshery", "provider", l.ProviderName, l.PackageVersion)
 }
 
+// DownloadProviderExtensionPackage downloads an extension package from one
+// consistent provider-properties snapshot.
+func (l *RemoteProvider) DownloadProviderExtensionPackage(log logger.Handler) {
+	properties := l.GetProviderProperties()
+	properties.DownloadProviderExtensionPackage(log)
+}
+
 // PackageLocation returns the location of the package for the current provider.
 func (l *RemoteProvider) PackageLocation() string {
 	props := l.GetProviderProperties()
@@ -4336,7 +4343,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 
 	// Download the package for the user only if they have extension capability
 	if len(providerProperties.Extensions.Navigator) > 0 {
-		providerProperties.DownloadProviderExtensionPackage(l.Log)
+		l.DownloadProviderExtensionPackage(l.Log)
 	}
 
 	// Proceed to redirect once the capabilities has loaded
