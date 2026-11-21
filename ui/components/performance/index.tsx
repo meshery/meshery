@@ -563,7 +563,8 @@ const MesheryPerformanceComponent_ = (props) => {
             <ModalFooter variant="filled">
               <React.Fragment>
                 <PerformanceFormActions
-                  disableTest={disableTestState || !!(cError || qpsError)}
+                  disableTest={disableTestState}
+                  invalidLoadParams={!!(cError || qpsError)}
                   blockRunTest={blockRunTestState}
                   hasTestResult={!!testResult}
                   onAbort={handleAbort}

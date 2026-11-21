@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { act, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const {
   getUserPrefQuerySpy,
@@ -134,12 +134,19 @@ describe('MesheryPerformanceComponent permission and query skipping', () => {
 describe('MesheryPerformanceComponent load parameter validation', () => {
   const lastFormProps = () => formPropsSpy.mock.calls.at(-1)![0];
   const lastActionsProps = () => actionsPropsSpy.mock.calls.at(-1)![0];
+  const eventSourceSpy = vi.fn(() => ({ close: vi.fn() }));
 
   beforeEach(() => {
     canSpy.mockReturnValue(true);
     saveProfileSpy.mockReset();
     formPropsSpy.mockClear();
     actionsPropsSpy.mockClear();
+    eventSourceSpy.mockClear();
+    vi.stubGlobal('EventSource', eventSourceSpy);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it.each([
@@ -157,14 +164,16 @@ describe('MesheryPerformanceComponent load parameter validation', () => {
 
     expect(!!lastFormProps().cError).toBe(expected.cError);
     expect(!!lastFormProps().qpsError).toBe(expected.qpsError);
-    expect(lastActionsProps().disableTest).toBe(true);
+    expect(lastActionsProps().invalidLoadParams).toBe(true);
+    expect(lastActionsProps().disableTest).toBe(false);
 
     lastActionsProps().onSaveProfile();
     lastActionsProps().onRunTest();
     expect(saveProfileSpy).not.toHaveBeenCalled();
+    expect(eventSourceSpy).not.toHaveBeenCalled();
   });
 
-  it('keeps the form valid when QPS is 0 (unbounded)', () => {
+  it('keeps the form valid when QPS is 0 (unbounded) and dispatches the run', () => {
     render(
       <MesheryPerformanceComponent
         url="http://example.com"
@@ -176,13 +185,18 @@ describe('MesheryPerformanceComponent load parameter validation', () => {
 
     expect(lastFormProps().cError).toBe('');
     expect(lastFormProps().qpsError).toBe('');
+    expect(lastActionsProps().invalidLoadParams).toBe(false);
     expect(lastActionsProps().disableTest).toBe(false);
+
+    act(() => lastActionsProps().onRunTest());
+    expect(eventSourceSpy).toHaveBeenCalledTimes(1);
   });
 
   it('opens a new profile form with a valid default for concurrent requests', () => {
     render(<MesheryPerformanceComponent url="http://example.com" />);
 
     expect(lastFormProps().cError).toBe('');
+    expect(lastActionsProps().invalidLoadParams).toBe(false);
     expect(lastActionsProps().disableTest).toBe(false);
   });
 });
