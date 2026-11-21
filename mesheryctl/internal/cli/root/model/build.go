@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -314,12 +315,16 @@ func copyModelExcludingGit(src, dst string) error {
 	})
 }
 
-func copyModelFile(srcFile, dstFile string, perm os.FileMode) error {
+func copyModelFile(srcFile, dstFile string, perm os.FileMode) (retErr error) {
 	src, err := os.Open(srcFile)
 	if err != nil {
 		return err
 	}
-	defer func() { _ = src.Close() }()
+	defer func() {
+		if closeErr := src.Close(); closeErr != nil {
+			retErr = errors.Join(retErr, closeErr)
+		}
+	}()
 
 	if err := os.MkdirAll(filepath.Dir(dstFile), 0755); err != nil {
 		return err
@@ -329,11 +334,15 @@ func copyModelFile(srcFile, dstFile string, perm os.FileMode) error {
 	if err != nil {
 		return err
 	}
-	defer func() { _ = dst.Close() }()
+	defer func() {
+		if closeErr := dst.Close(); closeErr != nil {
+			retErr = errors.Join(retErr, closeErr)
+		}
+	}()
 
 	if _, err := io.Copy(dst, src); err != nil {
 		return err
 	}
 
-	return nil
+	return retErr
 }
