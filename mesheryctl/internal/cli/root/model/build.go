@@ -2,6 +2,8 @@ package model
 
 import (
 	"fmt"
+	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -119,7 +121,14 @@ mesheryctl model build [model-name]/[model-version]
 		folder := buildModelCompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)
 
 		utils.Log.Infof("Building meshery model from path %s", folder)
-		img, errBuildImage := meshkitOci.BuildImage(folder)
+
+		buildSource, cleanup, err := prepareModelBuildSource(folder)
+		if err != nil {
+			return ErrModelBuild(err)
+		}
+		defer cleanup()
+
+		img, errBuildImage := meshkitOci.BuildImage(buildSource)
 		if errBuildImage != nil {
 			return ErrModelBuild(errBuildImage)
 		}
@@ -177,4 +186,154 @@ func buildModelCompileImageName(name string, version string, extension string) s
 		name,
 		extension,
 	)
+}
+
+// hasGitMetadata checks whether .git exists anywhere within src (as a file or directory).
+func hasGitMetadata(src string) (bool, error) {
+	hasGit := false
+	err := filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.Name() == ".git" {
+			hasGit = true
+			if d.IsDir() {
+				return fs.SkipDir
+			}
+		}
+		return nil
+	})
+	return hasGit, err
+}
+
+// prepareModelBuildSource prepares a build source directory that excludes any Git repository metadata (.git).
+// If no .git metadata is present, it returns the original folder with a no-op cleanup to avoid copying overhead.
+// If .git metadata is present, it stages a clean copy into an isolated temporary directory outside the source tree.
+func prepareModelBuildSource(folder string) (string, func(), error) {
+	cleanFolder := filepath.Clean(folder)
+	hasGit, err := hasGitMetadata(cleanFolder)
+	if err != nil {
+		return "", func() {}, err
+	}
+	if !hasGit {
+		return cleanFolder, func() {}, nil
+	}
+
+	tmpDir, err := os.MkdirTemp("", "meshery-model-build-*")
+	if err != nil {
+		return "", func() {}, err
+	}
+	cleanup := func() {
+		_ = os.RemoveAll(tmpDir)
+	}
+
+	if err := copyModelExcludingGit(cleanFolder, tmpDir); err != nil {
+		cleanup()
+		return "", func() {}, err
+	}
+
+	return tmpDir, cleanup, nil
+}
+
+// copyModelExcludingGit recursively copies src into dst while omitting any .git file or directory.
+func copyModelExcludingGit(src, dst string) error {
+	srcInfo, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+	if !srcInfo.IsDir() {
+		return fmt.Errorf("source path is not a directory: %s", src)
+	}
+
+	return filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.Name() == ".git" {
+			if d.IsDir() {
+				return fs.SkipDir
+			}
+			return nil
+		}
+
+		relPath, err := filepath.Rel(src, path)
+		if err != nil {
+			return err
+		}
+
+		if relPath == "." {
+			return nil
+		}
+
+		// Prevent path traversal
+		if strings.HasPrefix(relPath, "..") || filepath.IsAbs(relPath) {
+			return fmt.Errorf("invalid relative path: %s", relPath)
+		}
+
+		// Ensure no path segment is ".git"
+		segments := strings.Split(filepath.ToSlash(relPath), "/")
+		for _, seg := range segments {
+			if seg == ".git" {
+				if d.IsDir() {
+					return fs.SkipDir
+				}
+				return nil
+			}
+		}
+
+		targetPath := filepath.Join(dst, relPath)
+
+		info, err := d.Info()
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			return os.MkdirAll(targetPath, info.Mode().Perm())
+		}
+
+		if d.Type()&fs.ModeSymlink != 0 {
+			linkTarget, err := os.Readlink(path)
+			if err != nil {
+				return err
+			}
+			cleanTarget := filepath.Clean(linkTarget)
+			targetSlash := "/" + filepath.ToSlash(cleanTarget) + "/"
+			if cleanTarget == ".git" || strings.Contains(targetSlash, "/.git/") {
+				return nil
+			}
+			return os.Symlink(linkTarget, targetPath)
+		}
+
+		if d.Type().IsRegular() {
+			return copyModelFile(path, targetPath, info.Mode().Perm())
+		}
+
+		return fmt.Errorf("unsupported file type for %s: %s", path, d.Type().String())
+	})
+}
+
+func copyModelFile(srcFile, dstFile string, perm os.FileMode) error {
+	src, err := os.Open(srcFile)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = src.Close() }()
+
+	if err := os.MkdirAll(filepath.Dir(dstFile), 0755); err != nil {
+		return err
+	}
+
+	dst, err := os.OpenFile(dstFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, perm)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = dst.Close() }()
+
+	if _, err := io.Copy(dst, src); err != nil {
+		return err
+	}
+
+	return nil
 }

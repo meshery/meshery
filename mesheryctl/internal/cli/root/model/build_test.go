@@ -5,10 +5,12 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitOci "github.com/meshery/meshkit/models/oci"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
@@ -608,6 +610,7 @@ func TestModelBuild(t *testing.T) {
 		t.Run(tc.Name, func(t *testing.T) {
 			// Clean up any lingering test artifacts before this subtest starts
 			cleanupTestArtifacts(cleanupDirs)
+			cmdModelBuildFlagsProvided.Path = "."
 
 			if len(tc.CleanupHooks) > 0 {
 				for _, cleanupHook := range tc.CleanupHooks {
@@ -660,4 +663,194 @@ func TestModelBuild(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestModelBuild_Security_ExcludesGitMetadata(t *testing.T) {
+	utils.SetupContextEnv(t)
+	cmdModelBuildFlagsProvided.Path = "."
+
+	createFreshModelCmd := func() *cobra.Command {
+		cmd := &cobra.Command{
+			Use:     ModelCmd.Use,
+			Short:   ModelCmd.Short,
+			Long:    ModelCmd.Long,
+			Example: ModelCmd.Example,
+			Args:    ModelCmd.Args,
+			RunE:    ModelCmd.RunE,
+		}
+		ModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+			cmd.Flags().AddFlag(flag)
+		})
+		return cmd
+	}
+
+	createFreshBuildCmd := func() *cobra.Command {
+		freshBuildCmd := &cobra.Command{
+			Use:     buildModelCmd.Use,
+			Short:   buildModelCmd.Short,
+			Long:    buildModelCmd.Long,
+			Example: buildModelCmd.Example,
+			PreRunE: buildModelCmd.PreRunE,
+			RunE:    buildModelCmd.RunE,
+		}
+		buildModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+			freshBuildCmd.Flags().AddFlag(flag)
+		})
+		cmd := createFreshModelCmd()
+		mesheryctlflags.InitValidators(freshBuildCmd)
+		cmd.AddCommand(freshBuildCmd)
+		return cmd
+	}
+
+	const modelName = "test-case-model-build-security-git-model"
+	tarName := modelName + ".tar"
+
+	cleanup := func() {
+		_ = os.RemoveAll(modelName)
+		_ = os.RemoveAll(tarName)
+	}
+	cleanup()
+	defer cleanup()
+
+	// Initialize model with v1.0.0
+	setupCmd := createFreshModelCmd()
+	setupCmd.AddCommand(initModelCmd)
+	mesheryctlflags.InitValidators(initModelCmd)
+	setupCmd.SetArgs([]string{"init", modelName, "--version", "v1.0.0"})
+	buffInit := utils.SetupMeshkitLoggerTesting(t, false)
+	setupCmd.SetOut(buffInit)
+	if err := setupCmd.Execute(); err != nil {
+		t.Fatalf("failed to init test model: %v", err)
+	}
+
+	// Create root files to verify preservation
+	readmeExpected := "# Security Test Model\nThis is a sample model."
+	gitignoreExpected := "*.tar\n"
+	licenseExpected := "Apache License 2.0"
+	ciExpected := "name: CI\non: [push]"
+
+	if err := os.WriteFile(filepath.Join(modelName, "README.md"), []byte(readmeExpected), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(modelName, ".gitignore"), []byte(gitignoreExpected), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(modelName, "LICENSE"), []byte(licenseExpected), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create .github/workflows/ci.yml
+	githubDir := filepath.Join(modelName, ".github", "workflows")
+	if err := os.MkdirAll(githubDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(githubDir, "ci.yml"), []byte(ciExpected), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create .git directory and config with dummy credentials
+	gitDir := filepath.Join(modelName, ".git")
+	if err := os.MkdirAll(gitDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	dummyGitConfig := `[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+[remote "origin"]
+	url = https://test-user:dummy-token@example.invalid/private/repository.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+`
+	if err := os.WriteFile(filepath.Join(gitDir, "config"), []byte(dummyGitConfig), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create nested directory with a nested .git directory and config
+	nestedGitDir := filepath.Join(modelName, "docs", ".git")
+	if err := os.MkdirAll(nestedGitDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(nestedGitDir, "config"), []byte(dummyGitConfig), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	// Run mesheryctl model build
+	cmd := createFreshBuildCmd()
+	cmd.SetArgs([]string{"build", modelName})
+	buff := utils.SetupMeshkitLoggerTesting(t, false)
+	cmd.SetOut(buff)
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("model build failed: %v", err)
+	}
+
+	// Verify tar exists
+	info, err := os.Stat(tarName)
+	assert.NoError(t, err)
+	assert.False(t, info.IsDir())
+
+	// Uncompress OCI artifact using MeshKit helper into an isolated temporary directory
+	extractDir := t.TempDir()
+	err = meshkitOci.UnCompressOCIArtifact(tarName, extractDir)
+	assert.NoError(t, err)
+
+	// 1. Assert .git does not exist
+	_, err = os.Stat(filepath.Join(extractDir, ".git"))
+	assert.True(t, os.IsNotExist(err), ".git directory must not exist in extracted artifact")
+
+	_, err = os.Stat(filepath.Join(extractDir, ".git", "config"))
+	assert.True(t, os.IsNotExist(err), ".git/config must not exist in extracted artifact")
+
+	// 2. Assert nested .git does not exist
+	_, err = os.Stat(filepath.Join(extractDir, "docs", ".git"))
+	assert.True(t, os.IsNotExist(err), "nested .git directory must not exist in extracted artifact")
+
+	// 3. Walk all extracted files to ensure no entry begins with or contains .git, and no dummy credentials leaked
+	err = filepath.Walk(extractDir, func(path string, d os.FileInfo, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		rel, err := filepath.Rel(extractDir, path)
+		if err != nil {
+			return err
+		}
+		if rel == "." {
+			return nil
+		}
+
+		// Ensure no path segment is ".git"
+		for _, seg := range strings.Split(filepath.ToSlash(rel), "/") {
+			assert.NotEqual(t, ".git", seg, "artifact entry contains .git: %s", rel)
+		}
+
+		if !d.IsDir() {
+			content, err := os.ReadFile(path)
+			if assert.NoError(t, err) {
+				assert.NotContains(t, string(content), "dummy-token", "found credential token leaked in %s", rel)
+				assert.NotContains(t, string(content), "example.invalid", "found remote URL leaked in %s", rel)
+			}
+		}
+		return nil
+	})
+	assert.NoError(t, err)
+
+	// 4. Assert model and documentation files are preserved intact
+	readmeContent, err := os.ReadFile(filepath.Join(extractDir, "README.md"))
+	assert.NoError(t, err)
+	assert.Equal(t, readmeExpected, string(readmeContent))
+
+	gitignoreContent, err := os.ReadFile(filepath.Join(extractDir, ".gitignore"))
+	assert.NoError(t, err)
+	assert.Equal(t, gitignoreExpected, string(gitignoreContent))
+
+	licenseContent, err := os.ReadFile(filepath.Join(extractDir, "LICENSE"))
+	assert.NoError(t, err)
+	assert.Equal(t, licenseExpected, string(licenseContent))
+
+	ciContent, err := os.ReadFile(filepath.Join(extractDir, ".github", "workflows", "ci.yml"))
+	assert.NoError(t, err)
+	assert.Equal(t, ciExpected, string(ciContent))
+
+	// 5. Assert version directory and model.json are preserved intact
+	_, err = os.Stat(filepath.Join(extractDir, "v1.0.0", "model.json"))
+	assert.NoError(t, err)
 }
