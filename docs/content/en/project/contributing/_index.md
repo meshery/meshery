@@ -126,12 +126,15 @@ This checks for:
 <ul>
 <li><strong>Git:</strong> Required for repository and branch operations.</li>
 <li><strong>Supported Agent Runner:</strong> Claude Code, Codex, Copilot, Antigravity (<code>agy</code>), etc.</li>
-<li><strong>GitHub CLI (<code>gh</code>):</strong> Required for opening pull requests and monitoring CI.</li>
+<li><strong>GitHub CLI (<code>gh</code>):</strong> Required for opening pull requests and monitoring CI. Install it and sign in with <code>gh auth login</code>.</li>
 </ul>
 
 <h4>3. Initialize the Meshery Repository</h4>
-Navigate to your local Meshery repository and initialize the local quality gate with your GitHub fork:
+<p>
+Navigate to your local Meshery repository. The gate requires <code>origin</code> to point at the parent repository, and pushes validated branches to your fork via <code>--fork-url</code>. If your fork was cloned as <code>origin</code>, point it to the parent repository first:
+</p>
 <pre><code>cd meshery
+git remote set-url origin git@github.com:meshery/meshery.git
 no-mistakes init --fork-url git@github.com:YOUR_USERNAME/meshery.git</code></pre>
 <p>
 This registers the local <code>no-mistakes</code> remote, prepares isolated worktrees, and starts the background daemon.
@@ -174,7 +177,7 @@ The automated pipeline executes 9 structured stages:
 
 <h4>6. Pull Request Attestation &amp; Requirements</h4>
 <ul>
-<li><strong>Attestation Matching:</strong> The CI check <code>PR must be raised via no-mistakes</code> verifies that the pull request description contains a valid attestation matching the current <code>head_sha</code> and that <code>review</code>, <code>test</code>, and <code>document</code> steps are marked <code>completed</code>. After pushing new commits, re-run the gate so the attestation covers the new head; an attestation for an older commit fails the check.</li>
+<li><strong>Attestation Matching:</strong> The CI check <code>PR must be raised via no-mistakes</code> verifies that the pull request description contains a valid attestation matching the current <code>head_sha</code> and that <code>review</code>, <code>test</code>, and <code>document</code> steps are marked <code>completed</code>. After pushing new commits, re-run the gate so the attestation covers the new head; an attestation for an older commit fails the check. (Note: The gate can rebase your branch or add fix commits; before committing a follow-up, run <code>no-mistakes axi status</code>, and if it suggests syncing, run <code>no-mistakes axi sync</code> first).</li>
 <li><strong>Separate DCO Check:</strong> All commits must include a sign-off trailer (<code>git commit -s</code>) to satisfy GitHub's independent <code>DCO</code> status check.</li>
 <li><strong>Exempt Paths:</strong> Pull requests whose changed paths are strictly documentation (<code>docs/**</code>, <code>CNAME</code>) or CI workflows (<code>.github/workflows/**</code>) are automatically exempt from the pipeline requirement.</li>
 </ul>
