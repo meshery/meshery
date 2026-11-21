@@ -99,6 +99,7 @@ export const createPerformanceFormChangeHandler = (setters: PerformanceFormSette
             } catch {
               setAdditionalOptions(event.target.result);
               setJsonError(true);
+              setDisableTest(true);
             }
           };
           reader.readAsText(file);
@@ -113,6 +114,7 @@ export const createPerformanceFormChangeHandler = (setters: PerformanceFormSette
         } catch {
           setAdditionalOptions(value);
           setJsonError(true);
+          setDisableTest(true);
         }
       }
     }

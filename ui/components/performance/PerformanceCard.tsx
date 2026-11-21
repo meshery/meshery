@@ -25,6 +25,17 @@ import { useResourceOwner } from '@/utils/hooks/useResourceOwner';
 import useTestIDsGenerator from '@/utils/hooks/useTestIDs';
 import { BottomPart, CardButton, ResultContainer } from './style';
 
+const safeJsonParse = (value: unknown, fallback: unknown = '') => {
+  if (typeof value !== 'string' || value.trim() === '') {
+    return fallback;
+  }
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+};
+
 function PerformanceCard({
   profile,
   handleDelete,
@@ -68,10 +79,7 @@ function PerformanceCard({
     },
     {
       name: 'Additional Option',
-      value:
-        metadata?.additional_options && metadata?.additional_options[0] !== ''
-          ? JSON.parse(metadata?.additional_options[0])
-          : '',
+      value: safeJsonParse(metadata?.additional_options?.[0]),
     },
     {
       name: 'Certifcate Name',
