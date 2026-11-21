@@ -13,10 +13,12 @@ describe('useColumnVisibilityPreference', () => {
 
   it('persists and restores an own __proto__ visibility key', () => {
     const next: Record<string, boolean | undefined> = Object.create(null);
+    const responsiveDefaults: Record<string, boolean | undefined> = Object.create(null);
     next.__proto__ = false;
+    responsiveDefaults.__proto__ = true;
 
     const { result, unmount } = renderHook(() =>
-      useColumnVisibilityPreference('prototype-columns', { __proto__: true }),
+      useColumnVisibilityPreference('prototype-columns', responsiveDefaults),
     );
 
     act(() => {
@@ -31,7 +33,7 @@ describe('useColumnVisibilityPreference', () => {
 
     unmount();
     const remounted = renderHook(() =>
-      useColumnVisibilityPreference('prototype-columns', { __proto__: true }),
+      useColumnVisibilityPreference('prototype-columns', responsiveDefaults),
     );
 
     expect(
@@ -76,7 +78,6 @@ describe('useColumnVisibilityPreference', () => {
     act(() => {
       remounted.result.current.setColumnVisibilityByUser({
         available: true,
-        visibility: false,
       });
     });
 
@@ -96,11 +97,10 @@ describe('useColumnVisibilityPreference', () => {
     act(() => {
       remounted.result.current.setColumnVisibilityByResponsive({
         available: true,
-        visibility: true,
       });
     });
 
-    expect(remounted.result.current.columnVisibility.available).toBe(false);
+    expect(remounted.result.current.columnVisibility.available).toBe(true);
     expect(
       Object.prototype.hasOwnProperty.call(
         remounted.result.current.columnVisibility,

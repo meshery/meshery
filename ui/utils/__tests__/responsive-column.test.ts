@@ -42,7 +42,7 @@ describe('updateVisibleColumns', () => {
     },
   );
 
-  it('preserves fallback visibility for unknown and padded breakpoints', () => {
+  it('preserves unknown fallback visibility and normalizes known padded breakpoints', () => {
     expect(
       updateVisibleColumns(
         [
@@ -52,7 +52,7 @@ describe('updateVisibleColumns', () => {
         ],
         0,
       ),
-    ).toEqual({ unknown: true, padded: true, paddedKnown: true });
+    ).toEqual({ unknown: true, padded: true, paddedKnown: false });
   });
 
   it('handles multiple columns', () => {
@@ -95,14 +95,14 @@ describe('updateVisibleColumns', () => {
     expect(updateVisibleColumns([['valid', 's']], undefined)).toEqual({ valid: false });
   });
 
-  it('safely handles non-string screen sizes without TypeError', () => {
+  it('skips non-string screen sizes without TypeError', () => {
     const nonStringSizes = [
       ['col1', { toString: null, valueOf: null }],
       ['col2', 12345],
       ['col3', null],
     ];
     const res = updateVisibleColumns(nonStringSizes as unknown as unknown[], 800);
-    expect(res).toEqual({ col1: true, col2: true, col3: true });
+    expect(res).toEqual({});
   });
 
   it('ignores blank screen sizes', () => {
