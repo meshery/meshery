@@ -965,6 +965,10 @@ func TestModelBuild_Staging_TmpDirInsideModelSource(t *testing.T) {
 func TestModelBuild_Staging_ReadOnlySourceDirectory(t *testing.T) {
 	cmdModelBuildFlagsProvided.Path = "."
 
+	// Isolate TMPDIR so we can verify staging cleanup of 0555 and 0755 directories
+	stagingTmpParent := t.TempDir()
+	t.Setenv("TMPDIR", stagingTmpParent)
+
 	createFreshModelCmd := func() *cobra.Command {
 		cmd := &cobra.Command{
 			Use:   "model",
@@ -1037,11 +1041,21 @@ func TestModelBuild_Staging_ReadOnlySourceDirectory(t *testing.T) {
 		t.Fatal(err)
 	}
 	compFile := filepath.Join(readOnlyDir, "component.json")
-	if err := os.WriteFile(compFile, []byte(`{"name":"test-component"}`), 0o644); err != nil {
+	if err := os.WriteFile(compFile, []byte(`{"name":"test-readonly-component"}`), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	// Change directory mode to 0555 (read & execute only, no write bit)
 	if err := os.Chmod(readOnlyDir, 0o555); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a standard subdirectory with normal permissions (0755) containing a file
+	standardDir := filepath.Join(modelName, "standard-components")
+	if err := os.MkdirAll(standardDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	stdCompFile := filepath.Join(standardDir, "component.json")
+	if err := os.WriteFile(stdCompFile, []byte(`{"name":"test-standard-component"}`), 0o644); err != nil {
 		t.Fatal(err)
 	}
 
@@ -1059,16 +1073,26 @@ func TestModelBuild_Staging_ReadOnlySourceDirectory(t *testing.T) {
 	assert.NoError(t, err)
 	assert.False(t, info.IsDir())
 
-	// Uncompress OCI artifact and verify contents
+	// Assert staging tree was completely removed by cleanup() despite containing 0555 directory
+	stagingEntries, err := os.ReadDir(stagingTmpParent)
+	assert.NoError(t, err)
+	assert.Empty(t, stagingEntries, "staging directory was not cleaned up from TMPDIR after build")
+
+	// Reset TMPDIR before creating extractDir
+	t.Setenv("TMPDIR", "")
 	extractDir := t.TempDir()
 	err = meshkitOci.UnCompressOCIArtifact(tarName, extractDir)
 	assert.NoError(t, err)
 
-	extractedFile, err := os.ReadFile(filepath.Join(extractDir, "readonly-components", "component.json"))
+	extractedReadOnlyFile, err := os.ReadFile(filepath.Join(extractDir, "readonly-components", "component.json"))
 	assert.NoError(t, err)
-	assert.Equal(t, `{"name":"test-component"}`, string(extractedFile))
+	assert.Equal(t, `{"name":"test-readonly-component"}`, string(extractedReadOnlyFile))
 
-	// Verify tar layer header preserves 0555 mode
+	extractedStandardFile, err := os.ReadFile(filepath.Join(extractDir, "standard-components", "component.json"))
+	assert.NoError(t, err)
+	assert.Equal(t, `{"name":"test-standard-component"}`, string(extractedStandardFile))
+
+	// Verify tar layer headers preserve 0555 mode for readonly and 0755 for standard
 	img, err := tarball.ImageFromPath(tarName, nil)
 	assert.NoError(t, err)
 	layers, err := img.Layers()
@@ -1078,7 +1102,7 @@ func TestModelBuild_Staging_ReadOnlySourceDirectory(t *testing.T) {
 	assert.NoError(t, err)
 	defer func() { _ = layerReader.Close() }()
 	tr := archiveTar.NewReader(layerReader)
-	var foundReadonlyDir bool
+	var foundReadonlyDir, foundStandardDir bool
 	for {
 		hdr, err := tr.Next()
 		if err == io.EOF {
@@ -1089,6 +1113,11 @@ func TestModelBuild_Staging_ReadOnlySourceDirectory(t *testing.T) {
 			foundReadonlyDir = true
 			assert.Equal(t, int64(0o555), hdr.Mode&0o777)
 		}
+		if hdr.Name == "standard-components" || hdr.Name == "standard-components/" {
+			foundStandardDir = true
+			assert.Equal(t, int64(0o755), hdr.Mode&0o777)
+		}
 	}
 	assert.True(t, foundReadonlyDir, "readonly-components directory not found in tar layer")
+	assert.True(t, foundStandardDir, "standard-components directory not found in tar layer")
 }
