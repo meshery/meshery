@@ -225,8 +225,7 @@ function MesheryPatternCard_({
                     label: 'Validate',
                     icon: <CheckIcon style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleVerify),
-                    onDirectClick: (e) =>
-                      genericClickHandler(e, handleDirectVerify || handleVerify),
+                    onDirectClick: (e) => genericClickHandler(e, handleVerify),
                     permissionKey: Keys.CatalogManagementValidateDesign,
                     'data-testid': 'pattern-btn-validate',
                   },
@@ -234,8 +233,7 @@ function MesheryPatternCard_({
                     label: 'Dry Run',
                     icon: <DryRunIcon style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleDryRun),
-                    onDirectClick: (e) =>
-                      genericClickHandler(e, handleDirectDryRun || handleDryRun),
+                    onDirectClick: (e) => genericClickHandler(e, handleDryRun),
                     permissionKey: Keys.CatalogManagementValidateDesign,
                     'data-testid': 'pattern-btn-dryrun',
                   },
@@ -252,8 +250,7 @@ function MesheryPatternCard_({
                     label: 'Undeploy',
                     icon: <UndeployIcon fill={crimson[40]} style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleUnDeploy),
-                    onDirectClick: (e) =>
-                      genericClickHandler(e, handleDirectUnDeploy || handleUnDeploy),
+                    onDirectClick: (e) => genericClickHandler(e, handleUnDeploy),
                     permissionKey: Keys.CatalogManagementUndeployDesign,
                     'data-testid': 'pattern-btn-undeploy',
                   },
