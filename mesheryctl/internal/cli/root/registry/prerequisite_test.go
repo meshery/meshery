@@ -204,6 +204,27 @@ func TestVerifyRepoRoot_CaseInsensitiveGitConfigAndFormats(t *testing.T) {
 			expectMatch: true,
 		},
 		{
+			name: "Quoted URL in git config",
+			configText: `[remote "origin"]
+	url = "https://github.com/meshery/meshery.git"
+`,
+			expectMatch: true,
+		},
+		{
+			name: "Quoted URL with trailing inline comment",
+			configText: `[remote "origin"]
+	url = "https://github.com/meshery/meshery.git" # primary remote
+`,
+			expectMatch: true,
+		},
+		{
+			name: "Unquoted URL with semicolon comment",
+			configText: `[remote "origin"]
+	url = https://github.com/meshery/meshery.git ; upstream clone
+`,
+			expectMatch: true,
+		},
+		{
 			name: "Unrelated repo with meshery prefix rejected",
 			configText: `[remote "origin"]
 	url = https://github.com/meshery/meshery-operator.git

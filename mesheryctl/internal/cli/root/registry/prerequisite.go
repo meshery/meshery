@@ -224,6 +224,7 @@ func getGitConfigFiles(repoRoot string) []string {
 // comparing the complete repository identity and rejecting names like meshery-other.
 func isMesheryRemoteURL(rawURL string) bool {
 	u := strings.TrimSpace(rawURL)
+	u = strings.Trim(u, "\"")
 	u = strings.TrimSuffix(u, "/")
 	u = strings.TrimSuffix(u, ".git")
 	idx := strings.LastIndexAny(u, "/:")
@@ -232,6 +233,39 @@ func isMesheryRemoteURL(rawURL string) bool {
 	}
 	repoName := u[idx+1:]
 	return strings.EqualFold(repoName, "meshery")
+}
+
+// cleanGitConfigValue decodes Git configuration value quotes and strips trailing inline comments.
+func cleanGitConfigValue(val string) string {
+	trimmed := strings.TrimSpace(val)
+	if strings.HasPrefix(trimmed, "\"") {
+		idx := -1
+		escaped := false
+		for i := 1; i < len(trimmed); i++ {
+			if escaped {
+				escaped = false
+				continue
+			}
+			if trimmed[i] == '\\' {
+				escaped = true
+				continue
+			}
+			if trimmed[i] == '"' {
+				idx = i
+				break
+			}
+		}
+		if idx != -1 {
+			trimmed = trimmed[1:idx]
+		} else {
+			trimmed = strings.Trim(trimmed, "\"")
+		}
+	} else {
+		if idx := strings.IndexAny(trimmed, "#;"); idx != -1 {
+			trimmed = strings.TrimSpace(trimmed[:idx])
+		}
+	}
+	return strings.TrimSpace(trimmed)
 }
 
 // containsMesheryRemoteURL checks if git config text defines a remote URL for meshery.
@@ -261,7 +295,7 @@ func containsMesheryRemoteURL(configText string) bool {
 			if len(parts) == 2 {
 				key := strings.ToLower(strings.TrimSpace(parts[0]))
 				if key == "url" {
-					urlVal := strings.TrimSpace(parts[1])
+					urlVal := cleanGitConfigValue(parts[1])
 					if isMesheryRemoteURL(urlVal) {
 						return true
 					}
