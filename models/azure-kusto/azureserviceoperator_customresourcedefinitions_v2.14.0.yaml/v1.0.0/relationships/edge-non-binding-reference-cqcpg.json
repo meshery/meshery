@@ -72,7 +72,7 @@
         "to": [
           {
             "id": null,
-            "kind": "NamespacesEventhub",
+            "kind": "NamespacesEventHub",
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
