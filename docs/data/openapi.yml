@@ -58602,21 +58602,16 @@ paths:
             maxLength: 255
         - name: sort
           in: query
-          description: Column to order the table list by.
+          description: Sort direction used when `order` contains a bare column name. Accepted directions are `asc` and `desc`, case-insensitive. When `order` contains a bare column name, an omitted or invalid direction defaults to ascending.
           required: false
           schema:
             type: string
-            enum:
-              - name
         - name: order
           in: query
-          description: Sort direction for the `sort` column.
+          description: Column or compound ordering expression. Supported column is `name`. A bare `name` uses the separate `sort` parameter. In a compound expression, `desc` selects descending, while any other direction token defaults to ascending. Unsupported columns and expressions with an invalid number of tokens are ignored.
           required: false
           schema:
             type: string
-            enum:
-              - asc
-              - desc
       responses:
         '200':
           description: Database summary
