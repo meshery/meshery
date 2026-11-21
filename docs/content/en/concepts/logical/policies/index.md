@@ -37,13 +37,11 @@ Each policy is responsible for a specific relationship, matched by its `kind` / 
 The same Go codebase is built for two targets: the native server binary that ships with Meshery Server, and a `js/wasm` WebAssembly module that runs the identical evaluation logic in the browser, enabling client-side relationship evaluation in the Meshery UI without a server round trip.
 
 
-In any given Meshery deployment, you can reference and search the full set of registered policies (in Meshery's internal registry) in using either of Meshery's client interfaces.
+Policies are not listed on their own. Each built-in policy evaluates the relationships that match its `kind` / `type` / `subType` (listed above), so to see which policies are in use, view the relationships registered in Meshery's internal registry with either of Meshery's client interfaces.
 
-{{% alert color="info" title="Viewing All Registered Relationships" %}}
-You can view all registered relationships using either Meshery UI or Meshery CLI.
-
-- **Using Meshery UI**: Navigate to *Settings*, then to *Registry*
-- **Using Meshery CLI**: `mesheryctl policy list`
+{{% alert color="info" title="Viewing Registered Relationships and Their Policies" %}}
+- **Using Meshery UI**: Navigate to *Settings*, then to *Registry*, and open the *Relationships* tab. Each relationship shows its kind, type and subtype.
+- **Using Meshery CLI**: Run `mesheryctl relationship list` to list the registered relationships with their kind, type and subtype, and `mesheryctl relationship view <model-name>` to print a model's full relationship definitions.
 {{% /alert %}}
 
 <!-- There are different points in time in which policy evaluations are invoked
