@@ -59,11 +59,50 @@ func TestContextViewCmd(t *testing.T) {
 			Args:             []string{"context", "view", "--all"},
 			ExpectedResponse: "viewAllExpected.golden",
 		},
+		{
+			Name:             "Error for viewing context with too many arguments",
+			Args:             []string{"context", "view", "local2", "extra-arg"},
+			IsOutputGolden:   false,
+			ExpectedResponse: "",
+			ExpectError:      true,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", contextViewUsageMsg)),
+		},
+		{
+			Name:             "Error for viewing context with all flag and positional context argument",
+			Args:             []string{"context", "view", "local2", "--all"},
+			IsOutputGolden:   false,
+			ExpectedResponse: "",
+			ExpectError:      true,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("--all flag cannot be used when context name is specified\n\n%s", contextViewUsageMsg)),
+		},
+		{
+			Name:             "Error for viewing context with all flag and context flag",
+			Args:             []string{"context", "view", "--context", "local2", "--all"},
+			IsOutputGolden:   false,
+			ExpectedResponse: "",
+			ExpectError:      true,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("--all flag cannot be used when context name is specified\n\n%s", contextViewUsageMsg)),
+		},
+		{
+			Name:             "Error for viewing context with all flag and empty context flag",
+			Args:             []string{"context", "view", "--context=", "--all"},
+			IsOutputGolden:   false,
+			ExpectedResponse: "",
+			ExpectError:      true,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("--all flag cannot be used when context name is specified\n\n%s", contextViewUsageMsg)),
+		},
 	}
 
 	mesheryctlflags.InitValidators(SystemCmd)
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			contextViewFlags = cmdContextViewFlags{}
+			if f := viewContextCmd.Flags().Lookup("context"); f != nil {
+				f.Changed = false
+			}
+			if f := viewContextCmd.Flags().Lookup("all"); f != nil {
+				f.Changed = false
+			}
 			buf := utils.SetupMeshkitLoggerTesting(t, false)
 			defer buf.Reset()
 
