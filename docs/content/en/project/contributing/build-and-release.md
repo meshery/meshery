@@ -94,7 +94,7 @@ The workflow always reports the check, including on exempt pull requests, so bra
 
 Agents drive the pipeline with `.agents/skills/no-mistakes/SKILL.md`. A clone without a `no-mistakes` remote needs `no-mistakes init` once, then `no-mistakes axi run --intent "<goal>"`.
 
-Human contributors should follow the step-by-step setup and daily usage guide under [Running the pre-landing Quality Gate (No-Mistakes)]({{< ref "project/contributing/_index.md" >}}).
+Human contributors should follow the step-by-step setup and daily usage guide under [Running the pre-landing Quality Gate (No-Mistakes)]({{< ref "project/contributing/_index.md#no-mistakes-quality-gate" >}}).
 
 ### Test result reporting (QA dashboard)
 

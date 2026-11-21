@@ -127,11 +127,9 @@ Pull requests into `master` need a green no-mistakes run unless every changed pa
 no-mistakes axi run --intent "<brief description of your changes>"
 ```
 
-The pipeline reviews, tests, checks documentation and lint, then writes the attestation that the `PR must be raised via no-mistakes` check requires into the pull request description. Commit with `git commit -s` so the separate `DCO` check passes. See [Running the pre-landing Quality Gate]({{< ref "project/contributing/_index.md" >}}) for installation and setup.
+The pipeline reviews, tests, checks documentation and lint, then writes the attestation that the `PR must be raised via no-mistakes` check requires into the pull request description. Commit with `git commit -s` so the separate `DCO` check passes. See [Running the pre-landing Quality Gate]({{< ref "project/contributing/_index.md#no-mistakes-quality-gate" >}}) for installation and setup.
 
 ## Submitting
 
-Once you've committed and pushed all of your changes to GitHub, go to the page for your fork on GitHub, select your development branch, and click the pull request button. If you need to make any adjustments to your pull request, just push the updates to GitHub. Your pull request will automatically track the changes in your development branch and update it.
-
-If you push updates to a pull request that needs the gate, run the gate again so the attestation matches the new head. Documentation-only pull requests are exempt.
+Once you've committed and pushed all of your changes to GitHub, go to the page for your fork on GitHub, select your development branch, and click the pull request button. If you need to make any adjustments to your pull request, push the updates to GitHub. Then run the gate again on the same branch so the attestation matches the new head commit. An attestation for an older commit fails the `PR must be raised via no-mistakes` check. Pull requests that change only `docs/**`, the root `CNAME`, or `.github/workflows/**` are exempt. Your pull request will automatically track the changes in your development branch and update it.
 
