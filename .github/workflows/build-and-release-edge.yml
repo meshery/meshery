@@ -12,7 +12,6 @@ on:
     paths-ignore:
       - "docs/**"
       - ".github/**"
-      - "install/**"
 
 jobs:
   docker-build-push:
