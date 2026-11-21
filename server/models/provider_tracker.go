@@ -152,8 +152,10 @@ func (t *ProviderTracker) Publish(evt ProviderStatusEvent) {
 // VerifyAll fans the availability probe out across every registered remote
 // provider, publishing each result independently as its probe completes.
 // Local providers are reported online with no network call. The function
-// returns once every probe has settled; pass a context to bound the total
-// runtime (e.g. an http.Request context for an SSE-driven refresh).
+// returns once every probe has settled. Each probe is bounded by its own
+// timeout. Don't pass a context that ends before the refresh should: a
+// cancelled probe is published as the remote being offline, and callers that
+// were coalesced into this refresh get that result too.
 //
 // Concurrency: each remote is probed in its own goroutine, so total wall
 // time is bounded by the slowest single probe rather than by their sum.
