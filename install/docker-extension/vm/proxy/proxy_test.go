@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -135,6 +136,7 @@ func TestServeHTTP_WSClientNotifiedOfAuthChanges(t *testing.T) {
 		}
 	}
 	expectMsg(proxy.InitiationSuccessful)
+	expectMsg(proxy.UnauthenticatedMsg) // current state on connect
 
 	resp, err := http.Get(srv.URL + "/token/store?token=abc")
 	if err != nil {
@@ -152,9 +154,10 @@ func TestServeHTTP_WSClientNotifiedOfAuthChanges(t *testing.T) {
 	expectMsg(proxy.UnauthenticatedMsg)
 }
 
-// dialWS opens a websocket to the proxy's /ws endpoint and consumes the
-// initial handshake message.
-func dialWS(t *testing.T, srvURL string) *websocket.Conn {
+// dialWS opens a websocket to the proxy's /ws endpoint and checks the two
+// messages every connection starts with: the handshake, then the current auth
+// state (wantState).
+func dialWS(t *testing.T, srvURL, wantState string) *websocket.Conn {
 	t.Helper()
 	ws, _, err := websocket.DefaultDialer.Dial("ws"+strings.TrimPrefix(srvURL, "http")+"/ws", nil)
 	if err != nil {
@@ -164,6 +167,9 @@ func dialWS(t *testing.T, srvURL string) *websocket.Conn {
 	_ = ws.SetReadDeadline(time.Now().Add(2 * time.Second))
 	if _, msg, err := ws.ReadMessage(); err != nil || string(msg) != proxy.InitiationSuccessful {
 		t.Fatalf("expected %q, got %q (err %v)", proxy.InitiationSuccessful, msg, err)
+	}
+	if _, msg, err := ws.ReadMessage(); err != nil || string(msg) != wantState {
+		t.Fatalf("expected current state %q on connect, got %q (err %v)", wantState, msg, err)
 	}
 	return ws
 }
@@ -175,8 +181,8 @@ func TestServeHTTP_NewestWSClientGetsAllAuthChanges(t *testing.T) {
 	srv := httptest.NewServer(&proxy.Proxy{})
 	defer srv.Close()
 
-	older := dialWS(t, srv.URL)
-	newer := dialWS(t, srv.URL)
+	older := dialWS(t, srv.URL, proxy.UnauthenticatedMsg)
+	newer := dialWS(t, srv.URL, proxy.UnauthenticatedMsg)
 
 	for i := 0; i < 4; i++ {
 		req, _ := http.NewRequest(http.MethodGet, srv.URL+"/token/store?token=abc", nil)
@@ -216,9 +222,7 @@ func TestServeHTTP_TokenNotLogged(t *testing.T) {
 	proxy.MesheryServerHost = strings.TrimPrefix(backend.URL, "http://")
 	t.Cleanup(func() { proxy.MesheryServerHost = old })
 
-	var buf bytes.Buffer
-	log.SetOutput(&buf)
-	t.Cleanup(func() { log.SetOutput(os.Stderr) })
+	buf := captureLog(t)
 
 	const secret = "s3cr3t-token-value"
 	p := &proxy.Proxy{}
@@ -233,6 +237,35 @@ func TestServeHTTP_TokenNotLogged(t *testing.T) {
 	}
 }
 
+// syncBuffer is a bytes.Buffer safe for concurrent use. The global logger can
+// be written by websocket goroutines left over from earlier tests while a test
+// reads what it captured.
+type syncBuffer struct {
+	mu  sync.Mutex
+	buf bytes.Buffer
+}
+
+func (b *syncBuffer) Write(p []byte) (int, error) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return b.buf.Write(p)
+}
+
+func (b *syncBuffer) String() string {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return b.buf.String()
+}
+
+// captureLog redirects the global logger to a buffer for the rest of the test.
+func captureLog(t *testing.T) *syncBuffer {
+	t.Helper()
+	buf := &syncBuffer{}
+	log.SetOutput(buf)
+	t.Cleanup(func() { log.SetOutput(os.Stderr) })
+	return buf
+}
+
 // When the backend is unreachable, the client error embeds the request URL,
 // so a token in the query must not reach the log through it.
 func TestServeHTTP_TokenNotLoggedOnBackendError(t *testing.T) {
@@ -240,9 +273,7 @@ func TestServeHTTP_TokenNotLoggedOnBackendError(t *testing.T) {
 	proxy.MesheryServerHost = "127.0.0.1:1" // connection refused
 	t.Cleanup(func() { proxy.MesheryServerHost = old })
 
-	var buf bytes.Buffer
-	log.SetOutput(&buf)
-	t.Cleanup(func() { log.SetOutput(os.Stderr) })
+	buf := captureLog(t)
 
 	const secret = "s3cr3t-token-value"
 	rec := serveWithTimeout(t, &proxy.Proxy{}, httptest.NewRequest(http.MethodGet, "http://localhost/api/system/version?token="+secret, nil))
@@ -257,9 +288,8 @@ func TestServeHTTP_TokenNotLoggedOnBackendError(t *testing.T) {
 	}
 }
 
-// A client that connects after the token was stored is told it is
-// authenticated, so a login that lands between the UI reading /token and
-// opening /ws is not lost.
+// A client is told the current auth state when it connects, so a login or
+// logout that lands between the UI reading /token and opening /ws is not lost.
 func TestServeHTTP_WSClientGetsCurrentStateOnConnect(t *testing.T) {
 	srv := httptest.NewServer(&proxy.Proxy{})
 	defer srv.Close()
@@ -269,14 +299,92 @@ func TestServeHTTP_WSClientGetsCurrentStateOnConnect(t *testing.T) {
 		t.Fatalf("store token: %v", err)
 	}
 	resp.Body.Close()
+	dialWS(t, srv.URL, proxy.AuthenticatedMsg)
 
-	ws := dialWS(t, srv.URL) // also asserts the handshake comes first
-	_ = ws.SetReadDeadline(time.Now().Add(2 * time.Second))
-	_, msg, err := ws.ReadMessage()
+	req, _ := http.NewRequest(http.MethodDelete, srv.URL+"/token", nil)
+	resp, err = http.DefaultClient.Do(req)
 	if err != nil {
-		t.Fatalf("expected %q on connect: %v", proxy.AuthenticatedMsg, err)
+		t.Fatalf("delete token: %v", err)
 	}
-	if string(msg) != proxy.AuthenticatedMsg {
-		t.Fatalf("expected %q, got %q", proxy.AuthenticatedMsg, msg)
+	resp.Body.Close()
+	dialWS(t, srv.URL, proxy.UnauthenticatedMsg)
+}
+
+// A client that sends messages gets them echoed back, and those echoes must
+// not race the handshake or auth-state writes on the same connection: gorilla
+// websocket panics on concurrent writes, which would take down the proxy.
+func TestServeHTTP_EchoAndAuthWritesDoNotRace(t *testing.T) {
+	srv := httptest.NewServer(&proxy.Proxy{})
+	defer srv.Close()
+
+	ws := dialWS(t, srv.URL, proxy.UnauthenticatedMsg)
+	// dialWS leaves a short read deadline on the connection; clear it so a
+	// slow run doesn't stop the drainer and stall the server's echo writes.
+	_ = ws.SetReadDeadline(time.Time{})
+
+	// Drain everything the server sends so its writes never block.
+	go func() {
+		for {
+			if _, _, err := ws.ReadMessage(); err != nil {
+				return
+			}
+		}
+	}()
+
+	stop := make(chan struct{})
+	sendDone := make(chan struct{})
+	go func() {
+		defer close(sendDone)
+		for {
+			select {
+			case <-stop:
+				return
+			default:
+			}
+			if err := ws.WriteMessage(websocket.TextMessage, []byte("ping")); err != nil {
+				return
+			}
+		}
+	}()
+
+	for i := 0; i < 200; i++ {
+		req, _ := http.NewRequest(http.MethodGet, srv.URL+"/token/store?token=abc", nil)
+		if i%2 == 1 {
+			req, _ = http.NewRequest(http.MethodDelete, srv.URL+"/token", nil)
+		}
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			t.Fatalf("%s %s: %v", req.Method, req.URL.Path, err)
+		}
+		resp.Body.Close()
+	}
+	close(stop)
+	ws.Close() // unblock a sender stuck in WriteMessage
+	<-sendDone
+}
+
+// The client error for a malformed redirect quotes the Location header, which
+// can carry a token, so the error text itself must be redacted too.
+func TestServeHTTP_TokenNotLoggedOnMalformedRedirect(t *testing.T) {
+	const secret = "s3cr3t-token-value"
+	backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Location", "/next%zz?token="+secret)
+		w.WriteHeader(http.StatusFound)
+	}))
+	defer backend.Close()
+	old := proxy.MesheryServerHost
+	proxy.MesheryServerHost = strings.TrimPrefix(backend.URL, "http://")
+	t.Cleanup(func() { proxy.MesheryServerHost = old })
+
+	buf := captureLog(t)
+	rec := serveWithTimeout(t, &proxy.Proxy{}, httptest.NewRequest(http.MethodGet, "http://localhost/api/system/version", nil))
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected status %d, got %d", http.StatusInternalServerError, rec.Code)
+	}
+	if strings.Contains(buf.String(), secret) {
+		t.Fatalf("auth token leaked into logs:\n%s", buf.String())
+	}
+	if !strings.Contains(buf.String(), "?REDACTED") {
+		t.Fatalf("expected the redirect error to be logged with its query redacted:\n%s", buf.String())
 	}
 }
