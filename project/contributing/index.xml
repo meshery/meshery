@@ -13,11 +13,11 @@ find, and a row without an end-to-end test is a setting nobody can trust.&lt;/p&
 &lt;p&gt;A build that fails with &lt;code&gt;compile: version &amp;quot;goX.Y.Z&amp;quot; does not match go tool version&lt;/code&gt; across many dependencies is an environment mismatch, not a code problem. A stale &lt;code&gt;GOROOT&lt;/code&gt; points at one Go installation while the &lt;code&gt;go&lt;/code&gt; on &lt;code&gt;PATH&lt;/code&gt; is a different one.&lt;/p&gt;</description></item><item><title>Contributing Relationships - Testing and Best Practices</title><link>/project/contributing/contributing-relationships-best-practices/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-relationships-best-practices/</guid><description>&lt;h1 id="relationship-testing-and-best-practices"&gt;
 	Relationship Testing and Best Practices
 &lt;/h1&gt;
-&lt;p&gt;This guide complements the &lt;a href="/project/contributing/contributing-relationships"&gt;Contributing to Model Relationships&lt;/a&gt; documentation by focusing on &lt;strong&gt;practical testing and debugging techniques&lt;/strong&gt; for relationship definitions.&lt;/p&gt;
+&lt;p&gt;This guide complements the &lt;a href="/project/contributing/models/relationships/"&gt;Contributing to Model Relationships&lt;/a&gt; documentation by focusing on &lt;strong&gt;practical testing and debugging techniques&lt;/strong&gt; for relationship definitions.&lt;/p&gt;
 &lt;h2 id="before-you-start"&gt;
 	Before You Start
 &lt;/h2&gt;
-&lt;p&gt;Make sure you&amp;rsquo;ve read the &lt;a href="/project/contributing/contributing-relationships"&gt;Contributing to Model Relationships&lt;/a&gt; guide to understand relationship structure, schema, and components.&lt;/p&gt;
+&lt;p&gt;Make sure you&amp;rsquo;ve read the &lt;a href="/project/contributing/models/relationships/"&gt;Contributing to Model Relationships&lt;/a&gt; guide to understand relationship structure, schema, and components.&lt;/p&gt;
 &lt;h2 id="1-validate-json-syntax"&gt;
 	1. Validate JSON Syntax
 &lt;/h2&gt;

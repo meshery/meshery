@@ -62,7 +62,7 @@ See [Meshery Designs](/concepts/logical/designs/) for a full description of desi
 	Starting from an existing design
 </h2>
 <p>Instead of starting from nothing, import a design from the <a href="https://meshery.io/catalog">Meshery Catalog</a>, from a URL, or from a Kubernetes manifest, Helm chart, or Docker Compose file. See <a href="/guides/configuration-management/import-export-designs/">Importing and Exporting Designs</a>.</p>
-<img src="../images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" /></section><input id="creating-a-meshery-design-tabs-3-2" type="radio" name="creating-a-meshery-design-tabs-3">
+<img src="images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" /></section><input id="creating-a-meshery-design-tabs-3-2" type="radio" name="creating-a-meshery-design-tabs-3">
     <label for="creating-a-meshery-design-tabs-3-2"><i class="fa fa-terminal" aria-hidden="true"></i>mesheryctl
     </label>
     <section class="tabbed" id="creating-a-meshery-design-tabs-3-content-2"><h2 id="using-mesheryctl">

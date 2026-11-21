@@ -16525,7 +16525,7 @@ url: /concepts/logical/relationships/index.md
 description: Meshery Relationships identify and facilitate genealogy between Components.
 --------------------------------------------------------------------------------
 
-Meshery Relationships characterize how [components](/concepts/logical/components/) are connected and interact with each other. Relationships are defined within [models](/concepts/logical/models/) to aid in structuring the interrelationships between one or more components in a [design](/concepts/logical/designs/) to further in comprehending the overall structure and dependencies within managed systems.
+Meshery Relationships characterize how [components](/concepts/logical/components/) are connected and interact with each other. Relationships are defined within [models](/concepts/logical/models/) to aid in structuring the interrelationships between one or more components in a [design](/concepts/logical/designs/) to aid in comprehending the overall structure and dependencies within managed systems.
 
 Meshery recognizes that relationships exist in various forms and that the existence of a relationship might be interdependent upon the existence (or absence) of another relationship. To support this complexity, Meshery relationships are highly expressive, characterizing the nature of interaction of interconnected components no matter their genealogy.
 
@@ -19618,7 +19618,7 @@ See [Meshery Designs](/concepts/logical/designs/) for a full description of desi
 	Starting from an existing design
 </h2>
 <p>Instead of starting from nothing, import a design from the <a href="https://meshery.io/catalog">Meshery Catalog</a>, from a URL, or from a Kubernetes manifest, Helm chart, or Docker Compose file. See <a href="/guides/configuration-management/import-export-designs/">Importing and Exporting Designs</a>.</p>
-<img src="../images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" /></section><input id="creating-a-meshery-design-tabs-2-2" type="radio" name="creating-a-meshery-design-tabs-2">
+<img src="images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" /></section><input id="creating-a-meshery-design-tabs-2-2" type="radio" name="creating-a-meshery-design-tabs-2">
     <label for="creating-a-meshery-design-tabs-2-2"><i class="fa fa-terminal" aria-hidden="true"></i>mesheryctl
     </label>
     <section class="tabbed" id="creating-a-meshery-design-tabs-2-content-2"><h2 id="using-mesheryctl">
@@ -26650,7 +26650,7 @@ The schema defines the structure of the model, including the entities it contain
 
 > See [Registry](/concepts/logical/registry/) to learn more about Meshery's internal registry and how to use it.
 
-[![Model Entity Classification](../images/model-architecture.svg)](../images/meshery-models.png)
+[![Model Entity Classification](images/model-architecture.svg)](images/meshery-models.png)
 _Figure: Model Entity Classification_
 
 ## Meshery Entities and their Lifecycle
@@ -64992,11 +64992,11 @@ description: How to test, validate, and debug relationship definitions before co
 
 # Relationship Testing and Best Practices
 
-This guide complements the [Contributing to Model Relationships](/project/contributing/contributing-relationships) documentation by focusing on **practical testing and debugging techniques** for relationship definitions.
+This guide complements the [Contributing to Model Relationships](/project/contributing/models/relationships) documentation by focusing on **practical testing and debugging techniques** for relationship definitions.
 
 ## Before You Start
 
-Make sure you've read the [Contributing to Model Relationships](/project/contributing/contributing-relationships) guide to understand relationship structure, schema, and components.
+Make sure you've read the [Contributing to Model Relationships](/project/contributing/models/relationships) guide to understand relationship structure, schema, and components.
 
 ## 1. Validate JSON Syntax
 
@@ -65380,7 +65380,7 @@ Once validated and tested:
 
 ## Resources
 
-- [Contributing to Model Relationships](/project/contributing/contributing-relationships)
+- [Contributing to Model Relationships](/project/contributing/models/relationships)
 - [Meshery Relationship Schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1alpha3/relationship)
 - [Existing Relationships](https://github.com/meshery/meshery/tree/master/models)
 - [OPA Policies](https://github.com/meshery/meshery/tree/master/models/meshery-core)
@@ -65507,7 +65507,7 @@ Also, if the screenshot is present in the command, an `Annotation` macro variabl
 <pre class="codeblock-pre">
 	<span class="codeblock">
 		<code class="clipboardjs">var linkDocPatternApply = map[string]string{
- &#34;link&#34;:    &#34;![pattern-apply-usage](../../../images/patternApply.png)&#34;,
+ &#34;link&#34;:    &#34;![pattern-apply-usage](../../images/patternApply.png)&#34;,
  &#34;caption&#34;: &#34;Usage of mesheryctl design apply&#34;,
 }
 ...
@@ -65999,7 +65999,7 @@ To filter and view only CLI-related test cases using the Sheet Views feature:
 1. In the top menu bar, click Data → Change view
 2. Choose the pre-defined view labeled "CLI"
 
-![Meshery Test Plan Screenshot](../../images/meshery-test-plan-v0.8.0-ui.png)
+![Meshery Test Plan Screenshot](images/meshery-test-plan-v0.8.0-ui.png)
 
 ## Development
 
@@ -66544,9 +66544,11 @@ If the code snippet has special characters then use backtick delimiters:
 Don't use `code` shortcode when the snippet is in between an ordered list, this breaks the order and next item in the list will start numbering from 1. Instead, use `<pre class="codeblock-pre">...</pre>` method described above.
 
 **A full block:**
+````markdown
 ```
-```code snippet```
+code snippet
 ```
+````
 
 **Inline formatting:**
 
@@ -68450,8 +68452,8 @@ After running Meshery server, you will need to select your **Cloud Provider** by
 
 **Please note**: If you get error while starting the server as **"Meshery Development Incompatible"** then follow the below guideline 👇
 
-<a href="../images/meshery-development-incompatible-error.png">
-  <img style= "max-width: 450px;" src="../images/meshery-development-incompatible-error.png" />
+<a href="images/meshery-development-incompatible-error.png">
+  <img style="max-width: 450px;" src="images/meshery-development-incompatible-error.png" alt="Meshery Development Incompatible Error" />
 </a>
 
 Potential Solution:
@@ -68938,8 +68940,8 @@ Now, Meshery will run on the default port `http://localhost:9081`.
 
 **Please note**: If you see "Meshery Development Incompatible" while trying to sign into Meshery Server, then follow these steps:
 
-<a href="../../images/meshery-development-incompatible-error.png">
-  <img style="width: 600px;" src="../../images/meshery-development-incompatible-error.png"
+<a href="images/meshery-development-incompatible-error.png">
+  <img style="width: 600px;" src="images/meshery-development-incompatible-error.png" alt="Meshery Development Incompatible Error"
        alt="Meshery Development Incompatible error dialog" />
 </a>
 
@@ -69204,8 +69206,8 @@ Meshery stores user layout preferences either in local storage or via the provid
 
 This is how your default widget would appear in the dashboard:
 
-<a href="../images/dashboard-widgets.png">
-<img style= "width: 600px;" src="../images/dashboard-widgets.png" />
+<a href="images/dashboard-widgets.png">
+<img style="width: 600px;" src="images/dashboard-widgets.png" alt="Dashboard Widgets" />
 </a>
 
 ---
@@ -70172,7 +70174,7 @@ Each entry is rendered as Markdown. The event's full description is shown above 
 />
 ```
 
-<a href="../images/error-formatter.png"><img alt="Error Formatter" style="width:500px;height:auto;" src="../images/error-formatter.png" /></a>
+<a href="images/error-formatter.png"><img alt="Error Formatter" style="width:500px;height:auto;" src="images/error-formatter.png" /></a>
 
 **When to Use:**
 
@@ -70209,7 +70211,7 @@ The `Model Registration Formatter` formats and displays model registration detai
    - `modelName` (string): The name of the model or file being imported.
    - `error` (object): Contains `name`, `entityType`, and the nested `error` details.
 
-<a href="../images/model-register-formatter.png"><img alt="Model Register Formatter" style="width:500px;height:auto;" src="../images/model-register-formatter.png" /></a>
+<a href="images/model-register-formatter.png"><img alt="Model Register Formatter" style="width:500px;height:auto;" src="images/model-register-formatter.png" /></a>
 
 ### Relationship Evaluation Formatter
 
@@ -70236,7 +70238,7 @@ The **Relationship Evaluation Formatter** is responsible for rendering notificat
 
    Each category is rendered as a collapsible section that shows its item count and is hidden entirely when empty. Deletions read the component or relationship from the action payload itself, while additions and updates are resolved against the design.
 
-<a href="../images/relationship-evaluation-formatter.png"><img alt="Relationship Evaluation Formatter" style="width:500px;height:auto;" src="../images/relationship-evaluation-formatter.png" /></a>
+<a href="images/relationship-evaluation-formatter.png"><img alt="Relationship Evaluation Formatter" style="width:500px;height:auto;" src="images/relationship-evaluation-formatter.png" /></a>
 
 #### When to Use
 
@@ -70318,7 +70320,7 @@ The **Dry Run Formatter** is responsible for rendering notifications related to 
 
    - `event` (object): The notification event.
 
-<a href="../images/dry-run-formatter.png"><img alt="Dry Run Formatter" style="width:500px;height:auto;" src="../images/dry-run-formatter.png" /></a>
+<a href="images/dry-run-formatter.png"><img alt="Dry Run Formatter" style="width:500px;height:auto;" src="images/dry-run-formatter.png" /></a>
 
 #### When to Use
 
@@ -70425,8 +70427,8 @@ Sistent leverages Material UI libraries and provides a custom theme on top of it
 
 - This `Modal` is a Sistent Standard Modal used in validation of design.
 
-<a href="../images/sistent-modal.png">
-<img style= "width: 600px;" src="../images/sistent-modal.png" />
+<a href="images/sistent-modal.png">
+<img style="width: 600px;" src="images/sistent-modal.png" alt="Sistent Modal" />
 </a>
 
 ### How to use Sistent in Meshery UI
@@ -70876,7 +70878,7 @@ To filter and view only UI-related tests using the Sheet Views feature:
 1. In the top menu bar, click Data → Change view
 2. Choose the pre-defined view labeled "UI"
 
-![Meshery Test Plan Screenshot](../../images/meshery-test-plan-v0.8.0-ui.png)
+![Meshery Test Plan Screenshot](images/meshery-test-plan-v0.8.0-ui.png)
 
 ## Linking tests to the Test Plan (traceability)
 
@@ -73161,7 +73163,7 @@ See the [Meshery Architecture deck](https://docs.google.com/presentation/d/1SQMf
 ----
 See the [Meshery Architecture deck](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164) for additional visual designs and functional specifications like this one -
 
-![Meshery v0.6.5 - Data Persistence|690x387](upload://mkFFy7ERkWPzUI2OOhsGLfNW2Sh.jpeg)
+![Meshery Architecture](/images/meshery-architecture.webp)
 
 
 --------------------------------------------------------------------------------
