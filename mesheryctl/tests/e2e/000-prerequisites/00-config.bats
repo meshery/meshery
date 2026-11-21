@@ -7,22 +7,22 @@ setup() {
 
 # tests config file and authenticatin file set properly
 
-@test "meshery config.yaml file as been created" {
+@test "[cut=Meshery Configuration][tg=Configuration Prerequisites] meshery config.yaml file as been created" {
     assert_exists "$MESHERY_CONFIG_FILE_PATH"
 }
 
-@test "meshery config.yaml provider is Meshery" {
+@test "[cut=Meshery Configuration][tg=Configuration Prerequisites] meshery config.yaml provider is Meshery" {
     run yq '.contexts.local.provider' "$MESHERY_CONFIG_FILE_PATH"
     assert_success
 
     assert_output  --partial "Meshery"
 }
 
-@test "meshery auth.json file as been created" {
+@test "[cut=Meshery Configuration][tg=Configuration Prerequisites] meshery auth.json file as been created" {
     assert_exists "$MESHERY_AUTH_FILE"
 }
 
-@test "meshery auth.json file meshery provider is Meshery" {
+@test "[cut=Meshery Configuration][tg=Configuration Prerequisites] meshery auth.json file meshery provider is Meshery" {
     run jq '."meshery-provider"' "$MESHERY_AUTH_FILE"
     assert_success
 
