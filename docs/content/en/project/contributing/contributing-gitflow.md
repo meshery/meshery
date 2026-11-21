@@ -119,6 +119,16 @@ git rebase -i master
 
 This will open up a text editor where you can specify which commits to squash.
 
+## Validate with the Quality Gate (No-Mistakes)
+
+Pull requests into `master` need a green no-mistakes run unless every changed path is under `docs/**`, the root `CNAME`, or `.github/workflows/**`. There is no separate lane for hand-written changes. Run the pipeline on your branch:
+
+```bash
+no-mistakes axi run --intent "<brief description of your changes>"
+```
+
+The pipeline reviews, tests, checks documentation and lint, then writes the attestation that the `PR must be raised via no-mistakes` check requires into the pull request description. Commit with `git commit -s` so the separate `DCO` check passes. See [Running the pre-landing Quality Gate]({{< ref "project/contributing/_index.md" >}}) for installation and setup.
+
 ## Submitting
 
 Once you've committed and pushed all of your changes to GitHub, go to the page for your fork on GitHub, select your development branch, and click the pull request button. If you need to make any adjustments to your pull request, just push the updates to GitHub. Your pull request will automatically track the changes in your development branch and update it.

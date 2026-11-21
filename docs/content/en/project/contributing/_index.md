@@ -95,6 +95,95 @@ under both.
 </ul>
 </details>
 
+<details>
+<summary>Running the pre-landing Quality Gate (No-Mistakes)</summary>
+<div>
+<p>
+Meshery enforces the <a href="https://github.com/kunchenguid/no-mistakes">no-mistakes</a> quality gate on all code contributions (UI, server, CLI, schemas, and configurations). The gate validates code review, tests, documentation parity, and linting in isolated, disposable worktrees before changes reach GitHub, satisfying the <code>PR must be raised via no-mistakes</code> CI status check.
+</p>
+
+<h4>1. Install No-Mistakes</h4>
+Install the CLI tool on your local development system:
+<ul>
+<li><strong>macOS / Linux:</strong>
+<pre><code>curl -fsSL https://raw.githubusercontent.com/kunchenguid/no-mistakes/main/docs/install.sh | sh</code></pre>
+</li>
+<li><strong>Windows (PowerShell):</strong>
+<pre><code>irm https://raw.githubusercontent.com/kunchenguid/no-mistakes/main/docs/install.ps1 | iex</code></pre>
+</li>
+<li><strong>Via Go:</strong>
+<pre><code>go install github.com/kunchenguid/no-mistakes/cmd/no-mistakes@latest</code></pre>
+</li>
+</ul>
+<p>For other installation options, refer to the <a href="https://kunchenguid.github.io/no-mistakes/start-here/installation/">official installation guide</a>.</p>
+
+<h4>2. Check Prerequisites</h4>
+Verify your local environment with the built-in diagnostic tool:
+<pre><code>no-mistakes doctor</code></pre>
+<p>
+This checks for:
+</p>
+<ul>
+<li><strong>Git:</strong> Required for repository and branch operations.</li>
+<li><strong>Supported Agent Runner:</strong> Claude Code, Codex, Copilot, Antigravity (<code>agy</code>), etc.</li>
+<li><strong>GitHub CLI (<code>gh</code>):</strong> Required for opening pull requests and monitoring CI.</li>
+</ul>
+
+<h4>3. Initialize the Meshery Repository</h4>
+Navigate to your local Meshery repository and initialize the local quality gate with your GitHub fork:
+<pre><code>cd meshery
+no-mistakes init --fork-url git@github.com:YOUR_USERNAME/meshery.git</code></pre>
+<p>
+This registers the local <code>no-mistakes</code> remote, prepares isolated worktrees, and starts the background daemon.
+</p>
+
+<h4>4. Commit and Run the Quality Gate</h4>
+<ol>
+<li>Create your feature branch:
+<pre><code>git checkout -b feature/your-feature</code></pre>
+</li>
+<li>Make your changes and commit them with DCO sign-off:
+<pre><code>git commit -s -m "type(scope): descriptive commit message"</code></pre>
+</li>
+<li>Run the pipeline on your branch:
+<pre><code>no-mistakes axi run --intent "&lt;brief description of your changes&gt;"</code></pre>
+</li>
+</ol>
+<p>
+You can also push the branch through the gate directly with <code>git push no-mistakes feature/your-feature</code>.
+</p>
+
+<h4>5. Monitor Pipeline Progress</h4>
+<p>
+Run <code>no-mistakes</code> to watch the pipeline and respond to approval requests; <code>no-mistakes status</code> shows a summary.
+</p>
+<p>
+The automated pipeline executes 9 structured stages:
+</p>
+<ol>
+<li><strong>Intent:</strong> Analyzes the purpose and scope of your changes.</li>
+<li><strong>Rebase:</strong> Rebases onto the latest upstream branch.</li>
+<li><strong>Review:</strong> Evaluates code styling and safety rules.</li>
+<li><strong>Test:</strong> Scopes and runs baseline tests.</li>
+<li><strong>Document:</strong> Checks documentation parity and identifies gaps.</li>
+<li><strong>Lint:</strong> Runs repository linters.</li>
+<li><strong>Push:</strong> Pushes validated commits to your remote fork.</li>
+<li><strong>PR:</strong> Creates or updates the pull request.</li>
+<li><strong>CI:</strong> Monitors remote GitHub Actions workflows.</li>
+</ol>
+
+<h4>6. Pull Request Attestation &amp; Requirements</h4>
+<ul>
+<li><strong>Attestation Matching:</strong> The CI check <code>PR must be raised via no-mistakes</code> verifies that the pull request description contains a valid attestation matching the current <code>head_sha</code> and that <code>review</code>, <code>test</code>, and <code>document</code> steps are marked <code>completed</code>. After pushing new commits, re-run the gate so the attestation covers the new head; an attestation for an older commit fails the check.</li>
+<li><strong>Separate DCO Check:</strong> All commits must include a sign-off trailer (<code>git commit -s</code>) to satisfy GitHub's independent <code>DCO</code> status check.</li>
+<li><strong>Exempt Paths:</strong> Pull requests whose changed paths are strictly documentation (<code>docs/**</code>, <code>CNAME</code>) or CI workflows (<code>.github/workflows/**</code>) are automatically exempt from the pipeline requirement.</li>
+</ul>
+
+<p>
+For agent skill instructions and CI merge gate specifications, see the <a href="{{< ref "project/contributing/build-and-release.md#no-mistakes-merge-gate" >}}">No-mistakes merge gate technical specification</a> and <code>.agents/skills/no-mistakes/SKILL.md</code>.
+</p>
+</div></details>
+
 ## Cloning the Repository
 
 The `meshery/meshery` repository is large - a full clone is on the order of tens of gigabytes and keeps growing. Two directories account for most of that weight, and neither is needed for the vast majority of contributions:
