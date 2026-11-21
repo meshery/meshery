@@ -605,11 +605,6 @@ func objectSubset(toValue, fromValue interface{}) bool {
 	return deepEqual(fromValue, toValue)
 }
 
-// componentMatchesKind checks if a component matches the given kind selector.
-func componentMatchesKind(comp *component.ComponentDefinition, kind string) bool {
-	return matchName(comp.Component.Kind, kind)
-}
-
 // buildIdentifiedRelationship builds an identified relationship declaration
 // from matched component IDs, selectors, and the relationship definition.
 func buildIdentifiedRelationship(
@@ -648,18 +643,16 @@ func matchComponentPairs(
 	design *pattern.PatternFile,
 ) []*relationship.RelationshipDefinition {
 	var results []*relationship.RelationshipDefinition
-	fromKind := selectorItemKind(fromSel)
-	toKind := selectorItemKind(toSel)
 
 	for _, compFrom := range comps {
-		if !componentMatchesKind(compFrom, fromKind) {
+		if !isRelationshipFeasible(fromSel, compFrom) {
 			continue
 		}
 		for _, compTo := range comps {
 			if compFrom.ID == compTo.ID {
 				continue
 			}
-			if !componentMatchesKind(compTo, toKind) {
+			if !isRelationshipFeasible(toSel, compTo) {
 				continue
 			}
 			if !matchingMutators(compFrom, compTo, fromSel, toSel, design) {
