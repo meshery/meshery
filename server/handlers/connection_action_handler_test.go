@@ -11,6 +11,7 @@ import (
 
 	k8smachine "github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/models/controllers"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -383,5 +384,101 @@ func TestPerformConnectionAction_FlushMeshsync_DisconnectedDoesNotDeleteCache(t 
 	}
 	if count != 1 {
 		t.Errorf("cached MeshSync resource count = %d, want 1; disconnected flush must not delete cache", count)
+	}
+}
+
+func TestPerformConnectionAction_FlushMeshsync_NilHandlerPreservesCache(t *testing.T) {
+	gdb, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to open in-memory database: %v", err)
+	}
+	sqlDB, err := gdb.DB()
+	if err != nil {
+		t.Fatalf("failed to get SQL database: %v", err)
+	}
+	sqlDB.SetMaxOpenConns(1)
+	t.Cleanup(func() { _ = sqlDB.Close() })
+
+	db := &database.Handler{DB: gdb}
+	if err := db.AutoMigrate(
+		&meshsyncmodel.KubernetesKeyValue{},
+		&meshsyncmodel.KubernetesResource{},
+		&meshsyncmodel.KubernetesResourceSpec{},
+		&meshsyncmodel.KubernetesResourceStatus{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
+	); err != nil {
+		t.Fatalf("failed to migrate MeshSync tables: %v", err)
+	}
+
+	serverID := uuid.Must(uuid.NewV4())
+	resource := &meshsyncmodel.KubernetesResource{
+		ID:         uuid.Must(uuid.NewV4()).String(),
+		ClusterID:  serverID.String(),
+		Kind:       "Service",
+		APIVersion: "v1",
+	}
+	if err := db.Create(resource).Error; err != nil {
+		t.Fatalf("failed to seed MeshSync resource: %v", err)
+	}
+
+	baseProvider := newControllersConfigFakeProvider()
+	connectionID := seedKubernetesConnection(baseProvider, nil)
+	provider := &connectionActionFlushTestProvider{
+		controllersConfigFakeProvider: baseProvider,
+		db:                            db,
+	}
+
+	h := newConnectionActionTestHandler(t)
+	machine, err := k8smachine.New(connectionID.String(), uuid.Must(uuid.NewV4()), h.log)
+	if err != nil {
+		t.Fatalf("failed to create Kubernetes state machine: %v", err)
+	}
+
+	mesheryCtrlsHelper := models.NewMesheryControllersHelper(
+		h.log,
+		controllers.OperatorDeploymentConfig{},
+		nil,
+		nil,
+		nil,
+		nil,
+	)
+	machine.Context = &k8smachine.MachineCtx{
+		K8sContext: models.K8sContext{
+			ID:                 "test-context",
+			KubernetesServerID: &serverID,
+		},
+		MesheryCtrlsHelper: mesheryCtrlsHelper,
+	}
+
+	h.ConnectionToStateMachineInstanceTracker = &machines.ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
+	}
+	h.ConnectionToStateMachineInstanceTracker.Add(connectionID, machine)
+
+	req := httptest.NewRequest(
+		http.MethodPost,
+		"/api/integrations/connections/"+connectionID.String()+"/actions",
+		strings.NewReader(`{"action":"flushMeshsync"}`),
+	)
+	req = mux.SetURLVars(req, map[string]string{"connectionId": connectionID.String()})
+	rec := httptest.NewRecorder()
+
+	h.PerformConnectionAction(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("status = %d, want 500 for nil MeshSync handler; body: %s", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), "MeshSync data handler is not initialized") {
+		t.Errorf("expected resync-failure response, got: %s", rec.Body.String())
+	}
+
+	var count int64
+	if err := db.Model(&meshsyncmodel.KubernetesResource{}).
+		Where("cluster_id = ?", serverID.String()).
+		Count(&count).Error; err != nil {
+		t.Fatalf("failed to count cached MeshSync resources: %v", err)
+	}
+	if count != 1 {
+		t.Errorf("cached MeshSync resource count = %d, want 1; nil-handler flush must preserve cache", count)
 	}
 }
