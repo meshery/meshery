@@ -5,6 +5,7 @@ package utils
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"unsafe"
 
 	"golang.org/x/sys/windows"
@@ -34,6 +35,10 @@ func restrictPathToCurrentUser(path string) error {
 	if err != nil {
 		return fmt.Errorf("cannot restrict token file %q: %w", path, err)
 	}
+
+	var pinner runtime.Pinner
+	pinner.Pin(sid)
+	defer pinner.Unpin()
 
 	acl, err := windows.ACLFromEntries([]windows.EXPLICIT_ACCESS{{
 		AccessPermissions: tokenFileAccess,
