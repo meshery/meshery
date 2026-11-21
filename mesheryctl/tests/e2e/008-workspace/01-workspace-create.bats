@@ -6,7 +6,7 @@ setup() {
 	_load_bats_libraries
 }
 
-@test "given an invalid orgId provided as an argument when running mesheryctl workspace create --orgId invalid-org-id then an error message is displayed" {
+@test "[cut=Workspace][tg=Workspace Management] given an invalid orgId provided as an argument when running mesheryctl workspace create --orgId invalid-org-id then an error message is displayed" {
     run $MESHERYCTL_BIN workspace create --orgId foo
 
     assert_failure 
