@@ -70,9 +70,16 @@ export default function DesignConfigurator() {
     [design_id],
   );
 
-  function handleCategoryChange(event) {
-    setSelectedCategory(event.target.value);
-    getModelFromCategory(event.target.value);
+  function handleCategoryChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const nextCategory = event.target.value;
+    if (nextCategory === selectedCategory) {
+      return;
+    }
+    setSelectedCategory(nextCategory);
+    setSelectedModel('');
+    if (nextCategory) {
+      getModelFromCategory(nextCategory);
+    }
   }
 
   function handleModelChange(event) {
