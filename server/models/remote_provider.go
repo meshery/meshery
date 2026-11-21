@@ -486,8 +486,7 @@ func (l *RemoteProvider) GetProviderURL() string {
 
 // Description - returns a short description of the provider for display in the Provider UI.
 func (l *RemoteProvider) Description() []string {
-	description := l.GetProviderProperties().ProviderDescription
-	return cloneSlice(description)
+	return l.GetProviderProperties().ProviderDescription
 }
 
 // GetProviderType - Returns ProviderType
