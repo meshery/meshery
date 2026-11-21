@@ -755,7 +755,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                 {value === 1 && (
                   <ExtensionSandbox
                     type="userPrefs"
-                    Extension={(url) => RemoteComponent({ url })}
+                    Extension={(url) => RemoteComponent({ url, loaderType: 'circular' })}
                   />
                 )}
               </StatsWrapper>
