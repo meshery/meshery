@@ -34,11 +34,7 @@ import {
 import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
 import { randomApplicationNameGenerator } from "../../utils";
 import CatalogChart from "../Catalog/Chart";
-import {
-  CatalogCard,
-  FeedbackButton,
-  SistentThemeProviderWithoutBaseLine,
-} from "@sistent/sistent";
+import { CatalogCard, SistentThemeProviderWithoutBaseLine } from "@sistent/sistent";
 import {
   MESHMAP,
   providerUrl,
@@ -122,7 +118,7 @@ const ExtensionsComponent = () => {
   // const [meshAdapters, setMeshAdapters] = useState(null)
   const [catalogDesigns, setCatalogDesigns] = useState(null);
   const [filter, setFilter] = useState(null);
-  const [userDesigns, setUserDesigns] = useState(null);
+  const [userDesigns, setUserDesigns] = useState(null); // eslint-disable-line no-unused-vars
 
   // useEffect(() => {
   //   if (meshAdapters && meshAdapters.length !== 0) {
@@ -141,14 +137,14 @@ const ExtensionsComponent = () => {
       .catch(console.error);
   };
 
-  const onSubmit = async (feedback) => {
+  const onSubmit = async (feedback) => { // eslint-disable-line no-unused-vars
     const userFeedbackRequestBody = {
       scope: feedback?.label,
       message: feedback?.message,
       page_location: "",
       metadata: {},
     };
-    fetch(`${providerUrl}` + "/api/identity/users/notify/feedback", {
+    fetch(`${providerUrl}/api/identity/users/notify/feedback`, {
       method: httpPost,
       body: userFeedbackRequestBody,
     })
