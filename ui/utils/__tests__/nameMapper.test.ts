@@ -36,6 +36,23 @@ describe('podNameMapper', () => {
     // `'pod-1'.split('-').slice(0,-2)` yields [], which joins to ''
     expect(podNameMapper('unknown', 'pod-1')).toBe('');
   });
+
+  it('handles pod names with consecutive dashes without throwing', () => {
+    expect(podNameMapper('linkerd', 'linkerd--controller--pod-abc-123')).toBe(
+      'Linkerd Controller Pod',
+    );
+  });
+
+  it('handles nullish or non-string pod names safely', () => {
+    expect(podNameMapper('istio', undefined)).toBe('');
+    expect(podNameMapper('istio', null)).toBe('');
+    expect(podNameMapper('unknown', undefined)).toBe('');
+    expect(podNameMapper('unknown', null)).toBe('');
+    expect(podNameMapper('unknown', 12345)).toBe('');
+    expect(podNameMapper('kiali', undefined)).toBe('Kiali');
+    expect(podNameMapper('grafana', null)).toBe('Grafana');
+    expect(podNameMapper('prometheus', undefined)).toBe('Prometheus');
+  });
 });
 
 describe('versionMapper', () => {
@@ -53,6 +70,17 @@ describe('versionMapper', () => {
 
   it('prefixes uppercase V versions (since the check is for lowercase v only)', () => {
     expect(versionMapper('V1')).toBe('vV1');
+  });
+
+  it('returns empty string for nullish or empty versions', () => {
+    expect(versionMapper('')).toBe('');
+    expect(versionMapper(undefined)).toBe('');
+    expect(versionMapper(null)).toBe('');
+  });
+
+  it('returns empty string for non-string versions', () => {
+    expect(versionMapper(1.0)).toBe('');
+    expect(versionMapper({})).toBe('');
   });
 });
 
@@ -82,5 +110,11 @@ describe('isTelemetryComponent', () => {
   it('returns empty string for nullish names (optional chaining)', () => {
     expect(isTelemetryComponent(undefined)).toBe('');
     expect(isTelemetryComponent(null)).toBe('');
+  });
+
+  it('returns empty string for non-string names', () => {
+    expect(isTelemetryComponent(123)).toBe('');
+    expect(isTelemetryComponent({})).toBe('');
+    expect(isTelemetryComponent([])).toBe('');
   });
 });
