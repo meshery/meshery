@@ -93,7 +93,7 @@ mesheryctl model build [model-name]/[model-version]
 
 				count := 0
 				for _, entry := range entries {
-					if entry.IsDir() {
+					if entry.IsDir() && !strings.HasPrefix(entry.Name(), ".") {
 						count++
 					}
 				}
