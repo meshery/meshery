@@ -14,6 +14,7 @@ var loadersKey = &contextKey{name: "dataloaders"}
 // Loaders holds all request-scoped data loaders.
 type Loaders struct {
 	ControlPlaneLoader *ControlPlaneBatchLoader
+	AddonLoader        *AddonBatchLoader
 }
 
 // Middleware injects freshly instantiated, request-scoped DataLoaders into the request context.
@@ -24,6 +25,7 @@ func Middleware(providerGetter func(ctx context.Context) models.GenericPersister
 			ctx := r.Context()
 			loaders := &Loaders{
 				ControlPlaneLoader: newControlPlaneBatchLoader(ctx, providerGetter),
+				AddonLoader:        newAddonBatchLoader(ctx, providerGetter),
 			}
 			r = r.WithContext(context.WithValue(ctx, loadersKey, loaders))
 			next.ServeHTTP(w, r)
