@@ -625,3 +625,78 @@ func TestPanickingHelmActionReleasesTheClusterLock(t *testing.T) {
 		t.Fatalf("next connection ran %d installs, want 1", installs)
 	}
 }
+
+func TestContextsLinkedOnlyThroughAThirdShareTheOperatorLifecycle(t *testing.T) {
+	serverID := core.Uuid(uuid.Must(uuid.NewV4()))
+	idOf := func(id core.Uuid) *core.Uuid { return &id }
+	newConn := func() string { return uuid.Must(uuid.NewV4()).String() }
+	a := K8sContext{ID: "ctx-a", ConnectionID: newConn(), Server: "https://a.example.invalid", KubernetesServerID: idOf(serverID)}
+	b := K8sContext{ID: "ctx-b", ConnectionID: newConn(), Server: "https://b.example.invalid", KubernetesServerID: idOf(serverID)}
+	c := K8sContext{ID: "ctx-c", ConnectionID: newConn(), Server: "https://b.example.invalid"}
+
+	ot := NewOperatorTracker(false)
+	cluster := newFakeCluster()
+	ot.claimOperator(b)
+	viaA, viaC := operatorModeConsumer(t, cluster), operatorModeConsumer(t, cluster)
+
+	start := make(chan struct{})
+	var wg sync.WaitGroup
+	for _, run := range []func(){
+		func() { viaA.DeployUndeployedOperators(ot, a) },
+		func() { viaC.DeployUndeployedOperators(ot, c) },
+	} {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			<-start
+			run()
+		}()
+	}
+	close(start)
+	wg.Wait()
+
+	if _, installs, _, maxInFlight := cluster.snapshot(); installs != 1 || maxInFlight != 1 {
+		t.Fatalf("installs = %d with %d Helm actions overlapping, want one serialized install", installs, maxInFlight)
+	}
+	want := []string{a.ConnectionID, b.ConnectionID, c.ConnectionID}
+	sort.Strings(want)
+	for _, k8sctx := range []K8sContext{a, b, c} {
+		if got := ot.OperatorConsumers(k8sctx); !reflect.DeepEqual(got, want) {
+			t.Fatalf("consumers seen from %s = %v, want all three connections %v", k8sctx.ID, got, want)
+		}
+	}
+}
+
+func TestContextSeenBeforeTheLinkStillSerializesWithTheLinkedContext(t *testing.T) {
+	serverID := core.Uuid(uuid.Must(uuid.NewV4()))
+	idOf := func(id core.Uuid) *core.Uuid { return &id }
+	a := K8sContext{ID: "ctx-a", Server: "https://a.example.invalid", KubernetesServerID: idOf(serverID)}
+	b := K8sContext{ID: "ctx-b", Server: "https://b.example.invalid", KubernetesServerID: idOf(serverID)}
+	c := K8sContext{ID: "ctx-c", Server: "https://b.example.invalid"}
+
+	ot := NewOperatorTracker(false)
+	unlockA := ot.lockOperatorCluster(a)
+	ot.claimOperator(b)
+
+	locked := make(chan struct{})
+	go func() {
+		unlockC := ot.lockOperatorCluster(c)
+		close(locked)
+		unlockC()
+	}()
+	select {
+	case <-locked:
+		t.Fatal("C took its Helm lock while A, linked to it through B, held A's")
+	case <-time.After(time.Second):
+	}
+	unlockA()
+	select {
+	case <-locked:
+	case <-time.After(5 * time.Second):
+		t.Fatal("C never took its Helm lock after A released")
+	}
+
+	if fromA, fromC := ot.clusters(a), ot.clusters(c); !reflect.DeepEqual(fromA, fromC) {
+		t.Fatalf("A resolves to %d cluster locks and C to %d, want the same set", len(fromA), len(fromC))
+	}
+}
