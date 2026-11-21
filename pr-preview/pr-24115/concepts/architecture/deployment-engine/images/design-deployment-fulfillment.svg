@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 600" width="980" height="600" role="img" aria-labelledby="ddf-title ddf-desc">
+  <title id="ddf-title">Per-component deployment fulfillment in Meshery</title>
+  <desc id="ddf-desc">A single design holds three components. Each component belongs to a model, and each model carries a registrant. Meshery Server resolves the registrant of every component independently. Components whose registrant advertises no network port are applied by Meshery Server itself, using its own in-process Kubernetes client. Components whose registrant advertises a host and a port are delegated over gRPC to that adapter. Both paths act on the same selected Kubernetes clusters.</desc>
+
+  <defs>
+    <style>
+      .ddf-bg { fill: #ffffff; }
+      .ddf-frame { fill: none; stroke: #ced4da; stroke-width: 1.5; }
+      .ddf-panel { fill: #f8f9fa; stroke: #ced4da; stroke-width: 1.5; }
+      .ddf-chip { fill: #ffffff; stroke: #adb5bd; stroke-width: 1.5; }
+      .ddf-chip-b { fill: #ffffff; stroke: #477e96; stroke-width: 2; }
+      .ddf-server { fill: #eef7f6; stroke: #00b39f; stroke-width: 2; }
+      .ddf-adapter { fill: #edf2f6; stroke: #477e96; stroke-width: 2; }
+      .ddf-cluster { fill: #f1f3f5; stroke: #3c494f; stroke-width: 1.5; stroke-dasharray: 6 4; }
+      .ddf-t { font-family: "Qanelas Soft", "Open Sans", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; fill: #212529; }
+      .ddf-h { font-size: 16px; font-weight: 700; }
+      .ddf-sh { font-size: 14px; font-weight: 700; }
+      .ddf-b { font-size: 13px; }
+      .ddf-s { font-size: 12px; fill: #495057; }
+      .ddf-teal { fill: #007a70; }
+      .ddf-blue { fill: #3a6980; }
+      .ddf-mono { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; fill: #495057; }
+      .ddf-line { fill: none; stroke: #868e96; stroke-width: 1.75; }
+      .ddf-line-teal { fill: none; stroke: #00b39f; stroke-width: 2.25; }
+      .ddf-line-blue { fill: none; stroke: #477e96; stroke-width: 2.25; }
+    </style>
+    <marker id="ddf-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#868e96"/>
+    </marker>
+    <marker id="ddf-arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#00b39f"/>
+    </marker>
+    <marker id="ddf-arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#477e96"/>
+    </marker>
+  </defs>
+
+  <rect class="ddf-bg" x="0" y="0" width="980" height="600" rx="8"/>
+  <rect class="ddf-frame" x="0.75" y="0.75" width="978.5" height="598.5" rx="8"/>
+
+  <!-- Column 1: the design -->
+  <rect class="ddf-panel" x="24" y="48" width="252" height="292" rx="8"/>
+  <text class="ddf-t ddf-h" x="42" y="76">One design, one Deploy</text>
+  <text class="ddf-t ddf-s" x="42" y="96">Three components</text>
+
+  <rect class="ddf-chip" x="42" y="112" width="216" height="58" rx="6"/>
+  <text class="ddf-t ddf-sh" x="56" y="135">Deployment</text>
+  <text class="ddf-t ddf-s" x="56" y="155">model: kubernetes</text>
+
+  <rect class="ddf-chip" x="42" y="182" width="216" height="58" rx="6"/>
+  <text class="ddf-t ddf-sh" x="56" y="205">Prometheus</text>
+  <text class="ddf-t ddf-s" x="56" y="225">model: kube-prometheus-stack</text>
+
+  <rect class="ddf-chip-b" x="42" y="252" width="216" height="58" rx="6"/>
+  <text class="ddf-t ddf-sh" x="56" y="275">Adapter-sourced component</text>
+  <text class="ddf-t ddf-s" x="56" y="295">model: registered by an adapter</text>
+
+  <!-- Column 2: registrant resolution -->
+  <rect class="ddf-panel" x="312" y="48" width="236" height="292" rx="8"/>
+  <text class="ddf-t ddf-h" x="330" y="76">Registrant of that model</text>
+  <text class="ddf-t ddf-s" x="330" y="96">Looked up per component</text>
+
+  <rect class="ddf-chip" x="330" y="112" width="200" height="58" rx="6"/>
+  <text class="ddf-t ddf-sh" x="344" y="135">Kubernetes cluster</text>
+  <text class="ddf-t ddf-mono" x="344" y="155">no port</text>
+
+  <rect class="ddf-chip" x="330" y="182" width="200" height="58" rx="6"/>
+  <text class="ddf-t ddf-sh" x="344" y="205">Artifact Hub</text>
+  <text class="ddf-t ddf-mono" x="344" y="225">no port</text>
+
+  <rect class="ddf-chip-b" x="330" y="252" width="200" height="58" rx="6"/>
+  <text class="ddf-t ddf-sh" x="344" y="275">A Meshery Adapter</text>
+  <text class="ddf-t ddf-mono" x="344" y="295">host + port</text>
+
+  <path class="ddf-line" d="M 264 141 L 322 141" marker-end="url(#ddf-arrow)"/>
+  <path class="ddf-line" d="M 264 211 L 322 211" marker-end="url(#ddf-arrow)"/>
+  <path class="ddf-line" d="M 264 281 L 322 281" marker-end="url(#ddf-arrow)"/>
+
+  <!-- Column 3: the two fulfillment paths -->
+  <rect class="ddf-server" x="640" y="80" width="248" height="112" rx="8"/>
+  <text class="ddf-t ddf-sh ddf-teal" x="658" y="108">Path A</text>
+  <text class="ddf-t ddf-b" x="658" y="132">Meshery Server applies the</text>
+  <text class="ddf-t ddf-b" x="658" y="150">component itself, with its own</text>
+  <text class="ddf-t ddf-b" x="658" y="168">in-process Kubernetes client.</text>
+
+  <rect class="ddf-adapter" x="640" y="234" width="248" height="112" rx="8"/>
+  <text class="ddf-t ddf-sh ddf-blue" x="658" y="262">Path B</text>
+  <text class="ddf-t ddf-b" x="658" y="286">Meshery Server opens a gRPC</text>
+  <text class="ddf-t ddf-b" x="658" y="304">connection to the adapter's</text>
+  <text class="ddf-t ddf-mono" x="658" y="323">host:port</text>
+  <text class="ddf-t ddf-b" x="730" y="323">and delegates.</text>
+
+  <path class="ddf-line-teal" d="M 534 141 C 570 141 596 136 630 136" marker-end="url(#ddf-arrow-teal)"/>
+  <path class="ddf-line-teal" d="M 534 211 C 574 211 590 162 630 153" marker-end="url(#ddf-arrow-teal)"/>
+  <path class="ddf-line-blue" d="M 534 281 C 574 281 596 288 630 290" marker-end="url(#ddf-arrow-blue)"/>
+
+  <text class="ddf-t ddf-s ddf-teal" x="566" y="112">no port</text>
+  <text class="ddf-t ddf-s ddf-blue" x="560" y="330">host + port</text>
+
+  <!-- Bottom: the clusters -->
+  <rect class="ddf-cluster" x="312" y="412" width="576" height="152" rx="8"/>
+  <text class="ddf-t ddf-h" x="336" y="444">Your selected Kubernetes clusters</text>
+  <text class="ddf-t ddf-s" x="336" y="470">Both paths act on the same clusters you chose before deploying, so every</text>
+  <text class="ddf-t ddf-s" x="336" y="490">component of the design lands in the same place whichever path fulfilled it.</text>
+  <text class="ddf-t ddf-s" x="336" y="518">Meshery reports each component separately, naming the cluster or the</text>
+  <text class="ddf-t ddf-s" x="336" y="538">adapter that fulfilled it.</text>
+
+  <path class="ddf-line-teal" d="M 888 160 C 918 160 934 168 934 200 L 934 440 C 934 462 916 470 894 470" marker-end="url(#ddf-arrow-teal)"/>
+  <path class="ddf-line-blue" d="M 764 346 L 764 404" marker-end="url(#ddf-arrow-blue)"/>
+</svg>
