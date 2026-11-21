@@ -46,7 +46,7 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, _ *http.Request) {
 	err = json.NewEncoder(w).Encode(version)
 	if err != nil {
 		h.log.Error(models.ErrEncoding(err, "server-version"))
-		writeMeshkitError(w, models.ErrEncoding(err, "server-version"), http.StatusNotFound)
+		writeMeshkitError(w, models.ErrEncoding(err, "server-version"), http.StatusInternalServerError)
 	}
 }
 
