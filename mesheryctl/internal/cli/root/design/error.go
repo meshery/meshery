@@ -210,5 +210,5 @@ func ErrDesignSelectNotInteractive(designName string, matches int) error {
 		[]string{"Cannot choose between multiple designs without an interactive terminal"},
 		[]string{fmt.Sprintf("%d designs match the name %q, and standard input is not interactive so the selection prompt cannot be answered", matches, designName)},
 		[]string{"The command was run from a script, a pipe, a CI job, or with standard input redirected", "More than one design shares the given name"},
-		[]string{"Pass the design ID instead of the name", "Run the command from an interactive terminal", "Give the design a unique name with 'mesheryctl design list' to find the one you want"})
+		[]string{"Pass the design file with -f instead of the name", "Run the command from an interactive terminal", "Give the design a unique name with 'mesheryctl design list' to find the one you want"})
 }
