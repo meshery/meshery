@@ -8,7 +8,12 @@ import { getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { formatApiError } from '../../utils/helpers/meshkitError';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { buildPerformanceRunUrl, generateTestName, generateUUID } from './helper';
+import {
+  buildPerformanceRunUrl,
+  generateTestName,
+  generateUUID,
+  validateLoadParams,
+} from './helper';
 
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '@/components/general/error-404/index';
@@ -46,7 +51,7 @@ const MesheryPerformanceComponent_ = (props) => {
     meshName = '',
     url = '',
     qps = '0',
-    c = '0',
+    c = '1',
     t = '30s',
     performanceProfileID,
     profileName,
@@ -98,6 +103,7 @@ const MesheryPerformanceComponent_ = (props) => {
     ...metadata,
     ca_certificate: metadata?.ca_certificate || {},
   });
+  const { cError, qpsError } = validateLoadParams(cState, qpsState);
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const { data: userData, isSuccess: isUserDataFetched } = useGetUserPrefWithContextQuery(
@@ -172,6 +178,7 @@ const MesheryPerformanceComponent_ = (props) => {
       setUrlError(true);
       return;
     }
+    if (cError || qpsError) return;
 
     let err = false;
     let tNum = 0;
@@ -207,6 +214,7 @@ const MesheryPerformanceComponent_ = (props) => {
   };
 
   const submitProfile = (cb) => {
+    if (cError || qpsError) return;
     const profile = generatePerformanceProfile({
       name: profileNameState,
       loadGenerator: loadGeneratorState,
@@ -234,7 +242,7 @@ const MesheryPerformanceComponent_ = (props) => {
     setAdditionalOptions('');
     setUrl('');
     setMeshName('');
-    setC(0);
+    setC(1);
     setQps(0);
     setT('30s');
     setHeaders('');
@@ -401,7 +409,8 @@ const MesheryPerformanceComponent_ = (props) => {
     const loadTestPrefs = normalizeLoadTestPrefs(userData.loadTestPrefs);
 
     setQps(loadTestPrefs.qps);
-    setC(loadTestPrefs.c);
+    // A stored 0 means "unset"; the server runs that as a single connection.
+    setC(loadTestPrefs.c || 1);
     setT(loadTestPrefs.t);
     setLoadGenerator(loadTestPrefs.gen);
   };
@@ -530,7 +539,9 @@ const MesheryPerformanceComponent_ = (props) => {
                 url={urlState}
                 urlError={urlErrorState}
                 c={cState}
+                cError={cError}
                 qps={qpsState}
+                qpsError={qpsError}
                 t={tState}
                 tValue={tValueState}
                 tError={tErrorState}
@@ -552,7 +563,7 @@ const MesheryPerformanceComponent_ = (props) => {
             <ModalFooter variant="filled">
               <React.Fragment>
                 <PerformanceFormActions
-                  disableTest={disableTestState}
+                  disableTest={disableTestState || !!(cError || qpsError)}
                   blockRunTest={blockRunTestState}
                   hasTestResult={!!testResult}
                   onAbort={handleAbort}

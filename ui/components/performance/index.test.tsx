@@ -2,15 +2,25 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { getUserPrefQuerySpy, getMeshQuerySpy, canSpy, USER_PREF_RESULT, MESH_RESULT } = vi.hoisted(
-  () => ({
-    getUserPrefQuerySpy: vi.fn(),
-    getMeshQuerySpy: vi.fn(),
-    canSpy: vi.fn(() => true),
-    USER_PREF_RESULT: { data: {}, isSuccess: true },
-    MESH_RESULT: { data: [], isSuccess: true, isError: false, error: undefined },
-  }),
-);
+const {
+  getUserPrefQuerySpy,
+  getMeshQuerySpy,
+  canSpy,
+  saveProfileSpy,
+  formPropsSpy,
+  actionsPropsSpy,
+  USER_PREF_RESULT,
+  MESH_RESULT,
+} = vi.hoisted(() => ({
+  getUserPrefQuerySpy: vi.fn(),
+  getMeshQuerySpy: vi.fn(),
+  canSpy: vi.fn(() => true),
+  saveProfileSpy: vi.fn(),
+  formPropsSpy: vi.fn(),
+  actionsPropsSpy: vi.fn(),
+  USER_PREF_RESULT: { data: {}, isSuccess: true },
+  MESH_RESULT: { data: [], isSuccess: true, isError: false, error: undefined },
+}));
 
 vi.mock('react-redux', () => ({
   useDispatch: () => vi.fn(),
@@ -32,7 +42,7 @@ vi.mock('@/rtk-query/user', () => ({
 }));
 
 vi.mock('@/rtk-query/performance-profile', () => ({
-  useSavePerformanceProfileMutation: () => [vi.fn()],
+  useSavePerformanceProfileMutation: () => [saveProfileSpy],
 }));
 
 vi.mock('@/rtk-query/mesh', () => ({
@@ -62,8 +72,18 @@ vi.mock('@sistent/sistent', () => ({
   NoSsr: ({ children }: any) => <>{children}</>,
 }));
 
-vi.mock('./PerformanceForm', () => ({ default: () => null }));
-vi.mock('./PerformanceFormActions', () => ({ default: () => null }));
+vi.mock('./PerformanceForm', () => ({
+  default: (props: any) => {
+    formPropsSpy(props);
+    return null;
+  },
+}));
+vi.mock('./PerformanceFormActions', () => ({
+  default: (props: any) => {
+    actionsPropsSpy(props);
+    return null;
+  },
+}));
 vi.mock('./PerformanceTestResults', () => ({ default: () => null }));
 vi.mock('../load-test-timer-dialog', () => ({ default: () => null }));
 vi.mock('./style', () => ({ CenterTimer: ({ children }: any) => <div>{children}</div> }));
@@ -108,5 +128,61 @@ describe('MesheryPerformanceComponent permission and query skipping', () => {
       expect.objectContaining({ skip: false }),
     );
     expect(getMeshModels).toHaveBeenCalled();
+  });
+});
+
+describe('MesheryPerformanceComponent load parameter validation', () => {
+  const lastFormProps = () => formPropsSpy.mock.calls.at(-1)![0];
+  const lastActionsProps = () => actionsPropsSpy.mock.calls.at(-1)![0];
+
+  beforeEach(() => {
+    canSpy.mockReturnValue(true);
+    saveProfileSpy.mockReset();
+    formPropsSpy.mockClear();
+    actionsPropsSpy.mockClear();
+  });
+
+  it.each([
+    ['negative concurrent requests', { c: '-10', qps: '10' }, { cError: true, qpsError: false }],
+    ['zero concurrent requests', { c: '0', qps: '10' }, { cError: true, qpsError: false }],
+    ['negative QPS', { c: '5', qps: '-5' }, { cError: false, qpsError: true }],
+  ])('flags %s and blocks Save Profile and Run Test', (_name, values, expected) => {
+    render(
+      <MesheryPerformanceComponent
+        url="http://example.com"
+        performanceProfileID="p1"
+        {...values}
+      />,
+    );
+
+    expect(!!lastFormProps().cError).toBe(expected.cError);
+    expect(!!lastFormProps().qpsError).toBe(expected.qpsError);
+    expect(lastActionsProps().disableTest).toBe(true);
+
+    lastActionsProps().onSaveProfile();
+    lastActionsProps().onRunTest();
+    expect(saveProfileSpy).not.toHaveBeenCalled();
+  });
+
+  it('keeps the form valid when QPS is 0 (unbounded)', () => {
+    render(
+      <MesheryPerformanceComponent
+        url="http://example.com"
+        performanceProfileID="p1"
+        c="1"
+        qps="0"
+      />,
+    );
+
+    expect(lastFormProps().cError).toBe('');
+    expect(lastFormProps().qpsError).toBe('');
+    expect(lastActionsProps().disableTest).toBe(false);
+  });
+
+  it('opens a new profile form with a valid default for concurrent requests', () => {
+    render(<MesheryPerformanceComponent url="http://example.com" />);
+
+    expect(lastFormProps().cError).toBe('');
+    expect(lastActionsProps().disableTest).toBe(false);
   });
 });
