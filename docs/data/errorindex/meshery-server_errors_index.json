@@ -1410,11 +1410,11 @@
       "probableCause": [
         "The design ID in the URL is malformed or does not exist.",
         "The design has been deleted by its owner.",
-        "Your account does not have permission to view this design — it may belong to another organization or be set to private.",
+        "Your account does not have permission to view this design \u2014 it may belong to another organization or be set to private.",
         "Your session has expired or the remote provider is currently unreachable."
       ],
       "suggestedRemediation": [
-        "Verify the design link — confirm the full design ID is intact, with no missing or extra characters.",
+        "Verify the design link \u2014 confirm the full design ID is intact, with no missing or extra characters.",
         "Open My Designs and confirm the design still exists; if it was shared with you, ask the owner to re-share or grant access.",
         "Sign out and sign back in to refresh your session, then retry."
       ]
@@ -1430,8 +1430,8 @@
       "severity": "alert",
       "shortDescription": "Unable to delete this design",
       "probableCause": [
-        "The design ID is malformed or no longer exists — it may already have been deleted.",
-        "Your account does not have permission to delete this design — only authorized users (such as the owner) can delete it.",
+        "The design ID is malformed or no longer exists \u2014 it may already have been deleted.",
+        "Your account does not have permission to delete this design \u2014 only authorized users (such as the owner) can delete it.",
         "Your session has expired or the remote provider is currently unreachable."
       ],
       "suggestedRemediation": [
@@ -6025,7 +6025,7 @@
       "severity": "alert",
       "shortDescription": "Cannot drop table from database",
       "probableCause": [
-        "Migrator could not drop an existing table — schema or connection issue"
+        "Migrator could not drop an existing table \u2014 schema or connection issue"
       ],
       "suggestedRemediation": [
         "Check server logs for details and verify database integrity"
@@ -6348,7 +6348,7 @@
       "severity": "alert",
       "shortDescription": "Invalid design import request",
       "probableCause": [
-        "The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `fileName`, the URL variant requires `url`.",
+        "The request body did not match exactly one variant of the import oneOf \u2014 the File variant requires `file` and `fileName`, the URL variant requires `url`.",
         "Both variants were provided, or neither was."
       ],
       "suggestedRemediation": [
@@ -6423,7 +6423,7 @@
       "shortDescription": "Failed to update entity status",
       "probableCause": [
         "The entity ID does not exist in the registry.",
-        "The registry's persistence layer rejected the status update — typically a database connection or transaction failure."
+        "The registry's persistence layer rejected the status update \u2014 typically a database connection or transaction failure."
       ],
       "suggestedRemediation": [
         "Verify the entity ID exists by listing the entities of the same type. If it does, retry the request and inspect server logs for the underlying registry error."
@@ -7689,6 +7689,23 @@
       ],
       "suggestedRemediation": [
         "Inspect component configuration and provider logs for runtime failures"
+      ]
+    },
+    {
+      "code": "meshery-server-1498",
+      "moniker": "ErrStartingMetricsServerCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1498",
+      "severity": "alert",
+      "shortDescription": "Error starting Prometheus metrics server",
+      "probableCause": [
+        "Check if METRICS_PORT is already bound to another process"
+      ],
+      "suggestedRemediation": [
+        "Specify an open port for METRICS_PORT or unset it to disable"
       ]
     }
   ],

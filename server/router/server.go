@@ -81,8 +81,11 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux := mux.NewRouter()
 	gMux.Use(otelmux.Middleware("meshery-server"))
-	// Registered after otelmux so a contained panic is traced as the 500 it
-	// was answered with.
+	for _, mw := range options.preRecoveryMiddlewares {
+		gMux.Use(mw)
+	}
+	// Registered after otelmux and pre-recovery middlewares so a contained panic is traced as the 500 it
+	// was answered with and recorded by telemetry.
 	gMux.Use(recoveryMiddleware(options.log))
 
 	// shuttingDown is cancelled when the HTTP server starts shutting down.
