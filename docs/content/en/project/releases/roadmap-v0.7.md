@@ -78,6 +78,4 @@ See the [Meshery Architecture deck](https://docs.google.com/presentation/d/1SQMf
 * :white_check_mark: [?] Meshery Catalog ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.gfc8b2b2554_0_0))
 
 ----
-See the [Meshery Architecture deck](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164) for additional visual designs and functional specifications like this one -
-
-![Meshery v0.6.5 - Data Persistence|690x387](upload://mkFFy7ERkWPzUI2OOhsGLfNW2Sh.jpeg)
+See the [Meshery Architecture deck](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164) for additional visual designs and functional specifications (such as Meshery v0.6.5 - Data Persistence).
