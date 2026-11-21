@@ -28,6 +28,8 @@ func TestModelBuild(t *testing.T) {
 		buildTestDynamoController    = "test-case-model-build-aws-dynamodb-controller"
 		buildTestDynamoControllerGbx = "test-case-model-build-aws-dynamodb-controller-gbxter34"
 		buildTestEC2Controller       = "aws-ec2-controller"
+		buildTestNoVersionDir        = "test-case-model-build-no-versions"
+		buildTestTwoVersions         = "test-case-model-build-two-versions"
 		buildTestVersion             = "v0.1.0"
 		buildTestNonExistentFolder   = "not_existing_folder"
 	)
@@ -36,6 +38,8 @@ func TestModelBuild(t *testing.T) {
 	cleanupDirs := []string{
 		buildTestDynamoController,
 		buildTestDynamoControllerGbx,
+		buildTestNoVersionDir,
+		buildTestTwoVersions,
 	}
 	// Clean up all test artifacts from previous runs
 	cleanupTestArtifacts(cleanupDirs)
@@ -113,6 +117,16 @@ func TestModelBuild(t *testing.T) {
 			t.Log("removed created dirs and files")
 		}
 	}
+	setupHookCreateRootFiles := func(modelDir string, files ...string) func() {
+		return func() {
+			for _, file := range files {
+				filePath := filepath.Join(modelDir, file)
+				if err := os.WriteFile(filePath, []byte("sample content"), 0o644); err != nil {
+					t.Fatal(err)
+				}
+			}
+		}
+	}
 
 	tests := []struct {
 		Name             string
@@ -180,6 +194,82 @@ func TestModelBuild(t *testing.T) {
 			},
 		},
 		{
+			Name:             "given name only with README.md when model build then model is built",
+			Args:             []string{"build", buildTestDynamoController},
+			ExpectError:      false,
+			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedFiles: []string{
+				buildTestDynamoController + ".tar",
+			},
+			SetupHooks: []func(){
+				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
+				setupHookCreateRootFiles(buildTestDynamoController, "README.md"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					buildTestDynamoController,
+					buildTestDynamoController+".tar",
+				),
+			},
+		},
+		{
+			Name:             "given name only with .gitignore when model build then model is built",
+			Args:             []string{"build", buildTestDynamoController},
+			ExpectError:      false,
+			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedFiles: []string{
+				buildTestDynamoController + ".tar",
+			},
+			SetupHooks: []func(){
+				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
+				setupHookCreateRootFiles(buildTestDynamoController, ".gitignore"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					buildTestDynamoController,
+					buildTestDynamoController+".tar",
+				),
+			},
+		},
+		{
+			Name:             "given name only with README.md and .gitignore when model build then model is built",
+			Args:             []string{"build", buildTestDynamoController},
+			ExpectError:      false,
+			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedFiles: []string{
+				buildTestDynamoController + ".tar",
+			},
+			SetupHooks: []func(){
+				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
+				setupHookCreateRootFiles(buildTestDynamoController, "README.md", ".gitignore"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					buildTestDynamoController,
+					buildTestDynamoController+".tar",
+				),
+			},
+		},
+		{
+			Name:             "given name only with LICENSE when model build then model is built",
+			Args:             []string{"build", buildTestDynamoController},
+			ExpectError:      false,
+			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedFiles: []string{
+				buildTestDynamoController + ".tar",
+			},
+			SetupHooks: []func(){
+				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
+				setupHookCreateRootFiles(buildTestDynamoController, "LICENSE"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					buildTestDynamoController,
+					buildTestDynamoController+".tar",
+				),
+			},
+		},
+		{
 			Name:             "given no params when model build then throw error",
 			Args:             []string{"build"},
 			ExpectError:      true,
@@ -208,6 +298,47 @@ func TestModelBuild(t *testing.T) {
 			CleanupHooks: []func(){
 				cleanUpHookRemoveDirsAndFiles(
 					buildTestDynamoControllerGbx,
+				),
+			},
+			IsOutputGolden: false,
+			ExpectedError:  ErrModelBuildFromStrings(errBuildUsage, errBuildMultiVersionNotSupported),
+		},
+		{
+			Name:             "given name and two version directories when model build then throw error",
+			Args:             []string{"build", buildTestTwoVersions},
+			ExpectError:      true,
+			ExpectedResponse: "",
+			SetupHooks: []func(){
+				setupHookModelInit("init", buildTestTwoVersions, "--version", "v1.0.0"),
+				setupHookModelInit("init", buildTestTwoVersions, "--version", "v2.0.0"),
+				setupHookCreateRootFiles(buildTestTwoVersions, "README.md"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					buildTestTwoVersions,
+				),
+			},
+			IsOutputGolden: false,
+			ExpectedError:  ErrModelBuildFromStrings(errBuildUsage, errBuildMultiVersionNotSupported),
+		},
+		{
+			Name:             "given name and no version directories when model build then throw error",
+			Args:             []string{"build", buildTestNoVersionDir},
+			ExpectError:      true,
+			ExpectedResponse: "",
+			SetupHooks: []func(){
+				func() {
+					if err := os.MkdirAll(buildTestNoVersionDir, 0o755); err != nil {
+						t.Fatal(err)
+					}
+					if err := os.WriteFile(filepath.Join(buildTestNoVersionDir, "README.md"), []byte("sample docs"), 0o644); err != nil {
+						t.Fatal(err)
+					}
+				},
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					buildTestNoVersionDir,
 				),
 			},
 			IsOutputGolden: false,

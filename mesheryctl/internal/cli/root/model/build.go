@@ -93,9 +93,6 @@ mesheryctl model build [model-name]/[model-version]
 				for _, entry := range entries {
 					if entry.IsDir() {
 						count++
-					} else {
-						// If there is a file, it's not exactly one subfolder
-						return false
 					}
 				}
 
