@@ -216,3 +216,54 @@ func TestRemoteProviderDescriptionPreservesNilAndEmptySlices(t *testing.T) {
 		t.Fatal("Description changed a nil slice to non-nil")
 	}
 }
+
+func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
+	provider := newTestRemoteProvider(t, "https://remote.example.com")
+
+	properties := []ProviderProperties{
+		{
+			ProviderName:   "Provider One",
+			ProviderURL:    "https://one.example.com",
+			PackageVersion: "1.0.0",
+		},
+		{
+			ProviderName:   "Provider Two",
+			ProviderURL:    "https://two.example.com",
+			PackageVersion: "2.0.0",
+		},
+	}
+
+	provider.SetProviderProperties(properties[0])
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for i := 0; i < 5000; i++ {
+			provider.SetProviderProperties(properties[i%len(properties)])
+		}
+	}()
+
+	for reader := 0; reader < 4; reader++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for i := 0; i < 5000; i++ {
+				snapshot := provider.GetProviderProperties()
+				validOne := snapshot.ProviderName == "Provider One" &&
+					snapshot.ProviderURL == "https://one.example.com" &&
+					snapshot.PackageVersion == "1.0.0"
+				validTwo := snapshot.ProviderName == "Provider Two" &&
+					snapshot.ProviderURL == "https://two.example.com" &&
+					snapshot.PackageVersion == "2.0.0"
+				if !validOne && !validTwo {
+					t.Errorf("package snapshot mixed provider fields: name=%q url=%q version=%q",
+						snapshot.ProviderName, snapshot.ProviderURL, snapshot.PackageVersion)
+					return
+				}
+			}
+		}()
+	}
+
+	wg.Wait()
+}
