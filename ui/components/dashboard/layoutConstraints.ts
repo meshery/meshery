@@ -40,11 +40,17 @@ export const applyMinSizeConstraints = (
 
       const minW = Math.min(Math.max(baseMinW, 1), maxCols);
       const minH = Math.max(baseMinH, 1);
+      const w = Math.min(Math.max(item.w ?? minW, minW), maxCols);
+      const h = Math.max(item.h ?? minH, minH);
+      const x = Math.min(Math.max(item.x ?? 0, 0), maxCols - w);
+      const y = Math.max(item.y ?? 0, 0);
 
       return {
         ...item,
-        w: Math.max(item.w, minW),
-        h: Math.max(item.h, minH),
+        x,
+        y,
+        w,
+        h,
         minW,
         minH,
       };
