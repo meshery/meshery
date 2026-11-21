@@ -104,4 +104,39 @@ describe('debounce', () => {
     expect(fn).toHaveBeenCalledTimes(2);
     expect(fn).toHaveBeenLastCalledWith('two');
   });
+
+  it('safely returns a no-op function when passed non-function inputs', () => {
+    // @ts-expect-error testing invalid inputs
+    const dNull = debounce(null);
+    expect(typeof dNull).toBe('function');
+    expect(() => dNull()).not.toThrow();
+
+    // @ts-expect-error testing invalid inputs
+    const dUndefined = debounce(undefined);
+    expect(typeof dUndefined).toBe('function');
+    expect(() => dUndefined()).not.toThrow();
+
+    // @ts-expect-error testing invalid inputs
+    const dNumber = debounce(123);
+    expect(typeof dNumber).toBe('function');
+    expect(() => dNumber()).not.toThrow();
+
+    // @ts-expect-error testing invalid inputs
+    const dObj = debounce({});
+    expect(typeof dObj).toBe('function');
+    expect(() => dObj()).not.toThrow();
+  });
+
+  it('falls back to default 500ms timeout when passed invalid or negative timeout', () => {
+    const fn = vi.fn();
+    // @ts-expect-error testing invalid timeout
+    const debounced = debounce(fn, -100);
+
+    debounced();
+    vi.advanceTimersByTime(499);
+    expect(fn).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(1);
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
 });
