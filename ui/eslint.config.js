@@ -313,7 +313,6 @@ const legacyInlineStyleOffenders = [
   'components/relationship-builder/CreateRelationshipModal.tsx',
   'components/relationship-builder/RelationshipFormStepper.tsx',
   'components/settings/MesherySettings.tsx',
-  'components/settings/MesherySettingsPerformanceComponent.tsx',
   'components/registry/ComponentTree.tsx',
   'components/registry/CreateModelModal.tsx',
   'components/registry/ImportModel.tsx',
