@@ -225,6 +225,12 @@ func prepareModelBuildSource(folder string) (string, func(), error) {
 		return "", func() {}, err
 	}
 	cleanup := func() {
+		_ = filepath.WalkDir(tmpDir, func(p string, d fs.DirEntry, err error) error {
+			if err == nil && d.IsDir() {
+				_ = os.Chmod(p, 0700)
+			}
+			return nil
+		})
 		_ = os.RemoveAll(tmpDir)
 	}
 
@@ -234,6 +240,23 @@ func prepareModelBuildSource(folder string) (string, func(), error) {
 	}
 
 	return tmpDir, cleanup, nil
+}
+
+type dirPerm struct {
+	path string
+	perm os.FileMode
+}
+
+func isSubpathOrEqual(p, target string) bool {
+	cleanTarget := filepath.Clean(target)
+	cleanP := filepath.Clean(p)
+	if cleanP == cleanTarget {
+		return true
+	}
+	if cleanTarget == string(filepath.Separator) {
+		return true
+	}
+	return strings.HasPrefix(cleanP, cleanTarget+string(filepath.Separator))
 }
 
 // copyModelExcludingGit recursively copies src into dst while omitting any .git file or directory.
@@ -246,9 +269,40 @@ func copyModelExcludingGit(src, dst string) error {
 		return fmt.Errorf("source path is not a directory: %s", src)
 	}
 
-	return filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
+	absDst, err := filepath.Abs(dst)
+	if err != nil {
+		return err
+	}
+	realDst, err := filepath.EvalSymlinks(absDst)
+	if err != nil {
+		realDst = absDst
+	}
+
+	var dirsToRestore []dirPerm
+
+	err = filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
+		}
+
+		absPath, err := filepath.Abs(path)
+		if err != nil {
+			return err
+		}
+		// Prevent recursion if destination is inside source (e.g. TMPDIR set inside model source)
+		if isSubpathOrEqual(absPath, absDst) || isSubpathOrEqual(absPath, realDst) {
+			if d.IsDir() {
+				return fs.SkipDir
+			}
+			return nil
+		}
+		if realPath, err := filepath.EvalSymlinks(absPath); err == nil {
+			if isSubpathOrEqual(realPath, absDst) || isSubpathOrEqual(realPath, realDst) {
+				if d.IsDir() {
+					return fs.SkipDir
+				}
+				return nil
+			}
 		}
 
 		if d.Name() == ".git" {
@@ -291,7 +345,10 @@ func copyModelExcludingGit(src, dst string) error {
 		}
 
 		if d.IsDir() {
-			return os.MkdirAll(targetPath, info.Mode().Perm())
+			// Ensure owner write permission (0700) during staging so child items can be created,
+			// even if the source directory has read-only permissions (e.g. 0555).
+			dirsToRestore = append(dirsToRestore, dirPerm{path: targetPath, perm: info.Mode().Perm()})
+			return os.MkdirAll(targetPath, info.Mode().Perm()|0700)
 		}
 
 		if d.Type()&fs.ModeSymlink != 0 {
@@ -313,6 +370,19 @@ func copyModelExcludingGit(src, dst string) error {
 
 		return fmt.Errorf("unsupported file type for %s: %s", path, d.Type().String())
 	})
+	if err != nil {
+		return err
+	}
+
+	// Restore original directory permissions in reverse order (deepest directories first)
+	for i := len(dirsToRestore) - 1; i >= 0; i-- {
+		dp := dirsToRestore[i]
+		if chmodErr := os.Chmod(dp.path, dp.perm); chmodErr != nil {
+			return chmodErr
+		}
+	}
+
+	return nil
 }
 
 func copyModelFile(srcFile, dstFile string, perm os.FileMode) (retErr error) {

@@ -1,13 +1,17 @@
 package model
 
 import (
+	archiveTar "archive/tar"
 	"fmt"
+	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
 
+	"github.com/google/go-containerregistry/pkg/v1/tarball"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitOci "github.com/meshery/meshkit/models/oci"
@@ -853,4 +857,238 @@ func TestModelBuild_Security_ExcludesGitMetadata(t *testing.T) {
 	// 5. Assert version directory and model.json are preserved intact
 	_, err = os.Stat(filepath.Join(extractDir, "v1.0.0", "model.json"))
 	assert.NoError(t, err)
+}
+
+func TestModelBuild_Staging_TmpDirInsideModelSource(t *testing.T) {
+	cmdModelBuildFlagsProvided.Path = "."
+
+	createFreshModelCmd := func() *cobra.Command {
+		cmd := &cobra.Command{
+			Use:   "model",
+			Short: "Model management",
+		}
+		ModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+			cmd.Flags().AddFlag(flag)
+		})
+		return cmd
+	}
+
+	createFreshBuildCmd := func() *cobra.Command {
+		freshBuildCmd := &cobra.Command{
+			Use:     buildModelCmd.Use,
+			Short:   buildModelCmd.Short,
+			Long:    buildModelCmd.Long,
+			Example: buildModelCmd.Example,
+			PreRunE: buildModelCmd.PreRunE,
+			RunE:    buildModelCmd.RunE,
+		}
+		buildModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+			freshBuildCmd.Flags().AddFlag(flag)
+		})
+		cmd := createFreshModelCmd()
+		mesheryctlflags.InitValidators(freshBuildCmd)
+		cmd.AddCommand(freshBuildCmd)
+		return cmd
+	}
+
+	const modelName = "test-case-model-build-tmpdir-recursion"
+	tarName := modelName + ".tar"
+
+	cleanup := func() {
+		_ = os.RemoveAll(modelName)
+		_ = os.RemoveAll(tarName)
+	}
+	cleanup()
+	defer cleanup()
+
+	// Initialize model with v1.0.0
+	setupCmd := createFreshModelCmd()
+	setupCmd.AddCommand(initModelCmd)
+	mesheryctlflags.InitValidators(initModelCmd)
+	setupCmd.SetArgs([]string{"init", modelName, "--version", "v1.0.0"})
+	buffInit := utils.SetupMeshkitLoggerTesting(t, false)
+	setupCmd.SetOut(buffInit)
+	if err := setupCmd.Execute(); err != nil {
+		t.Fatalf("failed to init test model: %v", err)
+	}
+
+	// Create .git directory to trigger staging
+	gitDir := filepath.Join(modelName, ".git")
+	if err := os.MkdirAll(gitDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(gitDir, "config"), []byte("sample git config"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create TMPDIR inside model directory
+	internalTmp := filepath.Join(modelName, "internal_tmp")
+	if err := os.MkdirAll(internalTmp, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("TMPDIR", internalTmp)
+
+	// Run mesheryctl model build
+	cmd := createFreshBuildCmd()
+	cmd.SetArgs([]string{"build", modelName})
+	buff := utils.SetupMeshkitLoggerTesting(t, false)
+	cmd.SetOut(buff)
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("model build failed with TMPDIR inside model: %v", err)
+	}
+
+	// Verify tar exists
+	info, err := os.Stat(tarName)
+	assert.NoError(t, err)
+	assert.False(t, info.IsDir())
+
+	// Reset TMPDIR before creating extractDir so t.TempDir() doesn't write to internalTmp
+	t.Setenv("TMPDIR", "")
+	extractDir := t.TempDir()
+	err = meshkitOci.UnCompressOCIArtifact(tarName, extractDir)
+	assert.NoError(t, err)
+
+	// Assert that internal_tmp inside extracted artifact does not contain meshery-model-build-*
+	entries, err := os.ReadDir(filepath.Join(extractDir, "internal_tmp"))
+	if err == nil {
+		for _, e := range entries {
+			assert.False(t, strings.HasPrefix(e.Name(), "meshery-model-build-"), "found staging directory leak in artifact: %s", e.Name())
+		}
+	}
+
+	// Assert staging dir was cleaned up from model source
+	sourceEntries, err := os.ReadDir(internalTmp)
+	assert.NoError(t, err)
+	assert.Empty(t, sourceEntries, "staging directory was not cleaned up from internal TMPDIR")
+}
+
+func TestModelBuild_Staging_ReadOnlySourceDirectory(t *testing.T) {
+	cmdModelBuildFlagsProvided.Path = "."
+
+	createFreshModelCmd := func() *cobra.Command {
+		cmd := &cobra.Command{
+			Use:   "model",
+			Short: "Model management",
+		}
+		ModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+			cmd.Flags().AddFlag(flag)
+		})
+		return cmd
+	}
+
+	createFreshBuildCmd := func() *cobra.Command {
+		freshBuildCmd := &cobra.Command{
+			Use:     buildModelCmd.Use,
+			Short:   buildModelCmd.Short,
+			Long:    buildModelCmd.Long,
+			Example: buildModelCmd.Example,
+			PreRunE: buildModelCmd.PreRunE,
+			RunE:    buildModelCmd.RunE,
+		}
+		buildModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+			freshBuildCmd.Flags().AddFlag(flag)
+		})
+		cmd := createFreshModelCmd()
+		mesheryctlflags.InitValidators(freshBuildCmd)
+		cmd.AddCommand(freshBuildCmd)
+		return cmd
+	}
+
+	const modelName = "test-case-model-build-readonly-dir"
+	tarName := modelName + ".tar"
+
+	cleanup := func() {
+		// Restore write permissions so cleanup succeeds
+		_ = filepath.WalkDir(modelName, func(p string, d fs.DirEntry, err error) error {
+			if err == nil && d.IsDir() {
+				_ = os.Chmod(p, 0o755)
+			}
+			return nil
+		})
+		_ = os.RemoveAll(modelName)
+		_ = os.RemoveAll(tarName)
+	}
+	cleanup()
+	defer cleanup()
+
+	// Initialize model with v1.0.0
+	setupCmd := createFreshModelCmd()
+	setupCmd.AddCommand(initModelCmd)
+	mesheryctlflags.InitValidators(initModelCmd)
+	setupCmd.SetArgs([]string{"init", modelName, "--version", "v1.0.0"})
+	buffInit := utils.SetupMeshkitLoggerTesting(t, false)
+	setupCmd.SetOut(buffInit)
+	if err := setupCmd.Execute(); err != nil {
+		t.Fatalf("failed to init test model: %v", err)
+	}
+
+	// Create .git directory to trigger staging
+	gitDir := filepath.Join(modelName, ".git")
+	if err := os.MkdirAll(gitDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(gitDir, "config"), []byte("sample git config"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a subdirectory with read-only permissions (0555) containing a file
+	readOnlyDir := filepath.Join(modelName, "readonly-components")
+	if err := os.MkdirAll(readOnlyDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	compFile := filepath.Join(readOnlyDir, "component.json")
+	if err := os.WriteFile(compFile, []byte(`{"name":"test-component"}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	// Change directory mode to 0555 (read & execute only, no write bit)
+	if err := os.Chmod(readOnlyDir, 0o555); err != nil {
+		t.Fatal(err)
+	}
+
+	// Run mesheryctl model build
+	cmd := createFreshBuildCmd()
+	cmd.SetArgs([]string{"build", modelName})
+	buff := utils.SetupMeshkitLoggerTesting(t, false)
+	cmd.SetOut(buff)
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("model build failed with read-only directory: %v", err)
+	}
+
+	// Verify tar exists
+	info, err := os.Stat(tarName)
+	assert.NoError(t, err)
+	assert.False(t, info.IsDir())
+
+	// Uncompress OCI artifact and verify contents
+	extractDir := t.TempDir()
+	err = meshkitOci.UnCompressOCIArtifact(tarName, extractDir)
+	assert.NoError(t, err)
+
+	extractedFile, err := os.ReadFile(filepath.Join(extractDir, "readonly-components", "component.json"))
+	assert.NoError(t, err)
+	assert.Equal(t, `{"name":"test-component"}`, string(extractedFile))
+
+	// Verify tar layer header preserves 0555 mode
+	img, err := tarball.ImageFromPath(tarName, nil)
+	assert.NoError(t, err)
+	layers, err := img.Layers()
+	assert.NoError(t, err)
+	assert.NotEmpty(t, layers)
+	layerReader, err := layers[0].Uncompressed()
+	assert.NoError(t, err)
+	defer func() { _ = layerReader.Close() }()
+	tr := archiveTar.NewReader(layerReader)
+	var foundReadonlyDir bool
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		assert.NoError(t, err)
+		if hdr.Name == "readonly-components" || hdr.Name == "readonly-components/" {
+			foundReadonlyDir = true
+			assert.Equal(t, int64(0o555), hdr.Mode&0o777)
+		}
+	}
+	assert.True(t, foundReadonlyDir, "readonly-components directory not found in tar layer")
 }
