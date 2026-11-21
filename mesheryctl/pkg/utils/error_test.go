@@ -49,4 +49,16 @@ func TestTokenFileMeshKitErrorsUnwrapAndCode(t *testing.T) {
 		assert.True(t, stdErrors.As(err, &targetMesh), "errors.As must extract the MeshKit *errors.Error")
 		assert.Equal(t, ErrReplaceTokenFileCode, targetMesh.Code)
 	})
+
+	t.Run("ErrVerifyTokenFileACL", func(t *testing.T) {
+		err := ErrVerifyTokenFileACL(`C:\Users\test\.meshery\auth.json`, 0x1200a9, 0x001f01ff, nativeErr)
+		assert.Equal(t, ErrVerifyTokenFileACLCode, errors.GetCode(err))
+		assert.True(t, stdErrors.Is(err, nativeErr), "errors.Is must identify the underlying native error")
+		var targetMesh *errors.Error
+		assert.True(t, stdErrors.As(err, &targetMesh), "errors.As must extract the MeshKit *errors.Error")
+		assert.Equal(t, ErrVerifyTokenFileACLCode, targetMesh.Code)
+		assert.Contains(t, err.Error(), "auth.json")
+		assert.Contains(t, err.Error(), "0x1200a9")
+		assert.Contains(t, err.Error(), "0x1f01ff")
+	})
 }
