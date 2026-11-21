@@ -210,6 +210,12 @@ export const eventsSlice = createSlice({
 
     updateEvent: eventsEntityAdapter.updateOne,
     updateEvents: eventsEntityAdapter.updateMany,
+    removeEvent: (state, { payload }) => {
+      eventsEntityAdapter.removeOne(state, payload.id);
+    },
+    removeEvents: (state, { payload }) => {
+      eventsEntityAdapter.removeMany(state, payload.ids);
+    },
     updateIsEventChecked: (state, { payload }) => {
       const { id, value } = payload;
       eventsEntityAdapter.updateOne(state, {
@@ -289,6 +295,8 @@ export const {
   closeNotificationCenter,
   openNotificationCenter,
   updateEvents,
+  removeEvent,
+  removeEvents,
 } = eventsSlice.actions;
 
 export default eventsSlice.reducer;
@@ -376,27 +384,16 @@ export const updateEventStatus =
     );
   };
 
-// does a soft deletion on ui
 export const deleteEvent =
   ({ id }) =>
   (dispatch) => {
-    dispatch(updateEvent({ id, changes: { is_deleted: true } }));
-    //mutator({ id });
+    dispatch(removeEvent({ id }));
   };
 
 export const deleteEvents =
   ({ ids }) =>
   (dispatch) => {
-    dispatch(
-      updateEvents(
-        ids.map((id) => ({
-          id,
-          changes: {
-            is_deleted: true,
-          },
-        })),
-      ),
-    );
+    dispatch(removeEvents({ ids }));
   };
 
 //selectors
