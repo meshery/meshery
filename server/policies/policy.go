@@ -1,8 +1,8 @@
 package policies
 
 import (
-	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // RelationshipPolicy defines the interface each relationship type policy must implement.
@@ -32,7 +32,7 @@ func validateRelationshipsInDesign(design *pattern.PatternFile, policy Relations
 
 	var actions []PolicyAction
 	for _, rel := range implicated {
-		if fromOrToComponentsDontExist(rel, design) && policy.IsInvalid(rel, design) {
+		if policy.IsInvalid(rel, design) || (fromOrToComponentsDontExist(rel, design) && getRelStatus(rel) != StatusPending) {
 			actions = append(actions, newUpdateRelationshipAction(rel.ID.String(), "/status", StatusDeleted))
 		}
 	}
