@@ -6,8 +6,10 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/schemas/models/v1beta3/connection"
 )
 
 func TestConnectionListCmd(t *testing.T) {
@@ -132,4 +134,56 @@ func TestConnectionListCmd(t *testing.T) {
 
 	mesheryctlflags.InitValidators(ConnectionsCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, ConnectionsCmd, tests, currDir, "connection")
+}
+
+func TestProcessConnectionData_NilResponse(t *testing.T) {
+	rows, total := processConnectionData(nil)
+	if rows != nil {
+		t.Fatalf("expected nil rows, got %v", rows)
+	}
+	if total != 0 {
+		t.Fatalf("expected total 0, got %d", total)
+	}
+}
+
+func TestProcessConnectionData_NilAndEmptyItems(t *testing.T) {
+	connID := uuid.Must(uuid.NewV4())
+	validConn := &connection.Connection{
+		ID:             connID,
+		Name:           "test-connection",
+		ConnectionType: "platform",
+		Kind:           "kubernetes",
+		Status:         "connected",
+	}
+
+	page := &connection.ConnectionPage{
+		TotalCount: 3,
+		Connections: []*connection.Connection{
+			nil,
+			validConn,
+			nil,
+		},
+	}
+
+	rows, total := processConnectionData(page)
+	if total != 1 {
+		t.Fatalf("expected total 1, got %d", total)
+	}
+	if len(rows) != 1 {
+		t.Fatalf("expected 1 row, got %d", len(rows))
+	}
+
+	expectedRow := []string{connID.String(), "test-connection", "platform", "kubernetes", "connected"}
+	for i, val := range expectedRow {
+		if rows[0][i] != val {
+			t.Fatalf("row[0][%d] = %q, want %q", i, rows[0][i], val)
+		}
+	}
+}
+
+func TestGetConnectionDetail_Nil(t *testing.T) {
+	row := getConnectionDetail(nil)
+	if row != nil {
+		t.Fatalf("expected nil row, got %v", row)
+	}
 }

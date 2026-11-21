@@ -91,15 +91,30 @@ mesheryctl connection list --count
 }
 
 func processConnectionData(connectionsResponse *connection.ConnectionPage) ([][]string, int64) {
+	if connectionsResponse == nil {
+		return nil, 0
+	}
 	rows := [][]string{}
+	skippedCount := int64(0)
 	for _, connection := range connectionsResponse.Connections {
+		if connection == nil {
+			skippedCount++
+			continue
+		}
 		row := getConnectionDetail(connection)
 		rows = append(rows, row)
 	}
-	return rows, int64(connectionsResponse.TotalCount)
+	totalConnections := int64(connectionsResponse.TotalCount) - skippedCount
+	if totalConnections < int64(len(rows)) {
+		totalConnections = int64(len(rows))
+	}
+	return rows, totalConnections
 }
 
 func getConnectionDetail(connection *connection.Connection) []string {
+	if connection == nil {
+		return nil
+	}
 	data := make([]string, 5)
 
 	data[0] = connection.ID.String()
