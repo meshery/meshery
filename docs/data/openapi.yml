@@ -58602,23 +58602,16 @@ paths:
             maxLength: 255
         - name: sort
           in: query
-          description: Sort direction used with a bare `name` value in `order`. Case-insensitive `asc` and `desc` values are accepted; omitted or invalid values default to ascending.
+          description: Sort direction used when `order` contains a bare column name. Accepted directions are `asc` and `desc`, case-insensitive. When `order` contains a bare column name, an omitted or invalid direction defaults to ascending.
           required: false
           schema:
             type: string
-            enum:
-              - asc
-              - desc
         - name: order
           in: query
-          description: Column or compound ordering expression. Supported values are `name`, `name asc`, and `name desc`. When `order` is bare `name`, `sort` selects the direction.
+          description: Column or compound ordering expression. Supported ordering expressions are `name`, `name asc`, and `name desc`. A bare `name` uses the separate `sort` parameter. Unsupported columns and malformed expressions are safely ignored by the handler.
           required: false
           schema:
             type: string
-            enum:
-              - name
-              - name asc
-              - name desc
       responses:
         '200':
           description: Database summary
