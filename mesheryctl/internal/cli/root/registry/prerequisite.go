@@ -220,22 +220,51 @@ func getGitConfigFiles(repoRoot string) []string {
 	return paths
 }
 
+// isMesheryRemoteURL checks if a raw Git remote URL identifies a meshery repository clone or fork,
+// comparing the complete repository identity and rejecting names like meshery-other.
+func isMesheryRemoteURL(rawURL string) bool {
+	u := strings.TrimSpace(rawURL)
+	u = strings.TrimSuffix(u, "/")
+	u = strings.TrimSuffix(u, ".git")
+	idx := strings.LastIndexAny(u, "/:")
+	if idx == -1 {
+		return false
+	}
+	repoName := u[idx+1:]
+	return strings.EqualFold(repoName, "meshery")
+}
+
 // containsMesheryRemoteURL checks if git config text defines a remote URL for meshery.
+// Section and key names are recognized case-insensitively per Git configuration spec,
+// while preserving subsection names and URL values.
 func containsMesheryRemoteURL(configText string) bool {
 	lines := strings.Split(configText, "\n")
 	inRemoteSection := false
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line)
-		if strings.HasPrefix(trimmed, "[") && strings.HasSuffix(trimmed, "]") {
-			inRemoteSection = strings.HasPrefix(trimmed, `[remote `)
+		if strings.HasPrefix(trimmed, "#") || strings.HasPrefix(trimmed, ";") {
 			continue
 		}
-		if inRemoteSection && strings.HasPrefix(trimmed, "url") {
+		if strings.HasPrefix(trimmed, "[") && strings.HasSuffix(trimmed, "]") {
+			sectionContent := strings.TrimSpace(trimmed[1 : len(trimmed)-1])
+			fields := strings.Fields(sectionContent)
+			if (len(fields) >= 2 && strings.EqualFold(fields[0], "remote")) ||
+				strings.HasPrefix(strings.ToLower(sectionContent), "remote.") {
+				inRemoteSection = true
+			} else {
+				inRemoteSection = false
+			}
+			continue
+		}
+		if inRemoteSection {
 			parts := strings.SplitN(trimmed, "=", 2)
 			if len(parts) == 2 {
-				urlVal := strings.ToLower(strings.TrimSpace(parts[1]))
-				if strings.Contains(urlVal, "/meshery") || strings.Contains(urlVal, ":meshery") {
-					return true
+				key := strings.ToLower(strings.TrimSpace(parts[0]))
+				if key == "url" {
+					urlVal := strings.TrimSpace(parts[1])
+					if isMesheryRemoteURL(urlVal) {
+						return true
+					}
 				}
 			}
 		}

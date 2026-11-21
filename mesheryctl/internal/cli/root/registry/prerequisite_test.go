@@ -156,6 +156,85 @@ func TestVerifyRepoRoot_MissingRemote(t *testing.T) {
 	assert.Equal(t, ErrPrerequisiteFailedCode, errors.GetCode(err))
 }
 
+func TestVerifyRepoRoot_UnrelatedMesheryPrefixRemote(t *testing.T) {
+	root := setupMockMesheryRepo(t, false)
+	// Remote URL containing "meshery" as part of a different repo name should be rejected
+	unrelatedConfig := `[remote "origin"]
+	url = https://github.com/meshery/meshery-other.git
+`
+	require.NoError(t, os.WriteFile(filepath.Join(root, ".git", "config"), []byte(unrelatedConfig), 0o644))
+
+	err := verifyRepoRootDir(root)
+	require.Error(t, err)
+	assert.Equal(t, ErrPrerequisiteFailedCode, errors.GetCode(err))
+}
+
+func TestVerifyRepoRoot_CaseInsensitiveGitConfigAndFormats(t *testing.T) {
+	tests := []struct {
+		name        string
+		configText  string
+		expectMatch bool
+	}{
+		{
+			name: "Case-insensitive section and key [Remote origin] URL",
+			configText: `[Remote "origin"]
+	URL = https://github.com/meshery/meshery.git
+`,
+			expectMatch: true,
+		},
+		{
+			name: "SSH clone URL for fork",
+			configText: `[remote "origin"]
+	url = git@github.com:divyani-22/meshery.git
+`,
+			expectMatch: true,
+		},
+		{
+			name: "Upstream HTTPS without .git suffix",
+			configText: `[remote "upstream"]
+	url = https://github.com/meshery/meshery
+`,
+			expectMatch: true,
+		},
+		{
+			name: "Trailing slash in URL",
+			configText: `[remote "origin"]
+	url = https://github.com/meshery/meshery/
+`,
+			expectMatch: true,
+		},
+		{
+			name: "Unrelated repo with meshery prefix rejected",
+			configText: `[remote "origin"]
+	url = https://github.com/meshery/meshery-operator.git
+`,
+			expectMatch: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			matched := containsMesheryRemoteURL(tt.configText)
+			assert.Equal(t, tt.expectMatch, matched)
+		})
+	}
+}
+
+func TestIsMesheryRemoteURL(t *testing.T) {
+	assert.True(t, isMesheryRemoteURL("https://github.com/meshery/meshery.git"))
+	assert.True(t, isMesheryRemoteURL("https://github.com/meshery/meshery"))
+	assert.True(t, isMesheryRemoteURL("https://github.com/divyani-22/meshery.git"))
+	assert.True(t, isMesheryRemoteURL("git@github.com:divyani-22/meshery.git"))
+	assert.True(t, isMesheryRemoteURL("ssh://git@github.com/meshery/meshery.git"))
+	assert.True(t, isMesheryRemoteURL("https://gitlab.com/user/meshery.git/"))
+
+	assert.False(t, isMesheryRemoteURL("https://github.com/meshery/meshery-other.git"))
+	assert.False(t, isMesheryRemoteURL("https://github.com/meshery/mesheryctl.git"))
+	assert.False(t, isMesheryRemoteURL("https://github.com/meshery/meshkit.git"))
+	assert.False(t, isMesheryRemoteURL("https://github.com/other/project.git"))
+	assert.False(t, isMesheryRemoteURL(""))
+}
+
 func TestVerifyRepoRoot_CurrentWorkingDir(t *testing.T) {
 	root := setupMockMesheryRepo(t, false)
 	chdir(t, root)
