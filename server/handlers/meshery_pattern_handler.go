@@ -854,7 +854,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 			"error": errPatternDelete,
 		}).WithDescription("Error: Could not delete design.").Build()
 		h.persistAndPublish(provider, token, userID, event)
-		writeMeshkitError(rw, errPatternDelete, http.StatusInternalServerError)
+		writeMeshkitError(rw, errPatternDelete, providerStatusOrInternal(err))
 		return
 	}
 
@@ -1803,7 +1803,7 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 		if h != nil && h.log != nil {
 			h.log.Error(ErrDeletePattern(err))
 		}
-		writeMeshkitError(rw, ErrDeletePattern(err), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrDeletePattern(err), providerStatusOrInternal(err))
 		return
 	}
 	rw.Header().Set("Content-Type", "application/json")

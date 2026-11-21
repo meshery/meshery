@@ -10,12 +10,15 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/httputil"
 )
 
 type mockPatternDeleteProvider struct {
 	*models.DefaultLocalProvider
-	deleteFn func(r *http.Request, patterns models.MesheryPatternDeleteRequestBody) ([]byte, error)
+	deleteFn       func(r *http.Request, patterns models.MesheryPatternDeleteRequestBody) ([]byte, error)
+	deleteSingleFn func(r *http.Request, patternID string) ([]byte, error)
 }
 
 func (m *mockPatternDeleteProvider) DeleteMesheryPatterns(r *http.Request, patterns models.MesheryPatternDeleteRequestBody) ([]byte, error) {
@@ -23,6 +26,13 @@ func (m *mockPatternDeleteProvider) DeleteMesheryPatterns(r *http.Request, patte
 		return m.deleteFn(r, patterns)
 	}
 	return m.DefaultLocalProvider.DeleteMesheryPatterns(r, patterns)
+}
+
+func (m *mockPatternDeleteProvider) DeleteMesheryPattern(r *http.Request, patternID string) ([]byte, error) {
+	if m.deleteSingleFn != nil {
+		return m.deleteSingleFn(r, patternID)
+	}
+	return m.DefaultLocalProvider.DeleteMesheryPattern(r, patternID)
 }
 
 func newTestDeletePatternProvider(t *testing.T) *mockPatternDeleteProvider {
@@ -388,5 +398,122 @@ func TestDeleteMultiMesheryPatternsHandler_NilLoggerSafety(t *testing.T) {
 
 	if rec.Code != http.StatusRequestEntityTooLarge {
 		t.Fatalf("expected status 413, got %d", rec.Code)
+	}
+}
+
+func TestDeleteMultiMesheryPatternsHandler_ProviderStatus(t *testing.T) {
+	tests := []struct {
+		name           string
+		providerErr    error
+		expectedStatus int
+	}{
+		{
+			name:           "forbidden",
+			providerErr:    httputil.WithProviderStatus(errors.New("upstream forbidden"), http.StatusForbidden),
+			expectedStatus: http.StatusForbidden,
+		},
+		{
+			name:           "not found",
+			providerErr:    httputil.WithProviderStatus(errors.New("upstream not found"), http.StatusNotFound),
+			expectedStatus: http.StatusNotFound,
+		},
+		{
+			name:           "conflict",
+			providerErr:    httputil.WithProviderStatus(errors.New("upstream conflict"), http.StatusConflict),
+			expectedStatus: http.StatusConflict,
+		},
+		{
+			name:           "untyped error falls back to internal server error",
+			providerErr:    errors.New("database failure"),
+			expectedStatus: http.StatusInternalServerError,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := newTestDeletePatternProvider(t)
+			provider.deleteFn = func(r *http.Request, patterns models.MesheryPatternDeleteRequestBody) ([]byte, error) {
+				return nil, tt.providerErr
+			}
+
+			user := &models.User{ID: uuid.Must(uuid.NewV4())}
+			id := uuid.Must(uuid.NewV4()).String()
+			payload := fmt.Sprintf(`{"patterns": [{"id": "%s"}]}`, id)
+
+			req := httptest.NewRequest(http.MethodDelete, "/api/patterns/delete", strings.NewReader(payload))
+			rec := httptest.NewRecorder()
+
+			h.DeleteMultiMesheryPatternsHandler(rec, req, nil, user, provider)
+
+			if rec.Code != tt.expectedStatus {
+				t.Fatalf("expected status %d, got %d (body: %s)", tt.expectedStatus, rec.Code, rec.Body.String())
+			}
+			if !strings.Contains(rec.Body.String(), ErrDeletePatternCode) {
+				t.Errorf("expected response to contain %s, got: %s", ErrDeletePatternCode, rec.Body.String())
+			}
+		})
+	}
+}
+
+func TestDeleteMesheryPatternHandler_ProviderStatus(t *testing.T) {
+	tests := []struct {
+		name           string
+		providerErr    error
+		expectedStatus int
+	}{
+		{
+			name:           "forbidden",
+			providerErr:    httputil.WithProviderStatus(errors.New("upstream forbidden"), http.StatusForbidden),
+			expectedStatus: http.StatusForbidden,
+		},
+		{
+			name:           "not found",
+			providerErr:    httputil.WithProviderStatus(errors.New("upstream not found"), http.StatusNotFound),
+			expectedStatus: http.StatusNotFound,
+		},
+		{
+			name:           "conflict",
+			providerErr:    httputil.WithProviderStatus(errors.New("upstream conflict"), http.StatusConflict),
+			expectedStatus: http.StatusConflict,
+		},
+		{
+			name:           "untyped error falls back to internal server error",
+			providerErr:    errors.New("database failure"),
+			expectedStatus: http.StatusInternalServerError,
+		},
+		{
+			name:           "local not found",
+			providerErr:    models.ErrResultNotFound(errors.New("design not found")),
+			expectedStatus: http.StatusNotFound,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h, local := newDeleteConnectionFixture(t)
+			provider := &mockPatternDeleteProvider{
+				DefaultLocalProvider: local,
+			}
+			provider.deleteSingleFn = func(r *http.Request, patternID string) ([]byte, error) {
+				return nil, tt.providerErr
+			}
+
+			user := &models.User{ID: uuid.Must(uuid.NewV4())}
+			id := uuid.Must(uuid.NewV4()).String()
+
+			req := httptest.NewRequest(http.MethodDelete, "/api/patterns/"+id, nil)
+			req = mux.SetURLVars(req, map[string]string{"id": id})
+			rec := httptest.NewRecorder()
+
+			h.DeleteMesheryPatternHandler(rec, req, nil, user, provider)
+
+			if rec.Code != tt.expectedStatus {
+				t.Fatalf("expected status %d, got %d (body: %s)", tt.expectedStatus, rec.Code, rec.Body.String())
+			}
+			if !strings.Contains(rec.Body.String(), ErrDeletePatternCode) {
+				t.Errorf("expected response to contain %s, got: %s", ErrDeletePatternCode, rec.Body.String())
+			}
+		})
 	}
 }
