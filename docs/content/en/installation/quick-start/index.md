@@ -108,6 +108,21 @@ You can now design and manage any infrastructure that Meshery supports. For the 
   <img class="center" style="width:min(100%,650px);" src="./images/meshery-designs.png" />
 </a>
 
+## What's Next?
+
+Now that Meshery is running, here are a few suggested next steps:
+
+* 🎮 Explore the **[Cloud Native Playground](https://play.meshery.io)** to try Meshery in a pre-configured environment.
+* 📐 Create your first design using **[Kanvas](/extensions/kanvas)**, Meshery's visual designer for cloud native infrastructure.
+* 🔍 Explore your connected infrastructure and resources from the Meshery dashboard, or learn more about **[Managing Kubernetes Clusters](/installation/kubernetes)**.
+* 📚 Continue learning with the tutorials below or explore Meshery's **[Core Concepts](/concepts/logical)** and **[Architecture](/concepts/architecture)**.
+* 🤝 Join the **[Meshery Community](https://slack.meshery.io)** to ask questions, share feedback, and connect with other users and contributors.
+* 🛠️ Interested in contributing? Start with the **[Contributor Guides](/project/contributing)**.
+
+{{% alert color="info" title="Need help?" %}}
+If you run into any issues, see the **[Troubleshooting Guides](/guides/troubleshooting/installation)** or ask for help in the Meshery community.
+{{% /alert %}}
+
 ## Explore Tutorials
 
 🧑‍🔬 Work through these tutorials to learn how to manage infrastructure collaboratively with Meshery.
