@@ -90,3 +90,51 @@ export function subscribeToControllersStatus(
     },
   };
 }
+
+// Backoff between reopens, on top of RECONNECT_NOTIFY_DELAY_MS: 1s, 2s, 4s, ...
+// capped at 30s, so a long outage doesn't have every open tab reconnecting
+// every few seconds. It resets once the stream delivers a frame again.
+const REOPEN_BASE_DELAY_MS = 1000;
+const REOPEN_MAX_DELAY_MS = 30_000;
+
+/**
+ * Like subscribeToControllersStatus, but reopens the stream after the browser
+ * permanently closes it (e.g. a proxy answering 502 while Meshery Server
+ * restarts). Without this, controller status freezes until a page reload.
+ * Reopens back off (see REOPEN_BASE_DELAY_MS), and the server writes a full
+ * snapshot on connect, so the reopened stream restores current state at once.
+ */
+export function watchControllersStatus(
+  connectionIds: string[],
+  onNext: ControllersStatusCallback,
+): ControllersStatusSubscription {
+  let current: ControllersStatusSubscription;
+  let attempt = 0;
+  let reopenTimer: ReturnType<typeof setTimeout> | undefined;
+
+  const open = () => {
+    current = subscribeToControllersStatus(
+      connectionIds,
+      (items) => {
+        attempt = 0;
+        onNext(items);
+      },
+      () => {
+        current.dispose();
+        const delay = Math.min(REOPEN_MAX_DELAY_MS, REOPEN_BASE_DELAY_MS * 2 ** attempt);
+        attempt += 1;
+        reopenTimer = setTimeout(open, delay);
+      },
+    );
+  };
+  open();
+
+  return {
+    // onError is never raised after dispose, so clearing a pending reopen and
+    // disposing the current stream stops any further reopening.
+    dispose: () => {
+      clearTimeout(reopenTimer);
+      current.dispose();
+    },
+  };
+}
