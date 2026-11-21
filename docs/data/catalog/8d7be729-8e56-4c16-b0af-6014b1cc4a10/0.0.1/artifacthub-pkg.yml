@@ -1,0 +1,20 @@
+version: 0.0.1
+name: configuring-prometheus
+displayName: Configuring Prometheus
+createdAt: "2026-11-16T17:37:47Z"
+description: Configuring Prometheus with the Prometheus Operator — the operator, a 2-replica Prometheus instance, RBAC and storage, published as a Meshery design.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/8d7be729-8e56-4c16-b0af-6014b1cc4a10/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Deploy with: mesheryctl design import -f design.yml, then deploy from Meshery UI. Prerequisite: install the v0.95.2 Prometheus Operator CRDs first (kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.95.2/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml; kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.95.2/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml; kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.95.2/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml; kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.95.2/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml; kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.95.2/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml) — the operator also watches ServiceMonitor, PodMonitor, Probe and PrometheusRule, so all five CRDs are needed on a clean cluster. The design deploys the operator (1 replica), a 2-replica Prometheus instance, its RBAC (ServiceAccount, ClusterRole, ClusterRoleBinding) and an ssd StorageClass. To add scrape targets, create a ServiceMonitor labeled team: frontend in the same namespace as the Prometheus instance. The Prometheus ServiceMonitor for the operator itself and the persisted-Prometheus storage variant are not in this design; see the operator example for those. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 0f2ea3e8-17e5-43cb-9484-47d586f9dbe5
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
