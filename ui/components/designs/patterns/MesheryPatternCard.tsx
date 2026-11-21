@@ -167,6 +167,10 @@ function MesheryPatternCard_({
                 <PatternIcon {...iconLarge} color={true} data-testid="pattern-icon" />
               ) : (
                 <div data-testid="visibility-chip-menu">
+                  <span
+                    data-testid={`design-visibility-${visibility}`}
+                    style={{ display: 'none' }}
+                  />
                   <VisibilityChipMenu
                     value={visibility}
                     onChange={() => {}}
