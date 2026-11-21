@@ -298,11 +298,16 @@ func printAddComponentAction(action pattern.Action) {
 }
 
 func printDeleteComponentAction(action pattern.Action) {
-	kind := extractStringField(action.Value, "component")
 	id := extractID(action.Value)
-	if kind != "" {
+	// The server sends the removed component's definition as an object under
+	// "component", the same shape an add_component action carries in "item".
+	kind, displayName := extractComponentInfo(action.Value["component"])
+	switch {
+	case kind != "" && displayName != "":
+		fmt.Printf("  - %s %q (id: %s)\n", kind, displayName, id)
+	case kind != "":
 		fmt.Printf("  - %s (id: %s)\n", kind, id)
-	} else {
+	default:
 		fmt.Printf("  - component (id: %s)\n", id)
 	}
 }
@@ -329,11 +334,19 @@ func printAddRelationshipAction(action pattern.Action) {
 }
 
 func printDeleteRelationshipAction(action pattern.Action) {
-	relType := extractStringField(action.Value, "relationship")
 	id := extractID(action.Value)
-	if relType != "" {
-		fmt.Printf("  - %s (id: %s)\n", relType, id)
-	} else {
+	// The server sends the removed relationship's definition as an object
+	// under "relationship", the same shape an add_relationship action carries
+	// in "item".
+	// Only a complete definition gets the full line; a partial one would print
+	// an empty subtype or "unknown" endpoints.
+	kind, subType, from, to := extractRelationshipInfo(action.Value["relationship"])
+	switch {
+	case kind != "" && subType != "" && from != "unknown" && to != "unknown":
+		fmt.Printf("  - %s-%s relationship from %s to %s (id: %s)\n", kind, subType, from, to, id)
+	case kind != "":
+		fmt.Printf("  - %s (id: %s)\n", kind, id)
+	default:
 		fmt.Printf("  - relationship (id: %s)\n", id)
 	}
 }
@@ -369,7 +382,9 @@ func extractStringField(value map[string]interface{}, key string) string {
 	return s
 }
 
-// extractComponentInfo pulls kind and displayName from an add_component action's "item" field.
+// extractComponentInfo pulls kind and displayName from a component definition:
+// an add_component action's "item" field or a delete_component action's
+// "component" field.
 func extractComponentInfo(item interface{}) (kind, displayName string) {
 	m, ok := item.(map[string]interface{})
 	if !ok {
@@ -385,7 +400,9 @@ func extractComponentInfo(item interface{}) (kind, displayName string) {
 	return kind, displayName
 }
 
-// extractRelationshipInfo pulls kind, subType, from, and to from an add_relationship action's "item" field.
+// extractRelationshipInfo pulls kind, subType, from, and to from a relationship
+// definition: an add_relationship action's "item" field or a
+// delete_relationship action's "relationship" field.
 func extractRelationshipInfo(item interface{}) (kind, subType, from, to string) {
 	m, ok := item.(map[string]interface{})
 	if !ok {
@@ -414,14 +431,14 @@ func extractRelationshipInfo(item interface{}) (kind, subType, from, to string) 
 
 	if fromArr, ok := allow["from"].([]interface{}); ok && len(fromArr) > 0 {
 		if fromItem, ok := fromArr[0].(map[string]interface{}); ok {
-			if k, ok := fromItem["kind"].(string); ok {
+			if k, ok := fromItem["kind"].(string); ok && k != "" {
 				from = k
 			}
 		}
 	}
 	if toArr, ok := allow["to"].([]interface{}); ok && len(toArr) > 0 {
 		if toItem, ok := toArr[0].(map[string]interface{}); ok {
-			if k, ok := toItem["kind"].(string); ok {
+			if k, ok := toItem["kind"].(string); ok && k != "" {
 				to = k
 			}
 		}
