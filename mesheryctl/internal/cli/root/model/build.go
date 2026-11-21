@@ -24,6 +24,8 @@ var buildModelCmd = &cobra.Command{
 	Long: `Create an OCI-compliant package from the model files.
 Model files are taken from [path]/[model-name]/[model-version] folder.
 Expects input to be in the format scaffolded by the model init command.
+When only [model-name] is provided, the model directory must contain exactly one version directory.
+Root-level files such as README.md, .gitignore, and LICENSE do not affect this validation.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model/build`,
 	Example: `
 // Create an OCI-compliant package from the model files
