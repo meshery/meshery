@@ -174,9 +174,13 @@ describe('getResponsiveColumnVisibility', () => {
   it('defensively handles nullish and non-array columnNames or colViews', () => {
     expect(getResponsiveColumnVisibility(undefined, [['name', 'xs']], 800)).toEqual({});
     expect(getResponsiveColumnVisibility(null, [['name', 'xs']], 800)).toEqual({});
-    expect(getResponsiveColumnVisibility(['name'], undefined, 800)).toEqual({});
-    expect(getResponsiveColumnVisibility(['name'], null, 800)).toEqual({});
-    expect(getResponsiveColumnVisibility(['name'], 'invalid' as any, 800)).toEqual({});
+    expect(getResponsiveColumnVisibility(['name'], undefined, 800)).toStrictEqual({
+      name: undefined,
+    });
+    expect(getResponsiveColumnVisibility(['name'], null, 800)).toStrictEqual({ name: undefined });
+    expect(getResponsiveColumnVisibility(['name'], 'invalid' as any, 800)).toStrictEqual({
+      name: undefined,
+    });
   });
 
   it('skips non-string column names without throwing TypeError', () => {
@@ -210,14 +214,14 @@ describe('getResponsiveColumnVisibility', () => {
   });
 
   it('handles invalid colViews safely', () => {
-    expect(getResponsiveColumnVisibility(['name', 'size'], null, 800)).toEqual({
+    expect(getResponsiveColumnVisibility(['name', 'size'], null, 800)).toStrictEqual({
       name: undefined,
       size: undefined,
     });
   });
 
   it('does not expose inherited prototype properties for missing column names', () => {
-    expect(getResponsiveColumnVisibility(['constructor', 'toString'], [], 800)).toEqual({
+    expect(getResponsiveColumnVisibility(['constructor', 'toString'], [], 800)).toStrictEqual({
       constructor: undefined,
       toString: undefined,
     });

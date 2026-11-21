@@ -69,10 +69,7 @@ describe('useColumnVisibilityPreference', () => {
 
     expect(remounted.result.current.columnVisibility.available).toBe(false);
     expect(
-      Object.prototype.hasOwnProperty.call(
-        remounted.result.current.columnVisibility,
-        'visibility',
-      ),
+      Object.prototype.hasOwnProperty.call(remounted.result.current.columnVisibility, 'visibility'),
     ).toBe(false);
 
     act(() => {
@@ -84,14 +81,9 @@ describe('useColumnVisibilityPreference', () => {
     const stored = JSON.parse(
       window.localStorage.getItem('meshery_cols_hidden-layout') ?? '{}',
     ) as Record<string, boolean>;
+    expect(Object.prototype.hasOwnProperty.call(stored, 'visibility')).toBe(false);
     expect(
-      Object.prototype.hasOwnProperty.call(stored, 'visibility'),
-    ).toBe(false);
-    expect(
-      Object.prototype.hasOwnProperty.call(
-        remounted.result.current.columnVisibility,
-        'visibility',
-      ),
+      Object.prototype.hasOwnProperty.call(remounted.result.current.columnVisibility, 'visibility'),
     ).toBe(false);
 
     act(() => {
@@ -102,10 +94,7 @@ describe('useColumnVisibilityPreference', () => {
 
     expect(remounted.result.current.columnVisibility.available).toBe(true);
     expect(
-      Object.prototype.hasOwnProperty.call(
-        remounted.result.current.columnVisibility,
-        'visibility',
-      ),
+      Object.prototype.hasOwnProperty.call(remounted.result.current.columnVisibility, 'visibility'),
     ).toBe(false);
   });
 });

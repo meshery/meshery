@@ -38,10 +38,9 @@ function mergeVisibleColumns(
 ): Record<string, boolean | undefined> {
   const merged: Record<string, boolean | undefined> = Object.create(null);
   for (const [col, responsiveValue] of Object.entries(responsiveDefaults)) {
-    merged[col] =
-      Object.prototype.hasOwnProperty.call(storedPreferences, col)
-        ? storedPreferences[col]
-        : responsiveValue;
+    merged[col] = Object.prototype.hasOwnProperty.call(storedPreferences, col)
+      ? storedPreferences[col]
+      : responsiveValue;
   }
   return merged;
 }

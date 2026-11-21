@@ -17,8 +17,7 @@ export const updateVisibleColumns = (colViews?: unknown, width?: number | unknow
     xl: 1140,
   });
 
-  const safeWidth =
-    typeof width === 'number' && Number.isFinite(width) ? Math.max(0, width) : 0;
+  const safeWidth = typeof width === 'number' && Number.isFinite(width) ? Math.max(0, width) : 0;
   const showCols: Record<string, boolean> = Object.create(null);
 
   colViews.forEach((col) => {
@@ -66,8 +65,9 @@ export const getResponsiveColumnVisibility = (
 
   return Object.fromEntries(
     columnNames
-      .filter((columnName): columnName is string =>
-        typeof columnName === 'string' && columnName.trim() !== '',
+      .filter(
+        (columnName): columnName is string =>
+          typeof columnName === 'string' && columnName.trim() !== '',
       )
       .map((columnName) => [
         columnName,
