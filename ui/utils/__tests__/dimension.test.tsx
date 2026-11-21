@@ -145,6 +145,7 @@ describe('useWindowDimensions', () => {
   });
 
   it('cleans up pending searchTimeout on unmount', () => {
+    const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
     const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
     const { unmount } = render(<Probe onRender={() => {}} />);
 
@@ -152,10 +153,13 @@ describe('useWindowDimensions', () => {
       window.dispatchEvent(new Event('resize'));
     });
 
+    const pendingTimeout = setTimeoutSpy.mock.results.at(-1)?.value;
+
     // Unmount before the 500ms debounce timer fires
     unmount();
 
-    expect(clearTimeoutSpy).toHaveBeenCalled();
+    expect(clearTimeoutSpy).toHaveBeenCalledWith(pendingTimeout);
     clearTimeoutSpy.mockRestore();
+    setTimeoutSpy.mockRestore();
   });
 });
