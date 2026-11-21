@@ -67207,6 +67207,7 @@ paths:
         expose: true
         title: Get the current user profile
         scope: account:read
+        description: Read-only. Returns the profile of the signed-in user. An `X-Current-Orgid` that is not a UUID answers 400.
       summary: Get current user profile
       description: |
         Returns the profile of the signed-in user. An `X-Current-Orgid` that is not a UUID answers 400.
@@ -68038,6 +68039,12 @@ paths:
         expose: true
         title: Get connections
         scope: connections:read
+        description: >-
+          Read-only. Returns a paginated list of connections for the authenticated user with filtering, sorting and
+          pagination support. When `X-Current-Orgid` is also sent, it must name the same organization as the `orgId`
+          query; a mismatch is refused with a 400 (the organization selector in docs/mcp-operation-contract.md). When
+          `X-Current-Orgid` is omitted, the `orgId` query must name the organization the call acts in (the session's
+          selected organization); a mismatch is refused with a 403.
       summary: Get all connections
       description: >
         Returns a paginated list of connections for the authenticated user with filtering, sorting and pagination
@@ -69240,10 +69247,11 @@ paths:
         Servers implementing this contract must take the organization from the `X-Current-Orgid` header, refuse a
         `desktop` registration without it with `400`, and refuse a caller who is not a live member of that organization
         with `403`. They must deduplicate on (organization, owner, `metadata.installationId`): registering the same
-        install again updates that connection and returns `200`, while a new connection returns `201`. A `desktop` body
-        whose metadata lacks `installationId` is refused with `400`. Installs on one computer share
-        `metadata.computerId`, so a server can group them by computer. The kind names the connection type, never the
-        product that runs on the machine.
+        install again updates that connection and returns `200`, while a new connection returns `201`. A repeat
+        registration carries the stored `metadata.platformSessions` and `metadata.platformSessionsReportedAt` forward
+        from the stored row: it can neither set nor erase them. A `desktop` body whose metadata lacks `installationId`
+        is refused with `400`. Installs on one computer share `metadata.computerId`, so a server can group them by
+        computer. The kind names the connection type, never the product that runs on the machine.
 
 
         A `desktop` registration whose `metadata.clientName` and `metadata.appVersion` fall below the server's minimum
@@ -73110,7 +73118,10 @@ paths:
         On the GitHub App connection itself, the server-written metadata keys `installations`, `installationId` and
         `installationsVerifiedAt` are carried forward from the stored row: a client edit can neither set nor erase them
         (other metadata keys are written as sent). Their shape is `GithubConnectionMetadata` in the v1beta3 `github`
-        construct. `organizationId` is not in the body. The server keeps the organization assigned at registration.
+        construct. On a `desktop` connection the server-written metadata keys `tokenId`, `lastSeenAt`,
+        `platformSessions` and `platformSessionsReportedAt` are likewise carried forward from the stored row: an edit
+        can neither set nor erase them, so a report can only be written through `reportDesktopPlatformSessions`.
+        `organizationId` is not in the body. The server keeps the organization assigned at registration.
       parameters:
         - name: connectionId
           in: path
