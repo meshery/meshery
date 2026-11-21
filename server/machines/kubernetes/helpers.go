@@ -106,6 +106,10 @@ func (m *MachineCtx) RefreshK8sContext(newCtx models.K8sContext, eventBuilder *e
 	// iteration), so a refresh racing a setup cannot hand the goroutine a
 	// half-replaced context.
 	m.setupLock.Lock()
+	// Release the claim on the previous cluster before the swap, under the
+	// setup lock so a setup pass cannot re-claim with the old context after
+	// it. Disconnect and delete release only the current context's keys.
+	m.OperatorTracker.ReleaseOperatorClaimOnRefresh(m.K8sContext, newCtx)
 	m.K8sContext = newCtx
 	m.clientset = handler
 	m.setupLock.Unlock()
