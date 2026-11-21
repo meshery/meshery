@@ -27,7 +27,7 @@ import CodeEditor from '../CodeEditor';
 import LazyComponentForm from './LazyComponentForm';
 import useDesignLifecycle from './hooks/useDesignLifecycle';
 import { useRouter } from 'next/router';
-
+import { useTheme } from '@sistent/sistent';
 import { Keys } from '@meshery/schemas/permissions';
 
 const ScrollContainer = styled('div')({
@@ -41,6 +41,9 @@ export default function DesignConfigurator() {
   const [selectedModel, setSelectedModel] = useState('');
   const { models, meshmodelComponents, getModelFromCategory, getComponentsFromModel, categories } =
     useMeshModelComponents();
+
+  const theme = useTheme();
+
   const {
     onSettingsChange,
     designSave,
@@ -183,7 +186,7 @@ export default function DesignConfigurator() {
                 onClick={designSave}
                 permissionKey={Keys.CatalogManagementCreateNewDesign}
               >
-                <SaveAsIcon style={iconMedium} />
+                <SaveAsIcon style={{ ...iconMedium, fill: theme.palette.icon.default }} />
               </IconButton>
             </div>
           </CustomTooltip>
