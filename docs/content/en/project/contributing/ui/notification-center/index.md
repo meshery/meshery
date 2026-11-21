@@ -265,7 +265,7 @@ Each entry is rendered as Markdown. The event's full description is shown above 
 />
 ```
 
-<a href="../images/error-formatter.png"><img alt="Error Formatter" style="width:500px;height:auto;" src="../images/error-formatter.png" /></a>
+<a href="images/error-formatter.png"><img alt="Error Formatter" style="width:500px;height:auto;" src="images/error-formatter.png" /></a>
 
 **When to Use:**
 
@@ -302,7 +302,7 @@ The `Model Registration Formatter` formats and displays model registration detai
    - `modelName` (string): The name of the model or file being imported.
    - `error` (object): Contains `name`, `entityType`, and the nested `error` details.
 
-<a href="../images/model-register-formatter.png"><img alt="Model Register Formatter" style="width:500px;height:auto;" src="../images/model-register-formatter.png" /></a>
+<a href="images/model-register-formatter.png"><img alt="Model Register Formatter" style="width:500px;height:auto;" src="images/model-register-formatter.png" /></a>
 
 ### Relationship Evaluation Formatter
 
@@ -329,7 +329,7 @@ The **Relationship Evaluation Formatter** is responsible for rendering notificat
 
    Each category is rendered as a collapsible section that shows its item count and is hidden entirely when empty. Deletions read the component or relationship from the action payload itself, while additions and updates are resolved against the design.
 
-<a href="../images/relationship-evaluation-formatter.png"><img alt="Relationship Evaluation Formatter" style="width:500px;height:auto;" src="../images/relationship-evaluation-formatter.png" /></a>
+<a href="images/relationship-evaluation-formatter.png"><img alt="Relationship Evaluation Formatter" style="width:500px;height:auto;" src="images/relationship-evaluation-formatter.png" /></a>
 
 #### When to Use
 
@@ -411,7 +411,7 @@ The **Dry Run Formatter** is responsible for rendering notifications related to 
 
    - `event` (object): The notification event.
 
-<a href="../images/dry-run-formatter.png"><img alt="Dry Run Formatter" style="width:500px;height:auto;" src="../images/dry-run-formatter.png" /></a>
+<a href="images/dry-run-formatter.png"><img alt="Dry Run Formatter" style="width:500px;height:auto;" src="images/dry-run-formatter.png" /></a>
 
 #### When to Use
 

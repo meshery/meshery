@@ -61,7 +61,7 @@ The YAML editor sits next to the component forms. To write or paste a design by 
 
 Instead of starting from nothing, import a design from the [Meshery Catalog](https://meshery.io/catalog), from a URL, or from a Kubernetes manifest, Helm chart, or Docker Compose file. See [Importing and Exporting Designs]({{< ref "guides/configuration-management/import-export-designs.md" >}}).
 
-<img src="../images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" />
+<img src="images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" />
 
 <!-- tab -->
 mesheryctl | fa fa-terminal
