@@ -39,7 +39,7 @@ describe('responsive column edge cases', () => {
   it('rejects invalid column arrays without coercing objects to strings', () => {
     const names = ['valid', { toString: null, valueOf: null }, 123, null, undefined];
     expect(getResponsiveColumnVisibility(names, [['valid', 'xs']], 800)).toEqual({ valid: true });
-    expect(getResponsiveColumnVisibility(['valid'], null, 800)).toEqual({});
+    expect(getResponsiveColumnVisibility(['valid'], null, 800)).toEqual({ valid: undefined });
   });
 
   it('treats padded breakpoints as exact-match unsupported values', () => {

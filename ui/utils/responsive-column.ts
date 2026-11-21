@@ -36,11 +36,14 @@ export const updateVisibleColumns = (colViews?: unknown, width?: number | unknow
       return;
     }
 
-    const minScreenWidth = screenSizeMap[screenSize] || 0;
+    const normalizedScreenSize = screenSize.trim();
+    const minScreenWidth = Object.prototype.hasOwnProperty.call(screenSizeMap, normalizedScreenSize)
+      ? screenSizeMap[normalizedScreenSize]
+      : 0;
 
-    if (screenSize === 'na') {
+    if (normalizedScreenSize === 'na') {
       showCols[columnName] = false;
-    } else if (screenSize === 'xs') {
+    } else if (normalizedScreenSize === 'xs') {
       showCols[columnName] = true;
     } else {
       showCols[columnName] = safeWidth >= minScreenWidth;
