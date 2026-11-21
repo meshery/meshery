@@ -4,7 +4,7 @@
   "version": "v1.0.0",
   "name": "dnation-kubernetes-monitoring-stack",
   "displayName": "Dnation Kubernetes Monitoring Stack",
-  "status": "ignored",
+  "status": "enabled",
   "registrant": {
     "id": "00000000-0000-0000-0000-000000000000",
     "name": "Artifact Hub",
@@ -20,9 +20,9 @@
   "connection_id": "00000000-0000-0000-0000-000000000000",
   "category": {
     "id": "00000000-0000-0000-0000-000000000000",
-    "name": "Uncategorized"
+    "name": "Observability and Analysis"
   },
-  "subCategory": "Uncategorized",
+  "subCategory": "Monitoring",
   "metadata": {
     "capabilities": null,
     "isAnnotation": false,
@@ -37,7 +37,7 @@
   "model": {
     "version": "3.8.9"
   },
-  "components_count": 0,
+  "components_count": 15,
   "relationships_count": 0,
   "created_at": "0001-01-01T00:00:00Z",
   "updated_at": "0001-01-01T00:00:00Z",
