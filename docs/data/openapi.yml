@@ -58610,7 +58610,7 @@ paths:
             type: string
         - name: order
           in: query
-          description: Column or compound ordering expression. Supported ordering expressions are `name`, `name asc`, and `name desc`. A bare `name` uses the separate `sort` parameter. Unsupported columns and malformed expressions are safely ignored by the handler.
+          description: Column or compound ordering expression. Supported column is `name`. A bare `name` uses the separate `sort` parameter. In a compound expression, `desc` selects descending, while any other direction token defaults to ascending. Unsupported columns and expressions with an invalid number of tokens are ignored.
           required: false
           schema:
             type: string
