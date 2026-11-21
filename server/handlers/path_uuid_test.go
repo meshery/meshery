@@ -18,6 +18,7 @@ const (
 	pathUUIDSecond     = "22222222-2222-2222-2222-222222222222"
 	pathUUIDThird      = "33333333-3333-3333-3333-333333333333"
 	pathUUIDMalformed  = "not-a-uuid"
+	pathUUIDNil        = "00000000-0000-0000-0000-000000000000"
 	pathUUIDOrgID      = "44444444-4444-4444-4444-444444444444"
 	pathUUIDUpdateBody = `{"name":"updated","organizationId":"44444444-4444-4444-4444-444444444444"}`
 )
@@ -292,6 +293,7 @@ func TestRequirePathUUID(t *testing.T) {
 		{name: "valid uppercase UUID", value: strings.ToUpper(valid), wantOK: true, wantStatus: http.StatusOK},
 		{name: "not a UUID", value: "not-a-uuid", wantStatus: http.StatusBadRequest},
 		{name: "empty string", value: "", wantStatus: http.StatusBadRequest},
+		{name: "explicit nil UUID", value: pathUUIDNil, wantStatus: http.StatusBadRequest},
 		{name: "UUID with one character removed", value: valid[:len(valid)-1], wantStatus: http.StatusBadRequest},
 	}
 
@@ -332,6 +334,30 @@ func TestWorkspaceAndEnvironmentHandlers_MalformedPathUUID_ReturnsBadRequest(t *
 			t.Run(hc.name+"/malformed_"+bad, func(t *testing.T) {
 				vars := hc.validPathUUIDs()
 				vars[bad] = pathUUIDMalformed
+				provider := newPathUUIDSpyProvider()
+
+				rec := hc.run(t, vars, provider)
+
+				if rec.Code != http.StatusBadRequest {
+					t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+				}
+				if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
+					t.Errorf("code = %q, want %q", decoded.Code, models.ErrInvalidUUIDValueCode)
+				}
+				if len(provider.calls) != 0 {
+					t.Fatalf("provider must not be called, got calls %v", provider.calls)
+				}
+			})
+		}
+	}
+}
+
+func TestWorkspaceAndEnvironmentHandlers_NilPathUUID_ReturnsBadRequest(t *testing.T) {
+	for _, hc := range pathUUIDCases() {
+		for _, bad := range hc.vars {
+			t.Run(hc.name+"/nil_"+bad, func(t *testing.T) {
+				vars := hc.validPathUUIDs()
+				vars[bad] = pathUUIDNil
 				provider := newPathUUIDSpyProvider()
 
 				rec := hc.run(t, vars, provider)
