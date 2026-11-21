@@ -3,6 +3,7 @@ package kubernetes
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
@@ -259,5 +260,82 @@ func TestWithConnectedK8sContext_SkipsDisconnectedMachine(t *testing.T) {
 	}
 	if called {
 		t.Fatal("callback was called for a disconnected machine")
+	}
+}
+
+func TestWithSetupLock_WaitsForConnectionSetup(t *testing.T) {
+	machinectx := &MachineCtx{
+		K8sContext: models.K8sContext{ID: "ctx-1"},
+	}
+
+	// Simulate connection setup holding the lock.
+	machinectx.setupLock.Lock()
+
+	started := make(chan struct{})
+	callbackDone := make(chan struct{})
+	result := make(chan bool, 1)
+	errResult := make(chan error, 1)
+
+	go func() {
+		close(started)
+
+		connected, err := machinectx.WithSetupLock(func(ctx models.K8sContext) error {
+			if ctx.ID != "ctx-1" {
+				t.Errorf("context ID = %q, want ctx-1", ctx.ID)
+			}
+			close(callbackDone)
+			return nil
+		})
+
+		result <- connected
+		errResult <- err
+	}()
+
+	<-started
+
+	// The callback must remain blocked while setupLock is held.
+	select {
+	case <-callbackDone:
+		t.Fatal("callback ran while connection setup held setupLock")
+	case <-time.After(50 * time.Millisecond):
+		// Expected: callback is waiting for setupLock.
+	}
+
+	// Allow the reconciliation operation to proceed.
+	machinectx.setupLock.Unlock()
+
+	select {
+	case <-callbackDone:
+	case <-time.After(2 * time.Second):
+		t.Fatal("callback did not run after setupLock was released")
+	}
+
+	if err := <-errResult; err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !<-result {
+		t.Fatal("connected = false, want true")
+	}
+}
+
+func TestWithSetupLock_SkipsDisconnectedMachine(t *testing.T) {
+	machinectx := &MachineCtx{}
+	machinectx.SetDisconnected(true)
+
+	called := false
+
+	connected, err := machinectx.WithSetupLock(func(models.K8sContext) error {
+		called = true
+		return nil
+	})
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if connected {
+		t.Fatal("connected = true, want false")
+	}
+	if called {
+		t.Fatal("callback ran for a disconnected machine")
 	}
 }
