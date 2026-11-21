@@ -39,6 +39,7 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 		tableFinder = tableFinder.Offset(offset)
 	}
 	if order != "" {
+		order = strings.TrimSpace(order)
 		if !strings.Contains(order, " ") {
 			if strings.EqualFold(strings.TrimSpace(sort), "desc") {
 				order = fmt.Sprintf("%s desc", order)

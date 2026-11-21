@@ -94,6 +94,12 @@ func TestGetSystemDatabase_Ordering(t *testing.T) {
 			assertOrder:   true,
 		},
 		{
+			name:          "Separate REST descending format trims column whitespace",
+			query:         "?order=%20name%20&sort=desc&search=test_",
+			expectedOrder: []string{"test_zebra", "test_mango", "test_apple"},
+			assertOrder:   true,
+		},
+		{
 			name:          "Bare column with omitted sort defaults to ascending",
 			query:         "?order=name&search=test_",
 			expectedOrder: []string{"test_apple", "test_mango", "test_zebra"},
@@ -108,6 +114,12 @@ func TestGetSystemDatabase_Ordering(t *testing.T) {
 		{
 			name:          "UI compound descending format",
 			query:         "?order=name%20desc&search=test_",
+			expectedOrder: []string{"test_zebra", "test_mango", "test_apple"},
+			assertOrder:   true,
+		},
+		{
+			name:          "UI compound format trims surrounding whitespace",
+			query:         "?order=%20name%20desc%20&search=test_",
 			expectedOrder: []string{"test_zebra", "test_mango", "test_apple"},
 			assertOrder:   true,
 		},
