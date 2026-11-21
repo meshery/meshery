@@ -805,13 +805,29 @@ describe('Environments connection assignment modal', () => {
       environments: [{ id: 'env-2', name: 'staging' }],
       totalCount: 1,
     } as any;
+    CONNECTIONS_QUERY_RESULT.data = {
+      connections: [{ id: 'conn-3', name: 'Cluster C' }],
+      totalCount: 1,
+    } as any;
+    CONNECTIONS_QUERY_RESULT.currentData = undefined;
     rerender(<Environments />);
     await user.click(screen.getByTestId('assign-btn-env-2'));
-    expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-transfer-list')).toHaveAttribute(
+        'data-assignable-ids',
+        'conn-3',
+      );
+      expect(screen.getByTestId('mock-transfer-list')).toHaveAttribute(
+        'data-assigned-ids',
+        'conn-3',
+      );
+    });
 
     await act(async () => resolveAssignment());
 
-    expect(screen.getByTestId('mock-transfer-list')).toBeInTheDocument();
+    const currentTransferList = screen.getByTestId('mock-transfer-list');
+    expect(currentTransferList).toHaveAttribute('data-assignable-ids', 'conn-3');
+    expect(currentTransferList).toHaveAttribute('data-assigned-ids', 'conn-3');
   });
 
   it('deduplicates incoming connections with identical ids', async () => {
