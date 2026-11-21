@@ -575,10 +575,17 @@ type SystemEventPersister interface {
 	PersistSystemEvent(event events.Event) (PersistedEvent, error)
 }
 
+// GenericPersisterGetter allows consumers to access only database persistence
+// without coupling to the entire Provider lifecycle or methods.
+type GenericPersisterGetter interface {
+	GetGenericPersister() *database.Handler
+}
+
 // Provider - interface for providers
 type Provider interface {
 	PreferencePersister
 	CapabilitiesPersister
+	GenericPersisterGetter
 	// MesheryEvents
 
 	// Initialize will initialize a provider instance
@@ -655,8 +662,6 @@ type Provider interface {
 	SMPTestConfigGet(req *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error)
 	SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	SMPTestConfigDelete(req *http.Request, testUUID string) error
-
-	GetGenericPersister() *database.Handler
 
 	SetKubeClient(client *mesherykube.Client)
 	GetKubeClient() *mesherykube.Client
