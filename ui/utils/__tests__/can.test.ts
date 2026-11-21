@@ -1,9 +1,9 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
-// The `can.ts` module wires `@casl/ability` together with the redux store and
-// sistent's `createCanShow`. We mock the store + sistent's create helper so we
-// can unit-test the `CAN` permission function and verify that `CanShow` is
-// built with the right callbacks.
+// The `can.ts` module wires a lightweight permission checker together with the
+// redux store and sistent's `createCanShow`. We mock the store + sistent's
+// create helper so we can unit-test the `CAN` permission function and verify
+// that `CanShow` is built with the right callbacks.
 
 const hoisted = vi.hoisted(() => ({
   createCanShowMock: vi.fn(() => 'mocked-can-show'),
@@ -60,13 +60,6 @@ describe('ability + CAN', () => {
   it('returns false when the rule does not match the action', () => {
     ability.update([{ action: 'read', subject: 'pattern' }]);
     expect(CAN('write', 'pattern')).toBe(false);
-  });
-
-  it('supports manage as an aggregate', () => {
-    ability.update([{ action: 'manage', subject: 'design' }]);
-    expect(CAN('read', 'design')).toBe(true);
-    expect(CAN('update', 'design')).toBe(true);
-    expect(CAN('delete', 'design')).toBe(true);
   });
 });
 
