@@ -5,6 +5,39 @@ import (
 	"testing"
 )
 
+// knownLegacyMissingModels lists selector model names that predate this test and
+// name a model that is not yet registered (meshery/meshery#23092).
+var knownLegacyMissingModels = map[string]bool{
+	"aws-application-autoscaling-controller": true,
+	"aws-vpccni-controller":                  true,
+	"azure-conatiner-service":                true,
+	"azure-event-hubs":                       true,
+	"azure-key-vaults":                       true,
+}
+
+// knownLegacySubstringOnlyModels lists selector model names that predate this test
+// and match a registered model only via unanchored substring (meshery/meshery#23092).
+var knownLegacySubstringOnlyModels = map[string]bool{
+	"azure-machine-learning":   true,
+	"documentdb-controller":    true,
+	"dynamodb-controller":      true,
+	"ec2-controller":           true,
+	"ecs-controller":           true,
+	"efs-controller":           true,
+	"eks-controller":           true,
+	"elasticache-controller":   true,
+	"emrcontainers-controller": true,
+	"eventbridge-controller":   true,
+	"iam-controller":           true,
+	"lambda-controller":        true,
+	"memorydb-controller":      true,
+	"mq-controller":            true,
+	"rds-controller":           true,
+	"s3-controller":            true,
+	"sns-controller":           true,
+	"sqs-controller":           true,
+}
+
 // A selector's model.name is compared with a component's model name through
 // matchName (isRelationshipFeasible). A name that is not a registered model
 // can never match, and a name that matches only because matchName is an
@@ -22,6 +55,8 @@ func TestRelationshipSelectorsNameRegisteredModels(t *testing.T) {
 
 	missing := map[string]int{}
 	substringOnly := map[string]int{}
+	legacyMissing := map[string]int{}
+	legacySubstringOnly := map[string]int{}
 	for _, s := range seeded {
 		files, err := filepath.Glob(filepath.Join(s.dir, "relationships", "*.json"))
 		if err != nil {
@@ -48,12 +83,29 @@ func TestRelationshipSelectorsNameRegisteredModels(t *testing.T) {
 					}
 				}
 				if matched {
-					substringOnly[name]++
+					if knownLegacySubstringOnlyModels[name] {
+						legacySubstringOnly[name]++
+					} else {
+						substringOnly[name]++
+					}
 				} else {
-					missing[name]++
+					if knownLegacyMissingModels[name] {
+						legacyMissing[name]++
+					} else {
+						missing[name]++
+					}
 				}
 			}
 		}
+	}
+
+	if len(legacyMissing) > 0 {
+		total, summary := summarizeCounts(legacyMissing)
+		t.Logf("%d legacy selectors name a model that does not exist (meshery/meshery#23092): %s", total, summary)
+	}
+	if len(legacySubstringOnly) > 0 {
+		total, summary := summarizeCounts(legacySubstringOnly)
+		t.Logf("%d legacy selectors match a model only by unanchored substring (meshery/meshery#23092): %s", total, summary)
 	}
 
 	if len(missing) > 0 {
