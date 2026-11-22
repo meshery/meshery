@@ -60,7 +60,7 @@ mesheryctl system status --verbose
 	Annotations: linkDocStatus,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", statusUsageMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("status does not accept positional arguments\n\n%s", statusUsageMsg))
 		}
 		return nil
 	},

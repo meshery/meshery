@@ -24,13 +24,13 @@ func TestStatusCmdArgs(t *testing.T) {
 			Name:          "invalid with unexpected positional argument",
 			Args:          []string{"unexpected-arg"},
 			ExpectError:   true,
-			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", statusUsageMsg)),
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("status does not accept positional arguments\n\n%s", statusUsageMsg)),
 		},
 		{
 			Name:          "invalid with multiple unexpected positional arguments",
 			Args:          []string{"arg1", "arg2"},
 			ExpectError:   true,
-			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", statusUsageMsg)),
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("status does not accept positional arguments\n\n%s", statusUsageMsg)),
 		},
 	}
 
