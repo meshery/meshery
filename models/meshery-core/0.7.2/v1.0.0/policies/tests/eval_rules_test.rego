@@ -144,22 +144,20 @@ edge_non_binding_mutator_relationship := {
 	"type": "non-binding",
 	"subType": "network",
 	"status": "pending",
-	"selectors": [{
-		"allow": {
-			"from": [{
-				"id": "sel-from-1",
-				"kind": "Pod",
-				"model": {"name": "kubernetes"},
-				"patch": {"mutatorRef": [["configuration", "metadata", "namespace"]]},
-			}],
-			"to": [{
-				"id": "sel-to-1",
-				"kind": "Pod",
-				"model": {"name": "kubernetes"},
-				"patch": {"mutatedRef": [["configuration", "metadata", "namespace"]]},
-			}],
-		},
-	}],
+	"selectors": [{"allow": {
+		"from": [{
+			"id": "sel-from-1",
+			"kind": "Pod",
+			"model": {"name": "kubernetes"},
+			"patch": {"mutatorRef": [["configuration", "metadata", "namespace"]]},
+		}],
+		"to": [{
+			"id": "sel-to-1",
+			"kind": "Pod",
+			"model": {"name": "kubernetes"},
+			"patch": {"mutatedRef": [["configuration", "metadata", "namespace"]]},
+		}],
+	}}],
 }
 
 test_identify_mutator_no_match_across_models if {
@@ -299,9 +297,7 @@ test_identify_mutator_matches_regex_selector_model if {
 }
 
 test_identify_mutator_matches_heterogeneous_models if {
-	relationship := json.patch(edge_non_binding_mutator_relationship, [
-		{"op": "replace", "path": "/selectors/0/allow/to/0/model/name", "value": "istio"},
-	])
+	relationship := json.patch(edge_non_binding_mutator_relationship, [{"op": "replace", "path": "/selectors/0/allow/to/0/model/name", "value": "istio"}])
 	design_file := {"components": [
 		{
 			"id": "pod-1",
