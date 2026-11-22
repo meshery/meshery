@@ -210,6 +210,7 @@ describe('normalizeUnit', () => {
     expect(normalizeUnit(null as any, '100')).toBe('100');
     expect(normalizeUnit('memory', undefined)).toBe('');
     expect(normalizeUnit('memory', 1024 as any)).toBe('1024');
+    expect(normalizeUnit('cpu', Symbol('x'))).toBe('Symbol(x) cores');
   });
 });
 
@@ -307,6 +308,11 @@ describe('resourceParsers / getResourceStr', () => {
     expect(getResourceStr('500', undefined as any)).toBe('500');
     expect(getResourceStr('500', 'toString')).toBe('500');
     expect(getResourceStr('500', 'valueOf')).toBe('500');
+  });
+
+  it('returns string fallback for unsupported value types like bigint and symbol', () => {
+    expect(getResourceStr(1024n, 'memory')).toBe('1024');
+    expect(getResourceStr(Symbol('x'), 'memory')).toBe('Symbol(x)');
   });
 });
 

@@ -116,7 +116,7 @@ export function normalizeUnit(resourceType, quantity) {
       normalizedQuantity =
         typeof quantity === 'string' && quantity.endsWith('m')
           ? `${Number(quantity.substring(0, quantity.length - 1)) / 1000}`
-          : `${quantity ?? ''}`;
+          : String(quantity ?? '');
       if (normalizedQuantity === '1') {
         normalizedQuantity = normalizedQuantity + ' ' + 'core';
       } else {
@@ -277,8 +277,12 @@ export function getResourceStr(value, resourceType) {
     Object.prototype.hasOwnProperty.call(resourceFormatters, resourceType)
       ? resourceFormatters[resourceType]
       : undefined;
-  if (typeof formatter !== 'function') {
-    return `${value ?? ''}`;
+  if (
+    typeof formatter !== 'function' ||
+    (typeof value !== 'number' && typeof value !== 'string') ||
+    (typeof value === 'string' && (value.trim() === '' || isNaN(Number(value))))
+  ) {
+    return String(value ?? '');
   }
 
   const valueInfo = formatter(value);
