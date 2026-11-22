@@ -26,6 +26,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/viewoutput"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -86,7 +87,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 		}
 
 		if selectedConnection == nil || selectedConnection.ID == uuid.Nil {
-			fmt.Println("No connection(s) found for the given name or ID: ", connectionNameOrID)
+			fmt.Fprintln(cmd.OutOrStdout(), "No connection(s) found for the given name or ID: ", connectionNameOrID)
 			return nil
 		}
 
@@ -172,6 +173,9 @@ func fetchConnectionByID(connectionID string) (*connection.Connection, error) {
 	url := fmt.Sprintf("%s/%s", connectionApiPath, connectionID)
 	fetchedConnection, err := api.Fetch[connection.Connection](url)
 	if err != nil {
+		if meshkiterrors.GetCode(err) == utils.ErrNotFoundCode {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return fetchedConnection, nil

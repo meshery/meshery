@@ -1,6 +1,7 @@
 package connections
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -414,5 +415,69 @@ func TestSelectConnectionPromptNilEntries(t *testing.T) {
 				t.Fatalf("got connection = %+v, want ID %s", got, tt.wantConn.ID)
 			}
 		})
+	}
+}
+
+func TestFetchConnectionByID(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	utils.TokenFlag = utils.GetToken(t)
+
+	testUUID := "00000000-0000-0000-0000-000000000000"
+
+	t.Run("returns nil when connection is not found (404)", func(t *testing.T) {
+		httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/integrations/connections/"+testUUID,
+			httpmock.NewStringResponder(404, "connection not found"))
+
+		conn, err := fetchConnectionByID(testUUID)
+		if err != nil {
+			t.Fatalf("expected nil error on 404, got: %v", err)
+		}
+		if conn != nil {
+			t.Fatalf("expected nil connection on 404, got: %+v", conn)
+		}
+	})
+
+	t.Run("returns connection when connection is found (200)", func(t *testing.T) {
+		expectedConn := connection.Connection{
+			ID:   uuid.FromStringOrNil(testUUID),
+			Name: "test-connection",
+		}
+		httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/integrations/connections/"+testUUID,
+			httpmock.NewJsonResponderOrPanic(200, expectedConn))
+
+		conn, err := fetchConnectionByID(testUUID)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if conn == nil || conn.Name != "test-connection" {
+			t.Fatalf("expected connection with name 'test-connection', got: %+v", conn)
+		}
+	})
+}
+
+func TestConnectionViewNotFoundOutput(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	utils.TokenFlag = utils.GetToken(t)
+
+	testUUID := "00000000-0000-0000-0000-000000000000"
+	httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/integrations/connections/"+testUUID,
+		httpmock.NewStringResponder(404, "connection not found"))
+
+	var buf bytes.Buffer
+	ConnectionsCmd.SetOut(&buf)
+	ConnectionsCmd.SetArgs([]string{"view", testUUID})
+
+	err := ConnectionsCmd.Execute()
+	if err != nil {
+		t.Fatalf("unexpected error executing ConnectionsCmd: %v", err)
+	}
+
+	expectedMsg := fmt.Sprintf("No connection(s) found for the given name or ID:  %s\n", testUUID)
+	if buf.String() != expectedMsg {
+		t.Fatalf("expected output %q, got %q", expectedMsg, buf.String())
 	}
 }
