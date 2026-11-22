@@ -53,7 +53,7 @@ func TestComponent(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(errors.New("'' is an invalid subcommand. Please provide required options from [list, search, view]. Use 'mesheryctl component --help' to display usage guide")),
+			ExpectedError:    utils.ErrInvalidArgument(errors.New("please provide a subcommand")),
 		},
 		{
 			Name:           "rejects invalid subcommand with --count",
