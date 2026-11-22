@@ -3,6 +3,7 @@ package utils
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -69,9 +70,10 @@ func TestGetLatestVersionForMesheryctl(t *testing.T) {
 }
 
 func TestCheckMesheryctlClientVersion(t *testing.T) {
-	_ = SetupMeshkitLoggerTesting(t, false)
+	logOutput := SetupMeshkitLoggerTesting(t, false)
 
 	t.Run("outdated version logs notification", func(t *testing.T) {
+		logOutput.Reset()
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte("v0.7.50\n"))
@@ -84,12 +86,17 @@ func TestCheckMesheryctlClientVersion(t *testing.T) {
 
 		transport := installTrackingTransport(t)
 
-		// Should not panic or crash
 		CheckMesheryctlClientVersion("v0.7.40")
 		assertBodyClosed(t, transport, "expected response body to be closed")
+
+		out := logOutput.String()
+		if !strings.Contains(out, "A new release of mesheryctl is available: v0.7.40 → v0.7.50") {
+			t.Errorf("expected upgrade notice in logs, got %q", out)
+		}
 	})
 
 	t.Run("latest version logs up to date", func(t *testing.T) {
+		logOutput.Reset()
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte("v0.7.50\n"))
@@ -102,12 +109,17 @@ func TestCheckMesheryctlClientVersion(t *testing.T) {
 
 		transport := installTrackingTransport(t)
 
-		// Should not panic or crash
 		CheckMesheryctlClientVersion("v0.7.50")
 		assertBodyClosed(t, transport, "expected response body to be closed")
+
+		out := logOutput.String()
+		if !strings.Contains(out, "is the latest release.") {
+			t.Errorf("expected up-to-date message in logs, got %q", out)
+		}
 	})
 
 	t.Run("non-200 status logs warning instead of using error body", func(t *testing.T) {
+		logOutput.Reset()
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte("500 internal server error"))
@@ -120,8 +132,15 @@ func TestCheckMesheryctlClientVersion(t *testing.T) {
 
 		transport := installTrackingTransport(t)
 
-		// Should not panic or treat 500 error body as a new release
 		CheckMesheryctlClientVersion("v0.7.50")
 		assertBodyClosed(t, transport, "expected response body to be closed on non-200 response")
+
+		out := logOutput.String()
+		if !strings.Contains(out, "unable to check for latest version of mesheryctl") {
+			t.Errorf("expected warning in logs for non-200 status, got %q", out)
+		}
+		if strings.Contains(out, "500 internal server error") {
+			t.Errorf("did not expect error body to appear as a release version in logs, got %q", out)
+		}
 	})
 }
