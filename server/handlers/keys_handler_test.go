@@ -61,7 +61,7 @@ func TestGetUsersKeys_NilProviderIsServerError(t *testing.T) {
 // organization identifier is rejected at the boundary instead of being handed
 // to the provider, where it surfaced as an unclassified downstream error.
 func TestGetUsersKeys_InvalidOrganizationIDIsBadRequest(t *testing.T) {
-	for _, orgID := range []string{"not-a-uuid", "12345", "abc/def"} {
+	for _, orgID := range []string{"not-a-uuid", "12345", "abc/def", uuid.Nil.String()} {
 		t.Run(orgID, func(t *testing.T) {
 			h := newTestHandler(t, map[string]models.Provider{}, "")
 			provider := newRecordingKeysProvider([]byte(`{"keys":[]}`), nil)
@@ -162,4 +162,70 @@ func TestGetUsersKeys_NotFoundIs404(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestGetUsersKeys_NilLogger_DoesNotPanic verifies that the handler guards
+// against nil logger dereferences across all error and success branches.
+func TestGetUsersKeys_NilLogger_DoesNotPanic(t *testing.T) {
+	h := &Handler{} // nil logger
+
+	t.Run("missing token", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/api/identity/orgs/users/keys", nil)
+		rec := httptest.NewRecorder()
+		h.GetUsersKeys(rec, req, nil, nil, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusInternalServerError)
+		}
+	})
+
+	t.Run("nil provider", func(t *testing.T) {
+		req := withTokenContext(httptest.NewRequest(http.MethodGet, "/api/identity/orgs/users/keys", nil))
+		rec := httptest.NewRecorder()
+		h.GetUsersKeys(rec, req, nil, nil, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusInternalServerError)
+		}
+	})
+
+	t.Run("invalid orgID", func(t *testing.T) {
+		req := withTokenContext(httptest.NewRequest(http.MethodGet, "/api/identity/orgs/invalid/users/keys", nil))
+		req = mux.SetURLVars(req, map[string]string{"orgID": "invalid"})
+		rec := httptest.NewRecorder()
+		provider := newRecordingKeysProvider([]byte(`{"keys":[]}`), nil)
+		h.GetUsersKeys(rec, req, nil, nil, provider)
+		if rec.Code != http.StatusBadRequest {
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusBadRequest)
+		}
+	})
+
+	t.Run("nil orgID", func(t *testing.T) {
+		req := withTokenContext(httptest.NewRequest(http.MethodGet, "/api/identity/orgs/"+uuid.Nil.String()+"/users/keys", nil))
+		req = mux.SetURLVars(req, map[string]string{"orgID": uuid.Nil.String()})
+		rec := httptest.NewRecorder()
+		provider := newRecordingKeysProvider([]byte(`{"keys":[]}`), nil)
+		h.GetUsersKeys(rec, req, nil, nil, provider)
+		if rec.Code != http.StatusBadRequest {
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusBadRequest)
+		}
+	})
+
+	t.Run("provider error", func(t *testing.T) {
+		req := withTokenContext(httptest.NewRequest(http.MethodGet, "/api/identity/orgs/users/keys", nil))
+		rec := httptest.NewRecorder()
+		provider := newRecordingKeysProvider(nil, errors.New("upstream failed"))
+		h.GetUsersKeys(rec, req, nil, nil, provider)
+		if rec.Code != http.StatusBadGateway {
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusBadGateway)
+		}
+	})
+
+	t.Run("success", func(t *testing.T) {
+		req := withTokenContext(httptest.NewRequest(http.MethodGet, "/api/identity/orgs/users/keys", nil))
+		rec := httptest.NewRecorder()
+		provider := newRecordingKeysProvider([]byte(`{"keys":[]}`), nil)
+		h.GetUsersKeys(rec, req, nil, nil, provider)
+		if rec.Code != http.StatusOK {
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusOK)
+		}
+	})
 }
