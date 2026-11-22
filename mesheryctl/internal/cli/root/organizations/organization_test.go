@@ -95,8 +95,9 @@ func TestOrganization(t *testing.T) {
 	}
 }
 
-// TestOrganizationCountArgs verifies that --count rejects invalid subcommands
-// while remaining valid without positional arguments.
+// TestOrganizationCountArgs verifies that count-only usage is valid,
+// missing subcommands without --count are rejected, and invalid
+// subcommands are rejected regardless of --count.
 func TestOrganizationCountArgs(t *testing.T) {
 	previousCount := count
 	t.Cleanup(func() {
@@ -106,19 +107,32 @@ func TestOrganizationCountArgs(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    []string
+		count   bool
 		wantErr bool
 	}{
 		{
-			name: "accepts count without arguments",
+			name:    "rejects missing subcommand without count",
+			wantErr: true,
 		},
 		{
-			name:    "rejects invalid subcommand",
+			name:  "accepts count without arguments",
+			count: true,
+		},
+		{
+			name:    "rejects invalid subcommand without count",
 			args:    []string{"invalid"},
 			wantErr: true,
 		},
 		{
-			name:    "rejects multiple invalid arguments",
+			name:    "rejects invalid subcommand with count",
+			args:    []string{"invalid"},
+			count:   true,
+			wantErr: true,
+		},
+		{
+			name:    "rejects multiple invalid arguments with count",
 			args:    []string{"invalid", "extra"},
+			count:   true,
 			wantErr: true,
 		},
 	}
@@ -126,7 +140,7 @@ func TestOrganizationCountArgs(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cmd := &cobra.Command{}
-			cmd.Flags().Bool("count", true, "")
+			cmd.Flags().Bool("count", tt.count, "")
 
 			err := OrgCmd.Args(cmd, tt.args)
 			if (err != nil) != tt.wantErr {
