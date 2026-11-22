@@ -7673,6 +7673,23 @@
       "suggestedRemediation": [
         "Set the design file's version to a semver string such as 0.0.1 and save again"
       ]
+    },
+    {
+      "code": "meshery-server-1497",
+      "moniker": "ErrProvisionPanicCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1497",
+      "severity": "alert",
+      "shortDescription": "Component panicked during provisioning",
+      "probableCause": [
+        "Runtime fault occurred in component visitor execution"
+      ],
+      "suggestedRemediation": [
+        "Inspect component configuration and provider logs for runtime failures"
+      ]
     }
   ],
   "schemaVersion": 2
