@@ -453,10 +453,10 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, err
 	}
 
 	// The server answers /api/token with the provider's display name in
-	// meshery-provider, and login persists that response unchanged for later
-	// requests (AddAuthDetails sends the persisted value as the cookie). A
-	// display name shared by two providers would route those later requests
-	// nondeterministically, so when --provider named a registration key,
+	// meshery-provider. parseTokenResponse validates and persists only
+	// meshery-provider and token, so AddAuthDetails sends the persisted value as
+	// the cookie. A display name shared by two providers would route those later
+	// requests nondeterministically, so when --provider named a registration key,
 	// persist the key instead: the key is what /api/providers is keyed by
 	// and what the server resolves first.
 	if providerKey != "" {
