@@ -53,7 +53,7 @@ const validateSchema = (schema, data, id) => {
 };
 
 export const componentKey = (component) =>
-  `${component.component.kind}-${component.modelReference.name}-${component.component.version}`;
+  `${component.component?.kind ?? 'unknown'}-${component.modelReference?.name ?? 'unknown'}-${component.component?.version ?? 'unknown'}`;
 
 const skipValidation = (component, validateAnnotations, componentDef) => {
   if (validateAnnotations) {

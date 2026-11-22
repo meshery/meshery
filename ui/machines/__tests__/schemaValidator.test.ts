@@ -20,6 +20,26 @@ describe('componentKey', () => {
       }),
     ).toBe('Service-k8s-v1');
   });
+
+  it('falls back to unknown when modelReference is missing', () => {
+    expect(
+      componentKey({
+        component: { kind: 'Pod', version: 'core/v1' },
+      }),
+    ).toBe('Pod-unknown-core/v1');
+  });
+
+  it('falls back to unknown when component is missing', () => {
+    expect(
+      componentKey({
+        modelReference: { name: 'kubernetes' },
+      }),
+    ).toBe('unknown-kubernetes-unknown');
+  });
+
+  it('falls back to unknown for every field when both are missing', () => {
+    expect(componentKey({})).toBe('unknown-unknown-unknown');
+  });
 });
 
 describe('schemaValidatorMachine', () => {
@@ -214,6 +234,33 @@ describe('schemaValidatorMachine component validation', () => {
     }
   });
 
+  it('reports a malformed component as a definition error instead of throwing', async () => {
+    const validator = createActor(schemaValidatorMachine).start();
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      validator.send(
+        dataValidatorCommands.validateData({
+          validationPayload: {
+            validationPayloadType: 'component',
+            component: { id: 'c-malformed', configuration: {} },
+          },
+          returnAddress: null,
+        }),
+      );
+      const results = (await settled(validator)).context.validationResults;
+      const result = results['c-malformed'];
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0]).toMatchObject({ keyword: 'definition' });
+      expect(result.errors[0].message).toContain('unknown-unknown-unknown');
+      expect(error).not.toHaveBeenCalled();
+    } finally {
+      error.mockRestore();
+      validator.stop();
+    }
+  });
+
   it('reports missing definitions during design validation instead of returning no errors', async () => {
     const validator = createActor(schemaValidatorMachine).start();
     try {
@@ -242,6 +289,28 @@ describe('schemaValidatorMachine component validation', () => {
       expect(results['component-1'].isValid).toBe(false);
       expect(results['component-1'].errors).toHaveLength(1);
       expect(results['component-1'].errors[0].keyword).toBe('definition');
+    } finally {
+      validator.stop();
+    }
+  });
+
+  it('keeps malformed components in the design results instead of dropping them', async () => {
+    const validator = createActor(schemaValidatorMachine).start();
+    try {
+      validator.send(
+        dataValidatorCommands.validateData({
+          validationPayload: {
+            validationPayloadType: 'design',
+            design: { components: [{ id: 'c-malformed-design' }] },
+            componentDefs: {},
+          },
+          returnAddress: null,
+        }),
+      );
+      const results = (await settled(validator)).context.validationResults;
+
+      expect(results['c-malformed-design'].isValid).toBe(false);
+      expect(results['c-malformed-design'].errors[0].keyword).toBe('definition');
     } finally {
       validator.stop();
     }
