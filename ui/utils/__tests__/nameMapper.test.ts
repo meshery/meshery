@@ -55,6 +55,7 @@ describe('podNameMapper', () => {
 
   it('safely handles pod names with consecutive delimiters', () => {
     expect(podNameMapper('custom', 'my--custom--pod-abc-123')).toBe('My Custom Pod');
+    expect(podNameMapper('custom', 'my--pod-abc--123')).toBe('My Pod');
   });
 });
 

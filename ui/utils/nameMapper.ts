@@ -28,8 +28,8 @@ export const podNameMapper = (serviceMeshName, podName) => {
 
   if (Array.isArray(podNameArr)) {
     const prettifiedPodName = podNameArr
-      .slice(0, -2)
       .filter((word) => Boolean(word))
+      .slice(0, -2)
       .map((word) => word[0].toUpperCase() + word.slice(1))
       .join(' ');
 
