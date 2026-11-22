@@ -54,7 +54,7 @@ mesheryctl version
 	Annotations: linkDoc,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", versionUsageMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("this command does not accept positional arguments\n\n%s", versionUsageMsg))
 		}
 		return nil
 	},
