@@ -44,7 +44,7 @@ example actions: **"remove_from_organization", "add_to_organization"**.
 _Note: In certain conditions you must add some fields with specific keys:_
 
 - If the severity is "Error", set the error on the event with `models.AttachEventError(builder, err, log)` after `WithMetadata`. It stores it under the `error` key as a schemas `EventError` (see [Error events](#error-events)); an error without a MeshKit code keeps the legacy form.
-- When you want to add a link to meshery docs, include a field in Metadata using the key `doc` with the corresponding link value.
+- When you want to add a link to Meshery docs, put the link in Metadata under `doclink` (rendered as the "Doc" title link in the notification header, as in the Kubernetes component registration and saved design events) or `doc` (the "Doc" link in the notification's ellipsis menu). The Notification Center's `LinkFormatters` and `PropertyLinkFormatters` in `ui/components/layout/NotificationCenter/metadata.tsx` are the authoritative readers of both keys.
 
 - `WithDescription` : The string argument provides a detailed, descriptive message that depicts the specific operation or action being executed on the server.
 - `WithMetadata`: it takes a Map `map[string]interface{}` data structure containing any supplementary information that the developer/contributor deems essential for the user to be informed about.
