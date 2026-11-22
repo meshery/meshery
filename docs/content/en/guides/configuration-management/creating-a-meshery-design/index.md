@@ -3,10 +3,10 @@ title: Creating a Meshery Design
 description: Learn how to create a Meshery Design using the built-in Design Configurator in Meshery UI or the mesheryctl CLI.
 categories: [configuration]
 aliases:
-- /guides/configuration-management/working-with-designs
-- /guides/configuration-management/pattern-management
-- /tasks/patterns
-- /tasks/pattern-management/
+  - /guides/configuration-management/working-with-designs
+  - /guides/configuration-management/pattern-management
+  - /tasks/patterns
+  - /tasks/pattern-management/
 ---
 
 A Meshery Design is the primary unit of configuration management in Meshery. It is a declarative document that describes the desired state of your infrastructure and applications: the components you want, their configuration, and their relationships. You can deploy, share, version, export, and import designs.
@@ -35,16 +35,16 @@ Enter a name in the **Design Name** field in the toolbar. Meshery uses this name
 
 ### Step 3: Choose a model
 
-1. In the **Select Category** dropdown, choose a category, for example *Orchestration & Management*.
-2. In the **Select Model** dropdown, choose a model in that category, for example *Kubernetes*.
+1. In the **Select Category** dropdown, choose a category, for example _Orchestration & Management_.
+2. In the **Select Model** dropdown, choose a model in that category, for example _Kubernetes_.
 
-The configurator lists a form for each component of the model, such as *Deployment*, *Service*, and *ConfigMap*, next to the YAML editor.
+The configurator lists a form for each component of the model, such as _Deployment_, _Service_, and _ConfigMap_, next to the YAML editor.
 
 ### Step 4: Configure components
 
 Expand a component's form and fill in its fields. Each form is generated from the component's schema, so it marks required fields and shows nested properties you can expand. As you fill in a form, the configurator adds the component to the design and updates the YAML.
 
-Choose another category or model at any time to add components from it to the same design.
+Choose another category or model at any time to add components from it to the same design. Changing the category clears the selected model and collapses its component forms; choose a model in the new category to show its forms again.
 
 ### Step 5: Save the design
 
@@ -64,6 +64,7 @@ Instead of starting from nothing, import a design from the [Meshery Catalog](htt
 <img src="images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" />
 
 <!-- tab -->
+
 mesheryctl | fa fa-terminal
 
 ## Using mesheryctl
