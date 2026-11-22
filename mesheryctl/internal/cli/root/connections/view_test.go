@@ -455,6 +455,19 @@ func TestFetchConnectionByID(t *testing.T) {
 			t.Fatalf("expected connection with name 'test-connection', got: %+v", conn)
 		}
 	})
+
+	t.Run("returns error when server returns internal error (500)", func(t *testing.T) {
+		httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/integrations/connections/"+testUUID,
+			httpmock.NewStringResponder(500, "Internal Server Error"))
+
+		conn, err := fetchConnectionByID(testUUID)
+		if err == nil {
+			t.Fatalf("expected error on 500, got nil")
+		}
+		if conn != nil {
+			t.Fatalf("expected nil connection on 500, got: %+v", conn)
+		}
+	})
 }
 
 func TestConnectionViewNotFoundOutput(t *testing.T) {
@@ -464,20 +477,66 @@ func TestConnectionViewNotFoundOutput(t *testing.T) {
 	utils.TokenFlag = utils.GetToken(t)
 
 	testUUID := "00000000-0000-0000-0000-000000000000"
-	httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/integrations/connections/"+testUUID,
-		httpmock.NewStringResponder(404, "connection not found"))
 
-	var buf bytes.Buffer
-	ConnectionsCmd.SetOut(&buf)
-	ConnectionsCmd.SetArgs([]string{"view", testUUID})
+	t.Run("given a nonexistent UUID (404) then display not found message", func(t *testing.T) {
+		defer utils.ResetCommandFlags(ConnectionsCmd, t)
+		utils.TokenFlag = utils.GetToken(t)
+		httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/integrations/connections/"+testUUID,
+			httpmock.NewStringResponder(404, "connection not found"))
 
-	err := ConnectionsCmd.Execute()
-	if err != nil {
-		t.Fatalf("unexpected error executing ConnectionsCmd: %v", err)
-	}
+		var buf bytes.Buffer
+		ConnectionsCmd.SetOut(&buf)
+		ConnectionsCmd.SetArgs([]string{"view", testUUID})
 
-	expectedMsg := fmt.Sprintf("No connection(s) found for the given name or ID:  %s\n", testUUID)
-	if buf.String() != expectedMsg {
-		t.Fatalf("expected output %q, got %q", expectedMsg, buf.String())
-	}
+		err := ConnectionsCmd.Execute()
+		if err != nil {
+			t.Fatalf("unexpected error executing ConnectionsCmd: %v", err)
+		}
+
+		expectedMsg := fmt.Sprintf("No connection(s) found for the given name or ID:  %s\n", testUUID)
+		if buf.String() != expectedMsg {
+			t.Fatalf("expected output %q, got %q", expectedMsg, buf.String())
+		}
+	})
+
+	t.Run("given a nonexistent name then display not found message", func(t *testing.T) {
+		defer utils.ResetCommandFlags(ConnectionsCmd, t)
+		utils.TokenFlag = utils.GetToken(t)
+		searchName := "nonexistent-name"
+		query := url.Values{}
+		query.Add("search", searchName)
+		query.Add("pagesize", "all")
+		httpmock.RegisterResponder("GET", fmt.Sprintf("%s/api/integrations/connections?%s", testContext.BaseURL, query.Encode()),
+			httpmock.NewJsonResponderOrPanic(200, connection.ConnectionPage{TotalCount: 0, Connections: []*connection.Connection{}}))
+
+		var buf bytes.Buffer
+		ConnectionsCmd.SetOut(&buf)
+		ConnectionsCmd.SetArgs([]string{"view", searchName})
+
+		err := ConnectionsCmd.Execute()
+		if err != nil {
+			t.Fatalf("unexpected error executing ConnectionsCmd: %v", err)
+		}
+
+		expectedMsg := fmt.Sprintf("No connection(s) found for the given name or ID:  %s\n", searchName)
+		if buf.String() != expectedMsg {
+			t.Fatalf("expected output %q, got %q", expectedMsg, buf.String())
+		}
+	})
+
+	t.Run("given a server error (500) then return error", func(t *testing.T) {
+		defer utils.ResetCommandFlags(ConnectionsCmd, t)
+		utils.TokenFlag = utils.GetToken(t)
+		httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/integrations/connections/"+testUUID,
+			httpmock.NewStringResponder(500, "Internal Server Error"))
+
+		var buf bytes.Buffer
+		ConnectionsCmd.SetOut(&buf)
+		ConnectionsCmd.SetArgs([]string{"view", testUUID})
+
+		err := ConnectionsCmd.Execute()
+		if err == nil {
+			t.Fatalf("expected error on 500 server error, got nil")
+		}
+	})
 }
