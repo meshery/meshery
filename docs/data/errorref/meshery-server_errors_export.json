@@ -4354,6 +4354,33 @@
         "short_description": "",
         "probable_cause": "Request payload exceeds maximum allowed size",
         "suggested_remediation": "Reduce request payload size to within acceptable limits"
+      },
+      "1495": {
+        "name": "ErrHandlerPanicCode",
+        "code": "1495",
+        "severity": "Alert",
+        "long_description": "The handler for this request panicked. The panic value and stack are recorded in the server log, not in this response",
+        "short_description": "Meshery Server hit an unexpected internal error while handling the request",
+        "probable_cause": "A defect in Meshery Server caused the handler for this request to panic",
+        "suggested_remediation": "Retry the request\nIf it keeps failing, report it at https://github.com/meshery/meshery/issues/new/choose together with the request that triggered it; the server log holds the full stack"
+      },
+      "1496": {
+        "name": "ErrInvalidDesignVersionCode",
+        "code": "1496",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid design version",
+        "probable_cause": "The design file's version is not semver, so a next version cannot be computed from it\nOlder tooling wrote arbitrary version strings into design files",
+        "suggested_remediation": "Set the design file's version to a semver string such as 0.0.1 and save again"
+      },
+      "1497": {
+        "name": "ErrProvisionPanicCode",
+        "code": "1497",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Component panicked during provisioning",
+        "probable_cause": "Runtime fault occurred in component visitor execution",
+        "suggested_remediation": "Inspect component configuration and provider logs for runtime failures"
       }
     }
   }
