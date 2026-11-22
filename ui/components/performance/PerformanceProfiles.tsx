@@ -131,7 +131,11 @@ function PerformanceProfile() {
     return response;
   }
 
-  function deleteProfile(id) {
+  async function deleteProfile(id) {
+    const response = await showModal(1);
+    if (response !== 'DELETE') {
+      return;
+    }
     deletePerformanceProfile({ id: id })
       .unwrap()
       .then(() => {
