@@ -44,6 +44,24 @@ func TestDeleteCmd(t *testing.T) {
 			},
 			ExpectedResponse: "delete.success.output.golden",
 		},
+		{
+			Name: "given an exact profile id when delete with yes then delete it",
+			Args: []string{"delete", profileID, "--yes"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: "profile.delete.single.response.golden", ResponseCode: 200},
+				{Method: "DELETE", URL: deleteURL, Response: "profile.delete.success.response.golden", ResponseCode: 200},
+			},
+			ExpectedResponse: "delete.success.output.golden",
+		},
+		{
+			Name: "given several matches and one exact id when delete with yes then delete only the exact one",
+			Args: []string{"delete", profileID, "--yes"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: "profile.delete.exact.response.golden", ResponseCode: 200},
+				{Method: "DELETE", URL: deleteURL, Response: "profile.delete.success.response.golden", ResponseCode: 200},
+			},
+			ExpectedResponse: "delete.success.output.golden",
+		},
 	}
 
 	errorTests := []utils.MesheryMultiURLCommamdTest{

@@ -56,10 +56,10 @@ mesheryctl perf delete test-3 --yes
 			return err
 		}
 
-		// The search is a substring match, so prefer profiles named exactly as asked.
+		// The search is a substring match, so prefer profiles named or identified exactly as asked.
 		matches := profiles[:0:0]
 		for _, p := range profiles {
-			if p.Name == args[0] {
+			if p.Name == args[0] || p.ID.String() == args[0] {
 				matches = append(matches, p)
 			}
 		}
