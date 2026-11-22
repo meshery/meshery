@@ -35,12 +35,11 @@ describe('hasClass', () => {
     expect(hasClass(el, undefined as any)).toBe(false);
   });
 
-  it('does not throw if className is not a string (SVG-like DOM nodes)', () => {
+  it('supports SVG-like DOM nodes with SVGAnimatedString className', () => {
     const svgLike = { className: { baseVal: 'foo' }, parentElement: null };
-    // The function only matches when className is a string, so this should return false
-    // but should not throw.
     expect(() => hasClass(svgLike, 'foo')).not.toThrow();
-    expect(hasClass(svgLike, 'foo')).toBe(false);
+    expect(hasClass(svgLike, 'foo')).toBe(true);
+    expect(hasClass(svgLike, 'bar')).toBe(false);
   });
 
   it('logs and swallows errors when traversal raises', () => {
@@ -115,8 +114,8 @@ describe('AddClassRecursively', () => {
     expect(span.className).not.toContain('undefined');
   });
 
-  it('returns children unchanged when className is missing or non-string', () => {
-    const { container } = render(
+  it('returns children unchanged when className is missing, empty, or whitespace-only', () => {
+    const { container: c1 } = render(
       <AddClassRecursively className={undefined as any}>
         <div className="keep-me">
           <span>no-extra-class</span>
@@ -124,9 +123,22 @@ describe('AddClassRecursively', () => {
       </AddClassRecursively>,
     );
 
-    const div = container.querySelector('div')!;
-    const span = container.querySelector('span')!;
-    expect(div.className).toBe('keep-me');
-    expect(span.className).toBe('');
+    const div1 = c1.querySelector('div')!;
+    const span1 = c1.querySelector('span')!;
+    expect(div1.className).toBe('keep-me');
+    expect(span1.className).toBe('');
+
+    const { container: c2 } = render(
+      <AddClassRecursively className="   ">
+        <div className="keep-me">
+          <span>no-extra-class</span>
+        </div>
+      </AddClassRecursively>,
+    );
+
+    const div2 = c2.querySelector('div')!;
+    const span2 = c2.querySelector('span')!;
+    expect(div2.className).toBe('keep-me');
+    expect(span2.className).toBe('');
   });
 });
