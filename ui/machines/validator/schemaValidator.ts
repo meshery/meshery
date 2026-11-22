@@ -52,8 +52,23 @@ const validateSchema = (schema, data, id) => {
   };
 };
 
+export const componentKey = (component) =>
+  `${component.component.kind}-${component.modelReference.name}-${component.component.version}`;
+
+const skipValidation = (component, validateAnnotations, componentDef) => {
+  if (validateAnnotations) {
+    return false;
+  }
+  if (componentDef?.metadata?.isAnnotation) {
+    return true;
+  }
+  // When the definition could not be loaded, fall back to the design's own
+  // annotation marker so annotations keep being skipped.
+  return !componentDef && component?.metadata?.isAnnotation;
+};
+
 const validateComponent = (component, validateAnnotations = false, componentDef) => {
-  if (!componentDef || (componentDef?.metadata?.isAnnotation && !validateAnnotations)) {
+  if (skipValidation(component, validateAnnotations, componentDef)) {
     // skip validation for annotations
     return {
       errors: [],
@@ -61,6 +76,27 @@ const validateComponent = (component, validateAnnotations = false, componentDef)
       component,
     };
   }
+
+  if (!componentDef) {
+    // A definition that failed to load is not a reason to report success: the
+    // component was never validated. Surface the gap so the validation UI
+    // cannot report "No validation errors" for an incomplete run.
+    return {
+      isValid: false,
+      errors: [
+        {
+          instancePath: '',
+          keyword: 'definition',
+          message: `Component definition "${componentKey(
+            component,
+          )}" could not be loaded; this component was not validated.`,
+        },
+      ],
+      componentDefinition: componentDef,
+      component,
+    };
+  }
+
   const schema = JSON.parse(componentDef.component.schema);
   const results = validateSchema(schema, component.configuration || {}, componentDef.id);
 
@@ -70,9 +106,6 @@ const validateComponent = (component, validateAnnotations = false, componentDef)
   };
   return validationResults;
 };
-
-export const componentKey = (component) =>
-  `${component.component.kind}-${component.modelReference.name}-${component.component.version}`;
 
 const validateDesign = (design, componentDefsStore) => {
   const configurableComponents = design.components;

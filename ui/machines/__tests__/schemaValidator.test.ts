@@ -179,4 +179,142 @@ describe('schemaValidatorMachine component validation', () => {
       validator.stop();
     }
   });
+
+  it('reports a missing component definition as a validation error', async () => {
+    const validator = createActor(schemaValidatorMachine).start();
+    try {
+      validator.send(
+        dataValidatorCommands.validateData({
+          validationPayload: {
+            validationPayloadType: 'component',
+            component: {
+              id: 'c-missing',
+              displayName: 'Missing Pod',
+              component: { kind: 'Pod', version: 'core/v1' },
+              modelReference: { name: 'kubernetes' },
+              configuration: {},
+            },
+          },
+          returnAddress: null,
+        }),
+      );
+      const results = (await settled(validator)).context.validationResults;
+      const result = results['c-missing'];
+
+      expect(result.isValid).toBe(false);
+      expect(result.componentDefinition).toBeUndefined();
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0]).toMatchObject({
+        instancePath: '',
+        keyword: 'definition',
+      });
+      expect(result.errors[0].message).toContain('Pod-kubernetes-core/v1');
+    } finally {
+      validator.stop();
+    }
+  });
+
+  it('reports missing definitions during design validation instead of returning no errors', async () => {
+    const validator = createActor(schemaValidatorMachine).start();
+    try {
+      validator.send(
+        dataValidatorCommands.validateData({
+          validationPayload: {
+            validationPayloadType: 'design',
+            design: {
+              components: [
+                {
+                  id: 'component-1',
+                  displayName: 'Missing Service',
+                  component: { kind: 'Service', version: 'v1' },
+                  modelReference: { name: 'kubernetes' },
+                  configuration: {},
+                },
+              ],
+            },
+            componentDefs: {},
+          },
+          returnAddress: null,
+        }),
+      );
+      const results = (await settled(validator)).context.validationResults;
+
+      expect(results['component-1'].isValid).toBe(false);
+      expect(results['component-1'].errors).toHaveLength(1);
+      expect(results['component-1'].errors[0].keyword).toBe('definition');
+    } finally {
+      validator.stop();
+    }
+  });
+
+  it('skips annotations by default and validates them when requested', async () => {
+    const validator = createActor(schemaValidatorMachine).start();
+    try {
+      const annotationDef = {
+        ...componentDef('def-annotation'),
+        metadata: { isAnnotation: true },
+      };
+
+      validator.send(
+        dataValidatorCommands.validateData({
+          validationPayload: {
+            validationPayloadType: 'component',
+            component: { id: 'annotation', configuration: { replicas: 'three' } },
+            componentDef: annotationDef,
+          },
+          returnAddress: null,
+        }),
+      );
+      const skipped = (await settled(validator)).context.validationResults;
+      expect(skipped.annotation.errors).toEqual([]);
+
+      validator.send(
+        dataValidatorCommands.validateData({
+          validationPayload: {
+            validationPayloadType: 'component',
+            validateAnnotations: true,
+            component: { id: 'annotation-checked', configuration: { replicas: 'three' } },
+            componentDef: annotationDef,
+          },
+          returnAddress: null,
+        }),
+      );
+      const checked = await waitFor(
+        validator,
+        (state) =>
+          state.matches({ idle: 'waiting' }) &&
+          'annotation-checked' in state.context.validationResults,
+      );
+      expect(checked.context.validationResults['annotation-checked'].isValid).toBe(false);
+    } finally {
+      validator.stop();
+    }
+  });
+
+  it('keeps skipping annotations whose definition is unavailable', async () => {
+    const validator = createActor(schemaValidatorMachine).start();
+    try {
+      validator.send(
+        dataValidatorCommands.validateData({
+          validationPayload: {
+            validationPayloadType: 'component',
+            component: {
+              id: 'c-annotation',
+              metadata: { isAnnotation: true },
+              component: { kind: 'Annotation', version: 'v1' },
+              modelReference: { name: 'kubernetes' },
+              configuration: {},
+            },
+          },
+          returnAddress: null,
+        }),
+      );
+      const results = (await settled(validator)).context.validationResults;
+
+      expect(results['c-annotation'].errors).toEqual([]);
+      expect(results['c-annotation'].isValid).toBeUndefined();
+    } finally {
+      validator.stop();
+    }
+  });
 });
