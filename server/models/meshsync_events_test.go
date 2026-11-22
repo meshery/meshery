@@ -9,6 +9,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	meshkitBroker "github.com/meshery/meshkit/broker"
+	channelBroker "github.com/meshery/meshkit/broker/channel"
 	"github.com/meshery/meshkit/database"
 	meshkitErrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
@@ -133,6 +134,13 @@ func newTestMeshsyncHandler(t *testing.T, broker meshkitBroker.Handler, stopFunc
 	if err != nil {
 		t.Fatalf("Failed to create in-memory database: %v", err)
 	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		t.Fatalf("Failed to get database pool: %v", err)
+	}
+	// Stop leaves the caller-owned database open, so the fixture closes it.
+	// Registered first, it runs after any handler teardown the test registers.
+	t.Cleanup(func() { _ = sqlDB.Close() })
 
 	err = db.AutoMigrate(&component.ComponentDefinition{})
 	if err != nil {
@@ -481,6 +489,9 @@ func TestMeshsyncDataHandlerRunCleansUpWhenStoreRequestFails(t *testing.T) {
 	handler := newTestMeshsyncHandler(t, broker, func() {
 		stopCalls++
 	})
+	// Fallback only: the assertions below run first, so it cannot hide a
+	// handler that Run failed to stop.
+	t.Cleanup(handler.Stop)
 
 	err := handler.Run()
 	if mkErr, ok := err.(*meshkitErrors.Error); ok {
@@ -512,10 +523,126 @@ func TestMeshsyncDataHandlerRunCleansUpWhenStoreRequestFails(t *testing.T) {
 	assert.Equal(t, 1, stopCalls)
 }
 
+// fillingStoreRequestBroker runs fill and then fails the initial store request.
+type fillingStoreRequestBroker struct {
+	testMeshsyncBroker
+	fill func()
+}
+
+func (b *fillingStoreRequestBroker) Publish(_ string, _ *meshkitBroker.Message) error {
+	b.fill()
+	return fmt.Errorf("nats: connection closed")
+}
+
+// TestMeshsyncDataHandlerRunWaitsForListenersWhenStoreRequestFails holds the
+// events listener inside event processing when the store request fails, and
+// checks that Run does not return until that listener has exited.
+func TestMeshsyncDataHandlerRunWaitsForListenersWhenStoreRequestFails(t *testing.T) {
+	stopping := make(chan struct{})
+	broker := &fillingStoreRequestBroker{}
+	handler := newTestMeshsyncHandler(t, broker, func() { close(stopping) })
+	t.Cleanup(handler.Stop)
+
+	// The events listener takes the handler's DB lock for every event, so
+	// holding it is the barrier. The cleanup releases it before the fallback
+	// Stop runs, so a failed assertion cannot deadlock the teardown.
+	var barrier sync.Mutex
+	var release sync.Once
+	handler.dbHandler.Mutex = &barrier
+	barrier.Lock()
+	t.Cleanup(func() { release.Do(barrier.Unlock) })
+
+	broker.fill = func() {
+		// eventsChan holds one message, so the second send completes only
+		// after the listener has taken the first and gone to the barrier.
+		handler.eventsChan <- &meshkitBroker.Message{EventType: meshkitBroker.Delete}
+		handler.eventsChan <- &meshkitBroker.Message{EventType: meshkitBroker.Delete}
+	}
+
+	runErr := make(chan error, 1)
+	go func() { runErr <- handler.Run() }()
+
+	select {
+	case <-stopping:
+	case <-time.After(time.Second):
+		t.Fatal("expected the failed store request to stop the handler")
+	}
+	// Stop has begun and the listener is still held: Run must not return.
+	select {
+	case err := <-runErr:
+		t.Fatalf("Run returned while a listener was still running: %v", err)
+	case <-time.After(100 * time.Millisecond):
+	}
+
+	release.Do(barrier.Unlock)
+	select {
+	case err := <-runErr:
+		if mkErr, ok := err.(*meshkitErrors.Error); ok {
+			assert.Equal(t, ErrRequestMeshsyncStoreCode, mkErr.Code)
+		} else {
+			t.Fatalf("expected Run to return the store request error, got %T: %v", err, err)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("expected Run to return once the listener was released")
+	}
+	waitForMeshsyncListeners(t, handler)
+}
+
+// lateEventsSubscriptionBroker is MeshKit's in-process channel broker - the
+// one embedded MeshSync uses - with the events subscription held back until
+// the broker is closed, and the store request failing.
+type lateEventsSubscriptionBroker struct {
+	*channelBroker.ChannelBrokerHandler
+	closed    chan struct{}
+	closeOnce sync.Once
+}
+
+func (b *lateEventsSubscriptionBroker) SubscribeWithChannel(subject, queue string, ch chan *meshkitBroker.Message) error {
+	if subject == meshsyncEventsSubject {
+		// A Run that waits for this subscription never closes the broker
+		// first, so it proceeds on the timeout.
+		select {
+		case <-b.closed:
+		case <-time.After(100 * time.Millisecond):
+		}
+	}
+	return b.ChannelBrokerHandler.SubscribeWithChannel(subject, queue, ch)
+}
+
+func (b *lateEventsSubscriptionBroker) Publish(_ string, _ *meshkitBroker.Message) error {
+	return fmt.Errorf("nats: connection closed")
+}
+
+func (b *lateEventsSubscriptionBroker) CloseConnection() {
+	b.ChannelBrokerHandler.CloseConnection()
+	b.closeOnce.Do(func() { close(b.closed) })
+}
+
+// TestMeshsyncDataHandlerRunFailureLeavesNoSubscriptionBehind: when the store
+// request fails, the broker is closed only after the events subscription is
+// set up, so the channel broker is left with no subscription - and no
+// delivery goroutine - that nothing will ever close.
+func TestMeshsyncDataHandlerRunFailureLeavesNoSubscriptionBehind(t *testing.T) {
+	broker := &lateEventsSubscriptionBroker{
+		ChannelBrokerHandler: channelBroker.NewChannelBrokerHandler(),
+		closed:               make(chan struct{}),
+	}
+	// Ends any delivery goroutine a regression leaves behind.
+	t.Cleanup(broker.ChannelBrokerHandler.CloseConnection)
+	handler := newTestMeshsyncHandler(t, broker, nil)
+	t.Cleanup(handler.Stop)
+
+	if err := handler.Run(); err == nil {
+		t.Fatal("expected Run to fail")
+	}
+	assert.True(t, broker.IsEmpty(), "subscriptions left on the closed broker: %v", broker.ConnectedEndpoints())
+}
+
 func TestMeshsyncDataHandlerRepeatedRunFailuresDoNotAccumulate(t *testing.T) {
 	for i := 0; i < 5; i++ {
 		broker := newFailingStoreRequestBroker()
 		handler := newTestMeshsyncHandler(t, broker, nil)
+		t.Cleanup(handler.Stop)
 
 		if err := handler.Run(); err == nil {
 			t.Fatalf("attempt %d: expected Run to fail", i)
@@ -525,18 +652,46 @@ func TestMeshsyncDataHandlerRepeatedRunFailuresDoNotAccumulate(t *testing.T) {
 	}
 }
 
+// assertMeshsyncListenersConsume delivers an error event on each MeshSync
+// subject and waits for both listeners to log it.
+func assertMeshsyncListenersConsume(t *testing.T, handler *MeshsyncDataHandler, log *fakeMeshsyncLogger) {
+	t.Helper()
+	handler.eventsChan <- &meshkitBroker.Message{EventType: meshkitBroker.ErrorEvent, Object: fmt.Errorf("events probe")}
+	handler.storeChan <- &meshkitBroker.Message{EventType: meshkitBroker.ErrorEvent, Object: fmt.Errorf("store probe")}
+
+	deadline := time.Now().Add(2 * time.Second)
+	for {
+		codes := map[string]bool{}
+		for _, err := range log.getLogged() {
+			if mkErr, ok := err.(*meshkitErrors.Error); ok {
+				codes[mkErr.Code] = true
+			}
+		}
+		if codes[ErrMeshsyncEventCode] && codes[ErrMeshsyncStoreUpdatesCode] {
+			return
+		}
+		if time.Now().After(deadline) {
+			t.Fatalf("expected both listeners to consume a message, logged codes: %v", codes)
+		}
+		time.Sleep(time.Millisecond)
+	}
+}
+
 func TestMeshsyncDataHandlerRunFailureLeavesOtherHandlersRunning(t *testing.T) {
 	var siblingStopCalls int
 	siblingBroker := &testMeshsyncBroker{}
 	sibling := newTestMeshsyncHandler(t, siblingBroker, func() {
 		siblingStopCalls++
 	})
+	siblingLog := &fakeMeshsyncLogger{}
+	sibling.log = siblingLog
 	if err := sibling.Run(); err != nil {
 		t.Fatalf("Run() returned error: %v", err)
 	}
 	defer sibling.Stop()
 
 	failing := newTestMeshsyncHandler(t, newFailingStoreRequestBroker(), nil)
+	t.Cleanup(failing.Stop)
 	if err := failing.Run(); err == nil {
 		t.Fatal("expected Run to fail")
 	}
@@ -545,6 +700,7 @@ func TestMeshsyncDataHandlerRunFailureLeavesOtherHandlersRunning(t *testing.T) {
 	assert.False(t, siblingBroker.isClosed(), "expected sibling broker to stay open")
 	assert.False(t, isStopChClosed(sibling), "expected sibling listeners to keep running")
 	assert.Equal(t, 0, siblingStopCalls)
+	assertMeshsyncListenersConsume(t, sibling, siblingLog)
 }
 
 func TestMeshsyncDataHandlerRunSuccessKeepsListenersRunning(t *testing.T) {
@@ -553,6 +709,8 @@ func TestMeshsyncDataHandlerRunSuccessKeepsListenersRunning(t *testing.T) {
 	handler := newTestMeshsyncHandler(t, broker, func() {
 		stopCalls++
 	})
+	log := &fakeMeshsyncLogger{}
+	handler.log = log
 
 	if err := handler.Run(); err != nil {
 		t.Fatalf("Run() returned error: %v", err)
@@ -562,6 +720,7 @@ func TestMeshsyncDataHandlerRunSuccessKeepsListenersRunning(t *testing.T) {
 	assert.False(t, broker.isClosed(), "expected broker connection to stay open")
 	assert.False(t, isStopChClosed(handler), "expected listeners to keep running")
 	assert.Equal(t, 0, stopCalls)
+	assertMeshsyncListenersConsume(t, handler, log)
 }
 
 // TestMeshsyncDataHandlerPauseAndResumeSubscriptions: pausing unsubscribes both
