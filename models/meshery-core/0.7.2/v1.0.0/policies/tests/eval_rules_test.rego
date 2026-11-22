@@ -250,6 +250,54 @@ test_identify_mutator_matches_selector_without_model if {
 	count(result) == 2
 }
 
+test_identify_mutator_matches_empty_selector_model if {
+	relationship := json.patch(edge_non_binding_mutator_relationship, [
+		{"op": "replace", "path": "/selectors/0/allow/from/0/model/name", "value": ""},
+		{"op": "replace", "path": "/selectors/0/allow/to/0/model/name", "value": ""},
+	])
+	design_file := {"components": [
+		{
+			"id": "pod-1",
+			"component": {"kind": "Pod"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+		{
+			"id": "pod-2",
+			"component": {"kind": "Pod"},
+			"model": {"name": "istio"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+	]}
+
+	result := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship, design_file)
+	count(result) == 2
+}
+
+test_identify_mutator_matches_regex_selector_model if {
+	relationship := json.patch(edge_non_binding_mutator_relationship, [
+		{"op": "replace", "path": "/selectors/0/allow/from/0/model/name", "value": "^kuber.*$"},
+		{"op": "replace", "path": "/selectors/0/allow/to/0/model/name", "value": "^kuber.*$"},
+	])
+	design_file := {"components": [
+		{
+			"id": "pod-1",
+			"component": {"kind": "Pod"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+		{
+			"id": "pod-2",
+			"component": {"kind": "Pod"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+	]}
+
+	result := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship, design_file)
+	count(result) == 2
+}
+
 test_identify_mutator_matches_heterogeneous_models if {
 	relationship := json.patch(edge_non_binding_mutator_relationship, [
 		{"op": "replace", "path": "/selectors/0/allow/to/0/model/name", "value": "istio"},
