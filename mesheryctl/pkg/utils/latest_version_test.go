@@ -1,10 +1,14 @@
 package utils
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/meshery/meshkit/logger"
+	"github.com/sirupsen/logrus"
 )
 
 func TestGetLatestVersionForMesheryctl(t *testing.T) {
@@ -70,9 +74,19 @@ func TestGetLatestVersionForMesheryctl(t *testing.T) {
 }
 
 func TestCheckMesheryctlClientVersion(t *testing.T) {
+	var logOutput bytes.Buffer
+	testLogger, err := logger.New("mesheryctl", logger.Options{
+		Format:   logger.TerminalLogFormat,
+		LogLevel: int(logrus.InfoLevel),
+		Output:   &logOutput,
+	})
+	if err != nil {
+		t.Fatalf("failed to create test logger: %v", err)
+	}
+
 	prevLog := Log
+	Log = testLogger
 	t.Cleanup(func() { Log = prevLog })
-	logOutput := SetupMeshkitLoggerTesting(t, false)
 
 	t.Run("outdated version logs notification", func(t *testing.T) {
 		logOutput.Reset()
