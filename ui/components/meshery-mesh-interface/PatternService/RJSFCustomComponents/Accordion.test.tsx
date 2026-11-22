@@ -10,7 +10,11 @@ vi.mock('@sistent/sistent', () => ({
   ),
   Accordion: ({ children }: any) => <div data-testid="accordion">{children}</div>,
   AccordionSummary: ({ children }: any) => <div data-testid="summary">{children}</div>,
-  AccordionDetails: ({ children }: any) => <div data-testid="details">{children}</div>,
+  AccordionDetails: React.forwardRef(({ children }: any, ref: any) => (
+    <div data-testid="details" ref={ref}>
+      {children}
+    </div>
+  )),
   Typography: ({ children }: any) => <span>{children}</span>,
   Box: ({ children }: any) => <div>{children}</div>,
   useTheme: () => ({
@@ -27,6 +31,19 @@ vi.mock('../helper', () => ({
 }));
 
 import SimpleAccordion from './Accordion';
+
+// jsdom does not implement Element.prototype.scrollIntoView, so stub it with
+// a spy: in a browser the accordion's mount effect calls the real method and
+// scrolls the page; here the spy records the same calls instead of throwing.
+const scrollIntoView = vi.fn();
+
+beforeEach(() => {
+  Element.prototype.scrollIntoView = scrollIntoView;
+});
+
+afterEach(() => {
+  scrollIntoView.mockClear();
+});
 
 describe('SimpleAccordion', () => {
   it('capitalizes the heading and renders children content', () => {
@@ -63,5 +80,24 @@ describe('SimpleAccordion', () => {
     );
     // No throw, just empty heading
     expect(screen.getByTestId('accordion')).toBeInTheDocument();
+  });
+});
+
+describe('SimpleAccordion scroll behaviour', () => {
+  it('does not scroll the page when accordions mount', () => {
+    // Every array item in an RJSF design form is wrapped in a SimpleAccordion,
+    // so a mount-time scrollIntoView scrolls the page once per array item
+    // with no user interaction (meshery/meshery#23731).
+    render(
+      <>
+        <SimpleAccordion heading="first" childProps={{ hasRemove: false }}>
+          <div>one</div>
+        </SimpleAccordion>
+        <SimpleAccordion heading="second" childProps={{ hasRemove: false }}>
+          <div>two</div>
+        </SimpleAccordion>
+      </>,
+    );
+    expect(scrollIntoView).not.toHaveBeenCalled();
   });
 });

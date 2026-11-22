@@ -423,7 +423,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Failed to unmarshal configuration file",
-        "probable_cause": "Unable to covert JSON format from yml file",
+        "probable_cause": "Unable to convert JSON format from yml file",
         "suggested_remediation": "Ensure a valid data is provided in your yml file"
       },
       "1050": {
@@ -657,7 +657,7 @@
         "severity": "Fatal",
         "long_description": "Failed to start port-forwarding",
         "short_description": "Failed to get a free port",
-        "probable_cause": "Unable to provide a free port to connect to a kuberentes cluster",
+        "probable_cause": "Unable to provide a free port to connect to a kubernetes cluster",
         "suggested_remediation": "Ensure your Meshery Server is running,\nEnsure mesheryctl is connected to kubernetes cluster with `mesheryctl system check`"
       },
       "1078": {
@@ -701,7 +701,7 @@
         "code": "1082",
         "severity": "Alert",
         "long_description": "Channel switch aborted",
-        "short_description": "Unable to exectute command",
+        "short_description": "Unable to execute command",
         "probable_cause": "No user response provided",
         "suggested_remediation": ""
       },
@@ -2180,6 +2180,51 @@
         "short_description": "ID lookup hit page limit",
         "probable_cause": "The server did not report a total count and every page was full, so mesheryctl stopped at the page limit without confirming the list is complete.",
         "suggested_remediation": "Provide the full ID instead of a short prefix, or retry the command."
+      },
+      "1263": {
+        "name": "ErrRedirectChangesMethodCode",
+        "code": "1263",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Redirect would change the request method",
+        "probable_cause": "The current context's endpoint is not the address Meshery Server answers on directly (for example an http:// endpoint behind a proxy that redirects to https), or the request path is not in the form the server routes (for example it contains a doubled slash)",
+        "suggested_remediation": "Set the current context's endpoint to the Meshery server base URL (scheme, host, and port), not the redirected resource path; check it with `mesheryctl system context view`"
+      },
+      "1264": {
+        "name": "ErrUninstallMesheryCode",
+        "code": "1264",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error uninstalling Meshery",
+        "probable_cause": "Meshery may be partially removed from the cluster: some Meshery resources are still present",
+        "suggested_remediation": ""
+      },
+      "1265": {
+        "name": "ErrProfileTraversalCode",
+        "code": "1265",
+        "severity": "Alert",
+        "long_description": "The matching performance profile pages changed or were inconsistent during lookup",
+        "short_description": "Unable to complete performance profile lookup",
+        "probable_cause": "Profiles were added, deleted, or reordered during lookup, or the provider returned inconsistent pagination data",
+        "suggested_remediation": "Rerun the command to refresh the matching profile list"
+      },
+      "1266": {
+        "name": "ErrAcquireTokenFileLockCode",
+        "code": "1266",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to acquire token file lock",
+        "probable_cause": "Another process may be holding the token file lock longer than expected\nThe named mutex may be inaccessible",
+        "suggested_remediation": "Retry the operation\nRun `mesheryctl system login` to re-authenticate"
+      },
+      "1267": {
+        "name": "ErrReplaceTokenFileCode",
+        "code": "1267",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to replace token file",
+        "probable_cause": "The destination path may be locked by another process\nThe filesystem may not support atomic rename",
+        "suggested_remediation": "Retry the operation\nRun `mesheryctl system login` to re-authenticate"
       }
     }
   }

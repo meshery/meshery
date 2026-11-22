@@ -144,7 +144,7 @@ func (l *DefaultLocalProvider) InstallExtension(extType string, packageUrl strin
 		}
 
 		l.mu.Lock()
-		l.Extensions.Acccount = upsertAccountExtension(l.Extensions.Acccount, parsed)
+		l.Extensions.Account = upsertAccountExtension(l.Extensions.Account, parsed)
 		l.mu.Unlock()
 
 	default:
@@ -213,9 +213,9 @@ func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
 		}
 		l.Extensions.Navigator = filtered
 	case "account":
-		filtered := make(AccountExtensions, 0, len(l.Extensions.Acccount))
+		filtered := make(AccountExtensions, 0, len(l.Extensions.Account))
 		removed := false
-		for _, extension := range l.Extensions.Acccount {
+		for _, extension := range l.Extensions.Account {
 			if strings.EqualFold(strings.TrimSpace(extension.Title), title) {
 				removed = true
 				continue
@@ -225,7 +225,7 @@ func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
 		if !removed {
 			return fmt.Errorf("RemoveExtension: account extension %q not found", title)
 		}
-		l.Extensions.Acccount = filtered
+		l.Extensions.Account = filtered
 	default:
 		return fmt.Errorf("RemoveExtension: unsupported extension type %q (supported types: navigator, account)", extType)
 	}
@@ -424,6 +424,7 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 		Name:           environmentPayload.Name,
 		OrganizationID: orgId,
 		Owner:          &uuid.Nil, // "Meshery"
+		Purpose:        environment.EnvironmentPurposeUser,
 		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.SaveEnvironment(environment)
@@ -434,17 +435,22 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 	if err != nil {
 		return nil, ErrInvalidUUID(err)
 	}
+	existingEnv, err := l.EnvironmentPersister.GetEnvironment(core.Uuid(id))
+	if err != nil {
+		return nil, err
+	}
 	orgId := core.Uuid(environmentPayload.OrgID)
-	environment := &environment.Environment{
+	env := &environment.Environment{
 		ID:             id,
-		CreatedAt:      time.Now(),
+		CreatedAt:      existingEnv.CreatedAt,
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
 		OrganizationID: orgId,
-		Owner:          &uuid.Nil, // "Meshery"
+		Owner:          existingEnv.Owner,
+		Purpose:        existingEnv.Purpose,
 		UpdatedAt:      time.Now(),
 	}
-	return l.EnvironmentPersister.UpdateEnvironmentByID(environment)
+	return l.EnvironmentPersister.UpdateEnvironmentByID(env)
 }
 
 func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
@@ -595,7 +601,7 @@ func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order s
 		return nil, ErrPageSize(err)
 	}
 
-	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
+	return l.MesheryK8sContextPersister.GetMesheryK8sContextsWithStatus(search, order, pg, pgs, withStatus)
 }
 
 // GetK8sContext returns the Kubernetes context associated with the given ID or ConnectionID.
@@ -1784,11 +1790,21 @@ func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential 
 	return updatedCredential, nil
 }
 
-func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialID core.Uuid) (*Credential, error) {
+func (l *DefaultLocalProvider) DeleteUserCredential(req *http.Request, credentialID core.Uuid) (*Credential, error) {
+	// Fail-closed: require an authenticated user in the request context. An unscoped delete is never permitted.
+	if req == nil {
+		return nil, ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
+	}
+	user, ok := req.Context().Value(UserCtxKey).(*User)
+	if !ok || user == nil || user.ID == uuid.Nil {
+		return nil, ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
+	}
+
 	delCredential := &Credential{}
-	// Only a live credential can be deleted. Matching deleted rows too would
-	// report success for an id that is already gone and move its deleted_at.
-	result := l.GetGenericPersister().Model(&Credential{}).Where("id = ? AND deleted_at is NULL", credentialID).Update("deleted_at", time.Now())
+	// Only a live credential matching both credentialID and the caller's user_id can be deleted.
+	result := l.GetGenericPersister().Model(&Credential{}).
+		Where("id = ? AND user_id = ? AND deleted_at is NULL", credentialID, user.ID).
+		Update("deleted_at", time.Now())
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -1815,12 +1831,18 @@ func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order
 		return nil, ErrPageNumber(err)
 	}
 
-	pgs, err := strconv.ParseUint(pageSize, 10, 32)
-	if err != nil {
-		return nil, ErrPageSize(err)
+	// "all" lists every organization unpaginated, as the workspace and
+	// environment listings already do. mesheryctl organization --count sends it.
+	all := pageSize == "all"
+	var pgs uint64
+	if !all {
+		pgs, err = strconv.ParseUint(pageSize, 10, 32)
+		if err != nil {
+			return nil, ErrPageSize(err)
+		}
 	}
 
-	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, updatedAfter)
+	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, all, updatedAfter)
 }
 
 // GetUsersKeys returns the list of keys
@@ -2035,6 +2057,8 @@ func githubRepoPatternScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
+		Timeout(remoteFileFetchTimeout).
+		MaxFileSize(maxRemoteFileSize).
 		RegisterFileInterceptor(func(f walker.File) error {
 			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
@@ -2079,6 +2103,8 @@ func githubRepoFilterScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
+		Timeout(remoteFileFetchTimeout).
+		MaxFileSize(maxRemoteFileSize).
 		RegisterFileInterceptor(func(f walker.File) error {
 			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
@@ -2110,18 +2136,8 @@ func githubRepoFilterScan(
 	return result, err
 }
 
-func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPattern, error) {
-	resp, err := http.Get(fileURL)
-	if err != nil {
-		return nil, err
-	}
-	defer SafeClose(resp.Body, log)
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("file not found")
-	}
-
-	body, err := io.ReadAll(resp.Body)
+func genericHTTPPatternFile(fileURL string, _ logger.Handler) ([]MesheryPattern, error) {
+	body, err := fetchRemoteFile(fileURL)
 	if err != nil {
 		return nil, err
 	}
@@ -2147,31 +2163,20 @@ func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPatter
 	return []MesheryPattern{pf}, nil
 }
 
-func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter, error) {
-	resp, err := http.Get(fileURL)
+func genericHTTPFilterFile(fileURL string, _ logger.Handler) ([]MesheryFilter, error) {
+	body, err := fetchRemoteFile(fileURL)
 	if err != nil {
 		return nil, err
 	}
-	defer SafeClose(resp.Body, log)
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("file not found")
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	result := string(body)
-
-	name, err := GetFilterName(result)
+	name, err := filterNameForURLImport(fileURL, body)
 	if err != nil {
 		return nil, err
 	}
 
 	ff := MesheryFilter{
 		Name:       name,
-		FilterFile: []byte(result),
+		FilterFile: body,
 		Location: map[string]interface{}{
 			"type":   "http",
 			"host":   fileURL,

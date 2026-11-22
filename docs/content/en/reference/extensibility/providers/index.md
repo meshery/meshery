@@ -324,7 +324,7 @@ Interwoven into Meshery’s web-based user interface are a variety of extension 
 |**Name**   |**Type**   | **Description**  |
 |---|---|---|
 |navigator |Menu Items   |This is supposed to be a full page extension which will get a dedicated endpoint in the meshery UI. And will be listed in the meshery UI’s navigator/sidebar. Menu items may refer to full page extensions.   |
-|user_prefs   |Single Component   |This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. As of now, the only place where this extension can be loaded is the “User Preference” section under meshery settings.   |
+|userPrefs   |Single Component   |This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. As of now, the only place where this extension can be loaded is the “User Preference” section under meshery settings.   |
 |account   |Full Page   |Remote Reactjs components (or other) are placed in a pre-existing page and will have dedicated endpoint: `/extension/account`.   |
 |collaborator |Single Component|This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Mehery UI. Its work is to show active Meshery users under the same remote provider.|
   |/extension/\<your name here>|Full Page|The Provider package is unzipped into Meshery server filesystem under `~/.meshery/provider/<provider-name>/<package-version>`.|
@@ -549,7 +549,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
 #### Meshery Server Registration
 
 Every Meshery server is capable of registering itself with the remote provider, considering that remote provider supports this feature as a capability.
-On successful authentication with the remote provider, Meshery server registers itself by sending a POST request to the remote provider through the `persist-connection` capability. The body of the request should include information so as to uniquely indentify Meshery server and its status.
+On successful authentication with the remote provider, Meshery server registers itself by sending a POST request to the remote provider through the `persist-connection` capability. The body of the request should include information so as to uniquely identify Meshery server and its status.
 
 Example of the request body. The `id` is the zero UUID serialized for the unset connection ID; the Meshery server ID is in `metadata.serverId`:
 

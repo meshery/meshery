@@ -3,6 +3,9 @@ package models
 import (
 	"strings"
 
+	"errors"
+	"gorm.io/gorm"
+
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/core"
@@ -20,6 +23,12 @@ type PatternResourcePage struct {
 }
 
 func (prp *PatternResourcePersister) SavePatternResource(pr *PatternResource) (*PatternResource, error) {
+	if prp == nil || prp.DB == nil || prp.DB.DB == nil {
+		return nil, ErrDBConnection
+	}
+	if pr == nil {
+		return nil, ErrNilConfigData
+	}
 	if pr.ID == nil {
 		id, err := uuid.NewV4()
 		if err != nil {
@@ -33,31 +42,53 @@ func (prp *PatternResourcePersister) SavePatternResource(pr *PatternResource) (*
 }
 
 func (prp *PatternResourcePersister) DeletePatternResource(id core.Uuid) error {
-	return prp.DB.Model(&PatternResource{}).Where("id = ?", id).Update("deleted", true).Error
+	if prp == nil || prp.DB == nil || prp.DB.DB == nil {
+		return ErrDBConnection
+	}
+	result := prp.DB.Model(&PatternResource{}).Where("id = ? AND deleted = false", id).Update("deleted", true)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return ErrResultNotFound(gorm.ErrRecordNotFound)
+	}
+	return nil
 }
 
 func (prp *PatternResourcePersister) GetPatternResource(id core.Uuid) (*PatternResource, error) {
+	if prp == nil || prp.DB == nil || prp.DB.DB == nil {
+		return nil, ErrDBConnection
+	}
 	var pr PatternResource
-
-	err := prp.DB.First(&pr, id).Error
-	return &pr, err
+	err := prp.DB.Where("deleted = false").First(&pr, "id = ?", id).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, ErrResultNotFound(err)
+	}
+	if err != nil {
+		return nil, ErrDBRead(err)
+	}
+	return &pr, nil
 }
 
 func (prp *PatternResourcePersister) GetPatternResourceByAttributes(name, namespace, typ, oamType string) (*PatternResource, error) {
+	if prp == nil || prp.DB == nil || prp.DB.DB == nil {
+		return nil, ErrDBConnection
+	}
 	var pr PatternResource
-
-	err := Paginate(0, 1)(prp.DB.Model(&PatternResource{}).Where(
-		"name = ? AND namespace = ? AND type = ? AND oam_type = ? AND deleted = false",
-		name,
-		namespace,
-		typ,
-		oamType,
-	)).Scan(&pr).Error
-
-	return &pr, err
+	err := prp.DB.Where("name = ? AND namespace = ? AND type = ? AND oam_type = ? AND deleted = false", name, namespace, typ, oamType).First(&pr).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, ErrResultNotFound(err)
+	}
+	if err != nil {
+		return nil, ErrDBRead(err)
+	}
+	return &pr, nil
 }
 
 func (prp *PatternResourcePersister) GetPatternResources(search, order, name, namespace, typ, oamType string, page, pageSize uint64) (*PatternResourcePage, error) {
+	if prp == nil || prp.DB == nil || prp.DB.DB == nil {
+		return nil, ErrDBConnection
+	}
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
@@ -86,9 +117,13 @@ func (prp *PatternResourcePersister) GetPatternResources(search, order, name, na
 		query = query.Where("oam_type = ?", oamType)
 	}
 
-	query.Model(&PatternResource{}).Count(&count)
+	if err := query.Model(&PatternResource{}).Count(&count).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
 
-	Paginate(uint(page), uint(pageSize))(query).Find(&resources)
+	if err := Paginate(uint(page), uint(pageSize))(query).Find(&resources).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
 
 	patternResourcePage := &PatternResourcePage{
 		Page:       page,
@@ -101,6 +136,9 @@ func (prp *PatternResourcePersister) GetPatternResources(search, order, name, na
 }
 
 func (prp *PatternResourcePersister) Exists(name, namespace, typ, oamType string) bool {
+	if prp == nil || prp.DB == nil || prp.DB.DB == nil {
+		return false
+	}
 	var result struct {
 		Found bool
 	}

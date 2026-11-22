@@ -44,9 +44,9 @@ type MeshsyncDataHandler struct {
 	// eventsChan and storeChan carry the broker's MeshSync messages to the
 	// listener goroutines. Kept on the handler so PauseSubscriptions and
 	// ResumeSubscriptions can unsubscribe and re-subscribe the same channels.
-	// Each is written once by its listener goroutine before its first
-	// subscribe, so a pause - which runs through the broker's own locking -
-	// only ever reads a channel that is already stored.
+	// Each is written once by its listener goroutine, and Run waits for both
+	// listeners to subscribe before it returns, so a pause or resume - which
+	// only runs after Run - always sees the stored channel.
 	eventsChan chan *broker.Message
 	storeChan  chan *broker.Message
 	// paused reports whether the MeshSync subscriptions are paused: the
@@ -92,15 +92,21 @@ func (mh *MeshsyncDataHandler) IsConnected() bool {
 
 func (mh *MeshsyncDataHandler) Run() error {
 	storeSubscriptionStatusChan := make(chan bool)
+	eventsSubscribed := make(chan struct{})
 	if mh.listenerWg == nil {
 		mh.listenerWg = &sync.WaitGroup{}
 	}
 	// this subscription is independent of whether or not the stale data in the database have been cleaned up
 	mh.listenerWg.Add(1)
-	go mh.subscribeToMeshsyncEvents()
+	go mh.subscribeToMeshsyncEvents(eventsSubscribed)
 
 	mh.listenerWg.Add(1)
 	go mh.subsribeToStoreUpdates(storeSubscriptionStatusChan)
+	// Do not return before the events listener has subscribed: the supervisor
+	// may pause this handler right after it attaches, and an events
+	// subscription that lands after that pause keeps the paused handler
+	// receiving, and the resume then subscribes it a second time.
+	<-eventsSubscribed
 	// to make sure that we don't ask for data before we start listening
 	if <-storeSubscriptionStatusChan {
 		// err := mh.removeStaleObjects()
@@ -116,18 +122,24 @@ func (mh *MeshsyncDataHandler) Run() error {
 	return nil
 }
 
-func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents() {
+// subscribeToMeshsyncEvents closes subscribed once its subscribe attempt is
+// over, whether or not it succeeded, so Run can wait for it.
+func (mh *MeshsyncDataHandler) subscribeToMeshsyncEvents(subscribed chan<- struct{}) {
 	defer mh.listenerWg.Done()
 
-	// The channel lives on the handler so ResumeSubscriptions can
-	// re-subscribe it after a pause.
 	eventsChan := make(chan *broker.Message, 1)
-	mh.eventsChan = eventsChan
 	err := mh.ListenToMeshSyncEvents(eventsChan)
 	if err != nil {
+		close(subscribed)
 		mh.log.Error(ErrBrokerSubscription(err))
 		return
 	}
+	// The channel lives on the handler so ResumeSubscriptions can
+	// re-subscribe it after a pause. Store it only once subscribed: a failed
+	// subscription has no listener, and resuming it would point the broker at
+	// a channel nobody reads.
+	mh.eventsChan = eventsChan
+	close(subscribed)
 	mh.log.Info("subscribed to meshery broker for meshsync events")
 
 	for {
@@ -168,10 +180,7 @@ func (mh *MeshsyncDataHandler) ListenToMeshSyncEvents(out chan *broker.Message) 
 func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 	defer mh.listenerWg.Done()
 
-	// The channel lives on the handler so ResumeSubscriptions can
-	// re-subscribe it after a pause.
 	storeChan := make(chan *broker.Message, 1)
-	mh.storeChan = storeChan
 	mh.log.Info("subscribing to store updates from meshsync on NATS subject: ", MeshsyncStoreUpdatesSubject)
 	err := mh.broker.SubscribeWithChannel(MeshsyncStoreUpdatesSubject, "", storeChan)
 	if err != nil {
@@ -179,6 +188,10 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 		statusChan <- false
 		return
 	}
+	// The channel lives on the handler so ResumeSubscriptions can
+	// re-subscribe it after a pause. Store it only once subscribed, as for
+	// the events channel.
+	mh.storeChan = storeChan
 
 	statusChan <- true
 
@@ -262,18 +275,16 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 		go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: obj})
 		// Try to update object if Create fails. If MeshSync is restarted, on initial sync the discovered data will have eventType as ADD, but the database would already have the data, leading to conflicts hence try to update the object in such cases.
 		if result.Error != nil {
-			result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
-			if result.Error != nil {
-				return ErrDBPut(result.Error)
+			if err := mh.replaceMeshsyncResource(&obj); err != nil {
+				return ErrDBPut(err)
 			}
 		}
 	case broker.Update:
 		compMetadata, model := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
 		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
 		obj.Model = model
-		result := mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
-		if result.Error != nil {
-			return ErrDBPut(result.Error)
+		if err := mh.replaceMeshsyncResource(&obj); err != nil {
+			return ErrDBPut(err)
 		}
 		return nil
 	case broker.Delete:
@@ -300,9 +311,8 @@ func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Kubernet
 	go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: *object})
 
 	if result.Error != nil {
-		result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(object)
-		if result.Error != nil {
-			return ErrDBPut(result.Error)
+		if err := mh.replaceMeshsyncResource(object); err != nil {
+			return ErrDBPut(err)
 		}
 		mh.log.Info("Updated object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " in the database")
 		return nil
@@ -310,6 +320,21 @@ func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Kubernet
 	mh.log.Info("Added object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " to the database")
 
 	return nil
+}
+
+// replaceMeshsyncResource replaces the metadata rows and resource atomically. GORM's
+// association updates insert new key/value rows but do not remove old values.
+func (mh *MeshsyncDataHandler) replaceMeshsyncResource(obj *meshsyncmodel.KubernetesResource) error {
+	meshsyncmodel.SetID(obj)
+	if obj.ID == "" || obj.KubernetesResourceMeta == nil {
+		return fmt.Errorf("cannot update MeshSync resource without an identity and metadata")
+	}
+	return mh.dbHandler.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("id = ?", obj.ID).Delete(&meshsyncmodel.KubernetesKeyValue{}).Error; err != nil {
+			return err
+		}
+		return tx.Session(&gorm.Session{FullSaveAssociations: true}).Updates(obj).Error
+	})
 }
 
 func RemoveStaleObjects(dbHandler database.Handler) error {
@@ -355,10 +380,14 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 }
 
 // Returns metadata for the component identified by apiVersion and kind.
+// The returned definition omits the component schema.
 // If the component does not exist in the registry, default metadata for k8s component is returned.
 func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) (data map[string]interface{}, model string) {
-	componentDef := component.ComponentDefinition{} // Retrieve the entire component
+	componentDef := component.ComponentDefinition{} // Retrieve the component definition
 	defer func() {
+		// The schema is most of a definition's size and no reader of MeshSync
+		// rows uses it, so it stays in the registry only (meshery#14401).
+		componentDef.Component.Schema = ""
 		data, _ = utils.MarshalAndUnmarshal[component.ComponentDefinition, map[string]interface{}](componentDef)
 		if componentDef.Model != nil {
 			model = componentDef.Model.Name

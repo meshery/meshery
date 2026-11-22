@@ -3,12 +3,13 @@ package policies
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
+	"strings"
 
 	patching "github.com/meshery/meshkit/utils/patching"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
+	"github.com/tidwall/sjson"
 )
 
 // Action operation constants.
@@ -314,23 +315,23 @@ func applyComponentConfigPatches(design *pattern.PatternFile, actions []PolicyAc
 			}
 		}
 
-		var configRemoves, envelopeRemoves [][]string
+		var configRemoves, envelopeRemoves []PolicyAction
 		for _, rm := range removes {
 			if rm.ID != comp.ID.String() {
 				continue
 			}
 			if isConfigurationPath(rm.UpdatePath) {
-				configRemoves = append(configRemoves, rm.UpdatePath[1:])
+				configRemoves = append(configRemoves, rm)
 				continue
 			}
-			envelopeRemoves = append(envelopeRemoves, rm.UpdatePath)
+			envelopeRemoves = append(envelopeRemoves, rm)
 		}
 		if len(configRemoves) > 0 {
-			comp.Configuration = applyRemovesToMap(comp.Configuration, configRemoves)
+			comp.Configuration = applyConfigRemoves(comp.Configuration, orderCleanupActions(configRemoves))
 		}
 
 		if len(envelopePatches) > 0 || len(envelopeRemoves) > 0 {
-			if err := patchComponentEnvelope(comp, envelopePatches, envelopeRemoves); err != nil {
+			if err := patchComponentEnvelope(comp, envelopePatches, orderCleanupActions(envelopeRemoves)); err != nil {
 				errs = append(errs, fmt.Errorf("patching envelope of component %s: %w", comp.ID, err))
 			}
 		}
@@ -343,7 +344,7 @@ func applyComponentConfigPatches(design *pattern.PatternFile, actions []PolicyAc
 // configurationForComponentAtPath reads through, then folds the result back onto
 // the component. Mirrors the Rego engine, which applies update_component by
 // json.patch-ing the component object at the raw reference path.
-func patchComponentEnvelope(comp *component.ComponentDefinition, patches []patching.Patch, removes [][]string) error {
+func patchComponentEnvelope(comp *component.ComponentDefinition, patches []patching.Patch, removes []PolicyAction) error {
 	envelope, err := toGenericMap(comp)
 	if err != nil {
 		return fmt.Errorf("projecting component to JSON: %w", err)
@@ -355,7 +356,11 @@ func patchComponentEnvelope(comp *component.ComponentDefinition, patches []patch
 		}
 	}
 	if len(removes) > 0 {
-		envelope = applyRemovesToMap(envelope, removes)
+		// Envelope paths carry no "configuration" prefix, so applyConfigRemoves
+		// addresses them against the envelope as-is, with the same per-segment
+		// escaping the configuration side uses: a dotted key such as the label
+		// "kubernetes.io/service-name" stays one segment.
+		envelope = applyConfigRemoves(envelope, removes)
 	}
 
 	raw, err := json.Marshal(envelope)
@@ -378,44 +383,78 @@ func patchComponentEnvelope(comp *component.ComponentDefinition, patches []patch
 	return nil
 }
 
-// applyRemovesToMap removes each path from a generic object decoded from JSON.
-// Paths are relative to the object passed in, so callers strip any leading
-// "configuration" segment before calling.
-func applyRemovesToMap(obj map[string]interface{}, removes [][]string) map[string]interface{} {
-	for _, path := range removes {
-		deleteAtPath(obj, path)
+// sjsonPathSpecials are the characters gjson/sjson path syntax assigns meaning
+// to inside a key. Escaping them makes a path segment address a literal key.
+// The colon is included because sjson reads a leading ":" as force-object-key
+// syntax, so a literal key starting with ":" would otherwise be rewritten.
+//
+// This mirrors the escaping meshkit's patching package applies on the set side,
+// so a path means the same thing whether a relationship patch writes it or a
+// relationship delete removes it.
+const sjsonPathSpecials = `.*?|#@:`
+
+// sjsonPath joins a configuration path into an sjson path, escaping specials in
+// each segment so every segment addresses one literal key. Segments without
+// specials are emitted unchanged, so ordinary nested paths and numeric array
+// indices keep their existing meaning.
+func sjsonPath(path []string) string {
+	escaped := make([]string, len(path))
+	for i, segment := range path {
+		escaped[i] = escapeSjsonKey(segment)
 	}
-	return obj
+	return strings.Join(escaped, ".")
 }
 
-// deleteAtPath removes the value at a literal key path. Each segment addresses
-// one map key or one array index, so a key that itself contains dots - a
-// Kubernetes label such as "kubernetes.io/service-name", or any metadata
-// additional property - is treated as a single segment. Joining the path into
-// an sjson expression instead would split such a key into nested objects and
-// delete nothing, leaving the field a mutation created behind on cleanup.
-func deleteAtPath(root map[string]interface{}, path []string) {
-	if len(path) == 0 {
-		return
+// escapeSjsonKey backslash-escapes gjson/sjson path specials in a single key.
+// The escape character itself is escaped first so backslashes already present
+// in a key survive the round trip.
+func escapeSjsonKey(key string) string {
+	if !strings.ContainsAny(key, sjsonPathSpecials+`\`) {
+		return key
 	}
-	var parent interface{} = root
-	for _, segment := range path[:len(path)-1] {
-		switch node := parent.(type) {
-		case map[string]interface{}:
-			parent = node[segment]
-		case []interface{}:
-			index, err := strconv.Atoi(segment)
-			if err != nil || index < 0 || index >= len(node) {
-				return
-			}
-			parent = node[index]
-		default:
-			return
+	var b strings.Builder
+	b.Grow(len(key) + 4)
+	for _, r := range key {
+		if r == '\\' || strings.ContainsRune(sjsonPathSpecials, r) {
+			b.WriteByte('\\')
+		}
+		b.WriteRune(r)
+	}
+	return b.String()
+}
+
+// applyConfigRemoves removes fields from a component's configuration via sjson.Delete.
+// Duplicate removals targeting the same component ID and complete path are deduplicated
+// so that actions from multiple selectors do not shift and delete subsequent array elements.
+func applyConfigRemoves(config map[string]interface{}, removes []PolicyAction) map[string]interface{} {
+	data, err := json.Marshal(config)
+	if err != nil {
+		return config
+	}
+	jsonStr := string(data)
+	seen := make(map[string]bool)
+	for _, rm := range removes {
+		path := rm.UpdatePath
+		if len(path) > 0 && path[0] == "configuration" {
+			path = path[1:]
+		}
+		if len(path) == 0 {
+			continue
+		}
+		sjPath := sjsonPath(path)
+		dedupKey := rm.ID + ":" + sjPath
+		if seen[dedupKey] {
+			continue
+		}
+		seen[dedupKey] = true
+		jsonStr, err = sjson.Delete(jsonStr, sjPath)
+		if err != nil {
+			return config
 		}
 	}
-	// No mutatedRef in the shipped corpus ends in an array index, so only a
-	// map key is removable at the final segment.
-	if node, ok := parent.(map[string]interface{}); ok {
-		delete(node, path[len(path)-1])
+	var result map[string]interface{}
+	if err := json.Unmarshal([]byte(jsonStr), &result); err != nil {
+		return config
 	}
+	return result
 }

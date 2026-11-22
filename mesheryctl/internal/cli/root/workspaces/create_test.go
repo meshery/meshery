@@ -64,6 +64,17 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --name ''")),
 		},
 		{
+			Name:             "given blank flag name when workspace create then throw error",
+			Args:             []string{"create", "--orgId", testOrgId, "-n", "   ", "-d", workspaceDescription},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			Fixture:          "",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --name '   ': must not be blank")),
+		},
+		{
 			Name:             "given missing flag description when workspace create then workspace is created with empty description",
 			Args:             []string{"create", "--orgId", testOrgId, "-n", validWorkspaceName},
 			URL:              "/api/workspaces",

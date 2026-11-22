@@ -5,6 +5,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	"gorm.io/driver/sqlite"
@@ -101,5 +103,82 @@ func TestGetMesheryK8sContexts_PropagatesFindError(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "Unable to read data") {
 		t.Fatalf("expected a read error, got %v", err)
+	}
+}
+
+// TestGetMesheryK8sContextsWithStatus_FiltersByConnectionStatus verifies that
+// GetMesheryK8sContextsWithStatus filters contexts by their associated connection status.
+func TestGetMesheryK8sContextsWithStatus_FiltersByConnectionStatus(t *testing.T) {
+	persister := newK8sContextPersister(t, true)
+	if err := persister.DB.AutoMigrate(&connections.Connection{}); err != nil {
+		t.Fatalf("failed to migrate connections: %v", err)
+	}
+
+	conn1ID := "11111111-1111-1111-1111-111111111111"
+	conn2ID := "22222222-2222-2222-2222-222222222222"
+
+	c1 := connections.Connection{ID: uuid.FromStringOrNil(conn1ID), Status: connections.CONNECTED}
+	c2 := connections.Connection{ID: uuid.FromStringOrNil(conn2ID), Status: connections.DISCONNECTED}
+
+	if err := persister.DB.Create(&c1).Error; err != nil {
+		t.Fatalf("failed to seed connection 1: %v", err)
+	}
+	if err := persister.DB.Create(&c2).Error; err != nil {
+		t.Fatalf("failed to seed connection 2: %v", err)
+	}
+
+	ctx1 := K8sContext{ID: "ctx-1", Name: "cluster-connected", ConnectionID: conn1ID}
+	ctx2 := K8sContext{ID: "ctx-2", Name: "cluster-disconnected", ConnectionID: conn2ID}
+
+	if err := persister.DB.Create(&ctx1).Error; err != nil {
+		t.Fatalf("failed to seed context 1: %v", err)
+	}
+	if err := persister.DB.Create(&ctx2).Error; err != nil {
+		t.Fatalf("failed to seed context 2: %v", err)
+	}
+
+	// Status = CONNECTED
+	resp, err := persister.GetMesheryK8sContextsWithStatus("", "", 0, 10, string(connections.CONNECTED))
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	var page MesheryK8sContextPage
+	if err := json.Unmarshal(resp, &page); err != nil {
+		t.Fatalf("failed to decode page: %v", err)
+	}
+	if page.TotalCount != 1 || len(page.Contexts) != 1 {
+		t.Fatalf("expected 1 connected context, got total %d, contexts %d", page.TotalCount, len(page.Contexts))
+	}
+	if page.Contexts[0].ID != "ctx-1" {
+		t.Errorf("expected ctx-1, got %s", page.Contexts[0].ID)
+	}
+
+	// Status = "" (all)
+	respAll, err := persister.GetMesheryK8sContexts("", "", 0, 10)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	var pageAll MesheryK8sContextPage
+	if err := json.Unmarshal(respAll, &pageAll); err != nil {
+		t.Fatalf("failed to decode page: %v", err)
+	}
+	if pageAll.TotalCount != 2 {
+		t.Fatalf("expected 2 total contexts without status filter, got %d", pageAll.TotalCount)
+	}
+
+	// Status = CONNECTED + Search = "connected" + Order = "name asc"
+	respSearch, err := persister.GetMesheryK8sContextsWithStatus("connected", "name asc", 0, 10, string(connections.CONNECTED))
+	if err != nil {
+		t.Fatalf("expected no error for search with status and order, got %v", err)
+	}
+	var pageSearch MesheryK8sContextPage
+	if err := json.Unmarshal(respSearch, &pageSearch); err != nil {
+		t.Fatalf("failed to decode page: %v", err)
+	}
+	if pageSearch.TotalCount != 1 || len(pageSearch.Contexts) != 1 {
+		t.Fatalf("expected 1 context matching search and status, got total %d, contexts %d", pageSearch.TotalCount, len(pageSearch.Contexts))
+	}
+	if pageSearch.Contexts[0].ID != "ctx-1" {
+		t.Errorf("expected ctx-1, got %s", pageSearch.Contexts[0].ID)
 	}
 }

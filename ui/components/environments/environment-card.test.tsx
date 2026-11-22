@@ -118,6 +118,14 @@ describe('formattoLongDate', () => {
     expect(typeof formatted).toBe('string');
     expect(formatted).toMatch(/2026/);
   });
+
+  it('guards undefined, empty, invalid or Go zero-time sentinel dates', () => {
+    expect(formattoLongDate(undefined)).toBe('-');
+    expect(formattoLongDate(null)).toBe('-');
+    expect(formattoLongDate('')).toBe('-');
+    expect(formattoLongDate('not-a-valid-date')).toBe('-');
+    expect(formattoLongDate('0001-01-01T00:00:00Z')).toBe('-');
+  });
 });
 
 describe('TransferButton', () => {
@@ -246,6 +254,40 @@ describe('EnvironmentCard', () => {
       />,
     );
     expect(screen.getByTestId('bulk-checkbox')).not.toBeDisabled();
+  });
+
+  it('considers deletedAt as undefined or omitted as not deleted (checkbox enabled)', () => {
+    render(
+      <EnvironmentCard
+        environmentDetails={{
+          ...baseEnvironment,
+          deletedAt: undefined,
+        }}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    expect(screen.getByTestId('bulk-checkbox')).not.toBeDisabled();
+  });
+
+  it('considers deletedAt as an ISO timestamp string as deleted (checkbox disabled)', () => {
+    render(
+      <EnvironmentCard
+        environmentDetails={{
+          ...baseEnvironment,
+          deletedAt: '2026-01-15T12:00:00Z',
+        }}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    expect(screen.getByTestId('bulk-checkbox')).toBeDisabled();
   });
 
   it('fires onEdit/onDelete callbacks when corresponding buttons are clicked', async () => {

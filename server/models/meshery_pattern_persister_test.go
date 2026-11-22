@@ -3,14 +3,19 @@ package models
 import (
 	"database/sql"
 	"encoding/json"
+	"net/http"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/gofrs/uuid"
 	isql "github.com/meshery/meshery/server/internal/sql"
+	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/encoding"
 	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/catalog/v1alpha1"
+	"github.com/meshery/meshkit/models/patterns"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -24,6 +29,27 @@ relationships: []
 `
 
 var persisterTestCreatedAt = time.Date(2025, 1, 2, 3, 4, 5, 0, time.UTC)
+
+// persisterTestDesignWithoutVersion is a design saved before versioning, or one
+// created without a version.
+const persisterTestDesignWithoutVersion = `name: persister-test
+id: 00000000-0000-0000-0000-000000000000
+schemaVersion: designs.meshery.io/v1beta1
+components: []
+relationships: []
+`
+
+// persisterTestDesignJSON is a JSON-submitted design whose metadata carries a
+// key the pattern schema does not model.
+const persisterTestDesignJSON = `{"name":"persister-test","schemaVersion":"designs.meshery.io/v1beta1","components":[],"metadata":{"owner":"x"}}`
+
+// persisterTestDesignJSONBigNumber is a JSON-submitted design carrying a
+// metadata.buildId above float64 precision (2^53+1).
+const persisterTestDesignJSONBigNumber = `{"name":"persister-test","schemaVersion":"designs.meshery.io/v1beta1","components":[],"metadata":{"owner":"x","buildId":9007199254740993}}`
+
+func designWithVersion(version string) string {
+	return strings.Replace(persisterTestDesign, "version: 0.0.1", "version: "+version, 1)
+}
 
 func newPatternPersisterTestDB(t *testing.T) (*gorm.DB, *MesheryPatternPersister) {
 	t.Helper()
@@ -85,6 +111,31 @@ func countPatterns(t *testing.T, db *gorm.DB) int64 {
 		t.Fatalf("count patterns: %v", err)
 	}
 	return n
+}
+
+// storedDesignVersion parses the stored design file's version.
+func storedDesignVersion(t *testing.T, db *gorm.DB, id uuid.UUID) string {
+	t.Helper()
+	pf, err := patterns.GetPatternFormat(loadPattern(t, db, id).PatternFile)
+	if err != nil {
+		t.Fatalf("parse stored design file: %v", err)
+	}
+	return string(pf.Version)
+}
+
+// assertStoredMetadataOwner checks the stored design file still carries the
+// unmodelled metadata.owner key, whichever format it is stored in.
+func assertStoredMetadataOwner(t *testing.T, file string) {
+	t.Helper()
+	var doc map[string]interface{}
+	if err := encoding.Unmarshal([]byte(file), &doc); err != nil {
+		t.Fatalf("parse stored design file %q: %v", file, err)
+	}
+	metadata, _ := doc["metadata"].(map[string]interface{})
+	owner, _ := metadata["owner"].(string)
+	if owner != "x" {
+		t.Errorf("stored metadata.owner = %q, want %q (stored file: %s)", owner, "x", file)
+	}
 }
 
 // postStylePattern is the record handlePatternPOST builds for an existing
@@ -264,9 +315,231 @@ func TestSaveMesheryPattern_NewDesignKeepsImportedSource(t *testing.T) {
 	}
 }
 
-func TestCloneMesheryPattern_InsertsNewRow(t *testing.T) {
+// A design created or imported without a version is stored at 0.0.1. A supplied
+// version is kept as given, unless it is not semver, which fails the save.
+func TestSaveMesheryPattern_AssignsVersionOnCreate(t *testing.T) {
+	tests := []struct {
+		name        string
+		design      string
+		wantVersion string
+		wantCode    string
+	}{
+		{name: "no version", design: persisterTestDesignWithoutVersion, wantVersion: "0.0.1"},
+		{name: "supplied version", design: designWithVersion("1.2.3"), wantVersion: "1.2.3"},
+		{name: "v-prefixed version", design: designWithVersion("v1.2.3"), wantVersion: "1.2.3"},
+		{name: "short version", design: designWithVersion("1.2"), wantVersion: "1.2.0"},
+		{name: "invalid version", design: designWithVersion("not-semver"), wantCode: ErrInvalidDesignVersionCode},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			db, mpp := newPatternPersisterTestDB(t)
+			record := &MesheryPattern{Name: "new-design", PatternFile: tc.design}
+
+			_, err := mpp.SaveMesheryPattern(record)
+			if tc.wantCode != "" {
+				if code := mkerrors.GetCode(err); code != tc.wantCode {
+					t.Fatalf("error code = %q, want %q (err: %v)", code, tc.wantCode, err)
+				}
+				if n := countPatterns(t, db); n != 0 {
+					t.Errorf("rows = %d, want the invalid design not to be stored", n)
+				}
+				return
+			}
+
+			if err != nil {
+				t.Fatalf("save: %v", err)
+			}
+			if got := storedDesignVersion(t, db, *record.ID); got != tc.wantVersion {
+				t.Errorf("stored version = %q, want %q", got, tc.wantVersion)
+			}
+		})
+	}
+}
+
+// A JSON design's unmodelled metadata keys (PatternFile_Metadata
+// AdditionalProperties) must survive a create, not just receive the version.
+func TestSaveMesheryPattern_KeepsSubmittedMetadataOnCreate(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	record := &MesheryPattern{Name: "new-design", PatternFile: persisterTestDesignJSON}
+
+	if _, err := mpp.SaveMesheryPattern(record); err != nil {
+		t.Fatalf("save: %v", err)
+	}
+
+	assertStoredMetadataOwner(t, loadPattern(t, db, *record.ID).PatternFile)
+	if got := storedDesignVersion(t, db, *record.ID); got != "0.0.1" {
+		t.Errorf("stored version = %q, want 0.0.1", got)
+	}
+}
+
+// An existing design's stored version gets a patch bump.
+func TestSaveMesheryPattern_BumpsVersionOnUpdate(t *testing.T) {
 	db, mpp := newPatternPersisterTestDB(t)
 	id, _ := seedImportedPattern(t, db)
+
+	if _, err := mpp.SaveMesheryPattern(postStylePattern(id)); err != nil {
+		t.Fatalf("save: %v", err)
+	}
+
+	if got := storedDesignVersion(t, db, id); got != "0.0.2" {
+		t.Errorf("stored version = %q, want 0.0.2", got)
+	}
+}
+
+// A stored version that is not semver fails the save with a MeshKit error, not
+// the raw parse error, and leaves the stored design file alone.
+func TestSaveMesheryPattern_InvalidStoredVersionIsMeshKitError(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	id, _ := seedImportedPattern(t, db)
+	invalid := designWithVersion("not-semver")
+	if err := db.Model(&MesheryPattern{}).Where("id = ?", id).Update("pattern_file", invalid).Error; err != nil {
+		t.Fatalf("set stored version: %v", err)
+	}
+
+	// The design editor loads the stored file and saves it back, so the save
+	// carries the invalid version.
+	_, err := mpp.SaveMesheryPattern(&MesheryPattern{ID: &id, Name: "persister-test", PatternFile: invalid})
+	if code := mkerrors.GetCode(err); code != ErrInvalidDesignVersionCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrInvalidDesignVersionCode, err)
+	}
+	if got := loadPattern(t, db, id).PatternFile; got != invalid {
+		t.Errorf("pattern_file = %q, want the stored file left unchanged", got)
+	}
+}
+
+// The batch save versions designs the same way.
+func TestSaveMesheryPatterns_AssignsVersionOnCreate(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+
+	body, err := mpp.SaveMesheryPatterns([]MesheryPattern{
+		{Name: "batch-no-version", PatternFile: persisterTestDesignWithoutVersion},
+	})
+	if err != nil {
+		t.Fatalf("batch save: %v", err)
+	}
+
+	var saved []MesheryPattern
+	if err := json.Unmarshal(body, &saved); err != nil || len(saved) != 1 {
+		t.Fatalf("decode response %s: %v", body, err)
+	}
+	if got := storedDesignVersion(t, db, *saved[0].ID); got != "0.0.1" {
+		t.Errorf("stored version = %q, want 0.0.1", got)
+	}
+}
+
+// The batch save keeps the submitted metadata the same way.
+func TestSaveMesheryPatterns_KeepsSubmittedMetadataOnCreate(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+
+	body, err := mpp.SaveMesheryPatterns([]MesheryPattern{
+		{Name: "batch-json", PatternFile: persisterTestDesignJSON},
+	})
+	if err != nil {
+		t.Fatalf("batch save: %v", err)
+	}
+
+	var saved []MesheryPattern
+	if err := json.Unmarshal(body, &saved); err != nil || len(saved) != 1 {
+		t.Fatalf("decode response %s: %v", body, err)
+	}
+
+	assertStoredMetadataOwner(t, loadPattern(t, db, *saved[0].ID).PatternFile)
+	if got := storedDesignVersion(t, db, *saved[0].ID); got != "0.0.1" {
+		t.Errorf("stored version = %q, want 0.0.1", got)
+	}
+}
+
+// A JSON design's numbers above float64 precision keep their submitted form:
+// the save stamps the version into the raw JSON instead of decoding through
+// map[string]interface{}, which would store buildId as 9.007199254740992e+15.
+func TestSaveMesheryPattern_JSONNumbersKeepSubmittedForm(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	saves := []struct {
+		name string
+		save func(t *testing.T) uuid.UUID
+	}{
+		{"single save", func(t *testing.T) uuid.UUID {
+			record := &MesheryPattern{Name: "big-number", PatternFile: persisterTestDesignJSONBigNumber}
+			if _, err := mpp.SaveMesheryPattern(record); err != nil {
+				t.Fatalf("save: %v", err)
+			}
+			return *record.ID
+		}},
+		{"batch save", func(t *testing.T) uuid.UUID {
+			body, err := mpp.SaveMesheryPatterns([]MesheryPattern{
+				{Name: "batch-big-number", PatternFile: persisterTestDesignJSONBigNumber},
+			})
+			if err != nil {
+				t.Fatalf("batch save: %v", err)
+			}
+			var saved []MesheryPattern
+			if err := json.Unmarshal(body, &saved); err != nil || len(saved) != 1 {
+				t.Fatalf("decode response %s: %v", body, err)
+			}
+			return *saved[0].ID
+		}},
+	}
+
+	for _, tc := range saves {
+		t.Run(tc.name, func(t *testing.T) {
+			id := tc.save(t)
+			assertStoredJSONStamp(t, loadPattern(t, db, id).PatternFile)
+		})
+	}
+}
+
+// assertStoredJSONStamp checks the stored JSON design file: UseNumber keeps
+// numbers as json.Number so the buildId above 2^53 reads back exactly.
+func assertStoredJSONStamp(t *testing.T, file string) {
+	t.Helper()
+	var doc map[string]interface{}
+	dec := json.NewDecoder(strings.NewReader(file))
+	dec.UseNumber()
+	if err := dec.Decode(&doc); err != nil {
+		t.Fatalf("parse stored design file %q: %v", file, err)
+	}
+	if got, _ := doc["version"].(string); got != "0.0.1" {
+		t.Errorf("stored version = %q, want 0.0.1 (stored file: %s)", got, file)
+	}
+	metadata, _ := doc["metadata"].(map[string]interface{})
+	if owner, _ := metadata["owner"].(string); owner != "x" {
+		t.Errorf("stored metadata.owner = %q, want %q (stored file: %s)", owner, "x", file)
+	}
+	buildID, ok := metadata["buildId"].(json.Number)
+	if !ok || buildID.String() != "9007199254740993" {
+		t.Errorf("stored metadata.buildId = %v (%T), want number 9007199254740993 (stored file: %s)", metadata["buildId"], metadata["buildId"], file)
+	}
+}
+
+// The batch save returns the same MeshKit error body as the single save, so an
+// import with an invalid version keeps the 1496 code instead of a nil body.
+func TestSaveMesheryPatterns_InvalidVersionReturnsErrorBody(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+
+	body, err := mpp.SaveMesheryPatterns([]MesheryPattern{
+		{Name: "batch-bad-version", PatternFile: designWithVersion("not-semver")},
+	})
+	if code := mkerrors.GetCode(err); code != ErrInvalidDesignVersionCode {
+		t.Fatalf("error code = %q, want %q (err: %v)", code, ErrInvalidDesignVersionCode, err)
+	}
+	if !strings.Contains(string(body), ErrInvalidDesignVersionCode) {
+		t.Errorf("body = %s, want the marshaled %s error", body, ErrInvalidDesignVersionCode)
+	}
+	if n := countPatterns(t, db); n != 0 {
+		t.Errorf("rows = %d, want the invalid design not to be stored", n)
+	}
+}
+
+// A clone is a new design: it takes the source's content, but not its creation
+// time, usage counters, catalog data or design-file identity.
+func TestCloneMesheryPattern_InsertsNewRow(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	id, seed := seedImportedPattern(t, db)
+	if err := db.Model(&MesheryPattern{}).Where("id = ?", id).
+		Updates(map[string]interface{}{"share_count": 3, "download_count": 7, "deployment_count": 4}).Error; err != nil {
+		t.Fatalf("set counters: %v", err)
+	}
 
 	if _, err := mpp.CloneMesheryPattern(id.String(), &MesheryClonePatternRequestBody{Name: "copy"}); err != nil {
 		t.Fatalf("clone: %v", err)
@@ -282,8 +555,27 @@ func TestCloneMesheryPattern_InsertsNewRow(t *testing.T) {
 	if clone.Visibility != Private {
 		t.Errorf("clone visibility = %q, want %q", clone.Visibility, Private)
 	}
-	if original := loadPattern(t, db, id); original.Name != "persister-test" {
-		t.Errorf("original renamed to %q by the clone", original.Name)
+	if clone.CreatedAt == nil || clone.CreatedAt.Equal(persisterTestCreatedAt) {
+		t.Errorf("clone created_at = %v, want the clone's own creation time", clone.CreatedAt)
+	}
+	if counts := [5]int{clone.ViewCount, clone.ShareCount, clone.DownloadCount, clone.CloneCount, clone.DeploymentCount}; counts != [5]int{} {
+		t.Errorf("clone counters (view, share, download, clone, deploy) = %v, want all zero", counts)
+	}
+	if clone.CatalogData.PatternInfo != "" || clone.CatalogData.PatternCaveats != "" {
+		t.Errorf("clone catalog_data = %+v, want empty", clone.CatalogData)
+	}
+	if string(clone.SourceContent) != string(seed.SourceContent) || clone.Type != seed.Type {
+		t.Errorf("clone type/source = %q/%q, want the source's", clone.Type.String, clone.SourceContent)
+	}
+	pf, err := patterns.GetPatternFormat(clone.PatternFile)
+	if err != nil {
+		t.Fatalf("parse clone design file: %v", err)
+	}
+	if pf.ID != *clone.ID || pf.Name != "copy" || pf.Version != "0.0.1" {
+		t.Errorf("clone design file id/name/version = %s/%q/%s, want %s/%q/0.0.1", pf.ID, pf.Name, pf.Version, clone.ID, "copy")
+	}
+	if original := loadPattern(t, db, id); original.Name != "persister-test" || original.PatternFile != seed.PatternFile {
+		t.Errorf("original changed by the clone: name %q, design file %q", original.Name, original.PatternFile)
 	}
 }
 
@@ -412,5 +704,52 @@ func TestSaveMesheryPattern_ResponseShowsStoredRow(t *testing.T) {
 	}
 	if got.UserID == nil {
 		t.Errorf("response is missing the stamped owner")
+	}
+}
+
+// TestGetMesheryPattern_MissingDesignReturnsResultNotFound pins that a lookup
+// for a design that is not stored fails with ErrResultNotFound and no body,
+// so a handler cannot mistake an empty design for a result.
+func TestGetMesheryPattern_MissingDesignReturnsResultNotFound(t *testing.T) {
+	db, persister := newPatternPersisterTestDB(t)
+	storedID, _ := seedImportedPattern(t, db)
+
+	tests := []struct {
+		name     string
+		id       uuid.UUID
+		wantCode string
+	}{
+		{name: "stored design", id: storedID},
+		{name: "missing design", id: uuid.Must(uuid.NewV4()), wantCode: ErrResultNotFoundCode},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			body, err := persister.GetMesheryPattern(tc.id)
+
+			if tc.wantCode == "" {
+				if err != nil {
+					t.Fatalf("GetMesheryPattern: %v", err)
+				}
+				var got MesheryPattern
+				if err := json.Unmarshal(body, &got); err != nil {
+					t.Fatalf("unmarshal design: %v", err)
+				}
+				if got.ID == nil || *got.ID != tc.id {
+					t.Errorf("design id = %v, want %s", got.ID, tc.id)
+				}
+				return
+			}
+
+			if got := mkerrors.GetCode(err); got != tc.wantCode {
+				t.Errorf("error code = %q, want %q (err: %v)", got, tc.wantCode, err)
+			}
+			if got := httputil.StatusForProviderError(err, 0); got != http.StatusNotFound {
+				t.Errorf("provider status = %d, want %d", got, http.StatusNotFound)
+			}
+			if body != nil {
+				t.Errorf("body = %q, want none", body)
+			}
+		})
 	}
 }

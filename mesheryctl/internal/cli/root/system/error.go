@@ -76,6 +76,7 @@ const (
 	ErrMesheryEndpointNotAccessibleCode   = "mesheryctl-1244"
 	ErrAssignTokenCode                    = "mesheryctl-1257"
 	ErrTokenRollbackCode                  = "mesheryctl-1258"
+	ErrUninstallMesheryCode               = "mesheryctl-1264"
 )
 
 var (
@@ -152,6 +153,16 @@ func ErrSystemEksGetCredentials(err error) error {
 
 func ErrStopMeshery(err error) error {
 	return errors.New(ErrStopMesheryCode, errors.Alert, []string{"Error stopping Meshery"}, []string{err.Error()}, []string{"Meshery server is not stopped, some of the docker containers are still running"}, []string{"Verify all docker containers of Meshery server are stopped"})
+}
+
+func ErrUninstallMeshery(err error) error {
+	return errors.New(
+		ErrUninstallMesheryCode,
+		errors.Alert,
+		[]string{"Error uninstalling Meshery"},
+		[]string{err.Error()},
+		[]string{"Meshery may be partially removed from the cluster: some Meshery resources are still present"},
+		[]string{"Verify the cluster state with `mesheryctl system check`, then retry `mesheryctl system uninstall --force` to clean up the remaining Meshery resources in the cluster" + FormatErrorReference()})
 }
 
 func ErrResetMeshconfig(err error) error {
@@ -262,7 +273,7 @@ func ErrFailedGetEphemeralPort(err error) error {
 		errors.Fatal,
 		[]string{"Failed to get a free port"},
 		[]string{err.Error(), "Failed to start port-forwarding"},
-		[]string{"Unable to provide a free port to connect to a kuberentes cluster"},
+		[]string{"Unable to provide a free port to connect to a kubernetes cluster"},
 		[]string{"Ensure your Meshery Server is running,", "Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system check`"},
 	)
 }
@@ -311,7 +322,7 @@ func ErrSwitchChannelResponse() error {
 	return errors.New(
 		ErrSwitchChannelResponseCode,
 		errors.Alert,
-		[]string{"Unable to exectute command"},
+		[]string{"Unable to execute command"},
 		[]string{"Channel switch aborted"},
 		[]string{"No user response provided"},
 		[]string{"Provide a response or use the -y flag for confirmation. " + FormatErrorReference()})
