@@ -1,4 +1,8 @@
 export const podNameMapper = (serviceMeshName, podName) => {
+  if (typeof podName !== 'string' || !podName) {
+    return '';
+  }
+
   switch (serviceMeshName) {
     case 'istio':
       if (podName.includes('istio-galley')) return 'Istio Galley';
@@ -25,7 +29,8 @@ export const podNameMapper = (serviceMeshName, podName) => {
   if (Array.isArray(podNameArr)) {
     const prettifiedPodName = podNameArr
       .slice(0, -2)
-      .map((word) => word[0].toUpperCase() + word.substr(1))
+      .filter((word) => Boolean(word))
+      .map((word) => word[0].toUpperCase() + word.slice(1))
       .join(' ');
 
     return prettifiedPodName;
@@ -33,8 +38,12 @@ export const podNameMapper = (serviceMeshName, podName) => {
   return podName;
 };
 
-export const versionMapper = (versionName) =>
-  versionName.charAt(0) === 'v' ? versionName : `v${versionName}`;
+export const versionMapper = (versionName) => {
+  if (typeof versionName !== 'string' || !versionName) {
+    return '';
+  }
+  return versionName.charAt(0) === 'v' ? versionName : `v${versionName}`;
+};
 
 export const TelemetryComps = {
   GRAFANA: 'grafana',
@@ -43,10 +52,13 @@ export const TelemetryComps = {
 
 // maps objects to telemetry comp if name is one of "TelemetryComps"
 export function isTelemetryComponent(name) {
+  if (typeof name !== 'string') {
+    return '';
+  }
   const comps = Object.values(TelemetryComps);
-  for (const comp in comps) {
-    if (name?.toLowerCase().includes(comps[comp])) {
-      return comps[comp];
+  for (const comp of comps) {
+    if (name.toLowerCase().includes(comp)) {
+      return comp;
     }
   }
   return '';

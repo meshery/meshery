@@ -36,6 +36,26 @@ describe('podNameMapper', () => {
     // `'pod-1'.split('-').slice(0,-2)` yields [], which joins to ''
     expect(podNameMapper('unknown', 'pod-1')).toBe('');
   });
+
+  it('safely handles nullish and non-string podName inputs without throwing', () => {
+    // @ts-expect-error testing invalid inputs
+    expect(podNameMapper('istio', null)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(podNameMapper('istio', undefined)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(podNameMapper('istio', 123)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(podNameMapper(null, null)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(podNameMapper(undefined, undefined)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(podNameMapper('linkerd', {})).toBe('');
+    expect(podNameMapper('linkerd', '')).toBe('');
+  });
+
+  it('safely handles pod names with consecutive delimiters', () => {
+    expect(podNameMapper('custom', 'my--custom--pod-abc-123')).toBe('My Custom Pod');
+  });
 });
 
 describe('versionMapper', () => {
@@ -53,6 +73,18 @@ describe('versionMapper', () => {
 
   it('prefixes uppercase V versions (since the check is for lowercase v only)', () => {
     expect(versionMapper('V1')).toBe('vV1');
+  });
+
+  it('safely returns empty string for nullish, non-string, or empty version inputs', () => {
+    // @ts-expect-error testing invalid inputs
+    expect(versionMapper(null)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(versionMapper(undefined)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(versionMapper(123)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(versionMapper({})).toBe('');
+    expect(versionMapper('')).toBe('');
   });
 });
 
@@ -82,5 +114,16 @@ describe('isTelemetryComponent', () => {
   it('returns empty string for nullish names (optional chaining)', () => {
     expect(isTelemetryComponent(undefined)).toBe('');
     expect(isTelemetryComponent(null)).toBe('');
+  });
+
+  it('returns empty string for non-string inputs', () => {
+    // @ts-expect-error testing invalid inputs
+    expect(isTelemetryComponent(123)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(isTelemetryComponent(true)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(isTelemetryComponent({})).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(isTelemetryComponent([])).toBe('');
   });
 });
