@@ -596,10 +596,12 @@ func ValidateURL(URL string) error {
 	return nil
 }
 
-// TruncateID shortens an id to 8 characters
+// TruncateID shortens an id to 8 characters. If the id has 8 or fewer characters, it returns the id unchanged.
 func TruncateID(id string) string {
-	ShortenedID := id[0:8]
-	return ShortenedID
+	if len(id) <= 8 {
+		return id
+	}
+	return id[:8]
 }
 
 func BoldString(s string) string {
