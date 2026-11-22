@@ -206,6 +206,268 @@ func newTestMctCfg(endpoint string) *config.MesheryCtlConfig {
 	}
 }
 
+// a helper that builds a test MesheryCtlConfig with a configured token path.
+func newTestMctCfgWithToken(endpoint, tokenPath string) *config.MesheryCtlConfig {
+	return &config.MesheryCtlConfig{
+		CurrentContext: "test",
+		Contexts: map[string]config.Context{
+			"test": {
+				Endpoint: endpoint,
+				Token:    "default",
+			},
+		},
+		Tokens: []config.Token{
+			{
+				Name:     "default",
+				Location: tokenPath,
+			},
+		},
+	}
+}
+func TestTryExistingAuth_MissingContextToken(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	mctCfg := newTestMctCfg("http://localhost:9081")
+
+	data, valid, err := tryExistingAuth(
+		mctCfg,
+		Provider{ProviderName: "Meshery"},
+		"cloud.meshery.io",
+	)
+
+	if err != nil {
+		t.Fatalf("expected fallback without error, got: %v", err)
+	}
+	if valid {
+		t.Fatal("expected no existing authentication to be reused")
+	}
+	if data != nil {
+		t.Fatalf("expected nil token data, got: %s", data)
+	}
+}
+func TestTryExistingAuth_MissingAuthFile(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	mesheryDir := IsolateMesheryHome(t)
+	tokenPath := filepath.Join(mesheryDir, "missing-auth.json")
+
+	mctCfg := newTestMctCfgWithToken(
+		"http://localhost:9081",
+		tokenPath,
+	)
+
+	data, valid, err := tryExistingAuth(
+		mctCfg,
+		Provider{ProviderName: "Meshery"},
+		"cloud.meshery.io",
+	)
+
+	if err != nil {
+		t.Fatalf("expected fallback without error, got: %v", err)
+	}
+	if valid {
+		t.Fatal("expected no existing authentication to be reused")
+	}
+	if data != nil {
+		t.Fatalf("expected nil token data, got: %s", data)
+	}
+}
+func TestTryExistingAuth_Non200Response(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	statusCodes := []int{
+		http.StatusUnauthorized,
+		http.StatusForbidden,
+		http.StatusFound,
+		http.StatusInternalServerError,
+		http.StatusServiceUnavailable,
+		http.StatusBadGateway,
+	}
+
+	for _, status := range statusCodes {
+		t.Run(fmt.Sprintf("HTTP_%d", status), func(t *testing.T) {
+			mesheryDir := IsolateMesheryHome(t)
+			tokenPath := filepath.Join(mesheryDir, "auth.json")
+
+			tokenData := []byte(
+				`{"token":"existing-token","meshery-provider":"Meshery"}`,
+			)
+
+			if err := os.WriteFile(tokenPath, tokenData, 0o600); err != nil {
+				t.Fatal(err)
+			}
+
+			server := httptest.NewServer(http.HandlerFunc(
+				func(w http.ResponseWriter, r *http.Request) {
+					if r.URL.Path != "/api/token" {
+						t.Errorf("unexpected request path: %s", r.URL.Path)
+					}
+
+					w.WriteHeader(status)
+				},
+			))
+			defer server.Close()
+
+			mctCfg := newTestMctCfgWithToken(server.URL, "auth.json")
+
+			data, valid, err := tryExistingAuth(
+				mctCfg,
+				Provider{ProviderName: "Meshery"},
+				"",
+			)
+
+			if err != nil {
+				t.Fatalf("expected fallback without error, got: %v", err)
+			}
+			if valid {
+				t.Fatal("expected existing authentication not to be reused")
+			}
+			if data != nil {
+				t.Fatalf("expected nil token data, got: %s", data)
+			}
+		})
+	}
+}
+func TestTryExistingAuth_NetworkFailure(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	mesheryDir := IsolateMesheryHome(t)
+	tokenPath := filepath.Join(mesheryDir, "auth.json")
+
+	tokenData := []byte(
+		`{"token":"existing-token","meshery-provider":"Meshery"}`,
+	)
+
+	if err := os.WriteFile(tokenPath, tokenData, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	server := httptest.NewServer(http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {},
+	))
+	server.Close()
+
+	mctCfg := newTestMctCfgWithToken(server.URL, "auth.json")
+
+	data, valid, err := tryExistingAuth(
+		mctCfg,
+		Provider{ProviderName: "Meshery"},
+		"",
+	)
+
+	if err != nil {
+		t.Fatalf("expected fallback without error, got: %v", err)
+	}
+	if valid {
+		t.Fatal("expected existing authentication not to be reused")
+	}
+	if data != nil {
+		t.Fatalf("expected nil token data, got: %s", data)
+	}
+}
+func TestTryExistingAuth_InvalidTokenResponse(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	responses := []struct {
+		name string
+		body string
+	}{
+		{
+			name: "invalid JSON",
+			body: `not-json`,
+		},
+		{
+			name: "empty token",
+			body: `{"meshery-provider":"Meshery","token":""}`,
+		},
+		{
+			name: "missing token",
+			body: `{"meshery-provider":"Meshery"}`,
+		},
+	}
+
+	for _, tc := range responses {
+		t.Run(tc.name, func(t *testing.T) {
+			mesheryDir := IsolateMesheryHome(t)
+			tokenPath := filepath.Join(mesheryDir, "auth.json")
+
+			if err := os.WriteFile(
+				tokenPath,
+				[]byte(`{"token":"existing-token","meshery-provider":"Meshery"}`),
+				0o600,
+			); err != nil {
+				t.Fatal(err)
+			}
+
+			server := httptest.NewServer(http.HandlerFunc(
+				func(w http.ResponseWriter, r *http.Request) {
+					w.WriteHeader(http.StatusOK)
+					_, _ = fmt.Fprint(w, tc.body)
+				},
+			))
+			defer server.Close()
+
+			mctCfg := newTestMctCfgWithToken(server.URL, "auth.json")
+
+			data, valid, err := tryExistingAuth(
+				mctCfg,
+				Provider{ProviderName: "Meshery"},
+				"",
+			)
+
+			if err != nil {
+				t.Fatalf("expected fallback without error, got: %v", err)
+			}
+			if valid {
+				t.Fatal("expected existing authentication not to be reused")
+			}
+			if data != nil {
+				t.Fatalf("expected nil token data, got: %s", data)
+			}
+		})
+	}
+}
+// TestTryExistingAuth_Success verifies that a valid pre-existing token is
+// fetched from disk, validated against /api/token, and returned for reuse.
+func TestTryExistingAuth_Success(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	mesheryDir := IsolateMesheryHome(t)
+	tokenPath := filepath.Join(mesheryDir, "auth.json")
+
+	initialToken := []byte(`{"token":"existing-token","meshery-provider":"Meshery"}`)
+	if err := os.WriteFile(tokenPath, initialToken, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/token" {
+			t.Errorf("unexpected request path: %s", r.URL.Path)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = fmt.Fprint(w, `{"meshery-provider":"Meshery","token":"existing-token"}`)
+	}))
+	defer server.Close()
+
+	mctCfg := newTestMctCfgWithToken(server.URL, "auth.json")
+
+	data, valid, err := tryExistingAuth(
+		mctCfg,
+		Provider{ProviderName: "Meshery"},
+		"",
+	)
+
+	if err != nil {
+		t.Fatalf("expected no error, got: %v", err)
+	}
+	if !valid {
+		t.Fatal("expected existing authentication to be reused")
+	}
+	if string(data) != `{"meshery-provider":"Meshery","token":"existing-token"}` {
+		t.Fatalf("unexpected token data returned: %s", data)
+	}
+}
 func TestGetProviderInfo_BodyClosed(t *testing.T) {
 	_ = SetupMeshkitLoggerTesting(t, false)
 

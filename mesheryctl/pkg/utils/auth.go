@@ -417,9 +417,18 @@ func tryExistingAuth(
 ) ([]byte, bool, error) {
 
 	// Step 1: Resolve the auth file associated with the current context.
-	tokenPath, err := GetCurrentAuthToken()
+	// Existing authentication is optional, so failure to locate a token
+	// should fall back to the normal login flow.
+	contextToken, err := mctlCfg.GetTokenForContext(mctlCfg.CurrentContext)
 	if err != nil {
-		return nil, false, err
+		log.Debugf("Could not find an existing context token: %v", err)
+		return nil, false, nil
+	}
+
+	tokenPath, err := GetTokenLocation(contextToken)
+	if err != nil {
+		log.Debugf("Could not resolve existing authentication path: %v", err)
+		return nil, false, nil
 	}
 
 	// Step 2: Read the existing authentication details.
@@ -440,24 +449,28 @@ func tryExistingAuth(
 	}
 
 	// Step 4: Verify that the stored credentials belong to the selected provider.
-	// The auth file may contain either the provider's display name or its
-	// registration key, depending on how the user previously logged in.
-	matchesProviderName := strings.EqualFold(
-		storedProvider,
-		strings.TrimSpace(provider.ProviderName),
-	)
+	//
+	// Explicit provider selection requires an exact registration-key match.
+	// Interactive selection has no registration key, so it uses the display name.
+	matchesProvider := false
 
-	matchesProviderKey := providerKey != "" &&
-		strings.EqualFold(
+	if providerKey != "" {
+		matchesProvider = strings.EqualFold(
 			storedProvider,
 			strings.TrimSpace(providerKey),
 		)
+	} else {
+		matchesProvider = strings.EqualFold(
+			storedProvider,
+			strings.TrimSpace(provider.ProviderName),
+		)
+	}
 
-	if !matchesProviderName && !matchesProviderKey {
+	if !matchesProvider {
 		log.Debugf(
 			"Stored authentication belongs to provider %q, selected provider is %q",
 			storedProvider,
-			provider.ProviderName,
+			providerKey,
 		)
 		return nil, false, nil
 	}
@@ -501,68 +514,39 @@ func tryExistingAuth(
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, false, err
+		log.Debugf("Could not validate existing authentication: %v", err)
+		return nil, false, nil
 	}
 	defer SafeClose(resp.Body)
 
-	// Step 7: Handle authentication failures.
-	if resp.StatusCode == http.StatusUnauthorized {
-		log.Debug("Existing authentication is unauthorized")
+	// Step 7: Handle unsuccessful validation responses.
+	//
+	// Existing-session validation is best-effort. Any response other than
+	// HTTP 200 means we cannot reuse the existing session, so continue with
+	// the normal authentication flow.
+	if resp.StatusCode != http.StatusOK {
+		log.Debugf(
+			"Existing authentication validation returned HTTP %d; falling back to normal login",
+			resp.StatusCode,
+		)
 		return nil, false, nil
 	}
-
-	if resp.StatusCode >= 300 && resp.StatusCode < 400 {
-		location, err := resp.Location()
-		if err != nil {
-			return nil, false, fmt.Errorf(
-				"unexpected redirect while validating authentication: %w",
-				err,
-			)
-		}
-
-		// This is the expected redirect when the remote session is invalid.
-		if location.Path == "/auth/login" {
-			log.Debug("Existing session is invalid; browser login required")
-			return nil, false, nil
-		}
-
-		// A redirect somewhere else is not necessarily an authentication
-		// failure. Do not silently launch another login flow.
-		return nil, false, fmt.Errorf(
-			"unexpected redirect while validating authentication: %s",
-			location.String(),
-		)
-	}
-
-	// Step 8: Handle unexpected server responses.
-	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
-
-		return nil, false, fmt.Errorf(
-			"failed to validate existing authentication: HTTP %d: %s",
-			resp.StatusCode,
-			strings.TrimSpace(string(body)),
-		)
-	}
-
-	// Step 9: Read and validate the returned token JSON.
+	// Step 8: Read and validate the returned token JSON.
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, false, err
+		log.Debugf("Could not read existing authentication response: %v", err)
+		return nil, false, nil
 	}
 
 	var refreshedToken map[string]string
 	if err := json.Unmarshal(data, &refreshedToken); err != nil {
-		return nil, false, fmt.Errorf(
-			"invalid token response from Meshery: %w",
-			err,
-		)
+		log.Debugf("Invalid existing authentication response: %v", err)
+		return nil, false, nil
 	}
 
 	if strings.TrimSpace(refreshedToken[tokenName]) == "" {
-		return nil, false, fmt.Errorf(
-			"Meshery returned an empty authentication token",
-		)
+		log.Debug("Meshery returned an empty authentication token")
+		return nil, false, nil
 	}
 
 	// Step 10: Preserve the registration key when explicitly selected.
