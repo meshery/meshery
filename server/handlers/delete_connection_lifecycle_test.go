@@ -372,16 +372,82 @@ func TestDeleteConnectionTeardownFailure(t *testing.T) {
 				t.Fatalf("persisted %d delete events, want 1", len(persisted))
 			}
 			// Read back from the database: the reason must survive JSON.
+			// Severity and the metadata are asserted separately, so a warning
+			// without a reason - or a reason on an event left informational -
+			// is reported as the specific defect it is rather than collapsing
+			// into one boolean.
 			teardownErr, _ := persisted[0].Metadata["teardownError"].(string)
-			gotWarn := persisted[0].Severity == events.Warning && teardownErr != ""
-			if gotWarn != tc.wantWarn {
-				t.Errorf("delete event severity = %q, teardownError = %q; want warning = %v",
-					persisted[0].Severity, teardownErr, tc.wantWarn)
+			wantSeverity := events.Informational
+			if tc.wantWarn {
+				wantSeverity = events.Warning
+			}
+			if persisted[0].Severity != wantSeverity {
+				t.Errorf("delete event severity = %q, want %q", persisted[0].Severity, wantSeverity)
+			}
+			if tc.wantWarn && teardownErr == "" {
+				t.Error("delete event carries no teardownError after a failed teardown")
+			}
+			if !tc.wantWarn && teardownErr != "" {
+				t.Errorf("delete event carries teardownError %q after a teardown that worked", teardownErr)
 			}
 			if tc.probeErr != nil && !strings.Contains(teardownErr, tc.probeErr.Error()) {
 				t.Errorf("persisted teardownError = %q, want it to carry %q", teardownErr, tc.probeErr)
 			}
 		})
+	}
+}
+
+// A delete of a NOTFOUND Kubernetes connection resolves its open unreachable
+// condition, and the persister answers a resolution by updating that stored
+// condition row rather than recording a second event. The resolution's
+// metadata is therefore the only place a failed teardown can land, and
+// dropping it leaves the user a warning with no reason. The open row's own
+// metadata must survive too, since it says why the condition opened.
+func TestDeleteConnectionTeardownFailureWhileResolvingUnreachable(t *testing.T) {
+	f := newLifecycleFixture(t)
+	id := k8sConnectionID(t)
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	conditionKey := kubernetes.UnreachableConditionKey(id)
+	f.saveRow(t, id, connections.ConnectionStatus(machines.NOTFOUND))
+
+	opening := events.NewEvent().
+		ActedUpon(id).FromOwner(user.ID).FromSystem(*f.h.SystemID).
+		WithCategory("connection").WithAction("update").
+		WithSeverity(events.Error).WithDescription("Cluster unreachable").
+		WithMetadata(map[string]interface{}{"openedBecause": "cluster unreachable"}).
+		WithCorrelationKey(conditionKey).
+		Build()
+	if _, err := f.provider.PersistEvent(*opening, ""); err != nil {
+		t.Fatalf("persist the open condition: %v", err)
+	}
+
+	probe := &probeAction{provider: f.provider, id: id, err: errors.New("undeploy failed")}
+	f.trackMachine(t, id, machines.CONNECTED, &kubernetes.MachineCtx{}, probe)
+
+	if rec := deleteConnectionWithRawID(t, f.h, f.provider, id.String(), user); rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200. body: %s", rec.Code, rec.Body.String())
+	}
+
+	var stored []events.Event
+	if err := f.provider.EventsPersister.DB.
+		Where("correlation_key = ?", conditionKey).Find(&stored).Error; err != nil {
+		t.Fatal(err)
+	}
+	if len(stored) != 1 {
+		t.Fatalf("stored %d events for the condition, want 1 updated in place", len(stored))
+	}
+	if stored[0].ResolvedAt == nil {
+		t.Error("the delete did not resolve the unreachable condition")
+	}
+	if stored[0].Severity != events.Warning {
+		t.Errorf("resolved condition severity = %q, want %q", stored[0].Severity, events.Warning)
+	}
+	if got, _ := stored[0].Metadata["teardownError"].(string); !strings.Contains(got, "undeploy failed") {
+		t.Errorf("resolved condition teardownError = %q, want it to carry %q", got, "undeploy failed")
+	}
+	if got, _ := stored[0].Metadata["openedBecause"].(string); got != "cluster unreachable" {
+		t.Errorf("the resolution dropped the open condition's own metadata: openedBecause = %q, want %q",
+			got, "cluster unreachable")
 	}
 }
 
