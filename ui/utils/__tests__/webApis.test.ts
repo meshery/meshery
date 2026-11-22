@@ -80,6 +80,12 @@ describe('webApis', () => {
       expect(getQueryParam('ab')).toBe('2');
       expect(getQueryParam('abc')).toBe('1');
     });
+
+    it('preserves full query values containing embedded equals signs', () => {
+      setLocation('http://localhost:9081/x?foo=a=b&bar=x=y=z');
+      expect(getQueryParam('foo')).toBe('a=b');
+      expect(getQueryParam('bar')).toBe('x=y=z');
+    });
   });
 
   describe('getRawUrlFromCssUrlString', () => {
@@ -131,8 +137,22 @@ describe('webApis', () => {
       expect(getRawUrlFromCssUrlString([] as any)).toBeUndefined();
     });
 
-    it('returns navigator when present in browser environment', () => {
+    it('returns window.navigator when available, and undefined when window or navigator is missing', () => {
       expect(getNavigator()).toBe(window.navigator);
+
+      const originalNav = window.navigator;
+      try {
+        Object.defineProperty(window, 'navigator', {
+          configurable: true,
+          value: undefined,
+        });
+        expect(getNavigator()).toBeUndefined();
+      } finally {
+        Object.defineProperty(window, 'navigator', {
+          configurable: true,
+          value: originalNav,
+        });
+      }
     });
   });
 });

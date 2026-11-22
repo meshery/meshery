@@ -64,7 +64,8 @@ export function getQueryParam(queryKey) {
   queryParamString.split('&').forEach((query) => {
     if (query.split('=')[0] === queryKey) {
       if (!queryVal) {
-        queryVal = query.split('=')[1] || '';
+        const eqIndex = query.indexOf('=');
+        queryVal = eqIndex === -1 ? '' : query.slice(eqIndex + 1);
       }
     }
   });
@@ -93,8 +94,8 @@ export function getRawUrlFromCssUrlString(url) {
  * @returns {Navigator | undefined}
  */
 export function getNavigator() {
-  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+  if (typeof window === 'undefined' || !window.navigator) {
     return undefined;
   }
-  return navigator;
+  return window.navigator;
 }
