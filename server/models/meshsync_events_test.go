@@ -386,6 +386,82 @@ func TestGetComponentMetadataOmitsComponentSchema(t *testing.T) {
 	}
 }
 
+func TestGetComponentMetadataPicksLatestRegisteredDefinition(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("Failed to create in-memory database: %v", err)
+	}
+
+	if err := db.AutoMigrate(&modelv1beta1.ModelDefinition{}, &component.ComponentDefinition{}); err != nil {
+		t.Fatalf("Failed to migrate schema: %v", err)
+	}
+
+	modelID := uuid.FromStringOrNil("11111111-1111-1111-1111-111111111111")
+	if err := db.Create(&modelv1beta1.ModelDefinition{ID: modelID, Name: "kubernetes"}).Error; err != nil {
+		t.Fatalf("Failed to create model definition: %v", err)
+	}
+
+	// The same kind and version registered by two model versions. The later
+	// CreatedAt must win the lookup even though the older row has the lower ID,
+	// so a missing created_at ordering (gorm's First falls back to primary-key
+	// order) is caught.
+	older := component.ComponentDefinition{
+		ID:      uuid.FromStringOrNil("22222222-2222-2222-2222-222222222222"),
+		ModelID: &modelID,
+		Component: component.Component{
+			Kind:    "Pod",
+			Version: "v1",
+		},
+		Styles:    &core.ComponentStyles{SvgColor: "<svg>older</svg>"},
+		CreatedAt: time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC),
+	}
+	if err := db.Create(&older).Error; err != nil {
+		t.Fatalf("Failed to create older component definition: %v", err)
+	}
+	newer := component.ComponentDefinition{
+		ID:      uuid.FromStringOrNil("44444444-4444-4444-4444-444444444444"),
+		ModelID: &modelID,
+		Component: component.Component{
+			Kind:    "Pod",
+			Version: "v1",
+		},
+		Styles:    &core.ComponentStyles{SvgColor: "<svg>newer</svg>"},
+		CreatedAt: time.Date(2025, 1, 2, 0, 0, 0, 0, time.UTC),
+	}
+	if err := db.Create(&newer).Error; err != nil {
+		t.Fatalf("Failed to create newer component definition: %v", err)
+	}
+
+	mockLogger, err := logger.New("test", logger.Options{})
+	if err != nil {
+		t.Fatalf("Failed to create logger: %v", err)
+	}
+
+	handler := &MeshsyncDataHandler{
+		dbHandler: database.Handler{DB: db},
+		log:       mockLogger,
+	}
+
+	stylesOf := func(data map[string]interface{}) interface{} {
+		styles, ok := data["styles"].(map[string]interface{})
+		if !ok {
+			t.Fatalf("expected returned metadata to include styles, got %#v", data["styles"])
+		}
+		return styles["svgColor"]
+	}
+
+	data, _ := handler.getComponentMetadata("v1", "Pod")
+	if got := stylesOf(data); got != "<svg>newer</svg>" {
+		t.Fatalf("expected the latest registered definition to win, got styles %#v", got)
+	}
+
+	// A second lookup must return the same row, not flip between versions.
+	again, _ := handler.getComponentMetadata("v1", "Pod")
+	if got := stylesOf(again); got != "<svg>newer</svg>" {
+		t.Fatalf("expected repeat lookup to be deterministic, got styles %#v", got)
+	}
+}
+
 func TestMeshsyncDataHandlerStopStopsListeners(t *testing.T) {
 	stopCalled := make(chan struct{}, 1)
 	broker := &testMeshsyncBroker{}
