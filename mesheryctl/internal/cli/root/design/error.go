@@ -201,7 +201,7 @@ func ErrEvaluateDesignResponse(err error) error {
 		[]string{"Ensure the design file is valid", "Check that the Meshery server is running and accessible", "Verify that the server has the required policies loaded"})
 }
 
-// ErrDesignSelectionNotInteractive reports that several designs share the name
+// ErrDesignSelectNotInteractive reports that several designs share the name
 // the user gave, and that there is no interactive stdin to ask which one they
 // meant. Returning a choice here would deploy or apply a design nobody
 // selected, so the command stops instead.
