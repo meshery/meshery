@@ -11,22 +11,24 @@ import (
 	"github.com/meshery/meshery/server/models"
 )
 
+func (h *Handler) logErr(err error) {
+	if h != nil && h.log != nil {
+		h.log.Error(err)
+	}
+}
+
 func (h *Handler) GetUsersKeys(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		tokenErr := models.ErrGetToken(errors.New("token missing from request context"))
-		if h != nil && h.log != nil {
-			h.log.Error(tokenErr)
-		}
+		h.logErr(tokenErr)
 		writeMeshkitError(w, tokenErr, http.StatusInternalServerError)
 		return
 	}
 
 	if provider == nil {
 		nilProviderErr := ErrNilProvider()
-		if h != nil && h.log != nil {
-			h.log.Error(nilProviderErr)
-		}
+		h.logErr(nilProviderErr)
 		writeMeshkitError(w, nilProviderErr, http.StatusInternalServerError)
 		return
 	}
@@ -40,11 +42,9 @@ func (h *Handler) GetUsersKeys(w http.ResponseWriter, req *http.Request, _ *mode
 			if err != nil {
 				invalidOrgIDErr = models.ErrInvalidUUID(fmt.Errorf("invalid organization ID %q: %w", orgID, err))
 			} else {
-				invalidOrgIDErr = models.ErrInvalidUUID(fmt.Errorf("invalid organization ID %q", orgID))
+				invalidOrgIDErr = models.ErrInvalidUUID(fmt.Errorf("invalid organization ID %q: must not be the nil UUID", orgID))
 			}
-			if h != nil && h.log != nil {
-				h.log.Error(invalidOrgIDErr)
-			}
+			h.logErr(invalidOrgIDErr)
 			writeMeshkitError(w, invalidOrgIDErr, http.StatusBadRequest)
 			return
 		}
@@ -53,17 +53,13 @@ func (h *Handler) GetUsersKeys(w http.ResponseWriter, req *http.Request, _ *mode
 	resp, err := provider.GetUsersKeys(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
 	if err != nil {
 		handlerErr := ErrGetUsersKeys(err)
-		if h != nil && h.log != nil {
-			h.log.Error(handlerErr)
-		}
+		h.logErr(handlerErr)
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		if h != nil && h.log != nil {
-			h.log.Error(err)
-		}
+		h.logErr(err)
 	}
 }

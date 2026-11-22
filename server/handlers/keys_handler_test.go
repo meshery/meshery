@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -77,6 +78,8 @@ func TestGetUsersKeys_InvalidOrganizationIDIsBadRequest(t *testing.T) {
 			}
 			if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
 				t.Errorf("code = %q, want %q", decoded.Code, models.ErrInvalidUUIDValueCode)
+			} else if orgID == uuid.Nil.String() && !strings.Contains(rec.Body.String(), "must not be the nil UUID") {
+				t.Errorf("body = %q, want it to contain %q", rec.Body.String(), "must not be the nil UUID")
 			}
 			if provider.called {
 				t.Error("provider was called, want no call at all")
@@ -198,7 +201,7 @@ func TestGetUsersKeys_NilLogger_DoesNotPanic(t *testing.T) {
 		}
 	})
 
-	t.Run("nil orgID", func(t *testing.T) {
+	t.Run("zero orgID", func(t *testing.T) {
 		req := withTokenContext(httptest.NewRequest(http.MethodGet, "/api/identity/orgs/"+uuid.Nil.String()+"/users/keys", nil))
 		req = mux.SetURLVars(req, map[string]string{"orgID": uuid.Nil.String()})
 		rec := httptest.NewRecorder()
