@@ -37271,8 +37271,8 @@ Meshery Server proxies and Meshery UI fetches, evaluates, and mounts at runtime.
 &lt;h2 id="clone-your-fork-to-your-local-machine"&gt;
 	Clone your fork to your local machine
 &lt;/h2&gt;
-&lt;pre tabindex="0"&gt;&lt;code&gt;git clone git@github.com:USERNAME/FORKED-PROJECT.git
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Keeping Your Fork Up to Date
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sh" data-lang="sh"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git clone git@github.com:USERNAME/FORKED-PROJECT.git
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Keeping Your Fork Up to Date
 While this isn&amp;rsquo;t a necessary step, if you plan on doing anything more than just a tiny quick fix, you&amp;rsquo;ll want to make sure you keep your fork up to date by tracking the original &amp;ldquo;upstream&amp;rdquo; repo that you forked. To do this, you&amp;rsquo;ll need to add a remote:&lt;/p&gt;</description></item><item><title>Contributing to MeshSync</title><link>/project/contributing/contributing-meshsync/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-meshsync/</guid><description>&lt;p&gt;&lt;a href="/concepts/architecture/meshsync/"&gt;MeshSync&lt;/a&gt; is Meshery&amp;rsquo;s event-driven,
 continuous discovery and synchronization engine. It keeps Meshery Server&amp;rsquo;s view of the
 configuration and operational state of Kubernetes (and any supported Meshery platform)

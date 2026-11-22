@@ -543,7 +543,7 @@ Example:
 
 file: `modelscustominfo/aad.md`
 
-```
+```yaml
 ---
 title: Azure Active Directory (AAD)
 ---
