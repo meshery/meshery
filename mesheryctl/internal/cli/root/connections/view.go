@@ -82,12 +82,12 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 				return err
 			}
 
-			if fetchedConnection == nil {
-				fmt.Println("No connection(s) found for the given name or ID: ", connectionNameOrID)
-				return nil
-			}
-
 			selectedConnection = fetchedConnection
+		}
+
+		if selectedConnection == nil || selectedConnection.ID == uuid.Nil {
+			fmt.Println("No connection(s) found for the given name or ID: ", connectionNameOrID)
+			return nil
 		}
 
 		savePath := ""
