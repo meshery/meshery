@@ -15,19 +15,48 @@
 package system
 
 import (
+	"fmt"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestStopCmdArgs(t *testing.T) {
-	// stop does not take any arguments
-	err := stopCmd.Args(stopCmd, []string{})
-	assert.NoError(t, err)
+	tests := []struct {
+		Name          string
+		Args          []string
+		ExpectError   bool
+		ExpectedError error
+	}{
+		{
+			Name:        "valid with no positional arguments",
+			Args:        []string{},
+			ExpectError: false,
+		},
+		{
+			Name:          "invalid with unexpected positional argument",
+			Args:          []string{"unexpected-arg"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("stop does not accept positional arguments\n\n%s", stopUsageMsg)),
+		},
+		{
+			Name:          "invalid with multiple unexpected positional arguments",
+			Args:          []string{"arg1", "arg2"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("stop does not accept positional arguments\n\n%s", stopUsageMsg)),
+		},
+	}
 
-	err = stopCmd.Args(stopCmd, []string{"extra-arg"})
-	if assert.Error(t, err) {
-		assert.Contains(t, err.Error(), "too many arguments specified")
-		assert.Contains(t, err.Error(), "Usage: mesheryctl system stop")
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			err := stopCmd.Args(stopCmd, tt.Args)
+			if tt.ExpectError {
+				assert.Error(t, err)
+				utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
 	}
 }
