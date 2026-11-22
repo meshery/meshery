@@ -578,10 +578,11 @@ func TestSchemaMesheryPatterns_MapsFieldsAndOmitsDesignBody(t *testing.T) {
 		},
 		nil,
 		{Name: "empty-body"},
+		{Name: "official-design", CatalogData: v1alpha1.CatalogData{ContentClass: v1alpha1.Official}},
 	}
 
 	got := schemaMesheryPatterns(patterns)
-	if len(got) != 2 {
+	if len(got) != 3 {
 		t.Fatalf("expected nil entries to be skipped, got %d designs", len(got))
 	}
 
@@ -603,5 +604,13 @@ func TestSchemaMesheryPatterns_MapsFieldsAndOmitsDesignBody(t *testing.T) {
 	}
 	if first.CatalogData.ImageURL == nil || len(*first.CatalogData.ImageURL) != 1 {
 		t.Errorf("expected snapshot URL to be carried, got %v", first.CatalogData.ImageURL)
+	}
+	for _, d := range got[:2] {
+		if d.CatalogData == nil || d.CatalogData.ContentClass != nil {
+			t.Errorf("expected no content class on %q, got %+v", d.Name, d.CatalogData)
+		}
+	}
+	if class := got[2].CatalogData.ContentClass; class == nil || *class != "official" {
+		t.Errorf("expected content class official to be carried, got %v", class)
 	}
 }

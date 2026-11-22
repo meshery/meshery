@@ -651,7 +651,7 @@ func schemaCatalogData(catalogData v1alpha1.CatalogData) *catalogv1beta1.Catalog
 		PatternInfo:    catalogData.PatternInfo,
 		Type:           catalogv1beta1.CatalogDataType(catalogData.Type),
 	}
-	if class := catalogData.ContentClass.String(); class != "" {
+	if class := string(catalogData.ContentClass); class != "" {
 		schemaCatalog.ContentClass = &class
 	}
 	if catalogData.PublishedVersion != "" {
