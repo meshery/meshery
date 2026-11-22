@@ -18621,7 +18621,14 @@ Attendees build an extremely simple design: one Kubernetes Deployment that runs 
 <li><strong>Add a Deployment.</strong> From the Kubernetes model, drag a Deployment onto the canvas. Open its configuration form, give it a name, and set the container image to <code>meshery/meshery-milestone:latest</code>. That image is a small Nginx app; Docker Hub currently publishes it under the <code>latest</code> tag only. Add a label such as <code>app: kubecon-&lt;your-handle&gt;</code>.</li>
 <li><strong>Add a Service.</strong> Drag a Service onto the canvas. In its configuration form, set the selector to the same <code>app: kubecon-&lt;your-handle&gt;</code> value so the Service targets the Deployment, and set port and targetPort to <code>80</code>.</li>
 <li><strong>Connect them.</strong> Tap the Service, pick a relationship type from the edge picker, and drag to the Deployment. Kanvas highlights compatible targets.</li>
-<li><strong>Validate.</strong> Run Validate and fix anything it reports. Validate checks every component against its schema and does not contact a cluster. A component whose definition cannot be loaded is reported as a validation error instead of being silently skipped, so a clean result no longer hides missing definitions.</li>
+<li><strong>Validate.</strong> Run Validate and fix anything it reports. Validate checks
+every component against its schema and does not contact a cluster. A
+non-annotation component whose definition cannot be loaded is reported as a
+validation error instead of being silently skipped, so a clean result no
+longer hides missing definitions. Components marked with
+<code>metadata.isAnnotation</code> are skipped by default without an error, even when
+their definition is unavailable; they are validated only when annotation
+validation is explicitly requested.</li>
 <li><strong>Confirm it is saved.</strong> Check the save indicator shows a cloud with a tick.</li>
 <li><strong>Publish to the Catalog.</strong> Open Details for the design: click the info (&ldquo;i&rdquo;) button, or choose Details from the File menu, or go to <strong>Configuration</strong> &gt; <strong>Designs</strong> and open the design&rsquo;s <strong>Design Information</strong>. Fill in Type, Technology, Description and Caveats (for example: Type &ldquo;Workload&rdquo;, Technology &ldquo;Kubernetes&rdquo;, a one-sentence description of your Deployment and Service). Click <strong>Publish to Catalog</strong>.</li>
 </ol>
