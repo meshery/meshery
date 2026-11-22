@@ -177,6 +177,7 @@ const (
 	ErrInvalidExtensionProxyPathCode      = "meshery-server-1490"
 	ErrMigrateEventIndexesCode            = "meshery-server-1491"
 	ErrHandlerPanicCode                   = "meshery-server-1495"
+	ErrInvalidDesignVersionCode           = "meshery-server-1496"
 )
 
 var (
@@ -1036,5 +1037,18 @@ func ErrHandlerPanic() error {
 		[]string{"The handler for this request panicked. The panic value and stack are recorded in the server log, not in this response"},
 		[]string{"A defect in Meshery Server caused the handler for this request to panic"},
 		[]string{"Retry the request", "If it keeps failing, report it at https://github.com/meshery/meshery/issues/new/choose together with the request that triggered it; the server log holds the full stack"},
+	)
+}
+
+// ErrInvalidDesignVersion reports a design file whose version is not semantic
+// versioning, so the save cannot assign or bump it.
+func ErrInvalidDesignVersion(version string, err error) error {
+	return errors.New(
+		ErrInvalidDesignVersionCode,
+		errors.Alert,
+		[]string{"Invalid design version"},
+		[]string{fmt.Sprintf("The design version %q is not a valid semantic version: %v", version, err)},
+		[]string{"The design file's version is not semver, so a next version cannot be computed from it", "Older tooling wrote arbitrary version strings into design files"},
+		[]string{"Set the design file's version to a semver string such as 0.0.1 and save again"},
 	)
 }

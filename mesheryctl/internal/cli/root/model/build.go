@@ -1,7 +1,10 @@
 package model
 
 import (
+	"errors"
 	"fmt"
+	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -24,6 +27,8 @@ var buildModelCmd = &cobra.Command{
 	Long: `Create an OCI-compliant package from the model files.
 Model files are taken from [path]/[model-name]/[model-version] folder.
 Expects input to be in the format scaffolded by the model init command.
+When only [model-name] is provided, the model directory must contain exactly one version directory.
+Root-level files such as README.md, .gitignore, and LICENSE do not affect this validation.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model/build`,
 	Example: `
 // Create an OCI-compliant package from the model files
@@ -91,11 +96,8 @@ mesheryctl model build [model-name]/[model-version]
 
 				count := 0
 				for _, entry := range entries {
-					if entry.IsDir() {
+					if entry.IsDir() && mesheryctlflags.IsSemver(entry.Name()) {
 						count++
-					} else {
-						// If there is a file, it's not exactly one subfolder
-						return false
 					}
 				}
 
@@ -120,7 +122,16 @@ mesheryctl model build [model-name]/[model-version]
 		folder := buildModelCompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)
 
 		utils.Log.Infof("Building meshery model from path %s", folder)
-		img, errBuildImage := meshkitOci.BuildImage(folder)
+
+		buildSource, cleanup, err := prepareModelBuildSource(folder)
+		if err != nil {
+			err = ErrModelBuild(err)
+			utils.Log.Error(err)
+			return err
+		}
+		defer cleanup()
+
+		img, errBuildImage := meshkitOci.BuildImage(buildSource)
 		if errBuildImage != nil {
 			return ErrModelBuild(errBuildImage)
 		}
@@ -178,4 +189,232 @@ func buildModelCompileImageName(name string, version string, extension string) s
 		name,
 		extension,
 	)
+}
+
+// hasGitMetadata checks whether .git exists anywhere within src (as a file or directory).
+func hasGitMetadata(src string) (bool, error) {
+	hasGit := false
+	err := filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.Name() == ".git" {
+			hasGit = true
+			if d.IsDir() {
+				return fs.SkipDir
+			}
+		}
+		return nil
+	})
+	return hasGit, err
+}
+
+// prepareModelBuildSource prepares a build source directory that excludes any Git repository metadata (.git).
+// If no .git metadata is present, it returns the original folder with a no-op cleanup to avoid copying overhead.
+// If .git metadata is present, it stages a clean copy into an isolated temporary directory outside the source tree.
+func prepareModelBuildSource(folder string) (string, func(), error) {
+	cleanFolder := filepath.Clean(folder)
+	hasGit, err := hasGitMetadata(cleanFolder)
+	if err != nil {
+		return "", func() {}, err
+	}
+	if !hasGit {
+		return cleanFolder, func() {}, nil
+	}
+
+	tmpDir, err := os.MkdirTemp("", "meshery-model-build-*")
+	if err != nil {
+		return "", func() {}, err
+	}
+	cleanup := func() {
+		_ = filepath.WalkDir(tmpDir, func(p string, d fs.DirEntry, err error) error {
+			if err == nil && d.IsDir() {
+				_ = os.Chmod(p, 0700)
+			}
+			return nil
+		})
+		_ = os.RemoveAll(tmpDir)
+	}
+
+	if err := copyModelExcludingGit(cleanFolder, tmpDir); err != nil {
+		cleanup()
+		return "", func() {}, err
+	}
+
+	return tmpDir, cleanup, nil
+}
+
+type dirPerm struct {
+	path string
+	perm os.FileMode
+}
+
+func isSubpathOrEqual(p, target string) bool {
+	cleanTarget := filepath.Clean(target)
+	cleanP := filepath.Clean(p)
+	if cleanP == cleanTarget {
+		return true
+	}
+	if cleanTarget == string(filepath.Separator) {
+		return true
+	}
+	return strings.HasPrefix(cleanP, cleanTarget+string(filepath.Separator))
+}
+
+// copyModelExcludingGit recursively copies src into dst while omitting any .git file or directory.
+func copyModelExcludingGit(src, dst string) error {
+	srcInfo, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+	if !srcInfo.IsDir() {
+		return fmt.Errorf("source path is not a directory: %s", src)
+	}
+
+	absDst, err := filepath.Abs(dst)
+	if err != nil {
+		return err
+	}
+	realDst, err := filepath.EvalSymlinks(absDst)
+	if err != nil {
+		realDst = absDst
+	}
+
+	var dirsToRestore []dirPerm
+
+	err = filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		absPath, err := filepath.Abs(path)
+		if err != nil {
+			return err
+		}
+		// Prevent recursion if destination is inside source (e.g. TMPDIR set inside model source)
+		if isSubpathOrEqual(absPath, absDst) || isSubpathOrEqual(absPath, realDst) {
+			if d.IsDir() {
+				return fs.SkipDir
+			}
+			return nil
+		}
+		if realPath, err := filepath.EvalSymlinks(absPath); err == nil {
+			if isSubpathOrEqual(realPath, absDst) || isSubpathOrEqual(realPath, realDst) {
+				if d.IsDir() {
+					return fs.SkipDir
+				}
+				return nil
+			}
+		}
+
+		if d.Name() == ".git" {
+			if d.IsDir() {
+				return fs.SkipDir
+			}
+			return nil
+		}
+
+		relPath, err := filepath.Rel(src, path)
+		if err != nil {
+			return err
+		}
+
+		if relPath == "." {
+			return nil
+		}
+
+		// Prevent path traversal
+		if strings.HasPrefix(relPath, "..") || filepath.IsAbs(relPath) {
+			return fmt.Errorf("invalid relative path: %s", relPath)
+		}
+
+		// Ensure no path segment is ".git"
+		segments := strings.Split(filepath.ToSlash(relPath), "/")
+		for _, seg := range segments {
+			if seg == ".git" {
+				if d.IsDir() {
+					return fs.SkipDir
+				}
+				return nil
+			}
+		}
+
+		targetPath := filepath.Join(dst, relPath)
+
+		info, err := d.Info()
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			// Ensure owner write permission (0700) during staging so child items can be created,
+			// even if the source directory has read-only permissions (e.g. 0555).
+			dirsToRestore = append(dirsToRestore, dirPerm{path: targetPath, perm: info.Mode().Perm()})
+			return os.MkdirAll(targetPath, info.Mode().Perm()|0700)
+		}
+
+		if d.Type()&fs.ModeSymlink != 0 {
+			linkTarget, err := os.Readlink(path)
+			if err != nil {
+				return err
+			}
+			cleanTarget := filepath.Clean(linkTarget)
+			targetSlash := "/" + filepath.ToSlash(cleanTarget) + "/"
+			if cleanTarget == ".git" || strings.Contains(targetSlash, "/.git/") {
+				return nil
+			}
+			return os.Symlink(linkTarget, targetPath)
+		}
+
+		if d.Type().IsRegular() {
+			return copyModelFile(path, targetPath, info.Mode().Perm())
+		}
+
+		return fmt.Errorf("unsupported file type for %s: %s", path, d.Type().String())
+	})
+	if err != nil {
+		return err
+	}
+
+	// Restore original directory permissions in reverse order (deepest directories first)
+	for i := len(dirsToRestore) - 1; i >= 0; i-- {
+		dp := dirsToRestore[i]
+		if chmodErr := os.Chmod(dp.path, dp.perm); chmodErr != nil {
+			return chmodErr
+		}
+	}
+
+	return nil
+}
+
+func copyModelFile(srcFile, dstFile string, perm os.FileMode) (retErr error) {
+	src, err := os.Open(srcFile)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if closeErr := src.Close(); closeErr != nil {
+			retErr = errors.Join(retErr, closeErr)
+		}
+	}()
+
+	if err := os.MkdirAll(filepath.Dir(dstFile), 0755); err != nil {
+		return err
+	}
+
+	dst, err := os.OpenFile(dstFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, perm)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if closeErr := dst.Close(); closeErr != nil {
+			retErr = errors.Join(retErr, closeErr)
+		}
+	}()
+
+	if _, err := io.Copy(dst, src); err != nil {
+		return err
+	}
+
+	return retErr
 }

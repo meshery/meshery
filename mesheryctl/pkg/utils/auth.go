@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -80,6 +81,9 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	// add token to request
 	err = AddAuthDetails(req, tokenPath)
 	if err != nil {
+		if meshkiterrors.GetCode(err) == ErrUnauthenticatedCode {
+			return nil, err
+		}
 		return nil, ErrAttachAuthToken(err)
 	}
 
@@ -239,11 +243,24 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 		err = errors.Wrap(err, "could not read token: ")
 		return err
 	}
+
 	var tokenObj map[string]string
-	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		err = errors.Wrap(err, "token file invalid: ")
+	if len(bytes.TrimSpace(file)) == 0 {
+		var ok bool
+		tokenObj, ok = emptyLocalTokenObject()
+		if !ok {
+			return ErrUnauthenticated()
+		}
+	} else {
+		if err := json.Unmarshal(file, &tokenObj); err != nil {
+			err = errors.Wrap(err, "token file invalid: ")
+			return err
+		}
+	}
+	if err := validateTokenObject(tokenObj); err != nil {
 		return err
 	}
+
 	req.AddCookie(&http.Cookie{
 		Name:     tokenName,
 		Value:    tokenObj[tokenName],
@@ -301,12 +318,55 @@ func ReadToken(filepath string) (map[string]string, error) {
 		err = errors.Wrap(err, "could not read token: ")
 		return nil, ErrFileRead(err)
 	}
+	if len(bytes.TrimSpace(file)) == 0 {
+		tokenObj, ok := emptyLocalTokenObject()
+		if !ok {
+			return nil, ErrUnauthenticated()
+		}
+		return tokenObj, nil
+	}
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
 		err = errors.Wrap(err, "token file invalid: ")
 		return nil, ErrUnmarshal(err)
 	}
+	if err := validateTokenObject(tokenObj); err != nil {
+		return nil, err
+	}
 	return tokenObj, nil
+}
+
+func emptyLocalTokenObject() (map[string]string, bool) {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return nil, false
+	}
+	ctx, ok := mctlCfg.Contexts[mctlCfg.CurrentContext]
+	if !ok || !IsLocalProvider(ctx.GetProvider()) {
+		return nil, false
+	}
+	return map[string]string{
+		tokenName:    "",
+		providerName: "Local",
+	}, true
+}
+
+func validateTokenObject(tokenObj map[string]string) error {
+	if len(strings.TrimSpace(tokenObj[tokenName])) != 0 {
+		return nil
+	}
+	if !IsLocalProvider(tokenObj[providerName]) {
+		return ErrUnauthenticated()
+	}
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return ErrUnauthenticated()
+	}
+	ctx, ok := mctlCfg.Contexts[mctlCfg.CurrentContext]
+	if !ok || !IsLocalProvider(ctx.GetProvider()) {
+		return ErrUnauthenticated()
+	}
+	return nil
 }
 
 // CreateTempAuthServer creates a temporary http server
