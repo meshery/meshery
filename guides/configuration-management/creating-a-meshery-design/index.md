@@ -45,7 +45,7 @@ See [Meshery Designs](/concepts/logical/designs/) for a full description of desi
 	Step 4: Configure components
 </h3>
 <p>Expand a component&rsquo;s form and fill in its fields. Each form is generated from the component&rsquo;s schema, so it marks required fields and shows nested properties you can expand. As you fill in a form, the configurator adds the component to the design and updates the YAML.</p>
-<p>Choose another category or model at any time to add components from it to the same design.</p>
+<p>Choose another category or model at any time to add components from it to the same design. Changing the category clears the selected model and collapses its component forms; choose a model in the new category to show its forms again.</p>
 <h3 id="step-5-save-the-design">
 	Step 5: Save the design
 </h3>
