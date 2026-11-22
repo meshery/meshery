@@ -96,7 +96,30 @@ func (g *ParallelProcessGraph) Traverse(fn VisitFn, withheld WithheldFn, log log
 // Process starts an internal loop which listens for the signals on the channels
 // and operate accordingly
 func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg *sync.WaitGroup, fn VisitFn, withheld WithheldFn, log logger.Handler) {
-	defer wg.Done()
+	signaled := make(map[*ParallelProcessGraphNode]bool, len(deps))
+	sendSignals := func(ok bool) {
+		for _, dep := range deps {
+			if !signaled[dep] {
+				signaled[dep] = true
+				func() {
+					defer func() {
+						if r := recover(); r != nil {
+							log.Errorf("panic sending signal to dependent %s: %v", dep.Name, r)
+						}
+					}()
+					sendSignalToDep(dep, ok, v.Name, log)
+				}()
+			}
+		}
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			log.Errorf("panic in parallel process node %s: %v", v.Name, r)
+			sendSignals(false)
+		}
+		wg.Done()
+	}()
 
 	log.Debug("started with:", v.Name, v.DepCount)
 
@@ -129,8 +152,7 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 			withheld(v.Name, v.Data.Data, failedDep)
 		}
 
-		sendSignalToDeps(deps, false, v.Name, log)
-
+		sendSignals(false)
 		return
 	}
 
@@ -140,14 +162,7 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 	log.Debug("RESPONSE GOT FOR", v.Name, ":", ok)
 
 	// Send the appropriate signal
-	sendSignalToDeps(deps, ok, v.Name, log)
-}
-
-// sendSignalToDeps sends signal on the channel
-func sendSignalToDeps(deps []*ParallelProcessGraphNode, ok bool, from string, log logger.Handler) {
-	for _, dep := range deps {
-		sendSignalToDep(dep, ok, from, log)
-	}
+	sendSignals(ok)
 }
 
 // sendSignalToDep sends signal either on the DepUpdateChannel or DepCancelChannel

@@ -6,12 +6,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // Mock the leaf dependencies that the SUT pulls in. The SUT itself is NOT
 // mocked — we import it and exercise its real exports below.
 // The fetch echoes the requested page back, like the server does.
-const { fetchResources, clusterIds } = vi.hoisted(() => ({
+const { fetchResources, clusterIds, notify } = vi.hoisted(() => ({
   fetchResources: vi.fn((args: { page: number }) => ({
     unwrap: () =>
       Promise.resolve({ resources: [], page: Number(args.page), totalCount: 40, pageSize: 10 }),
   })),
   clusterIds: { current: [] as string[] },
+  notify: vi.fn(),
 }));
 
 vi.mock('@/rtk-query/meshsync', () => ({
@@ -33,7 +34,7 @@ vi.mock('@/assets/styles/general/tool.styles', () => ({
 }));
 
 vi.mock('../../../utils/hooks/useNotification', () => ({
-  useNotification: () => ({ notify: vi.fn() }),
+  useNotification: () => ({ notify }),
 }));
 
 vi.mock('../../../utils/multi-ctx', () => ({
@@ -192,5 +193,88 @@ describe('resources-table paging', () => {
     await user.click(screen.getByTestId('apply-filter'));
 
     await waitFor(() => expect(lastFetchArgs()).toMatchObject({ page: 0, namespace: 'default' }));
+  });
+});
+
+describe('resources-table fetch errors', () => {
+  beforeEach(() => {
+    routerState.isReady = true;
+    routerState.query = {};
+    clusterIds.current = ['cluster-1'];
+    fetchResources.mockClear();
+    notify.mockClear();
+  });
+
+  afterEach(() => {
+    clusterIds.current = [];
+  });
+
+  it('shows the server error message instead of [object Object]', async () => {
+    // unwrap() rejects with an RTK Query error object, not an Error.
+    fetchResources.mockImplementationOnce(() => ({
+      unwrap: () => Promise.reject({ status: 500, data: 'cluster is unreachable' }),
+    }));
+
+    render(
+      <ResourcesTable
+        updateProgress={vi.fn()}
+        k8sConfig={{}}
+        useResourceConfig={() => ({ name: 'Pod', columns: [], options: {} })}
+        submenu={false}
+        workloadType="pods"
+        selectedK8sContexts={[]}
+      />,
+    );
+
+    await waitFor(() => expect(notify).toHaveBeenCalled());
+    const { message, details } = notify.mock.calls[0][0];
+    expect(message).toBe('cluster is unreachable');
+    expect(`${message} ${details ?? ''}`).not.toContain('[object Object]');
+  });
+
+  it('falls back to the action error message when the response has no text', async () => {
+    fetchResources.mockImplementationOnce(() => ({
+      unwrap: () => Promise.reject({ status: 'FETCH_ERROR' }),
+    }));
+
+    render(
+      <ResourcesTable
+        updateProgress={vi.fn()}
+        k8sConfig={{}}
+        useResourceConfig={() => ({ name: 'Pod', columns: [], options: {} })}
+        submenu={false}
+        workloadType="pods"
+        selectedK8sContexts={[]}
+      />,
+    );
+
+    await waitFor(() => expect(notify).toHaveBeenCalled());
+    expect(notify.mock.calls[0][0].message).toBe(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES.error_msg);
+  });
+
+  it.each([
+    ['an empty server message', { status: 500, data: { message: '' } }],
+    [
+      'a malformed MeshKit envelope',
+      { status: 500, meshkit: { message: 'boom', suggestedRemediation: 'not a list' } },
+    ],
+  ])('falls back to the action error message for %s', async (_label, rejection) => {
+    fetchResources.mockImplementationOnce(() => ({
+      unwrap: () => Promise.reject(rejection),
+    }));
+
+    render(
+      <ResourcesTable
+        updateProgress={vi.fn()}
+        k8sConfig={{}}
+        useResourceConfig={() => ({ name: 'Pod', columns: [], options: {} })}
+        submenu={false}
+        workloadType="pods"
+        selectedK8sContexts={[]}
+      />,
+    );
+
+    await waitFor(() => expect(notify).toHaveBeenCalled());
+    expect(notify.mock.calls[0][0].message).toBe(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES.error_msg);
   });
 });

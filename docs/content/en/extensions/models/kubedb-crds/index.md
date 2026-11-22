@@ -637,7 +637,19 @@ components:
   colorIcon: extensions/models/kubedb-crds/components/weaviate-ops-request/icons/color/weaviate-ops-request-color.svg
   whiteIcon: extensions/models/kubedb-crds/components/weaviate-ops-request/icons/white/weaviate-ops-request-white.svg
   description: 
-components-count: 157
+- name: document-db-archiver
+  colorIcon: extensions/models/kubedb-crds/components/document-db-archiver/icons/color/document-db-archiver-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/document-db-archiver/icons/white/document-db-archiver-white.svg
+  description: 
+- name: milvus-archiver
+  colorIcon: extensions/models/kubedb-crds/components/milvus-archiver/icons/color/milvus-archiver-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/milvus-archiver/icons/white/milvus-archiver-white.svg
+  description: 
+- name: neo4j-archiver
+  colorIcon: extensions/models/kubedb-crds/components/neo4j-archiver/icons/color/neo4j-archiver-color.svg
+  whiteIcon: extensions/models/kubedb-crds/components/neo4j-archiver/icons/white/neo4j-archiver-white.svg
+  description: 
+components-count: 160
 relationships: 
 relationship-count: 0
 featureList: [

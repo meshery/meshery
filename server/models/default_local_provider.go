@@ -144,7 +144,7 @@ func (l *DefaultLocalProvider) InstallExtension(extType string, packageUrl strin
 		}
 
 		l.mu.Lock()
-		l.Extensions.Acccount = upsertAccountExtension(l.Extensions.Acccount, parsed)
+		l.Extensions.Account = upsertAccountExtension(l.Extensions.Account, parsed)
 		l.mu.Unlock()
 
 	default:
@@ -213,9 +213,9 @@ func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
 		}
 		l.Extensions.Navigator = filtered
 	case "account":
-		filtered := make(AccountExtensions, 0, len(l.Extensions.Acccount))
+		filtered := make(AccountExtensions, 0, len(l.Extensions.Account))
 		removed := false
-		for _, extension := range l.Extensions.Acccount {
+		for _, extension := range l.Extensions.Account {
 			if strings.EqualFold(strings.TrimSpace(extension.Title), title) {
 				removed = true
 				continue
@@ -225,7 +225,7 @@ func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
 		if !removed {
 			return fmt.Errorf("RemoveExtension: account extension %q not found", title)
 		}
-		l.Extensions.Acccount = filtered
+		l.Extensions.Account = filtered
 	default:
 		return fmt.Errorf("RemoveExtension: unsupported extension type %q (supported types: navigator, account)", extType)
 	}
@@ -2057,6 +2057,8 @@ func githubRepoPatternScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
+		Timeout(remoteFileFetchTimeout).
+		MaxFileSize(maxRemoteFileSize).
 		RegisterFileInterceptor(func(f walker.File) error {
 			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
@@ -2101,6 +2103,8 @@ func githubRepoFilterScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
+		Timeout(remoteFileFetchTimeout).
+		MaxFileSize(maxRemoteFileSize).
 		RegisterFileInterceptor(func(f walker.File) error {
 			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
@@ -2132,18 +2136,8 @@ func githubRepoFilterScan(
 	return result, err
 }
 
-func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPattern, error) {
-	resp, err := http.Get(fileURL)
-	if err != nil {
-		return nil, err
-	}
-	defer SafeClose(resp.Body, log)
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("file not found")
-	}
-
-	body, err := io.ReadAll(resp.Body)
+func genericHTTPPatternFile(fileURL string, _ logger.Handler) ([]MesheryPattern, error) {
+	body, err := fetchRemoteFile(fileURL)
 	if err != nil {
 		return nil, err
 	}
@@ -2169,31 +2163,20 @@ func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPatter
 	return []MesheryPattern{pf}, nil
 }
 
-func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter, error) {
-	resp, err := http.Get(fileURL)
+func genericHTTPFilterFile(fileURL string, _ logger.Handler) ([]MesheryFilter, error) {
+	body, err := fetchRemoteFile(fileURL)
 	if err != nil {
 		return nil, err
 	}
-	defer SafeClose(resp.Body, log)
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("file not found")
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	result := string(body)
-
-	name, err := GetFilterName(result)
+	name, err := filterNameForURLImport(fileURL, body)
 	if err != nil {
 		return nil, err
 	}
 
 	ff := MesheryFilter{
 		Name:       name,
-		FilterFile: []byte(result),
+		FilterFile: body,
 		Location: map[string]interface{}{
 			"type":   "http",
 			"host":   fileURL,

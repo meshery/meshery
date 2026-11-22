@@ -3,9 +3,11 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"sync/atomic"
 	"testing"
 
@@ -294,7 +296,7 @@ func TestGetUserCredentialByID_RejectsMissingOrInvalidID(t *testing.T) {
 }
 
 // TestGetUserCredentialByID_ValidID verifies that a valid UUID successfully
-// queries the provider and returns 200 OK for the owning user.
+// queries the provider and returns 200 OK along with the credential payload for the owning user.
 func TestGetUserCredentialByID_ValidID(t *testing.T) {
 	validID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
 	authUser := &models.User{ID: uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))}
@@ -303,6 +305,7 @@ func TestGetUserCredentialByID_ValidID(t *testing.T) {
 	p.stubbedCredential = &models.Credential{
 		ID:     validID,
 		UserId: authUser.ID,
+		Name:   "valid-cred",
 	}
 
 	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials/"+validID.String(), nil)
@@ -314,6 +317,19 @@ func TestGetUserCredentialByID_ValidID(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
 	}
+	var cred models.Credential
+	if err := json.Unmarshal(rec.Body.Bytes(), &cred); err != nil {
+		t.Fatalf("failed to unmarshal credential response body: %v (body=%q)", err, rec.Body.String())
+	}
+	if cred.ID != validID {
+		t.Fatalf("credential ID = %v, want %v", cred.ID, validID)
+	}
+	if cred.UserId != authUser.ID {
+		t.Fatalf("credential UserId = %v, want %v", cred.UserId, authUser.ID)
+	}
+	if cred.Name != "valid-cred" {
+		t.Fatalf("credential Name = %q, want %q", cred.Name, "valid-cred")
+	}
 	observed := p.observedGet.Load()
 	if observed == nil {
 		t.Fatalf("provider GetCredentialByID was not invoked")
@@ -323,8 +339,23 @@ func TestGetUserCredentialByID_ValidID(t *testing.T) {
 	}
 }
 
+// assertCredentialNotFoundEnvelope decodes the response body and asserts that
+// it contains a structured MeshKit ErrResultNotFound error envelope with a
+// case-insensitive 'not found' message.
+func assertCredentialNotFoundEnvelope(t *testing.T, body []byte) {
+	t.Helper()
+	decoded := decodeErrorBody(t, body)
+	if decoded.Code != models.ErrResultNotFoundCode {
+		t.Fatalf("expected %s, got %s", models.ErrResultNotFoundCode, decoded.Code)
+	}
+	if !strings.Contains(strings.ToLower(decoded.Error), "not found") {
+		t.Fatalf("expected error containing 'not found', got %q", decoded.Error)
+	}
+}
+
 // TestGetUserCredentialByID_UnownedCredentialReturns404 verifies that requesting
-// a legacy unowned credential (UserId == uuid.Nil) returns 404 Not Found (fail-closed).
+// a legacy unowned credential (UserId == uuid.Nil) returns 404 Not Found (fail-closed)
+// with a structured MeshKit error envelope.
 func TestGetUserCredentialByID_UnownedCredentialReturns404(t *testing.T) {
 	credID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
 	authUser := &models.User{ID: uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))}
@@ -345,10 +376,12 @@ func TestGetUserCredentialByID_UnownedCredentialReturns404(t *testing.T) {
 	if rec.Code != http.StatusNotFound {
 		t.Fatalf("expected 404, got %d (body=%q)", rec.Code, rec.Body.String())
 	}
+	assertCredentialNotFoundEnvelope(t, rec.Body.Bytes())
 }
 
 // TestGetUserCredentialByID_NilUserReturns404 verifies that calling GetUserCredentialByID
-// when the caller is unauthenticated/unresolved (user is nil) returns 404 Not Found (fail-closed).
+// when the caller is unauthenticated/unresolved (user is nil) returns 404 Not Found (fail-closed)
+// with a structured MeshKit error envelope.
 func TestGetUserCredentialByID_NilUserReturns404(t *testing.T) {
 	credID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
 
@@ -368,10 +401,12 @@ func TestGetUserCredentialByID_NilUserReturns404(t *testing.T) {
 	if rec.Code != http.StatusNotFound {
 		t.Fatalf("expected 404, got %d (body=%q)", rec.Code, rec.Body.String())
 	}
+	assertCredentialNotFoundEnvelope(t, rec.Body.Bytes())
 }
 
 // TestGetUserCredentialByID_ForeignUserReturns404 verifies that requesting
-// a credential belonging to another user returns 404 Not Found.
+// a credential belonging to another user returns 404 Not Found
+// with a structured MeshKit error envelope.
 func TestGetUserCredentialByID_ForeignUserReturns404(t *testing.T) {
 	credID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
 	authUser := &models.User{ID: uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))}
@@ -393,6 +428,7 @@ func TestGetUserCredentialByID_ForeignUserReturns404(t *testing.T) {
 	if rec.Code != http.StatusNotFound {
 		t.Fatalf("expected 404, got %d (body=%q)", rec.Code, rec.Body.String())
 	}
+	assertCredentialNotFoundEnvelope(t, rec.Body.Bytes())
 }
 
 // TestGetUserCredentialByID_OwnerReturns200 verifies that the owner of a
@@ -417,6 +453,19 @@ func TestGetUserCredentialByID_OwnerReturns200(t *testing.T) {
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+	var cred models.Credential
+	if err := json.Unmarshal(rec.Body.Bytes(), &cred); err != nil {
+		t.Fatalf("failed to unmarshal credential response body: %v (body=%q)", err, rec.Body.String())
+	}
+	if cred.ID != credID {
+		t.Fatalf("credential ID = %v, want %v", cred.ID, credID)
+	}
+	if cred.UserId != owner.ID {
+		t.Fatalf("credential UserId = %v, want %v", cred.UserId, owner.ID)
+	}
+	if cred.Name != "my-cred" {
+		t.Fatalf("credential Name = %q, want %q", cred.Name, "my-cred")
 	}
 }
 
@@ -443,5 +492,160 @@ func TestDeleteUserCredential_PropagatesAuthenticatedUser(t *testing.T) {
 	}
 	if receivedUser.ID != authUser.ID {
 		t.Fatalf("received user ID %v, want %v", receivedUser.ID, authUser.ID)
+	}
+}
+
+func TestSaveUserCredential_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := newCredentialSpyProvider()
+
+	req := httptest.NewRequest(http.MethodPost, "/api/integrations/credentials", bytes.NewBufferString(`{}`))
+	rec := httptest.NewRecorder()
+
+	h.SaveUserCredential(rec, req, nil, nil, p)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for nil user, got %d", rec.Code)
+	}
+	var body map[string]string
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("unmarshaling error response: %v", err)
+	}
+	if body["error"] != "user unauthorized" {
+		t.Fatalf("expected 'user unauthorized', got %q", body["error"])
+	}
+}
+
+func TestSaveUserCredential_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/integrations/credentials", bytes.NewBufferString(`{}`))
+	rec := httptest.NewRecorder()
+
+	h.SaveUserCredential(rec, req, nil, authUser, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestGetUserCredentials_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := newCredentialSpyProvider()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetUserCredentials(rec, req, nil, nil, p)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for nil user, got %d", rec.Code)
+	}
+	var body map[string]string
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("unmarshaling error response: %v", err)
+	}
+	if body["error"] != "user unauthorized" {
+		t.Fatalf("expected 'user unauthorized', got %q", body["error"])
+	}
+}
+
+func TestGetUserCredentials_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials", nil)
+	rec := httptest.NewRecorder()
+
+	h.GetUserCredentials(rec, req, nil, authUser, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestUpdateUserCredential_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := newCredentialSpyProvider()
+
+	req := httptest.NewRequest(http.MethodPut, "/api/integrations/credentials", bytes.NewBufferString(`{}`))
+	rec := httptest.NewRecorder()
+
+	h.UpdateUserCredential(rec, req, nil, nil, p)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for nil user, got %d", rec.Code)
+	}
+	var body map[string]string
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("unmarshaling error response: %v", err)
+	}
+	if body["error"] != "user unauthorized" {
+		t.Fatalf("expected 'user unauthorized', got %q", body["error"])
+	}
+}
+
+func TestUpdateUserCredential_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	req := httptest.NewRequest(http.MethodPut, "/api/integrations/credentials", bytes.NewBufferString(`{}`))
+	rec := httptest.NewRecorder()
+
+	h.UpdateUserCredential(rec, req, nil, authUser, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestGetUserCredentialByID_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	id := uuid.Must(uuid.NewV4())
+
+	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials/"+id.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"credentialID": id.String()})
+	rec := httptest.NewRecorder()
+
+	h.GetUserCredentialByID(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
+	}
+}
+
+func TestDeleteUserCredential_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	id := uuid.Must(uuid.NewV4())
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/integrations/credentials?credentialId="+id.String(), nil)
+	rec := httptest.NewRecorder()
+
+	h.DeleteUserCredential(rec, req, nil, authUser, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrNilProviderCode {
+		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
 	}
 }

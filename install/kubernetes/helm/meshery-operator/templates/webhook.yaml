@@ -221,7 +221,7 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "meshery-operator.selectorLabels" . | nindent 8 }}
+        {{- include "meshery-operator.hookPodLabels" (dict "context" . "component" "webhook-teardown") | nindent 8 }}
     spec:
       serviceAccountName: {{ $fullname }}-webhook-teardown
       restartPolicy: Never
