@@ -13,20 +13,7 @@ const {
 const os = require('node:os');
 const path = require('node:path');
 
-const workflowPath = path.join(__dirname, '..', 'workflows', 'model-generator.yml');
-const workflowLines = readFileSync(workflowPath, 'utf8').split(/\r?\n/);
-const functionStart = workflowLines.findIndex((line) => line.trim() === 'append_log_excerpt() {');
-const functionEnd = workflowLines.findIndex(
-  (line, index) => index > functionStart && line === '          }',
-);
-
-assert.notEqual(functionStart, -1, 'append_log_excerpt must exist in the workflow');
-assert.notEqual(functionEnd, -1, 'append_log_excerpt must have a closing brace');
-
-const bashFunction = workflowLines
-  .slice(functionStart, functionEnd + 1)
-  .map((line) => line.slice(10))
-  .join('\n');
+const scriptPath = path.join(__dirname, 'model-generator-log-excerpt.sh');
 
 const bashExecutable =
   process.env.BASH ||
@@ -48,13 +35,14 @@ function makeExcerpt(t, logLines) {
   writeFileSync(emailPath, '');
   writeFileSync(logPath, `${logLines.join('\n')}\n`);
 
-  const script = `${bashFunction}
-EMAIL_FILE="$1"
-append_log_excerpt "$2" "test step"
-`;
   const result = spawnSync(
     bashExecutable,
-    ['-c', script, 'model-generator-log-excerpt-test', toBashPath(emailPath), toBashPath(logPath)],
+    [
+      toBashPath(scriptPath),
+      toBashPath(emailPath),
+      toBashPath(logPath),
+      'test step',
+    ],
     { encoding: 'utf8' },
   );
 
