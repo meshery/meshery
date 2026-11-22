@@ -27,7 +27,6 @@ type ParallelProcessGraphNode struct {
 	DepUpdateCh chan struct{}
 	// DepCancleCh carries the name of the dependency that did not succeed.
 	DepCancleCh chan string
-	depLock     sync.Mutex
 
 	DepCount int
 }
@@ -44,11 +43,9 @@ func NewParallelProcessGraph(g *Graph) (*ParallelProcessGraph, error) {
 	// Copy the nodes data
 	for node, data := range g.Nodes {
 		pg.ParallelProcessGraphNodeMap[node] = &ParallelProcessGraphNode{
-			Name:        node,
-			Data:        data,
-			DepUpdateCh: make(chan struct{}, 1),
-			DepCancleCh: make(chan string, 1),
-			DepCount:    0,
+			Name:     node,
+			Data:     data,
+			DepCount: 0,
 		}
 	}
 
@@ -69,6 +66,19 @@ func NewParallelProcessGraph(g *Graph) (*ParallelProcessGraph, error) {
 		}
 	}
 
+	// Sizing both channels to max(1, node.DepCount) ensures the buffer has sufficient
+	// capacity for all incoming signals. Given the exactly-once reporting invariant
+	// for each dependency, the buffer never saturates, allowing sends to proceed
+	// without waiting or lock contention.
+	for _, node := range pg.ParallelProcessGraphNodeMap {
+		bufSize := node.DepCount
+		if bufSize < 1 {
+			bufSize = 1
+		}
+		node.DepUpdateCh = make(chan struct{}, bufSize)
+		node.DepCancleCh = make(chan string, bufSize)
+	}
+
 	return pg, nil
 }
 
@@ -86,7 +96,30 @@ func (g *ParallelProcessGraph) Traverse(fn VisitFn, withheld WithheldFn, log log
 // Process starts an internal loop which listens for the signals on the channels
 // and operate accordingly
 func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg *sync.WaitGroup, fn VisitFn, withheld WithheldFn, log logger.Handler) {
-	defer wg.Done()
+	signaled := make(map[*ParallelProcessGraphNode]bool, len(deps))
+	sendSignals := func(ok bool) {
+		for _, dep := range deps {
+			if !signaled[dep] {
+				signaled[dep] = true
+				func() {
+					defer func() {
+						if r := recover(); r != nil {
+							log.Errorf("panic sending signal to dependent %s: %v", dep.Name, r)
+						}
+					}()
+					sendSignalToDep(dep, ok, v.Name, log)
+				}()
+			}
+		}
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			log.Errorf("panic in parallel process node %s: %v", v.Name, r)
+			sendSignals(false)
+		}
+		wg.Done()
+	}()
 
 	log.Debug("started with:", v.Name, v.DepCount)
 
@@ -119,8 +152,7 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 			withheld(v.Name, v.Data.Data, failedDep)
 		}
 
-		sendSignalToDeps(deps, false, v.Name, log)
-
+		sendSignals(false)
 		return
 	}
 
@@ -130,28 +162,17 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 	log.Debug("RESPONSE GOT FOR", v.Name, ":", ok)
 
 	// Send the appropriate signal
-	sendSignalToDeps(deps, ok, v.Name, log)
-}
-
-// sendSignalToDeps sends signal on the channel
-func sendSignalToDeps(deps []*ParallelProcessGraphNode, ok bool, from string, log logger.Handler) {
-	for _, dep := range deps {
-		sendSignalToDep(dep, ok, from, log)
-	}
+	sendSignals(ok)
 }
 
 // sendSignalToDep sends signal either on the DepUpdateChannel or DepCancelChannel
 // depending upon the "ok" parameter. "from" names the node the signal is sent on
 // behalf of.
 //
-// sendSignalToDep will first acquire a lock on the channel operation and then will
-// perform the acttion, hence this method SHOULD be used for sending the messages
-// on the channels to avoid races
+// Because DepUpdateCh and DepCancleCh are buffered to the node's DepCount and each
+// dependency reports exactly once, the buffer never saturates, allowing standard channel
+// sends to complete without waiting and without requiring mutex locking.
 func sendSignalToDep(dep *ParallelProcessGraphNode, ok bool, from string, log logger.Handler) {
-	// Lock the channel
-	dep.depLock.Lock()
-	defer dep.depLock.Unlock()
-
 	if ok {
 		log.Debug("Sending completed signal to:", dep.Name)
 		dep.DepUpdateCh <- struct{}{}

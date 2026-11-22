@@ -95,6 +95,96 @@ under both.
 </ul>
 </details>
 
+<details id="no-mistakes-quality-gate">
+<summary>Running the pre-landing Quality Gate (No-Mistakes)</summary>
+<div>
+<p>
+Meshery enforces the <a href="https://github.com/kunchenguid/no-mistakes">no-mistakes</a> quality gate on all code contributions (UI, server, CLI, schemas, and configurations). The gate validates code review, tests, documentation parity, and linting in isolated, disposable worktrees before changes reach GitHub, satisfying the <code>PR must be raised via no-mistakes</code> CI status check.
+</p>
+
+<h4>1. Install No-Mistakes</h4>
+Install the CLI tool on your local development system:
+<ul>
+<li><strong>macOS / Linux:</strong>
+<pre><code>curl -fsSL https://raw.githubusercontent.com/kunchenguid/no-mistakes/main/docs/install.sh | sh</code></pre>
+</li>
+<li><strong>Windows (PowerShell):</strong>
+<pre><code>irm https://raw.githubusercontent.com/kunchenguid/no-mistakes/main/docs/install.ps1 | iex</code></pre>
+</li>
+<li><strong>Via Go:</strong>
+<pre><code>go install github.com/kunchenguid/no-mistakes/cmd/no-mistakes@latest</code></pre>
+</li>
+</ul>
+<p>For other installation options, refer to the <a href="https://kunchenguid.github.io/no-mistakes/start-here/installation/">official installation guide</a>.</p>
+
+<h4>2. Check Prerequisites</h4>
+Verify your local environment with the built-in diagnostic tool:
+<pre><code>no-mistakes doctor</code></pre>
+<p>
+This checks for:
+</p>
+<ul>
+<li><strong>Git:</strong> Required for repository and branch operations.</li>
+<li><strong>Supported Agent Runner:</strong> Claude Code, Codex, Copilot, Antigravity (<code>agy</code>), etc.</li>
+<li><strong>GitHub CLI (<code>gh</code>):</strong> Required for opening pull requests and monitoring CI. Run <code>gh auth login</code>, then confirm with <code>gh auth status</code>. Doctor checks only that <code>gh</code> is installed.</li>
+</ul>
+
+<h4>3. Initialize the Meshery Repository</h4>
+Navigate to your local Meshery repository and initialize the local quality gate with your GitHub fork. Point <code>origin</code> at the parent repository first: if you cloned your fork (the gitflow guide's layout), <code>no-mistakes init</code> refuses rather than opening pull requests against your own fork. Run <code>git remote set-url origin git@github.com:meshery/meshery.git</code>, then pass your fork with <code>--fork-url</code>:
+<pre><code>cd meshery
+git remote set-url origin git@github.com:meshery/meshery.git
+no-mistakes init --fork-url git@github.com:YOUR_USERNAME/meshery.git</code></pre>
+<p>
+This registers the local <code>no-mistakes</code> remote, prepares isolated worktrees, and starts the background daemon.
+</p>
+
+<h4>4. Commit and Run the Quality Gate</h4>
+<ol>
+<li>Create your feature branch:
+<pre><code>git checkout -b feature/your-feature</code></pre>
+</li>
+<li>Make your changes and commit them with DCO sign-off:
+<pre><code>git commit -s -m "type(scope): descriptive commit message"</code></pre>
+</li>
+<li>Run the pipeline on your branch:
+<pre><code>no-mistakes axi run --intent "&lt;brief description of your changes&gt;"</code></pre>
+</li>
+</ol>
+<p>
+You can also push the branch through the gate directly with <code>git push no-mistakes feature/your-feature</code>.
+</p>
+
+<h4>5. Monitor Pipeline Progress</h4>
+<p>
+Run <code>no-mistakes</code> to watch the pipeline and respond to approval requests; <code>no-mistakes status</code> shows a summary.
+</p>
+<p>
+The automated pipeline executes 9 structured stages:
+</p>
+<ol>
+<li><strong>Intent:</strong> Analyzes the purpose and scope of your changes.</li>
+<li><strong>Rebase:</strong> Rebases onto the latest upstream branch.</li>
+<li><strong>Review:</strong> Evaluates code styling and safety rules.</li>
+<li><strong>Test:</strong> Scopes and runs baseline tests.</li>
+<li><strong>Document:</strong> Checks documentation parity and identifies gaps.</li>
+<li><strong>Lint:</strong> Runs repository linters.</li>
+<li><strong>Push:</strong> Pushes validated commits to your remote fork.</li>
+<li><strong>PR:</strong> Creates or updates the pull request.</li>
+<li><strong>CI:</strong> Monitors remote GitHub Actions workflows.</li>
+</ol>
+
+<h4>6. Pull Request Attestation &amp; Requirements</h4>
+<ul>
+<li><strong>Attestation Matching:</strong> The CI check <code>PR must be raised via no-mistakes</code> verifies that the pull request description contains a valid attestation matching the current <code>head_sha</code> and that <code>review</code>, <code>test</code>, and <code>document</code> steps are marked <code>completed</code>. After pushing new commits, re-run the gate so the attestation covers the new head; an attestation for an older commit fails the check. Before a follow-up commit, run <code>no-mistakes axi status</code> and follow its <code>branch_sync.next_action</code>: when it says <code>sync</code>, run <code>no-mistakes axi sync</code> first, since the gate may have advanced the published branch past your local copy.</li>
+<li><strong>Separate DCO Check:</strong> All commits must include a sign-off trailer (<code>git commit -s</code>) to satisfy GitHub's independent <code>DCO</code> status check.</li>
+<li><strong>Exempt Paths:</strong> Pull requests whose changed paths are strictly documentation (<code>docs/**</code>, <code>CNAME</code>) or CI workflows (<code>.github/workflows/**</code>) are automatically exempt from the pipeline requirement.</li>
+</ul>
+
+<p>
+For agent skill instructions and CI merge gate specifications, see the <a href="{{< ref "project/contributing/build-and-release.md#no-mistakes-merge-gate" >}}">No-mistakes merge gate technical specification</a> and <code>.agents/skills/no-mistakes/SKILL.md</code>.
+</p>
+</div></details>
+
 ## Cloning the Repository
 
 The `meshery/meshery` repository is large - a full clone is on the order of tens of gigabytes and keeps growing. Two directories account for most of that weight, and neither is needed for the vast majority of contributions:
@@ -106,10 +196,13 @@ Unless you are specifically working on the model registry or on an archived docu
 
 ### Recommended: sparse clone
 
+First [fork](https://github.com/meshery/meshery/fork) the repository, then replace `USERNAME` and `FORKED-PROJECT` with your GitHub username and fork name:
+
 ```bash
 # 1. Blobless partial clone - fetches history metadata, not every file's contents
-git clone --no-checkout --filter=blob:none https://github.com/meshery/meshery.git
+git clone --no-checkout --filter=blob:none https://github.com/USERNAME/FORKED-PROJECT.git
 cd meshery
+git remote add upstream https://github.com/meshery/meshery.git
 
 # 2. Check out everything EXCEPT the bulky generated directories:
 #      - every model except meshery-core and kubernetes
@@ -161,9 +254,9 @@ git sparse-checkout disable
   <li><strong>Familiarize</strong> yourself with the broader set of projects in Meshery's ecosystem, including the <a href="https://github.com/meshery-extensions">meshery-extensions</a> repositories (the <a href="https://meshery.io/community">community handbook</a> is a helpful resource): Spend time understanding each of the initiatives through high-level overviews available in the community drive and through discussions with your MeshMate.</li>
   <li><strong>Identify</strong> your area of interest: Use the time with your MeshMate to familiarize yourself with the architecture and technologies used in the projects. Inform your MeshMate of your current skills and what skills you aim to develop.</li>
   <li><strong><a href="https://play.meshery.io">Play with Meshery</a></strong>: Put on your user hat and walk-through all of Meshery’s features and functions as a user.</li>
-  <li><strong>Build Meshery Server and UI</strong>: Confirm that you have a usable development environment. See <a href="#contributing-guides">Guides</a> below.</li>
+  <li><strong>Build Meshery Server and UI</strong>: Confirm that you have a usable development environment. See <a href="#specific-contribution-guides">Guides</a> below.</li>
   <li><strong>Discuss</strong> with the community by engaging in the <a href="https://discuss.meshery.io/">discussion forum</a>.</li>
-  <li><strong>Contribute</strong> by grabbing any open issue with the <a href="https://github.com/issues?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Ameshery+org%3Ameshery-extensions+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22+">help-wanted label</a> and jump in. If needed, create a <a href="https://github.com/meshery/meshery/issues/new/choose">new issue</a>. All <a href="https://github.com/meshery/meshery/pulls">pull requests</a> should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to <a href="https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords">automatically close issues in GitHub</a>.</li>
+  <li><strong>Contribute</strong> by grabbing any open issue with the <a href="https://github.com/search?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Ameshery+org%3Ameshery-extensions+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22&type=issues">help-wanted label</a> and jump in. If needed, create a <a href="https://github.com/meshery/meshery/issues/new/choose">new issue</a>. All <a href="https://github.com/meshery/meshery/pulls">pull requests</a> should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to <a href="https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords">automatically close issues in GitHub</a>.</li>
   <li><strong>Fill in</strong> a <a href="https://meshery.io/newcomers">community member form</a> to gain access to community resources.</li>
 </ol>
 </details>

@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-	"os"
 	"sync"
 	"time"
 
@@ -35,8 +34,7 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 		LogLevel: logLevel,
 	})
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		logrus.Error(err)
 	}
 	data := NewDefaultPreference()
 
@@ -50,16 +48,24 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 
 	dataCopyB, ok := s.db.Load(userID)
 	if ok {
-		log.Debug(fmt.Sprintf("retrieved session for user with id: %s", userID))
+		if log != nil {
+			log.Debug(fmt.Sprintf("retrieved session for user with id: %s", userID))
+		}
 		newData, ok1 := dataCopyB.(*Preference)
 		if ok1 {
-			log.Debug(fmt.Sprintf("session for user with id: %s was read in tact.", userID))
+			if log != nil {
+				log.Debug(fmt.Sprintf("session for user with id: %s was read in tact.", userID))
+			}
 			data = newData
 		} else {
-			log.Warn(ErrSessionNotReadIntact(userID))
+			if log != nil {
+				log.Warn(ErrSessionNotReadIntact(userID))
+			}
 		}
 	} else {
-		log.Debug(ErrSessionNotFound(userID))
+		if log != nil {
+			log.Debug(ErrSessionNotFound(userID))
+		}
 		// Do not store the freshly created default preference on read-miss.
 		// Let callers explicitly persist preferences via WriteToPersister.
 	}

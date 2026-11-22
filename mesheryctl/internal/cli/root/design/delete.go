@@ -21,26 +21,55 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"gopkg.in/yaml.v2"
 )
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete design file",
 	Long: `delete design file will trigger deletion of the design file.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/design/delete`,
-	Args: cobra.MinimumNArgs(0),
+	When a positional target is passed, it is resolved with the following precedence:
+	1. Existing local file path
+	2. Remote URL
+	3. Design ID or name lookup
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/design/delete`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if cmd.Flags().Changed("file") && strings.TrimSpace(file) == "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("file path cannot be empty"))
+		}
+		if len(args) == 0 && file == "" {
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return utils.ErrInvalidArgument(fmt.Errorf("please provide a design name, ID, or file path"))
+		}
+		if len(args) > 0 && strings.TrimSpace(args[0]) == "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("target cannot be empty"))
+		}
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("expected at most one positional argument, got %d", len(args)))
+		}
+		if len(args) > 0 && file != "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a positional argument and the --file flag"))
+		}
+		return nil
+	},
 	Example: `
 // delete a design file
 mesheryctl design delete [file | URL]
+
+// delete a design by ID
+mesheryctl design delete [ID]
+
+// delete a design using --file
+mesheryctl design delete -f [file | URL]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
@@ -49,15 +78,31 @@ mesheryctl design delete [file | URL]
 			return err
 		}
 
+		targetFile := file
 		pattern := ""
 		isID := false
 		if len(args) > 0 {
-			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
-			if err != nil {
-				if errors.GetCode(err) == utils.ErrNotFoundCode {
-					return ErrDesignNotFound(args[0])
+			target := args[0]
+			if _, statErr := os.Stat(target); statErr == nil {
+				targetFile = target
+			} else if utils.IsValidUrl(target) {
+				targetFile = target
+			} else {
+				pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), target, "pattern")
+				if err != nil {
+					if errors.GetCode(err) == utils.ErrNotFoundCode {
+						return ErrDesignNotFound(target)
+					}
+					if errors.GetCode(err) == utils.ErrAmbiguousIDCode {
+						return err
+					}
+					// If the server is unreachable or another network error occurs,
+					// fall through to treat target as a file path so the descriptive
+					// file-read error is surfaced instead of an obscure ID error.
+					targetFile = target
+				} else if !isID {
+					targetFile = target
 				}
-				return utils.ErrInvalidNameOrID(err)
 			}
 		}
 
@@ -74,78 +119,35 @@ mesheryctl design delete [file | URL]
 			return nil
 		}
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
-		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
 		var patternFileByt []byte
 		// If file path not a valid URL, treat it like a local file path
-		if !govalidator.IsURL(file) {
-			content, err := os.ReadFile(file)
+		if !utils.IsValidUrl(targetFile) {
+			content, err := os.ReadFile(targetFile)
 			if err != nil {
-				return utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, file))
+				return utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, targetFile))
 			}
 
 			patternFileByt = content
 		} else {
 			// Else treat it like a URL
-			url, path, err := utils.ParseURLGithub(file)
-			if err != nil {
-				return utils.ErrParseGithubFile(err, file)
-			}
-
-			utils.Log.Debug(url)
-			utils.Log.Debug(path)
-
-			var jsonValues []byte
-
-			// Send the URL and path to the server and let it fetch the patternfile and delete
-			// the components
-			if path != "" {
-				jsonValues, _ = json.Marshal(map[string]interface{}{
-					"url":  url,
-					"path": path,
-					"save": false,
-				})
-			} else {
-				jsonValues, _ = json.Marshal(map[string]interface{}{
-					"url":  url,
-					"save": false,
-				})
-			}
-
-			req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
+			patternFileByt, err = fetchDesignFromGithub(targetFile)
 			if err != nil {
 				return err
-			}
-
-			resp, err := utils.MakeRequest(req)
-			if err != nil {
-				return err
-			}
-			utils.Log.Debug("remote hosted pattern request success")
-			var response []*models.MesheryPattern
-			defer func() { _ = resp.Body.Close() }()
-
-			body, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return utils.ErrReadFromBody(err)
-			}
-
-			err = json.Unmarshal(body, &response)
-			if err != nil {
-				return utils.ErrUnmarshal(err)
-			}
-
-			if len(response) == 0 {
-				return ErrDesignNotFound("design at " + file)
-			}
-
-			patternFileByt, err = yaml.Marshal(response[0].PatternFile)
-			if err != nil {
-				return models.ErrMarshallingDesignIntoYAML(err)
 			}
 		}
 
-		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer(patternFileByt))
+		// The server decodes this endpoint's body as a JSON
+		// MesheryPatternFileDeployPayload, so send the design the same way
+		// design deploy does rather than as raw file content.
+		payloadBytes, err := json.Marshal(models.MesheryPatternFileDeployPayload{
+			PatternFile: string(patternFileByt),
+		})
+		if err != nil {
+			return utils.ErrMarshal(err)
+		}
+
+		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer(payloadBytes))
 		if err != nil {
 			return utils.ErrCreatingRequest(err)
 		}

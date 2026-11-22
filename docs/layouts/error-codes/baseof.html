@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}" class="no-js">
+  <head>
+    {{ partial "head.html" (dict "Title" .Title "Description" .Params.abstract "Kind" .Kind "Permalink" .Permalink "Site" .Site) }}
+  </head>
+  <body class="td-{{ .Kind }}{{ with .Params.body_class }} {{ . }}{{ end }} docs-slim">
+    {{ partialCached "scripts/google-tagmanager-body.html" . }}
+    <main class="main-container" role="main" style="max-width: 56rem; margin: 1.5rem auto; padding: 0 1.25rem;">
+      <p>
+        <a href="{{ .Site.Home.RelPermalink }}">Meshery Docs</a>
+        {{- with .Parent }}
+          · <a href="{{ .RelPermalink }}">{{ .LinkTitle | default .Title }}</a>
+        {{- end }}
+      </p>
+      {{ if ne (.Params.display_title | default true) false }}
+        <h1>{{ .Title }}</h1>
+      {{ end }}
+      {{ block "main" . }}{{ end }}
+    </main>
+    {{ partialCached "scripts/google-analytics.html" . }}
+  </body>
+</html>

@@ -11,14 +11,14 @@ The **Telemetry** section of Meshery lets you view your observability data witho
 
 Telemetry is organized into two modes, available as items under the **Telemetry** entry in the Meshery navigation:
 
-- **Charts** — Browse, pin, and render your existing **Grafana** dashboards. See [Grafana Dashboards]({{< ref "guides/telemetry/grafana-dashboards.md" >}}).
-- **Metrics** — Explore **Prometheus** metrics, compose PromQL queries, and save your own panels. See [Prometheus Metrics]({{< ref "guides/telemetry/prometheus-metrics.md" >}}).
+- **Charts** - Browse, pin, and render your existing **Grafana** dashboards. See [Grafana Dashboards]({{< ref "guides/telemetry/grafana-dashboards.md" >}}).
+- **Metrics** - Explore **Prometheus** metrics, compose PromQL queries, and save your own panels. See [Prometheus Metrics]({{< ref "guides/telemetry/prometheus-metrics.md" >}}).
 
 ## How it works
 
 Telemetry is **connection-driven**. Instead of pasting a URL and API key into a settings form, you register Grafana and Prometheus as Meshery Connections (with an associated [Credential]({{< ref "concepts/logical/credentials.md" >}})), and Telemetry uses them. This means:
 
-- Credentials are stored once, securely, and reused — Meshery proxies every query server-side, so your browser never needs direct access to Grafana or Prometheus.
+- Credentials are stored once, securely, and reused - Meshery proxies every query server-side, so your browser never needs direct access to Grafana or Prometheus.
 - The same connection can be shared across an [Environment]({{< ref "concepts/logical/environments.md" >}}) and reused by other Meshery features.
 - Your pinned dashboards and saved metric panels are stored on the connection itself, so they persist and travel with it.
 
@@ -39,9 +39,9 @@ Once a connection reaches the **Connected** or **Registered** state, it becomes 
 
 Both Telemetry modes share a common set of controls:
 
-- **Connection picker** — choose which registered Grafana/Prometheus connection to view.
-- **Connection status** — a live indicator pings the connection and shows whether it is reachable, along with the detected server version.
-- **Time range** — a relative time-range selector (from the last 5 minutes up to the last 7 days) applied to every panel.
-- **Refresh** — refresh on demand, or set an auto-refresh interval.
+- **Connection picker** - choose which registered Grafana/Prometheus connection to view.
+- **Connection status** - a live indicator pings the connection and shows whether it is reachable, along with the detected server version.
+- **Time range** - a relative time-range selector (from the last 5 minutes up to the last 7 days) applied to every panel.
+- **Refresh** - refresh on demand, or set an auto-refresh interval.
 
 All panels on a board or grid are loaded in a single batched request per refresh, keeping the view responsive even with many panels.

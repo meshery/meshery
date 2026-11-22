@@ -59,8 +59,8 @@ func TestDeployMesh(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
-			Name: "Test Deploy App Mesh",
-			Args: []string{"deploy", "app-mesh"},
+			Name: "Test Deploy Cilium Service Mesh with a hyphenated name",
+			Args: []string{"deploy", "cilium-service-mesh"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -75,7 +75,7 @@ func TestDeployMesh(t *testing.T) {
 					ResponseCode: 200,
 				},
 			},
-			ExpectedResponse: "deploy.appmesh.output.golden",
+			ExpectedResponse: "deploy.cilium.output.golden",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},

@@ -4,7 +4,6 @@ contexts:
         token: default
         platform: kubernetes
         components:
-            - meshery-app-mesh
             - meshery-istio
             - meshery-linkerd
             - meshery-consul

@@ -161,7 +161,15 @@ components:
   colorIcon: extensions/models/consul/components/route-upstream-limits-filter/icons/color/route-upstream-limits-filter-color.svg
   whiteIcon: extensions/models/consul/components/route-upstream-limits-filter/icons/white/route-upstream-limits-filter-white.svg
   description: 
-components-count: 38
+- name: inference-gateway
+  colorIcon: extensions/models/consul/components/inference-gateway/icons/color/inference-gateway-color.svg
+  whiteIcon: extensions/models/consul/components/inference-gateway/icons/white/inference-gateway-white.svg
+  description: 
+- name: inference-pool-config
+  colorIcon: extensions/models/consul/components/inference-pool-config/icons/color/inference-pool-config-color.svg
+  whiteIcon: extensions/models/consul/components/inference-pool-config/icons/white/inference-pool-config-white.svg
+  description: 
+components-count: 40
 relationships: 
 relationship-count: 0
 featureList: [

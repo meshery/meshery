@@ -2,7 +2,6 @@
 title: Contributing to Meshery Docs
 description: How to contribute to Meshery Docs.
 categories: [contributing]
-aliases: [/project/contributing/contributing-docs]
 ---
 
 {{% alert color="info" title="Important" %}}
@@ -101,6 +100,8 @@ make docker
 
 This runs `docker compose watch`, which builds and serves the site inside a container.
 
+The initial startup may take several minutes while Hugo downloads modules and builds the site. Once ready, the site will be available at <http://localhost:1313/>.
+
 ### Using Gitpod
 - Ensure you have an account on <a href="https://www.gitpod.io/" class="meshery-light">Gitpod</a> and add the <a href="https://chromewebstore.google.com/detail/gitpod/dodmmooeoklaejobgleioelladacbeki" class="meshery-light">Gitpod extension</a> to your browser.
 - Open your forked Meshery repository on GitHub.
@@ -157,9 +158,10 @@ You should be able to access the site on port `1313`. If you want to access it i
 ### Make Necessary Changes
 - Make changes as required based on the issue you are solving.
 - Ensure to verify that your changes reflect correctly by serving the site locally using `make site`.
+- Before writing or restructuring a page, decide whether it is a tutorial, a how-to guide, a concept, or reference. See [Choosing a Content Type]({{< ref "project/contributing/contributing-docs/content-types" >}}).
 
 {{% alert color="light" title="Note" %}}
-If the issue requires making new doc page that replaces the old page, please don't forget to add a redirect link on the old page. In Hugo, you can add an `aliases` field in the frontmatter of the new page to redirect from the old URL.
+Never move, rename, merge, or delete a published page without a redirect. In Hugo, add the old URL (trailing-slash form) to the `aliases` field in the front matter of the page that now holds the content, and keep any aliases the old page already had. Do not add an alias that matches the URL of another published page.
 {{% /alert %}}
 
 
@@ -238,9 +240,11 @@ If the code snippet has special characters then use backtick delimiters:
 Don't use `code` shortcode when the snippet is in between an ordered list, this breaks the order and next item in the list will start numbering from 1. Instead, use `<pre class="codeblock-pre">...</pre>` method described above.
 
 **A full block:**
+````markdown
 ```
-```code snippet```
+code snippet
 ```
+````
 
 **Inline formatting:**
 
@@ -263,7 +267,7 @@ For contributing `mesheryctl` reference section, refer [Contributing CLI]({{< re
 
 The following is a concise summary of the steps to contribute to Meshery documentation.
 
-1. Create a fork, if you have not already, by following the steps described [here](CONTRIBUTING-gitflow.md)
+1. Create a fork, if you have not already, by following the steps described [here]({{< ref "project/contributing/contributing-gitflow.md" >}})
 2. In the local copy of your fork, navigate to the docs folder.
    `cd docs`
 3. Create and checkout a new branch to make changes within
@@ -273,57 +277,29 @@ The following is a concise summary of the steps to contribute to Meshery documen
 5. Add redirect link on the old page (only when a new page is created that replaces the old page). In Hugo, use the `aliases` frontmatter field.
 6. Run site locally to preview changes.
    `make site`
-7. Commit, [sign-off](#commit-signing), and push changes to your remote branch.
+7. Commit, [sign-off]({{< ref "project/contributing/_index.md" >}}), and push changes to your remote branch.
    `git push origin <my-changes>`
 8. Open a pull request (in your web browser) against the repo: https://github.com/meshery/meshery.
 
 ### Navigation Table of Contents in Sidebar (toc)
 
-Sidebars use a data file at `data/toc.yml` to create a table of contents. It is written in the following manner:
+The sidebar is generated from the content tree under `content/en/`. There is no navigation data file to edit: a page appears in the sidebar because of where its file lives.
+
+- A directory with an `_index.md` is a **section**. It shows as a parent entry in the sidebar.
+- Pages and subdirectories inside that directory show as its children. Nesting directories nests sidebar entries.
+
+For example, these files:
 
 ```
-- title: Group 1
-  url: group1
-  links:
-    - title: Thing 1
-      url: group1/thing1
-    - title: Thing 2
-      url: group1/thing2
-    - title: Thing 3
-      url: group1/thing3
+content/en/group1/_index.md
+content/en/group1/thing1/_index.md
+content/en/group1/thing1/subthing1_1.md
+content/en/group1/thing1/subthing1_2.md
+content/en/group1/thing2.md
+content/en/group1/thing3.md
 ```
 
-The output of the code snippet would be:
-
-```
-    Group 1
-      Thing 1
-      Thing 2
-      Thing 3
-```
-
-In this example, **Group 1** is a ``parent`` section within the Table of Contents, and **Thing 1**, **Thing 2**, and **Thing 3** are ``children`` of **Group 1**. This is a direct hierarchy with a single level of children under the parent.
-
-``Grandchildren`` are added in the sidebars in the following manner:
-
-```
-- title: Group 1
-  url: group1
-  links:
-    - title: Thing 1
-      url: group1/thing1
-      children:
-        - title: Subthing 1.1
-          url: group1/thing1/subthing1_1
-        - title: Subthing 1.2
-          url: group1/thing1/subthing1_2
-    - title: Thing 2
-      url: group1/thing2
-    - title: Thing 3
-      url: group1/thing3
-```
-
-The output of the code snippet would be:
+produce this sidebar:
 
 ```
     Group 1
@@ -334,16 +310,24 @@ The output of the code snippet would be:
       Thing 3
 ```
 
-Here, **Subthing 1.1** and **Subthing 1.2** are the ``grandchildren`` of **Thing 1**.
+Use front matter to control how a page or section is listed:
 
-The sidebar template in `layouts/partials/sidebar.html` reads from `data/toc.yml` and supports up to four levels of navigation hierarchy.
+| Field | Effect |
+|---|---|
+| `title` | The sidebar label, unless `linkTitle` is set. |
+| `linkTitle` | A shorter label for the sidebar. The page heading still uses `title`. |
+| `weight` | Order within the parent section, lowest first. Entries with the same weight are sorted by title. An entry with no weight counts as `0`, so it sorts after negative weights and before positive ones. |
+| `toc_hide: true` | Keeps the page or section out of the sidebar. The page is still published. |
 
-- **Parent**: It serves as a top level category for related content.
-- **Children** (`links`): They are immediate subsections or topics that fall under the parent section.
-- **Grandchildren** (`children`): They are nested under a link and provide a more detailed breakdown of information within the child section. Grandchildren are used to organize content further, offering a more detailed structure for a specific topic.
-- **Great-grandchildren** (`grandchildren`): An additional level of nesting for even finer-grained organization.
+```yaml
+---
+title: Contributing to Meshery Docs
+linkTitle: Docs
+weight: 20
+---
+```
 
-These sections create a hierarchical and organized navigation experience for readers.
+To add a page to the sidebar, create the Markdown file in the section it belongs to and set `weight` if its position matters. The sidebar itself is rendered by `layouts/partials/sidebar-tree.html`.
 
 ### Alerts
 
@@ -452,7 +436,7 @@ Example:
 
 file: `modelscustominfo/aad.md`
 
-```
+```yaml
 ---
 title: Azure Active Directory (AAD)
 ---

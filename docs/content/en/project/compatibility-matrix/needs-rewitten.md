@@ -1,7 +1,5 @@
 ---
 title: Compatibility Matrix
-aliases:
-- /project/compatibility-matrix/
 description: Understand which environments, dependencies, and installation paths Meshery supports.
 display_title: false
 cascade:
@@ -77,7 +75,7 @@ Validate your environment before installing Meshery:
 
 {{< code code="mesheryctl system check --preflight" >}}
 
-For a deeper walkthrough of what these checks validate, see [Running system checks using Meshery CLI]({{< ref "guides/mesheryctl/running-system-checks-using-mesheryctl.md" >}}) and the [`mesheryctl system check` reference]({{< ref "reference/references/mesheryctl/system/check.md" >}}).
+For a deeper walkthrough of what these checks validate, see [Running system checks using Meshery CLI]({{< ref "guides/mesheryctl/running-system-checks-using-mesheryctl.md" >}}) and the [`mesheryctl system check` reference]({{< ref "reference/mesheryctl/system/check.md" >}}).
 
 If you plan to use Docker, verify that the Docker Engine and Compose plugin are available:
 

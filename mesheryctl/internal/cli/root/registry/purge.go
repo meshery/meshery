@@ -63,6 +63,8 @@ func (p *purgePlan) totalToRemove() int {
 	return n
 }
 
+var purgeUsageMsg = "Usage: mesheryctl registry purge [flags]\nRun 'mesheryctl registry purge --help' to see detailed help message"
+
 var purgeCmd = &cobra.Command{
 	Use:   "purge",
 	Short: "Prune old model version directories",
@@ -71,7 +73,7 @@ var purgeCmd = &cobra.Command{
 Prerequisite: Execute this command from the root of a meshery/meshery repo fork; it operates on the "./models" directory relative to the current working directory.
 
 The "kubernetes" and "meshery-core" models are always excluded from purging, regardless of flags. Use --exclude to skip additional models.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/registry/purge`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/registry/purge`,
 	Example: `
 // Retain only the latest version of every model (default).
 mesheryctl registry purge
@@ -88,6 +90,12 @@ mesheryctl registry purge --exclude aws-ec2-controller,cilium
 // Skip the confirmation prompt.
 mesheryctl registry purge --retain 2 -y
 	`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", purgeUsageMsg))
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if purgeRetain < 1 {
 			return ErrPurgeInvalidRetain(purgeRetain)
@@ -128,7 +136,10 @@ mesheryctl registry purge --retain 2 -y
 
 		userResponse := utils.SilentFlag
 		if !userResponse {
-			userResponse = utils.AskForConfirmation(fmt.Sprintf("This will permanently delete %s under %s. Are you sure you want to continue", pluralize(plan.totalToRemove(), "model version directory", "model version directories"), modelsDir))
+			userResponse, err = utils.AskForConfirmation(fmt.Sprintf("This will permanently delete %s under %s. Are you sure you want to continue", pluralize(plan.totalToRemove(), "model version directory", "model version directories"), modelsDir))
+			if err != nil {
+				return err
+			}
 		}
 		if !userResponse {
 			utils.Log.Info("Purge aborted.")
