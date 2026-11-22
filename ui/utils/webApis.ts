@@ -4,7 +4,10 @@
  * @returns {string} application host
  */
 function getHost() {
-  return window.location.host;
+  if (typeof window === 'undefined' || !window.location) {
+    return '';
+  }
+  return window.location.host || '';
 }
 
 /**
@@ -13,7 +16,10 @@ function getHost() {
  * @returns {string}
  */
 export function getProtocol() {
-  return window.location.protocol;
+  if (typeof window === 'undefined' || !window.location) {
+    return '';
+  }
+  return window.location.protocol || '';
 }
 
 /**
@@ -22,7 +28,15 @@ export function getProtocol() {
  * @example http://localhost:9081
  */
 export function getWebAdress() {
-  return getProtocol() + '//' + getHost();
+  const protocol = getProtocol();
+  const host = getHost();
+  if (!protocol && !host) {
+    return '';
+  }
+  if (!protocol) {
+    return `//${host}`;
+  }
+  return `${protocol}//${host}`;
 }
 
 /**
@@ -33,6 +47,15 @@ export function getWebAdress() {
  * @returns {string} queryVal
  */
 export function getQueryParam(queryKey) {
+  if (
+    typeof window === 'undefined' ||
+    !window.location ||
+    typeof window.location.search !== 'string' ||
+    !queryKey ||
+    typeof queryKey !== 'string'
+  ) {
+    return '';
+  }
   let queryParamString = window.location.search;
   queryParamString = queryParamString.replace('?', '');
 
@@ -41,7 +64,7 @@ export function getQueryParam(queryKey) {
   queryParamString.split('&').forEach((query) => {
     if (query.split('=')[0] === queryKey) {
       if (!queryVal) {
-        queryVal = query.split('=')[1];
+        queryVal = query.split('=')[1] || '';
       }
     }
   });
@@ -50,7 +73,7 @@ export function getQueryParam(queryKey) {
 }
 
 export function getRawUrlFromCssUrlString(url) {
-  if (!url) return;
+  if (!url || typeof url !== 'string') return;
 
   // turns url(http://localhost:9081/path/to/svg) to http://localhost:9081/path/to/svg
   if (url.startsWith('url')) {
@@ -63,4 +86,15 @@ export function getRawUrlFromCssUrlString(url) {
   }
 
   return url;
+}
+
+/**
+ * Safe accessor for window.navigator in SSR environments
+ * @returns {Navigator | undefined}
+ */
+export function getNavigator() {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    return undefined;
+  }
+  return navigator;
 }

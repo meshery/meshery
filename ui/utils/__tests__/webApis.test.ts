@@ -1,5 +1,11 @@
 import { describe, expect, it, beforeEach, afterEach } from 'vitest';
-import { getProtocol, getWebAdress, getQueryParam, getRawUrlFromCssUrlString } from '../webApis';
+import {
+  getProtocol,
+  getWebAdress,
+  getQueryParam,
+  getRawUrlFromCssUrlString,
+  getNavigator,
+} from '../webApis';
 
 // jsdom exposes `window.location` but it is a read-only `Location` object.
 // Re-defining the descriptor lets each test simulate different URLs.
@@ -98,6 +104,35 @@ describe('webApis', () => {
     it('returns relative paths verbatim when they are neither url(...) nor http', () => {
       expect(getRawUrlFromCssUrlString('/local/path')).toBe('/local/path');
       expect(getRawUrlFromCssUrlString('static/icon.png')).toBe('static/icon.png');
+    });
+  });
+
+  describe('SSR / null safety guards', () => {
+    it('handles undefined window.location gracefully', () => {
+      Object.defineProperty(window, 'location', {
+        configurable: true,
+        value: undefined,
+      });
+      expect(getProtocol()).toBe('');
+      expect(getWebAdress()).toBe('');
+      expect(getQueryParam('foo')).toBe('');
+    });
+
+    it('handles invalid or non-string queryKey in getQueryParam', () => {
+      setLocation('http://localhost:9081/x?foo=bar');
+      expect(getQueryParam(undefined)).toBe('');
+      expect(getQueryParam(null as any)).toBe('');
+      expect(getQueryParam(123 as any)).toBe('');
+    });
+
+    it('handles non-string inputs safely in getRawUrlFromCssUrlString', () => {
+      expect(getRawUrlFromCssUrlString(123 as any)).toBeUndefined();
+      expect(getRawUrlFromCssUrlString({} as any)).toBeUndefined();
+      expect(getRawUrlFromCssUrlString([] as any)).toBeUndefined();
+    });
+
+    it('returns navigator when present in browser environment', () => {
+      expect(getNavigator()).toBe(window.navigator);
     });
   });
 });
