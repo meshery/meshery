@@ -2596,7 +2596,7 @@
       },
       "numericCode": "1160",
       "severity": "alert",
-      "shortDescription": "Unable to create rest config from kube congif"
+      "shortDescription": "Unable to create rest config from kube config"
     },
     {
       "code": "meshery-server-1161",
@@ -2816,26 +2816,6 @@
       ]
     },
     {
-      "code": "meshery-server-1175",
-      "moniker": "ErrSubscribeChannelCode",
-      "component": {
-        "name": "meshery-server",
-        "type": "component"
-      },
-      "numericCode": "1175",
-      "severity": "alert",
-      "shortDescription": "Unable to subscribe to channel",
-      "longDescription": "Unable to create a broker subscription",
-      "probableCause": [
-        "Could be a network issue",
-        "Meshery Broker could have crashed"
-      ],
-      "suggestedRemediation": [
-        "Check if Meshery Broker is reachable from Meshery Server",
-        "Check if Meshery Broker is up and running inside the configured cluster"
-      ]
-    },
-    {
       "code": "meshery-server-1176",
       "moniker": "ErrPublishBrokerCode",
       "component": {
@@ -3042,42 +3022,6 @@
       ]
     },
     {
-      "code": "meshery-server-1188",
-      "moniker": "ErrAddonSubscriptionCode",
-      "component": {
-        "name": "meshery-server",
-        "type": "component"
-      },
-      "numericCode": "1188",
-      "severity": "alert",
-      "shortDescription": "Addons Subscription failed",
-      "longDescription": "GraphQL subscription for Addons stopped",
-      "probableCause": [
-        "Could be a network issue"
-      ],
-      "suggestedRemediation": [
-        "Check if meshery server is reachable from the browser"
-      ]
-    },
-    {
-      "code": "meshery-server-1189",
-      "moniker": "ErrResolverControlPlaneSubscriptionCode",
-      "component": {
-        "name": "meshery-server",
-        "type": "component"
-      },
-      "numericCode": "1189",
-      "severity": "alert",
-      "shortDescription": "Control Plane Subscription failed",
-      "longDescription": "GraphQL subscription for Control Plane stopped",
-      "probableCause": [
-        "Could be a network issue"
-      ],
-      "suggestedRemediation": [
-        "Confirm that Meshery Server is reachable from your browser."
-      ]
-    },
-    {
       "code": "meshery-server-1190",
       "moniker": "ErrMesheryClientCode",
       "component": {
@@ -3129,24 +3073,6 @@
       "suggestedRemediation": [
         "Enable Meshery Operator from the settings page in the UI",
         "Check for logs in the meshery-operator pods from inside the application for more information"
-      ]
-    },
-    {
-      "code": "meshery-server-1193",
-      "moniker": "ErrDataPlaneSubscriptionCode",
-      "component": {
-        "name": "meshery-server",
-        "type": "component"
-      },
-      "numericCode": "1193",
-      "severity": "alert",
-      "shortDescription": "Data Plane Subscription failed",
-      "longDescription": "GraphQL subscription for Data Plane stopped",
-      "probableCause": [
-        "Could be a network issue"
-      ],
-      "suggestedRemediation": [
-        "Check if meshery server is reachable from the browser"
       ]
     },
     {
@@ -3220,7 +3146,7 @@
       },
       "numericCode": "1198",
       "severity": "alert",
-      "shortDescription": "failed to find the resource. invalid resource type. resource doens't exists",
+      "shortDescription": "failed to find the resource. invalid resource type. resource doesn't exist",
       "longDescription": "invalid kubernetes resource type or couldn't find the specified resource"
     },
     {
@@ -3382,7 +3308,7 @@
         "The machine context has become invalid."
       ],
       "suggestedRemediation": [
-        "Retry the opereation or try archiving and reinitializing the connection"
+        "Retry the operation or try archiving and reinitializing the connection"
       ]
     },
     {
@@ -3450,7 +3376,7 @@
       },
       "numericCode": "1222",
       "severity": "alert",
-      "shortDescription": "Unable to prase the Page Numer"
+      "shortDescription": "Unable to parse the Page Number"
     },
     {
       "code": "meshery-server-1223",
@@ -3473,7 +3399,7 @@
       },
       "numericCode": "1224",
       "severity": "alert",
-      "shortDescription": "Invalid peformance profile ID"
+      "shortDescription": "Invalid performance profile ID"
     },
     {
       "code": "meshery-server-1225",
@@ -4056,13 +3982,13 @@
       "numericCode": "1273",
       "severity": "alert",
       "shortDescription": "Capability is not supported by your Provider",
-      "longDescription": "You dont have access to the capability",
+      "longDescription": "You don't have access to the capability",
       "probableCause": [
-        "Not logged in to the vaild remote Provider"
+        "Not logged in to the valid remote Provider"
       ],
       "suggestedRemediation": [
-        "Connect to the vaild remote Provider",
-        "Ask the Provider Adim for access"
+        "Connect to the valid remote Provider",
+        "Ask the Provider Admin for access"
       ]
     },
     {
@@ -5525,7 +5451,7 @@
       },
       "numericCode": "1370",
       "severity": "alert",
-      "shortDescription": "Error in meshsync data hadler",
+      "shortDescription": "Error in meshsync data handler",
       "probableCause": [
         "not deployed operator",
         "issue with connection to broker"
@@ -7657,6 +7583,112 @@
       ],
       "suggestedRemediation": [
         "Make sure Meshery Server can write to its database, then restart Meshery Server"
+      ]
+    },
+    {
+      "code": "meshery-server-1492",
+      "moniker": "ErrNilProviderCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1492",
+      "severity": "alert",
+      "shortDescription": "Provider not initialized",
+      "longDescription": "Provider instance passed to the handler is nil",
+      "probableCause": [
+        "The handler was invoked without an initialized provider instance"
+      ],
+      "suggestedRemediation": [
+        "Ensure the provider is properly initialized before handling the request"
+      ]
+    },
+    {
+      "code": "meshery-server-1493",
+      "moniker": "ErrTelemetrySizeCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1493",
+      "severity": "alert",
+      "shortDescription": "Telemetry response exceeds Meshery's 16 MiB limit",
+      "probableCause": [
+        "The upstream response contains more data than Meshery can return."
+      ],
+      "suggestedRemediation": [
+        "Reduce the response size, then retry.",
+        "For panel queries, shorten the time range or use more selective label matchers."
+      ]
+    },
+    {
+      "code": "meshery-server-1494",
+      "moniker": "ErrRequestTooLargeCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1494",
+      "severity": "alert",
+      "probableCause": [
+        "Request payload exceeds maximum allowed size"
+      ],
+      "suggestedRemediation": [
+        "Reduce request payload size to within acceptable limits"
+      ]
+    },
+    {
+      "code": "meshery-server-1495",
+      "moniker": "ErrHandlerPanicCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1495",
+      "severity": "alert",
+      "shortDescription": "Meshery Server hit an unexpected internal error while handling the request",
+      "longDescription": "The handler for this request panicked. The panic value and stack are recorded in the server log, not in this response",
+      "probableCause": [
+        "A defect in Meshery Server caused the handler for this request to panic"
+      ],
+      "suggestedRemediation": [
+        "Retry the request",
+        "If it keeps failing, report it at https://github.com/meshery/meshery/issues/new/choose together with the request that triggered it; the server log holds the full stack"
+      ]
+    },
+    {
+      "code": "meshery-server-1496",
+      "moniker": "ErrInvalidDesignVersionCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1496",
+      "severity": "alert",
+      "shortDescription": "Invalid design version",
+      "probableCause": [
+        "The design file's version is not semver, so a next version cannot be computed from it",
+        "Older tooling wrote arbitrary version strings into design files"
+      ],
+      "suggestedRemediation": [
+        "Set the design file's version to a semver string such as 0.0.1 and save again"
+      ]
+    },
+    {
+      "code": "meshery-server-1497",
+      "moniker": "ErrProvisionPanicCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1497",
+      "severity": "alert",
+      "shortDescription": "Component panicked during provisioning",
+      "probableCause": [
+        "Runtime fault occurred in component visitor execution"
+      ],
+      "suggestedRemediation": [
+        "Inspect component configuration and provider logs for runtime failures"
       ]
     }
   ],

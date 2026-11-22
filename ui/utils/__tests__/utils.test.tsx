@@ -493,9 +493,35 @@ describe('getComponentFromDesign', () => {
 });
 
 describe('getDesignVersion', () => {
-  it('returns the published version when visibility is published', () => {
+  it('returns the published version from camelCase catalogData when visibility is published', () => {
+    expect(
+      getDesignVersion({ visibility: 'published', catalogData: { publishedVersion: '1.2.3' } }),
+    ).toBe('1.2.3');
+  });
+
+  it('prefers camelCase catalogData.publishedVersion over legacy snake_case catalog_data.published_version', () => {
+    expect(
+      getDesignVersion({
+        visibility: 'published',
+        catalogData: { publishedVersion: '2.0.0' },
+        catalog_data: { published_version: '1.0.0' },
+      }),
+    ).toBe('2.0.0');
+  });
+
+  it('falls back to legacy snake_case catalog_data.published_version when catalogData is absent', () => {
     expect(
       getDesignVersion({ visibility: 'published', catalog_data: { published_version: '1.2.3' } }),
+    ).toBe('1.2.3');
+  });
+
+  it('falls back to legacy snake_case catalog_data.published_version when catalogData.publishedVersion is empty', () => {
+    expect(
+      getDesignVersion({
+        visibility: 'published',
+        catalogData: { publishedVersion: '' },
+        catalog_data: { published_version: '1.2.3' },
+      }),
     ).toBe('1.2.3');
   });
 
@@ -517,6 +543,17 @@ describe('urlEncodeArrayParam / urlEncodeParams', () => {
 
   it('builds repeated key=value pairs from an array', () => {
     expect(urlEncodeArrayParam('id', ['a', 'b'])).toBe('id=a&id=b');
+  });
+
+  it('returns empty string for null, undefined, or empty array', () => {
+    expect(urlEncodeArrayParam('id', undefined)).toBe('');
+    expect(urlEncodeArrayParam('id', null)).toBe('');
+    expect(urlEncodeArrayParam('id', [])).toBe('');
+    expect(urlEncodeArrayParam('id', {} as any)).toBe('');
+  });
+
+  it('url encodes array elements with special characters', () => {
+    expect(urlEncodeArrayParam('filter', ['a b', 'c&d'])).toBe('filter=a%20b&filter=c%26d');
   });
 
   it('produces a query string from a record', () => {

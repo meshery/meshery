@@ -20,12 +20,14 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -34,7 +36,7 @@ import (
 type filterListFlags struct {
 	Count    bool `json:"count" validate:"boolean"`
 	Page     int  `json:"page" validate:"gte=1"`
-	PageSize int  `json:"pageSize" validate:"gte=1"`
+	PageSize int  `json:"pagesize" validate:"gte=1"`
 	Verbose  bool `json:"verbose" validate:"boolean"`
 }
 
@@ -78,6 +80,9 @@ mesheryctl filter list 'Test Filter'
 
 		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, filterListFlagsProvided.PageSize, filterListFlagsProvided.Page-1)
 		if err != nil {
+			if meshkiterrors.GetCode(err) == utils.ErrUnauthenticatedCode {
+				return err
+			}
 			utils.Log.Error(err)
 			return ErrFetchFilter(err)
 		}
@@ -97,68 +102,13 @@ mesheryctl filter list 'Test Filter'
 
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
+			if meshkiterrors.GetCode(err) == utils.ErrUnauthenticatedCode {
+				return err
+			}
 			return utils.ErrReadToken(err)
 		}
 		provider := tokenObj["meshery-provider"]
-		var data [][]string
-		var header []string
-		var footer []string
-
-		if filterListFlagsProvided.Verbose {
-			if utils.IsLocalProvider(provider) {
-				for _, v := range response.Filters {
-					FilterID := v.ID.String()
-					FilterName := utils.TrimFileExtension(v.Name)
-					CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
-					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
-					data = append(data, []string{FilterID, FilterName, CreatedAt, UpdatedAt})
-				}
-				header = []string{"FILTER ID", "NAME", "CREATED", "UPDATED"}
-				footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""}
-			} else {
-				for _, v := range response.Filters {
-					FilterID := utils.TruncateID(v.ID.String())
-					var owner string
-					if v.Owner != nil {
-						owner = *v.Owner
-					} else {
-						owner = "null"
-					}
-					FilterName := utils.TrimFileExtension(v.Name)
-					CreatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year(), v.CreatedAt.Hour(), v.CreatedAt.Minute(), v.CreatedAt.Second())
-					UpdatedAt := fmt.Sprintf("%d-%d-%d %d:%d:%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year(), v.UpdatedAt.Hour(), v.UpdatedAt.Minute(), v.UpdatedAt.Second())
-					data = append(data, []string{FilterID, owner, FilterName, CreatedAt, UpdatedAt})
-				}
-				header = []string{"FILTER ID", "OWNER", "NAME", "CREATED", "UPDATED"}
-				footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""}
-			}
-		} else if utils.IsLocalProvider(provider) {
-			for _, v := range response.Filters {
-				FilterName := utils.TrimFileExtension(v.Name)
-				FilterID := utils.TruncateID(v.ID.String())
-				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
-				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
-				data = append(data, []string{FilterID, FilterName, CreatedAt, UpdatedAt})
-			}
-			header = []string{"FILTER ID", "NAME", "CREATED", "UPDATED"}
-			footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""}
-		} else {
-			for _, v := range response.Filters {
-				FilterID := utils.TruncateID(v.ID.String())
-				var owner string
-				if v.Owner != nil {
-					owner = utils.TruncateID(*v.Owner)
-				} else {
-					owner = "null"
-				}
-				FilterName := utils.TrimFileExtension(v.Name)
-				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
-				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
-				data = append(data, []string{FilterID, owner, FilterName, CreatedAt, UpdatedAt})
-			}
-			header = []string{"FILTER ID", "OWNER", "NAME", "CREATED", "UPDATED"}
-			footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""}
-		}
+		header, data, footer := processFilterData(response, filterListFlagsProvided.Verbose, utils.IsLocalProvider(provider))
 
 		if cmd.Flags().Changed("page") {
 			utils.PrintToTable(header, data, footer)
@@ -174,7 +124,9 @@ mesheryctl filter list 'Test Filter'
 
 // Pagination(making multiple requests) to retrieve filter Data in batches
 func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*models.FiltersAPIResponse, error) {
-	var response *models.FiltersAPIResponse
+	// Decode into a value, not a pointer: a response body of null leaves a value as
+	// an empty page, but would leave a pointer nil for the callers to crash on.
+	var response models.FiltersAPIResponse
 
 	url := baseURL + "/api/filter"
 
@@ -185,6 +137,9 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 
 	req, err := utils.NewRequest("GET", url, nil)
 	if err != nil {
+		if meshkiterrors.GetCode(err) == utils.ErrUnauthenticatedCode {
+			return nil, err
+		}
 		return nil, utils.ErrCreatingRequest(err)
 	}
 
@@ -208,7 +163,7 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 	if err != nil {
 		return nil, utils.ErrUnmarshal(err)
 	}
-	return response, nil
+	return &response, nil
 }
 
 func init() {
@@ -216,4 +171,55 @@ func init() {
 	listCmd.Flags().IntVarP(&filterListFlagsProvided.Page, "page", "p", 1, "(optional) List next set of filters with --page (default = 1)")
 	listCmd.Flags().IntVarP(&filterListFlagsProvided.PageSize, "pagesize", "s", 25, "(optional) List next set of filters with --pagesize (default = 25)")
 	listCmd.Flags().BoolVarP(&filterListFlagsProvided.Verbose, "verbose", "v", false, "Display full length user and filter file identifiers")
+}
+
+func processFilterData(response *models.FiltersAPIResponse, isVerbose, isLocal bool) ([]string, [][]string, []string) {
+	if response == nil {
+		return nil, nil, nil
+	}
+
+	var data [][]string
+	for _, v := range response.Filters {
+		filterID := utils.FormatUUID(v.ID, "N/A")
+		if !isVerbose || !isLocal {
+			filterID = utils.TruncateID(filterID)
+		}
+		filterName := utils.TrimFileExtension(v.Name)
+		createdAt := formatFilterTime(v.CreatedAt, isVerbose)
+		updatedAt := formatFilterTime(v.UpdatedAt, isVerbose)
+
+		if isLocal {
+			data = append(data, []string{filterID, filterName, createdAt, updatedAt})
+			continue
+		}
+
+		owner := "null"
+		if v.Owner != nil {
+			owner = *v.Owner
+			if !isVerbose {
+				owner = utils.TruncateID(owner)
+			}
+		}
+		data = append(data, []string{filterID, owner, filterName, createdAt, updatedAt})
+	}
+
+	if isLocal {
+		header := []string{"FILTER ID", "NAME", "CREATED", "UPDATED"}
+		footer := []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", ""}
+		return header, data, footer
+	}
+
+	header := []string{"FILTER ID", "OWNER", "NAME", "CREATED", "UPDATED"}
+	footer := []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""}
+	return header, data, footer
+}
+
+func formatFilterTime(t *time.Time, isVerbose bool) string {
+	if t == nil {
+		return "N/A"
+	}
+	if isVerbose {
+		return fmt.Sprintf("%d-%d-%d %d:%d:%d", int(t.Month()), t.Day(), t.Year(), t.Hour(), t.Minute(), t.Second())
+	}
+	return fmt.Sprintf("%d-%d-%d", int(t.Month()), t.Day(), t.Year())
 }

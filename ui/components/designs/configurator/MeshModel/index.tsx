@@ -27,7 +27,7 @@ import CodeEditor from '../CodeEditor';
 import LazyComponentForm from './LazyComponentForm';
 import useDesignLifecycle from './hooks/useDesignLifecycle';
 import { useRouter } from 'next/router';
-
+import { useTheme } from '@sistent/sistent';
 import { Keys } from '@meshery/schemas/permissions';
 
 const ScrollContainer = styled('div')({
@@ -37,10 +37,13 @@ const ScrollContainer = styled('div')({
 });
 
 export default function DesignConfigurator() {
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedModel, setSelectedModel] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedModel, setSelectedModel] = useState('');
   const { models, meshmodelComponents, getModelFromCategory, getComponentsFromModel, categories } =
     useMeshModelComponents();
+
+  const theme = useTheme();
+
   const {
     onSettingsChange,
     designSave,
@@ -67,9 +70,16 @@ export default function DesignConfigurator() {
     [design_id],
   );
 
-  function handleCategoryChange(event) {
-    setSelectedCategory(event.target.value);
-    getModelFromCategory(event.target.value);
+  function handleCategoryChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    const nextCategory = event.target.value;
+    if (nextCategory === selectedCategory) {
+      return;
+    }
+    setSelectedCategory(nextCategory);
+    setSelectedModel('');
+    if (nextCategory) {
+      getModelFromCategory(nextCategory);
+    }
   }
 
   function handleModelChange(event) {
@@ -93,6 +103,7 @@ export default function DesignConfigurator() {
             <FormControl>
               <TextField
                 select={true}
+                label="Select Category"
                 SelectProps={{
                   MenuProps: {
                     anchorOrigin: {
@@ -101,14 +112,6 @@ export default function DesignConfigurator() {
                     },
                     getContentAnchorEl: null,
                   },
-                  renderValue: (selected) => {
-                    if (!selected || selected.length === 0) {
-                      return <em>Select Category</em>;
-                    }
-
-                    return selected;
-                  },
-                  displayEmpty: true,
                 }}
                 InputProps={{ disableUnderline: true }}
                 labelId="category-selector"
@@ -131,7 +134,7 @@ export default function DesignConfigurator() {
             {selectedCategory && (
               <FormControl>
                 <TextField
-                  placeholder="select Model"
+                  label="Select Model"
                   select={true}
                   SelectProps={{
                     MenuProps: {
@@ -142,13 +145,8 @@ export default function DesignConfigurator() {
                       getContentAnchorEl: null,
                     },
                     renderValue: (selected) => {
-                      if (!selected || selected.length === 0) {
-                        return <em>Select Model</em>;
-                      }
-
                       return removeHyphenAndCapitalise(selected);
                     },
-                    displayEmpty: true,
                   }}
                   InputProps={{ disableUnderline: true }}
                   labelId="model-selector"
@@ -195,7 +193,7 @@ export default function DesignConfigurator() {
                 onClick={designSave}
                 permissionKey={Keys.CatalogManagementCreateNewDesign}
               >
-                <SaveAsIcon style={iconMedium} />
+                <SaveAsIcon style={{ ...iconMedium, fill: theme.palette.icon.default }} />
               </IconButton>
             </div>
           </CustomTooltip>

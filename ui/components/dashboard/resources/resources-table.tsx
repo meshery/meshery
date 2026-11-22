@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
+import { formatApiError } from '@/utils/helpers/meshkitError';
 import { useLazyGetMeshSyncResourcesQuery } from '@/rtk-query/meshsync';
 import {
   CustomColumnVisibilityControl,
@@ -169,10 +170,22 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
       .catch((err) => {
         if (cancelled) return;
         updateProgress?.({ showProgress: false });
+        // unwrap() rejects with an RTK Query error object ({ status, data }),
+        // which reads "[object Object]" when interpolated into a string.
+        // formatApiError can throw on a malformed MeshKit envelope and can
+        // return an empty string for `data: { message: '' }`; use the action
+        // message in both cases so the toast never goes missing or blank.
+        const fallback = ACTION_TYPES.FETCH_MESHSYNC_RESOURCES.error_msg;
+        let message: string;
+        try {
+          ({ message } = formatApiError(err, fallback));
+        } catch {
+          message = fallback;
+        }
+        if (!message?.trim()) message = fallback;
         notify({
-          message: `${ACTION_TYPES.FETCH_MESHSYNC_RESOURCES.error_msg}: ${err}`,
+          message,
           event_type: EVENT_TYPES.ERROR,
-          details: err.toString(),
         });
       });
 

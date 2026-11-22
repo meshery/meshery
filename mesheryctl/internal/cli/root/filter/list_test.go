@@ -2,13 +2,40 @@ package filter
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"testing"
+	"time"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
+	"github.com/meshery/schemas/models/core"
 )
+
+func TestFetchFiltersPreservesUnauthenticatedError(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tokenPath, nil, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	originalTokenFlag := utils.TokenFlag
+	utils.TokenFlag = tokenPath
+	t.Cleanup(func() {
+		utils.TokenFlag = originalTokenFlag
+	})
+
+	_, err := fetchFilters("http://127.0.0.1", "", 25, 0)
+	if err == nil {
+		t.Fatal("fetchFilters succeeded with an empty token file")
+	}
+	if got := meshkiterrors.GetCode(err); got != utils.ErrUnauthenticatedCode {
+		t.Fatalf("fetchFilters error code = %q, want %q (error: %v)", got, utils.ErrUnauthenticatedCode, err)
+	}
+}
 
 func TestListCmd(t *testing.T) {
 	// get current directory
@@ -41,6 +68,18 @@ func TestListCmd(t *testing.T) {
 			HttpStatusCode:   200,
 		},
 		{
+			// A server, proxy or provider can answer 200 with the JSON value null (what
+			// json.Marshal writes for a nil slice). It must read as "no filters".
+			Name:             "Fetch Filter List when the server replies null",
+			Args:             []string{"list"},
+			ExpectedResponse: "list.filter.output.golden",
+			Fixture:          "filter.list.null.api.response.golden",
+			URL:              "/api/filter",
+			ExpectError:      false,
+			HttpMethod:       "GET",
+			HttpStatusCode:   200,
+		},
+		{
 			Name:             "List filters with invalid page number",
 			Args:             []string{"list", "--page", "0"},
 			ExpectedResponse: "",
@@ -54,7 +93,7 @@ func TestListCmd(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pageSize '0'")),
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '0'")),
 		},
 		{
 			Name:             "List filters with too many arguments",
@@ -87,6 +126,14 @@ func TestListCmdCount(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
+			Name:             "Fetch Filter Count when the server replies null",
+			Args:             []string{"list", "--count"},
+			ExpectedResponse: "list.filter.count.empty.output.golden",
+			Fixture:          "filter.list.null.api.response.golden",
+			URL:              "/api/filter",
+			ExpectError:      false,
+		},
+		{
 			Name:             "Fetch Filter Count with no matching filters",
 			Args:             []string{"list", "nonexistent", "--count"},
 			ExpectedResponse: "list.filter.count.empty.output.golden",
@@ -98,4 +145,99 @@ func TestListCmdCount(t *testing.T) {
 
 	mesheryctlflags.InitValidators(FilterCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, FilterCmd, tests, currDir, "filter")
+}
+
+func TestProcessFilterData(t *testing.T) {
+	ts := time.Date(2025, time.January, 2, 3, 4, 5, 0, time.UTC)
+	filterID := core.Uuid{0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef, 0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef}
+	longOwner := "user1234-5678-90ab-cdef-1234567890ab"
+	shortOwner := "usr"
+
+	header, data, footer := processFilterData(nil, false, true)
+	if header != nil || data != nil || footer != nil {
+		t.Fatalf("processFilterData(nil) = (%v, %v, %v), want (nil, nil, nil)", header, data, footer)
+	}
+
+	tests := []struct {
+		name       string
+		isVerbose  bool
+		isLocal    bool
+		filter     models.MesheryFilter
+		wantHeader []string
+		wantRow    []string
+		wantFooter []string
+	}{
+		{
+			name:       "local non-verbose handles nil id and timestamps",
+			isVerbose:  false,
+			isLocal:    true,
+			filter:     models.MesheryFilter{Name: "my-filter.wasm"},
+			wantHeader: []string{"FILTER ID", "NAME", "CREATED", "UPDATED"},
+			wantRow:    []string{"N/A", "my-filter", "N/A", "N/A"},
+			wantFooter: []string{"Total", "1", "", ""},
+		},
+		{
+			name:       "local verbose handles nil id and timestamps",
+			isVerbose:  true,
+			isLocal:    true,
+			filter:     models.MesheryFilter{Name: "my-filter.wasm"},
+			wantHeader: []string{"FILTER ID", "NAME", "CREATED", "UPDATED"},
+			wantRow:    []string{"N/A", "my-filter", "N/A", "N/A"},
+			wantFooter: []string{"Total", "1", "", ""},
+		},
+		{
+			name:       "remote non-verbose handles nil id, owner, and timestamps",
+			isVerbose:  false,
+			isLocal:    false,
+			filter:     models.MesheryFilter{Name: "remote-filter.wasm"},
+			wantHeader: []string{"FILTER ID", "OWNER", "NAME", "CREATED", "UPDATED"},
+			wantRow:    []string{"N/A", "null", "remote-filter", "N/A", "N/A"},
+			wantFooter: []string{"Total", "1", "", "", ""},
+		},
+		{
+			name:       "remote non-verbose handles short owner without slice panic",
+			isVerbose:  false,
+			isLocal:    false,
+			filter:     models.MesheryFilter{ID: &filterID, Owner: &shortOwner, Name: "short-owner.wasm", CreatedAt: &ts, UpdatedAt: &ts},
+			wantHeader: []string{"FILTER ID", "OWNER", "NAME", "CREATED", "UPDATED"},
+			wantRow:    []string{"12345678", "usr", "short-owner", "1-2-2025", "1-2-2025"},
+			wantFooter: []string{"Total", "1", "", "", ""},
+		},
+		{
+			name:       "remote verbose formats full owner and timestamp",
+			isVerbose:  true,
+			isLocal:    false,
+			filter:     models.MesheryFilter{ID: &filterID, Owner: &longOwner, Name: "full-filter.wasm", CreatedAt: &ts, UpdatedAt: &ts},
+			wantHeader: []string{"FILTER ID", "OWNER", "NAME", "CREATED", "UPDATED"},
+			wantRow:    []string{"12345678", longOwner, "full-filter", "1-2-2025 3:4:5", "1-2-2025 3:4:5"},
+			wantFooter: []string{"Total", "1", "", "", ""},
+		},
+		{
+			name:       "local verbose keeps full id and timestamp",
+			isVerbose:  true,
+			isLocal:    true,
+			filter:     models.MesheryFilter{ID: &filterID, Name: "full-local.wasm", CreatedAt: &ts, UpdatedAt: &ts},
+			wantHeader: []string{"FILTER ID", "NAME", "CREATED", "UPDATED"},
+			wantRow:    []string{"12345678-90ab-cdef-1234-567890abcdef", "full-local", "1-2-2025 3:4:5", "1-2-2025 3:4:5"},
+			wantFooter: []string{"Total", "1", "", ""},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotHeader, gotData, gotFooter := processFilterData(&models.FiltersAPIResponse{
+				Filters:    []models.MesheryFilter{tt.filter},
+				TotalCount: 1,
+			}, tt.isVerbose, tt.isLocal)
+			if !reflect.DeepEqual(gotHeader, tt.wantHeader) {
+				t.Errorf("gotHeader = %#v, want %#v", gotHeader, tt.wantHeader)
+			}
+			if !reflect.DeepEqual(gotData, [][]string{tt.wantRow}) {
+				t.Errorf("gotData = %#v, want %#v", gotData, [][]string{tt.wantRow})
+			}
+			if !reflect.DeepEqual(gotFooter, tt.wantFooter) {
+				t.Errorf("gotFooter = %#v, want %#v", gotFooter, tt.wantFooter)
+			}
+		})
+	}
 }

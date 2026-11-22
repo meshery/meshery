@@ -61,6 +61,15 @@ Every item in this pass must be verified before approval. If any check fails, th
 ### 7. DCO Commit Sign-off
 * **Rule**: Every commit must be signed-off under the Developer Certificate of Origin (`git commit -s`).
 
+### 8. Kubernetes Connection & State Machine Lifecycle
+* **Rule**: Handlers and lifecycle actions operating on connections and Kubernetes state machines must uphold strict lookup, teardown, and assertion discipline:
+  * **Tracker-First Machine Reuse**: Handlers processing connection events must query `smInstanceTracker.Get(connectionID)` *before* issuing provider or database context queries. If an active machine is already tracked, reuse it directly without failing when context rows are not yet linked.
+  * **Context ID vs Connection ID Separation**: Persisted `K8sContext.ID` is a deterministic hash of cluster parameters (`K8sContextGenerateID`), NOT the `connections.Connection` UUID. Never pass a connection ID to `GetK8sContext` expecting an exact `id` match unless resolving through the `ConnectionID` foreign key link (or metadata `contextId`).
+  * **Cluster Teardown on Connection Deletion**: Deleting a Kubernetes connection must dispatch `machines.Delete` via `SendEvent` under a detached bounded context (`context.WithoutCancel`) so operators are undeployed, controller handlers are removed, MeshSync is stopped, and data is flushed before database rows are deleted.
+  * **Defensive Nil Guards**: Never assume `h.config` (e.g. `OperatorTracker`, `K8scontextChannel`, `EventBroadcaster`) or action loggers/helpers are non-nil. Always guard references to prevent panics in minimal test fixtures.
+  * **Robust Positive Test Assertions**: Tests must assert the full positive lifecycle behavior (e.g., machine reused, HTTP 200, state transition executed, DB rows cleaned). Never write negative-only assertions (e.g., asserting only `err != ErrSpecificCode`) that pass by masking unexpected HTTP 500 or DB lookup errors.
+  * **SQLite Test Fixture Resource Cleanup**: SQLite test fixtures created with `database.New` inside `t.TempDir()` must register `t.Cleanup(func() { _ = db.DBClose() })` to prevent `unlinkat ... directory not empty` panics during test directory cleanup.
+
 ---
 
 ## Pass 2: Advisory INFORMATIONAL Checks

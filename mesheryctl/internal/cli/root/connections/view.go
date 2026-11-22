@@ -103,11 +103,14 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 
 			// Connections from local providers can exist without a name.
 			connectionString := func(c connection.Connection) string {
-				if c.Name == "" {
-					return c.ID.String()
+				name := utils.SanitizeFileName(fmt.Sprintf("%v", c.Name))
+				if name == "" {
+					name = utils.SanitizeFileName(c.ID.String())
 				}
-
-				return strings.ReplaceAll(fmt.Sprintf("%v", c.Name), " ", "_")
+				if name == "" {
+					name = "unknown"
+				}
+				return name
 			}(*selectedConnection)
 
 			fileName := fmt.Sprintf(
@@ -128,19 +131,36 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 	},
 }
 
-func selectConnectionPrompt(connectionsList []*connection.Connection) (*connection.Connection, error) {
-	connectionNames := make([]string, len(connectionsList))
+var runSelectPrompt = utils.RunSelectPrompt
 
-	for i, conn := range connectionsList {
+func filterNonNilConnections(connectionsList []*connection.Connection) []*connection.Connection {
+	valid := make([]*connection.Connection, 0, len(connectionsList))
+	for _, conn := range connectionsList {
+		if conn != nil {
+			valid = append(valid, conn)
+		}
+	}
+	return valid
+}
+
+func selectConnectionPrompt(connectionsList []*connection.Connection) (*connection.Connection, error) {
+	validConnections := filterNonNilConnections(connectionsList)
+	if len(validConnections) == 0 {
+		return nil, nil
+	}
+
+	connectionNames := make([]string, len(validConnections))
+
+	for i, conn := range validConnections {
 		connectionNames[i] = fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn.ID.String(), conn.Name, conn.ConnectionType)
 	}
 
-	i, err := utils.RunSelectPrompt("Select connection", connectionNames)
+	i, err := runSelectPrompt("Select connection", connectionNames)
 	if err != nil {
 		return nil, err
 	}
 
-	return connectionsList[i], nil
+	return validConnections[i], nil
 }
 
 func isArgumentUUID(arg string) bool {
@@ -169,15 +189,19 @@ func fetchConnectionByName(connectionName string) (*connection.Connection, error
 		return nil, err
 	}
 
-	if connectionsResponse.TotalCount == 0 {
+	if connectionsResponse == nil {
 		return nil, nil
 	}
 
-	if connectionsResponse.TotalCount > 1 {
-		return selectConnectionPrompt(connectionsResponse.Connections)
+	validConnections := filterNonNilConnections(connectionsResponse.Connections)
+	switch len(validConnections) {
+	case 0:
+		return nil, nil
+	case 1:
+		return validConnections[0], nil
+	default:
+		return selectConnectionPrompt(validConnections)
 	}
-
-	return connectionsResponse.Connections[0], nil
 }
 
 func init() {

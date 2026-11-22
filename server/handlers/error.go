@@ -1,9 +1,13 @@
 package handlers
 
 import (
+	stderrors "errors"
 	"fmt"
+	"net/http"
 	"strings"
 
+	"github.com/meshery/meshery/server/models/telemetry/grafana"
+	"github.com/meshery/meshery/server/models/telemetry/prometheus"
 	"github.com/meshery/meshkit/errors"
 )
 
@@ -217,6 +221,7 @@ const (
 	ErrMeshsyncReconcileCode               = "meshery-server-1442"
 	ErrUnsafeFilePathCode                  = "meshery-server-1443"
 	ErrModelNotFoundCode                   = "meshery-server-1485"
+	ErrTelemetrySizeCode                   = "meshery-server-1493"
 	// Environment, workspace, organization, user and key operations previously
 	// reported every failure as ErrGetResult ("unable to get result", probable
 	// cause "Result Identifier provided is not valid") - a performance-results
@@ -241,6 +246,8 @@ const (
 	ErrFetchProfilesCode         = "meshery-server-1464"
 	ErrResetInProgressCode       = "meshery-server-1481"
 	ErrInvalidClientEventCode    = "meshery-server-1489"
+	ErrNilProviderCode           = "meshery-server-1492"
+	ErrRequestTooLargeCode       = "meshery-server-1494"
 )
 
 var (
@@ -488,6 +495,9 @@ func ErrFailToDelete(err error, obj string) error {
 }
 
 func ErrBlankName(err error) error {
+	if err == nil {
+		err = fmt.Errorf("test name is empty")
+	}
 	return errors.New(ErrBlankNameCode, errors.Alert, []string{"Error: name field is blank."}, []string{err.Error()}, []string{"Load test name empty or not valid."}, []string{"Provide a name for the test."})
 }
 
@@ -992,6 +1002,12 @@ func ErrUpdateConnection(err error) error {
 // (health, board search/fetch, datasource listing, or datasource query proxy).
 // The op string identifies the operation that failed. Emitted with HTTP 502.
 func ErrTelemetryGrafana(err error, op string) error {
+	if status := grafana.StatusCode(err); status == http.StatusUnauthorized || status == http.StatusForbidden {
+		return ErrTelemetryGrafanaAuth(err)
+	}
+	if stderrors.Is(err, grafana.ErrResponseTooLarge) {
+		return ErrTelemetrySize(err)
+	}
 	return errors.New(ErrTelemetryGrafanaCode, errors.Alert, []string{fmt.Sprintf("Grafana telemetry request failed during %s", op)}, []string{err.Error()}, []string{"The Grafana instance is unreachable or returned an error.", "The stored credential (API key / basic auth) is missing, expired, or lacks permission.", "The connection's URL is incorrect."}, []string{"Verify the Grafana URL is reachable from the Meshery server and that the connection's credential is valid, then retry."})
 }
 
@@ -1017,7 +1033,22 @@ func ErrTelemetryGrafanaAuth(err error) error {
 // connection (health, metric/label discovery, metadata, or query/query_range).
 // The op string identifies the operation that failed. Emitted with HTTP 502.
 func ErrTelemetryPrometheus(err error, op string) error {
+	if status := prometheus.StatusCode(err); status == http.StatusUnauthorized || status == http.StatusForbidden {
+		return ErrTelemetryPrometheusAuth(err)
+	}
+	if stderrors.Is(err, prometheus.ErrResponseTooLarge) {
+		return ErrTelemetrySize(err)
+	}
 	return errors.New(ErrTelemetryPrometheusCode, errors.Alert, []string{fmt.Sprintf("Prometheus telemetry request failed during %s", op)}, []string{err.Error()}, []string{"The Prometheus instance is unreachable or returned an error.", "The stored credential (API key / basic auth) is missing, expired, or lacks permission.", "The connection's URL is incorrect."}, []string{"Verify the Prometheus URL is reachable from the Meshery server and that the connection's credential is valid, then retry."})
+}
+
+// ErrTelemetrySize gives users a useful error when an upstream telemetry response exceeds the limit.
+func ErrTelemetrySize(err error) error {
+	return errors.New(ErrTelemetrySizeCode, errors.Alert,
+		[]string{"Telemetry response exceeds Meshery's 16 MiB limit"},
+		[]string{err.Error()},
+		[]string{"The upstream response contains more data than Meshery can return."},
+		[]string{"Reduce the response size, then retry.", "For panel queries, shorten the time range or use more selective label matchers."})
 }
 
 // ErrTelemetryPrometheusAuth reports that Prometheus rejected the connection's
@@ -1272,5 +1303,28 @@ func ErrInvalidClientEvent(err error) error {
 		[]string{err.Error()},
 		[]string{"A field breaks the meshery/schemas event contract: a correlationKey, source or type outside 1 to 255 characters, an occurrenceCount below 1, a lastSeenAt before firstSeenAt, a specversion other than 1.0, or a traceId or parentId that is not W3C Trace Context hex", "A metadata.error object carrying a lowercase code key breaks the schemas EventError contract: a value of the wrong JSON type or an unknown key, an empty code, a severity that is not an error severity, too many causes or remediations, a duplicate cause id, one remediation id naming two different remediations, an automatic or requiresApproval actionPolicy without an action, flat probableCause or suggestedRemediation lists that are not the ones derived from probableCauses, or a matchedCauses entry whose causeId is malformed, is not one of probableCauses, or whose confidence is outside 0 to 1. The long description names each failing field path"},
 		[]string{"Send the fields as the schemas EventPayload defines them, or omit the ones the client does not set", "Send metadata.error as the schemas EventError shape (code, shortDescription and the other defined keys only), or drop it when the client has no structured error to attach"},
+	)
+}
+
+func ErrNilProvider() error {
+	return errors.New(
+		ErrNilProviderCode,
+		errors.Alert,
+		[]string{"Provider not initialized"},
+		[]string{"Provider instance passed to the handler is nil"},
+		[]string{"The handler was invoked without an initialized provider instance"},
+		[]string{"Ensure the provider is properly initialized before handling the request"},
+	)
+}
+
+func ErrRequestTooLarge(maxSize int) error {
+	msg := fmt.Sprintf("request body exceeds maximum allowed size of %dMB", maxSize/(1024*1024))
+	return errors.New(
+		ErrRequestTooLargeCode,
+		errors.Alert,
+		[]string{msg},
+		[]string{msg},
+		[]string{"Request payload exceeds maximum allowed size"},
+		[]string{"Reduce request payload size to within acceptable limits"},
 	)
 }

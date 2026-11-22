@@ -125,7 +125,12 @@ const HoneycombComponent = ({
             Cluster Resource Overview
           </Typography>
           <ControlsContainer>
-            <Select value={groupBy} onChange={handleGroupChange} variant="standard">
+            <Select
+              value={groupBy}
+              onChange={handleGroupChange}
+              variant="standard"
+              inputProps={{ 'aria-label': 'Group by' }}
+            >
               {groupOptions.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}

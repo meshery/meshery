@@ -180,7 +180,8 @@ const ObjectFieldTemplate = ({
       spacing={2}
       size="grow"
       sx={{
-        padding: '1rem',
+        padding: '0.5rem',
+        minWidth: 0,
         width: '100%',
         margin: '0px',
         ...(Object.keys(properties).length === 0 || schema['$schema']
@@ -192,7 +193,7 @@ const ObjectFieldTemplate = ({
         return element.hidden ? (
           element.content
         ) : (
-          <Grid2 size={calculateGrid(element)} key={index}>
+          <Grid2 size={calculateGrid(element)} key={index} sx={{ minWidth: 0 }}>
             {element.content}
           </Grid2>
         );

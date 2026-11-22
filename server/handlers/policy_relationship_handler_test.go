@@ -1,14 +1,24 @@
 package handlers
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
+	"github.com/meshery/meshery/server/models"
 	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/models/events"
+	policyv1beta1 "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/category"
@@ -16,8 +26,10 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	modelv1beta2 "github.com/meshery/schemas/models/v1beta2/model"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	v1beta3comp "github.com/meshery/schemas/models/v1beta3/component"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -903,7 +915,6 @@ func TestBuildPolicyEvaluationEventMetadata_NilTimestamp(t *testing.T) {
 	assert.Equal(t, 0, metadata["relationshipsAdded"])
 }
 
-
 func seedAnnotationComponent(t *testing.T, rm *registry.RegistryManager) {
 	t.Helper()
 	conn := connection.Connection{
@@ -1002,4 +1013,352 @@ func TestProcessEvaluationResponse_PreservesRegistryAnnotationClassification(t *
 
 	// 2. Genuine annotation component Comment must preserve IsAnnotation=true from registry
 	assert.True(t, byID[commentID].Metadata.IsAnnotation, "Annotation component Comment must preserve IsAnnotation=true from registry")
+}
+
+func seedTestPolicies(t *testing.T, rm *registry.RegistryManager) {
+	t.Helper()
+
+	conn := connection.Connection{
+		Name:    "test-policy-registrant",
+		Kind:    "kubernetes",
+		Type:    "platform",
+		SubType: "orchestration",
+		Status:  connection.ConnectionStatusConnected,
+	}
+
+	host := registry.RegistrantHostToV1beta3(conn)
+
+	for _, version := range []string{"v1", "v2"} {
+		policy := policyv1beta1.PolicyDefinition{
+			Kind:    "TestPolicy",
+			Version: version,
+			Model: modelv1beta2.ModelDefinition{
+				Name:          "test-policy-model",
+				DisplayName:   "Test Policy Model",
+				SchemaVersion: "models.meshery.io/v1beta1",
+				Version:       "1.0.0",
+				Model:         modelv1beta2.Model{Version: "1.0.0"},
+				Category:      category.CategoryDefinition{Name: "Orchestration"},
+				Status:        modelv1beta2.Enabled,
+			},
+		}
+
+		_, _, err := rm.RegisterEntity(host, &policy)
+		require.NoError(t, err, "failed to register test policy")
+	}
+}
+
+func TestGetAllMeshmodelPoliciesPagination(t *testing.T) {
+	tests := []struct {
+		name    string
+		handler func(*Handler, http.ResponseWriter, *http.Request)
+		vars    map[string]string
+	}{
+		{
+			name:    "all policies",
+			handler: (*Handler).GetAllMeshmodelPolicies,
+			vars:    map[string]string{"model": "test-policy-model"},
+		},
+		{
+			name:    "policies by name",
+			handler: (*Handler).GetAllMeshmodelPoliciesByName,
+			vars: map[string]string{
+				"model": "test-policy-model",
+				"name":  "TestPolicy",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rm, _ := newTestRegistryManager(t)
+			seedTestPolicies(t, rm)
+
+			h := &Handler{
+				registryManager: rm,
+				log:             newTestLogger(t),
+			}
+
+			request := func(page int) struct {
+				Page       int               `json:"page"`
+				PageSize   int               `json:"pageSize"`
+				TotalCount int64             `json:"totalCount"`
+				Policies   []json.RawMessage `json:"policies"`
+			} {
+				req := httptest.NewRequest(
+					http.MethodGet,
+					fmt.Sprintf("/?page=%d&pageSize=1", page),
+					nil,
+				)
+				req = mux.SetURLVars(req, tt.vars)
+
+				recorder := httptest.NewRecorder()
+				tt.handler(h, recorder, req)
+
+				require.Equal(t, http.StatusOK, recorder.Code)
+
+				var response struct {
+					Page       int               `json:"page"`
+					PageSize   int               `json:"pageSize"`
+					TotalCount int64             `json:"totalCount"`
+					Policies   []json.RawMessage `json:"policies"`
+				}
+
+				require.NoError(t, json.Unmarshal(recorder.Body.Bytes(), &response))
+				return response
+			}
+
+			firstPage := request(0)
+			secondPage := request(1)
+
+			assert.Equal(t, 0, firstPage.Page)
+			assert.Equal(t, 1, firstPage.PageSize)
+			assert.Equal(t, int64(2), firstPage.TotalCount)
+			require.Len(t, firstPage.Policies, 1)
+
+			assert.Equal(t, 1, secondPage.Page)
+			assert.Equal(t, 1, secondPage.PageSize)
+			assert.Equal(t, int64(2), secondPage.TotalCount)
+			require.Len(t, secondPage.Policies, 1)
+
+			assert.NotEqual(
+				t,
+				string(firstPage.Policies[0]),
+				string(secondPage.Policies[0]),
+			)
+		})
+	}
+}
+
+func TestEvaluateRelationshipPolicy_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	provider := &models.DefaultLocalProvider{}
+	h.EvaluateRelationshipPolicy(rec, req, nil, nil, provider)
+
+	require.Equal(t, http.StatusUnauthorized, rec.Code)
+	var jsonErr map[string]string
+	err := json.Unmarshal(rec.Body.Bytes(), &jsonErr)
+	require.NoError(t, err, "unauthorized response body must decode as valid JSON")
+	assert.Equal(t, "user unauthorized", jsonErr["error"])
+}
+
+func TestEvaluateRelationshipPolicy_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, nil)
+
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+	errBody := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrNilProviderCode, errBody.Code)
+	assert.NotEmpty(t, errBody.Error)
+	assert.NotEmpty(t, errBody.ProbableCause)
+	assert.NotEmpty(t, errBody.SuggestedRemediation)
+}
+
+func TestEvaluateRelationshipPolicy_EmptyRequestBody_ReturnsBadRequest(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(""))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &models.DefaultLocalProvider{}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusBadRequest, rec.Code)
+	errBody := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrRequestBodyCode, errBody.Code)
+	assert.NotEmpty(t, errBody.Error)
+	assert.NotEmpty(t, errBody.ProbableCause)
+	assert.NotEmpty(t, errBody.SuggestedRemediation)
+}
+
+func TestEvaluateRelationshipPolicy_PayloadTooLarge_ReturnsRequestEntityTooLarge(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+	// 4MB + 1 byte payload
+	largePayload := bytes.Repeat([]byte("a"), (4<<20)+1)
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", bytes.NewReader(largePayload))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &models.DefaultLocalProvider{}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusRequestEntityTooLarge, rec.Code)
+	errBody := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrRequestBodyCode, errBody.Code)
+	assert.NotEmpty(t, errBody.Error)
+}
+
+func TestEvaluateRelationshipPolicy_MalformedJSON_ReturnsBadRequest(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader("invalid json"))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &models.DefaultLocalProvider{}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusBadRequest, rec.Code)
+	errBody := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrDecodingCode, errBody.Code)
+	assert.NotEmpty(t, errBody.Error)
+	assert.NotEmpty(t, errBody.ProbableCause)
+	assert.NotEmpty(t, errBody.SuggestedRemediation)
+}
+
+func TestEvaluateRelationshipPolicy_NilSystemID_DoesNotPanic(t *testing.T) {
+	h := &Handler{
+		log:         newTestLogger(t),
+		evalTracker: newEvaluationTracker(),
+	}
+	validJSON := `{"design":{"id":"11111111-1111-1111-1111-111111111111","name":"test","version":"v1"}}`
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(validJSON))
+	ctx, cancel := context.WithCancel(req.Context())
+	cancel()
+	req = req.WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &models.DefaultLocalProvider{}
+
+	// SystemID is nil on h; must not panic and must return 500 on canceled context
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+	errBody := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrPolicyEvalCode, errBody.Code)
+	assert.NotEmpty(t, errBody.Error)
+}
+
+type panickingPersistEventProvider struct {
+	*models.DefaultLocalProvider
+	persisted chan struct{}
+}
+
+func (p *panickingPersistEventProvider) PersistEvent(event events.Event, token string) (models.PersistedEvent, error) {
+	if p.persisted != nil {
+		select {
+		case <-p.persisted:
+		default:
+			close(p.persisted)
+		}
+	}
+	panic("synthetic panic in PersistEvent")
+}
+
+// assertSuccessResponseKeys verifies the raw JSON envelope contains the
+// required success payload keys and that trace/actions decode with the
+// expected shape. A typed decode into pattern.EvaluationResponse alone
+// cannot prove key presence: absent keys decode to zero values without
+// error. Empty results are valid, so actions may be null.
+func assertSuccessResponseKeys(t *testing.T, body []byte) {
+	t.Helper()
+
+	var raw map[string]json.RawMessage
+	require.NoError(t, json.Unmarshal(body, &raw))
+	for _, key := range []string{"design", "trace", "actions"} {
+		_, ok := raw[key]
+		assert.True(t, ok, "response JSON must contain %q key", key)
+	}
+
+	var trace pattern.Trace
+	if payload, ok := raw["trace"]; ok {
+		require.NoError(t, json.Unmarshal(payload, &trace), "trace must decode as an object")
+	}
+	var actions []pattern.Action
+	if payload, ok := raw["actions"]; ok {
+		require.NoError(t, json.Unmarshal(payload, &actions), "actions must decode as an array")
+	}
+}
+
+func TestEvaluateRelationshipPolicy_PersistEventPanicRecovered(t *testing.T) {
+	viper.Set("USE_GO_POLICY_ENGINE", true)
+	t.Cleanup(func() {
+		viper.Set("USE_GO_POLICY_ENGINE", false)
+	})
+
+	logger := newTestLogger(t)
+	h := &Handler{
+		log:         logger,
+		evalTracker: newEvaluationTracker(),
+		GoEngine:    gopolicies.NewGoEngine(logger),
+	}
+
+	persistedCh := make(chan struct{})
+	provider := &panickingPersistEventProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		persisted:            persistedCh,
+	}
+
+	validJSON := `{"design":{"id":"11111111-1111-1111-1111-111111111111","name":"test","version":"v1"}}`
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(validJSON))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	// Wait for the detached persistence goroutine to run and panic (which is safely recovered)
+	select {
+	case <-persistedCh:
+	case <-time.After(2 * time.Second):
+		t.Fatal("PersistEvent was never called before timeout")
+	}
+
+	// Verify that the handler returns HTTP 200 OK without crashing the process
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	var resp pattern.EvaluationResponse
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &resp))
+	assert.Equal(t, "test", resp.Design.Name)
+	assert.Equal(t, "1.0.1", resp.Design.Version)
+	assert.NotNil(t, resp.Timestamp)
+	assertSuccessResponseKeys(t, rec.Body.Bytes())
+}
+
+func TestEvaluateRelationshipPolicy_Success_ResponsePayloadStructure(t *testing.T) {
+	viper.Set("USE_GO_POLICY_ENGINE", true)
+	t.Cleanup(func() {
+		viper.Set("USE_GO_POLICY_ENGINE", false)
+	})
+
+	logger := newTestLogger(t)
+	h := &Handler{
+		log:         logger,
+		evalTracker: newEvaluationTracker(),
+		GoEngine:    gopolicies.NewGoEngine(logger),
+	}
+
+	provider := &models.DefaultLocalProvider{}
+	provider.Initialize()
+
+	designID := uuid.Must(uuid.NewV4())
+	validJSON := fmt.Sprintf(`{"design":{"id":"%s","name":"eval-payload-test","version":"1.0.0"}}`, designID)
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(validJSON))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	var resp pattern.EvaluationResponse
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &resp))
+	assert.Equal(t, designID, resp.Design.ID)
+	assert.Equal(t, "eval-payload-test", resp.Design.Name)
+	assert.Equal(t, "1.0.1", resp.Design.Version)
+	assert.NotNil(t, resp.Timestamp)
+	assertSuccessResponseKeys(t, rec.Body.Bytes())
 }

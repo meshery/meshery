@@ -1,9 +1,13 @@
 import React from 'react';
 import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { Keys } from '@meshery/schemas/permissions';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const notify = vi.fn();
 const dispatch = vi.fn();
+const mockUseHasPermission = vi.fn(() => true);
+const mockUseGetProviderCapabilitiesQuery = vi.fn(() => capabilitiesReturn);
+const mockUseGetUserPrefQuery = vi.fn(() => userDataReturn);
 const updateUserPref = vi.fn().mockImplementation(() => ({
   unwrap: () => Promise.resolve({}),
 }));
@@ -28,9 +32,8 @@ let capabilitiesReturn: any = {
 let catalogMutationReturn: any = {};
 
 vi.mock('@sistent/sistent', () => ({
-  // This suite exercises preference toggles, not authorization: grant every
-  // capability so the permission gate never masks the behaviour under test.
-  useHasPermission: () => true,
+  // Default to granted so existing toggle specs aren't masked; deny specs override mockUseHasPermission.
+  useHasPermission: (permissionKey: any) => mockUseHasPermission(permissionKey),
   Tab: ({ label, ...rest }: any) => <button {...rest}>{label}</button>,
   Tabs: ({ children, value, onChange }: any) => (
     <div data-testid="tabs" data-value={value} onClick={(e) => onChange?.(e, 0)}>
@@ -89,7 +92,9 @@ vi.mock('@sistent/sistent', () => ({
 }));
 
 vi.mock('../general/error-404/index', () => ({
-  default: ({ permissionKey }: any) => <div data-testid="default-error">{permissionKey}</div>,
+  default: ({ permissionKey }: any) => (
+    <div data-testid="default-error" data-permission-key={JSON.stringify(permissionKey)} />
+  ),
 }));
 
 vi.mock('../../assets/icons/CopyIcon', () => ({
@@ -154,8 +159,8 @@ vi.mock('@/utils/dimension', () => ({
 }));
 
 vi.mock('@/rtk-query/user', () => ({
-  useGetProviderCapabilitiesQuery: () => capabilitiesReturn,
-  useGetUserPrefQuery: () => userDataReturn,
+  useGetProviderCapabilitiesQuery: (...args: any[]) => mockUseGetProviderCapabilitiesQuery(...args),
+  useGetUserPrefQuery: (...args: any[]) => mockUseGetUserPrefQuery(...args),
   useUpdateUserPrefMutation: () => [updateUserPref, catalogMutationReturn],
   useUpdateUserPrefWithContextMutation: () => [updateUserPrefWithContext],
 }));
@@ -190,6 +195,10 @@ describe('UserPreference', () => {
   beforeEach(() => {
     notify.mockReset();
     dispatch.mockReset();
+    mockUseHasPermission.mockReset();
+    mockUseHasPermission.mockReturnValue(true);
+    mockUseGetUserPrefQuery.mockClear();
+    mockUseGetProviderCapabilitiesQuery.mockClear();
     updateUserPref.mockClear();
     updateUserPrefWithContext.mockClear();
     catalogMutationReturn = {};
@@ -252,6 +261,96 @@ describe('UserPreference', () => {
       );
       expect(screen.getByTestId('CatalogContentPreference')).toHaveProperty('checked', saved);
       expect(dispatch).toHaveBeenLastCalledWith({ catalogVisibility: saved });
+    },
+  );
+
+  it.each(['UsageStatsPreference', 'PerfResultPreference'])(
+    'turns the %s switch back when saving it fails',
+    async (testId) => {
+      updateUserPrefWithContext.mockImplementationOnce(() => ({
+        unwrap: () => Promise.reject(new Error('network down')),
+      }));
+      render(<UserPreference anonymousStats={false} perfResultStats={false} />);
+      const toggle = screen.getByTestId(testId);
+      fireEvent.click(toggle);
+
+      await waitFor(() =>
+        expect(notify).toHaveBeenCalledWith({
+          message: 'There was an error sending your preference',
+          event_type: 'error',
+        }),
+      );
+      expect(toggle).not.toBeChecked();
+    },
+  );
+
+  it.each(['UsageStatsPreference', 'PerfResultPreference'])(
+    'keeps the %s switch on when saving it succeeds',
+    async (testId) => {
+      updateUserPrefWithContext.mockImplementationOnce(() => ({
+        unwrap: () => Promise.resolve({}),
+      }));
+      render(<UserPreference anonymousStats={false} perfResultStats={false} />);
+      const toggle = screen.getByTestId(testId);
+      fireEvent.click(toggle);
+
+      await waitFor(() => expect(notify).toHaveBeenCalled());
+      expect(toggle).toBeChecked();
+    },
+  );
+
+  it.each(['UsageStatsPreference', 'PerfResultPreference'])(
+    'ignores the %s switch while its save is pending and restores the saved value if it fails',
+    async (testId) => {
+      let rejectSave!: () => void;
+      const pendingSave = new Promise((_, reject) => {
+        rejectSave = () => reject(new Error('network down'));
+      });
+      updateUserPrefWithContext.mockImplementationOnce(() => ({ unwrap: () => pendingSave }));
+      render(<UserPreference anonymousStats={false} perfResultStats={false} />);
+      const toggle = screen.getByTestId(testId);
+      const other = screen.getByTestId(
+        testId === 'UsageStatsPreference' ? 'PerfResultPreference' : 'UsageStatsPreference',
+      );
+
+      fireEvent.click(toggle);
+      fireEvent.click(toggle);
+      fireEvent.click(other);
+      expect(updateUserPrefWithContext).toHaveBeenCalledTimes(1);
+      expect(toggle).toBeChecked();
+      expect(toggle).toBeDisabled();
+      expect(other).toBeDisabled();
+
+      await act(async () => rejectSave());
+      expect(toggle).not.toBeChecked();
+      expect(other).not.toBeChecked();
+      expect(toggle).toBeEnabled();
+    },
+  );
+
+  it.each(['UsageStatsPreference', 'PerfResultPreference'])(
+    'restores the %s switch to the value saved earlier in this session',
+    async (testId) => {
+      updateUserPrefWithContext
+        .mockImplementationOnce(() => ({ unwrap: () => Promise.resolve({}) }))
+        .mockImplementationOnce(() => ({
+          unwrap: () => Promise.reject(new Error('network down')),
+        }));
+      render(<UserPreference anonymousStats={false} perfResultStats={false} />);
+      const toggle = screen.getByTestId(testId);
+
+      fireEvent.click(toggle);
+      await waitFor(() => expect(toggle).toBeEnabled());
+      expect(toggle).toBeChecked();
+
+      fireEvent.click(toggle);
+      await waitFor(() =>
+        expect(notify).toHaveBeenCalledWith({
+          message: 'There was an error sending your preference',
+          event_type: 'error',
+        }),
+      );
+      expect(toggle).toBeChecked();
     },
   );
 
@@ -323,5 +422,19 @@ describe('UserPreference', () => {
     expect(toggle).toBeDisabled();
     fireEvent.click(toggle);
     expect(updateUserPref).not.toHaveBeenCalled();
+  });
+
+  it('skips preference queries, ignores cached preferences, and renders DefaultError when permission is denied', () => {
+    mockUseHasPermission.mockReturnValue(false);
+    render(<UserPreference />);
+
+    expect(mockUseHasPermission).toHaveBeenCalledWith(Keys.ExtensibilityViewMesheryUserPreferences);
+    expect(mockUseGetUserPrefQuery).toHaveBeenCalledWith(undefined, { skip: true });
+    expect(mockUseGetProviderCapabilitiesQuery).toHaveBeenCalledWith(undefined, { skip: true });
+    expect(screen.getByTestId('default-error')).toHaveAttribute(
+      'data-permission-key',
+      JSON.stringify(Keys.ExtensibilityViewMesheryUserPreferences),
+    );
+    expect(screen.queryByTestId('CatalogContentPreference')).not.toBeInTheDocument();
   });
 });

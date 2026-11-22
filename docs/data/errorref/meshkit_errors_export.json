@@ -1928,6 +1928,114 @@
             ]
           }
         ]
+      },
+      "11341": {
+        "name": "ErrInProcessCloudAuthUnavailableCode",
+        "code": "11341",
+        "severity": "Alert",
+        "long_description": "In-process token minting requires cloud credentials in the Meshery process; a kubeconfig alone is not enough",
+        "short_description": "Unable to authenticate to the managed Kubernetes cluster",
+        "probable_cause": "The Meshery process has no cloud credentials for the cluster's account or project\nThe exec credential plugin named in the kubeconfig is not installed where Meshery runs",
+        "suggested_remediation": "For EKS, give the Meshery process AWS credentials: environment variables, a shared config profile, IAM Roles for Service Accounts, or an EC2/ECS instance role\nFor GKE, give the Meshery process Application Default Credentials: GOOGLE_APPLICATION_CREDENTIALS pointing at a service-account key, or Workload Identity\nAlternatively install the exec credential plugin (the AWS CLI, aws-iam-authenticator, or gke-gcloud-auth-plugin) on the Meshery host's PATH\nIf the Meshery server cannot hold cloud credentials, deploy the Meshery Operator into the cluster instead"
+      },
+      "11342": {
+        "name": "ErrAWSCredentialsUnavailableCode",
+        "code": "11342",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "AWS credentials are not available for EKS token minting",
+        "probable_cause": "No AWS credentials are configured in the environment, shared config files, web identity (IRSA), or instance metadata\nThe AWS profile named in the kubeconfig does not exist where Meshery runs\nThe role named with --role-arn or -r cannot be assumed with the available credentials\nThe profile uses an AWS IAM Identity Center (SSO) session that has expired, or an assume-role that requires MFA, neither of which is supported in process",
+        "suggested_remediation": "Configure AWS credentials for the Meshery process (for example AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY, AWS_PROFILE, IRSA, or an instance role)\nVerify that the credentials are allowed to assume the role referenced by the kubeconfig"
+      },
+      "11343": {
+        "name": "ErrEKSRegionUnresolvedCode",
+        "code": "11343",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "AWS region is not configured for EKS token minting",
+        "probable_cause": "The exec stanza has no --region flag, no AWS_REGION or AWS_DEFAULT_REGION env entry, and the process environment and shared config name no region either",
+        "suggested_remediation": "Add --region to the exec stanza arguments, or set AWS_REGION for the Meshery process"
+      },
+      "11344": {
+        "name": "ErrMintEKSTokenCode",
+        "code": "11344",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to mint EKS bearer token",
+        "probable_cause": "The AWS credentials expired and could not be refreshed",
+        "suggested_remediation": "Verify that the AWS credentials available to the Meshery process are still valid"
+      },
+      "11345": {
+        "name": "ErrGCPCredentialsUnavailableCode",
+        "code": "11345",
+        "severity": "Alert",
+        "long_description": "Unable to obtain a token from Google Application Default Credentials to mint a GKE token",
+        "short_description": "Google Cloud credentials are not available for GKE token minting",
+        "probable_cause": "GOOGLE_APPLICATION_CREDENTIALS is unset, no gcloud application-default credentials file exists, and no GCE or GKE metadata server is reachable\nThe Application Default Credentials were found but token exchange failed, for example because the refresh token was revoked or expired\nThe credentials file is not a service_account key or an authorized_user (gcloud application-default login) file; external_account, impersonated_service_account and other types are not supported in process\nThe credentials file names a token_uri other than https://oauth2.googleapis.com/token\nOn a metadata server, the host's access scopes do not include cloud-platform and userinfo.email",
+        "suggested_remediation": "Set GOOGLE_APPLICATION_CREDENTIALS to a service-account key file, run on GKE with Workload Identity, or run gcloud auth application-default login\nOn a Compute Engine host, enable the cloud-platform and userinfo.email access scopes"
+      },
+      "11346": {
+        "name": "ErrGCPServiceAccountKeyCode",
+        "code": "11346",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unusable Google Cloud service-account key",
+        "probable_cause": "The supplied JSON is malformed or is not a service_account key\nThe key names a token_uri other than https://oauth2.googleapis.com/token\nGoogle rejected the key, for example because it was deleted or disabled, or the token endpoint could not be reached",
+        "suggested_remediation": "Supply a current JSON key file downloaded for a Google Cloud service account, unmodified"
+      },
+      "11347": {
+        "name": "ErrUnsupportedCloudProviderCode",
+        "code": "11347",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unsupported cloud provider for in-process token minting",
+        "probable_cause": "The credential plugin specification was constructed with an unknown provider",
+        "suggested_remediation": "Use a Spec returned by Recognize"
+      },
+      "11348": {
+        "name": "ErrInProcessCloudAuthFallbackCode",
+        "code": "11348",
+        "severity": "None",
+        "long_description": "",
+        "short_description": "Falling back to the exec credential plugin for the managed Kubernetes cluster",
+        "probable_cause": "The Meshery process has no usable cloud credentials for the cluster's account or project\nThe cloud credentials are misconfigured, for example a mistyped role ARN or an expired Application Default Credentials login",
+        "suggested_remediation": "No action is needed if the exec credential plugin is meant to authenticate\nTo mint tokens in process, fix the cloud credentials available to the Meshery process; setup is retried periodically"
+      },
+      "11349": {
+        "name": "ErrUntrustedClusterEndpointCode",
+        "code": "11349",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Refusing to send cloud credentials to an unrecognized cluster endpoint",
+        "probable_cause": "The kubeconfig server is not an EKS or GKE control plane endpoint, for example a proxy, a load balancer, or a host controlled by whoever wrote the kubeconfig\nThe kubeconfig disables TLS verification (insecure-skip-tls-verify), uses http, or routes the connection through proxy-url\nFor EKS, the exec stanza's --region differs from the region in the endpoint host name\nFor a GKE IP endpoint, the kubeconfig has no certificate-authority data, or the GKE API did not confirm that this IP and CA certificate belong to a cluster in a trusted project (the ADC project, GOOGLE_CLOUD_PROJECT or GOOGLE_PROJECT)",
+        "suggested_remediation": "Use the cluster endpoint written by aws eks update-kubeconfig or gcloud container clusters get-credentials, with TLS verification enabled\nFor a GKE IP endpoint, grant the Meshery process container.clusters.get or container.clusters.list on the cluster project, and set GOOGLE_CLOUD_PROJECT to that project unless it is the ADC project\nAlternatively install the exec credential plugin named in the kubeconfig on the Meshery host's PATH, so it authenticates instead\nTo keep the exec plugin for a context, disable in-process cloud auth for that context's kubeconfig user; every context sharing that user switches with it\nIf the Meshery server cannot hold cloud credentials, deploy the Meshery Operator into the cluster instead"
+      },
+      "11350": {
+        "name": "ErrUntrustedClusterEndpointFallbackCode",
+        "code": "11350",
+        "severity": "None",
+        "long_description": "",
+        "short_description": "Using the exec credential plugin for an unrecognized cluster endpoint",
+        "probable_cause": "The kubeconfig server is not an EKS or GKE control plane endpoint, or the kubeconfig disables TLS verification, uses http, or sets proxy-url\nFor a GKE IP endpoint, no trusted project (the ADC project, GOOGLE_CLOUD_PROJECT or GOOGLE_PROJECT) was set, or the GKE API was unreachable, denied container.clusters.get and container.clusters.list, listed clusters only partially, or returned no cluster with this IP and CA certificate in those projects",
+        "suggested_remediation": "No action is needed if the exec credential plugin is meant to authenticate\nTo mint tokens in process, point the kubeconfig at the cluster's own EKS or GKE endpoint with TLS verification enabled\nFor a GKE IP endpoint, grant the Meshery process container.clusters.get or container.clusters.list on the cluster project, and set GOOGLE_CLOUD_PROJECT to that project unless it is the ADC project"
+      },
+      "11351": {
+        "name": "ErrCloudAuthTimeoutCode",
+        "code": "11351",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Timed out obtaining cloud credentials for the managed Kubernetes cluster",
+        "probable_cause": "The cloud provider's token or credentials endpoint (AWS STS, Google OAuth2, or an instance metadata server) is unreachable or not responding\nA network proxy or firewall is blocking or stalling requests from the Meshery process to the cloud provider",
+        "suggested_remediation": "Verify that the Meshery host can reach the cloud provider's credential endpoints\nRetry the request; every new request starts a fresh attempt"
+      },
+      "11352": {
+        "name": "ErrInProcessGKEIPMintingCode",
+        "code": "11352",
+        "severity": "None",
+        "long_description": "",
+        "short_description": "In-process GKE token minting is active for an IP endpoint",
+        "probable_cause": "The kubeconfig names a GKE control plane by IP address, and the GKE API confirmed that IP and CA certificate belong to a cluster in the ADC project, GOOGLE_CLOUD_PROJECT or GOOGLE_PROJECT",
+        "suggested_remediation": "No action is needed if this cluster should use in-process token minting\nTo use the exec plugin for this context instead, disable in-process cloud auth for that context's kubeconfig user (every context sharing that user switches with it), or set MESHKIT_DISABLE_INPROCESS_CLOUD_AUTH=true for the whole process"
       }
     }
   }

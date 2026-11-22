@@ -4,6 +4,7 @@ package models
 import (
 	stderrors "errors"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/meshery/meshery/server/models/httputil"
@@ -175,6 +176,8 @@ const (
 	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
 	ErrInvalidExtensionProxyPathCode      = "meshery-server-1490"
 	ErrMigrateEventIndexesCode            = "meshery-server-1491"
+	ErrHandlerPanicCode                   = "meshery-server-1495"
+	ErrInvalidDesignVersionCode           = "meshery-server-1496"
 )
 
 var (
@@ -255,11 +258,11 @@ func ErrPageSize(err error) error {
 }
 
 func ErrPageNumber(err error) error {
-	return errors.New(ErrPageNumberCode, errors.Alert, []string{"Unable to prase the Page Numer"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrPageNumberCode, errors.Alert, []string{"Unable to parse the Page Number"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrPerfID(err error) error {
-	return errors.New(ErrPerfIDCode, errors.Alert, []string{"Invalid peformance profile ID"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrPerfIDCode, errors.Alert, []string{"Invalid performance profile ID"}, []string{err.Error()}, []string{}, []string{})
 }
 func ErrPublish(err error, obj string) error {
 	return errors.New(ErrPublishCode, errors.Alert, []string{fmt.Sprintf("Error while publishing %s to catlog", obj)}, []string{err.Error()}, []string{}, []string{})
@@ -541,7 +544,7 @@ func ErrJWKsKeys(err error) error {
 }
 
 func ErrInvalidCapability(capability string, provider string) error {
-	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capability is not supported by your Provider", capability}, []string{"You dont have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the vaild remote Provider"}, []string{"Connect to the vaild remote Provider", "Ask the Provider Adim for access"})
+	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capability is not supported by your Provider", capability}, []string{"You don't have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the valid remote Provider"}, []string{"Connect to the valid remote Provider", "Ask the Provider Admin for access"})
 }
 
 func ErrFetchData(err error) error {
@@ -658,7 +661,10 @@ func ErrUpdateConnectionStatus(err error, statusCode int) error {
 }
 
 func ErrResultNotFound(err error) error {
-	return errors.New(ErrResultNotFoundCode, errors.Alert, []string{err.Error()}, []string{"The record in the database does not exist."}, []string{"The record might have been deleted."}, []string{""})
+	return httputil.WithProviderStatus(
+		errors.New(ErrResultNotFoundCode, errors.Alert, []string{err.Error()}, []string{"The record in the database does not exist."}, []string{"The record might have been deleted."}, []string{""}),
+		http.StatusNotFound,
+	)
 }
 
 func ErrPersistCredential(err error) error {
@@ -840,7 +846,7 @@ func ErrMarshallingDesignIntoYAML(err error) error {
 }
 
 func ErrMeshsyncDataHandler(err error) error {
-	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data hadler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
+	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data handler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
 }
 
 // ErrReconcileServerID wraps a failure to back-fill an already-persisted
@@ -1016,5 +1022,33 @@ func ErrAttachEventError(err error) error {
 		[]string{err.Error()},
 		[]string{"The error the event reports carries no MeshKit error code", "The MeshKit error's causes or matched causes break the schemas EventError contract"},
 		[]string{"Report the error the event reports as a MeshKit error with a code", "Fix the probable causes of the MeshKit error, or the matched cause ids its producer names, so they satisfy the EventError contract"},
+	)
+}
+
+// ErrHandlerPanic is returned to the client when an HTTP handler panics and the
+// recovery middleware contains it. The text is fixed on purpose: the panic value
+// can carry anything the handler was holding, so it and the stack stay in the
+// server log and never reach the response.
+func ErrHandlerPanic() error {
+	return errors.New(
+		ErrHandlerPanicCode,
+		errors.Alert,
+		[]string{"Meshery Server hit an unexpected internal error while handling the request"},
+		[]string{"The handler for this request panicked. The panic value and stack are recorded in the server log, not in this response"},
+		[]string{"A defect in Meshery Server caused the handler for this request to panic"},
+		[]string{"Retry the request", "If it keeps failing, report it at https://github.com/meshery/meshery/issues/new/choose together with the request that triggered it; the server log holds the full stack"},
+	)
+}
+
+// ErrInvalidDesignVersion reports a design file whose version is not semantic
+// versioning, so the save cannot assign or bump it.
+func ErrInvalidDesignVersion(version string, err error) error {
+	return errors.New(
+		ErrInvalidDesignVersionCode,
+		errors.Alert,
+		[]string{"Invalid design version"},
+		[]string{fmt.Sprintf("The design version %q is not a valid semantic version: %v", version, err)},
+		[]string{"The design file's version is not semver, so a next version cannot be computed from it", "Older tooling wrote arbitrary version strings into design files"},
+		[]string{"Set the design file's version to a semver string such as 0.0.1 and save again"},
 	)
 }

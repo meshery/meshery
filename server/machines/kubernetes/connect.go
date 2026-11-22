@@ -113,11 +113,13 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		connections.MeshsyncDeploymentModeFromString(viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE")),
 	).Mode
 
+	machinectx.lifecycleLock.Lock()
 	machinectx.setupLock.Lock()
 	machinectx.disconnected = false
 	if machinectx.setupInProgress {
 		machinectx.retryPending = true
 		machinectx.setupLock.Unlock()
+		machinectx.lifecycleLock.Unlock()
 		if machinectx.log != nil {
 			machinectx.log.Infof("Kubernetes connection setup already in progress for %s, queued retry after current setup finishes", machinectx.K8sContext.Name)
 		}
@@ -125,6 +127,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 	}
 	machinectx.setupInProgress = true
 	machinectx.setupLock.Unlock()
+	machinectx.lifecycleLock.Unlock()
 
 	go func() {
 		workerExitedCleanly := false
@@ -145,17 +148,23 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 				return
 			}
 
+			// Snapshot the context for this setup pass: a credential
+			// refresh can replace machinectx.K8sContext while setup runs,
+			// so every read in this iteration uses one immutable copy
+			// instead of re-reading a field that may change mid-setup.
+			k8sCtx := machinectx.K8sContext
+
 			// SetControllersConfig first: AddCtxControllerHandlers constructs the
 			// operator controller handler with the Helm chart version this document
 			// resolves to (operator.version), and captures it there.
 			ctrlHelper := machinectx.MesheryCtrlsHelper.
 				SetControllersConfig(mergedControllersConfig).
 				SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
-				AddCtxControllerHandlers(machinectx.K8sContext).
+				AddCtxControllerHandlers(k8sCtx).
 				UpdateOperatorsStatusMap(machinectx.OperatorTracker).
-				DeployUndeployedOperators(machinectx.OperatorTracker, machinectx.K8sContext.ID)
+				DeployUndeployedOperators(machinectx.OperatorTracker, k8sCtx)
 
-			ctrlHelper.AddMeshsyncDataHandlers(ctx, machinectx.K8sContext, userUUID, systemID, provider)
+			ctrlHelper.AddMeshsyncDataHandlers(ctx, k8sCtx, userUUID, systemID, provider)
 			machinectx.setupLock.Unlock()
 
 			// Operator mode: best-effort apply of the explicitly-set
@@ -173,7 +182,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 					return
 				}
 
-				kubeClient, errClient := machinectx.K8sContext.GenerateKubeHandler()
+				kubeClient, errClient := k8sCtx.GenerateKubeHandler()
 				if errClient != nil {
 					machinectx.log.Error(ErrConnectAction(errClient))
 				} else {
@@ -206,7 +215,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 			latestConn, _, errConn := provider.GetConnectionByID(token, connectionID)
 			if errConn != nil || !isConnectionMeantToBeConnected(latestConn) {
 				if machinectx.log != nil {
-					machinectx.log.Infof("Skipping queued Kubernetes connection setup for %s: connection is no longer connected", machinectx.K8sContext.Name)
+					machinectx.log.Infof("Skipping queued Kubernetes connection setup for %s: connection is no longer connected", k8sCtx.Name)
 				}
 				machinectx.setupLock.Lock()
 				machinectx.retryPending = false
