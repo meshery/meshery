@@ -287,6 +287,7 @@ const MesheryResults = () => {
           break;
         case 'changeRowsPerPage':
           setPageSize(tableState.rowsPerPage);
+          setPage(0);
           break;
         case 'search':
           if (searchTimeout) clearTimeout(searchTimeout);
