@@ -4372,6 +4372,15 @@
         "short_description": "Invalid design version",
         "probable_cause": "The design file's version is not semver, so a next version cannot be computed from it\nOlder tooling wrote arbitrary version strings into design files",
         "suggested_remediation": "Set the design file's version to a semver string such as 0.0.1 and save again"
+      },
+      "1497": {
+        "name": "ErrProvisionPanicCode",
+        "code": "1497",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Component panicked during provisioning",
+        "probable_cause": "Runtime fault occurred in component visitor execution",
+        "suggested_remediation": "Inspect component configuration and provider logs for runtime failures"
       }
     }
   }
