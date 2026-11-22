@@ -11,6 +11,7 @@ import {
   useTheme,
   IconButton,
   CustomTooltip,
+  useHasPermission,
 } from '@sistent/sistent';
 import { iconMedium } from '../../css/icons.styles';
 
@@ -81,13 +82,16 @@ const EnvironmentCard = ({
   onAssignConnection,
 }) => {
   const theme = useTheme();
+  const canViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
   const { data: environmentConnections } = useGetEnvironmentConnectionsQuery(
     {
       environmentId: environmentDetails.id,
     },
-    { skip: !environmentDetails.id },
+    { skip: !environmentDetails.id || !canViewConnections },
   );
-  const environmentConnectionsCount = environmentConnections?.totalCount || 0;
+  const environmentConnectionsCount = canViewConnections
+    ? environmentConnections?.totalCount || 0
+    : 0;
 
   // this allows to handle both cases when deleted at is:
   // - timestamp or null

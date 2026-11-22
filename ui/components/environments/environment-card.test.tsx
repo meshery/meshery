@@ -2,8 +2,10 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { Keys } from '@meshery/schemas/permissions';
 
 const can = vi.fn(() => true);
+const hasPermission = vi.fn((key: any) => can(key?.id, key?.function));
 const getEnvironmentConnectionsQuery = vi.fn();
 
 vi.mock('../../rtk-query/environments', () => ({
@@ -46,6 +48,7 @@ vi.mock('@sistent/sistent', () => {
         icon: { secondary: 'secondary' },
       },
     }),
+    useHasPermission: (...args: unknown[]) => hasPermission(...args),
     styled,
   };
 });
@@ -161,6 +164,7 @@ describe('EnvironmentCard', () => {
   beforeEach(() => {
     can.mockReset();
     can.mockReturnValue(true);
+    hasPermission.mockClear();
     getEnvironmentConnectionsQuery.mockReset();
     getEnvironmentConnectionsQuery.mockReturnValue({ data: { totalCount: 7 } });
   });
@@ -275,7 +279,7 @@ describe('EnvironmentCard', () => {
     expect(onDelete).toHaveBeenCalled();
   });
 
-  it('uses {skip: !id} for connections query', () => {
+  it('skips the connections query when the environment id is missing', () => {
     render(
       <EnvironmentCard
         environmentDetails={{ ...baseEnvironment, id: '' }}
@@ -290,5 +294,48 @@ describe('EnvironmentCard', () => {
       { environmentId: '' },
       { skip: true },
     );
+  });
+
+  it('skips the connections query and hides the count when ViewConnections is denied', () => {
+    can.mockReturnValue(false);
+    render(
+      <EnvironmentCard
+        environmentDetails={baseEnvironment}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+
+    expect(hasPermission).toHaveBeenCalledWith(Keys.WorkspaceManagementViewConnections);
+    expect(getEnvironmentConnectionsQuery).toHaveBeenCalledWith(
+      { environmentId: 'env-1' },
+      { skip: true },
+    );
+    expect(screen.getByTestId('tab-count')).toHaveTextContent('0');
+    expect(screen.getByTestId('popup-button')).toBeDisabled();
+  });
+
+  it('fetches and shows the count when ViewConnections is allowed', () => {
+    render(
+      <EnvironmentCard
+        environmentDetails={baseEnvironment}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+
+    expect(hasPermission).toHaveBeenCalledWith(Keys.WorkspaceManagementViewConnections);
+    expect(getEnvironmentConnectionsQuery).toHaveBeenCalledWith(
+      { environmentId: 'env-1' },
+      { skip: false },
+    );
+    expect(screen.getByTestId('tab-count')).toHaveTextContent('7');
+    expect(screen.getByTestId('popup-button')).not.toBeDisabled();
   });
 });
