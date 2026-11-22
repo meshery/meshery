@@ -30,4 +30,18 @@ describe('PascalCaseToKebab', () => {
   it('handles strings beginning with a digit (no leading hyphen)', () => {
     expect(PascalCaseToKebab('1FooBar')).toBe('1-foo-bar');
   });
+
+  it('safely handles nullish, non-string, or empty inputs without throwing', () => {
+    // @ts-expect-error testing invalid inputs
+    expect(PascalCaseToKebab(null)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(PascalCaseToKebab(undefined)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(PascalCaseToKebab(123)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(PascalCaseToKebab({})).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(PascalCaseToKebab([])).toBe('');
+    expect(PascalCaseToKebab('')).toBe('');
+  });
 });

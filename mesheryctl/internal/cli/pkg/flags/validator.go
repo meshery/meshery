@@ -51,8 +51,13 @@ func (fv *FlagValidator) Validate(s interface{}) error {
 	return nil
 }
 
+// IsSemver returns true if the string matches Meshery's supported model-version format (^vMAJOR.MINOR.PATCH...).
+func IsSemver(version string) bool {
+	return vSemverRegex.MatchString(version)
+}
+
 func isSemver(fl validator.FieldLevel) bool {
-	return vSemverRegex.MatchString(fl.Field().String())
+	return IsSemver(fl.Field().String())
 }
 
 func isRelativePath(fl validator.FieldLevel) bool {
@@ -77,6 +82,13 @@ func isRelativeOrAbsolutePath(fl validator.FieldLevel) bool {
 		return true // Omit empty check should be handled by 'omitempty' tag
 	}
 	return isRelativePath(fl) || isAbsolutePath(fl)
+}
+
+// isNotBlank checks that a string field contains at least one non-whitespace character.
+// The built-in "required" tag only rejects the empty string, so a value such as "   " passes it.
+func isNotBlank(fl validator.FieldLevel) bool {
+	field := fl.Field()
+	return field.Kind() == reflect.String && strings.TrimSpace(field.String()) != ""
 }
 
 // isBoolean is a custom validation function that checks if a field is a boolean value (true or false)
@@ -105,6 +117,8 @@ func (fv *FlagValidator) ReadValidationErrorMessages(err validator.ValidationErr
 			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': valid values are %s", strings.ToLower(e.Field()), e.Value(), e.Param()))
 		case "uuid":
 			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': must be a valid UUID", strings.ToLower(e.Field()), e.Value()))
+		case "notblank":
+			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': must not be blank", e.Field(), e.Value()))
 		case "dir", "dirpath":
 			errorMessages = append(errorMessages, fmt.Sprintf("Invalid value for --%s '%v': directory does not exist", e.Field(), e.Value()))
 		case "relpath":
@@ -156,6 +170,12 @@ func GetFlagValidator() *FlagValidator {
 
 		// Register a custom validation function for relative or absolute file paths with a tag name "relabspath"
 		err = validate.RegisterValidation("relabspath", isRelativeOrAbsolutePath)
+		if err != nil {
+			log.Fatalf("Error registering validation: %v", err)
+		}
+
+		// Register a custom validation function for non-blank strings with a tag name "notblank"
+		err = validate.RegisterValidation("notblank", isNotBlank)
 		if err != nil {
 			log.Fatalf("Error registering validation: %v", err)
 		}
