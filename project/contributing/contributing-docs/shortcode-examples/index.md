@@ -384,7 +384,7 @@ Takes no parameters and no body.
 
 
 
-<h2>v1.0.82</h2>
+<h2>v1.0.83</h2>
 
 
 
@@ -452,6 +452,10 @@ Takes no body. Use the `{{< >}}` form.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/need-meshmate-to-assist-in-start-contributing-to-meshery-doc/8324" target="_blank" rel="noopener noreferrer">
+            Need meshmate to assist in start contributing to meshery Doc
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-meshmate-to-learn-from/8316" target="_blank" rel="noopener noreferrer">
             Looking for MeshMate to learn from
           </a>
@@ -478,10 +482,6 @@ Takes no body. Use the `{{< >}}` form.
         </li><li>
           <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
             New comer here and looking for Meshmates
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/request-to-reactivate-my-slack-account/8168" target="_blank" rel="noopener noreferrer">
-            Request to Reactivate My Slack Account
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
