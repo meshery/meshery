@@ -52,6 +52,15 @@ func TestRelationship(t *testing.T) {
 			IsOutputGolden:   true,
 		},
 		{
+			Name:             "Reject empty subcommand with --count",
+			Args:             []string{"--count", ""},
+			URL:              "",
+			Fixture:          "list.relationship.api.empty.response.golden",
+			ExpectedResponse: "relationship.empty.command.output.golden",
+			ExpectError:      true,
+			IsOutputGolden:   true,
+		},
+		{
 			Name:             "Reject multiple invalid arguments with --count",
 			Args:             []string{"invalidCommand", "extra", "--count"},
 			URL:              "",

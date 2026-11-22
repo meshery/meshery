@@ -3,9 +3,11 @@ package organizations
 import (
 	goerrors "errors"
 	"flag"
+	"fmt"
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -99,20 +101,15 @@ func TestOrganization(t *testing.T) {
 // missing subcommands without --count are rejected, and invalid
 // subcommands are rejected regardless of --count.
 func TestOrganizationCountArgs(t *testing.T) {
-	previousCount := count
-	t.Cleanup(func() {
-		count = previousCount
-	})
-
 	tests := []struct {
 		name    string
 		args    []string
 		count   bool
-		wantErr bool
+		wantErr string
 	}{
 		{
 			name:    "rejects missing subcommand without count",
-			wantErr: true,
+			wantErr: "please provide a subcommand",
 		},
 		{
 			name:  "accepts count without arguments",
@@ -121,30 +118,49 @@ func TestOrganizationCountArgs(t *testing.T) {
 		{
 			name:    "rejects invalid subcommand without count",
 			args:    []string{"invalid"},
-			wantErr: true,
+			wantErr: "invalid command",
 		},
 		{
 			name:    "rejects invalid subcommand with count",
 			args:    []string{"invalid"},
 			count:   true,
-			wantErr: true,
+			wantErr: "invalid command",
+		},
+		{
+			name:    "rejects empty subcommand with count",
+			args:    []string{""},
+			count:   true,
+			wantErr: "invalid command",
 		},
 		{
 			name:    "rejects multiple invalid arguments with count",
 			args:    []string{"invalid", "extra"},
 			count:   true,
-			wantErr: true,
+			wantErr: "invalid command",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cmd := &cobra.Command{}
-			cmd.Flags().Bool("count", tt.count, "")
+			cmd := &cobra.Command{
+				Use:  "resource",
+				Args: OrgCmd.Args,
+				Run:  func(*cobra.Command, []string) {},
+			}
+			cmd.Flags().Bool("count", false, "")
+			args := append([]string{}, tt.args...)
+			if tt.count {
+				args = append([]string{"--count"}, args...)
+			}
+			cmd.SetArgs(args)
 
-			err := OrgCmd.Args(cmd, tt.args)
-			if (err != nil) != tt.wantErr {
-				t.Fatalf("Args() error = %v, wantErr = %v", err, tt.wantErr)
+			err := cmd.Execute()
+			if tt.wantErr == "" {
+				if err != nil {
+					t.Fatalf("Execute() error = %v", err)
+				}
+			} else if err == nil || !strings.Contains(fmt.Sprint(errors.GetLDescription(err)), tt.wantErr) {
+				t.Fatalf("Execute() error = %+v, want %q", err, tt.wantErr)
 			}
 		})
 	}

@@ -51,6 +51,15 @@ func TestConnection(t *testing.T) {
 			IsOutputGolden: false,
 		},
 		{
+			Name:           "Reject empty subcommand with --count",
+			Args:           []string{"--count", ""},
+			URL:            "",
+			Fixture:        "list.connection.api.empty.response.golden",
+			ExpectError:    true,
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Use 'mesheryctl connection --help' to display usage", "")),
+			IsOutputGolden: false,
+		},
+		{
 			Name:           "given multiple invalid arguments with --count then an invalid argument error is returned",
 			Args:           []string{"invalidsubcommand1", "invalidsubcommand2", "--count"},
 			URL:            "",

@@ -4,12 +4,10 @@ import (
 	"fmt"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 const connectionApiPath = "api/integrations/connections"
@@ -48,32 +46,17 @@ mesheryctl connection delete [connection_id]
 			}
 			return nil
 		}
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Use 'mesheryctl connection --help' to display usage", args[0]))
-		}
-		return nil
+		return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Use 'mesheryctl connection --help' to display usage", args[0]))
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		countFlag, _ := cmd.Flags().GetBool("count")
-		if countFlag {
-			connectionsResponse, err := api.Fetch[connection.ConnectionPage](connectionApiPath)
+	RunE: func(_ *cobra.Command, _ []string) error {
+		connectionsResponse, err := api.Fetch[connection.ConnectionPage](connectionApiPath)
 
-			if err != nil {
-				return err
-			}
-
-			utils.DisplayCount("connection", int64(connectionsResponse.TotalCount))
-
-			return nil
-		}
-		_, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-		err = cmd.Usage()
 		if err != nil {
 			return err
 		}
+
+		utils.DisplayCount("connection", int64(connectionsResponse.TotalCount))
+
 		return nil
 	},
 }

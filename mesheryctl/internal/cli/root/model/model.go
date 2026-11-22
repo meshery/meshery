@@ -19,13 +19,11 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta1/model"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 type cmdModelFlags struct {
@@ -94,37 +92,21 @@ mesheryctl model build [model-name]/[model-version]
 			}
 			return nil
 		}
-		if !utils.IsValidSubcommand(availableSubcommands, args[0]) {
-			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Use 'mesheryctl model --help' to display usage guide.\n", args[0]), "model"))
-		}
-		return nil
+		return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Use 'mesheryctl model --help' to display usage guide.\n", args[0]), "model"))
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		countFlag, _ := cmd.Flags().GetBool("count")
-		if countFlag {
-			models, err := api.Fetch[model.MeshModelModelsPage](fmt.Sprintf("%s?page=1", modelsApiPath))
+	RunE: func(_ *cobra.Command, _ []string) error {
+		models, err := api.Fetch[model.MeshModelModelsPage](fmt.Sprintf("%s?page=1", modelsApiPath))
 
-			if err != nil {
-				return err
-			}
-
-			count := int64(0)
-			if models.TotalCount != nil {
-				count = int64(*models.TotalCount)
-			}
-			utils.DisplayCount("models", count)
-
-			return nil
-		}
-		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
 		}
 
-		err = cmd.Usage()
-		if err != nil {
-			return err
+		count := int64(0)
+		if models.TotalCount != nil {
+			count = int64(*models.TotalCount)
 		}
+		utils.DisplayCount("models", count)
+
 		return nil
 	},
 }

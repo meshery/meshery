@@ -62,6 +62,14 @@ func TestFilterCmdCount(t *testing.T) {
 			ExpectedError:  ErrInvalidFilterCommand("invalidCommand", ""),
 		},
 		{
+			Name:           "Reject empty subcommand with --count",
+			Args:           []string{"--count", ""},
+			Fixture:        "filter.list.api.response.golden",
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrInvalidFilterCommand("", ""),
+		},
+		{
 			Name:           "Reject multiple invalid arguments with --count",
 			Args:           []string{"invalidCommand", "extra", "--count"},
 			Fixture:        "filter.list.api.response.golden",

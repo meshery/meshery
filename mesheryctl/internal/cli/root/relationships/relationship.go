@@ -18,13 +18,11 @@ import (
 	"fmt"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
@@ -70,34 +68,17 @@ mesheryctl relationship view [model-name]
 			}
 			return nil
 		}
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [%s]. Use 'mesheryctl relationship --help' to display usage guide.\n", args[0], utils.SubcommandNames(availableSubcommands)), "relationship"))
-		}
-		return nil
+		return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [%s]. Use 'mesheryctl relationship --help' to display usage guide.\n", args[0], utils.SubcommandNames(availableSubcommands)), "relationship"))
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		countFlag, _ := cmd.Flags().GetBool("count")
-		if countFlag {
-			models, err := api.Fetch[MeshmodelRelationshipsAPIResponse](relationshipApiPath)
+	RunE: func(_ *cobra.Command, _ []string) error {
+		models, err := api.Fetch[MeshmodelRelationshipsAPIResponse](relationshipApiPath)
 
-			if err != nil {
-				return err
-			}
-
-			utils.DisplayCount("relationships", models.Count)
-
-			return nil
-		}
-
-		_, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-
-		err = cmd.Usage()
 		if err != nil {
 			return err
 		}
+
+		utils.DisplayCount("relationships", models.Count)
+
 		return nil
 	},
 }

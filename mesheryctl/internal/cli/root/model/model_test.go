@@ -3,6 +3,8 @@ package model
 import (
 	"flag"
 	"testing"
+
+	"github.com/spf13/cobra"
 )
 
 var update = flag.Bool("update", false, "Update the model")
@@ -18,11 +20,6 @@ func TestGenerateModelDataToDisplay_NilResponse(t *testing.T) {
 // --count, while count-only usage remains valid and a missing subcommand
 // without --count remains invalid.
 func TestModelArgs(t *testing.T) {
-	previousCount := modelFlags.Count
-	t.Cleanup(func() {
-		modelFlags.Count = previousCount
-	})
-
 	tests := []struct {
 		name    string
 		args    []string
@@ -49,6 +46,12 @@ func TestModelArgs(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name:    "rejects empty subcommand with count",
+			args:    []string{""},
+			count:   true,
+			wantErr: true,
+		},
+		{
 			name:    "rejects multiple invalid arguments with count",
 			args:    []string{"invalidsubcommand1", "invalidsubcommand2"},
 			count:   true,
@@ -58,12 +61,21 @@ func TestModelArgs(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// The count flag is bound to modelFlags.Count.
-			modelFlags.Count = tt.count
+			cmd := &cobra.Command{
+				Use:  "resource",
+				Args: ModelCmd.Args,
+				Run:  func(*cobra.Command, []string) {},
+			}
+			cmd.Flags().Bool("count", false, "")
+			args := append([]string{}, tt.args...)
+			if tt.count {
+				args = append([]string{"--count"}, args...)
+			}
+			cmd.SetArgs(args)
 
-			err := ModelCmd.Args(ModelCmd, tt.args)
+			err := cmd.Execute()
 			if (err != nil) != tt.wantErr {
-				t.Fatalf("Args() error = %v, wantErr = %v", err, tt.wantErr)
+				t.Fatalf("Execute() error = %v, wantErr = %v", err, tt.wantErr)
 			}
 		})
 	}

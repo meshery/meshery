@@ -13,7 +13,6 @@ import (
 var (
 	availableSubcommands = []*cobra.Command{listOrgCmd}
 	organizationsApiPath = "api/identity/orgs"
-	count                bool
 )
 
 var OrgCmd = &cobra.Command{
@@ -30,7 +29,7 @@ mesheryctl organization --count
 mesheryctl organization list
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		count, _ = cmd.Flags().GetBool("count")
+		count, _ := cmd.Flags().GetBool("count")
 		if len(args) == 0 {
 			if !count {
 				if err := cmd.Usage(); err != nil {
@@ -40,20 +39,14 @@ mesheryctl organization list
 			}
 			return nil
 		}
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid command. Use 'mesheryctl organization --help' to display usage guide", args[0]))
-		}
-		return nil
+		return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid command. Use 'mesheryctl organization --help' to display usage guide", args[0]))
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if count {
-			orgs, err := api.Fetch[models.OrganizationsPage](fmt.Sprintf("%s?pagesize=all", organizationsApiPath))
-			if err != nil {
-				return err
-			}
-			utils.DisplayCount("organizations", int64(orgs.TotalCount))
-			return nil
+	RunE: func(_ *cobra.Command, _ []string) error {
+		orgs, err := api.Fetch[models.OrganizationsPage](fmt.Sprintf("%s?pagesize=all", organizationsApiPath))
+		if err != nil {
+			return err
 		}
+		utils.DisplayCount("organizations", int64(orgs.TotalCount))
 		return nil
 	},
 }

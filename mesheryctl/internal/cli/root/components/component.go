@@ -60,37 +60,25 @@ mesheryctl component view [component-name | component-id]
 		return mesheryctlflags.ValidateCmdFlags(cmd, componentFlagsProvided)
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
-		argsIsEmpty := len(args) == 0 || (len(args) == 1 && args[0] == "")
-		if argsIsEmpty {
+		if len(args) == 0 {
 			if !componentFlagsProvided.Count {
 				return utils.ErrInvalidArgument(errors.New("please provide a subcommand"))
 			}
 			return nil
 		}
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [list, search, view]. Use 'mesheryctl component --help' to display usage guide", args[0]))
-		}
-		return nil
+		return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [list, search, view]. Use 'mesheryctl component --help' to display usage guide", args[0]))
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if componentFlagsProvided.Count {
-			componentData := display.DisplayDataAsync{
-				UrlPath:          componentApiPath,
-				DataType:         "component",
-				Header:           []string{},
-				Page:             cmdComponentListFlag.Page,
-				PageSize:         10,
-				IsPage:           false,
-				DisplayCountOnly: componentFlagsProvided.Count,
-			}
-			return display.ListAsyncPagination(componentData, generateComponentDataToDisplay)
+	RunE: func(_ *cobra.Command, _ []string) error {
+		componentData := display.DisplayDataAsync{
+			UrlPath:          componentApiPath,
+			DataType:         "component",
+			Header:           []string{},
+			Page:             cmdComponentListFlag.Page,
+			PageSize:         10,
+			IsPage:           false,
+			DisplayCountOnly: true,
 		}
-
-		err := cmd.Usage()
-		if err != nil {
-			return err
-		}
-		return nil
+		return display.ListAsyncPagination(componentData, generateComponentDataToDisplay)
 	},
 }
 

@@ -42,16 +42,14 @@ mesheryctl filter [subcommands]
 `,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) > 0 {
-			if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-				return ErrInvalidFilterCommand(args[0], "")
-			}
+			return ErrInvalidFilterCommand(args[0], "")
 		}
 		return nil
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &filterFlagsProvided)
 	},
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, _ []string) error {
 		if filterFlagsProvided.Count {
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
@@ -66,10 +64,7 @@ mesheryctl filter [subcommands]
 			utils.DisplayCount("filter", int64(response.TotalCount))
 			return nil
 		}
-		if len(args) == 0 {
-			return cmd.Help()
-		}
-		return nil
+		return cmd.Help()
 	},
 }
 
