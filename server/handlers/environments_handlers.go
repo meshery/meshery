@@ -8,10 +8,11 @@ import (
 	"net/http"
 
 	"github.com/gofrs/uuid"
-	"github.com/gorilla/mux"
 
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta3/environment"
+	"gorm.io/gorm"
 )
 
 // environmentPayloadWire is a handler-local dual-accept wrapper around
@@ -69,6 +70,10 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 	}
 	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
 		handlerErr := ErrGetEnvironments(err)
 		h.log.Error(handlerErr)
 		writeMeshkitError(w, handlerErr, providerStatus(err))
@@ -81,8 +86,19 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 	}
 }
 
+// isNotFoundError reports whether err represents a missing record, either by
+// MeshKit error code, raw GORM ErrRecordNotFound, or HTTP 404 provider status.
+func isNotFoundError(err error, status int) bool {
+	return meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode ||
+		errors.Is(err, gorm.ErrRecordNotFound) ||
+		status == http.StatusNotFound
+}
+
 func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	environmentID := mux.Vars(r)["id"]
+	environmentID, ok := h.requirePathUUID(w, r, "id")
+	if !ok {
+		return
+	}
 	q := r.URL.Query()
 	orgID := q.Get("orgId")
 	if orgID == "" {
@@ -94,7 +110,12 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		handlerErr := ErrGetEnvironment(err)
 		h.log.Error(handlerErr)
-		writeMeshkitError(w, handlerErr, providerStatus(err))
+		status := providerStatus(err)
+		if isNotFoundError(err, status) {
+			writeMeshkitError(w, handlerErr, http.StatusNotFound)
+			return
+		}
+		writeMeshkitError(w, handlerErr, status)
 		return
 	}
 
@@ -142,12 +163,20 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 }
 
 func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	environmentID := mux.Vars(r)["id"]
+	environmentID, ok := h.requirePathUUID(w, r, "id")
+	if !ok {
+		return
+	}
 	resp, err := provider.DeleteEnvironment(r, environmentID)
 	if err != nil {
 		handlerErr := ErrDeleteEnvironment(err)
 		h.log.Error(handlerErr)
-		writeMeshkitError(w, handlerErr, providerStatus(err))
+		status := providerStatus(err)
+		if isNotFoundError(err, status) {
+			writeMeshkitError(w, handlerErr, http.StatusNotFound)
+			return
+		}
+		writeMeshkitError(w, handlerErr, status)
 		return
 	}
 
@@ -158,7 +187,10 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 }
 
 func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	environmentID := mux.Vars(req)["id"]
+	environmentID, ok := h.requirePathUUID(w, req, "id")
+	if !ok {
+		return
+	}
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
@@ -181,7 +213,12 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 	if err != nil {
 		handlerErr := ErrUpdateEnvironment(err)
 		h.log.Error(handlerErr)
-		writeMeshkitError(w, handlerErr, providerStatus(err))
+		status := providerStatus(err)
+		if isNotFoundError(err, status) {
+			writeMeshkitError(w, handlerErr, http.StatusNotFound)
+			return
+		}
+		writeMeshkitError(w, handlerErr, status)
 		return
 	}
 
@@ -205,8 +242,14 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 }
 
 func (h *Handler) AddConnectionToEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	environmentID := mux.Vars(r)["environmentID"]
-	connectionID := mux.Vars(r)["connectionID"]
+	environmentID, ok := h.requirePathUUID(w, r, "environmentID")
+	if !ok {
+		return
+	}
+	connectionID, ok := h.requirePathUUID(w, r, "connectionID")
+	if !ok {
+		return
+	}
 	resp, err := provider.AddConnectionToEnvironment(r, environmentID, connectionID)
 	if err != nil {
 		handlerErr := ErrEnvironmentConnection(err, "assign connection to")
@@ -222,8 +265,14 @@ func (h *Handler) AddConnectionToEnvironmentHandler(w http.ResponseWriter, r *ht
 }
 
 func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	environmentID := mux.Vars(r)["environmentID"]
-	connectionID := mux.Vars(r)["connectionID"]
+	environmentID, ok := h.requirePathUUID(w, r, "environmentID")
+	if !ok {
+		return
+	}
+	connectionID, ok := h.requirePathUUID(w, r, "connectionID")
+	if !ok {
+		return
+	}
 	resp, err := provider.RemoveConnectionFromEnvironment(r, environmentID, connectionID)
 	if err != nil {
 		handlerErr := ErrEnvironmentConnection(err, "remove connection from")
@@ -239,10 +288,17 @@ func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, 
 }
 
 func (h *Handler) GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	environmentID := mux.Vars(r)["environmentID"]
+	environmentID, ok := h.requirePathUUID(w, r, "environmentID")
+	if !ok {
+		return
+	}
 	q := r.URL.Query()
 	resp, err := provider.GetConnectionsOfEnvironment(r, environmentID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
+		if isPaginationError(err) {
+			writeMeshkitError(w, err, http.StatusBadRequest)
+			return
+		}
 		handlerErr := ErrEnvironmentConnection(err, "list the connections of")
 		h.log.Error(handlerErr)
 		writeMeshkitError(w, handlerErr, providerStatus(err))

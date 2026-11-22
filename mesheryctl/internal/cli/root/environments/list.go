@@ -16,6 +16,7 @@ package environments
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -24,6 +25,8 @@ import (
 
 	"github.com/spf13/cobra"
 )
+
+var listUsageMsg = "Usage: mesheryctl environment list --orgId [orgId]\nRun 'mesheryctl environment list --help' to see detailed help message"
 
 type environmentListFlags struct {
 	count    bool
@@ -40,22 +43,27 @@ var listEnvironmentCmd = &cobra.Command{
 	Long: `List detailed information of all registered environments
 Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/list`,
 	Example: `
-// List all registered environment
+// List all registered environments
 mesheryctl environment list --orgId [orgId]
 
-// List count of all registered environment
+// List count of all registered environments
 mesheryctl environment list --orgId [orgId] --count
 
-// List all registered environment at a specific page
+// List all registered environments at a specific page
 mesheryctl environment list --orgId [orgId] --page [page]
 
-// List all registered environment with a specific page size
+// List all registered environments with a specific page size
 mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 `,
-
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if environmentListFlagsProvided.orgId == "" {
-			const errMsg = "[ orgId ] isn't specified\n\nUsage: mesheryctl environment list --orgId [orgId]\nRun 'mesheryctl environment list --help' to see detailed help message"
+			errMsg := "[ orgId ] isn't specified\n\n" + listUsageMsg
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 
@@ -82,9 +90,17 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 }
 
 func processEnvironmentData(environmentResponse *environment.EnvironmentPage) ([][]string, int64) {
+	if environmentResponse == nil {
+		return [][]string{}, 0
+	}
+
 	rows := [][]string{}
 	for _, environment := range environmentResponse.Environments {
-		row := []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), environment.Description, environment.CreatedAt.String(), environment.UpdatedAt.String()}
+		description := "N/A"
+		if strings.TrimSpace(environment.Description) != "" {
+			description = environment.Description
+		}
+		row := []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), description, environment.CreatedAt.String(), environment.UpdatedAt.String()}
 		rows = append(rows, row)
 	}
 	return rows, int64(environmentResponse.TotalCount)

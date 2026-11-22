@@ -53,6 +53,11 @@ vi.mock('@sistent/sistent', () => {
     alpha: (color: string) => color,
     Avatar: ({ alt, src }: any) => <img data-testid="avatar" alt={alt} src={src} />,
     Box: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    Chip: ({ label, title }: any) => (
+      <span data-testid="chip" title={title}>
+        {label}
+      </span>
+    ),
     Checkbox: ({ checked, onClick, onChange }: any) => (
       <input
         type="checkbox"
@@ -219,6 +224,12 @@ describe('getErrorCodesFromEvent', () => {
     expect(getErrorCodesFromEvent({ metadata: { error: { Code: 'E1' } } } as any)).toEqual(['E1']);
   });
 
+  it('collects the code of a schemas EventError', () => {
+    expect(
+      getErrorCodesFromEvent({ metadata: { error: { code: 'meshery-server-1304' } } } as any),
+    ).toEqual(['meshery-server-1304']);
+  });
+
   it('collects codes from an array metadata.error and ModelDetails errors', () => {
     const codes = getErrorCodesFromEvent({
       metadata: {
@@ -319,6 +330,42 @@ describe('Notification component', () => {
     expect(dispatchMock).toHaveBeenCalled();
     const lastCall = dispatchMock.mock.calls[dispatchMock.mock.calls.length - 1][0];
     expect(lastCall.type).toBe('events/updateIsEventChecked');
+  });
+
+  it('shows no condition badges for an event that reports no condition', () => {
+    render(<Notification event_id="evt-1" />);
+    expect(screen.queryByTestId('condition-badges')).not.toBeInTheDocument();
+  });
+
+  it('shows the occurrence count and last seen time of a repeated condition', () => {
+    selectors.event = {
+      ...selectors.event,
+      correlationKey: 'meshery-server/k8s-connection/c1/unreachable',
+      occurrenceCount: 4,
+      firstSeenAt: '2024-01-01T00:00:00.000Z',
+      lastSeenAt: '2024-01-02T03:04:05.000Z',
+    };
+    render(<Notification event_id="evt-1" />);
+    expect(screen.getByTestId('condition-badges')).toHaveTextContent('×4');
+    expect(screen.getByTestId('formatted-time')).toHaveTextContent('2024-01-02T03:04:05.000Z');
+
+    fireEvent.click(screen.getByTestId('notification-summary'));
+    const summary = screen.getByTestId('condition-summary');
+    expect(summary).toHaveTextContent('4 times');
+    expect(summary).toHaveTextContent('2024-01-02T03:04:05.000Z');
+  });
+
+  it('marks a resolved condition', () => {
+    selectors.event = {
+      ...selectors.event,
+      severity: 'success',
+      correlationKey: 'meshery-server/k8s-connection/c1/unreachable',
+      resolvedAt: '2024-01-03T00:00:00.000Z',
+    };
+    render(<Notification event_id="evt-1" />);
+    expect(screen.getByTestId('condition-badges')).toHaveTextContent('Resolved');
+    fireEvent.click(screen.getByTestId('notification-summary'));
+    expect(screen.getByTestId('condition-summary')).toHaveTextContent('2024-01-03T00:00:00.000Z');
   });
 
   it('prefers history_title over description when in history mode', () => {

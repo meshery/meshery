@@ -62,7 +62,9 @@ export const PropertyFormatters = {
   },
   // MeshSync event field formatters - imported from formatters/meshsync_events.js
   ...MeshSyncPropertyFormatters,
-  error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
+  // FormattedMetadata rebinds this with the event, so the formatter can show
+  // the event's full description when its title had to be truncated.
+  error: (value) => <ErrorMetadataFormatter metadata={value} />,
   dryRunResponse: (value) => <DryRunResponse response={value} />,
   ModelImportMessage: (value) => value && <ModelImportMessages message={value} />,
   ModelDetails: (value) => value && <ModelImportedSection modelDetails={value} />,
@@ -156,9 +158,13 @@ export const FormattedMetadata = ({ event }) => {
   const orderedMetadata = hasImportedModelName
     ? reorderObjectProperties({ ...metadata, ShortDescription: null }, order) // Exclude ShortDescription
     : reorderObjectProperties(metadata, order);
+  const propertyFormatters = {
+    ...PropertyFormatters,
+    error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
+  };
   return (
     <FormatStructuredData
-      propertyFormatters={PropertyFormatters}
+      propertyFormatters={propertyFormatters}
       data={orderedMetadata}
       order={order}
       style={{

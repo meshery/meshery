@@ -137,7 +137,7 @@ Query details about Addons available (Eg. Prometheus and Grafana).
 
 ### `Query.getAvailableNamespaces`
 
-Query available Namesapces in your cluster.
+Query available Namespaces in your cluster.
 
 ###### **Returns** [`[NameSpace!]!`](#namespace).
 
@@ -309,6 +309,14 @@ Change the Adapter Status.
 
 Change the Operator Status.
 
+Meshery Operator is installed once per cluster and shared by every connection to
+that cluster. `targetStatus: DISABLED` uninstalls it for all of them - it is the
+only way Meshery Server uninstalls the Operator; disconnecting, deleting, or
+switching a connection to embedded mode never does. When other connections on
+the same Meshery Server were using it, Meshery raises a warning event naming
+them in `affectedConnectionIDs`. See
+[One Operator per cluster]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#one-operator-per-cluster-shared-by-every-connection" >}}).
+
 ###### **Input type:** `OperatorStatusInput`
 
 #### **Arguments**
@@ -324,45 +332,9 @@ Change the Operator Status.
 
 The `Subscription` type contains all the Subscriptions you can listen to.
 
-### `Subscription.listenToAddonState`
-
-Listen to changes in status of Addons available (Eg. Prometheus and Grafana).
-
-###### **Returns** [`[AddonList!]!`](#addonlist).
-
-#### **Arguments**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| <a id="subscriptionlistentoaddonstatefilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Select Mesh Type. |
-
-### `Subscription.listenToControlPlaneState`
-
-Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster.
-
-###### **Returns** [`[ControlPlane!]!`](#controlplane).
-
-#### **Arguments**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| <a id="subscriptionlistentocontrolplanestatefilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Filter Control Plane Query. |
-
-### `Subscription.listenToDataPlaneState`
-
-Listen to changes in Data Plane data for a Service Mesh (or all) in your cluster.
-
-###### **Returns** [`[DataPlane!]!`](#dataplane).
-
-#### **Arguments**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| <a id="subscriptionlistentodataplanestatefilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Filter Control Plane Query. |
-
 ### `Subscription.listenToMeshSyncEvents`
 
-Listen to changes in the list of available Namesapces in your cluster.
+Listen to changes in the list of available Namespaces in your cluster.
 
 ###### **Returns** [`OperatorControllerStatusPerK8sContext`](#operatorcontrollerstatusperk8scontext).
 
@@ -881,7 +853,7 @@ Status of Meshery Operator and its controllers.
 | <a id="operatorstatuscontrollers"></a>`controllers` | [`[OperatorControllerStatus!]!`](#operatorcontrollerstatus) | Details about various Controllers of Meshery Operator. |
 | <a id="operatorstatuserror"></a>`error` | [`Error`](#error) | Error Logs encountered by Meshery Operator. |
 | <a id="operatorstatusstatus"></a>`status` | [`Status!`](#status) | Status of Meshery Operator. |
-| <a id="operatorstatusversion"></a>`version` | [`String!`](#string) | Verion of Meshery Operator. |
+| <a id="operatorstatusversion"></a>`version` | [`String!`](#string) | Version of Meshery Operator. |
 
 ### `OperatorStatusPerK8sContext`
 
@@ -973,7 +945,7 @@ Status of Meshery Operator and its controllers.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="resourcecount"></a>`count` | [`Int!`](#int) | Number of resouce. |
+| <a id="resourcecount"></a>`count` | [`Int!`](#int) | Number of resource. |
 | <a id="resourcekind"></a>`kind` | [`String!`](#string) | Name of resource. |
 
 ### `TelemetryComp`
@@ -1096,7 +1068,7 @@ Input for changing Addon Status.
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | <a id="addonstatusinputk8scontextid"></a>`k8scontextID` | [`String!`](#string) | kubernetes context ID. |
-| <a id="addonstatusinputselector"></a>`selector` | [`MeshType`](#meshtype) | Filter by Serice Mesh. |
+| <a id="addonstatusinputselector"></a>`selector` | [`MeshType`](#meshtype) | Filter by Service Mesh. |
 | <a id="addonstatusinputtargetstatus"></a>`targetStatus` | [`Status!`](#status) | Desired Status. |
 
 ### `CatalogSelector`

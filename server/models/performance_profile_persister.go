@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/meshery/meshkit/database"
@@ -79,18 +80,34 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 	return json.Marshal(performanceProfilePage)
 }
 
-// DeletePerformanceProfile takes in a profile id and delete it if it already exists
+// DeletePerformanceProfile takes in a profile id and deletes it. When no profile
+// with that id is stored it returns ErrResultNotFound, so a delete of a profile
+// that never existed is distinguishable from a successful delete.
 func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id core.Uuid) ([]byte, error) {
 	profile := PerformanceProfile{ID: id}
-	if err := ppp.DB.Delete(&profile).Error; err != nil {
-		return nil, err
+	result := ppp.DB.Delete(&profile)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return nil, ErrResultNotFound(fmt.Errorf("performance profile %s not found", id.String()))
 	}
 
 	return json.Marshal(&profile)
 }
 
+// SavePerformanceProfile updates the profile with this ID, or inserts it when
+// none is stored. An edit from the performance form carries every form field
+// but no createdAt, so an update writes every column except created_at.
 func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ core.Uuid, profile *PerformanceProfile) error {
-	return ppp.DB.Save(profile).Error
+	res := ppp.DB.Model(profile).Select("*").Omit("created_at").Updates(profile)
+	if res.Error != nil {
+		return res.Error
+	}
+	if res.RowsAffected > 0 {
+		return nil
+	}
+	return ppp.DB.Create(profile).Error
 }
 
 func (ppp *PerformanceProfilePersister) GetPerformanceProfile(id core.Uuid) (*PerformanceProfile, error) {

@@ -115,10 +115,6 @@ vi.mock('../styles', () => ({
   InnerTableContainer: ({ children }) => <div>{children}</div>,
 }));
 
-vi.mock('@/store/slices/mesheryUi', () => ({
-  updateProgress: vi.fn(),
-}));
-
 vi.mock('./MeshSyncEmptyState', () => ({
   default: () => <div data-testid="mesh-sync-empty-state" />,
 }));
@@ -259,6 +255,7 @@ describe('MeshSyncTable', () => {
         details: 'MeshSync unavailable',
       }),
     );
+    expect(notify).toHaveBeenCalledTimes(1);
   });
 
   it('recomputes responsive column visibility when the window width changes', async () => {

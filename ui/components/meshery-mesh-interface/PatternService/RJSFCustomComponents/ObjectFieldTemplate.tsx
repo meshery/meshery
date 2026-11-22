@@ -1,5 +1,5 @@
 import React from 'react';
-import { canExpand } from '@rjsf/utils';
+import { canExpand, getUiOptions } from '@rjsf/utils';
 import AddIcon from '../../../../assets/icons/AddIcon';
 import { Grid2, Box, IconButton, Typography, useTheme, CssBaseline } from '@sistent/sistent';
 import { CustomTextTooltip } from '../CustomTextTooltip';
@@ -27,6 +27,23 @@ const getRawErrors = (errorSchema) => {
   return errors;
 };
 
+/**
+ * Resolve whether this object's errors must be hidden.
+ * RJSF's ObjectField passes errorSchema to this template even when the object
+ * hides its errors, and it does not forward hideError to the template at all
+ * (@rjsf/core 6.6.2, ObjectField.js: hideError reaches only the child property
+ * components, never templateProps), so the template cannot rely on props.hideError
+ * at all. The effective value comes from the uiSchema, resolved the same way
+ * SchemaField resolves it: getUiOptions merges ui:options.hideError and the bare
+ * ui:hideError on top of the registry's global UI options.
+ * @param {Object} props the object field template props.
+ * @returns {boolean} true when the error indicator must not be rendered.
+ */
+const isErrorHidden = ({ uiSchema, registry }) => {
+  const uiOptions = getUiOptions(uiSchema, registry?.globalUiOptions);
+  return Boolean(uiOptions.hideError);
+};
+
 const ObjectFieldTemplate = ({
   description,
   title,
@@ -38,13 +55,14 @@ const ObjectFieldTemplate = ({
   schema,
   formData,
   onAddProperty,
-
+  registry,
   errorSchema,
 }) => {
   const safeId = idSchema?.$id ?? 'object-field';
   const additional = schema?.__additional_property; // check if the object is additional
   const theme = useTheme();
   const rawErrors = getRawErrors(errorSchema);
+  const hideError = isErrorHidden({ uiSchema, registry });
 
   // If the parent type is an `array`, then expand the current object.
   const [show, setShow] = React.useState(uiSchema['ui:options']?.expand || false);
@@ -130,7 +148,7 @@ const ObjectFieldTemplate = ({
                 </IconButton>
               </CustomTextTooltip>
             )}
-            {rawErrors.length !== 0 && (
+            {!hideError && rawErrors.length !== 0 && (
               <CustomTextTooltip
                 bgColor={theme.palette.error.main}
                 title={safeStringTitle(Array.isArray(rawErrors) ? rawErrors.join('  ') : rawErrors)}
@@ -162,7 +180,8 @@ const ObjectFieldTemplate = ({
       spacing={2}
       size="grow"
       sx={{
-        padding: '1rem',
+        padding: '0.5rem',
+        minWidth: 0,
         width: '100%',
         margin: '0px',
         ...(Object.keys(properties).length === 0 || schema['$schema']
@@ -174,7 +193,7 @@ const ObjectFieldTemplate = ({
         return element.hidden ? (
           element.content
         ) : (
-          <Grid2 size={calculateGrid(element)} key={index}>
+          <Grid2 size={calculateGrid(element)} key={index} sx={{ minWidth: 0 }}>
             {element.content}
           </Grid2>
         );

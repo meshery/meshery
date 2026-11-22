@@ -71,6 +71,7 @@ pre.codeblock-pre {
   border: 0px;
   background-color: transparent;
   font-size: 1.05rem;
+  cursor: pointer;
   & i.fa-copy::before {
     color: #f1f3f5;
   }
@@ -80,7 +81,11 @@ pre.codeblock-pre {
 }
 .clipbtn:hover {
   color: #fff;
-  cursor: pointer;
+}
+.clipbtn:focus-visible {
+  outline: 2px solid var(--brand-color-secondary, #00d3a9);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 .clipbtn:active {
   background-color: #495057;

@@ -19,6 +19,7 @@ registrant:
     deleted_at: null
     environments: []
     schemaVersion: ""
+    organizationId: null
 connection_id: cf1d6acd-4509-e589-1c1e-3f20f8aaf715
 category:
     id: 639aa59e-5b2d-0c11-92c5-74c5014d41df
