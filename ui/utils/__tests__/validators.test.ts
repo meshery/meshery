@@ -28,6 +28,15 @@ describe('isFieldEmpty', () => {
     expect(isFieldEmpty([])).toBe(true);
     expect(isFieldEmpty([0])).toBe(false);
   });
+
+  it('treats non-empty primitive and object types as non-empty', () => {
+    expect(isFieldEmpty(0)).toBe(false);
+    expect(isFieldEmpty(42)).toBe(false);
+    expect(isFieldEmpty(false)).toBe(false);
+    expect(isFieldEmpty(true)).toBe(false);
+    expect(isFieldEmpty({})).toBe(false);
+    expect(isFieldEmpty({ key: 'val' })).toBe(false);
+  });
 });
 
 describe('isArrayEmpty', () => {
@@ -60,6 +69,10 @@ describe('isValidJSON', () => {
     expect(isValidJSON(null)).toBe(false);
     expect(isValidJSON(undefined)).toBe(false);
     expect(isValidJSON(123)).toBe(false);
+    expect(isValidJSON(true)).toBe(false);
+    expect(isValidJSON(false)).toBe(false);
+    expect(isValidJSON({})).toBe(false);
+    expect(isValidJSON([])).toBe(false);
   });
 });
 
@@ -97,7 +110,12 @@ describe('normalizeSearchTerm / matchesSearch', () => {
     expect(matchesSearch(undefined, 'cluster')).toBe(false);
     expect(matchesSearch(123, 'cluster')).toBe(false);
     expect(matchesSearch({}, 'cluster')).toBe(false);
+    expect(matchesSearch(['cluster'], 'cluster')).toBe(false);
+    expect(matchesSearch(true, 'cluster')).toBe(false);
+    expect(matchesSearch(false, 'cluster')).toBe(false);
     expect(matchesSearch(null, null)).toBe(true);
     expect(matchesSearch(undefined, '')).toBe(true);
+    expect(matchesSearch('anything', 0)).toBe(true);
+    expect(matchesSearch('anything', {})).toBe(true);
   });
 });
