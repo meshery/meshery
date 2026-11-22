@@ -31,11 +31,13 @@ import (
 
 type cmdWorkspaceCreateFlags struct {
 	OrganizationID string `json:"orgId" validate:"required,uuid"`
-	Name           string `json:"name" validate:"required"`
+	Name           string `json:"name" validate:"required,notblank"`
 	Description    string `json:"description" validate:"omitempty"`
 }
 
 var workspaceCreateFlags cmdWorkspaceCreateFlags
+
+var createUsageMsg = "Usage: mesheryctl workspace create --orgId [orgId] --name [name] --description [description]\nRun 'mesheryctl workspace create --help' to see detailed help message"
 
 var createWorkspaceCmd = &cobra.Command{
 	Use:   "create",
@@ -46,6 +48,12 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace
 // Create a new workspace in an organization
 mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
 `,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", createUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceCreateFlags)
 	},

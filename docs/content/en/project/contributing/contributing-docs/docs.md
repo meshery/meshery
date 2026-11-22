@@ -240,9 +240,11 @@ If the code snippet has special characters then use backtick delimiters:
 Don't use `code` shortcode when the snippet is in between an ordered list, this breaks the order and next item in the list will start numbering from 1. Instead, use `<pre class="codeblock-pre">...</pre>` method described above.
 
 **A full block:**
+````markdown
 ```
-```code snippet```
+code snippet
 ```
+````
 
 **Inline formatting:**
 
@@ -265,7 +267,7 @@ For contributing `mesheryctl` reference section, refer [Contributing CLI]({{< re
 
 The following is a concise summary of the steps to contribute to Meshery documentation.
 
-1. Create a fork, if you have not already, by following the steps described [here](CONTRIBUTING-gitflow.md)
+1. Create a fork, if you have not already, by following the steps described [here]({{< ref "project/contributing/contributing-gitflow.md" >}})
 2. In the local copy of your fork, navigate to the docs folder.
    `cd docs`
 3. Create and checkout a new branch to make changes within
@@ -281,51 +283,23 @@ The following is a concise summary of the steps to contribute to Meshery documen
 
 ### Navigation Table of Contents in Sidebar (toc)
 
-Sidebars use a data file at `data/toc.yml` to create a table of contents. It is written in the following manner:
+The sidebar is generated from the content tree under `content/en/`. There is no navigation data file to edit: a page appears in the sidebar because of where its file lives.
+
+- A directory with an `_index.md` is a **section**. It shows as a parent entry in the sidebar.
+- Pages and subdirectories inside that directory show as its children. Nesting directories nests sidebar entries.
+
+For example, these files:
 
 ```
-- title: Group 1
-  url: group1
-  links:
-    - title: Thing 1
-      url: group1/thing1
-    - title: Thing 2
-      url: group1/thing2
-    - title: Thing 3
-      url: group1/thing3
+content/en/group1/_index.md
+content/en/group1/thing1/_index.md
+content/en/group1/thing1/subthing1_1.md
+content/en/group1/thing1/subthing1_2.md
+content/en/group1/thing2.md
+content/en/group1/thing3.md
 ```
 
-The output of the code snippet would be:
-
-```
-    Group 1
-      Thing 1
-      Thing 2
-      Thing 3
-```
-
-In this example, **Group 1** is a ``parent`` section within the Table of Contents, and **Thing 1**, **Thing 2**, and **Thing 3** are ``children`` of **Group 1**. This is a direct hierarchy with a single level of children under the parent.
-
-``Grandchildren`` are added in the sidebars in the following manner:
-
-```
-- title: Group 1
-  url: group1
-  links:
-    - title: Thing 1
-      url: group1/thing1
-      children:
-        - title: Subthing 1.1
-          url: group1/thing1/subthing1_1
-        - title: Subthing 1.2
-          url: group1/thing1/subthing1_2
-    - title: Thing 2
-      url: group1/thing2
-    - title: Thing 3
-      url: group1/thing3
-```
-
-The output of the code snippet would be:
+produce this sidebar:
 
 ```
     Group 1
@@ -336,16 +310,24 @@ The output of the code snippet would be:
       Thing 3
 ```
 
-Here, **Subthing 1.1** and **Subthing 1.2** are the ``grandchildren`` of **Thing 1**.
+Use front matter to control how a page or section is listed:
 
-The sidebar template in `layouts/partials/sidebar.html` reads from `data/toc.yml` and supports up to four levels of navigation hierarchy.
+| Field | Effect |
+|---|---|
+| `title` | The sidebar label, unless `linkTitle` is set. |
+| `linkTitle` | A shorter label for the sidebar. The page heading still uses `title`. |
+| `weight` | Order within the parent section, lowest first. Entries with the same weight are sorted by title. An entry with no weight counts as `0`, so it sorts after negative weights and before positive ones. |
+| `toc_hide: true` | Keeps the page or section out of the sidebar. The page is still published. |
 
-- **Parent**: It serves as a top level category for related content.
-- **Children** (`links`): They are immediate subsections or topics that fall under the parent section.
-- **Grandchildren** (`children`): They are nested under a link and provide a more detailed breakdown of information within the child section. Grandchildren are used to organize content further, offering a more detailed structure for a specific topic.
-- **Great-grandchildren** (`grandchildren`): An additional level of nesting for even finer-grained organization.
+```yaml
+---
+title: Contributing to Meshery Docs
+linkTitle: Docs
+weight: 20
+---
+```
 
-These sections create a hierarchical and organized navigation experience for readers.
+To add a page to the sidebar, create the Markdown file in the section it belongs to and set `weight` if its position matters. The sidebar itself is rendered by `layouts/partials/sidebar-tree.html`.
 
 ### Alerts
 

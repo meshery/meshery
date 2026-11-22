@@ -122,9 +122,13 @@ func TestLoginPersistsValidTokenResponse(t *testing.T) {
 			want: `{"meshery-provider":"Local","token":""}`,
 		},
 		{
-			name: "remote provider with a token and extra fields",
+			// Login persists the registration key named by --provider rather
+			// than the display name the response carries, so the response's
+			// "Meshery" is replaced by "Local" here. Fields beyond the
+			// provider and the token are dropped either way.
+			name: "token and extra fields, provider from --provider",
 			body: `{"meshery-provider":"Meshery","token":"abc.def.ghi","extra":1}`,
-			want: `{"meshery-provider":"Meshery","token":"abc.def.ghi"}`,
+			want: `{"meshery-provider":"Local","token":"abc.def.ghi"}`,
 		},
 	}
 
@@ -262,5 +266,32 @@ func TestLoginDoesNotReportSuccessWhenTokenCannotBeWritten(t *testing.T) {
 	}
 	if strings.Contains(logs.String(), "authenticated") {
 		t.Errorf("login reported success although the token was not written: %q", logs.String())
+	}
+}
+
+// TestLoginCmdArgs pins the argument validator of `system login`:
+// the command takes no positional arguments, so any supplied argument
+// must be rejected before the login handler runs.
+func TestLoginCmdArgs(t *testing.T) {
+	if err := loginCmd.Args(loginCmd, []string{"unexpected-arg"}); err == nil {
+		t.Error("expected an error when passing a positional argument to 'system login', got nil")
+	}
+	if err := loginCmd.Args(loginCmd, []string{"unexpected-arg-1", "unexpected-arg-2"}); err == nil {
+		t.Error("expected an error when passing multiple positional arguments to 'system login', got nil")
+	}
+	if err := loginCmd.Args(loginCmd, []string{}); err != nil {
+		t.Errorf("expected no error when passing no arguments to 'system login', got %v", err)
+	}
+}
+
+// TestLoginCmdFlags verifies that the provider flag remains registered
+// and supported by loginCmd and is not affected by argument validation changes.
+func TestLoginCmdFlags(t *testing.T) {
+	flag := loginCmd.PersistentFlags().Lookup("provider")
+	if flag == nil {
+		t.Fatal("expected 'provider' flag to be registered on loginCmd, got nil")
+	}
+	if flag.Shorthand != "p" {
+		t.Errorf("expected shorthand for 'provider' flag to be 'p', got %q", flag.Shorthand)
 	}
 }

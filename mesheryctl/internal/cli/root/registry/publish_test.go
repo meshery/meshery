@@ -53,3 +53,16 @@ func TestSpreadsheetRequestError_EmptyResponse(t *testing.T) {
 	assert.Contains(t, errMsg, "did not succeed")
 	assert.Contains(t, errMsg, "empty response")
 }
+
+func TestMesherySystem_Unsupported(t *testing.T) {
+	err := mesherySystem()
+	assert.Error(t, err, "mesherySystem should return an error as publishing to meshery is unsupported")
+	assert.Contains(t, err.Error(), "not supported")
+}
+
+func TestErrPublish_MesherySystem(t *testing.T) {
+	err := mesherySystem()
+	pubErr := ErrPublish(err, "meshery")
+	assert.Error(t, pubErr)
+	assert.Contains(t, pubErr.Error(), "publishing directly to system 'meshery' is not supported")
+}
