@@ -27,6 +27,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -79,6 +80,9 @@ mesheryctl filter list 'Test Filter'
 
 		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, filterListFlagsProvided.PageSize, filterListFlagsProvided.Page-1)
 		if err != nil {
+			if meshkiterrors.GetCode(err) == utils.ErrUnauthenticatedCode {
+				return err
+			}
 			utils.Log.Error(err)
 			return ErrFetchFilter(err)
 		}
@@ -98,6 +102,9 @@ mesheryctl filter list 'Test Filter'
 
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
+			if meshkiterrors.GetCode(err) == utils.ErrUnauthenticatedCode {
+				return err
+			}
 			return utils.ErrReadToken(err)
 		}
 		provider := tokenObj["meshery-provider"]
@@ -130,6 +137,9 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 
 	req, err := utils.NewRequest("GET", url, nil)
 	if err != nil {
+		if meshkiterrors.GetCode(err) == utils.ErrUnauthenticatedCode {
+			return nil, err
+		}
 		return nil, utils.ErrCreatingRequest(err)
 	}
 
