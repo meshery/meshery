@@ -70,6 +70,8 @@ func TestGetLatestVersionForMesheryctl(t *testing.T) {
 }
 
 func TestCheckMesheryctlClientVersion(t *testing.T) {
+	prevLog := Log
+	t.Cleanup(func() { Log = prevLog })
 	logOutput := SetupMeshkitLoggerTesting(t, false)
 
 	t.Run("outdated version logs notification", func(t *testing.T) {
