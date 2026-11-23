@@ -12,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models/telemetry"
 	"github.com/meshery/meshkit/logger"
 )
@@ -40,12 +41,31 @@ type Client struct {
 //   - any other non-empty value             -> Bearer token (API key / service-account token)
 //   - empty                                  -> no auth (anonymous Prometheus)
 func New(baseURL, secret string, log logger.Handler) *Client {
+	return newClient(baseURL, secret, log, utils.NewSafeHTTPClient(defaultTimeout))
+}
+
+// newClient builds a Client around a caller-supplied HTTP client. Production
+// code goes through New, which installs the SSRF-guarded client from
+// helpers/utils; only tests that drive a local httptest server substitute a
+// client permitted to reach private addresses.
+func newClient(baseURL, secret string, log logger.Handler, httpClient *http.Client) *Client {
 	return &Client{
-		baseURL:    strings.TrimRight(strings.TrimSpace(baseURL), "/"),
+		baseURL:    normalizeBaseURL(baseURL),
 		authHeader: authHeader(secret),
-		httpClient: &http.Client{Timeout: defaultTimeout},
+		httpClient: httpClient,
 		log:        log,
 	}
+}
+
+// normalizeBaseURL trims surrounding space, any query or fragment, and a
+// trailing slash, so that the API path appended on every request is always the
+// effective request path.
+func normalizeBaseURL(raw string) string {
+	s := strings.TrimSpace(raw)
+	if i := strings.IndexAny(s, "?#"); i >= 0 {
+		s = s[:i]
+	}
+	return strings.TrimRight(s, "/")
 }
 
 func authHeader(secret string) string {
