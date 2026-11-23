@@ -107,8 +107,10 @@ const ConnectionTable = ({
 
   const { page, pageSize, sortOrder, search } = tableState;
   const setPage = useCallback((p: number) => updateTableState({ page: p }), [updateTableState]);
-  const setPageSize = useCallback(
-    (ps: number) => updateTableState({ pageSize: ps }),
+  // One updateTableState call: two calls in a row would each build the URL
+  // from the same stale router.query, and the second would drop the first.
+  const setPageSizeAndResetPage = useCallback(
+    (ps: number) => updateTableState({ pageSize: ps, page: 0 }),
     [updateTableState],
   );
   const setSortOrder = useCallback(
@@ -632,7 +634,7 @@ const ConnectionTable = ({
     page,
     pageSize,
     setPage,
-    setPageSize,
+    setPageSizeAndResetPage,
     // Normalized to column names: a bookmarked snake_case param would not
     // match any column, dropping the active-sort indicator. The server query
     // above translates the other way, via toServerSortOrder.

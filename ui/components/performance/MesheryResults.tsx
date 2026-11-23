@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import MUIDataTable from '@sistent/mui-datatables';
 import Moment from 'react-moment';
 import { MoreHoriz as MoreHorizIcon } from '@/assets/icons';
@@ -7,7 +7,15 @@ import MesheryChart from '../MesheryChart';
 import MesheryResultDialog from '../MesheryResultDialog';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { Box, IconButton, NoSsr, TableRow, TableCell, TableSortLabel } from '@sistent/sistent';
+import {
+  Box,
+  Button,
+  IconButton,
+  NoSsr,
+  TableRow,
+  TableCell,
+  TableSortLabel,
+} from '@sistent/sistent';
 import { useLazyGetResultsQuery } from '@/rtk-query/meshResult';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
@@ -27,6 +35,10 @@ const MesheryResults = () => {
   const [results, setResults] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [searchTimeout, setSearchTimeout] = useState(null);
+  const [fetchFailed, setFetchFailed] = useState(false);
+  // Only the latest request may update the table: an older response arriving
+  // late would otherwise restore its page and page size.
+  const requestIdRef = useRef(0);
   const { providerCapabilities } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
   const { results_selection } = useSelector((state) => state.prefTest);
@@ -36,6 +48,7 @@ const MesheryResults = () => {
   // Fetch results using RTK Query
   const fetchResults = useCallback(
     async (page, pageSize, search, sortOrder) => {
+      const requestId = ++requestIdRef.current;
       updateProgress({ showProgress: true });
 
       try {
@@ -46,6 +59,9 @@ const MesheryResults = () => {
           sortOrder,
         }).unwrap(); // Unwrap the result to handle errors properly
 
+        if (requestId !== requestIdRef.current) return;
+
+        setFetchFailed(false);
         if (result) {
           setResults(result.results || []);
           setSearch(search);
@@ -55,6 +71,11 @@ const MesheryResults = () => {
           setCount(result.total_count || 0);
         }
       } catch (error) {
+        if (requestId !== requestIdRef.current) return;
+        // Drop rows from the previous request so they are not shown under the
+        // new page; the empty state below offers a retry.
+        setResults([]);
+        setFetchFailed(true);
         handleError(error);
       } finally {
         updateProgress({ showProgress: false });
@@ -286,7 +307,10 @@ const MesheryResults = () => {
           setPage(tableState.page);
           break;
         case 'changeRowsPerPage':
+          // Hide the previous page's rows while page 0 loads.
+          setResults([]);
           setPageSize(tableState.rowsPerPage);
+          setPage(0);
           break;
         case 'search':
           if (searchTimeout) clearTimeout(searchTimeout);
@@ -336,6 +360,24 @@ const MesheryResults = () => {
       ),
       print: false,
       download: false,
+      textLabels: {
+        body: {
+          noMatch: fetchFailed ? (
+            <>
+              Could not load results.{' '}
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => fetchResults(page, pageSize, search, sortOrder)}
+              >
+                Retry
+              </Button>
+            </>
+          ) : (
+            'Sorry, no matching records found'
+          ),
+        },
+      },
       onRowsSelect: handleRowSelection,
       onTableChange: handleTableChange,
       customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
@@ -366,6 +408,10 @@ const MesheryResults = () => {
       handleRowSelection,
       handleTableChange,
       results,
+      fetchFailed,
+      fetchResults,
+      search,
+      sortOrder,
     ],
   );
 

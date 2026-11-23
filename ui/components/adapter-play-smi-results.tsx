@@ -275,8 +275,9 @@ const AdapterSmiResultsDialog: React.FC<AdapterSmiResultsDialogProps> = ({
           onPageChange(tableState.page);
           break;
         case 'changeRowsPerPage':
-          fetchSMIResults(adapterName, page, tableState.rowsPerPage, search, sortOrder);
+          fetchSMIResults(adapterName, 0, tableState.rowsPerPage, search, sortOrder);
           onPageSizeChange(tableState.rowsPerPage);
+          onPageChange(0);
           break;
         case 'search':
           if (search !== tableState.searchText) {

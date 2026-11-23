@@ -599,6 +599,7 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
           break;
         case 'changeRowsPerPage':
           setPageSize(tableState.rowsPerPage);
+          setPage(0);
           break;
         case 'search':
           if (searchTimeout.current) {

@@ -12,7 +12,8 @@ type UseConnectionTableOptionsArgs = {
   page: number;
   pageSize: number;
   setPage: (page: number) => void;
-  setPageSize: (size: number) => void;
+  // Sets the page size and resets to the first page in one URL update.
+  setPageSizeAndResetPage: (size: number) => void;
   sortOrder: string;
   setSortOrder: (order: string) => void;
   rowsExpanded: number[];
@@ -31,7 +32,7 @@ export const useConnectionTableOptions = ({
   page,
   pageSize,
   setPage,
-  setPageSize,
+  setPageSizeAndResetPage,
   sortOrder,
   setSortOrder,
   rowsExpanded,
@@ -97,7 +98,7 @@ export const useConnectionTableOptions = ({
             setPage(tableState.page);
             break;
           case 'changeRowsPerPage':
-            setPageSize(tableState.rowsPerPage);
+            setPageSizeAndResetPage(tableState.rowsPerPage);
             break;
           case 'sort':
             if (sortInfo.length === 2 && typeof tableState.activeColumn === 'number') {
@@ -198,7 +199,7 @@ export const useConnectionTableOptions = ({
       rowsExpanded,
       selectedConnectionId,
       setPage,
-      setPageSize,
+      setPageSizeAndResetPage,
       setRowsExpanded,
       setSortOrder,
       sortOrder,
