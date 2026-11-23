@@ -408,6 +408,9 @@ var seededRand = rand.New(
 
 // StringWithCharset generates a random string with a given length
 func StringWithCharset(length int) string {
+	if length <= 0 {
+		return ""
+	}
 	const charset = "abcdefghijklmnopqrstuvwxyz"
 	// + "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	b := make([]byte, length)
@@ -523,6 +526,9 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path 
 // IsValidSubcommand checks if the passed subcommand is supported by the parent command
 func IsValidSubcommand(available []*cobra.Command, sub string) bool {
 	for _, s := range available {
+		if s == nil {
+			continue
+		}
 		if sub == s.CalledAs() {
 			return true
 		}
@@ -540,6 +546,9 @@ func IsValidSubcommand(available []*cobra.Command, sub string) bool {
 func SubcommandNames(available []*cobra.Command) string {
 	names := make([]string, 0, len(available))
 	for _, s := range available {
+		if s == nil {
+			continue
+		}
 		if name := s.Name(); name != "" {
 			names = append(names, name)
 		}
@@ -548,8 +557,11 @@ func SubcommandNames(available []*cobra.Command) string {
 	return strings.Join(names, ", ")
 }
 
-// ContentTypeIsHTML Checks if the response is an HTML resposnse
+// ContentTypeIsHTML checks if the response is an HTML response
 func ContentTypeIsHTML(resp *http.Response) bool {
+	if resp == nil || resp.Header == nil {
+		return false
+	}
 	ctString := strings.Split(resp.Header.Get("Content-Type"), ";")
 	if len(ctString) < 1 {
 		return false

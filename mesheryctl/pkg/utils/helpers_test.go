@@ -217,6 +217,13 @@ func TestStringWithCharset(t *testing.T) {
 	if len(gotString) != strLength {
 		t.Errorf("StringWithCharset got = %v want = %v", len(gotString), strLength)
 	}
+
+	if got := StringWithCharset(0); got != "" {
+		t.Errorf("StringWithCharset(0) = %q, want empty string", got)
+	}
+	if got := StringWithCharset(-5); got != "" {
+		t.Errorf("StringWithCharset(-5) = %q, want empty string", got)
+	}
 }
 
 func TestPrereq(t *testing.T) {
@@ -329,6 +336,18 @@ func TestContentTypeIsHTML(t *testing.T) {
 				Header: http.Header{
 					"Content-Type": []string{"multipart/form-data"},
 				},
+			},
+			expectedOutput: false,
+		},
+		{
+			name:           "nil response",
+			response:       nil,
+			expectedOutput: false,
+		},
+		{
+			name: "nil header in response",
+			response: &http.Response{
+				Header: nil,
 			},
 			expectedOutput: false,
 		},
@@ -1498,12 +1517,171 @@ func TestSubcommandNames(t *testing.T) {
 			available: []*cobra.Command{{Use: "view [model-name]"}, {Use: "list [flags]"}},
 			expected:  "list, view",
 		},
+		{
+			name:      "handles nil command in slice gracefully",
+			available: []*cobra.Command{nil, {Use: "view"}, nil},
+			expected:  "view",
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := SubcommandNames(tt.available); got != tt.expected {
 				t.Errorf("SubcommandNames() = %q, want %q", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestIsValidSubcommand(t *testing.T) {
+	cmdA := &cobra.Command{Use: "start"}
+	cmdB := &cobra.Command{Use: "stop"}
+
+	available := []*cobra.Command{cmdA, cmdB, nil}
+
+	tests := []struct {
+		name      string
+		available []*cobra.Command
+		sub       string
+		want      bool
+	}{
+		{
+			name:      "valid subcommand",
+			available: available,
+			sub:       "start",
+			want:      true,
+		},
+		{
+			name:      "second valid subcommand",
+			available: available,
+			sub:       "stop",
+			want:      true,
+		},
+		{
+			name:      "invalid subcommand",
+			available: available,
+			sub:       "restart",
+			want:      false,
+		},
+		{
+			name:      "empty subcommand name",
+			available: available,
+			sub:       "",
+			want:      false,
+		},
+		{
+			name:      "nil available slice",
+			available: nil,
+			sub:       "start",
+			want:      false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := IsValidSubcommand(tt.available, tt.sub)
+			if got != tt.want {
+				t.Errorf("IsValidSubcommand() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFindInSlice(t *testing.T) {
+	items := []string{"apple", "banana", "cherry"}
+
+	tests := []struct {
+		name      string
+		key       string
+		items     []string
+		wantIndex int
+		wantFound bool
+	}{
+		{
+			name:      "existing item at start",
+			key:       "apple",
+			items:     items,
+			wantIndex: 0,
+			wantFound: true,
+		},
+		{
+			name:      "existing item in middle",
+			key:       "banana",
+			items:     items,
+			wantIndex: 1,
+			wantFound: true,
+		},
+		{
+			name:      "non-existing item",
+			key:       "orange",
+			items:     items,
+			wantIndex: -1,
+			wantFound: false,
+		},
+		{
+			name:      "empty slice",
+			key:       "apple",
+			items:     []string{},
+			wantIndex: -1,
+			wantFound: false,
+		},
+		{
+			name:      "nil slice",
+			key:       "apple",
+			items:     nil,
+			wantIndex: -1,
+			wantFound: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotIdx, gotFound := FindInSlice(tt.key, tt.items)
+			if gotIdx != tt.wantIndex || gotFound != tt.wantFound {
+				t.Errorf("FindInSlice(%q) = (%d, %v), want (%d, %v)", tt.key, gotIdx, gotFound, tt.wantIndex, tt.wantFound)
+			}
+		})
+	}
+}
+
+func TestIsValidUrl(t *testing.T) {
+	tests := []struct {
+		name string
+		url  string
+		want bool
+	}{
+		{
+			name: "valid http url",
+			url:  "http://meshery.io",
+			want: true,
+		},
+		{
+			name: "valid https url with path",
+			url:  "https://meshery.io/api/v1/models",
+			want: true,
+		},
+		{
+			name: "missing scheme",
+			url:  "meshery.io/api",
+			want: false,
+		},
+		{
+			name: "relative path",
+			url:  "/path/to/file",
+			want: false,
+		},
+		{
+			name: "empty string",
+			url:  "",
+			want: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := IsValidUrl(tt.url)
+			if got != tt.want {
+				t.Errorf("IsValidUrl(%q) = %v, want %v", tt.url, got, tt.want)
 			}
 		})
 	}
