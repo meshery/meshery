@@ -4381,6 +4381,15 @@
         "short_description": "Component panicked during provisioning",
         "probable_cause": "Runtime fault occurred in component visitor execution",
         "suggested_remediation": "Inspect component configuration and provider logs for runtime failures"
+      },
+      "1498": {
+        "name": "ErrInvalidPerformanceProfileCode",
+        "code": "1498",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid performance profile",
+        "probable_cause": "The performance profile object is nil or invalid",
+        "suggested_remediation": "Ensure a valid, non-nil performance profile is provided"
       }
     }
   }

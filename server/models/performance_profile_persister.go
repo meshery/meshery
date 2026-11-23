@@ -107,7 +107,8 @@ func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id core.Uuid) (
 }
 
 // SavePerformanceProfile updates the profile with this ID, or inserts it when
-// none is stored. An edit from the performance form carries every form field
+// none is stored. It returns ErrInvalidPerformanceProfile if profile is nil.
+// An edit from the performance form carries every form field
 // but no createdAt, so an update writes every column except created_at.
 func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ core.Uuid, profile *PerformanceProfile) error {
 	if ppp == nil || ppp.DB == nil {
@@ -127,6 +128,8 @@ func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ core.Uuid, prof
 	return ppp.DB.Create(profile).Error
 }
 
+// GetPerformanceProfile returns a performance profile by ID. When no profile
+// with that id is stored it returns ErrResultNotFound.
 func (ppp *PerformanceProfilePersister) GetPerformanceProfile(id core.Uuid) (*PerformanceProfile, error) {
 	if ppp == nil || ppp.DB == nil {
 		return nil, ErrDBConnection

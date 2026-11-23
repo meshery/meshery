@@ -7690,6 +7690,23 @@
       "suggestedRemediation": [
         "Inspect component configuration and provider logs for runtime failures"
       ]
+    },
+    {
+      "code": "meshery-server-1498",
+      "moniker": "ErrInvalidPerformanceProfileCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1498",
+      "severity": "alert",
+      "shortDescription": "Invalid performance profile",
+      "probableCause": [
+        "The performance profile object is nil or invalid"
+      ],
+      "suggestedRemediation": [
+        "Ensure a valid, non-nil performance profile is provided"
+      ]
     }
   ],
   "schemaVersion": 2
