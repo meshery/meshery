@@ -2257,6 +2257,7 @@ func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.Even
 
 	return &EventsResponse{
 		Events:               eventsDB,
+		Page:                 page,
 		PageSize:             eventsFilter.Limit,
 		TotalCount:           count,
 		CountBySeverityLevel: countBySeverity,
