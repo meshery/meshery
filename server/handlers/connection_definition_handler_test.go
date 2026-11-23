@@ -156,7 +156,9 @@ func TestDeleteConnectionDefinition_InvalidUUID(t *testing.T) {
 // TestConnectionDefinition_NilLogger_DoesNotPanic verifies that the handlers guard
 // against nil logger dereferences across validation failure branches.
 func TestConnectionDefinition_NilLogger_DoesNotPanic(t *testing.T) {
-	h := &Handler{} // nil logger
+	h := &Handler{
+		config: &models.HandlerConfig{},
+	} // nil logger
 
 	t.Run("GetConnectionDefinitionByID invalid UUID", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/api/registry/connections/invalid-uuid", nil)
@@ -174,6 +176,20 @@ func TestConnectionDefinition_NilLogger_DoesNotPanic(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, rw.Code)
 	})
 
+	t.Run("RegisterConnectionDefinition malformed JSON", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPost, "/api/registry/connections", strings.NewReader("not-json"))
+		rw := httptest.NewRecorder()
+		h.RegisterConnectionDefinition(rw, req, nil, nil, nil)
+		assert.Equal(t, http.StatusBadRequest, rw.Code)
+	})
+
+	t.Run("RegisterConnectionDefinition missing ModelReference", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPost, "/api/registry/connections", strings.NewReader(`{}`))
+		rw := httptest.NewRecorder()
+		h.RegisterConnectionDefinition(rw, req, nil, nil, nil)
+		assert.Equal(t, http.StatusBadRequest, rw.Code)
+	})
+
 	t.Run("UpdateConnectionDefinition invalid UUID", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPut, "/api/registry/connections/invalid-uuid", strings.NewReader(`{}`))
 		req = mux.SetURLVars(req, map[string]string{"connectionDefinitionId": "invalid-uuid"})
@@ -185,6 +201,15 @@ func TestConnectionDefinition_NilLogger_DoesNotPanic(t *testing.T) {
 	t.Run("UpdateConnectionDefinition zero UUID", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPut, "/api/registry/connections/"+uuid.Nil.String(), strings.NewReader(`{}`))
 		req = mux.SetURLVars(req, map[string]string{"connectionDefinitionId": uuid.Nil.String()})
+		rw := httptest.NewRecorder()
+		h.UpdateConnectionDefinition(rw, req, nil, nil, nil)
+		assert.Equal(t, http.StatusBadRequest, rw.Code)
+	})
+
+	t.Run("UpdateConnectionDefinition malformed JSON with valid UUID", func(t *testing.T) {
+		validID := uuid.Must(uuid.NewV4()).String()
+		req := httptest.NewRequest(http.MethodPut, "/api/registry/connections/"+validID, strings.NewReader("not-json"))
+		req = mux.SetURLVars(req, map[string]string{"connectionDefinitionId": validID})
 		rw := httptest.NewRecorder()
 		h.UpdateConnectionDefinition(rw, req, nil, nil, nil)
 		assert.Equal(t, http.StatusBadRequest, rw.Code)
