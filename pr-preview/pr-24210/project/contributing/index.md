@@ -94,6 +94,11 @@ plain <code>git commit -s</code> refuses an empty commit - then push it:
 
 <pre><code>I, Jane Smith &lt;jane.smith@example.com&gt;, hereby add my Signed-off-by to this commit: &lt;full sha&gt;</code></pre>
 
+A rebase gives every replayed commit a new SHA, so a remediation commit that names the old
+SHA no longer covers the unsigned commit. Create the remediation commit only after the branch
+reaches its final base, name the full SHA as it appears on the branch, and recreate the
+remediation commit after any later rebase.
+
 Only a commit's own author can sign for it; a remediation commit from someone else is not
 accepted. Use the unsigned commit's own name and email, both as the remediation commit's
 author and in the sign-off line: if your Git identity has changed since the unsigned commit,
