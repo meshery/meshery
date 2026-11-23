@@ -198,6 +198,27 @@ describe('MeshSyncTable', () => {
     );
   });
 
+  it('resets to the first page when rows per page changes', () => {
+    render(<MeshSyncTable />);
+
+    act(() => {
+      dataTableProps.options.onTableChange('changePage', { page: 2 });
+    });
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: '2' }),
+    );
+
+    // The datatable clamps its own page here; keeping page 2 with 25 rows
+    // would ask for a page past the end and show an empty table.
+    act(() => {
+      dataTableProps.options.onTableChange('changeRowsPerPage', { rowsPerPage: 25, page: 0 });
+    });
+
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 0, pagesize: '25' }),
+    );
+  });
+
   it('resets to the first page when filters are applied', () => {
     render(<MeshSyncTable />);
 
