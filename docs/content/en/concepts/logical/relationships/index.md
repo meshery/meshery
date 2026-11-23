@@ -260,6 +260,10 @@ See [Contributing to Relationships]({{< ref "project/contributing/models/relatio
 
 In Meshery, a selector specifies which components participate in a relationship. The field name is `selectors` (an array of selector-set items). Items in the array are OR; inside one item, every `from` entry relates to every `to` entry - a cross-product.
 
+The selector's `model.name` also scopes each endpoint. An omitted or empty name, or `*`,
+matches components from any model; a specific name or regular expression matches only
+components whose model name satisfies the selector.
+
 Here are examples of pairs that share a visual paradigm. The ConfigMap pairs are **edge / non-binding / reference**. The WASMFilter pair is **hierarchical / parent / wallet**, not inventory.
 
 <table class="table table-dark table-active">
