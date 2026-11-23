@@ -1,7 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Grid2, Chip, Button, TextField, Tooltip, Avatar, styled } from '@sistent/sistent';
+import {
+  Grid2,
+  Chip,
+  Button,
+  TextField,
+  Tooltip,
+  Avatar,
+  styled,
+  PROMPT_VARIANTS,
+} from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import ReactSelectWrapper from './general/ReactSelectWrapper';
+import _PromptComponent, { PromptRef } from './general/PromptComponent';
 
 import changeAdapterState from '@/graphql/mutations/AdapterStatusMutation';
 import { useNotification } from '../utils/hooks/useNotification';
@@ -58,6 +68,8 @@ const STATUS = {
 
 const MeshAdapterConfigComponent = () => {
   const labelRef = useRef(null);
+  const modalRef = useRef<PromptRef>(null);
+  const isDeletingRef = useRef(false);
   const { meshAdapters: globalAdapters, meshAdaptersts: meshAdapterStates } = useSelector(
     (state) => state.adapter,
   );
@@ -194,6 +206,32 @@ const MeshAdapterConfigComponent = () => {
   };
 
   const handleDelete = (adapterLoc) => async () => {
+    if (!modalRef.current) {
+      return;
+    }
+
+    let response: string;
+    try {
+      response = await modalRef.current.show({
+        title: 'Delete Adapter?',
+        subtitle: `Are you sure you want to delete adapter "${adapterLoc}"?`,
+        primaryOption: 'DELETE',
+        variant: PROMPT_VARIANTS.DANGER,
+      });
+    } catch (error) {
+      handleError('Failed to display confirmation prompt')(error);
+      return;
+    }
+
+    if (response !== 'DELETE') {
+      return;
+    }
+
+    if (isDeletingRef.current) {
+      return;
+    }
+
+    isDeletingRef.current = true;
     updateProgress({ showProgress: true });
 
     try {
@@ -211,6 +249,8 @@ const MeshAdapterConfigComponent = () => {
       }
     } catch (error) {
       handleError('Adapter was not removed due to an error')(error);
+    } finally {
+      isDeletingRef.current = false;
     }
   };
 
@@ -500,6 +540,7 @@ const MeshAdapterConfigComponent = () => {
               </AdapterButton>
             </React.Fragment>
           </Grid2>
+          <_PromptComponent ref={modalRef} />
         </WrapperStyledDiv>
       </NoSsr>
     );
