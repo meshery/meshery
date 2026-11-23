@@ -329,6 +329,77 @@ func TestDeleteMesheryFilterExisting(t *testing.T) {
 	}
 }
 
+// TestGetMesheryFilters_OrderByVisibility pins that the filters list really
+// honours order=visibility: the seeded updated_at values make the fallback
+// order (updated_at desc) differ from both visibility orders, so the test
+// fails if visibility is dropped from the getter's order whitelist.
+func TestGetMesheryFilters_OrderByVisibility(t *testing.T) {
+	db, mfp := newFilterPersisterTestDB(t)
+
+	seeds := []struct {
+		name       string
+		visibility string
+		updatedAt  time.Time
+	}{
+		{name: "vis-public", visibility: Public, updatedAt: filterTestCreatedAt.Add(2 * time.Hour)},
+		{name: "vis-published", visibility: Published, updatedAt: filterTestCreatedAt.Add(time.Hour)},
+		{name: "vis-private", visibility: Private, updatedAt: filterTestCreatedAt},
+	}
+	for _, s := range seeds {
+		id := uuid.Must(uuid.NewV4())
+		stamp := s.updatedAt
+		record := MesheryFilter{
+			ID:          &id,
+			Name:        s.name,
+			FilterFile:  filterTestFile,
+			Visibility:  s.visibility,
+			CatalogData: isql.Map{},
+			Location:    localFilterLocation(),
+			CreatedAt:   &stamp,
+			UpdatedAt:   &stamp,
+		}
+		if err := db.Create(&record).Error; err != nil {
+			t.Fatalf("seed filter %s: %v", s.name, err)
+		}
+	}
+
+	tests := []struct {
+		order string
+		want  []string
+	}{
+		{order: "visibility asc", want: []string{Private, Public, Published}},
+		{order: "visibility desc", want: []string{Published, Public, Private}},
+	}
+	for _, tc := range tests {
+		t.Run(tc.order, func(t *testing.T) {
+			body, err := mfp.GetMesheryFilters("", tc.order, 0, 10, nil)
+			if err != nil {
+				t.Fatalf("GetMesheryFilters: %v", err)
+			}
+			var page MesheryFilterPage
+			if err := json.Unmarshal(body, &page); err != nil {
+				t.Fatalf("unmarshal page: %v", err)
+			}
+			if page.TotalCount != len(seeds) {
+				t.Fatalf("totalCount = %d, want %d", page.TotalCount, len(seeds))
+			}
+			got := make([]string, 0, len(page.Filters))
+			for _, f := range page.Filters {
+				got = append(got, f.Visibility)
+			}
+			if len(got) != len(tc.want) {
+				t.Fatalf("visibilities = %v, want %v", got, tc.want)
+			}
+			for i := range tc.want {
+				if got[i] != tc.want[i] {
+					t.Errorf("visibilities = %v, want %v", got, tc.want)
+					break
+				}
+			}
+		})
+	}
+}
+
 // TestGetMesheryFilter_MissingFilterReturnsResultNotFound pins that a lookup
 // for a filter that is not stored fails with ErrResultNotFound and no body.
 func TestGetMesheryFilter_MissingFilterReturnsResultNotFound(t *testing.T) {

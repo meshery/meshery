@@ -707,6 +707,75 @@ func TestSaveMesheryPattern_ResponseShowsStoredRow(t *testing.T) {
 	}
 }
 
+// TestGetMesheryPatterns_OrderByVisibility pins that the designs list really
+// honours order=visibility: the seeded updated_at values make the fallback
+// order (updated_at desc) differ from both visibility orders, so the test
+// fails if visibility is dropped from the getter's order whitelist.
+func TestGetMesheryPatterns_OrderByVisibility(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+
+	seeds := []struct {
+		name       string
+		visibility string
+		updatedAt  time.Time
+	}{
+		{name: "vis-public", visibility: Public, updatedAt: persisterTestCreatedAt.Add(2 * time.Hour)},
+		{name: "vis-published", visibility: Published, updatedAt: persisterTestCreatedAt.Add(time.Hour)},
+		{name: "vis-private", visibility: Private, updatedAt: persisterTestCreatedAt},
+	}
+	for _, s := range seeds {
+		id := uuid.Must(uuid.NewV4())
+		stamp := s.updatedAt
+		record := MesheryPattern{
+			ID:          &id,
+			Name:        s.name,
+			PatternFile: persisterTestDesign,
+			Visibility:  s.visibility,
+			CreatedAt:   &stamp,
+			UpdatedAt:   &stamp,
+		}
+		if err := db.Create(&record).Error; err != nil {
+			t.Fatalf("seed pattern %s: %v", s.name, err)
+		}
+	}
+
+	tests := []struct {
+		order string
+		want  []string
+	}{
+		{order: "visibility asc", want: []string{Private, Public, Published}},
+		{order: "visibility desc", want: []string{Published, Public, Private}},
+	}
+	for _, tc := range tests {
+		t.Run(tc.order, func(t *testing.T) {
+			body, err := mpp.GetMesheryPatterns("", tc.order, 0, 10, "", nil)
+			if err != nil {
+				t.Fatalf("GetMesheryPatterns: %v", err)
+			}
+			var page MesheryPatternPage
+			if err := json.Unmarshal(body, &page); err != nil {
+				t.Fatalf("unmarshal page: %v", err)
+			}
+			if page.TotalCount != len(seeds) {
+				t.Fatalf("totalCount = %d, want %d", page.TotalCount, len(seeds))
+			}
+			got := make([]string, 0, len(page.Patterns))
+			for _, p := range page.Patterns {
+				got = append(got, p.Visibility)
+			}
+			if len(got) != len(tc.want) {
+				t.Fatalf("visibilities = %v, want %v", got, tc.want)
+			}
+			for i := range tc.want {
+				if got[i] != tc.want[i] {
+					t.Errorf("visibilities = %v, want %v", got, tc.want)
+					break
+				}
+			}
+		})
+	}
+}
+
 // TestGetMesheryPattern_MissingDesignReturnsResultNotFound pins that a lookup
 // for a design that is not stored fails with ErrResultNotFound and no body,
 // so a handler cannot mistake an empty design for a result.
