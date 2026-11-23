@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+// mesheryctlReleaseVersionURL is the endpoint used to check the latest release of mesheryctl.
+// It is exposed as a package-level variable to allow test redirection.
 var mesheryctlReleaseVersionURL = "https://docs.meshery.io/project/releases/latest"
 
 func GetLatestVersionForMesheryctl() (string, error) {

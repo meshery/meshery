@@ -17,11 +17,11 @@ func TestGetLatestVersionForMesheryctl(t *testing.T) {
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte("v0.7.50\n"))
 		}))
-		defer server.Close()
+		t.Cleanup(server.Close)
 
 		origURL := mesheryctlReleaseVersionURL
 		mesheryctlReleaseVersionURL = server.URL
-		defer func() { mesheryctlReleaseVersionURL = origURL }()
+		t.Cleanup(func() { mesheryctlReleaseVersionURL = origURL })
 
 		transport := installTrackingTransport(t)
 
@@ -40,11 +40,11 @@ func TestGetLatestVersionForMesheryctl(t *testing.T) {
 			w.WriteHeader(http.StatusNotFound)
 			_, _ = w.Write([]byte("404 page not found"))
 		}))
-		defer server.Close()
+		t.Cleanup(server.Close)
 
 		origURL := mesheryctlReleaseVersionURL
 		mesheryctlReleaseVersionURL = server.URL
-		defer func() { mesheryctlReleaseVersionURL = origURL }()
+		t.Cleanup(func() { mesheryctlReleaseVersionURL = origURL })
 
 		transport := installTrackingTransport(t)
 
@@ -61,7 +61,7 @@ func TestGetLatestVersionForMesheryctl(t *testing.T) {
 	t.Run("unreachable endpoint returns error", func(t *testing.T) {
 		origURL := mesheryctlReleaseVersionURL
 		mesheryctlReleaseVersionURL = "http://127.0.0.1:0"
-		defer func() { mesheryctlReleaseVersionURL = origURL }()
+		t.Cleanup(func() { mesheryctlReleaseVersionURL = origURL })
 
 		version, err := GetLatestVersionForMesheryctl()
 		if err == nil {
@@ -94,11 +94,11 @@ func TestCheckMesheryctlClientVersion(t *testing.T) {
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte("v0.7.50\n"))
 		}))
-		defer server.Close()
+		t.Cleanup(server.Close)
 
 		origURL := mesheryctlReleaseVersionURL
 		mesheryctlReleaseVersionURL = server.URL
-		defer func() { mesheryctlReleaseVersionURL = origURL }()
+		t.Cleanup(func() { mesheryctlReleaseVersionURL = origURL })
 
 		transport := installTrackingTransport(t)
 
@@ -117,11 +117,11 @@ func TestCheckMesheryctlClientVersion(t *testing.T) {
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte("v0.7.50\n"))
 		}))
-		defer server.Close()
+		t.Cleanup(server.Close)
 
 		origURL := mesheryctlReleaseVersionURL
 		mesheryctlReleaseVersionURL = server.URL
-		defer func() { mesheryctlReleaseVersionURL = origURL }()
+		t.Cleanup(func() { mesheryctlReleaseVersionURL = origURL })
 
 		transport := installTrackingTransport(t)
 
@@ -140,11 +140,11 @@ func TestCheckMesheryctlClientVersion(t *testing.T) {
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte("500 internal server error"))
 		}))
-		defer server.Close()
+		t.Cleanup(server.Close)
 
 		origURL := mesheryctlReleaseVersionURL
 		mesheryctlReleaseVersionURL = server.URL
-		defer func() { mesheryctlReleaseVersionURL = origURL }()
+		t.Cleanup(func() { mesheryctlReleaseVersionURL = origURL })
 
 		transport := installTrackingTransport(t)
 
