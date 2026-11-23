@@ -92,7 +92,7 @@ mesheryctl model build [model-name]/[model-version]
 			}
 			return nil
 		}
-		return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Use 'mesheryctl model --help' to display usage guide.\n", args[0]), "model"))
+		return utils.ErrInvalidArgument(errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Use 'mesheryctl model --help' to display usage guide.\n", args[0]), "model")))
 	},
 	RunE: func(_ *cobra.Command, _ []string) error {
 		models, err := api.Fetch[model.MeshModelModelsPage](fmt.Sprintf("%s?page=1", modelsApiPath))
