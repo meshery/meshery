@@ -176,7 +176,7 @@ const (
 	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
 	ErrInvalidExtensionProxyPathCode      = "meshery-server-1490"
 	ErrMigrateEventIndexesCode            = "meshery-server-1491"
-	ErrInvalidPerformanceProfileCode      = "meshery-server-1493"
+	ErrInvalidPerformanceProfileCode      = "meshery-server-1498"
 	ErrHandlerPanicCode                   = "meshery-server-1495"
 	ErrInvalidDesignVersionCode           = "meshery-server-1496"
 )
