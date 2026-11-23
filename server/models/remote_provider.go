@@ -637,12 +637,12 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 
 func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http.Request, res http.ResponseWriter) {
 	providerProperties := l.GetProviderProperties()
-	providerURL, _ := url.Parse(l.GetProviderURL())
+	providerURL, _ := url.Parse(providerProperties.ProviderURL)
 	errorUI := "/error"
 	ep, exists := providerProperties.Capabilities.GetEndpointForFeature(PersistAnonymousUser)
 
 	if !exists {
-		err := ErrInvalidCapability("PersistAnonymousUser", l.Name())
+		err := ErrInvalidCapability("PersistAnonymousUser", providerProperties.ProviderName)
 		l.Log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
@@ -1005,14 +1005,15 @@ func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter s
 
 // GetUsersKeys returns keys from a user via /api/identity/users/keys
 func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filter string, orgID string) ([]byte, error) {
-	if !l.supportsFeature(UsersKeys) {
+	providerProperties := l.GetProviderProperties()
+	if !providerProperties.Capabilities.IsSupported(UsersKeys) {
 		l.Log.Warn(ErrOperationNotAvailable)
 
-		return []byte{}, ErrInvalidCapability("UsersKeys", l.Name())
+		return []byte{}, ErrInvalidCapability("UsersKeys", providerProperties.ProviderName)
 	}
 
-	ep, _ := l.endpointForFeature(PersistOrganizations)
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + orgID + "/users/keys")
+	ep, _ := providerProperties.Capabilities.GetEndpointForFeature(PersistOrganizations)
+	remoteProviderURL, _ := url.Parse(providerProperties.ProviderURL + ep + "/" + orgID + "/users/keys")
 	q := remoteProviderURL.Query()
 	if page != "" {
 		q.Set("page", page)
@@ -4339,11 +4340,10 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	}
 
 	l.SetProviderProperties(providerProperties)
-	providerProperties = l.GetProviderProperties()
 
 	// Download the package for the user only if they have extension capability
 	if len(providerProperties.Extensions.Navigator) > 0 {
-		l.DownloadProviderExtensionPackage(l.Log)
+		providerProperties.DownloadProviderExtensionPackage(l.Log)
 	}
 
 	// Proceed to redirect once the capabilities has loaded

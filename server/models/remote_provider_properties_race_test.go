@@ -1,8 +1,13 @@
 package models
 
 import (
+	"archive/tar"
+	"bytes"
+	"compress/gzip"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -222,8 +227,25 @@ func TestRemoteProviderDescriptionPreservesNilAndEmptySlices(t *testing.T) {
 	}
 }
 
+func makeProviderPackageArchive(name string) []byte {
+	var archive bytes.Buffer
+	gzipWriter := gzip.NewWriter(&archive)
+	tarWriter := tar.NewWriter(gzipWriter)
+	content := []byte(name)
+	_ = tarWriter.WriteHeader(&tar.Header{
+		Name: "extension.txt",
+		Mode: 0600,
+		Size: int64(len(content)),
+	})
+	_, _ = tarWriter.Write(content)
+	_ = tarWriter.Close()
+	_ = gzipWriter.Close()
+	return archive.Bytes()
+}
+
 func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 	provider := newTestRemoteProvider(t, "https://remote.example.com")
+	t.Setenv("HOME", t.TempDir())
 	origSkip := viper.Get(SKIP_DOWNLOAD_EXTENSIONS_ENV)
 	defer viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, origSkip)
 	viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, false)
@@ -240,7 +262,8 @@ func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 			http.NotFound(w, r)
 			return
 		}
-		http.NotFound(w, r)
+		w.Header().Set("Content-Type", "application/gzip")
+		_, _ = w.Write(makeProviderPackageArchive(r.URL.Path))
 	}))
 	defer server.Close()
 
@@ -257,6 +280,24 @@ func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 			PackageVersion: "2.0.0",
 			PackageURL:     server.URL + "/two.tar.gz",
 		},
+	}
+
+	for i, expected := range properties {
+		provider.SetProviderProperties(expected)
+		snapshot := provider.GetProviderProperties()
+		location := snapshot.PackageLocation()
+		provider.DownloadProviderExtensionPackage(provider.Log)
+		content, err := os.ReadFile(filepath.Join(location, "extension.txt"))
+		if err != nil {
+			t.Fatalf("provider %d package downloaded to the wrong snapshot location: %v", i, err)
+		}
+		expectedContent := "/one.tar.gz"
+		if i == 1 {
+			expectedContent = "/two.tar.gz"
+		}
+		if string(content) != expectedContent {
+			t.Fatalf("provider %d package content=%q, want %q", i, content, expectedContent)
+		}
 	}
 
 	provider.SetProviderProperties(properties[0])
