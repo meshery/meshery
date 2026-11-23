@@ -83,7 +83,19 @@ To sign off a commit you have already written but have <em>not</em> pushed:
 <pre><code>$ git commit --amend -s --no-edit</code></pre>
 
 Once the branch is pushed, amending reaches only its tip, and a DCO failure usually names more
-than one commit. Sign off every commit the pull request carries and replace the pushed branch:
+than one commit. Meshery accepts individual DCO remediation commits, so the preferred repair
+rewrites nothing: the author of each unsigned commit adds one more commit, signed off with
+<code>git commit -s</code>, whose message has a line per unsigned commit:
+
+<pre><code>I, Jane Smith &lt;jane.smith@example.com&gt;, hereby add my Signed-off-by to this commit: &lt;full sha&gt;</code></pre>
+
+Only a commit's own author can sign for it; a remediation commit from someone else is not
+accepted.
+</li>
+
+<li>
+Alternatively, when the branch is yours alone, sign off every commit the pull request carries
+and replace the pushed branch:
 
 <pre><code>$ git rebase &lt;base-branch&gt; --signoff
 $ git push --force-with-lease</code></pre>
