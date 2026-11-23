@@ -120,7 +120,7 @@ users:
 	cancel() // pre-cancel context
 
 	eventMetadata := map[string]interface{}{}
-	contexts := K8sContextsFromKubeconfigWithContext(ctx, nil, "user-id", nil, kubeconfig, nil, eventMetadata, nil, true)
+	contexts := K8sContextsFromKubeconfigWithContext(ctx, nil, "user-id", nil, kubeconfig, nil, eventMetadata, nil, KubeconfigDiscoveryOptions{IncludeUnreachable: true})
 	if len(contexts) != 0 {
 		t.Fatalf("expected 0 contexts on canceled context, got %d", len(contexts))
 	}

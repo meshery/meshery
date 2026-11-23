@@ -58,7 +58,10 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	man, err := GetK8sMeshModelComponents(config)
 	genErr := err
 	eventMetadata := make(map[string]interface{}, 0)
-	ctx := models.K8sContextsFromKubeconfig(*provider, userID, ec, config, &mesheryInstanceID, eventMetadata, log)
+	// config belongs to a context Meshery already registered: uploads lost
+	// their exec and auth-provider contexts at discovery, and
+	// GetK8sMeshModelComponents above has already built a client from it.
+	ctx := models.K8sContextsFromKubeconfigWithOptions(*provider, userID, ec, config, &mesheryInstanceID, eventMetadata, log, models.KubeconfigDiscoveryOptions{Source: models.KubeconfigFromServer})
 	if genErr != nil {
 		if len(man) == 0 {
 			return ErrCreatingKubernetesComponents(genErr, ctxID)

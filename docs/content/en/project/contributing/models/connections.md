@@ -224,6 +224,10 @@ An extension matches a Connection by `kind` (optionally narrowed by `type`/`subT
 
 Each step implements a small contract - an `id` and `label`, a `Component` to render, and optional `canProceed`, `onNext`, `nextLabel`, and `hidden` hooks. Use the existing `kubernetesExtension` as a worked example, and see [Contributing to the Meshery UI]({{< ref "project/contributing/ui" >}}) for building and testing UI changes.
 
+{{% alert color="warning" title="Kubeconfig discovery and who may run exec plugins" %}}
+Every kubeconfig, uploaded or not, goes through `models.DiscoverKubeconfigContexts` in `server/models/k8s_context.go`. Its `KubeconfigDiscoveryOptions.Source` says who supplied the file. `KubeconfigFromUpload`, the zero value, is any kubeconfig that arrived over the API: its exec-plugin and auth-provider contexts are skipped before a client is built, because client-go would otherwise run the named command on the Meshery Server host during the reachability probe. `KubeconfigFromServer` is reserved for the server operator's own kubeconfig (`KUBECONFIG_FOLDER`) and contexts Meshery already registered; their authentication runs as configured. A new caller that handles a user-supplied kubeconfig must not pass `KubeconfigFromServer`.
+{{% /alert %}}
+
 {{% alert color="warning" title="Prefer schemas over code" %}}
 Reach for a custom extension only when the generic, schema-driven flow genuinely cannot express what your Connection needs. A definition-only contribution is easier to review, ships without a UI release, and stays consistent with every other Connection in the wizard.
 {{% /alert %}}

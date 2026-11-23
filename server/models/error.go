@@ -178,9 +178,15 @@ const (
 	ErrMigrateEventIndexesCode            = "meshery-server-1491"
 	ErrHandlerPanicCode                   = "meshery-server-1495"
 	ErrInvalidDesignVersionCode           = "meshery-server-1496"
+	ErrKubeconfigUnreadableCode           = "meshery-server-1498"
 )
 
 var (
+	// ErrKubeconfigUnreadable is returned when discovery is given bytes that
+	// are not a kubeconfig. A valid kubeconfig that simply lists no contexts
+	// is not this error. It is a package-level value so callers match it with
+	// errors.Is.
+	ErrKubeconfigUnreadable = errors.New(ErrKubeconfigUnreadableCode, errors.Alert, []string{"The kubeconfig could not be parsed"}, []string{"The uploaded file is empty, is not YAML, or does not look like a kubeconfig (it has no kind: Config, current-context, clusters, contexts, or users)."}, []string{"A different file was selected, or the kubeconfig was truncated or edited by hand."}, []string{"Upload the kubeconfig file itself (for example ~/.kube/config), and check it with kubectl config view --kubeconfig <file>."})
 	ErrResultID                = errors.New(ErrResultIDCode, errors.Alert, []string{"Given resultID is not valid"}, []string{"Given resultID is nil"}, []string{}, []string{})
 	ErrLocalProviderSupport    = errors.New(ErrLocalProviderSupportCode, errors.Alert, []string{"Method not supported by local provider"}, []string{}, []string{}, []string{})
 	ErrNilQuery                = errors.New(ErrNilQueryCode, errors.Alert, []string{"Query data passed is nil"}, []string{}, []string{}, []string{})

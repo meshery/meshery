@@ -152,7 +152,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	eventMetadata := map[string]interface{}{}
 	// Include unreachable contexts so they are still registered as discovered
 	// connections; reachability is only required to transition to connected.
-	contexts := models.K8sContextsFromKubeconfigWithContext(req.Context(), provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, log, true)
+	contexts := models.K8sContextsFromKubeconfigWithContext(req.Context(), provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, log, models.KubeconfigDiscoveryOptions{IncludeUnreachable: true, Source: models.KubeconfigFromUpload})
 
 	// Parse contexts configuration if provided
 	var contextsConfig map[string]ContextOptions
@@ -528,7 +528,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	// reachability only gates connecting. Skipped contexts (unsupported auth,
 	// unreadable credentials) are reported only when the client asks for the
 	// detailed payload; the default body stays a JSON array.
-	discovery, err := models.DiscoverKubeconfigContexts(req.Context(), provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, log, true)
+	discovery, err := models.DiscoverKubeconfigContexts(req.Context(), provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, log, models.KubeconfigDiscoveryOptions{IncludeUnreachable: true, Source: models.KubeconfigFromUpload})
 	if err != nil {
 		log.Error(err)
 		writeMeshkitError(w, ErrInvalidKubeConfig(err, ""), http.StatusBadRequest)
@@ -696,7 +696,9 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		return contexts, err
 	}
 
-	ctxs := models.K8sContextsFromKubeconfig(prov, userID, h.config.EventBroadcaster, cfg, mid, eventMetadata, log)
+	// This is the server operator's own kubeconfig, not an upload, so its
+	// exec plugins and auth-provider blocks keep working.
+	ctxs := models.K8sContextsFromKubeconfigWithOptions(prov, userID, h.config.EventBroadcaster, cfg, mid, eventMetadata, log, models.KubeconfigDiscoveryOptions{Source: models.KubeconfigFromServer})
 
 	// Do not persist the generated contexts
 	// consolidate this func and addK8sConfig. In this we explicitly updated status as well as this func perfomr greeedy upload so while consolidating make sure to handle the case.

@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"sort"
 	"strings"
 	"testing"
@@ -308,7 +311,7 @@ func TestK8sContextsFromKubeconfigDiscoversAllContexts(t *testing.T) {
 
 	// includeUnreachable=true mirrors the import wizard: unreachable contexts are
 	// still returned (flagged Reachable=false) so the user can register them.
-	got := K8sContextsFromKubeconfigWithOptions(nil, uuid.Must(uuid.NewV4()).String(), nil, kubeconfig, &instanceID, eventMetadata, log, true)
+	got := K8sContextsFromKubeconfigWithOptions(nil, uuid.Must(uuid.NewV4()).String(), nil, kubeconfig, &instanceID, eventMetadata, log, KubeconfigDiscoveryOptions{IncludeUnreachable: true})
 
 	if len(got) != wantContexts {
 		var names []string
@@ -632,7 +635,7 @@ func testKubeLogger(t *testing.T) logger.Handler {
 func discoverForTest(t *testing.T, kubeconfig []byte) (KubeconfigDiscovery, error) {
 	t.Helper()
 	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
-	return DiscoverKubeconfigContexts(context.Background(), nil, uuid.Must(uuid.NewV4()).String(), nil, kubeconfig, &instanceID, map[string]interface{}{}, testKubeLogger(t), true)
+	return DiscoverKubeconfigContexts(context.Background(), nil, uuid.Must(uuid.NewV4()).String(), nil, kubeconfig, &instanceID, map[string]interface{}{}, testKubeLogger(t), KubeconfigDiscoveryOptions{IncludeUnreachable: true})
 }
 
 func TestDiscoverKubeconfigContextsDistinguishesUnreadableEmptyAndSkipped(t *testing.T) {
@@ -844,12 +847,85 @@ users:
 	})
 }
 
+// TestDiscoverKubeconfigContextsRunsExecOnlyForTheServersOwnKubeconfig pins
+// who may make Meshery Server run a kubeconfig's exec plugin. The plugin here
+// is a shell command that leaves a marker file, so the test observes whether
+// the command actually ran rather than inferring it from the skip list.
+func TestDiscoverKubeconfigContextsRunsExecOnlyForTheServersOwnKubeconfig(t *testing.T) {
+	shell, err := exec.LookPath("sh")
+	if err != nil {
+		t.Skip("needs a POSIX shell to stand in for an exec credential plugin")
+	}
+	execKubeconfig := func(marker string) []byte {
+		return []byte(fmt.Sprintf(`apiVersion: v1
+kind: Config
+current-context: eks
+clusters:
+- cluster:
+    server: https://127.0.0.1:1
+  name: eks
+contexts:
+- context:
+    cluster: eks
+    user: eks-user
+  name: eks
+users:
+- name: eks-user
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      command: %q
+      args: ["-c", "touch '%s'; exit 1"]
+`, shell, marker))
+	}
+	discover := func(t *testing.T, kubeconfig []byte, source KubeconfigSource) KubeconfigDiscovery {
+		t.Helper()
+		instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+		got, err := DiscoverKubeconfigContexts(context.Background(), nil, uuid.Must(uuid.NewV4()).String(), nil, kubeconfig, &instanceID, map[string]interface{}{}, testKubeLogger(t), KubeconfigDiscoveryOptions{IncludeUnreachable: true, Source: source})
+		if err != nil {
+			t.Fatalf("discover: %v", err)
+		}
+		return got
+	}
+
+	t.Run("an uploaded kubeconfig never runs its exec command", func(t *testing.T) {
+		marker := filepath.Join(t.TempDir(), "ran")
+		got := discover(t, execKubeconfig(marker), KubeconfigFromUpload)
+		if _, err := os.Stat(marker); !errors.Is(err, os.ErrNotExist) {
+			t.Fatalf("exec command from an uploaded kubeconfig ran on the server (marker stat err = %v)", err)
+		}
+		if len(got.Contexts) != 0 || len(got.SkippedContexts) != 1 {
+			t.Fatalf("got %d contexts and %d skipped, want the exec context skipped", len(got.Contexts), len(got.SkippedContexts))
+		}
+	})
+
+	t.Run("the zero-value source is treated as an upload", func(t *testing.T) {
+		if (KubeconfigDiscoveryOptions{}).Source != KubeconfigFromUpload {
+			t.Fatal("KubeconfigDiscoveryOptions zero value must fail closed as KubeconfigFromUpload")
+		}
+	})
+
+	t.Run("the server's own kubeconfig keeps its exec authentication", func(t *testing.T) {
+		marker := filepath.Join(t.TempDir(), "ran")
+		got := discover(t, execKubeconfig(marker), KubeconfigFromServer)
+		if len(got.SkippedContexts) != 0 {
+			t.Fatalf("server kubeconfig skipped %+v, want its exec context offered", got.SkippedContexts)
+		}
+		if len(got.Contexts) != 1 || got.Contexts[0].Reachable {
+			t.Fatalf("got %d contexts, want the exec context returned unreachable (its plugin exits 1)", len(got.Contexts))
+		}
+		if _, err := os.Stat(marker); err != nil {
+			t.Fatalf("exec plugin of the server's own kubeconfig did not run: %v", err)
+		}
+	})
+}
+
 // Existing callers (import, component registration) keep receiving a context
 // slice. An unreadable file stays an empty slice for them; the discovery
 // endpoint is what turns that into an error.
 func TestK8sContextsFromKubeconfigWithOptionsKeepsUnreadableAsEmpty(t *testing.T) {
 	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
-	got := K8sContextsFromKubeconfigWithOptions(nil, uuid.Must(uuid.NewV4()).String(), nil, []byte("not a kubeconfig {{{"), &instanceID, map[string]interface{}{}, testKubeLogger(t), true)
+	got := K8sContextsFromKubeconfigWithOptions(nil, uuid.Must(uuid.NewV4()).String(), nil, []byte("not a kubeconfig {{{"), &instanceID, map[string]interface{}{}, testKubeLogger(t), KubeconfigDiscoveryOptions{IncludeUnreachable: true})
 	if len(got) != 0 {
 		t.Fatalf("got %d contexts, want 0", len(got))
 	}
