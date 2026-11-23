@@ -206,25 +206,35 @@ const MeshAdapterConfigComponent = () => {
   };
 
   const handleDelete = (adapterLoc) => async () => {
-    if (isDeletingRef.current || !modalRef.current) {
+    if (!modalRef.current) {
       return;
     }
 
-    isDeletingRef.current = true;
+    let response: string;
     try {
-      const response = await modalRef.current.show({
+      response = await modalRef.current.show({
         title: 'Delete Adapter?',
         subtitle: `Are you sure you want to delete adapter "${adapterLoc}"?`,
         primaryOption: 'DELETE',
         variant: PROMPT_VARIANTS.DANGER,
       });
+    } catch (error) {
+      handleError('Failed to display confirmation prompt')(error);
+      return;
+    }
 
-      if (response !== 'DELETE') {
-        return;
-      }
+    if (response !== 'DELETE') {
+      return;
+    }
 
-      updateProgress({ showProgress: true });
+    if (isDeletingRef.current) {
+      return;
+    }
 
+    isDeletingRef.current = true;
+    updateProgress({ showProgress: true });
+
+    try {
       const result = await manageAdapter({
         method: 'DELETE',
         adapter: adapterLoc,

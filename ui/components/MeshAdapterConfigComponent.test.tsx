@@ -16,6 +16,11 @@ const defaultAdapters = [
     adapterLocation: 'localhost:10000',
     uniqueID: 'adapter-istio-1',
   },
+  {
+    name: 'Linkerd',
+    adapterLocation: 'localhost:10001',
+    uniqueID: 'adapter-linkerd-2',
+  },
 ];
 
 vi.mock('@/rtk-query/system', () => ({
@@ -89,12 +94,12 @@ vi.mock('@sistent/sistent', () => {
       </button>
     ),
     Chip: ({ label, onDelete, onClick }: any) => (
-      <div data-testid="adapter-chip">
+      <div data-testid={`adapter-chip-${label}`}>
         <span data-testid="chip-label" onClick={onClick}>
           {label}
         </span>
         {onDelete && (
-          <button data-testid="chip-delete-btn" onClick={onDelete}>
+          <button data-testid={`chip-delete-btn-${label}`} onClick={onDelete}>
             delete
           </button>
         )}
@@ -129,7 +134,7 @@ describe('MeshAdapterConfigComponent - Adapter Deletion Confirmation', () => {
     const user = userEvent.setup();
     render(<MeshAdapterConfigComponent />);
 
-    const deleteBtn = screen.getByTestId('chip-delete-btn');
+    const deleteBtn = screen.getByTestId('chip-delete-btn-localhost:10000');
     await user.click(deleteBtn);
 
     expect(showPrompt).toHaveBeenCalledTimes(1);
@@ -149,7 +154,7 @@ describe('MeshAdapterConfigComponent - Adapter Deletion Confirmation', () => {
     const user = userEvent.setup();
     render(<MeshAdapterConfigComponent />);
 
-    const deleteBtn = screen.getByTestId('chip-delete-btn');
+    const deleteBtn = screen.getByTestId('chip-delete-btn-localhost:10000');
     await user.click(deleteBtn);
 
     expect(showPrompt).toHaveBeenCalledTimes(1);
@@ -167,7 +172,7 @@ describe('MeshAdapterConfigComponent - Adapter Deletion Confirmation', () => {
     const user = userEvent.setup();
     render(<MeshAdapterConfigComponent />);
 
-    const deleteBtn = screen.getByTestId('chip-delete-btn');
+    const deleteBtn = screen.getByTestId('chip-delete-btn-localhost:10000');
     await user.click(deleteBtn);
 
     expect(showPrompt).toHaveBeenCalledTimes(1);
@@ -188,6 +193,31 @@ describe('MeshAdapterConfigComponent - Adapter Deletion Confirmation', () => {
     });
   });
 
+  it('prompt rejection displays prompt error and does not report adapter deletion error', async () => {
+    const promptError = new Error('Dialog cancelled unexpectedly');
+    showPrompt.mockRejectedValue(promptError);
+
+    const user = userEvent.setup();
+    render(<MeshAdapterConfigComponent />);
+
+    const deleteBtn = screen.getByTestId('chip-delete-btn-localhost:10000');
+    await user.click(deleteBtn);
+
+    expect(showPrompt).toHaveBeenCalledTimes(1);
+    expect(manageAdapterMutator).not.toHaveBeenCalled();
+    expect(notify).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Failed to display confirmation prompt',
+        details: promptError.toString(),
+      }),
+    );
+    expect(notify).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Adapter was not removed due to an error',
+      }),
+    );
+  });
+
   it('failed deletion preserves existing error handling and does not update adapter state', async () => {
     showPrompt.mockResolvedValue('DELETE');
     const deleteError = new Error('Network failure');
@@ -198,7 +228,7 @@ describe('MeshAdapterConfigComponent - Adapter Deletion Confirmation', () => {
     const user = userEvent.setup();
     render(<MeshAdapterConfigComponent />);
 
-    const deleteBtn = screen.getByTestId('chip-delete-btn');
+    const deleteBtn = screen.getByTestId('chip-delete-btn-localhost:10000');
     await user.click(deleteBtn);
 
     expect(showPrompt).toHaveBeenCalledTimes(1);
@@ -210,6 +240,37 @@ describe('MeshAdapterConfigComponent - Adapter Deletion Confirmation', () => {
       }),
     );
     expect(dispatch).not.toHaveBeenCalled();
+  });
+
+  it('allows clicking delete on another adapter while first prompt is waiting, without locking', async () => {
+    // Keep the prompt unresolved for the first adapter
+    let resolveFirstPrompt: (val: string) => void;
+    const firstPromptPromise = new Promise<string>((resolve) => {
+      resolveFirstPrompt = resolve;
+    });
+
+    showPrompt.mockReturnValueOnce(firstPromptPromise).mockResolvedValueOnce('CANCEL');
+
+    const user = userEvent.setup();
+    render(<MeshAdapterConfigComponent />);
+
+    const firstDeleteBtn = screen.getByTestId('chip-delete-btn-localhost:10000');
+    const secondDeleteBtn = screen.getByTestId('chip-delete-btn-localhost:10001');
+
+    // Click first adapter delete
+    await user.click(firstDeleteBtn);
+    expect(showPrompt).toHaveBeenCalledTimes(1);
+
+    // Deletion lock is NOT held while prompt is waiting, so clicking second adapter's delete icon is not blocked
+    await user.click(secondDeleteBtn);
+    expect(showPrompt).toHaveBeenCalledTimes(2);
+
+    // Resolve first prompt as CANCEL
+    await act(async () => {
+      resolveFirstPrompt('CANCEL');
+    });
+
+    expect(manageAdapterMutator).not.toHaveBeenCalled();
   });
 
   it('repeated clicks while deletion is in progress do not trigger duplicate mutations', async () => {
@@ -226,15 +287,13 @@ describe('MeshAdapterConfigComponent - Adapter Deletion Confirmation', () => {
     const user = userEvent.setup();
     render(<MeshAdapterConfigComponent />);
 
-    const deleteBtn = screen.getByTestId('chip-delete-btn');
+    const deleteBtn = screen.getByTestId('chip-delete-btn-localhost:10000');
 
-    // First click initiates delete flow
+    // First click initiates delete flow and resolves prompt to DELETE
     const firstClick = user.click(deleteBtn);
 
-    // Second click during active deletion
+    // Second click during active in-flight mutation
     await user.click(deleteBtn);
-
-    expect(showPrompt).toHaveBeenCalledTimes(1);
 
     // Finish first deletion
     await act(async () => {
@@ -253,8 +312,8 @@ describe('MeshAdapterConfigComponent - Adapter Deletion Confirmation', () => {
     const user = userEvent.setup();
     render(<MeshAdapterConfigComponent />);
 
-    const chipLabel = screen.getByTestId('chip-label');
-    await user.click(chipLabel);
+    const chipLabels = screen.getAllByTestId('chip-label');
+    await user.click(chipLabels[0]);
 
     expect(pingAdapterTrigger).toHaveBeenCalledWith('localhost:10000');
     expect(manageAdapterMutator).not.toHaveBeenCalled();
