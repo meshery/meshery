@@ -32,9 +32,11 @@ func TestInvokeCompUpdate_InputPaths(t *testing.T) {
 	root := t.TempDir()
 	modelsDir := filepath.Join(root, "models")
 	subDir := filepath.Join(root, "mesheryctl")
+	modelsWithoutComponent := filepath.Join(root, "models-without-component")
 	componentPath := filepath.Join(modelsDir, modelName, "1.0.0", "v1.0.0", "components", "Thing.json")
 	require.NoError(t, os.MkdirAll(filepath.Dir(componentPath), 0o755))
 	require.NoError(t, os.MkdirAll(subDir, 0o755))
+	require.NoError(t, os.MkdirAll(filepath.Join(modelsWithoutComponent, modelName, "1.0.0", "v1.0.0"), 0o755))
 	componentCSVFilePath = filepath.Join(root, "components.csv")
 	csv := "ignored,ignored,ignored,ignored\nregistrant,model,component,description\n" +
 		"meshery,demo,Thing,after\n"
@@ -51,6 +53,7 @@ func TestInvokeCompUpdate_InputPaths(t *testing.T) {
 		{name: "absolute", cwd: root, input: modelsDir, wantDescription: "after"},
 		{name: "relative from subdirectory", cwd: subDir, input: filepath.Join("..", "models"), wantDescription: "after"},
 		{name: "valid directory without the model", cwd: root, input: "mesheryctl", wantDescription: "before"},
+		{name: "valid model without the component", cwd: root, input: "models-without-component", wantDescription: "before"},
 		{name: "missing relative directory", cwd: root, input: "missing-models", wantErr: true, wantDescription: "before"},
 		{name: "missing absolute directory", cwd: root, input: filepath.Join(root, "missing-models"), wantErr: true, wantDescription: "before"},
 		{name: "regular file", cwd: root, input: componentCSVFilePath, wantErr: true, wantDescription: "before"},
