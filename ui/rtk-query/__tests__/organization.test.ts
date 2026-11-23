@@ -3,7 +3,9 @@ import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 // ---------------------------------------------------------------------------
 // organization.ts wraps useGetOrgsQuery from @meshery/schemas/mesheryApi.
 // The wrapper coerces page/pagesize to strings and forwards search/order/all.
-// We mock the underlying schemas hook and assert the wrapper's contract.
+// The generated getOrgs endpoint (schemas v1beta2) reads `pageSize` only, so
+// the wrapper must send the page size under that key or it never reaches the
+// server. We mock the underlying schemas hook and assert the wrapper's contract.
 // ---------------------------------------------------------------------------
 
 const { mockedSchemasGetOrgs } = vi.hoisted(() => ({ mockedSchemasGetOrgs: vi.fn() }));
@@ -23,13 +25,13 @@ describe('useGetOrgsQuery', () => {
     vi.restoreAllMocks();
   });
 
-  it('forwards stringified page and pagesize to the underlying hook', () => {
+  it('forwards stringified page and the page size as pageSize to the underlying hook', () => {
     useGetOrgsQuery({ page: 1, pagesize: 25, search: 'team', order: 'asc', all: true });
 
     expect(mockedSchemasGetOrgs).toHaveBeenCalledWith(
       {
         page: '1',
-        pagesize: '25',
+        pageSize: '25',
         search: 'team',
         order: 'asc',
         all: true,
@@ -43,7 +45,7 @@ describe('useGetOrgsQuery', () => {
     useGetOrgsQuery({ page: 0, pagesize: 10 }, options);
 
     expect(mockedSchemasGetOrgs).toHaveBeenCalledWith(
-      expect.objectContaining({ page: '0', pagesize: '10' }),
+      expect.objectContaining({ page: '0', pageSize: '10' }),
       options,
     );
   });
@@ -54,13 +56,21 @@ describe('useGetOrgsQuery', () => {
     expect(mockedSchemasGetOrgs).toHaveBeenCalledWith(
       {
         page: undefined,
-        pagesize: undefined,
+        pageSize: undefined,
         search: undefined,
         order: undefined,
         all: undefined,
       },
       undefined,
     );
+  });
+
+  it("forwards pagesize 'all' as pageSize so every organization is requested", () => {
+    useGetOrgsQuery({ pagesize: 'all' });
+
+    const [args] = mockedSchemasGetOrgs.mock.calls[0];
+    expect(args.pageSize).toBe('all');
+    expect(args).not.toHaveProperty('pagesize');
   });
 
   it('returns the result of the underlying hook', () => {
