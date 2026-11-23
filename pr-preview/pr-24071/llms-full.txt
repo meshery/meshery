@@ -16393,7 +16393,9 @@ Meshery Server has a built-in policy engine implemented natively in Go (ported f
 Each evaluation cycle visits every registered policy and applies it to the current design in three phases:
 
 - **Identify** — propose new relationships from the policy's selectors and the matching component configuration. The hierarchical parent-child policy, for example, connects a Pod that declares `namespace: production` to the `Namespace/production` declaration in the same design.
-- **Validate** — drop existing relationships whose endpoints no longer satisfy the policy (the from or to component was removed, or its kind / labels no longer match).
+- **Validate** — mark existing relationships deleted when their endpoints no longer satisfy the policy
+  (the from or to component was removed, or its kind / labels no longer match).
+  Pending relationships remain pending until their components become available.
 - **Apply side effects** — patch component configuration when a relationship requires it. A binding relationship copies a value from its mutator endpoint into a field on the bound component, and reverses that patch on deletion.
 
 **Built-in policies**
@@ -16858,6 +16860,10 @@ See [Contributing to Relationships](/pr-preview/pr-24071/project/contributing/mo
 ## Selectors in Relationships
 
 In Meshery, a selector specifies which components participate in a relationship. The field name is `selectors` (an array of selector-set items). Items in the array are OR; inside one item, every `from` entry relates to every `to` entry - a cross-product.
+
+The selector's `model.name` also scopes each endpoint. An omitted or empty name, or `*`,
+matches components from any model; a specific name or regular expression matches only
+components whose model name satisfies the selector.
 
 Here are examples of pairs that share a visual paradigm. The ConfigMap pairs are **edge / non-binding / reference**. The WASMFilter pair is **hierarchical / parent / wallet**, not inventory.
 
@@ -27838,6 +27844,8 @@ An empty string. The property is deprecated (see the schema's deprecation notice
 1. To apply a relationship across models, set the selector `model.name` to `*`. To limit it to one model, specify that model name (case sensitive); model names may also use regular expressions.
 2. Absence or an empty value of a selector model.name is interpreted as the wildcard `*`.
 3. Values for `kind`, `version`, and `model` are case-sensitive.
+4. Every endpoint must satisfy both its kind and model selector. A component in another
+   model cannot satisfy a model-pinned endpoint even when its kind and configuration values match.
 
 #### Actions
 
