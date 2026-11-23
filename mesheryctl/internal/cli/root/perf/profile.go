@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"strconv"
 	"strings"
 
@@ -28,6 +29,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	core "github.com/meshery/schemas/models/core"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	"github.com/pkg/errors"
@@ -188,6 +190,38 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 	}
 
 	return response.Profiles, response.TotalCount, nil
+}
+
+// fetchPerformanceProfile fetches a single performance profile by its UUID.
+func fetchPerformanceProfile(baseURL, profileID string) (*perfprofile.PerformanceProfile, error) {
+	url := baseURL + "/api/performance/profiles/" + profileID
+
+	req, err := utils.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		if meshkiterrors.GetCode(err) == utils.ErrNotFoundCode {
+			return nil, ErrNoProfileFound()
+		}
+		return nil, err
+	}
+	defer utils.SafeClose(resp.Body)
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, utils.ErrReadResponseBody(err)
+	}
+
+	var profile perfprofile.PerformanceProfile
+	err = json.Unmarshal(body, &profile)
+	if err != nil {
+		return nil, ErrFailUnmarshal(err)
+	}
+
+	return &profile, nil
 }
 
 // fetchAllPerformanceProfiles returns every profile matching searchString, across all pages.
