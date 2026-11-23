@@ -493,7 +493,7 @@ func TestConnectionViewNotFoundOutput(t *testing.T) {
 			t.Fatalf("unexpected error executing ConnectionsCmd: %v", err)
 		}
 
-		expectedMsg := fmt.Sprintf("No connection(s) found for the given name or ID:  %s\n", testUUID)
+		expectedMsg := fmt.Sprintf("No connection(s) found for the given name or ID: %s\n", testUUID)
 		if buf.String() != expectedMsg {
 			t.Fatalf("expected output %q, got %q", expectedMsg, buf.String())
 		}
@@ -518,7 +518,7 @@ func TestConnectionViewNotFoundOutput(t *testing.T) {
 			t.Fatalf("unexpected error executing ConnectionsCmd: %v", err)
 		}
 
-		expectedMsg := fmt.Sprintf("No connection(s) found for the given name or ID:  %s\n", searchName)
+		expectedMsg := fmt.Sprintf("No connection(s) found for the given name or ID: %s\n", searchName)
 		if buf.String() != expectedMsg {
 			t.Fatalf("expected output %q, got %q", expectedMsg, buf.String())
 		}

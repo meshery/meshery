@@ -87,7 +87,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 		}
 
 		if selectedConnection == nil || selectedConnection.ID == uuid.Nil {
-			_, err := fmt.Fprintln(cmd.OutOrStdout(), "No connection(s) found for the given name or ID: ", connectionNameOrID)
+			_, err := fmt.Fprintln(cmd.OutOrStdout(), "No connection(s) found for the given name or ID:", connectionNameOrID)
 			return err
 		}
 
