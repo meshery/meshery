@@ -492,15 +492,15 @@ func ErrDBOpen(err error) error {
 }
 
 func ErrDBRLock(err error) error {
-	return errors.New(ErrDBRLockCode, errors.Alert, []string{"Unable to obtain read lock from bitcask store"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrDBRLockCode, errors.Alert, []string{"Unable to obtain read lock from the database"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDBLock(err error) error {
-	return errors.New(ErrDBLockCode, errors.Alert, []string{"Unable to obtain write lock from bitcask store"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrDBLockCode, errors.Alert, []string{"Unable to obtain write lock from the database"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDBRead(err error) error {
-	return errors.New(ErrDBReadCode, errors.Alert, []string{"Unable to read data from bitcast store"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrDBReadCode, errors.Alert, []string{"Unable to read data from the database"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDBPut(err error) error {

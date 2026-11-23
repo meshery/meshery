@@ -3646,7 +3646,7 @@
       },
       "numericCode": "1244",
       "severity": "alert",
-      "shortDescription": "Unable to obtain read lock from bitcask store"
+      "shortDescription": "Unable to obtain read lock from the database"
     },
     {
       "code": "meshery-server-1245",
@@ -3657,7 +3657,7 @@
       },
       "numericCode": "1245",
       "severity": "alert",
-      "shortDescription": "Unable to obtain write lock from bitcask store"
+      "shortDescription": "Unable to obtain write lock from the database"
     },
     {
       "code": "meshery-server-1246",
@@ -3668,7 +3668,7 @@
       },
       "numericCode": "1246",
       "severity": "alert",
-      "shortDescription": "Unable to read data from bitcast store"
+      "shortDescription": "Unable to read data from the database"
     },
     {
       "code": "meshery-server-1247",

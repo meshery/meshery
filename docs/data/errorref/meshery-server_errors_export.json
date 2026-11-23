@@ -2060,7 +2060,7 @@
         "code": "1244",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Unable to obtain read lock from bitcask store",
+        "short_description": "Unable to obtain read lock from the database",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -2069,7 +2069,7 @@
         "code": "1245",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Unable to obtain write lock from bitcask store",
+        "short_description": "Unable to obtain write lock from the database",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -2078,7 +2078,7 @@
         "code": "1246",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Unable to read data from bitcast store",
+        "short_description": "Unable to read data from the database",
         "probable_cause": "",
         "suggested_remediation": ""
       },
