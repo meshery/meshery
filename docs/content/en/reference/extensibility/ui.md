@@ -127,7 +127,7 @@ Submit an issue to request more documentation.
 ### Extension Points by File
 
 1. **/ui/components/layout/Navigator/NavigatorExtension.tsx** - add custom menu items in Meshery's main navigation menu.
-1. **/ui/pages/extension/[...component].tsx** - optionally, define the state of a parent menu item: expanded or collapsed.
+1. **/ui/pages/extension/[...component].tsx** - resolves the active extension from the path, sets its title and type, and renders the matching remote or navigator component.
 1. **ui/remote-component.config.js** - list of Material UI components made available to Remote Providers and their plugins.
 1. **ui/components/meshery-mesh-interface/PatternServiceFormCore.tsx** - PatternServiceFormCore component which decouples the SettingsForm from its UI representation while keeping the logic coupled. This design lets the Remote Provider amend the design of the components without interfering with Meshery UI's core logic.
 
