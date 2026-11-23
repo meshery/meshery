@@ -17,10 +17,15 @@ func (q *Queue) Enqueue(str string) {
 	q.internalQueue = append(q.internalQueue, str)
 }
 
-// Dequeue removes data from the queue
+// Dequeue removes data from the queue. If the queue is empty, it returns an
+// empty string safely without panicking.
 func (q *Queue) Dequeue() string {
 	q.Lock()
 	defer q.Unlock()
+
+	if len(q.internalQueue) == 0 {
+		return ""
+	}
 
 	val := q.internalQueue[0]
 	q.internalQueue = q.internalQueue[1:]
