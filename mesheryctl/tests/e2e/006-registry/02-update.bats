@@ -8,10 +8,34 @@ setup() {
     export TEST_SPREADSHEET_ID="${TEST_SPREADSHEET_ID:-}"
     export TEST_SPREADSHEET_CRED="${TEST_SPREADSHEET_CRED:-}"
 
-    # registry update requires an existing models directory as its input root.
-    # The suite runs from mesheryctl/tests/e2e, so the repo-root models
-    # directory is three levels up.
-    export MODELS_DIR="../../../models"
+    # registry update rewrites every component JSON the spreadsheet names
+    # beneath its input root, so it must never be pointed at the repository's
+    # tracked models tree. Each test gets a disposable root that it owns.
+    export MODELS_DIR="$TEMP_DATA_DIR/registry-update/$BATS_TEST_NAME"
+    mkdir -p "$MODELS_DIR"
+}
+
+teardown() {
+    rm -rf "$MODELS_DIR"
+}
+
+# Copies one version of a tracked model into the disposable input root. The copy
+# is independent of the source, so the command under test cannot reach the
+# tracked models tree.
+seed_model_fixture() {
+    local model="$1"
+    local source_root="../../../models/$model"
+
+    # A model root holds one directory per version, and may also hold loose
+    # files such as model_template.json that registry update ignores.
+    local version
+    version="$(cd "$source_root" 2>/dev/null && ls -d */ 2>/dev/null | head -1 | tr -d '/')"
+    if [[ -z "$version" ]]; then
+        fail "no model version directory found under $source_root"
+    fi
+
+    mkdir -p "$MODELS_DIR/$model"
+    cp -R "$source_root/$version" "$MODELS_DIR/$model/$version"
 }
 
 require_spreadsheet_credentials() {
@@ -55,6 +79,7 @@ require_spreadsheet_credentials() {
 
 @test "given valid spreadsheet credentials and a model name when running mesheryctl registry update then that model is updated" {
     require_spreadsheet_credentials
+    seed_model_fixture "kubernetes"
     run $MESHERYCTL_BIN registry update --input "$MODELS_DIR" --spreadsheet-id "$TEST_SPREADSHEET_ID" --spreadsheet-cred "$TEST_SPREADSHEET_CRED" --model "kubernetes"
     assert_success
     assert_output --regexp "Updated [1-9][0-9]* models? and [0-9]+ components?"
@@ -62,6 +87,7 @@ require_spreadsheet_credentials() {
 
 @test "given valid spreadsheet credentials when running mesheryctl registry update then models are updated successfully" {
     require_spreadsheet_credentials
+    seed_model_fixture "kubernetes"
     run $MESHERYCTL_BIN registry update --input "$MODELS_DIR" --spreadsheet-id "$TEST_SPREADSHEET_ID" --spreadsheet-cred "$TEST_SPREADSHEET_CRED"
     assert_success
     assert_output --regexp "Updated [1-9][0-9]* models? and [0-9]+ components?"
