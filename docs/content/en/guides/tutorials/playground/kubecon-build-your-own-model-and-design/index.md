@@ -517,7 +517,7 @@ These are optional. Use them if you finish a lab early, or after the session.
 
 ## Related docs
 
-- [Creating a Meshery Design]({{< ref "guides/configuration-management/creating-a-meshery-design.md" >}})
+- [Creating a Meshery Design]({{< ref "guides/configuration-management/creating-a-meshery-design/index.md" >}})
 - [Importing and Exporting Designs]({{< ref "guides/configuration-management/import-export-designs.md" >}})
 - [Catalog]({{< ref "concepts/architecture/catalog/index.md" >}})
 - [Publishing Designs](https://docs.layer5.io/kanvas/designer/publishing-designs/)

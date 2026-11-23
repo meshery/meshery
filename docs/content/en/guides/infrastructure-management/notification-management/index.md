@@ -117,6 +117,6 @@ Meshery shows the user's avatar when the event carries a user ID and Meshery can
 
 Your provider decides how long notifications are retained. To clear notifications sooner, delete them.
 
-For how the Notification Center is built, see the [contributor guide]({{< ref "project/contributing/ui/notification-center.md" >}}).
+For how the Notification Center is built, see the [contributor guide]({{< ref "project/contributing/ui/notification-center/index.md" >}}).
 
 {{< related-discussions tag="meshery" >}}

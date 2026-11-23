@@ -29,7 +29,7 @@ In Meshery UI, open **Configuration → Designs**. The page is at:
 {{% alert color="info" title="Can't find your design?" %}}
 If you don't see your design, check your Organization and Workspace selections. Designs are scoped to a Workspace, so make sure you have the correct Workspace selected in the dropdown at the top of the page. If you don't have any designs in that Workspace, you can switch to another Workspace or create a new design in the current one.
 
-If you don't have any designs, create one by following [Creating a Meshery Design]({{< ref "guides/configuration-management/creating-a-meshery-design.md" >}}).
+If you don't have any designs, create one by following [Creating a Meshery Design]({{< ref "guides/configuration-management/creating-a-meshery-design/index.md" >}}).
 {{% /alert %}}
 
 ### 2. Download your design as an OCI image

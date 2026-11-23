@@ -682,7 +682,7 @@ Unit coverage that exists today:
 End-to-end coverage lives in `ui/tests/e2e/controllers-config.spec.ts`, keyed to
 the **Operator, MeshSync & Broker Settings** Test Plan Test Group via the Allure
 `testGroup` label - the same mechanism the Connection Lifecycle report uses (see
-[Contributing to Meshery's CLI tests]({{< relref "cli/tests.md" >}})). It covers
+[Contributing to Meshery's CLI tests]({{< relref "cli/tests/index.md" >}})). It covers
 every wire path in the tables above plus the precedence chain, the inherit
 round-trip, validation rejection, and the mode gating.
 
