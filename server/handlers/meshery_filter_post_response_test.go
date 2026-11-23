@@ -173,6 +173,50 @@ func TestFilterPOSTImportsRawWASMFromURL(t *testing.T) {
 	assert.Equal(t, module, stored.FilterFile, "the stored filter file must be the downloaded module")
 }
 
+// TestFilterPOSTURLImportKeepsConfig pins the configuration sent with a URL
+// import (mesheryctl filter import <url> --wasm-config, or the UI's config
+// field): it must reach the filter as filterResource, as a file upload's does.
+func TestFilterPOSTURLImportKeepsConfig(t *testing.T) {
+	const config = "match: route-a\nratelimit: 100\n"
+	for _, save := range []bool{false, true} {
+		t.Run(map[bool]string{false: "without save", true: "with save"}[save], func(t *testing.T) {
+			allowLoopbackRemoteFileImports(t)
+			h, provider, db := newFilterPOSTFixture(t)
+			provider.Log = h.log
+			registerWASMFilterComponent(t, h.registryManager)
+			source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				_, _ = w.Write([]byte("\x00asm\x01\x00\x00\x00"))
+			}))
+			t.Cleanup(source.Close)
+
+			rec := postFilter(t, h, provider, models.MesheryFilterRequestBody{
+				Save:   save,
+				URL:    source.URL + "/filters/rate-limit.wasm",
+				Config: config,
+			})
+			require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+
+			var imported []models.MesheryFilter
+			require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &imported))
+			require.Len(t, imported, 1, "the response must carry the imported filter, got %s", rec.Body.String())
+			filterResource := imported[0].FilterResource
+			if save {
+				require.NotNil(t, imported[0].ID)
+				var stored models.MesheryFilter
+				require.NoError(t, db.Where("id = ?", *imported[0].ID).First(&stored).Error)
+				filterResource = stored.FilterResource
+			}
+			require.NotEmpty(t, filterResource, "the configuration sent with a URL import must not be dropped")
+
+			var resource struct {
+				Configuration map[string]interface{} `json:"configuration"`
+			}
+			require.NoError(t, json.Unmarshal([]byte(filterResource), &resource))
+			assert.Equal(t, config, resource.Configuration["config"])
+		})
+	}
+}
+
 // TestFilterPOSTResponseCarriesUnsavedFilter pins the body when save is false:
 // the handler only converts the filter, so the response is its only output.
 func TestFilterPOSTResponseCarriesUnsavedFilter(t *testing.T) {
