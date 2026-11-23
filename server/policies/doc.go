@@ -18,10 +18,10 @@
 //     is deduplicated against the existing design via
 //     [RelationshipPolicy.AlreadyExists] and emitted as an add-relationship
 //     action.
-//  2a. Inventory additions. [identifyInventoryAdditions] auto-creates any
-//      parent declarations a child references but the design does not
-//      contain (Namespace for a namespaced resource, etc.). This mirrors
-//      the Rego engine's identify_additions step.
+//     2a. Inventory additions. [identifyInventoryAdditions] auto-creates any
+//     parent declarations a child references but the design does not
+//     contain (Namespace for a namespaced resource, etc.). This mirrors
+//     the Rego engine's identify_additions step.
 //  3. Side effects. For every implicated relationship, approve identified
 //     ones, clean up deleted ones, and apply policy-specific side effects
 //     (configuration patches, alias node creation, ...).
