@@ -175,9 +175,13 @@ function prepareHref(href) {
   }
 
   if (typeof href === 'object') {
-    if (href.external) return href.uri || '';
+    if (typeof href.uri !== 'string' || !href.uri) {
+      return '';
+    }
 
-    return '/extension' + (href.uri || '');
+    if (href.external) return href.uri;
+
+    return '/extension' + href.uri;
   }
 
   return '';

@@ -112,6 +112,19 @@ describe('ExtensionPointSchemaValidator', () => {
       expect(out[1].href).toBe('https://meshery.io');
     });
 
+    it('returns an empty string when href object has non-string or empty uri', () => {
+      const out = decode([
+        { title: 'NumericUri', href: { uri: 42 } },
+        { title: 'ExternalNumericUri', href: { external: true, uri: 42 } },
+        { title: 'ObjectUri', href: { uri: { toString: 0 } } },
+        { title: 'EmptyUri', href: { uri: '' } },
+      ]);
+      expect(out[0].href).toBe('');
+      expect(out[1].href).toBe('');
+      expect(out[2].href).toBe('');
+      expect(out[3].href).toBe('');
+    });
+
     it('filters out null, undefined, and non-object items in the array', () => {
       const out = decode([
         null,
@@ -229,6 +242,15 @@ describe('ExtensionPointSchemaValidator', () => {
       expect(out[0].href).toBe('');
       expect(out[1].href).toBe('');
       expect(out[2].href).toBe('/account/settings');
+    });
+
+    it('returns an empty string when account href object has non-string uri', () => {
+      const out = decode([
+        { title: 'NumericUri', href: { uri: 42 } },
+        { title: 'ObjectUri', href: { uri: { toString: 0 } } },
+      ]);
+      expect(out[0].href).toBe('');
+      expect(out[1].href).toBe('');
     });
 
     it('filters out nullish and non-object items', () => {
