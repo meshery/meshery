@@ -246,7 +246,11 @@ func makeProviderPackageArchive(name string) []byte {
 func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 	provider := newTestRemoteProvider(t, "https://remote.example.com")
 	homeDir := t.TempDir()
-	t.Setenv("HOME", homeDir)
+	originalHomeDir := remoteProviderHomeDir
+	remoteProviderHomeDir = homeDir
+	t.Cleanup(func() {
+		remoteProviderHomeDir = originalHomeDir
+	})
 	origSkip := viper.Get(SKIP_DOWNLOAD_EXTENSIONS_ENV)
 	defer viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, origSkip)
 	viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, false)
@@ -287,7 +291,7 @@ func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 		provider.SetProviderProperties(expected)
 		snapshot := provider.GetProviderProperties()
 		location := snapshot.PackageLocation()
-		provider.DownloadProviderExtensionPackage(provider.Log)
+		snapshot.DownloadProviderExtensionPackage(provider.Log)
 		content, err := os.ReadFile(filepath.Join(location, "extension.txt"))
 		if err != nil {
 			t.Fatalf("provider %d package downloaded to the wrong snapshot location: %v", i, err)
@@ -322,9 +326,6 @@ func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 			defer wg.Done()
 			for i := 0; i < 5000; i++ {
 				snapshot := provider.GetProviderProperties()
-				_ = snapshot.PackageLocation()
-				_ = provider.PackageLocation()
-				provider.DownloadProviderExtensionPackage(provider.Log)
 				validOne := snapshot.ProviderName == "Provider One" &&
 					snapshot.ProviderURL == "https://one.example.com" &&
 					snapshot.PackageVersion == "1.0.0"
@@ -334,6 +335,22 @@ func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 				if !validOne && !validTwo {
 					t.Errorf("package snapshot mixed provider fields: name=%q url=%q version=%q",
 						snapshot.ProviderName, snapshot.ProviderURL, snapshot.PackageVersion)
+					return
+				}
+				location := snapshot.PackageLocation()
+				snapshot.DownloadProviderExtensionPackage(provider.Log)
+				content, err := os.ReadFile(filepath.Join(location, "extension.txt"))
+				if err != nil {
+					t.Errorf("package snapshot was not downloaded to %s: %v", location, err)
+					return
+				}
+				expectedContent := "/one.tar.gz"
+				if validTwo {
+					expectedContent = "/two.tar.gz"
+				}
+				if string(content) != expectedContent {
+					t.Errorf("package snapshot destination=%s content=%q, want %q",
+						location, content, expectedContent)
 					return
 				}
 			}

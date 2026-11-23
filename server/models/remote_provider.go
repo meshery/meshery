@@ -130,6 +130,8 @@ type RemoteProvider struct {
 	MeshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode
 }
 
+var remoteProviderHomeDir = homedir.HomeDir()
+
 // AnonymousFlowResponse is the remote provider's reply to the anonymous-user
 // mint. It is a CONSUMED contract - the provider produces it, Meshery Server
 // only decodes it - so it is the schemas construct itself, never a local
@@ -466,7 +468,7 @@ func (l *ProviderProperties) DownloadProviderExtensionPackage(log logger.Handler
 // PackageLocation returns the location of where the package for the current
 // provider is located
 func (l *ProviderProperties) PackageLocation() string {
-	return path.Join(homedir.HomeDir(), ".meshery", "provider", l.ProviderName, l.PackageVersion)
+	return path.Join(remoteProviderHomeDir, ".meshery", "provider", l.ProviderName, l.PackageVersion)
 }
 
 // DownloadProviderExtensionPackage downloads an extension package from one
