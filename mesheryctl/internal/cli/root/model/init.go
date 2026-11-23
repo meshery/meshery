@@ -27,7 +27,7 @@ type cmdModelInitFlags struct {
 var modelInitFlags cmdModelInitFlags
 
 var initModelCmd = &cobra.Command{
-	Use:   "init",
+	Use:   "init <model-name>",
 	Short: "Generates scaffolding for convenient model creation",
 	Long: `Generates a folder structure and guides user on model creation
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model/init`,
