@@ -24,7 +24,7 @@ Another way to test your local changes is to run the adapter as a process. To do
 
 ### Creating a new Meshery Adapter
 
-Meshery uses adapters to manage and interact with different cloud native infrastructure. Meshery adapters are written in Go. Whether you are creating a new adapter or modifying an existing adapter, be sure to read the [Meshery Adapters](https://docs.google.com/document/d/1b8JAMzr3Rntu7CudRaYv6r6ccACJONAB5t7ISCaPNuA/edit#) design specification. For new adapters, start with the Repository Template(https://github.com/meshery/meshery). 
+Meshery uses adapters to manage and interact with different cloud native infrastructure. Meshery adapters are written in Go. Whether you are creating a new adapter or modifying an existing adapter, be sure to read the [Meshery Adapters](https://docs.google.com/document/d/1b8JAMzr3Rntu7CudRaYv6r6ccACJONAB5t7ISCaPNuA/edit#) design specification. For new adapters, start with the [Meshery Adapter Template](https://github.com/meshery-extensions/meshery-adapter-template).
 
 1. Get the proto buf spec file from Meshery repo:
 wget -P meshes https://raw.githubusercontent.com/meshery/meshery/master/server/meshes/meshops.proto
