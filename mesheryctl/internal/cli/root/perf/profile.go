@@ -23,6 +23,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gofrs/uuid"
 	"github.com/manifoldco/promptui"
 	termbox "github.com/nsf/termbox-go"
 
@@ -219,6 +220,16 @@ func fetchPerformanceProfile(baseURL, profileID string) (*perfprofile.Performanc
 	err = json.Unmarshal(body, &profile)
 	if err != nil {
 		return nil, ErrFailUnmarshal(err)
+	}
+
+	requestedUUID, err := uuid.FromString(profileID)
+	if err != nil {
+		return nil, utils.ErrInvalidUUID(err)
+	}
+
+	returnedUUID := uuid.UUID(profile.ID)
+	if returnedUUID == uuid.Nil || returnedUUID != requestedUUID {
+		return nil, utils.ErrInvalidUUID(fmt.Errorf("returned profile ID %q does not match requested UUID %q", profile.ID.String(), profileID))
 	}
 
 	return &profile, nil

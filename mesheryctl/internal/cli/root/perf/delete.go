@@ -55,6 +55,7 @@ mesheryctl perf delete test-3 --yes
 		if utils.IsUUID(args[0]) {
 			p, err := fetchPerformanceProfile(baseURL, args[0])
 			if err != nil {
+				utils.Log.Error(err)
 				return err
 			}
 			profile = *p
