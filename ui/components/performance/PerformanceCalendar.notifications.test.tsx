@@ -77,4 +77,21 @@ describe('PerformanceCalendar', () => {
     expect(screen.getAllByText(/^Run /)).toHaveLength(11);
     expect(fetchPage).toHaveBeenCalledTimes(2);
   });
+
+  it('keeps fetched runs when a later page fails', async () => {
+    const runs = Array.from({ length: 10 }, (_, i) => ({
+      name: `Run ${i + 1}`,
+      testStartTime: '2026-11-01T12:00:00Z',
+      runnerResults: { ActualDuration: 1e9 },
+    }));
+    resultsState.current = {};
+    fetchPage.mockImplementation(async ({ page }) =>
+      page === '0' ? { data: { results: runs, totalCount: 11 } } : { isError: true },
+    );
+
+    render(<PerformanceCalendar />);
+
+    expect(await screen.findByText('Run 10')).toBeInTheDocument();
+    expect(screen.getAllByText(/^Run /)).toHaveLength(10);
+  });
 });

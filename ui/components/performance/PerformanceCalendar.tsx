@@ -119,7 +119,8 @@ function PerformanceCalendar({ style }) {
           from: time.start,
           to: time.end,
         });
-        if (!active || pageFailed || !data) return;
+        if (!active) return;
+        if (pageFailed || !data) break;
         if (!data.results?.length) break;
         runs.push(...data.results);
         if (runs.length >= data.totalCount) break;
