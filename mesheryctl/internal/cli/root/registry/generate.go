@@ -264,6 +264,8 @@ func handleSpreadsheetResponseError(resp *sheets.Spreadsheet, err error, locatio
 		} else {
 			err = fmt.Errorf("request to Google Spreadsheet returned empty response")
 		}
+	} else if resp != nil && resp.HTTPStatusCode != 0 {
+		err = fmt.Errorf("%w (HTTP status %d)", err, resp.HTTPStatusCode)
 	}
 	return ErrUpdateRegistry(err, location)
 }

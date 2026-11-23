@@ -382,10 +382,14 @@ func TestGenerateCmd_InvalidCredentials(t *testing.T) {
 	origCred := spreadsheeetCred
 	origID := spreadsheeetID
 	origCSVDir := csvDirectory
+	origOutputLocation := outputLocation
+	origRegistryLocation := registryLocation
 	defer func() {
 		spreadsheeetCred = origCred
 		spreadsheeetID = origID
 		csvDirectory = origCSVDir
+		outputLocation = origOutputLocation
+		registryLocation = origRegistryLocation
 	}()
 
 	spreadsheeetCred = "invalid-token"
@@ -442,6 +446,17 @@ func TestHandleSpreadsheetResponseError(t *testing.T) {
 			err:          nil,
 			expectedCode: ErrUpdateRegistryCode,
 			containsDiag: "empty response",
+		},
+		{
+			name: "Non-nil error with non-200 HTTP status code appends status",
+			resp: func() *sheets.Spreadsheet {
+				r := &sheets.Spreadsheet{}
+				r.HTTPStatusCode = 404
+				return r
+			}(),
+			err:          fmt.Errorf("spreadsheet not found on remote"),
+			expectedCode: ErrUpdateRegistryCode,
+			containsDiag: "spreadsheet not found on remote (HTTP status 404)",
 		},
 	}
 
