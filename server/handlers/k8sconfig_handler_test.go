@@ -2,11 +2,16 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -417,4 +422,109 @@ func TestKubeconfigDiscoveryPayloadStaysAnArrayUnlessAsked(t *testing.T) {
 	if len(skipped) != 1 || skipped[0]["name"] != "eks" {
 		t.Fatalf("skipped = %#v, want eks", skipped)
 	}
+}
+
+// An uploaded kubeconfig must never make Meshery Server run a command named in
+// it. models.DiscoverKubeconfigContexts proves the skip for each source; this
+// pins the HTTP entry points to the upload source, so switching one of them to
+// KubeconfigFromServer fails here even though every model test stays green.
+func TestUploadedExecKubeconfigNeverRunsItsCommand(t *testing.T) {
+	if _, err := exec.LookPath("sh"); err != nil {
+		t.Skip("needs a POSIX shell to stand in for an exec credential plugin")
+	}
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	// The command is the bare name "sh", not an absolute path: the import
+	// flattens the kubeconfig and inlines any value that is a path on disk,
+	// which would break the plugin for a reason unrelated to the skip.
+	upload := func(t *testing.T, marker string, fields map[string]string) *http.Request {
+		t.Helper()
+		kubeconfig := fmt.Sprintf(`apiVersion: v1
+kind: Config
+current-context: eks
+clusters:
+- cluster:
+    server: https://127.0.0.1:1
+  name: eks
+contexts:
+- context:
+    cluster: eks
+    user: eks-user
+  name: eks
+users:
+- name: eks-user
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      command: sh
+      args: ["-c", "touch '%s'; exit 1"]
+`, marker)
+		var b bytes.Buffer
+		w := multipart.NewWriter(&b)
+		part, err := w.CreateFormFile("k8sfile", "kubeconfig")
+		if err != nil {
+			t.Fatalf("create form file: %v", err)
+		}
+		if _, err := part.Write([]byte(kubeconfig)); err != nil {
+			t.Fatalf("write form file: %v", err)
+		}
+		for k, v := range fields {
+			if err := w.WriteField(k, v); err != nil {
+				t.Fatalf("write field %s: %v", k, err)
+			}
+		}
+		if err := w.Close(); err != nil {
+			t.Fatalf("close writer: %v", err)
+		}
+		req := httptest.NewRequest(http.MethodPost, "/api/system/kubernetes", &b)
+		req.Header.Set("Content-Type", w.FormDataContentType())
+		return req
+	}
+	assertNotRun := func(t *testing.T, marker string) {
+		t.Helper()
+		if _, err := os.Stat(marker); !errors.Is(err, os.ErrNotExist) {
+			t.Fatalf("exec command from an uploaded kubeconfig ran on the server (marker stat err = %v)", err)
+		}
+	}
+
+	t.Run("discovery skips it and reports why", func(t *testing.T) {
+		h := newTestHandler(t, map[string]models.Provider{}, "")
+		marker := filepath.Join(t.TempDir(), "ran")
+		rec := httptest.NewRecorder()
+		h.GetContextsFromK8SConfig(rec, upload(t, marker, map[string]string{DiscoveryDetailFormKey: "true"}), nil, authUser, &mockK8sConfigProvider{})
+		if rec.Code != http.StatusOK {
+			t.Fatalf("expected 200 OK, got %d: %s", rec.Code, rec.Body.String())
+		}
+		assertNotRun(t, marker)
+		var body struct {
+			Contexts        []models.K8sContext         `json:"contexts"`
+			SkippedContexts []models.SkippedKubeContext `json:"skippedContexts"`
+		}
+		if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+			t.Fatalf("unmarshaling discovery response: %v", err)
+		}
+		if len(body.Contexts) != 0 || len(body.SkippedContexts) != 1 || body.SkippedContexts[0].Name != "eks" {
+			t.Fatalf("contexts=%d skipped=%+v, want only eks skipped", len(body.Contexts), body.SkippedContexts)
+		}
+	})
+
+	t.Run("import does not run it or register the context", func(t *testing.T) {
+		h := newTestHandler(t, map[string]models.Provider{}, "")
+		marker := filepath.Join(t.TempDir(), "ran")
+		rec := httptest.NewRecorder()
+		req := upload(t, marker, nil)
+		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+		h.K8SConfigHandler(rec, req, nil, authUser, &mockK8sConfigProvider{})
+		if rec.Code != http.StatusOK {
+			t.Fatalf("expected the import to reach discovery and return 200, got %d: %s", rec.Code, rec.Body.String())
+		}
+		assertNotRun(t, marker)
+		var body SaveK8sContextResponse
+		if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+			t.Fatalf("unmarshaling import response (status %d): %v: %s", rec.Code, err, rec.Body.String())
+		}
+		if n := len(body.RegisteredContexts) + len(body.ConnectedContexts) + len(body.IgnoredContexts) + len(body.ErroredContexts); n != 0 {
+			t.Fatalf("import returned %d contexts, want the exec context left out", n)
+		}
+	})
 }

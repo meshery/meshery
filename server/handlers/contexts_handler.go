@@ -336,7 +336,7 @@ func loadContextsForDeletion(provider interface {
 		if page == 0 {
 			expectedTotal = result.TotalCount
 		} else if result.TotalCount != expectedTotal {
-			return nil, fmt.Errorf("Kubernetes context count changed during pagination")
+			return nil, fmt.Errorf("kubernetes context count changed during pagination")
 		}
 		for _, item := range result.Contexts {
 			if item == nil || item.ID == "" {
