@@ -85,3 +85,21 @@ func TestPreflightCmdIntegration(t *testing.T) {
 		t.Log("PreflightCmdIntegration Test Passed")
 	}
 }
+
+func TestCheckCmdArgs(t *testing.T) {
+	// check does not take any positional arguments
+	err := checkCmd.Args(checkCmd, []string{})
+	assert.NoError(t, err)
+
+	err = checkCmd.Args(checkCmd, []string{"extra-arg"})
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "too many arguments specified")
+		assert.Contains(t, err.Error(), "Usage: mesheryctl system check")
+	}
+
+	err = checkCmd.Args(checkCmd, []string{"arg1", "arg2"})
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "too many arguments specified")
+		assert.Contains(t, err.Error(), "Usage: mesheryctl system check")
+	}
+}
