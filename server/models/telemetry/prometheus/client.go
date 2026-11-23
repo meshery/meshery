@@ -34,19 +34,18 @@ type Client struct {
 	log        logger.Handler
 }
 
-// New builds a Client for the given Prometheus base URL and secret.
-//
-// The secret is interpreted the same way the connection wizard captures it:
-//   - "username:password" (contains a colon) -> HTTP Basic auth
-//   - any other non-empty value             -> Bearer token (API key / service-account token)
-//   - empty                                  -> no auth (anonymous Prometheus)
-//
 // safeHTTPClient is the single SSRF-guarded client shared by every Client in
 // this package. Sharing one transport keeps connection pooling effective: the
 // telemetry handlers build a Client per request, and *http.Client is safe for
 // concurrent use and carries no per-Client state.
 var safeHTTPClient = utils.NewSafeHTTPClient(defaultTimeout)
 
+// New builds a Client for the given Prometheus base URL and secret.
+//
+// The secret is interpreted the same way the connection wizard captures it:
+//   - "username:password" (contains a colon) -> HTTP Basic auth
+//   - any other non-empty value             -> Bearer token (API key / service-account token)
+//   - empty                                  -> no auth (anonymous Prometheus)
 func New(baseURL, secret string, log logger.Handler) *Client {
 	return NewWithHTTPClient(baseURL, secret, log, safeHTTPClient)
 }
