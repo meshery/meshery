@@ -56,6 +56,7 @@ import 'tippy.js/animations/perspective.css';
 import 'tippy.js/animations/perspective-subtle.css';
 import 'tippy.js/animations/perspective-extreme.css';
 import '@xterm/xterm/css/xterm.css';
+import ConsoleProvider from '@/components/console/ConsoleProvider';
 import {
   getControllerPollConnectionIDsFromContextIds,
   getK8sConfigIdsFromK8sConfig,
@@ -563,47 +564,49 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                                 maxSnack={10}
                               >
                                 <NotificationCenterProvider>
-                                  <MesheryProgressBar />
-                                  <KubernetesSubscription setAppState={setAppState} />
-                                  {!state.isFullScreenMode && (
-                                    <Header
-                                      onDrawerToggle={handleDrawerToggle}
-                                      onDrawerCollapse={isDrawerCollapsed}
-                                      contexts={state.k8sContexts}
-                                      activeContexts={state.activeK8sContexts}
-                                      setActiveContexts={setActiveContexts}
-                                      searchContexts={searchContexts}
-                                      updateExtensionType={updateCurrentExtensionType}
-                                      abilityUpdated={state.abilityUpdated}
-                                    />
-                                  )}
-                                  <StyledContentWrapper>
-                                    <StyledMainContent
-                                      id="meshery-main"
-                                      style={{
-                                        padding: extensionType === 'navigator' && '0px',
-                                      }}
-                                    >
-                                      <LocalizationProvider dateAdapter={AdapterMoment}>
-                                        <ErrorBoundary customFallback={CustomErrorFallback}>
-                                          <Component
-                                            pageContext={pageContext}
-                                            contexts={state.k8sContexts}
-                                            activeContexts={state.activeK8sContexts}
-                                            setActiveContexts={setActiveContexts}
-                                            searchContexts={searchContexts}
-                                            {...pageProps}
-                                          />
-                                        </ErrorBoundary>
-                                      </LocalizationProvider>
-                                    </StyledMainContent>
-                                    <Footer
-                                      handleMesheryCommunityClick={handleMesheryCommunityClick}
-                                      providerCapabilities={providerCapabilities}
-                                    />
-                                  </StyledContentWrapper>
-                                  {/* App-level Create Connection wizard (context switcher, telemetry, deep links). */}
-                                  <ConnectionWizardHost />
+                                  <ConsoleProvider>
+                                    <MesheryProgressBar />
+                                    <KubernetesSubscription setAppState={setAppState} />
+                                    {!state.isFullScreenMode && (
+                                      <Header
+                                        onDrawerToggle={handleDrawerToggle}
+                                        onDrawerCollapse={isDrawerCollapsed}
+                                        contexts={state.k8sContexts}
+                                        activeContexts={state.activeK8sContexts}
+                                        setActiveContexts={setActiveContexts}
+                                        searchContexts={searchContexts}
+                                        updateExtensionType={updateCurrentExtensionType}
+                                        abilityUpdated={state.abilityUpdated}
+                                      />
+                                    )}
+                                    <StyledContentWrapper>
+                                      <StyledMainContent
+                                        id="meshery-main"
+                                        style={{
+                                          padding: extensionType === 'navigator' && '0px',
+                                        }}
+                                      >
+                                        <LocalizationProvider dateAdapter={AdapterMoment}>
+                                          <ErrorBoundary customFallback={CustomErrorFallback}>
+                                            <Component
+                                              pageContext={pageContext}
+                                              contexts={state.k8sContexts}
+                                              activeContexts={state.activeK8sContexts}
+                                              setActiveContexts={setActiveContexts}
+                                              searchContexts={searchContexts}
+                                              {...pageProps}
+                                            />
+                                          </ErrorBoundary>
+                                        </LocalizationProvider>
+                                      </StyledMainContent>
+                                      <Footer
+                                        handleMesheryCommunityClick={handleMesheryCommunityClick}
+                                        providerCapabilities={providerCapabilities}
+                                      />
+                                    </StyledContentWrapper>
+                                    {/* App-level Create Connection wizard (context switcher, telemetry, deep links). */}
+                                    <ConnectionWizardHost />
+                                  </ConsoleProvider>
                                 </NotificationCenterProvider>
                               </SnackbarProvider>
                             </StyledAppContent>
