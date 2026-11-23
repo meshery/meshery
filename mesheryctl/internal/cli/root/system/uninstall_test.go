@@ -1061,7 +1061,7 @@ func TestUninstallCmdArgs(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:          "invalid with unexpected positional arguements",
+			Name:          "invalid with unexpected positional arguments",
 			Args:          []string{"unexpected-arg"},
 			ExpectError:   true,
 			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("uninstall does not accept positional arguments\n\n%s", uninstallUsageMsg)),
