@@ -1,13 +1,17 @@
 package registry
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/api/sheets/v4"
 )
 
 // resetGenerateFlags resets all flags to their default values
@@ -368,6 +372,85 @@ func TestGenerateCmdArgs(t *testing.T) {
 			} else {
 				assert.NoError(t, err)
 			}
+		})
+	}
+}
+
+func TestGenerateCmd_InvalidCredentials(t *testing.T) {
+	utils.SetupMeshkitLoggerTesting(t, false)
+
+	origCred := spreadsheeetCred
+	origID := spreadsheeetID
+	origCSVDir := csvDirectory
+	defer func() {
+		spreadsheeetCred = origCred
+		spreadsheeetID = origID
+		csvDirectory = origCSVDir
+	}()
+
+	spreadsheeetCred = "invalid-token"
+	spreadsheeetID = "some-id"
+	csvDirectory = ""
+
+	err := generateCmd.RunE(generateCmd, []string{})
+	assert.Error(t, err, "generateCmd.RunE must return an error when credentials are invalid")
+	assert.Contains(t, err.Error(), "Invalid JWT Token")
+}
+
+func TestHandleSpreadsheetResponseError(t *testing.T) {
+	const testLocation = "./models"
+
+	tests := []struct {
+		name         string
+		resp         *sheets.Spreadsheet
+		err          error
+		expectedCode string
+		containsDiag string
+	}{
+		{
+			name:         "Direct network or request error preserved",
+			resp:         nil,
+			err:          fmt.Errorf("connection refused"),
+			expectedCode: ErrUpdateRegistryCode,
+			containsDiag: "connection refused",
+		},
+		{
+			name: "Non-200 HTTP status code 403 preserved",
+			resp: func() *sheets.Spreadsheet {
+				r := &sheets.Spreadsheet{}
+				r.HTTPStatusCode = 403
+				return r
+			}(),
+			err:          nil,
+			expectedCode: ErrUpdateRegistryCode,
+			containsDiag: "HTTP status 403",
+		},
+		{
+			name: "Non-200 HTTP status code 404 preserved",
+			resp: func() *sheets.Spreadsheet {
+				r := &sheets.Spreadsheet{}
+				r.HTTPStatusCode = 404
+				return r
+			}(),
+			err:          nil,
+			expectedCode: ErrUpdateRegistryCode,
+			containsDiag: "HTTP status 404",
+		},
+		{
+			name:         "Nil response with nil error formats empty response diagnostic",
+			resp:         nil,
+			err:          nil,
+			expectedCode: ErrUpdateRegistryCode,
+			containsDiag: "empty response",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resErr := handleSpreadsheetResponseError(tt.resp, tt.err, testLocation)
+			assert.Error(t, resErr)
+			assert.Equal(t, tt.expectedCode, meshkiterrors.GetCode(resErr))
+			assert.Contains(t, resErr.Error(), tt.containsDiag)
 		})
 	}
 }

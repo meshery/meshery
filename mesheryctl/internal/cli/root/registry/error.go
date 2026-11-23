@@ -24,28 +24,35 @@ var (
 	ErrPurgeUnsafePathCode       = "mesheryctl-1252"
 )
 
+func errString(err error) string {
+	if err == nil {
+		return ""
+	}
+	return err.Error()
+}
+
 func ErrUpdateRegistry(err error, path string) error {
-	return errors.New(ErrUpdateRegistryCode, errors.Alert, []string{"error updating registry at ", path}, []string{err.Error()}, []string{"Provided spreadsheet ID is incorrect", "Provided credential is incorrect"}, []string{"Ensure correct spreadsheet ID is provided", "Ensure correct credential is used"})
+	return errors.New(ErrUpdateRegistryCode, errors.Alert, []string{"error updating registry at ", path}, []string{errString(err)}, []string{"Provided spreadsheet ID is incorrect", "Provided credential is incorrect"}, []string{"Ensure correct spreadsheet ID is provided", "Ensure correct credential is used"})
 }
 
 func ErrGenerateModel(err error, modelName string) error {
-	return errors.New(ErrGenerateModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{fmt.Sprintf("Error generating model: %s\n %s", modelName, err.Error())}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
+	return errors.New(ErrGenerateModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{fmt.Sprintf("Error generating model: %s\n %s", modelName, errString(err))}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
 }
 
 func ErrGenerateComponent(err error, modelName, compName string) error {
-	return errors.New(ErrGenerateComponentCode, errors.Alert, []string{"Error generating component", fmt.Sprintf("component %s of model %s", compName, modelName)}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrGenerateComponentCode, errors.Alert, []string{"Error generating component", fmt.Sprintf("component %s of model %s", compName, modelName)}, []string{errString(err)}, []string{}, []string{})
 }
 
 func ErrUpdateModel(err error, modelName string) error {
-	return errors.New(ErrUpdateModelCode, errors.Alert, []string{"error updating model ", modelName}, []string{err.Error()}, []string{"Model does not exist"}, []string{"Ensure existence of model, check for typo in model name"})
+	return errors.New(ErrUpdateModelCode, errors.Alert, []string{"error updating model ", modelName}, []string{errString(err)}, []string{"Model does not exist"}, []string{"Ensure existence of model, check for typo in model name"})
 }
 
 func ErrUpdateComponent(err error, modelName, compName string) error {
-	return errors.New(ErrUpdateComponentCode, errors.Alert, []string{fmt.Sprintf("error updating component %s of model %s ", compName, modelName)}, []string{err.Error()}, []string{"Component does not exist", "Component definition is corrupted"}, []string{"Ensure existence of component, check for typo in component name", "Regenerate corrupted component"})
+	return errors.New(ErrUpdateComponentCode, errors.Alert, []string{fmt.Sprintf("error updating component %s of model %s ", compName, modelName)}, []string{errString(err)}, []string{"Component does not exist", "Component definition is corrupted"}, []string{"Ensure existence of component, check for typo in component name", "Regenerate corrupted component"})
 }
 
 func ErrParsingSheet(err error, obj string) error {
-	return errors.New(ErrParsingSheetCode, errors.Alert, []string{fmt.Sprintf("error parsing %s sheet", obj)}, []string{fmt.Sprintf("while parsing the %s sheet encountered an error: %s", obj, err)}, []string{"provided sheet id for %s might be incorrect"}, []string{"ensure the sheet id is correct"})
+	return errors.New(ErrParsingSheetCode, errors.Alert, []string{fmt.Sprintf("error parsing %s sheet", obj)}, []string{fmt.Sprintf("while parsing the %s sheet encountered an error: %s", obj, errString(err))}, []string{"provided sheet id for %s might be incorrect"}, []string{"ensure the sheet id is correct"})
 }
 
 func ErrGenerationTimeout(duration time.Duration) error {
@@ -53,15 +60,15 @@ func ErrGenerationTimeout(duration time.Duration) error {
 }
 
 func ErrParsingRelationship(err error, modelName string) error {
-	return errors.New(ErrParsingRelationshipCode, errors.Alert, []string{fmt.Sprintf("error parsing relationships for model: %s", modelName)}, []string{err.Error()}, []string{"Invalid relationship definition format", "Missing required relationship fields", "Malformed selector in relationship"}, []string{"Verify the relationship CSV format", "Check that all required fields are present", "Validate the selector JSON syntax"})
+	return errors.New(ErrParsingRelationshipCode, errors.Alert, []string{fmt.Sprintf("error parsing relationships for model: %s", modelName)}, []string{errString(err)}, []string{"Invalid relationship definition format", "Missing required relationship fields", "Malformed selector in relationship"}, []string{"Verify the relationship CSV format", "Check that all required fields are present", "Validate the selector JSON syntax"})
 }
 
 func ErrPublish(err error, system string) error {
-	return errors.New(ErrPublishCode, errors.Alert, []string{fmt.Sprintf("error publishing to %s", system)}, []string{err.Error()}, []string{"Invalid system specified", "Publishing process encountered an error"}, []string{"Ensure a valid system is provided (remote-provider, website)", "Check the publishing configuration and try again"})
+	return errors.New(ErrPublishCode, errors.Alert, []string{fmt.Sprintf("error publishing to %s", system)}, []string{errString(err)}, []string{"Invalid system specified", "Publishing process encountered an error"}, []string{"Ensure a valid system is provided (remote-provider, website)", "Check the publishing configuration and try again"})
 }
 
 func ErrModelGenerationFailed(modelName string, err error) error {
-	return errors.New(ErrModelGenerationFailedCode, errors.Alert, []string{fmt.Sprintf("failed to generate model: %s", modelName)}, []string{err.Error()}, []string{"Invalid model source URL", "Unsupported registrant type", "Network issues fetching model data"}, []string{"Verify the model's source URL is accessible", "Check the registrant type is supported", "Review network connectivity"})
+	return errors.New(ErrModelGenerationFailedCode, errors.Alert, []string{fmt.Sprintf("failed to generate model: %s", modelName)}, []string{errString(err)}, []string{"Invalid model source URL", "Unsupported registrant type", "Network issues fetching model data"}, []string{"Verify the model's source URL is accessible", "Check the registrant type is supported", "Review network connectivity"})
 }
 
 func ErrPurgeInvalidRetain(retain int) error {
@@ -69,7 +76,7 @@ func ErrPurgeInvalidRetain(retain int) error {
 }
 
 func ErrPurgeReadModelsDir(err error, path string) error {
-	return errors.New(ErrPurgeReadModelsDirCode, errors.Alert, []string{fmt.Sprintf("error reading models directory: %s", path)}, []string{err.Error()}, []string{"The ./models directory is not readable", "Insufficient filesystem permissions"}, []string{"Ensure ./models exists and is readable", "Run mesheryctl registry purge from the root of a meshery/meshery fork"})
+	return errors.New(ErrPurgeReadModelsDirCode, errors.Alert, []string{fmt.Sprintf("error reading models directory: %s", path)}, []string{errString(err)}, []string{"The ./models directory is not readable", "Insufficient filesystem permissions"}, []string{"Ensure ./models exists and is readable", "Run mesheryctl registry purge from the root of a meshery/meshery fork"})
 }
 
 func ErrPurgeUnsafePath(path, modelsDir string) error {
@@ -77,5 +84,5 @@ func ErrPurgeUnsafePath(path, modelsDir string) error {
 }
 
 func ErrPurgeRemove(err error, path string) error {
-	return errors.New(ErrPurgeRemoveCode, errors.Alert, []string{fmt.Sprintf("error removing model version directory: %s", path)}, []string{err.Error()}, []string{"Insufficient filesystem permissions", "The directory is in use by another process"}, []string{"Ensure sufficient permissions to delete the directory", "Retry the purge after closing any process using the directory"})
+	return errors.New(ErrPurgeRemoveCode, errors.Alert, []string{fmt.Sprintf("error removing model version directory: %s", path)}, []string{errString(err)}, []string{"Insufficient filesystem permissions", "The directory is in use by another process"}, []string{"Ensure sufficient permissions to delete the directory", "Retry the purge after closing any process using the directory"})
 }
