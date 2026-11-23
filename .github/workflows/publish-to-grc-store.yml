@@ -19,6 +19,7 @@ permissions: {}
 jobs:
   version:
     name: version
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     permissions:
       contents: read # Read the latest release tag
@@ -39,6 +40,7 @@ jobs:
 
   results:
     name: publish-results
+    if: github.repository == 'meshery/meshery'
     needs: version
     permissions:
       contents: read         
