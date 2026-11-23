@@ -312,6 +312,7 @@ func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 	}
 
 	var wg sync.WaitGroup
+	var packageDownloadMu sync.Mutex
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
@@ -337,10 +338,12 @@ func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 						snapshot.ProviderName, snapshot.ProviderURL, snapshot.PackageVersion)
 					return
 				}
+				packageDownloadMu.Lock()
 				location := snapshot.PackageLocation()
 				snapshot.DownloadProviderExtensionPackage(provider.Log)
 				content, err := os.ReadFile(filepath.Join(location, "extension.txt"))
 				if err != nil {
+					packageDownloadMu.Unlock()
 					t.Errorf("package snapshot was not downloaded to %s: %v", location, err)
 					return
 				}
@@ -349,10 +352,12 @@ func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 					expectedContent = "/two.tar.gz"
 				}
 				if string(content) != expectedContent {
+					packageDownloadMu.Unlock()
 					t.Errorf("package snapshot destination=%s content=%q, want %q",
 						location, content, expectedContent)
 					return
 				}
+				packageDownloadMu.Unlock()
 			}
 		}()
 	}
