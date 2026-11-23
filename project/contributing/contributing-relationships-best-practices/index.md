@@ -84,10 +84,10 @@ This simple check catches malformed JSON and is sufficient for most relationship
   "selectors": [{
     "allow": {
       "from": [
-        {"kind": "ServiceAccount", "model": "kubernetes"}
+        {"kind": "ServiceAccount", "model": {"name": "kubernetes"}}
       ],
       "to": [
-        {"kind": "Role", "model": "aws-iam-controller"}
+        {"kind": "Role", "model": {"name": "aws-iam-controller"}}
       ]
     }
   }]

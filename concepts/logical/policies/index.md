@@ -25,7 +25,10 @@ Meshery Server has a built-in policy engine implemented natively in Go (ported f
 Each evaluation cycle visits every registered policy and applies it to the current design in three phases:
 
 - **Identify** — propose new relationships from the policy's selectors and the matching component configuration. The hierarchical parent-child policy, for example, connects a Pod that declares `namespace: production` to the `Namespace/production` declaration in the same design.
-- **Validate** — drop existing relationships whose endpoints no longer satisfy the policy (the from or to component was removed, or its kind / labels no longer match).
+- **Validate** — mark existing relationships deleted when their endpoints no
+  longer satisfy the policy (the from or to component was removed, or its kind /
+  labels no longer match).
+  Pending relationships remain pending until their components become available.
 - **Apply side effects** — patch component configuration when a relationship requires it. A binding relationship copies a value from its mutator endpoint into a field on the bound component, and reverses that patch on deletion.
 
 **Built-in policies**

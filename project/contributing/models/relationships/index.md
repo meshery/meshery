@@ -362,9 +362,15 @@ An empty string. The property is deprecated (see the schema's deprecation notice
 
 #### Scoping
 
-1. To apply a relationship across models, set the selector `model.name` to `*`. To limit it to one model, specify that model name (case sensitive).
-2. Absence of a selector property is interpreted as the wildcard `*`.
+1. To apply a relationship across models, set the selector `model.name` to `*`.
+   To limit it to one model, specify that model name (case sensitive); model names
+   may also use regular expressions.
+2. Absence or an empty value of a selector `model.name` is interpreted as the
+   wildcard `*`.
 3. Values for `kind`, `version`, and `model` are case-sensitive.
+4. Every endpoint must satisfy both its kind and model selector. A component in
+   another model cannot satisfy a model-pinned endpoint even when its kind and
+   configuration values match.
 
 #### Actions
 

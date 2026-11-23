@@ -16378,7 +16378,10 @@ Meshery Server has a built-in policy engine implemented natively in Go (ported f
 Each evaluation cycle visits every registered policy and applies it to the current design in three phases:
 
 - **Identify** — propose new relationships from the policy's selectors and the matching component configuration. The hierarchical parent-child policy, for example, connects a Pod that declares `namespace: production` to the `Namespace/production` declaration in the same design.
-- **Validate** — drop existing relationships whose endpoints no longer satisfy the policy (the from or to component was removed, or its kind / labels no longer match).
+- **Validate** — mark existing relationships deleted when their endpoints no
+  longer satisfy the policy (the from or to component was removed, or its kind /
+  labels no longer match).
+  Pending relationships remain pending until their components become available.
 - **Apply side effects** — patch component configuration when a relationship requires it. A binding relationship copies a value from its mutator endpoint into a field on the bound component, and reverses that patch on deletion.
 
 **Built-in policies**
@@ -16843,6 +16846,10 @@ See [Contributing to Relationships](/project/contributing/models/relationships/)
 ## Selectors in Relationships
 
 In Meshery, a selector specifies which components participate in a relationship. The field name is `selectors` (an array of selector-set items). Items in the array are OR; inside one item, every `from` entry relates to every `to` entry - a cross-product.
+
+The selector's `model.name` also scopes each endpoint. An omitted or empty name,
+or `*`, matches components from any model; a specific name or regular expression
+matches only components whose model name satisfies the selector.
 
 Here are examples of pairs that share a visual paradigm. The ConfigMap pairs are **edge / non-binding / reference**. The WASMFilter pair is **hierarchical / parent / wallet**, not inventory.
 
@@ -27820,9 +27827,15 @@ An empty string. The property is deprecated (see the schema's deprecation notice
 
 #### Scoping
 
-1. To apply a relationship across models, set the selector `model.name` to `*`. To limit it to one model, specify that model name (case sensitive).
-2. Absence of a selector property is interpreted as the wildcard `*`.
+1. To apply a relationship across models, set the selector `model.name` to `*`.
+   To limit it to one model, specify that model name (case sensitive); model names
+   may also use regular expressions.
+2. Absence or an empty value of a selector `model.name` is interpreted as the
+   wildcard `*`.
 3. Values for `kind`, `version`, and `model` are case-sensitive.
+4. Every endpoint must satisfy both its kind and model selector. A component in
+   another model cannot satisfy a model-pinned endpoint even when its kind and
+   configuration values match.
 
 #### Actions
 
@@ -28852,7 +28865,6 @@ date: "2026-11-22"
 
 Thank you to our contributors for making this release possible:
 @Abiona, @Amansingh0807, @Asheesh7298, @BHAUMIK0711, @DRafi2006, @Fabito97, @Hpsingh26, @ItsAbir005, @JayitaL, @Maanvi212006, @MeghiyaT, @OkokoJerry, @Rebs707, @SajanBisht, @SakshamMawari, @SandstromPL, @Sarthak-Pandey, @Shikhyy, @Supersaiyan101, @abhinavkdeval08-design, @akpn23, @alexquincy, @escanut, @everleepham, @fitzergerald, @fqthedeveloper, @gideon-tech, @hariswarreddy, @himanishpuri, @hortison, @leecalcote, @madhavzanwar, @marblom007, @meshery-ci, @mi-vault, @miacycle, @michaelvance092, @mrdeyroy, @nanjundachitra100-del, @nishant-devv, @patelshivani2283-lab, @pontusringblom, @ramith14, @rrehhamm, @sarajkrishnasingh, @sheldenr, @shrimanasa, @thisisvaishnav, @tusharsanka4, @unchained-angel, @winkletinkle, @yenugantirahul, @yi-nuo426, Pontus Ringblom and Sarthak Pandey
-
 
 
 --------------------------------------------------------------------------------
@@ -65172,10 +65184,10 @@ This simple check catches malformed JSON and is sufficient for most relationship
   "selectors": [{
     "allow": {
       "from": [
-        {"kind": "ServiceAccount", "model": "kubernetes"}
+        {"kind": "ServiceAccount", "model": {"name": "kubernetes"}}
       ],
       "to": [
-        {"kind": "Role", "model": "aws-iam-controller"}
+        {"kind": "Role", "model": {"name": "aws-iam-controller"}}
       ]
     }
   }]
@@ -71162,7 +71174,7 @@ The pipeline reviews, tests, checks documentation and lint, then writes the atte
 
 ## Submitting
 
-Once you've committed your changes, push them through the gate remote with `git push no-mistakes feature/jdoe/567`: a plain push targets `origin`, which the setup guide repointed at meshery/meshery. The gate runs the pipeline and opens the pull request for you once every check passes, so do not open one by hand. If you need to make any adjustments to your pull request, first run `no-mistakes axi status` and follow its `branch_sync.next_action`: when it says `sync`, run `no-mistakes axi sync` first, since the gate may have advanced the published branch past your local copy. Then push the updates through the gate remote, and run the gate again on the same branch so the attestation matches the new head commit. An attestation for an older commit fails the `PR must be raised via no-mistakes` check. Pull requests that change only `docs/**`, the root `CNAME`, or `.github/workflows/**` are exempt from the gate. If you never ran the gate setup, `origin` still points at your fork, so push with `git push origin feature/jdoe/567` and open the pull request from your fork's page. If you ran the setup, `origin` points at `meshery/meshery`, so add a remote for your fork first (`git remote add fork git@github.com:USERNAME/meshery.git`), push with `git push fork feature/jdoe/567`, and open the pull request from your fork's page. Your pull request will automatically track the changes in your development branch and update it.
+Once you've committed your changes, push them through the gate remote with `git push no-mistakes feature/jdoe/567`: a plain push targets `origin`, which the setup guide repointed at meshery/meshery. The gate runs the pipeline and opens the pull request for you once every check passes, so do not open one by hand. If you need to make any adjustments to your pull request, first run `no-mistakes axi status` and follow its `branch_sync.next_action`: when it says `sync`, run `no-mistakes axi sync` first, since the gate may have advanced the published branch past your local copy. Then push the updates through the gate remote, and run the gate again on the same branch so the attestation matches the new head commit. An attestation for an older commit fails the `PR must be raised via no-mistakes` check. Pull requests that change only `docs/**`, the root `CNAME`, or `.github/workflows/**` are exempt from the gate; push those changes to your fork and open the pull request there. If gate setup has repointed `origin` to `meshery/meshery`, add a fork remote first (`git remote add fork git@github.com:USERNAME/meshery.git`) and push the exempt-only branch with `git push fork feature/jdoe/567`.
 
 
 
