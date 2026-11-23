@@ -24,7 +24,7 @@ const RequestForm = () => {
     isSuccess: isOrgsSuccess,
     isError: isOrgsError,
     error: orgsError,
-  } = useGetOrgsQuery({});
+  } = useGetOrgsQuery({ pagesize: 'all' });
 
   const theme = useTheme();
   let orgs = orgsResponse?.organizations || [];
