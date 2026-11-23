@@ -51,8 +51,13 @@ func (fv *FlagValidator) Validate(s interface{}) error {
 	return nil
 }
 
+// IsSemver returns true if the string matches Meshery's supported model-version format (^vMAJOR.MINOR.PATCH...).
+func IsSemver(version string) bool {
+	return vSemverRegex.MatchString(version)
+}
+
 func isSemver(fl validator.FieldLevel) bool {
-	return vSemverRegex.MatchString(fl.Field().String())
+	return IsSemver(fl.Field().String())
 }
 
 func isRelativePath(fl validator.FieldLevel) bool {

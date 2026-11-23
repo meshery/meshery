@@ -120,8 +120,11 @@ func (g *Graph) topologicalSort(fn VisitFn) (bool, error) {
 	}
 
 	var vertexCount int64
-	for queue.Length() > 0 {
-		v := queue.Dequeue()
+	for {
+		v, ok := queue.Dequeue()
+		if !ok {
+			break
+		}
 
 		node, known := g.Nodes[v]
 		if !known {
