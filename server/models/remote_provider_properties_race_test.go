@@ -3,6 +3,8 @@ package models
 import (
 	"sync"
 	"testing"
+
+	"github.com/spf13/viper"
 )
 
 func TestRemoteProviderProviderPropertiesConcurrentAccess(t *testing.T) {
@@ -219,17 +221,22 @@ func TestRemoteProviderDescriptionPreservesNilAndEmptySlices(t *testing.T) {
 
 func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 	provider := newTestRemoteProvider(t, "https://remote.example.com")
+	origSkip := viper.Get(SKIP_DOWNLOAD_EXTENSIONS_ENV)
+	defer viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, origSkip)
+	viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, false)
 
 	properties := []ProviderProperties{
 		{
 			ProviderName:   "Provider One",
 			ProviderURL:    "https://one.example.com",
 			PackageVersion: "1.0.0",
+			PackageURL:     "",
 		},
 		{
 			ProviderName:   "Provider Two",
 			ProviderURL:    "https://two.example.com",
 			PackageVersion: "2.0.0",
+			PackageURL:     "",
 		},
 	}
 
@@ -250,6 +257,9 @@ func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 			defer wg.Done()
 			for i := 0; i < 5000; i++ {
 				snapshot := provider.GetProviderProperties()
+				_ = snapshot.PackageLocation()
+				_ = provider.PackageLocation()
+				provider.DownloadProviderExtensionPackage(provider.Log)
 				validOne := snapshot.ProviderName == "Provider One" &&
 					snapshot.ProviderURL == "https://one.example.com" &&
 					snapshot.PackageVersion == "1.0.0"
