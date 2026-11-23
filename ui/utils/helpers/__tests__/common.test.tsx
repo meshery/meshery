@@ -37,6 +37,14 @@ describe('closeButtonForSnackbarAction', () => {
     expect(closeSnackbar).toHaveBeenNthCalledWith(1, 'a');
     expect(closeSnackbar).toHaveBeenNthCalledWith(2, 'b');
   });
+
+  it('safely handles non-function closeSnackbar on click', () => {
+    const buildAction = closeButtonForSnackbarAction(undefined as any);
+    const action = buildAction('snack-1');
+    render(action as React.ReactElement);
+    const btn = screen.getByRole('button', { name: /close/i });
+    expect(() => fireEvent.click(btn)).not.toThrow();
+  });
 });
 
 describe('successHandlerGenerator', () => {
@@ -79,6 +87,28 @@ describe('successHandlerGenerator', () => {
     handler(undefined);
     expect(notify).not.toHaveBeenCalled();
     expect(cb).not.toHaveBeenCalled();
+  });
+
+  it('safely handles circular object payloads without throwing', () => {
+    const notify = vi.fn();
+    const handler = successHandlerGenerator(notify, 'Saved');
+    const circular: Record<string, unknown> = { name: 'demo' };
+    circular.self = circular;
+    expect(() => handler(circular)).not.toThrow();
+    expect(notify).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Saved',
+        event_type: EVENT_TYPES.SUCCESS,
+      }),
+    );
+  });
+
+  it('handles non-function cb and notify safely', () => {
+    const handlerWithBadCb = successHandlerGenerator(vi.fn(), 'Saved', 'not-a-fn' as any);
+    expect(() => handlerWithBadCb('ok')).not.toThrow();
+
+    const handlerWithBadNotify = successHandlerGenerator(null as any, 'Saved');
+    expect(() => handlerWithBadNotify('ok')).not.toThrow();
   });
 });
 
@@ -126,5 +156,32 @@ describe('errorHandlerGenerator', () => {
     handler('oops');
     expect(cb).toHaveBeenCalledWith('oops');
     expect(notify).toHaveBeenCalled();
+  });
+
+  it('safely handles null and undefined error values without throwing', () => {
+    const notify = vi.fn();
+    const handler = errorHandlerGenerator(notify, 'Failed');
+
+    expect(() => handler(null)).not.toThrow();
+    expect(notify).toHaveBeenCalledWith({
+      message: 'Failed',
+      details: '',
+      event_type: EVENT_TYPES.ERROR,
+    });
+
+    expect(() => handler(undefined)).not.toThrow();
+    expect(notify).toHaveBeenCalledWith({
+      message: 'Failed',
+      details: '',
+      event_type: EVENT_TYPES.ERROR,
+    });
+  });
+
+  it('handles non-function cb and notify gracefully', () => {
+    const handlerWithBadCb = errorHandlerGenerator(vi.fn(), 'Failed', 'not-a-fn' as any);
+    expect(() => handlerWithBadCb('error')).not.toThrow();
+
+    const handlerWithBadNotify = errorHandlerGenerator(null as any, 'Failed');
+    expect(() => handlerWithBadNotify('error')).not.toThrow();
   });
 });
