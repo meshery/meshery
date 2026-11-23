@@ -38,6 +38,52 @@ describe('useInterval', () => {
     expect(cb).not.toHaveBeenCalled();
   });
 
+  it('does nothing when delay is undefined', () => {
+    const cb = vi.fn();
+    renderHook(() => useInterval(cb, undefined));
+
+    act(() => {
+      vi.advanceTimersByTime(10_000);
+    });
+
+    expect(cb).not.toHaveBeenCalled();
+  });
+
+  it('does nothing when delay is negative', () => {
+    const cb = vi.fn();
+    renderHook(() => useInterval(cb, -100));
+
+    act(() => {
+      vi.advanceTimersByTime(10_000);
+    });
+
+    expect(cb).not.toHaveBeenCalled();
+  });
+
+  it('does nothing when delay is NaN or non-numeric', () => {
+    const cb = vi.fn();
+    renderHook(() => useInterval(cb, Number.NaN));
+    // @ts-expect-error testing invalid delay input
+    renderHook(() => useInterval(cb, '500'));
+
+    act(() => {
+      vi.advanceTimersByTime(10_000);
+    });
+
+    expect(cb).not.toHaveBeenCalled();
+  });
+
+  it('does not throw when callback is not a function', () => {
+    // @ts-expect-error testing invalid callback input
+    expect(() => renderHook(() => useInterval(null, 100))).not.toThrow();
+    // @ts-expect-error testing invalid callback input
+    expect(() => renderHook(() => useInterval(undefined, 100))).not.toThrow();
+
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+  });
+
   it('always invokes the most recent callback without resetting the timer', () => {
     const first = vi.fn();
     const second = vi.fn();
