@@ -17,7 +17,8 @@ import (
 type Option func(*routerOptions)
 
 type routerOptions struct {
-	log logger.Handler
+	log                    logger.Handler
+	preRecoveryMiddlewares []mux.MiddlewareFunc
 }
 
 // WithLogger sets the logger the recovery middleware writes contained panics
@@ -25,6 +26,14 @@ type routerOptions struct {
 // registered hooks; it is just not logged.
 func WithLogger(log logger.Handler) Option {
 	return func(o *routerOptions) { o.log = log }
+}
+
+// WithPreRecoveryMiddleware registers middleware before the recovery middleware,
+// ensuring it executes outside recovery and observes recovered 500 responses and durations.
+func WithPreRecoveryMiddleware(mw ...mux.MiddlewareFunc) Option {
+	return func(o *routerOptions) {
+		o.preRecoveryMiddlewares = append(o.preRecoveryMiddlewares, mw...)
+	}
 }
 
 // recoveryMiddleware answers a panicking HTTP handler with a structured 500
