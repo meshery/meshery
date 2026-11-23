@@ -70,25 +70,31 @@ export default function ExtensionPointSchemaValidator(type) {
  */
 function NavigatorExtensionSchemaDecoder(content) {
   if (Array.isArray(content)) {
-    return content.map((item) => {
-      return {
-        title: item.title || '',
-        href: prepareHref(item.href),
-        component: item.component || '',
-        onClickCallback: item?.onClickCallback || 0,
-        // Mirror createPathForRemoteComponent's prefix-then-normalizeURI shape
-        // so the icon URL never picks up a double slash. Without this, an
-        // item.icon starting with "/" concatenated onto a prefix ending in "/"
-        // produced "/api/provider/extension//provider/..." which the browser
-        // treated as a distinct URL from the single-slash form, causing two
-        // fetches (one of which stalled) for the same asset.
-        icon: (item.icon && '/api/provider/extension' + normalizeURI(item.icon)) || '',
-        show: !!item.show,
-        children: NavigatorExtensionSchemaDecoder(item.children),
-        full_page: item.full_page,
-        isBeta: item.isBeta ?? false,
-      };
-    });
+    return content
+      .filter((item) => item && typeof item === 'object')
+      .map((item) => {
+        return {
+          title: item.title || '',
+          href: prepareHref(item.href),
+          component: item.component || '',
+          onClickCallback: item?.onClickCallback || 0,
+          // Mirror createPathForRemoteComponent's prefix-then-normalizeURI shape
+          // so the icon URL never picks up a double slash. Without this, an
+          // item.icon starting with "/" concatenated onto a prefix ending in "/"
+          // produced "/api/provider/extension//provider/..." which the browser
+          // treated as a distinct URL from the single-slash form, causing two
+          // fetches (one of which stalled) for the same asset.
+          icon:
+            (typeof item.icon === 'string' &&
+              item.icon &&
+              '/api/provider/extension' + normalizeURI(item.icon)) ||
+            '',
+          show: !!item.show,
+          children: NavigatorExtensionSchemaDecoder(item.children),
+          full_page: item.full_page,
+          isBeta: item.isBeta ?? false,
+        };
+      });
   }
 
   return [];
@@ -101,9 +107,11 @@ function NavigatorExtensionSchemaDecoder(content) {
  */
 function UserPrefsExtensionSchemaDecoder(content) {
   if (Array.isArray(content)) {
-    return content.map((item) => {
-      return { component: item.component || '' };
-    });
+    return content
+      .filter((item) => item && typeof item === 'object')
+      .map((item) => {
+        return { component: item.component || '' };
+      });
   }
 
   return [];
@@ -116,9 +124,11 @@ function UserPrefsExtensionSchemaDecoder(content) {
  */
 function CollaboratorExtensionSchemaDecoder(content) {
   if (Array.isArray(content)) {
-    return content.map((item) => {
-      return { component: item.component || '' };
-    });
+    return content
+      .filter((item) => item && typeof item === 'object')
+      .map((item) => {
+        return { component: item.component || '' };
+      });
   }
 
   return [];
@@ -131,25 +141,48 @@ function CollaboratorExtensionSchemaDecoder(content) {
  */
 function AccountExtensionSchemaDecoder(content) {
   if (Array.isArray(content)) {
-    return content.map((item) => {
-      return {
-        title: item.title || '',
-        href: prepareHref(item.href),
-        component: item.component || '',
-        onClickCallback: item?.onClickCallback || 0,
-        show: !!item.show,
-        children: AccountExtensionSchemaDecoder(item.children),
-        full_page: item.full_page,
-        isHtmlLink: item.link,
-      };
-    });
+    return content
+      .filter((item) => item && typeof item === 'object')
+      .map((item) => {
+        return {
+          title: item.title || '',
+          href: prepareHref(item.href),
+          component: item.component || '',
+          onClickCallback: item?.onClickCallback || 0,
+          show: !!item.show,
+          children: AccountExtensionSchemaDecoder(item.children),
+          full_page: item.full_page,
+          isHtmlLink: item.link,
+        };
+      });
   }
 
   return [];
 }
 
+/**
+ * Resolves an extension href object or string into a fully-qualified route.
+ * Returns an empty string for nullish or invalid href inputs.
+ *
+ * @param {Object|string|null|undefined} href
+ * @returns {string}
+ */
 function prepareHref(href) {
-  if (href.external) return href.uri || '';
+  if (!href) return '';
 
-  return '/extension' + (href.uri || '');
+  if (typeof href === 'string') {
+    return href;
+  }
+
+  if (typeof href === 'object') {
+    if (typeof href.uri !== 'string' || !href.uri) {
+      return '';
+    }
+
+    if (href.external) return href.uri;
+
+    return '/extension' + href.uri;
+  }
+
+  return '';
 }

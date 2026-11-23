@@ -10,7 +10,7 @@ Just head over to the GitHub page and click the "Fork" button. It's just that si
 
 ## Clone your fork to your local machine
 
-```
+```sh
 git clone git@github.com:USERNAME/FORKED-PROJECT.git
 ```
 
@@ -19,7 +19,7 @@ While this isn't a necessary step, if you plan on doing anything more than just 
 
 ## Add 'upstream' repo to list of remotes
 
-```
+```sh
 git remote add upstream https://github.com/meshery/meshery.git
 ```
 
@@ -27,7 +27,7 @@ git remote add upstream https://github.com/meshery/meshery.git
 
 ## Verify the new remote named 'upstream'
 
-```
+```sh
 git remote -v
 ```
 
@@ -35,13 +35,13 @@ Whenever you want to update your fork with the latest upstream changes, you'll n
 
 ## Fetch from upstream remote
 
-```
+```sh
 git fetch upstream
 ```
 
 ## View all branches, including those from upstream
 
-```
+```sh
 git branch -va
 ```
 
@@ -49,7 +49,7 @@ Now, check out your master branch and merge the upstream repo's master branch:
 
 ## Checkout your master branch and merge upstream
 
-```
+```sh
 git checkout master
 git merge upstream/master
 ```
@@ -65,7 +65,7 @@ To create a new branch and start working on it, perform the following flow.
 
 ## Check out the master branch - you want your new branch to come from the master
 
-```
+```sh
 git checkout master
 ```
 
@@ -75,13 +75,13 @@ For enhancements use `feature/your_username/issue#` or `feature/your_username/na
 
 For bugs use `bug/your_username/issue#` or `bug/your_username/name_of_bug`
 
-```
+```sh
 git branch feature/jdoe/567
 ```
 
 ## Switch to your new branch
 
-```
+```sh
 git checkout feature/jdoe/567
 ```
 
@@ -95,7 +95,7 @@ In the time that you've been working on your changes, if any commits have been m
 
 ## Fetch upstream master and merge with your repo's master branch
 
-```
+```sh
 git fetch upstream
 git checkout master
 git merge upstream/master
@@ -103,7 +103,7 @@ git merge upstream/master
 
 ## If there were any new commits, rebase your development branch
 
-```
+```sh
 git checkout feature/jdoe/567
 git rebase master
 ```
@@ -112,14 +112,24 @@ Now, it may be desirable to squash some of your smaller commits down into a smal
 
 ## Rebase all commits on your development branch
 
-```
+```sh
 git checkout
 git rebase -i master
 ```
 
 This will open up a text editor where you can specify which commits to squash.
 
+## Validate with the Quality Gate (No-Mistakes)
+
+These steps target `meshery/meshery`; for another Meshery repository, substitute that repository's parent and fork URLs throughout. Pull requests into `master` need a green no-mistakes run unless every changed path is under `docs/**`, the root `CNAME`, or `.github/workflows/**`. There is no separate lane for hand-written changes. Run the pipeline on your branch:
+
+```bash
+no-mistakes axi run --intent "<brief description of your changes>"
+```
+
+The pipeline reviews, tests, checks documentation and lint, then writes the attestation that the `PR must be raised via no-mistakes` check requires into the pull request description. Commit with `git commit -s` so the separate `DCO` check passes. See [Running the pre-landing Quality Gate]({{< ref "project/contributing/_index.md#no-mistakes-quality-gate" >}}) for installation and setup.
+
 ## Submitting
 
-Once you've committed and pushed all of your changes to GitHub, go to the page for your fork on GitHub, select your development branch, and click the pull request button. If you need to make any adjustments to your pull request, just push the updates to GitHub. Your pull request will automatically track the changes in your development branch and update it.
+Once you've committed your changes, push them through the gate remote with `git push no-mistakes feature/jdoe/567`: a plain push targets `origin`, which the setup guide repointed at meshery/meshery. The gate runs the pipeline and opens the pull request for you once every check passes, so do not open one by hand. If you need to make any adjustments to your pull request, first run `no-mistakes axi status` and follow its `branch_sync.next_action`: when it says `sync`, run `no-mistakes axi sync` first, since the gate may have advanced the published branch past your local copy. Then push the updates through the gate remote, and run the gate again on the same branch so the attestation matches the new head commit. An attestation for an older commit fails the `PR must be raised via no-mistakes` check. Pull requests that change only `docs/**`, the root `CNAME`, or `.github/workflows/**` are exempt from the gate; push those changes to your fork and open the pull request there. If gate setup has repointed `origin` to `meshery/meshery`, add a fork remote first (`git remote add fork git@github.com:USERNAME/meshery.git`) and push the exempt-only branch with `git push fork feature/jdoe/567`.
 

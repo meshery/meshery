@@ -426,7 +426,10 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     }
 
     try {
-      const result = await fetchOrganizations({}).unwrap();
+      // Every organization, so a session org past the server's default first
+      // page is found instead of being replaced by organizations[0]. This is the
+      // generated endpoint, so the key is camelCase pageSize.
+      const result = await fetchOrganizations({ pageSize: 'all' }).unwrap();
       let organizationToSet;
       const sessionOrg = currentOrg ? JSON.parse(currentOrg) : null;
 

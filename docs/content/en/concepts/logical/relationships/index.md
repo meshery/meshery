@@ -5,7 +5,7 @@ aliases:
 - /concepts/relationships/
 ---
 
-Meshery Relationships characterize how [components]({{< ref "components.md" >}}) are connected and interact with each other. Relationships are defined within [models]({{< ref "models/index.md" >}}) to aid in structuring the interrelationships between one or more components in a [design]({{< ref "designs.md" >}}) to further in comprehending the overall structure and dependencies within managed systems.
+Meshery Relationships characterize how [components]({{< ref "concepts/logical/components.md" >}}) are connected and interact with each other. Relationships are defined within [models]({{< ref "concepts/logical/models/index.md" >}}) to aid in structuring the interrelationships between one or more components in a [design]({{< ref "concepts/logical/designs.md" >}}) to aid in comprehending the overall structure and dependencies within managed systems.
 
 Meshery recognizes that relationships exist in various forms and that the existence of a relationship might be interdependent upon the existence (or absence) of another relationship. To support this complexity, Meshery relationships are highly expressive, characterizing the nature of interaction of interconnected components no matter their genealogy.
 
@@ -259,6 +259,10 @@ See [Contributing to Relationships]({{< ref "project/contributing/models/relatio
 ## Selectors in Relationships
 
 In Meshery, a selector specifies which components participate in a relationship. The field name is `selectors` (an array of selector-set items). Items in the array are OR; inside one item, every `from` entry relates to every `to` entry - a cross-product.
+
+The selector's `model.name` also scopes each endpoint. An omitted or empty name,
+or `*`, matches components from any model; a specific name or regular expression
+matches only components whose model name satisfies the selector.
 
 Here are examples of pairs that share a visual paradigm. The ConfigMap pairs are **edge / non-binding / reference**. The WASMFilter pair is **hierarchical / parent / wallet**, not inventory.
 

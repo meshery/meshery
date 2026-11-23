@@ -6,11 +6,11 @@ categories: [contributing]
 
 # Relationship Testing and Best Practices
 
-This guide complements the [Contributing to Model Relationships](/project/contributing/contributing-relationships) documentation by focusing on **practical testing and debugging techniques** for relationship definitions.
+This guide complements the [Contributing to Model Relationships](/project/contributing/models/relationships) documentation by focusing on **practical testing and debugging techniques** for relationship definitions.
 
 ## Before You Start
 
-Make sure you've read the [Contributing to Model Relationships](/project/contributing/contributing-relationships) guide to understand relationship structure, schema, and components.
+Make sure you've read the [Contributing to Model Relationships](/project/contributing/models/relationships) guide to understand relationship structure, schema, and components.
 
 ## 1. Validate JSON Syntax
 
@@ -80,10 +80,10 @@ This simple check catches malformed JSON and is sufficient for most relationship
   "selectors": [{
     "allow": {
       "from": [
-        {"kind": "ServiceAccount", "model": "kubernetes"}
+        {"kind": "ServiceAccount", "model": {"name": "kubernetes"}}
       ],
       "to": [
-        {"kind": "Role", "model": "aws-iam-controller"}
+        {"kind": "Role", "model": {"name": "aws-iam-controller"}}
       ]
     }
   }]
@@ -394,7 +394,7 @@ Once validated and tested:
 
 ## Resources
 
-- [Contributing to Model Relationships](/project/contributing/contributing-relationships)
+- [Contributing to Model Relationships](/project/contributing/models/relationships)
 - [Meshery Relationship Schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1alpha3/relationship)
 - [Existing Relationships](https://github.com/meshery/meshery/tree/master/models)
 - [OPA Policies](https://github.com/meshery/meshery/tree/master/models/meshery-core)

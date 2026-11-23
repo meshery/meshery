@@ -1,13 +1,19 @@
 package perf
 
 import (
+	"errors"
 	"fmt"
+	"net/http"
+	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 )
 
 func TestDeleteCmd(t *testing.T) {
@@ -38,6 +44,15 @@ func TestDeleteCmd(t *testing.T) {
 			Args: []string{"delete", "istio-test", "--yes"},
 			URLs: []utils.MockURL{
 				{Method: "GET", URL: profileURL, Response: "profile.delete.exact.response.golden", ResponseCode: 200},
+				{Method: "DELETE", URL: deleteURL, Response: "profile.delete.success.response.golden", ResponseCode: 200},
+			},
+			ExpectedResponse: "delete.success.output.golden",
+		},
+		{
+			Name: "given an exact profile id when delete with yes then delete it directly via GET endpoint",
+			Args: []string{"delete", profileID, "--yes"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: deleteURL, Response: "profile.get.single.response.golden", ResponseCode: 200},
 				{Method: "DELETE", URL: deleteURL, Response: "profile.delete.success.response.golden", ResponseCode: 200},
 			},
 			ExpectedResponse: "delete.success.output.golden",
@@ -94,10 +109,64 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectError:   true,
 			ExpectedError: utils.ErrFailReqStatus(400, ""),
 		},
+		{
+			Name: "given nonexistent profile uuid when delete with yes then throw no profile found error",
+			Args: []string{"delete", profileID, "--yes"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: deleteURL, Response: "profile.error.response.golden", ResponseCode: 404},
+			},
+			ExpectError:   true,
+			ExpectedError: ErrNoProfileFound(),
+		},
+		{
+			Name: "given server error on profile uuid lookup when delete with yes then throw error",
+			Args: []string{"delete", profileID, "--yes"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: deleteURL, Response: "profile.error.response.golden", ResponseCode: 500},
+			},
+			ExpectError:   true,
+			ExpectedError: utils.ErrMesheryServerInternalError(errors.New("")),
+		},
+		{
+			Name: "given bad request on profile uuid lookup when delete with yes then throw error",
+			Args: []string{"delete", profileID, "--yes"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: deleteURL, Response: "profile.error.response.golden", ResponseCode: 400},
+			},
+			ExpectError:   true,
+			ExpectedError: utils.ErrFailReqStatus(400, ""),
+		},
 	}
 
 	utils.RunMesheryctlMultiURLTests(t, update, PerfCmd, listTests, currDir, "perf", resetVariables)
 	utils.RunMesheryctlMultiURLTests(t, update, PerfCmd, errorTests, currDir, "perf", resetVariables)
+}
+
+func TestDeleteCmdRejectsIncompleteProfileLookup(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	previousToken := utils.TokenFlag
+	utils.TokenFlag = utils.GetToken(t)
+	t.Cleanup(func() {
+		utils.StopMockery(t)
+		utils.ResetCommandFlags(PerfCmd, t)
+		resetVariables()
+		utils.TokenFlag = previousToken
+	})
+
+	profileURL := testContext.BaseURL + "/api/performance/profiles"
+	profileID := "a947dff3-1415-4ca6-8922-e35b3232bd78"
+	firstPage := fmt.Sprintf(`{"totalCount":2,"profiles":[{"id":"%s","name":"istio-test"}]}`, profileID)
+	httpmock.RegisterResponderWithQuery("GET", profileURL, "pagesize=25&page=0&search=istio-test", httpmock.NewStringResponder(200, firstPage))
+	httpmock.RegisterResponderWithQuery("GET", profileURL, "pagesize=25&page=1&search=istio-test", httpmock.NewStringResponder(200, `{"totalCount":1,"profiles":[]}`))
+	httpmock.RegisterResponder("DELETE", profileURL+"/"+profileID, func(_ *http.Request) (*http.Response, error) {
+		t.Error("delete requested after incomplete profile lookup")
+		return httpmock.NewStringResponse(200, ""), nil
+	})
+
+	PerfCmd.SetArgs([]string{"delete", "istio-test", "--yes"})
+	if err := PerfCmd.Execute(); meshkiterrors.GetCode(err) != ErrProfileTraversalCode {
+		t.Fatalf("expected profile traversal error, got %v", err)
+	}
 }
 
 func TestFetchAllPerformanceProfilesPagesThroughResults(t *testing.T) {
@@ -121,5 +190,280 @@ func TestFetchAllPerformanceProfilesPagesThroughResults(t *testing.T) {
 	}
 	if len(got) != 2 || got[0].Name != "istio-0" || got[1].Name != "istio-1" {
 		t.Fatalf("expected both pages to be returned, got %+v", got)
+	}
+}
+
+func TestDeleteCmdByUUIDInteractive(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	previousToken := utils.TokenFlag
+	utils.TokenFlag = utils.GetToken(t)
+	t.Cleanup(func() {
+		utils.StopMockery(t)
+		utils.ResetCommandFlags(PerfCmd, t)
+		resetVariables()
+		utils.TokenFlag = previousToken
+	})
+
+	profileID := "a947dff3-1415-4ca6-8922-e35b3232bd78"
+	singleProfileJSON := fmt.Sprintf(`{"id":"%s","name":"istio-test"}`, profileID)
+	getURL := testContext.BaseURL + "/api/performance/profiles/" + profileID
+
+	t.Run("when confirmed then delete profile", func(t *testing.T) {
+		httpmock.Reset()
+		deleted := false
+		httpmock.RegisterResponder("GET", getURL, httpmock.NewStringResponder(200, singleProfileJSON))
+		httpmock.RegisterResponder("DELETE", getURL, func(_ *http.Request) (*http.Response, error) {
+			deleted = true
+			return httpmock.NewStringResponse(200, ""), nil
+		})
+
+		r, w, err := os.Pipe()
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, _ = w.WriteString("yes\n")
+		_ = w.Close()
+		oldStdin := os.Stdin
+		defer func() { os.Stdin = oldStdin }()
+		os.Stdin = r
+
+		PerfCmd.SetArgs([]string{"delete", profileID})
+		err = PerfCmd.Execute()
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if !deleted {
+			t.Errorf("expected DELETE request to be executed on confirmation")
+		}
+	})
+
+	t.Run("when aborted then do not delete profile", func(t *testing.T) {
+		httpmock.Reset()
+		deleted := false
+		httpmock.RegisterResponder("GET", getURL, httpmock.NewStringResponder(200, singleProfileJSON))
+		httpmock.RegisterResponder("DELETE", getURL, func(_ *http.Request) (*http.Response, error) {
+			deleted = true
+			return httpmock.NewStringResponse(200, ""), nil
+		})
+
+		r, w, err := os.Pipe()
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, _ = w.WriteString("no\n")
+		_ = w.Close()
+		oldStdin := os.Stdin
+		defer func() { os.Stdin = oldStdin }()
+		os.Stdin = r
+
+		PerfCmd.SetArgs([]string{"delete", profileID})
+		err = PerfCmd.Execute()
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if deleted {
+			t.Errorf("expected DELETE request NOT to be executed when aborted")
+		}
+	})
+}
+
+func TestFetchPerformanceProfile(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	previousToken := utils.TokenFlag
+	utils.TokenFlag = utils.GetToken(t)
+	t.Cleanup(func() {
+		utils.StopMockery(t)
+		utils.TokenFlag = previousToken
+	})
+
+	profileID := "a947dff3-1415-4ca6-8922-e35b3232bd78"
+	url := testContext.BaseURL + "/api/performance/profiles/" + profileID
+
+	t.Run("successful profile lookup", func(t *testing.T) {
+		httpmock.Reset()
+		body := fmt.Sprintf(`{"id":"%s","name":"istio-test"}`, profileID)
+		httpmock.RegisterResponder("GET", url, httpmock.NewStringResponder(200, body))
+
+		profile, err := fetchPerformanceProfile(testContext.BaseURL, profileID)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if profile.ID.String() != profileID || profile.Name != "istio-test" {
+			t.Errorf("unexpected profile data: %+v", profile)
+		}
+	})
+
+	t.Run("profile not found returns ErrNoProfileFound", func(t *testing.T) {
+		httpmock.Reset()
+		httpmock.RegisterResponder("GET", url, httpmock.NewStringResponder(404, `{"message":"not found"}`))
+
+		_, err := fetchPerformanceProfile(testContext.BaseURL, profileID)
+		if meshkiterrors.GetCode(err) != ErrNoProfileFoundCode {
+			t.Fatalf("expected ErrNoProfileFoundCode, got %v", err)
+		}
+	})
+
+	t.Run("server error returns ErrMesheryServerInternalError", func(t *testing.T) {
+		httpmock.Reset()
+		httpmock.RegisterResponder("GET", url, httpmock.NewStringResponder(500, "internal error"))
+
+		_, err := fetchPerformanceProfile(testContext.BaseURL, profileID)
+		if meshkiterrors.GetCode(err) != utils.ErrMesheryServerInternalErrorCode {
+			t.Fatalf("expected ErrMesheryServerInternalErrorCode, got %v", err)
+		}
+	})
+
+	t.Run("bad request error returns ErrFailReqStatus", func(t *testing.T) {
+		httpmock.Reset()
+		httpmock.RegisterResponder("GET", url, httpmock.NewStringResponder(400, "bad request"))
+
+		_, err := fetchPerformanceProfile(testContext.BaseURL, profileID)
+		if meshkiterrors.GetCode(err) != utils.ErrFailReqStatusCode {
+			t.Fatalf("expected ErrFailReqStatusCode, got %v", err)
+		}
+	})
+
+	t.Run("invalid json response returns ErrFailUnmarshal", func(t *testing.T) {
+		httpmock.Reset()
+		httpmock.RegisterResponder("GET", url, httpmock.NewStringResponder(200, "not-valid-json"))
+
+		_, err := fetchPerformanceProfile(testContext.BaseURL, profileID)
+		if meshkiterrors.GetCode(err) != ErrFailUnmarshalCode {
+			t.Fatalf("expected ErrFailUnmarshalCode, got %v", err)
+		}
+	})
+
+	t.Run("returned profile id matches but uses different letter casing", func(t *testing.T) {
+		httpmock.Reset()
+		upperUUID := strings.ToUpper(profileID)
+		body := fmt.Sprintf(`{"id":"%s","name":"istio-test"}`, upperUUID)
+		httpmock.RegisterResponder("GET", url, httpmock.NewStringResponder(200, body))
+
+		profile, err := fetchPerformanceProfile(testContext.BaseURL, profileID)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if profile.ID.String() != profileID || profile.Name != "istio-test" {
+			t.Errorf("unexpected profile data: %+v", profile)
+		}
+	})
+
+	t.Run("returned profile id missing returns ErrInvalidUUID", func(t *testing.T) {
+		httpmock.Reset()
+		body := `{"name":"istio-test"}`
+		httpmock.RegisterResponder("GET", url, httpmock.NewStringResponder(200, body))
+
+		_, err := fetchPerformanceProfile(testContext.BaseURL, profileID)
+		if meshkiterrors.GetCode(err) != utils.ErrInvalidUUIDCode {
+			t.Fatalf("expected ErrInvalidUUIDCode, got %v", err)
+		}
+	})
+
+	t.Run("returned profile id is zero uuid returns ErrInvalidUUID", func(t *testing.T) {
+		httpmock.Reset()
+		body := `{"id":"00000000-0000-0000-0000-000000000000","name":"istio-test"}`
+		httpmock.RegisterResponder("GET", url, httpmock.NewStringResponder(200, body))
+
+		_, err := fetchPerformanceProfile(testContext.BaseURL, profileID)
+		if meshkiterrors.GetCode(err) != utils.ErrInvalidUUIDCode {
+			t.Fatalf("expected ErrInvalidUUIDCode, got %v", err)
+		}
+	})
+
+	t.Run("returned profile id is different uuid returns ErrInvalidUUID", func(t *testing.T) {
+		httpmock.Reset()
+		diffUUID := "00000000-0000-0000-0000-111111111111"
+		body := fmt.Sprintf(`{"id":"%s","name":"istio-test"}`, diffUUID)
+		httpmock.RegisterResponder("GET", url, httpmock.NewStringResponder(200, body))
+
+		_, err := fetchPerformanceProfile(testContext.BaseURL, profileID)
+		if meshkiterrors.GetCode(err) != utils.ErrInvalidUUIDCode {
+			t.Fatalf("expected ErrInvalidUUIDCode, got %v", err)
+		}
+	})
+}
+
+func TestDeleteCmdByUUIDRejectsInvalidProfileResponses(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	previousToken := utils.TokenFlag
+	utils.TokenFlag = utils.GetToken(t)
+	t.Cleanup(func() {
+		utils.StopMockery(t)
+		utils.ResetCommandFlags(PerfCmd, t)
+		resetVariables()
+		utils.TokenFlag = previousToken
+	})
+
+	profileID := "a947dff3-1415-4ca6-8922-e35b3232bd78"
+	getURL := testContext.BaseURL + "/api/performance/profiles/" + profileID
+	deleteURL := testContext.BaseURL + "/api/performance/profiles/"
+
+	tests := []struct {
+		name         string
+		getResponse  string
+		responseCode int
+		expectedCode string
+	}{
+		{
+			name:         "missing profile ID in response",
+			getResponse:  `{"name":"istio-test"}`,
+			responseCode: 200,
+			expectedCode: utils.ErrInvalidUUIDCode,
+		},
+		{
+			name:         "zero profile ID in response",
+			getResponse:  `{"id":"00000000-0000-0000-0000-000000000000","name":"istio-test"}`,
+			responseCode: 200,
+			expectedCode: utils.ErrInvalidUUIDCode,
+		},
+		{
+			name:         "mismatched profile ID in response",
+			getResponse:  `{"id":"00000000-0000-0000-0000-111111111111","name":"istio-test"}`,
+			responseCode: 200,
+			expectedCode: utils.ErrInvalidUUIDCode,
+		},
+		{
+			name:         "404 not found in response",
+			getResponse:  `{"message":"not found"}`,
+			responseCode: 404,
+			expectedCode: ErrNoProfileFoundCode,
+		},
+		{
+			name:         "500 server error in response",
+			getResponse:  `internal error`,
+			responseCode: 500,
+			expectedCode: utils.ErrMesheryServerInternalErrorCode,
+		},
+		{
+			name:         "invalid json in response",
+			getResponse:  `not-valid-json`,
+			responseCode: 200,
+			expectedCode: ErrFailUnmarshalCode,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			httpmock.Reset()
+			deleteCalled := false
+
+			httpmock.RegisterResponder("GET", getURL, httpmock.NewStringResponder(tt.responseCode, tt.getResponse))
+			httpmock.RegisterRegexpResponder("DELETE", regexp.MustCompile(regexp.QuoteMeta(deleteURL)+".*"), func(_ *http.Request) (*http.Response, error) {
+				deleteCalled = true
+				return httpmock.NewStringResponse(200, ""), nil
+			})
+
+			PerfCmd.SetArgs([]string{"delete", profileID, "--yes"})
+			err := PerfCmd.Execute()
+			if err == nil {
+				t.Fatalf("expected error, got nil")
+			}
+			if meshkiterrors.GetCode(err) != tt.expectedCode {
+				t.Fatalf("expected error code %s, got %v (%s)", tt.expectedCode, err, meshkiterrors.GetCode(err))
+			}
+			if deleteCalled {
+				t.Fatalf("DELETE request must NOT be sent when lookup response is invalid")
+			}
+		})
 	}
 }
