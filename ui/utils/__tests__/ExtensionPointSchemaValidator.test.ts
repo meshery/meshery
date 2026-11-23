@@ -90,6 +90,51 @@ describe('ExtensionPointSchemaValidator', () => {
       expect(out[0].children[0].title).toBe('Child');
       expect(out[0].children[0].href).toBe('/extension/c');
     });
+
+    it('handles items with missing, null, or undefined href by returning an empty string', () => {
+      const out = decode([
+        { title: 'NoHref' },
+        { title: 'NullHref', href: null },
+        { title: 'UndefinedHref', href: undefined },
+      ]);
+      expect(out).toHaveLength(3);
+      expect(out[0].href).toBe('');
+      expect(out[1].href).toBe('');
+      expect(out[2].href).toBe('');
+    });
+
+    it('preserves direct string href values', () => {
+      const out = decode([
+        { title: 'DirectInternal', href: '/custom/path' },
+        { title: 'DirectExternal', href: 'https://meshery.io' },
+      ]);
+      expect(out[0].href).toBe('/custom/path');
+      expect(out[1].href).toBe('https://meshery.io');
+    });
+
+    it('filters out null, undefined, and non-object items in the array', () => {
+      const out = decode([
+        null,
+        undefined,
+        'invalid',
+        42,
+        { title: 'Valid', href: { uri: '/valid' } },
+      ]);
+      expect(out).toHaveLength(1);
+      expect(out[0].title).toBe('Valid');
+      expect(out[0].href).toBe('/extension/valid');
+    });
+
+    it('handles non-string icon gracefully', () => {
+      const out = decode([
+        { title: 'NullIcon', icon: null },
+        { title: 'BoolIcon', icon: true },
+        { title: 'ObjIcon', icon: {} },
+      ]);
+      expect(out[0].icon).toBe('');
+      expect(out[1].icon).toBe('');
+      expect(out[2].icon).toBe('');
+    });
   });
 
   describe('userPrefs decoder', () => {
@@ -105,6 +150,12 @@ describe('ExtensionPointSchemaValidator', () => {
         { component: '' },
       ]);
     });
+
+    it('filters out nullish and non-object items', () => {
+      expect(decode([null, undefined, 'str', { component: 'Pref' }])).toEqual([
+        { component: 'Pref' },
+      ]);
+    });
   });
 
   describe('collaborator decoder', () => {
@@ -116,6 +167,12 @@ describe('ExtensionPointSchemaValidator', () => {
 
     it('extracts only the component field, defaulting to empty string', () => {
       expect(decode([{ component: 'A' }, {}])).toEqual([{ component: 'A' }, { component: '' }]);
+    });
+
+    it('filters out nullish and non-object items', () => {
+      expect(decode([null, undefined, 123, { component: 'Collab' }])).toEqual([
+        { component: 'Collab' },
+      ]);
     });
   });
 
@@ -161,6 +218,23 @@ describe('ExtensionPointSchemaValidator', () => {
         { title: 'External', href: { external: true, uri: 'https://docs.example.com' } },
       ]);
       expect(out[0].href).toBe('https://docs.example.com');
+    });
+
+    it('handles missing, null, and direct string hrefs safely', () => {
+      const out = decode([
+        { title: 'NoHref' },
+        { title: 'NullHref', href: null },
+        { title: 'DirectHref', href: '/account/settings' },
+      ]);
+      expect(out[0].href).toBe('');
+      expect(out[1].href).toBe('');
+      expect(out[2].href).toBe('/account/settings');
+    });
+
+    it('filters out nullish and non-object items', () => {
+      const out = decode([null, undefined, 'test', { title: 'ValidAccount' }]);
+      expect(out).toHaveLength(1);
+      expect(out[0].title).toBe('ValidAccount');
     });
   });
 });
