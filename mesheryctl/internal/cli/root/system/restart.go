@@ -35,7 +35,7 @@ var (
 	silentFlagSet bool
 )
 
-var restartUsageMsg = "Usage: mesheryctl system restart [flags]\nRun 'mesheryctl system restart --help' to see detailed help message"
+var restartUsageMsg = "Usage: mesheryctl system restart [flags]\nRun 'mesheryctl system restart --help' to see detailed help message."
 
 // restartCmd represents the restart command
 var restartCmd = &cobra.Command{

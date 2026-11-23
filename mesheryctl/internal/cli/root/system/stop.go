@@ -40,7 +40,7 @@ var (
 	forceDelete bool
 )
 
-var stopUsageMsg = "Usage: mesheryctl system stop [flags]\nRun 'mesheryctl system stop --help' to see detailed help message"
+var stopUsageMsg = "Usage: mesheryctl system stop [flags]\nRun 'mesheryctl system stop --help' to see detailed help message."
 
 // stopCmd represents the stop command
 var stopCmd = &cobra.Command{
