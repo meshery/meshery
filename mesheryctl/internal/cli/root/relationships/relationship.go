@@ -60,13 +60,16 @@ mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subty
 mesheryctl relationship view [model-name]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		count, _ := cmd.Flags().GetBool("count")
-		if len(args) == 0 {
-			if !count {
-				errMsg := "Usage: mesheryctl relationship [subcommand]\nRun 'mesheryctl relationship --help' to see detailed help message"
-				return utils.ErrInvalidArgument(fmt.Errorf("no command specified. %s", errMsg))
-			}
+		count, err := cmd.Flags().GetBool("count")
+		if err != nil {
+			return err
+		}
+		if utils.IsValidCountUsage(count, args) {
 			return nil
+		}
+		if len(args) == 0 {
+			errMsg := "Usage: mesheryctl relationship [subcommand]\nRun 'mesheryctl relationship --help' to see detailed help message"
+			return utils.ErrInvalidArgument(fmt.Errorf("no command specified. %s", errMsg))
 		}
 		return utils.ErrInvalidArgument(errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [%s]. Use 'mesheryctl relationship --help' to display usage guide.\n", args[0], utils.SubcommandNames(availableSubcommands)), "relationship")))
 	},

@@ -1509,6 +1509,34 @@ func TestSubcommandNames(t *testing.T) {
 	}
 }
 
+// TestIsValidCountUsage verifies that count mode requires zero positional
+// arguments, including rejecting an explicitly empty argument.
+func TestIsValidCountUsage(t *testing.T) {
+	tests := []struct {
+		name  string
+		count bool
+		args  []string
+		want  bool
+	}{
+		{"count only", true, nil, true},
+		{"count disabled", false, nil, false},
+		{"unexpected argument", true, []string{"invalid"}, false},
+		{"multiple arguments", true, []string{"invalid", "extra"}, false},
+		{"explicit empty argument", true, []string{""}, false},
+		{"empty followed by argument", true, []string{"", "extra"}, false},
+		{"argument without count", false, []string{"invalid"}, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IsValidCountUsage(tt.count, tt.args); got != tt.want {
+				t.Errorf("IsValidCountUsage(%v, %q) = %v, want %v",
+					tt.count, tt.args, got, tt.want)
+			}
+		})
+	}
+}
+
 // TestTrimFileExtension checks that only the final extension is removed.
 // Regression test: strings.Trim(name, ext) strips a character set from both
 // ends, turning "my-app.yaml" into "-app". Use strings.TrimSuffix instead.

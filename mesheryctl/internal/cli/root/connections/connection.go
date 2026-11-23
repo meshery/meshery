@@ -39,12 +39,15 @@ mesheryctl connection list --count
 mesheryctl connection delete [connection_id]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
-		countFlag, _ := cmd.Flags().GetBool("count")
-		if len(args) == 0 {
-			if !countFlag {
-				return utils.ErrInvalidArgument(errors.New("no subcommand provided for connection"))
-			}
+		count, err := cmd.Flags().GetBool("count")
+		if err != nil {
+			return err
+		}
+		if utils.IsValidCountUsage(count, args) {
 			return nil
+		}
+		if len(args) == 0 {
+			return utils.ErrInvalidArgument(errors.New("no subcommand provided for connection"))
 		}
 		return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Use 'mesheryctl connection --help' to display usage", args[0]))
 	},

@@ -530,6 +530,12 @@ func IsValidSubcommand(available []*cobra.Command, sub string) bool {
 	return false
 }
 
+// IsValidCountUsage reports whether count mode is enabled without positional
+// arguments. An explicitly empty argument still counts as an argument.
+func IsValidCountUsage(count bool, args []string) bool {
+	return count && len(args) == 0
+}
+
 // SubcommandNames renders the names of available subcommands for use in an
 // "invalid subcommand" message, e.g. "generate, list, search, view".
 //

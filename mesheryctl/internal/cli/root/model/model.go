@@ -82,15 +82,18 @@ mesheryctl model build [model-name]/[model-version]
 		return mesheryctlflags.ValidateCmdFlags(cmd, &modelFlags)
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
-		count, _ := cmd.Flags().GetBool("count")
-		if len(args) == 0 {
-			if !count {
-				if err := cmd.Usage(); err != nil {
-					return err
-				}
-				return utils.ErrInvalidArgument(errors.New("please provide a subcommand"))
-			}
+		count, err := cmd.Flags().GetBool("count")
+		if err != nil {
+			return err
+		}
+		if utils.IsValidCountUsage(count, args) {
 			return nil
+		}
+		if len(args) == 0 {
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return utils.ErrInvalidArgument(errors.New("please provide a subcommand"))
 		}
 		return utils.ErrInvalidArgument(errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Use 'mesheryctl model --help' to display usage guide.\n", args[0]), "model")))
 	},

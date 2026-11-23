@@ -60,11 +60,12 @@ mesheryctl component view [component-name | component-id]
 		return mesheryctlflags.ValidateCmdFlags(cmd, componentFlagsProvided)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		if !componentFlagsProvided.Count && (len(args) == 0 || (len(args) == 1 && args[0] == "")) {
-			return utils.ErrInvalidArgument(errors.New("please provide a subcommand"))
-		}
-		if len(args) == 0 {
+		count := componentFlagsProvided.Count
+		if utils.IsValidCountUsage(count, args) {
 			return nil
+		}
+		if len(args) == 0 || (!count && len(args) == 1 && args[0] == "") {
+			return utils.ErrInvalidArgument(errors.New("please provide a subcommand"))
 		}
 		return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [list, search, view]. Use 'mesheryctl component --help' to display usage guide", args[0]))
 	},

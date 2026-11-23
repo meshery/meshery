@@ -41,10 +41,13 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl#command-r
 mesheryctl filter [subcommands]
 `,
 	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) > 0 {
-			return ErrInvalidFilterCommand(args[0], "")
+		if utils.IsValidCountUsage(filterFlagsProvided.Count, args) {
+			return nil
 		}
-		return nil
+		if len(args) == 0 {
+			return nil // Preserve help display when no subcommand or count is supplied.
+		}
+		return ErrInvalidFilterCommand(args[0], "")
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &filterFlagsProvided)
