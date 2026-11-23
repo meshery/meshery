@@ -29,6 +29,47 @@ func newTestComponent(name, kind string) *component.ComponentDefinition {
 	}
 }
 
+func TestMatchComponentPairsRequiresSelectorModels(t *testing.T) {
+	fromComp := newTestComponent("pod-a", "Pod")
+	fromComp.Configuration = map[string]interface{}{
+		"metadata": map[string]interface{}{"namespace": "team-a"},
+	}
+	toComp := newTestComponent("pod-b", "Pod")
+	toComp.ModelReference.Name = "istio"
+	toComp.Configuration = map[string]interface{}{
+		"metadata": map[string]interface{}{"namespace": "team-a"},
+	}
+
+	kind := "Pod"
+	mutatorRef := [][]string{{"configuration", "metadata", "namespace"}}
+	mutatedRef := [][]string{{"configuration", "metadata", "namespace"}}
+	fromSel := relationship.SelectorItem{
+		Kind:  &kind,
+		Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatorRef: &mutatorRef,
+		},
+	}
+	toSel := relationship.SelectorItem{
+		Kind:  &kind,
+		Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatedRef: &mutatedRef,
+		},
+	}
+	relDef := &relationship.RelationshipDefinition{}
+	design := &pattern.PatternFile{Components: []*component.ComponentDefinition{fromComp, toComp}}
+
+	if got := matchComponentPairs(fromSel, toSel, design.Components, relDef, design); len(got) != 0 {
+		t.Fatalf("cross-model Pod pair matched selector models: got %d relationships", len(got))
+	}
+
+	toComp.ModelReference.Name = "kubernetes"
+	if got := matchComponentPairs(fromSel, toSel, design.Components, relDef, design); len(got) != 2 {
+		t.Fatalf("same-model Pod pairs should match in both directions: got %d relationships", len(got))
+	}
+}
+
 // TestFromAndToComponentsExist_MultiComponentRelationship verifies that
 // fromAndToComponentsExist checks all referenced components in a multi-component
 // relationship (such as sibling matchLabels with 3+ components), not just index 0.
