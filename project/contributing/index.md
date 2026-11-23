@@ -86,7 +86,28 @@ To sign off a commit you have already written but have <em>not</em> pushed:
 <pre><code>$ git commit --amend -s --no-edit</code></pre>
 
 Once the branch is pushed, amending reaches only its tip, and a DCO failure usually names more
-than one commit. Sign off every commit the pull request carries and replace the pushed branch:
+than one commit. Meshery accepts individual DCO remediation commits, so the preferred repair
+rewrites nothing: the author of each unsigned commit adds one more commit, signed off with
+<code>git commit -s</code>, whose message has a line per unsigned commit. If there is nothing
+to stage, create the empty commit with <code>git commit --allow-empty -s</code> instead - a
+plain <code>git commit -s</code> refuses an empty commit - then push it:
+
+<pre><code>I, Jane Smith &lt;jane.smith@example.com&gt;, hereby add my Signed-off-by to this commit: &lt;full sha&gt;</code></pre>
+
+A rebase gives every replayed commit a new SHA, so a remediation commit that names the old
+SHA no longer covers the unsigned commit. Create the remediation commit only after the branch
+reaches its final base, name the full SHA as it appears on the branch, and recreate the
+remediation commit after any later rebase.
+
+Only a commit's own author can sign for it; a remediation commit from someone else is not
+accepted. Use the unsigned commit's own name and email, both as the remediation commit's
+author and in the sign-off line: if your Git identity has changed since the unsigned commit,
+the DCO check will not match a remediation signed with the new identity.
+</li>
+
+<li>
+Alternatively, when the branch is yours alone, sign off every commit the pull request carries
+and replace the pushed branch:
 
 <pre><code>$ git rebase &lt;base-branch&gt; --signoff
 $ git push --force-with-lease</code></pre>
