@@ -251,3 +251,53 @@ func TestListProviderCmd(t *testing.T) {
 		})
 	}
 }
+
+func TestResetProviderCmd(t *testing.T) {
+	setupContextTestEnv(t)
+	t.Cleanup(BreakupFunc)
+
+	tests := []struct {
+		name          string
+		args          []string
+		expectedError string
+		expectError   bool
+	}{
+		{
+			name:        "given no arguments when provider reset then succeed",
+			args:        []string{"provider", "reset"},
+			expectError: false,
+		},
+		{
+			name:          "given extra positional arguments when provider reset then throw error",
+			args:          []string{"provider", "reset", "extra-arg"},
+			expectError:   true,
+			expectedError: "too many arguments specified",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			b := utils.SetupMeshkitLoggerTesting(t, false)
+			SystemCmd.SetOut(b)
+			SystemCmd.SetArgs(tt.args)
+			err := SystemCmd.Execute()
+
+			if tt.expectError {
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), tt.expectedError)
+					assert.Contains(t, err.Error(), resetProviderUsageMsg)
+				}
+			} else {
+				assert.NoError(t, err)
+				saved := viper.New()
+				saved.SetConfigFile(viper.ConfigFileUsed())
+				if err := saved.ReadInConfig(); err != nil {
+					t.Fatal(err)
+				}
+				assert.Empty(t, saved.GetString("contexts.local.provider"))
+			}
+			BreakupFunc()
+		})
+	}
+}
+
