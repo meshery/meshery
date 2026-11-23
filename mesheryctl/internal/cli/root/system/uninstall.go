@@ -39,6 +39,9 @@ import (
 	"k8s.io/client-go/rest"
 )
 
+// uninstallUsageMsg is the usage message displayed when invalid arguments are provided to the uninstall command.
+var uninstallUsageMsg = "Usage: mesheryctl system uninstall [flags]\nRun 'mesheryctl system uninstall --help' to see detailed help message."
+
 // uninstallCmd represents the uninstall command
 var uninstallCmd = &cobra.Command{
 	Use:   "uninstall",
@@ -66,6 +69,13 @@ mesheryctl system uninstall --keep-namespace
 // Uninstall Meshery forcefully on Kubernetes (use it when system uninstall doesn't work)
 mesheryctl system uninstall --force
 	`,
+	// Args validates that no positional arguments are passed to the uninstall command.
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("uninstall does not accept positional arguments\n\n%s", uninstallUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// A Docker installation that is not there has nothing to stop, so a
 		// missing daemon must not turn the no-op into a preflight failure.
@@ -80,9 +90,6 @@ mesheryctl system uninstall --force
 		return hc.RunPreflightHealthChecks()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			return errors.New(utils.SystemLifeCycleError(fmt.Sprintf("this command takes no arguments. See '%s --help' for more information.\n", cmd.CommandPath()), "uninstall"))
-		}
 		if err := uninstallMeshery(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to uninstall Meshery"))
 		}

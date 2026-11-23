@@ -2,6 +2,7 @@ package system
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"slices"
@@ -1044,4 +1045,44 @@ func TestKubernetesUninstallStagesUseOneConfiguration(t *testing.T) {
 		assert.Same(t, &client.RestConfig, got,
 			"CRD deletion must reuse the configuration every other stage targets")
 	})
+}
+
+// TestUninstallCmdArgs verifies that system uninstall rejects unexpected positional arguments upfront.
+func TestUninstallCmdArgs(t *testing.T) {
+	tests := []struct {
+		Name          string
+		Args          []string
+		ExpectError   bool
+		ExpectedError error
+	}{
+		{
+			Name:        "valid with no positional arguments",
+			Args:        []string{},
+			ExpectError: false,
+		},
+		{
+			Name:          "invalid with unexpected positional arguements",
+			Args:          []string{"unexpected-arg"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("uninstall does not accept positional arguments\n\n%s", uninstallUsageMsg)),
+		},
+		{
+			Name:          "invalid with multiple positional arguements",
+			Args:          []string{"arg1", "arg2"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("uninstall does not accept positional arguments\n\n%s", uninstallUsageMsg)),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			err := uninstallCmd.Args(uninstallCmd, tt.Args)
+			if tt.ExpectError {
+				assert.Error(t, err)
+				utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
 }
