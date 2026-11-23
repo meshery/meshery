@@ -7,6 +7,11 @@ setup() {
     # allow CI/environment to provide integration spreadsheet credentials
     export TEST_SPREADSHEET_ID="${TEST_SPREADSHEET_ID:-}"
     export TEST_SPREADSHEET_CRED="${TEST_SPREADSHEET_CRED:-}"
+
+    # registry update requires an existing models directory as its input root.
+    # The suite runs from mesheryctl/tests/e2e, so the repo-root models
+    # directory is three levels up.
+    export MODELS_DIR="../../../models"
 }
 
 require_spreadsheet_credentials() {
@@ -43,21 +48,21 @@ require_spreadsheet_credentials() {
 
 @test "given an invalid model name when running mesheryctl registry update then zero models are updated" {
     require_spreadsheet_credentials
-    run $MESHERYCTL_BIN registry update --spreadsheet-id "$TEST_SPREADSHEET_ID" --spreadsheet-cred "$TEST_SPREADSHEET_CRED" --model "nonexistent-model"
+    run $MESHERYCTL_BIN registry update --input "$MODELS_DIR" --spreadsheet-id "$TEST_SPREADSHEET_ID" --spreadsheet-cred "$TEST_SPREADSHEET_CRED" --model "nonexistent-model"
     assert_success
     assert_output --partial "Updated 0 models and 0 components"
 }
 
 @test "given valid spreadsheet credentials and a model name when running mesheryctl registry update then that model is updated" {
     require_spreadsheet_credentials
-    run $MESHERYCTL_BIN registry update --spreadsheet-id "$TEST_SPREADSHEET_ID" --spreadsheet-cred "$TEST_SPREADSHEET_CRED" --model "kubernetes"
+    run $MESHERYCTL_BIN registry update --input "$MODELS_DIR" --spreadsheet-id "$TEST_SPREADSHEET_ID" --spreadsheet-cred "$TEST_SPREADSHEET_CRED" --model "kubernetes"
     assert_success
     assert_output --regexp "Updated [1-9][0-9]* models? and [0-9]+ components?"
 }
 
 @test "given valid spreadsheet credentials when running mesheryctl registry update then models are updated successfully" {
     require_spreadsheet_credentials
-    run $MESHERYCTL_BIN registry update --spreadsheet-id "$TEST_SPREADSHEET_ID" --spreadsheet-cred "$TEST_SPREADSHEET_CRED"
+    run $MESHERYCTL_BIN registry update --input "$MODELS_DIR" --spreadsheet-id "$TEST_SPREADSHEET_ID" --spreadsheet-cred "$TEST_SPREADSHEET_CRED"
     assert_success
     assert_output --regexp "Updated [1-9][0-9]* models? and [0-9]+ components?"
 }
