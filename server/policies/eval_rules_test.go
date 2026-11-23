@@ -29,6 +29,47 @@ func newTestComponent(name, kind string) *component.ComponentDefinition {
 	}
 }
 
+func TestMatchComponentPairsRequiresSelectorModels(t *testing.T) {
+	fromComp := newTestComponent("pod-a", "Pod")
+	fromComp.Configuration = map[string]interface{}{
+		"metadata": map[string]interface{}{"namespace": "team-a"},
+	}
+	toComp := newTestComponent("pod-b", "Pod")
+	toComp.ModelReference.Name = "istio"
+	toComp.Configuration = map[string]interface{}{
+		"metadata": map[string]interface{}{"namespace": "team-a"},
+	}
+
+	kind := "Pod"
+	mutatorRef := [][]string{{"configuration", "metadata", "namespace"}}
+	mutatedRef := [][]string{{"configuration", "metadata", "namespace"}}
+	fromSel := relationship.SelectorItem{
+		Kind:  &kind,
+		Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatorRef: &mutatorRef,
+		},
+	}
+	toSel := relationship.SelectorItem{
+		Kind:  &kind,
+		Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatedRef: &mutatedRef,
+		},
+	}
+	relDef := &relationship.RelationshipDefinition{}
+	design := &pattern.PatternFile{Components: []*component.ComponentDefinition{fromComp, toComp}}
+
+	if got := matchComponentPairs(fromSel, toSel, design.Components, relDef, design); len(got) != 0 {
+		t.Fatalf("cross-model Pod pair matched selector models: got %d relationships", len(got))
+	}
+
+	toComp.ModelReference.Name = "kubernetes"
+	if got := matchComponentPairs(fromSel, toSel, design.Components, relDef, design); len(got) != 2 {
+		t.Fatalf("same-model Pod pairs should match in both directions: got %d relationships", len(got))
+	}
+}
+
 // TestFromAndToComponentsExist_MultiComponentRelationship verifies that
 // fromAndToComponentsExist checks all referenced components in a multi-component
 // relationship (such as sibling matchLabels with 3+ components), not just index 0.
@@ -314,6 +355,38 @@ func TestValidateRelationshipsInDesign_PendingAliasPreservedWhenComponentMissing
 	actions := validateRelationshipsInDesign(design, policy)
 	if len(actions) != 0 {
 		t.Fatalf("expected 0 actions for pending alias with missing component, got %d", len(actions))
+	}
+}
+
+func TestValidateRelationshipsInDesign_PendingMatchLabelsPreservedWhenComponentMissing(t *testing.T) {
+	compA := newTestComponent("pod-a", "Pod")
+	compBID := uuid.Must(uuid.NewV4())
+	kind := "Pod"
+
+	rel := &relationship.RelationshipDefinition{
+		ID:               uuid.Must(uuid.NewV4()),
+		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+		RelationshipType: "sibling",
+		SubType:          "matchlabels",
+		Selectors: &relationship.SelectorSet{
+			{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{{ID: &compA.ID, Kind: &kind}},
+					To:   []relationship.SelectorItem{{ID: &compBID, Kind: &kind}},
+				},
+			},
+		},
+	}
+	setRelStatus(rel, StatusPending)
+
+	design := &pattern.PatternFile{
+		Components:    []*component.ComponentDefinition{compA},
+		Relationships: []*relationship.RelationshipDefinition{rel},
+	}
+
+	actions := validateRelationshipsInDesign(design, &MatchLabelsPolicy{})
+	if len(actions) != 0 {
+		t.Fatalf("expected 0 actions for pending matchLabels with missing component, got %d", len(actions))
 	}
 }
 
