@@ -21,7 +21,6 @@ import (
 )
 
 type mockProvider struct {
-	models.DefaultLocalProvider
 	dbHandler *database.Handler
 }
 
@@ -115,7 +114,7 @@ func TestControlPlaneDataLoader_BatchingAndQueryReduction(t *testing.T) {
 	// 2. With DataLoader (Batched single query pattern):
 	atomic.StoreInt64(queryCount, 0)
 	ctx := context.Background()
-	loaderMiddleware := dataloader.Middleware(func(ctx context.Context) models.Provider {
+	loaderMiddleware := dataloader.Middleware(func(ctx context.Context) models.GenericPersisterGetter {
 		return prov
 	})
 
@@ -179,7 +178,7 @@ func TestControlPlaneDataLoader_SelectorIsolation(t *testing.T) {
 	seedPod(t, dbHandler, "pod-linkerd", "cluster-iso", "linkerd-controller", "linkerd-system", "docker.io/linkerd/controller:2.14.0")
 
 	prov := &mockProvider{dbHandler: dbHandler}
-	middleware := dataloader.Middleware(func(ctx context.Context) models.Provider {
+	middleware := dataloader.Middleware(func(ctx context.Context) models.GenericPersisterGetter {
 		return prov
 	})
 
