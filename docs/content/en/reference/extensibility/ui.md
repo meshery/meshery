@@ -129,11 +129,11 @@ Submit an issue to request more documentation.
 1. **/ui/components/layout/Navigator/NavigatorExtension.tsx** - add custom menu items in Meshery's main navigation menu.
 1. **/ui/pages/extension/[...component].tsx** - optionally, define the state of a parent menu item: expanded or collapsed.
 1. **ui/remote-component.config.js** - list of Material UI components made available to Remote Providers and their plugins.
-1. **ui/components/meshery-mesh-interface/PatternServiceFormCore.tsx** - PatternServiceFormCore component which decouples the SettingsForm and TraitsForm from their UI representation while keeping the logic coupled. This design lets the Remote Provider amend the design of the components without interfering with Meshery UI's core logic.
+1. **ui/components/meshery-mesh-interface/PatternServiceFormCore.tsx** - PatternServiceFormCore component which decouples the SettingsForm from its UI representation while keeping the logic coupled. This design lets the Remote Provider amend the design of the components without interfering with Meshery UI's core logic.
 
 ### Using React JSON Schema Form
 
-Meshery exposes a custom RJSF Form component which is capable of generating "Pattern" YAMLs without being extremely opinionated about the UI. This custom component is available at `ui/components/meshery-mesh-interface/PatternServiceFormCore.tsx`. An example usage of the component which will render the logically coupled `SettingsForm` and `TraitsForm` in a Material UI `TabPanel`:
+Meshery exposes a custom RJSF Form component which is capable of generating "Pattern" YAMLs without being extremely opinionated about the UI. This custom component is available at `ui/components/meshery-mesh-interface/PatternServiceFormCore.tsx`. An example usage of the component which will render the `SettingsForm` in a Material UI `TabPanel`:
 
 {{< code code=`<PatternServiceFormCore
 formData={formData}
@@ -145,14 +145,11 @@ namespace={namespace}
 
 >
 
-    {(SettingsForm, TraitsForm) => {
+    {(SettingsForm) => {
     	return (
     		<div>
     			<TabPanel value={tab} index={0} style={ { marginTop: "1.1rem" } }>
     				<SettingsForm />
-    			</TabPanel>
-    			<TabPanel value={tab} index={1} style={ { marginTop: "1.1rem" } }>
-    				<TraitsForm />
     			</TabPanel>
     		</div>
     	);
