@@ -3,6 +3,7 @@ package planner
 import (
 	"fmt"
 	"sync"
+	"sync/atomic"
 	"testing"
 )
 
@@ -57,11 +58,14 @@ func TestQueue_ConcurrentAccess(t *testing.T) {
 	var q Queue
 	const numGoroutines = 50
 	const opsPerGoroutine = 100
+	const totalEnqueued = numGoroutines * opsPerGoroutine
 
 	var wg sync.WaitGroup
 	wg.Add(numGoroutines * 2)
 
-	// Producers
+	var dequeued int64
+
+	// Producers: concurrently enqueue items
 	for i := 0; i < numGoroutines; i++ {
 		go func(id int) {
 			defer wg.Done()
@@ -71,17 +75,25 @@ func TestQueue_ConcurrentAccess(t *testing.T) {
 		}(i)
 	}
 
-	// Consumers
+	// Consumers: concurrently dequeue items, counting non-empty returns
 	for i := 0; i < numGoroutines; i++ {
 		go func() {
 			defer wg.Done()
 			for j := 0; j < opsPerGoroutine; j++ {
-				// Dequeue might return empty string if queue is temporarily drained,
-				// but it must never panic or race
-				_ = q.Dequeue()
+				if val := q.Dequeue(); val != "" {
+					atomic.AddInt64(&dequeued, 1)
+				}
 			}
 		}()
 	}
 
 	wg.Wait()
+
+	// Assert item conservation: successfully dequeued non-empty items + items
+	// remaining in the queue must exactly equal the total number of items enqueued.
+	remaining := q.Length()
+	if totalAccounted := remaining + int(dequeued); totalAccounted != totalEnqueued {
+		t.Fatalf("item conservation violated: enqueued %d, got %d dequeued + %d remaining = %d accounted",
+			totalEnqueued, dequeued, remaining, totalAccounted)
+	}
 }
