@@ -8,8 +8,12 @@ import (
 	"time"
 )
 
+// mesheryctlReleaseVersionURL is the endpoint used to check the latest release of mesheryctl.
+// It is exposed as a package-level variable to allow test redirection.
+var mesheryctlReleaseVersionURL = "https://docs.meshery.io/project/releases/latest"
+
 func GetLatestVersionForMesheryctl() (string, error) {
-	req, err := http.NewRequest(http.MethodGet, "https://docs.meshery.io/project/releases/latest", nil)
+	req, err := http.NewRequest(http.MethodGet, mesheryctlReleaseVersionURL, nil)
 
 	if err != nil {
 		return "", err
@@ -22,7 +26,11 @@ func GetLatestVersionForMesheryctl() (string, error) {
 		return "", err
 	}
 
-	defer func() { _ = resp.Body.Close() }()
+	defer SafeClose(resp.Body)
+
+	if resp.StatusCode != http.StatusOK {
+		return "", ErrResponseStatus(resp.StatusCode)
+	}
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {

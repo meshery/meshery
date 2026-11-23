@@ -111,6 +111,8 @@ tags:
     description: APIs for profiles.
   - name: ProviderCapability_capabilities
     description: Operations related to the provider's capabilities document.
+  - name: Recognition_recognition
+    description: Operations related to peer recognition.
   - name: Request_requests
     description: Operations related to requests for a decision.
   - name: Schedule_schedules
@@ -58602,21 +58604,16 @@ paths:
             maxLength: 255
         - name: sort
           in: query
-          description: Column to order the table list by.
+          description: Sort direction used when `order` contains a bare column name. Accepted directions are `asc` and `desc`, case-insensitive. When `order` contains a bare column name, an omitted or invalid direction defaults to ascending.
           required: false
           schema:
             type: string
-            enum:
-              - name
         - name: order
           in: query
-          description: Sort direction for the `sort` column.
+          description: Column or compound ordering expression. Supported column is `name`. A bare `name` uses the separate `sort` parameter. In a compound expression, `desc` selects descending, while any other direction token defaults to ascending. Unsupported columns and expressions with an invalid number of tokens are ignored.
           required: false
           schema:
             type: string
-            enum:
-              - asc
-              - desc
       responses:
         '200':
           description: Database summary
@@ -79041,7 +79038,9 @@ paths:
         - Environment_environments
       operationId: getEnvironments
       summary: Get all environments
-      description: Gets all environments
+      description: >-
+        Gets the environments of the organization named by orgId. orgId is required: a request that omits it, or names a
+        value that is not a UUID, is answered 400 and lists nothing.
       parameters:
         - name: search
           in: query
@@ -79366,6 +79365,12 @@ paths:
                             json: purpose,omitempty
                           x-order: 11
                     description: Environments associated with this resource.
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
         '401':
           description: Expired JWT token used or insufficient privilege
           content:
@@ -85167,7 +85172,10 @@ paths:
         - Workspace_workspaces
       operationId: getWorkspaces
       summary: Get all workspaces
-      description: Gets all workspaces accessible to the current user, optionally scoped to a specific organization.
+      description: >-
+        Gets all workspaces accessible to the current user, optionally scoped to a specific organization. Without orgId
+        the listing spans every organization the caller is a member of, so a caller with one organization (an anonymous
+        user, for example) gets that organization's workspaces. An orgId that is not a UUID is answered 400.
       parameters:
         - name: orgId
           in: query
