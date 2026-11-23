@@ -9,12 +9,14 @@ const useInterval = (callback: IntervalCallback, delay: number | null | undefine
     savedCallback.current = callback;
   }, [callback]);
 
+  const hasCallback = typeof callback === 'function';
+
   useEffect(() => {
     if (
       typeof delay !== 'number' ||
       Number.isNaN(delay) ||
       delay < 0 ||
-      typeof savedCallback.current !== 'function'
+      !hasCallback
     ) {
       return undefined;
     }
@@ -24,7 +26,7 @@ const useInterval = (callback: IntervalCallback, delay: number | null | undefine
       }
     }, delay);
     return () => clearInterval(id);
-  }, [delay]);
+  }, [delay, hasCallback]);
 };
 
 export default useInterval;

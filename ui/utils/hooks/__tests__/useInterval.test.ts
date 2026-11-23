@@ -84,6 +84,28 @@ describe('useInterval', () => {
     });
   });
 
+  it(
+    'starts interval when callback transitions from non-callable to callable with unchanged delay',
+    () => {
+    const cb = vi.fn();
+    // @ts-expect-error testing transition from invalid to valid callback
+    const { rerender } = renderHook(({ fn }) => useInterval(fn, 100), {
+      initialProps: { fn: null as unknown as () => void },
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
+    expect(cb).not.toHaveBeenCalled();
+
+    rerender({ fn: cb });
+
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+    expect(cb).toHaveBeenCalledTimes(1);
+  });
+
   it('always invokes the most recent callback without resetting the timer', () => {
     const first = vi.fn();
     const second = vi.fn();
