@@ -25,6 +25,9 @@ export function isEmptyAtAllDepths(input) {
  * @returns {Object|null} - The first object that satisfies the condition, or null if no matching object is found.
  */
 export const findNestedObject = (object, condition) => {
+  if (typeof condition !== 'function') {
+    return null;
+  }
   const stack = [object];
   while (stack.length) {
     const currentObject = stack.pop();
@@ -32,10 +35,8 @@ export const findNestedObject = (object, condition) => {
       return currentObject;
     }
     if (_.isObject(currentObject) || _.isArray(currentObject)) {
-      if (_.isObject(currentObject) || _.isArray(currentObject)) {
-        const values = _.values(currentObject).filter((value) => value !== currentObject.models);
-        stack.push(...values);
-      }
+      const values = _.values(currentObject).filter((value) => value !== currentObject?.models);
+      stack.push(...values);
     }
   }
   return null;
@@ -44,7 +45,7 @@ export const findNestedObject = (object, condition) => {
  * Accept object and removes empty properties from object.
  **/
 export const filterEmptyFields = (data) => {
-  if (!data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
     return {};
   }
 

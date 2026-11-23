@@ -80,6 +80,13 @@ describe('findNestedObject', () => {
   it('returns the input itself if condition matches a non-object', () => {
     expect(findNestedObject('hello', (val) => val === 'hello')).toBe('hello');
   });
+
+  it('returns null safely when condition is not a function', () => {
+    const tree = { id: 1, kind: 'target' };
+    expect(findNestedObject(tree, undefined as any)).toBeNull();
+    expect(findNestedObject(tree, null as any)).toBeNull();
+    expect(findNestedObject(tree, 'invalid' as any)).toBeNull();
+  });
 });
 
 describe('filterEmptyFields', () => {
@@ -88,6 +95,13 @@ describe('filterEmptyFields', () => {
     expect(filterEmptyFields(undefined)).toEqual({});
     expect(filterEmptyFields(0)).toEqual({});
     expect(filterEmptyFields(false)).toEqual({});
+  });
+
+  it('returns an empty object when given primitives or arrays', () => {
+    expect(filterEmptyFields('string input' as any)).toEqual({});
+    expect(filterEmptyFields(123 as any)).toEqual({});
+    expect(filterEmptyFields(true as any)).toEqual({});
+    expect(filterEmptyFields(['a', '', 'b'] as any)).toEqual({});
   });
 
   it('removes empty string and undefined properties', () => {
