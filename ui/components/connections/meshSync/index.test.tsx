@@ -142,7 +142,7 @@ describe('MeshSyncTable', () => {
             kind: 'Pod',
             model: 'core',
             cluster_id: 'cluster-a',
-            pattern_resources: '',
+            pattern_resource: '',
             status: 'discovered',
           },
         ],
@@ -290,5 +290,14 @@ describe('MeshSyncTable', () => {
     await waitFor(() => {
       expect(dataTableProps.columnVisibility.model).toBe(false);
     });
+  });
+
+  it('names the pattern column after the json key MeshSync returns', () => {
+    render(<MeshSyncTable />);
+
+    const names = dataTableProps.columns.map((column) => column.name);
+    expect(names).toContain('pattern_resource');
+    expect(names).not.toContain('pattern_resources');
+    expect(dataTableProps.columnVisibility).toHaveProperty('pattern_resource');
   });
 });
