@@ -64,12 +64,15 @@ func captureVersionStdout(t *testing.T, fn func()) string {
 	os.Stdout = w
 	defer func() { os.Stdout = stdout }()
 
-	out := make(chan string)
+	out := make(chan string, 1)
 	go func() {
 		var buf bytes.Buffer
 		_, _ = io.Copy(&buf, r)
 		out <- buf.String()
 	}()
+	// Close the pipe writer even if fn panics, so the reader goroutine
+	// finishes instead of hanging the test on <-out.
+	defer func() { _ = w.Close() }()
 
 	fn()
 	_ = w.Close()
