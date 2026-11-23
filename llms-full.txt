@@ -117173,7 +117173,7 @@ Generates a folder structure and guides user on model creation
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl model init [flags]
+mesheryctl model init &lt;model-name&gt; [flags]
 
 </div>
 </div>

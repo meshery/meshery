@@ -199,7 +199,7 @@ mesheryctl model import --file [OCI]
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl model init [flags]
+mesheryctl model init &amp;lt;model-name&amp;gt; [flags]
 
 &lt;/div&gt;
 &lt;/div&gt;
