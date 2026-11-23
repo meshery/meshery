@@ -8,6 +8,7 @@ import (
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshkit/errors"
 )
 
 var update = flag.Bool("update", false, "update golden files")
@@ -44,6 +45,10 @@ func TestFilterCmdCount(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 
+	expectedInvalidCommand := func(description string) error {
+		return errors.New("mesheryctl-1171", errors.Alert, nil, []string{description}, nil, nil)
+	}
+
 	tests := []utils.MesheryListCommandTest{
 		{
 			Name:           "Reject invalid subcommand without --count",
@@ -51,7 +56,7 @@ func TestFilterCmdCount(t *testing.T) {
 			Fixture:        "filter.list.api.response.golden",
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  ErrInvalidFilterCommand("invalidCommand", ""),
+			ExpectedError:  expectedInvalidCommand("'invalidCommand' is an invalid command"),
 		},
 		{
 			Name:           "Reject invalid subcommand with --count",
@@ -59,7 +64,7 @@ func TestFilterCmdCount(t *testing.T) {
 			Fixture:        "filter.list.api.response.golden",
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  ErrInvalidFilterCommand("invalidCommand", ""),
+			ExpectedError:  expectedInvalidCommand("'invalidCommand' is an invalid command"),
 		},
 		{
 			Name:           "Reject empty subcommand with --count",
@@ -67,7 +72,7 @@ func TestFilterCmdCount(t *testing.T) {
 			Fixture:        "filter.list.api.response.golden",
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  ErrInvalidFilterCommand("", ""),
+			ExpectedError:  expectedInvalidCommand("'' is an invalid command"),
 		},
 		{
 			Name:           "Reject multiple invalid arguments with --count",
@@ -75,7 +80,7 @@ func TestFilterCmdCount(t *testing.T) {
 			Fixture:        "filter.list.api.response.golden",
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  ErrInvalidFilterCommand("invalidCommand", ""),
+			ExpectedError:  expectedInvalidCommand("'invalidCommand' is an invalid command"),
 		},
 		{
 			Name:             "Fetch Filter Count on root command",
