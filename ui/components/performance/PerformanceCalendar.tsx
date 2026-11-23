@@ -10,7 +10,7 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import { formatApiError } from '@/utils/helpers/meshkitError';
 import { CalendarComponent } from './style';
 import { updateProgressAction } from '@/store/slices/mesheryUi';
-import { useGetPerformanceResultsQuery } from '@meshery/schemas/mesheryApi';
+import { useLazyGetPerformanceResultsQuery } from '@meshery/schemas/mesheryApi';
 import { useDispatch } from 'react-redux';
 
 const localizer = momentLocalizer(moment);
@@ -98,19 +98,7 @@ function PerformanceCalendar({ style }) {
   const [results, setResults] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState();
   const dispatch = useDispatch();
-  const {
-    data: performanceResultsData,
-    isFetching,
-    isError,
-    error,
-  } = useGetPerformanceResultsQuery({
-    page: '0',
-    pagesize: '10',
-    search: '',
-    order: '',
-    from: time.start,
-    to: time.end,
-  });
+  const [fetchPage, { isFetching, isError, error }] = useLazyGetPerformanceResultsQuery();
 
   //hooks
   const { notify } = useNotification();
@@ -120,8 +108,29 @@ function PerformanceCalendar({ style }) {
   }, [dispatch, isFetching]);
 
   useEffect(() => {
-    setResults(performanceResultsData?.results || []);
-  }, [performanceResultsData]);
+    let active = true;
+    setResults([]);
+    async function loadPages() {
+      const runs = [];
+      for (let page = 0; ; page++) {
+        const { data, isError: pageFailed } = await fetchPage({
+          page: String(page),
+          pagesize: '10',
+          from: time.start,
+          to: time.end,
+        });
+        if (!active || pageFailed || !data) return;
+        if (!data.results?.length) break;
+        runs.push(...data.results);
+        if (runs.length >= data.totalCount) break;
+      }
+      setResults(runs);
+    }
+    void loadPages();
+    return () => {
+      active = false;
+    };
+  }, [fetchPage, time.start, time.end]);
 
   useEffect(() => {
     if (isError) handleError('Failed to Fetch Results')(error);
