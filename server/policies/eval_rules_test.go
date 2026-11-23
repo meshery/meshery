@@ -358,6 +358,38 @@ func TestValidateRelationshipsInDesign_PendingAliasPreservedWhenComponentMissing
 	}
 }
 
+func TestValidateRelationshipsInDesign_PendingMatchLabelsPreservedWhenComponentMissing(t *testing.T) {
+	compA := newTestComponent("pod-a", "Pod")
+	compBID := uuid.Must(uuid.NewV4())
+	kind := "Pod"
+
+	rel := &relationship.RelationshipDefinition{
+		ID:               uuid.Must(uuid.NewV4()),
+		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+		RelationshipType: "sibling",
+		SubType:          "matchlabels",
+		Selectors: &relationship.SelectorSet{
+			{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{{ID: &compA.ID, Kind: &kind}},
+					To:   []relationship.SelectorItem{{ID: &compBID, Kind: &kind}},
+				},
+			},
+		},
+	}
+	setRelStatus(rel, StatusPending)
+
+	design := &pattern.PatternFile{
+		Components:    []*component.ComponentDefinition{compA},
+		Relationships: []*relationship.RelationshipDefinition{rel},
+	}
+
+	actions := validateRelationshipsInDesign(design, &MatchLabelsPolicy{})
+	if len(actions) != 0 {
+		t.Fatalf("expected 0 actions for pending matchLabels with missing component, got %d", len(actions))
+	}
+}
+
 // TestFromAndToComponentsExist_MultiSelectorSets verifies that fromAndToComponentsExist
 // inspects all selector sets in *rel.Selectors, not only the first selector set (*rel.Selectors)[0].
 func TestFromAndToComponentsExist_MultiSelectorSets(t *testing.T) {
