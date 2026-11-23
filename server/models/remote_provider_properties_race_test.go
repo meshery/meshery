@@ -245,7 +245,8 @@ func makeProviderPackageArchive(name string) []byte {
 
 func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 	provider := newTestRemoteProvider(t, "https://remote.example.com")
-	t.Setenv("HOME", t.TempDir())
+	homeDir := t.TempDir()
+	t.Setenv("HOME", homeDir)
 	origSkip := viper.Get(SKIP_DOWNLOAD_EXTENSIONS_ENV)
 	defer viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, origSkip)
 	viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, false)
@@ -301,6 +302,10 @@ func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 	}
 
 	provider.SetProviderProperties(properties[0])
+	packageRoot := filepath.Join(homeDir, ".meshery", "provider")
+	if err := os.RemoveAll(packageRoot); err != nil {
+		t.Fatalf("remove provider package cache before concurrent downloads: %v", err)
+	}
 
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -336,6 +341,21 @@ func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 	}
 
 	wg.Wait()
+
+	for i, expected := range properties {
+		location := filepath.Join(packageRoot, expected.ProviderName, expected.PackageVersion)
+		content, err := os.ReadFile(filepath.Join(location, "extension.txt"))
+		if err != nil {
+			t.Fatalf("provider %d package snapshot was not downloaded to %s: %v", i, location, err)
+		}
+		expectedContent := "/one.tar.gz"
+		if i == 1 {
+			expectedContent = "/two.tar.gz"
+		}
+		if string(content) != expectedContent {
+			t.Fatalf("provider %d package destination=%s content=%q, want %q", i, location, content, expectedContent)
+		}
+	}
 
 	if oneRequests.Load() == 0 || twoRequests.Load() == 0 {
 		t.Fatalf("package download did not observe both provider package URLs: one=%d two=%d",
