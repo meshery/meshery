@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 FROM golang:1.26.4 AS meshery-server
 ARG TOKEN
 ARG GIT_VERSION
@@ -7,7 +9,13 @@ ARG RELEASE_CHANNEL
 RUN adduser --disabled-login appuser
 WORKDIR /github.com/meshery/meshery
 ADD . .
-RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    cd server/cmd && \
+    GOPROXY=https://proxy.golang.org GOSUMDB=off go build \
+    -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" \
+    -tags draft \
+    -o /meshery .
 
 # Compile the Go relationship/policy engine to WebAssembly and stage Go's
 # wasm_exec.js runtime glue. ui/pages/_document.tsx loads
@@ -119,7 +127,7 @@ COPY --from=meshery-ui-builder /app/public /app/ui/public
 COPY --from=meshery-ui-provider-builder /app/out /app/provider-ui/out
 # COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
 
-# Permission keys are authorization keys which server will
+# Permission keys are authorization keys which will
 # seed on initial boot for local provider, if there is update on this path
 # ensure to update here also https://github.com/meshery/meshery/blob/85a0fd9b9cc03bbc51c4aa1efd1e837db72ef691/install/kubernetes/helm/meshery/values.yaml#L19
 ENV KEYS_PATH="/app/server/permissions/keys.csv"
@@ -127,7 +135,7 @@ ENV KEYS_PATH="/app/server/permissions/keys.csv"
 # Build-time Extension Point: Copy .meshery directory from build context if present.
 # System integrators can place a .meshery directory at the repository root before running
 # docker build to supply build-time configuration, data, packages, etc.
-# The contents will be copied into /home/appuser/.meshery/ and merged with existing content.
+# The contents will be copied to /home/appuser/.meshery/ and merged with existing content.
 COPY --from=build_time_extensions /build-ext/.meshery /home/appuser/.meshery
 
 RUN addgroup docker
