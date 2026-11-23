@@ -33,7 +33,11 @@ export const successHandlerGenerator = (notify, msg, cb) => (res) => {
       try {
         details = JSON.stringify(res);
       } catch {
-        details = String(res);
+        try {
+          details = String(res);
+        } catch {
+          details = '';
+        }
       }
     }
     if (typeof notify === 'function') {
@@ -62,7 +66,11 @@ export const errorHandlerGenerator = (notify, msg, cb) => (err) => {
     try {
       errorDetails = typeof err.toString === 'function' ? err.toString() : String(err);
     } catch {
-      errorDetails = String(err);
+      try {
+        errorDetails = typeof err.message === 'string' ? err.message : '';
+      } catch {
+        errorDetails = '';
+      }
     }
   }
   if (typeof notify === 'function') {

@@ -110,6 +110,24 @@ describe('successHandlerGenerator', () => {
     const handlerWithBadNotify = successHandlerGenerator(null as any, 'Saved');
     expect(() => handlerWithBadNotify('ok')).not.toThrow();
   });
+
+  it('handles circular object payloads whose toString also throws', () => {
+    const notify = vi.fn();
+    const handler = successHandlerGenerator(notify, 'Saved');
+    const circularThrowing: Record<string, unknown> = {
+      toString() {
+        throw new Error('circular toString failed');
+      },
+    };
+    circularThrowing.self = circularThrowing;
+
+    expect(() => handler(circularThrowing)).not.toThrow();
+    expect(notify).toHaveBeenCalledWith({
+      message: 'Saved',
+      details: '',
+      event_type: EVENT_TYPES.SUCCESS,
+    });
+  });
 });
 
 describe('errorHandlerGenerator', () => {
@@ -183,5 +201,35 @@ describe('errorHandlerGenerator', () => {
 
     const handlerWithBadNotify = errorHandlerGenerator(null as any, 'Failed');
     expect(() => handlerWithBadNotify('error')).not.toThrow();
+  });
+
+  it('notifies safely even when error toString() throws', () => {
+    const notify = vi.fn();
+    const handler = errorHandlerGenerator(notify, 'Failed');
+    const throwingErr = {
+      message: 'inner error message',
+      toString() {
+        throw new Error('toString failed');
+      },
+    };
+
+    expect(() => handler(throwingErr)).not.toThrow();
+    expect(notify).toHaveBeenCalledWith({
+      message: 'Failed',
+      details: 'inner error message',
+      event_type: EVENT_TYPES.ERROR,
+    });
+
+    const throwingNoMessage = {
+      toString() {
+        throw new Error('toString failed');
+      },
+    };
+    expect(() => handler(throwingNoMessage)).not.toThrow();
+    expect(notify).toHaveBeenCalledWith({
+      message: 'Failed',
+      details: '',
+      event_type: EVENT_TYPES.ERROR,
+    });
   });
 });
