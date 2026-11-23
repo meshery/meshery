@@ -23,7 +23,6 @@ jobs:
   welcome:
     name: Welcome First-Time Contributor
     runs-on: ubuntu-latest
-    timeout-minutes: 5
     if: >-
       (github.event.issue.user.type || github.event.pull_request.user.type) != 'Bot' &&
       !contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'),
