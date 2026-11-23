@@ -1,7 +1,10 @@
 package models
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"sync"
+	"sync/atomic"
 	"testing"
 
 	"github.com/spf13/viper"
@@ -225,18 +228,34 @@ func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 	defer viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, origSkip)
 	viper.Set(SKIP_DOWNLOAD_EXTENSIONS_ENV, false)
 
+	var oneRequests atomic.Int64
+	var twoRequests atomic.Int64
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/one.tar.gz":
+			oneRequests.Add(1)
+		case "/two.tar.gz":
+			twoRequests.Add(1)
+		default:
+			http.NotFound(w, r)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer server.Close()
+
 	properties := []ProviderProperties{
 		{
 			ProviderName:   "Provider One",
 			ProviderURL:    "https://one.example.com",
 			PackageVersion: "1.0.0",
-			PackageURL:     "",
+			PackageURL:     server.URL + "/one.tar.gz",
 		},
 		{
 			ProviderName:   "Provider Two",
 			ProviderURL:    "https://two.example.com",
 			PackageVersion: "2.0.0",
-			PackageURL:     "",
+			PackageURL:     server.URL + "/two.tar.gz",
 		},
 	}
 
@@ -276,4 +295,9 @@ func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 	}
 
 	wg.Wait()
+
+	if oneRequests.Load() == 0 || twoRequests.Load() == 0 {
+		t.Fatalf("package download did not observe both provider package URLs: one=%d two=%d",
+			oneRequests.Load(), twoRequests.Load())
+	}
 }
