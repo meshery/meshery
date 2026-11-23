@@ -150,9 +150,7 @@ func TestDeleteCmdRejectsIncompleteProfileLookup(t *testing.T) {
 		utils.StopMockery(t)
 		utils.ResetCommandFlags(PerfCmd, t)
 		resetVariables()
-		if previousToken != "" {
-			utils.TokenFlag = previousToken
-		}
+		utils.TokenFlag = previousToken
 	})
 
 	profileURL := testContext.BaseURL + "/api/performance/profiles"
@@ -203,9 +201,7 @@ func TestDeleteCmdByUUIDInteractive(t *testing.T) {
 		utils.StopMockery(t)
 		utils.ResetCommandFlags(PerfCmd, t)
 		resetVariables()
-		if previousToken != "" {
-			utils.TokenFlag = previousToken
-		}
+		utils.TokenFlag = previousToken
 	})
 
 	profileID := "a947dff3-1415-4ca6-8922-e35b3232bd78"
@@ -277,9 +273,7 @@ func TestFetchPerformanceProfile(t *testing.T) {
 	utils.TokenFlag = utils.GetToken(t)
 	t.Cleanup(func() {
 		utils.StopMockery(t)
-		if previousToken != "" {
-			utils.TokenFlag = previousToken
-		}
+		utils.TokenFlag = previousToken
 	})
 
 	profileID := "a947dff3-1415-4ca6-8922-e35b3232bd78"
@@ -397,9 +391,7 @@ func TestDeleteCmdByUUIDRejectsInvalidProfileResponses(t *testing.T) {
 		utils.StopMockery(t)
 		utils.ResetCommandFlags(PerfCmd, t)
 		resetVariables()
-		if previousToken != "" {
-			utils.TokenFlag = previousToken
-		}
+		utils.TokenFlag = previousToken
 	})
 
 	profileID := "a947dff3-1415-4ca6-8922-e35b3232bd78"
