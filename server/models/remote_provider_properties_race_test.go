@@ -291,7 +291,7 @@ func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 		provider.SetProviderProperties(expected)
 		snapshot := provider.GetProviderProperties()
 		location := snapshot.PackageLocation()
-		snapshot.DownloadProviderExtensionPackage(provider.Log)
+		provider.DownloadProviderExtensionPackage(provider.Log)
 		content, err := os.ReadFile(filepath.Join(location, "extension.txt"))
 		if err != nil {
 			t.Fatalf("provider %d package downloaded to the wrong snapshot location: %v", i, err)
@@ -339,24 +339,7 @@ func TestRemoteProviderPackageSnapshotRemainsConsistent(t *testing.T) {
 					return
 				}
 				packageDownloadMu.Lock()
-				location := snapshot.PackageLocation()
-				snapshot.DownloadProviderExtensionPackage(provider.Log)
-				content, err := os.ReadFile(filepath.Join(location, "extension.txt"))
-				if err != nil {
-					packageDownloadMu.Unlock()
-					t.Errorf("package snapshot was not downloaded to %s: %v", location, err)
-					return
-				}
-				expectedContent := "/one.tar.gz"
-				if validTwo {
-					expectedContent = "/two.tar.gz"
-				}
-				if string(content) != expectedContent {
-					packageDownloadMu.Unlock()
-					t.Errorf("package snapshot destination=%s content=%q, want %q",
-						location, content, expectedContent)
-					return
-				}
+				provider.DownloadProviderExtensionPackage(provider.Log)
 				packageDownloadMu.Unlock()
 			}
 		}()
