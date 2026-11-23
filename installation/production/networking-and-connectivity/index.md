@@ -248,18 +248,18 @@ Meshery Server serves its web UI - a static [Next.js](https://nextjs.org/)
 export - directly. To make that UI safely cacheable by a CDN or caching reverse
 proxy placed in front of Meshery, the Server emits **release-scoped cache
 headers**: the edge can serve UI content for the lifetime of a release and pick
-up new content automatically after an upgrade, **without any cache purge**. The
-build/release version is the only control point.
+up new content automatically after an upgrade, **without any cache purge**.
+Deploying a new build is the only control point.
 
 Two tiers of response are handled differently:
 
 | Response | `Cache-Control` | Validator | Why |
 | :--- | :--- | :--- | :--- |
 | **Immutable versioned assets** under `/_next/static/{chunks,css,media}/...` | `public, max-age=31536000, immutable` | - | The build content hash is in the URL, so the bytes at a given URL never change. A new release ships new hashes (new URLs); old entries simply fall out of use - no purge. |
-| **HTML documents** (`/` → `index.html`, `<route>.html`) | `public, no-cache` | `ETag: "<build version>"` | HTML lives at stable URLs, so it must always be revalidated. While the release is unchanged the origin answers `If-None-Match` with `304`; a new release changes the build version → changes the `ETag` → the next revalidation returns fresh HTML. |
+| **HTML documents** (`/` → `index.html`, `<route>.html`) | `public, no-cache` | `ETag: "<build version>-<file mtime>-<file size>"` | HTML lives at stable URLs, so it must always be revalidated. While the file is unchanged the origin answers `If-None-Match` with `304`. A new build writes new HTML files, which changes their modification time and so the `ETag`, and the next revalidation returns fresh HTML. The version alone is not enough, because every edge build carries the latest stable version. |
 
 Because browser caches cannot be purged, HTML is never given a positive
-`max-age`; it is always revalidated against the build-version `ETag`. And only
+`max-age`; it is always revalidated against its `ETag`. And only
 existing files receive these headers - a transient `404` (for example, a
 content-hashed asset requested mid-deploy against a pod that does not have it
 yet) is returned **without** cache headers, so it is never pinned as `immutable`
@@ -291,8 +291,8 @@ apply correctly when Meshery is served under a sub-path as well.
 <div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">No cache purge on upgrade</div>
 
 
-Because immutable asset URLs change on every build and the HTML `ETag` is the
-build/release version, a Meshery upgrade is reflected at the edge
+Because immutable asset URLs change on every build and the HTML `ETag` changes
+whenever a build writes new HTML, a Meshery upgrade is reflected at the edge
 **automatically**. You do not need to wire a CDN purge into your upgrade
 pipeline - see the
 [upgrade strategy](/installation/production/operational-readiness-checklist/).
