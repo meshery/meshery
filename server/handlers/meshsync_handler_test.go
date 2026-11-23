@@ -511,3 +511,70 @@ func TestDeleteMeshSyncResource_RemovesChildRows(t *testing.T) {
 		}
 	}
 }
+
+// TestGetMeshSyncResources_EmptyClusterFilter verifies that when clusterIds
+// query param is omitted, resources across all clusters are returned rather
+// than being dropped by an empty IN (?) clause.
+func TestGetMeshSyncResources_EmptyClusterFilter(t *testing.T) {
+	h, provider, db := newMeshSyncTestFixture(t)
+
+	resID := uuid.Must(uuid.NewV4()).String()
+	meta := model.KubernetesResourceObjectMeta{
+		ID:   resID,
+		Name: "test-resource",
+		UID:  resID,
+	}
+	resID2 := uuid.Must(uuid.NewV4()).String()
+	meta2 := model.KubernetesResourceObjectMeta{
+		ID:   resID2,
+		Name: "test-resource-2",
+		UID:  resID2,
+	}
+	if err := db.Create(&meta).Error; err != nil {
+		t.Fatalf("failed to seed resource meta: %v", err)
+	}
+	if err := db.Create(&meta2).Error; err != nil {
+		t.Fatalf("failed to seed resource meta: %v", err)
+	}
+
+	resource := model.KubernetesResource{
+		ID:        resID,
+		ClusterID: "test-cluster",
+		ComponentMetadata: map[string]interface{}{
+			"name": "test-resource",
+		},
+	}
+	resource2 := model.KubernetesResource{
+		ID:        resID2,
+		ClusterID: "test-cluster-2",
+		ComponentMetadata: map[string]interface{}{
+			"name": "test-resource-2",
+		},
+	}
+	if err := db.Table("kubernetes_resources").Create(&resource).Error; err != nil {
+		t.Fatalf("failed to seed resource: %v", err)
+	}
+	if err := db.Table("kubernetes_resources").Create(&resource2).Error; err != nil {
+		t.Fatalf("failed to seed resource: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/system/meshsync/resources", nil)
+	rec := httptest.NewRecorder()
+	h.GetMeshSyncResources(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status 200, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+
+	var resp models.MeshSyncResourcesAPIResponse
+	if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("failed to unmarshal response: %v", err)
+	}
+	clusterIDs := map[string]bool{}
+	for _, r := range resp.Resources {
+		clusterIDs[r.ClusterID] = true
+	}
+	if !clusterIDs["test-cluster"] || !clusterIDs["test-cluster-2"] {
+		t.Fatalf("expected resources from both clusters when clusterIds is omitted, got clusters %v", clusterIDs)
+	}
+}
