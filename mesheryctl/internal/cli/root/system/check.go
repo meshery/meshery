@@ -135,7 +135,11 @@ var checkCmd = &cobra.Command{
 Find more information at: https://docs.meshery.io/reference/mesheryctl/system/check`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", checkUsageMsg))
+			err := utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", checkUsageMsg))
+			if utils.Log != nil {
+				utils.Log.Error(err)
+			}
+			return err
 		}
 		return nil
 	},

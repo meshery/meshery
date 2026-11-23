@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -87,18 +88,22 @@ func TestPreflightCmdIntegration(t *testing.T) {
 }
 
 func TestCheckCmdArgs(t *testing.T) {
+	utils.SetupMeshkitLoggerTesting(t, false)
+
 	// check does not take any positional arguments
 	err := checkCmd.Args(checkCmd, []string{})
 	assert.NoError(t, err)
 
 	err = checkCmd.Args(checkCmd, []string{"extra-arg"})
 	if assert.Error(t, err) {
+		assert.Equal(t, utils.ErrInvalidArgumentCode, errors.GetCode(err))
 		assert.Contains(t, err.Error(), "too many arguments specified")
 		assert.Contains(t, err.Error(), "Usage: mesheryctl system check")
 	}
 
 	err = checkCmd.Args(checkCmd, []string{"arg1", "arg2"})
 	if assert.Error(t, err) {
+		assert.Equal(t, utils.ErrInvalidArgumentCode, errors.GetCode(err))
 		assert.Contains(t, err.Error(), "too many arguments specified")
 		assert.Contains(t, err.Error(), "Usage: mesheryctl system check")
 	}
