@@ -121,7 +121,7 @@ func (h *Handler) GetUserCredentialByID(w http.ResponseWriter, req *http.Request
 	}
 }
 
-func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if user == nil {
 		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
 		return
@@ -163,12 +163,34 @@ func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _
 		h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
 	}
 
+	// The remote provider reads the saved selection off the session preference
+	// (and auto-selects a sole organization when none is saved). Put it on the
+	// request so GetUserCredentials can see the same Preference the middleware
+	// already loaded, including a selection the handler just mutated.
+	if prefObj != nil {
+		req = req.WithContext(context.WithValue(req.Context(), models.PerfObjCtxKey, prefObj))
+	}
+
 	credentialsPage, err := provider.GetUserCredentials(req, user.ID.String(), page, pageSize, search, order)
 	if err != nil {
+		status := providerStatusOrInternal(err)
 		if h.log != nil {
 			h.log.Error(ErrGetUserCredential(err))
 		}
-		writeMeshkitError(w, ErrGetUserCredential(err), http.StatusInternalServerError)
+		// 409 is the schemas OrganizationSelectionRequiredError body
+		// (code organization_selection_required plus choices), not MeshKit.
+		// 403/404 stay distinct MeshKit errors ("no qualifying organization",
+		// "not a member of selected org") so they are not mistaken for a
+		// credentials wipe or a generic 500.
+		if sel, ok := models.AsOrganizationSelectionRequired(err); ok {
+			writeJSONMessage(w, sel.Body(), http.StatusConflict)
+			return
+		}
+		if status == http.StatusForbidden || status == http.StatusNotFound {
+			writeMeshkitError(w, err, status)
+			return
+		}
+		writeMeshkitError(w, ErrGetUserCredential(err), status)
 		return
 	}
 

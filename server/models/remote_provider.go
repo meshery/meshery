@@ -5518,10 +5518,14 @@ func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential
 }
 
 // GetUserCredentials - to get saved credentials
-func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, pageSize int, search, order string) (*CredentialsPage, error) {
+func (l *RemoteProvider) GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error) {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
+	}
+	orgID, err := l.resolveActingOrganizationID(req, userID)
+	if err != nil {
+		return nil, err
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
 
@@ -5535,6 +5539,7 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 	remoteProviderURL.RawQuery = q.Encode()
 	l.Log.Debug("Making request to : ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	cReq.Header.Set(CurrentOrgIDHeader, orgID)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
 		return nil, err
@@ -5550,15 +5555,45 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 	}()
 
 	bdr, _ := io.ReadAll(resp.Body)
-	if resp.StatusCode != http.StatusOK {
-		return nil, ErrFetch(fmt.Errorf("could not retrieve list of test profiles: %d", resp.StatusCode), string(bdr), resp.StatusCode)
+	switch resp.StatusCode {
+	case http.StatusOK:
+		var cp CredentialsPage
+		if err = json.Unmarshal(bdr, &cp); err != nil {
+			return nil, ErrFetch(err, "Unmarshal Credentials Page", resp.StatusCode)
+		}
+		return &cp, nil
+	case http.StatusConflict:
+		sel := parseOrganizationSelectionRequired(bdr)
+		if sel == nil {
+			sel = &OrganizationSelectionRequired{
+				Code:    OrganizationSelectionRequiredCode,
+				Message: organizationSelectionRequiredMessage,
+			}
+		}
+		if len(sel.Choices) < 2 {
+			if choices := l.organizationChoicesFromRequest(req); len(choices) >= 2 {
+				sel.Choices = choices
+			}
+		}
+		return nil, httputil.WithProviderStatus(sel, http.StatusConflict)
+	case http.StatusForbidden:
+		// Live Cloud v1.0.384 may still answer 403 for a multi-org caller
+		// with no named org. Promote to 409 only when the body is already
+		// the selection-required contract (the code and at least two
+		// choices). Otherwise this is "no qualifying organization".
+		if sel := parseOrganizationSelectionRequired(bdr); sel != nil && sel.Code == OrganizationSelectionRequiredCode && len(sel.Choices) >= 2 {
+			return nil, httputil.WithProviderStatus(sel, http.StatusConflict)
+		}
+		err = ErrNoQualifyingOrganization()
+		l.Log.Error(err)
+		return nil, err
+	case http.StatusNotFound:
+		err = ErrOrganizationMembership()
+		l.Log.Error(err)
+		return nil, err
+	default:
+		return nil, ErrFetch(fmt.Errorf("could not retrieve credentials: %d", resp.StatusCode), string(bdr), resp.StatusCode)
 	}
-
-	var cp CredentialsPage
-	if err = json.Unmarshal(bdr, &cp); err != nil {
-		return nil, ErrFetch(err, "Unmarshal Credentials Page", resp.StatusCode)
-	}
-	return &cp, nil
 }
 
 func (l *RemoteProvider) GetCredentialByID(token string, credentialID core.Uuid) (*Credential, int, error) {
