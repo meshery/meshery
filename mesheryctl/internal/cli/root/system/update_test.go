@@ -38,13 +38,13 @@ func TestUpdateCmdArgs(t *testing.T) {
 			Name:          "invalid with unexpected positional argument",
 			Args:          []string{"unexpected-arg"},
 			ExpectError:   true,
-			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("update does not accept positional arguments\n\n%s", updateUsageMsg)),
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", updateUsageMsg)),
 		},
 		{
 			Name:          "invalid with multiple unexpected positional arguments",
 			Args:          []string{"arg1", "arg2"},
 			ExpectError:   true,
-			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("update does not accept positional arguments\n\n%s", updateUsageMsg)),
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", updateUsageMsg)),
 		},
 	}
 

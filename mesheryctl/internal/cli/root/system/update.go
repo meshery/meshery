@@ -50,7 +50,7 @@ mesheryctl system update --skip-reset
 	Annotations: linkDocUpdate,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("update does not accept positional arguments\n\n%s", updateUsageMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", updateUsageMsg))
 		}
 		return nil
 	},

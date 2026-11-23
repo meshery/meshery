@@ -44,7 +44,7 @@ mesheryctl system delete -y
 `,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("delete does not accept positional arguments\n\n%s", deleteUsageMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", deleteUsageMsg))
 		}
 		return nil
 	},
