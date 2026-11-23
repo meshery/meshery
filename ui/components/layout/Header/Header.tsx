@@ -470,7 +470,7 @@ const Header = ({
                   )}
                 </ErrorBoundary>
                 <UserInfoContainer>
-                  <CustomTooltip title={contexts?.contexts?.length > 1 ? 'Clusters' : 'Cluster'}>
+                  <CustomTooltip title={contexts?.totalCount > 1 ? 'Clusters' : 'Cluster'}>
                     <UserSpan
                       sx={{
                         display: {
