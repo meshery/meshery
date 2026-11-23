@@ -175,14 +175,24 @@ describe('visibility update helpers', () => {
 });
 
 describe('getDefaultFilterType', () => {
-  it('returns VIEW when in operator mode', () => {
+  it('returns VIEW when in operator mode and view permission is granted', () => {
     isInOperatorMode.mockReturnValue(true);
-    expect(getDefaultFilterType()).toBe('view');
+    expect(getDefaultFilterType(true)).toBe('view');
   });
 
-  it('returns DESIGN otherwise', () => {
+  it('returns DESIGN when in operator mode but view permission is denied', () => {
+    isInOperatorMode.mockReturnValue(true);
+    expect(getDefaultFilterType(false)).toBe('design');
+  });
+
+  it('returns DESIGN when not in operator mode even if view permission is granted', () => {
     isInOperatorMode.mockReturnValue(false);
-    expect(getDefaultFilterType()).toBe('design');
+    expect(getDefaultFilterType(true)).toBe('design');
+  });
+
+  it('defaults isViewAllowed to true for backward compatibility', () => {
+    isInOperatorMode.mockReturnValue(true);
+    expect(getDefaultFilterType()).toBe('view');
   });
 });
 
