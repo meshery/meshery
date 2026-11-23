@@ -146,7 +146,7 @@ export const handleUpdateViewVisibility = async ({ value, updateView, selectedRe
   };
 };
 
-export const getDefaultFilterType = (isViewAllowed = true) => {
+export const getDefaultFilterType = (isViewAllowed: boolean) => {
   if (isInOperatorMode() && isViewAllowed) {
     return RESOURCE_TYPE.VIEW;
   }

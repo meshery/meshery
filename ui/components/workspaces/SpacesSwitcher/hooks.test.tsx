@@ -189,11 +189,6 @@ describe('getDefaultFilterType', () => {
     isInOperatorMode.mockReturnValue(false);
     expect(getDefaultFilterType(true)).toBe('design');
   });
-
-  it('defaults isViewAllowed to true for backward compatibility', () => {
-    isInOperatorMode.mockReturnValue(true);
-    expect(getDefaultFilterType()).toBe('view');
-  });
 });
 
 describe('useGetIconBasedOnMode', () => {
