@@ -17,6 +17,12 @@ import (
 	"github.com/meshery/schemas/models/core"
 )
 
+// newGrafanaTelemetryClient constructs the Grafana telemetry client. It is a variable so
+// tests can substitute a transport permitted to reach a local httptest server
+// standing in for a real instance; production always uses grafana.New, which
+// installs the SSRF-guarded transport from helpers/utils.
+var newGrafanaTelemetryClient = grafana.New
+
 // telemetry_grafana_handler.go exposes a clean, read-oriented API over a Grafana
 // instance registered as a first-class Meshery connection. It is independent of
 // the legacy /api/telemetry/metrics/grafana/* handlers and reuses the connection
@@ -56,7 +62,7 @@ func (h *Handler) grafanaClientForConnection(token string, connectionID uuid.UUI
 			secret = models.CredentialAuthSecret(cred.Secret)
 		}
 	}
-	return grafana.New(baseURL, secret, h.log), connection, http.StatusOK, nil
+	return newGrafanaTelemetryClient(baseURL, secret, h.log), connection, http.StatusOK, nil
 }
 
 // writeJSON serializes v as the JSON response body with a 200 status.

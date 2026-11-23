@@ -40,32 +40,33 @@ type Client struct {
 //   - "username:password" (contains a colon) -> HTTP Basic auth
 //   - any other non-empty value             -> Bearer token (API key / service-account token)
 //   - empty                                  -> no auth (anonymous Prometheus)
+//
+// safeHTTPClient is the single SSRF-guarded client shared by every Client in
+// this package. Sharing one transport keeps connection pooling effective: the
+// telemetry handlers build a Client per request, and *http.Client is safe for
+// concurrent use and carries no per-Client state.
+var safeHTTPClient = utils.NewSafeHTTPClient(defaultTimeout)
+
 func New(baseURL, secret string, log logger.Handler) *Client {
-	return newClient(baseURL, secret, log, utils.NewSafeHTTPClient(defaultTimeout))
+	return NewWithHTTPClient(baseURL, secret, log, safeHTTPClient)
 }
 
-// newClient builds a Client around a caller-supplied HTTP client. Production
-// code goes through New, which installs the SSRF-guarded client from
-// helpers/utils; only tests that drive a local httptest server substitute a
-// client permitted to reach private addresses.
-func newClient(baseURL, secret string, log logger.Handler, httpClient *http.Client) *Client {
+// NewWithHTTPClient builds a Client around a caller-supplied HTTP client. New is
+// the production entry point and installs the guarded client; this exists for
+// tests that drive a local httptest server and therefore need a transport
+// permitted to reach private addresses (utils.NewSafeHTTPClientWithAllowPrivate).
+// A nil httpClient falls back to the guarded client, so the safe behaviour is the
+// default rather than a nil-dereference at request time.
+func NewWithHTTPClient(baseURL, secret string, log logger.Handler, httpClient *http.Client) *Client {
+	if httpClient == nil {
+		httpClient = safeHTTPClient
+	}
 	return &Client{
-		baseURL:    normalizeBaseURL(baseURL),
+		baseURL:    telemetry.NormalizeBaseURL(baseURL),
 		authHeader: authHeader(secret),
 		httpClient: httpClient,
 		log:        log,
 	}
-}
-
-// normalizeBaseURL trims surrounding space, any query or fragment, and a
-// trailing slash, so that the API path appended on every request is always the
-// effective request path.
-func normalizeBaseURL(raw string) string {
-	s := strings.TrimSpace(raw)
-	if i := strings.IndexAny(s, "?#"); i >= 0 {
-		s = s[:i]
-	}
-	return strings.TrimRight(s, "/")
 }
 
 func authHeader(secret string) string {

@@ -17,6 +17,12 @@ import (
 	"github.com/meshery/schemas/models/core"
 )
 
+// newPrometheusTelemetryClient constructs the Prometheus telemetry client. It is a variable so
+// tests can substitute a transport permitted to reach a local httptest server
+// standing in for a real instance; production always uses prometheus.New, which
+// installs the SSRF-guarded transport from helpers/utils.
+var newPrometheusTelemetryClient = prometheus.New
+
 // telemetry_prometheus_handler.go exposes a clean, read-oriented API over a
 // Prometheus instance registered as a first-class Meshery connection. It is
 // independent of the legacy /api/telemetry/metrics/* handlers and reuses the
@@ -61,7 +67,7 @@ func (h *Handler) prometheusTelemetryClientForConnection(token string, connectio
 			secret = models.CredentialAuthSecret(cred.Secret)
 		}
 	}
-	return prometheus.New(baseURL, secret, h.log), connection, http.StatusOK, nil
+	return newPrometheusTelemetryClient(baseURL, secret, h.log), connection, http.StatusOK, nil
 }
 
 // PrometheusTelemetryPingHandler verifies a Prometheus connection is reachable

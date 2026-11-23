@@ -100,6 +100,8 @@ func newAuthCapturingServer(t *testing.T) (*httptest.Server, *string) {
 // shape (`secret` object IS the payload) and the double-nested shape Meshery UI
 // writes both produced an unauthenticated client.
 func TestGrafanaClientForConnectionCredentialShapes(t *testing.T) {
+	useLoopbackTelemetryClients(t)
+
 	tests := []struct {
 		name    string
 		secret  map[string]interface{}
@@ -154,6 +156,8 @@ func TestGrafanaClientForConnectionCredentialShapes(t *testing.T) {
 // credential form carries no auth field, so a canonical credential is correctly
 // anonymous; the legacy shapes must keep authenticating.
 func TestPrometheusClientForConnectionCredentialShapes(t *testing.T) {
+	useLoopbackTelemetryClients(t)
+
 	tests := []struct {
 		name    string
 		secret  map[string]interface{}

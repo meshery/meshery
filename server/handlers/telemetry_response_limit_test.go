@@ -48,8 +48,8 @@ func TestTelemetryAuthPrecedesResponseSize(t *testing.T) {
 			w.WriteHeader(code)
 			_, _ = w.Write([]byte(strings.Repeat("x", 16<<20+1)))
 		}))
-		_, grafanaErr := grafana.New(srv.URL, "", nil).Health(context.Background())
-		_, prometheusErr := prometheus.New(srv.URL, "", nil).Health(context.Background())
+		_, grafanaErr := grafana.NewWithHTTPClient(srv.URL, "", nil, allowPrivateHTTPClient()).Health(context.Background())
+		_, prometheusErr := prometheus.NewWithHTTPClient(srv.URL, "", nil, allowPrivateHTTPClient()).Health(context.Background())
 		srv.Close()
 		if grafanaErr == nil || prometheusErr == nil {
 			t.Fatalf("HTTP %d: expected both clients to reject the oversized response", code)
