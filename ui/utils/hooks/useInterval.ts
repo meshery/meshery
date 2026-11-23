@@ -12,12 +12,7 @@ const useInterval = (callback: IntervalCallback, delay: number | null | undefine
   const hasCallback = typeof callback === 'function';
 
   useEffect(() => {
-    if (
-      typeof delay !== 'number' ||
-      Number.isNaN(delay) ||
-      delay < 0 ||
-      !hasCallback
-    ) {
+    if (typeof delay !== 'number' || Number.isNaN(delay) || delay < 0 || !hasCallback) {
       return undefined;
     }
     const id = setInterval(() => {

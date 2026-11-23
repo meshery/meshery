@@ -84,9 +84,7 @@ describe('useInterval', () => {
     });
   });
 
-  it(
-    'starts interval when callback transitions from non-callable to callable with unchanged delay',
-    () => {
+  it('starts interval when callback transitions from non-callable to callable with unchanged delay', () => {
     const cb = vi.fn();
     const { rerender } = renderHook(({ fn }) => useInterval(fn, 100), {
       initialProps: { fn: null as unknown as () => void },
