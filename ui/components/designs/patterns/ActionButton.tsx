@@ -88,7 +88,7 @@ export default function ActionButton({
           horizontal: 'left',
         }}
       >
-        <Paper>
+        <Paper sx={{ minWidth: 160 }}>
           <ClickAwayListener onClickAway={handleClose}>
             <MenuList id="split-button-menu" autoFocusItem>
               {options.map((option, index) => (
@@ -102,8 +102,16 @@ export default function ActionButton({
                     handleMenuItemClick(event);
                     option.onClick(event, index);
                   }}
+                  sx={{
+                    minWidth: 160,
+                    pr: 4.5,
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
                 >
-                  <div style={{ marginRight: '0.5rem' }}>{option.icon}</div>
+                  <div style={{ marginRight: '0.5rem', display: 'flex', alignItems: 'center' }}>
+                    {option.icon}
+                  </div>
                   {option.label}
                 </MenuItem>
               ))}

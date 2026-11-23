@@ -49,7 +49,7 @@ const ActionPopover = ({ actions = [] }) => {
           anchorEl={anchorRef.current}
           placement="bottom-start"
         >
-          <Paper>
+          <Paper sx={{ minWidth: 160 }}>
             <MenuList autoFocusItem>
               {actions.map((action, index) => (
                 <MenuItem
@@ -61,8 +61,16 @@ const ActionPopover = ({ actions = [] }) => {
                     action.onClick(event);
                     setOpen(false);
                   }}
+                  sx={{
+                    minWidth: 160,
+                    pr: 4.5,
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
                 >
-                  <div style={{ marginRight: '0.5rem' }}>{action.icon}</div>
+                  <div style={{ marginRight: '0.5rem', display: 'flex', alignItems: 'center' }}>
+                    {action.icon}
+                  </div>
                   {action.label}
                 </MenuItem>
               ))}
