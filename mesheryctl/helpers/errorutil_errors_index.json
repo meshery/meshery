@@ -109,7 +109,7 @@
       ],
       "suggestedRemediation": [
         "Provide the path to the design manifest.",
-        "Usage: mesheryctl design import -f [file/url] -s [source-type]\nExample: mesheryctl design import -f ./pattern.yml -s \"Kubernetes Manifest\""
+        "Usage: mesheryctl design import -f [file/url] -s [source-type]\nExample: mesheryctl design import -f ./pattern.yml -s manifest"
       ]
     },
     {
@@ -1909,7 +1909,7 @@
       ],
       "suggestedRemediation": [
         "Provide one of the supported source type for the design to import.",
-        "Usage: mesheryctl design import -f [file/url] -s [source-type]\nExample: mesheryctl design import -f ./pattern.yml -s \"Kubernetes Manifest\""
+        "Usage: mesheryctl design import -f [file/url] -s [source-type]\nExample: mesheryctl design import -f ./pattern.yml -s manifest"
       ]
     },
     {
@@ -2178,7 +2178,7 @@
       ],
       "suggestedRemediation": [
         "Provide the path to the design file using the '-f' flag. Ensure that the file path or URL is correctly specified and accessible.",
-        "Usage: mesheryctl design import -f [file/url] -s [source-type]\nExample: mesheryctl design import -f ./pattern.yml -s \"Kubernetes Manifest\""
+        "Usage: mesheryctl design import -f [file/url] -s [source-type]\nExample: mesheryctl design import -f ./pattern.yml -s manifest"
       ]
     },
     {

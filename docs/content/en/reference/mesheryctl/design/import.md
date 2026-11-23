@@ -65,7 +65,7 @@ mesheryctl design import -f design.yml -n design-name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
+mesheryctl design import -f design.yml -s manifest -n design-name
 
 </div>
 </div>
@@ -78,7 +78,7 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
   -f, --file string          Path/URL to design file
   -h, --help                 help for import
   -n, --name string          Name for the design file
-  -s, --source-type string   Type of source file (ex. manifest / compose / helm / design)
+  -s, --source-type string   Type of source file (ex. manifest / compose / helm / kustomize / design)
 
 </div>
 </pre>

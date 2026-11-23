@@ -60,20 +60,27 @@ var deployDesignCmd = &cobra.Command{
 	Example: `
 // Deploy design by providing file path
 mesheryctl design deploy -f [filepath] -s [source type]
+
+mesheryctl design deploy -f ./pattern.yml -s manifest
 	`,
 	Annotations: linkDocDesignDeploy,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
 		flagValidator := mesheryctlflags.GetFlagValidator()
-		designDeployValidSourceTypes, err := getDesignSourceTypes()
-		if err != nil {
-			return err
-		}
+		designDeployValidSourceTypes := GetDesignSourceTypes()
 
-		err = flagValidator.Validator.RegisterValidation("design-source-type", func(fl validator.FieldLevel) bool {
-			if sourceType, ok := fl.Field().Interface().(string); ok {
+		err := flagValidator.Validator.RegisterValidation("design-source-type", func(fl validator.FieldLevel) bool {
+			if st, ok := fl.Field().Interface().(string); ok {
+				if st == "" {
+					return true
+				}
+				canonical, err := ValidateAndNormalizeSourceType(st)
+				if err == nil {
+					designDeployFlags.SourceType = string(canonical)
+					return true
+				}
 				for _, validType := range designDeployValidSourceTypes {
-					if strings.EqualFold(sourceType, validType) {
+					if strings.EqualFold(st, validType) {
 						return true
 					}
 				}
@@ -215,5 +222,5 @@ func multiplepatternsConfirmation(profiles []models.MesheryPattern) int {
 func init() {
 	deployDesignCmd.Flags().StringVarP(&designDeployFlags.File, "file", "f", "", "Path to design file")
 	deployDesignCmd.Flags().BoolVarP(&designDeployFlags.SkipSave, "skip-save", "", false, "Skip saving a design")
-	deployDesignCmd.Flags().StringVarP(&designDeployFlags.SourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
+	deployDesignCmd.Flags().StringVarP(&designDeployFlags.SourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm / kustomize / design)")
 }
