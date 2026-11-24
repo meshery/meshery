@@ -20,7 +20,9 @@ func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(user); err != nil {
 		obj := "user data"
-		h.log.Error(models.ErrEncoding(err, obj))
+		if h != nil && h.log != nil {
+			h.log.Error(models.ErrEncoding(err, obj))
+		}
 		writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
 		return
 	}
@@ -28,18 +30,30 @@ func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.
 
 func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	if provider == nil {
-		h.log.Error(ErrNilProvider())
+		if h != nil && h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
 		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
 		return
 	}
 
 	userID := mux.Vars(r)["id"]
-	_, err := uuid.FromString(userID)
-	if err != nil {
-		writeMeshkitError(w, models.ErrInvalidUUID(err), http.StatusBadRequest)
+	parsedID, err := uuid.FromString(userID)
+	if err != nil || parsedID == uuid.Nil {
+		var invalidErr error
+		if err != nil {
+			invalidErr = models.ErrInvalidUUID(fmt.Errorf("invalid user ID %q: %w", userID, err))
+		} else {
+			invalidErr = models.ErrInvalidUUID(fmt.Errorf("invalid user ID %q: must not be the nil UUID", userID))
+		}
+		if h != nil && h.log != nil {
+			h.log.Error(invalidErr)
+		}
+		writeMeshkitError(w, invalidErr, http.StatusBadRequest)
 		return
 	}
-	resp, err := provider.GetUserByID(r, userID)
+	canonicalID := parsedID.String()
+	resp, err := provider.GetUserByID(r, canonicalID)
 	if err != nil {
 		if errors.Is(err, models.ErrUserIsSystemInstance) {
 			// The requested ID is this Meshery instance's own system UUID; it
@@ -49,25 +63,31 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 			return
 		}
 		handlerErr := ErrGetUser(err)
-		h.log.Error(handlerErr)
+		if h != nil && h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
 	if resp == nil {
-		writeMeshkitError(w, ErrUserNotFound(userID), http.StatusNotFound)
+		writeMeshkitError(w, ErrUserNotFound(canonicalID), http.StatusNotFound)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
 func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	if provider == nil {
-		h.log.Error(ErrNilProvider())
+		if h != nil && h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
 		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
 		return
 	}
@@ -83,14 +103,18 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 	resp, err := provider.GetUsers(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		handlerErr := ErrGetUsers(err)
-		h.log.Error(handlerErr)
+		if h != nil && h.log != nil {
+			h.log.Error(handlerErr)
+		}
 		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(w, string(resp)); err != nil {
-		h.log.Error(err)
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
 	}
 }
 
@@ -100,14 +124,18 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
 			obj := "user preference object"
-			h.log.Error(models.ErrEncoding(err, obj))
+			if h != nil && h.log != nil {
+				h.log.Error(models.ErrEncoding(err, obj))
+			}
 			writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
 		}
 		return
 	}
 
 	if provider == nil {
-		h.log.Error(ErrNilProvider())
+		if h != nil && h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
 		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
 		return
 	}
@@ -118,14 +146,18 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 
 	// read user preferences from JSON request body
 	if err := json.NewDecoder(req.Body).Decode(&prefObj); err != nil {
-		h.log.Error(ErrDecoding(err, "user preferences"))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrDecoding(err, "user preferences"))
+		}
 		writeMeshkitError(w, ErrDecoding(err, "user preferences"), http.StatusInternalServerError)
 		return
 	}
 
 	if prefObj == nil {
 		err := fmt.Errorf("request body cannot be empty")
-		h.log.Error(ErrRequestBody(err))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
@@ -136,7 +168,9 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		qps := prefObj.LoadTestPreferences.QueriesPerSecond
 		if qps < 0 {
 			err := fmt.Errorf("QPS value less than 0")
-			h.log.Error(ErrSavingUserPreference(err))
+			if h != nil && h.log != nil {
+				h.log.Error(ErrSavingUserPreference(err))
+			}
 			writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusBadRequest)
 			return
 		}
@@ -144,7 +178,9 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		dur := prefObj.LoadTestPreferences.Duration
 		if _, err := time.ParseDuration(dur); err != nil {
 			err = pkgerrors.Wrap(err, "unable to parse test duration")
-			h.log.Error(ErrSavingUserPreference(err))
+			if h != nil && h.log != nil {
+				h.log.Error(ErrSavingUserPreference(err))
+			}
 			writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusBadRequest)
 			return
 		}
@@ -152,7 +188,9 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		c := prefObj.LoadTestPreferences.ConcurrentRequests
 		if c < 0 {
 			err := fmt.Errorf("number of concurrent requests less than 0")
-			h.log.Error(ErrSavingUserPreference(err))
+			if h != nil && h.log != nil {
+				h.log.Error(ErrSavingUserPreference(err))
+			}
 			writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusBadRequest)
 			return
 		}
@@ -164,7 +202,9 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 		loadGen := prefObj.LoadTestPreferences.LoadGenerator
 		if loadGen != "" && loadGen != models.FortioLG.Name() && loadGen != "wrk2" {
 			err := fmt.Errorf("invalid load generator: %s", loadGen)
-			h.log.Error(ErrSavingUserPreference(err))
+			if h != nil && h.log != nil {
+				h.log.Error(ErrSavingUserPreference(err))
+			}
 			writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusBadRequest)
 			return
 		}
@@ -172,14 +212,18 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 
 	if user == nil {
 		err := fmt.Errorf("user not found in request context")
-		h.log.Error(ErrSavingUserPreference(err))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrSavingUserPreference(err))
+		}
 		writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusBadRequest)
 		return
 	}
 
 	if err := provider.RecordPreferences(req, user.ID.String(), prefObj); err != nil {
 		err := fmt.Errorf("unable to save user preferences: %v", err)
-		h.log.Error(ErrSavingUserPreference(err))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrSavingUserPreference(err))
+		}
 		writeMeshkitError(w, ErrSavingUserPreference(err), http.StatusInternalServerError)
 		return
 	}
@@ -187,7 +231,9 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(prefObj); err != nil {
 		obj := "user preferences"
-		h.log.Error(models.ErrEncoding(err, obj))
+		if h != nil && h.log != nil {
+			h.log.Error(models.ErrEncoding(err, obj))
+		}
 		writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
 		return
 	}
@@ -195,7 +241,9 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 
 func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	if provider == nil {
-		h.log.Error(ErrNilProvider())
+		if h != nil && h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
 		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
 		return
 	}
@@ -211,7 +259,9 @@ func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *
 
 func (h *Handler) ShareFilterHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	if provider == nil {
-		h.log.Error(ErrNilProvider())
+		if h != nil && h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
 		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
 		return
 	}

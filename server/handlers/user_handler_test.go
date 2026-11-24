@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 )
@@ -18,33 +19,84 @@ import (
 // The handler test uses this to drive each error path independently.
 type userSpyProvider struct {
 	*models.DefaultLocalProvider
-	resp []byte
-	err  error
+	resp   []byte
+	err    error
+	called bool
+	gotID  string
 }
 
-func (m *userSpyProvider) GetUserByID(_ *http.Request, _ string) ([]byte, error) {
+func (m *userSpyProvider) GetUserByID(_ *http.Request, id string) ([]byte, error) {
+	m.called = true
+	m.gotID = id
 	return m.resp, m.err
+}
+
+// TestGetUserByIDHandler_CanonicalizesUUID verifies that non-canonical UUID
+// spellings accepted by uuid.FromString (such as uppercase hex or braced forms)
+// are normalized to their canonical lowercase hyphenated representation before
+// reaching the provider.
+func TestGetUserByIDHandler_CanonicalizesUUID(t *testing.T) {
+	const canonical = "00000000-0000-0000-0000-00000000000a"
+	for _, raw := range []string{
+		"00000000-0000-0000-0000-00000000000A",
+		"{00000000-0000-0000-0000-00000000000A}",
+	} {
+		t.Run(raw, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := &userSpyProvider{
+				DefaultLocalProvider: &models.DefaultLocalProvider{},
+				resp:                 []byte(`{"id":"` + canonical + `"}`),
+			}
+			provider.Initialize()
+
+			req := httptest.NewRequest(http.MethodGet, "/api/user/profile/test", nil)
+			req = mux.SetURLVars(req, map[string]string{"id": raw})
+			rec := httptest.NewRecorder()
+
+			h.GetUserByIDHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusOK {
+				t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
+			}
+			if !provider.called {
+				t.Fatal("expected provider to be called")
+			}
+			if provider.gotID != canonical {
+				t.Errorf("provider received id = %q, want %q", provider.gotID, canonical)
+			}
+		})
+	}
 }
 
 // TestGetUserByIDHandler_InvalidUUIDReturnsJSON pins the 400 response to a
 // JSON envelope so the client's RTK Query parser sees a structured error
-// object instead of a plain-text body (which previously crashed the JSON
-// parser with "Unexpected token ... is not valid JSON").
+// object instead of a plain-text body. It verifies both malformed and zero UUIDs
+// are rejected at the boundary and never reach the provider.
 func TestGetUserByIDHandler_InvalidUUIDReturnsJSON(t *testing.T) {
-	h := newTestHandler(t, map[string]models.Provider{}, "")
-	provider := &userSpyProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
-	provider.Initialize()
+	for _, id := range []string{"not-a-uuid", "12345", uuid.Nil.String()} {
+		t.Run(id, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := &userSpyProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
+			provider.Initialize()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/user/profile/not-a-uuid", nil)
-	req = mux.SetURLVars(req, map[string]string{"id": "not-a-uuid"})
-	rec := httptest.NewRecorder()
+			req := httptest.NewRequest(http.MethodGet, "/api/user/profile/"+id, nil)
+			req = mux.SetURLVars(req, map[string]string{"id": id})
+			rec := httptest.NewRecorder()
 
-	h.GetUserByIDHandler(rec, req, nil, nil, provider)
+			h.GetUserByIDHandler(rec, req, nil, nil, provider)
 
-	if rec.Code != http.StatusBadRequest {
-		t.Fatalf("expected 400, got %d (body=%q)", rec.Code, rec.Body.String())
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected 400, got %d (body=%q)", rec.Code, rec.Body.String())
+			}
+			assertJSONErrorEnvelope(t, rec.Result())
+			if id == uuid.Nil.String() && !strings.Contains(rec.Body.String(), "must not be the nil UUID") {
+				t.Errorf("body = %q, want it to contain %q", rec.Body.String(), "must not be the nil UUID")
+			}
+			if provider.called {
+				t.Error("provider was called, want no call at all")
+			}
+		})
 	}
-	assertJSONErrorEnvelope(t, rec.Result())
 }
 
 // TestGetUserByIDHandler_ProviderErrorReturnsJSON covers the upstream-fetch
@@ -169,7 +221,6 @@ func assertJSONErrorEnvelope(t *testing.T, resp *http.Response) {
 	}
 }
 
-
 func TestUserHandlers_NilGuards(t *testing.T) {
 	h := newTestHandler(t, map[string]models.Provider{}, "")
 
@@ -275,4 +326,139 @@ func TestUserHandlers_NilGuards(t *testing.T) {
 			t.Errorf("expected error body to contain %s, got: %s", ErrNilProviderCode, rec.Body.String())
 		}
 	}
+}
+
+// errResponseWriter wraps httptest.ResponseRecorder and returns a scripted error
+// from Write without committing headers, allowing tests to deterministically
+// trigger json.NewEncoder(w).Encode failures while still observing WriteHeader.
+type errResponseWriter struct {
+	*httptest.ResponseRecorder
+	writeErr error
+}
+
+func (w *errResponseWriter) Write(_ []byte) (int, error) {
+	return 0, w.writeErr
+}
+
+// TestUserHandlers_NilLogger_DoesNotPanic verifies that user handlers guard against
+// nil logger dereferences when logging is unavailable.
+func TestUserHandlers_NilLogger_DoesNotPanic(t *testing.T) {
+	h := &Handler{
+		config: &models.HandlerConfig{},
+	} // nil logger
+
+	provider := &userSpyProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
+	provider.Initialize()
+
+	t.Run("GetUserByIDHandler invalid UUID", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/api/user/profile/invalid-uuid", nil)
+		req = mux.SetURLVars(req, map[string]string{"id": "invalid-uuid"})
+		rec := httptest.NewRecorder()
+		h.GetUserByIDHandler(rec, req, nil, nil, provider)
+		if rec.Code != http.StatusBadRequest {
+			t.Errorf("status = %d, want 400", rec.Code)
+		}
+	})
+
+	t.Run("GetUserByIDHandler zero UUID", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/api/user/profile/"+uuid.Nil.String(), nil)
+		req = mux.SetURLVars(req, map[string]string{"id": uuid.Nil.String()})
+		rec := httptest.NewRecorder()
+		h.GetUserByIDHandler(rec, req, nil, nil, provider)
+		if rec.Code != http.StatusBadRequest {
+			t.Errorf("status = %d, want 400", rec.Code)
+		}
+	})
+
+	t.Run("GetUserByIDHandler nil provider", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/api/user/profile/00000000-0000-0000-0000-000000000001", nil)
+		req = mux.SetURLVars(req, map[string]string{"id": "00000000-0000-0000-0000-000000000001"})
+		rec := httptest.NewRecorder()
+		h.GetUserByIDHandler(rec, req, nil, nil, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("status = %d, want 500", rec.Code)
+		}
+	})
+
+	t.Run("GetUserByIDHandler provider error", func(t *testing.T) {
+		errProvider := &userSpyProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}, err: fmt.Errorf("upstream failed")}
+		errProvider.Initialize()
+		req := httptest.NewRequest(http.MethodGet, "/api/user/profile/00000000-0000-0000-0000-000000000001", nil)
+		req = mux.SetURLVars(req, map[string]string{"id": "00000000-0000-0000-0000-000000000001"})
+		rec := httptest.NewRecorder()
+		h.GetUserByIDHandler(rec, req, nil, nil, errProvider)
+		if rec.Code != http.StatusBadGateway {
+			t.Errorf("status = %d, want 502", rec.Code)
+		}
+	})
+
+	t.Run("GetUsers nil provider", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/api/user", nil)
+		ctx := context.WithValue(req.Context(), models.TokenCtxKey, "test-token")
+		req = req.WithContext(ctx)
+		rec := httptest.NewRecorder()
+		h.GetUsers(rec, req, nil, nil, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("status = %d, want 500", rec.Code)
+		}
+	})
+
+	t.Run("UserHandler encoding error", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		w := &errResponseWriter{ResponseRecorder: rec, writeErr: fmt.Errorf("write failed")}
+		req := httptest.NewRequest(http.MethodGet, "/api/user", nil)
+		h.UserHandler(w, req, nil, &models.User{}, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("status = %d, want 500", rec.Code)
+		}
+		if ct := rec.Header().Get("Content-Type"); !strings.HasPrefix(ct, "application/json") {
+			t.Errorf("Content-Type = %q, want prefix %q", ct, "application/json")
+		}
+	})
+
+	t.Run("UserPrefsHandler GET encoding error", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		w := &errResponseWriter{ResponseRecorder: rec, writeErr: fmt.Errorf("write failed")}
+		req := httptest.NewRequest(http.MethodGet, "/api/user/prefs", nil)
+		h.UserPrefsHandler(w, req, &models.Preference{}, nil, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("status = %d, want 500", rec.Code)
+		}
+	})
+
+	t.Run("UserPrefsHandler POST nil provider", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, "/api/user/prefs", strings.NewReader(`{}`))
+		h.UserPrefsHandler(rec, req, nil, nil, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("status = %d, want 500", rec.Code)
+		}
+	})
+
+	t.Run("UserPrefsHandler POST invalid JSON", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, "/api/user/prefs", strings.NewReader(`{invalid`))
+		h.UserPrefsHandler(rec, req, nil, nil, provider)
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("status = %d, want 500", rec.Code)
+		}
+	})
+
+	t.Run("ShareDesignHandler nil provider", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, "/api/user/design/share", nil)
+		h.ShareDesignHandler(rec, req, nil, nil, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("status = %d, want 500", rec.Code)
+		}
+	})
+
+	t.Run("ShareFilterHandler nil provider", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, "/api/user/filter/share", nil)
+		h.ShareFilterHandler(rec, req, nil, nil, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("status = %d, want 500", rec.Code)
+		}
+	})
 }
