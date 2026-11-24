@@ -877,7 +877,11 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			return
 		}
 
-		if err := FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), sid); err != nil {
+		dbHandler := provider.GetGenericPersister()
+		dbHandler.Lock()
+		err := FlushMeshSyncResourcesForCluster(dbHandler, sid)
+		dbHandler.Unlock()
+		if err != nil {
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			})

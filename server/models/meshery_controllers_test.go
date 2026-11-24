@@ -252,10 +252,15 @@ func TestFlushAndResyncMeshsyncFlushesAndPublishesResync(t *testing.T) {
 	mch := NewMesheryControllersHelper(log, controllers.OperatorDeploymentConfig{}, nil, nil, nil, nil)
 
 	testBroker := &testMeshsyncBroker{}
-	mch.ctxMeshsyncDataHandler = newTestMeshsyncHandler(t, testBroker, nil)
+	handler := newTestMeshsyncHandler(t, testBroker, nil)
+	mch.ctxMeshsyncDataHandler = handler
 
 	flushCalled := false
 	flushErr, resyncErr := mch.FlushAndResyncMeshsync(func() error {
+		if handler.dbHandler.Mutex.TryLock() {
+			handler.dbHandler.Unlock()
+			t.Error("MeshSync event persistence lock was not held during cache flush")
+		}
 		testBroker.mu.Lock()
 		publishedBeforeFlush := testBroker.published
 		testBroker.mu.Unlock()
@@ -275,6 +280,10 @@ func TestFlushAndResyncMeshsyncFlushesAndPublishesResync(t *testing.T) {
 	if resyncErr != nil {
 		t.Fatalf("resync error = %v, want nil", resyncErr)
 	}
+	if !handler.dbHandler.Mutex.TryLock() {
+		t.Fatal("MeshSync event persistence lock remained held after cache flush")
+	}
+	handler.dbHandler.Unlock()
 
 	testBroker.mu.Lock()
 	published := testBroker.published

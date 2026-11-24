@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"sync"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -143,7 +144,7 @@ func newMeshSyncTestDB(t *testing.T) *database.Handler {
 	); err != nil {
 		t.Fatalf("failed to migrate meshsync tables: %v", err)
 	}
-	return &database.Handler{DB: gdb}
+	return &database.Handler{DB: gdb, Mutex: &sync.Mutex{}}
 }
 
 // seedMeshSyncResource inserts a KubernetesResource together with one child row in

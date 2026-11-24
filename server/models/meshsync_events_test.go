@@ -151,7 +151,7 @@ func newTestMeshsyncHandler(t *testing.T, broker meshkitBroker.Handler, stopFunc
 
 	return NewMeshsyncDataHandler(
 		broker,
-		database.Handler{DB: db},
+		database.Handler{DB: db, Mutex: &sync.Mutex{}},
 		mockLogger,
 		nil,
 		uuid.Nil,
