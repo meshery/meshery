@@ -87,7 +87,7 @@ independently. For Kubernetes production deployments:
   chart is deployed with a warning that the Operator may not become ready.
 - **Edge caches need no purge.** If a CDN or caching reverse proxy fronts
   Meshery, its UI cache busts itself on upgrade - hashed asset URLs change and the
-  HTML `ETag` follows the build/release version - so a manual cache purge is not
+  HTML `ETag` changes with every build - so a manual cache purge is not
   required in your upgrade pipeline
   ([networking]({{< ref "installation/production/networking-and-connectivity.md" >}})).
 
