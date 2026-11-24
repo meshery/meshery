@@ -256,6 +256,12 @@ func TestFlushAndResyncMeshsyncFlushesAndPublishesResync(t *testing.T) {
 
 	flushCalled := false
 	flushErr, resyncErr := mch.FlushAndResyncMeshsync(func() error {
+		testBroker.mu.Lock()
+		publishedBeforeFlush := testBroker.published
+		testBroker.mu.Unlock()
+		if publishedBeforeFlush != 1 {
+			t.Errorf("broker publish count before cache flush = %d, want 1", publishedBeforeFlush)
+		}
 		flushCalled = true
 		return nil
 	})
@@ -275,6 +281,30 @@ func TestFlushAndResyncMeshsyncFlushesAndPublishesResync(t *testing.T) {
 	testBroker.mu.Unlock()
 	if published != 1 {
 		t.Fatalf("broker publish count = %d, want 1", published)
+	}
+}
+
+func TestFlushAndResyncMeshsyncPreservesCacheWhenResyncPublishFails(t *testing.T) {
+	log, _ := logger.New("test", logger.Options{})
+	mch := NewMesheryControllersHelper(log, controllers.OperatorDeploymentConfig{}, nil, nil, nil, nil)
+
+	testBroker := &testMeshsyncBroker{publishErr: context.Canceled}
+	mch.ctxMeshsyncDataHandler = newTestMeshsyncHandler(t, testBroker, nil)
+
+	flushCalled := false
+	flushErr, resyncErr := mch.FlushAndResyncMeshsync(func() error {
+		flushCalled = true
+		return nil
+	})
+
+	if flushCalled {
+		t.Fatal("cache flush callback must not run when resync publish fails")
+	}
+	if flushErr != nil {
+		t.Fatalf("flush error = %v, want nil", flushErr)
+	}
+	if resyncErr == nil {
+		t.Fatal("expected a resync error when broker publish fails")
 	}
 }
 

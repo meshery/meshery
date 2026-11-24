@@ -911,11 +911,14 @@ func (mch *MesheryControllersHelper) FlushAndResyncMeshsync(flush func() error) 
 	if flush == nil {
 		return fmt.Errorf("MeshSync cache flush callback is nil"), nil
 	}
+	if err := mch.ctxMeshsyncDataHandler.Resync(); err != nil {
+		return nil, err
+	}
 	if err := flush(); err != nil {
 		return err, nil
 	}
 
-	return nil, mch.ctxMeshsyncDataHandler.Resync()
+	return nil, nil
 }
 
 // AddCtxControllerHandlers attaches a MesheryController for each context if
