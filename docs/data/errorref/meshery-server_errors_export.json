@@ -4399,6 +4399,15 @@
         "short_description": "The Kubernetes credential is not allowed to run commands or read files on the Meshery Server host",
         "probable_cause": "exec plugins, auth-providers and certificate, key or token file paths are executed or read on the machine running Meshery Server, so only the server's own kubeconfig may use them",
         "suggested_remediation": "Replace the credential with embedded data (client-certificate-data, client-key-data, certificate-authority-data, token) and save it again"
+      },
+      "1501": {
+        "name": "ErrKubeconfigUnreadableCode",
+        "code": "1501",
+        "severity": "Alert",
+        "long_description": "The uploaded file is empty, is not YAML, or does not look like a kubeconfig (it has no kind: Config, current-context, clusters, contexts, or users).",
+        "short_description": "The kubeconfig could not be parsed",
+        "probable_cause": "A different file was selected, or the kubeconfig was truncated or edited by hand.",
+        "suggested_remediation": "Upload the kubeconfig file itself (for example ~/.kube/config), and check it with kubectl config view --kubeconfig <file>."
       }
     }
   }

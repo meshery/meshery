@@ -7725,6 +7725,24 @@
       "suggestedRemediation": [
         "Replace the credential with embedded data (client-certificate-data, client-key-data, certificate-authority-data, token) and save it again"
       ]
+    },
+    {
+      "code": "meshery-server-1501",
+      "moniker": "ErrKubeconfigUnreadableCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1501",
+      "severity": "alert",
+      "shortDescription": "The kubeconfig could not be parsed",
+      "longDescription": "The uploaded file is empty, is not YAML, or does not look like a kubeconfig (it has no kind: Config, current-context, clusters, contexts, or users).",
+      "probableCause": [
+        "A different file was selected, or the kubeconfig was truncated or edited by hand."
+      ],
+      "suggestedRemediation": [
+        "Upload the kubeconfig file itself (for example ~/.kube/config), and check it with kubectl config view --kubeconfig <file>."
+      ]
     }
   ],
   "schemaVersion": 2

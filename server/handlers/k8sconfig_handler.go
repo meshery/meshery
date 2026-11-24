@@ -36,6 +36,11 @@ const MeshsyncDeploymentModeFormKey = "meshsync_deployment_mode"
 const ContextsFormKey = "contexts"
 const SelectedContextsFormKey = "selectedContexts"
 
+// DiscoveryDetailFormKey opts the discovery response into the object form
+// ({contexts, skippedContexts}). Callers that omit it still receive the
+// historical JSON array of contexts.
+const DiscoveryDetailFormKey = "discoveryDetail"
+
 // ContextOptions represents the configuration options for a specific context
 type ContextOptions struct {
 	MeshsyncDeploymentMode string `json:"meshsyncDeploymentMode"`
@@ -149,7 +154,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	eventMetadata := map[string]interface{}{}
 	// Include unreachable contexts so they are still registered as discovered
 	// connections; reachability is only required to transition to connected.
-	contexts := models.K8sContextsFromKubeconfigWithContext(req.Context(), provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, log, true)
+	contexts := models.K8sContextsFromKubeconfigWithContext(req.Context(), provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, log, models.KubeconfigDiscoveryOptions{IncludeUnreachable: true, Source: models.KubeconfigFromUpload})
 
 	// Parse contexts configuration if provided
 	var contextsConfig map[string]ContextOptions
@@ -178,6 +183,14 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			selectedContexts[id] = struct{}{}
 		}
 	}
+
+	// Discovery recorded a per-context entry (with an "error" for any context
+	// that failed) for every context in the file, including the ones the user
+	// deselected and the ones Meshery skipped. The receipt below describes only
+	// what this import acted on, so drop the entries of contexts outside an
+	// explicit selection; otherwise a broken context the user chose not to import would
+	// raise the receipt to Error while the wizard reports success (issue #24220).
+	retainSelectedContextMetadata(eventMetadata, contexts, selectedContexts)
 
 	// Helper function to get meshsync deployment mode for a context
 	// Uses closure pattern to call req.FormValue only once while keeping globalMeshsyncMode scoped
@@ -254,6 +267,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				// context is reported as errored rather than imported with a
 				// mode the controllers editor would contradict.
 				log.Error(modeErr)
+				ctx.ImportError = modeErr.Error()
 				saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Unable to record the MeshSync deployment mode for context \"%s\" at %s", ctx.Name, ctx.Server)
 				metadata["error"] = modeErr
@@ -273,6 +287,9 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		// so regenerate the context ID to keep the struct's ID in sync with the
 		// connection ID SaveK8sContext will mint.
 		if opts, ok := contextsConfig[ctx.ID]; ok && opts.Name != "" && opts.Name != ctx.Name {
+			// The receipt is keyed by the name the connection is saved under;
+			// drop the discovery entry that is keyed by the old name.
+			delete(eventMetadata, ctx.Name)
 			ctx.Name = opts.Name
 			if regeneratedID, idErr := models.K8sContextGenerateID(*ctx); idErr == nil {
 				ctx.ID = regeneratedID
@@ -282,6 +299,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		importedCount++
 		connection, err := provider.SaveK8sContext(token, *ctx, k8sContextsMetadata)
 		if err != nil {
+			ctx.ImportError = err.Error()
 			saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
 			metadata["error"] = err
@@ -318,6 +336,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				metadata["description"] = fmt.Sprintf("Connection already exists with Kubernetes context \"%s\" at %s", ctx.Name, ctx.Server)
 
 			case connections.IGNORED:
+				ctx.ImportError = fmt.Sprintf("Kubernetes context \"%s\" is ignored.", ctx.Name)
 				saveK8sContextResponse.IgnoredContexts = append(saveK8sContextResponse.IgnoredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Kubernetes context \"%s\" is set to ignored state.", ctx.Name)
 
@@ -413,6 +432,32 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	}
 }
 
+// retainSelectedContextMetadata removes from eventMetadata, the per-context
+// discovery metadata keyed by context name, the entries of contexts the user
+// left out of an explicit selection: discovered contexts outside it, and
+// contexts discovery skipped (never importable, so never selected). With no
+// selection every context is imported, so nothing is removed and a context that
+// failed or was skipped during discovery still shows in the receipt.
+func retainSelectedContextMetadata(eventMetadata map[string]interface{}, contexts []*models.K8sContext, selected map[string]struct{}) {
+	if selected == nil {
+		return
+	}
+	keep := make(map[string]struct{}, len(selected))
+	for _, ctx := range contexts {
+		if ctx == nil {
+			continue
+		}
+		if _, ok := selected[ctx.ID]; ok {
+			keep[ctx.Name] = struct{}{}
+		}
+	}
+	for name := range eventMetadata {
+		if _, ok := keep[name]; !ok {
+			delete(eventMetadata, name)
+		}
+	}
+}
+
 // k8sEventMetadataHasError reports whether any per-context entry in a Kubernetes
 // connection receipt's metadata recorded a failure. Each context's outcome is
 // keyed by its name and carries an "error" entry only when that context failed
@@ -447,6 +492,29 @@ func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.R
 }
 
 // GetContextsFromK8SConfig returns the context list for a given k8s config
+// kubeconfigDiscoveryPayload keeps the discovery response backward compatible.
+// Without the detail flag the body is the historical JSON array of contexts
+// (what mesheryctl unmarshals). With the flag it is an object that also lists
+// skipped contexts and their reasons. Nil slices encode as empty arrays so an
+// empty kubeconfig is `[]`, not `null`.
+func kubeconfigDiscoveryPayload(detail bool, discovery models.KubeconfigDiscovery) any {
+	contexts := discovery.Contexts
+	if contexts == nil {
+		contexts = []*models.K8sContext{}
+	}
+	if !detail {
+		return contexts
+	}
+	skipped := discovery.SkippedContexts
+	if skipped == nil {
+		skipped = []models.SkippedKubeContext{}
+	}
+	return models.KubeconfigDiscovery{
+		Contexts:        contexts,
+		SkippedContexts: skipped,
+	}
+}
+
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	log := h.getLogger()
 	if user == nil {
@@ -491,13 +559,21 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 
 	// Discovery surfaces unreachable contexts too (flagged Reachable=false) so
 	// the wizard can let the user register them as discovered connections;
-	// reachability only gates connecting.
-	contexts := models.K8sContextsFromKubeconfigWithContext(req.Context(), provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, log, true)
+	// reachability only gates connecting. Skipped contexts (unsupported auth,
+	// unreadable credentials) are reported only when the client asks for the
+	// detailed payload; the default body stays a JSON array.
+	discovery, err := models.DiscoverKubeconfigContexts(req.Context(), provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, log, models.KubeconfigDiscoveryOptions{IncludeUnreachable: true, Source: models.KubeconfigFromUpload})
+	if err != nil {
+		log.Error(err)
+		writeMeshkitError(w, ErrInvalidKubeConfig(err, ""), http.StatusBadRequest)
+		return
+	}
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
 	h.persistAndPublish(provider, token, userUUID, event)
 
-	err = json.NewEncoder(w).Encode(contexts)
+	detail := req.FormValue(DiscoveryDetailFormKey) == "true"
+	err = json.NewEncoder(w).Encode(kubeconfigDiscoveryPayload(detail, discovery))
 	if err != nil {
 		// Response body has already started streaming via json.Encoder —
 		// a partial JSON envelope is on the wire and a fresh error
@@ -661,7 +737,9 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		return contexts, err
 	}
 
-	ctxs := models.K8sContextsFromKubeconfig(prov, userID, h.config.EventBroadcaster, cfg, mid, eventMetadata, log)
+	// This is the server operator's own kubeconfig, not an upload, so its
+	// exec plugins and auth-provider blocks keep working.
+	ctxs := models.K8sContextsFromKubeconfigWithOptions(prov, userID, h.config.EventBroadcaster, cfg, mid, eventMetadata, log, models.KubeconfigDiscoveryOptions{Source: models.KubeconfigFromServer})
 
 	// Do not persist the generated contexts
 	// consolidate this func and addK8sConfig. In this we explicitly updated status as well as this func perfomr greeedy upload so while consolidating make sure to handle the case.

@@ -156,8 +156,8 @@ Then connect Meshery to your cluster:
 1. In the Meshery UI, navigate to **Lifecycle** from the menu on the left.
 2. Select **Connections**.
 3. Click **Create Connection** and choose **Kubernetes**.
-4. In the **Import Kubeconfig** step, upload your kubeconfig file and select the contexts to import.
-5. Review the import and confirm it.
+4. In the **Import Kubeconfig** step, upload your kubeconfig file.
+5. On **Review Contexts**, choose the contexts to import, then click **Import** to save them as connections.
 
 **Note**: Meshery rejects an uploaded kubeconfig whose `certificate-authority`, `client-certificate`, `client-key` or `tokenFile` entries are file paths, because the Meshery Server cannot (and must not) read files from your machine. Minikube writes `client-certificate` and `client-key` as paths, so embed them before you upload:
 
