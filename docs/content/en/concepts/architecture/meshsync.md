@@ -80,11 +80,10 @@ In operator (broker) mode, MeshSync publishes resource events to the NATS subjec
 When it starts, MeshSync serves two HTTP endpoints on port `11000`:
 
 - `GET /healthz` - liveness; always returns `200` while the process is alive.
-- `GET /readyz` - startup readiness; returns `200` after MeshSync's initial Broker connection (broker mode), and `503` before that. It does not indicate current Broker connectivity after startup.
+- `GET /readyz` - startup readiness; see the
+  [Broker configuration guide][broker-config] for its semantics.
 
-{{% alert color="info" title="Readiness caveat" %}}
-`/readyz` reflects startup readiness, not current Broker connectivity or informer-cache synchronization. For the operational distinction and current connectivity checks, see the [MeshSync troubleshooting guide]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}}).
-{{% /alert %}}
+[broker-config]: ../../../guides/infrastructure-management/configuring-operator-meshsync-broker/#health-endpoints-and-probes
 
 # Scalability and Performance
 
