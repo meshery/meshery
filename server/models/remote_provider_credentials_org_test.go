@@ -12,6 +12,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/errors"
+	"github.com/meshery/schemas/models/v1beta2/core"
 	"github.com/meshery/schemas/models/v1beta2/organization"
 )
 
@@ -220,13 +221,13 @@ func TestGetUserCredentialsRequiresSelectionWhenSeveralOrganizations(t *testing.
 		t.Errorf("error = %q, want it to tell the UI to select an organization", err)
 	}
 	body := sel.Body()
-	if body.Code != OrganizationSelectionRequiredCode {
-		t.Errorf("body code = %q, want %q", body.Code, OrganizationSelectionRequiredCode)
+	if body.Code != core.OrganizationSelectionRequiredErrorCodeOrganizationSelectionRequired {
+		t.Errorf("body code = %q, want %q", body.Code, core.OrganizationSelectionRequiredErrorCodeOrganizationSelectionRequired)
 	}
 	if len(body.Choices) != 2 {
 		t.Fatalf("choices = %#v, want 2 organizations", body.Choices)
 	}
-	gotIDs := map[string]OrganizationSelectionChoice{}
+	gotIDs := map[string]core.OrganizationSelectionChoice{}
 	for _, c := range body.Choices {
 		gotIDs[c.ID.String()] = c
 	}
@@ -342,10 +343,10 @@ func TestGetUserCredentialsDefensiveCloudForbiddenAndNotFound(t *testing.T) {
 func TestGetUserCredentialsSurfacesCloudOrganizationSelectionRequired(t *testing.T) {
 	choiceA := uuid.Must(uuid.FromString(testSoleOrgID))
 	choiceB := uuid.Must(uuid.FromString(testOtherOrgID))
-	cloudBody, err := json.Marshal(OrganizationSelectionRequiredError{
-		Code:    OrganizationSelectionRequiredCode,
+	cloudBody, err := json.Marshal(core.OrganizationSelectionRequiredError{
+		Code:    core.OrganizationSelectionRequiredErrorCodeOrganizationSelectionRequired,
 		Message: "select an organization",
-		Choices: []OrganizationSelectionChoice{
+		Choices: []core.OrganizationSelectionChoice{
 			{ID: choiceA, Name: "Org A", Description: "first"},
 			{ID: choiceB, Name: "Org B", Description: "second"},
 		},
@@ -354,44 +355,53 @@ func TestGetUserCredentialsSurfacesCloudOrganizationSelectionRequired(t *testing
 		t.Fatalf("marshal 409 body: %v", err)
 	}
 
-	// Simulate a Cloud that still answers 403 (v1.0.384) as well as 409,
-	// so the body is honored in both cases when it carries choices.
-	for _, remoteCode := range []int{http.StatusConflict, http.StatusForbidden} {
-		t.Run(http.StatusText(remoteCode), func(t *testing.T) {
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsAPIEndpoint) {
-					if r.Header.Get(CurrentOrgIDHeader) != testSelectedOrg {
-						t.Errorf("X-Current-Orgid = %q, want %q", r.Header.Get(CurrentOrgIDHeader), testSelectedOrg)
-					}
-					w.WriteHeader(remoteCode)
-					_, _ = w.Write(cloudBody)
-					return
-				}
-				http.NotFound(w, r)
-			}))
-			defer server.Close()
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsAPIEndpoint) {
+			if r.Header.Get(CurrentOrgIDHeader) != testSelectedOrg {
+				t.Errorf("X-Current-Orgid = %q, want %q", r.Header.Get(CurrentOrgIDHeader), testSelectedOrg)
+			}
+			w.WriteHeader(http.StatusConflict)
+			_, _ = w.Write(cloudBody)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer server.Close()
 
-			provider := newCredentialsOrgProvider(t, server.URL)
-			pref := &Preference{SelectedOrganizationID: testSelectedOrg}
-			page, err := provider.GetUserCredentials(newCredentialsOrgRequest(t, pref), testCredsUserID, 0, 10, "", "")
-			if page != nil {
-				t.Fatal("expected no credentials page on organization_selection_required")
-			}
-			sel, ok := AsOrganizationSelectionRequired(err)
-			if !ok {
-				t.Fatalf("error = %v, want organization_selection_required", err)
-			}
-			if status, ok := httputil.ProviderStatusCode(err); !ok || status != http.StatusConflict {
-				t.Errorf("provider status = %d, ok=%v, want 409", status, ok)
-			}
-			body := sel.Body()
-			if body.Code != OrganizationSelectionRequiredCode {
-				t.Errorf("body code = %q, want %q", body.Code, OrganizationSelectionRequiredCode)
-			}
-			if len(body.Choices) != 2 || body.Choices[0].Name != "Org A" || body.Choices[1].Description != "second" {
-				t.Errorf("choices = %#v, want Cloud's org choices", body.Choices)
-			}
-		})
+	provider := newCredentialsOrgProvider(t, server.URL)
+	pref := &Preference{SelectedOrganizationID: testSelectedOrg}
+	page, err := provider.GetUserCredentials(newCredentialsOrgRequest(t, pref), testCredsUserID, 0, 10, "", "")
+	if page != nil {
+		t.Fatal("expected no credentials page on organization_selection_required")
+	}
+	sel, ok := AsOrganizationSelectionRequired(err)
+	if !ok {
+		t.Fatalf("error = %v, want organization_selection_required", err)
+	}
+	if status, ok := httputil.ProviderStatusCode(err); !ok || status != http.StatusConflict {
+		t.Errorf("provider status = %d, ok=%v, want 409", status, ok)
+	}
+	body := sel.Body()
+	if body.Code != core.OrganizationSelectionRequiredErrorCodeOrganizationSelectionRequired {
+		t.Errorf("body code = %q, want %q", body.Code, core.OrganizationSelectionRequiredErrorCodeOrganizationSelectionRequired)
+	}
+	if len(body.Choices) != 2 || body.Choices[0].Name != "Org A" || body.Choices[1].Description != "second" {
+		t.Errorf("choices = %#v, want Cloud's org choices", body.Choices)
+	}
+
+	// A 403 with the same contract-shaped body stays a 403 (no qualifying
+	// organization); it is never promoted to selection-required.
+	forbidden := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusForbidden)
+		_, _ = w.Write(cloudBody)
+	}))
+	defer forbidden.Close()
+	_, err = newCredentialsOrgProvider(t, forbidden.URL).GetUserCredentials(newCredentialsOrgRequest(t, pref), testCredsUserID, 0, 10, "", "")
+	if _, ok := AsOrganizationSelectionRequired(err); ok {
+		t.Fatalf("403 was promoted to organization_selection_required: %v", err)
+	}
+	if status, ok := httputil.ProviderStatusCode(err); !ok || status != http.StatusForbidden {
+		t.Errorf("provider status = %d, ok=%v, want 403", status, ok)
 	}
 }
 

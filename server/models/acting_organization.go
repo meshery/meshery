@@ -8,6 +8,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/httputil"
+	"github.com/meshery/schemas/models/v1beta2/core"
 	"github.com/meshery/schemas/models/v1beta2/organization"
 )
 
@@ -16,37 +17,16 @@ import (
 // the Cloud credential endpoints (list, get by id, save, update, delete).
 const CurrentOrgIDHeader = "X-Current-Orgid"
 
-// OrganizationSelectionRequiredCode is the machine-readable reason in the
-// v1beta2/core OrganizationSelectionRequiredError body (schemas v1.3.126).
-// It is a contract value, not a MeshKit component-scoped code.
-const OrganizationSelectionRequiredCode = "organization_selection_required"
-
 const organizationSelectionRequiredMessage = "select an organization"
-
-// OrganizationSelectionChoice is one organization the caller may name as
-// X-Current-Orgid. The shape matches schemas v1beta2/core
-// OrganizationSelectionChoice (id, name, description).
-type OrganizationSelectionChoice struct {
-	ID          uuid.UUID `json:"id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-}
-
-// OrganizationSelectionRequiredError is the 409 body defined by
-// schemas v1beta2/core OrganizationSelectionRequiredError. It is not a
-// MeshKit error: MeshKit codes are unstable component-scoped identifiers.
-type OrganizationSelectionRequiredError struct {
-	Code    string                        `json:"code"`
-	Message string                        `json:"message"`
-	Choices []OrganizationSelectionChoice `json:"choices"`
-}
 
 // OrganizationSelectionRequired is the Go error carried for a 409
 // organization_selection_required, including the choices the UI should show.
+// The wire body is schemas v1beta2/core OrganizationSelectionRequiredError; it
+// is not a MeshKit error because MeshKit codes are unstable component-scoped
+// identifiers.
 type OrganizationSelectionRequired struct {
-	Code    string
 	Message string
-	Choices []OrganizationSelectionChoice
+	Choices []core.OrganizationSelectionChoice
 }
 
 func (e *OrganizationSelectionRequired) Error() string {
@@ -57,9 +37,9 @@ func (e *OrganizationSelectionRequired) Error() string {
 }
 
 // Body returns the contract JSON the client is shown.
-func (e *OrganizationSelectionRequired) Body() OrganizationSelectionRequiredError {
+func (e *OrganizationSelectionRequired) Body() core.OrganizationSelectionRequiredError {
 	msg := organizationSelectionRequiredMessage
-	var choices []OrganizationSelectionChoice
+	var choices []core.OrganizationSelectionChoice
 	if e != nil {
 		if strings.TrimSpace(e.Message) != "" {
 			msg = e.Message
@@ -67,10 +47,10 @@ func (e *OrganizationSelectionRequired) Body() OrganizationSelectionRequiredErro
 		choices = e.Choices
 	}
 	if choices == nil {
-		choices = []OrganizationSelectionChoice{}
+		choices = []core.OrganizationSelectionChoice{}
 	}
-	return OrganizationSelectionRequiredError{
-		Code:    OrganizationSelectionRequiredCode,
+	return core.OrganizationSelectionRequiredError{
+		Code:    core.OrganizationSelectionRequiredErrorCodeOrganizationSelectionRequired,
 		Message: msg,
 		Choices: choices,
 	}
@@ -78,10 +58,9 @@ func (e *OrganizationSelectionRequired) Body() OrganizationSelectionRequiredErro
 
 // ErrOrganizationSelectionRequired returns a 409 asking the UI to have the
 // user pick one of choices as X-Current-Orgid.
-func ErrOrganizationSelectionRequired(choices []OrganizationSelectionChoice) error {
+func ErrOrganizationSelectionRequired(choices []core.OrganizationSelectionChoice) error {
 	return httputil.WithProviderStatus(
 		&OrganizationSelectionRequired{
-			Code:    OrganizationSelectionRequiredCode,
 			Message: organizationSelectionRequiredMessage,
 			Choices: choices,
 		},
@@ -100,23 +79,20 @@ func AsOrganizationSelectionRequired(err error) (*OrganizationSelectionRequired,
 }
 
 // parseOrganizationSelectionRequired reads a Cloud 409 body. The contract
-// body is OrganizationSelectionRequiredError, not MeshKit.
+// body is core.OrganizationSelectionRequiredError, not MeshKit.
 func parseOrganizationSelectionRequired(body []byte) *OrganizationSelectionRequired {
-	var payload OrganizationSelectionRequiredError
+	var payload core.OrganizationSelectionRequiredError
 	if err := json.Unmarshal(body, &payload); err != nil {
 		return nil
 	}
-	if payload.Code != "" && payload.Code != OrganizationSelectionRequiredCode {
-		return nil
-	}
-	if payload.Code == "" && len(payload.Choices) == 0 {
+	if payload.Code != core.OrganizationSelectionRequiredErrorCodeOrganizationSelectionRequired {
 		return nil
 	}
 	msg := payload.Message
 	if strings.TrimSpace(msg) == "" {
 		msg = organizationSelectionRequiredMessage
 	}
-	return &OrganizationSelectionRequired{Code: payload.Code, Message: msg, Choices: payload.Choices}
+	return &OrganizationSelectionRequired{Message: msg, Choices: payload.Choices}
 }
 
 // resolveActingOrganizationID returns the organization id that must be sent as
@@ -209,13 +185,13 @@ func parseActingOrganizations(body []byte) ([]*organization.Organization, int, e
 	return orgs, total, nil
 }
 
-func organizationSelectionChoices(orgs []*organization.Organization) []OrganizationSelectionChoice {
-	choices := make([]OrganizationSelectionChoice, 0, len(orgs))
+func organizationSelectionChoices(orgs []*organization.Organization) []core.OrganizationSelectionChoice {
+	choices := make([]core.OrganizationSelectionChoice, 0, len(orgs))
 	for _, org := range orgs {
 		if org == nil {
 			continue
 		}
-		choices = append(choices, OrganizationSelectionChoice{
+		choices = append(choices, core.OrganizationSelectionChoice{
 			ID:          org.ID,
 			Name:        org.Name,
 			Description: org.Description,
@@ -224,7 +200,7 @@ func organizationSelectionChoices(orgs []*organization.Organization) []Organizat
 	return choices
 }
 
-func (l *RemoteProvider) organizationChoicesFromRequest(req *http.Request) []OrganizationSelectionChoice {
+func (l *RemoteProvider) organizationChoicesFromRequest(req *http.Request) []core.OrganizationSelectionChoice {
 	if l == nil || req == nil {
 		return nil
 	}
@@ -420,7 +396,7 @@ func (l *RemoteProvider) organizationScopeError(req *http.Request, status int, b
 	switch status {
 	case http.StatusConflict:
 		sel := parseOrganizationSelectionRequired(body)
-		if sel != nil && sel.Code == OrganizationSelectionRequiredCode {
+		if sel != nil {
 			if len(sel.Choices) < 2 {
 				if choices := l.organizationChoicesFromRequest(req); len(choices) >= 2 {
 					sel.Choices = choices
@@ -432,10 +408,7 @@ func (l *RemoteProvider) organizationScopeError(req *http.Request, status int, b
 			return nil
 		}
 		if sel == nil {
-			sel = &OrganizationSelectionRequired{
-				Code:    OrganizationSelectionRequiredCode,
-				Message: organizationSelectionRequiredMessage,
-			}
+			sel = &OrganizationSelectionRequired{Message: organizationSelectionRequiredMessage}
 		}
 		if len(sel.Choices) < 2 {
 			if choices := l.organizationChoicesFromRequest(req); len(choices) >= 2 {
@@ -444,14 +417,6 @@ func (l *RemoteProvider) organizationScopeError(req *http.Request, status int, b
 		}
 		return httputil.WithProviderStatus(sel, http.StatusConflict)
 	case http.StatusForbidden:
-		// Live Cloud v1.0.384 may still answer 403 for a multi-org caller
-		// with no named org. Promote to 409 only when the body is already
-		// the selection-required contract (the code and at least two
-		// choices). Otherwise this is "no qualifying organization" only
-		// when the operation is collection-scoped (list/save).
-		if sel := parseOrganizationSelectionRequired(body); sel != nil && sel.Code == OrganizationSelectionRequiredCode && len(sel.Choices) >= 2 {
-			return httputil.WithProviderStatus(sel, http.StatusConflict)
-		}
 		if !policy.treatForbiddenAsNoOrg {
 			return nil
 		}

@@ -14,6 +14,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/schemas/models/v1beta2/core"
 )
 
 // credentialSpyProvider captures the Credential passed to SaveUserCredential
@@ -780,7 +781,7 @@ func (m *orgScopedCredentialProvider) GetCredentialByID(_, _ string, id uuid.UUI
 func TestGetUserCredentials_SurfacesOrganizationSelectionErrors(t *testing.T) {
 	choiceA := uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
 	choiceB := uuid.Must(uuid.FromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"))
-	selectionErr := models.ErrOrganizationSelectionRequired([]models.OrganizationSelectionChoice{
+	selectionErr := models.ErrOrganizationSelectionRequired([]core.OrganizationSelectionChoice{
 		{ID: choiceA, Name: "Org A", Description: "first"},
 		{ID: choiceB, Name: "Org B", Description: "second"},
 	})
@@ -801,12 +802,12 @@ func TestGetUserCredentials_SurfacesOrganizationSelectionErrors(t *testing.T) {
 		if rec.Code != http.StatusConflict {
 			t.Fatalf("status = %d, want 409 (body=%q)", rec.Code, rec.Body.String())
 		}
-		var body models.OrganizationSelectionRequiredError
+		var body core.OrganizationSelectionRequiredError
 		if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
 			t.Fatalf("409 body did not parse as OrganizationSelectionRequiredError: %v (body=%q)", err, rec.Body.String())
 		}
-		if body.Code != models.OrganizationSelectionRequiredCode {
-			t.Errorf("code = %q, want %q", body.Code, models.OrganizationSelectionRequiredCode)
+		if body.Code != core.OrganizationSelectionRequiredErrorCodeOrganizationSelectionRequired {
+			t.Errorf("code = %q, want %q", body.Code, core.OrganizationSelectionRequiredErrorCodeOrganizationSelectionRequired)
 		}
 		if body.Message != "select an organization" {
 			t.Errorf("message = %q, want %q", body.Message, "select an organization")
@@ -874,7 +875,7 @@ func TestGetUserCredentials_SurfacesOrganizationSelectionErrors(t *testing.T) {
 func TestCredentialHandlers_SurfaceOrganizationSelectionErrors(t *testing.T) {
 	choiceA := uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
 	choiceB := uuid.Must(uuid.FromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"))
-	selectionErr := models.ErrOrganizationSelectionRequired([]models.OrganizationSelectionChoice{
+	selectionErr := models.ErrOrganizationSelectionRequired([]core.OrganizationSelectionChoice{
 		{ID: choiceA, Name: "Org A", Description: "first"},
 		{ID: choiceB, Name: "Org B", Description: "second"},
 	})
@@ -947,11 +948,11 @@ func TestCredentialHandlers_SurfaceOrganizationSelectionErrors(t *testing.T) {
 			if rec.Code != http.StatusConflict {
 				t.Fatalf("status = %d, want 409 (body=%q)", rec.Code, rec.Body.String())
 			}
-			var body models.OrganizationSelectionRequiredError
+			var body core.OrganizationSelectionRequiredError
 			if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
 				t.Fatalf("409 body did not parse as OrganizationSelectionRequiredError: %v (body=%q)", err, rec.Body.String())
 			}
-			if body.Code != models.OrganizationSelectionRequiredCode || len(body.Choices) != 2 {
+			if body.Code != core.OrganizationSelectionRequiredErrorCodeOrganizationSelectionRequired || len(body.Choices) != 2 {
 				t.Errorf("body = %#v, want organization_selection_required with two choices", body)
 			}
 		})
