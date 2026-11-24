@@ -17,7 +17,7 @@ import {
 import { NoSsr } from '@sistent/sistent';
 import { StyledSelect } from './SpaceSwitcher';
 import { iconMedium } from 'css/icons.styles';
-import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { WorkspaceModalContext } from '@/utils/context/workspaceModalContext';
 import { Keys } from '@meshery/schemas/permissions';
 import {
   useGetSelectedOrganization,

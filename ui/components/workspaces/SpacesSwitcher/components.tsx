@@ -36,7 +36,7 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useImportDesignMutation } from '@/rtk-query/design';
 import { updateProgress } from '@/store/slices/mesheryUi';
-import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { WorkspaceModalContext } from '@/utils/context/workspaceModalContext';
 import { useAssignDesignToWorkspaceMutation } from '@/rtk-query/workspace';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import { iconMedium } from 'css/icons.styles';

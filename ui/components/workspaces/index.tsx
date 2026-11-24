@@ -53,7 +53,7 @@ import { iconMedium } from 'css/icons.styles';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { useContext } from 'react';
-import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { WorkspaceModalContext } from '@/utils/context/workspaceModalContext';
 import { useEffect } from 'react';
 
 export const WORKSPACE_ACTION_TYPES = {

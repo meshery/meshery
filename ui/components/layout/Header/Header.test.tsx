@@ -265,7 +265,7 @@ vi.mock('lib/event-types', () => ({
   EVENT_TYPES: { ERROR: 'error' },
 }));
 
-vi.mock('../../../utils/context/WorkspaceModalContextProvider', () => ({
+vi.mock('@/utils/context/workspaceModalContext', () => ({
   WorkspaceModalContext: React.createContext({ openModal: vi.fn() }),
 }));
 

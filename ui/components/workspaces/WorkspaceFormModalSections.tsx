@@ -14,7 +14,7 @@ import {
 } from '@sistent/sistent';
 import { useTheme } from '@/theme';
 import { iconSmall } from 'css/icons.styles';
-import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { WorkspaceModalContext } from '@/utils/context/workspaceModalContext';
 
 export type NavConfigItem = {
   id: string;
