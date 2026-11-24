@@ -26,6 +26,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/viewoutput"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -75,10 +76,6 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 			if err != nil {
 				return err
 			}
-			if fetchedConnection == nil {
-				utils.Log.Info(fmt.Sprintf("No connection(s) found for the given name or ID: %s", connectionNameOrID))
-				return nil
-			}
 			selectedConnection = fetchedConnection
 		} else {
 			fetchedConnection, err := fetchConnectionByName(connectionNameOrID)
@@ -86,12 +83,12 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 				return err
 			}
 
-			if fetchedConnection == nil {
-				utils.Log.Info(fmt.Sprintf("No connection(s) found for the given name or ID: %s", connectionNameOrID))
-				return nil
-			}
-
 			selectedConnection = fetchedConnection
+		}
+
+		if selectedConnection == nil || selectedConnection.ID == uuid.Nil {
+			_, err := fmt.Fprintln(cmd.OutOrStdout(), "No connection(s) found for the given name or ID:", connectionNameOrID)
+			return err
 		}
 
 		savePath := ""
@@ -176,6 +173,9 @@ var fetchConnectionByID = func(connectionID string) (*connection.Connection, err
 	url := fmt.Sprintf("%s/%s", connectionApiPath, connectionID)
 	fetchedConnection, err := api.Fetch[connection.Connection](url)
 	if err != nil {
+		if meshkiterrors.GetCode(err) == utils.ErrNotFoundCode {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return fetchedConnection, nil
