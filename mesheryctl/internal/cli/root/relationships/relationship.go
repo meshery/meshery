@@ -72,8 +72,7 @@ mesheryctl relationship view [model-name]
 			return utils.ErrInvalidArgument(fmt.Errorf("no command specified. %s", errMsg))
 		}
 		err = utils.ErrInvalidArgument(errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [%s]. Use 'mesheryctl relationship --help' to display usage guide.\n", args[0], utils.SubcommandNames(availableSubcommands)), "relationship")))
-		utils.Log.Error(err)
-		return err
+		return utils.LogCommandError(cmd, err)
 	},
 	RunE: func(_ *cobra.Command, _ []string) error {
 		models, err := api.Fetch[MeshmodelRelationshipsAPIResponse](relationshipApiPath)

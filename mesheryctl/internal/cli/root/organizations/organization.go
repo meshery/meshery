@@ -43,8 +43,7 @@ mesheryctl organization list
 			return utils.ErrInvalidArgument(errors.New("please provide a subcommand with the command"))
 		}
 		err = utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid command. Use 'mesheryctl organization --help' to display usage guide", args[0]))
-		utils.Log.Error(err)
-		return err
+		return utils.LogCommandError(cmd, err)
 	},
 	RunE: func(_ *cobra.Command, _ []string) error {
 		orgs, err := api.Fetch[models.OrganizationsPage](fmt.Sprintf("%s?pagesize=all", organizationsApiPath))

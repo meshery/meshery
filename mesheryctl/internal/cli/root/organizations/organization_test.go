@@ -101,6 +101,8 @@ func TestOrganization(t *testing.T) {
 // missing subcommands without --count are rejected, and invalid
 // subcommands are rejected regardless of --count.
 func TestOrganizationCountArgs(t *testing.T) {
+	utils.SetupMeshkitLoggerTesting(t, false)
+
 	tests := []struct {
 		name    string
 		args    []string

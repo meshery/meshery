@@ -4,6 +4,7 @@ import (
 	"flag"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -20,6 +21,8 @@ func TestGenerateModelDataToDisplay_NilResponse(t *testing.T) {
 // --count, while count-only usage remains valid and a missing subcommand
 // without --count remains invalid.
 func TestModelArgs(t *testing.T) {
+	utils.SetupMeshkitLoggerTesting(t, false)
+
 	tests := []struct {
 		name    string
 		args    []string

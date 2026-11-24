@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -1645,4 +1646,44 @@ func TestDeleteConfiguration_BodyClosed(t *testing.T) {
 		}
 		assertBodyClosed(t, transport, "expected response body to be closed on delete configuration")
 	})
+}
+
+func TestExecuteWithLoggedErrors(t *testing.T) {
+	logOutput := SetupMeshkitLoggerTesting(t, false)
+	Log.UpdateErrorLogOutput(logOutput)
+	t.Cleanup(func() { Log.UpdateErrorLogOutput(os.Stderr) })
+	var cobraOutput bytes.Buffer
+	root := &cobra.Command{Use: "mesheryctl", SilenceUsage: true}
+	root.SetErr(&cobraOutput)
+
+	invalid := ErrInvalidArgument(fmt.Errorf("unexpected resource name"))
+	requestFailure := fmt.Errorf("count request failed")
+	parent := &cobra.Command{
+		Use: "resource",
+		Args: func(cmd *cobra.Command, args []string) error {
+			if len(args) > 0 {
+				return LogCommandError(cmd, invalid)
+			}
+			return nil
+		},
+		RunE: func(*cobra.Command, []string) error { return requestFailure },
+	}
+	parent.Flags().Bool("count", false, "")
+	root.AddCommand(parent)
+
+	root.SetArgs([]string{"resource", "--count", "bogus"})
+	if err := ExecuteWithLoggedErrors(root); err != invalid {
+		t.Fatalf("invalid subcommand returned %v, want %v", err, invalid)
+	}
+	if got := strings.Count(logOutput.String(), "unexpected resource name"); got != 1 || cobraOutput.Len() != 0 {
+		t.Fatalf("expected one structured diagnostic, got log %q and Cobra output %q", logOutput, &cobraOutput)
+	}
+
+	root.SetArgs([]string{"resource", "--count"})
+	if err := ExecuteWithLoggedErrors(root); err != requestFailure {
+		t.Fatalf("count request returned %v, want %v", err, requestFailure)
+	}
+	if got := cobraOutput.String(); got != "Error: count request failed\n" {
+		t.Fatalf("count request diagnostic = %q", got)
+	}
 }

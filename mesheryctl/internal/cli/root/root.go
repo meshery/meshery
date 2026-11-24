@@ -95,8 +95,7 @@ func Execute() error {
 	//log formatter for improved UX
 	// Removing printing command usage on error
 	RootCmd.SilenceUsage = true
-	err := RootCmd.Execute()
-	return err
+	return utils.ExecuteWithLoggedErrors(RootCmd)
 }
 
 func init() {

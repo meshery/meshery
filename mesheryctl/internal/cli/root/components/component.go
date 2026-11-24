@@ -59,7 +59,7 @@ mesheryctl component view [component-name | component-id]
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, componentFlagsProvided)
 	},
-	Args: func(_ *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		count := componentFlagsProvided.Count
 		if utils.IsValidCountUsage(count, args) {
 			return nil
@@ -68,8 +68,7 @@ mesheryctl component view [component-name | component-id]
 			return utils.ErrInvalidArgument(errors.New("please provide a subcommand"))
 		}
 		err := utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [list, search, view]. Use 'mesheryctl component --help' to display usage guide", args[0]))
-		utils.Log.Error(err)
-		return err
+		return utils.LogCommandError(cmd, err)
 	},
 	RunE: func(_ *cobra.Command, _ []string) error {
 		componentData := display.DisplayDataAsync{
