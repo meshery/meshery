@@ -84,12 +84,13 @@ func (s *SMIResultsPersister) GetResult(key core.Uuid) ([]byte, error) {
 	if s.DB == nil {
 		return nil, ErrDBConnection
 	}
-	var result SmiResult
-	err := s.DB.First(&result, key).Error
+	var result SmiResultWithID
+	err := s.DB.Where("id = ?", key).First(&result).Error
 	if err != nil {
 		return nil, err
 	}
-	bd, _ := json.Marshal(result)
+	result.SmiResult.ID = result.ID
+	bd, _ := json.Marshal(result.SmiResult)
 
 	return bd, nil
 }
