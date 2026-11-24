@@ -470,10 +470,11 @@
 
             {{ with $operation.requestBody }}
               {{ $requestBody := . }}
-              {{ $requestContentCount := len $requestBody.content }}
+              {{ $requestContent := $requestBody.content | default dict }}
+              {{ $requestContentCount := len $requestContent }}
               {{ $singleRequestContentType := "" }}
               {{ if eq $requestContentCount 1 }}
-                {{ range $contentType, $_ := $requestBody.content }}
+                {{ range $contentType, $_ := $requestContent }}
                   {{ $singleRequestContentType = $contentType }}
                 {{ end }}
               {{ end }}
@@ -481,7 +482,7 @@
                 <div class="rest-api-section-heading rest-api-section-heading--request">
                   <div class="rest-api-section-header">
                     <h3 id="request-body-{{ $operationId }}">Request body</h3>
-                    {{ if eq $requestContentCount 1 }}
+                    {{ if le $requestContentCount 1 }}
                       <div class="rest-api-section-header__meta">
                         <span class="rest-api-section-header__type">{{ $singleRequestContentType }}</span>
                         <span class="rest-api-chip rest-api-chip--subtle">{{ if $requestBody.required }}Required{{ else }}Optional{{ end }}</span>
@@ -492,7 +493,7 @@
                     <div class="rest-api-section-heading__summary rest-api-prose">{{ . | markdownify }}</div>
                   {{ end }}
                 </div>
-                {{ range $contentType, $content := $requestBody.content }}
+                {{ range $contentType, $content := $requestContent }}
                   {{ $schema := index $content "schema" | default dict }}
                   {{ $schemaType := partial "rest-apis/schema-type.html" $schema }}
                   {{ $fields := partial "rest-apis/schema-properties.html" $schema }}

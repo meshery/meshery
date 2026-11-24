@@ -185,8 +185,8 @@ func registrantConnectionsByKind(db *database.Handler) (map[string][]connectionv
 // The `connections` table carries two column sets for the same fields: meshkit's
 // registry manager AutoMigrates the v1beta1 Connection (`type`, `user_id`) while
 // the server AutoMigrates the canonical v1beta3 Connection (`connection_type`,
-// `owner`). Reads that serve the API scan v1beta3, but
-// ConnectionPersister.GetConnections filters with raw SQL on `type`/`sub_type`,
+// `owner`). Reads that serve the API scan v1beta3, but the free-form `filter`
+// parameter of ConnectionPersister.GetConnections matches raw `type`/`sub_type`,
 // so both halves matter. Seeding reads and writes them as a pair so the filter
 // and the payload cannot disagree.
 func legacyRegistrantColumnsByID(db *database.Handler) (map[core.Uuid]connectionv1beta1.Connection, error) {

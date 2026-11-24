@@ -14,6 +14,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -937,7 +938,7 @@ func processComponentDefinitions(entities []entity.Entity) []component.Component
 func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	var response models.RegistryAPIResponse
 	regErrorStore := models.NewRegistrationFailureLogHandler()
-	var tempFile *os.File
+	var tempFilePath string
 	var mu sync.Mutex
 	defer func() {
 		_ = r.Body.Close()
@@ -1199,7 +1200,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			writeMeshkitError(rw, ErrInvalidBase64Data(err), http.StatusBadRequest)
 			return
 		}
-		tempFile, err = CreateTemp(importRequest.ImportBody.FileName, decodedBytes)
+		tempFilePath, err = CreateTemp(importRequest.ImportBody.FileName, decodedBytes)
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
 			h.handleError(rw, err, err.Error())
@@ -1207,38 +1208,40 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 		defer func() {
-			if err := os.Remove(tempFile.Name()); err != nil {
+			if err := os.Remove(tempFilePath); err != nil {
 				h.log.Error(err)
 			}
 		}()
 
-		dir = registration.NewDir(tempFile.Name())
+		dir = registration.NewDir(tempFilePath)
 		if importRequest.Register {
 			registrationHelper.Register(dir)
-			if err := tempFile.Close(); err != nil {
-				h.log.Error(err)
-			}
 		}
 	case "urlImport":
-		downloadFile := func(url string) ([]byte, error) {
-			resp, err := http.Get(url)
+		downloadFile := func(targetURL string) ([]byte, error) {
+			if _, err := utils.ValidateSafeURL(targetURL); err != nil {
+				return nil, models.ErrDoRequest(err, "GET", targetURL)
+			}
+			client := utils.NewSafeHTTPClient(60 * time.Second)
+			resp, err := client.Get(targetURL)
 			if err != nil {
-				return nil, fmt.Errorf("error downloading file from URL: %v", err)
+				return nil, models.ErrDoRequest(err, "GET", targetURL)
 			}
-			fileData, err := io.ReadAll(resp.Body)
-			if err != nil {
-				if closeErr := resp.Body.Close(); closeErr != nil {
-					return nil, fmt.Errorf("error reading downloaded file: %v (close error: %v)", err, closeErr)
-				}
-				return nil, fmt.Errorf("error reading downloaded file: %v", err)
-			}
-
-			if err := resp.Body.Close(); err != nil {
-				return nil, fmt.Errorf("error closing response body: %v", err)
-			}
+			defer func() {
+				_ = resp.Body.Close()
+			}()
 
 			if resp.StatusCode != http.StatusOK {
-				return nil, fmt.Errorf("failed to download file. Status code: %d", resp.StatusCode)
+				return nil, models.ErrDoRequest(fmt.Errorf("failed to download file. Status code: %d", resp.StatusCode), "GET", targetURL)
+			}
+
+			const maxDownloadFileSize = 10 * 1024 * 1024
+			fileData, err := io.ReadAll(io.LimitReader(resp.Body, int64(maxDownloadFileSize)+1))
+			if err != nil {
+				return nil, models.ErrDoRequest(err, "GET", targetURL)
+			}
+			if len(fileData) > maxDownloadFileSize {
+				return nil, models.ErrDoRequest(fmt.Errorf("file size exceeds maximum allowed limit of %d bytes", maxDownloadFileSize), "GET", targetURL)
 			}
 
 			return fileData, nil
@@ -1247,7 +1250,8 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		// Download the file from the provided URL
 		fileData, err := downloadFile(importRequest.ImportBody.Url)
 		if err != nil {
-			h.handleError(rw, err, "Error downloading file from URL")
+			h.log.Error(err)
+			writeMeshkitError(rw, err, http.StatusBadRequest)
 			h.sendErrorEvent(userID, provider, "Error downloading file from URL", err, token)
 			return
 		}
@@ -1258,7 +1262,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 		name := "model" + fileType
 		//write the file to a temp file
-		tempFile, err = CreateTemp(name, fileData)
+		tempFilePath, err = CreateTemp(name, fileData)
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
 			h.handleError(rw, err, "Error creating temp file")
@@ -1266,17 +1270,14 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 		defer func() {
-			if err := os.Remove(tempFile.Name()); err != nil {
+			if err := os.Remove(tempFilePath); err != nil {
 				h.log.Error(err)
 			}
 		}()
 
-		dir = registration.NewDir(tempFile.Name())
+		dir = registration.NewDir(tempFilePath)
 		if importRequest.Register {
 			registrationHelper.Register(dir)
-			if err := tempFile.Close(); err != nil {
-				h.log.Error(err)
-			}
 		}
 	}
 

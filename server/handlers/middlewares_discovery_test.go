@@ -379,7 +379,7 @@ func TestClientEventHandlerStatusFollowsTheDisposition(t *testing.T) {
 
 // persistAndPublishEvent reports nothing for a nil event (a suppressed
 // Discovery failure), broadcasts nothing when the stored event is unknown, and
-// broadcasts an event that failed to persist with an ID of its own.
+// suppresses broadcast when persistence fails to avoid ghost notifications.
 func TestPersistAndPublishEventEdgeCases(t *testing.T) {
 	broadcaster := models.NewBroadcaster("test")
 	user := uuid.Must(uuid.NewV4())
@@ -405,8 +405,10 @@ func TestPersistAndPublishEventEdgeCases(t *testing.T) {
 	sent := events.NewEvent().WithSeverity(events.Error).Build()
 	sent.ID = uuid.Nil
 	persistAndPublishEvent(log, provider, "", broadcaster, user, sent)
-	if got := receiveEvent(t, ch); got.ID.IsNil() || got.ID != provider.persisted[0].ID {
-		t.Fatalf("fallback broadcast ID %s, persisted ID %s; want the same non-zero ID", got.ID, provider.persisted[0].ID)
+	select {
+	case got := <-ch:
+		t.Fatalf("unexpected broadcast %v when persistence failed", got)
+	case <-time.After(100 * time.Millisecond):
 	}
 }
 

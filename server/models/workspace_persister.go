@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"strconv"
 	"strings"
 	"time"
@@ -82,7 +83,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 	workspacesFetched := []workspace.Workspace{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 	// Fetch all workspaces if pageSize is "all"
 	if pageSize == "all" {
@@ -91,7 +92,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 		// Convert page and pageSize from string to uint
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
-			return nil, err
+			return nil, ErrPageSize(err)
 		}
 
 		// Fetch workspaces with pagination
@@ -219,11 +220,14 @@ func (wp *WorkspacePersister) UpdateWorkspaceByID(selectedWorkspace *workspace.W
 	return selectedWorkspace, nil
 }
 
-// GetWorkspace returns a workspace by ID
+// GetWorkspace returns a workspace by ID. A missing workspace is returned as ErrResultNotFound.
 func (wp *WorkspacePersister) GetWorkspace(id core.Uuid) (*workspace.Workspace, error) {
 	workspace := workspace.Workspace{}
 	query := wp.DB.Where("id = ?", id)
 	err := query.First(&workspace).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, ErrResultNotFound(err)
+	}
 	return &workspace, err
 }
 
@@ -267,9 +271,6 @@ func (wp *WorkspacePersister) UpdateWorkspace(workspaceID core.Uuid, payload *wo
 func (wp *WorkspacePersister) DeleteWorkspaceByID(workspaceID core.Uuid) ([]byte, error) {
 	ws, err := wp.GetWorkspace(workspaceID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, ErrResultNotFound(err)
-		}
 		return nil, err
 	}
 
@@ -378,7 +379,7 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, se
 	environmentsFetched := []environment.Environment{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 
 	if pageSize == "all" {
@@ -386,7 +387,7 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, se
 	} else {
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
-			return nil, err
+			return nil, ErrPageSize(err)
 		}
 
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&environmentsFetched)
@@ -555,7 +556,7 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 	designsFetched := []*MesheryPattern{}
 	pageUint, err := strconv.ParseUint(page, 10, 64)
 	if err != nil {
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 
 	if pageSize == "all" {
@@ -563,7 +564,7 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 	} else {
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 64)
 		if err != nil {
-			return nil, err
+			return nil, ErrPageSize(err)
 		}
 
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&designsFetched)
@@ -737,7 +738,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 	viewsFetched := []viewv1beta2.MesheryViewWithLocation{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 
 	if pageSize == "all" {
@@ -745,7 +746,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 	} else {
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
-			return nil, err
+			return nil, ErrPageSize(err)
 		}
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&viewsFetched)
 	}
@@ -891,7 +892,7 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, o
 	teamsFetched := []Team{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 
 	if pageSize == "all" {
@@ -899,7 +900,7 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, o
 	} else {
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
-			return nil, err
+			return nil, ErrPageSize(err)
 		}
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&teamsFetched)
 	}

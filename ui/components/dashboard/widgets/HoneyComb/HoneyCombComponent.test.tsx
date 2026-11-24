@@ -107,13 +107,16 @@ vi.mock('@sistent/sistent', () => ({
     children,
     value,
     onChange,
+    inputProps,
   }: {
     children?: React.ReactNode;
     value?: string;
     onChange?: (event: { target: { value: string } }) => void;
+    inputProps?: { 'aria-label'?: string };
   }) => (
     <select
       data-testid="group-select"
+      aria-label={inputProps?.['aria-label']}
       value={value}
       onChange={(e) => onChange?.({ target: { value: e.target.value } } as never)}
     >
@@ -177,6 +180,7 @@ describe('HoneycombComponent', () => {
   it('renders the group-by select with the documented options', () => {
     render(<HoneycombComponent kinds={[{ kind: 'Pod', count: 1 }]} />);
     expect(screen.getByTestId('group-select')).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Group by' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'All Resources' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Workload' })).toBeInTheDocument();
   });

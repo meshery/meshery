@@ -126,8 +126,10 @@ export function normalizeUnit(resourceType, quantity) {
         bytes *= 1024 * 1024 * 1024;
       } else if (quantity.endsWith('Ti')) {
         bytes *= 1024 * 1024 * 1024 * 1024;
-      } else if (quantity.endsWith('Ei')) {
+      } else if (quantity.endsWith('Pi')) {
         bytes *= 1024 * 1024 * 1024 * 1024 * 1024;
+      } else if (quantity.endsWith('Ei')) {
+        bytes *= 1024 * 1024 * 1024 * 1024 * 1024 * 1024;
       } else if (quantity.endsWith('m')) {
         bytes /= 1000;
       } else if (quantity.endsWith('u')) {
@@ -142,8 +144,10 @@ export function normalizeUnit(resourceType, quantity) {
         bytes *= 1000 * 1000 * 1000;
       } else if (quantity.endsWith('T')) {
         bytes *= 1000 * 1000 * 1000 * 1000;
-      } else if (quantity.endsWith('E')) {
+      } else if (quantity.endsWith('P')) {
         bytes *= 1000 * 1000 * 1000 * 1000 * 1000;
+      } else if (quantity.endsWith('E')) {
+        bytes *= 1000 * 1000 * 1000 * 1000 * 1000 * 1000;
       }
 
       if (bytes === 0) {
@@ -270,9 +274,8 @@ export const getStatus = (status) => {
       return attribute.phase;
     }
     if (Array.isArray(attribute.conditions) && attribute.conditions.length > 0) {
-      // return the last condition status because it is the most recent one
-      const lastCondition = attribute.conditions.reverse()[0];
-      return lastCondition?.type === 'Ready' && lastCondition?.status === 'True' ? 'Ready' : false;
+      const readyCondition = attribute.conditions.find((condition) => condition?.type === 'Ready');
+      return readyCondition?.status === 'True' ? 'Ready' : false;
     }
 
     return false;

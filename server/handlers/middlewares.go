@@ -54,6 +54,16 @@ func backgroundDiscoveryContext(ctx context.Context) (context.Context, context.C
 // per minute, and at most one reload per minute.
 const notFoundProbeInterval = time.Minute
 
+// discoveryResolutionStatusReadAttempts bounds how often the reporting
+// path re-reads a connection's stored status before giving up on a
+// resolution whose status cannot be verified, and
+// discoveryResolutionStatusReadRetryDelay is the pause between attempts.
+// The reporting path runs in a goroutine, so a brief retry costs nothing
+// on the request path.
+const discoveryResolutionStatusReadAttempts = 3
+
+const discoveryResolutionStatusReadRetryDelay = 50 * time.Millisecond
+
 // notFoundProbeLoadScope identifies one NOTFOUND load budget: a provider
 // deployment serving one user. A single Handler serves every user and every
 // provider, so a single global load gate would let one user's requests block
@@ -600,7 +610,83 @@ func (h *Handler) reportBackgroundDiscovery(provider models.Provider, token stri
 	if provider == nil || event == nil || (err == nil && event.ResolvedAt == nil && !machines.IsRecurrence(event, err)) {
 		return
 	}
+	// A Discovery resolution is reported only while the connection is
+	// still in the state the Discovery settled it in. SendEvent's
+	// conditional write (issue #23248) already refuses to move a
+	// connection the user has since disconnected, but the resolution is
+	// persisted later, in this goroutine, after SendEvent returns: a
+	// disconnect landing in between would otherwise close the
+	// unreachable condition and broadcast "reachable again" for a
+	// connection the user just disconnected. Re-read the stored status
+	// here and drop the resolution when it no longer matches the state
+	// the event says the Discovery settled in. Recurrences and failures
+	// are unaffected: they carry no resolution to drop.
+	if err == nil && event.ResolvedAt != nil && !discoveryResolutionStillCurrent(provider, token, event) {
+		return
+	}
 	h.reportMachineOutcome(provider, token, userUUID, event, err)
+}
+
+// discoveryResolutionStillCurrent reports whether a Discovery resolution
+// event may still be persisted: the connection's stored status must still
+// be the state the Discovery settled it in (the event's currentStatus
+// metadata, set by SendEvent). A disconnect, delete or ignore landing
+// after SendEvent wrote its state but before this report ran makes the
+// resolution stale, and persisting it would resolve the unreachable
+// condition for a connection the user just moved away (issue #23248).
+// A stored status that cannot be read is not treated as matching: the
+// lookup is retried briefly, so a transient provider blip does not
+// swallow a legitimate recovery, but a lookup that keeps failing drops
+// the resolution rather than resolving a condition for a connection
+// whose state is unknown — the safer side for a disconnect race. A
+// connection that is gone (404) has no condition left to resolve, so
+// its resolution is dropped without a retry. An event that does not say
+// what state the Discovery settled in fails open, as before.
+func discoveryResolutionStillCurrent(provider models.Provider, token string, event *events.Event) bool {
+	settled, ok := eventCurrentStatus(event)
+	if !ok || event.ActedUpon.IsNil() {
+		return true
+	}
+	var stored *connections.Connection
+	var statusCode int
+	var err error
+	for attempt := 0; attempt < discoveryResolutionStatusReadAttempts; attempt++ {
+		if attempt > 0 {
+			time.Sleep(discoveryResolutionStatusReadRetryDelay)
+		}
+		stored, statusCode, err = provider.GetConnectionByID(token, event.ActedUpon)
+		if err == nil {
+			break
+		}
+		if statusCode == http.StatusNotFound {
+			return false
+		}
+	}
+	if err != nil {
+		return false
+	}
+	if stored == nil {
+		return false
+	}
+	return stored.Status == connections.ConnectionStatus(settled)
+}
+
+// eventCurrentStatus reads the state SendEvent settled in from a success
+// event's currentStatus metadata. The value is a machines.StateType
+// in-process and a plain string after a JSON round trip, so both shapes
+// are accepted.
+func eventCurrentStatus(event *events.Event) (machines.StateType, bool) {
+	if event == nil || event.Metadata == nil {
+		return "", false
+	}
+	switch v := event.Metadata["currentStatus"].(type) {
+	case string:
+		return machines.StateType(v), v != ""
+	case machines.StateType:
+		return v, v != ""
+	default:
+		return "", false
+	}
 }
 
 // reportMachineOutcome reports what a connection's StateMachine.SendEvent
@@ -631,7 +717,7 @@ func (h *Handler) reportMachineOutcome(provider models.Provider, token string, u
 // counted on, or the resolution of, an open condition is broadcast as the
 // condition's stored event, so a client updates that notification in place
 // instead of showing one whose ID was never recorded. When persisting fails the
-// event is still broadcast, as sent.
+// event is logged and not broadcast to avoid ghost notifications and 404s.
 //
 // Every server site that persists an event and broadcasts it goes through this
 // helper (or persistAndPublishEvent, outside a Handler; a system event goes
@@ -656,9 +742,8 @@ func persistAndPublishEvent(log logger.Handler, provider models.Provider, token 
 	if provider == nil || event == nil {
 		return
 	}
-	// Prepare the event here, not only on the provider's copy, so the event
-	// broadcast when persisting fails has its own ID too: events that share
-	// the zero ID overwrite one another in the UI's store.
+	// Prepare the event here, not only on the provider's copy, so the
+	// preparation mints the ID for the persisted copy.
 	prepared := models.PrepareEventForPersistence(*event, log)
 	event = &prepared
 	persisted, err := provider.PersistEvent(*event, token)
@@ -666,13 +751,13 @@ func persistAndPublishEvent(log logger.Handler, provider models.Provider, token 
 		if log != nil {
 			log.Error(err)
 		}
-	} else {
-		if persisted.Event == nil {
-			// Nothing new was recorded and the stored event is unknown.
-			return
-		}
-		event = persisted.Event
+		return
 	}
+	if persisted.Event == nil {
+		// Nothing new was recorded and the stored event is unknown.
+		return
+	}
+	event = persisted.Event
 	if broadcaster != nil {
 		broadcaster.Publish(userID, event)
 	}

@@ -1,6 +1,10 @@
 import _ from 'lodash';
 
 export function isEmptyAtAllDepths(input) {
+  // Numeric and boolean leaves carry data, including zero and false.
+  if (_.isNumber(input) || _.isBoolean(input)) {
+    return false;
+  }
   if (_.isArray(input)) {
     // If the input is an array, check if all items are empty at all depths
     return input.every(isEmptyAtAllDepths);
