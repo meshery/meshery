@@ -5,6 +5,7 @@ export const StyledSummaryBox = styled(Box)(({ theme }) => ({
   padding: '1rem',
   borderRadius: '8px',
   marginBottom: '1rem',
+  overflowX: 'hidden',
 }));
 
 export const StyledSummaryItem = styled(Box)(({ theme }) => ({
@@ -12,6 +13,8 @@ export const StyledSummaryItem = styled(Box)(({ theme }) => ({
   padding: '0.7rem',
   backgroundColor: theme.palette.background.hover,
   flexGrow: 1,
+  overflowWrap: 'break-word',
+  wordBreak: 'break-word',
 }));
 
 export const SectionHeading = styled(Typography)(() => ({

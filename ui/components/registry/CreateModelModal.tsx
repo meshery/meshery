@@ -28,9 +28,17 @@ const CreateModelModal: FC<CreateModelModalProps> = ({
       isOpen={isCreateModalOpen}
       onClose={handleClose}
       title="Create Model"
-      size="sm"
+      size="md"
       disableBodyWrap
-      sx={{ zIndex: 1500 }}
+      sx={{
+        zIndex: 1500,
+        '& .MuiDialog-paper': {
+          maxWidth: { xs: '95vw', sm: '85vw', md: '900px' },
+          width: '100%',
+          m: { xs: 1, sm: 2 },
+          overflowX: 'hidden',
+        },
+      }}
     >
       <UrlStepper handleClose={handleClose} />
     </Modal>

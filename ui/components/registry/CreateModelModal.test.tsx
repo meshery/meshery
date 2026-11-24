@@ -3,9 +3,9 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/components/shared/Modal', () => ({
-  Modal: ({ isOpen, onClose, title, children }: any) =>
+  Modal: ({ isOpen, onClose, title, size, children }: any) =>
     isOpen ? (
-      <div data-testid="modal" data-title={title}>
+      <div data-testid="modal" data-title={title} data-size={size}>
         <button onClick={onClose} data-testid="modal-close" type="button">
           x
         </button>
@@ -30,6 +30,7 @@ describe('CreateModelModal', () => {
 
     expect(screen.getByTestId('modal')).toBeInTheDocument();
     expect(screen.getByTestId('modal')).toHaveAttribute('data-title', 'Create Model');
+    expect(screen.getByTestId('modal')).toHaveAttribute('data-size', 'md');
     expect(screen.getByTestId('url-stepper-close')).toBeInTheDocument();
   });
 
