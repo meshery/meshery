@@ -858,3 +858,41 @@ func TestGetCredentialByIDPlainForbiddenStaysResourceError(t *testing.T) {
 		t.Errorf("status = %d, want 403", status)
 	}
 }
+
+func TestGetUserCredentialsOmitsOrgHeaderWhenOrganizationsUnsupported(t *testing.T) {
+	var credsCalls, orgsCalls int
+	var gotOrg string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsOrgEndpoint):
+			orgsCalls++
+			http.Error(w, "unexpected", http.StatusInternalServerError)
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsAPIEndpoint):
+			credsCalls++
+			gotOrg = r.Header.Get(CurrentOrgIDHeader)
+			_, _ = w.Write(credentialsPageJSON(t))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := newCredentialsOrgProvider(t, server.URL)
+	provider.Capabilities = Capabilities{
+		{Feature: PersistCredentials, Endpoint: credsAPIEndpoint},
+		{Feature: SyncPrefs, Endpoint: "/user/preferences"},
+	}
+	page, err := provider.GetUserCredentials(newCredentialsOrgRequest(t, nil), testCredsUserID, 0, 10, "", "")
+	if err != nil {
+		t.Fatalf("GetUserCredentials: %v", err)
+	}
+	if page == nil {
+		t.Fatal("expected a credentials page, got nil")
+	}
+	if credsCalls != 1 || orgsCalls != 0 {
+		t.Fatalf("credentials calls = %d, organizations calls = %d, want 1 and 0", credsCalls, orgsCalls)
+	}
+	if gotOrg != "" {
+		t.Errorf("X-Current-Orgid = %q, want unset", gotOrg)
+	}
+}

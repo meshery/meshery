@@ -143,6 +143,10 @@ func (l *RemoteProvider) resolveActingOrganizationID(req *http.Request, userID, 
 		return "", nil
 	}
 
+	if !l.Capabilities.IsSupported(PersistOrganizations) {
+		return "", nil
+	}
+
 	token, err := l.requestToken(req, token)
 	if err != nil {
 		return "", err
