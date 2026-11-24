@@ -132,3 +132,197 @@ test_cleanup_deleted_relationships_actions_none if {
 	result := eval_rules.cleanup_deleted_relationships_actions(relationships)
 	count(result) == 0
 }
+
+# Test identify_relationships_based_on_matching_mutator_and_mutated_fields
+# Regression tests for meshery/meshery#24006: the identify rule paired components
+# to selectors by kind only, ignoring the selector model, so two components of
+# the same kind from different models could be wrongly identified as related.
+
+edge_non_binding_mutator_relationship := {
+	"id": "test-rel-id",
+	"kind": "edge",
+	"type": "non-binding",
+	"subType": "network",
+	"status": "pending",
+	"selectors": [{"allow": {
+		"from": [{
+			"id": "sel-from-1",
+			"kind": "Pod",
+			"model": {"name": "kubernetes"},
+			"patch": {"mutatorRef": [["configuration", "metadata", "namespace"]]},
+		}],
+		"to": [{
+			"id": "sel-to-1",
+			"kind": "Pod",
+			"model": {"name": "kubernetes"},
+			"patch": {"mutatedRef": [["configuration", "metadata", "namespace"]]},
+		}],
+	}}],
+}
+
+test_identify_mutator_no_match_across_models if {
+	design_file := {"components": [
+		{
+			"id": "pod-1",
+			"component": {"kind": "Pod"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+		{
+			"id": "pod-2",
+			"component": {"kind": "Pod"},
+			"model": {"name": "istio"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+	]}
+
+	result := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(edge_non_binding_mutator_relationship, design_file)
+	count(result) == 0
+}
+
+test_identify_mutator_matches_same_model if {
+	design_file := {"components": [
+		{
+			"id": "pod-1",
+			"component": {"kind": "Pod"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+		{
+			"id": "pod-2",
+			"component": {"kind": "Pod"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+	]}
+
+	result := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(edge_non_binding_mutator_relationship, design_file)
+	count(result) == 2
+}
+
+test_identify_mutator_matches_wildcard_selector_model if {
+	relationship := json.patch(edge_non_binding_mutator_relationship, [
+		{"op": "replace", "path": "/selectors/0/allow/from/0/model/name", "value": "*"},
+		{"op": "replace", "path": "/selectors/0/allow/to/0/model/name", "value": "*"},
+	])
+	design_file := {"components": [
+		{
+			"id": "pod-1",
+			"component": {"kind": "Pod"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+		{
+			"id": "pod-2",
+			"component": {"kind": "Pod"},
+			"model": {"name": "istio"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+	]}
+
+	result := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship, design_file)
+	count(result) == 2
+}
+
+test_identify_mutator_matches_selector_without_model if {
+	relationship := json.patch(edge_non_binding_mutator_relationship, [
+		{"op": "remove", "path": "/selectors/0/allow/from/0/model"},
+		{"op": "remove", "path": "/selectors/0/allow/to/0/model"},
+	])
+	design_file := {"components": [
+		{
+			"id": "pod-1",
+			"component": {"kind": "Pod"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+		{
+			"id": "pod-2",
+			"component": {"kind": "Pod"},
+			"model": {"name": "istio"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+	]}
+
+	result := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship, design_file)
+	count(result) == 2
+}
+
+test_identify_mutator_matches_empty_selector_model if {
+	relationship := json.patch(edge_non_binding_mutator_relationship, [
+		{"op": "replace", "path": "/selectors/0/allow/from/0/model/name", "value": ""},
+		{"op": "replace", "path": "/selectors/0/allow/to/0/model/name", "value": ""},
+	])
+	design_file := {"components": [
+		{
+			"id": "pod-1",
+			"component": {"kind": "Pod"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+		{
+			"id": "pod-2",
+			"component": {"kind": "Pod"},
+			"model": {"name": "istio"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+	]}
+
+	result := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship, design_file)
+	count(result) == 2
+}
+
+test_identify_mutator_matches_regex_selector_model if {
+	relationship := json.patch(edge_non_binding_mutator_relationship, [
+		{"op": "replace", "path": "/selectors/0/allow/from/0/model/name", "value": "^kuber.*$"},
+		{"op": "replace", "path": "/selectors/0/allow/to/0/model/name", "value": "^kuber.*$"},
+	])
+	design_file := {"components": [
+		{
+			"id": "pod-1",
+			"component": {"kind": "Pod"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+		{
+			"id": "pod-2",
+			"component": {"kind": "Pod"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+	]}
+
+	result := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship, design_file)
+	count(result) == 2
+}
+
+test_identify_mutator_matches_heterogeneous_models if {
+	relationship := json.patch(edge_non_binding_mutator_relationship, [{"op": "replace", "path": "/selectors/0/allow/to/0/model/name", "value": "istio"}])
+	design_file := {"components": [
+		{
+			"id": "pod-1",
+			"component": {"kind": "Pod"},
+			"model": {"name": "kubernetes"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+		{
+			"id": "pod-2",
+			"component": {"kind": "Pod"},
+			"model": {"name": "istio"},
+			"configuration": {"metadata": {"namespace": "team-a"}},
+		},
+	]}
+
+	# Only the kubernetes -> istio direction matches: each side must match
+	# its own selector's model, so the check is per-selector, not
+	# per-relationship. The reverse direction (istio -> kubernetes) must
+	# not match.
+	result := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship, design_file)
+	count(result) == 1
+
+	# The single declaration must be the kubernetes -> istio direction: a
+	# reverse-only match would also satisfy the count above.
+	some declaration in result
+	declaration.selectors[0].allow.from[0].id == "pod-1"
+	declaration.selectors[0].allow.to[0].id == "pod-2"
+}
