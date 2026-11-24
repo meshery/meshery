@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { Keys } from '@meshery/schemas/permissions';
 
 const can = vi.fn(() => true);
 const getEnvironmentConnectionsQuery = vi.fn();
@@ -40,6 +41,7 @@ vi.mock('@sistent/sistent', () => {
       </div>
     ),
     Typography: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    useHasPermission: (key: any) => can(key?.id, key?.action || key?.function),
     useTheme: () => ({
       palette: {
         background: { neutral: { default: 'neutral' } },
@@ -332,5 +334,42 @@ describe('EnvironmentCard', () => {
       { environmentId: '' },
       { skip: true },
     );
+  });
+
+  it('uses {skip: false} for connections query and renders count when permitted', () => {
+    render(
+      <EnvironmentCard
+        environmentDetails={baseEnvironment}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    expect(getEnvironmentConnectionsQuery).toHaveBeenCalledWith(
+      { environmentId: 'env-1' },
+      { skip: false },
+    );
+    expect(screen.getByTestId('tab-count')).toHaveTextContent('7');
+  });
+
+  it('skips connections query and hides count when user lacks WorkspaceManagementViewConnections permission', () => {
+    can.mockImplementation((id: string) => id !== Keys.WorkspaceManagementViewConnections.id);
+    render(
+      <EnvironmentCard
+        environmentDetails={baseEnvironment}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    expect(getEnvironmentConnectionsQuery).toHaveBeenCalledWith(
+      { environmentId: 'env-1' },
+      { skip: true },
+    );
+    expect(screen.getByTestId('tab-count')).toHaveTextContent('');
   });
 });
