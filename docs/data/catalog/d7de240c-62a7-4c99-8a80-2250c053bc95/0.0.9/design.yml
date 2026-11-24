@@ -1,0 +1,299 @@
+{
+  "id": "d7de240c-62a7-4c99-8a80-2250c053bc95",
+  "name": "NATS JetStream Cluster",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.9",
+  "components": [
+    {
+      "id": "d4216559-6185-4d90-a811-285b3408f768",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "nats-jetstream-config",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "position": {
+          "x": 757.5,
+          "y": 464
+        },
+        "primaryColor": "",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": ""
+      },
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "data": {
+          "nats.conf": "jetstream { store_dir: \"/data/jetstream\", max_mem: 1G, max_file: 10G }"
+        },
+        "metadata": {
+          "namespace": "playground-sandbox"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "13c4949b-094f-4168-be51-1b3c51806854",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "nats-headless",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "position": {
+          "x": 849.5,
+          "y": 464
+        },
+        "primaryColor": "",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "",
+        "z-index": 3
+      },
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "playground-sandbox"
+        },
+        "spec": {
+          "clusterIP": "None",
+          "ports": [
+            {
+              "name": "client",
+              "port": 4222,
+              "protocol": "TCP"
+            },
+            {
+              "name": "cluster",
+              "port": 6222,
+              "protocol": "TCP"
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "34566d2a-4863-45a1-9eef-250ac4dc0604",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "nats-client",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "position": {
+          "x": 757.5,
+          "y": 556
+        },
+        "primaryColor": "",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "",
+        "z-index": 4
+      },
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "playground-sandbox"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "client",
+              "port": 4222,
+              "protocol": "TCP"
+            },
+            {
+              "name": "monitor",
+              "port": 8222,
+              "protocol": "TCP"
+            }
+          ],
+          "selector": {
+            "app": "nats"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "3a588465-be5a-4ba8-8ce2-64972d28e6ab",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "nats-cluster",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "position": {
+          "x": 849.5,
+          "y": 556
+        },
+        "primaryColor": "",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "",
+        "z-index": 5
+      },
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "name": "nats-cluster",
+          "namespace": "playground-sandbox"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "nats"
+            }
+          },
+          "serviceName": "nats-headless",
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "nats"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "nats:2.10-alpine",
+                  "name": "nats",
+                  "ports": [
+                    {
+                      "containerPort": 4222,
+                      "name": "client"
+                    },
+                    {
+                      "containerPort": 6222,
+                      "name": "cluster"
+                    },
+                    {
+                      "containerPort": 8222,
+                      "name": "monitor"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "relationships": []
+}

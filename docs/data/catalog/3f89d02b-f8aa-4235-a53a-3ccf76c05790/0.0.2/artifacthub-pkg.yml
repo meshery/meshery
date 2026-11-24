@@ -1,0 +1,20 @@
+version: 0.0.2
+name: podinfo
+displayName: Podinfo
+createdAt: "2026-11-22T19:32:47Z"
+description: Podinfo is a lightweight Go-based microservice designed for Kubernetes demonstrations. It exposes HTTP, gRPC, and Prometheus metrics endpoints and includes health checks, resource configuration, and horizontal pod autoscaling. It demonstrates Kubernetes deployment, service discovery, and observability capabilities.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3f89d02b-f8aa-4235-a53a-3ccf76c05790/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a sample application intended for learning and demonstration, not production use. It requires a Kubernetes cluster and access to the public Podinfo container image. Horizontal Pod Autoscaling requires a functioning metrics server in the cluster. The Service uses ClusterIP, so external access requires port-forwarding or an appropriate ingress or load balancer configuration. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cb7164e-e765-49e5-9ba6-8995f05935ff
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
