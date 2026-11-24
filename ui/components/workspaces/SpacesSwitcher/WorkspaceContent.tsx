@@ -70,15 +70,18 @@ const WorkspaceContent = ({ workspace }) => {
     }
   }, [isViewVisible, filters.type, setMultiSelectedContent]);
 
-  const handleTypeChange = useCallback((event) => {
-    setMultiSelectedContent([]);
-    setFilters((prev) => ({
-      ...prev,
-      type: event.target.value,
-      designsPage: 0,
-      viewsPage: 0,
-    }));
-  }, [setMultiSelectedContent]);
+  const handleTypeChange = useCallback(
+    (event) => {
+      setMultiSelectedContent([]);
+      setFilters((prev) => ({
+        ...prev,
+        type: event.target.value,
+        designsPage: 0,
+        viewsPage: 0,
+      }));
+    },
+    [setMultiSelectedContent],
+  );
 
   const handleSortByChange = useCallback((event) => {
     setFilters((prev) => ({
