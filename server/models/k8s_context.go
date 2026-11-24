@@ -367,9 +367,10 @@ func DiscoverKubeconfigContexts(ctx context.Context, _ Provider, _ string, _ *Br
 		handler, err := kc.GenerateKubeHandler()
 		if err != nil {
 			reason := kubeconfigUnreadableReason
-			err =ErrUnreachableKubeAPI(err, kc.Server)
-
-			metadata["error"] = err
+			if log != nil {
+				log.Warn(ErrGenerateK8sHandler(err, kc.Name))
+			}
+			metadata["error"] = ErrUnreachableKubeAPI(stderrors.New(reason), kc.Server)
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
 			eventMetadata[name] = metadata
 
@@ -377,9 +378,6 @@ func DiscoverKubeconfigContexts(ctx context.Context, _ Provider, _ string, _ *Br
 			// 	// Publishing again would lead to duplicate events and confusion to the user.
 			// 	// _ = provider.PersistEvent(token,*event)
 			// 	// eventChan.Publish(userUUID, event)
-			if log != nil {
-				log.Warn(ErrGenerateK8sHandler(err, kc.Name))
-			}
 			// The kube handler could not even be constructed from the context's
 			// credentials, so there is nothing reachable to register; skip it
 			// regardless of opts.IncludeUnreachable and record why.

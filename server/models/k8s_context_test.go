@@ -789,7 +789,9 @@ users:
 	})
 
 	t.Run("a missing server-side credential path is not echoed in the skip reason", func(t *testing.T) {
-		got, err := discoverForTest(t, []byte(`apiVersion: v1
+		instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+		eventMetadata := map[string]interface{}{}
+		got, err := DiscoverKubeconfigContexts(context.Background(), nil, uuid.Must(uuid.NewV4()).String(), nil, []byte(`apiVersion: v1
 kind: Config
 current-context: leak
 clusters:
@@ -806,7 +808,7 @@ users:
   user:
     client-certificate-data: bm90LWEtY2VydA==
     client-key: /no/such/dir/client.key
-`))
+`), &instanceID, eventMetadata, testKubeLogger(t), KubeconfigDiscoveryOptions{IncludeUnreachable: true})
 		if err != nil {
 			t.Fatalf("discover: %v", err)
 		}
@@ -819,6 +821,13 @@ users:
 		}
 		if strings.Contains(reason, "/no/such") || strings.Contains(reason, "client.key") {
 			t.Fatalf("reason %q leaks the server-side path", reason)
+		}
+		meta, _ := eventMetadata["leak"].(map[string]interface{})
+		if meta == nil {
+			t.Fatalf("eventMetadata = %#v, want an entry for the skipped context", eventMetadata)
+		}
+		if rendered := fmt.Sprintf("%v %+v", meta["error"], meta); strings.Contains(rendered, "/no/such") || strings.Contains(rendered, "client.key") {
+			t.Fatalf("event metadata %q leaks the server-side path", rendered)
 		}
 	})
 
