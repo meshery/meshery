@@ -2,6 +2,7 @@ package system
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -10,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 // trackingBody wraps an io.ReadCloser to track when Close is called.
@@ -132,6 +134,45 @@ func TestOpenMesheryUI(t *testing.T) {
 			}
 			if !strings.Contains(buf.String(), tt.wantLog) {
 				t.Errorf("expected output to contain %q, got %q", tt.wantLog, buf.String())
+			}
+		})
+	}
+}
+
+func TestDashboardCmdArgs(t *testing.T) {
+	tests := []struct {
+		Name          string
+		Args          []string
+		ExpectError   bool
+		ExpectedError error
+	}{
+		{
+			Name:        "valid with no positional arguments",
+			Args:        []string{},
+			ExpectError: false,
+		},
+		{
+			Name:          "invalid with unexpected positional argument",
+			Args:          []string{"unexpected-arg"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", dashboardUsageMsg)),
+		},
+		{
+			Name:          "invalid with multiple unexpected positional arguments",
+			Args:          []string{"arg1", "arg2"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", dashboardUsageMsg)),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			err := dashboardCmd.Args(dashboardCmd, tt.Args)
+			if tt.ExpectError {
+				assert.Error(t, err)
+				utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+			} else {
+				assert.NoError(t, err)
 			}
 		})
 	}

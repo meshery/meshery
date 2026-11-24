@@ -63,12 +63,19 @@ func newDashboardOptions() *dashboardOptions {
 	}
 }
 
+var dashboardUsageMsg = "Usage: mesheryctl system dashboard [flags]\nRun 'mesheryctl system dashboard --help' to see detailed help message"
+
 var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
 	Short: "Open Meshery UI in browser.",
 	Long: `Open Meshery UI in browser.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/dashboard`,
-	Args: cobra.NoArgs,
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", dashboardUsageMsg))
+		}
+		return nil
+	},
 	Example: `
 // Open Meshery UI in browser
 mesheryctl system dashboard
