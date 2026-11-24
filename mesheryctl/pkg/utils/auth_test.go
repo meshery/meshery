@@ -427,6 +427,7 @@ func TestTryExistingAuth_InvalidTokenResponse(t *testing.T) {
 		})
 	}
 }
+
 // TestTryExistingAuth_Success verifies that a valid pre-existing token is
 // fetched from disk, validated against /api/token, and returned for reuse.
 func TestTryExistingAuth_Success(t *testing.T) {

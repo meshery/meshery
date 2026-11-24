@@ -27,7 +27,7 @@ description: Log in to Meshery Server from mesheryctl and get an authentication 
 
 2. Choose a provider:
 
-    - **Meshery** (or another remote provider) opens your browser at the provider's sign-in page. After you sign in, the page says "you have logged in, you can close this window now". Close it and return to your terminal. A remote provider keeps your designs, environments, and performance results between sessions.
+    - **Meshery** reuses any valid existing session found in your current context's token file without opening a browser. If no valid session exists, or when using another remote provider, `mesheryctl` opens your browser at the provider's sign-in page. After you sign in, the page says "you have logged in, you can close this window now". Close it and return to your terminal. A remote provider keeps your designs, environments, and performance results between sessions.
     - **Local** signs you in without a browser. Your work stays on this Meshery Server only.
 
 3. Confirm that `mesheryctl` printed `authenticated` and that it saved the token to `~/.meshery/auth.json`:

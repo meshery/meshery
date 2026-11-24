@@ -549,12 +549,12 @@ func tryExistingAuth(
 		return nil, false, nil
 	}
 
-	// Step 10: Preserve the registration key when explicitly selected.
+	// Step 9: Preserve the registration key when explicitly selected.
 	if providerKey != "" {
 		data = rewriteTokenProvider(data, providerKey)
 	}
 
-	// Step 11: Persist the refreshed authentication details.
+	// Step 10: Persist the refreshed authentication details.
 	if err := WriteTokenFile(tokenPath, data); err != nil {
 		return nil, false, fmt.Errorf(
 			"failed to update authentication file: %w",
@@ -567,7 +567,7 @@ func tryExistingAuth(
 	return data, true, nil
 }
 
-// InitiateLogin initates the login process
+// InitiateLogin initiates the login process
 func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, error) {
 	// Get the providers info
 	providers, err := GetProviderInfo(mctlCfg)
