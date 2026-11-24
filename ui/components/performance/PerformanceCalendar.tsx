@@ -62,19 +62,52 @@ function generateCalendarEventsFromResults(results) {
 }
 
 /**
- * generateDateRange generates date range from the given dates
- * in yyyy-mm-dd
- * @param {Date} [from] start date
- * @param {Date} [to] end date
+ * generateDateRange generates date range from the given dates, array of dates,
+ * or range object in YYYY-MM-DD.
+ *
+ * react-big-calendar onRangeChange delivers:
+ * - { start: Date, end: Date } for Month view
+ * - [Date] for Day view
+ * - [Date, ..., Date] for Week / Work Week views
+ *
+ * @param {Date | { start: Date, end: Date } | Date[]} [fromOrRange]
+ * @param {Date} [to]
  * @returns {{
  *  start: string,
  *  end: string
  * }}
  */
-function generateDateRange(from, to) {
-  if (from && to) {
+export function generateDateRange(fromOrRange, to) {
+  if (Array.isArray(fromOrRange)) {
+    if (fromOrRange.length === 0) {
+      return {
+        start: moment().startOf('M').format('YYYY-MM-DD'),
+        end: moment().add(1, 'M').startOf('M').format('YYYY-MM-DD'),
+      };
+    }
+    const from = fromOrRange[0];
+    const toDate = fromOrRange[fromOrRange.length - 1];
     return {
       start: moment(from).format('YYYY-MM-DD'),
+      end: moment(toDate).format('YYYY-MM-DD'),
+    };
+  }
+
+  if (
+    fromOrRange &&
+    typeof fromOrRange === 'object' &&
+    'start' in fromOrRange &&
+    'end' in fromOrRange
+  ) {
+    return {
+      start: moment(fromOrRange.start).format('YYYY-MM-DD'),
+      end: moment(fromOrRange.end).format('YYYY-MM-DD'),
+    };
+  }
+
+  if (fromOrRange && to) {
+    return {
+      start: moment(fromOrRange).format('YYYY-MM-DD'),
       end: moment(to).format('YYYY-MM-DD'),
     };
   }
@@ -182,7 +215,7 @@ function PerformanceCalendar({ style }) {
         localizer={localizer}
         style={{ height: '100%' }}
         // @ts-ignore
-        onRangeChange={(range) => setTime(generateDateRange(range.start, range.end))}
+        onRangeChange={(range) => setTime(generateDateRange(range))}
         onSelectEvent={(results) => handleEventClick(results)}
       />
 
