@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { render } from '@testing-library/react';
 
 vi.mock('../../../../utils/k8s-utils', () => ({ timeAgo: (v: string) => `AGO:${v}` }));
 vi.mock('../../../../utils/multi-ctx', () => ({
@@ -38,5 +39,37 @@ describe('buildNetworkPolicyColumns', () => {
     });
     expect(typeof cfg.name).toBe('string');
     expect(cfg.columns.length).toBeGreaterThan(0);
+  });
+});
+
+const getColumn = (label: string) => {
+  const column = buildNetworkPolicyColumns({
+    switchView: () => {},
+    meshSyncResources: [],
+    k8sConfig: {},
+    connectionMetadataState: {},
+    workloadType: 'NetworkPolicy',
+    ping: () => {},
+  }).columns.find((col: any) => col.label === label) as any;
+  expect(column).toBeDefined();
+  return column;
+};
+
+const renderCell = (label: string, value: unknown) => {
+  const { container } = render(
+    <>{getColumn(label).options.customBodyRender(JSON.stringify(value), {})}</>,
+  );
+  return container.textContent;
+};
+
+describe('NetworkPolicy Policy Types column', () => {
+  it('shows the policy types under a matching label', () => {
+    expect(renderCell('Policy Types', { policyTypes: ['Ingress', 'Egress'] })).toBe(
+      'Ingress, Egress',
+    );
+  });
+
+  it('is empty when no policy types are set', () => {
+    expect(renderCell('Policy Types', { podSelector: {} })).toBe('');
   });
 });
