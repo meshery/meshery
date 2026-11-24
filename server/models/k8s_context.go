@@ -350,6 +350,8 @@ func DiscoverKubeconfigContexts(ctx context.Context, _ Provider, _ string, _ *Br
 		// Contexts are resolved by name, so a later entry with the same name
 		// would resolve to the first entry's cluster and user and be offered
 		// as an identical copy of it. Keep the first and report the rest.
+		// eventMetadata is keyed by name, so a duplicate deliberately writes
+		// no entry: it would overwrite the first context's receipt metadata.
 		if _, duplicate := seenContextNames[name]; duplicate {
 			result.SkippedContexts = append(result.SkippedContexts, SkippedKubeContext{
 				Name:   name,
