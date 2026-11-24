@@ -1,6 +1,7 @@
 package adapter
 
 import (
+	"io"
 	"net/http"
 	"path/filepath"
 	"runtime"
@@ -80,11 +81,19 @@ func TestValidateMesh(t *testing.T) {
 			Args: []string{"validate", "istio", "--adapter", "meshery-istio"},
 			// Cobra checks required flags after PreRunE, so the adapter sync
 			// still runs; the validation request itself must never be sent.
+			// The operation responder is registered anyway so that an
+			// unexpected POST would be counted instead of going unmatched.
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
 					URL:          syncURL,
 					Response:     "sync.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          operationURL,
+					Response:     "deploy.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -121,10 +130,21 @@ func TestValidateMesh(t *testing.T) {
 			httpmock.Reset()
 
 			for _, url := range tc.URLs {
+				url := url
 				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
-				// mock response
+				// mock response; for the operation POST, also check what was sent.
+				// The request has no content type, so read the raw body rather
+				// than using req.ParseForm.
 				httpmock.RegisterResponder(url.Method, url.URL,
-					httpmock.NewStringResponder(url.ResponseCode, apiResponse))
+					func(req *http.Request) (*http.Response, error) {
+						if url.Method == http.MethodPost {
+							body, err := io.ReadAll(req.Body)
+							require.NoError(t, err)
+							assert.Contains(t, string(body), "query=smi_conformance")
+							assert.Contains(t, string(body), "adapter=localhost%3A10000")
+						}
+						return httpmock.NewStringResponse(url.ResponseCode, apiResponse), nil
+					})
 			}
 			utils.TokenFlag = filepath.Join(fixturesDir, "token.golden")
 
@@ -138,6 +158,10 @@ func TestValidateMesh(t *testing.T) {
 			assert.Equal(t, tc.ExpectedOperationCalls,
 				httpmock.GetCallCountInfo()["POST "+operationURL],
 				"unexpected number of adapter operation requests")
+			// Cobra checks required flags after PreRunE, so the sync request
+			// runs exactly once in every case, including the missing-spec one.
+			assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET "+syncURL],
+				"expected exactly one adapter sync request")
 
 			if tc.ExpectError {
 				require.Error(t, err)
