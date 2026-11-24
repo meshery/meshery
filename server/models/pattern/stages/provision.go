@@ -67,7 +67,18 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 		}
 
 		// Execute the plan
-		err = plan.Execute(func(name string, component component.ComponentDefinition) bool {
+		err = plan.Execute(func(name string, component component.ComponentDefinition) (ok bool) {
+			defer func() {
+				if r := recover(); r != nil {
+					log.Errorf("panic during component provisioning for %s (%s): %v", component.DisplayName, name, r)
+					panicErr := ErrProvisionPanic(component.DisplayName, r)
+					data.Lock.Lock()
+					data.Other[fmt.Sprintf("%s%s", name, ProvisionSuffixKey)] = dispatchFailureMessage(component, panicErr, data.Pattern.Name, prov.IsDelete())
+					data.Lock.Unlock()
+					ok = false
+				}
+			}()
+
 			ccp := CompConfigPair{}
 
 			// meshkit's orchestration.EnrichComponentWithMesheryMetadata operates

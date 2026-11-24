@@ -7673,6 +7673,76 @@
       "suggestedRemediation": [
         "Set the design file's version to a semver string such as 0.0.1 and save again"
       ]
+    },
+    {
+      "code": "meshery-server-1497",
+      "moniker": "ErrProvisionPanicCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1497",
+      "severity": "alert",
+      "shortDescription": "Component panicked during provisioning",
+      "probableCause": [
+        "Runtime fault occurred in component visitor execution"
+      ],
+      "suggestedRemediation": [
+        "Inspect component configuration and provider logs for runtime failures"
+      ]
+    },
+    {
+      "code": "meshery-server-1499",
+      "moniker": "ErrKubeConfigFileReferenceCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1499",
+      "severity": "alert",
+      "shortDescription": "The kubeconfig refers to files by path",
+      "longDescription": "certificate-authority, client-certificate, client-key and tokenFile may not be file paths in an uploaded kubeconfig.",
+      "probableCause": [
+        "An uploaded kubeconfig is read on the Meshery Server host, which cannot and must not read files from the machine the kubeconfig came from."
+      ],
+      "suggestedRemediation": [
+        "Embed the credentials instead, for example with `kubectl config view --raw --flatten --minify`, and upload the result."
+      ]
+    },
+    {
+      "code": "meshery-server-1500",
+      "moniker": "ErrUnsafeKubeCredentialCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1500",
+      "severity": "alert",
+      "shortDescription": "The Kubernetes credential is not allowed to run commands or read files on the Meshery Server host",
+      "probableCause": [
+        "exec plugins, auth-providers and certificate, key or token file paths are executed or read on the machine running Meshery Server, so only the server's own kubeconfig may use them"
+      ],
+      "suggestedRemediation": [
+        "Replace the credential with embedded data (client-certificate-data, client-key-data, certificate-authority-data, token) and save it again"
+      ]
+    },
+    {
+      "code": "meshery-server-1501",
+      "moniker": "ErrKubeconfigUnreadableCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1501",
+      "severity": "alert",
+      "shortDescription": "The kubeconfig could not be parsed",
+      "longDescription": "The uploaded file is empty, is not YAML, or does not look like a kubeconfig (it has no kind: Config, current-context, clusters, contexts, or users).",
+      "probableCause": [
+        "A different file was selected, or the kubeconfig was truncated or edited by hand."
+      ],
+      "suggestedRemediation": [
+        "Upload the kubeconfig file itself (for example ~/.kube/config), and check it with kubectl config view --kubeconfig <file>."
+      ]
     }
   ],
   "schemaVersion": 2
