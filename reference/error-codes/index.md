@@ -16188,6 +16188,31 @@ Older tooling wrote arbitrary version strings into design files</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrKubeConfigFileReferenceCode-1499" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrKubeConfigFileReferenceCode-more-info" onclick="toggle_visibility('meshery-server-ErrKubeConfigFileReferenceCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1499" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errkubeconfigfilereferencecode-1499/"><code>ErrKubeConfigFileReferenceCode-1499</code></a>
+            </td>
+            <td>The kubeconfig refers to files by path</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrKubeConfigFileReferenceCode-1499" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrKubeConfigFileReferenceCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">certificate-authority, client-certificate, client-key and tokenFile may not be file paths in an uploaded kubeconfig.</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">An uploaded kubeconfig is read on the Meshery Server host, which cannot and must not read files from the machine the kubeconfig came from.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Embed the credentials instead, for example with `kubectl config view --raw --flatten --minify`, and upload the result.</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>

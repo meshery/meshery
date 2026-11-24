@@ -8373,6 +8373,8 @@ You can now design and manage any infrastructure that Meshery supports. For the 
     
   
     
+  
+    
       
     
   
@@ -14301,6 +14303,19 @@ Then connect Meshery to your cluster:
 4. In the **Import Kubeconfig** step, upload your kubeconfig file and select the contexts to import.
 5. Review the import and confirm it.
 
+**Note**: Meshery rejects an uploaded kubeconfig whose `certificate-authority`, `client-certificate`, `client-key` or `tokenFile` entries are file paths, because the Meshery Server cannot (and must not) read files from your machine. Minikube writes `client-certificate` and `client-key` as paths, so embed them before you upload:
+
+
+
+<pre class="codeblock-pre">
+	<span class="codeblock">
+		<code class="clipboardjs">kubectl config view --minify --flatten --raw &gt; minikube-kubeconfig.yaml</code>
+	</span>
+</pre>
+
+
+`mesheryctl connection create --type minikube` does this for you.
+
 For details, see [Registering a Connection](/guides/infrastructure-management/registering-a-connection/).
 
 **Note**: If you get a connection refused error when you upload your kubeconfig, change your cluster's server URL to Minikube's external API address, as described in [Minikube Docker Driver Users](#minikube-docker-driver-users).
@@ -17239,7 +17254,7 @@ Credentials entered in the wizard are persisted as first-class, named [Credentia
 Kubernetes uses a dedicated flow because a single kubeconfig can describe many clusters and its kubeconfig also serves as its credential.
 
 1. **Choose Connection** → **Kubernetes**.
-2. **Import Kubeconfig.** Upload a kubeconfig file. Meshery parses it and lists the contexts it contains, indicating which are reachable - nothing is persisted yet.
+2. **Import Kubeconfig.** Upload a kubeconfig file. Meshery parses it and lists the contexts it contains, indicating which are reachable - nothing is persisted yet. The kubeconfig must embed its certificates, keys and tokens (`*-data`, `token`); one that names files by path (`certificate-authority`, `client-certificate`, `client-key`, `tokenFile`) is rejected, because the Meshery Server cannot read files from your machine. Create an embedded copy with `kubectl config view --minify --flatten --raw`.
 3. **Select contexts.** Choose which contexts to import. For each, you can override the Connection name and choose a [MeshSync deployment mode](#meshsync-deployment-mode).
 4. **Review Import.** Confirm your selection and import. Meshery creates one Connection per selected context and reports the outcome, grouped into connected, registered, ignored, and errored buckets.
 
@@ -78816,6 +78831,12 @@ url: /reference/error-codes/component-meshery-server/errkubeclientcode-1066/inde
 
 
 --------------------------------------------------------------------------------
+title: "ErrKubeConfigFileReferenceCode-1499"
+url: /reference/error-codes/component-meshery-server/errkubeconfigfilereferencecode-1499/index.md
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
 title: "ErrKubectlDescribeCode-1198"
 url: /reference/error-codes/component-meshery-server/errkubectldescribecode-1198/index.md
 --------------------------------------------------------------------------------
@@ -95874,6 +95895,31 @@ Older tooling wrote arbitrary version strings into design files</p>
               <p class="error-details">Runtime fault occurred in component visitor execution</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Inspect component configuration and provider logs for runtime failures</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrKubeConfigFileReferenceCode-1499" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrKubeConfigFileReferenceCode-more-info" onclick="toggle_visibility('meshery-server-ErrKubeConfigFileReferenceCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1499" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errkubeconfigfilereferencecode-1499/"><code>ErrKubeConfigFileReferenceCode-1499</code></a>
+            </td>
+            <td>The kubeconfig refers to files by path</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrKubeConfigFileReferenceCode-1499" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrKubeConfigFileReferenceCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">certificate-authority, client-certificate, client-key and tokenFile may not be file paths in an uploaded kubeconfig.</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">An uploaded kubeconfig is read on the Meshery Server host, which cannot and must not read files from the machine the kubeconfig came from.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Embed the credentials instead, for example with `kubectl config view --raw --flatten --minify`, and upload the result.</p>
             </td>
           </tr>
         
