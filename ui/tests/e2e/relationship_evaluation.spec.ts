@@ -185,7 +185,17 @@ test.describe('Relationship Evaluation', { tag: '@relationship' }, () => {
         }
       }
 
-      console.log(`Total relationship failures for ${design.name}: ${failures}`);
+      expect(failures, `Total relationship failures for ${design.name}`).toBe(0);
+      const isValid = (r: Relationship) =>
+        r.status === 'approved' &&
+        r.selectors &&
+        !r?.metadata?.isAnnotation &&
+        r.subType !== 'annotation';
+
+      expect(
+        actualRelationships.filter(isValid).length,
+        'Unexpected relationship count for ' + design.name,
+      ).toBe(design.relationships.filter(isValid).length);
     });
   }
 });
