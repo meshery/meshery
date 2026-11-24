@@ -11,7 +11,7 @@ import {
   WorkspaceContentMoveModal,
   useHasPermission,
 } from '@sistent/sistent';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { StyledSearchBar } from '@sistent/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import MainViewsContent from './MainViewsContent';
