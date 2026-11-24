@@ -66,6 +66,10 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 	credential := &models.Credential{}
 	// If existing credential is used do not persist again
 	if !ok {
+		if guardErr := models.RejectUnsafeKubeCredential(payload.CredentialSecret); guardErr != nil {
+			return NoOp, eventBuilder.WithDescription(fmt.Sprintf("Refused credential for the connection %s", payload.Name)).
+				WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": guardErr}).Build(), guardErr
+		}
 		credName, _ := payload.CredentialSecret["name"].(string)
 		credential, err = provider.SaveUserCredential(token, &models.Credential{
 			Name:   credName,

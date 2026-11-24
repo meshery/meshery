@@ -170,3 +170,19 @@ func pairsMatchServerContext(cfg, srv *clientcmdapi.Config) bool {
 	}
 	return len(cfg.AuthInfos) > 0
 }
+
+// RejectUnsafeKubeCredential refuses a Kubernetes credential secret whose
+// kubeconfig user or cluster would make Meshery Server run a command (exec,
+// auth-provider) or read a file (certificate, key and token paths) on its own
+// host to build a client (issue #24218), unless it is a context of the server's own
+// kubeconfig (see UntrustedKubeCredentialFields). Credentials that carry no Kubernetes
+// auth or cluster block are not affected. It reports field names only.
+func RejectUnsafeKubeCredential(secret map[string]interface{}) error {
+	payload := CredentialPayload(secret)
+	auth, _ := payload["auth"].(map[string]interface{})
+	cluster, _ := payload["cluster"].(map[string]interface{})
+	if fields := UntrustedKubeCredentialFields(auth, cluster); len(fields) > 0 {
+		return ErrUnsafeKubeCredential(fields)
+	}
+	return nil
+}

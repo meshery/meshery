@@ -56,7 +56,7 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 	// onto another user's account.
 	credential.UserId = userUUID
 
-	if err := rejectUnsafeKubeCredential(credential.Secret); err != nil {
+	if err := models.RejectUnsafeKubeCredential(credential.Secret); err != nil {
 		writeMeshkitError(w, err, http.StatusBadRequest)
 		return
 	}
@@ -221,7 +221,7 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 	// field to confirm the caller owns the credential being updated).
 	credential.UserId = userUUID
 
-	if err := rejectUnsafeKubeCredential(credential.Secret); err != nil {
+	if err := models.RejectUnsafeKubeCredential(credential.Secret); err != nil {
 		writeMeshkitError(w, err, http.StatusBadRequest)
 		return
 	}
@@ -304,20 +304,4 @@ func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request,
 		h.log.Info("Credential deleted.")
 	}
 	w.WriteHeader(http.StatusOK)
-}
-
-// rejectUnsafeKubeCredential refuses a Kubernetes credential secret whose
-// kubeconfig user or cluster would make Meshery Server run a command (exec,
-// auth-provider) or read a file (certificate, key and token paths) on its own
-// host to build a client (issue #24218), unless it is a context of the server's own
-// kubeconfig (see models.UntrustedKubeCredentialFields). Credentials that carry no Kubernetes
-// auth or cluster block are not affected. It reports field names only.
-func rejectUnsafeKubeCredential(secret map[string]interface{}) error {
-	payload := models.CredentialPayload(secret)
-	auth, _ := payload["auth"].(map[string]interface{})
-	cluster, _ := payload["cluster"].(map[string]interface{})
-	if fields := models.UntrustedKubeCredentialFields(auth, cluster); len(fields) > 0 {
-		return models.ErrUnsafeKubeCredential(fields)
-	}
-	return nil
 }
