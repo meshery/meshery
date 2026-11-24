@@ -21,7 +21,9 @@ This skill covers **creating new definitions** and **refining existing ones**. I
 | Human docs | [Concepts: Relationships](https://docs.meshery.io/concepts/logical/relationships), [Contributing to Relationships](https://docs.meshery.io/project/contributing/contributing-relationships) |
 | In-tree corpus | `models/<model>/<model-version>/<definition-version>/relationships/` |
 
-`v1beta3` is the authoring target; in-tree model files are still mostly `v1beta2` (a few `v1alpha3`). The version shapes are compatible - Meshery Server bridges registered definitions to the `v1beta2` shape for the policy engine (`server/models/pattern/utils/relationship_version_bridge.go`) - **but the registration gate accepts only `v1beta2`/`v1alpha3` documents until [meshkit#1096](https://github.com/meshery/meshkit/pull/1096) ships in the server's meshkit**. A definition that must register on current servers (in-tree seeding, `mesheryctl model import`) declares `v1beta2`; flip to `v1beta3` once the gate accepts it. When **refining** an existing file, keep its `schemaVersion` unless you are deliberately migrating it.
+**Always prioritize the latest version.** New relationships use the newest schema in meshery/schemas (`relationships.meshery.io/v1beta3` today) and are written only in the latest `<model-version>` folder for that model. Do not copy `schemaVersion`, or an older model directory, from a neighboring file.
+
+In-tree files are still mostly `v1beta2` (a few `v1alpha3`). The shapes are compatible: Meshery Server bridges registered definitions to the `v1beta2` shape for the policy engine (`server/models/pattern/utils/relationship_version_bridge.go`). The registration gate still accepts only `v1beta2`/`v1alpha3` until [meshkit#1096](https://github.com/meshery/meshkit/pull/1096) ships in the server's meshkit. That gate is a server limit, not the authoring target. Prefer `v1beta3`. Use `v1beta2` only when a definition must import on a server that has not picked up that meshkit change, and move it to `v1beta3` as soon as the gate allows it. When refining an existing file, keep its `schemaVersion` unless you are deliberately migrating it.
 
 `kind` is a schema enum: `hierarchical` | `edge` | `sibling`. `type` and `subType` are open strings. The combinations below are the ones Meshery currently visualizes and evaluates. A new `subType` needs a visual paradigm (whiteboard a proposal in Kanvas) and an evaluation policy that understands it.
 
@@ -137,8 +139,8 @@ If legacy tooling forces you to name a rule, the historical default is `{kind}_{
 3. Pick `kind` / `type` / `subType` from the table. If none fit, stop and propose a visualization; do not invent a combo.
 4. Set `from` / `to` (hierarchical: child in `from`, parent in `to`).
 5. If values should flow, add paired `mutatorRef` / `mutatedRef` after reading the component JSON schemas. If they should only match, use `match.refs` or omit patch.
-6. Set `evaluationQuery: ""`, `status: enabled`, and the `schemaVersion` the registration gate accepts (`v1beta2` today; `v1beta3` once meshkit#1096 ships - see Source of truth).
-7. Write one JSON file per relationship (or a small cohesive set) under `models/<model>/<model-version>/<def-version>/relationships/`. Filename convention: `{kind}-{type}-{subType}-<suffix>.json`.
+6. Set `evaluationQuery: ""`, `status: enabled`, and `schemaVersion` to the latest schema (`relationships.meshery.io/v1beta3`). See Source of truth for the registration-gate exception.
+7. Write one JSON file per relationship (or a small cohesive set) under the latest `models/<model>/<model-version>/<def-version>/relationships/` folder. Filename convention: `{kind}-{type}-{subType}-<suffix>.json`.
 8. Compare against the matching file in [examples/](examples/) and against a kubernetes in-tree neighbour of the same combo.
 
 ## Refine an existing definition
@@ -153,7 +155,8 @@ If legacy tooling forces you to name a rule, the historical default is `{kind}_{
 
 ## Common mistakes
 
-- `schemaVersion` `v1beta1` or `core.meshery.io/v1alpha2` — wrong. New: `relationships.meshery.io/v1beta3`.
+- `schemaVersion` `v1beta1` or `core.meshery.io/v1alpha2` — wrong. New work uses the latest schema, `relationships.meshery.io/v1beta3`, not the `v1beta2` stamped on a neighboring file.
+- Authoring under an older `<model-version>` folder when a newer one exists.
 - Putting the parent in `from` for hierarchical inventory.
 - Using `type: network` with no `subType`, or treating `inventory` as a `kind`.
 - `selector` instead of `selectors`.
