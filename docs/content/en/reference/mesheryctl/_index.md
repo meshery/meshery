@@ -32,6 +32,10 @@ Meshery CLI commands are categorized by function, which are:
 
 {{< mesheryctl-command-table command="global" >}}
 
+### Counting resources
+
+To get a total, run `mesheryctl <resource> --count` with `connection`, `model`, `component`, `organization`, `relationship`, or `filter` as the resource. The parent command's count mode requires zero positional arguments, so even an empty quoted argument (`""`) is rejected. For counts on a subcommand, see that subcommand's options.
+
 ## Meshery Lifecycle Management and Troubleshooting
 
 Installation, troubleshooting and debugging of Meshery and its adapters
