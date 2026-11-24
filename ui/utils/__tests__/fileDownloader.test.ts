@@ -88,9 +88,15 @@ describe('downloadContent', () => {
     expect(setAttributeSpy).toHaveBeenCalledWith('href', '/api/filter/download/f1');
   });
 
-  it('throws for an unknown content type', () => {
-    expect(() => downloadContent({ id: 'x', type: 'unknown', name: 'x' })).toThrow();
-  });
+  it.each(['unknown', 'toString', '__proto__'])(
+    'throws an error naming the invalid type for content type %s',
+    (type) => {
+      expect(() => downloadContent({ id: 'x', type, name: 'x' })).toThrow(
+        `Invalid type of content to download: ${type}`,
+      );
+      expect(createElementSpy).not.toHaveBeenCalled();
+    },
+  );
 });
 
 describe('downloadFileFromContent', () => {
@@ -98,8 +104,11 @@ describe('downloadFileFromContent', () => {
   let createElementSpy: ReturnType<typeof vi.spyOn>;
   let setAttributeSpy: ReturnType<typeof vi.fn>;
   let originalCreateObjectURL: typeof window.URL.createObjectURL | undefined;
+  let revokeObjectURLSpy: ReturnType<typeof vi.fn>;
+  let originalRevokeObjectURL: typeof window.URL.revokeObjectURL | undefined;
 
   beforeEach(() => {
+    vi.useFakeTimers();
     setAttributeSpy = vi.fn();
     createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue({
       setAttribute: setAttributeSpy,
@@ -114,15 +123,31 @@ describe('downloadFileFromContent', () => {
       writable: true,
       value: createObjectURLSpy,
     });
+
+    revokeObjectURLSpy = vi.fn();
+    originalRevokeObjectURL = window.URL.revokeObjectURL;
+    Object.defineProperty(window.URL, 'revokeObjectURL', {
+      configurable: true,
+      writable: true,
+      value: revokeObjectURLSpy,
+    });
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     createElementSpy.mockRestore();
     if (originalCreateObjectURL) {
       Object.defineProperty(window.URL, 'createObjectURL', {
         configurable: true,
         writable: true,
         value: originalCreateObjectURL,
+      });
+    }
+    if (originalRevokeObjectURL) {
+      Object.defineProperty(window.URL, 'revokeObjectURL', {
+        configurable: true,
+        writable: true,
+        value: originalRevokeObjectURL,
       });
     }
   });
@@ -135,5 +160,14 @@ describe('downloadFileFromContent', () => {
     expect(blob.type).toBe('application/json');
     expect(setAttributeSpy).toHaveBeenCalledWith('href', 'blob:fake-url');
     expect(setAttributeSpy).toHaveBeenCalledWith('download', 'data.json');
+  });
+
+  it('revokes the blob URL once the download has been triggered', () => {
+    downloadFileFromContent('{"hello":"world"}', 'data.json', 'application/json');
+    expect(revokeObjectURLSpy).not.toHaveBeenCalled();
+
+    vi.runAllTimers();
+    expect(revokeObjectURLSpy).toHaveBeenCalledTimes(1);
+    expect(revokeObjectURLSpy).toHaveBeenCalledWith('blob:fake-url');
   });
 });
