@@ -54,7 +54,7 @@ Creating a Connection performs two transitions in sequence: it **registers** the
 
 ### Credentials
 
-Credentials entered in the wizard are persisted as first-class, named [Credentials]({{< ref "concepts/logical/credentials.md" >}}), encrypted at rest, and reusable across other Connections. Meshery never exposes them in logs or API responses. To learn how Meshery interprets a credential's secret (Basic auth vs. bearer token vs. anonymous), see [Credentials]({{< ref "concepts/logical/credentials.md" >}}) and the [Telemetry authentication note]({{< ref "guides/telemetry/_index.md" >}}).
+Credentials entered in the wizard are persisted as first-class, named [Credentials]({{< ref "concepts/logical/credentials.md" >}}), encrypted at rest, and reusable across other Connections. Meshery never exposes them in logs or API responses. A Kubernetes credential must carry plain data: Meshery rejects (HTTP 400) one that sets an `exec` plugin, an `auth-provider`, or a `certificate-authority`, `client-certificate`, `client-key` or `tokenFile` path, because building a client from it would run a command or read a file on the machine running Meshery Server. Credentials of Kubernetes contexts that Meshery Server imported from its own kubeconfig are the exception, and keep working. Embed the data instead (`*-data` fields or a `token`). To learn how Meshery interprets a credential's secret (Basic auth vs. bearer token vs. anonymous), see [Credentials]({{< ref "concepts/logical/credentials.md" >}}) and the [Telemetry authentication note]({{< ref "guides/telemetry/_index.md" >}}).
 
 ## Importing a Kubernetes cluster
 
@@ -63,7 +63,7 @@ Kubernetes uses a dedicated flow because a single kubeconfig can describe many c
 The Kubernetes flow has four steps: **Choose Connection**, **Import Kubeconfig**, **Review Contexts**, and **Done**.
 
 1. **Choose Connection** → **Kubernetes**.
-2. **Import Kubeconfig.** Upload a kubeconfig file. Nothing is saved yet. Meshery reads the file and tells you which of these it found:
+2. **Import Kubeconfig.** Upload a kubeconfig file. Nothing is saved yet. The kubeconfig must embed its certificates, keys and tokens (`*-data`, `token`); one that names files by path (`certificate-authority`, `client-certificate`, `client-key`, `tokenFile`) is rejected, because the Meshery Server cannot read files from your machine. Create an embedded copy with `kubectl config view --minify --flatten --raw`. Meshery reads the file and tells you which of these it found:
    - A file that cannot be parsed is reported as an error.
    - A valid kubeconfig that lists no contexts says that the file does not contain any contexts.
    - Contexts whose authentication method is unsupported (an exec plugin or an auth-provider, for example), or whose credentials cannot be read, are skipped and listed with the reason. Meshery does not run exec plugins or auth-provider helpers from an imported kubeconfig, because they would execute on the Meshery Server host. This applies only to uploaded files: the kubeconfig Meshery Server reads from its own host (the `KUBECONFIG_FOLDER` directory, `~/.kube` by default) keeps its exec plugins, so a natively run server can still use `aws eks get-token` or `gke-gcloud-auth-plugin` from the operator's kubeconfig.

@@ -7690,6 +7690,41 @@
       "suggestedRemediation": [
         "Inspect component configuration and provider logs for runtime failures"
       ]
+    },
+    {
+      "code": "meshery-server-1499",
+      "moniker": "ErrKubeConfigFileReferenceCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1499",
+      "severity": "alert",
+      "shortDescription": "The kubeconfig refers to files by path",
+      "longDescription": "certificate-authority, client-certificate, client-key and tokenFile may not be file paths in an uploaded kubeconfig.",
+      "probableCause": [
+        "An uploaded kubeconfig is read on the Meshery Server host, which cannot and must not read files from the machine the kubeconfig came from."
+      ],
+      "suggestedRemediation": [
+        "Embed the credentials instead, for example with `kubectl config view --raw --flatten --minify`, and upload the result."
+      ]
+    },
+    {
+      "code": "meshery-server-1500",
+      "moniker": "ErrUnsafeKubeCredentialCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1500",
+      "severity": "alert",
+      "shortDescription": "The Kubernetes credential is not allowed to run commands or read files on the Meshery Server host",
+      "probableCause": [
+        "exec plugins, auth-providers and certificate, key or token file paths are executed or read on the machine running Meshery Server, so only the server's own kubeconfig may use them"
+      ],
+      "suggestedRemediation": [
+        "Replace the credential with embedded data (client-certificate-data, client-key-data, certificate-authority-data, token) and save it again"
+      ]
     }
   ],
   "schemaVersion": 2
