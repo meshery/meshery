@@ -51,9 +51,9 @@ var (
 type cmdSystemCheckFlags struct {
 	Preflight      bool   `json:"preflight" validate:"boolean"`
 	Pre            bool   `json:"pre" validate:"boolean"`
-	ComponentsFlag bool   `json:"componentsFlag" validate:"boolean"`
-	AdaptersFlag   bool   `json:"adaptersFlag" validate:"boolean"`
-	OperatorsFlag  bool   `json:"operatorsFlag" validate:"boolean"`
+	ComponentsFlag bool   `json:"components" validate:"boolean"`
+	AdaptersFlag   bool   `json:"adapters" validate:"boolean"`
+	OperatorsFlag  bool   `json:"operator" validate:"boolean"`
 	Adapter        string `json:"adapter" validate:"omitempty"`
 }
 

@@ -3596,7 +3596,7 @@
         "Publishing process encountered an error"
       ],
       "suggestedRemediation": [
-        "Ensure a valid system is provided (meshery, remote-provider, website)",
+        "Ensure a valid system is provided (remote-provider, website)",
         "Check the publishing configuration and try again"
       ]
     },

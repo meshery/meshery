@@ -198,8 +198,8 @@ function parseUnitsOfBytes(value) {
     return number * 10 ** parseInt(groups[4], 10);
   }
 
-  const unit = groups[2].toUpperCase();
-  const unitIndex = _.indexOf(UNITS, unit);
+  const rawUnit = groups[2].toUpperCase();
+  const unitIndex = _.indexOf(UNITS, rawUnit);
 
   // Unit + i ex. 1Ki
   if (groups[3] !== undefined) {

@@ -34,7 +34,7 @@ import (
 type filterListFlags struct {
 	Count    bool `json:"count" validate:"boolean"`
 	Page     int  `json:"page" validate:"gte=1"`
-	PageSize int  `json:"pageSize" validate:"gte=1"`
+	PageSize int  `json:"pagesize" validate:"gte=1"`
 	Verbose  bool `json:"verbose" validate:"boolean"`
 }
 

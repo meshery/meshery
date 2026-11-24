@@ -493,9 +493,35 @@ describe('getComponentFromDesign', () => {
 });
 
 describe('getDesignVersion', () => {
-  it('returns the published version when visibility is published', () => {
+  it('returns the published version from camelCase catalogData when visibility is published', () => {
+    expect(
+      getDesignVersion({ visibility: 'published', catalogData: { publishedVersion: '1.2.3' } }),
+    ).toBe('1.2.3');
+  });
+
+  it('prefers camelCase catalogData.publishedVersion over legacy snake_case catalog_data.published_version', () => {
+    expect(
+      getDesignVersion({
+        visibility: 'published',
+        catalogData: { publishedVersion: '2.0.0' },
+        catalog_data: { published_version: '1.0.0' },
+      }),
+    ).toBe('2.0.0');
+  });
+
+  it('falls back to legacy snake_case catalog_data.published_version when catalogData is absent', () => {
     expect(
       getDesignVersion({ visibility: 'published', catalog_data: { published_version: '1.2.3' } }),
+    ).toBe('1.2.3');
+  });
+
+  it('falls back to legacy snake_case catalog_data.published_version when catalogData.publishedVersion is empty', () => {
+    expect(
+      getDesignVersion({
+        visibility: 'published',
+        catalogData: { publishedVersion: '' },
+        catalog_data: { published_version: '1.2.3' },
+      }),
     ).toBe('1.2.3');
   });
 

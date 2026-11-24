@@ -1047,6 +1047,10 @@ func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracke
 		return mch
 	}
 
+	if ot == nil {
+		return mch
+	}
+
 	if ot.IsUndeployed(mch.contextID) {
 		// this code is probably never reached as mch.contextID is never set
 		mch.ctxOperatorStatus = controllers.Undeployed

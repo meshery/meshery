@@ -222,8 +222,27 @@ func (ep *EnvironmentPersister) DeleteEnvironmentByID(environmentID core.Uuid) (
 	return ep.DeleteEnvironment(env)
 }
 
+// parseBoolFilter checks filterMap for the given keys in order and parses either a
+// boolean or a string-encoded boolean value.
+func parseBoolFilter(filterMap map[string]interface{}, keys ...string) (bool, bool) {
+	for _, key := range keys {
+		if val, ok := filterMap[key]; ok {
+			switch v := val.(type) {
+			case bool:
+				return v, true
+			case string:
+				if b, err := strconv.ParseBool(v); err == nil {
+					return b, true
+				}
+			}
+		}
+	}
+	return false, false
+}
+
 // AddConnectionToEnvironment adds a connection to an environment. Adding one the
 // environment already has returns the existing mapping instead of a second row.
+// If a soft-deleted mapping exists, it is restored so the connection becomes active again.
 func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connectionID core.Uuid) ([]byte, error) {
 	var existing environment.EnvironmentConnectionMapping
 	found := ep.DB.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).Limit(1).Find(&existing)
@@ -231,7 +250,24 @@ func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connec
 		return nil, ErrDBRead(found.Error)
 	}
 	if found.RowsAffected > 0 {
-		return json.Marshal(existing)
+		if existing.DeletedAt.Valid {
+			now := time.Now()
+			res := ep.DB.Model(&existing).Updates(map[string]interface{}{
+				"deleted_at": nil,
+				"updated_at": now,
+			})
+			if res.Error != nil {
+				return nil, ErrDBCreate(res.Error)
+			}
+			if res.RowsAffected > 0 {
+				existing.DeletedAt = core.NullTime{}
+				existing.UpdatedAt = core.Time(now)
+				return json.Marshal(existing)
+			}
+			// If RowsAffected == 0, the row was deleted concurrently; fall through to create a new mapping.
+		} else {
+			return json.Marshal(existing)
+		}
 	}
 
 	envConMapping := environment.EnvironmentConnectionMapping{
@@ -265,10 +301,11 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 	// Sanitize the order input
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order == "" {
-		order = "connections.updated_at desc"
+		order = defaultOrderUpdatedAtDesc
 	}
 
 	isAssigned := true
+	deletedAt := false
 	// Parse the filter JSON string
 	if filter != "" {
 		var filterMap map[string]interface{}
@@ -277,25 +314,31 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 			return nil, err
 		}
 
-		if assignedVal, ok := filterMap["assigned"]; ok {
-			isAssigned = assignedVal.(bool)
+		if b, ok := parseBoolFilter(filterMap, "assigned"); ok {
+			isAssigned = b
+		}
+		if b, ok := parseBoolFilter(filterMap, "deletedAt", "deleted_at"); ok {
+			deletedAt = b
 		}
 	}
 
 	var query *gorm.DB
 	if isAssigned {
-		// Query for connection that are assigned to given environment
-		query = ep.DB.Table("environment_connection_mappings").
-			Joins("JOIN connections ON connections.id = environment_connection_mappings.connection_id").
-			Select("connections.name, connections.id, connections.metadata, connections.status, connections.type, connections.sub_type, connections.created_at, connections.updated_at, connections.deleted_at, connections.kind, connections.user_id").
-			Where("environment_connection_mappings.environment_id = ?", environmentID)
+		// Query for connections that are assigned to the given environment
+		query = ep.DB.Table("connections").
+			Where("EXISTS (SELECT 1 FROM environment_connection_mappings AS ecm WHERE connections.id = ecm.connection_id AND ecm.environment_id = ? AND ecm.deleted_at IS NULL)", environmentID)
 	} else {
 		// Query for connections that are not assigned to the given environment
 		query = ep.DB.Table("connections").
-			Select("connections.name, connections.id, connections.metadata, connections.status, connections.type, connections.sub_type, connections.created_at, connections.updated_at, connections.deleted_at, connections.kind, connections.user_id").
-			Joins("LEFT JOIN environment_connection_mappings ON environment_connection_mappings.connection_id = connections.id AND environment_connection_mappings.environment_id = ?", environmentID).
-			Where("environment_connection_mappings.connection_id IS NULL")
+			Where("NOT EXISTS (SELECT 1 FROM environment_connection_mappings AS ecm WHERE connections.id = ecm.connection_id AND ecm.environment_id = ? AND ecm.deleted_at IS NULL)", environmentID)
 	}
+
+	if deletedAt {
+		query = query.Where("connections.deleted_at IS NOT NULL")
+	} else {
+		query = query.Where("connections.deleted_at IS NULL")
+	}
+
 	// Apply search filter
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
@@ -308,7 +351,16 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 	query = query.Order(order)
 
 	count := int64(0)
-	query.Count(&count)
+	if err := query.Count(&count).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
+
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
 
 	var connectionsFetched []*connections.Connection
 	pageUint, err := strconv.ParseUint(page, 10, 32)
@@ -317,7 +369,9 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 	}
 	// Fetch all connections if pageSize is "all"
 	if pageSize == "all" {
-		query.Find(&connectionsFetched)
+		if err := query.Find(&connectionsFetched).Error; err != nil {
+			return nil, ErrDBRead(err)
+		}
 	} else {
 		// Convert page and pageSize from string to uint
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
@@ -326,7 +380,9 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 		}
 
 		// Fetch connections with pagination
-		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&connectionsFetched)
+		if err := Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&connectionsFetched).Error; err != nil {
+			return nil, ErrDBRead(err)
+		}
 	}
 	connectionsPage := &connections.ConnectionPage{
 		Page:        int(pageUint),
