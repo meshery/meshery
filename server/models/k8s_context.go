@@ -365,7 +365,13 @@ func DiscoverKubeconfigContexts(ctx context.Context, _ Provider, _ string, _ *Br
 		metadata["context"] = RedactCredentialsForContext(&kc)
 
 		if reason := kubeconfigMissingReferenceReason(kcfg, ctxEntry); reason != "" {
-			metadata["description"] = fmt.Sprintf("Skipped context \"%s\" at %s: %s", kc.Name, kc.Server, reason)
+			// A missing cluster leaves kc.Server empty, so name the server
+			// only when the context resolved one.
+			if kc.Server != "" {
+				metadata["description"] = fmt.Sprintf("Skipped context \"%s\" at %s: %s", kc.Name, kc.Server, reason)
+			} else {
+				metadata["description"] = fmt.Sprintf("Skipped context \"%s\": %s", kc.Name, reason)
+			}
 			eventMetadata[name] = metadata
 			result.SkippedContexts = append(result.SkippedContexts, SkippedKubeContext{
 				Name:   name,
@@ -669,25 +675,25 @@ func K8sContextGenerateID(kc K8sContext) (string, error) {
 
 // GenerateKubeConfig will generate a kubeconfig from the context object
 // and will set the "current-context" to the current context's name
-func (c K8sContext) GenerateKubeConfig() ([]byte, error) {
+func (kc K8sContext) GenerateKubeConfig() ([]byte, error) {
 	cfg := map[string]interface{}{
 		"apiVersion": "v1",
 		"clusters": []map[string]interface{}{
-			c.Cluster,
+			kc.Cluster,
 		},
 		"contexts": []map[string]interface{}{
 			{
 				"context": map[string]interface{}{
-					"cluster": c.Cluster["name"],
-					"user":    c.Auth["name"],
+					"cluster": kc.Cluster["name"],
+					"user":    kc.Auth["name"],
 				},
-				"name": c.Name,
+				"name": kc.Name,
 			},
 		},
-		"current-context": c.Name,
+		"current-context": kc.Name,
 		"kind":            "Config",
 		"users": []map[string]interface{}{
-			c.Auth,
+			kc.Auth,
 		},
 	}
 
@@ -698,8 +704,8 @@ func (c K8sContext) GenerateKubeConfig() ([]byte, error) {
 	return data, nil
 }
 
-func (c *K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
-	cfg, err := c.GenerateKubeConfig()
+func (kc *K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
+	cfg, err := kc.GenerateKubeConfig()
 	if err != nil {
 		return nil, err
 	}
@@ -707,7 +713,7 @@ func (c *K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
 	return kubernetes.New(cfg)
 }
 
-func (c *K8sContext) AssignVersion(ctx context.Context, handler *kubernetes.Client) error {
+func (kc *K8sContext) AssignVersion(ctx context.Context, handler *kubernetes.Client) error {
 	if _, hasDeadline := ctx.Deadline(); !hasDeadline {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, DefaultK8sDiscoveryTimeout)
@@ -716,21 +722,21 @@ func (c *K8sContext) AssignVersion(ctx context.Context, handler *kubernetes.Clie
 
 	body, err := handler.KubeClient.Discovery().RESTClient().Get().AbsPath("/version").Do(ctx).Raw()
 	if err != nil {
-		return ErrUnreachableKubeAPI(err, c.Server)
+		return ErrUnreachableKubeAPI(err, kc.Server)
 	}
 	var res version.Info
 	if err := json.Unmarshal(body, &res); err != nil {
-		return ErrUnreachableKubeAPI(fmt.Errorf("unable to parse the server version: %w", err), c.Server)
+		return ErrUnreachableKubeAPI(fmt.Errorf("unable to parse the server version: %w", err), kc.Server)
 	}
 
-	c.Version = res.GitVersion
+	kc.Version = res.GitVersion
 	return nil
 }
 
 // PingTest uses the k8scontext to to "ping" the kubernetes cluster
 // if the return value is nil then the succeeds or else it has failed
-func (c K8sContext) PingTest() error {
-	h, err := c.GenerateKubeHandler()
+func (kc K8sContext) PingTest() error {
+	h, err := kc.GenerateKubeHandler()
 	if err != nil {
 		return err
 	}
@@ -740,7 +746,7 @@ func (c K8sContext) PingTest() error {
 
 	res := h.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Timeout(1 * time.Second).Do(ctx)
 	if res.Error() != nil {
-		return ErrUnreachableKubeAPI(res.Error(), c.Server)
+		return ErrUnreachableKubeAPI(res.Error(), kc.Server)
 	}
 
 	return nil
@@ -749,7 +755,7 @@ func (c K8sContext) PingTest() error {
 // AssignServerID will attempt to assign kubernetes
 // server ID to the kubernetes context. If the provided context has no deadline,
 // DefaultK8sDiscoveryTimeout is applied as a guardrail.
-func (c *K8sContext) AssignServerID(ctx context.Context, handler *kubernetes.Client) error {
+func (kc *K8sContext) AssignServerID(ctx context.Context, handler *kubernetes.Client) error {
 	if _, hasDeadline := ctx.Deadline(); !hasDeadline {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, DefaultK8sDiscoveryTimeout)
@@ -759,12 +765,12 @@ func (c *K8sContext) AssignServerID(ctx context.Context, handler *kubernetes.Cli
 	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
 	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(ctx, "kube-system", v1.GetOptions{})
 	if err != nil {
-		return ErrUnreachableKubeAPI(err, c.Server)
+		return ErrUnreachableKubeAPI(err, kc.Server)
 	}
 	uid := ksns.GetUID()
 	ksUUID := uuid.FromStringOrNil(string(uid))
 
-	c.KubernetesServerID = &ksUUID
+	kc.KubernetesServerID = &ksUUID
 
 	return nil
 }

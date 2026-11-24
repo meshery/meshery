@@ -1132,8 +1132,22 @@ contexts:
 			if !ok {
 				t.Fatalf("event metadata = %#v, want a receipt for %q", eventMetadata, skipped.Name)
 			}
-			if description, _ := metadata["description"].(string); !strings.Contains(description, skipped.Reason) {
+			description, _ := metadata["description"].(string)
+			if !strings.Contains(description, skipped.Reason) {
 				t.Fatalf("receipt description = %q, want skip reason %q", description, skipped.Reason)
+			}
+			// A missing cluster leaves no server to name; the receipt must not
+			// render a blank "at :" slot. A missing user still has the
+			// cluster's server, so the receipt names it.
+			switch skipped.Name {
+			case "no-cluster":
+				if strings.Contains(description, " at ") {
+					t.Fatalf("receipt description = %q, want no server slot when the cluster is missing", description)
+				}
+			case "no-user":
+				if !strings.Contains(description, " at https://127.0.0.1:1: ") {
+					t.Fatalf("receipt description = %q, want it to name the cluster's server", description)
+				}
 			}
 			redacted, ok := metadata["context"].(K8sContext)
 			if !ok || redacted.Name != "" || redacted.Server != "" {
