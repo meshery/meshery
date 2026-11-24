@@ -37,7 +37,16 @@ vi.mock('next/link', () => ({
 }));
 
 vi.mock('@sistent/sistent', () => ({
+  styled: (Base: any) => () => Base,
   CustomTooltip: ({ children }: any) => <>{children}</>,
+  IconButton: React.forwardRef<HTMLButtonElement, any>(
+    ({ children, pinned: _pinned, ...props }, ref) => (
+      <button ref={ref} type="button" {...props}>
+        {children}
+      </button>
+    ),
+  ),
+  FavoriteIcon: ({ ...props }: any) => <svg {...props} />,
   ListItemIcon: ({ children }: any) => <div>{children}</div>,
   Grow: ({ children, in: open }: any) => (open ? <div>{children}</div> : null),
   ListItem: ({ children, button, ...props }: any) => (
