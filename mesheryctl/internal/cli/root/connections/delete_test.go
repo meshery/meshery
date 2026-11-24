@@ -1,3 +1,17 @@
+// Copyright Meshery Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package connections
 
 import (
@@ -29,6 +43,12 @@ func TestConnectionDeleteCmd(t *testing.T) {
 			Args:          []string{"delete"},
 			ExpectError:   true,
 			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errNoArgMsg, deleteUsageMsg)),
+		},
+		{
+			Name:          "given multiple arguments provided when running mesheryctl connection delete then an error message is displayed",
+			Args:          []string{"delete", "id1", "id2"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errMultiArgMsg, deleteUsageMsg)),
 		},
 		{
 			Name:          "given an invalid connectionID provided when running mesheryctl connection delete invalid-id then an error message is displayed",
