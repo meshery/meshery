@@ -2,6 +2,7 @@ package system
 
 import (
 	"flag"
+	"fmt"
 	"path/filepath"
 	"reflect"
 	"runtime"
@@ -88,23 +89,41 @@ func TestPreflightCmdIntegration(t *testing.T) {
 }
 
 func TestCheckCmdArgs(t *testing.T) {
-	utils.SetupMeshkitLoggerTesting(t, false)
-
-	// check does not take any positional arguments
-	err := checkCmd.Args(checkCmd, []string{})
-	assert.NoError(t, err)
-
-	err = checkCmd.Args(checkCmd, []string{"extra-arg"})
-	if assert.Error(t, err) {
-		assert.Equal(t, utils.ErrInvalidArgumentCode, errors.GetCode(err))
-		assert.Contains(t, err.Error(), "too many arguments specified")
-		assert.Contains(t, err.Error(), "Usage: mesheryctl system check")
+	tests := []struct {
+		Name          string
+		Args          []string
+		ExpectError   bool
+		ExpectedError error
+	}{
+		{
+			Name:        "valid with no positional arguments",
+			Args:        []string{},
+			ExpectError: false,
+		},
+		{
+			Name:          "invalid with unexpected positional argument",
+			Args:          []string{"unexpected-arg"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", checkUsageMsg)),
+		},
+		{
+			Name:          "invalid with multiple unexpected positional arguments",
+			Args:          []string{"arg1", "arg2"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", checkUsageMsg)),
+		},
 	}
 
-	err = checkCmd.Args(checkCmd, []string{"arg1", "arg2"})
-	if assert.Error(t, err) {
-		assert.Equal(t, utils.ErrInvalidArgumentCode, errors.GetCode(err))
-		assert.Contains(t, err.Error(), "too many arguments specified")
-		assert.Contains(t, err.Error(), "Usage: mesheryctl system check")
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			err := checkCmd.Args(checkCmd, tt.Args)
+			if tt.ExpectError {
+				assert.Error(t, err)
+				assert.Equal(t, utils.ErrInvalidArgumentCode, errors.GetCode(err))
+				utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
 	}
 }

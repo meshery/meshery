@@ -133,13 +133,9 @@ var checkCmd = &cobra.Command{
 	Short: "Pre-deployment and post-deployment healthchecks for Meshery",
 	Long: `Verify environment pre/post-deployment of Meshery.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/system/check`,
-	Args: func(cmd *cobra.Command, args []string) error {
+	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			err := utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", checkUsageMsg))
-			if utils.Log != nil {
-				utils.Log.Error(err)
-			}
-			return err
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", checkUsageMsg))
 		}
 		return nil
 	},
