@@ -29,7 +29,7 @@ func (ep *EnvironmentPersister) fetchUserDetails() *User {
 }
 
 // GetEnvironments returns all of the environments
-func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, pageSize, filter string) ([]byte, error) {
+func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, pageSize, filter, purpose string) ([]byte, error) {
 	// Sanitize the order input
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order == "" {
@@ -46,6 +46,15 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
 		query = query.Where("lower(name) like ?", like)
+	}
+
+	switch purpose {
+	case "":
+	case string(environment.EnvironmentPurposeUser):
+		// Rows written before the purpose column existed read back as "", which means user.
+		query = query.Where("(purpose = ? OR purpose = '' OR purpose IS NULL)", purpose)
+	default:
+		query = query.Where("purpose = ?", purpose)
 	}
 
 	dynamicKeys := []string{"owner", "organization_id"}

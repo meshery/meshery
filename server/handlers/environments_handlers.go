@@ -68,7 +68,7 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 		writeJSONError(w, "orgId is required", http.StatusBadRequest)
 		return
 	}
-	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
+	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID, q.Get("purpose"))
 	if err != nil {
 		if isPaginationError(err) {
 			writeMeshkitError(w, err, http.StatusBadRequest)
