@@ -24,7 +24,7 @@ RUN mkdir -p /wasm-dist && cd server/policies/wasm && \
     GOOS=js GOARCH=wasm GOPROXY=https://proxy.golang.org GOSUMDB=off \
         go build -trimpath -ldflags="-w -s" -o /wasm-dist/policy_engine.wasm . && \
     cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" /wasm-dist/wasm_exec.js && \
-    awk '{ print; if (index($0, "chdir() { throw enosys(); },") > 0) { print "\t\t\tenv: {},"; found=1 } } END { exit(found ? 0 : 1) }' \
+    awk '{ if (index($0, "chdir() { throw enosys(); }") > 0) { sub(/},?$/, "},"); print; print "\t\t\tenv: {},"; found=1; next } print } END { exit(found ? 0 : 1) }' \
         /wasm-dist/wasm_exec.js > /wasm-dist/wasm_exec.js.tmp && \
     mv /wasm-dist/wasm_exec.js.tmp /wasm-dist/wasm_exec.js
 
