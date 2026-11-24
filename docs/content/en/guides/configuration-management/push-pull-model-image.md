@@ -76,19 +76,19 @@ alongside your other OCI artifacts.
 Authenticate using your Docker ID and a Personal Access Token (PAT) via standard input:
 
 ```bash
-echo $DOCKER_PAT | oras login docker.io -u <username> --password-stdin
+echo <personal-access-token> | oras login docker.io -u <username> --password-stdin
 ```
 
 Push the model artifact:
 
 ```bash
-oras push docker.io/<username>/<model-name>:<version> digitalocean-icons-v0-1-0.tar
+oras push docker.io/<username>/digitalocean-icons:v0.1.0 digitalocean-icons-v0-1-0.tar
 ```
 
 Pull the model artifact:
 
 ```bash
-oras pull docker.io/<username>/<model-name>:<version>
+oras pull docker.io/<username>/digitalocean-icons:v0.1.0
 ```
 
 #### Azure Container Registry (ACR)
@@ -104,19 +104,19 @@ az acr login --name <registry-name>
 Using ORAS with service principal or repository credentials via standard input:
 
 ```bash
-echo $SP_SECRET | oras login <registry-name>.azurecr.io -u <username-or-sp-app-id> --password-stdin
+echo <password-or-sp-secret> | oras login <registry-name>.azurecr.io -u <username-or-sp-app-id> --password-stdin
 ```
 
 Push the model artifact:
 
 ```bash
-oras push <registry-name>.azurecr.io/<model-name>:<version> digitalocean-icons-v0-1-0.tar
+oras push <registry-name>.azurecr.io/digitalocean-icons:v0.1.0 digitalocean-icons-v0-1-0.tar
 ```
 
 Pull the model artifact:
 
 ```bash
-oras pull <registry-name>.azurecr.io/<model-name>:<version>
+oras pull <registry-name>.azurecr.io/digitalocean-icons:v0.1.0
 ```
 
 #### GitHub Container Registry (GHCR)
@@ -124,19 +124,19 @@ oras pull <registry-name>.azurecr.io/<model-name>:<version>
 Authenticate using your GitHub username and a Personal Access Token (classic) with `write:packages` and `read:packages` scopes:
 
 ```bash
-echo $CR_PAT | oras login ghcr.io -u <username> --password-stdin
+echo <personal-access-token> | oras login ghcr.io -u <username> --password-stdin
 ```
 
 Push the model artifact:
 
 ```bash
-oras push ghcr.io/<owner>/<model-name>:<version> digitalocean-icons-v0-1-0.tar
+oras push ghcr.io/<owner>/digitalocean-icons:v0.1.0 digitalocean-icons-v0-1-0.tar
 ```
 
 Pull the model artifact:
 
 ```bash
-oras pull ghcr.io/<owner>/<model-name>:<version>
+oras pull ghcr.io/<owner>/digitalocean-icons:v0.1.0
 ```
 
 #### AWS Elastic Container Registry (ECR)
@@ -148,19 +148,19 @@ aws ecr get-login-password --region <region> | oras login --username AWS --passw
 ```
 
 > **Note on ECR Repository Creation:**
-> AWS ECR requires the target repository (`<model-name>`) to exist before pushing. You can create it with:
-> `aws ecr create-repository --repository-name <model-name> --region <region>`
+> AWS ECR requires the target repository (`digitalocean-icons`) to exist before pushing. You can create it with:
+> `aws ecr create-repository --repository-name digitalocean-icons --region <region>`
 
 Push the model artifact:
 
 ```bash
-oras push <aws-account-id>.dkr.ecr.<region>.amazonaws.com/<model-name>:<version> digitalocean-icons-v0-1-0.tar
+oras push <aws-account-id>.dkr.ecr.<region>.amazonaws.com/digitalocean-icons:v0.1.0 digitalocean-icons-v0-1-0.tar
 ```
 
 Pull the model artifact:
 
 ```bash
-oras pull <aws-account-id>.dkr.ecr.<region>.amazonaws.com/<model-name>:<version>
+oras pull <aws-account-id>.dkr.ecr.<region>.amazonaws.com/digitalocean-icons:v0.1.0
 ```
 
 #### Import the pulled artifact into Meshery Server
