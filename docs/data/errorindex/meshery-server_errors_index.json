@@ -7690,6 +7690,24 @@
       "suggestedRemediation": [
         "Inspect component configuration and provider logs for runtime failures"
       ]
+    },
+    {
+      "code": "meshery-server-1499",
+      "moniker": "ErrKubeConfigFileReferenceCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1499",
+      "severity": "alert",
+      "shortDescription": "The kubeconfig refers to files by path",
+      "longDescription": "certificate-authority, client-certificate, client-key and tokenFile may not be file paths in an uploaded kubeconfig.",
+      "probableCause": [
+        "An uploaded kubeconfig is read on the Meshery Server host, which cannot and must not read files from the machine the kubeconfig came from."
+      ],
+      "suggestedRemediation": [
+        "Embed the credentials instead, for example with `kubectl config view --raw --flatten --minify`, and upload the result."
+      ]
     }
   ],
   "schemaVersion": 2
