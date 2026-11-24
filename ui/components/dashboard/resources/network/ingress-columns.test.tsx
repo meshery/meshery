@@ -79,9 +79,18 @@ describe('Ingress LoadBalancer column', () => {
     ).toBe('203.0.113.10, lb.example.com');
   });
 
-  it.each([null, {}, { loadBalancer: {} }])('is empty when there is no address: %j', (status) => {
-    expect(renderCell('LoadBalancer IP', status)).toBe('');
+  it('leaves out an entry that has no address', () => {
+    expect(
+      renderCell('LoadBalancer IP', { loadBalancer: { ingress: [{}, { ip: '203.0.113.10' }] } }),
+    ).toBe('203.0.113.10');
   });
+
+  it.each([null, {}, { loadBalancer: {} }, { loadBalancer: { ingress: [{}] } }])(
+    'is empty when there is no address: %j',
+    (status) => {
+      expect(renderCell('LoadBalancer IP', status)).toBe('');
+    },
+  );
 });
 
 describe('Ingress Rules column', () => {
