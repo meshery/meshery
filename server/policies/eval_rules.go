@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // componentDeclarationByID finds a component in the design by its ID.
@@ -648,18 +648,16 @@ func matchComponentPairs(
 	design *pattern.PatternFile,
 ) []*relationship.RelationshipDefinition {
 	var results []*relationship.RelationshipDefinition
-	fromKind := selectorItemKind(fromSel)
-	toKind := selectorItemKind(toSel)
 
 	for _, compFrom := range comps {
-		if !componentMatchesKind(compFrom, fromKind) {
+		if !isRelationshipFeasible(fromSel, compFrom) {
 			continue
 		}
 		for _, compTo := range comps {
 			if compFrom.ID == compTo.ID {
 				continue
 			}
-			if !componentMatchesKind(compTo, toKind) {
+			if !isRelationshipFeasible(toSel, compTo) {
 				continue
 			}
 			if !matchingMutators(compFrom, compTo, fromSel, toSel, design) {

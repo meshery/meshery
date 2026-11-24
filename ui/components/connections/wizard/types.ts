@@ -1,5 +1,9 @@
 import type { ReactNode, RefObject, ElementType } from 'react';
-import type { ConnectionWizardKindConfig, CredentialRecord } from '../ConnectionWizard.helpers';
+import type {
+  ConnectionWizardKindConfig,
+  CredentialRecord,
+  KubeconfigDiscoveryResult,
+} from '../ConnectionWizard.helpers';
 
 export type GenericRecord = Record<string, unknown>;
 
@@ -87,8 +91,8 @@ export type WizardServices = {
   registerConnection: (body: GenericRecord) => Promise<GenericRecord>;
   /** POST /integrations/connections/register (status: connect). */
   connectConnection: (body: GenericRecord) => Promise<GenericRecord>;
-  /** POST /system/kubernetes/contexts — parse contexts without persisting. */
-  discoverKubeContexts: (file: File) => Promise<DiscoveredKubeContext[]>;
+  /** POST /system/kubernetes/contexts. Parses contexts without persisting. */
+  discoverKubeContexts: (file: File) => Promise<KubeconfigDiscoveryResult>;
   /** POST /system/kubernetes — persist the selected contexts as connections. */
   uploadKubeconfig: (file: File, options?: KubeconfigImportOptions) => Promise<GenericRecord>;
   /** PUT /integrations/connections/{id} { status }. */
@@ -128,6 +132,12 @@ export type WizardStep = {
   nextLabel?: (ctx: WizardContext) => string;
   /** Skip the step entirely when this returns true. */
   hidden?: (ctx: WizardContext) => boolean;
+  /**
+   * Hide the Back action on this step. The footer then offers Cancel (create)
+   * or Close (configure) instead, so a finished import cannot be repeated by
+   * stepping back to Review.
+   */
+  hideBack?: boolean | ((ctx: WizardContext) => boolean);
   /**
    * Footer info-popover copy for this step. Prefer markdown with docs.meshery.io
    * links so HelperTextPopover can render them. Static string or ctx-aware fn.
