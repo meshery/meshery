@@ -58,7 +58,10 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	man, err := GetK8sMeshModelComponents(config)
 	genErr := err
 	eventMetadata := make(map[string]interface{}, 0)
-	ctx := models.K8sContextsFromKubeconfig(*provider, userID, ec, config, &mesheryInstanceID, eventMetadata, log)
+	// config belongs to a context Meshery already registered: uploads lost
+	// their exec and auth-provider contexts at discovery, and
+	// GetK8sMeshModelComponents above has already built a client from it.
+	ctx := models.K8sContextsFromKubeconfigWithOptions(*provider, userID, ec, config, &mesheryInstanceID, eventMetadata, log, models.KubeconfigDiscoveryOptions{Source: models.KubeconfigFromServer})
 	if genErr != nil {
 		if len(man) == 0 {
 			return ErrCreatingKubernetesComponents(genErr, ctxID)
@@ -206,8 +209,6 @@ func extractCRDsFromManifests(contents []apiResult, arrAPIResources []string) ([
 }
 
 // GetK8sMeshModelComponents fetches Kubernetes CRDs and OpenAPI definitions using the given kubeconfig and converts them into MeshModel component definitions.
-//
-// TODO: move to meshmodel
 func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefinition, error) {
 	cli, err := kubernetes.New(kubeconfig)
 	if err != nil {
@@ -398,7 +399,6 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) ([]crdRespon
 	return res, nil
 }
 
-// TODO: To be moved in meshkit
 // getAPIRes gets all the available api resources from kube-api server. It is equivalent to the output of `kubectl api-resources`
 // Returns a map of api resources with key as api-resource kind and value as api-resource object
 func getAPIRes(cli *kubernetes.Client) (map[string]v1.APIResource, error) {
@@ -414,57 +414,3 @@ func getAPIRes(cli *kubernetes.Client) (map[string]v1.APIResource, error) {
 	}
 	return apiRes, nil
 }
-
-// TODO: To be moved in meshkit
-// func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind][]groupversion, err error) {
-// 	hgv = make(map[kind][]groupversion)
-// 	var gl v1.APIGroupList
-// 	gs, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis").Do(context.Background()).Raw()
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	err = json.Unmarshal(gs, &gl)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	for _, g := range gl.Groups {
-// 		groupName := g.Name
-// 		var apig v1.APIGroup
-// 		apigbytes, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis/" + groupName).Do(context.Background()).Raw()
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		err = json.Unmarshal(apigbytes, &apig)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		for _, v := range apig.Versions {
-// 			apiRes, err := cli.KubeClient.DiscoveryClient.ServerResourcesForGroupVersion(v.GroupVersion)
-// 			if err != nil {
-// 				return nil, err
-// 			}
-// 			if err != nil {
-// 				return nil, err
-// 			}
-// 			for _, res := range apiRes.APIResources {
-// 				if v.GroupVersion != "" {
-// 					hgv[kind(res.Kind)] = append(hgv[kind(res.Kind)], groupversion(v.GroupVersion))
-// 				} else {
-// 					hgv[kind(res.Kind)] = append(hgv[kind(res.Kind)], groupversion(v.Version))
-// 				}
-// 			}
-// 		}
-// 		apiRes, err := cli.KubeClient.DiscoveryClient.ServerResourcesForGroupVersion("v1")
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		for _, res := range apiRes.APIResources {
-// 			hgv[kind(res.Kind)] = append(hgv[kind(res.Kind)], groupversion("v1"))
-// 		}
-// 	}
-// 	return
-// }

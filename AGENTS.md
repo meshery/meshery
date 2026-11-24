@@ -1,3 +1,15 @@
+# No-mistakes required for functional pull requests
+
+Functional pull requests must be pushed through no-mistakes, which writes the `## Pipeline` attestation the merge check requires:
+
+```sh
+no-mistakes axi run --intent "<goal>"
+# or
+git push no-mistakes <branch>
+```
+
+A clone without a `no-mistakes` remote needs `no-mistakes init` once. Website-only, documentation-only, and CI-only pull requests are exempt (every changed path must belong to those sets; see [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md#no-mistakes-merge-gate)). At most three pipeline runs per pull request; if the change is not green after three, stop and ask a maintainer. Drive the pipeline with `.agents/skills/no-mistakes/SKILL.md`.
+
 # Project Overview
 
 Meshery is a self-service engineering platform and open source cloud native manager for Kubernetes infrastructure. A CNCF project supporting 300+ integrations with visual GitOps, multi-cluster management, and workspace collaboration.
@@ -447,8 +459,13 @@ NATS topics: `meshsync.request`, `meshery.broker`. MeshSync publishes cluster st
   commits git routes through it: a checkout without `make ui-setup`, and any harness
   that repoints `core.hooksPath` at its own hooks directory, bypass it silently. Always
   `git commit -s`; never rely on the hook to catch the omission.
-- Repairing a pushed commit that lacks the trailer: DCO wants a sign-off naming that
-  commit's **author**, so derive it per commit
+- Repairing a pushed commit that lacks the trailer, first choice: a **remediation commit**
+  (`.github/dco.yml` allows individual ones). The same author adds one commit, signed off,
+  whose message has a line per unsigned commit: `I, <Name> <email>, hereby add my
+  Signed-off-by to this commit: <full sha>`. No history is rewritten. The no-mistakes
+  pipeline's own fix commits carry no sign-off, so this is the usual repair for them.
+- Repairing by rewriting instead (only when the branch is yours and unshared): DCO wants a
+  sign-off naming that commit's **author**, so derive it per commit
   (`git rebase <base> --exec 'git commit --amend --no-edit --trailer
   "Signed-off-by=$(git log -1 --pretty="%an <%ae>")"'`). Plain `git rebase --signoff`
   stamps whoever runs it, which leaves DCO red on a branch carrying more than one
@@ -486,10 +503,11 @@ touching any of them.
   the worktree, then run `no-mistakes axi run --intent "<goal>"` (a clone without a
   `no-mistakes` remote needs `no-mistakes init` once). `no-mistakes axi status` shows the step
   and its findings, and `no-mistakes axi respond` answers a review gate. The pipeline reviews,
-  tests, pushes and opens the pull request. After the third run, open an issue for anything
-  still flagged and merge the pull request as it stands only if CI is green and it touches no
-  "Require Human Review" area; otherwise hand it to a human. A run that stopped on a usage limit
-  counts; one cancelled before it did anything does not.
+  tests, pushes and opens the pull request. Drive it with the vendored skill at
+  `.agents/skills/no-mistakes/SKILL.md`. After the third run, open an issue for anything
+  still flagged and hand the pull request to a human. A run that stopped on a usage limit
+  counts; one cancelled before it did anything does not. Three runs do not waive the merge gate.
+- **A pull request that changes any path outside documentation, the docs website, and CI merges only with a green no-mistakes run on its current head.** Documentation and the docs website are `docs/**`, the root `CNAME`, and markdown (`*.md` / `*.markdown`) outside the product code trees (`server/`, `ui/`, `provider-ui/`, `mesheryctl/`, `install/`, `models/`). CI is `.github/workflows/**`, `.github/actions/**`, `.github/scripts/**`, and CI config files directly under `.github/`. The check is `PR must be raised via no-mistakes`: `review`, `test`, and `document` must each be `completed` in a head-bound attestation. Detail: [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md#no-mistakes-merge-gate).
 
 ## Reusable Workflows Consumed by Other Repos
 
@@ -527,7 +545,7 @@ worked detail behind them — open the one that matches what you are working on.
 | A build that fails for an unrelated-looking reason | [Build Environment Gotchas](./docs/content/en/project/contributing/contributing-build-environment.md) |
 | MeshKit error codes | [How to write MeshKit compatible errors](./docs/content/en/project/contributing/contributing-error.md) |
 | A Go lint rule firing, or adding one | [Go Lint Rules](./docs/content/en/project/contributing/contributing-lint.md) |
-| Releases, CI secrets, the QA dashboard | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
+| Releases, CI secrets, the QA dashboard, the no-mistakes merge gate | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
 | A reusable workflow called from another repo | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
 | Connections and credential secrets | [Connections](./docs/content/en/project/contributing/models/connections.md) |
 | A permission-gated page, control or key | [Extensibility: Authorization](./docs/content/en/reference/extensibility/authorization/index.md) |

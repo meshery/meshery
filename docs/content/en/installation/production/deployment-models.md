@@ -104,9 +104,8 @@ For each Kubernetes cluster under management, Meshery deploys exactly one
 [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}), which in turn manages one
 [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) and one
 [Broker]({{< ref "concepts/architecture/broker/index.md" >}}) in that cluster. This holds whether
-Meshery Server is in-cluster or out-of-cluster. The Operator is deployed when
-Meshery Server connects to a cluster and removed when it disconnects (or via the
-on/off control in the UI).
+Meshery Server is in-cluster or out-of-cluster. Disconnecting a connection does
+not remove it. See [One Operator per cluster]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#one-operator-per-cluster-shared-by-every-connection" >}}).
 
 MeshSync can instead run in **embedded mode** - the default for new Kubernetes
 connections - where it executes as a library inside Meshery Server and deploys no
