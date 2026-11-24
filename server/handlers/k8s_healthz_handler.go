@@ -1,33 +1,91 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
 	"path"
 	"strings"
+	"time"
+
+	"github.com/meshery/meshkit/logger"
 )
 
-// K8sHealthzHandler implements Kubernetes-style health check endpoints (/healthz/live and /healthz/ready).
-// Following Kubernetes best practices, it returns:
-// - HTTP 200 with plain text "ok" when healthy
-// - HTTP 503 with plain text error details when unhealthy
-// - Supports ?verbose=1 query parameter for detailed check results
+// K8sHealthzHandler is a backward-compatible entry point that dispatches explicitly
+// to K8sLivenessHandler for /healthz/live and /healthz/live/, or to
+// K8sReadinessHandler for /healthz/ready and /healthz/ready/.
+// Noncanonical, traversal, or unrecognized paths are rejected with HTTP 404 Not Found.
 func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
-	// Parse verbose flag from query parameters
+	switch r.URL.Path {
+	case "/healthz/live", "/healthz/live/":
+		h.K8sLivenessHandler(w, r)
+	case "/healthz/ready", "/healthz/ready/":
+		h.K8sReadinessHandler(w, r)
+	default:
+		http.NotFound(w, r)
+	}
+}
+
+// K8sLivenessHandler implements the Kubernetes liveness probe (/healthz/live).
+// Following Kubernetes conventions, it returns:
+// - HTTP 200 with plain text "ok" when healthy
+// - Supports ?verbose=1 query parameter for detailed check results
+// Liveness verifies process viability and responsiveness without depending on
+// asynchronously initialized or remote dependencies like provider capabilities or databases.
+func (h *Handler) K8sLivenessHandler(w http.ResponseWriter, r *http.Request) {
 	verbose := r.URL.Query().Get("verbose") == "1"
 
-	// Collect check results
+	checks := []healthCheck{
+		{name: "live", status: checkOK, reason: "server is responsive"},
+	}
+
+	formatHealthResponse(w, checks, verbose, h.log)
+}
+
+// K8sReadinessHandler implements the Kubernetes readiness probe (/healthz/ready).
+// It returns:
+// - HTTP 200 with plain text "ok" when ready to serve user traffic
+// - HTTP 503 with plain text error details when dependencies are not ready
+// - Supports ?verbose=1 query parameter for detailed check results
+// Readiness verifies:
+// 1. Database connectivity via PingContext (bounded timeout <= 2s)
+// 2. Provider capabilities loaded
+// 3. Extension package existence on filesystem (informational only)
+func (h *Handler) K8sReadinessHandler(w http.ResponseWriter, r *http.Request) {
+	verbose := r.URL.Query().Get("verbose") == "1"
+
 	checks := []healthCheck{}
 
-	// Check 1: Verify capabilities are loaded by checking provider properties
+	// Check 1: Database connectivity
+	if h.dbHandler == nil || h.dbHandler.DB == nil {
+		checks = append(checks, healthCheck{name: "database", status: checkFailed, reason: "database handler not initialized"})
+	} else {
+		sqlDB, err := h.dbHandler.DB.DB()
+		if err != nil {
+			checks = append(checks, healthCheck{name: "database", status: checkFailed, reason: fmt.Sprintf("failed to get sql.DB: %v", err)})
+		} else {
+			ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+			err := sqlDB.PingContext(ctx)
+			cancel()
+			if err != nil {
+				checks = append(checks, healthCheck{name: "database", status: checkFailed, reason: fmt.Sprintf("database ping failed: %v", err)})
+			} else {
+				checks = append(checks, healthCheck{name: "database", status: checkOK, reason: "database responsive"})
+			}
+		}
+	}
+
+	// Check 2: Verify capabilities are loaded by checking provider properties
 	capabilitiesLoaded := false
-	for _, provider := range h.config.Providers {
-		providerProps := provider.GetProviderProperties()
-		// Check if capabilities have been loaded (non-empty capabilities object)
-		if len(providerProps.Capabilities) > 0 {
-			capabilitiesLoaded = true
-			break
+	if h.config != nil {
+		for _, provider := range h.config.Providers {
+			providerProps := provider.GetProviderProperties()
+			// Check if capabilities have been loaded (non-empty capabilities object)
+			if len(providerProps.Capabilities) > 0 {
+				capabilitiesLoaded = true
+				break
+			}
 		}
 	}
 
@@ -37,25 +95,25 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 		checks = append(checks, healthCheck{name: "capabilities", status: checkFailed, reason: "provider capabilities not loaded"})
 	}
 
-	// Check 2: Check for extensions (informational only, does not affect health status)
+	// Check 3: Check for extensions (informational only, does not affect health status)
 	extensionExists := false
+	if h.config != nil {
+		for _, provider := range h.config.Providers {
+			providerProps := provider.GetProviderProperties()
 
-	// Check all providers for navigator extensions
-	for _, provider := range h.config.Providers {
-		providerProps := provider.GetProviderProperties()
-
-		// Check if navigator extensions are configured
-		if len(providerProps.Extensions.Navigator) > 0 {
-			// Check if the extension package exists on filesystem
-			packageLocation := provider.PackageLocation()
-			if packageLocation != "" {
-				// Check if GraphQL extension path exists
-				if len(providerProps.Extensions.GraphQL) > 0 {
-					packagePath := providerProps.Extensions.GraphQL[0].Path
-					fullPath := path.Join(packageLocation, packagePath)
-					if _, err := os.Stat(fullPath); err == nil {
-						extensionExists = true
-						break
+			// Check if navigator extensions are configured
+			if len(providerProps.Extensions.Navigator) > 0 {
+				// Check if the extension package exists on filesystem
+				packageLocation := provider.PackageLocation()
+				if packageLocation != "" {
+					// Check if GraphQL extension path exists
+					if len(providerProps.Extensions.GraphQL) > 0 {
+						packagePath := providerProps.Extensions.GraphQL[0].Path
+						fullPath := path.Join(packageLocation, packagePath)
+						if _, err := os.Stat(fullPath); err == nil {
+							extensionExists = true
+							break
+						}
 					}
 				}
 			}
@@ -69,6 +127,11 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 		checks = append(checks, healthCheck{name: "extension", status: checkInfo, reason: "extension package not found"})
 	}
 
+	formatHealthResponse(w, checks, verbose, h.log)
+}
+
+// formatHealthResponse formats the HTTP response following Kubernetes health check conventions.
+func formatHealthResponse(w http.ResponseWriter, checks []healthCheck, verbose bool, log logger.Handler) {
 	// Determine overall health status (only checkFailed affects health, checkInfo is informational)
 	allHealthy := true
 	for _, check := range checks {
@@ -96,13 +159,13 @@ func (h *Handler) K8sHealthzHandler(w http.ResponseWriter, r *http.Request) {
 					_, _ = fmt.Fprintf(w, "[i]%s %s\n", check.name, check.reason)
 				}
 			}
-			if _, err := fmt.Fprint(w, "healthz check passed\n"); err != nil {
-				h.log.Error(err)
+			if _, err := fmt.Fprint(w, "healthz check passed\n"); err != nil && log != nil {
+				log.Error(err)
 			}
 		} else {
 			// Simple "ok" response
-			if _, err := fmt.Fprint(w, "ok"); err != nil {
-				h.log.Error(err)
+			if _, err := fmt.Fprint(w, "ok"); err != nil && log != nil {
+				log.Error(err)
 			}
 		}
 	} else {
