@@ -309,6 +309,123 @@ func TestRelationshipEvaluationScenarios(t *testing.T) {
 			designFile:  "namespace_parent_inline",
 			expected:    true,
 		},
+		{
+			// A missing mutator path resolves to null (utils.rego
+			// configuration_for_component_at_path defaults to null), and
+			// patch_mutators_action must not emit an update that writes
+			// null over the mutated field. The hierarchical patch path
+			// already guards this (patch_helper_rules.rego
+			// `update_value != null`); this pins the same behavior for the
+			// edge flow, matching the Go engine, which skips nil mutator
+			// values.
+			name:  "patch_mutators_skips_missing_mutator_value",
+			query: "data.eval_rules.patch_mutators_action(input.relationship, input.design_file)",
+			input: map[string]interface{}{
+				"relationship": map[string]interface{}{
+					"selectors": []map[string]interface{}{
+						{
+							"allow": map[string]interface{}{
+								"from": []map[string]interface{}{
+									{
+										"id": "from-1",
+										"patch": map[string]interface{}{
+											"mutatorRef": [][]string{{"configuration", "metadata", "name"}},
+										},
+									},
+								},
+								"to": []map[string]interface{}{
+									{
+										"id": "to-1",
+										"patch": map[string]interface{}{
+											"mutatedRef": [][]string{{"configuration", "metadata", "namespace"}},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				"design_file": map[string]interface{}{
+					"components": []map[string]interface{}{
+						{
+							"id": "from-1",
+							// metadata exists but "name" is missing, so the
+							// mutator path resolves to null.
+							"configuration": map[string]interface{}{"metadata": map[string]interface{}{}},
+						},
+						{
+							"id": "to-1",
+							"configuration": map[string]interface{}{
+								"metadata": map[string]interface{}{"namespace": "default"},
+							},
+						},
+					},
+				},
+			},
+			expectError: false,
+			designFile:  "inline",
+			expected:    []interface{}{},
+		},
+		{
+			// Positive control for the case above: when the mutator path
+			// resolves to a real value, the update action is emitted.
+			name:  "patch_mutators_emits_update_for_present_mutator_value",
+			query: "data.eval_rules.patch_mutators_action(input.relationship, input.design_file)",
+			input: map[string]interface{}{
+				"relationship": map[string]interface{}{
+					"selectors": []map[string]interface{}{
+						{
+							"allow": map[string]interface{}{
+								"from": []map[string]interface{}{
+									{
+										"id": "from-1",
+										"patch": map[string]interface{}{
+											"mutatorRef": [][]string{{"configuration", "metadata", "name"}},
+										},
+									},
+								},
+								"to": []map[string]interface{}{
+									{
+										"id": "to-1",
+										"patch": map[string]interface{}{
+											"mutatedRef": [][]string{{"configuration", "metadata", "namespace"}},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				"design_file": map[string]interface{}{
+					"components": []map[string]interface{}{
+						{
+							"id": "from-1",
+							"configuration": map[string]interface{}{
+								"metadata": map[string]interface{}{"name": "prod"},
+							},
+						},
+						{
+							"id": "to-1",
+							"configuration": map[string]interface{}{
+								"metadata": map[string]interface{}{"namespace": "default"},
+							},
+						},
+					},
+				},
+			},
+			expectError: false,
+			designFile:  "inline",
+			expected: []interface{}{
+				map[string]interface{}{
+					"op": "update_component_configuration",
+					"value": map[string]interface{}{
+						"id":    "to-1",
+						"path":  []interface{}{"configuration", "metadata", "namespace"},
+						"value": "prod",
+					},
+				},
+			},
+		},
 	}
 
 	for _, tc := range testCases {
