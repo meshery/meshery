@@ -19,6 +19,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
 	"k8s.io/client-go/tools/clientcmd/api"
 )
 
@@ -29,6 +30,12 @@ type mockCloser struct {
 func (m mockCloser) Close() error {
 	return m.closeFunc()
 
+}
+
+type failOnCloseCloser struct{}
+
+func (f *failOnCloseCloser) Close() error {
+	panic("unexpected Close call on typed-nil closer")
 }
 
 type trackingTransport struct {
@@ -114,12 +121,36 @@ func TestIsLocalProvider(t *testing.T) {
 }
 
 func TestSafeClose(t *testing.T) {
+	logBuf := SetupMeshkitLoggerTesting(t, false)
+	Log.UpdateErrorLogOutput(logBuf)
 
-	SetupMeshkitLoggerTesting(t, false)
+	t.Run("nil closer does not panic", func(t *testing.T) {
+		assert.NotPanics(t, func() {
+			SafeClose(nil)
+		})
+	})
 
-	// testcases for SafeClose(co io.Closer)
-	t.Run("SafeClose", func(t *testing.T) {
-		// define a io.Closer for testing
+	t.Run("typed nil pointer closer skips close", func(t *testing.T) {
+		var f *failOnCloseCloser
+		assert.NotPanics(t, func() {
+			SafeClose(f)
+		})
+	})
+
+	t.Run("valid closer closes successfully", func(t *testing.T) {
+		closed := false
+		mc := &mockCloser{
+			closeFunc: func() error {
+				closed = true
+				return nil
+			},
+		}
+		SafeClose(mc)
+		assert.True(t, closed, "closer should have been closed")
+	})
+
+	t.Run("closer returning error logs when logger is initialized", func(t *testing.T) {
+		logBuf.Reset()
 		expectedErr := errors.New("close error")
 		mc := &mockCloser{
 			closeFunc: func() error {
@@ -127,7 +158,23 @@ func TestSafeClose(t *testing.T) {
 			},
 		}
 		SafeClose(mc)
+		assert.Contains(t, logBuf.String(), "close error")
+	})
 
+	t.Run("closer returning error does not panic when logger is nil", func(t *testing.T) {
+		origLog := Log
+		Log = nil
+		defer func() { Log = origLog }()
+
+		expectedErr := errors.New("close error with nil logger")
+		mc := &mockCloser{
+			closeFunc: func() error {
+				return expectedErr
+			},
+		}
+		assert.NotPanics(t, func() {
+			SafeClose(mc)
+		})
 	})
 }
 

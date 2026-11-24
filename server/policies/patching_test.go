@@ -1,6 +1,7 @@
 package policies
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -1831,3 +1832,671 @@ func TestCleanupOnDeleteDottedKeysFullPipeline(t *testing.T) {
 		})
 	}
 }
+
+// TestPatchMutatorsAction_WildcardArrayResolution verifies that wildcards ("_")
+// in mutator and mutated reference paths are correctly resolved against array elements
+// for forward mutation updates and reverse cleanup actions.
+func TestPatchMutatorsAction_WildcardArrayResolution(t *testing.T) {
+	fromID, _ := uuid.FromString("00000000-0000-0000-0000-000000000010")
+	toID, _ := uuid.FromString("00000000-0000-0000-0000-000000000020")
+
+	// ConfigMap provides configuration values to inject
+	cm := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "ConfigMap"},
+		DisplayName:    "app-config",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{"name": "app-config"},
+		},
+	}
+	cm.ID = fromID
+
+	// Pod contains a containers array
+	pod := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Pod"},
+		DisplayName:    "app-pod",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"containers": []interface{}{
+					map[string]interface{}{
+						"name":  "web-server",
+						"image": "nginx:latest",
+					},
+				},
+			},
+		},
+	}
+	pod.ID = toID
+
+	design := makePatternFile([]*component.ComponentDefinition{cm, pod}, nil)
+
+	// MutatorRef references cm.metadata.name
+	// MutatedRef contains wildcard "_" in containers array: configuration.spec.containers._.envFrom
+	mutatorRef := relationship.MutatorRef{{"configuration", "metadata", "name"}}
+	mutatedRef := relationship.MutatedRef{{"configuration", "spec", "containers", "_", "envFrom"}}
+
+	relStatus := relationship.RelationshipDefinitionStatus("approved")
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						ID:   &fromID,
+						Kind: strPtr("ConfigMap"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						ID:   &toID,
+						Kind: strPtr("Pod"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.Edge,
+		RelationshipType: "hierarchical",
+		SubType:          "inventory",
+		Status:           &relStatus,
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000030")
+
+	// 1. Forward mutation: verify action is generated for concrete resolved index "0"
+	actions := patchMutatorsAction(rel, design)
+	if len(actions) != 1 {
+		t.Fatalf("Expected 1 forward patch action, got %d", len(actions))
+	}
+	act := actions[0]
+	if act.ID != toID.String() {
+		t.Errorf("Expected action ID %s, got %s", toID.String(), act.ID)
+	}
+	if act.UpdateValue != "app-config" {
+		t.Errorf("Expected UpdateValue 'app-config', got %v", act.UpdateValue)
+	}
+	expectedPath := []string{"configuration", "spec", "containers", "0", "envFrom"}
+	if !reflect.DeepEqual(act.UpdatePath, expectedPath) {
+		t.Errorf("Expected UpdatePath %v, got %v", expectedPath, act.UpdatePath)
+	}
+
+	// 2. Reverse deletion cleanup: update pod to hold the mutated value, then delete rel
+	podMutated := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Pod"},
+		DisplayName:    "app-pod",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"containers": []interface{}{
+					map[string]interface{}{
+						"name":    "web-server",
+						"image":   "nginx:latest",
+						"envFrom": "app-config",
+					},
+				},
+			},
+		},
+	}
+	podMutated.ID = toID
+
+	delStatus := relationship.RelationshipDefinitionStatus(StatusDeleted)
+	rel.Status = &delStatus
+	designDeleted := makePatternFile([]*component.ComponentDefinition{cm, podMutated}, nil)
+
+	cleanupActions := patchMutatorsAction(rel, designDeleted)
+	if len(cleanupActions) != 1 {
+		t.Fatalf("Expected 1 cleanup action on deletion, got %d", len(cleanupActions))
+	}
+	cleanAct := cleanupActions[0]
+	if cleanAct.Op != RemoveComponentConfigurationOp {
+		t.Errorf("Expected Op %s, got %s", RemoveComponentConfigurationOp, cleanAct.Op)
+	}
+	if !reflect.DeepEqual(cleanAct.UpdatePath, expectedPath) {
+		t.Errorf("Expected cleanup UpdatePath %v, got %v", expectedPath, cleanAct.UpdatePath)
+	}
+}
+
+// TestPatchMutatorsAction_WildcardMultiArrayResolution verifies that wildcards ("_")
+// expand to concrete paths across ALL matching array elements, not just the last one,
+// and that schema defaults declared on array items are respected during cleanup.
+func TestPatchMutatorsAction_WildcardMultiArrayResolution(t *testing.T) {
+	fromID, _ := uuid.FromString("00000000-0000-0000-0000-000000000050")
+	toID, _ := uuid.FromString("00000000-0000-0000-0000-000000000060")
+
+	cm := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "ConfigMap"},
+		DisplayName:    "app-cm",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{
+				"name": "app-config",
+			},
+		},
+	}
+	cm.ID = fromID
+
+	// Pod with two containers in spec.containers
+	pod := &component.ComponentDefinition{
+		Component: component.Component{
+			Kind: "Pod",
+			Schema: `{
+				"type": "object",
+				"properties": {
+					"spec": {
+						"type": "object",
+						"properties": {
+							"containers": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"envFrom": {
+											"type": "string",
+											"default": "default-env"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}`,
+		},
+		DisplayName:    "app-pod",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"containers": []interface{}{
+					map[string]interface{}{"name": "web", "image": "nginx"},
+					map[string]interface{}{"name": "sidecar", "image": "envoy"},
+				},
+			},
+		},
+	}
+	pod.ID = toID
+
+	design := makePatternFile([]*component.ComponentDefinition{cm, pod}, nil)
+
+	mutatorRef := relationship.MutatorRef{{"configuration", "metadata", "name"}}
+	mutatedRef := relationship.MutatedRef{{"configuration", "spec", "containers", "_", "envFrom"}}
+
+	relStatus := relationship.RelationshipDefinitionStatus("approved")
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						ID:   &fromID,
+						Kind: strPtr("ConfigMap"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						ID:   &toID,
+						Kind: strPtr("Pod"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.Edge,
+		RelationshipType: "hierarchical",
+		SubType:          "inventory",
+		Status:           &relStatus,
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000070")
+
+	// 1. Forward mutation: Both containers (0 and 1) should receive updates!
+	actions := patchMutatorsAction(rel, design)
+	if len(actions) != 2 {
+		t.Fatalf("Expected 2 forward patch actions (for each container), got %d: %+v", len(actions), actions)
+	}
+
+	expectedPaths := [][]string{
+		{"configuration", "spec", "containers", "0", "envFrom"},
+		{"configuration", "spec", "containers", "1", "envFrom"},
+	}
+	for i, expectedPath := range expectedPaths {
+		if !reflect.DeepEqual(actions[i].UpdatePath, expectedPath) {
+			t.Errorf("Action %d path mismatch: got %v, want %v", i, actions[i].UpdatePath, expectedPath)
+		}
+		if actions[i].UpdateValue != "app-config" {
+			t.Errorf("Action %d value mismatch: got %v, want 'app-config'", i, actions[i].UpdateValue)
+		}
+	}
+
+	// 2. Reverse cleanup on delete: Both containers should restore to schema default "default-env"
+	podMutated := &component.ComponentDefinition{
+		Component:      pod.Component,
+		DisplayName:    "app-pod",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"containers": []interface{}{
+					map[string]interface{}{"name": "web", "image": "nginx", "envFrom": "app-config"},
+					map[string]interface{}{"name": "sidecar", "image": "envoy", "envFrom": "app-config"},
+				},
+			},
+		},
+	}
+	podMutated.ID = toID
+
+	delStatus := relationship.RelationshipDefinitionStatus(StatusDeleted)
+	rel.Status = &delStatus
+	designDeleted := makePatternFile([]*component.ComponentDefinition{cm, podMutated}, nil)
+
+	cleanActions := patchMutatorsAction(rel, designDeleted)
+	if len(cleanActions) != 2 {
+		t.Fatalf("Expected 2 cleanup actions on deletion, got %d: %+v", len(cleanActions), cleanActions)
+	}
+
+	for i, expectedPath := range expectedPaths {
+		if !reflect.DeepEqual(cleanActions[i].UpdatePath, expectedPath) {
+			t.Errorf("Clean action %d path mismatch: got %v, want %v", i, cleanActions[i].UpdatePath, expectedPath)
+		}
+		// Since schema defines default "default-env", it should restore to "default-env" via Update action, not Remove!
+		if cleanActions[i].Op != UpdateComponentConfigurationOp {
+			t.Errorf("Clean action %d Op mismatch: got %v, want %v", i, cleanActions[i].Op, UpdateComponentConfigurationOp)
+		}
+		if cleanActions[i].UpdateValue != "default-env" {
+			t.Errorf("Clean action %d UpdateValue mismatch: got %v, want 'default-env'", i, cleanActions[i].UpdateValue)
+		}
+	}
+}
+
+// TestBindingPatching_WildcardArrayResolution verifies that wildcards in 3-party binding
+// match fields (e.g. subjects._.name in RoleBinding) correctly resolve concrete indices
+// during both forward patching and reverse deletion cleanup.
+func TestBindingPatching_WildcardArrayResolution(t *testing.T) {
+	p := &EdgeBindingPolicy{}
+
+	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000001")
+	saID, _ := uuid.FromString("00000000-0000-0000-0000-000000000002")
+	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000003")
+
+	role := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Role"},
+		DisplayName:    "pod-reader",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{"name": "pod-reader"},
+		},
+	}
+	role.ID = roleID
+
+	sa := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "ServiceAccount"},
+		DisplayName:    "app-sa",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{"name": "app-sa"},
+		},
+	}
+	sa.ID = saID
+
+	rb := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "RoleBinding"},
+		DisplayName:    "read-pods-rb",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"roleRef": map[string]interface{}{"name": ""},
+			"subjects": []interface{}{
+				map[string]interface{}{"kind": "ServiceAccount", "name": ""},
+			},
+		},
+	}
+	rb.ID = rbID
+
+	design := makePatternFile([]*component.ComponentDefinition{role, sa, rb}, nil)
+
+	roleMutatorRef := relationship.MutatorRef{{"configuration", "metadata", "name"}}
+	rbMutatedRef := relationship.MutatedRef{{"configuration", "roleRef", "name"}}
+
+	saMutatorRef := relationship.MutatorRef{{"configuration", "metadata", "name"}}
+	rbSubjectMutatedRef := relationship.MutatedRef{{"configuration", "subjects", "_", "name"}}
+
+	fromMatchFrom := []relationship.MatchSelectorItem{
+		{Kind: "Role", MutatorRef: &roleMutatorRef, ID: &roleID},
+	}
+	fromMatchTo := []relationship.MatchSelectorItem{
+		{Kind: "RoleBinding", MutatedRef: &rbMutatedRef, ID: &rbID},
+	}
+
+	toMatchFrom := []relationship.MatchSelectorItem{
+		{Kind: "RoleBinding", MutatedRef: &rbSubjectMutatedRef, ID: &rbID},
+	}
+	toMatchTo := []relationship.MatchSelectorItem{
+		{Kind: "ServiceAccount", MutatorRef: &saMutatorRef, ID: &saID},
+	}
+
+	relStatus := relationship.RelationshipDefinitionStatus("approved")
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						ID:   &roleID,
+						Kind: strPtr("Role"),
+						Match: &relationship.MatchSelector{
+							From: &fromMatchFrom,
+							To:   &fromMatchTo,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						ID:   &saID,
+						Kind: strPtr("ServiceAccount"),
+						Match: &relationship.MatchSelector{
+							From: &toMatchFrom,
+							To:   &toMatchTo,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.Edge,
+		RelationshipType: "binding",
+		SubType:          "permission",
+		Status:           &relStatus,
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	rel.ID, _ = uuid.FromString("00000000-0000-0000-0000-000000000040")
+
+	// 1. Forward SideEffects: both roleRef and subjects._.name should be patched with resolved index 0
+	actions := p.SideEffects(rel, design)
+	var subjectPatched bool
+	for _, a := range actions {
+		if a.ID == rbID.String() && a.UpdateValue == "app-sa" {
+			subjectPatched = true
+			expectedSubPath := []string{"configuration", "subjects", "0", "name"}
+			if !reflect.DeepEqual(a.UpdatePath, expectedSubPath) {
+				t.Errorf("Expected subject UpdatePath %v, got %v", expectedSubPath, a.UpdatePath)
+			}
+		}
+	}
+	if !subjectPatched {
+		t.Errorf("Expected subjects._.name to be resolved and patched to 'app-sa', actions: %+v", actions)
+	}
+
+	// 2. Reverse cleanup on delete
+	rbClean := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "RoleBinding"},
+		DisplayName:    "read-pods-rb",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"roleRef": map[string]interface{}{"name": "pod-reader"},
+			"subjects": []interface{}{
+				map[string]interface{}{"kind": "ServiceAccount", "name": "app-sa"},
+			},
+		},
+	}
+	rbClean.ID = rbID
+	designClean := makePatternFile([]*component.ComponentDefinition{role, sa, rbClean}, nil)
+	delStatus := relationship.RelationshipDefinitionStatus(StatusDeleted)
+	rel.Status = &delStatus
+
+	cleanActions := p.SideEffects(rel, designClean)
+	var subjectCleaned bool
+	for _, a := range cleanActions {
+		if a.ID == rbID.String() && a.Op == RemoveComponentConfigurationOp {
+			if len(a.UpdatePath) == 4 && a.UpdatePath[2] == "0" && a.UpdatePath[3] == "name" {
+				subjectCleaned = true
+			}
+		}
+	}
+	if !subjectCleaned {
+		t.Errorf("Expected subjects.0.name to be removed on binding relationship delete, got: %+v", cleanActions)
+	}
+}
+
+// TestIdentifyBindingRelationships_MatchingSubjectNotFirst verifies that RoleBinding subject
+// matching evaluates all resolved paths and successfully identifies relationships even when
+// the matching subject is not first in the list (e.g. subjects[1] matches).
+func TestIdentifyBindingRelationships_MatchingSubjectNotFirst(t *testing.T) {
+	p := &EdgeBindingPolicy{}
+
+	roleID, _ := uuid.FromString("00000000-0000-0000-0000-000000000081")
+	saID, _ := uuid.FromString("00000000-0000-0000-0000-000000000082")
+	rbID, _ := uuid.FromString("00000000-0000-0000-0000-000000000083")
+
+	role := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Role"},
+		DisplayName:    "pod-reader",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{"name": "pod-reader"},
+		},
+	}
+	role.ID = roleID
+
+	sa := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "ServiceAccount"},
+		DisplayName:    "target-sa",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{"name": "target-sa"},
+		},
+	}
+	sa.ID = saID
+
+	// RoleBinding where target-sa is at index 1 (not first!)
+	rb := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "RoleBinding"},
+		DisplayName:    "read-pods-rb",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"roleRef": map[string]interface{}{"name": "pod-reader"},
+			"subjects": []interface{}{
+				map[string]interface{}{"kind": "ServiceAccount", "name": "other-sa"},
+				map[string]interface{}{"kind": "ServiceAccount", "name": "target-sa"},
+			},
+		},
+	}
+	rb.ID = rbID
+
+	design := makePatternFile([]*component.ComponentDefinition{role, sa, rb}, nil)
+
+	roleMutatorRef := relationship.MutatorRef{{"configuration", "metadata", "name"}}
+	rbMutatedRef := relationship.MutatedRef{{"configuration", "roleRef", "name"}}
+
+	saMutatorRef := relationship.MutatorRef{{"configuration", "metadata", "name"}}
+	rbSubjectMutatedRef := relationship.MutatedRef{{"configuration", "subjects", "_", "name"}}
+
+	fromMatchFrom := []relationship.MatchSelectorItem{
+		{Kind: "Role", MutatorRef: &roleMutatorRef, ID: &roleID},
+	}
+	fromMatchTo := []relationship.MatchSelectorItem{
+		{Kind: "RoleBinding", MutatedRef: &rbMutatedRef, ID: &rbID},
+	}
+
+	toMatchFrom := []relationship.MatchSelectorItem{
+		{Kind: "RoleBinding", MutatedRef: &rbSubjectMutatedRef, ID: &rbID},
+	}
+	toMatchTo := []relationship.MatchSelectorItem{
+		{Kind: "ServiceAccount", MutatorRef: &saMutatorRef, ID: &saID},
+	}
+
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						Kind: strPtr("Role"),
+						Match: &relationship.MatchSelector{
+							From: &fromMatchFrom,
+							To:   &fromMatchTo,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						Kind: strPtr("ServiceAccount"),
+						Match: &relationship.MatchSelector{
+							From: &toMatchFrom,
+							To:   &toMatchTo,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	relDef := &relationship.RelationshipDefinition{
+		Kind:             relationship.Edge,
+		RelationshipType: "binding",
+		SubType:          "permission",
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+
+	identified := p.IdentifyRelationship(relDef, design)
+	if len(identified) == 0 {
+		t.Fatalf("Expected binding relationship to be identified when matching subject is not first, got 0")
+	}
+}
+
+// TestReverseCleanup_MovedTargetElements verifies that reverse cleanup correctly matches
+// and cleans up applied mutator values even if target array elements have been moved or reordered.
+func TestReverseCleanup_MovedTargetElements(t *testing.T) {
+	fromID, _ := uuid.FromString("00000000-0000-0000-0000-000000000091")
+	toID, _ := uuid.FromString("00000000-0000-0000-0000-000000000092")
+
+	cm := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "ConfigMap"},
+		DisplayName:    "app-cm",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"metadata": map[string]interface{}{
+				"name": "app-config",
+			},
+		},
+	}
+	cm.ID = fromID
+
+	// Pod with two containers where container 1 holds the mutated value and container 0 was moved
+	pod := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Pod"},
+		DisplayName:    "app-pod",
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"containers": []interface{}{
+					map[string]interface{}{"name": "custom", "envFrom": "other-val"},
+					map[string]interface{}{"name": "web", "envFrom": "app-config"},
+				},
+			},
+		},
+	}
+	pod.ID = toID
+
+	design := makePatternFile([]*component.ComponentDefinition{cm, pod}, nil)
+
+	mutatorRef := relationship.MutatorRef{{"configuration", "metadata", "name"}}
+	mutatedRef := relationship.MutatedRef{{"configuration", "spec", "containers", "_", "envFrom"}}
+
+	delStatus := relationship.RelationshipDefinitionStatus(StatusDeleted)
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						ID:   &fromID,
+						Kind: strPtr("ConfigMap"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						ID:   &toID,
+						Kind: strPtr("Pod"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	rel := &relationship.RelationshipDefinition{
+		Kind:             relationship.Edge,
+		RelationshipType: "hierarchical",
+		SubType:          "inventory",
+		Status:           &delStatus,
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+
+	cleanActions := patchMutatorsAction(rel, design)
+	if len(cleanActions) != 1 {
+		t.Fatalf("Expected 1 cleanup action for the matching container, got %d: %+v", len(cleanActions), cleanActions)
+	}
+	expectedPath := []string{"configuration", "spec", "containers", "1", "envFrom"}
+	if !reflect.DeepEqual(cleanActions[0].UpdatePath, expectedPath) {
+		t.Errorf("Expected cleanup UpdatePath %v, got %v", expectedPath, cleanActions[0].UpdatePath)
+	}
+}
+
+// TestApplyConfigRemoves_DedupKeyUnambiguous verifies that applyConfigRemoves disambiguates
+// between literal dotted keys like ["a.b"] and nested paths like ["a", "b"], and also
+// deduplicates exact duplicates.
+func TestApplyConfigRemoves_DedupKeyUnambiguous(t *testing.T) {
+	config := map[string]interface{}{
+		"a.b": "literal-dot-val",
+		"a": map[string]interface{}{
+			"b": "nested-val",
+		},
+		"keep": "safe",
+	}
+
+	removes := []PolicyAction{
+		// Literal dotted key: ["configuration", "a.b"]
+		{ID: "c1", UpdatePath: []string{"configuration", "a.b"}},
+		// Nested path: ["configuration", "a", "b"]
+		{ID: "c1", UpdatePath: []string{"configuration", "a", "b"}},
+		// Duplicate of literal dotted key
+		{ID: "c1", UpdatePath: []string{"configuration", "a.b"}},
+	}
+
+	result := applyConfigRemoves(config, removes)
+
+	// Both distinct paths should be removed
+	if _, exists := result["a.b"]; exists {
+		t.Errorf("Expected literal key 'a.b' to be removed from config")
+	}
+	if aMap, ok := result["a"].(map[string]interface{}); ok {
+		if _, exists := aMap["b"]; exists {
+			t.Errorf("Expected nested key 'b' inside 'a' to be removed from config")
+		}
+	}
+	if result["keep"] != "safe" {
+		t.Errorf("Expected 'keep' to remain untouched, got %v", result["keep"])
+	}
+}
+

@@ -111,7 +111,7 @@ server-local: dep-check
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	OTEL_CONFIG=$(OTEL_CONFIG) \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go
+	go run main.go error.go instance_id.go
 
 ## Build Meshery Server on your local machine.
 build-server: dep-check
@@ -123,7 +123,7 @@ build-server: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	GOPROXY=https://proxy.golang.org,direct GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
+	GOPROXY=https://proxy.golang.org,direct GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go ./server/cmd/instance_id.go
 	chmod +x ./main
 
 ## Running the meshery server using binary.
@@ -161,7 +161,7 @@ server-stg: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 ## Build and run Meshery Server on your local machine.
 server: dep-check
@@ -176,7 +176,7 @@ server: dep-check
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
 	MESHSYNC_DEFAULT_DEPLOYMENT_MODE=$${MESHSYNC_DEFAULT_DEPLOYMENT_MODE:-operator} \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 ## Build and run Meshery Server with some Meshery Adapters on your local machine.
 server-with-adapters: dep-check
@@ -188,7 +188,7 @@ server-with-adapters: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 ## Build and run Meshery Server on your local machine.
 ## Disable deployment of the Meshery Operator to your Kubernetes cluster(s).
@@ -202,7 +202,7 @@ server-without-operator: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 ## Build and run Meshery Server with no Kubernetes components on your local machine.
 server-skip-compgen:
@@ -215,7 +215,7 @@ server-skip-compgen:
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
  	SKIP_COMP_GEN=true \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 ## Build and run Meshery Server on your local machine.
 ## Do not generate and register Kubernetes models.
@@ -229,7 +229,7 @@ server-without-k8s: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 server-remote-provider: dep-check
 	cd server; cd cmd; go mod tidy; \
@@ -241,7 +241,7 @@ server-remote-provider: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 server-local-provider: dep-check
 	cd server; cd cmd; go mod tidy; \
@@ -253,7 +253,7 @@ server-local-provider: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 ## Build and run Meshery Server with no seed content.
 server-no-content:
@@ -266,7 +266,7 @@ server-no-content:
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	SKIP_DOWNLOAD_CONTENT=true \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 server-playground: dep-check
 	cd server; cd cmd; go mod tidy; \
@@ -279,7 +279,7 @@ server-playground: dep-check
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	PLAYGROUND=true \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 ## Lint check Meshery Server.
 golangci: error dep-check

@@ -374,3 +374,25 @@ func TestWorkspaceAndEnvironmentHandlers_ValidPathUUID_ReachesProvider(t *testin
 		})
 	}
 }
+
+func TestRequirePathUUID_NilLogger_DoesNotPanic(t *testing.T) {
+	h := &Handler{log: nil}
+	req := httptest.NewRequest(http.MethodGet, "/api/test", nil)
+	req = mux.SetURLVars(req, map[string]string{"id": "invalid-uuid"})
+	rec := httptest.NewRecorder()
+
+	id, ok := h.requirePathUUID(rec, req, "id")
+	if ok {
+		t.Fatalf("expected ok=false for invalid UUID, got true")
+	}
+	if id != "" {
+		t.Fatalf("expected empty id, got %q", id)
+	}
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400 Bad Request, got %d", rec.Code)
+	}
+	if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
+		t.Errorf("code = %q, want %q", decoded.Code, models.ErrInvalidUUIDValueCode)
+	}
+}
+

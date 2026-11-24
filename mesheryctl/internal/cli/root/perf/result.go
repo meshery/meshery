@@ -79,6 +79,9 @@ mesheryctl perf result saturday-profile --view
 		if pageNumber < 1 {
 			return utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --page '%d'", pageNumber))
 		}
+		if pageSize < 1 {
+			return utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --pagesize '%d'", pageSize))
+		}
 		// Check for valid output Format
 		if outputFormatFlag != "" {
 			return display.ValidateOutputFormat(outputFormatFlag)
@@ -109,8 +112,9 @@ mesheryctl perf result saturday-profile --view
 		// Merge args to get profile-name
 		searchString = strings.Join(args, "%20")
 
-		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
+		profiles, err := fetchAllPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString)
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 
@@ -206,7 +210,9 @@ mesheryctl perf result saturday-profile --view
 
 // Fetch results for a specific profile
 func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNumber int) ([]models.PerformanceResult, []byte, error) {
-	var response *models.PerformanceResultsAPIResponse
+	// Decode into a value, not a pointer: a response body of null leaves a value
+	// as an empty page, but would leave a pointer nil for the next line to crash on.
+	var response models.PerformanceResultsAPIResponse
 
 	url := baseURL + "/api/user/performance/profiles/" + profileID + "/results"
 
@@ -341,4 +347,7 @@ func performanceResultsToStringArrays(results []models.PerformanceResult) ([][]s
 func init() {
 	resultCmd.Flags().BoolVarP(&viewSingleResult, "view", "", false, "(optional) View single performance results with more info")
 	resultCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of performance results with --page (default = 1)")
+	resultCmd.Flags().IntVarP(&pageSize, "pagesize", "s", 25, "(optional) Number of performance results to be displayed per page (default = 25)")
+	resultCmd.Flags().IntVar(&pageSize, "page-size", 25, "(optional) Number of performance results to be displayed per page")
+	_ = resultCmd.Flags().MarkHidden("page-size")
 }

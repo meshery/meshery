@@ -1,0 +1,66 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "NetIT",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.2",
+  "components": [
+    {
+      "id": "98775d98-62e7-441f-8ac7-b7040e629428",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "\u003cName of the Component\u003e",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "gitlab",
+        "registrant": {
+          "kind": "artifacthub"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": null,
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "namespace": "default"
+        },
+        "spec": {
+          "endpoints": [
+            {}
+          ],
+          "tls": {
+            "clientCertificateRef": {
+              "group": "",
+              "kind": "Secret"
+            },
+            "insecureSkipVerify": false
+          },
+          "type": "Endpoints"
+        }
+      },
+      "component": {
+        "version": "gateway.envoyproxy.io/v1alpha1",
+        "kind": "Backend",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "relationships": null
+}

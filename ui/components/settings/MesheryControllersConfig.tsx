@@ -23,7 +23,10 @@ export default function MesheryControllersConfig() {
     isLoaded: Boolean(data),
     source: data,
     loadError: error,
-    save: (body) => updateDefaults({ body }).unwrap(),
+    save: (body) =>
+      updateDefaults({
+        mesheryControllersConfigurationMesheryControllersConfigPayload: body,
+      }).unwrap(),
     messages: {
       loadError: 'Failed to load controllers configuration defaults.',
       saveError: 'Failed to save controllers configuration defaults.',
