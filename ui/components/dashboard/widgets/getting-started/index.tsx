@@ -8,8 +8,6 @@ import {
   useHasPermission,
 } from '@sistent/sistent';
 import {
-  useGetLoggedInUserQuery,
-  useGetUserByIdQuery,
   useHandleUserInviteMutation,
   useLazyGetTeamsQuery,
   useUpdateUserPrefMutation,
@@ -17,7 +15,12 @@ import {
 import { stepsData } from './data';
 import { useNotificationHandlers } from '@/utils/hooks/useNotification';
 import { useGetUserOrgRolesQuery } from '@/rtk-query/orgRoles';
-import { useGetOrgsQuery } from '@/rtk-query/organization';
+import {
+  useGetUserQuery,
+  useGetUserProfileByIdQuery,
+  useGetOrgsQuery,
+} from '@meshery/schemas/mesheryApi';
+import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../../store';
@@ -25,10 +28,11 @@ import type { RootState } from '../../../../store';
 const GetStarted = (props: { iconsProps?: object }) => {
   const [openModal, setOpenModal] = useState(false);
   const theme = useTheme();
-  const { data: currentUser } = useGetLoggedInUserQuery();
-  const { data: profileData } = useGetUserByIdQuery(currentUser?.id, {
-    skip: !currentUser?.id,
-  });
+  const { data: currentUser } = useGetUserQuery();
+  const { data: profileData } = useGetUserProfileByIdQuery(
+    { id: currentUser?.id },
+    { skip: !currentUser?.id },
+  );
   const { organization: currentOrg } = useSelector((state: RootState) => state.ui);
   const org_id = currentOrg?.id;
   const canAssignUserRoles = useHasPermission(Keys.IdentityAccessManagementAssignUserRoles);
