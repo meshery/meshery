@@ -56,8 +56,11 @@ const WorkspaceContent = ({ workspace }) => {
     viewsPage: 0,
   }));
 
+  const { setMultiSelectedContent } = useContext(WorkspaceModalContext);
+
   useEffect(() => {
     if (!isViewVisible && filters.type === RESOURCE_TYPE.VIEW) {
+      setMultiSelectedContent([]);
       setFilters((prev) => ({
         ...prev,
         type: RESOURCE_TYPE.DESIGN,
@@ -65,7 +68,7 @@ const WorkspaceContent = ({ workspace }) => {
         viewsPage: 0,
       }));
     }
-  }, [isViewVisible, filters.type]);
+  }, [isViewVisible, filters.type, setMultiSelectedContent]);
 
   const handleTypeChange = useCallback((event) => {
     setFilters((prev) => ({
