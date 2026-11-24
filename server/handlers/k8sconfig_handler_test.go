@@ -2,15 +2,19 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/models"
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
@@ -370,5 +374,109 @@ users:
 	}
 	if contexts[0].Name != "ctx-0" {
 		t.Fatalf("expected context name 'ctx-0', got %q", contexts[0].Name)
+	}
+}
+
+// uploadKubeconfigRequest builds the multipart request both kubeconfig upload
+// endpoints read, carrying kubeconfig under the k8sfile form field.
+func uploadKubeconfigRequest(t *testing.T, target string, kubeconfig []byte) *http.Request {
+	t.Helper()
+	var b bytes.Buffer
+	w := multipart.NewWriter(&b)
+	part, err := w.CreateFormFile("k8sfile", "kubeconfig")
+	if err != nil {
+		t.Fatalf("create form file: %v", err)
+	}
+	if _, err := part.Write(kubeconfig); err != nil {
+		t.Fatalf("write form file: %v", err)
+	}
+	if err := w.Close(); err != nil {
+		t.Fatalf("close writer: %v", err)
+	}
+	req := httptest.NewRequest(http.MethodPost, target, &b)
+	req.Header.Set("Content-Type", w.FormDataContentType())
+	return req
+}
+
+// TestUploadedKubeconfigNeverReadsServerSideFiles pins issue #24219: an uploaded
+// kubeconfig that points client-key (or another credential field) at a path is
+// refused outright. Before the fix FlattenMinifyKubeConfig read the file on the
+// Meshery Server host and inlined it as client-key-data, and a missing path was
+// silently kept, so responses told the uploader which server paths exist.
+func TestUploadedKubeconfigNeverReadsServerSideFiles(t *testing.T) {
+	secretFile := filepath.Join(t.TempDir(), "server-secret.key")
+	const secretContent = "TOP-SECRET-SERVER-FILE-CONTENT"
+	if err := os.WriteFile(secretFile, []byte(secretContent), 0o600); err != nil {
+		t.Fatalf("write secret file: %v", err)
+	}
+	missingFile := filepath.Join(t.TempDir(), "missing", "client.key")
+
+	kubeconfigWith := func(keyPath string) []byte {
+		return []byte(`apiVersion: v1
+kind: Config
+current-context: ctx-0
+clusters:
+- cluster:
+    server: https://127.0.0.1:59900
+  name: cluster-0
+contexts:
+- context:
+    cluster: cluster-0
+    user: user-0
+  name: ctx-0
+users:
+- name: user-0
+  user:
+    client-certificate-data: YQ==
+    client-key: ` + keyPath + `
+`)
+	}
+
+	// Same credential field, but carried by a document whose generic YAML decode
+	// fails on an unknown key while the typed decode the server uses succeeds.
+	kubeconfigWithJunk := func(keyPath string) []byte {
+		return append([]byte("junk: {[a]: b}\n"), kubeconfigWith(keyPath)...)
+	}
+
+	endpoints := map[string]func(h *Handler, rec *httptest.ResponseRecorder, req *http.Request, u *models.User, p models.Provider){
+		"/api/system/kubernetes/contexts": func(h *Handler, rec *httptest.ResponseRecorder, req *http.Request, u *models.User, p models.Provider) {
+			h.GetContextsFromK8SConfig(rec, req, nil, u, p)
+		},
+		"/api/system/kubernetes/register": func(h *Handler, rec *httptest.ResponseRecorder, req *http.Request, u *models.User, p models.Provider) {
+			h.K8sRegistrationHandler(rec, req, nil, u, p)
+		},
+		"/api/system/kubernetes": func(h *Handler, rec *httptest.ResponseRecorder, req *http.Request, u *models.User, p models.Provider) {
+			h.K8SConfigHandler(rec, req, nil, u, p)
+		},
+	}
+
+	for target, call := range endpoints {
+		for name, keyPath := range map[string]string{"existing file": secretFile, "missing file": missingFile} {
+			for shape, build := range map[string]func(string) []byte{"plain": kubeconfigWith, "unknown junk key": kubeconfigWithJunk} {
+				t.Run(target+" "+name+" "+shape, func(t *testing.T) {
+					h := newTestHandler(t, map[string]models.Provider{}, "")
+					authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+					provider := &mockK8sConfigProvider{}
+					req := uploadKubeconfigRequest(t, target, build(keyPath))
+					req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "token"))
+					rec := httptest.NewRecorder()
+
+					call(h, rec, req, authUser, provider)
+
+					if rec.Code != http.StatusBadRequest {
+						t.Fatalf("status = %d, want 400; body: %s", rec.Code, rec.Body.String())
+					}
+					body := rec.Body.String()
+					for _, leak := range []string{secretContent, "VE9QLVNFQ1JFVC1TRVJWRVItRklMRS1DT05URU5U", keyPath, filepath.Base(keyPath)} {
+						if strings.Contains(body, leak) {
+							t.Fatalf("response leaks %q: %s", leak, body)
+						}
+					}
+					if decodeErrorBody(t, rec.Body.Bytes()).Code != helpers.ErrKubeConfigFileReferenceCode {
+						t.Fatalf("unexpected error code in %s", body)
+					}
+				})
+			}
+		}
 	}
 }
