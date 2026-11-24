@@ -43,11 +43,22 @@ vi.mock('react-redux', () => ({
 
 vi.mock('css/icons.styles', () => ({ iconMedium: {} }));
 
+vi.mock('@/theme', () => ({
+  GlobalStyles: () => null,
+}));
+
 vi.mock('@sistent/sistent', () => ({
   Link: ({ children, href }: { children?: React.ReactNode; href?: string }) => (
     <a href={href}>{children}</a>
   ),
-  useTheme: () => ({ palette: { icon: { default: '#000' } } }),
+  useTheme: () => ({
+    palette: {
+      icon: { default: '#000' },
+      mode: 'light',
+      text: { primary: '#3C494F' },
+      common: { white: '#FFFFFF' },
+    },
+  }),
   GetStartedIcon: () => <svg data-testid="get-started-icon" />,
   useHasPermission: () => true,
   ActionButtonCard: (props: {
