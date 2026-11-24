@@ -649,3 +649,66 @@ func TestDeleteUserCredential_NilProvider_ReturnsInternalServerError(t *testing.
 		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
 	}
 }
+
+// TestSaveAndUpdateUserCredential_RejectUnsafeKubeCredential pins issue #24218:
+// a Kubernetes credential secret must not carry an exec plugin, an
+// auth-provider or a certificate, key or token file path, in either the
+// canonical {auth, cluster} shape or the legacy {credentialName, secret} wrapper.
+// The provider must never see it, and the response must not echo the command or
+// the path.
+func TestSaveAndUpdateUserCredential_RejectUnsafeKubeCredential(t *testing.T) {
+	cluster := `"cluster":{"name":"c","cluster":{"server":"https://127.0.0.1:1"}}`
+	secrets := map[string]string{
+		"exec":                `{"auth":{"name":"u","user":{"exec":{"apiVersion":"client.authentication.k8s.io/v1","command":"leak-cmd","args":["/leak/path"]}}},` + cluster + `}`,
+		"auth-provider":       `{"auth":{"name":"u","user":{"auth-provider":{"name":"oidc"}}},` + cluster + `}`,
+		"tokenFile":           `{"auth":{"name":"u","user":{"tokenFile":"/leak/path"}},` + cluster + `}`,
+		"client-key":          `{"auth":{"name":"u","user":{"client-key":"/leak/path"}},` + cluster + `}`,
+		"ca path":             `{"auth":{"name":"u","user":{"token":"t"}},"cluster":{"name":"c","cluster":{"server":"https://k","certificate-authority":"/leak/path"}}}`,
+		"legacy wrapper exec": `{"credentialName":"x","secret":{"auth":{"name":"u","user":{"exec":{"apiVersion":"client.authentication.k8s.io/v1","command":"leak-cmd"}}},` + cluster + `}}`,
+	}
+	for name, secret := range secrets {
+		for _, method := range []string{http.MethodPost, http.MethodPut} {
+			t.Run(name+" "+method, func(t *testing.T) {
+				body := `{"id":"abcdefab-abcd-abcd-abcd-abcdefabcdef","name":"k","type":"kubernetes","secret":` + secret + `}`
+				h := newTestHandler(t, map[string]models.Provider{}, "")
+				p := newCredentialSpyProvider()
+				req := httptest.NewRequest(method, "/api/integrations/credentials", bytes.NewBufferString(body))
+				req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+				rec := httptest.NewRecorder()
+				user := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+				if method == http.MethodPost {
+					h.SaveUserCredential(rec, req, nil, user, p)
+				} else {
+					h.UpdateUserCredential(rec, req, nil, user, p)
+				}
+
+				if rec.Code != http.StatusBadRequest {
+					t.Fatalf("status = %d, want 400 (body=%q)", rec.Code, rec.Body.String())
+				}
+				if p.observedSave.Load() != nil || p.observedUpdate.Load() != nil {
+					t.Fatalf("the provider was asked to store an unsafe credential")
+				}
+				if strings.Contains(rec.Body.String(), "leak-cmd") || strings.Contains(rec.Body.String(), "/leak/path") {
+					t.Fatalf("response echoes the credential: %s", rec.Body.String())
+				}
+				if got := decodeErrorBody(t, rec.Body.Bytes()).Code; got != models.ErrUnsafeKubeCredentialCode {
+					t.Fatalf("error code = %q, want %q", got, models.ErrUnsafeKubeCredentialCode)
+				}
+			})
+		}
+	}
+
+	t.Run("embedded data is stored", func(t *testing.T) {
+		body := `{"name":"k","type":"kubernetes","secret":{"auth":{"name":"u","user":{"token":"t","client-key-data":"Yg=="}},` + cluster + `}}`
+		h := newTestHandler(t, map[string]models.Provider{}, "")
+		p := newCredentialSpyProvider()
+		req := httptest.NewRequest(http.MethodPost, "/api/integrations/credentials", bytes.NewBufferString(body))
+		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+		rec := httptest.NewRecorder()
+		h.SaveUserCredential(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, p)
+		if rec.Code != http.StatusCreated || p.observedSave.Load() == nil {
+			t.Fatalf("status = %d, saved = %v (body=%q)", rec.Code, p.observedSave.Load() != nil, rec.Body.String())
+		}
+	})
+}

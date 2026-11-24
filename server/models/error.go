@@ -5,6 +5,7 @@ import (
 	stderrors "errors"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/meshery/meshery/server/models/httputil"
@@ -178,6 +179,7 @@ const (
 	ErrMigrateEventIndexesCode            = "meshery-server-1491"
 	ErrHandlerPanicCode                   = "meshery-server-1495"
 	ErrInvalidDesignVersionCode           = "meshery-server-1496"
+	ErrUnsafeKubeCredentialCode           = "meshery-server-1500"
 )
 
 var (
@@ -1050,5 +1052,21 @@ func ErrInvalidDesignVersion(version string, err error) error {
 		[]string{fmt.Sprintf("The design version %q is not a valid semantic version: %v", version, err)},
 		[]string{"The design file's version is not semver, so a next version cannot be computed from it", "Older tooling wrote arbitrary version strings into design files"},
 		[]string{"Set the design file's version to a semver string such as 0.0.1 and save again"},
+	)
+}
+
+// ErrUnsafeKubeCredential reports a Kubernetes credential that would make
+// Meshery Server run a command or read a file on its own host to build a client
+// (an exec plugin, an auth-provider, or a certificate, key or token file path).
+// fields holds only field names, never their values, so the message cannot echo
+// a path or a command.
+func ErrUnsafeKubeCredential(fields []string) error {
+	return errors.New(
+		ErrUnsafeKubeCredentialCode,
+		errors.Alert,
+		[]string{"The Kubernetes credential is not allowed to run commands or read files on the Meshery Server host"},
+		[]string{fmt.Sprintf("The credential sets: %s", strings.Join(fields, ", "))},
+		[]string{"exec plugins, auth-providers and certificate, key or token file paths are executed or read on the machine running Meshery Server, so only the server's own kubeconfig may use them"},
+		[]string{"Replace the credential with embedded data (client-certificate-data, client-key-data, certificate-authority-data, token) and save it again"},
 	)
 }

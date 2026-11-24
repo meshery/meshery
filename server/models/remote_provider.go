@@ -32,6 +32,7 @@ import (
 	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/encoding"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
@@ -1266,6 +1267,12 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 			for _, c := range cp.Connections {
 				ctx, err := K8sContextFromConnection(Provider(l), token, c)
 				if err != nil {
+					// One unsafe credential must not take the whole listing
+					// down; it simply cannot be used to build a client.
+					if c != nil && meshkiterrors.GetCode(err) == ErrUnsafeKubeCredentialCode {
+						l.Log.Warn(fmt.Errorf("skipping Kubernetes connection %q: %w", c.Name, err))
+						continue
+					}
 					if c == nil {
 						return nil, fmt.Errorf("failed to convert remote Kubernetes connection: %w", err)
 					}

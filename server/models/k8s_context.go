@@ -92,6 +92,13 @@ func K8sContextFromConnection(provider Provider, token string, connection *conne
 	credentialPayload := CredentialPayload(credential.Secret)
 	ctx.Auth, _ = credentialPayload["auth"].(map[string]interface{})
 	ctx.Cluster, _ = credentialPayload["cluster"].(map[string]interface{})
+	// The credential is user-editable, and building a client runs an exec
+	// plugin or reads files on this host. Refuse one that carries either unless
+	// it is the server's own (issue #24218). Callers that build a client from the
+	// returned context (ping, the state machine, graphql) get this error instead.
+	if fields := UntrustedKubeCredentialFields(ctx.Auth, ctx.Cluster); len(fields) > 0 {
+		return K8sContext{}, ErrUnsafeKubeCredential(fields)
+	}
 	ctx.CreatedAt = &connection.CreatedAt
 	ctx.UpdatedAt = &connection.UpdatedAt
 
