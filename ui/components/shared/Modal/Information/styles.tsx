@@ -9,7 +9,6 @@ export const CreatAtContainer = styled(Typography)(({ isBold }) => ({
 export const ActionContainer = styled(Box)({
   width: '100%',
   display: 'flex',
-  gap: '1rem',
   justifyContent: 'end',
 });
 
