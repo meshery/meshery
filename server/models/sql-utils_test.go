@@ -65,6 +65,18 @@ func TestSanitizeOrderInput(t *testing.T) {
 			expected: "last_run desc",
 		},
 		{
+			name:     "designs and filters sort by visibility ascending",
+			order:    "visibility asc",
+			columns:  []string{"created_at", "updated_at", "name", "visibility"},
+			expected: "visibility asc",
+		},
+		{
+			name:     "designs and filters sort by visibility descending",
+			order:    "visibility desc",
+			columns:  []string{"created_at", "updated_at", "name", "visibility"},
+			expected: "visibility desc",
+		},
+		{
 			name:     "column outside the whitelist is ignored",
 			order:    "password desc",
 			columns:  validColumns,

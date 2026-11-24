@@ -63,7 +63,7 @@ type MesheryPatternPage struct {
 // GetMesheryPatterns returns all of the 'private' patterns. Though private has no meaning here since there is only
 // one local user. We make this distinction to be consistent with the remote provider
 func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, page, pageSize uint64, updatedAfter string, visibility []string) ([]byte, error) {
-	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name", "visibility"})
 
 	if order == "" {
 		order = defaultOrderUpdatedAtDesc
