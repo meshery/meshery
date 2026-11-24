@@ -182,7 +182,11 @@ function PerformanceCalendar({ style }) {
         localizer={localizer}
         style={{ height: '100%' }}
         // @ts-ignore
-        onRangeChange={(range) => setTime(generateDateRange(range.start, range.end))}
+        onRangeChange={(range) =>
+          Array.isArray(range)
+            ? setTime(generateDateRange(range[0], range[range.length - 1]))
+            : setTime(generateDateRange(range.start, range.end))
+        }
         onSelectEvent={(results) => handleEventClick(results)}
       />
 
