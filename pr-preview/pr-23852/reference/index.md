@@ -655,6 +655,7 @@ Section pages:
 - [ErrK8sVersionInfoCode-1217](/pr-preview/pr-23852/reference/error-codes/client-mesheryctl/errk8sversioninfocode-1217/)
 - [ErrKeysRegisterColumnMissingCode-1486](/pr-preview/pr-23852/reference/error-codes/component-meshery-server/errkeysregistercolumnmissingcode-1486/)
 - [ErrKubeClientCode-1066](/pr-preview/pr-23852/reference/error-codes/component-meshery-server/errkubeclientcode-1066/)
+- [ErrKubeconfigUnreadableCode-1498](/pr-preview/pr-23852/reference/error-codes/component-meshery-server/errkubeconfigunreadablecode-1498/)
 - [ErrKubectlDescribeCode-1198](/pr-preview/pr-23852/reference/error-codes/component-meshery-server/errkubectldescribecode-1198/)
 - [ErrKubernetesConnectivityCode-1138](/pr-preview/pr-23852/reference/error-codes/client-mesheryctl/errkubernetesconnectivitycode-1138/)
 - [ErrKubernetesQueryCode-1139](/pr-preview/pr-23852/reference/error-codes/client-mesheryctl/errkubernetesquerycode-1139/)
