@@ -19,7 +19,7 @@ const CustomToolbarSelect = ({
       toBeDeleted.length,
       toBeDeleted.map((p) => ' ' + p.name),
     );
-    if (response.toLowerCase() === 'no') {
+    if (response.toLowerCase() !== 'delete') {
       return;
     }
     deletePatterns({ patterns: toBeDeleted }).then(() => {
