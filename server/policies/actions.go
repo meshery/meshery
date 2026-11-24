@@ -297,18 +297,62 @@ func applyComponentConfigPatches(design *pattern.PatternFile, actions []PolicyAc
 			}
 		}
 		if len(compRemoves) > 0 {
+			compRemoves = orderCleanupActions(compRemoves)
 			comp.Configuration = applyConfigRemoves(comp.Configuration, compRemoves)
 		}
 	}
 }
 
+// sjsonPathSpecials are the characters gjson/sjson path syntax assigns meaning
+// to inside a key. Escaping them makes a path segment address a literal key.
+// The colon is included because sjson reads a leading ":" as force-object-key
+// syntax, so a literal key starting with ":" would otherwise be rewritten.
+//
+// This mirrors the escaping meshkit's patching package applies on the set side,
+// so a path means the same thing whether a relationship patch writes it or a
+// relationship delete removes it.
+const sjsonPathSpecials = `.*?|#@:`
+
+// sjsonPath joins a configuration path into an sjson path, escaping specials in
+// each segment so every segment addresses one literal key. Segments without
+// specials are emitted unchanged, so ordinary nested paths and numeric array
+// indices keep their existing meaning.
+func sjsonPath(path []string) string {
+	escaped := make([]string, len(path))
+	for i, segment := range path {
+		escaped[i] = escapeSjsonKey(segment)
+	}
+	return strings.Join(escaped, ".")
+}
+
+// escapeSjsonKey backslash-escapes gjson/sjson path specials in a single key.
+// The escape character itself is escaped first so backslashes already present
+// in a key survive the round trip.
+func escapeSjsonKey(key string) string {
+	if !strings.ContainsAny(key, sjsonPathSpecials+`\`) {
+		return key
+	}
+	var b strings.Builder
+	b.Grow(len(key) + 4)
+	for _, r := range key {
+		if r == '\\' || strings.ContainsRune(sjsonPathSpecials, r) {
+			b.WriteByte('\\')
+		}
+		b.WriteRune(r)
+	}
+	return b.String()
+}
+
 // applyConfigRemoves removes fields from a component's configuration via sjson.Delete.
+// Duplicate removals targeting the same component ID and complete path are deduplicated
+// so that actions from multiple selectors do not shift and delete subsequent array elements.
 func applyConfigRemoves(config map[string]interface{}, removes []PolicyAction) map[string]interface{} {
 	data, err := json.Marshal(config)
 	if err != nil {
 		return config
 	}
 	jsonStr := string(data)
+	seen := make(map[string]bool)
 	for _, rm := range removes {
 		path := rm.UpdatePath
 		if len(path) > 0 && path[0] == "configuration" {
@@ -317,7 +361,13 @@ func applyConfigRemoves(config map[string]interface{}, removes []PolicyAction) m
 		if len(path) == 0 {
 			continue
 		}
-		jsonStr, err = sjson.Delete(jsonStr, strings.Join(path, "."))
+		sjPath := sjsonPath(path)
+		dedupKey := rm.ID + ":" + sjPath
+		if seen[dedupKey] {
+			continue
+		}
+		seen[dedupKey] = true
+		jsonStr, err = sjson.Delete(jsonStr, sjPath)
 		if err != nil {
 			return config
 		}

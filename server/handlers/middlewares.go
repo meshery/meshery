@@ -3,10 +3,12 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -16,6 +18,7 @@ import (
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/utils"
@@ -44,6 +47,143 @@ const providerQParamName = "provider"
 // outlive the HTTP response, with a deadline for context-aware operations.
 func backgroundDiscoveryContext(ctx context.Context) (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.WithoutCancel(ctx), 2*time.Minute)
+}
+
+// notFoundProbeInterval bounds how often a NOTFOUND connection is re-probed
+// and how often the NOTFOUND list is reloaded: at most once per connection
+// per minute, and at most one reload per minute.
+const notFoundProbeInterval = time.Minute
+
+// discoveryResolutionStatusReadAttempts bounds how often the reporting
+// path re-reads a connection's stored status before giving up on a
+// resolution whose status cannot be verified, and
+// discoveryResolutionStatusReadRetryDelay is the pause between attempts.
+// The reporting path runs in a goroutine, so a brief retry costs nothing
+// on the request path.
+const discoveryResolutionStatusReadAttempts = 3
+
+const discoveryResolutionStatusReadRetryDelay = 50 * time.Millisecond
+
+// notFoundProbeLoadScope identifies one NOTFOUND load budget: a provider
+// deployment serving one user. A single Handler serves every user and every
+// provider, so a single global load gate would let one user's requests block
+// another user's NOTFOUND recovery for a minute.
+type notFoundProbeLoadScope struct {
+	providerName string
+	providerURL  string
+	user         core.Uuid
+}
+
+// notFoundProbeThrottle gates background Discovery probes of NOTFOUND
+// Kubernetes connections (issue #22955). A connection whose cluster went
+// unreachable sits in NOTFOUND with an open "unreachable" condition, and
+// Discovery never runs for it again because it is no longer in
+// AllKubeClusterKey. The throttle lets K8sFSMMiddleware re-probe such
+// connections without a second remote-provider round trip per request: the
+// NOTFOUND list is reloaded at most once per interval per provider+user, and
+// each connection is probed at most once per interval.
+//
+// Both gates are an atomic check-and-set under one mutex, stamped when the
+// load/probe starts rather than when it finishes, because the middleware
+// fires one goroutine per request and concurrent requests must not
+// double-probe a connection. Entries are dropped when a connection leaves
+// NOTFOUND (its probe resolves the condition, see forget) or when they
+// expire (see prune), so the map cannot grow without bound. Load entries
+// are likewise dropped once they are older than the interval: a scope that
+// has not loaded within the interval would be allowed again anyway.
+//
+// The clock is injected so tests can advance time without sleeping.
+type notFoundProbeThrottle struct {
+	mu         sync.Mutex
+	now        func() time.Time
+	interval   time.Duration
+	lastLoad   map[notFoundProbeLoadScope]time.Time
+	lastProbed map[core.Uuid]time.Time
+}
+
+func newNotFoundProbeThrottle(now func() time.Time, interval time.Duration) *notFoundProbeThrottle {
+	if now == nil {
+		now = time.Now
+	}
+	return &notFoundProbeThrottle{
+		now:        now,
+		interval:   interval,
+		lastLoad:   make(map[notFoundProbeLoadScope]time.Time),
+		lastProbed: make(map[core.Uuid]time.Time),
+	}
+}
+
+// allowLoad reports whether the NOTFOUND list may be reloaded now for this
+// provider+user, and stamps the load start time when it does. At most one
+// load per interval per scope, so one user's traffic cannot block another
+// user's NOTFOUND recovery.
+func (t *notFoundProbeThrottle) allowLoad(scope notFoundProbeLoadScope) bool {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	now := t.now()
+	if last, ok := t.lastLoad[scope]; ok && now.Sub(last) < t.interval {
+		return false
+	}
+	t.lastLoad[scope] = now
+	return true
+}
+
+// allowProbe reports whether the connection may be probed now, and stamps
+// the probe start time when it does. At most one probe per connection per
+// interval.
+func (t *notFoundProbeThrottle) allowProbe(id core.Uuid) bool {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	now := t.now()
+	if last, ok := t.lastProbed[id]; ok && now.Sub(last) < t.interval {
+		return false
+	}
+	t.lastProbed[id] = now
+	return true
+}
+
+// forget drops the probe entry for a connection that left NOTFOUND.
+func (t *notFoundProbeThrottle) forget(id core.Uuid) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	delete(t.lastProbed, id)
+}
+
+// prune drops throttle entries older than the interval: probe entries for
+// connections that left NOTFOUND or were deleted, and load entries for
+// scopes that would be allowed to load again anyway. It must not drop a
+// fresh probe entry for a connection absent from this load: the load is
+// scoped to one provider+user, but the probe map is global, so pruning by
+// this scope's page would delete another scope's active entries and let
+// its connections be probed again inside the interval.
+func (t *notFoundProbeThrottle) prune() {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	now := t.now()
+	for id, at := range t.lastProbed {
+		if now.Sub(at) >= t.interval {
+			delete(t.lastProbed, id)
+		}
+	}
+	for scope, at := range t.lastLoad {
+		if now.Sub(at) >= t.interval {
+			delete(t.lastLoad, scope)
+		}
+	}
+}
+
+// defaultNotFoundProbeThrottle backs Handlers built without a throttle (for
+// example Handler literals in tests); production Handlers get their own
+// from NewHandlerInstance.
+var defaultNotFoundProbeThrottle = newNotFoundProbeThrottle(time.Now, notFoundProbeInterval)
+
+// notFoundProbeThrottleOrDefault returns the Handler's throttle, or the
+// shared default when the Handler was built without one.
+func (h *Handler) notFoundProbeThrottleOrDefault() *notFoundProbeThrottle {
+	if h != nil && h.notFoundProbeThrottle != nil {
+		return h.notFoundProbeThrottle
+	}
+	return defaultNotFoundProbeThrottle
 }
 
 // legacyProviderAliasWarnOnce ensures the "None"->"Local" deprecation warning
@@ -470,7 +610,83 @@ func (h *Handler) reportBackgroundDiscovery(provider models.Provider, token stri
 	if provider == nil || event == nil || (err == nil && event.ResolvedAt == nil && !machines.IsRecurrence(event, err)) {
 		return
 	}
+	// A Discovery resolution is reported only while the connection is
+	// still in the state the Discovery settled it in. SendEvent's
+	// conditional write (issue #23248) already refuses to move a
+	// connection the user has since disconnected, but the resolution is
+	// persisted later, in this goroutine, after SendEvent returns: a
+	// disconnect landing in between would otherwise close the
+	// unreachable condition and broadcast "reachable again" for a
+	// connection the user just disconnected. Re-read the stored status
+	// here and drop the resolution when it no longer matches the state
+	// the event says the Discovery settled in. Recurrences and failures
+	// are unaffected: they carry no resolution to drop.
+	if err == nil && event.ResolvedAt != nil && !discoveryResolutionStillCurrent(provider, token, event) {
+		return
+	}
 	h.reportMachineOutcome(provider, token, userUUID, event, err)
+}
+
+// discoveryResolutionStillCurrent reports whether a Discovery resolution
+// event may still be persisted: the connection's stored status must still
+// be the state the Discovery settled it in (the event's currentStatus
+// metadata, set by SendEvent). A disconnect, delete or ignore landing
+// after SendEvent wrote its state but before this report ran makes the
+// resolution stale, and persisting it would resolve the unreachable
+// condition for a connection the user just moved away (issue #23248).
+// A stored status that cannot be read is not treated as matching: the
+// lookup is retried briefly, so a transient provider blip does not
+// swallow a legitimate recovery, but a lookup that keeps failing drops
+// the resolution rather than resolving a condition for a connection
+// whose state is unknown — the safer side for a disconnect race. A
+// connection that is gone (404) has no condition left to resolve, so
+// its resolution is dropped without a retry. An event that does not say
+// what state the Discovery settled in fails open, as before.
+func discoveryResolutionStillCurrent(provider models.Provider, token string, event *events.Event) bool {
+	settled, ok := eventCurrentStatus(event)
+	if !ok || event.ActedUpon.IsNil() {
+		return true
+	}
+	var stored *connections.Connection
+	var statusCode int
+	var err error
+	for attempt := 0; attempt < discoveryResolutionStatusReadAttempts; attempt++ {
+		if attempt > 0 {
+			time.Sleep(discoveryResolutionStatusReadRetryDelay)
+		}
+		stored, statusCode, err = provider.GetConnectionByID(token, event.ActedUpon)
+		if err == nil {
+			break
+		}
+		if statusCode == http.StatusNotFound {
+			return false
+		}
+	}
+	if err != nil {
+		return false
+	}
+	if stored == nil {
+		return false
+	}
+	return stored.Status == connections.ConnectionStatus(settled)
+}
+
+// eventCurrentStatus reads the state SendEvent settled in from a success
+// event's currentStatus metadata. The value is a machines.StateType
+// in-process and a plain string after a JSON round trip, so both shapes
+// are accepted.
+func eventCurrentStatus(event *events.Event) (machines.StateType, bool) {
+	if event == nil || event.Metadata == nil {
+		return "", false
+	}
+	switch v := event.Metadata["currentStatus"].(type) {
+	case string:
+		return machines.StateType(v), v != ""
+	case machines.StateType:
+		return v, v != ""
+	default:
+		return "", false
+	}
 }
 
 // reportMachineOutcome reports what a connection's StateMachine.SendEvent
@@ -501,7 +717,7 @@ func (h *Handler) reportMachineOutcome(provider models.Provider, token string, u
 // counted on, or the resolution of, an open condition is broadcast as the
 // condition's stored event, so a client updates that notification in place
 // instead of showing one whose ID was never recorded. When persisting fails the
-// event is still broadcast, as sent.
+// event is logged and not broadcast to avoid ghost notifications and 404s.
 //
 // Every server site that persists an event and broadcasts it goes through this
 // helper (or persistAndPublishEvent, outside a Handler; a system event goes
@@ -526,9 +742,8 @@ func persistAndPublishEvent(log logger.Handler, provider models.Provider, token 
 	if provider == nil || event == nil {
 		return
 	}
-	// Prepare the event here, not only on the provider's copy, so the event
-	// broadcast when persisting fails has its own ID too: events that share
-	// the zero ID overwrite one another in the UI's store.
+	// Prepare the event here, not only on the provider's copy, so the
+	// preparation mints the ID for the persisted copy.
 	prepared := models.PrepareEventForPersistence(*event, log)
 	event = &prepared
 	persisted, err := provider.PersistEvent(*event, token)
@@ -536,13 +751,13 @@ func persistAndPublishEvent(log logger.Handler, provider models.Provider, token 
 		if log != nil {
 			log.Error(err)
 		}
-	} else {
-		if persisted.Event == nil {
-			// Nothing new was recorded and the stored event is unknown.
-			return
-		}
-		event = persisted.Event
+		return
 	}
+	if persisted.Event == nil {
+		// Nothing new was recorded and the stored event is unknown.
+		return
+	}
+	event = persisted.Event
 	if broadcaster != nil {
 		broadcaster.Publish(userID, event)
 	}
@@ -570,7 +785,6 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 	}
 
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
-	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 
 	var connectedK8sContexts []*models.K8sContext
 	if val := ctx.Value(models.AllKubeClusterKey); val != nil {
@@ -584,62 +798,17 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		userUUID = user.ID
 	}
 
-	var operatorTracker *models.OperatorTracker
-	var k8scontextChannel *models.K8scontextChan
-	var eventBroadcaster *models.Broadcast
-	if h.config != nil {
-		operatorTracker = h.config.OperatorTracker
-		k8scontextChannel = h.config.K8scontextChannel
-		eventBroadcaster = h.config.EventBroadcaster
-	}
-
 	dataHandlers := []*dataHandlerToClusterID{}
 	clusterIDs := []string{}
 	for _, k8sContext := range connectedK8sContexts {
 		if k8sContext == nil {
 			continue
 		}
-		machineCtx := &kubernetes.MachineCtx{
-			K8sContext:         *k8sContext,
-			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
-			K8sCompRegHelper:   h.K8sCompRegHelper,
-			OperatorTracker:    operatorTracker,
-			K8scontextChannel:  k8scontextChannel,
-			EventBroadcaster:   eventBroadcaster,
-			RegistryManager:    h.registryManager,
-		}
-		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
-
-		inst, err := mhelpers.InitializeMachineWithContext(
-			machineCtx,
-			ctx,
-			connectionUUID,
-			userUUID,
-			smInstanceTracker,
-			h.log,
-			provider,
-			machines.DefaultState,
-			"kubernetes",
-			kubernetes.AssignInitialCtx,
-		)
-		if err != nil && h.log != nil {
-			h.log.Error(err)
-		}
-
-		// Skip a machine that failed to initialize rather than nil-dereferencing
-		// on ResetState/SendEvent, or type-asserting its nil Context on the Cast
-		// below. See mhelpers.HasMachineContext for why.
-		if !mhelpers.HasMachineContext(inst) {
+		inst := h.discoverK8sContext(ctx, provider, token, userUUID, k8sContext, nil, false)
+		if inst == nil {
 			continue
 		}
-		inst.ResetState()
-		go func(inst *machines.StateMachine) {
-			discoveryCtx, cancel := backgroundDiscoveryContext(ctx)
-			defer cancel()
-			event, err := inst.SendEvent(discoveryCtx, machines.Discovery, nil)
-			h.reportBackgroundDiscovery(provider, token, userUUID, event, err)
-		}(inst)
-		kubernesMachineCtx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
+		kubernesMachineCtx, err := utils.Cast[*kubernetes.MachineCtx](inst.GetContext())
 		if err != nil {
 			if h.log != nil {
 				h.log.Error(err)
@@ -660,6 +829,11 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			}
 		}
 	}
+
+	// Probe NOTFOUND connections so their unreachable condition can resolve
+	// when the cluster comes back (issue #22955). These contexts are loaded
+	// separately and are never added to AllKubeClusterKey.
+	h.probeNotFoundK8sContexts(ctx, provider, token, userUUID, connectedK8sContexts)
 
 	if provider == nil || len(clusterIDs) == 0 {
 		return
@@ -691,5 +865,229 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 				go regQueue.Send(models.MeshSyncRegistrationData{MeshsyncDataHandler: dh.mdh, Obj: resource})
 			}
 		}
+	}
+}
+
+// discoverK8sContext initializes (or reuses) the state machine for a
+// Kubernetes connection and fires a background Discovery on it, reporting
+// the outcome through reportBackgroundDiscovery. It returns the machine, or
+// nil when the machine could not be initialized. afterProbe, when non-nil,
+// runs in the discovery goroutine once the probe has reported; the NOTFOUND
+// probe uses it to forget a connection whose condition resolved.
+// skipProbeOnRefreshFailure, set by the NOTFOUND probe only, skips the
+// probe when the credential refresh fails instead of running Discovery
+// against the old clientset: a successful probe would report the connection
+// recovered even though the stored credentials cannot build a client. The
+// connected path leaves it false — a failed refresh there only maintains
+// the existing CONNECTED status, and skipping would freeze outage detection
+// for a connection whose rotated credentials are broken.
+func (h *Handler) discoverK8sContext(ctx context.Context, provider models.Provider, token string, userUUID uuid.UUID, k8sContext *models.K8sContext, afterProbe func(event *events.Event, err error), skipProbeOnRefreshFailure bool) *machines.StateMachine {
+	var operatorTracker *models.OperatorTracker
+	var k8scontextChannel *models.K8scontextChan
+	var eventBroadcaster *models.Broadcast
+	if h.config != nil {
+		operatorTracker = h.config.OperatorTracker
+		k8scontextChannel = h.config.K8scontextChannel
+		eventBroadcaster = h.config.EventBroadcaster
+	}
+
+	machineCtx := &kubernetes.MachineCtx{
+		K8sContext:         *k8sContext,
+		MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+		K8sCompRegHelper:   h.K8sCompRegHelper,
+		OperatorTracker:    operatorTracker,
+		K8scontextChannel:  k8scontextChannel,
+		EventBroadcaster:   eventBroadcaster,
+		RegistryManager:    h.registryManager,
+	}
+	connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+
+	inst, err := mhelpers.InitializeMachineWithContext(
+		machineCtx,
+		ctx,
+		connectionUUID,
+		userUUID,
+		h.ConnectionToStateMachineInstanceTracker,
+		h.log,
+		provider,
+		machines.DefaultState,
+		"kubernetes",
+		kubernetes.AssignInitialCtx,
+	)
+	if err != nil && h.log != nil {
+		h.log.Error(err)
+	}
+
+	// Skip a machine that failed to initialize rather than nil-dereferencing
+	// on ResetState/SendEvent. See mhelpers.HasMachineContext for why.
+	if !mhelpers.HasMachineContext(inst) {
+		return nil
+	}
+
+	// A tracked machine reuses the context (and clientset) built when it was
+	// created, so a credential update would otherwise never reach Discovery:
+	// the probe would keep failing against the old clientset and the
+	// unreachable condition would stay open. Refresh the stored context when
+	// the newly loaded one carries different connection material. This runs
+	// here, in the helper both paths share, so the connected path benefits
+	// too. A rebuild failure keeps the old context and is logged; when
+	// skipProbeOnRefreshFailure is set the probe is skipped this cycle,
+	// because probing with the old clientset could report the connection
+	// recovered when the stored credentials cannot connect. The next
+	// request retries the refresh.
+	var refreshErr error
+	inst.UpdateContext(func(oldCtx interface{}) interface{} {
+		stored, ok := oldCtx.(*kubernetes.MachineCtx)
+		if !ok || stored == nil {
+			return oldCtx
+		}
+		if _, err := stored.RefreshK8sContext(*k8sContext, models.NewServerEvent(ctx), h.log); err != nil {
+			refreshErr = err
+			if h.log != nil {
+				h.log.Error(err)
+			}
+		}
+		return oldCtx
+	})
+	if refreshErr != nil && skipProbeOnRefreshFailure {
+		return nil
+	}
+
+	inst.ResetState()
+	go func(inst *machines.StateMachine) {
+		discoveryCtx, cancel := backgroundDiscoveryContext(ctx)
+		defer cancel()
+		event, err := inst.SendEvent(discoveryCtx, machines.Discovery, nil)
+		h.reportBackgroundDiscovery(provider, token, userUUID, event, err)
+		if afterProbe != nil {
+			afterProbe(event, err)
+		}
+	}(inst)
+	return inst
+}
+
+// loadNotFoundK8sContexts fetches all of the user's Kubernetes contexts
+// whose connection status is NOTFOUND, paginating like
+// RemoteProvider.LoadAllK8sContext. The provider API takes a single status,
+// so this is a separate call from the CONNECTED load — gated behind the
+// throttle in probeNotFoundK8sContexts, it runs at most once per interval.
+func loadNotFoundK8sContexts(provider models.Provider, token string) ([]*models.K8sContext, error) {
+	page := 0
+	pageSize := 25
+	results := []*models.K8sContext{}
+
+	for {
+		res, err := provider.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", string(connections.NOTFOUND), true)
+		if err != nil {
+			return results, err
+		}
+		var k8scontext models.MesheryK8sContextPage
+		if err := json.Unmarshal(res, &k8scontext); err != nil {
+			return results, err
+		}
+		results = append(results, k8scontext.Contexts...)
+
+		if (page+1)*pageSize >= k8scontext.TotalCount {
+			break
+		}
+
+		page++
+	}
+
+	return results, nil
+}
+
+// probeNotFoundK8sContexts re-probes the user's managed Kubernetes
+// connections that background Discovery previously moved to NOTFOUND, so
+// their "unreachable" condition can resolve when the cluster comes back.
+// Discovery otherwise runs only over AllKubeClusterKey, which holds only
+// CONNECTED contexts, so a NOTFOUND connection is never probed again.
+//
+// The NOTFOUND list is loaded with a single provider call, gated by the
+// throttle (at most one load per interval per provider+user) — no second
+// remote-provider round trip per request. Each connection is probed at most
+// once per interval, and a connection already in AllKubeClusterKey (i.e.
+// CONNECTED, or a local-provider context, which the local provider returns
+// unfiltered) is skipped; for the local provider the persisted status is
+// checked too, so a DISCONNECTED context is never probed. Probed connections
+// stay out of AllKubeClusterKey: only the Discovery event can move them back
+// to CONNECTED, through the state machine, exactly like a connected context.
+func (h *Handler) probeNotFoundK8sContexts(ctx context.Context, provider models.Provider, token string, userUUID uuid.UUID, connectedK8sContexts []*models.K8sContext) {
+	if provider == nil {
+		return
+	}
+
+	throttle := h.notFoundProbeThrottleOrDefault()
+
+	// Prune expired throttle entries before the load, so the maps cannot
+	// grow without bound even when loads keep failing: a probe entry for a
+	// connection that left NOTFOUND or was deleted expires after the interval.
+	throttle.prune()
+
+	// One Handler serves every user and provider, so the load gate is
+	// scoped to this provider and user: one user's requests must not block
+	// another user's NOTFOUND recovery. The per-connection probe limit stays
+	// global — a connection belongs to one user and provider anyway.
+	if !throttle.allowLoad(notFoundProbeLoadScope{
+		providerName: provider.Name(),
+		providerURL:  provider.GetProviderURL(),
+		user:         userUUID,
+	}) {
+		return
+	}
+
+	notFoundContexts, err := loadNotFoundK8sContexts(provider, token)
+	if err != nil {
+		if h.log != nil {
+			h.log.Error(err)
+		}
+		return
+	}
+
+	connectedIDs := make(map[core.Uuid]struct{}, len(connectedK8sContexts))
+	for _, k8sContext := range connectedK8sContexts {
+		if k8sContext == nil {
+			continue
+		}
+		connectedIDs[uuid.FromStringOrNil(k8sContext.ConnectionID)] = struct{}{}
+	}
+
+	for _, k8sContext := range notFoundContexts {
+		if k8sContext == nil {
+			continue
+		}
+		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+		if _, ok := connectedIDs[connectionUUID]; ok {
+			continue
+		}
+		// The local provider returns contexts unfiltered by status, so a
+		// context whose connection is not NOTFOUND can slip into this load.
+		// Probe only connections that are still NOTFOUND: a DISCONNECTED
+		// connection must wait for the user to reconnect it, and Discovery
+		// must not move it to CONNECTED on its own. Remote providers filter
+		// by status server-side, so the check is unnecessary there. A
+		// lookup failure skips the probe this cycle; the connection is
+		// retried on the next load.
+		if provider.GetProviderType() == models.LocalProviderType {
+			conn, _, err := provider.GetConnectionByID(token, connectionUUID)
+			if err != nil || conn == nil || conn.Status != connections.NOTFOUND {
+				if err != nil && h.log != nil {
+					h.log.Error(err)
+				}
+				continue
+			}
+		}
+		if !throttle.allowProbe(connectionUUID) {
+			continue
+		}
+		h.discoverK8sContext(ctx, provider, token, userUUID, k8sContext, func(event *events.Event, err error) {
+			// A probe that leaves NOTFOUND resolves the connection's
+			// unreachable condition; forget the throttle entry so the
+			// connection is probed again promptly if it goes NOTFOUND
+			// again, instead of waiting out the interval.
+			if err == nil && event != nil && event.ResolvedAt != nil {
+				throttle.forget(connectionUUID)
+			}
+		}, true)
 	}
 }

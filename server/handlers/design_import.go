@@ -13,6 +13,7 @@ import (
 	"path"
 	"time"
 
+	serverutils "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
 	pCore "github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshkit/encoding"
@@ -44,15 +45,9 @@ type importVariant struct {
 }
 
 // designImportHTTPClient is the shared client used for URL-variant
-// imports. A bounded Timeout prevents a slow or unresponsive remote
-// from hanging the handler goroutine indefinitely — the default
-// http.Client has no timeout, which is the class of bug review
-// feedback on meshery/meshery#18845 called out. 60s is generous for
-// a single-file fetch (Kubernetes manifests, Helm charts, Meshery
-// designs) while still bounding damage from dead endpoints.
-var designImportHTTPClient = &http.Client{
-	Timeout: 60 * time.Second,
-}
+// imports. It enforces a bounded 60s timeout and uses a safe transport
+// that rejects private, loopback, and cloud metadata addresses (SSRF protection).
+var designImportHTTPClient = serverutils.NewSafeHTTPClient(60 * time.Second)
 
 // resolveImportVariant decodes the request body against the two oneOf
 // variants published in the schema, enforces the "exactly one of"
@@ -101,10 +96,14 @@ func resolveImportVariant(body pattern.MesheryPatternImportRequestBody) (importV
 // fetchFileFromURL performs the remote GET behind a URL-variant import
 // and derives a filename from either Content-Disposition or the path
 // segment of the URL. Uses designImportHTTPClient so every fetch is
-// bounded by a timeout, and rejects non-2xx responses explicitly so a
-// 404 HTML body isn't handed to the design parser as if it were a
-// valid import file.
+// bounded by a timeout and guarded against SSRF, and rejects non-2xx
+// responses explicitly so a 404 HTML body isn't handed to the design
+// parser as if it were a valid import file.
 func fetchFileFromURL(fileURL string) (FileToImport, error) {
+	if _, err := serverutils.ValidateSafeURL(fileURL); err != nil {
+		return FileToImport{}, models.ErrDoRequest(err, "GET", fileURL)
+	}
+
 	resp, err := designImportHTTPClient.Get(fileURL)
 	if err != nil {
 		return FileToImport{}, models.ErrDoRequest(err, "GET", fileURL)
@@ -119,9 +118,16 @@ func fetchFileFromURL(fileURL string) (FileToImport, error) {
 		// metadata, matching the http.Client.Get error path above.
 		return FileToImport{}, models.ErrDoRequest(fmt.Errorf("returned HTTP %d %s", resp.StatusCode, resp.Status), "GET", fileURL)
 	}
-	body, err := io.ReadAll(resp.Body)
+	// Cap read at 10 MB to prevent unbounded memory consumption from large remote responses.
+	// Reading up to maxImportFileSize+1 allows detecting whether the remote stream exceeds the cap,
+	// rejecting truncated downloads instead of accepting partial files.
+	const maxImportFileSize = 10 * 1024 * 1024
+	body, err := io.ReadAll(io.LimitReader(resp.Body, int64(maxImportFileSize)+1))
 	if err != nil {
 		return FileToImport{}, models.ErrDoRequest(err, "GET", fileURL)
+	}
+	if len(body) > maxImportFileSize {
+		return FileToImport{}, models.ErrDoRequest(fmt.Errorf("file size exceeds maximum allowed limit of %d bytes", maxImportFileSize), "GET", fileURL)
 	}
 	return FileToImport{Data: body, FileName: getFileNameFromResponse(resp, fileURL)}, nil
 }

@@ -325,7 +325,7 @@ export const useGetUsersForOrgQuery = (queryArg, options) =>
     {
       orgId: queryArg?.orgId,
       page: queryArg?.page?.toString(),
-      pagesize: queryArg?.pagesize?.toString(),
+      pageSize: queryArg?.pagesize?.toString(),
       search: queryArg?.search,
       order: queryArg?.order,
       filter: queryArg?.filter,
@@ -408,11 +408,13 @@ export const useGetSelectedOrganization = () => {
     isLoading: isLoadingUserPrefs,
     error: errorLoadingUserPrefs,
   } = useGetUserPrefQuery();
+  // Every organization, so the selected one is found even when it is not on
+  // the server's default first page (otherwise this falls back to orgs[0]).
   const {
     data: allOrgs,
     isLoading: isLoadingAllOrgs,
     error: errorLoadingAllOrgs,
-  } = useGetOrgsQuery();
+  } = useGetOrgsQuery({ pagesize: 'all' });
 
   // `selectedOrganizationId` is the canonical key (schemas v1beta1
   // user.Preference, and what meshery-cloud reads and writes). Meshery Server

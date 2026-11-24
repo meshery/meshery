@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
@@ -374,5 +375,50 @@ func TestDefaultLocalProviderInstallExtension_ReplacesMatchingNavigatorExtension
 	}
 	if provider.Extensions.Navigator[0].Component != "/provider/navigator/meshmap/index.js?packageVersion=new" {
 		t.Fatalf("expected replacement component to be stored, got %q", provider.Extensions.Navigator[0].Component)
+	}
+}
+
+func TestDefaultLocalProviderSaveK8sContextNilMesheryInstanceID(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to open in-memory database: %v", err)
+	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		t.Fatalf("failed to inspect sqlite handle: %v", err)
+	}
+	sqlDB.SetMaxOpenConns(1)
+
+	if err := db.AutoMigrate(&connections.Connection{}, &Credential{}, &K8sContext{}); err != nil {
+		t.Fatalf("failed to migrate k8s context tables: %v", err)
+	}
+
+	dbHandler := &database.Handler{DB: db}
+	provider := &DefaultLocalProvider{
+		GenericPersister:           dbHandler,
+		ConnectionPersister:        &ConnectionPersister{DB: dbHandler},
+		MesheryK8sContextPersister: &MesheryK8sContextPersister{DB: dbHandler},
+	}
+
+	k8sCtx := K8sContext{
+		ID:      "ctx-1",
+		Name:    "unreachable-without-instance-id",
+		Server:  "https://127.0.0.1:6443",
+		Cluster: map[string]interface{}{"server": "https://127.0.0.1:6443"},
+		Auth:    map[string]interface{}{"token": "tok"},
+	}
+
+	conn, err := provider.SaveK8sContext("", k8sCtx, nil)
+	if err != nil {
+		t.Fatalf("SaveK8sContext failed with nil MesheryInstanceID: %v", err)
+	}
+	if conn.ID == uuid.Nil {
+		t.Fatal("expected persisted connection to receive a non-nil UUID")
+	}
+	if got, _ := conn.Metadata["mesheryInstanceId"].(string); got != "" {
+		t.Fatalf("expected empty mesheryInstanceId metadata for nil MesheryInstanceID, got %q", got)
+	}
+	if got, _ := conn.Metadata["kubernetesServerId"].(string); got != "" {
+		t.Fatalf("expected empty kubernetesServerId metadata for nil KubernetesServerID, got %q", got)
 	}
 }

@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
-	"os"
 	"sort"
 	"time"
 
@@ -124,7 +124,7 @@ func (h *Handler) machineCtxForConnection(connectionID string) (*kubernetes.Mach
 		h.log.Debug(fmt.Sprintf("machine instance for connection %s has no context assigned, treating as not-ready", connectionID))
 		return nil, false
 	}
-	machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
+	machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.GetContext())
 	if err != nil || machinectx.MesheryCtrlsHelper == nil {
 		if err != nil {
 			h.log.Error(err)
@@ -330,19 +330,44 @@ func (h *Handler) SubscribeMesheryControllersStatusHandler(w http.ResponseWriter
 	}
 }
 
+// requireQueryConnectionID extracts and validates the connectionId query parameter.
+// It returns (parsedUUID, true) on success. When the parameter is missing,
+// malformed, or the zero UUID, it writes a 400 Bad Request response with
+// models.ErrInvalidUUID, safely logs the failure, and returns (uuid.Nil, false).
+func (h *Handler) requireQueryConnectionID(w http.ResponseWriter, req *http.Request) (uuid.UUID, bool) {
+	connectionID := req.URL.Query().Get("connectionId")
+	if connectionID == "" {
+		err := models.ErrInvalidUUID(fmt.Errorf("missing query parameter %q", "connectionId"))
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
+		writeMeshkitError(w, err, http.StatusBadRequest)
+		return uuid.Nil, false
+	}
+	connectionUUID, err := uuid.FromString(connectionID)
+	if err != nil || connectionUUID == uuid.Nil {
+		if err == nil {
+			err = errors.New("zero UUID is not a valid connection id")
+		}
+		invalidUUIDErr := models.ErrInvalidUUID(err)
+		if h != nil && h.log != nil {
+			h.log.Error(invalidUUIDErr)
+		}
+		writeMeshkitError(w, invalidUUIDErr, http.StatusBadRequest)
+		return uuid.Nil, false
+	}
+	return connectionUUID, true
+}
+
 // OperatorStatusHandler returns the operator's current status for a connection.
 // Replaces the getOperatorStatus GraphQL query.
 // GET /api/system/controllers/operator/status?connectionId=<id>
 func (h *Handler) OperatorStatusHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
-	connectionID := req.URL.Query().Get("connectionId")
-	// Reject a malformed connectionId rather than falling back to uuid.Nil: a
-	// zero UUID is never a real connection and would echo an invalid id back to
-	// the client.
-	connectionUUID, err := uuid.FromString(connectionID)
-	if err != nil {
-		writeMeshkitError(w, models.ErrInvalidUUID(err), http.StatusBadRequest)
+	connectionUUID, ok := h.requireQueryConnectionID(w, req)
+	if !ok {
 		return
 	}
+	connectionID := connectionUUID.String()
 	item := system.ControllerStatus{
 		ConnectionId: connectionUUID,
 		Controller:   internalControllerName(models.MesheryOperator),
@@ -361,13 +386,11 @@ func (h *Handler) OperatorStatusHandler(w http.ResponseWriter, req *http.Request
 // Replaces the getMeshsyncStatus GraphQL query.
 // GET /api/system/controllers/meshsync/status?connectionId=<id>
 func (h *Handler) MeshsyncStatusHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
-	connectionID := req.URL.Query().Get("connectionId")
-	// Reject a malformed connectionId rather than falling back to uuid.Nil.
-	connectionUUID, err := uuid.FromString(connectionID)
-	if err != nil {
-		writeMeshkitError(w, models.ErrInvalidUUID(err), http.StatusBadRequest)
+	connectionUUID, ok := h.requireQueryConnectionID(w, req)
+	if !ok {
 		return
 	}
+	connectionID := connectionUUID.String()
 	info := system.ControllerInfo{
 		ConnectionId: connectionUUID,
 		Name:         "MeshSync",
@@ -385,13 +408,11 @@ func (h *Handler) MeshsyncStatusHandler(w http.ResponseWriter, req *http.Request
 // Replaces the getNatsStatus GraphQL query.
 // GET /api/system/controllers/broker/status?connectionId=<id>
 func (h *Handler) BrokerStatusHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
-	connectionID := req.URL.Query().Get("connectionId")
-	// Reject a malformed connectionId rather than falling back to uuid.Nil.
-	connectionUUID, err := uuid.FromString(connectionID)
-	if err != nil {
-		writeMeshkitError(w, models.ErrInvalidUUID(err), http.StatusBadRequest)
+	connectionUUID, ok := h.requireQueryConnectionID(w, req)
+	if !ok {
 		return
 	}
+	connectionID := connectionUUID.String()
 	info := system.ControllerInfo{
 		ConnectionId: connectionUUID,
 		Name:         "MesheryBroker",
@@ -628,7 +649,9 @@ func (h *Handler) brokerNetworkingDiagnostic(
 
 	managedAddr := machinectx.MesheryCtrlsHelper.GetBrokerPortForwardAddr()
 	endpoint, _ := broker.GetPublicEndpoint()
-	inCluster := os.Getenv("KUBERNETES_SERVICE_HOST") != ""
+	// Running in *a* cluster is not the question: only Meshery running in this
+	// connection's own cluster reaches the broker's ClusterIP directly.
+	sameCluster := machinectx.MesheryCtrlsHelper.TargetsHostCluster(machinectx.K8sContext)
 
 	var transport, description, ep string
 	switch {
@@ -636,13 +659,13 @@ func (h *Handler) brokerNetworkingDiagnostic(
 		transport = "Managed port-forward"
 		ep = managedAddr
 		description = fmt.Sprintf(
-			"Meshery reaches the Meshery Broker (NATS) through a managed port-forward at %s, tunneled to the in-cluster NATS pod through the Kubernetes API server. This is automatic for out-of-cluster Meshery; set MESHERY_MANAGED_BROKER_PORTFORWARD=false on the server to disable it. The transport follows the connection's MeshSync mode — operator mode uses the in-cluster broker; embedded mode uses none.",
+			"Meshery reaches the Meshery Broker (NATS) through a managed port-forward at %s, tunneled to the in-cluster NATS pod through the Kubernetes API server. This is automatic whenever Meshery runs outside this connection's cluster (on a host, in Docker, or in a different cluster); set MESHERY_MANAGED_BROKER_PORTFORWARD=false on the server to disable it. The transport follows the connection's MeshSync mode - operator mode uses the in-cluster broker; embedded mode uses none.",
 			managedAddr,
 		)
-	case inCluster:
+	case sameCluster:
 		transport = "In-cluster (ClusterIP)"
 		ep = endpoint
-		description = "Meshery runs inside the cluster and reaches the Meshery Broker (NATS) directly at its cluster-internal (ClusterIP) address."
+		description = "Meshery runs inside this connection's cluster and reaches the Meshery Broker (NATS) directly at its cluster-internal (ClusterIP) address."
 	default:
 		transport = "Direct endpoint"
 		ep = endpoint
@@ -667,6 +690,9 @@ func (h *Handler) brokerNetworkingDiagnostic(
 // "Diagnostics" section of the connection detail view.
 // GET /api/system/controllers/diagnostics?connectionId=<id>
 func (h *Handler) ControllerDiagnosticsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
-	connectionID := req.URL.Query().Get("connectionId")
-	writeJSONMessage(w, h.computeConnectionDiagnostics(connectionID), http.StatusOK)
+	connectionUUID, ok := h.requireQueryConnectionID(w, req)
+	if !ok {
+		return
+	}
+	writeJSONMessage(w, h.computeConnectionDiagnostics(connectionUUID.String()), http.StatusOK)
 }

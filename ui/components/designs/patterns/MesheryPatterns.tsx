@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import MesheryPatternGrid from './MesheryPatternGridView';
 import _PromptComponent from '../../general/PromptComponent';
 import LoadingScreen from '../../shared/LoadingState/LoadingComponent';
-import { MesheryPatternsCatalog, VISIBILITY } from '../../../utils/Enum';
+import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../../../utils/Enum';
 import { useRouter } from 'next/router';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import _ from 'lodash';
@@ -83,6 +83,7 @@ function MesheryPatterns({
   const canDeployDesign = useHasPermission(Keys.CatalogManagementDeployDesign);
   const canDownloadDesign = useHasPermission(Keys.CatalogManagementDownloadADesign);
   const canUnpublishDesign = useHasPermission(Keys.CatalogManagementUnpublishDesign);
+  const canDeleteDesign = useHasPermission(Keys.CatalogManagementDeleteADesign);
   const router = useRouter();
 
   const { tableState, updateTableState } = useTableUrlState({
@@ -367,6 +368,7 @@ function MesheryPatterns({
 
   const columns = buildPatternColumns({
     patterns,
+    arePatternsReadOnly,
     handlers: {
       handleOpenInConfigurator,
       handleClone,
@@ -379,6 +381,12 @@ function MesheryPatterns({
       handleUnpublishModal,
       handleEvaluateRelationship,
       userCanEdit,
+      handleDelete: (rowData) =>
+        handleSubmit({
+          id: rowData.id,
+          name: rowData.name,
+          type: FILE_OPS.DELETE,
+        }),
     },
     permissions: {
       editDesign: canEditDesignPermission,
@@ -391,6 +399,7 @@ function MesheryPatterns({
       detailsOfDesign: canViewDesignDetails,
       publishDesign: canPublishDesign,
       unpublishDesign: canUnpublishDesign,
+      deleteDesign: canDeleteDesign,
     },
   });
 

@@ -57,7 +57,21 @@ mesheryctl design apply -f [file | URL]
 mesheryctl design apply [design-name]
 	`,
 	Annotations: linkDocPatternApply,
-	Args:        cobra.MinimumNArgs(0),
+	Args: func(cmd *cobra.Command, args []string) error {
+		if cmd.Flags().Changed("file") && strings.TrimSpace(file) == "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("file path cannot be empty"))
+		}
+		hasDesignName := strings.TrimSpace(strings.Join(args, " ")) != ""
+		hasFile := strings.TrimSpace(file) != ""
+
+		if !hasDesignName && !hasFile {
+			return utils.ErrInvalidArgument(fmt.Errorf("please provide a design name or specify a file using --file"))
+		}
+		if len(args) > 0 && hasFile {
+			return utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a design name and the --file flag"))
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -86,7 +100,9 @@ mesheryctl design apply [design-name]
 				return err
 			}
 
-			var response *models.PatternsAPIResponse
+			// Decode into a value, not a pointer: a response body of null leaves a value as
+			// an empty list, but would leave a pointer nil for the lines below to crash on.
+			var response models.PatternsAPIResponse
 			defer func() { _ = resp.Body.Close() }()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
@@ -183,7 +199,7 @@ func multiplePatternsConfirmation(profiles []models.MesheryPattern) int {
 	for index, a := range profiles {
 		fmt.Printf("Index: %v\n", index)
 		fmt.Printf("Name: %v\n", a.Name)
-		fmt.Printf("ID: %s\n", a.ID.String())
+		fmt.Printf("ID: %s\n", utils.FormatUUID(a.ID, "N/A"))
 		fmt.Printf("DesignFile:\n")
 		fmt.Printf("%s\n", a.PatternFile)
 		fmt.Println("---------------------")

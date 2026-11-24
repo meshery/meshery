@@ -292,6 +292,144 @@ describe('Modal (RJSF version)', () => {
     expect(screen.getByTestId('modal-footer')).toHaveAttribute('data-help', 'Need help?');
     expect(screen.getByTestId('modal-footer')).toHaveAttribute('data-has-help', 'true');
   });
+
+  it('disables submit while schema is pending and toggles with schema resolution and reopen', async () => {
+    const user = userEvent.setup();
+    const handleSubmit = vi.fn();
+    const handleClose = vi.fn();
+
+    const { rerender } = render(
+      <Modal
+        open={true}
+        title="Help & Support"
+        type="helpAndSupport"
+        schema={null}
+        handleClose={handleClose}
+        handleSubmit={handleSubmit}
+      />,
+    );
+
+    const primaryBtn = screen.getByTestId('primary-button');
+    expect(primaryBtn).toBeDisabled();
+    await user.click(primaryBtn);
+    expect(handleSubmit).not.toHaveBeenCalled();
+    expect(handleClose).not.toHaveBeenCalled();
+
+    rerender(
+      <Modal
+        open={true}
+        title="Help & Support"
+        type="helpAndSupport"
+        schema={{ type: 'object' }}
+        handleClose={handleClose}
+        handleSubmit={handleSubmit}
+      />,
+    );
+
+    expect(screen.getByTestId('primary-button')).not.toBeDisabled();
+
+    // Clearing schema before reopening must reset loadingSchema and disable submit again.
+    rerender(
+      <Modal
+        open={false}
+        title="Help & Support"
+        type="helpAndSupport"
+        schema={null}
+        handleClose={handleClose}
+        handleSubmit={handleSubmit}
+      />,
+    );
+    rerender(
+      <Modal
+        open={true}
+        title="Help & Support"
+        type="helpAndSupport"
+        schema={null}
+        handleClose={handleClose}
+        handleSubmit={handleSubmit}
+      />,
+    );
+
+    expect(screen.getByTestId('circular-progress')).toBeInTheDocument();
+    expect(screen.getByTestId('primary-button')).toBeDisabled();
+  });
+
+  it('supports consumer-controlled submitDisabled without altering default enabled behavior', async () => {
+    const user = userEvent.setup();
+    const handleSubmit = vi.fn();
+    const handleClose = vi.fn();
+
+    const { rerender } = render(
+      <Modal
+        open={true}
+        title="Help & Support"
+        schema={{ type: 'object' }}
+        submitDisabled={true}
+        handleClose={handleClose}
+        handleSubmit={handleSubmit}
+      />,
+    );
+
+    expect(screen.getByTestId('primary-button')).toBeDisabled();
+    await user.click(screen.getByTestId('primary-button'));
+    expect(handleSubmit).not.toHaveBeenCalled();
+
+    rerender(
+      <Modal
+        open={true}
+        title="Help & Support"
+        schema={{ type: 'object' }}
+        submitDisabled={false}
+        handleClose={handleClose}
+        handleSubmit={handleSubmit}
+      />,
+    );
+
+    expect(screen.getByTestId('primary-button')).not.toBeDisabled();
+
+    // Title-derived canNotSubmit still disables even when submitDisabled is false.
+    rerender(
+      <Modal
+        open={true}
+        title="Untitled Design"
+        schema={{ type: 'object' }}
+        submitDisabled={false}
+        handleClose={handleClose}
+        handleSubmit={handleSubmit}
+      />,
+    );
+
+    expect(screen.getByTestId('primary-button')).toBeDisabled();
+  });
+
+  it('resolves type-only schemas when schema is omitted and keeps explicit schema={null} pending', () => {
+    const { rerender } = render(
+      <Modal
+        open={true}
+        title="Credentials"
+        type="prometheus"
+        handleClose={vi.fn()}
+        handleSubmit={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId('rjsf-wrapper')).toBeInTheDocument();
+    expect(screen.getByTestId('primary-button')).not.toBeDisabled();
+
+    rerender(
+      <Modal
+        open={true}
+        title="Credentials"
+        type="prometheus"
+        schema={null}
+        handleClose={vi.fn()}
+        handleSubmit={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId('circular-progress')).toBeInTheDocument();
+    expect(screen.getByTestId('primary-button')).toBeDisabled();
+  });
 });
 
 describe('RJSFModalWrapper', () => {
@@ -416,5 +554,61 @@ describe('RJSFModalWrapper', () => {
     );
 
     expect(screen.getByTestId('primary-button')).not.toBeDisabled();
+  });
+
+  it('disables submit while schema is pending or submitDisabled is true', async () => {
+    const user = userEvent.setup();
+    const handleSubmit = vi.fn();
+
+    const { rerender } = render(
+      <RJSFModalWrapper
+        title="Wrapper"
+        schema={null}
+        handleClose={vi.fn()}
+        handleSubmit={handleSubmit}
+      />,
+    );
+
+    expect(screen.getByTestId('circular-progress')).toBeInTheDocument();
+    expect(screen.getByTestId('primary-button')).toBeDisabled();
+    await user.click(screen.getByTestId('primary-button'));
+    expect(handleSubmit).not.toHaveBeenCalled();
+
+    rerender(
+      <RJSFModalWrapper
+        title="Wrapper"
+        schema={{ type: 'object' }}
+        submitDisabled={true}
+        handleClose={vi.fn()}
+        handleSubmit={handleSubmit}
+      />,
+    );
+
+    expect(screen.getByTestId('rjsf-wrapper')).toBeInTheDocument();
+    expect(screen.getByTestId('primary-button')).toBeDisabled();
+
+    rerender(
+      <RJSFModalWrapper
+        title="Wrapper"
+        schema={{ type: 'object' }}
+        submitDisabled={false}
+        handleClose={vi.fn()}
+        handleSubmit={handleSubmit}
+      />,
+    );
+
+    expect(screen.getByTestId('primary-button')).not.toBeDisabled();
+
+    rerender(
+      <RJSFModalWrapper
+        title="Wrapper"
+        schema={null}
+        submitDisabled={false}
+        handleClose={vi.fn()}
+        handleSubmit={handleSubmit}
+      />,
+    );
+
+    expect(screen.getByTestId('primary-button')).toBeDisabled();
   });
 });

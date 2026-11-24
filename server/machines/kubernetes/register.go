@@ -32,7 +32,9 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	machinectx.log.Debug("executing ping test for connection", machinectx.K8sContext.ConnectionID)
+	if machinectx.log != nil {
+		machinectx.log.Debug("executing ping test for connection", machinectx.K8sContext.ConnectionID)
+	}
 	err = machinectx.K8sContext.PingTest()
 
 	if err != nil {
@@ -41,7 +43,9 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		// ConnectAction and DiscoverAction failure events. Without this the event
 		// lands with an empty severity and is effectively invisible to users.
 		eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to ping kubernetes context %s at %s", machinectx.K8sContext.Name, machinectx.K8sContext.Server)).WithMetadata(map[string]interface{}{"error": err})
-		machinectx.log.Error(err)
+		if machinectx.log != nil {
+			machinectx.log.Error(err)
+		}
 		return machines.NotFound, eventBuilder.Build(), err
 	}
 

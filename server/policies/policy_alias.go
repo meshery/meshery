@@ -237,11 +237,16 @@ func aliasAddComponentSideEffects(rel *relationship.RelationshipDefinition, _ *p
 					displayName = fmt.Sprintf("%s.%s", path[length-2], path[length-1])
 				}
 
+				isAnnotation := false
+				if rel.RelationshipMetadata != nil && rel.RelationshipMetadata.IsAnnotation != nil {
+					isAnnotation = *rel.RelationshipMetadata.IsAnnotation
+				}
+
 				newComp := component.ComponentDefinition{
 					ID:          *fromSel.ID,
 					DisplayName: displayName,
 					Component:   component.Component{Kind: selectorItemKind(fromSel)},
-					Metadata:    component.ComponentDefinition_Metadata{IsAnnotation: true},
+					Metadata:    component.ComponentDefinition_Metadata{IsAnnotation: isAnnotation},
 				}
 				if fromSel.Model != nil {
 					newComp.ModelReference = *fromSel.Model
