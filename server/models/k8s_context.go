@@ -1,14 +1,17 @@
 package models
 
 import (
+	"bytes"
 	"context"
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"net"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/meshery/schemas/models/core"
@@ -54,6 +57,54 @@ type K8sContext struct {
 	// transition to the connected state. An unreachable context can still be
 	// registered as a (discovered) connection.
 	Reachable bool `json:"reachable" yaml:"-" gorm:"-"`
+
+	// ImportError is a human-readable reason set when this context was not
+	// imported (the save failed, or the connection is ignored). It is not persisted.
+	ImportError string `json:"error,omitempty" yaml:"-" gorm:"-"`
+}
+
+// KubeconfigSource says who supplied a kubeconfig, which decides whether
+// discovery may let client-go run the authentication it names.
+type KubeconfigSource int
+
+const (
+	// KubeconfigFromUpload is a kubeconfig a user sent to the API (the
+	// connection wizard, the kubeconfig upload and registration endpoints).
+	// Discovery skips its exec-plugin and auth-provider contexts before any
+	// client is built, so an uploaded file cannot make Meshery Server run a
+	// command named in it. It is the zero value, so a caller that does not
+	// say where a kubeconfig came from fails closed.
+	KubeconfigFromUpload KubeconfigSource = iota
+	// KubeconfigFromServer is the Meshery Server operator's own kubeconfig
+	// (KUBECONFIG_FOLDER), or a context Meshery already registered from one.
+	// The operator controls that file and the host it runs on, so its exec
+	// plugins and auth-provider blocks run as configured (for example
+	// `aws eks get-token` on a natively run server).
+	KubeconfigFromServer
+)
+
+// KubeconfigDiscoveryOptions controls DiscoverKubeconfigContexts.
+type KubeconfigDiscoveryOptions struct {
+	// IncludeUnreachable returns contexts whose API server did not answer,
+	// flagged Reachable=false, instead of dropping them.
+	IncludeUnreachable bool
+	// Source says who supplied the kubeconfig; see KubeconfigSource.
+	Source KubeconfigSource
+}
+
+// SkippedKubeContext is a kubeconfig context discovery could not turn into a
+// connection candidate, with the reason a caller can show.
+type SkippedKubeContext struct {
+	Name   string `json:"name"`
+	Server string `json:"server,omitempty"`
+	Reason string `json:"reason"`
+}
+
+// KubeconfigDiscovery is the parsed kubeconfig: contexts Meshery can register,
+// and contexts it skipped (unsupported auth, unreadable credentials) with reasons.
+type KubeconfigDiscovery struct {
+	Contexts        []*K8sContext        `json:"contexts"`
+	SkippedContexts []SkippedKubeContext `json:"skippedContexts"`
 }
 
 // K8sContextFromConnection converts a kubernetes connection into a K8sContext.
@@ -92,6 +143,13 @@ func K8sContextFromConnection(provider Provider, token string, connection *conne
 	credentialPayload := CredentialPayload(credential.Secret)
 	ctx.Auth, _ = credentialPayload["auth"].(map[string]interface{})
 	ctx.Cluster, _ = credentialPayload["cluster"].(map[string]interface{})
+	// The credential is user-editable, and building a client runs an exec
+	// plugin or reads files on this host. Refuse one that carries either unless
+	// it is the server's own (issue #24218). Callers that build a client from the
+	// returned context (ping, the state machine, graphql) get this error instead.
+	if fields := UntrustedKubeCredentialFields(ctx.Auth, ctx.Cluster); len(fields) > 0 {
+		return K8sContext{}, ErrUnsafeKubeCredential(fields)
+	}
 	ctx.CreatedAt = &connection.CreatedAt
 	ctx.UpdatedAt = &connection.UpdatedAt
 
@@ -99,7 +157,6 @@ func K8sContextFromConnection(provider Provider, token string, connection *conne
 }
 
 type InternalKubeConfig struct {
-	APIVersion     string                   `json:"apiVersion,omitempty" yaml:"apiVersion,omitempty"`
 	Kind           string                   `json:"kind,omitempty" yaml:"kind,omitempty"`
 	Clusters       []map[string]interface{} `json:"clusters,omitempty" yaml:"clusters,omitempty"`
 	Contexts       []map[string]interface{} `json:"contexts,omitempty" yaml:"contexts,omitempty"`
@@ -200,27 +257,59 @@ func NewK8sContextWithServerID(
 }
 
 // K8sContextsFromKubeconfig takes in a kubeconfig and meshery instance ID and generates
-// kubernetes contexts from it
+// kubernetes contexts from it. It treats the kubeconfig as uploaded
+// (KubeconfigFromUpload) and drops unreachable contexts; callers holding the
+// server's own kubeconfig use K8sContextsFromKubeconfigWithOptions.
 func K8sContextsFromKubeconfig(provider Provider, userID string, broadcast *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler) []*K8sContext {
-	return K8sContextsFromKubeconfigWithOptions(provider, userID, broadcast, kubeconfig, instanceID, eventMetadata, log, false)
+	return K8sContextsFromKubeconfigWithOptions(provider, userID, broadcast, kubeconfig, instanceID, eventMetadata, log, KubeconfigDiscoveryOptions{})
 }
 
 // K8sContextsFromKubeconfigWithOptions parses the kubeconfig into per-context
-// K8sContexts. When includeUnreachable is false (the default behaviour used by
+// K8sContexts. When opts.IncludeUnreachable is false (the default behaviour used by
 // component registration and startup discovery) contexts whose API server is
 // unreachable are skipped. When it is true, unreachable contexts are still
 // returned with Reachable=false so callers (the connection wizard's discover &
 // import flow) can register them as discovered connections and let the user
 // decide; reachability only gates the transition to the connected state.
-func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, broadcast *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, includeUnreachable bool) []*K8sContext {
-	return K8sContextsFromKubeconfigWithContext(context.Background(), provider, userID, broadcast, kubeconfig, instanceID, eventMetadata, log, includeUnreachable)
+func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, broadcast *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, opts KubeconfigDiscoveryOptions) []*K8sContext {
+	return K8sContextsFromKubeconfigWithContext(context.Background(), provider, userID, broadcast, kubeconfig, instanceID, eventMetadata, log, opts)
 }
 
 // K8sContextsFromKubeconfigWithContext parses the kubeconfig into per-context
 // K8sContexts using the caller's context to support request cancellation and
 // deadline propagation across multi-cluster discovery loops.
-func K8sContextsFromKubeconfigWithContext(ctx context.Context, provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, includeUnreachable bool) []*K8sContext {
-	kcs := []*K8sContext{}
+// Callers that only want the context slice (import, component registration)
+// keep today's behavior: an unreadable file yields no contexts, and skipped
+// contexts stay omitted. The discovery endpoint uses DiscoverKubeconfigContexts
+// so it can tell those cases apart.
+func K8sContextsFromKubeconfigWithContext(ctx context.Context, provider Provider, userID string, broadcast *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, opts KubeconfigDiscoveryOptions) []*K8sContext {
+	discovery, err := DiscoverKubeconfigContexts(ctx, provider, userID, broadcast, kubeconfig, instanceID, eventMetadata, log, opts)
+	if err != nil {
+		return []*K8sContext{}
+	}
+	return discovery.Contexts
+}
+
+// DiscoverKubeconfigContexts parses kubeconfig into contexts the caller can
+// register and contexts that were skipped, with a reason. It returns
+// ErrKubeconfigUnreadable when the bytes are not a kubeconfig. A kubeconfig
+// that parses and lists no contexts returns an empty result and a nil error.
+// An uploaded kubeconfig (opts.Source == KubeconfigFromUpload) has its
+// exec-plugin and auth-provider contexts skipped before any client is built.
+func DiscoverKubeconfigContexts(ctx context.Context, _ Provider, _ string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, opts KubeconfigDiscoveryOptions) (KubeconfigDiscovery, error) {
+	result := KubeconfigDiscovery{
+		Contexts:        []*K8sContext{},
+		SkippedContexts: []SkippedKubeContext{},
+	}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	if eventMetadata == nil {
+		eventMetadata = map[string]interface{}{}
+	}
+	if len(bytes.TrimSpace(kubeconfig)) == 0 {
+		return result, ErrKubeconfigUnreadable
+	}
 
 	// Enumerate contexts from the raw kubeconfig rather than via
 	// kubernetes.ProcessConfig: ProcessConfig runs clientcmd MinifyConfig, which
@@ -229,10 +318,13 @@ func K8sContextsFromKubeconfigWithContext(ctx context.Context, provider Provider
 	// The import wizard needs *every* context in the file, so enumerate them from
 	// the un-minified config here; each context is still validated individually
 	// below when its kube handler is built (unreachable ones are surfaced or
-	// skipped per includeUnreachable).
+	// skipped per opts.IncludeUnreachable).
 	kcfg := InternalKubeConfig{}
 	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
-		return kcs
+		return result, ErrKubeconfigUnreadable
+	}
+	if !looksLikeKubeconfig(kcfg) {
+		return result, ErrKubeconfigUnreadable
 	}
 
 	for _, ctxEntry := range kcfg.Contexts {
@@ -253,11 +345,39 @@ func K8sContextsFromKubeconfigWithContext(ctx context.Context, provider Provider
 
 		metadata["context"] = RedactCredentialsForContext(&kc)
 
+		// Skip exec and auth-provider contexts of an uploaded kubeconfig before
+		// building a client. client-go stores an exec plugin without running
+		// it until the API probe, so a well-formed exec kubeconfig would
+		// otherwise be offered as importable (Reachable or Unreachable).
+		// Uploaded kubeconfigs must not cause Meshery Server to execute a
+		// command named in the file. The server's own kubeconfig keeps its
+		// authentication.
+		if kind := unsupportedKubeconfigAuth(kc); kind != "" && opts.Source == KubeconfigFromUpload {
+			reason := kubeconfigUnsupportedAuthReason(kind)
+			if log != nil {
+				log.Warn(ErrGenerateK8sHandler(stderrors.New(reason), kc.Name))
+			}
+			// Record the skip in the receipt event without an "error" key:
+			// k8sEventMetadataHasError scans every eventMetadata entry, so an
+			// error key would raise the whole import receipt to Error
+			// severity even when every selected context succeeded.
+			metadata["description"] = fmt.Sprintf("Skipped context \"%s\" at %s: %s", kc.Name, kc.Server, reason)
+			eventMetadata[name] = metadata
+			result.SkippedContexts = append(result.SkippedContexts, SkippedKubeContext{
+				Name:   kc.Name,
+				Server: kc.Server,
+				Reason: reason,
+			})
+			continue
+		}
+
 		handler, err := kc.GenerateKubeHandler()
 		if err != nil {
-			err = ErrUnreachableKubeAPI(err, kc.Server)
-
-			metadata["error"] = err
+			reason := kubeconfigUnreadableReason
+			if log != nil {
+				log.Warn(ErrGenerateK8sHandler(err, kc.Name))
+			}
+			metadata["error"] = ErrUnreachableKubeAPI(stderrors.New(strings.TrimRight(reason, ".")), kc.Server)
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
 			eventMetadata[name] = metadata
 
@@ -265,12 +385,14 @@ func K8sContextsFromKubeconfigWithContext(ctx context.Context, provider Provider
 			// 	// Publishing again would lead to duplicate events and confusion to the user.
 			// 	// _ = provider.PersistEvent(token,*event)
 			// 	// eventChan.Publish(userUUID, event)
-			if log != nil {
-				log.Warn(ErrGenerateK8sHandler(err, kc.Name))
-			}
 			// The kube handler could not even be constructed from the context's
 			// credentials, so there is nothing reachable to register; skip it
-			// regardless of includeUnreachable.
+			// regardless of opts.IncludeUnreachable and record why.
+			result.SkippedContexts = append(result.SkippedContexts, SkippedKubeContext{
+				Name:   kc.Name,
+				Server: kc.Server,
+				Reason: reason,
+			})
 			continue
 		}
 
@@ -291,9 +413,9 @@ func K8sContextsFromKubeconfigWithContext(ctx context.Context, provider Provider
 			// is unreachable. Historically the context was dropped; when the
 			// caller opts in we instead return it flagged unreachable so it can be
 			// registered as a discovered connection (without a server ID/version).
-			if includeUnreachable {
+			if opts.IncludeUnreachable {
 				kc.Reachable = false
-				kcs = append(kcs, &kc)
+				result.Contexts = append(result.Contexts, &kc)
 			}
 			continue
 		}
@@ -315,15 +437,65 @@ func K8sContextsFromKubeconfigWithContext(ctx context.Context, provider Provider
 			if log != nil {
 				log.Warn(ErrRetrieveK8sClusterID(err, kc.Name))
 			}
-			kcs = append(kcs, &kc)
+			result.Contexts = append(result.Contexts, &kc)
 			continue
 		}
 
-		kcs = append(kcs, &kc)
+		result.Contexts = append(result.Contexts, &kc)
 	}
 
-	return kcs
+	return result, nil
 }
+
+// looksLikeKubeconfig reports whether the unmarshaled document is a kubeconfig
+// rather than arbitrary YAML. An empty Config document counts: it is a
+// kubeconfig that happens to list no contexts.
+func looksLikeKubeconfig(kcfg InternalKubeConfig) bool {
+	if strings.EqualFold(strings.TrimSpace(kcfg.Kind), "Config") {
+		return true
+	}
+	if len(kcfg.Contexts) > 0 || len(kcfg.Clusters) > 0 || len(kcfg.Users) > 0 {
+		return true
+	}
+	return strings.TrimSpace(kcfg.CurrentContext) != ""
+}
+
+func asStringKeyMap(value interface{}) map[string]interface{} {
+	switch typed := value.(type) {
+	case map[string]interface{}:
+		return typed
+	case sql.Map:
+		return map[string]interface{}(typed)
+	default:
+		return nil
+	}
+}
+
+// unsupportedKubeconfigAuth names the authentication a context's user would
+// make client-go run on the Meshery Server host ("exec plugin" or
+// "auth-provider"), or returns "" when it has neither.
+func unsupportedKubeconfigAuth(kc K8sContext) string {
+	var user map[string]interface{}
+	if auth := asStringKeyMap(kc.Auth); auth != nil {
+		user = asStringKeyMap(auth["user"])
+	}
+	if user == nil {
+		return ""
+	}
+	if _, ok := user["exec"]; ok {
+		return "exec plugin"
+	}
+	if _, ok := user["auth-provider"]; ok {
+		return "auth-provider"
+	}
+	return ""
+}
+
+func kubeconfigUnsupportedAuthReason(kind string) string {
+	return fmt.Sprintf("Authentication method is not supported (%s). Meshery does not run this method from an imported kubeconfig, because it would execute on the Meshery Server host.", kind)
+}
+
+const kubeconfigUnreadableReason = "The context's credentials could not be read from the kubeconfig. Check that its certificate, key and token entries are embedded and valid."
 
 func NewK8sContextFromInClusterConfig(contextName string, instanceID *core.Uuid, log logger.Handler) (*K8sContext, error) {
 	const (
