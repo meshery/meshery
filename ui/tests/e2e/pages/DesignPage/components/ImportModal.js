@@ -4,20 +4,35 @@ export class ImportModal {
   constructor(page) {
     this.page = page;
     this.modal = page.locator('[role="dialog"]').filter({ hasText: 'Import Design' });
-    this.designFileInput = page
-      .locator('#root_name, input[placeholder="Untitled Design"], input[name="name"]')
+    this.designFileInput = this.modal
+      .getByLabel(/design file name/i)
+      .or(
+        this.modal.locator('#root_name, input[placeholder="Untitled Design"], input[name="name"]'),
+      )
       .first();
-    this.urlInput = page.locator('#root_url, input[type="url"], input[name="url"]').first();
-    this.fileInput = page.locator('input[type="file"]').first();
-    this.importBtn = page.getByRole('button', { name: /^import/i });
+    this.urlInput = this.modal
+      .getByLabel(/^url/i)
+      .or(
+        this.modal.locator(
+          '#root_url, input[type="url"], input[name="url"], input[placeholder*="http"]',
+        ),
+      )
+      .first();
+    this.fileInput = this.modal.locator('input[type="file"]').first();
+    this.importBtn = this.modal
+      .getByRole('button', { name: /^import$/i })
+      .or(this.modal.getByText(/^import$/i))
+      .first();
   }
 
   async clickImportType(type) {
     const radioLabel = type === 'File' ? /File Upload/i : /URL Import/i;
-    const radio = this.page
+    const radio = this.modal
       .getByRole('radio', { name: radioLabel })
+      .or(this.modal.getByLabel(radioLabel))
+      .or(this.modal.getByText(radioLabel))
       .or(
-        this.page.locator(
+        this.modal.locator(
           `input[type="radio"][value="${type === 'File' ? 'File Upload' : 'URL Import'}"]`,
         ),
       );
