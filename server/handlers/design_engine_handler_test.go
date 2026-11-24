@@ -2,20 +2,26 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"sync"
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/planner"
 	"github.com/meshery/meshkit/logger"
+	events "github.com/meshery/meshkit/models/events"
 	meshkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/v1beta2/component"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -446,4 +452,85 @@ func TestDryRunComponent_PreservesComponentOnDelete(t *testing.T) {
 	if cmp.Configuration["spec"] == nil {
 		t.Errorf("original component configuration was mutated: %v", cmp.Configuration)
 	}
+}
+
+func TestPatternFileHandler_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/deploy", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	provider := &models.DefaultLocalProvider{}
+	h.PatternFileHandler(rec, req, nil, nil, provider)
+
+	require.Equal(t, http.StatusUnauthorized, rec.Code)
+	var body map[string]string
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &body))
+	assert.Equal(t, "user unauthorized", body["error"])
+}
+
+func TestPatternFileHandler_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/deploy", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	h.PatternFileHandler(rec, req, nil, user, nil)
+
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrNilProviderCode, decoded.Code)
+	assert.NotEmpty(t, decoded.Error)
+}
+
+func TestPatternFileHandler_MissingToken_ReturnsInternalServerError(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/deploy", strings.NewReader(`{}`))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &models.DefaultLocalProvider{}
+	provider.Initialize()
+
+	h.PatternFileHandler(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	assert.Equal(t, ErrRetrieveUserTokenCode, decoded.Code)
+}
+
+type mockDesignEngineEventProvider struct {
+	*models.DefaultLocalProvider
+	lastEvent *events.Event
+}
+
+func (m *mockDesignEngineEventProvider) PersistEvent(event events.Event, token string) (models.PersistedEvent, error) {
+	m.lastEvent = &event
+	return models.PersistedEvent{}, nil
+}
+
+func TestPatternFileHandler_NilSystemID_DoesNotPanic(t *testing.T) {
+	h := &Handler{
+		log:      newTestLogger(t),
+		SystemID: nil,
+	}
+	// Payload with invalid pattern file syntax to hit the parsing error & event creation path
+	payload := `{"pattern_file":"invalid: [yaml: content"}`
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/deploy", strings.NewReader(payload))
+	ctx := context.WithValue(req.Context(), models.TokenCtxKey, "test-token")
+	req = req.WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &mockDesignEngineEventProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+	}
+
+	require.NotPanics(t, func() {
+		h.PatternFileHandler(rec, req, nil, user, provider)
+	})
+	require.Equal(t, http.StatusInternalServerError, rec.Code)
+	require.NotNil(t, provider.lastEvent)
+	assert.Equal(t, uuid.Nil, provider.lastEvent.SystemID, "event SystemID should be uuid.Nil when h.SystemID is nil")
 }

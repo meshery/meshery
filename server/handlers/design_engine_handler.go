@@ -49,11 +49,28 @@ func (h *Handler) PatternFileHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
 	userID := user.ID
+	var systemID uuid.UUID
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
 	token, ok := r.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		tokenErr := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
-		h.log.Error(tokenErr)
+		if h.log != nil {
+			h.log.Error(tokenErr)
+		}
 		writeMeshkitError(rw, tokenErr, http.StatusInternalServerError)
 		return
 	}
@@ -63,13 +80,17 @@ func (h *Handler) PatternFileHandler(
 	// Read the PatternFile
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
 	if err := json.Unmarshal(body, &payload); err != nil {
-		h.log.Error(ErrRequestBody(err))
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(rw, ErrDecoding(err, "design engine request"), http.StatusBadRequest)
 		return
 	}
@@ -92,15 +113,17 @@ func (h *Handler) PatternFileHandler(
 	isDesignInAlpha2Format, err := patternutils.IsDesignInAlpha2Format(payload.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
-		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(patternErrorEventMetadata(r, payload.PatternID, "", "", err)).Build()
+		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(systemID).FromOwner(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(patternErrorEventMetadata(r, payload.PatternID, "", "", err)).Build()
 		h.persistAndPublish(provider, token, userID, event)
-		h.log.Error(err)
+		if h.log != nil {
+			h.log.Error(err)
+		}
 		writeMeshkitError(rw, err, http.StatusInternalServerError)
 		return
 	}
 
 	if isDesignInAlpha2Format {
-		eventBuilder := events.NewEvent().ActedUpon(patternID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("convert")
+		eventBuilder := events.NewEvent().ActedUpon(patternID).FromSystem(systemID).FromOwner(userID).WithCategory("pattern").WithAction("convert")
 
 		_, patternFileStr, err := h.convertV1alpha2ToV1beta3(&models.MesheryPattern{
 			ID:          &patternID,
@@ -147,6 +170,11 @@ func (h *Handler) PatternFileHandler(
 		description = fmt.Sprintf("Deployment completed for design '%s'", patternFile.Name)
 	}
 
+	var eventBroadcaster *models.Broadcast
+	if h.config != nil {
+		eventBroadcaster = h.config.EventBroadcaster
+	}
+
 	opts := &patterncore.ProcessPatternOptions{
 		Context:                r.Context(),
 		Provider:               provider,
@@ -160,12 +188,12 @@ func (h *Handler) PatternFileHandler(
 		UpgradeExistingRelease: upgradeExistingRelease,
 		SkipPrintLogs:          viper.GetBool("DEBUG"),
 		Registry:               h.registryManager,
-		EventBroadcaster:       h.config.EventBroadcaster,
+		EventBroadcaster:       eventBroadcaster,
 		Log:                    h.log,
 	}
 	response, err := _processPattern(opts)
 
-	eventBuilder := events.NewEvent().ActedUpon(patternID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
+	eventBuilder := events.NewEvent().ActedUpon(patternID).FromOwner(userID).FromSystem(systemID).WithCategory("pattern").WithAction(action)
 
 	if err != nil {
 		err := ErrPatternDeploy(err, patternFile.Name)
