@@ -1,0 +1,323 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "Podinfo",
+  "schemaVersion": "designs.meshery.io/v1beta3",
+  "version": "0.0.2",
+  "components": [
+    {
+      "id": "63dbf4c1-5d5f-4f5c-8642-6521b6d292df",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "podinfo",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-style": "dashed",
+        "border-width": 2,
+        "height": 80,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg",
+        "width": 80
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": {
+            "provider": "kubernetes-sample-apps"
+          },
+          "name": "podinfo"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Namespace",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "2d647c27-cd8e-47f1-acca-7da5d728a16f",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "podinfo",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": {
+            "provider": "kubernetes-sample-apps"
+          },
+          "name": "podinfo",
+          "namespace": "podinfo"
+        },
+        "spec": {
+          "minReadySeconds": 3,
+          "progressDeadlineSeconds": 60,
+          "revisionHistoryLimit": 5,
+          "selector": {
+            "matchLabels": {
+              "app": "podinfo"
+            }
+          },
+          "strategy": {
+            "rollingUpdate": {
+              "maxUnavailable": 0
+            },
+            "type": "RollingUpdate"
+          },
+          "template": {
+            "metadata": {
+              "annotations": {
+                "prometheus.io/port": "9797",
+                "prometheus.io/scrape": "true"
+              },
+              "labels": {
+                "app": "podinfo"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "command": [
+                    "./podinfo",
+                    "--port=9898",
+                    "--port-metrics=9797",
+                    "--grpc-port=9999",
+                    "--grpc-service-name=podinfo",
+                    "--level=info",
+                    "--random-delay=false",
+                    "--random-error=false"
+                  ],
+                  "env": [
+                    {
+                      "name": "PODINFO_UI_COLOR",
+                      "value": "#34577c"
+                    }
+                  ],
+                  "image": "ghcr.io/stefanprodan/podinfo:6.17.0",
+                  "imagePullPolicy": "IfNotPresent",
+                  "livenessProbe": {
+                    "exec": {
+                      "command": [
+                        "podcli",
+                        "check",
+                        "http",
+                        "localhost:9898/healthz"
+                      ]
+                    },
+                    "initialDelaySeconds": 5,
+                    "timeoutSeconds": 5
+                  },
+                  "name": "podinfod",
+                  "ports": [
+                    {
+                      "containerPort": 9898,
+                      "name": "http",
+                      "protocol": "TCP"
+                    },
+                    {
+                      "containerPort": 9797,
+                      "name": "http-metrics",
+                      "protocol": "TCP"
+                    },
+                    {
+                      "containerPort": 9999,
+                      "name": "grpc",
+                      "protocol": "TCP"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "exec": {
+                      "command": [
+                        "podcli",
+                        "check",
+                        "http",
+                        "localhost:9898/readyz"
+                      ]
+                    },
+                    "initialDelaySeconds": 5,
+                    "timeoutSeconds": 5
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "2000m",
+                      "memory": "512Mi"
+                    },
+                    "requests": {
+                      "cpu": "100m",
+                      "memory": "64Mi"
+                    }
+                  },
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/data",
+                      "name": "data"
+                    }
+                  ]
+                }
+              ],
+              "volumes": [
+                {
+                  "emptyDir": {},
+                  "name": "data"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "e6ba88a7-e727-4ef3-a1db-d145f43856ba",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "podinfo",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": {
+            "provider": "kubernetes-sample-apps"
+          },
+          "name": "podinfo",
+          "namespace": "podinfo"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "port": 9898,
+              "protocol": "TCP",
+              "targetPort": "http"
+            },
+            {
+              "name": "grpc",
+              "port": 9999,
+              "targetPort": "grpc"
+            }
+          ],
+          "selector": {
+            "app": "podinfo"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "relationships": null
+}

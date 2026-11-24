@@ -1,0 +1,6 @@
+# DCO bot (probot/dco) configuration.
+# Individual remediation commits are accepted (Lee, 2026-11-23): a pushed commit that lacks its
+# Signed-off-by can be fixed by a later commit from the same author that adds it, instead of
+# rewriting the branch. See "Hooks & Scripts" in AGENTS.md.
+allowRemediationCommits:
+  individual: true
