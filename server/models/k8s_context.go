@@ -377,7 +377,7 @@ func DiscoverKubeconfigContexts(ctx context.Context, _ Provider, _ string, _ *Br
 			if log != nil {
 				log.Warn(ErrGenerateK8sHandler(err, kc.Name))
 			}
-			metadata["error"] = ErrUnreachableKubeAPI(stderrors.New(reason), kc.Server)
+			metadata["error"] = ErrUnreachableKubeAPI(stderrors.New(strings.TrimRight(reason, ".")), kc.Server)
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
 			eventMetadata[name] = metadata
 
