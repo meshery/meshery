@@ -44,7 +44,9 @@ mesheryctl filter [subcommands]
 		if len(args) == 0 {
 			return nil // Preserve help display when no subcommand or count is supplied.
 		}
-		return ErrInvalidFilterCommand(args[0], "")
+		err := ErrInvalidFilterCommand(args[0], "")
+		utils.Log.Error(err)
+		return err
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &filterFlagsProvided)

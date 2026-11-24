@@ -49,7 +49,9 @@ mesheryctl connection delete [connection_id]
 		if len(args) == 0 {
 			return utils.ErrInvalidArgument(errors.New("no subcommand provided for connection"))
 		}
-		return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Use 'mesheryctl connection --help' to display usage", args[0]))
+		err = utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Use 'mesheryctl connection --help' to display usage", args[0]))
+		utils.Log.Error(err)
+		return err
 	},
 	RunE: func(_ *cobra.Command, _ []string) error {
 		connectionsResponse, err := api.Fetch[connection.ConnectionPage](connectionApiPath)
