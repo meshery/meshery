@@ -188,15 +188,18 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 
 	// The resources are deployed in correct order and dependsOn is respected but sometimes it has issues, for eg: CR depends on CRD, hence when deployment request to k8s to deploy CRD succeeds, we continue with the deployment of dependent CR.
 	// The 200 response from k8s doesn’t guarantee that resource is available to use, it is just an indication that req is received and being worked on, therefore in ceratin cases, deployment failures are experienced and hence we need a mechanism to ensure that the dependent resource is actually deployed and ready to use before conitnuing.
+	// Bounded concurrency & jitter: Apply optional jitter first to desynchronize
+	// bursts, then acquire a token from the semaphore right before calling fn so
+	// that slots are held only for actual deployment work.
 	ok := func() bool {
-		if v.sem != nil {
-			v.sem <- struct{}{}
-			defer func() { <-v.sem }()
-		}
-
 		if v.maxJitter > 0 {
 			jitter := time.Duration(rand.Int63n(int64(v.maxJitter)))
 			time.Sleep(jitter)
+		}
+
+		if v.sem != nil {
+			v.sem <- struct{}{}
+			defer func() { <-v.sem }()
 		}
 
 		return fn(v.Name, v.Data.Data)
