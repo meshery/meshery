@@ -19,10 +19,12 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 
 	"github.com/gofrs/uuid"
+	googleuuid "github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/database"
@@ -429,10 +431,74 @@ func TestGetMeshSyncResources_OrderBy(t *testing.T) {
 	}
 }
 
+// The MeshSync table offers Cluster ID and Pattern resources as sortable
+// columns, so both must reach the ORDER BY. cluster_id also exists on the joined
+// metadata table and must not be ambiguous there.
+func TestGetMeshSyncResources_OrderByClusterAndPatternResource(t *testing.T) {
+	h, provider, db := newMeshSyncTestFixture(t)
+
+	// Seeded out of order, so no case passes on insertion order. The pattern
+	// resources run opposite to the clusters, so sorting by one is not sorting
+	// by the other, and the metadata's cluster_id is constant.
+	for _, seed := range []struct{ cluster, patternResource string }{
+		{"cluster-2", "00000000-0000-4000-8000-000000000002"},
+		{"cluster-1", "00000000-0000-4000-8000-000000000003"},
+		{"cluster-3", "00000000-0000-4000-8000-000000000001"},
+	} {
+		id := uuid.Must(uuid.NewV4()).String()
+		meta := model.KubernetesResourceObjectMeta{ID: id, Name: seed.cluster, UID: id, ClusterID: "same"}
+		if err := db.Create(&meta).Error; err != nil {
+			t.Fatalf("seed metadata: %v", err)
+		}
+		patternResource := googleuuid.MustParse(seed.patternResource)
+		res := model.KubernetesResource{
+			ID:                id,
+			ClusterID:         seed.cluster,
+			PatternResource:   &patternResource,
+			ComponentMetadata: map[string]interface{}{"name": seed.cluster},
+		}
+		if err := db.Table("kubernetes_resources").Create(&res).Error; err != nil {
+			t.Fatalf("seed resource: %v", err)
+		}
+	}
+
+	for _, tc := range []struct{ order, want string }{
+		{"cluster_id asc", "cluster-1,cluster-2,cluster-3"},
+		{"cluster_id desc", "cluster-3,cluster-2,cluster-1"},
+		{"pattern_resource asc", "cluster-3,cluster-2,cluster-1"},
+		{"pattern_resource desc", "cluster-1,cluster-2,cluster-3"},
+	} {
+		t.Run(tc.order, func(t *testing.T) {
+			q := url.Values{
+				"clusterIds": {`["cluster-1","cluster-2","cluster-3"]`},
+				"order":      {tc.order},
+			}
+			req := httptest.NewRequest(http.MethodGet, "/api/system/meshsync/resources?"+q.Encode(), nil)
+			rec := httptest.NewRecorder()
+			h.GetMeshSyncResources(rec, req, nil, nil, provider)
+			if rec.Code != http.StatusOK {
+				t.Fatalf("status = %d, want 200 (body=%q)", rec.Code, rec.Body.String())
+			}
+
+			var resp models.MeshSyncResourcesAPIResponse
+			if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
+				t.Fatalf("unmarshal response: %v", err)
+			}
+			clusters := make([]string, 0, len(resp.Resources))
+			for _, r := range resp.Resources {
+				clusters = append(clusters, r.ClusterID)
+			}
+			if got := strings.Join(clusters, ","); got != tc.want {
+				t.Errorf("clusters = %s, want %s", got, tc.want)
+			}
+		})
+	}
+}
+
 // TestMeshSyncResources_OrderInputSanitization verifies that allowed sorting columns
 // are safely translated to snake_case while invalid columns and injection attempts are rejected.
 func TestMeshSyncResources_OrderInputSanitization(t *testing.T) {
-	validColumns := []string{"creation_timestamp", "name", "kind", "model", "api_version", "namespace"}
+	validColumns := []string{"creation_timestamp", "name", "kind", "model", "api_version", "namespace", "cluster_id", "pattern_resource"}
 
 	tests := []struct {
 		input    string

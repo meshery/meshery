@@ -129,7 +129,7 @@ export default function MeshSyncTable(props) {
       ['model', 'm'],
       ['metadata.namespace', 'xs'],
       ['cluster_id', 'na'],
-      ['pattern_resources', 'na'],
+      ['pattern_resource', 'na'],
       ['metadata.creationTimestamp', 'l'],
       ['status', 'xs'],
       ['metadata', 'na'],
@@ -270,7 +270,7 @@ export default function MeshSyncTable(props) {
       },
     },
     {
-      name: 'pattern_resources',
+      name: 'pattern_resource',
       label: 'Pattern resources',
       options: {
         sort: true,

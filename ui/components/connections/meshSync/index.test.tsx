@@ -142,7 +142,7 @@ describe('MeshSyncTable', () => {
             kind: 'Pod',
             model: 'core',
             cluster_id: 'cluster-a',
-            pattern_resources: '',
+            pattern_resource: 'pattern-resource-1',
             status: 'discovered',
           },
         ],
@@ -176,6 +176,27 @@ describe('MeshSyncTable', () => {
       expect.objectContaining({
         clusterIds: ['cluster-a', 'cluster-b'],
       }),
+    );
+  });
+
+  it('reads and sorts the pattern resources column by the key the API sends', () => {
+    render(<MeshSyncTable />);
+
+    const { columns, data, options } = dataTableProps;
+    const index = columns.findIndex(({ label }) => label === 'Pattern resources');
+    expect(data[0][columns[index].name]).toBe('pattern-resource-1');
+    // The visibility map is keyed by the same names.
+    expect(dataTableProps.columnVisibility).toHaveProperty(columns[index].name);
+
+    act(() => {
+      options.onTableChange('sort', {
+        activeColumn: index,
+        announceText: 'Table now sorted by Pattern resources : descending',
+      });
+    });
+
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ order: 'pattern_resource desc' }),
     );
   });
 
