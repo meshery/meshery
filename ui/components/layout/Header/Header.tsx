@@ -470,22 +470,24 @@ const Header = ({
                   )}
                 </ErrorBoundary>
                 <UserInfoContainer>
-                  <UserSpan
-                    sx={{
-                      display: {
-                        xs: 'none',
-                        sm: 'inline-flex',
-                      },
-                    }}
-                    style={{ position: 'relative' }}
-                  >
-                    <K8sContextMenu
-                      contexts={contexts}
-                      activeContexts={activeContexts}
-                      setActiveContexts={setActiveContexts}
-                      searchContexts={searchContexts}
-                    />
-                  </UserSpan>
+                  <CustomTooltip title={contexts?.totalCount > 1 ? 'Clusters' : 'Cluster'}>
+                    <UserSpan
+                      sx={{
+                        display: {
+                          xs: 'none',
+                          sm: 'inline-flex',
+                        },
+                      }}
+                      style={{ position: 'relative' }}
+                    >
+                      <K8sContextMenu
+                        contexts={contexts}
+                        activeContexts={activeContexts}
+                        setActiveContexts={setActiveContexts}
+                        searchContexts={searchContexts}
+                      />
+                    </UserSpan>
+                  </CustomTooltip>
                   <CustomTooltip title="Notifications">
                     <div data-testid="notification-button">
                       <NotificationDrawerButton />

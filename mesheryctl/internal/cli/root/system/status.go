@@ -116,6 +116,9 @@ mesheryctl system status --verbose
 			return nil
 		}
 
+		configuredEndpoint := currCtx.GetEndpoint()
+		displayEndpoint := configuredEndpoint
+
 		switch currPlatform {
 		case platformDocker:
 			// List the running Meshery containers using compose library
@@ -143,9 +146,8 @@ mesheryctl system status --verbose
 			if err != nil {
 				return ErrHealthCheckFailed(err)
 			}
-			// If k8s is available print the status of pods in the MesheryNamespace
-			if err = hc.Run(); err != nil {
-				return nil
+			if err = hc.Run(); err != nil && systemStatusFlags.Verbose {
+				utils.Log.Warnf("Health check reported an issue: %v", err)
 			}
 
 		case platformKubernetes:
@@ -207,25 +209,23 @@ mesheryctl system status --verbose
 			// Print the data to a table for readability
 			utils.PrintToTable(columnNames, data, nil)
 
-			configuredEndpoint := currCtx.GetEndpoint()
-			displayEndpoint := configuredEndpoint
-
-			if currPlatform == "kubernetes" {
-				endpoint, err := utils.GetMesheryEndpoint(cmd.Context(), client)
-				if err != nil && systemStatusFlags.Verbose {
-					utils.Log.Warnf("Could not discover Meshery service endpoint: %v", err)
-				}
-				if err == nil && endpoint.External != nil && endpoint.External.Address != "" && endpoint.External.Address != "localhost" {
-					displayEndpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port)
-				}
+			// Endpoint discovery needs the Kubernetes client, so it stays
+			// Kubernetes-only; Docker deployments show the configured endpoint.
+			endpoint, err := utils.GetMesheryEndpoint(cmd.Context(), client)
+			if err != nil && systemStatusFlags.Verbose {
+				utils.Log.Warnf("Could not discover Meshery service endpoint: %v", err)
 			}
-
-			utils.Log.Info(fmt.Sprintf("\nMeshery endpoint is %s", displayEndpoint))
-			if displayEndpoint != configuredEndpoint {
-				utils.Log.Info(fmt.Sprintf("Note: Your configured endpoint (%s) differs from the discovered endpoint.", configuredEndpoint))
-				utils.Log.Info("Run 'mesheryctl system dashboard' to update your configuration.")
+			if err == nil && endpoint.External != nil && endpoint.External.Address != "" && endpoint.External.Address != "localhost" {
+				displayEndpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port)
 			}
 		}
+
+		utils.Log.Info(fmt.Sprintf("\nMeshery endpoint is %s", displayEndpoint))
+		if displayEndpoint != configuredEndpoint {
+			utils.Log.Info(fmt.Sprintf("Note: Your configured endpoint (%s) differs from the discovered endpoint.", configuredEndpoint))
+			utils.Log.Info("Run 'mesheryctl system dashboard' to update your configuration.")
+		}
+
 		return nil
 	},
 }
