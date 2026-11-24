@@ -24,7 +24,7 @@ export const userApi = api
     endpoints: (builder) => ({
       getLoadTestPrefs: builder.query({
         query: (selectedK8sContexts) => ({
-          url: ctxUrl('/api/user/prefs', selectedK8sContexts),
+          url: ctxUrl('/user/prefs', selectedK8sContexts),
           method: 'GET',
           credentials: 'include',
         }),
@@ -35,7 +35,7 @@ export const userApi = api
 
       updateLoadTestPrefs: builder.mutation({
         query: (queryArg) => ({
-          url: ctxUrl('/api/user/prefs', queryArg.selectedK8sContexts),
+          url: ctxUrl('/user/prefs', queryArg.selectedK8sContexts),
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json;charset=UTF-8' },
