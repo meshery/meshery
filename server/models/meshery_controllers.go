@@ -87,9 +87,52 @@ type MesheryControllersHelper struct {
 	meshsyncConnectedEventEmitted atomic.Bool
 
 	// brokerPortForward is the self-healing port-forward to the NATS pod used when
-	// Meshery runs out-of-cluster and the broker is only reachable on a ClusterIP.
-	// nil when running in-cluster or when managed forwarding is disabled.
+	// the connection's cluster is not the one Meshery runs in, so a ClusterIP-only
+	// broker is not directly reachable. nil when the target is Meshery's own
+	// cluster or when managed forwarding is disabled.
 	brokerPortForward *mesherykube.PortForwarder
+
+	// hostCluster identifies the cluster Meshery Server runs in, if any, so the
+	// managed port-forward is skipped only for a connection to that cluster.
+	// Never nil once constructed; injected so tests need no cluster.
+	hostCluster *hostCluster
+
+	// brokerTarget is the endpoint and token the attached operator-mode data
+	// handler's broker connection was built from, and owns the supervisor that
+	// rebuilds the connection when the broker is recreated under it. nil when
+	// no such handler is attached. Guarded by meshsyncMutex.
+	brokerTarget *brokerTarget
+
+	// brokerRebuildCancel cancels the replacement wait of an in-flight broker
+	// rebuild, if one is running, and brokerRebuildStale is the old handler
+	// that wait is keeping alive. Both are guarded by meshsyncMutex:
+	// recheckBroker sets them before it waits for the replacement to connect
+	// and clears them when the wait ends, and RemoveMeshSyncDataHandler
+	// closes the channel and stops the old handler, so removal does not leave
+	// it running until the wait expires. nil when no rebuild is waiting.
+	brokerRebuildCancel chan struct{}
+	brokerRebuildStale  *MeshsyncDataHandler
+
+	// newBrokerConnection opens the NATS connection to the broker. It is
+	// nats.New; injected so tests need no NATS server. Never nil once
+	// constructed.
+	newBrokerConnection func(nats.Options) (broker.Handler, error)
+
+	// brokerReachable reports whether a broker endpoint answers. It is
+	// brokerAnswers; injected so tests need no listener. Never nil once
+	// constructed.
+	brokerReachable func(endpoint string) bool
+
+	// brokerRecheckInterval is how often the supervisor looks at a broker
+	// connection, and brokerStaleAfter how long it must have been down before
+	// the broker's endpoint and token are re-resolved. See superviseBroker.
+	brokerRecheckInterval time.Duration
+	brokerStaleAfter      time.Duration
+
+	// brokerConnectWait bounds how long a rebuild waits for its replacement
+	// handler to report connected before giving up on it. See
+	// defaultBrokerConnectWait; zero means the default.
+	brokerConnectWait time.Duration
 
 	log          logger.Handler
 	oprDepConfig controllers.OperatorDeploymentConfig
@@ -241,6 +284,11 @@ func NewMesheryControllersHelper(
 		ctxMeshsyncDataHandler: nil,
 		dbHandler:              dbHandler,
 		chartVersions:          mesheryutils.PublishedChartVersions,
+		hostCluster:            defaultHostCluster,
+		newBrokerConnection:    nats.New,
+		brokerReachable:        brokerAnswers,
+		brokerRecheckInterval:  defaultBrokerRecheckInterval,
+		brokerStaleAfter:       defaultBrokerStaleAfter,
 		meshsyncDeploymentMode: connections.MeshsyncDeploymentModeOperator,
 		eventBroadcaster:       eventBroadcaster,
 		provider:               provider,
@@ -273,8 +321,8 @@ func (mch *MesheryControllersHelper) GetMeshsyncDeploymentMode() connections.Mes
 }
 
 // GetBrokerPortForwardAddr returns the local address of the managed broker
-// port-forward when one is active (out-of-cluster Meshery), else "". Used to
-// surface how Meshery reaches the broker.
+// port-forward when one is active (the connection's cluster is not the one
+// Meshery runs in), else "". Used to surface how Meshery reaches the broker.
 func (mch *MesheryControllersHelper) GetBrokerPortForwardAddr() string {
 	if mch.brokerPortForward == nil {
 		return ""
@@ -328,18 +376,23 @@ func (mch *MesheryControllersHelper) ResolveControllersConfigForConnection(metad
 func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context, k8scontext K8sContext, userID, mesheryInstanceID core.Uuid, provider Provider) *MesheryControllersHelper {
 	mch.meshsyncMutex.Lock()
 	defer mch.meshsyncMutex.Unlock()
+	mch.addMeshsyncDataHandlersLocked(ctx, k8scontext, userID, mesheryInstanceID, provider)
+	return mch
+}
 
-	// only checking those contexts whose MesheryControllers are active
-	// go func(mch *MesheryControllersHelper) {
-
+// addMeshsyncDataHandlersLocked is AddMeshsyncDataHandlers for a caller that
+// already holds meshsyncMutex - the broker supervisor, when it rebuilds a
+// connection in place.
+func (mch *MesheryControllersHelper) addMeshsyncDataHandlersLocked(ctx context.Context, k8scontext K8sContext, userID, mesheryInstanceID core.Uuid, provider Provider) {
 	ctxID := k8scontext.ID
 	if mch.ctxMeshsyncDataHandler == nil {
 		var brokerHandler broker.Handler
+		var target *brokerTarget
 		var stopFunc func()
 
 		switch mch.meshsyncDeploymentMode {
 		case connections.MeshsyncDeploymentModeOperator:
-			brokerHandler = mch.meshsyncDataHandlersNatsBroker(k8scontext, userID)
+			brokerHandler, target = mch.meshsyncDataHandlersNatsBroker(k8scontext, userID)
 		case connections.MeshsyncDeploymentModeEmbedded:
 			brokerHandler = channelBroker.NewChannelBrokerHandler()
 			// use a standalone context here context.Background(), as
@@ -354,7 +407,7 @@ func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context
 					"connectionID":           k8scontext.ConnectionID,
 					"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
 				}, userID)
-				return mch
+				return
 			}
 			stopFunc = stop
 		default:
@@ -368,7 +421,7 @@ func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context
 				"connectionID":           k8scontext.ConnectionID,
 				"meshsyncDeploymentMode": string(mch.meshsyncDeploymentMode),
 			}, userID)
-			return mch
+			return
 		}
 
 		if brokerHandler == nil {
@@ -378,7 +431,7 @@ func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context
 				"k8sContextName": k8scontext.Name,
 				"connectionID":   k8scontext.ConnectionID,
 			}, userID)
-			return mch
+			return
 		}
 		if mch.dbHandler == nil {
 			mch.log.Warnf("MesheryControllersHelper::AddMeshsyncDataHandlers dbHandler is nil")
@@ -387,12 +440,22 @@ func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context
 				"k8sContextName": k8scontext.Name,
 				"connectionID":   k8scontext.ConnectionID,
 			}, userID)
-			return mch
+			// Nothing will own this connection, so close it rather than leave it
+			// reconnecting in the background forever.
+			brokerHandler.CloseConnection()
+			if stopFunc != nil {
+				stopFunc()
+			}
+			return
 		}
 		token, _ := ctx.Value(TokenCtxKey).(string)
 		msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token, stopFunc)
 		err := msDataHandler.Run()
 		if err != nil {
+			// The handler is discarded, so stop it: its broker connection
+			// reconnects forever otherwise, and every later connect cycle used to
+			// leak another one.
+			msDataHandler.Stop()
 			mch.log.Warn(err)
 			mch.log.Info(fmt.Sprintf("Unable to connect MeshSync for Kubernetes context (%s) due to: %s", ctxID, err.Error()))
 			mch.emitErrorEvent("Unable to connect MeshSync", err, map[string]any{
@@ -400,21 +463,39 @@ func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context
 				"k8sContextName": k8scontext.Name,
 				"connectionID":   k8scontext.ConnectionID,
 			}, userID)
-			return mch
+			return
 		}
 		mch.ctxMeshsyncDataHandler = msDataHandler
 		mch.log.Info(fmt.Sprintf("MeshSync connected for Kubernetes context (%s)", ctxID))
+		if target != nil {
+			// Rebuild with the same inputs. Only the context's values are kept:
+			// the caller's ctx may be a request that ends long before the broker
+			// is recreated.
+			detached := context.WithoutCancel(ctx)
+			mch.superviseBroker(target, k8scontext, userID, func() {
+				mch.addMeshsyncDataHandlersLocked(detached, k8scontext, userID, mesheryInstanceID, provider)
+			})
+		}
 	}
-
-	// }(mch)
 
 	// Emit the success event only when the data path is actually up. With the
 	// self-healing broker connection, the handler may be attached but still
 	// connecting in the background; in that case meshsyncDataHandlersNatsBroker has
 	// already surfaced the "unreachable, retrying" warning + remediation, and a
 	// later AddMeshsyncDataHandlers call (once IsConnected) emits the event once.
-	// Deduplicate so repeated reconcile calls do not spam the same snackbar.
-	// CompareAndSwap so concurrent AddMeshsyncDataHandlers callers emit once.
+	mch.emitMeshsyncConnectedEventLocked(k8scontext, userID)
+}
+
+// emitMeshsyncConnectedEventLocked publishes the "MeshSync connected" event
+// for the attached handler, once per handler session. The caller holds
+// meshsyncMutex. It emits only when the data path is actually up (see the
+// comment at the call site in addMeshsyncDataHandlersLocked). Deduplicate so
+// repeated reconcile calls do not spam the same snackbar. CompareAndSwap so
+// concurrent AddMeshsyncDataHandlers callers emit once. The broker supervisor
+// calls it too, after a rebuild resets the flag, so a replacement handler
+// that is already connected announces itself instead of waiting for a later
+// reconcile call.
+func (mch *MesheryControllersHelper) emitMeshsyncConnectedEventLocked(k8scontext K8sContext, userID core.Uuid) {
 	if mch.ctxMeshsyncDataHandler != nil &&
 		mch.ctxMeshsyncDataHandler.IsConnected() &&
 		mch.meshsyncConnectedEventEmitted.CompareAndSwap(false, true) {
@@ -434,14 +515,12 @@ func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context
 			userID,
 		)
 	}
-
-	return mch
 }
 
 // BrokerUnreachableLongDescription explains why Meshery cannot reach the broker.
 // It is shared by the "broker unreachable" event and the controller-diagnostics
 // API so both surface identical wording.
-const BrokerUnreachableLongDescription = "Meshery could not obtain a reachable endpoint for the Meshery Broker (NATS) in this cluster, so it cannot receive MeshSync data. This typically happens when the broker is only exposed on a cluster-internal (ClusterIP) address while Meshery runs outside the cluster."
+const BrokerUnreachableLongDescription = "Meshery could not obtain a reachable endpoint for the Meshery Broker (NATS) in this cluster, so it cannot receive MeshSync data. This typically happens when the broker is only exposed on a cluster-internal (ClusterIP) address while Meshery runs outside that cluster - on a host, in Docker, or in a different Kubernetes cluster."
 
 // BrokerUnreachableRemediation is surfaced to the user (as an event's
 // SuggestedRemediation and via the controller-diagnostics API) when Meshery
@@ -472,10 +551,15 @@ var BrokerTokenUnavailableRemediation = []string{
 	"Confirm the broker auth secret exists: kubectl get secret meshery-nats-auth -n meshery",
 }
 
+// meshsyncDataHandlersNatsBroker opens the operator-mode broker connection for
+// k8scontext. Alongside the handler it returns the endpoint and token the
+// connection was built from, which the supervisor later compares against the
+// cluster to notice a recreated broker. Both are nil when no connection could
+// be configured; the reason has been logged and emitted.
 func (mch *MesheryControllersHelper) meshsyncDataHandlersNatsBroker(
 	k8scontext K8sContext,
 	userID core.Uuid,
-) broker.Handler {
+) (broker.Handler, *brokerTarget) {
 	ctxID := k8scontext.ID
 	controllerHandlers := mch.ctxControllerHandlers
 
@@ -493,16 +577,18 @@ func (mch *MesheryControllersHelper) meshsyncDataHandlersNatsBroker(
 			"k8sContextName": k8scontext.Name,
 			"connectionID":   k8scontext.ConnectionID,
 		}, userID)
-		return nil
+		return nil, nil
 	}
 
-	// Out-of-cluster Meshery can't reach a ClusterIP-only broker directly. Start a
-	// self-healing managed port-forward to the NATS pod first — it selects the pod
-	// by label, so it does not depend on the broker having published an endpoint
-	// yet and can come up (and keep retrying) even when GetPublicEndpoint is still
-	// empty right after deploy. In-cluster Meshery reaches the ClusterIP directly,
-	// so this is a no-op there.
-	forwardAddr := mch.ensureBrokerPortForward(brokerController)
+	// Meshery outside the connection's cluster can't reach a ClusterIP-only
+	// broker directly - whether it runs on a host, in Docker, or in a Pod of a
+	// different cluster. Start a self-healing managed port-forward to the NATS pod
+	// first - it selects the pod by label, so it does not depend on the broker
+	// having published an endpoint yet and can come up (and keep retrying) even
+	// when GetPublicEndpoint is still empty right after deploy. Only Meshery
+	// running in the connection's own cluster reaches the ClusterIP directly, so
+	// this is a no-op there.
+	forwardAddr := mch.ensureBrokerPortForward(k8scontext, brokerController)
 
 	// brokerStatus := brokerController.GetStatus()
 	// do something if broker is being deployed , maybe try again after sometime
@@ -527,7 +613,7 @@ func (mch *MesheryControllersHelper) meshsyncDataHandlersNatsBroker(
 			"LongDescription":      BrokerUnreachableLongDescription,
 			"SuggestedRemediation": BrokerUnreachableRemediation,
 		}, userID)
-		return nil
+		return nil, nil
 	}
 	// The operator (>= 1.0.2) provisions NATS with token auth: without the token
 	// the connection is rejected with an authorization violation even when the
@@ -543,14 +629,9 @@ func (mch *MesheryControllersHelper) meshsyncDataHandlersNatsBroker(
 	// retries, by which time the secret exists and we connect cleanly. We no longer
 	// support tokenless brokers, so an empty token is always "not ready yet", never
 	// a legitimately unauthenticated broker.
-	var brokerToken string
-	tokenProvider, ok := brokerController.(interface{ GetToken() (string, error) })
-	if ok {
-		token, terr := tokenProvider.GetToken()
-		if terr != nil {
-			mch.log.Warn(terr)
-		}
-		brokerToken = token
+	brokerToken, terr := brokerAuthToken(brokerController)
+	if terr != nil {
+		mch.log.Warn(terr)
 	}
 	if brokerToken == "" {
 		mch.log.Info(
@@ -563,7 +644,7 @@ func (mch *MesheryControllersHelper) meshsyncDataHandlersNatsBroker(
 			"LongDescription":      BrokerTokenUnavailableLongDescription,
 			"SuggestedRemediation": BrokerTokenUnavailableRemediation,
 		}, userID)
-		return nil
+		return nil, nil
 	}
 
 	// Self-healing connection: hand NATS the (managed forward, if any) plus the
@@ -580,7 +661,7 @@ func (mch *MesheryControllersHelper) meshsyncDataHandlersNatsBroker(
 	if brokerEndpoint != "" {
 		urls = append(urls, brokerConnectURLs(brokerEndpoint)...)
 	}
-	brokerHandler, err := nats.New(nats.Options{
+	brokerHandler, err := mch.connectBroker(nats.Options{
 		URLS:                 urls,
 		ConnectionName:       MesheryServerBrokerConnection,
 		Token:                brokerToken,
@@ -601,7 +682,7 @@ func (mch *MesheryControllersHelper) meshsyncDataHandlersNatsBroker(
 			"LongDescription":      BrokerUnreachableLongDescription,
 			"SuggestedRemediation": BrokerUnreachableRemediation,
 		}, userID)
-		return nil
+		return nil, nil
 	}
 
 	if brokerHandler.IsConnected() {
@@ -621,7 +702,25 @@ func (mch *MesheryControllersHelper) meshsyncDataHandlersNatsBroker(
 			"SuggestedRemediation": BrokerUnreachableRemediation,
 		}, userID)
 	}
-	return brokerHandler
+	return brokerHandler, newBrokerTarget(brokerController, brokerEndpoint, brokerToken)
+}
+
+// connectBroker opens a NATS connection through newBrokerConnection.
+func (mch *MesheryControllersHelper) connectBroker(opts nats.Options) (broker.Handler, error) {
+	if mch.newBrokerConnection == nil {
+		return nats.New(opts)
+	}
+	return mch.newBrokerConnection(opts)
+}
+
+// brokerAuthToken reads the NATS token the operator provisioned for the broker
+// (secret meshery-nats-auth). "" means not provisioned yet.
+func brokerAuthToken(brokerController controllers.IMesheryController) (string, error) {
+	tokenProvider, ok := brokerController.(interface{ GetToken() (string, error) })
+	if !ok {
+		return "", nil
+	}
+	return tokenProvider.GetToken()
 }
 
 // brokerConnectURLs returns the NATS server pool for the resolved broker
@@ -655,19 +754,25 @@ func managedBrokerPortForwardEnabled() bool {
 	return !strings.EqualFold(os.Getenv("MESHERY_MANAGED_BROKER_PORTFORWARD"), "false")
 }
 
-// runningInCluster reports whether Meshery itself runs inside a Kubernetes
-// cluster, where the broker's ClusterIP is directly reachable and no port-forward
-// is needed.
-func runningInCluster() bool {
-	return os.Getenv("KUBERNETES_SERVICE_HOST") != ""
+// TargetsHostCluster reports whether k8sctx reaches the Kubernetes cluster
+// Meshery Server itself runs in - the only cluster whose ClusterIP services it
+// can reach directly. Running in *a* cluster is not enough: a Meshery Server in
+// one cluster routinely manages others. See hostCluster.hosts for how identity
+// is decided and why an undecidable case counts as a different cluster.
+func (mch *MesheryControllersHelper) TargetsHostCluster(k8sctx K8sContext) bool {
+	h := mch.hostCluster
+	if h == nil {
+		h = defaultHostCluster
+	}
+	return h.hosts(k8sctx)
 }
 
 // ensureBrokerPortForward starts (once) a self-healing managed port-forward to the
-// broker's NATS pod when Meshery runs out-of-cluster, and returns its stable local
-// address (or "" when not applicable). The forwarder is stored on the helper and
-// torn down in RemoveMeshSyncDataHandler.
-func (mch *MesheryControllersHelper) ensureBrokerPortForward(broker controllers.IMesheryController) string {
-	if !managedBrokerPortForwardEnabled() || runningInCluster() || broker == nil {
+// broker's NATS pod unless k8scontext is the cluster Meshery runs in, and returns
+// its stable local address (or "" when not applicable). The forwarder is stored
+// on the helper and torn down in RemoveMeshSyncDataHandler.
+func (mch *MesheryControllersHelper) ensureBrokerPortForward(k8scontext K8sContext, broker controllers.IMesheryController) string {
+	if !managedBrokerPortForwardEnabled() || broker == nil || mch.TargetsHostCluster(k8scontext) {
 		return ""
 	}
 	if mch.brokerPortForward != nil {
@@ -752,6 +857,20 @@ func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Conte
 	mch.meshsyncMutex.Lock()
 	defer mch.meshsyncMutex.Unlock()
 
+	mch.stopBrokerSupervisorLocked()
+	// A rebuild may be waiting for its replacement to connect while its old
+	// handler is still alive: cancel the wait and stop the old handler here,
+	// so it cannot persist updates after removal returns. The wait itself
+	// ends at once on the cancelled channel, and the replacement is stopped
+	// below as the attached handler.
+	if mch.brokerRebuildCancel != nil {
+		close(mch.brokerRebuildCancel)
+		mch.brokerRebuildCancel = nil
+	}
+	if mch.brokerRebuildStale != nil {
+		mch.brokerRebuildStale.Stop()
+		mch.brokerRebuildStale = nil
+	}
 	if mch.ctxMeshsyncDataHandler != nil {
 		mch.log.Infof("MesheryControllersHelper::RemoveMeshSyncDataHandler for contextID = %s", contextID)
 		mch.ctxMeshsyncDataHandler.Stop()
@@ -773,7 +892,7 @@ func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
 	if mch.ctxMeshsyncDataHandler != nil {
 		return mch.ctxMeshsyncDataHandler.Resync()
 	}
-	return nil
+	return fmt.Errorf("MeshSync data handler is not initialized")
 }
 
 // AddCtxControllerHandlers attaches a MesheryController for each context if
@@ -1025,8 +1144,11 @@ func (mch *MesheryControllersHelper) ReconcileOperatorChartVersion(k8sctx K8sCon
 	}
 	// Deploy(false) is a no-op against an operator this handler undeployed and a
 	// Helm upgrade against one that is installed, so an operator the user turned
-	// off is not resurrected by a chart-version change.
-	if deployErr := operatorHandler.Deploy(false); deployErr != nil {
+	// off is not resurrected by a chart-version change. It is serialized with
+	// every other Helm action against this cluster.
+	var deployErr error
+	ot.withOperatorClusterLock(k8sctx, func() { deployErr = operatorHandler.Deploy(false) })
+	if deployErr != nil {
 		mch.attachedOperatorChartVersion = previousChartVersion
 		mch.setOperatorError(deployErr)
 		return desired, false, ErrReconcileOperatorChartVersion(deployErr)
@@ -1047,6 +1169,10 @@ func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracke
 		return mch
 	}
 
+	if ot == nil {
+		return mch
+	}
+
 	if ot.IsUndeployed(mch.contextID) {
 		// this code is probably never reached as mch.contextID is never set
 		mch.ctxOperatorStatus = controllers.Undeployed
@@ -1063,16 +1189,25 @@ func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracke
 	return mch
 }
 
+// OperatorTracker is the server-wide record of Meshery Operator lifecycle. One
+// instance is shared by every connection's state machine, which is what lets it
+// hold the cluster-scoped state (see operator_cluster_lifecycle.go): the
+// per-cluster Helm lock and the set of connections using each cluster's
+// operator.
 type OperatorTracker struct {
-	ctxIDtoDeploymentStatus map[string]bool
+	// mx guards ctxIDtoDeploymentStatus and every operatorCluster's consumers.
+	// It is written from GraphQL resolver goroutines and read from connection
+	// FSM goroutines, so no access may bypass it.
 	mx                      sync.Mutex
+	ctxIDtoDeploymentStatus map[string]bool
+	clustersByKey           map[string]*operatorCluster
 	DisableOperator         bool
 }
 
 func NewOperatorTracker(disabled bool) *OperatorTracker {
 	return &OperatorTracker{
 		ctxIDtoDeploymentStatus: make(map[string]bool),
-		mx:                      sync.Mutex{},
+		clustersByKey:           make(map[string]*operatorCluster),
 		DisableOperator:         disabled,
 	}
 }
@@ -1081,6 +1216,8 @@ func (ot *OperatorTracker) Undeployed(ctxID string, undeployed bool) {
 	if ot.DisableOperator { //no-op when operator is disabled
 		return
 	}
+	ot.mx.Lock()
+	defer ot.mx.Unlock()
 	if ot.ctxIDtoDeploymentStatus == nil {
 		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
 	}
@@ -1091,10 +1228,8 @@ func (ot *OperatorTracker) IsUndeployed(ctxID string) bool {
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return true
 	}
-	if ot.ctxIDtoDeploymentStatus == nil {
-		ot.ctxIDtoDeploymentStatus = make(map[string]bool)
-		return false
-	}
+	ot.mx.Lock()
+	defer ot.mx.Unlock()
 	return ot.ctxIDtoDeploymentStatus[ctxID]
 }
 
@@ -1152,20 +1287,16 @@ func (mch *MesheryControllersHelper) reportMissingOperatorHandler(action, contex
 	}, uuid.Nil)
 }
 
-// operatorStatusObserved reports whether Meshery has ever actually read this
-// context's operator status, as opposed to still carrying the Unknown that
-// NewMesheryControllersHelper seeds. It distinguishes "we saw an operator and
-// can no longer act on it" from "we never reached this cluster at all".
-func (mch *MesheryControllersHelper) operatorStatusObserved() bool {
-	return mch.ctxOperatorStatus != controllers.Unknown
-}
-
 // SetOperatorDeployment applies a user-initiated Meshery Operator lifecycle
 // request for k8sctx: deploy=true installs or upgrades it, deploy=false removes
-// it. It is the counterpart to the FSM's DeployUndeployedOperators and
-// UndeployDeployedOperators for callers that must be told the outcome - the
-// GraphQL changeOperatorStatus mutation - and shares their guard rather than
-// restating it.
+// it. It is the counterpart to the FSM's DeployUndeployedOperators for callers
+// that must be told the outcome - the GraphQL changeOperatorStatus mutation -
+// and shares its guard rather than restating it.
+//
+// deploy=false is the only path in Meshery Server that uninstalls the
+// operator. The operator is cluster-scoped, so removing it removes it for every
+// connection to that cluster, on this server or any other; see
+// uninstallOperator for how that blast radius is reported.
 //
 // A latched chart-resolution failure is retried here rather than being final.
 // operatorChartError is written only when handlers are attached, so a connect
@@ -1182,19 +1313,9 @@ func (mch *MesheryControllersHelper) operatorStatusObserved() bool {
 //
 // The error is returned rather than emitted: the caller owns how a request it
 // initiated is surfaced. A failure is still recorded for the diagnostics API.
-func (mch *MesheryControllersHelper) SetOperatorDeployment(k8sctx K8sContext, deploy bool) error {
+func (mch *MesheryControllersHelper) SetOperatorDeployment(ot *OperatorTracker, k8sctx K8sContext, deploy bool) error {
 	if !deploy {
-		operatorHandler := mch.attachedOperatorHandler()
-		if operatorHandler == nil {
-			err := ErrOperatorHandlerNotAttached(k8sctx.ID)
-			mch.setOperatorErrorIfUnset(err)
-			return err
-		}
-		if err := operatorHandler.Undeploy(); err != nil {
-			mch.setOperatorError(err)
-			return err
-		}
-		return nil
+		return mch.uninstallOperator(ot, k8sctx)
 	}
 
 	if mch.GetOperatorChartError() != nil {
@@ -1210,26 +1331,113 @@ func (mch *MesheryControllersHelper) SetOperatorDeployment(k8sctx K8sContext, de
 		}
 		return err
 	}
-	if err := operatorHandler.Deploy(true); err != nil {
-		mch.setOperatorError(err)
-		return err
+	var deployErr error
+	ot.withOperatorClusterLock(k8sctx, func() { deployErr = operatorHandler.Deploy(true) })
+	if deployErr != nil {
+		mch.setOperatorError(deployErr)
+		return deployErr
 	}
+	// A deploy that succeeds clears a failure recorded by an earlier attempt,
+	// so the diagnostics API reports the completed action, not the old failure.
+	mch.setOperatorError(nil)
+	// DeployUndeployedOperators claims as well; this path is the one an
+	// explicit install takes, and without a claim here the connection is
+	// invisible to otherOperatorConsumers.
+	ot.claimOperator(k8sctx)
 	return nil
 }
 
-// DeployUndeployedOperators looks at the status of Meshery Operator for each cluster and takes necessary action.
-// it will deploy the operator only when it is in NotDeployed state
-func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTracker, contextID string) *MesheryControllersHelper {
+// OperatorSharedRemovalLongDescription explains the event raised when a user
+// removes Meshery Operator from a cluster that other connections still use.
+const OperatorSharedRemovalLongDescription = "Meshery Operator is installed once per cluster (Helm release meshery-operator in namespace meshery) and is shared by every Meshery connection to that cluster. Removing it on request for one connection removed it for the connections listed in affectedConnectionIDs as well, and for any other Meshery Server that manages this cluster. Their MeshSync data stops until the operator is installed again."
+
+// OperatorSharedRemovalRemediation is surfaced with that event.
+var OperatorSharedRemovalRemediation = []string{
+	"If the removal was intended, switch the affected connections to embedded MeshSync mode so they keep receiving cluster state without the operator.",
+	"Otherwise, reconnect any affected operator-mode connection, or deploy the operator again; Meshery reinstalls it.",
+}
+
+// uninstallOperator removes the Meshery Operator release from k8sctx's cluster
+// on an explicit user request.
+//
+// Unlike deploy, this is not gated on GetOperatorChartError. Removal is the
+// direction to attempt rather than refuse: refusing would leave the operator
+// running on a cluster the user asked to have it taken off. Attempted is all it
+// is, though. meshkit's ApplyHelmChart downloads and loads the chart archive
+// before dispatching UNINSTALL just as it does for INSTALL, from the same
+// repository whose index could not be read - so in the very case that motivates
+// not refusing, Undeploy fails at chart download, the operator stays on the
+// cluster, and the user gets a Helm error. A removal path that does not need
+// the archive would have to come from meshkit.
+//
+// The operator is cluster-scoped, so the removal is reported with its blast
+// radius: every other connection on this server that was using the operator is
+// named in a warning event. Other Meshery Servers are invisible from here; the
+// event says so.
+func (mch *MesheryControllersHelper) uninstallOperator(ot *OperatorTracker, k8sctx K8sContext) error {
+	operatorHandler := mch.attachedOperatorHandler()
+	if operatorHandler == nil {
+		err := ErrOperatorHandlerNotAttached(k8sctx.ID)
+		mch.setOperatorErrorIfUnset(err)
+		return err
+	}
+
+	var undeployErr error
+	ot.withOperatorClusterLock(k8sctx, func() { undeployErr = operatorHandler.Undeploy() })
+	if undeployErr != nil {
+		mch.setOperatorError(undeployErr)
+		return undeployErr
+	}
+	// Release this connection's claim only after the operator is gone, so a
+	// later explicit uninstall does not list it as still using the operator.
+	// Re-read the remaining consumers after the uninstall, outside the Helm
+	// lock: a connection that claimed while the lock was held would otherwise
+	// be missing from the warning event, and otherOperatorConsumers takes
+	// OperatorTracker.mx, which must stay outside the innermost Helm lock.
+	ot.releaseOperatorClaim(k8sctx)
+	affected := ot.otherOperatorConsumers(k8sctx)
+	if len(affected) == 0 {
+		return nil
+	}
+	mch.log.Warnf("Meshery Operator removed from cluster %q on request for Kubernetes context %s; %d other connection(s) on this server were using it: %s",
+		k8sctx.Server, k8sctx.ID, len(affected), strings.Join(affected, ", "))
+	mch.emitWarningEvent("Meshery Operator removed from a cluster other connections use", nil, map[string]any{
+		"k8sContextID":          k8sctx.ID,
+		"k8sContextName":        k8sctx.Name,
+		"connectionID":          k8sctx.ConnectionID,
+		"affectedConnectionIDs": affected,
+		"LongDescription":       OperatorSharedRemovalLongDescription,
+		"SuggestedRemediation":  OperatorSharedRemovalRemediation,
+	}, uuid.Nil)
+	return nil
+}
+
+// DeployUndeployedOperators installs the Meshery Operator on k8sctx's cluster
+// when it is not there yet, and records the connection as one of the cluster's
+// operator consumers. It does nothing for an operator this connection's user
+// explicitly removed (Undeployed) or one that is already installed.
+//
+// Every Helm action against a cluster is serialized, and the operator's live
+// status is re-read once the lock is held: the status this connection read
+// before waiting is stale if another connection to the same cluster installed
+// the operator meanwhile. Without that, two connections connecting together
+// both saw NotDeployed and both ran helm install for the one release.
+func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTracker, k8sctx K8sContext) *MesheryControllersHelper {
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return mch
 	}
 	if mch.meshsyncDeploymentMode != connections.MeshsyncDeploymentModeOperator {
 		return mch
 	}
+	// An operator-mode connection depends on its cluster's operator whether this
+	// call installs it, finds it installed, or fails and retries later, so it is
+	// a consumer from here on - which is what an explicit removal reports.
+	ot.claimOperator(k8sctx)
 	if mch.ctxOperatorStatus != controllers.NotDeployed {
 		return mch
 	}
 
+	contextID := k8sctx.ID
 	operatorHandler, attached, err := mch.operatorInstallTarget(contextID)
 	if err != nil {
 		if !attached {
@@ -1244,10 +1452,25 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 		return mch
 	}
 
-	if err := operatorHandler.Deploy(false); err != nil {
-		mch.setOperatorError(err)
-		mch.log.Error(err)
-		mch.emitErrorEvent("Failed to deploy Meshery Operator", err, map[string]any{
+	var status controllers.MesheryControllerStatus
+	var present bool
+	var deployErr error
+	ot.withOperatorClusterLock(k8sctx, func() {
+		status = operatorHandler.GetStatus()
+		present = status == controllers.Deployed || status == controllers.Deploying
+		if !present {
+			deployErr = operatorHandler.Deploy(false)
+		}
+	})
+	if present {
+		mch.ctxOperatorStatus = status
+		return mch
+	}
+
+	if deployErr != nil {
+		mch.setOperatorError(deployErr)
+		mch.log.Error(deployErr)
+		mch.emitErrorEvent("Failed to deploy Meshery Operator", deployErr, map[string]any{
 			"k8sContextID":           contextID,
 			"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
 			"operatorStatus":         mch.ctxOperatorStatus,
@@ -1257,46 +1480,28 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 	return mch
 }
 
-func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTracker, contextID string) *MesheryControllersHelper {
-	if mch.ctxOperatorStatus == controllers.Undeployed {
-		return mch
+// ReleaseOperator ends k8sctx's connection's use of its cluster's Meshery
+// Operator. It never uninstalls the operator: that is cluster-scoped and may
+// still serve other connections on this server, other Meshery Servers, or an
+// installation made with Helm or mesheryctl, none of which a connection's
+// disconnect, deletion or switch to embedded mode speaks for. Removal is
+// SetOperatorDeployment's alone, on an explicit request.
+func (mch *MesheryControllersHelper) ReleaseOperator(ot *OperatorTracker, k8sctx K8sContext) *MesheryControllersHelper {
+	if released, remaining := ot.releaseOperatorClaim(k8sctx); released && mch.log != nil {
+		mch.log.Infof("Kubernetes context %s released Meshery Operator on cluster %q and left it installed; %d other connection(s) on this server still use it",
+			k8sctx.ID, k8sctx.Server, remaining)
 	}
-
-	// Unlike deploy, this is not gated on GetOperatorChartError. Removal is the
-	// direction to attempt rather than refuse: refusing would leave the operator
-	// running on a cluster the user asked to have it taken off.
-	//
-	// Attempted is all it is, though. meshkit's ApplyHelmChart downloads and
-	// loads the chart archive before dispatching UNINSTALL just as it does for
-	// INSTALL, from the same repository whose index could not be read - so in the
-	// very case that motivates not refusing, Undeploy fails at chart download,
-	// the operator stays on the cluster, and the user gets a Helm error. A
-	// removal path that does not need the archive would have to come from
-	// meshkit; until then this surfaces the failure rather than hiding it.
-	operatorHandler := mch.attachedOperatorHandler()
-	if operatorHandler == nil {
-		// A connection whose cluster was never reached has no operator to
-		// remove and never had one, so reporting a failed removal on its
-		// teardown would be a second alert for a non-event - and would bury the
-		// kubeconfig or Kubernetes-client diagnostic that explains it. Report
-		// only when an operator was actually observed here at some point.
-		if mch.operatorStatusObserved() {
-			mch.reportMissingOperatorHandler("Failed to undeploy Meshery Operator", contextID)
-		}
-		return mch
-	}
-
-	if err := operatorHandler.Undeploy(); err != nil {
-		mch.setOperatorError(err)
-		mch.log.Error(err)
-		mch.emitErrorEvent("Failed to undeploy Meshery Operator", err, map[string]any{
-			"k8sContextID":           contextID,
-			"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
-			"operatorStatus":         mch.ctxOperatorStatus,
-		}, uuid.Nil)
-	}
-
 	return mch
+}
+
+// DetachFromCluster is the teardown every implicit connection transition runs -
+// disconnect, delete, and the first half of a MeshSync deployment-mode switch.
+// It releases the connection's claim on the cluster's operator, drops the
+// controller handlers, and stops the MeshSync data handler (and with it the
+// managed broker port-forward). Nothing is removed from the cluster.
+func (mch *MesheryControllersHelper) DetachFromCluster(ctx context.Context, ot *OperatorTracker, k8sctx K8sContext) {
+	mch.ReleaseOperator(ot, k8sctx).RemoveCtxControllerHandler(ctx, k8sctx.ID)
+	mch.RemoveMeshSyncDataHandler(ctx, k8sctx.ID)
 }
 
 func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) controllers.OperatorDeploymentConfig {

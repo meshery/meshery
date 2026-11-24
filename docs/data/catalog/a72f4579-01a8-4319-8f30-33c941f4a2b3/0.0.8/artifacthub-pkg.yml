@@ -1,0 +1,20 @@
+version: 0.0.8
+name: k8s-hello-design
+displayName: k8s-hello-design
+createdAt: "2026-11-18T21:13:58Z"
+description: A simple dual-pod deployment with a serviceIP
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/a72f4579-01a8-4319-8f30-33c941f4a2b3/0.0.8/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This design contains deliberate k8s errors. From Meshery's perspective and YAML syntax, everything is fine. But when the design is deployed on a k8s cluster, the service component will fail. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a45ed188-6d89-4b18-b919-71e70eeec83d
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -52,13 +53,28 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 	}
 
 	if len(connType) != 0 {
-		query = query.Where("type IN (?)", connType)
+		query = query.Where("connection_type IN (?)", connType)
 	}
 
-	dynamicKeys := []string{"type", "sub_type"}
-
-	// Apply filters using the utility function
-	query = utils.ApplyFilters(query, filter, dynamicKeys)
+	// Accept the public type alias while querying the persisted connection_type column.
+	// The existing filter syntax is "key value"; JSON objects are also accepted.
+	var jsonFilter map[string]string
+	if json.Unmarshal([]byte(filter), &jsonFilter) == nil && jsonFilter != nil {
+		for _, key := range []string{"type", "connection_type", "sub_type"} {
+			if value, ok := jsonFilter[key]; ok {
+				column := key
+				if key == "type" {
+					column = "connection_type"
+				}
+				query = query.Where(column+" = ?", value)
+			}
+		}
+	} else {
+		if filter == "type" || strings.HasPrefix(filter, "type ") {
+			filter = "connection_type" + strings.TrimPrefix(filter, "type")
+		}
+		query = utils.ApplyFilters(query, filter, []string{"connection_type", "sub_type"})
+	}
 
 	query = query.Order(order)
 	count := int64(0)
@@ -269,6 +285,33 @@ func (cp *ConnectionPersister) UpdateConnectionStatusByID(connectionID core.Uuid
 	}
 
 	return &updatedConnection, nil
+}
+
+// UpdateConnectionStatusIf updates a connection's status to newStatus only
+// when its stored status is one of fromStatuses, and reports whether the
+// write applied. The condition and the write are a single UPDATE ... WHERE
+// status IN (...) statement, so no concurrent status change can slip
+// between the check and the write: a background Discovery uses it to
+// refuse to move a connection the user has since disconnected, deleted or
+// ignored back to connected (issue #23248). Zero rows affected means the
+// stored status had already left the expected set, and nothing was
+// written.
+func (cp *ConnectionPersister) UpdateConnectionStatusIf(connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
+	res := cp.DB.Model(&connections.Connection{}).Where("id = ? AND status IN ?", connectionID, fromStatuses).UpdateColumn("status", newStatus)
+	if res.Error != nil {
+		return false, nil, ErrDBPut(res.Error)
+	}
+	if res.RowsAffected == 0 {
+		return false, nil, nil
+	}
+
+	updatedConnection := connections.Connection{}
+	err := cp.DB.Model(&updatedConnection).Where("id = ?", connectionID).First(&updatedConnection).Error
+	if err != nil {
+		return false, nil, ErrDBRead(err)
+	}
+
+	return true, &updatedConnection, nil
 }
 
 // UpdateConnectionByID persists updates to an existing connection while

@@ -51,9 +51,9 @@ var (
 type cmdSystemCheckFlags struct {
 	Preflight      bool   `json:"preflight" validate:"boolean"`
 	Pre            bool   `json:"pre" validate:"boolean"`
-	ComponentsFlag bool   `json:"componentsFlag" validate:"boolean"`
-	AdaptersFlag   bool   `json:"adaptersFlag" validate:"boolean"`
-	OperatorsFlag  bool   `json:"operatorsFlag" validate:"boolean"`
+	ComponentsFlag bool   `json:"components" validate:"boolean"`
+	AdaptersFlag   bool   `json:"adapters" validate:"boolean"`
+	OperatorsFlag  bool   `json:"operator" validate:"boolean"`
 	Adapter        string `json:"adapter" validate:"omitempty"`
 }
 
@@ -77,6 +77,10 @@ type HealthCheckOptions struct {
 	RunComponentChecks bool
 	// if RunOperatorChecks is true we run operator checks
 	RunOperatorChecks bool
+	// if SkipKubernetesVersionChecks is true the Kubernetes/kubectl minimum
+	// version checks are skipped. Teardown commands set it so an outdated
+	// cluster or kubectl cannot block the removal of an existing installation.
+	SkipKubernetesVersionChecks bool
 }
 
 type HealthChecker struct {
@@ -122,12 +126,19 @@ var linkDocCheck = map[string]string{
 	"caption": "Usage of mesheryctl system check",
 }
 
+var checkUsageMsg = "Usage: mesheryctl system check [flags]\nRun 'mesheryctl system check --help' to see detailed help message"
+
 var checkCmd = &cobra.Command{
 	Use:   "check",
 	Short: "Pre-deployment and post-deployment healthchecks for Meshery",
 	Long: `Verify environment pre/post-deployment of Meshery.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/system/check`,
-	Args: cobra.MaximumNArgs(1),
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", checkUsageMsg))
+		}
+		return nil
+	},
 	Example: `
 // Run all system checks for both pre and post-deployment scenarios
 mesheryctl system check
@@ -481,6 +492,11 @@ func (hc *HealthChecker) runKubernetesHealthChecks() error {
 	if err := hc.runKubernetesAPIHealthCheck(); err != nil {
 		return err
 	}
+	// Teardown has to work against an outdated cluster or kubectl, so the
+	// minimum version checks are skipped there.
+	if hc.Options.SkipKubernetesVersionChecks {
+		return nil
+	}
 	// Run k8s plus kubectl minimum version healthchecks
 	err = hc.runKubernetesVersionHealthCheck()
 	return err
@@ -533,6 +549,10 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		err = json.Unmarshal(data, &serverVersion)
 		if err != nil {
 			return errors.Errorf("\n  Unable to unmarshal data: %v", err)
+		}
+		// A body of null decodes without error but leaves serverVersion nil.
+		if serverVersion == nil {
+			return errors.New("\n  Invalid response: the server returned no version information")
 		}
 
 		isOutdated, _, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
@@ -738,6 +758,9 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		}
 	}
 	if len(adapters) == 0 {
+		if adapterName != "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("adapter %q is not configured in the current context", adapterName))
+		}
 		utils.Log.Info("- No components configured in current context")
 		return nil
 	}

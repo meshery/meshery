@@ -10,7 +10,7 @@ global:
   flags:
     config:
       name: --config
-      description: configures Meshery with the meshconfig, generated with the help of user details to provide cluster access for public clouds(GKE/EKS).
+      description: configures Meshery with the meshconfig, generated with the help of user details to provide cluster access for public clouds (GKE/EKS).
       usage: mesheryctl [command] --config=[path to config file]
       example: mesheryctl system reset --config="~/.meshery/config.yaml"
     help:
@@ -104,6 +104,21 @@ system:
           name: --force
           description: (optional) uninstall Meshery resources forcefully
           usage: mesheryctl system stop --force
+
+    uninstall:
+      name: uninstall
+      arg: system
+      description: Uninstall Meshery
+      usage: mesheryctl system uninstall
+      flags:
+        keep-namespace:
+          name: --keep-namespace
+          description: (optional) keep the Meshery namespace during uninstallation
+          usage: mesheryctl system uninstall --keep-namespace
+        force:
+          name: --force
+          description: (optional) forcefully delete Kubernetes resources; has no effect for Docker installations
+          usage: mesheryctl system uninstall --force
 
     update:
       name: update
@@ -625,7 +640,7 @@ design:
           example: mesheryctl design apply -f "bookInfo.yaml"
     delete:
       name: delete
-      description: Deprovision cloud native infrastructure using a design /design file
+      description: Deprovision cloud native infrastructure using a design file
       usage: mesheryctl design delete [flags]
       flags:
         file:
@@ -963,10 +978,6 @@ model:
           name: --output-type, -o
           description: (optional) package type of the exported model [oci|tar] (default oci)
           usage: mesheryctl model export [model-name] --output-type [oci|tar]
-        page:
-          name: --page, -p
-          description: (optional) page number for paginated results (default 1)
-          usage: mesheryctl model export [model-name] --page [page-number]
         version:
           name: --version
           description: (optional) model version to export, in vX.X.X format

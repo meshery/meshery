@@ -148,12 +148,12 @@ The following section outlines the fields and their descriptions
         Events   []string
       ]
       ```
-      The string should be json enconded for example
+      The string should be json encoded for example
       ```yaml
       '[{"Resource":"namespaces.v1.","Events":["ADDED","MODIFIED","DELETED"]}]'
       ```
     - **blacklist**:
-      Alternatively one can use the blacklist field to define resources that should be ingored by MeshSync. The resources and their respective events will not be tracked.
+      Alternatively one can use the blacklist field to define resources that should be ignored by MeshSync. The resources and their respective events will not be tracked.
       The blacklist is an array of resources of the format **_resource.version.group_** format
       ```yaml
       '["namespaces.v1.","configmaps.v1."]'

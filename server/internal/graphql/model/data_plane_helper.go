@@ -13,13 +13,17 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-func GetDataPlaneState(ctx context.Context, selectors []MeshType, provider models.Provider, cid []string) ([]*DataPlane, error) {
+func GetDataPlaneState(ctx context.Context, selectors []MeshType, provider models.GenericPersisterGetter, cid []string) ([]*DataPlane, error) {
 	object := []meshsyncmodel.KubernetesResource{}
 	dataPlaneList := make([]*DataPlane, 0)
 	cidMap := make(map[string]bool)
 
 	for _, c := range cid {
 		cidMap[c] = true
+	}
+
+	if provider == nil || provider.GetGenericPersister() == nil {
+		return dataPlaneList, nil
 	}
 
 	for _, selector := range selectors {

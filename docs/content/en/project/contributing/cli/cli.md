@@ -58,7 +58,7 @@ Annotations: linkScreenshot,
 Also, if the screenshot is present in the command, an `Annotation` macro variable (of `map[string]string` type) containing the `link` and the `caption` has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/content/en/reference/images` folder in **PNG** format. The screenshot field is given for reference below
 
 {{< code code=`var linkDocPatternApply = map[string]string{
- "link":    "![pattern-apply-usage](../../../images/patternApply.png)",
+ "link":    "![pattern-apply-usage](../../images/patternApply.png)",
  "caption": "Usage of mesheryctl design apply",
 }
 ...
@@ -127,9 +127,8 @@ The following key principles should be taken to mind when writing tests:
 5. **Testdata** is the expected response of mesheryctl commands or functions.
 6. The mock data and the expected responses are stored in the **golden files**.
 7. Table formatted tests are performed on functions and commands.
-8. [mesheryctl/pkg/utils/fixtures/validate.version.github.golden](https://github.com/meshery/meshery/blob/master/mesheryctl/pkg/utils/fixtures/validate.version.github.golden) file needs to be updated regularly.
-9. The version in utils.NewTestHelper() should be updated regularly.
-10. Golden files should be updated synchronously as API responses, mesheryctl outputs are updated.
+8. The version in utils.NewTestHelper() should be updated regularly.
+9. Golden files should be updated synchronously as API responses, mesheryctl outputs are updated.
 
 **References**
 

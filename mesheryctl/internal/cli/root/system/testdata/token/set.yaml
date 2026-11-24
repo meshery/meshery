@@ -21,3 +21,5 @@ current-context: local
 tokens:
   - location: auth.json
     name: default
+  - location: auth-new.json
+    name: DefaultNew
