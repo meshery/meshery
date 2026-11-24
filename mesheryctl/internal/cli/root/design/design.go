@@ -22,7 +22,6 @@ import (
 	"net/url"
 	"path"
 	"path/filepath"
-	"slices"
 	"strings"
 	"time"
 
@@ -160,12 +159,6 @@ func retrieveProvidedSourceType(sType string, validDesignSourceTypes []string) (
 	if err == nil {
 		return string(canonical), nil
 	}
-	clean := strings.ToLower(strings.TrimSpace(sType))
-	for _, v := range validDesignSourceTypes {
-		if strings.EqualFold(clean, v) {
-			return clean, nil
-		}
-	}
 	return "", ErrInValidSource(sType, validDesignSourceTypes)
 }
 
@@ -204,7 +197,7 @@ func fetchDesignFromGithub(fileURL string) ([]byte, error) {
 		return nil, utils.ErrParseGithubFile(err, fileURL)
 	}
 
-	rawURL := repoURL
+	var rawURL string
 	if filePath != "" {
 		rawURL = strings.Replace(repoURL, "https://github.com/", "https://raw.githubusercontent.com/", 1) + "/" + filePath
 	} else {

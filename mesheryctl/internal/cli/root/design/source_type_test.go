@@ -1,12 +1,16 @@
 package design
 
 import (
+	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
 	"path/filepath"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/core"
 	"github.com/stretchr/testify/assert"
 )
@@ -121,16 +125,47 @@ func Test_importPattern_WithSourceTypeFlag(t *testing.T) {
 	// Test with shorthand -s manifest
 	DesignCmd.SetArgs([]string{"import", "-f", filepath.Join("fixtures", "sampleDesign.golden"), "-s", "manifest"})
 	assert.NoError(t, DesignCmd.Execute())
+	assert.Equal(t, string(core.K8sManifest), sourceType)
 
 	// Test with canonical -s k8s-manifest
 	DesignCmd.SetArgs([]string{"import", "-f", filepath.Join("fixtures", "sampleDesign.golden"), "-s", "k8s-manifest"})
 	assert.NoError(t, DesignCmd.Execute())
+	assert.Equal(t, string(core.K8sManifest), sourceType)
 
 	// Test with legacy -s "Kubernetes Manifest"
 	DesignCmd.SetArgs([]string{"import", "-f", filepath.Join("fixtures", "sampleDesign.golden"), "-s", "Kubernetes Manifest"})
 	assert.NoError(t, DesignCmd.Execute())
+	assert.Equal(t, string(core.K8sManifest), sourceType)
 
 	// Test with invalid source type
 	DesignCmd.SetArgs([]string{"import", "-f", filepath.Join("fixtures", "sampleDesign.golden"), "-s", "invalid-source"})
 	assert.Error(t, DesignCmd.Execute())
+}
+
+func Test_deployDesign_NormalizesSourceTypeInPlace(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	defer resetVariables()
+	defer utils.ResetCommandFlags(DesignCmd, t)
+	utils.TokenFlag = utils.GetToken(t)
+
+	patternContent := "name: SampleApp\nservices:\n  myapp:\n    type: Application\n"
+	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/pattern/import", func(req *http.Request) (*http.Response, error) {
+		resp := fmt.Sprintf(`[{"id":"3817ec9a-1d83-4f6f-9154-0fd4408ba9f0","name":"SampleApp","patternFile":%q,"pattern_file":%q}]`, patternContent, patternContent)
+		return httpmock.NewStringResponse(200, resp), nil
+	})
+	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/pattern/deploy", func(req *http.Request) (*http.Response, error) {
+		body, err := io.ReadAll(req.Body)
+		assert.NoError(t, err)
+		var payload models.MesheryPatternFileDeployPayload
+		err = json.Unmarshal(body, &payload)
+		assert.NoError(t, err)
+		assert.Contains(t, payload.PatternFile, "SampleApp")
+		return httpmock.NewStringResponse(200, "design deployed"), nil
+	})
+
+	DesignCmd.SetArgs([]string{"deploy", "-f", filepath.Join("fixtures", "sampleDesign.golden"), "-s", "manifest"})
+	assert.NoError(t, DesignCmd.Execute())
+	assert.Equal(t, string(core.K8sManifest), designDeployFlags.SourceType)
 }

@@ -76,13 +76,9 @@ mesheryctl design deploy -f ./pattern.yml -s manifest
 				}
 				canonical, err := ValidateAndNormalizeSourceType(st)
 				if err == nil {
+					// Normalize the flag value in-place during PreRunE so downstream execution receives the canonical schema type.
 					designDeployFlags.SourceType = string(canonical)
 					return true
-				}
-				for _, validType := range designDeployValidSourceTypes {
-					if strings.EqualFold(st, validType) {
-						return true
-					}
 				}
 			}
 			return false
