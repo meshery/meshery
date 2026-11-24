@@ -669,25 +669,25 @@ func K8sContextGenerateID(kc K8sContext) (string, error) {
 
 // GenerateKubeConfig will generate a kubeconfig from the context object
 // and will set the "current-context" to the current context's name
-func (kc K8sContext) GenerateKubeConfig() ([]byte, error) {
+func (c K8sContext) GenerateKubeConfig() ([]byte, error) {
 	cfg := map[string]interface{}{
 		"apiVersion": "v1",
 		"clusters": []map[string]interface{}{
-			kc.Cluster,
+			c.Cluster,
 		},
 		"contexts": []map[string]interface{}{
 			{
 				"context": map[string]interface{}{
-					"cluster": kc.Cluster["name"],
-					"user":    kc.Auth["name"],
+					"cluster": c.Cluster["name"],
+					"user":    c.Auth["name"],
 				},
-				"name": kc.Name,
+				"name": c.Name,
 			},
 		},
-		"current-context": kc.Name,
+		"current-context": c.Name,
 		"kind":            "Config",
 		"users": []map[string]interface{}{
-			kc.Auth,
+			c.Auth,
 		},
 	}
 
@@ -698,8 +698,8 @@ func (kc K8sContext) GenerateKubeConfig() ([]byte, error) {
 	return data, nil
 }
 
-func (kc *K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
-	cfg, err := kc.GenerateKubeConfig()
+func (c *K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
+	cfg, err := c.GenerateKubeConfig()
 	if err != nil {
 		return nil, err
 	}
@@ -707,7 +707,7 @@ func (kc *K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
 	return kubernetes.New(cfg)
 }
 
-func (kc *K8sContext) AssignVersion(ctx context.Context, handler *kubernetes.Client) error {
+func (c *K8sContext) AssignVersion(ctx context.Context, handler *kubernetes.Client) error {
 	if _, hasDeadline := ctx.Deadline(); !hasDeadline {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, DefaultK8sDiscoveryTimeout)
@@ -716,21 +716,21 @@ func (kc *K8sContext) AssignVersion(ctx context.Context, handler *kubernetes.Cli
 
 	body, err := handler.KubeClient.Discovery().RESTClient().Get().AbsPath("/version").Do(ctx).Raw()
 	if err != nil {
-		return ErrUnreachableKubeAPI(err, kc.Server)
+		return ErrUnreachableKubeAPI(err, c.Server)
 	}
 	var res version.Info
 	if err := json.Unmarshal(body, &res); err != nil {
-		return ErrUnreachableKubeAPI(fmt.Errorf("unable to parse the server version: %w", err), kc.Server)
+		return ErrUnreachableKubeAPI(fmt.Errorf("unable to parse the server version: %w", err), c.Server)
 	}
 
-	kc.Version = res.GitVersion
+	c.Version = res.GitVersion
 	return nil
 }
 
 // PingTest uses the k8scontext to to "ping" the kubernetes cluster
 // if the return value is nil then the succeeds or else it has failed
-func (kc K8sContext) PingTest() error {
-	h, err := kc.GenerateKubeHandler()
+func (c K8sContext) PingTest() error {
+	h, err := c.GenerateKubeHandler()
 	if err != nil {
 		return err
 	}
@@ -740,7 +740,7 @@ func (kc K8sContext) PingTest() error {
 
 	res := h.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Timeout(1 * time.Second).Do(ctx)
 	if res.Error() != nil {
-		return ErrUnreachableKubeAPI(res.Error(), kc.Server)
+		return ErrUnreachableKubeAPI(res.Error(), c.Server)
 	}
 
 	return nil
@@ -749,7 +749,7 @@ func (kc K8sContext) PingTest() error {
 // AssignServerID will attempt to assign kubernetes
 // server ID to the kubernetes context. If the provided context has no deadline,
 // DefaultK8sDiscoveryTimeout is applied as a guardrail.
-func (kc *K8sContext) AssignServerID(ctx context.Context, handler *kubernetes.Client) error {
+func (c *K8sContext) AssignServerID(ctx context.Context, handler *kubernetes.Client) error {
 	if _, hasDeadline := ctx.Deadline(); !hasDeadline {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, DefaultK8sDiscoveryTimeout)
@@ -759,12 +759,12 @@ func (kc *K8sContext) AssignServerID(ctx context.Context, handler *kubernetes.Cl
 	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
 	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(ctx, "kube-system", v1.GetOptions{})
 	if err != nil {
-		return ErrUnreachableKubeAPI(err, kc.Server)
+		return ErrUnreachableKubeAPI(err, c.Server)
 	}
 	uid := ksns.GetUID()
 	ksUUID := uuid.FromStringOrNil(string(uid))
 
-	kc.KubernetesServerID = &ksUUID
+	c.KubernetesServerID = &ksUUID
 
 	return nil
 }
