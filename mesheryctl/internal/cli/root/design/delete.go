@@ -183,16 +183,16 @@ mesheryctl design delete -f [file | URL]
 	},
 }
 
+// designSearchPageSize is the page size of the name lookup; tests lower it to
+// exercise pagination.
+var designSearchPageSize = 10000
+
 // findDesignIDByExactName returns the ID of the one design named exactly name.
 // The server's search is a case-insensitive substring match, so results are
 // filtered down to whole-name matches before anything is deleted: an exact
 // match wins, and only without one does a match that differs in case count.
 // Two designs that match equally well are reported as ambiguous instead of
 // picking one.
-// designSearchPageSize is the page size of the name lookup; tests lower it to
-// exercise pagination.
-var designSearchPageSize = 10000
-
 func findDesignIDByExactName(baseURL, name string) (string, error) {
 	const maxPages = 50
 	pageSize := designSearchPageSize
