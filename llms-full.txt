@@ -8823,6 +8823,10 @@ deployment, harden it, make it resilient, and observe it.
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -8845,10 +8849,6 @@ deployment, harden it, make it resilient, and observe it.
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -9041,6 +9041,10 @@ data and events between each cluster and the Server. Production guidance:
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -9063,10 +9067,6 @@ data and events between each cluster and the Server. Production guidance:
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -9303,6 +9303,10 @@ deployment; the provider restores user data; MeshSync restores the live view.
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -9325,10 +9329,6 @@ deployment; the provider restores user data; MeshSync restores the live view.
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -9651,6 +9651,10 @@ Remote Provider, and the local database is a rebuildable cache. Two notes:
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -9673,10 +9677,6 @@ Remote Provider, and the local database is a rebuildable cache. Two notes:
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10099,6 +10099,10 @@ After deployment, validate connectivity end-to-end:
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -10121,10 +10125,6 @@ After deployment, validate connectivity end-to-end:
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10533,6 +10533,10 @@ extension before enabling it, and enable only what your deployment actually need
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -10555,10 +10559,6 @@ extension before enabling it, and enable only what your deployment actually need
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10756,6 +10756,10 @@ Remote Provider is required for multi-user production.
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -10778,10 +10782,6 @@ Remote Provider is required for multi-user production.
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -10959,6 +10959,10 @@ that matter:
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -10981,10 +10985,6 @@ that matter:
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -11183,6 +11183,10 @@ When a KPI trips, these guides are the fastest path to resolution:
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -11205,10 +11209,6 @@ When a KPI trips, these guides are the fastest path to resolution:
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -11463,6 +11463,10 @@ Work through these before going live. Each group links to its source page.
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -11485,10 +11489,6 @@ Work through these before going live. Each group links to its source page.
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -11831,6 +11831,10 @@ Managing a service mesh through an adapter additionally requires that mesh's own
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -11853,10 +11857,6 @@ Managing a service mesh through an adapter additionally requires that mesh's own
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -12038,6 +12038,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -12060,10 +12064,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -12444,6 +12444,10 @@ To reach Meshery UI from your browser, forward its port from the codespace. See 
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -12466,10 +12470,6 @@ To reach Meshery UI from your browser, forward its port from the codespace. See 
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -12722,6 +12722,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -12744,10 +12748,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -12896,6 +12896,10 @@ Meshery creates its own Docker networks, which can remain after you uninstall th
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -12918,10 +12922,6 @@ Meshery creates its own Docker networks, which can remain after you uninstall th
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -13131,6 +13131,10 @@ Meshery UI is available on your local machine at [`http://localhost:9081`](http:
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -13153,10 +13157,6 @@ Meshery UI is available on your local machine at [`http://localhost:9081`](http:
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -13365,6 +13365,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -13387,10 +13391,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -13668,6 +13668,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -13690,10 +13694,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -13914,6 +13914,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -13936,10 +13940,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -14024,6 +14024,10 @@ Follow these steps in order.
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -14046,10 +14050,6 @@ Follow these steps in order.
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -14392,6 +14392,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -14414,10 +14418,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -18399,6 +18399,10 @@ From the connection in Meshery UI you can:
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -18421,10 +18425,6 @@ From the connection in Meshery UI you can:
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -21922,6 +21922,10 @@ For how the Notification Center is built, see the [contributor guide](/project/c
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -21944,10 +21948,6 @@ For how the Notification Center is built, see the [contributor guide](/project/c
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -22332,6 +22332,10 @@ kubectl -n meshery get deploy meshery-meshsync \
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -22354,10 +22358,6 @@ kubectl -n meshery get deploy meshery-meshsync \
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -65514,7 +65514,7 @@ description: How to contribute to Meshery Adapters
 
 Meshery Adapters are the Extension Points in Meshery's architecture. Their design, the process of creating a new adapter is documented in [Extensibility: Meshery Adapters](/concepts/architecture/adapters/).
 
-With the [CONTRIBUTING.md](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#adapter) in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’  in their name.  The actions are parameterized using secrets (see Build & Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured.
+With the [Contributing Overview](/project/contributing/) in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’  in their name.  The actions are parameterized using secrets (see Build & Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured.
 
 Each commit has to be signed off, see [Contributing Overview](/project/contributing/).
 
@@ -74717,6 +74717,10 @@ Takes no body. Use the `{{< >}}` form.
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -74739,10 +74743,6 @@ Takes no body. Use the `{{< >}}` form.
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
@@ -75086,6 +75086,10 @@ References for using Meshery's various features and components.
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -75108,10 +75112,6 @@ References for using Meshery's various features and components.
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">

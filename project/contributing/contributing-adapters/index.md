@@ -10,7 +10,7 @@ LLMS index: [llms.txt](/llms.txt)
 
 Meshery Adapters are the Extension Points in Meshery's architecture. Their design, the process of creating a new adapter is documented in [Extensibility: Meshery Adapters](/concepts/architecture/adapters/).
 
-With the [CONTRIBUTING.md](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#adapter) in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’  in their name.  The actions are parameterized using secrets (see Build & Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured.
+With the [Contributing Overview](/project/contributing/) in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’  in their name.  The actions are parameterized using secrets (see Build & Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured.
 
 Each commit has to be signed off, see [Contributing Overview](/project/contributing/).
 

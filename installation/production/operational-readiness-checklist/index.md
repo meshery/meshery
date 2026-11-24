@@ -246,6 +246,10 @@ Work through these before going live. Each group links to its source page.
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
         </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-devops-nats-jetstream-aiming-for-lfx-gsoc-2027/8343" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate: DevOps &#43; NATS JetStream, aiming for LFX/GSoC 2027 😛
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
           </a>
@@ -268,10 +272,6 @@ Work through these before going live. Each group links to its source page.
         </li><li>
           <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
             Authorization Required , missing requisite key
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-comer-here-and-looking-for-meshmates/8271" target="_blank" rel="noopener noreferrer">
-            New comer here and looking for Meshmates
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
