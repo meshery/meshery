@@ -633,3 +633,101 @@ users:
 		}
 	}
 }
+
+// TestImportReceiptIgnoresFailingDeselectedContext pins issue #24220: a context
+// that fails discovery but that the user deselected must leave no error in the
+// import receipt, which then stays Informational like the wizard's success.
+func TestImportReceiptIgnoresFailingDeselectedContext(t *testing.T) {
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+	// Nothing listens on port 1, so discovery cannot reach the API server and
+	// records an error for the context.
+	kubeconfig := []byte(`apiVersion: v1
+kind: Config
+current-context: broken
+clusters:
+- cluster:
+    server: https://127.0.0.1:1
+  name: broken
+contexts:
+- context:
+    cluster: broken
+    user: broken-user
+  name: broken
+users:
+- name: broken-user
+  user:
+    token: token-0
+`)
+	receiptOf := func(t *testing.T, form map[string]string) events.Event {
+		t.Helper()
+		h := newTestHandler(t, map[string]models.Provider{}, "")
+		provider := &mockK8sConfigProvider{}
+		var b bytes.Buffer
+		w := multipart.NewWriter(&b)
+		part, err := w.CreateFormFile("k8sfile", "kubeconfig")
+		if err != nil {
+			t.Fatalf("create form file: %v", err)
+		}
+		if _, err := part.Write(kubeconfig); err != nil {
+			t.Fatalf("write form file: %v", err)
+		}
+		for k, v := range form {
+			if err := w.WriteField(k, v); err != nil {
+				t.Fatalf("write field %s: %v", k, err)
+			}
+		}
+		if err := w.Close(); err != nil {
+			t.Fatalf("close writer: %v", err)
+		}
+		req := httptest.NewRequest(http.MethodPost, "/api/system/kubernetes", &b)
+		req.Header.Set("Content-Type", w.FormDataContentType())
+		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+		rec := httptest.NewRecorder()
+		h.K8SConfigHandler(rec, req, nil, authUser, provider)
+		if rec.Code != http.StatusOK {
+			t.Fatalf("expected 200 OK, got %d: %s", rec.Code, rec.Body.String())
+		}
+		if len(provider.persistedEvents) != 1 {
+			t.Fatalf("persisted %d events, want the single import receipt", len(provider.persistedEvents))
+		}
+		return provider.persistedEvents[0]
+	}
+
+	t.Run("deselected failing context leaves an informational receipt", func(t *testing.T) {
+		receipt := receiptOf(t, map[string]string{SelectedContextsFormKey: "[]"})
+		if receipt.Severity != events.Informational {
+			t.Fatalf("receipt severity = %v, want Informational (description %q)", receipt.Severity, receipt.Description)
+		}
+		if k8sEventMetadataHasError(receipt.Metadata) {
+			t.Fatalf("receipt metadata carries an error for a context the user deselected: %#v", receipt.Metadata)
+		}
+		if _, ok := receipt.Metadata["broken"]; ok {
+			t.Fatalf("receipt metadata describes the deselected context: %#v", receipt.Metadata)
+		}
+	})
+}
+
+func TestRetainSelectedContextMetadata(t *testing.T) {
+	picked := &models.K8sContext{ID: "id-picked", Name: "picked"}
+	dropped := &models.K8sContext{ID: "id-dropped", Name: "dropped"}
+	failing := map[string]interface{}{"error": errors.New("unreachable")}
+	newMetadata := func() map[string]interface{} {
+		return map[string]interface{}{"picked": failing, "dropped": failing, "skipped": failing}
+	}
+
+	t.Run("a selection keeps only the selected contexts", func(t *testing.T) {
+		metadata := newMetadata()
+		retainSelectedContextMetadata(metadata, []*models.K8sContext{picked, dropped}, map[string]struct{}{"id-picked": {}})
+		if len(metadata) != 1 || metadata["picked"] == nil {
+			t.Fatalf("metadata = %#v, want only the selected context's entry", metadata)
+		}
+	})
+
+	t.Run("no selection removes nothing, so skipped and failed contexts still show", func(t *testing.T) {
+		metadata := newMetadata()
+		retainSelectedContextMetadata(metadata, []*models.K8sContext{picked, dropped}, nil)
+		if len(metadata) != 3 || !k8sEventMetadataHasError(metadata) {
+			t.Fatalf("metadata = %#v, want all three entries kept", metadata)
+		}
+	})
+}

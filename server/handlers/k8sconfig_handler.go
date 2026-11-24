@@ -184,6 +184,14 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		}
 	}
 
+	// Discovery recorded a per-context entry (with an "error" for any context
+	// that failed) for every context in the file, including the ones the user
+	// deselected and the ones Meshery skipped. The receipt below describes only
+	// what this import acted on, so drop the entries of contexts outside an
+	// explicit selection; otherwise a broken context the user chose not to import would
+	// raise the receipt to Error while the wizard reports success (issue #24220).
+	retainSelectedContextMetadata(eventMetadata, contexts, selectedContexts)
+
 	// Helper function to get meshsync deployment mode for a context
 	// Uses closure pattern to call req.FormValue only once while keeping globalMeshsyncMode scoped
 	getMeshsyncModeForContext := func() func(*models.K8sContext) string {
@@ -279,6 +287,9 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		// so regenerate the context ID to keep the struct's ID in sync with the
 		// connection ID SaveK8sContext will mint.
 		if opts, ok := contextsConfig[ctx.ID]; ok && opts.Name != "" && opts.Name != ctx.Name {
+			// The receipt is keyed by the name the connection is saved under;
+			// drop the discovery entry that is keyed by the old name.
+			delete(eventMetadata, ctx.Name)
 			ctx.Name = opts.Name
 			if regeneratedID, idErr := models.K8sContextGenerateID(*ctx); idErr == nil {
 				ctx.ID = regeneratedID
@@ -418,6 +429,32 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		// response would corrupt it, so log only.
 		log.Error(models.ErrMarshal(err, "kubeconfig"))
 		return
+	}
+}
+
+// retainSelectedContextMetadata removes from eventMetadata, the per-context
+// discovery metadata keyed by context name, the entries of contexts the user
+// left out of an explicit selection: discovered contexts outside it, and
+// contexts discovery skipped (never importable, so never selected). With no
+// selection every context is imported, so nothing is removed and a context that
+// failed or was skipped during discovery still shows in the receipt.
+func retainSelectedContextMetadata(eventMetadata map[string]interface{}, contexts []*models.K8sContext, selected map[string]struct{}) {
+	if selected == nil {
+		return
+	}
+	keep := make(map[string]struct{}, len(selected))
+	for _, ctx := range contexts {
+		if ctx == nil {
+			continue
+		}
+		if _, ok := selected[ctx.ID]; ok {
+			keep[ctx.Name] = struct{}{}
+		}
+	}
+	for name := range eventMetadata {
+		if _, ok := keep[name]; !ok {
+			delete(eventMetadata, name)
+		}
 	}
 }
 
