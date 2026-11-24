@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 1
+          fetch-depth: 0
         # inspired by .github/workflows/build-ui-and-server.yml
       - name: Free disk space
         run: |
@@ -35,6 +35,11 @@ jobs:
 
       - name: file system info 00
         run: df -h
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
 
         # TODO  think about if we could reuse image build from ui-and-server build workflow?
       - name: Build meshery image
@@ -48,11 +53,6 @@ jobs:
 
       - name: file system info 02
         run: df -h
-
-      - name: Setup Go
-        uses: actions/setup-go@v6
-        with:
-          go-version-file: go.mod
 
       - name: Integration tests set up (cluster)
         run: make server-integration-tests-meshsync-setup-cluster
