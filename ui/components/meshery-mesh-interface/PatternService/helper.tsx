@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import { useTheme } from '@/theme';
+import { CredentialRjsfSchemasV1Beta1, CredentialRjsfUiSchemasV1Beta1 } from '@meshery/schemas';
 
 /**
  * Returns a value safe to use as React child or tooltip/label text.
@@ -216,21 +217,31 @@ export const HyperLinkDiv = ({ text }) => {
 // Backward-compatible alias for legacy callers that imported `getHyperLinkDiv`.
 export const getHyperLinkDiv = (text) => <HyperLinkDiv text={text} />;
 /**
- * Returns the schema for the credentials.
- * @param {String} type
- * @returns
+ * Returns the supported credential types from the canonical schemas package.
+ * @returns {string[]}
+ */
+export const getCredentialTypes = () => {
+  return Object.keys(CredentialRjsfSchemasV1Beta1);
+};
+
+/**
+ * Returns the canonical RJSF schema for the credentials from @meshery/schemas.
+ * @param {string} [type]
+ * @returns {object | undefined}
  */
 export const getSchema = (type) => {
-  switch (type) {
-    case 'grafana':
-      return require('../../schemas/credentials/grafana').grafanaSchema;
-    case 'prometheus':
-      return require('../../schemas/credentials/prometheus').prometheusSchema;
-    case 'kubernetes':
-      return require('../../schemas/credentials/kubernetes').kubernetesSchema;
-    default:
-      return;
-  }
+  if (!type) return undefined;
+  return CredentialRjsfSchemasV1Beta1[type.toLowerCase()];
+};
+
+/**
+ * Returns the canonical RJSF uiSchema for the credentials from @meshery/schemas.
+ * @param {string} [type]
+ * @returns {object | undefined}
+ */
+export const getUiSchema = (type) => {
+  if (!type) return undefined;
+  return CredentialRjsfUiSchemasV1Beta1[type.toLowerCase()];
 };
 
 /**

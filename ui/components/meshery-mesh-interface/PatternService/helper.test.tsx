@@ -11,9 +11,11 @@ vi.mock('@/theme', () => ({
 import {
   HyperLinkDiv,
   calculateGrid,
+  getCredentialTypes,
   getHyperLinkDiv,
   getRefinedJsonSchema,
   getSchema,
+  getUiSchema,
   safeDisplayValue,
   safeStringTitle,
   userPromptKeys,
@@ -146,7 +148,40 @@ describe('HyperLinkDiv / getHyperLinkDiv', () => {
 });
 
 describe('getSchema', () => {
-  it('returns undefined for unknown credential types', () => {
+  it('returns undefined for unknown or null credential types', () => {
     expect(getSchema('unknown')).toBeUndefined();
+    expect(getSchema(null)).toBeUndefined();
+    expect(getSchema(undefined)).toBeUndefined();
+  });
+
+  it('resolves canonical schemas for known credential types case-insensitively', () => {
+    expect(getSchema('prometheus')).toBeDefined();
+    expect(getSchema('PROMETHEUS')).toBeDefined();
+    expect(getSchema('kubernetes')?.properties?.secret).toBeDefined();
+    expect(getSchema('slack')?.properties?.name).toBeDefined();
+  });
+});
+
+describe('getUiSchema', () => {
+  it('returns undefined for unknown or null credential types', () => {
+    expect(getUiSchema('unknown')).toBeUndefined();
+    expect(getUiSchema(null)).toBeUndefined();
+  });
+
+  it('resolves canonical uiSchemas for known credential types', () => {
+    expect(getUiSchema('slack')?.secret?.SLACK_BOT_TOKEN?.['ui:widget']).toBe('password');
+    expect(getUiSchema('kubernetes')?.secret?.auth?.clusterToken?.['ui:widget']).toBe('password');
+  });
+});
+
+describe('getCredentialTypes', () => {
+  it('returns canonical credential types from @meshery/schemas', () => {
+    const types = getCredentialTypes();
+    expect(types).toContain('prometheus');
+    expect(types).toContain('grafana');
+    expect(types).toContain('kubernetes');
+    expect(types).toContain('slack');
+    expect(types).toContain('github');
+    expect(types.length).toBeGreaterThanOrEqual(21);
   });
 });

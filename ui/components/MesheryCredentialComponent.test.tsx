@@ -42,7 +42,27 @@ vi.mock('../utils/hooks/useNotification', () => ({
 vi.mock('./general/error-404/index', () => ({
   default: () => <div data-testid="credentials-access-denied" />,
 }));
-vi.mock('./shared/Modal/Modal', () => ({ default: () => null }));
+vi.mock('./shared/Modal/Modal', () => ({
+  default: (props: any) =>
+    props.open ? (
+      <div
+        data-testid="credential-modal"
+        data-title={props.title}
+        data-type={props.type}
+        data-schema-count={props.schema_array?.length}
+        data-has-schema={Boolean(props.schema)}
+        data-submit-disabled={Boolean(props.submitDisabled)}
+      >
+        <button
+          data-testid="modal-save-btn"
+          disabled={props.submitDisabled}
+          onClick={() => props.handleSubmit?.(props.formData)}
+        >
+          {props.submitBtnText || 'Save'}
+        </button>
+      </div>
+    ) : null,
+}));
 vi.mock('./general/PromptComponent', () => ({
   default: React.forwardRef(function PromptStub() {
     return null;
@@ -50,7 +70,11 @@ vi.mock('./general/PromptComponent', () => ({
 }));
 
 import { api } from '@/rtk-query/index';
-import MesheryCredentialComponent from './MesheryCredentialComponent';
+import MesheryCredentialComponent, {
+  cleanEmptyPasswordFields,
+  sanitizeInitialData,
+} from './MesheryCredentialComponent';
+import { CredentialRjsfSchemasV1Beta1, CredentialRjsfUiSchemasV1Beta1 } from '@meshery/schemas';
 
 const TOTAL_CREDENTIALS = 12;
 const SERVER_DEFAULT_PAGE_SIZE = 10;
@@ -237,5 +261,116 @@ describe('MesheryCredentialComponent dates', () => {
     const row = (await screen.findByText('cred-dated')).closest('tr') as HTMLElement;
     expect(within(row).getByText('a year ago')).toBeInTheDocument();
     expect(within(row).getByText('3 days ago')).toBeInTheDocument();
+  });
+});
+
+describe('MesheryCredentialComponent password and secret sanitation', () => {
+  it('redacts writeOnly / password fields from initialData when editing', () => {
+    const k8sData = {
+      clusterName: 'production',
+      clusterServerURL: 'https://k8s.example.com',
+      auth: {
+        clusterUserName: 'admin',
+        clusterToken: 'super-secret-token',
+        clusterClientCertificateData: 'cert',
+        clusterClientKeyData: 'key',
+        clusterCertificateAuthorityData: 'ca',
+      },
+    };
+    const sanitized = sanitizeInitialData(
+      k8sData,
+      CredentialRjsfSchemasV1Beta1['kubernetes'].properties.secret,
+      CredentialRjsfUiSchemasV1Beta1['kubernetes'].secret,
+    );
+
+    expect(sanitized.clusterName).toBe('production');
+    expect(sanitized.clusterServerURL).toBe('https://k8s.example.com');
+    expect(sanitized.auth.clusterUserName).toBe('admin');
+    expect(sanitized.auth.clusterToken).toBeUndefined();
+    expect(sanitized.auth.clusterClientCertificateData).toBeUndefined();
+    expect(sanitized.auth.clusterClientKeyData).toBeUndefined();
+  });
+
+  it('omits empty password fields on edit so stored secrets are not blanked out', () => {
+    const editPayload = {
+      clusterName: 'production-v2',
+      clusterServerURL: 'https://k8s.example.com',
+      auth: {
+        clusterUserName: 'admin',
+        clusterToken: '', // left blank by user
+        clusterClientCertificateData: '',
+      },
+    };
+    const cleaned = cleanEmptyPasswordFields(
+      editPayload,
+      CredentialRjsfSchemasV1Beta1['kubernetes'].properties.secret,
+      CredentialRjsfUiSchemasV1Beta1['kubernetes'].secret,
+    );
+
+    expect(cleaned.clusterName).toBe('production-v2');
+    expect(cleaned.auth.clusterUserName).toBe('admin');
+    expect(cleaned.auth.clusterToken).toBeUndefined();
+    expect(cleaned.auth.clusterClientCertificateData).toBeUndefined();
+  });
+
+  it('retains password fields when the user explicitly provides a new value', () => {
+    const editPayload = {
+      grafanaURL: 'https://grafana.example.com',
+      grafanaAPIKey: 'new-api-key-999',
+    };
+    const cleaned = cleanEmptyPasswordFields(
+      editPayload,
+      CredentialRjsfSchemasV1Beta1['grafana'].properties.secret,
+      CredentialRjsfUiSchemasV1Beta1['grafana'].secret,
+    );
+
+    expect(cleaned.grafanaURL).toBe('https://grafana.example.com');
+    expect(cleaned.grafanaAPIKey).toBe('new-api-key-999');
+  });
+});
+
+describe('MesheryCredentialComponent schema forms and toolbar actions', () => {
+  beforeEach(() => {
+    canViewSpy.mockReturnValue(true);
+    storedCredentials = seedCredentials();
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async (req) =>
+      credentialsResponse(new URL((req as Request).url)),
+    );
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('renders the Create button and opens modal with all canonical schemas', async () => {
+    renderPage();
+    expect(await screen.findByText('cred-01')).toBeInTheDocument();
+
+    const createBtn = screen.getByRole('button', { name: /create/i });
+    expect(createBtn).toBeInTheDocument();
+
+    fireEvent.click(createBtn);
+
+    const modal = screen.getByTestId('credential-modal');
+    expect(modal).toBeInTheDocument();
+    expect(modal).toHaveAttribute('data-title', 'Create Credential');
+    const schemaCount = Number(modal.getAttribute('data-schema-count'));
+    expect(schemaCount).toBeGreaterThanOrEqual(21);
+    expect(modal).toHaveAttribute('data-has-schema', 'true');
+    expect(modal).toHaveAttribute('data-submit-disabled', 'false');
+  });
+
+  it('renders Edit button on each credential row and opens Edit modal', async () => {
+    renderPage();
+    expect(await screen.findByText('cred-01')).toBeInTheDocument();
+
+    const editButtons = screen.getAllByRole('button', { name: /edit/i });
+    expect(editButtons.length).toBeGreaterThan(0);
+
+    fireEvent.click(editButtons[0]);
+
+    const modal = screen.getByTestId('credential-modal');
+    expect(modal).toBeInTheDocument();
+    expect(modal).toHaveAttribute('data-title', 'Edit Credential');
   });
 });
