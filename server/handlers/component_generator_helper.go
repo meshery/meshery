@@ -9,6 +9,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/core"
 
@@ -209,7 +210,11 @@ func incrementCountersOnSuccess(mu *sync.Mutex, entityType entity.EntityType, co
 }
 
 func (h *Handler) sendErrorEvent(userID core.Uuid, provider models.Provider, description string, err error, token string) {
-	event := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithAction("register").WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
+	var systemID uuid.UUID
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
+	event := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(systemID).WithAction("register").WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
 		"error": err,
 	}).Build()
 	h.persistAndPublish(provider, token, userID, event)
