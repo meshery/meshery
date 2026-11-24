@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/meshery/meshery/server/models"
@@ -14,7 +15,6 @@ import (
 	"github.com/meshery/meshkit/utils"
 	system "github.com/meshery/schemas/models/v1beta1/system"
 	"github.com/spf13/viper"
-	"gorm.io/gorm/clause"
 )
 
 func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -38,11 +38,17 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	if offset != 0 {
 		tableFinder = tableFinder.Offset(offset)
 	}
-	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order != "" {
-		if sort == "desc" {
-			tableFinder = tableFinder.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
-		} else {
+		order = strings.TrimSpace(order)
+		if !strings.Contains(order, " ") {
+			if strings.EqualFold(strings.TrimSpace(sort), "desc") {
+				order = fmt.Sprintf("%s desc", order)
+			} else {
+				order = fmt.Sprintf("%s asc", order)
+			}
+		}
+		order = models.SanitizeOrderInput(order, []string{"name"})
+		if order != "" {
 			tableFinder = tableFinder.Order(order)
 		}
 	}
