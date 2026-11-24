@@ -228,13 +228,13 @@ export function createPatternsActions(deps) {
   }
 
   async function handleSubmit({ data, id, name, type, metadata, catalogData }) {
-    updateProgress({ showProgress: true });
     if (type === FILE_OPS.DELETE) {
+      // Dismissing the prompt never settles this promise, so progress must not start before it.
       const response = await showModal(1, name);
-      if (response == 'CANCEL') {
-        updateProgress({ showProgress: false });
+      if (response !== 'DELETE') {
         return;
       }
+      updateProgress({ showProgress: true });
       deletePatternFile({
         id: id,
       })
@@ -252,6 +252,7 @@ export function createPatternsActions(deps) {
     }
 
     if (type === FILE_OPS.UPDATE) {
+      updateProgress({ showProgress: true });
       const design = yaml.load(data);
 
       updatePattern({
@@ -274,6 +275,7 @@ export function createPatternsActions(deps) {
     }
 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
+      updateProgress({ showProgress: true });
       let body;
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({

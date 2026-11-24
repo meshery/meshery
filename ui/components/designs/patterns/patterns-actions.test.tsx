@@ -44,6 +44,7 @@ vi.mock('../import-design-request', () => ({
   buildImportDesignRequestBody: (data: any) => buildImportDesignRequestBody(data),
 }));
 
+import { updateProgress } from '@/store/slices/mesheryUi';
 import { createPatternsActions } from './patterns-actions';
 
 const baseDeps = () => {
@@ -86,6 +87,7 @@ const baseDeps = () => {
 describe('createPatternsActions', () => {
   beforeEach(() => {
     buildImportDesignRequestBody.mockReset();
+    vi.mocked(updateProgress).mockClear();
   });
 
   it('returns the canonical set of action methods', () => {
@@ -218,6 +220,45 @@ describe('createPatternsActions', () => {
       message: 'Something went wrong: boom',
       event_type: 'error',
     });
+  });
+
+  it('handleSubmit deletes the design and toggles progress once deletion is confirmed', async () => {
+    const deps = baseDeps();
+    deps.modalRef.current.show.mockResolvedValue('DELETE');
+    deps.deletePatternFile.mockReturnValue({ unwrap: () => Promise.resolve({}) });
+
+    const actions = createPatternsActions(deps);
+    await actions.handleSubmit({ id: 'p-1', name: 'Design 1', type: 'DELETE' } as any);
+    await vi.waitFor(() => expect(deps.getPatterns).toHaveBeenCalled());
+
+    expect(deps.deletePatternFile).toHaveBeenCalledWith({ id: 'p-1' });
+    expect(updateProgress).toHaveBeenNthCalledWith(1, { showProgress: true });
+    expect(updateProgress).toHaveBeenLastCalledWith({ showProgress: false });
+  });
+
+  it('handleSubmit does not start progress when deletion is cancelled', async () => {
+    const deps = baseDeps();
+    deps.modalRef.current.show.mockResolvedValue('CANCEL');
+
+    const actions = createPatternsActions(deps);
+    await actions.handleSubmit({ id: 'p-1', name: 'Design 1', type: 'DELETE' } as any);
+
+    expect(deps.deletePatternFile).not.toHaveBeenCalled();
+    expect(updateProgress).not.toHaveBeenCalled();
+  });
+
+  it('handleSubmit does not start progress when the delete prompt is dismissed', async () => {
+    const deps = baseDeps();
+    // A dismissed prompt (close button, backdrop, Escape) never settles the show() promise.
+    deps.modalRef.current.show.mockReturnValue(new Promise(() => {}));
+
+    const actions = createPatternsActions(deps);
+    actions.handleSubmit({ id: 'p-1', name: 'Design 1', type: 'DELETE' } as any);
+    await Promise.resolve();
+
+    expect(deps.modalRef.current.show).toHaveBeenCalled();
+    expect(deps.deletePatternFile).not.toHaveBeenCalled();
+    expect(updateProgress).not.toHaveBeenCalled();
   });
 
   it('handleImportDesign uploads file imports using the resolved file metadata', async () => {
