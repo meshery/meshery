@@ -97,21 +97,16 @@ func (b *liveBroker) recreate(endpoint, token string) {
 // client: it never connects anywhere, and reports whatever the test says.
 type natsConn struct {
 	*testMeshsyncBroker
-	opts          nats.Options
-	mu            sync.Mutex
-	connected     bool
-	publishErr    error
-	onIsConnected func(bool)
+	opts       nats.Options
+	mu         sync.Mutex
+	connected  bool
+	publishErr error
 }
 
 func (c *natsConn) IsConnected() bool {
 	c.mu.Lock()
 	connected := c.connected && !c.isClosed()
 	c.mu.Unlock()
-
-	if c.onIsConnected != nil {
-		c.onIsConnected(connected)
-	}
 	return connected
 }
 
@@ -128,7 +123,6 @@ type brokerDialer struct {
 	mu         sync.Mutex
 	conns      []*natsConn
 	publishErr error
-	onDial     func(*natsConn)
 	// acceptToken reports whether the broker accepts a token for a new
 	// connection. A nil func accepts every token. A connection dialed with an
 	// accepted token reports connected, standing in for the NATS client
@@ -142,9 +136,6 @@ func (d *brokerDialer) dial(opts nats.Options) (meshkitBroker.Handler, error) {
 	c := &natsConn{testMeshsyncBroker: &testMeshsyncBroker{}, opts: opts, publishErr: d.publishErr}
 	if d.acceptToken == nil || d.acceptToken(opts.Token) {
 		c.connected = true
-	}
-	if d.onDial != nil {
-		d.onDial(c)
 	}
 	d.conns = append(d.conns, c)
 	return c, nil
@@ -789,89 +780,122 @@ func TestFailedDataHandlerStartClosesItsBrokerConnection(t *testing.T) {
 	}
 }
 
-// TestReplacementThatConnectsAfterTheWaitCheckIsNotRolledBack covers the
-// interval between the connection wait returning false and recheckBroker
-// reacquiring meshsyncMutex. A replacement that connects in that interval
-// must be kept rather than discarded using the stale wait result.
-func TestReplacementThatConnectsAfterTheWaitCheckIsNotRolledBack(t *testing.T) {
-	mch, broker, dialer := supervisedConnection(t)
-	target := attach(t, mch)
-	first := dialer.opened()[0]
-
-	broker.recreate(newBrokerEndpoint, "new-token")
-	first.setConnected(false)
-
-	var since time.Time
-	t0 := time.Unix(1000, 0)
-	if mch.recheckBroker(target, t0, &since) {
-		t.Fatal("the supervisor finished on the first sign of an outage")
+func TestReplacementConnectionDecisionUsesLiveState(t *testing.T) {
+	tests := []struct {
+		name            string
+		waitResult      bool
+		replacementLive bool
+		wantRebuilt     bool
+		wantReplacement bool
+	}{
+		{
+			name:            "connects after wait reports failure",
+			waitResult:      false,
+			replacementLive: true,
+			wantRebuilt:     true,
+			wantReplacement: true,
+		},
+		{
+			name:            "disconnects after wait reports success",
+			waitResult:      true,
+			replacementLive: false,
+			wantRebuilt:     false,
+			wantReplacement: false,
+		},
 	}
 
-	waitStarted := make(chan struct{})
-	allowWaitToReturn := make(chan struct{})
-	var releaseOnce sync.Once
-	releaseWait := func() {
-		releaseOnce.Do(func() { close(allowWaitToReturn) })
-	}
-	defer releaseWait()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mch, broker, dialer := supervisedConnection(t)
+			target := attach(t, mch)
+			first := dialer.opened()[0]
 
-	waitForConnection := func(
-		_ *MeshsyncDataHandler,
-		_ time.Duration,
-		_ <-chan struct{},
-	) bool {
-		close(waitStarted)
-		<-allowWaitToReturn
-		return false
-	}
+			broker.recreate(newBrokerEndpoint, "new-token")
+			first.setConnected(false)
 
-	result := make(chan bool, 1)
-	go func() {
-		result <- mch.recheckBrokerWithWait(
-			target,
-			t0.Add(mch.brokerStaleAfter),
-			&since,
-			waitForConnection,
-		)
-	}()
+			var since time.Time
+			t0 := time.Unix(1000, 0)
+			if mch.recheckBroker(target, t0, &since) {
+				t.Fatal("the supervisor finished on the first sign of an outage")
+			}
 
-	select {
-	case <-waitStarted:
-	case <-time.After(2 * time.Second):
-		t.Fatal("replacement did not reach the connection wait")
-	}
+			waitStarted := make(chan struct{})
+			allowWaitToReturn := make(chan struct{})
+			var releaseOnce sync.Once
+			releaseWait := func() {
+				releaseOnce.Do(func() { close(allowWaitToReturn) })
+			}
+			defer releaseWait()
 
-	mch.meshsyncMutex.Lock()
-	conns := dialer.opened()
-	if len(conns) != 2 {
-		mch.meshsyncMutex.Unlock()
-		t.Fatalf("opened %d connections, want original and replacement", len(conns))
-	}
-	replacement := conns[1]
-	replacement.setConnected(true)
-	releaseWait()
-	mch.meshsyncMutex.Unlock()
+			waitForConnection := func(
+				_ *MeshsyncDataHandler,
+				_ time.Duration,
+				_ <-chan struct{},
+			) bool {
+				close(waitStarted)
+				<-allowWaitToReturn
+				return tt.waitResult
+			}
 
-	select {
-	case rebuilt := <-result:
-		if !rebuilt {
-			t.Fatal("supervisor rolled back a replacement that had connected")
-		}
-	case <-time.After(2 * time.Second):
-		t.Fatal("supervisor did not finish after the replacement connected")
-	}
+			result := make(chan bool, 1)
+			go func() {
+				result <- mch.recheckBrokerWithWait(
+					target,
+					t0.Add(mch.brokerStaleAfter),
+					&since,
+					waitForConnection,
+				)
+			}()
 
-	if !first.isClosed() {
-		t.Fatal("stale connection was not stopped after successful replacement")
-	}
-	if !stopped(target) {
-		t.Fatal("stale connection supervisor was not stopped")
-	}
+			select {
+			case <-waitStarted:
+			case <-time.After(2 * time.Second):
+				t.Fatal("replacement did not reach the connection wait")
+			}
 
-	mch.meshsyncMutex.Lock()
-	defer mch.meshsyncMutex.Unlock()
-	if mch.ctxMeshsyncDataHandler == nil ||
-		mch.ctxMeshsyncDataHandler.GetBrokerHandler() != meshkitBroker.Handler(replacement) {
-		t.Fatal("the connected replacement is not the active MeshSync handler")
+			mch.meshsyncMutex.Lock()
+			conns := dialer.opened()
+			if len(conns) != 2 {
+				mch.meshsyncMutex.Unlock()
+				t.Fatalf("opened %d connections, want original and replacement", len(conns))
+			}
+			replacement := conns[1]
+			replacement.setConnected(tt.replacementLive)
+			releaseWait()
+			mch.meshsyncMutex.Unlock()
+
+			select {
+			case rebuilt := <-result:
+				if rebuilt != tt.wantRebuilt {
+					t.Fatalf("rebuilt = %v, want %v", rebuilt, tt.wantRebuilt)
+				}
+			case <-time.After(2 * time.Second):
+				t.Fatal("supervisor did not finish after the wait")
+			}
+
+			mch.meshsyncMutex.Lock()
+			defer mch.meshsyncMutex.Unlock()
+			active := mch.ctxMeshsyncDataHandler
+			if tt.wantReplacement {
+				if active == nil ||
+					active.GetBrokerHandler() != meshkitBroker.Handler(replacement) {
+					t.Fatal("the live replacement is not active")
+				}
+				if !first.isClosed() {
+					t.Fatal("stale connection was not stopped after successful replacement")
+				}
+				if !stopped(target) {
+					t.Fatal("stale connection supervisor was not stopped")
+				}
+			} else {
+				if active == nil ||
+					active.GetBrokerHandler() != meshkitBroker.Handler(first) {
+					t.Fatal("the previous connection was not restored")
+				}
+				if first.isClosed() {
+					t.Fatal("previous connection was stopped after replacement rollback")
+				}
+			}
+		})
 	}
 }

@@ -300,7 +300,7 @@ func (mch *MesheryControllersHelper) recheckBrokerWithWait(
 	mch.brokerRebuildCancel = cancel
 	mch.brokerRebuildStale = stale
 	mch.meshsyncMutex.Unlock()
-	connected := waitForConnection(replacement, wait, cancel)
+	waitForConnection(replacement, wait, cancel)
 	mch.meshsyncMutex.Lock()
 	defer mch.meshsyncMutex.Unlock()
 	// The wait is over: removal can no longer cancel it, and a later removal
@@ -316,7 +316,7 @@ func (mch *MesheryControllersHelper) recheckBrokerWithWait(
 		stale.Stop()
 		return true
 	}
-	if !connected && !replacement.IsConnected() {
+	if !replacement.IsConnected() {
 		// The replacement never connected - the broker rejected its token, or
 		// its endpoint never came up. Discard it and keep the old handler and
 		// its supervisor, so the next tick retries the rebuild instead of the
