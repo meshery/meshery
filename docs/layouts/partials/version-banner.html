@@ -1,0 +1,81 @@
+{{/*
+  Version banner partial – shows a dismissible warning when the site is
+  built as an archived version (archived_version = true in hugo.toml).
+
+  For pre-built static snapshots (v0.8, v0.9), the banner is injected
+  client-side by static/js/main.js which those pages already load.
+*/}}
+
+{{ if .Site.Params.archived_version }}
+  {{ $base := .Site.Params.url_latest_version | default "https://docs.meshery.io" }}
+  {{ $base = strings.TrimSuffix "/" $base }}
+  {{/* Link to the equivalent page on the latest docs by stripping the
+       archived version prefix (e.g. /v0.9/…) from the current path. */}}
+  {{ $relPath := replaceRE `^/v[0-9]+\.[0-9]+` "" .RelPermalink }}
+  {{ $latestUrl := printf "%s%s" $base $relPath }}
+
+  <div class="version-banner" id="version-banner" role="alert">
+    <span class="version-banner__icon" aria-hidden="true">&#9888;</span>
+    <span>
+      You are not viewing the latest version of the documentation.
+      <a class="version-banner__link" href="{{ $latestUrl }}">
+        View the latest version &rarr;
+      </a>
+    </span>
+    <button
+      class="version-banner__dismiss"
+      aria-label="Dismiss version warning"
+    >&times;</button>
+  </div>
+
+  <script>
+    (function () {
+      var STORAGE_KEY = 'version-banner-dismissed';
+
+      // sessionStorage can throw when storage is disabled (e.g. privacy modes).
+      function isDismissed() {
+        try { return sessionStorage.getItem(STORAGE_KEY) === '1'; } catch (e) { return false; }
+      }
+      function rememberDismissed() {
+        try { sessionStorage.setItem(STORAGE_KEY, '1'); } catch (e) {}
+      }
+
+      // The `has-version-banner` offset classes are applied server-side (in
+      // baseof.html) so the layout is already shifted at first paint — this
+      // avoids the flash/jump (FOUC). Here we only reconcile the dismissed
+      // state and fine-tune the measured height.
+      var banner = document.getElementById('version-banner');
+      if (isDismissed()) {
+        if (banner) banner.remove();
+        document.body.classList.remove('has-version-banner');
+        document.documentElement.classList.remove('has-version-banner');
+        return;
+      }
+
+      // Measure the rendered banner so the layout offset matches its real
+      // height, even when it wraps to multiple lines on narrow screens.
+      function syncBannerHeight() {
+        if (!banner) return;
+        var h = banner.offsetHeight;
+        if (h) {
+          var px = h + 'px';
+          document.body.style.setProperty('--version-banner-height', px);
+          document.documentElement.style.setProperty('--version-banner-height', px);
+        }
+      }
+      syncBannerHeight();
+      window.addEventListener('resize', syncBannerHeight);
+
+      var btn = banner && banner.querySelector('.version-banner__dismiss');
+      if (btn) {
+        btn.addEventListener('click', function () {
+          banner.remove();
+          window.removeEventListener('resize', syncBannerHeight);
+          document.body.classList.remove('has-version-banner');
+          document.documentElement.classList.remove('has-version-banner');
+          rememberDismissed();
+        });
+      }
+    })();
+  </script>
+{{ end }}
