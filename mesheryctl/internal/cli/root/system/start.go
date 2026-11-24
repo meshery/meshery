@@ -54,13 +54,21 @@ var (
 	skipBrowserFlag bool
 )
 
+var startUsageMsg = `Usage: mesheryctl system start [flags]
+Run 'mesheryctl system start --help' to see detailed help message`
+
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start Meshery",
 	Long: `Start Meshery and each of its cloud native components.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/start`,
-	Args: cobra.NoArgs,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", startUsageMsg))
+		}
+		return nil
+	},
 	Example: `
 // Start meshery
 mesheryctl system start
