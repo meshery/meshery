@@ -7708,6 +7708,23 @@
       "suggestedRemediation": [
         "Embed the credentials instead, for example with `kubectl config view --raw --flatten --minify`, and upload the result."
       ]
+    },
+    {
+      "code": "meshery-server-1500",
+      "moniker": "ErrUnsafeKubeCredentialCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1500",
+      "severity": "alert",
+      "shortDescription": "The Kubernetes credential is not allowed to run commands or read files on the Meshery Server host",
+      "probableCause": [
+        "exec plugins, auth-providers and certificate, key or token file paths are executed or read on the machine running Meshery Server, so only the server's own kubeconfig may use them"
+      ],
+      "suggestedRemediation": [
+        "Replace the credential with embedded data (client-certificate-data, client-key-data, certificate-authority-data, token) and save it again"
+      ]
     }
   ],
   "schemaVersion": 2

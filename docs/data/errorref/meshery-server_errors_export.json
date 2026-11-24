@@ -4390,6 +4390,15 @@
         "short_description": "The kubeconfig refers to files by path",
         "probable_cause": "An uploaded kubeconfig is read on the Meshery Server host, which cannot and must not read files from the machine the kubeconfig came from.",
         "suggested_remediation": "Embed the credentials instead, for example with `kubectl config view --raw --flatten --minify`, and upload the result."
+      },
+      "1500": {
+        "name": "ErrUnsafeKubeCredentialCode",
+        "code": "1500",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "The Kubernetes credential is not allowed to run commands or read files on the Meshery Server host",
+        "probable_cause": "exec plugins, auth-providers and certificate, key or token file paths are executed or read on the machine running Meshery Server, so only the server's own kubeconfig may use them",
+        "suggested_remediation": "Replace the credential with embedded data (client-certificate-data, client-key-data, certificate-authority-data, token) and save it again"
       }
     }
   }
