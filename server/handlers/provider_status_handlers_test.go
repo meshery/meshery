@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
 )
 
 // keysOrgsFailingProvider scripts GetUsersKeys and GetOrganizations to fail so
@@ -106,5 +107,66 @@ func TestGetOrganizations_PropagatesProviderStatus(t *testing.T) {
 	}
 	if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != ErrGetOrganizationsCode {
 		t.Errorf("code = %q, want %q", decoded.Code, ErrGetOrganizationsCode)
+	}
+}
+
+type connectionsFailingProvider struct {
+	*models.DefaultLocalProvider
+	err error
+}
+
+func newConnectionsFailingProvider(err error) *connectionsFailingProvider {
+	base := &models.DefaultLocalProvider{}
+	base.Initialize()
+	return &connectionsFailingProvider{DefaultLocalProvider: base, err: err}
+}
+
+func (p *connectionsFailingProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _, _ string, _, _, _ []string, _ string) (*connections.ConnectionPage, error) {
+	if p.err != nil {
+		return nil, p.err
+	}
+	return &connections.ConnectionPage{}, nil
+}
+
+func TestGetConnectionsPreservesProviderStatus(t *testing.T) {
+	tests := []struct {
+		name       string
+		err        error
+		wantStatus int
+	}{
+		{
+			name:       "tagged provider error",
+			err:        models.ErrFetch(errors.New("service unavailable"), "Connections", http.StatusServiceUnavailable),
+			wantStatus: http.StatusServiceUnavailable,
+		},
+		{
+			name:       "generic error",
+			err:        errors.New("database unavailable"),
+			wantStatus: http.StatusInternalServerError,
+		},
+		{
+			name:       "success",
+			wantStatus: http.StatusOK,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := newConnectionsFailingProvider(test.err)
+			req := httptest.NewRequest(http.MethodGet, "/api/integrations/connections", nil)
+			rec := httptest.NewRecorder()
+
+			h.GetConnections(rec, req, nil, &models.User{}, provider)
+
+			if rec.Code != test.wantStatus {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, test.wantStatus, rec.Body.String())
+			}
+			if test.err != nil {
+				if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != ErrGetConnectionsCode {
+					t.Errorf("code = %q, want %q", decoded.Code, ErrGetConnectionsCode)
+				}
+			}
+		})
 	}
 }
