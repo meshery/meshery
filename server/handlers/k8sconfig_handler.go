@@ -10,10 +10,10 @@ import (
 	"path/filepath"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshery/server/machines"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
+	"github.com/meshery/meshkit/logger"
 
 	"github.com/meshery/meshery/server/models/connections"
 	mcore "github.com/meshery/meshery/server/models/meshmodel/core"
