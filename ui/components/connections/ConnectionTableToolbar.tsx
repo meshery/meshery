@@ -17,7 +17,7 @@ type ConnectionTableToolbarProps = {
   filters: Record<string, { name: string; options: Array<{ label: string; value: string }> }>;
   selectedFilters: SelectedFilters;
   setSelectedFilters: (filters: SelectedFilters) => void;
-  handleApplyFilter: () => void;
+  handleApplyFilter: (filters?: SelectedFilters) => void;
   columns: Array<{ name: string; label?: string; options?: { display?: boolean } }>;
   columnVisibility: Record<string, boolean | undefined>;
   setColumnVisibility: (visibility: Record<string, boolean | undefined>) => void;
