@@ -140,6 +140,9 @@ func TestOpenMesheryUI(t *testing.T) {
 }
 
 func TestDashboardCmdArgs(t *testing.T) {
+	expectedUsage := "Usage: mesheryctl system dashboard [flags]\nRun 'mesheryctl system dashboard --help' to see detailed help message"
+	expectedErr := utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s)\n\n%s", expectedUsage))
+
 	tests := []struct {
 		Name          string
 		Args          []string
@@ -155,13 +158,13 @@ func TestDashboardCmdArgs(t *testing.T) {
 			Name:          "invalid with unexpected positional argument",
 			Args:          []string{"unexpected-arg"},
 			ExpectError:   true,
-			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s)\n\n%s", dashboardUsageMsg)),
+			ExpectedError: expectedErr,
 		},
 		{
 			Name:          "invalid with multiple unexpected positional arguments",
 			Args:          []string{"arg1", "arg2"},
 			ExpectError:   true,
-			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s)\n\n%s", dashboardUsageMsg)),
+			ExpectedError: expectedErr,
 		},
 	}
 
