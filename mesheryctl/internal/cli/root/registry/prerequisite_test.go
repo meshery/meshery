@@ -225,6 +225,13 @@ func TestVerifyRepoRoot_CaseInsensitiveGitConfigAndFormats(t *testing.T) {
 			expectMatch: true,
 		},
 		{
+			name: "Partially quoted URL in git config with inline comment",
+			configText: `[remote "origin"]
+	url = "https://github.com/meshery/meshe"ry.git # comment
+`,
+			expectMatch: true,
+		},
+		{
 			name: "Unrelated repo with meshery prefix rejected",
 			configText: `[remote "origin"]
 	url = https://github.com/meshery/meshery-operator.git

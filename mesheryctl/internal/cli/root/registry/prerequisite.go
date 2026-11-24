@@ -235,37 +235,51 @@ func isMesheryRemoteURL(rawURL string) bool {
 	return strings.EqualFold(repoName, "meshery")
 }
 
-// cleanGitConfigValue decodes Git configuration value quotes and strips trailing inline comments.
+// cleanGitConfigValue decodes Git configuration values, supporting full or partial
+// quoting, escape sequences, and stripping unquoted inline comments (# and ;).
 func cleanGitConfigValue(val string) string {
+	var sb strings.Builder
+	inQuotes := false
+	escaped := false
+
 	trimmed := strings.TrimSpace(val)
-	if strings.HasPrefix(trimmed, "\"") {
-		idx := -1
-		escaped := false
-		for i := 1; i < len(trimmed); i++ {
-			if escaped {
-				escaped = false
-				continue
+	for i := 0; i < len(trimmed); i++ {
+		ch := trimmed[i]
+		if escaped {
+			switch ch {
+			case 't':
+				sb.WriteByte('\t')
+			case 'n':
+				sb.WriteByte('\n')
+			case '\\':
+				sb.WriteByte('\\')
+			case '"':
+				sb.WriteByte('"')
+			default:
+				sb.WriteByte(ch)
 			}
-			if trimmed[i] == '\\' {
-				escaped = true
-				continue
-			}
-			if trimmed[i] == '"' {
-				idx = i
-				break
-			}
+			escaped = false
+			continue
 		}
-		if idx != -1 {
-			trimmed = trimmed[1:idx]
-		} else {
-			trimmed = strings.Trim(trimmed, "\"")
+
+		if ch == '\\' {
+			escaped = true
+			continue
 		}
-	} else {
-		if idx := strings.IndexAny(trimmed, "#;"); idx != -1 {
-			trimmed = strings.TrimSpace(trimmed[:idx])
+
+		if ch == '"' {
+			inQuotes = !inQuotes
+			continue
 		}
+
+		if !inQuotes && (ch == '#' || ch == ';') {
+			break
+		}
+
+		sb.WriteByte(ch)
 	}
-	return strings.TrimSpace(trimmed)
+
+	return strings.TrimSpace(sb.String())
 }
 
 // containsMesheryRemoteURL checks if git config text defines a remote URL for meshery.
