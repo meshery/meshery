@@ -55,4 +55,17 @@ describe('URLValidator', () => {
   it('rejects an empty string', () => {
     expect(URLValidator('')).toBeFalsy();
   });
+
+  it('safely returns null for non-string inputs without throwing', () => {
+    // @ts-expect-error testing invalid inputs
+    expect(URLValidator(123)).toBeNull();
+    // @ts-expect-error testing invalid inputs
+    expect(URLValidator({})).toBeNull();
+    // @ts-expect-error testing invalid inputs
+    expect(URLValidator([])).toBeNull();
+    // @ts-expect-error testing invalid inputs
+    expect(URLValidator(true)).toBeNull();
+    // @ts-expect-error testing invalid inputs
+    expect(URLValidator(false)).toBeNull();
+  });
 });

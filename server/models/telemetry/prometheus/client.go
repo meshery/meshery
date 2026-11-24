@@ -6,19 +6,22 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/meshery/meshery/server/models/telemetry"
 	"github.com/meshery/meshkit/logger"
 )
 
 // defaultTimeout bounds every outbound call to Prometheus so a slow or
 // unreachable instance can never hang a Meshery request indefinitely.
 const defaultTimeout = 30 * time.Second
+
+// ErrResponseTooLarge identifies an upstream response that cannot be returned intact.
+var ErrResponseTooLarge = telemetry.ErrResponseTooLarge
 
 // Client is a minimal, dependency-light Prometheus HTTP API client. A Client is
 // scoped to a single Prometheus instance + credential and is safe for concurrent
@@ -66,11 +69,14 @@ type apiError struct {
 	Method     string
 	Path       string
 	Body       string
+	Cause      error
 }
 
 func (e *apiError) Error() string {
 	return fmt.Sprintf("prometheus: %s %s returned %d: %s", e.Method, e.Path, e.StatusCode, e.Body)
 }
+
+func (e *apiError) Unwrap() error { return e.Cause }
 
 // StatusCode returns the HTTP status carried by a Prometheus API error, or 0 when
 // err is not one. It lets callers classify failures without depending on the
@@ -108,7 +114,13 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values) 
 	}
 	defer func() { _ = resp.Body.Close() }()
 
-	body, err := io.ReadAll(io.LimitReader(resp.Body, 16<<20)) // cap at 16MiB
+	body, err := telemetry.ReadBody(resp.Body)
+	if errors.Is(err, ErrResponseTooLarge) {
+		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+			return nil, &apiError{StatusCode: resp.StatusCode, Method: method, Path: path, Body: ErrResponseTooLarge.Error(), Cause: ErrResponseTooLarge}
+		}
+		return nil, fmt.Errorf("prometheus: %w from %s; reduce the query time range or number of series", ErrResponseTooLarge, path)
+	}
 	if err != nil {
 		return nil, fmt.Errorf("prometheus: read response from %s: %w", path, err)
 	}

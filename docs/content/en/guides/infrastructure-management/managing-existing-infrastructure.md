@@ -94,7 +94,7 @@ MeshSync's default watch list includes `secrets.v1.`, and Secret **values are pu
 
 - Each kubeconfig context becomes its own Connection, and in operator mode each connected cluster gets its own Operator, Broker, and MeshSync. Plan RBAC and network exposure per cluster, not once. See [Multi-Cluster and Multi-Cloud]({{< ref "installation/production/multi-cluster-and-multi-cloud.md" >}}).
 - A Kubernetes Connection is owned by the user who imported it and is private until explicitly shared - by assigning it to an [Environment]({{< ref "concepts/logical/environments.md" >}}) and that Environment to a [Workspace]({{< ref "concepts/logical/workspaces.md" >}}). On a team, decide up front who imports production clusters and into which Environments they land.
-- Deployment mode is per Connection and switchable later: changing it tears down the old mode and brings up the new one (undeploying the operator when moving to embedded, and vice versa).
+- Deployment mode is per Connection and switchable later: changing it tears down the old mode and brings up the new one (installing the operator when moving to operator mode if the cluster lacks it; moving to embedded leaves the cluster's shared operator installed).
 
 ## Walkthrough: bringing a live cluster under management
 

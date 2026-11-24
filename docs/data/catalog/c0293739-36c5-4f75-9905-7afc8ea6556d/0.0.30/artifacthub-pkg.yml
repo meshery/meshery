@@ -1,0 +1,28 @@
+version: 0.0.30
+name: vllm-inference-server
+displayName: vllm-inference-server
+createdAt: "2026-11-16T18:40:49Z"
+description: |-
+    Reference Kubernetes architecture for serving large language models with vLLM's OpenAI-compatible API server.
+
+    Includes:
+    - Deployment running vllm/vllm-openai with GPU resource requests, readiness/liveness probes on /health, and shared memory (/dev/shm)
+    - Service exposing the OpenAI-compatible API on port 8000, plus an Ingress routing /v1 traffic
+    - PersistentVolumeClaim caching Hugging Face model weights so pod restarts don't re-download models
+    - ConfigMap for model name and max context length; Secret for the Hugging Face token
+    - HorizontalPodAutoscaler scaling replicas 1–3 on CPU utilization
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/c0293739-36c5-4f75-9905-7afc8ea6556d/0.0.30/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Requires a GPU node pool with the NVIDIA device plugin, a default StorageClass, and an NGINX ingress controller. Pods will not schedule without GPU nodes.\n\nBefore deploying: replace the placeholder HF_TOKEN in the hf-token Secret, set MODEL_NAME in vllm-config (default: Qwen/Qwen2.5-0.5B-Instruct), and adjust GPU/memory requests and PVC size for your model.\n\nCPU-based autoscaling is a simple default; for production, scale on request queue depth or GPU utilization via custom metrics. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 8a97268f-49c2-4aba-8400-bc7bf281827b
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
