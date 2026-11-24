@@ -3,7 +3,7 @@
  * row plus the workspaces list (an "All Workspaces" entry and one entry per
  * workspace in the active organisation).
  */
-import React, { useContext, FC } from 'react';
+import React, { useContext, FC, useRef } from 'react';
 import {
   CustomTooltip,
   ListItem,
@@ -15,6 +15,7 @@ import {
 import { useTheme } from '@/theme';
 import { iconSmall } from 'css/icons.styles';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { useIsTextTruncated } from '@/utils/hooks';
 
 export type NavConfigItem = {
   id: string;
@@ -33,33 +34,42 @@ type NavItemProps = {
 
 export const NavItem: FC<NavItemProps> = ({ item, open, selectedId, onSelect }) => {
   const { setMultiSelectedContent } = useContext(WorkspaceModalContext);
-  return (
-    <CustomTooltip title={item.label} disableHoverListener={open} placement="right">
-      <ListItem disablePadding sx={{ display: 'block' }}>
-        <ListItemButton
-          selected={selectedId === item.id}
-          onClick={() => {
-            setMultiSelectedContent([]);
-            onSelect(item.id);
-          }}
+
+  const navItem = (
+    <ListItem disablePadding sx={{ display: 'block' }}>
+      <ListItemButton
+        selected={selectedId === item.id}
+        onClick={() => {
+          setMultiSelectedContent([]);
+          onSelect(item.id);
+        }}
+        sx={{
+          minHeight: 48,
+          px: 2.5,
+          justifyContent: open ? 'initial' : 'center',
+        }}
+      >
+        <ListItemIcon
           sx={{
-            minHeight: 48,
-            px: 2.5,
-            justifyContent: open ? 'initial' : 'center',
+            minWidth: 0,
+            justifyContent: 'center',
+            mr: open ? 3 : 'auto',
           }}
         >
-          <ListItemIcon
-            sx={{
-              minWidth: 0,
-              justifyContent: 'center',
-              mr: open ? 3 : 'auto',
-            }}
-          >
-            {item.icon}
-          </ListItemIcon>
-          <ListItemText primary={item.label} sx={{ opacity: open ? 1 : 0 }} />
-        </ListItemButton>
-      </ListItem>
+          {item.icon}
+        </ListItemIcon>
+        <ListItemText primary={item.label} sx={{ opacity: open ? 1 : 0 }} />
+      </ListItemButton>
+    </ListItem>
+  );
+
+  if (open) {
+    return navItem;
+  }
+
+  return (
+    <CustomTooltip title={item.label} placement="right">
+      {navItem}
     </CustomTooltip>
   );
 };
@@ -76,6 +86,66 @@ type WorkspacesSectionProps = {
   onSelect: (id: string) => void;
   workspacesData?: { workspaces?: Array<{ id: string; name: string }> };
   isLoading: boolean;
+};
+
+type WorkspaceListItemProps = {
+  workspace: WorkspaceItem;
+  open: boolean;
+  selected: boolean;
+  onSelect: () => void;
+  backgroundColor: string | undefined;
+};
+
+const WorkspaceListItem: FC<WorkspaceListItemProps> = ({
+  workspace,
+  open,
+  selected,
+  onSelect,
+  backgroundColor,
+}) => {
+  const primaryRef = useRef<HTMLSpanElement | null>(null);
+  const isTruncated = useIsTextTruncated(primaryRef, [open, workspace.name]);
+  const showTooltip = !open || isTruncated;
+
+  const workspaceListItem = (
+    <ListItem disablePadding sx={{ display: 'block', backgroundColor }}>
+      <ListItemButton
+        selected={selected}
+        onClick={onSelect}
+        sx={{
+          minHeight: 48,
+          px: 2.5,
+          pl: open ? '2.5rem' : undefined,
+          justifyContent: open ? 'initial' : 'center',
+        }}
+      >
+        <ListItemIcon
+          sx={{
+            minWidth: 0,
+            justifyContent: 'center',
+            mr: open ? 3 : 'auto',
+          }}
+        >
+          {workspace.icon}
+        </ListItemIcon>
+        <ListItemText
+          primary={workspace.name}
+          sx={{ opacity: open ? 1 : 0 }}
+          slotProps={{ primary: { ref: primaryRef } }}
+        />
+      </ListItemButton>
+    </ListItem>
+  );
+
+  if (!showTooltip) {
+    return workspaceListItem;
+  }
+
+  return (
+    <CustomTooltip title={workspace.name} placement="right" key={workspace.id}>
+      {workspaceListItem}
+    </CustomTooltip>
+  );
 };
 
 export const WorkspacesSection: FC<WorkspacesSectionProps> = ({
@@ -103,36 +173,44 @@ export const WorkspacesSection: FC<WorkspacesSectionProps> = ({
     ),
   }));
   const { setMultiSelectedContent } = useContext(WorkspaceModalContext);
+  const allWorkspacesItem = (
+    <ListItem disablePadding sx={{ display: 'block' }}>
+      <ListItemButton
+        selected={selectedId === 'All Workspaces'}
+        onClick={handleWorkspacesClick}
+        sx={{
+          minHeight: 48,
+          px: 2.5,
+          justifyContent: open ? 'initial' : 'center',
+        }}
+      >
+        <ListItemIcon
+          sx={{
+            minWidth: 0,
+            justifyContent: 'center',
+            mr: open ? 3 : 'auto',
+          }}
+        >
+          <WorkspaceIcon
+            fill={theme.palette.icon.default}
+            secondaryFill={theme.palette.icon.default}
+            {...iconSmall}
+          />
+        </ListItemIcon>
+        <ListItemText primary="All Workspaces" sx={{ opacity: open ? 1 : 0 }} />
+      </ListItemButton>
+    </ListItem>
+  );
+
   return (
     <>
-      <CustomTooltip title={'All Workspaces'} disableHoverListener={open} placement="right">
-        <ListItem disablePadding sx={{ display: 'block' }}>
-          <ListItemButton
-            selected={selectedId === 'All Workspaces'}
-            onClick={handleWorkspacesClick}
-            sx={{
-              minHeight: 48,
-              px: 2.5,
-              justifyContent: open ? 'initial' : 'center',
-            }}
-          >
-            <ListItemIcon
-              sx={{
-                minWidth: 0,
-                justifyContent: 'center',
-                mr: open ? 3 : 'auto',
-              }}
-            >
-              <WorkspaceIcon
-                fill={theme.palette.icon.default}
-                secondaryFill={theme.palette.icon.default}
-                {...iconSmall}
-              />
-            </ListItemIcon>
-            <ListItemText primary="All Workspaces" sx={{ opacity: open ? 1 : 0 }} />
-          </ListItemButton>
-        </ListItem>
-      </CustomTooltip>
+      {open ? (
+        allWorkspacesItem
+      ) : (
+        <CustomTooltip title="All Workspaces" placement="right">
+          {allWorkspacesItem}
+        </CustomTooltip>
+      )}
       {isLoading ? (
         <ListItem sx={{ pl: 4 }}>
           <ListItemText primary="Loading..." />
@@ -140,43 +218,17 @@ export const WorkspacesSection: FC<WorkspacesSectionProps> = ({
       ) : (
         workspaces &&
         workspaces.map((workspace) => (
-          <CustomTooltip
-            title={workspace.name}
-            disableHoverListener={open}
-            placement="right"
+          <WorkspaceListItem
             key={workspace.id}
-          >
-            <ListItem
-              key={workspace.id}
-              disablePadding
-              sx={{ display: 'block', backgroundColor: theme.palette.background.secondary }}
-            >
-              <ListItemButton
-                selected={selectedId === workspace.id}
-                onClick={() => {
-                  setMultiSelectedContent([]);
-                  onSelect(workspace.id);
-                }}
-                sx={{
-                  minHeight: 48,
-                  px: 2.5,
-                  pl: open ? '2.5rem' : undefined,
-                  justifyContent: open ? 'initial' : 'center',
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    justifyContent: 'center',
-                    mr: open ? 3 : 'auto',
-                  }}
-                >
-                  {workspace.icon}
-                </ListItemIcon>
-                <ListItemText primary={workspace.name} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          </CustomTooltip>
+            workspace={workspace}
+            open={open}
+            selected={selectedId === workspace.id}
+            onSelect={() => {
+              setMultiSelectedContent([]);
+              onSelect(workspace.id);
+            }}
+            backgroundColor={theme.palette.background.secondary}
+          />
         ))
       )}
     </>

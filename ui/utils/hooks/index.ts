@@ -11,3 +11,4 @@ export { usePageTitle } from './usePageTitle';
 export { default as useInterval } from './useInterval';
 export { default as useTimeout } from './useTimeout';
 export { default as useEventListener } from './useEventListener';
+export { useIsTextTruncated } from './useIsTextTruncated';
