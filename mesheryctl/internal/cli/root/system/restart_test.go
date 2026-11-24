@@ -19,16 +19,47 @@ import (
 	"testing"
 
 	"github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRestartCmdArgs(t *testing.T) {
-	// restart does not take any arguments
-	err := restartCmd.Args(restartCmd, []string{})
-	assert.NoError(t, err)
+	tests := []struct {
+		Name          string
+		Args          []string
+		ExpectError   bool
+		ExpectedError error
+	}{
+		{
+			Name:        "valid with no positional arguments",
+			Args:        []string{},
+			ExpectError: false,
+		},
+		{
+			Name:          "invalid with unexpected positional argument",
+			Args:          []string{"unexpected-arg"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("restart does not accept positional arguments\n\n%s", restartUsageMsg)),
+		},
+		{
+			Name:          "invalid with multiple unexpected positional arguments",
+			Args:          []string{"arg1", "arg2"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("restart does not accept positional arguments\n\n%s", restartUsageMsg)),
+		},
+	}
 
-	err = restartCmd.Args(restartCmd, []string{"extra-arg"})
-	assert.Error(t, err)
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			err := restartCmd.Args(restartCmd, tt.Args)
+			if tt.ExpectError {
+				assert.Error(t, err)
+				utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
 }
 
 func TestRestartCmdFlags(t *testing.T) {
