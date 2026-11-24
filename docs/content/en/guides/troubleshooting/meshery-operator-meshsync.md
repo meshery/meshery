@@ -89,10 +89,10 @@ Some common failure situations that Meshery users might face are described below
       - MeshSync and Broker are orphaned: Meshery Operator is gone, but MeshSync and Broker are still running.
       - **Broker unreachable / not authenticated (out-of-cluster Meshery):** the Broker is `ClusterIP`-only and unreachable, or Meshery is not presenting the NATS token. See [Out-of-Cluster Deployment](#out-of-cluster-deployment); the connection's [Diagnostics](#diagnostics-in-the-connection-detail-view) will report `broker_unreachable` with remediation.
 
-1. **Situation:** MeshSync cache becomes empty or cluster resources stop appearing after a MeshSync flush/resync operation fails because the Broker is disconnected.
+1. **Situation:** A MeshSync flush/resync operation fails because the Broker is disconnected, or resources do not reappear after a successful flush.
    1. **Probable causes:**
-      - The Broker was disconnected before the flush started. Meshery Server refuses to flush the cache when the MeshSync handler is unavailable or disconnected.
-      - The Broker disconnected after the cache flush succeeded but before the resync request could be published. In this case, the cache may already be empty and discovery may not resume until a new resync is triggered.
+      - The MeshSync handler is unavailable or the Broker is disconnected, so Meshery Server cannot publish the resync request. In this case, the cache is not flushed.
+      - A resync request was published and the cache flush succeeded, but resources have not yet repopulated. Allow discovery time to complete before triggering another resync.
    2. **Diagnostics:**
       - Open the Kubernetes connection's **Diagnostics** section in Meshery UI and check the Operator, MeshSync, and Broker connectivity status.
       - Inspect MeshSync logs:
@@ -108,7 +108,7 @@ Some common failure situations that Meshery users might face are described below
    3. **Remediation and verification:**
       - Restore Broker connectivity. For out-of-cluster deployments, verify Broker reachability and NATS authentication as described in [Out-of-Cluster Deployment](#out-of-cluster-deployment).
       - Confirm that MeshSync is connected and ready.
-      - If the cache was already flushed, trigger a fresh discovery by restarting MeshSync:
+      - If a previous flush succeeded but resources remain absent after allowing discovery time, trigger a fresh discovery by restarting MeshSync:
         ```bash
         kubectl -n meshery rollout restart deploy/meshery-meshsync
         ```
