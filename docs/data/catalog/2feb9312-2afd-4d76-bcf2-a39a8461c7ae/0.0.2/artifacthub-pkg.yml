@@ -1,0 +1,20 @@
+version: 0.0.2
+name: podtato-head
+displayName: Podtato Head
+createdAt: "2026-11-22T19:44:46Z"
+description: Podtato Head is a cloud-native sample application built with multiple Go microservices representing different components of a character. It consists of an entry service, hat, arms, and legs, demonstrating service-to-service communication, Kubernetes Deployments, Services, ConfigMaps, and dynamic service discovery.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/2feb9312-2afd-4d76-bcf2-a39a8461c7ae/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a sample application intended for learning and demonstration, not production use. It requires a Kubernetes cluster and access to the public Podtato Head container images hosted on GitHub Container Registry. The entry Service uses LoadBalancer and requires cluster support or an alternative exposure method. The manifests do not define resource requests or limits. The ServiceAccount references an image pull secret named ghcr, which is not included in the provided manifests and may be unnecessary for pulling the public images. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cb7164e-e765-49e5-9ba6-8995f05935ff
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import {
   CustomTooltip,
   styled,
@@ -61,33 +61,44 @@ const SearchBar = ({
   const [searchText, setSearchText] = useState(value);
   const searchRef = useRef(null);
 
-  const debouncedOnSearch = debounce(onSearch, 500);
+  const debouncedOnSearch = useMemo(() => {
+    return typeof onSearch === 'function' ? debounce(onSearch, 500) : () => {};
+  }, [onSearch]);
 
   const handleSearchChange = (event) => {
-    debouncedOnSearch(event.target.value);
-    setSearchText(event.target.value);
+    const val = event.target.value;
+    debouncedOnSearch(val);
+    setSearchText(val);
   };
 
   const handleClearIconClick = () => {
-    setModelsFilters({ page: 0 });
+    if (typeof setModelsFilters === 'function') {
+      setModelsFilters({ page: 0 });
+    }
     setSearchText('');
     debouncedOnSearch('');
-    setExpanded(false);
+    if (typeof setExpanded === 'function') {
+      setExpanded(false);
+    }
   };
 
   const handleSearchIconClick = () => {
     if (expanded) {
       setSearchText('');
-      setExpanded(false);
+      if (typeof setExpanded === 'function') {
+        setExpanded(false);
+      }
     } else {
-      setExpanded(true);
+      if (typeof setExpanded === 'function') {
+        setExpanded(true);
+      }
       setTimeout(() => {
-        searchRef.current.focus();
+        searchRef.current?.focus?.();
       }, 300);
     }
   };
 
-  const width = window.innerWidth;
+  const width = typeof window !== 'undefined' ? window.innerWidth : 1200;
   let searchWidth = '12.5rem';
   if (width <= 750) {
     searchWidth = '7.5rem';
@@ -123,7 +134,7 @@ const SearchBar = ({
           }}
         >
           <CustomTooltip title="Close">
-            <IconButton onClick={handleClearIconClick}>
+            <IconButton onClick={handleClearIconClick} data-testid="close-icon" aria-label="close">
               <CloseIcon fill={theme.palette.icon.secondary} height={'1.5rem'} width={'1.5rem'} />
             </IconButton>
           </CustomTooltip>

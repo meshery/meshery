@@ -1,3 +1,15 @@
+# No-mistakes required for functional pull requests
+
+Functional pull requests must be pushed through no-mistakes, which writes the `## Pipeline` attestation the merge check requires:
+
+```sh
+no-mistakes axi run --intent "<goal>"
+# or
+git push no-mistakes <branch>
+```
+
+A clone without a `no-mistakes` remote needs `no-mistakes init` once. Website-only, documentation-only, and CI-only pull requests are exempt (every changed path must belong to those sets; see [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md#no-mistakes-merge-gate)). At most three pipeline runs per pull request; if the change is not green after three, stop and ask a maintainer. Drive the pipeline with `.agents/skills/no-mistakes/SKILL.md`.
+
 # Project Overview
 
 Meshery is a self-service engineering platform and open source cloud native manager for Kubernetes infrastructure. A CNCF project supporting 300+ integrations with visual GitOps, multi-cluster management, and workspace collaboration.
@@ -495,7 +507,7 @@ touching any of them.
   `.agents/skills/no-mistakes/SKILL.md`. After the third run, open an issue for anything
   still flagged and hand the pull request to a human. A run that stopped on a usage limit
   counts; one cancelled before it did anything does not. Three runs do not waive the merge gate.
-- **A pull request that changes any path outside documentation, the docs website, and CI merges only with a green no-mistakes run on its current head.** Documentation and the docs website are `docs/**` plus the root `CNAME`. CI is `.github/workflows/**`. The check is `PR must be raised via no-mistakes`: `review`, `test`, and `document` must each be `completed` in a head-bound attestation. Detail: [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md#no-mistakes-merge-gate).
+- **A pull request that changes any path outside documentation, the docs website, and CI merges only with a green no-mistakes run on its current head.** Documentation and the docs website are `docs/**`, the root `CNAME`, and markdown (`*.md` / `*.markdown`) outside the product code trees (`server/`, `ui/`, `provider-ui/`, `mesheryctl/`, `install/`, `models/`). CI is `.github/workflows/**`, `.github/actions/**`, `.github/scripts/**`, and CI config files directly under `.github/`. The check is `PR must be raised via no-mistakes`: `review`, `test`, and `document` must each be `completed` in a head-bound attestation. Detail: [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md#no-mistakes-merge-gate).
 
 ## Reusable Workflows Consumed by Other Repos
 

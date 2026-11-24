@@ -1,0 +1,20 @@
+version: 0.0.6
+name: my-first-kubernetes-design
+displayName: My First Kubernetes Design
+createdAt: "2026-11-17T12:03:17Z"
+description: A simple Kubernetes application design demonstrating an Nginx Deployment and Service. It provides a basic example of deploying a containerized web application and exposing it through an internal Kubernetes Service.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/c42eb6d0-74ce-4ec6-b50f-97728b2f14bb/0.0.6/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Requires a Kubernetes environment for deployment. The design is intended for demonstration and learning purposes. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: ad6b3efd-a422-4081-b248-a00b1b168c23
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

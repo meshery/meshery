@@ -1,5 +1,9 @@
 # Copilot Instructions for Meshery
 
+## No-mistakes required for functional pull requests
+
+Functional pull requests must be pushed through no-mistakes (`no-mistakes axi run --intent "<goal>"` or `git push no-mistakes <branch>`), which writes the `## Pipeline` attestation the merge check requires. A clone without a `no-mistakes` remote needs `no-mistakes init` once. Website-only, documentation-only, and CI-only pull requests are exempt. At most three pipeline runs per pull request; if the change is not green after three, stop and ask a maintainer. See `AGENTS.md` and [Build & Release (CI)](../docs/content/en/project/contributing/build-and-release.md#no-mistakes-merge-gate).
+
 ## Project Overview
 
 Meshery is a cloud native manager that enables the design and management of Kubernetes-based infrastructure and applications. It is a CNCF project that supports 300+ integrations and provides visual and collaborative GitOps capabilities.
