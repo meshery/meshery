@@ -6,6 +6,10 @@ on:
     paths:
       - "server/**"
       - "Makefile"
+      - "go.mod"
+      - "go.sum"
+      - "**/go.mod"
+      - "**/go.sum"
       - ".github/workflows/server-integration-tests.yml"
       - "install/kubernetes/helm/meshery-operator/**"
   pull_request:
@@ -14,6 +18,10 @@ on:
     paths:
       - "server/**"
       - "Makefile"
+      - "go.mod"
+      - "go.sum"
+      - "**/go.mod"
+      - "**/go.sum"
       - ".github/workflows/server-integration-tests.yml"
       - "install/kubernetes/helm/meshery-operator/**"
 
