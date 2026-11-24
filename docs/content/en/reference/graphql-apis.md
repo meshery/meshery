@@ -309,6 +309,14 @@ Change the Adapter Status.
 
 Change the Operator Status.
 
+Meshery Operator is installed once per cluster and shared by every connection to
+that cluster. `targetStatus: DISABLED` uninstalls it for all of them - it is the
+only way Meshery Server uninstalls the Operator; disconnecting, deleting, or
+switching a connection to embedded mode never does. When other connections on
+the same Meshery Server were using it, Meshery raises a warning event naming
+them in `affectedConnectionIDs`. See
+[One Operator per cluster]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#one-operator-per-cluster-shared-by-every-connection" >}}).
+
 ###### **Input type:** `OperatorStatusInput`
 
 #### **Arguments**
@@ -323,42 +331,6 @@ Change the Operator Status.
 ## `Subscription` type
 
 The `Subscription` type contains all the Subscriptions you can listen to.
-
-### `Subscription.listenToAddonState`
-
-Listen to changes in status of Addons available (Eg. Prometheus and Grafana).
-
-###### **Returns** [`[AddonList!]!`](#addonlist).
-
-#### **Arguments**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| <a id="subscriptionlistentoaddonstatefilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Select Mesh Type. |
-
-### `Subscription.listenToControlPlaneState`
-
-Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster.
-
-###### **Returns** [`[ControlPlane!]!`](#controlplane).
-
-#### **Arguments**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| <a id="subscriptionlistentocontrolplanestatefilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Filter Control Plane Query. |
-
-### `Subscription.listenToDataPlaneState`
-
-Listen to changes in Data Plane data for a Service Mesh (or all) in your cluster.
-
-###### **Returns** [`[DataPlane!]!`](#dataplane).
-
-#### **Arguments**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| <a id="subscriptionlistentodataplanestatefilter"></a>`filter` | [`ServiceMeshFilter`](#servicemeshfilter) | Filter Control Plane Query. |
 
 ### `Subscription.listenToMeshSyncEvents`
 

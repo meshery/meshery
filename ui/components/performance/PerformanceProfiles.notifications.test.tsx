@@ -9,12 +9,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Query results must be referentially stable across renders: the component
 // copies them into state inside an effect keyed on the data object.
-const { notify, deleteProfile, refetch, PROFILES_QUERY_RESULT } = vi.hoisted(() => {
+const { notify, deleteProfile, refetch, showPrompt, PROFILES_QUERY_RESULT } = vi.hoisted(() => {
   const refetch = vi.fn();
+  const showPrompt = vi.fn();
   return {
     notify: vi.fn(),
     deleteProfile: vi.fn(),
     refetch,
+    showPrompt,
     PROFILES_QUERY_RESULT: {
       data: { profiles: [{ id: 'p1', name: 'profile-1' }], totalCount: 1, pageSize: 10 },
       isFetching: false,
@@ -48,10 +50,10 @@ vi.mock('@meshery/schemas/permissions', () => ({
 
 vi.mock('./index', () => ({ default: () => null }));
 vi.mock('./PerformanceResults', () => ({ default: () => null }));
-// The delete confirmation prompt always answers DELETE.
+// The delete confirmation prompt resolves according to the showPrompt mock.
 vi.mock('../general/PromptComponent', () => ({
   default: React.forwardRef(function Prompt(_props, ref) {
-    React.useImperativeHandle(ref, () => ({ show: () => Promise.resolve('DELETE') }));
+    React.useImperativeHandle(ref, () => ({ show: showPrompt }));
     return null;
   }),
 }));
@@ -115,6 +117,27 @@ describe('PerformanceProfiles delete notifications', () => {
     notify.mockReset();
     deleteProfile.mockReset();
     refetch.mockReset();
+    showPrompt.mockReset();
+    showPrompt.mockResolvedValue('DELETE');
+  });
+
+  it('prompts for confirmation and aborts deletion when cancelled in grid view', async () => {
+    showPrompt.mockResolvedValue('CANCEL');
+    const user = userEvent.setup();
+    render(<PerformanceProfiles />);
+
+    await user.click(screen.getByTestId('delete-p1'));
+
+    await waitFor(() => expect(showPrompt).toHaveBeenCalledTimes(1));
+    expect(showPrompt).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Delete 1 Performance Profile?',
+        primaryOption: 'DELETE',
+      }),
+    );
+    expect(deleteProfile).not.toHaveBeenCalled();
+    expect(notify).not.toHaveBeenCalled();
+    expect(refetch).not.toHaveBeenCalled();
   });
 
   it('shows an error notification when the delete fails', async () => {
@@ -126,6 +149,13 @@ describe('PerformanceProfiles delete notifications', () => {
 
     await user.click(screen.getByTestId('delete-p1'));
 
+    await waitFor(() => expect(showPrompt).toHaveBeenCalledTimes(1));
+    expect(showPrompt).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Delete 1 Performance Profile?',
+        primaryOption: 'DELETE',
+      }),
+    );
     await waitFor(() => expect(notify).toHaveBeenCalledTimes(1));
     expect(deleteProfile).toHaveBeenCalledWith({ id: 'p1' });
     expect(notifiedEventTypes()).toEqual(['error']);
@@ -140,7 +170,15 @@ describe('PerformanceProfiles delete notifications', () => {
 
     await user.click(screen.getByTestId('delete-p1'));
 
+    await waitFor(() => expect(showPrompt).toHaveBeenCalledTimes(1));
+    expect(showPrompt).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Delete 1 Performance Profile?',
+        primaryOption: 'DELETE',
+      }),
+    );
     await waitFor(() => expect(notify).toHaveBeenCalledTimes(1));
+    expect(deleteProfile).toHaveBeenCalledWith({ id: 'p1' });
     expect(notifiedEventTypes()).toEqual(['success']);
     expect(refetch).toHaveBeenCalledTimes(1);
   });

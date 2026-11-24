@@ -7,14 +7,16 @@ import { WILDCARD_V } from './hooks/useMeshModelComponents';
  *
  * @param {Array.<String>} versionList
  */
-export default function getMostRecentVersion(versionList) {
-  if (!versionList) return;
+export default function getMostRecentVersion(versionList: unknown): string | undefined {
+  if (!Array.isArray(versionList) || versionList.length === 0) return undefined;
 
-  const stableList = [];
-  const alphaList = [];
-  const betaList = [];
+  const stableList: string[] = [];
+  const alphaList: string[] = [];
+  const betaList: string[] = [];
 
   versionList.forEach((apiVersion) => {
+    if (typeof apiVersion !== 'string' || !apiVersion) return;
+
     const isAlpha = apiVersion.includes('alpha'); // returns true if matches alpha in string
     const isBeta = apiVersion.includes('beta'); // returns true if matches beta in string
     const isStable = !isAlpha && !isBeta && /^v?[0-9]+(\.[0-9]+)*$/i.test(apiVersion);
@@ -29,7 +31,8 @@ export default function getMostRecentVersion(versionList) {
   betaList.sort().reverse();
 
   // priority order: stable > beta > alpha
-  return stableList?.[0] || betaList?.[0] || alphaList?.[0] || versionList?.[0];
+  const fallback = versionList.find((v): v is string => typeof v === 'string' && v.length > 0);
+  return stableList?.[0] || betaList?.[0] || alphaList?.[0] || fallback;
 }
 
 /**
@@ -39,8 +42,8 @@ export default function getMostRecentVersion(versionList) {
  * @param {string} versionB
  * @returns
  */
-export function versionSortComparatorFn(versionA, versionB) {
-  if (!versionA || !versionB) {
+export function versionSortComparatorFn(versionA: unknown, versionB: unknown): number | undefined {
+  if (typeof versionA !== 'string' || typeof versionB !== 'string' || !versionA || !versionB) {
     return;
   }
 
@@ -92,8 +95,8 @@ export function versionSortComparatorFn(versionA, versionB) {
   return 0;
 }
 
-function removeVFromVersion(version) {
-  if (!version) return;
+function removeVFromVersion(version: unknown): string | undefined {
+  if (typeof version !== 'string' || !version) return;
   if (version.startsWith('v')) {
     return version.substring(1);
   }
@@ -108,18 +111,22 @@ function removeVFromVersion(version) {
  * @param {Array.<string>} versions
  * @returns Versions sorted in decreasing order
  */
-export const sortByVersionInDecreasingOrder = (versions) => {
-  if (!versions) {
+export const sortByVersionInDecreasingOrder = (versions: unknown): string[] | undefined => {
+  if (!Array.isArray(versions)) {
     return;
   }
 
-  // add wildcard only in the case of multiple distinct versions
-  let wildCardV = [];
-  if (versions.length > 1) {
-    wildCardV = [WILDCARD_V];
+  const validVersions = versions.filter((v): v is string => typeof v === 'string' && v.length > 0);
+
+  // Count only concrete versions: a WILDCARD_V already in the input must not
+  // trigger a second prepended copy, and it must stay first in the result.
+  const concreteVersions = validVersions.filter((v) => v !== WILDCARD_V);
+  const hasWildcard = concreteVersions.length !== validVersions.length;
+  if (concreteVersions.length > 1 || hasWildcard) {
+    return [WILDCARD_V, ...[...concreteVersions].sort(versionSortComparatorFn).reverse()];
   }
 
-  return [...wildCardV, ...[...versions].sort(versionSortComparatorFn).reverse()];
+  return [...concreteVersions].sort(versionSortComparatorFn).reverse();
 };
 
 /**
@@ -128,8 +135,14 @@ export const sortByVersionInDecreasingOrder = (versions) => {
  * @param {string} v1
  * @param {string} v2
  */
-export function getGreaterVersion(v1, v2) {
+export function getGreaterVersion(v1: unknown, v2: unknown): unknown {
   const comparatorResult = versionSortComparatorFn(v1, v2);
+
+  if (comparatorResult === undefined) {
+    if (typeof v1 === 'string' && v1.length > 0) return v1;
+    if (typeof v2 === 'string' && v2.length > 0) return v2;
+    return typeof v1 === 'string' ? v1 : v2;
+  }
 
   if (comparatorResult >= 0) {
     return v1;
@@ -147,23 +160,34 @@ export function getGreaterVersion(v1, v2) {
  * @param {Array} models
  * @returns {Array} the de-duplicated models array with all the versions available
  */
-function groupModelsByVersion(models) {
-  if (!models) {
+function groupModelsByVersion(models: unknown): Array<any> {
+  if (!Array.isArray(models)) {
     return [];
   }
 
-  let modelMap = {};
+  let modelMap: Record<string, any> = {};
   models.forEach((model) => {
-    const modelMapCurr = modelMap[model.name];
+    if (!model || typeof model !== 'object' || !('name' in model)) return;
+    const modelName = (model as any).name;
+    if (typeof modelName !== 'string' || !modelName) return;
+
+    const rawVersion = (model as any).version;
+    const versionList = Array.isArray(rawVersion)
+      ? [...new Set(rawVersion)]
+      : rawVersion !== undefined
+        ? [rawVersion]
+        : [];
+
+    const modelMapCurr = modelMap[modelName];
     if (modelMapCurr) {
-      modelMap[model.name] = {
+      modelMap[modelName] = {
         ...modelMapCurr,
-        version: [...new Set([...modelMapCurr.version, model.version])],
+        version: [...new Set([...modelMapCurr.version, ...versionList])],
       };
     } else {
-      modelMap[model.name] = {
+      modelMap[modelName] = {
         ...model,
-        version: [model.version],
+        version: versionList,
       };
     }
   });
@@ -171,10 +195,13 @@ function groupModelsByVersion(models) {
   return Object.values(modelMap);
 }
 
-function sortVersionsInModel(models) {
+function sortVersionsInModel(models: unknown) {
+  if (!Array.isArray(models)) {
+    return [];
+  }
   return [...models].map((model) => ({
     ...model,
-    version: sortByVersionInDecreasingOrder(model.version),
+    version: sortByVersionInDecreasingOrder((model as any)?.version),
   }));
 }
 

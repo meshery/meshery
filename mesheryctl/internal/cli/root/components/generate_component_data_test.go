@@ -46,3 +46,10 @@ func TestGenerateComponentDataToDisplay_ModelColumn(t *testing.T) {
 		t.Errorf("rows = %v\nwant %v", rows, want)
 	}
 }
+
+func TestGenerateComponentDataToDisplay_NilResponse(t *testing.T) {
+	rows, total := generateComponentDataToDisplay(nil)
+	if len(rows) != 0 || total != 0 {
+		t.Fatalf("expected 0 rows and 0 total on nil response, got %d rows and %d total", len(rows), total)
+	}
+}
