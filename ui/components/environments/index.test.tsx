@@ -415,6 +415,36 @@ describe('Environments paging after delete', () => {
       delete (ENVIRONMENTS_QUERY_RESULT as any).isFetching;
     }
   });
+
+  it('stays on the current page while it still has environments', async () => {
+    const originalData = ENVIRONMENTS_QUERY_RESULT.data;
+    ENVIRONMENTS_QUERY_RESULT.data = {
+      environments: [
+        { id: 'env-21', name: 'first-on-page-3' },
+        { id: 'env-22', name: 'second-on-page-3' },
+      ],
+      totalCount: 22,
+    } as any;
+    try {
+      const user = userEvent.setup();
+      const { rerender } = render(<Environments />);
+
+      await user.click(screen.getByTestId('go-to-page-3'));
+      await waitFor(() => expect(lastQueryArgs()).toMatchObject({ page: 2 }));
+
+      // One of the two environments on page 3 was deleted; page 3 still has
+      // one, so the page must not change.
+      ENVIRONMENTS_QUERY_RESULT.data = {
+        environments: [{ id: 'env-22', name: 'second-on-page-3' }],
+        totalCount: 21,
+      } as any;
+      rerender(<Environments />);
+
+      expect(lastQueryArgs()).toMatchObject({ page: 2 });
+    } finally {
+      ENVIRONMENTS_QUERY_RESULT.data = originalData;
+    }
+  });
 });
 
 describe('Environments permissions and wire query skipping', () => {

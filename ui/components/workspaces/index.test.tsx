@@ -368,6 +368,31 @@ describe('Workspaces grid paging after delete', () => {
       WORKSPACES_QUERY_RESULT.data = originalData;
     }
   });
+
+  it('does not move while a refetch is still in flight', async () => {
+    const originalData = WORKSPACES_QUERY_RESULT.data;
+    WORKSPACES_QUERY_RESULT.data = {
+      workspaces: [{ id: 'ws-21', name: 'only-on-page-3' }],
+      totalCount: 21,
+    } as any;
+    try {
+      const user = userEvent.setup();
+      const { rerender } = render(<Workspaces onSelectWorkspace={undefined} />);
+
+      await user.click(screen.getByTestId('grid-view'));
+      await user.click(await screen.findByTestId('go-to-page-3'));
+      await waitFor(() => expect(lastQueryArgs()).toMatchObject({ page: 2 }));
+
+      WORKSPACES_QUERY_RESULT.data = { workspaces: [], totalCount: 20 } as any;
+      (WORKSPACES_QUERY_RESULT as any).isFetching = true;
+      rerender(<Workspaces onSelectWorkspace={undefined} />);
+
+      expect(lastQueryArgs()).toMatchObject({ page: 2 });
+    } finally {
+      WORKSPACES_QUERY_RESULT.data = originalData;
+      delete (WORKSPACES_QUERY_RESULT as any).isFetching;
+    }
+  });
 });
 
 describe('Workspaces column visibility menu', () => {
