@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"mime/multipart"
@@ -109,6 +110,155 @@ func TestK8sEventMetadataHasError(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestDiscoveryMetadataForSelection guards that a failure discovery recorded for
+// a context the user deselected never reaches the import receipt: the wizard
+// reports success for the imported contexts, so a receipt raised to Error
+// severity by a context that was not imported contradicts it.
+func TestDiscoveryMetadataForSelection(t *testing.T) {
+	failing := func() map[string]interface{} {
+		return map[string]interface{}{
+			"description": "Unable to establish connection",
+			"error":       errors.New("kube API unreachable"),
+		}
+	}
+	contexts := []*models.K8sContext{
+		{ID: "id-keep", Name: "keep"},
+		{ID: "id-drop", Name: "drop"},
+	}
+
+	tests := []struct {
+		name         string
+		discovery    map[string]interface{}
+		selected     map[string]struct{}
+		wantKeys     []string
+		wantHasError bool
+	}{
+		{
+			name:         "nil selection imports everything and keeps every failure",
+			discovery:    map[string]interface{}{"keep": failing(), "drop": failing()},
+			selected:     nil,
+			wantKeys:     []string{"keep", "drop"},
+			wantHasError: true,
+		},
+		{
+			name:         "failing deselected context records no error",
+			discovery:    map[string]interface{}{"drop": failing()},
+			selected:     map[string]struct{}{"id-keep": {}},
+			wantKeys:     nil,
+			wantHasError: false,
+		},
+		{
+			name:         "failing selected context keeps its error",
+			discovery:    map[string]interface{}{"keep": failing(), "drop": failing()},
+			selected:     map[string]struct{}{"id-keep": {}},
+			wantKeys:     []string{"keep"},
+			wantHasError: true,
+		},
+		{
+			name:         "context discovery could not build is dropped once a selection exists",
+			discovery:    map[string]interface{}{"unbuildable": failing()},
+			selected:     map[string]struct{}{"id-keep": {}},
+			wantKeys:     nil,
+			wantHasError: false,
+		},
+		{
+			name:         "empty selection imports nothing and records no error",
+			discovery:    map[string]interface{}{"keep": failing(), "drop": failing()},
+			selected:     map[string]struct{}{},
+			wantKeys:     nil,
+			wantHasError: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := discoveryMetadataForSelection(tt.discovery, contexts, tt.selected)
+
+			if len(got) != len(tt.wantKeys) {
+				t.Fatalf("got metadata for %d contexts, want %d: %v", len(got), len(tt.wantKeys), got)
+			}
+			for _, key := range tt.wantKeys {
+				if _, ok := got[key]; !ok {
+					t.Errorf("expected metadata for context %q, got %v", key, got)
+				}
+			}
+			if hasErr := k8sEventMetadataHasError(got); hasErr != tt.wantHasError {
+				t.Errorf("k8sEventMetadataHasError() = %v, want %v", hasErr, tt.wantHasError)
+			}
+		})
+	}
+}
+
+// TestDiscoveryMetadataForSelection_UnreachableContexts runs real discovery
+// against a kubeconfig whose contexts cannot be reached and checks the receipt
+// metadata that results once the user has narrowed the selection.
+func TestDiscoveryMetadataForSelection_UnreachableContexts(t *testing.T) {
+	// Port 1 refuses connections immediately, so discovery records a failure for
+	// both contexts without waiting on a timeout.
+	kubeconfig := []byte(`apiVersion: v1
+kind: Config
+current-context: ctx-keep
+clusters:
+- cluster:
+    server: https://127.0.0.1:1
+  name: cluster-keep
+- cluster:
+    server: https://127.0.0.1:1
+  name: cluster-drop
+contexts:
+- context:
+    cluster: cluster-keep
+    user: user-keep
+  name: ctx-keep
+- context:
+    cluster: cluster-drop
+    user: user-drop
+  name: ctx-drop
+users:
+- name: user-keep
+  user:
+    token: token-keep
+- name: user-drop
+  user:
+    token: token-drop
+`)
+
+	discoveryMetadata := map[string]interface{}{}
+	discovered := models.K8sContextsFromKubeconfigWithContext(context.Background(), nil, uuid.Must(uuid.NewV4()).String(), nil, kubeconfig, nil, discoveryMetadata, newTestLogger(t), true)
+
+	idByName := map[string]string{}
+	for _, c := range discovered {
+		idByName[c.Name] = c.ID
+	}
+	for _, name := range []string{"ctx-keep", "ctx-drop"} {
+		if idByName[name] == "" {
+			t.Fatalf("expected %q to be discovered as an unreachable context, got %v", name, idByName)
+		}
+	}
+	// Precondition: discovery itself records an error for both contexts. This is
+	// what used to leak into the receipt for the deselected one.
+	if !k8sEventMetadataHasError(discoveryMetadata) || len(discoveryMetadata) != 2 {
+		t.Fatalf("expected discovery to record an error for both contexts, got %v", discoveryMetadata)
+	}
+
+	t.Run("deselected failing context leaves the receipt without an error", func(t *testing.T) {
+		got := discoveryMetadataForSelection(discoveryMetadata, discovered, map[string]struct{}{})
+		if len(got) != 0 || k8sEventMetadataHasError(got) {
+			t.Fatalf("expected no error metadata when every context is deselected, got %v", got)
+		}
+	})
+
+	t.Run("only the selected context's failure is recorded", func(t *testing.T) {
+		got := discoveryMetadataForSelection(discoveryMetadata, discovered, map[string]struct{}{idByName["ctx-keep"]: {}})
+		if _, ok := got["ctx-keep"]; !ok || len(got) != 1 {
+			t.Fatalf("expected metadata only for ctx-keep, got %v", got)
+		}
+		if _, ok := got["ctx-drop"]; ok {
+			t.Fatalf("deselected ctx-drop must not be recorded, got %v", got)
+		}
+	})
 }
 
 // TestErrNilClusterContext verifies that ErrNilClusterContext handles a nil error gracefully

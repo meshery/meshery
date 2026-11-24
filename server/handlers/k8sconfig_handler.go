@@ -144,10 +144,14 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		return events.NewEvent().FromOwner(userID).FromSystem(sysID).WithCategory("connection").WithAction("create")
 	}
 	eventBuilder := newImportEvent().WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
-	eventMetadata := map[string]interface{}{}
+	// Discovery records a failure for every context it cannot reach, including
+	// contexts the caller may leave out of the selection below. It therefore
+	// writes to its own map; only the entries of imported contexts are carried
+	// into the receipt's eventMetadata once the selection is known.
+	discoveryMetadata := map[string]interface{}{}
 	// Include unreachable contexts so they are still registered as discovered
 	// connections; reachability is only required to transition to connected.
-	contexts := models.K8sContextsFromKubeconfigWithContext(req.Context(), provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, log, true)
+	contexts := models.K8sContextsFromKubeconfigWithContext(req.Context(), provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, discoveryMetadata, log, true)
 
 	// Parse contexts configuration if provided
 	var contextsConfig map[string]ContextOptions
@@ -176,6 +180,8 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			selectedContexts[id] = struct{}{}
 		}
 	}
+
+	eventMetadata := discoveryMetadataForSelection(discoveryMetadata, contexts, selectedContexts)
 
 	// Helper function to get meshsync deployment mode for a context
 	// Uses closure pattern to call req.FormValue only once while keeping globalMeshsyncMode scoped
@@ -409,6 +415,33 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		log.Error(models.ErrMarshal(err, "kubeconfig"))
 		return
 	}
+}
+
+// discoveryMetadataForSelection returns the part of the per-context discovery
+// metadata that belongs in the import receipt. Discovery records an "error" for
+// every context it cannot reach, but only the selected contexts are imported, so
+// a failure on a context the user deselected must not reach the receipt: it
+// would raise the receipt to Error severity while the wizard reports success.
+//
+// A nil selection means every discovered context is imported, so the discovery
+// metadata is returned unchanged. With a selection, an entry is kept only when
+// it belongs to a discovered context whose ID was selected; a context discovery
+// could not build at all is never returned, so it can never be selected and its
+// entry is dropped.
+func discoveryMetadataForSelection(discoveryMetadata map[string]interface{}, contexts []*models.K8sContext, selected map[string]struct{}) map[string]interface{} {
+	if selected == nil {
+		return discoveryMetadata
+	}
+	filtered := make(map[string]interface{}, len(selected))
+	for _, ctx := range contexts {
+		if _, ok := selected[ctx.ID]; !ok {
+			continue
+		}
+		if meta, ok := discoveryMetadata[ctx.Name]; ok {
+			filtered[ctx.Name] = meta
+		}
+	}
+	return filtered
 }
 
 // k8sEventMetadataHasError reports whether any per-context entry in a Kubernetes
