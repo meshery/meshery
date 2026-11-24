@@ -42,9 +42,10 @@ export const dataToColors = (
     return {};
   }
   const colors: Record<string, string> = {};
-  data.forEach((item, idx) => {
+  let colorIdx = 0;
+  data.forEach((item) => {
     if (Array.isArray(item) && item.length > 0 && item[0] !== undefined && item[0] !== null) {
-      colors[String(item[0])] = palette[idx % palette.length];
+      colors[String(item[0])] = palette[colorIdx++ % palette.length];
     }
   });
   return colors;

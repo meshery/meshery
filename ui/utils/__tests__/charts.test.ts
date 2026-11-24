@@ -108,7 +108,7 @@ describe('dataToColors', () => {
     expect(mapping).toEqual({});
   });
 
-  it('skips nullish or empty rows gracefully', () => {
+  it('skips nullish or empty rows gracefully and assigns consecutive palette colors to valid rows', () => {
     const theme = makeTheme();
     const data = [
       ['valid', 5],
@@ -119,7 +119,10 @@ describe('dataToColors', () => {
       ['another', 20],
     ];
     const mapping = dataToColors(data, theme);
+    const palette = getChartColors(theme);
     expect(Object.keys(mapping)).toEqual(['valid', 'another']);
+    expect(mapping.valid).toBe(palette[0]);
+    expect(mapping.another).toBe(palette[1]);
   });
 
   it('handles duplicate column labels by overwriting earlier entries', () => {
