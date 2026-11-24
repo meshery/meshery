@@ -282,11 +282,33 @@ func cleanGitConfigValue(val string) string {
 	return strings.TrimSpace(sb.String())
 }
 
+// joinGitConfigLines splits Git config text into logical lines by joining lines
+// that end with a trailing backslash continuation character ('\').
+func joinGitConfigLines(configText string) []string {
+	rawLines := strings.Split(configText, "\n")
+	var lines []string
+	var current strings.Builder
+	for _, raw := range rawLines {
+		trimmedRight := strings.TrimRight(raw, "\r")
+		if strings.HasSuffix(trimmedRight, "\\") {
+			current.WriteString(trimmedRight[:len(trimmedRight)-1])
+		} else {
+			current.WriteString(trimmedRight)
+			lines = append(lines, current.String())
+			current.Reset()
+		}
+	}
+	if current.Len() > 0 {
+		lines = append(lines, current.String())
+	}
+	return lines
+}
+
 // containsMesheryRemoteURL checks if git config text defines a remote URL for meshery.
 // Section and key names are recognized case-insensitively per Git configuration spec,
 // while preserving subsection names and URL values.
 func containsMesheryRemoteURL(configText string) bool {
-	lines := strings.Split(configText, "\n")
+	lines := joinGitConfigLines(configText)
 	inRemoteSection := false
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line)
