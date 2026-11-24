@@ -142,6 +142,24 @@ describe('Adapters component', () => {
     expect(updateProgressMock).toHaveBeenLastCalledWith({ showProgress: false });
   });
 
+  it('handles sync response when meshAdapters key is omitted without showing an error', async () => {
+    fetchSystemSyncMock.mockReturnValue({
+      unwrap: () => Promise.resolve({}),
+    });
+
+    await act(async () => {
+      render(<Adapters />);
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(notifyMock).not.toHaveBeenCalled();
+    expect(screen.getAllByText(/Meshery Adapter for Istio/i).length).toBeGreaterThan(0);
+    expect(updateProgressMock).toHaveBeenLastCalledWith({ showProgress: false });
+  });
+
   it('marks adapters returned by system sync as enabled', async () => {
     fetchSystemSyncMock.mockReturnValue({
       unwrap: () =>

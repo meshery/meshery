@@ -22,7 +22,7 @@ interface MeshAdapter {
 }
 
 interface SyncResult {
-  meshAdapters: MeshAdapter[];
+  meshAdapters?: MeshAdapter[];
 }
 
 const Adapters: React.FC = () => {
@@ -56,13 +56,15 @@ const Adapters: React.FC = () => {
           // Deep copying to avoid mutability.
           const currentAdaptersList = structuredClone(adaptersList);
 
-          result.meshAdapters.forEach((element) => {
-            const adapterId = element.name;
-            if (adapterId && currentAdaptersList[adapterId]) {
-              currentAdaptersList[adapterId].enabled = true;
-              currentAdaptersList[adapterId].url = element.adapter_location;
-            }
-          });
+          if (Array.isArray(result.meshAdapters)) {
+            result.meshAdapters.forEach((element) => {
+              const adapterId = element.name;
+              if (adapterId && currentAdaptersList[adapterId]) {
+                currentAdaptersList[adapterId].enabled = true;
+                currentAdaptersList[adapterId].url = element.adapter_location;
+              }
+            });
+          }
           setAvailableAdapters(currentAdaptersList);
         }
       })
