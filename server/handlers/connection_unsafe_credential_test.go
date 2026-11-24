@@ -11,7 +11,9 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestSaveAndUpdateConnection_RejectUnsafeKubeCredential pins issue #24234:
@@ -25,6 +27,7 @@ func TestSaveAndUpdateConnection_RejectUnsafeKubeCredential(t *testing.T) {
 		"auth-provider": `{"auth":{"name":"u","user":{"auth-provider":{"name":"oidc"}}},` + cluster + `}`,
 		"tokenFile":     `{"auth":{"name":"u","user":{"tokenFile":"/leak/path"}},` + cluster + `}`,
 		"client-key":    `{"auth":{"name":"u","user":{"client-key":"/leak/path"}},` + cluster + `}`,
+		"client-cert":   `{"auth":{"name":"u","user":{"client-certificate":"/leak/path"}},` + cluster + `}`,
 		"ca path":       `{"auth":{"name":"u","user":{"token":"t"}},"cluster":{"name":"c","cluster":{"server":"https://k","certificate-authority":"/leak/path"}}}`,
 	}
 
@@ -62,9 +65,11 @@ func TestSaveAndUpdateConnection_RejectUnsafeKubeCredential(t *testing.T) {
 		}
 	}
 
+	safeSecret := `{"auth":{"name":"u","user":{"token":"safe-token"}},"cluster":{"name":"c","cluster":{"server":"https://127.0.0.1:1"}}}`
+
 	t.Run("safe embedded kubeconfig is accepted on SaveConnection", func(t *testing.T) {
 		h, provider := newDeleteConnectionFixture(t)
-		body := `{"name":"safe-conn","kind":"kubernetes","type":"platform","credentialSecret":{"auth":{"name":"u","user":{"token":"safe-token"}},"cluster":{"name":"c","cluster":{"server":"https://127.0.0.1:1"}}}}`
+		body := fmt.Sprintf(`{"name":"safe-conn","kind":"kubernetes","type":"platform","credentialSecret":%s}`, safeSecret)
 		req := httptest.NewRequest(http.MethodPost, "/api/integrations/connections", bytes.NewBufferString(body))
 		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
 		rec := httptest.NewRecorder()
@@ -73,5 +78,24 @@ func TestSaveAndUpdateConnection_RejectUnsafeKubeCredential(t *testing.T) {
 		h.SaveConnection(rec, req, nil, user, provider)
 
 		assert.Equal(t, http.StatusCreated, rec.Code, rec.Body.String())
+	})
+
+	t.Run("safe embedded kubeconfig is accepted on UpdateConnectionById", func(t *testing.T) {
+		h, provider := newDeleteConnectionFixture(t)
+		saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+			Name: "existing-conn", Kind: "kubernetes", ConnectionType: "platform",
+		})
+		require.NoError(t, err)
+
+		body := fmt.Sprintf(`{"name":"updated-conn","kind":"kubernetes","type":"platform","credentialSecret":%s}`, safeSecret)
+		req := httptest.NewRequest(http.MethodPut, "/api/integrations/connections/"+saved.ID.String(), bytes.NewBufferString(body))
+		req = mux.SetURLVars(req, map[string]string{"connectionId": saved.ID.String()})
+		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+		rec := httptest.NewRecorder()
+		user := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+		h.UpdateConnectionById(rec, req, nil, user, provider)
+
+		assert.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
 	})
 }
