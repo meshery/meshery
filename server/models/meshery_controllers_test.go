@@ -257,7 +257,7 @@ func TestFlushAndResyncMeshsyncFlushesAndPublishesResync(t *testing.T) {
 
 	flushCalled := false
 	flushErr, resyncErr := mch.FlushAndResyncMeshsync(func() error {
-		if handler.dbHandler.Mutex.TryLock() {
+		if handler.dbHandler.TryLock() {
 			handler.dbHandler.Unlock()
 			t.Error("MeshSync event persistence lock was not held during cache flush")
 		}
@@ -280,7 +280,7 @@ func TestFlushAndResyncMeshsyncFlushesAndPublishesResync(t *testing.T) {
 	if resyncErr != nil {
 		t.Fatalf("resync error = %v, want nil", resyncErr)
 	}
-	if !handler.dbHandler.Mutex.TryLock() {
+	if !handler.dbHandler.TryLock() {
 		t.Fatal("MeshSync event persistence lock remained held after cache flush")
 	}
 	handler.dbHandler.Unlock()
