@@ -14,6 +14,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/spf13/viper"
+	"golang.org/x/oauth2"
 )
 
 func TestRemoteProviderMarkAllEventsReadForwardsRequest(t *testing.T) {
@@ -114,6 +115,163 @@ func TestRemoteProviderMarkAllEventsReadHonorsCancellation(t *testing.T) {
 		}
 	case <-time.After(time.Second):
 		t.Fatal("MarkAllEventsRead did not return after context cancellation")
+	}
+}
+
+func TestRemoteProviderMarkAllEventsReadCancelsTokenRefresh(t *testing.T) {
+	refreshStarted := make(chan struct{})
+	cleanup := make(chan struct{})
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/api/events/mark-all-read":
+			w.WriteHeader(http.StatusUnauthorized)
+		case "/refresh":
+			close(refreshStarted)
+			select {
+			case <-r.Context().Done():
+			case <-cleanup:
+			}
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	t.Cleanup(func() {
+		close(cleanup)
+		server.Close()
+	})
+
+	provider := newTestRemoteProvider(t, server.URL)
+	provider.Capabilities = Capabilities{{Feature: PersistEvents, Endpoint: "/events"}}
+	token := encodeTestToken(t, oauth2.Token{AccessToken: "expired", RefreshToken: "refreshable"})
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan error, 1)
+	go func() {
+		done <- provider.MarkAllEventsRead(ctx, token, uuid.Nil)
+	}()
+
+	select {
+	case <-refreshStarted:
+		cancel()
+	case <-time.After(time.Second):
+		cancel()
+		t.Fatal("timed out waiting for token refresh")
+	}
+
+	select {
+	case err := <-done:
+		if err == nil {
+			t.Fatal("MarkAllEventsRead returned nil after cancellation")
+		}
+	case <-time.After(time.Second):
+		t.Fatal("MarkAllEventsRead did not return after cancelling token refresh")
+	}
+}
+
+func TestRemoteProviderMarkAllEventsReadCancelsWhileRefreshInFlight(t *testing.T) {
+	markAllStarted := make(chan struct{}, 2)
+	refreshStarted := make(chan struct{})
+	cleanup := make(chan struct{})
+	var refreshCalls atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/api/events/mark-all-read":
+			markAllStarted <- struct{}{}
+			w.WriteHeader(http.StatusUnauthorized)
+		case "/refresh":
+			if refreshCalls.Add(1) == 1 {
+				close(refreshStarted)
+			}
+			select {
+			case <-r.Context().Done():
+			case <-cleanup:
+			}
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	t.Cleanup(func() {
+		close(cleanup)
+		server.Close()
+	})
+
+	provider := newTestRemoteProvider(t, server.URL)
+	provider.Capabilities = Capabilities{{Feature: PersistEvents, Endpoint: "/events"}}
+	token := encodeTestToken(t, oauth2.Token{AccessToken: "expired", RefreshToken: "refreshable"})
+
+	firstCtx, cancelFirst := context.WithCancel(context.Background())
+	defer cancelFirst()
+	firstDone := make(chan error, 1)
+	go func() {
+		firstDone <- provider.MarkAllEventsRead(firstCtx, token, uuid.Nil)
+	}()
+
+	select {
+	case <-refreshStarted:
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for first token refresh")
+	}
+
+	secondCtx, cancelSecond := context.WithCancel(context.Background())
+	secondDone := make(chan error, 1)
+	go func() {
+		secondDone <- provider.MarkAllEventsRead(secondCtx, token, uuid.Nil)
+	}()
+	select {
+	case <-markAllStarted:
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for first mark-all request")
+	}
+	select {
+	case <-markAllStarted:
+		cancelSecond()
+	case <-time.After(time.Second):
+		cancelSecond()
+		t.Fatal("timed out waiting for second mark-all request")
+	}
+
+	select {
+	case err := <-secondDone:
+		if err == nil {
+			t.Fatal("second MarkAllEventsRead returned nil after cancellation")
+		}
+	case <-time.After(time.Second):
+		t.Fatal("second MarkAllEventsRead remained blocked behind the in-flight refresh")
+	}
+
+	cancelFirst()
+	select {
+	case err := <-firstDone:
+		if err == nil {
+			t.Fatal("first MarkAllEventsRead returned nil after cancellation")
+		}
+	case <-time.After(time.Second):
+		t.Fatal("first MarkAllEventsRead did not return after cancellation")
+	}
+	if got := refreshCalls.Load(); got != 1 {
+		t.Fatalf("refresh calls = %d, want 1", got)
+	}
+}
+
+func TestRemoteProviderMarkAllEventsReadPreservesRefreshFailureStatus(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/api/events/mark-all-read", "/refresh":
+			w.WriteHeader(http.StatusUnauthorized)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+	provider.Capabilities = Capabilities{{Feature: PersistEvents, Endpoint: "/events"}}
+	token := encodeTestToken(t, oauth2.Token{AccessToken: "expired", RefreshToken: "refreshable"})
+	err := provider.MarkAllEventsRead(context.Background(), token, uuid.Nil)
+	if err == nil {
+		t.Fatal("MarkAllEventsRead returned nil, want refresh failure")
+	}
+	if got := httputil.StatusForProviderError(err, 0); got != http.StatusUnauthorized {
+		t.Fatalf("provider status = %d, want %d", got, http.StatusUnauthorized)
 	}
 }
 

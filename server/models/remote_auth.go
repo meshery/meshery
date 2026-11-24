@@ -2,6 +2,7 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/base64"
@@ -16,6 +17,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/tracing"
 	"github.com/spf13/viper"
@@ -68,9 +70,13 @@ func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http
 			l.Log.Error(err)
 		}
 		l.Log.Warn(ErrTokenRetry)
-		newToken, err := l.refreshToken(tokenString)
+		newToken, err := l.refreshToken(req.Context(), tokenString)
 		if err != nil {
-			return nil, ErrTokenRefresh(err)
+			refreshErr := ErrTokenRefresh(err)
+			if status, ok := httputil.ProviderStatusCode(err); ok {
+				refreshErr = httputil.WithProviderStatus(refreshErr, status)
+			}
+			return nil, refreshErr
 		}
 		l.Log.Info("token refresh successful")
 		retryReq, err := cloneRequestForRetry(req)
@@ -87,14 +93,63 @@ func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http
 	return resp, err
 }
 
-// refreshToken - takes a tokenString and returns a new tokenString
-func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
+type tokenRefreshCall struct {
+	done  chan struct{}
+	token string
+	err   error
+}
+
+// refreshToken takes a tokenString and returns a new tokenString. Only one
+// refresh per token is sent at a time, while callers waiting on that refresh
+// remain independently cancellable.
+func (l *RemoteProvider) refreshToken(ctx context.Context, tokenString string) (string, error) {
 	l.TokenStoreMut.Lock()
-	defer l.TokenStoreMut.Unlock()
 	newTokenString := strings.TrimSpace(l.TokenStore[tokenString])
 	if newTokenString != "" {
+		l.TokenStoreMut.Unlock()
 		return newTokenString, nil
 	}
+	if l.tokenRefreshes == nil {
+		l.tokenRefreshes = make(map[string]*tokenRefreshCall)
+	}
+	if call, ok := l.tokenRefreshes[tokenString]; ok {
+		l.TokenStoreMut.Unlock()
+		select {
+		case <-ctx.Done():
+			return "", ctx.Err()
+		case <-call.done:
+			return call.token, call.err
+		}
+	}
+	call := &tokenRefreshCall{done: make(chan struct{})}
+	l.tokenRefreshes[tokenString] = call
+	l.TokenStoreMut.Unlock()
+
+	newTokenString, err := l.requestTokenRefresh(ctx, tokenString)
+
+	l.TokenStoreMut.Lock()
+	if err == nil {
+		l.TokenStore[tokenString] = newTokenString
+	}
+	call.token = newTokenString
+	call.err = err
+	delete(l.tokenRefreshes, tokenString)
+	close(call.done)
+	l.TokenStoreMut.Unlock()
+
+	if err != nil {
+		return "", err
+	}
+	time.AfterFunc(time.Hour, func() {
+		l.Log.Info("deleting old token string")
+		l.TokenStoreMut.Lock()
+		delete(l.TokenStore, tokenString)
+		l.TokenStoreMut.Unlock()
+	})
+	return newTokenString, nil
+}
+
+func (l *RemoteProvider) requestTokenRefresh(ctx context.Context, tokenString string) (string, error) {
 	bd := map[string]string{
 		TokenCookieName: tokenString,
 	}
@@ -102,7 +157,12 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	if err != nil {
 		return "", ErrMarshal(err, "refreshing token")
 	}
-	r, err := http.Post(l.RemoteProviderURL+"/refresh", "application/json; charset=utf-8", bytes.NewReader(jsonString))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, l.RemoteProviderURL+"/refresh", bytes.NewReader(jsonString))
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	r, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return "", err
 	}
@@ -111,9 +171,12 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	if r.StatusCode != http.StatusOK {
 		body, readErr := io.ReadAll(r.Body)
 		if readErr != nil {
-			return "", fmt.Errorf("failed to refresh token. status code %d", r.StatusCode)
+			return "", httputil.WithProviderStatus(fmt.Errorf("failed to refresh token: %w", readErr), r.StatusCode)
 		}
-		return "", fmt.Errorf("failed to refresh token. status code %d: %s", r.StatusCode, strings.TrimSpace(string(body)))
+		return "", httputil.WithProviderStatus(
+			fmt.Errorf("failed to refresh token. status code %d: %s", r.StatusCode, strings.TrimSpace(string(body))),
+			r.StatusCode,
+		)
 	}
 
 	var target map[string]string
@@ -121,15 +184,10 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	newTokenString = strings.TrimSpace(target[TokenCookieName])
+	newTokenString := strings.TrimSpace(target[TokenCookieName])
 	if newTokenString == "" {
 		return "", fmt.Errorf("failed to refresh token. response missing %q", TokenCookieName)
 	}
-	l.TokenStore[tokenString] = newTokenString
-	time.AfterFunc(1*time.Hour, func() {
-		l.Log.Info("deleting old token string")
-		delete(l.TokenStore, tokenString)
-	})
 	return newTokenString, nil
 }
 
