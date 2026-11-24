@@ -1,0 +1,69 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "slack-operator-iotp",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.4",
+  "components": [
+    {
+      "id": "981dc638-bc7e-4d9d-a7cd-c323846c402c",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "iotp-alertbot-dev",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "slack-operator",
+        "registrant": {
+          "kind": "artifacthub"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": null,
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": {
+            "version": "1.0"
+          },
+          "labels": {
+            "environment": "dev"
+          },
+          "namespace": "dev"
+        },
+        "spec": {
+          "description": "Used for relaying alerts to IOTP Slack alert channel. (Dev branch)",
+          "name": "alerts-dev",
+          "private": true,
+          "topic": "alerts-dev",
+          "users": [
+            "alertmanager",
+            "TunahanBalci"
+          ]
+        }
+      },
+      "component": {
+        "version": "slack.stakater.com/v1alpha1",
+        "kind": "Channel",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "relationships": null
+}

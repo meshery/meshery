@@ -3,8 +3,11 @@ run-name: "PR #${{ github.event.pull_request.number }} no-mistakes gate - ${{ gi
 
 # Not a reusable workflow. Other repositories must not `uses:` this file.
 # A pull request is exempt only when every changed path is documentation,
-# the docs website, or CI. Any other path must carry a green no-mistakes run
-# bound to the current head. See docs/content/en/project/contributing/build-and-release.md.
+# the docs website, or CI. Classification runs inside the job (not as an
+# on.pull_request path filter) so the required check still reports success
+# on exempt pull requests. Any other path must carry a green no-mistakes
+# run bound to the current head.
+# See docs/content/en/project/contributing/build-and-release.md.
 on:
   pull_request:
     types: [opened, edited, synchronize, reopened]
@@ -28,6 +31,25 @@ jobs:
     name: PR must be raised via no-mistakes
     runs-on: ubuntu-24.04
     steps:
+      # Sparse-checkout the classifier only. The logic lives in the repository
+      # so it can be unit-tested. Like the workflow file itself, the script
+      # comes from this pull_request event's revision.
+      - name: Check out exemption classifier
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            .github/scripts/no_mistakes_exemption.py
+            .github/scripts/no_mistakes_exemption_test.py
+          sparse-checkout-cone-mode: false
+
+      # Run tests in this same required job. A separate job that this job
+      # `needs` would skip this check when the tests fail, and branch
+      # protection treats a skipped required check as passing.
+      - name: Run classifier unit tests
+        working-directory: .github/scripts
+        run: python3 -m unittest no_mistakes_exemption_test.py -v
+
       - name: Classify documentation, website, and CI pull requests
         id: scope
         env:
@@ -39,80 +61,7 @@ jobs:
           changed=$(gh api "/repos/${REPO}/pulls/${PR_NUMBER}" --jq '.changed_files')
           files=$(mktemp)
           gh api --paginate "/repos/${REPO}/pulls/${PR_NUMBER}/files" --jq '.[] | {filename, previous_filename}' > "$files"
-          CHANGED_FILES="$changed" FILES_JSON="$files" python3 - <<'PY'
-          import json
-          import os
-          import sys
-
-          CAP = 3000
-
-          def is_exempt(path):
-              # docs/ is the documentation tree and the docs.meshery.io website.
-              # CNAME publishes that website. .github/workflows/ is CI.
-              if path == "CNAME":
-                  return True
-              if path.startswith("docs/"):
-                  return True
-              if path.startswith(".github/workflows/"):
-                  return True
-              return False
-
-          def load_records(raw):
-              raw = raw.strip()
-              if not raw:
-                  return []
-              try:
-                  parsed = json.loads(raw)
-              except json.JSONDecodeError:
-                  parsed = None
-              if isinstance(parsed, list):
-                  return parsed
-              if isinstance(parsed, dict):
-                  return [parsed]
-              return [json.loads(line) for line in raw.splitlines() if line.strip()]
-
-          def paths_of(record):
-              found = []
-              for key in ("filename", "previous_filename"):
-                  value = record.get(key)
-                  if isinstance(value, str) and value:
-                      found.append(value)
-              return found
-
-          changed = int(os.environ["CHANGED_FILES"])
-          with open(os.environ["FILES_JSON"], encoding="utf-8") as handle:
-              records = load_records(handle.read())
-          if changed >= CAP or len(records) != changed or len(records) >= CAP:
-              print(
-                  "::error::Refusing to classify this pull request: GitHub reports "
-                  f"{changed} changed files and the API returned {len(records)}. "
-                  f"The files API stops at {CAP}, so an incomplete list would hide a code change.",
-                  file=sys.stderr,
-              )
-              sys.exit(1)
-
-          outside = []
-          seen = set()
-          for record in records:
-              for path in paths_of(record):
-                  if path not in seen and not is_exempt(path):
-                      seen.add(path)
-                      outside.append(path)
-
-          exempt = not outside
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as handle:
-              handle.write("exempt=" + ("true" if exempt else "false") + "\n")
-          if exempt:
-              print(
-                  f"Exempt: all {changed} changed file(s) are documentation, the docs website, or CI."
-              )
-              sys.exit(0)
-          print("This pull request changes a path outside documentation, the docs website, and CI.")
-          for path in outside[:50]:
-              print(f"requires no-mistakes: {path}")
-          if len(outside) > 50:
-              print(f"... and {len(outside) - 50} more")
-          PY
+          CHANGED_FILES="$changed" FILES_JSON="$files" python3 .github/scripts/no_mistakes_exemption.py
 
       - name: Verify no-mistakes signature and pipeline attestation
         if: steps.scope.outputs.exempt != 'true'

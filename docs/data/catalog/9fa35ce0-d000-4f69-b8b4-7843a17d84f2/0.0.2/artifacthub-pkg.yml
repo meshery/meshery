@@ -1,0 +1,20 @@
+version: 0.0.2
+name: bookinfo
+displayName: Bookinfo
+createdAt: "2026-11-22T18:49:43Z"
+description: Bookinfo is a sample microservices application that displays information about a book through a product page. It consists of productpage, details, ratings, and reviews services, with three versions of the reviews service to demonstrate service-to-service communication in Kubernetes.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/9fa35ce0-d000-4f69-b8b4-7843a17d84f2/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a sample application intended for learning and demonstration, not production use. It requires a Kubernetes cluster and access to the public Istio Bookinfo container images. The Services are ClusterIP by default, so access to productpage requires port-forwarding or an appropriate ingress or load balancer configuration. The manifests do not include the optional Istio Gateway or DestinationRule resources. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cb7164e-e765-49e5-9ba6-8995f05935ff
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

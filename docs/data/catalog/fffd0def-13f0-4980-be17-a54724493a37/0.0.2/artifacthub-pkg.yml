@@ -1,0 +1,20 @@
+version: 0.0.2
+name: aks-store-demo
+displayName: AKS Store Demo
+createdAt: "2026-11-22T19:51:21Z"
+description: AKS Store Demo is a microservices-based e-commerce application that demonstrates a cloud-native online store architecture. It includes a storefront, admin interface, product and order services, background customer and worker services, and supporting RabbitMQ and DocumentDB databases. It showcases Kubernetes Deployments, StatefulSets, Services, ConfigMaps, Secrets, and inter-service communication.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/fffd0def-13f0-4980-be17-a54724493a37/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This sample is intended for learning and demonstration, not production use. It requires a Kubernetes cluster and access to the public container images. The manifests use demo credentials that must not be reused in production. The storefront and admin Services use LoadBalancer and require cluster support or an alternative exposure method. The optional AI service is not included in this manifest, so AI-powered features will not be available. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cb7164e-e765-49e5-9ba6-8995f05935ff
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

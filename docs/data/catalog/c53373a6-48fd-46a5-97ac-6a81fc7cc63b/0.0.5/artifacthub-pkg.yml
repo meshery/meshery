@@ -1,0 +1,20 @@
+version: 0.0.5
+name: ml-model-serving-stack
+displayName: ML Model Serving Stack
+createdAt: "2026-11-15T04:44:00Z"
+description: A production-minded reference architecture for serving machine learning models on Kubernetes. Inference requests enter through an Ingress and are routed to MLServer, which runs two replicas behind a Service, scales on CPU with a HorizontalPodAutoscaler, and is protected by a PodDisruptionBudget. On startup, an init container pulls model artifacts from a MinIO bucket backed by a PersistentVolumeClaim. A NetworkPolicy restricts MinIO access to the model server only, credentials are held in a Secret, and Prometheus scrapes MLServer's metrics endpoint. All workloads define resource limits and health probes.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/c53373a6-48fd-46a5-97ac-6a81fc7cc63b/0.0.5/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Replace the placeholder MinIO credentials in the Secret before deploying.\n2. Upload a model to the \"models\" bucket; the server starts with an empty repository otherwise.\n3. Requires an Ingress controller, a default StorageClass, metrics-server (for the HPA), and a CNI that enforces NetworkPolicy.\n4. The Ingress host (ml.example.local) is a placeholder; set your own host and TLS.\n5. MinIO runs as a single replica and Prometheus has no persistent storage; both are for demonstration, not high availability.\n6. The MLServer image includes the scikit-learn runtime; change the image tag for other frameworks. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 6f656ca3-771a-43ad-adc0-9300dcb87b94
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

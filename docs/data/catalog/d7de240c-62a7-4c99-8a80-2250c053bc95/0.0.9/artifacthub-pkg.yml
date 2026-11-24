@@ -1,0 +1,20 @@
+version: 0.0.9
+name: nats-jetstream-cluster
+displayName: NATS JetStream Cluster
+createdAt: "2026-11-18T13:19:10Z"
+description: 'This design is a production-ready NATS JetStream cluster architecture for Kubernetes. It includes a ConfigMap for JetStream storage settings, a StatefulSet for running NATS nodes, a Headless Service (clusterIP: None) for internal peer discovery and clustering, and a ClusterIP Service exposing client and HTTP monitoring ports. Ideal for cloud-native messaging, event streaming, and microservices communication.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/d7de240c-62a7-4c99-8a80-2250c053bc95/0.0.9/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "- For production workloads, you should attach a dynamic StorageClass using volumeClaimTemplates on the StatefulSet so JetStream stream data (store_dir) can persists even when pod restarts.\n- Currently configured with 1 replica for sandbox compatibility but for production HA (high availability), it'll be ideal to scale the StatefulSet to 3 or 5 replicas to maintain Raft consensus quorum.\n- Update the target namespace from `playground-sandbox` to a dedicated namespace (e.g., `nats-system`). \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 5330829d-56bc-402f-8ea0-5c62730345b6
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

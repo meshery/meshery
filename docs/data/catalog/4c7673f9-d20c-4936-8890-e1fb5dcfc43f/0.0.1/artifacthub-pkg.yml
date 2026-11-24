@@ -1,0 +1,20 @@
+version: 0.0.1
+name: votesecure-architecture
+displayName: VoteSecure-Architecture
+createdAt: "2026-11-21T02:25:43Z"
+description: End-to-end Kubernetes deployment architecture for the VoteSecure full-stack voting application, featuring Ingress routing, an Nginx web tier, a FastAPI backend service, and a PostgreSQL database backed by a PersistentVolumeClaim.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/4c7673f9-d20c-4936-8890-e1fb5dcfc43f/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Configured as a single-tier request chain routing frontend and API traffic sequentially through the web proxy service. Requires valid Kubernetes Secrets for database credentials and TLS termination before production deployment. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 14c3375e-e728-4813-a842-bbcc2607d9f8
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
