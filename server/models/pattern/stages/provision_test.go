@@ -49,6 +49,7 @@ type stubActionProvider struct {
 	dispatchFailures     map[string]bool
 	noOutcomes           map[string]bool
 	prerequisiteFailures map[string]bool
+	panics               map[string]bool
 
 	mx         sync.Mutex
 	dispatched []string
@@ -77,7 +78,12 @@ func (s *stubActionProvider) Provision(ccp CompConfigPair) ([]patterns.Deploymen
 
 	s.mx.Lock()
 	s.dispatched = append(s.dispatched, name)
+	shouldPanic := s.panics[name]
 	s.mx.Unlock()
+
+	if shouldPanic {
+		panic(fmt.Sprintf("simulated failure in act.Provision for %s", name))
+	}
 
 	if s.dispatchFailures[name] {
 		return nil, errors.New("meshery-server-test", errors.Alert, []string{"dispatch failed"}, []string{"dispatch failed"}, []string{}, []string{})
@@ -296,6 +302,114 @@ func TestProvisionWithholdsDependentsOfAComponentThatFailedToApply(t *testing.T)
 
 	if !succeeded(reported["c"]) {
 		t.Error("\"c\" was not reported as successful, want it deployed regardless of \"a\" failing")
+	}
+}
+
+func TestProvisionHandlesPanicInActProvision(t *testing.T) {
+	act := newStubActionProvider(t)
+	act.panics = map[string]bool{"a": true}
+
+	compA := newDesignComponent("a")
+	compB := newDesignComponent("b", "a")
+	compC := newDesignComponent("c")
+	components := []*component.ComponentDefinition{compA, compB, compC}
+
+	design := pattern.PatternFile{
+		ID:         uuid.Must(uuid.NewV4()),
+		Name:       "provision-test",
+		Version:    "1.0.0",
+		Components: components,
+	}
+
+	names := map[string]string{}
+	mapping := map[core.Uuid]component.ComponentDefinition{}
+	for _, comp := range components {
+		names[comp.ID.String()] = comp.DisplayName
+		mapping[comp.ID] = *comp
+	}
+
+	data := &Data{
+		Pattern:                       &design,
+		Other:                         map[string]interface{}{},
+		DeclartionToDefinitionMapping: mapping,
+	}
+
+	var nextErr error
+	nextCalled := false
+	next := func(d *Data, err error) {
+		nextCalled = true
+		nextErr = err
+	}
+
+	testLog, err := logger.New("provision-test", logger.Options{})
+	if err != nil {
+		t.Fatalf("failed to build a logger: %v", err)
+	}
+
+	Provision(&stubInfoProvider{}, act, testLog)(data, nil, next)
+
+	if !nextCalled {
+		t.Fatal("next was not called")
+	}
+
+	if nextErr != nil {
+		t.Errorf("next called with error %v, want nil so deployment summary is preserved in HTTP response", nextErr)
+	}
+
+	reported := map[string][]patterns.DeploymentMessagePerContext{}
+	data.Lock.Lock()
+	for key, value := range data.Other {
+		id := key[:len(key)-len(ProvisionSuffixKey)]
+		msgs, ok := value.([]patterns.DeploymentMessagePerContext)
+		if !ok {
+			t.Fatalf("data.Other[%q] holds %T, want []patterns.DeploymentMessagePerContext", key, value)
+		}
+		reported[names[id]] = msgs
+	}
+	data.Lock.Unlock()
+
+	order := act.order()
+
+	if !dispatched(order, "a") {
+		t.Errorf("dispatched %v, want \"a\" dispatched", order)
+	}
+
+	if dispatched(order, "b") {
+		t.Errorf("dispatched %v, want \"b\" withheld because \"a\" panicked", order)
+	}
+
+	if !dispatched(order, "c") {
+		t.Errorf("dispatched %v, want \"c\" dispatched", order)
+	}
+
+	msgA, reportedA := reported["a"]
+	if !reportedA {
+		t.Fatal("\"a\" produced no deployment message in data.Other, want failure recorded")
+	}
+
+	if succeeded(msgA) {
+		t.Error("\"a\" was reported as successful, want it reported as failed")
+	}
+
+	if got := errors.GetCode(msgA[0].Summary[0].Error); got != ErrProvisionPanicCode {
+		t.Errorf("\"a\" was reported with error code %s, want %s", got, ErrProvisionPanicCode)
+	}
+
+	withheldB, reportedB := reported["b"]
+	if !reportedB {
+		t.Fatal("\"b\" produced no deployment message, want it reported as withheld")
+	}
+
+	if succeeded(withheldB) {
+		t.Error("\"b\" was reported as successful, want it reported as withheld")
+	}
+
+	if got := errors.GetCode(withheldB[0].Summary[0].Error); got != ErrDependencyNotSatisfiedCode {
+		t.Errorf("\"b\" was reported with error code %s, want %s", got, ErrDependencyNotSatisfiedCode)
+	}
+
+	if !succeeded(reported["c"]) {
+		t.Error("\"c\" was not reported as successful")
 	}
 }
 

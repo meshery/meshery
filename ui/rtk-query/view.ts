@@ -41,21 +41,26 @@ export const viewsApi = api
         invalidatesTags: (result, error, { id }) => [{ type: TAGS.VIEWS, id }],
       }),
       fetchViews: builder.query({
-        query: (queryArg) =>
-          mesheryApiPath(
-            `extensions/api/content/views?${urlEncodeArrayParam(
-              'visibility',
-              queryArg.visibility,
-            )}&${urlEncodeParams({
-              page: queryArg.page,
-              pagesize: queryArg.pagesize,
-              search: queryArg.search || '',
-              order: queryArg.order || '',
-              trim: queryArg.trim || false,
-              shared: queryArg.shared || false,
-              userId: queryArg.userId,
-            })}`,
-          ),
+        query: (queryArg) => {
+          const visibilityParam = queryArg.visibility
+            ? typeof queryArg.visibility === 'string' && !queryArg.visibility.includes('=')
+              ? `visibility=${encodeURIComponent(queryArg.visibility)}`
+              : urlEncodeArrayParam('visibility', queryArg.visibility)
+            : '';
+          const otherParams = urlEncodeParams({
+            page: queryArg.page,
+            pagesize: queryArg.pagesize,
+            search: queryArg.search || '',
+            order: queryArg.order || '',
+            trim: queryArg.trim || false,
+            shared: queryArg.shared || false,
+            userId: queryArg.userId,
+          });
+          const queryString = [visibilityParam, otherParams].filter(Boolean).join('&');
+          return mesheryApiPath(
+            `extensions/api/content/views${queryString ? `?${queryString}` : ''}`,
+          );
+        },
 
         // Only have one cache entry
         serializeQueryArgs: ({ endpointName }) => {

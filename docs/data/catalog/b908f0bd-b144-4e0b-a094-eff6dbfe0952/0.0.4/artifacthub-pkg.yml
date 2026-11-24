@@ -1,0 +1,20 @@
+version: 0.0.4
+name: cloud-native-app-platform.
+displayName: Cloud-Native App Platform.
+createdAt: "2026-11-15T00:43:14Z"
+description: A cloud-native application architecture demonstrating frontend and backend Kubernetes Deployments and Services within a dedicated Namespace.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/b908f0bd-b144-4e0b-a094-eff6dbfe0952/0.0.4/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Demonstration design using NGINX containers as placeholders. Intended for learning and architectural illustration, not production deployment. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 03cda31e-2839-487a-b433-78a6c432348e
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
