@@ -59,20 +59,24 @@ details.
 
 ### Push to or pull from an external OCI registry
 
-Because the artifact produced by `mesheryctl model build` or `model export` is a standard OCI
-image, you can push it to - or pull it from - any OCI-compatible registry using standard container
-and artifact tooling, such as [ORAS (OCI Registry As Storage)](https://oras.land/) or `docker`. Once
-pulled, you can import the model into any Meshery Server using `mesheryctl model import`.
+Because the artifact produced by `mesheryctl model build` or `model export` (as well as Meshery
+Designs exported via `mesheryctl design export --type oci`) is a standard OCI image, you can push it
+to - or pull it from - any OCI-compatible registry using standard container and artifact tooling,
+such as [ORAS (OCI Registry As Storage)](https://oras.land/) or `docker`. Once pulled, you can
+import the artifact into any Meshery Server using `mesheryctl model import` (or
+`mesheryctl design import` for designs). See
+[Importing and Exporting Designs]({{< ref "guides/configuration-management/import-export-designs.md" >}})
+for additional details on design export options.
 
-This makes model images easy to distribute, version, and share across teams and environments
+This makes model and design images easy to distribute, version, and share across teams and environments
 alongside your other OCI artifacts.
 
 #### Docker Hub
 
-Authenticate using your Docker ID and a Personal Access Token (PAT):
+Authenticate using your Docker ID and a Personal Access Token (PAT) via standard input:
 
 ```bash
-oras login docker.io -u <username> -p <personal-access-token>
+echo $DOCKER_PAT | oras login docker.io -u <username> --password-stdin
 ```
 
 Push the model artifact:
@@ -89,7 +93,7 @@ oras pull docker.io/<username>/<model-name>:<version>
 
 #### Azure Container Registry (ACR)
 
-Authenticate to your registry using the Azure CLI or ORAS with credentials:
+Authenticate to your registry using the Azure CLI or ORAS with credentials via standard input:
 
 Using Azure CLI:
 
@@ -97,10 +101,10 @@ Using Azure CLI:
 az acr login --name <registry-name>
 ```
 
-Using ORAS with service principal or repository credentials:
+Using ORAS with service principal or repository credentials via standard input:
 
 ```bash
-oras login <registry-name>.azurecr.io -u <username-or-sp-app-id> -p <password-or-sp-secret>
+echo $SP_SECRET | oras login <registry-name>.azurecr.io -u <username-or-sp-app-id> --password-stdin
 ```
 
 Push the model artifact:
@@ -159,10 +163,16 @@ Pull the model artifact:
 oras pull <aws-account-id>.dkr.ecr.<region>.amazonaws.com/<model-name>:<version>
 ```
 
-#### Import the pulled model into Meshery Server
+#### Import the pulled artifact into Meshery Server
 
-Once you have pulled the model artifact (`.tar` archive) from your OCI registry, register it with your active Meshery Server:
+Once you have pulled the model artifact (`.tar` archive) from your OCI registry, register the pulled file (`digitalocean-icons-v0-1-0.tar` in this example) with your active Meshery Server:
 
 ```bash
-mesheryctl model import -f <model-name>-<version>.tar
+mesheryctl model import -f digitalocean-icons-v0-1-0.tar
+```
+
+Similarly, if you pulled a Meshery Design OCI image, import the resulting design archive using:
+
+```bash
+mesheryctl design import -f <design-name>.tar
 ```
