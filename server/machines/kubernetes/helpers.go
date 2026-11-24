@@ -94,7 +94,13 @@ func AssignClientSetToContext(machinectx *MachineCtx, eventBuilder *events.Event
 // logger: the stored machine context's own log may be nil on machines built
 // outside the normal init path, and a failed build logs through it.
 func (m *MachineCtx) RefreshK8sContext(newCtx models.K8sContext, eventBuilder *events.EventBuilder, log logger.Handler) (bool, error) {
-	if k8sContextCredentialsEqual(m.K8sContext, newCtx) {
+	if m.clientset != nil && k8sContextCredentialsEqual(m.K8sContext, newCtx) {
+		if m.K8sContext.KubernetesServerID == nil && newCtx.KubernetesServerID != nil {
+			m.setupLock.Lock()
+			m.K8sContext.KubernetesServerID = newCtx.KubernetesServerID
+			m.setupLock.Unlock()
+			return true, nil
+		}
 		return false, nil
 	}
 	handler, err := GenerateClientSetAction(&newCtx, eventBuilder, log)

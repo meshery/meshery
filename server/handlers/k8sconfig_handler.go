@@ -376,6 +376,31 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				log.Error(err)
 			}
 
+			// When the instance was already present in the tracker (cache hit),
+			// InitializeMachineWithContext returns it as-is and drops machineCtx.
+			// Refresh its stored context so credential updates are applied and,
+			// if the machine previously failed initial startup with a nil Context,
+			// its Context is properly initialized.
+			if inst != nil {
+				inst.UpdateContext(func(oldCtx interface{}) interface{} {
+					if oldCtx == nil {
+						assigned, _, aerr := kubernetes.AssignInitialCtx(req.Context(), machineCtx, log)
+						if aerr != nil {
+							log.Error(aerr)
+							return oldCtx
+						}
+						return assigned
+					}
+					if stored, ok := oldCtx.(*kubernetes.MachineCtx); ok && stored != nil {
+						if _, rerr := stored.RefreshK8sContext(*ctx, models.NewServerEvent(req.Context()), log); rerr != nil {
+							log.Error(rerr)
+						}
+						return stored
+					}
+					return oldCtx
+				})
+			}
+
 			// An unreachable context cannot build a client set, so the state
 			// machine fails to initialize - either returning a nil instance, or,
 			// on a cache hit, one whose Context was never assigned. The connection
