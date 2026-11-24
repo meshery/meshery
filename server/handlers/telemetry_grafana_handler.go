@@ -27,7 +27,7 @@ import (
 // into a ready-to-use grafana.Client. It enforces that the connection is of
 // kind "grafana" and tolerates connections without a credential (anonymous
 // Grafana). The returned int is an HTTP status to use when err is non-nil.
-func (h *Handler) grafanaClientForConnection(token string, connectionID uuid.UUID, p models.Provider) (*grafana.Client, *connections.Connection, int, error) {
+func (h *Handler) grafanaClientForConnection(token, userID string, connectionID uuid.UUID, p models.Provider) (*grafana.Client, *connections.Connection, int, error) {
 	if connectionID.IsNil() {
 		return nil, nil, http.StatusBadRequest, models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
 	}
@@ -50,7 +50,7 @@ func (h *Handler) grafanaClientForConnection(token string, connectionID uuid.UUI
 	// DefaultLocalProvider.SaveConnection persists a nil CredentialID as the
 	// zero UUID for compatibility, so treat both nil and uuid.Nil as anonymous.
 	if credID := core.UUIDOrUUIDNil(connection.CredentialID); !credID.IsNil() {
-		cred, sc, cerr := p.GetCredentialByID(token, credID)
+		cred, sc, cerr := p.GetCredentialByID(token, userID, credID)
 		if cerr != nil {
 			return nil, connection, sc, cerr
 		}
@@ -105,10 +105,10 @@ func (h *Handler) GrafanaTelemetryPingHandler(w http.ResponseWriter, req *http.R
 		WithCategory("connection").
 		WithAction("ping")
 
-	client, connection, statusCode, err := h.grafanaClientForConnection(token, connectionID, p)
+	client, connection, statusCode, err := h.grafanaClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
 		h.emitGrafanaPingFailure(p, token, userID, eventBuilder, connectionLabel(connection, connectionID), err)
-		writeMeshkitError(w, err, statusCode)
+		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}
 
@@ -165,13 +165,13 @@ func connectionLabel(connection *connections.Connection, connectionID uuid.UUID)
 // GrafanaTelemetryBoardsHandler searches the Grafana instance's dashboards.
 //
 // GET /api/telemetry/grafana/{connectionID}/boards?search=
-func (h *Handler) GrafanaTelemetryBoardsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
+func (h *Handler) GrafanaTelemetryBoardsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	client, _, statusCode, err := h.grafanaClientForConnection(token, connectionID, p)
+	client, _, statusCode, err := h.grafanaClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
-		writeMeshkitError(w, err, statusCode)
+		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}
 	boards, err := client.SearchBoards(req.Context(), req.URL.Query().Get("search"))
@@ -185,13 +185,13 @@ func (h *Handler) GrafanaTelemetryBoardsHandler(w http.ResponseWriter, req *http
 // GrafanaTelemetryBoardHandler returns a single dashboard's panels.
 //
 // GET /api/telemetry/grafana/{connectionID}/boards/{uid}
-func (h *Handler) GrafanaTelemetryBoardHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
+func (h *Handler) GrafanaTelemetryBoardHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	client, _, statusCode, err := h.grafanaClientForConnection(token, connectionID, p)
+	client, _, statusCode, err := h.grafanaClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
-		writeMeshkitError(w, err, statusCode)
+		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}
 	board, err := client.GetBoard(req.Context(), mux.Vars(req)["uid"])
@@ -205,13 +205,13 @@ func (h *Handler) GrafanaTelemetryBoardHandler(w http.ResponseWriter, req *http.
 // GrafanaTelemetryDatasourcesHandler lists the Grafana instance's datasources.
 //
 // GET /api/telemetry/grafana/{connectionID}/datasources
-func (h *Handler) GrafanaTelemetryDatasourcesHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
+func (h *Handler) GrafanaTelemetryDatasourcesHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	client, _, statusCode, err := h.grafanaClientForConnection(token, connectionID, p)
+	client, _, statusCode, err := h.grafanaClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
-		writeMeshkitError(w, err, statusCode)
+		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}
 	ds, err := client.ListDatasources(req.Context())
@@ -227,13 +227,13 @@ func (h *Handler) GrafanaTelemetryDatasourcesHandler(w http.ResponseWriter, req 
 // the UI to render.
 //
 // GET /api/telemetry/grafana/{connectionID}/query_range?ds=&query=&start=&end=&step=
-func (h *Handler) GrafanaTelemetryQueryRangeHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
+func (h *Handler) GrafanaTelemetryQueryRangeHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	client, _, statusCode, err := h.grafanaClientForConnection(token, connectionID, p)
+	client, _, statusCode, err := h.grafanaClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
-		writeMeshkitError(w, err, statusCode)
+		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}
 
@@ -301,7 +301,7 @@ type grafanaBatchResultItem struct {
 // queries, or an unresolvable connection) returns a non-200 status.
 //
 // POST /api/telemetry/grafana/{connectionID}/query_range_batch
-func (h *Handler) GrafanaTelemetryQueryRangeBatchHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
+func (h *Handler) GrafanaTelemetryQueryRangeBatchHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 	if connectionID.IsNil() {
@@ -330,9 +330,9 @@ func (h *Handler) GrafanaTelemetryQueryRangeBatchHandler(w http.ResponseWriter, 
 		return
 	}
 
-	client, _, statusCode, err := h.grafanaClientForConnection(token, connectionID, p)
+	client, _, statusCode, err := h.grafanaClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
-		writeMeshkitError(w, err, statusCode)
+		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}
 

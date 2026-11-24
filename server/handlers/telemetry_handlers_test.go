@@ -229,7 +229,7 @@ func TestGrafanaTelemetryHandlers_RejectsInvalidConnectionID(t *testing.T) {
 // prometheusTelemetryClientForConnection rejects nil UUID with ErrInvalidUUID.
 func TestPrometheusTelemetryClientForConnection_NilUUID(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
-	client, conn, code, err := h.prometheusTelemetryClientForConnection("", uuid.Nil, &models.DefaultLocalProvider{})
+	client, conn, code, err := h.prometheusTelemetryClientForConnection("", "", uuid.Nil, &models.DefaultLocalProvider{})
 	if client != nil || conn != nil {
 		t.Errorf("expected nil client and connection, got client=%v, conn=%v", client, conn)
 	}
@@ -245,7 +245,7 @@ func TestPrometheusTelemetryClientForConnection_NilUUID(t *testing.T) {
 // grafanaClientForConnection rejects nil UUID with ErrInvalidUUID.
 func TestGrafanaClientForConnection_NilUUID(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
-	client, conn, code, err := h.grafanaClientForConnection("", uuid.Nil, &models.DefaultLocalProvider{})
+	client, conn, code, err := h.grafanaClientForConnection("", "", uuid.Nil, &models.DefaultLocalProvider{})
 	if client != nil || conn != nil {
 		t.Errorf("expected nil client and connection, got client=%v, conn=%v", client, conn)
 	}
@@ -540,12 +540,12 @@ func TestTelemetryHandlers_NilProvider_ReturnsServerError(t *testing.T) {
 	}
 
 	// Client constructor helpers with nil provider
-	_, _, gCode, gErr := h.grafanaClientForConnection("token", connUUID, nil)
+	_, _, gCode, gErr := h.grafanaClientForConnection("token", "", connUUID, nil)
 	if gCode != http.StatusInternalServerError || gErr == nil {
 		t.Errorf("grafanaClientForConnection expected 500 and error for nil provider, got code=%d, err=%v", gCode, gErr)
 	}
 
-	_, _, prCode, prErr := h.prometheusTelemetryClientForConnection("token", connUUID, nil)
+	_, _, prCode, prErr := h.prometheusTelemetryClientForConnection("token", "", connUUID, nil)
 	if prCode != http.StatusInternalServerError || prErr == nil {
 		t.Errorf("prometheusTelemetryClientForConnection expected 500 and error for nil provider, got code=%d, err=%v", prCode, prErr)
 	}
@@ -658,12 +658,12 @@ func TestTelemetryHandlers_NilConnection_ReturnsNotFound(t *testing.T) {
 	}
 
 	// Client constructor helpers
-	_, _, gCode, gErr := h.grafanaClientForConnection("token", connUUID, provider)
+	_, _, gCode, gErr := h.grafanaClientForConnection("token", "", connUUID, provider)
 	if gCode != http.StatusNotFound || meshkiterrors.GetCode(gErr) != models.ErrResultNotFoundCode {
 		t.Errorf("grafanaClientForConnection expected 404 and ErrResultNotFoundCode for nil connection, got code=%d, err=%v", gCode, gErr)
 	}
 
-	_, _, prCode, prErr := h.prometheusTelemetryClientForConnection("token", connUUID, provider)
+	_, _, prCode, prErr := h.prometheusTelemetryClientForConnection("token", "", connUUID, provider)
 	if prCode != http.StatusNotFound || meshkiterrors.GetCode(prErr) != models.ErrResultNotFoundCode {
 		t.Errorf("prometheusTelemetryClientForConnection expected 404 and ErrResultNotFoundCode for nil connection, got code=%d, err=%v", prCode, prErr)
 	}

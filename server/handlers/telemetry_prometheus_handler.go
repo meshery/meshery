@@ -32,7 +32,7 @@ const defaultMetricNamesLimit = 2000
 // connection is of kind "prometheus" and tolerates connections without a
 // credential (anonymous Prometheus). The returned int is an HTTP status to use
 // when err is non-nil.
-func (h *Handler) prometheusTelemetryClientForConnection(token string, connectionID uuid.UUID, p models.Provider) (*prometheus.Client, *connections.Connection, int, error) {
+func (h *Handler) prometheusTelemetryClientForConnection(token, userID string, connectionID uuid.UUID, p models.Provider) (*prometheus.Client, *connections.Connection, int, error) {
 	if connectionID.IsNil() {
 		return nil, nil, http.StatusBadRequest, models.ErrInvalidUUID(fmt.Errorf("connectionID must be a valid UUID"))
 	}
@@ -55,7 +55,7 @@ func (h *Handler) prometheusTelemetryClientForConnection(token string, connectio
 	// DefaultLocalProvider.SaveConnection persists a nil CredentialID as the
 	// zero UUID for compatibility, so treat both nil and uuid.Nil as anonymous.
 	if credID := core.UUIDOrUUIDNil(connection.CredentialID); !credID.IsNil() {
-		cred, sc, cerr := p.GetCredentialByID(token, credID)
+		cred, sc, cerr := p.GetCredentialByID(token, userID, credID)
 		if cerr != nil {
 			return nil, connection, sc, cerr
 		}
@@ -100,10 +100,10 @@ func (h *Handler) PrometheusTelemetryPingHandler(w http.ResponseWriter, req *htt
 		WithCategory("connection").
 		WithAction("ping")
 
-	client, connection, statusCode, err := h.prometheusTelemetryClientForConnection(token, connectionID, p)
+	client, connection, statusCode, err := h.prometheusTelemetryClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
 		h.emitPrometheusPingFailure(p, token, userID, eventBuilder, connectionLabel(connection, connectionID), err)
-		writeMeshkitError(w, err, statusCode)
+		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}
 
@@ -150,13 +150,13 @@ func (h *Handler) emitPrometheusPingFailure(p models.Provider, token string, use
 // filtered by a case-insensitive substring and capped.
 //
 // GET /api/telemetry/prometheus/{connectionID}/metrics?search=&limit=
-func (h *Handler) PrometheusTelemetryMetricsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
+func (h *Handler) PrometheusTelemetryMetricsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	client, _, statusCode, err := h.prometheusTelemetryClientForConnection(token, connectionID, p)
+	client, _, statusCode, err := h.prometheusTelemetryClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
-		writeMeshkitError(w, err, statusCode)
+		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}
 
@@ -179,13 +179,13 @@ func (h *Handler) PrometheusTelemetryMetricsHandler(w http.ResponseWriter, req *
 // constrained to a series selector.
 //
 // GET /api/telemetry/prometheus/{connectionID}/labels?match=
-func (h *Handler) PrometheusTelemetryLabelsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
+func (h *Handler) PrometheusTelemetryLabelsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	client, _, statusCode, err := h.prometheusTelemetryClientForConnection(token, connectionID, p)
+	client, _, statusCode, err := h.prometheusTelemetryClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
-		writeMeshkitError(w, err, statusCode)
+		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}
 	names, err := client.LabelNames(req.Context(), req.URL.Query().Get("match"))
@@ -200,13 +200,13 @@ func (h *Handler) PrometheusTelemetryLabelsHandler(w http.ResponseWriter, req *h
 // optionally constrained to a series selector.
 //
 // GET /api/telemetry/prometheus/{connectionID}/label_values?label=&match=
-func (h *Handler) PrometheusTelemetryLabelValuesHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
+func (h *Handler) PrometheusTelemetryLabelValuesHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	client, _, statusCode, err := h.prometheusTelemetryClientForConnection(token, connectionID, p)
+	client, _, statusCode, err := h.prometheusTelemetryClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
-		writeMeshkitError(w, err, statusCode)
+		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}
 	q := req.URL.Query()
@@ -222,13 +222,13 @@ func (h *Handler) PrometheusTelemetryLabelValuesHandler(w http.ResponseWriter, r
 // back verbatim for the UI to render.
 //
 // GET /api/telemetry/prometheus/{connectionID}/metadata?metric=
-func (h *Handler) PrometheusTelemetryMetadataHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
+func (h *Handler) PrometheusTelemetryMetadataHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	client, _, statusCode, err := h.prometheusTelemetryClientForConnection(token, connectionID, p)
+	client, _, statusCode, err := h.prometheusTelemetryClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
-		writeMeshkitError(w, err, statusCode)
+		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}
 	body, err := client.Metadata(req.Context(), req.URL.Query().Get("metric"))
@@ -244,13 +244,13 @@ func (h *Handler) PrometheusTelemetryMetadataHandler(w http.ResponseWriter, req 
 // the response back verbatim for the UI to render.
 //
 // GET /api/telemetry/prometheus/{connectionID}/query?query=&time=
-func (h *Handler) PrometheusTelemetryQueryHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
+func (h *Handler) PrometheusTelemetryQueryHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	client, _, statusCode, err := h.prometheusTelemetryClientForConnection(token, connectionID, p)
+	client, _, statusCode, err := h.prometheusTelemetryClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
-		writeMeshkitError(w, err, statusCode)
+		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}
 	q := req.URL.Query()
@@ -273,13 +273,13 @@ func (h *Handler) PrometheusTelemetryQueryHandler(w http.ResponseWriter, req *ht
 // streams the response back verbatim for the UI to render.
 //
 // GET /api/telemetry/prometheus/{connectionID}/query_range?query=&start=&end=&step=
-func (h *Handler) PrometheusTelemetryQueryRangeHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
+func (h *Handler) PrometheusTelemetryQueryRangeHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	client, _, statusCode, err := h.prometheusTelemetryClientForConnection(token, connectionID, p)
+	client, _, statusCode, err := h.prometheusTelemetryClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
-		writeMeshkitError(w, err, statusCode)
+		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}
 	q := req.URL.Query()
@@ -335,7 +335,7 @@ type prometheusBatchResultItem struct {
 // queries, or an unresolvable connection) returns a non-200 status.
 //
 // POST /api/telemetry/prometheus/{connectionID}/query_range_batch
-func (h *Handler) PrometheusTelemetryQueryRangeBatchHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
+func (h *Handler) PrometheusTelemetryQueryRangeBatchHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 	if connectionID.IsNil() {
@@ -364,9 +364,9 @@ func (h *Handler) PrometheusTelemetryQueryRangeBatchHandler(w http.ResponseWrite
 		return
 	}
 
-	client, _, statusCode, err := h.prometheusTelemetryClientForConnection(token, connectionID, p)
+	client, _, statusCode, err := h.prometheusTelemetryClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
-		writeMeshkitError(w, err, statusCode)
+		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}
 

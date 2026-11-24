@@ -480,3 +480,381 @@ func TestGetUserCredentialsFillsChoicesWhenCloud409BodyIsUnusable(t *testing.T) 
 		t.Fatalf("choices = %#v, want the organizations list as a fallback", sel.Choices)
 	}
 }
+
+func testCredential(t *testing.T) *Credential {
+	t.Helper()
+	userID := uuid.Must(uuid.FromString("dddddddd-dddd-dddd-dddd-dddddddddddd"))
+	credID := uuid.Must(uuid.FromString("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"))
+	return &Credential{ID: credID, UserId: userID, Name: "cred"}
+}
+
+func TestCredentialMutationsSendSelectedOrganizationHeader(t *testing.T) {
+	cred := testCredential(t)
+	userID := cred.UserId.String()
+	pref := &Preference{SelectedOrganizationID: testSelectedOrg}
+
+	type verb struct {
+		name   string
+		method string
+		call   func(t *testing.T, provider *RemoteProvider, req *http.Request) error
+	}
+	verbs := []verb{
+		{
+			name:   "save",
+			method: http.MethodPost,
+			call: func(t *testing.T, provider *RemoteProvider, _ *http.Request) error {
+				t.Helper()
+				_, err := provider.SaveUserCredential(testCredsToken, cred)
+				return err
+			},
+		},
+		{
+			name:   "update",
+			method: http.MethodPut,
+			call: func(t *testing.T, provider *RemoteProvider, req *http.Request) error {
+				t.Helper()
+				_, err := provider.UpdateUserCredential(req, cred)
+				return err
+			},
+		},
+		{
+			name:   "delete",
+			method: http.MethodDelete,
+			call: func(t *testing.T, provider *RemoteProvider, req *http.Request) error {
+				t.Helper()
+				_, err := provider.DeleteUserCredential(req, cred.ID)
+				return err
+			},
+		},
+		{
+			name:   "getByID",
+			method: http.MethodGet,
+			call: func(t *testing.T, provider *RemoteProvider, _ *http.Request) error {
+				t.Helper()
+				_, _, err := provider.GetCredentialByID(testCredsToken, userID, cred.ID)
+				return err
+			},
+		},
+	}
+
+	for _, tc := range verbs {
+		t.Run(tc.name, func(t *testing.T) {
+			var credsCalls, orgsCalls int
+			var gotOrg string
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				switch {
+				case strings.HasPrefix(r.URL.Path, credsAPIEndpoint):
+					if r.Method != tc.method {
+						t.Errorf("method = %s, want %s", r.Method, tc.method)
+					}
+					credsCalls++
+					gotOrg = r.Header.Get(CurrentOrgIDHeader)
+					if r.Method == http.MethodPost {
+						w.WriteHeader(http.StatusCreated)
+					} else {
+						w.WriteHeader(http.StatusOK)
+					}
+					_, _ = io.WriteString(w, `{"id":"`+cred.ID.String()+`","name":"cred"}`)
+				case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsOrgEndpoint):
+					orgsCalls++
+					http.Error(w, "organizations should not be listed when a selection exists", http.StatusInternalServerError)
+				default:
+					http.NotFound(w, r)
+				}
+			}))
+			defer server.Close()
+
+			provider := newCredentialsOrgProvider(t, server.URL)
+			if err := provider.WriteToPersister(userID, pref); err != nil {
+				t.Fatalf("seed persister: %v", err)
+			}
+			if err := tc.call(t, provider, newCredentialsOrgRequest(t, pref)); err != nil {
+				t.Fatalf("%s: %v", tc.name, err)
+			}
+			if credsCalls != 1 {
+				t.Errorf("credentials calls = %d, want 1", credsCalls)
+			}
+			if orgsCalls != 0 {
+				t.Errorf("organizations calls = %d, want 0", orgsCalls)
+			}
+			if gotOrg != testSelectedOrg {
+				t.Errorf("X-Current-Orgid = %q, want %q", gotOrg, testSelectedOrg)
+			}
+		})
+	}
+}
+
+func TestCredentialMutationsRequireSelectionWhenSeveralOrganizations(t *testing.T) {
+	cred := testCredential(t)
+	userID := cred.UserId.String()
+	verbs := []struct {
+		name string
+		call func(t *testing.T, provider *RemoteProvider, req *http.Request) error
+	}{
+		{"save", func(t *testing.T, provider *RemoteProvider, _ *http.Request) error {
+			t.Helper()
+			_, err := provider.SaveUserCredential(testCredsToken, cred)
+			return err
+		}},
+		{"update", func(t *testing.T, provider *RemoteProvider, req *http.Request) error {
+			t.Helper()
+			_, err := provider.UpdateUserCredential(req, cred)
+			return err
+		}},
+		{"delete", func(t *testing.T, provider *RemoteProvider, req *http.Request) error {
+			t.Helper()
+			_, err := provider.DeleteUserCredential(req, cred.ID)
+			return err
+		}},
+		{"getByID", func(t *testing.T, provider *RemoteProvider, _ *http.Request) error {
+			t.Helper()
+			_, _, err := provider.GetCredentialByID(testCredsToken, userID, cred.ID)
+			return err
+		}},
+	}
+
+	for _, tc := range verbs {
+		t.Run(tc.name, func(t *testing.T) {
+			var credsCalls int
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				switch {
+				case strings.HasPrefix(r.URL.Path, credsAPIEndpoint):
+					credsCalls++
+					http.Error(w, "credentials must not be called", http.StatusInternalServerError)
+				case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsOrgEndpoint):
+					_, _ = w.Write(orgsPageJSON(t, testSoleOrgID, testOtherOrgID))
+				default:
+					http.NotFound(w, r)
+				}
+			}))
+			defer server.Close()
+
+			provider := newCredentialsOrgProvider(t, server.URL)
+			if err := provider.WriteToPersister(userID, NewDefaultPreference()); err != nil {
+				t.Fatalf("seed persister: %v", err)
+			}
+			req := newCredentialsOrgRequest(t, NewDefaultPreference())
+			req = req.WithContext(context.WithValue(req.Context(), UserCtxKey, &User{ID: cred.UserId}))
+			err := tc.call(t, provider, req)
+			if credsCalls != 0 {
+				t.Errorf("credentials calls = %d, want 0", credsCalls)
+			}
+			sel, ok := AsOrganizationSelectionRequired(err)
+			if !ok {
+				t.Fatalf("error = %v, want organization_selection_required", err)
+			}
+			if len(sel.Choices) != 2 {
+				t.Errorf("choices = %#v, want two organizations", sel.Choices)
+			}
+			if status, ok := httputil.ProviderStatusCode(err); !ok || status != http.StatusConflict {
+				t.Errorf("provider status = %d, ok=%v, want 409", status, ok)
+			}
+		})
+	}
+}
+
+func TestCredentialMutationsAutoSelectSoleOrganization(t *testing.T) {
+	cred := testCredential(t)
+	userID := cred.UserId.String()
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodPost && strings.HasPrefix(r.URL.Path, credsAPIEndpoint):
+			if r.Header.Get(CurrentOrgIDHeader) != testSoleOrgID {
+				t.Errorf("X-Current-Orgid = %q, want auto-selected %q", r.Header.Get(CurrentOrgIDHeader), testSoleOrgID)
+			}
+			w.WriteHeader(http.StatusCreated)
+			_, _ = io.WriteString(w, `{"id":"`+cred.ID.String()+`","name":"cred"}`)
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsOrgEndpoint):
+			_, _ = w.Write(orgsPageJSON(t, testSoleOrgID))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := newCredentialsOrgProvider(t, server.URL)
+	if _, err := provider.SaveUserCredential(testCredsToken, cred); err != nil {
+		t.Fatalf("SaveUserCredential: %v", err)
+	}
+	stored, err := provider.ReadFromPersister(userID)
+	if err != nil {
+		t.Fatalf("ReadFromPersister: %v", err)
+	}
+	if stored == nil || stored.SelectedOrganizationID != testSoleOrgID {
+		t.Fatalf("persisted selection = %#v, want %q", stored, testSoleOrgID)
+	}
+	select {
+	case session := <-provider.syncChan:
+		if session == nil || session.token != testCredsToken {
+			t.Errorf("sync token = %#v, want %q", session, testCredsToken)
+		}
+		if session.session == nil || session.session.SelectedOrganizationID != testSoleOrgID {
+			t.Errorf("sync selection = %#v, want %q", session.session, testSoleOrgID)
+		}
+	default:
+		t.Fatal("expected a preference sync after auto-select")
+	}
+}
+
+func TestGetCredentialByIDDefensiveCloudNotFoundStaysResourceNotFoundWhenStillAMember(t *testing.T) {
+	cred := testCredential(t)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsAPIEndpoint+"/"):
+			w.WriteHeader(http.StatusNotFound)
+			_, _ = io.WriteString(w, `{"error":"credential not found"}`)
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsOrgEndpoint):
+			_, _ = w.Write(orgsPageJSON(t, testSelectedOrg))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := newCredentialsOrgProvider(t, server.URL)
+	pref := &Preference{SelectedOrganizationID: testSelectedOrg}
+	if err := provider.WriteToPersister(cred.UserId.String(), pref); err != nil {
+		t.Fatalf("seed persister: %v", err)
+	}
+	_, status, err := provider.GetCredentialByID(testCredsToken, cred.UserId.String(), cred.ID)
+	if err == nil {
+		t.Fatal("expected a not-found error")
+	}
+	if _, ok := AsOrganizationSelectionRequired(err); ok {
+		t.Fatalf("resource 404 was promoted to 409: %v", err)
+	}
+	if errors.GetCode(err) == ErrOrganizationMembershipCode {
+		t.Fatalf("resource 404 was mapped to membership: %v", err)
+	}
+	if status != http.StatusNotFound {
+		t.Errorf("status = %d, want 404", status)
+	}
+}
+
+func TestGetCredentialByIDMapsCloudNotFoundToMembershipWhenOrgIsNotTheCallers(t *testing.T) {
+	cred := testCredential(t)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsAPIEndpoint+"/"):
+			w.WriteHeader(http.StatusNotFound)
+			_, _ = io.WriteString(w, `{"error":"not a member"}`)
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsOrgEndpoint):
+			_, _ = w.Write(orgsPageJSON(t, testSoleOrgID, testOtherOrgID))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := newCredentialsOrgProvider(t, server.URL)
+	pref := &Preference{SelectedOrganizationID: testSelectedOrg}
+	if err := provider.WriteToPersister(cred.UserId.String(), pref); err != nil {
+		t.Fatalf("seed persister: %v", err)
+	}
+	_, status, err := provider.GetCredentialByID(testCredsToken, cred.UserId.String(), cred.ID)
+	if errors.GetCode(err) != ErrOrganizationMembershipCode {
+		t.Fatalf("error code = %q, want %q (err=%v)", errors.GetCode(err), ErrOrganizationMembershipCode, err)
+	}
+	if status != http.StatusNotFound {
+		t.Errorf("status = %d, want 404", status)
+	}
+}
+
+func TestSaveUserCredentialDoesNotTreatResourceConflictAsSelectionRequired(t *testing.T) {
+	cred := testCredential(t)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost && strings.HasPrefix(r.URL.Path, credsAPIEndpoint) {
+			w.WriteHeader(http.StatusConflict)
+			_, _ = io.WriteString(w, `{"error":"credential name already exists"}`)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer server.Close()
+
+	provider := newCredentialsOrgProvider(t, server.URL)
+	if err := provider.WriteToPersister(cred.UserId.String(), &Preference{SelectedOrganizationID: testSelectedOrg}); err != nil {
+		t.Fatalf("seed persister: %v", err)
+	}
+	_, err := provider.SaveUserCredential(testCredsToken, cred)
+	if _, ok := AsOrganizationSelectionRequired(err); ok {
+		t.Fatalf("duplicate-name 409 was promoted to organization_selection_required: %v", err)
+	}
+	if err == nil {
+		t.Fatal("expected a conflict error")
+	}
+	if status, ok := httputil.ProviderStatusCode(err); !ok || status != http.StatusConflict {
+		t.Errorf("provider status = %d, ok=%v, want 409", status, ok)
+	}
+}
+
+func TestGetCredentialByIDWithoutUserIDDoesNotRequireSelection(t *testing.T) {
+	// Token-only callers such as K8sContextFromConnection cannot consult a
+	// saved selection. Listing orgs and 409-ing would break multi-org users.
+	cred := testCredential(t)
+	var credsCalls, orgsCalls int
+	var gotOrg string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsAPIEndpoint+"/"):
+			credsCalls++
+			gotOrg = r.Header.Get(CurrentOrgIDHeader)
+			_, _ = io.WriteString(w, `{"id":"`+cred.ID.String()+`","name":"cred"}`)
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsOrgEndpoint):
+			orgsCalls++
+			_, _ = w.Write(orgsPageJSON(t, testSoleOrgID, testOtherOrgID))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := newCredentialsOrgProvider(t, server.URL)
+	got, status, err := provider.GetCredentialByID(testCredsToken, "", cred.ID)
+	if err != nil {
+		t.Fatalf("GetCredentialByID: %v", err)
+	}
+	if status != http.StatusOK || got == nil || got.ID != cred.ID {
+		t.Fatalf("got status=%d cred=%#v, want 200", status, got)
+	}
+	if credsCalls != 1 {
+		t.Errorf("credentials calls = %d, want 1", credsCalls)
+	}
+	if orgsCalls != 0 {
+		t.Errorf("organizations calls = %d, want 0", orgsCalls)
+	}
+	if gotOrg != "" {
+		t.Errorf("X-Current-Orgid = %q, want empty on the token-only path", gotOrg)
+	}
+}
+
+func TestGetCredentialByIDPlainForbiddenStaysResourceError(t *testing.T) {
+	cred := testCredential(t)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsAPIEndpoint+"/") {
+			w.WriteHeader(http.StatusForbidden)
+			_, _ = io.WriteString(w, `{"error":"not allowed to read this credential"}`)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer server.Close()
+
+	provider := newCredentialsOrgProvider(t, server.URL)
+	if err := provider.WriteToPersister(cred.UserId.String(), &Preference{SelectedOrganizationID: testSelectedOrg}); err != nil {
+		t.Fatalf("seed persister: %v", err)
+	}
+	_, status, err := provider.GetCredentialByID(testCredsToken, cred.UserId.String(), cred.ID)
+	if err == nil {
+		t.Fatal("expected a forbidden error")
+	}
+	if errors.GetCode(err) == ErrNoQualifyingOrganizationCode {
+		t.Fatalf("resource 403 was mapped to no qualifying organization: %v", err)
+	}
+	if _, ok := AsOrganizationSelectionRequired(err); ok {
+		t.Fatalf("resource 403 was promoted to 409: %v", err)
+	}
+	if status != http.StatusForbidden {
+		t.Errorf("status = %d, want 403", status)
+	}
+}

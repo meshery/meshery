@@ -742,7 +742,7 @@ type Provider interface {
 
 	SaveUserCredential(token string, credential *Credential) (*Credential, error)
 	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
-	GetCredentialByID(token string, credentialID core.Uuid) (*Credential, int, error)
+	GetCredentialByID(token, userID string, credentialID core.Uuid) (*Credential, int, error)
 	UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error)
 	DeleteUserCredential(req *http.Request, credentialID core.Uuid) (*Credential, error)
 

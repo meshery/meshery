@@ -13,7 +13,7 @@ import (
 
 // CurrentOrgIDHeader is the organization-selection header Meshery Cloud uses
 // to name the caller's acting organization on org-scoped APIs, including
-// GET /api/integrations/credentials.
+// the Cloud credential endpoints (list, get by id, save, update, delete).
 const CurrentOrgIDHeader = "X-Current-Orgid"
 
 // OrganizationSelectionRequiredCode is the machine-readable reason in the
@@ -130,12 +130,20 @@ func parseOrganizationSelectionRequired(body []byte) *OrganizationSelectionRequi
 // organizations qualify and none is selected, the credentials endpoint is not
 // called; a 409 organization_selection_required with choices is returned so
 // the UI can prompt. When no organization qualifies, a 403 is returned.
-func (l *RemoteProvider) resolveActingOrganizationID(req *http.Request, userID string) (string, error) {
+func (l *RemoteProvider) resolveActingOrganizationID(req *http.Request, userID, token string) (string, error) {
 	if id := l.selectedOrganizationID(req, userID); id != "" {
 		return id, nil
 	}
+	if userID == "" {
+		// Token-only callers (for example K8sContextFromConnection) cannot
+		// consult a saved selection. Do not list organizations: that would
+		// 409 every multi-org user and persist nothing useful. Leave the
+		// header unset and let Cloud apply its default (auto-select a sole
+		// org, or 403 until those callers pass a user id).
+		return "", nil
+	}
 
-	token, err := l.GetToken(req)
+	token, err := l.requestToken(req, token)
 	if err != nil {
 		return "", err
 	}
@@ -151,7 +159,7 @@ func (l *RemoteProvider) resolveActingOrganizationID(req *http.Request, userID s
 	switch {
 	case total == 1 && len(orgs) == 1:
 		orgID := orgs[0].ID.String()
-		l.persistActingOrganization(req, userID, orgID)
+		l.persistActingOrganization(req, userID, orgID, token)
 		return orgID, nil
 	case total <= 0 || len(orgs) == 0:
 		return "", ErrNoQualifyingOrganization()
@@ -235,7 +243,7 @@ func (l *RemoteProvider) organizationChoicesFromRequest(req *http.Request) []Org
 // locally and enqueues a remote preference sync when that path is available.
 // Failure to persist is logged and does not block the in-flight call, which
 // already has the organization id to send as X-Current-Orgid.
-func (l *RemoteProvider) persistActingOrganization(req *http.Request, userID, orgID string) {
+func (l *RemoteProvider) persistActingOrganization(req *http.Request, userID, orgID, token string) {
 	if l == nil || orgID == "" {
 		return
 	}
@@ -277,10 +285,10 @@ func (l *RemoteProvider) persistActingOrganization(req *http.Request, userID, or
 		}
 		return
 	}
-	if l.syncChan == nil || req == nil {
+	if l.syncChan == nil {
 		return
 	}
-	token, err := l.GetToken(req)
+	token, err := l.requestToken(req, token)
 	if err != nil {
 		if l.Log != nil {
 			l.Log.Error(err)
@@ -291,4 +299,198 @@ func (l *RemoteProvider) persistActingOrganization(req *http.Request, userID, or
 		token:   token,
 		session: pref,
 	}
+}
+
+func requestUserID(req *http.Request) string {
+	if req == nil {
+		return ""
+	}
+	user, _ := req.Context().Value(UserCtxKey).(*User)
+	if user == nil || user.ID == uuid.Nil {
+		return ""
+	}
+	return user.ID.String()
+}
+
+func credentialUserID(credential *Credential) string {
+	if credential == nil || credential.UserId == uuid.Nil {
+		return ""
+	}
+	return credential.UserId.String()
+}
+
+func (l *RemoteProvider) requestToken(req *http.Request, token string) (string, error) {
+	token = strings.TrimSpace(token)
+	if token != "" {
+		return token, nil
+	}
+	if l == nil || req == nil {
+		return "", ErrGetToken(stderrors.New("missing token"))
+	}
+	return l.GetToken(req)
+}
+
+// requestWithToken returns a request GetToken can read the token from. When
+// req is already present it is cloned so the caller's cookie jar is not
+// mutated.
+func requestWithToken(req *http.Request, token string) *http.Request {
+	token = strings.TrimSpace(token)
+	if token == "" {
+		return req
+	}
+	if req == nil {
+		req, _ = http.NewRequest(http.MethodGet, "/", nil)
+	} else {
+		req = req.Clone(req.Context())
+	}
+	req.AddCookie(&http.Cookie{Name: TokenCookieName, Value: token})
+	return req
+}
+
+// setActingOrganizationHeader resolves the acting organization and sets
+// X-Current-Orgid on the Cloud request. On a 409 or 403 from resolution it
+// returns without calling the credentials API.
+func (l *RemoteProvider) setActingOrganizationHeader(req *http.Request, userID, token string, cReq *http.Request) (string, error) {
+	if userID == "" {
+		userID = requestUserID(req)
+	}
+	orgID, err := l.resolveActingOrganizationID(req, userID, token)
+	if err != nil {
+		return "", err
+	}
+	if orgID != "" && cReq != nil {
+		cReq.Header.Set(CurrentOrgIDHeader, orgID)
+	}
+	return orgID, nil
+}
+
+// organizationScopePolicy controls how Cloud 409/403/404 responses are
+// interpreted for a particular credential operation.
+type organizationScopePolicy struct {
+	// treatConflictAsSelection reports whether any 409 (including an
+	// unparseable body) is organization_selection_required. That is true
+	// for the credentials list, whose only 409 is the org-selection
+	// contract, and false for save/update/delete/get-by-id, where a 409
+	// may also be an ordinary resource conflict such as a duplicate name.
+	treatConflictAsSelection bool
+	// treatForbiddenAsNoOrg reports whether a plain 403 (not the
+	// selection contract) is "no qualifying organization". That is true
+	// for list and save. On get/update/delete an org has already been
+	// sent, so a plain 403 is left as a resource permission error.
+	treatForbiddenAsNoOrg bool
+	// treatNotFoundAsMembership reports whether a 404 is always "not a
+	// member of selected org". True for list and save, which have no
+	// missing-credential 404. Get/update/delete only map 404 to
+	// membership when the sent org is not one the caller belongs to.
+	treatNotFoundAsMembership bool
+}
+
+var (
+	credentialCollectionScope = organizationScopePolicy{
+		treatConflictAsSelection:  true,
+		treatForbiddenAsNoOrg:     true,
+		treatNotFoundAsMembership: true,
+	}
+	credentialResourceScope = organizationScopePolicy{
+		treatConflictAsSelection:  false,
+		treatForbiddenAsNoOrg:     false,
+		treatNotFoundAsMembership: false,
+	}
+	// Save can 409 on a duplicate name, so only a contract 409 is
+	// treated as organization_selection_required. A 403/404 is still
+	// organization-scope: there is no missing-credential 404 on POST.
+	credentialSaveScope = organizationScopePolicy{
+		treatConflictAsSelection:  false,
+		treatForbiddenAsNoOrg:     true,
+		treatNotFoundAsMembership: true,
+	}
+)
+
+// organizationScopeError maps a Cloud organization-scope response. 409 and a
+// contract 403 become organization_selection_required. A plain 403 is "no
+// qualifying organization". A 404 is "not a member of selected org" when
+// treatNotFoundAsMembership is true, or when the org we sent is no longer
+// one the caller belongs to. It returns nil when the status is not an
+// organization-scope failure (including a resource 404 on get/update/delete).
+func (l *RemoteProvider) organizationScopeError(req *http.Request, status int, body []byte, orgID string, policy organizationScopePolicy) error {
+	switch status {
+	case http.StatusConflict:
+		sel := parseOrganizationSelectionRequired(body)
+		if sel != nil && sel.Code == OrganizationSelectionRequiredCode {
+			if len(sel.Choices) < 2 {
+				if choices := l.organizationChoicesFromRequest(req); len(choices) >= 2 {
+					sel.Choices = choices
+				}
+			}
+			return httputil.WithProviderStatus(sel, http.StatusConflict)
+		}
+		if !policy.treatConflictAsSelection {
+			return nil
+		}
+		if sel == nil {
+			sel = &OrganizationSelectionRequired{
+				Code:    OrganizationSelectionRequiredCode,
+				Message: organizationSelectionRequiredMessage,
+			}
+		}
+		if len(sel.Choices) < 2 {
+			if choices := l.organizationChoicesFromRequest(req); len(choices) >= 2 {
+				sel.Choices = choices
+			}
+		}
+		return httputil.WithProviderStatus(sel, http.StatusConflict)
+	case http.StatusForbidden:
+		// Live Cloud v1.0.384 may still answer 403 for a multi-org caller
+		// with no named org. Promote to 409 only when the body is already
+		// the selection-required contract (the code and at least two
+		// choices). Otherwise this is "no qualifying organization" only
+		// when the operation is collection-scoped (list/save).
+		if sel := parseOrganizationSelectionRequired(body); sel != nil && sel.Code == OrganizationSelectionRequiredCode && len(sel.Choices) >= 2 {
+			return httputil.WithProviderStatus(sel, http.StatusConflict)
+		}
+		if !policy.treatForbiddenAsNoOrg {
+			return nil
+		}
+		err := ErrNoQualifyingOrganization()
+		if l != nil && l.Log != nil {
+			l.Log.Error(err)
+		}
+		return err
+	case http.StatusNotFound:
+		if policy.treatNotFoundAsMembership || l.actingOrganizationIsNotMember(req, orgID) {
+			err := ErrOrganizationMembership()
+			if l != nil && l.Log != nil {
+				l.Log.Error(err)
+			}
+			return err
+		}
+		return nil
+	default:
+		return nil
+	}
+}
+
+func (l *RemoteProvider) actingOrganizationIsNotMember(req *http.Request, orgID string) bool {
+	orgID = strings.TrimSpace(orgID)
+	if l == nil || orgID == "" {
+		return false
+	}
+	choices := l.organizationChoicesFromRequest(req)
+	if len(choices) == 0 {
+		// Could not list organizations; do not claim a membership failure.
+		return false
+	}
+	for _, choice := range choices {
+		if choice.ID.String() == orgID {
+			return false
+		}
+	}
+	return true
+}
+
+func providerErrorStatus(err error, fallback int) int {
+	if status, ok := httputil.ProviderStatusCode(err); ok {
+		return status
+	}
+	return fallback
 }
