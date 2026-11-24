@@ -98,7 +98,8 @@ func TestGetUserCredentialsSendsSelectedOrganizationHeader(t *testing.T) {
 		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsOrgEndpoint):
 			orgsCalls++
 			t.Error("organizations endpoint should not be called when a selection is already saved")
-			http.Error(w, "unexpected", http.StatusInternalServerError)
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = io.WriteString(w, "unexpected")
 		default:
 			http.NotFound(w, r)
 		}
@@ -557,7 +558,8 @@ func TestCredentialMutationsSendSelectedOrganizationHeader(t *testing.T) {
 					_, _ = io.WriteString(w, `{"id":"`+cred.ID.String()+`","name":"cred"}`)
 				case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsOrgEndpoint):
 					orgsCalls++
-					http.Error(w, "organizations should not be listed when a selection exists", http.StatusInternalServerError)
+					w.WriteHeader(http.StatusInternalServerError)
+					_, _ = io.WriteString(w, "organizations should not be listed when a selection exists")
 				default:
 					http.NotFound(w, r)
 				}
@@ -620,7 +622,8 @@ func TestCredentialMutationsRequireSelectionWhenSeveralOrganizations(t *testing.
 				switch {
 				case strings.HasPrefix(r.URL.Path, credsAPIEndpoint):
 					credsCalls++
-					http.Error(w, "credentials must not be called", http.StatusInternalServerError)
+					w.WriteHeader(http.StatusInternalServerError)
+					_, _ = io.WriteString(w, "credentials must not be called")
 				case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsOrgEndpoint):
 					_, _ = w.Write(orgsPageJSON(t, testSoleOrgID, testOtherOrgID))
 				default:
@@ -866,7 +869,8 @@ func TestGetUserCredentialsOmitsOrgHeaderWhenOrganizationsUnsupported(t *testing
 		switch {
 		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsOrgEndpoint):
 			orgsCalls++
-			http.Error(w, "unexpected", http.StatusInternalServerError)
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = io.WriteString(w, "unexpected")
 		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsAPIEndpoint):
 			credsCalls++
 			gotOrg = r.Header.Get(CurrentOrgIDHeader)

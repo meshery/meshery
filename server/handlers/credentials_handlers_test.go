@@ -917,8 +917,8 @@ func TestCredentialHandlers_SurfaceOrganizationSelectionErrors(t *testing.T) {
 			name: "getByID",
 			set: func(p *orgScopedCredentialProvider, err error) {
 				p.getErr = err
-				switch {
-				case err == selectionErr:
+				switch err {
+				case selectionErr:
 					p.getStatus = http.StatusConflict
 				default:
 					// 403/404 organization errors carry provider status, but
