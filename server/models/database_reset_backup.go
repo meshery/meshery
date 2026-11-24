@@ -35,7 +35,7 @@ func BackupSystemDatabase(dbHandler *database.Handler) (string, error) {
 	}
 
 	currentTime := time.Now().UTC().Format("20060102150405.000000000")
-	archiveFileName := fmt.Sprintf("mesherydb-%s.sql", currentTime)
+	archiveFileName := fmt.Sprintf("mesherydb-%s.db", currentTime)
 	backupPath := filepath.Join(archiveDir, archiveFileName)
 
 	if err := dbHandler.Exec("VACUUM INTO ?", backupPath).Error; err != nil {

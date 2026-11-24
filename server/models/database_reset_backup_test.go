@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -25,7 +24,7 @@ func TestBackupSystemDatabase(t *testing.T) {
 
 	dbFile := filepath.Join(tempDir, "mesherydb.sql")
 	db, err := database.New(database.Options{
-		Filename: fmt.Sprintf("file:%s?cache=private&mode=rwc&_busy_timeout=10000&_journal_mode=WAL", filepath.ToSlash(dbFile)),
+		Filename: SystemDatabaseDSN(dbFile),
 		Engine:   database.SQLITE,
 	})
 	require.NoError(t, err, "failed to initialize SQLite DB")
@@ -72,9 +71,9 @@ func TestBackupSystemDatabase(t *testing.T) {
 	assert.Error(t, err)
 
 	// 4. Refuse existing destination
-	err = os.WriteFile(filepath.Join(tempDir, ".archive", "existing.sql"), []byte("data"), 0644)
+	err = os.WriteFile(filepath.Join(tempDir, ".archive", "existing.db"), []byte("data"), 0644)
 	require.NoError(t, err)
 	// Direct VACUUM INTO existing path fails
-	err = db.Exec("VACUUM INTO ?", filepath.Join(tempDir, ".archive", "existing.sql")).Error
+	err = db.Exec("VACUUM INTO ?", filepath.Join(tempDir, ".archive", "existing.db")).Error
 	assert.Error(t, err, "VACUUM INTO must refuse to overwrite existing file")
 }
