@@ -3,7 +3,7 @@
 	One page, one type
 &lt;/h2&gt;
 &lt;p&gt;Diátaxis does not require each of its four types to have its own top-level section in the table of contents. Meshery keeps its top level small and bundled, so a tutorial track can live inside an existing section, such as getting started, as a clearly labeled subsection.&lt;/p&gt;</description></item><item><title>Contributing to Meshery Docs</title><link>/project/contributing/contributing-docs/docs/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-docs/docs/</guid><description>&lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Important&lt;/div&gt;
-&lt;p&gt;Before contributing, please review the &lt;a href="https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow"&gt;Documentation Contribution Flow&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Before contributing, please review the &lt;a href="/project/contributing/#general-contribution-flow"&gt;General Contribution Flow&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;Use the following steps to set up your development environment depending on your Operating System of choice, fork the repository, install dependencies and run the site locally. You can then make changes, test locally, sign-off and commit, and push the changes made for review.&lt;/p&gt;
 &lt;div class="alert alert-info" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;Meshery Documentation Design Specification&lt;/div&gt;

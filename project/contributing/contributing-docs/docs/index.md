@@ -11,7 +11,7 @@ LLMS index: [llms.txt](/llms.txt)
 <div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Important</div>
 
 
-Before contributing, please review the [Documentation Contribution Flow](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow).
+Before contributing, please review the [General Contribution Flow](/project/contributing/#general-contribution-flow).
 </div>
 
 
