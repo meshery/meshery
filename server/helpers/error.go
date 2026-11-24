@@ -8,6 +8,7 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
+	ErrKubeConfigFileReferenceCode         = "meshery-server-1499"
 	ErrErrNewDynamicClientGeneratorCode    = "meshery-server-1138"
 	ErrInvalidK8SConfigCode                = "meshery-server-1139"
 	ErrClientConfigCode                    = "meshery-server-1140"
@@ -154,4 +155,11 @@ func ErrDeployingAdapterInUnknownPlatform(err error) error {
 
 func ErrUnDeployingAdapterInUnknownPlatform(err error) error {
 	return errors.New(ErrUnDeployingAdapterCode, errors.Critical, []string{"Unable to undeploy Meshery Adapter in the current environment"}, []string{err.Error()}, []string{"Current platform is not supported for undeploying Meshery Adapters"}, []string{"Consider using a supported platform for undeploying Meshery Adapters"})
+}
+
+// ErrKubeConfigFileReference reports an uploaded kubeconfig that names a file
+// on the server instead of embedding the credential. It deliberately carries no
+// path or file content: the response must not reveal what the server can read.
+func ErrKubeConfigFileReference() error {
+	return errors.New(ErrKubeConfigFileReferenceCode, errors.Alert, []string{"The kubeconfig refers to files by path"}, []string{"certificate-authority, client-certificate, client-key and tokenFile may not be file paths in an uploaded kubeconfig."}, []string{"An uploaded kubeconfig is read on the Meshery Server host, which cannot and must not read files from the machine the kubeconfig came from."}, []string{"Embed the credentials instead, for example with `kubectl config view --raw --flatten --minify`, and upload the result."})
 }

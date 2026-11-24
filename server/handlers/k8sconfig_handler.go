@@ -120,10 +120,12 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		return
 	}
 
-	// Flatten kubeconfig. If that fails, go ahead with non-flattened config file
-	flattenedK8sConfig, err := helpers.FlattenMinifyKubeConfig(*k8sConfigBytes)
-	if err == nil {
-		k8sConfigBytes = &flattenedK8sConfig
+	// An uploaded kubeconfig is never flattened: FlattenMinifyKubeConfig reads
+	// whatever file a value names on the Meshery Server host. Refuse file-path
+	// credentials up front instead (issue #24219).
+	if err := helpers.RejectKubeConfigFileReferences(*k8sConfigBytes); err != nil {
+		writeMeshkitError(w, err, http.StatusBadRequest)
+		return
 	}
 
 	saveK8sContextResponse := SaveK8sContextResponse{
@@ -479,17 +481,12 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 
 	eventMetadata := map[string]interface{}{}
 
-	// Flatten (inline file-path certs) before deriving contexts. This MUST match
-	// addK8SConfig, which also flattens: the context ID is a hash of the cluster
-	// and auth maps, so a kubeconfig with file-path certs (e.g. minikube's
-	// client-certificate: /path) hashes differently before vs after flattening.
-	// If discovery hashed the raw config and registration hashed the flattened
-	// one, the IDs the wizard selects would never match the ones registration
-	// computes, and every context would be filtered out ("0 connections
-	// imported"). Falling back to the raw bytes on error keeps both paths in sync
-	// (registration falls back the same way).
-	if flattenedK8sConfig, ferr := helpers.FlattenMinifyKubeConfig(*k8sConfigBytes); ferr == nil {
-		k8sConfigBytes = &flattenedK8sConfig
+	// An uploaded kubeconfig is never flattened (see addK8SConfig): it may not
+	// name server-side files, so there is nothing to inline, and discovery and
+	// registration both derive context IDs from the bytes exactly as uploaded.
+	if err := helpers.RejectKubeConfigFileReferences(*k8sConfigBytes); err != nil {
+		writeMeshkitError(w, err, http.StatusBadRequest)
+		return
 	}
 
 	// Discovery surfaces unreachable contexts too (flagged Reachable=false) so
@@ -585,6 +582,13 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
 		log.Error(err)
+		writeMeshkitError(w, err, http.StatusBadRequest)
+		return
+	}
+
+	// client-go reads certificate, key and token files named by the kubeconfig
+	// when it builds the client, so a path-bearing upload must not reach it.
+	if err := helpers.RejectKubeConfigFileReferences(*k8sConfigBytes); err != nil {
 		writeMeshkitError(w, err, http.StatusBadRequest)
 		return
 	}
