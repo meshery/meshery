@@ -1,0 +1,36 @@
+version: 0.0.1
+name: dfd-level-1-template
+displayName: DFD Level 1 Template
+createdAt: "2024-10-28T00:00:00Z"
+description: A Data Flow Diagram (DFD) Level 1 template for Kanvas that provides a starter layout for creating DFD Level 1 architecture diagrams. It decomposes high-level processes into detailed sub-processes, showing how data moves between external entities, processes, and data stores. Ideal for system architects, developers, and teams documenting data movement across services in cloud native environments.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/52c0d3a0-3dc3-45fe-9114-e0a5e34bdce5/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: |
+  ## DFD Level 1 Architecture Template
+
+  This template provides a ready-to-use Data Flow Diagram (DFD) Level 1 layout for Kanvas. A DFD Level 1 decomposes the single process from a Context Diagram (Level 0) into its major sub-processes, data stores, and external entities, along with the data flows connecting them.
+
+  ### What This Template Includes
+  - **External Entities**: User, Admin, Third-Party API (rectangles at the edges)
+  - **Processes**: Authentication Service (1.0), Request Processing (2.0), Data Transformation (3.0), Notification Service (4.0) (rounded rectangles)
+  - **Data Stores**: User Database (D1), Application Data Store (D2), Log Store (D3) (double-bordered rectangles)
+  - **Data Flows**: Login Credentials, Auth Token, API Request, Transformed Data, Notification Alert, Config Updates (dashed labels)
+  - **Annotated Comments**: Guide and step-by-step instructions for creating a DFD Level 1
+
+  ### Caveats and Considerations
+  - This template uses annotation components (TextBox, Comment) and is intended as a visual diagramming starter.
+  - Modify the placeholder labels and text to match your specific system architecture.
+  - For complex DFDs, consider linking multiple designs to represent different subsystem decompositions.
+  - Ensure every process has at least one input and one output data flow for completeness.
+install: mesheryctl design import -f
+provider:
+    name: 090e7114-509a-4046-81f1-9c5fb8daf724
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
