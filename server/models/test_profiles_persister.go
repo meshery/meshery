@@ -248,6 +248,7 @@ func (s *TestProfilesPersister) WriteTestConfig(key core.Uuid, result []byte) er
 	}
 	var p PerformanceTestConfig
 	if err := s.DB.Model(&PerformanceTestConfig{}).Where("id = ?", key).First(&p).Error; err == nil {
+		p.PerformanceTestConfigBytes = result
 		return s.UpdateTestConfig(key, p)
 	}
 	p.ID = key
