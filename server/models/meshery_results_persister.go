@@ -56,10 +56,18 @@ func (mrp *MesheryResultsPersister) GetResults(page, pageSize uint64, profileID 
 	return marshalMesheryResultsPage(resultPage), err
 }
 
-func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, log logger.Handler) ([]byte, error) {
+// GetAllResults returns a page of results. from and to, when set, are the first
+// and last days (YYYY-MM-DD) of the test start times to return.
+func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, from, to string, log logger.Handler) ([]byte, error) {
 	var res []*localMesheryResultDBRepresentation
 	var count int64
 	query := mrp.DB.Table("meshery_results")
+	if from != "" {
+		query = query.Where("DATETIME(test_start_time) >= DATETIME(?)", from)
+	}
+	if to != "" {
+		query = query.Where("DATETIME(test_start_time) < DATETIME(?, '+1 day')", to)
+	}
 
 	err := query.Count(&count).Error
 	if err != nil {
