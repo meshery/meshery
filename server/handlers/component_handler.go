@@ -67,6 +67,9 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
+
+		Components:    queryParams.Get("components") == queryParamTrue,
+		Relationships: queryParams.Get("relationships") == queryParamTrue,
 	}
 	if search != "" {
 		filter.Greedy = true
@@ -127,6 +130,9 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
+
+		Components:    queryParams.Get("components") == queryParamTrue,
+		Relationships: queryParams.Get("relationships") == queryParamTrue,
 	})
 
 	var modelDefs []_model.ModelDefinition
