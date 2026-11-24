@@ -1,0 +1,23 @@
+version: 0.0.17
+name: rajendhar-kubernetes-deployment-design
+displayName: Rajendhar Kubernetes Deployment Design
+createdAt: "2026-11-19T11:08:26Z"
+description: |-
+    A simple Kubernetes Deployment design that demonstrates how to run an NGINX web server using a declarative configuration in Meshery Kanvas. The design creates two replicas of the NGINX container using the `nginx:1.27` image in the `playground-sandbox` namespace.
+
+    This design is intended as a beginner-friendly reference for understanding Kubernetes Deployments, container image configuration, replica management, and namespace selection. It was validated successfully using Meshery Playground's Dryrun feature.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/392157ae-bc6e-4c24-afc9-5afcc3a42914/0.0.17/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "- The target Kubernetes namespace `playground-sandbox` must exist before deployment.\n- The user or service account must have permission to create Deployments in the target namespace.\n- The design creates a Deployment only; it does not include a Kubernetes Service or Ingress for external access.\n- The NGINX container image must be accessible from the Kubernetes cluster. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 752213f4-0e21-434e-9f34-4ac0465a10d5
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

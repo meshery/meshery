@@ -1,0 +1,20 @@
+version: 0.0.6
+name: qr-pass-website
+displayName: QR Pass Website
+createdAt: "2026-11-09T10:33:26Z"
+description: "Cloudflare \nCloudflare D1"
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/779e783a-5294-4b1b-b302-4f52aa885697/0.0.6/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This architecture diagram documents an existing Cloudflare setup. The DB arrow represents the database binding configured in Cloudflare. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 0845a8e9-f1ef-4efc-bfc7-69907e0f3984
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

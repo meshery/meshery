@@ -1,0 +1,584 @@
+{
+  "id": "a72f4579-01a8-4319-8f30-33c941f4a2b3",
+  "name": "k8s-hello-design",
+  "schemaVersion": "designs.meshery.io/v1beta3",
+  "version": "0.0.8",
+  "components": [
+    {
+      "id": "d71be88b-88a4-49aa-bed8-23441ed972fe",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "hello",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "position": {
+          "x": 719.638427734375,
+          "y": 552
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app": "hello"
+          },
+          "name": "hello"
+        },
+        "spec": {
+          "replicas": 3,
+          "selector": {
+            "matchLabels": {
+              "app": "hello"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "hello"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx:1.14.2",
+                  "name": "nginx",
+                  "ports": [
+                    {
+                      "containerPort": 80
+                    }
+                  ]
+                },
+                {
+                  "command": [
+                    "sh",
+                    "-c",
+                    "echo \"\u003chtml\u003e\u003chead\u003e\u003ctitle\u003eHTTP Hello World\u003c/title\u003e\u003c/head\u003e\u003cbody\u003e\u003ch1\u003eHello from $(hostname)\u003c/h1\u003e\u003c/body\u003e\u003c/html\" \u003e /www/index.html \u0026\u0026 python -m SimpleHTTPServer 8080"
+                  ],
+                  "image": "strm/helloworld-http:latest",
+                  "name": "hello-8080",
+                  "ports": [
+                    {
+                      "containerPort": 8080
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "a0a7a501-6536-4975-9172-62ab38d3579a",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "hello-svc",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "position": {
+          "x": 837.638427734375,
+          "y": 542
+        },
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20,
+        "z-index": 3
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app": "hello"
+          },
+          "name": "hello-svc"
+        },
+        "spec": {
+          "ports": [
+            {
+              "port": 80,
+              "protocol": "http",
+              "targetPort": 80
+            },
+            {
+              "port": 8080,
+              "protocol": "http",
+              "targetPort": 8080
+            }
+          ],
+          "selector": {
+            "app": "hello"
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "3c80ac5d-8d29-4432-ad87-789734c2efa7",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 1,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "transparent",
+        "border-style": "dashed",
+        "border-width": 0,
+        "data": {
+          "label": ""
+        },
+        "height": 1,
+        "opacity": 1,
+        "padding": 2,
+        "position": {
+          "x": 793.6389936831108,
+          "y": 515.2143192227039
+        },
+        "primaryColor": "#00D3a9",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "",
+        "width": 1,
+        "z-index": 4
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "PenTerminal",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "2b7f2e5d-8cd1-48de-8dfb-b060003d097d",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0,
+        "body-text": "Is this a useless text ?",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-style": "dashed",
+        "border-width": 1,
+        "data": {
+          "label": ""
+        },
+        "height": 60,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 808.1238598467164,
+          "y": 651.2560617058081
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#FFDE00",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
+        "width": 180,
+        "z-index": 5
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "hasInvalidSchema": true,
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "TextBox",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "1f2c1910-d6e4-4eac-aefb-88e38cfd8ba8",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "3c80ac5d-8d29-4432-ad87-789734c2efa7",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "d71be88b-88a4-49aa-bed8-23441ed972fe",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          },
+          "deny": {
+            "from": [],
+            "to": []
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "0492afd4-51c8-433b-b7fa-2b4d6fceaccb",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "a0a7a501-6536-4975-9172-62ab38d3579a",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "3c80ac5d-8d29-4432-ad87-789734c2efa7",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          },
+          "deny": {
+            "from": [],
+            "to": []
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "396cc9de-3616-465b-9e27-21aaf8a45225",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "",
+        "isAnnotation": false,
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "97adba88-2323-40b4-bdf7-8594bf9123c1",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "2b7f2e5d-8cd1-48de-8dfb-b060003d097d",
+                "kind": "*",
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          },
+          "deny": {
+            "from": [],
+            "to": []
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    }
+  ]
+}
