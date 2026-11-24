@@ -22,11 +22,50 @@ type userSpyProvider struct {
 	resp   []byte
 	err    error
 	called bool
+	gotID  string
 }
 
-func (m *userSpyProvider) GetUserByID(_ *http.Request, _ string) ([]byte, error) {
+func (m *userSpyProvider) GetUserByID(_ *http.Request, id string) ([]byte, error) {
 	m.called = true
+	m.gotID = id
 	return m.resp, m.err
+}
+
+// TestGetUserByIDHandler_CanonicalizesUUID verifies that non-canonical UUID
+// spellings accepted by uuid.FromString (such as uppercase hex or braced forms)
+// are normalized to their canonical lowercase hyphenated representation before
+// reaching the provider.
+func TestGetUserByIDHandler_CanonicalizesUUID(t *testing.T) {
+	const canonical = "00000000-0000-0000-0000-00000000000a"
+	for _, raw := range []string{
+		"00000000-0000-0000-0000-00000000000A",
+		"{00000000-0000-0000-0000-00000000000A}",
+	} {
+		t.Run(raw, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := &userSpyProvider{
+				DefaultLocalProvider: &models.DefaultLocalProvider{},
+				resp:                 []byte(`{"id":"` + canonical + `"}`),
+			}
+			provider.Initialize()
+
+			req := httptest.NewRequest(http.MethodGet, "/api/user/profile/test", nil)
+			req = mux.SetURLVars(req, map[string]string{"id": raw})
+			rec := httptest.NewRecorder()
+
+			h.GetUserByIDHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusOK {
+				t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
+			}
+			if !provider.called {
+				t.Fatal("expected provider to be called")
+			}
+			if provider.gotID != canonical {
+				t.Errorf("provider received id = %q, want %q", provider.gotID, canonical)
+			}
+		})
+	}
 }
 
 // TestGetUserByIDHandler_InvalidUUIDReturnsJSON pins the 400 response to a

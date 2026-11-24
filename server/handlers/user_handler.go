@@ -52,7 +52,8 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 		writeMeshkitError(w, invalidErr, http.StatusBadRequest)
 		return
 	}
-	resp, err := provider.GetUserByID(r, userID)
+	canonicalID := parsedID.String()
+	resp, err := provider.GetUserByID(r, canonicalID)
 	if err != nil {
 		if errors.Is(err, models.ErrUserIsSystemInstance) {
 			// The requested ID is this Meshery instance's own system UUID; it
@@ -70,7 +71,7 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 	}
 
 	if resp == nil {
-		writeMeshkitError(w, ErrUserNotFound(userID), http.StatusNotFound)
+		writeMeshkitError(w, ErrUserNotFound(canonicalID), http.StatusNotFound)
 		return
 	}
 
