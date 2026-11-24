@@ -5,7 +5,7 @@ categories: [contributing]
 ---
 
 {{% alert color="info" title="Important" %}}
-Before contributing, please review the [Documentation Contribution Flow](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow).
+Before contributing, please review the [General Contribution Flow]({{< ref "project/contributing/_index.md" >}}#general-contribution-flow).
 {{% /alert %}}
 
 Use the following steps to set up your development environment depending on your Operating System of choice, fork the repository, install dependencies and run the site locally.  You can then make changes, test locally, sign-off and commit, and push the changes made for review.
