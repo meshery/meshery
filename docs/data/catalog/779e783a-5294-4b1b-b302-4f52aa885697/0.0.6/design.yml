@@ -1,0 +1,530 @@
+{
+  "id": "779e783a-5294-4b1b-b302-4f52aa885697",
+  "name": "QR Pass Website",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.6",
+  "metadata": {
+    "resolvedAliases": {}
+  },
+  "components": [
+    {
+      "id": "77daf461-8a2c-4a4f-95e3-2c0b7b7ab101",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "Visitor's phone",
+      "description": "Opens a QR pass link",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.1,
+        "body-text": "Opens a QR pass link",
+        "body-text-color": "#808080",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 1,
+        "height": 105,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 199.53287501605067,
+          "y": 230.90876331058573
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/roundrectangle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/roundrectangle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/roundrectangle-white.svg",
+        "width": 250,
+        "z-index": 10
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "name": "visitor-phone"
+        }
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "RoundRectangle",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "77daf461-8a2c-4a4f-95e3-2c0b7b7ab102",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "QR Pass Web App",
+      "description": "Cloudflare Worker\nLooks up passes and renders QR codes",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.1,
+        "body-text": "Cloudflare Worker\nLooks up passes and renders QR codes",
+        "body-text-color": "#808080",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 1,
+        "height": 105,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 611.1607282142613,
+          "y": 231.02963129673793
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/roundrectangle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/roundrectangle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/roundrectangle-white.svg",
+        "width": 250,
+        "z-index": 11
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "name": "qr-pass-web-app"
+        }
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "RoundRectangle",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "77daf461-8a2c-4a4f-95e3-2c0b7b7ab103",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "Pass Database",
+      "description": "Cloudflare D1\nStores passes and redemptions",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Shapes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.1,
+        "body-text": "Cloudflare D1\nStores passes and redemptions",
+        "body-text-color": "#808080",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-vertical-align": "center",
+        "border-style": "solid",
+        "border-width": 1,
+        "height": 105,
+        "opacity": 1,
+        "padding": 6,
+        "position": {
+          "x": 1019.4133743168617,
+          "y": 229.59085161460985
+        },
+        "primaryColor": "#00B39F",
+        "secondaryColor": "#00D3A9",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/roundrectangle-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-shapes/complete/roundrectangle-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-shapes/white/roundrectangle-white.svg",
+        "width": 250,
+        "z-index": 12
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "name": "pass-database"
+        }
+      },
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "RoundRectangle",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "a705b1b2-dd67-41c2-ba40-c4a43bd822ee",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-width": 0,
+        "height": 22,
+        "menu-forground-color": "#424242",
+        "opacity": 1,
+        "padding": 2,
+        "position": {
+          "x": 769.158105022831,
+          "y": 410.1698193136416
+        },
+        "primaryColor": "#FFDE00",
+        "secondaryColor": "#FFDE00",
+        "shape": "tag",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-core/complete/comment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/comment-white.svg",
+        "width": 22,
+        "x": 1.5,
+        "y": 7.5,
+        "z-index": 13
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Comment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "11dc5b6c-41ef-4fde-bb0e-04f808af966a",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "",
+      "description": "",
+      "format": "JSON",
+      "model": null,
+      "modelReference": {
+        "displayName": "Meshery Core",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-core",
+        "registrant": {
+          "kind": "meshery"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 0,
+        "body-text": "",
+        "body-text-color": "#808080",
+        "body-text-font-family": "Qanelas Soft",
+        "body-text-font-size": 12,
+        "body-text-font-weight": "400",
+        "body-text-horizontal-align": "center",
+        "body-text-text-decoration": "none",
+        "body-text-vertical-align": "center",
+        "border-color": "#808080",
+        "border-width": 0,
+        "height": 22,
+        "menu-forground-color": "#424242",
+        "opacity": 1,
+        "padding": 2,
+        "position": {
+          "x": 673.787100456621,
+          "y": 332.13899739583337
+        },
+        "primaryColor": "#FFDE00",
+        "secondaryColor": "#FFDE00",
+        "shape": "tag",
+        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/meshery-core/complete/comment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/comment-white.svg",
+        "width": 22,
+        "x": 1.5,
+        "y": 7.5,
+        "z-index": 14
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {},
+      "component": {
+        "version": "core.meshery.io/v1alpha1",
+        "kind": "Comment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "preferences": {
+    "layers": {
+      "relationships": {
+        "hierarchical-sibling-matchlabels": false
+      }
+    }
+  },
+  "relationships": [
+    {
+      "id": "77daf461-8a2c-4a4f-95e3-2c0b7b7ab104",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "Opens pass link",
+        "isAnnotation": false,
+        "styles": {
+          "label": "Opens pass link",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "77daf461-8a2c-4a4f-95e3-2c0b7b7ab101",
+                "kind": "*",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "77daf461-8a2c-4a4f-95e3-2c0b7b7ab102",
+                "kind": "*",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    },
+    {
+      "id": "77daf461-8a2c-4a4f-95e3-2c0b7b7ab105",
+      "evaluationQuery": null,
+      "kind": "edge",
+      "metadata": {
+        "description": "DB binding (env.DB)",
+        "isAnnotation": false,
+        "styles": {
+          "label": "DB binding (env.DB)",
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        }
+      },
+      "model": {
+        "displayName": "Meshery Shapes",
+        "id": "9d2e5746-210f-0d1f-d22e-bed178cebefd",
+        "model": {
+          "version": "0.7.2"
+        },
+        "name": "meshery-shapes",
+        "registrant": {
+          "kind": ""
+        },
+        "version": "v1.0.0"
+      },
+      "schemaVersion": "",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "77daf461-8a2c-4a4f-95e3-2c0b7b7ab102",
+                "kind": "*",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ],
+            "to": [
+              {
+                "id": "77daf461-8a2c-4a4f-95e3-2c0b7b7ab103",
+                "kind": "*",
+                "match": {},
+                "matchStrategyMatrix": null,
+                "model": {
+                  "displayName": "",
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "model": {
+                    "version": ""
+                  },
+                  "name": "*",
+                  "registrant": {
+                    "kind": ""
+                  },
+                  "version": ""
+                },
+                "patch": null
+              }
+            ]
+          }
+        }
+      ],
+      "subType": "annotation",
+      "status": "pending",
+      "type": "non-binding",
+      "version": ""
+    }
+  ]
+}

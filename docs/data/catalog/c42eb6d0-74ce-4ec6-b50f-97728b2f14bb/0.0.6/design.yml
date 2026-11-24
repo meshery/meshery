@@ -1,0 +1,225 @@
+{
+  "id": "c42eb6d0-74ce-4ec6-b50f-97728b2f14bb",
+  "name": "My First Kubernetes Design",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.6",
+  "components": [
+    {
+      "id": "69b311bd-d3f9-4089-abcb-84a02ec4cb84",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "nginx-config",
+      "description": "Configuration for the Nginx application",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "position": {
+          "x": 995.6406706048894,
+          "y": 516.5823617775096
+        },
+        "primaryColor": "",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": ""
+      },
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "data": {
+          "APP_ENV": "development",
+          "APP_NAME": "nginx-demo"
+        },
+        "metadata": {
+          "name": "nginx-config",
+          "namespace": "default"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "65a28e37-8876-401b-8ba5-dafe496cae40",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "nginx-demo",
+      "description": "Nginx application deployment",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "position": {
+          "x": 1055.5,
+          "y": 519
+        },
+        "primaryColor": "",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "",
+        "z-index": 3
+      },
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "name": "nginx-demo",
+          "namespace": "default"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "nginx-demo"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "nginx-demo"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "envFrom": [
+                    {
+                      "configMapRef": {
+                        "name": "nginx-config"
+                      }
+                    }
+                  ],
+                  "image": "nginx:latest",
+                  "name": "nginx",
+                  "ports": [
+                    {
+                      "containerPort": 80
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "678a5d02-e12e-48f2-9d7a-25cd900dbb03",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "nginx-service",
+      "description": "Internal service for Nginx",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "position": {
+          "x": 1000.5116177039592,
+          "y": 617.3679749318012
+        },
+        "primaryColor": "",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "",
+        "z-index": 4
+      },
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "name": "nginx-service",
+          "namespace": "default"
+        },
+        "spec": {
+          "ports": [
+            {
+              "port": 80,
+              "protocol": "TCP",
+              "targetPort": 80
+            }
+          ],
+          "selector": {
+            "app": "nginx-demo"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "relationships": []
+}

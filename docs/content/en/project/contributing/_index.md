@@ -83,7 +83,28 @@ To sign off a commit you have already written but have <em>not</em> pushed:
 <pre><code>$ git commit --amend -s --no-edit</code></pre>
 
 Once the branch is pushed, amending reaches only its tip, and a DCO failure usually names more
-than one commit. Sign off every commit the pull request carries and replace the pushed branch:
+than one commit. Meshery accepts individual DCO remediation commits, so the preferred repair
+rewrites nothing: the author of each unsigned commit adds one more commit, signed off with
+<code>git commit -s</code>, whose message has a line per unsigned commit. If there is nothing
+to stage, create the empty commit with <code>git commit --allow-empty -s</code> instead - a
+plain <code>git commit -s</code> refuses an empty commit - then push it:
+
+<pre><code>I, Jane Smith &lt;jane.smith@example.com&gt;, hereby add my Signed-off-by to this commit: &lt;full sha&gt;</code></pre>
+
+A rebase gives every replayed commit a new SHA, so a remediation commit that names the old
+SHA no longer covers the unsigned commit. Create the remediation commit only after the branch
+reaches its final base, name the full SHA as it appears on the branch, and recreate the
+remediation commit after any later rebase.
+
+Only a commit's own author can sign for it; a remediation commit from someone else is not
+accepted. Use the unsigned commit's own name and email, both as the remediation commit's
+author and in the sign-off line: if your Git identity has changed since the unsigned commit,
+the DCO check will not match a remediation signed with the new identity.
+</li>
+
+<li>
+Alternatively, when the branch is yours alone, sign off every commit the pull request carries
+and replace the pushed branch:
 
 <pre><code>$ git rebase &lt;base-branch&gt; --signoff
 $ git push --force-with-lease</code></pre>
@@ -177,7 +198,7 @@ The automated pipeline executes 9 structured stages:
 <ul>
 <li><strong>Attestation Matching:</strong> The CI check <code>PR must be raised via no-mistakes</code> verifies that the pull request description contains a valid attestation matching the current <code>head_sha</code> and that <code>review</code>, <code>test</code>, and <code>document</code> steps are marked <code>completed</code>. After pushing new commits, re-run the gate so the attestation covers the new head; an attestation for an older commit fails the check. Before a follow-up commit, run <code>no-mistakes axi status</code> and follow its <code>branch_sync.next_action</code>: when it says <code>sync</code>, run <code>no-mistakes axi sync</code> first, since the gate may have advanced the published branch past your local copy.</li>
 <li><strong>Separate DCO Check:</strong> All commits must include a sign-off trailer (<code>git commit -s</code>) to satisfy GitHub's independent <code>DCO</code> status check.</li>
-<li><strong>Exempt Paths:</strong> Pull requests whose changed paths are strictly documentation (<code>docs/**</code>, <code>CNAME</code>) or CI workflows (<code>.github/workflows/**</code>) are automatically exempt from the pipeline requirement.</li>
+<li><strong>Exempt Paths:</strong> Pull requests are automatically exempt from the pipeline requirement only when every changed path is documentation or the docs website (<code>docs/**</code>, root <code>CNAME</code>, and markdown files outside <code>server/</code>, <code>ui/</code>, <code>provider-ui/</code>, <code>mesheryctl/</code>, <code>install/</code>, and <code>models/</code>) or CI (<code>.github/workflows/**</code>, <code>.github/actions/**</code>, <code>.github/scripts/**</code>, and CI config files directly under <code>.github/</code>).</li>
 </ul>
 
 <p>
