@@ -159,6 +159,12 @@ Then connect Meshery to your cluster:
 4. In the **Import Kubeconfig** step, upload your kubeconfig file and select the contexts to import.
 5. Review the import and confirm it.
 
+**Note**: Meshery rejects an uploaded kubeconfig whose `certificate-authority`, `client-certificate`, `client-key` or `tokenFile` entries are file paths, because the Meshery Server cannot (and must not) read files from your machine. Minikube writes `client-certificate` and `client-key` as paths, so embed them before you upload:
+
+{{< code code="kubectl config view --minify --flatten --raw > minikube-kubeconfig.yaml" >}}
+
+`mesheryctl connection create --type minikube` does this for you.
+
 For details, see [Registering a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}).
 
 **Note**: If you get a connection refused error when you upload your kubeconfig, change your cluster's server URL to Minikube's external API address, as described in [Minikube Docker Driver Users](#minikube-docker-driver-users).
