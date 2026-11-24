@@ -182,7 +182,7 @@ const (
 	ErrKubeconfigUnreadableCode           = "meshery-server-1501"
 	ErrUnsafeKubeCredentialCode           = "meshery-server-1500"
 	ErrOrganizationMembershipCode         = "meshery-server-1498"
-	ErrNoQualifyingOrganizationCode       = "meshery-server-1499"
+	ErrNoQualifyingOrganizationCode       = "meshery-server-1502"
 )
 
 var (
