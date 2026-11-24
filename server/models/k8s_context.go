@@ -327,6 +327,7 @@ func DiscoverKubeconfigContexts(ctx context.Context, _ Provider, _ string, _ *Br
 		return result, ErrKubeconfigUnreadable
 	}
 
+	seenContextNames := map[string]struct{}{}
 	for _, ctxEntry := range kcfg.Contexts {
 		if ctx.Err() != nil {
 			if log != nil {
@@ -337,13 +338,42 @@ func DiscoverKubeconfigContexts(ctx context.Context, _ Provider, _ string, _ *Br
 
 		ctxEntry = utils.RecursiveCastMapStringInterfaceToMapStringInterface(ctxEntry)
 		name, _ := ctxEntry["name"].(string)
+		// A context without a name cannot be looked up or registered. Report
+		// it instead of dropping it, so a kubeconfig whose only entry is
+		// unnamed is not presented as one that lists no contexts.
 		if name == "" {
+			result.SkippedContexts = append(result.SkippedContexts, SkippedKubeContext{
+				Reason: kubeconfigUnnamedContextReason,
+			})
 			continue
 		}
+		// Contexts are resolved by name, so a later entry with the same name
+		// would resolve to the first entry's cluster and user and be offered
+		// as an identical copy of it. Keep the first and report the rest.
+		if _, duplicate := seenContextNames[name]; duplicate {
+			result.SkippedContexts = append(result.SkippedContexts, SkippedKubeContext{
+				Name:   name,
+				Reason: kubeconfigDuplicateContextReason,
+			})
+			continue
+		}
+		seenContextNames[name] = struct{}{}
+
 		metadata := map[string]interface{}{}
 		kc, _ := kcfg.K8sContext(name, instanceID, log)
 
 		metadata["context"] = RedactCredentialsForContext(&kc)
+
+		if reason := kubeconfigMissingReferenceReason(kcfg, ctxEntry); reason != "" {
+			metadata["description"] = fmt.Sprintf("Skipped context \"%s\" at %s: %s", kc.Name, kc.Server, reason)
+			eventMetadata[name] = metadata
+			result.SkippedContexts = append(result.SkippedContexts, SkippedKubeContext{
+				Name:   name,
+				Server: kc.Server,
+				Reason: reason,
+			})
+			continue
+		}
 
 		// Skip exec and auth-provider contexts of an uploaded kubeconfig before
 		// building a client. client-go stores an exec plugin without running
@@ -496,6 +526,40 @@ func kubeconfigUnsupportedAuthReason(kind string) string {
 }
 
 const kubeconfigUnreadableReason = "The context's credentials could not be read from the kubeconfig. Check that its certificate, key and token entries are embedded and valid."
+
+const kubeconfigUnnamedContextReason = "The context has no name. Give it a name in the kubeconfig to import it."
+
+const kubeconfigDuplicateContextReason = "Another context with the same name appears earlier in the kubeconfig. Rename this context to import it."
+
+// kubeconfigMissingReferenceReason reports a context that names a cluster or a
+// user the kubeconfig does not define. Without this check the context fails
+// later, when its client is built, with the generic credentials reason, which
+// points the user at the wrong entry. A context that names no user at all is
+// left alone: that is anonymous access, not a dangling reference.
+func kubeconfigMissingReferenceReason(kcfg InternalKubeConfig, ctxEntry map[string]interface{}) string {
+	ctxInfo, _ := ctxEntry["context"].(map[string]interface{})
+	clusterName, _ := ctxInfo["cluster"].(string)
+	if clusterName == "" {
+		return "The context does not name a cluster."
+	}
+	if !kubeconfigDefinesEntry(kcfg.Clusters, clusterName) {
+		return fmt.Sprintf("The context refers to cluster %q, which the kubeconfig does not define.", clusterName)
+	}
+	userName, _ := ctxInfo["user"].(string)
+	if userName != "" && !kubeconfigDefinesEntry(kcfg.Users, userName) {
+		return fmt.Sprintf("The context refers to user %q, which the kubeconfig does not define.", userName)
+	}
+	return ""
+}
+
+func kubeconfigDefinesEntry(entries []map[string]interface{}, name string) bool {
+	for _, entry := range entries {
+		if entryName, _ := entry["name"].(string); entryName == name {
+			return true
+		}
+	}
+	return false
+}
 
 func NewK8sContextFromInClusterConfig(contextName string, instanceID *core.Uuid, log logger.Handler) (*K8sContext, error) {
 	const (

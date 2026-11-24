@@ -991,3 +991,187 @@ func TestK8sContextImportErrorIsOptionalJSON(t *testing.T) {
 		t.Fatalf("body = %s, want error omitted when empty", without)
 	}
 }
+
+// Contexts that cannot be resolved on their own must be reported with a reason
+// rather than dropped or duplicated (#23851).
+func TestDiscoverKubeconfigContextsReportsUnresolvableContexts(t *testing.T) {
+	discover := func(t *testing.T, kubeconfig string) (KubeconfigDiscovery, map[string]interface{}) {
+		t.Helper()
+		instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+		eventMetadata := map[string]interface{}{}
+		got, err := DiscoverKubeconfigContexts(context.Background(), nil, uuid.Must(uuid.NewV4()).String(), nil, []byte(kubeconfig), &instanceID, eventMetadata, testKubeLogger(t), KubeconfigDiscoveryOptions{IncludeUnreachable: true})
+		if err != nil {
+			t.Fatalf("discover: %v", err)
+		}
+		return got, eventMetadata
+	}
+
+	t.Run("an unnamed context is reported, not treated as an empty kubeconfig", func(t *testing.T) {
+		got, _ := discover(t, `apiVersion: v1
+kind: Config
+clusters:
+- name: c
+  cluster:
+    server: https://127.0.0.1:1
+    insecure-skip-tls-verify: true
+users:
+- name: u
+  user:
+    token: abc
+contexts:
+- context:
+    cluster: c
+    user: u
+`)
+		if len(got.Contexts) != 0 || len(got.SkippedContexts) != 1 {
+			t.Fatalf("contexts=%d skipped=%d, want 0 and 1", len(got.Contexts), len(got.SkippedContexts))
+		}
+		if got.SkippedContexts[0].Reason != kubeconfigUnnamedContextReason {
+			t.Fatalf("reason = %q, want the unnamed-context reason", got.SkippedContexts[0].Reason)
+		}
+	})
+
+	t.Run("a whitespace context name is resolved exactly", func(t *testing.T) {
+		got, _ := discover(t, `apiVersion: v1
+kind: Config
+clusters:
+- name: c
+  cluster:
+    server: https://127.0.0.1:1
+    insecure-skip-tls-verify: true
+users:
+- name: u
+  user:
+    token: abc
+contexts:
+- name: " "
+  context:
+    cluster: c
+    user: u
+`)
+		if len(got.Contexts) != 1 || got.Contexts[0].Name != " " {
+			t.Fatalf("contexts = %#v, want the whitespace-named context", got.Contexts)
+		}
+		if len(got.SkippedContexts) != 0 {
+			t.Fatalf("skipped = %#v, want none", got.SkippedContexts)
+		}
+	})
+
+	t.Run("a second context with the same name is reported, not offered as a copy of the first", func(t *testing.T) {
+		got, _ := discover(t, `apiVersion: v1
+kind: Config
+clusters:
+- name: a
+  cluster:
+    server: https://127.0.0.1:1
+    insecure-skip-tls-verify: true
+- name: b
+  cluster:
+    server: https://127.0.0.1:2
+    insecure-skip-tls-verify: true
+users:
+- name: u
+  user:
+    token: abc
+contexts:
+- name: same
+  context:
+    cluster: a
+    user: u
+- name: same
+  context:
+    cluster: b
+    user: u
+`)
+		if len(got.Contexts) != 1 {
+			t.Fatalf("contexts=%d, want 1", len(got.Contexts))
+		}
+		if got.Contexts[0].Server != "https://127.0.0.1:1" {
+			t.Fatalf("kept context server = %q, want the first entry's", got.Contexts[0].Server)
+		}
+		if len(got.SkippedContexts) != 1 || got.SkippedContexts[0].Name != "same" || got.SkippedContexts[0].Reason != kubeconfigDuplicateContextReason {
+			t.Fatalf("skipped = %+v, want one duplicate-name entry for %q", got.SkippedContexts, "same")
+		}
+	})
+
+	t.Run("a context naming an undefined cluster or user says which one", func(t *testing.T) {
+		got, eventMetadata := discover(t, `apiVersion: v1
+kind: Config
+clusters:
+- name: c
+  cluster:
+    server: https://127.0.0.1:1
+    insecure-skip-tls-verify: true
+users:
+- name: u
+  user:
+    token: abc
+contexts:
+- name: no-cluster
+  context:
+    cluster: missing-cluster
+    user: u
+- name: no-user
+  context:
+    cluster: c
+    user: missing-user
+`)
+		if len(got.Contexts) != 0 || len(got.SkippedContexts) != 2 {
+			t.Fatalf("contexts=%d skipped=%d, want 0 and 2", len(got.Contexts), len(got.SkippedContexts))
+		}
+		want := map[string]string{
+			"no-cluster": `cluster "missing-cluster"`,
+			"no-user":    `user "missing-user"`,
+		}
+		for _, skipped := range got.SkippedContexts {
+			fragment, ok := want[skipped.Name]
+			if !ok || !strings.Contains(skipped.Reason, fragment) {
+				t.Fatalf("skipped %q reason = %q, want it to mention %s", skipped.Name, skipped.Reason, fragment)
+			}
+			metadata, ok := eventMetadata[skipped.Name].(map[string]interface{})
+			if !ok {
+				t.Fatalf("event metadata = %#v, want a receipt for %q", eventMetadata, skipped.Name)
+			}
+			if description, _ := metadata["description"].(string); !strings.Contains(description, skipped.Reason) {
+				t.Fatalf("receipt description = %q, want skip reason %q", description, skipped.Reason)
+			}
+			redacted, ok := metadata["context"].(K8sContext)
+			if !ok || redacted.Name != "" || redacted.Server != "" {
+				t.Fatalf("receipt context = %#v, want a redacted context", metadata["context"])
+			}
+		}
+		if got.SkippedContexts[1].Server != "https://127.0.0.1:1" {
+			t.Fatalf("no-user server = %q, want the cluster's server", got.SkippedContexts[1].Server)
+		}
+	})
+
+	t.Run("a context with no user is anonymous access, not a dangling reference", func(t *testing.T) {
+		got, _ := discover(t, `apiVersion: v1
+kind: Config
+clusters:
+- name: c
+  cluster:
+    server: https://127.0.0.1:1
+    insecure-skip-tls-verify: true
+contexts:
+- name: anon
+  context:
+    cluster: c
+`)
+		// This change only governs reporting: whether a user-less context can
+		// be imported is decided elsewhere and is out of scope. What must hold
+		// is that the context is accounted for, and that a missing user is not
+		// reported as a dangling reference.
+		if n := len(got.Contexts) + len(got.SkippedContexts); n != 1 {
+			t.Fatalf("contexts=%d skipped=%d, want the anon context accounted for exactly once", len(got.Contexts), len(got.SkippedContexts))
+		}
+		for _, skipped := range got.SkippedContexts {
+			if skipped.Name != "anon" {
+				t.Fatalf("skipped %q, want only anon", skipped.Name)
+			}
+			if strings.Contains(skipped.Reason, "does not define") || strings.Contains(skipped.Reason, "does not name") {
+				t.Fatalf("anonymous context reported as a dangling reference: %q", skipped.Reason)
+			}
+		}
+	})
+}
