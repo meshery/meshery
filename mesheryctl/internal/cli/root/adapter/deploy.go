@@ -36,7 +36,7 @@ var (
 		Short: "Deploy infrastructure to the Kubernetes cluster",
 		Long:  `Deploy infrastructure to the connected Kubernetes cluster`,
 		Example: `
-// Deploy a infrastructure from an interactive on the default namespace
+// Deploy infrastructure interactively in the default namespace
 mesheryctl adapter deploy
 
 // Deploy infrastructure
