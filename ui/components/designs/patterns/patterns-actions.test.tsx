@@ -261,6 +261,33 @@ describe('createPatternsActions', () => {
     expect(updateProgress).not.toHaveBeenCalled();
   });
 
+  it('handleSubmit does not start progress when the updated design is malformed YAML', async () => {
+    const deps = baseDeps();
+
+    const actions = createPatternsActions(deps);
+    await expect(
+      actions.handleSubmit({ id: 'p-1', name: 'Design 1', type: 'UPDATE', data: 'a: [' } as any),
+    ).rejects.toThrow();
+
+    expect(deps.updatePattern).not.toHaveBeenCalled();
+    expect(updateProgress).not.toHaveBeenCalled();
+  });
+
+  it('handleSubmit does not start progress when the uploaded file cannot be decoded', async () => {
+    const deps = baseDeps();
+    getUnit8ArrayDecodedFile.mockImplementationOnce(() => {
+      throw new Error('bad file');
+    });
+
+    const actions = createPatternsActions(deps);
+    await expect(
+      actions.handleSubmit({ name: 'Design 1', type: 'FILE_UPLOAD', data: [1, 2, 3] } as any),
+    ).rejects.toThrow('bad file');
+
+    expect(deps.uploadPatternFile).not.toHaveBeenCalled();
+    expect(updateProgress).not.toHaveBeenCalled();
+  });
+
   it('handleImportDesign uploads file imports using the resolved file metadata', async () => {
     const deps = baseDeps();
     deps.importDesign.mockReturnValue({ unwrap: () => Promise.resolve({}) });

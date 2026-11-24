@@ -252,9 +252,9 @@ export function createPatternsActions(deps) {
     }
 
     if (type === FILE_OPS.UPDATE) {
-      updateProgress({ showProgress: true });
       const design = yaml.load(data);
 
+      updateProgress({ showProgress: true });
       updatePattern({
         updateBody: JSON.stringify({
           id,
@@ -275,7 +275,6 @@ export function createPatternsActions(deps) {
     }
 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
-      updateProgress({ showProgress: true });
       let body;
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
@@ -295,6 +294,7 @@ export function createPatternsActions(deps) {
           catalogData,
         });
       }
+      updateProgress({ showProgress: true });
       uploadPatternFile({
         uploadBody: body,
       })
