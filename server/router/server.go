@@ -73,9 +73,17 @@ func registerRegistryRoute(gMux *mux.Router, subpath string, handler http.Handle
 }
 
 // NewRouter returns a new ServeMux with app routes.
-func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Handler, gp http.Handler) *Router {
+func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Handler, gp http.Handler, opts ...Option) *Router {
+	var options routerOptions
+	for _, opt := range opts {
+		opt(&options)
+	}
+
 	gMux := mux.NewRouter()
 	gMux.Use(otelmux.Middleware("meshery-server"))
+	// Registered after otelmux so a contained panic is traced as the 500 it
+	// was answered with.
+	gMux.Use(recoveryMiddleware(options.log))
 
 	// shuttingDown is cancelled when the HTTP server starts shutting down.
 	// Every SSE stream that serves until its client leaves is wrapped with

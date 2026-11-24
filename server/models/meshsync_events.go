@@ -380,10 +380,14 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 }
 
 // Returns metadata for the component identified by apiVersion and kind.
+// The returned definition omits the component schema.
 // If the component does not exist in the registry, default metadata for k8s component is returned.
 func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) (data map[string]interface{}, model string) {
-	componentDef := component.ComponentDefinition{} // Retrieve the entire component
+	componentDef := component.ComponentDefinition{} // Retrieve the component definition
 	defer func() {
+		// The schema is most of a definition's size and no reader of MeshSync
+		// rows uses it, so it stays in the registry only (meshery#14401).
+		componentDef.Component.Schema = ""
 		data, _ = utils.MarshalAndUnmarshal[component.ComponentDefinition, map[string]interface{}](componentDef)
 		if componentDef.Model != nil {
 			model = componentDef.Model.Name
