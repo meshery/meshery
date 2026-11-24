@@ -61,6 +61,17 @@ func TestViewModel(t *testing.T) {
 			IsOutputGolden:   true,
 		},
 		{
+			Name:             "given multiple models returned with one exact match when model view then display detailed information",
+			Args:             []string{"view", modelName},
+			URL:              fmt.Sprintf("/api/registry/models?page=0&pagesize=10&search=%s", url.QueryEscape(modelName)),
+			HttpMethod:       "GET",
+			HttpStatusCode:   200,
+			Fixture:          "list.model.multiple.api.response.golden",
+			ExpectedResponse: "view.model.output.golden",
+			ExpectError:      false,
+			IsOutputGolden:   true,
+		},
+		{
 			Name:             "given a non-existent model-name when model view then display not found message",
 			Args:             []string{"view", nonExistentModelName},
 			URL:              fmt.Sprintf("/api/registry/models?page=0&pagesize=10&search=%s", url.QueryEscape(nonExistentModelName)),

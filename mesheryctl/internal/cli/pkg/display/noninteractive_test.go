@@ -8,7 +8,8 @@ import (
 )
 
 type paginationTestItem struct {
-	ID string
+	ID   string
+	Name string
 }
 
 // withTerminal swaps the interactive-terminal probe for the duration of a test,
@@ -139,3 +140,265 @@ func TestPromptPageHandlerDoesNotAutoSelectOnePageOfMany(t *testing.T) {
 		t.Errorf("expected nothing to be selected, got %q", selected.ID)
 	}
 }
+
+// TestPromptPageHandlerExactNameMatch verifies that when multiple candidates match
+// a search query but exactly one has an exact case-insensitive name match, promptPageHandler
+// auto-selects it without failing as ambiguous or prompting interactively.
+func TestPromptPageHandlerExactNameMatch(t *testing.T) {
+	kubernetesCandidates := []paginationTestItem{
+		{ID: "1", Name: "aws-eks-controller"},
+		{ID: "2", Name: "aerospike-kubernetes-operator"},
+		{ID: "3", Name: "kube-arangodb"},
+		{ID: "4", Name: "azure-kubernetes-configuration"},
+		{ID: "5", Name: "kubernetes"},
+		{ID: "6", Name: "kubernetes-secret-generator"},
+		{ID: "7", Name: "kube-ui-server"},
+	}
+
+	tests := []struct {
+		name         string
+		interactive  bool
+		searchTerm   string
+		rows         []paginationTestItem
+		totalCount   int64
+		pageSize     int
+		extractNames func(any) []string
+		expectError  bool
+		errCode      string
+		expectID     string
+	}{
+		{
+			name:        "unique exact match auto-selects without terminal",
+			interactive: false,
+			searchTerm:  "kubernetes",
+			rows:        kubernetesCandidates,
+			totalCount:  7,
+			pageSize:    10,
+			expectError: false,
+			expectID:    "5",
+		},
+		{
+			name:        "unique exact match is case-insensitive",
+			interactive: false,
+			searchTerm:  "Kubernetes",
+			rows:        kubernetesCandidates,
+			totalCount:  7,
+			pageSize:    10,
+			expectError: false,
+			expectID:    "5",
+		},
+		{
+			name:        "unique exact match auto-selects with terminal",
+			interactive: true,
+			searchTerm:  "kubernetes",
+			rows:        kubernetesCandidates,
+			totalCount:  7,
+			pageSize:    10,
+			expectError: false,
+			expectID:    "5",
+		},
+		{
+			name:        "multiple exact matches fails as ambiguous without terminal",
+			interactive: false,
+			searchTerm:  "Pod",
+			rows: []paginationTestItem{
+				{ID: "pod-1", Name: "Pod"},
+				{ID: "pod-2", Name: "Pod"},
+				{ID: "pod-3", Name: "PodDisruptionBudget"},
+			},
+			totalCount:  3,
+			pageSize:    10,
+			expectError: true,
+			errCode:     ErrAmbiguousSelectionCode,
+		},
+		{
+			name:        "zero exact matches fails as ambiguous without terminal",
+			interactive: false,
+			searchTerm:  "kube",
+			rows: []paginationTestItem{
+				{ID: "1", Name: "kube-arangodb"},
+				{ID: "2", Name: "kube-ui-server"},
+			},
+			totalCount:  2,
+			pageSize:    10,
+			expectError: true,
+			errCode:     ErrAmbiguousSelectionCode,
+		},
+		{
+			name:        "exact match on partial page does not auto-select without terminal",
+			interactive: false,
+			searchTerm:  "kubernetes",
+			rows:        []paginationTestItem{{ID: "5", Name: "kubernetes"}},
+			totalCount:  7,
+			pageSize:    1,
+			expectError: true,
+			errCode:     ErrAmbiguousSelectionCode,
+		},
+		{
+			name:        "custom ExtractNames function is respected",
+			interactive: false,
+			searchTerm:  "custom-alias",
+			rows: []paginationTestItem{
+				{ID: "alias-1", Name: "something-else"},
+				{ID: "alias-2", Name: "another-item"},
+			},
+			totalCount: 2,
+			pageSize:   10,
+			extractNames: func(item any) []string {
+				if p, ok := item.(paginationTestItem); ok && p.ID == "alias-1" {
+					return []string{"custom-alias"}
+				}
+				return nil
+			},
+			expectError: false,
+			expectID:    "alias-1",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			withTerminal(t, tt.interactive)
+
+			var selected paginationTestItem
+			handler := promptPageHandler(
+				DisplayDataAsync{
+					DataType:     "models",
+					SearchTerm:   tt.searchTerm,
+					ExtractNames: tt.extractNames,
+				},
+				func(rows []paginationTestItem) []string {
+					labels := make([]string, len(rows))
+					for i, r := range rows {
+						labels[i] = r.Name
+					}
+					return labels
+				},
+				func(_ *[]paginationTestItem) ([]paginationTestItem, int64) {
+					return tt.rows, tt.totalCount
+				},
+				&selected,
+			)
+
+			shouldContinue, err := handler(&[]paginationTestItem{}, 0, tt.pageSize)
+			if tt.expectError {
+				if err == nil {
+					t.Fatalf("expected error, got nil")
+				}
+				if tt.errCode != "" {
+					if got := errors.GetCode(err); got != tt.errCode {
+						t.Errorf("error code = %q, want %q (err: %v)", got, tt.errCode, err)
+					}
+				}
+				if selected.ID != "" {
+					t.Errorf("expected nothing selected, got ID %q", selected.ID)
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("expected no error, got %v", err)
+				}
+				if shouldContinue {
+					t.Errorf("expected shouldContinue=false, got true")
+				}
+				if selected.ID != tt.expectID {
+					t.Errorf("selected ID = %q, want %q", selected.ID, tt.expectID)
+				}
+			}
+		})
+	}
+}
+
+func TestPromptPageHandler_KindFieldExcludedFromDefaultMatching(t *testing.T) {
+	withTerminal(t, false)
+
+	type itemWithKind struct {
+		ID   string
+		Name string
+		Kind string
+	}
+
+	var selected itemWithKind
+	// Item 1 has Name="mesh-adapter", Kind="kubernetes".
+	// Item 2 has Name="kubernetes-operator", Kind="operator".
+	// Search term is "kubernetes". Neither has Name=="kubernetes".
+	// Because Kind is excluded from default matching, item 1's Kind does not trigger an exact match,
+	// and the handler correctly reports ErrAmbiguousSelection instead of improperly auto-selecting item 1.
+	handler := promptPageHandler(
+		DisplayDataAsync{
+			DataType:   "models",
+			SearchTerm: "kubernetes",
+		},
+		func(rows []itemWithKind) []string {
+			labels := make([]string, len(rows))
+			for i, r := range rows {
+				labels[i] = r.Name
+			}
+			return labels
+		},
+		func(_ *[]itemWithKind) ([]itemWithKind, int64) {
+			return []itemWithKind{
+				{ID: "1", Name: "mesh-adapter", Kind: "kubernetes"},
+				{ID: "2", Name: "kubernetes-operator", Kind: "operator"},
+			}, 2
+		},
+		&selected,
+	)
+
+	_, err := handler(&[]itemWithKind{}, 0, 10)
+	if err == nil {
+		t.Fatal("expected ErrAmbiguousSelection because Kind is not matched by default, got nil")
+	}
+	if got := errors.GetCode(err); got != ErrAmbiguousSelectionCode {
+		t.Errorf("error code = %q, want %q", got, ErrAmbiguousSelectionCode)
+	}
+	if selected.ID != "" {
+		t.Errorf("expected no auto-selection based on Kind, got %q", selected.ID)
+	}
+}
+
+func TestPromptPageHandler_KindMatchingViaExtractNames(t *testing.T) {
+	withTerminal(t, false)
+
+	type itemWithKind struct {
+		ID   string
+		Name string
+		Kind string
+	}
+
+	var selected itemWithKind
+	// With caller-supplied ExtractNames, Kind matching can be explicitly opted into.
+	handler := promptPageHandler(
+		DisplayDataAsync{
+			DataType:   "models",
+			SearchTerm: "kubernetes",
+			ExtractNames: func(item any) []string {
+				if ik, ok := item.(itemWithKind); ok {
+					return []string{ik.Name, ik.Kind}
+				}
+				return nil
+			},
+		},
+		func(rows []itemWithKind) []string {
+			labels := make([]string, len(rows))
+			for i, r := range rows {
+				labels[i] = r.Name
+			}
+			return labels
+		},
+		func(_ *[]itemWithKind) ([]itemWithKind, int64) {
+			return []itemWithKind{
+				{ID: "1", Name: "mesh-adapter", Kind: "kubernetes"},
+				{ID: "2", Name: "kubernetes-operator", Kind: "operator"},
+			}, 2
+		},
+		&selected,
+	)
+
+	_, err := handler(&[]itemWithKind{}, 0, 10)
+	if err != nil {
+		t.Fatalf("expected successful auto-selection with custom ExtractNames, got %v", err)
+	}
+	if selected.ID != "1" {
+		t.Errorf("expected item 1 selected, got %q", selected.ID)
+	}
+}
+

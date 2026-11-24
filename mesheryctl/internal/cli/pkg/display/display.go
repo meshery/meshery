@@ -34,6 +34,7 @@ type DisplayDataAsync struct {
 	// Prompt-only field
 	SearchTerm     string
 	ErrNotFoundMsg string
+	ExtractNames   func(item any) []string
 }
 
 type (
