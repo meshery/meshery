@@ -26,6 +26,11 @@ func TestClosestArgs(t *testing.T) {
 		if minIndex != 0 {
 			t.Errorf("Expected 0, got %d", minIndex)
 		}
+
+		emptyIndex, min := minIntSlice([]int{})
+		if emptyIndex != -1 || min != 0 {
+			t.Errorf("Expected -1 and 0 for empty slice, got index %d and min %d", emptyIndex, min)
+		}
 	})
 
 	t.Run("Test minimum", func(t *testing.T) {
@@ -71,6 +76,11 @@ func TestClosestArgs(t *testing.T) {
 		closestArg := FindClosestArg(argPassed, validArgs)
 		if closestArg != "meshery" {
 			t.Errorf("Expected meshery, got %s", closestArg)
+		}
+
+		emptyArg := FindClosestArg("meshery", []string{})
+		if emptyArg != "" {
+			t.Errorf("Expected empty string for empty validArgs, got %s", emptyArg)
 		}
 	})
 }

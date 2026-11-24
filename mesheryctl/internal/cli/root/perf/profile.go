@@ -19,15 +19,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"strconv"
 	"strings"
 
+	"github.com/gofrs/uuid"
 	"github.com/manifoldco/promptui"
 	termbox "github.com/nsf/termbox-go"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	core "github.com/meshery/schemas/models/core"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	"github.com/pkg/errors"
@@ -59,6 +62,9 @@ mesheryctl perf profile test --view
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if pageNumber < 1 {
 			return utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --page '%d'", pageNumber))
+		}
+		if pageSize < 1 {
+			return utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --pagesize '%d'", pageSize))
 		}
 		// Check for valid output Format
 		if outputFormatFlag != "" {
@@ -190,6 +196,48 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 	return response.Profiles, response.TotalCount, nil
 }
 
+// fetchPerformanceProfile fetches a single performance profile by its UUID.
+func fetchPerformanceProfile(baseURL, profileID string) (*perfprofile.PerformanceProfile, error) {
+	url := baseURL + "/api/performance/profiles/" + profileID
+
+	req, err := utils.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		if meshkiterrors.GetCode(err) == utils.ErrNotFoundCode {
+			return nil, ErrNoProfileFound()
+		}
+		return nil, err
+	}
+	defer utils.SafeClose(resp.Body)
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, utils.ErrReadResponseBody(err)
+	}
+
+	var profile perfprofile.PerformanceProfile
+	err = json.Unmarshal(body, &profile)
+	if err != nil {
+		return nil, ErrFailUnmarshal(err)
+	}
+
+	requestedUUID, err := uuid.FromString(profileID)
+	if err != nil {
+		return nil, utils.ErrInvalidUUID(err)
+	}
+
+	returnedUUID := uuid.UUID(profile.ID)
+	if returnedUUID == uuid.Nil || returnedUUID != requestedUUID {
+		return nil, utils.ErrInvalidUUID(fmt.Errorf("returned profile ID %q does not match requested UUID %q", profile.ID.String(), profileID))
+	}
+
+	return &profile, nil
+}
+
 // fetchAllPerformanceProfiles returns every profile matching searchString, across all pages.
 func fetchAllPerformanceProfiles(baseURL, searchString string) ([]perfprofile.PerformanceProfile, error) {
 	var profiles []perfprofile.PerformanceProfile
@@ -297,4 +345,7 @@ func userPrompt(key string, label string, data [][]string) (int, error) {
 func init() {
 	profileCmd.Flags().BoolVarP(&viewSingleProfile, "view", "", false, "(optional) View single performance profile with more info")
 	profileCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of performance results with --page (default = 1)")
+	profileCmd.Flags().IntVarP(&pageSize, "pagesize", "s", 25, "(optional) Number of performance profiles to be displayed per page (default = 25)")
+	profileCmd.Flags().IntVar(&pageSize, "page-size", 25, "(optional) Number of performance profiles to be displayed per page")
+	_ = profileCmd.Flags().MarkHidden("page-size")
 }

@@ -40,7 +40,7 @@ func newLocalProviderWithOrgs(t *testing.T, n int) *models.DefaultLocalProvider 
 }
 
 // TestGetOrganizations_LocalProviderPageSize pins how the Local provider reads
-// the pagesize query parameter. "all" is what `mesheryctl organization
+// the page size query parameters (pageSize, legacy pagesize, and all). "all" is what `mesheryctl organization
 // --count` sends, and the value the workspace and environment listings already
 // accept; it used to fail strconv.ParseUint and surface as a 502.
 func TestGetOrganizations_LocalProviderPageSize(t *testing.T) {
@@ -55,6 +55,12 @@ func TestGetOrganizations_LocalProviderPageSize(t *testing.T) {
 		{name: "all returns every organization", query: "?pagesize=all", wantOrgs: seeded, wantPageSize: seeded},
 		{name: "numeric page size still paginates", query: "?pagesize=5", wantOrgs: 5, wantPageSize: 5},
 		{name: "missing page size defaults to 10", query: "", wantOrgs: 10, wantPageSize: 10},
+		// pageSize and all are the spellings the schemas contract (v1beta2
+		// getOrgs) and the generated UI client send.
+		{name: "camelCase pageSize paginates", query: "?pageSize=5", wantOrgs: 5, wantPageSize: 5},
+		{name: "camelCase pageSize all returns every organization", query: "?pageSize=all", wantOrgs: seeded, wantPageSize: seeded},
+		{name: "all=true returns every organization", query: "?all=true", wantOrgs: seeded, wantPageSize: seeded},
+		{name: "all=true wins over a numeric page size", query: "?pageSize=5&all=true", wantOrgs: seeded, wantPageSize: seeded},
 	}
 
 	for _, tc := range cases {
