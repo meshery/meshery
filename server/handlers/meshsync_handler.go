@@ -327,7 +327,14 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		query = query.Offset(offset)
 	}
 
-	order = models.SanitizeOrderInput(order, []string{"creation_timestamp", "name", "kind", "model", "api_version", "namespace"})
+	order = models.SanitizeOrderInput(order, []string{"creation_timestamp", "name", "kind", "model", "api_version", "namespace", "cluster_id", "pattern_resource"})
+	// The joined metadata table has a cluster_id too, so name the resource's.
+	switch order {
+	case "cluster_id asc":
+		order = "kubernetes_resources.cluster_id asc"
+	case "cluster_id desc":
+		order = "kubernetes_resources.cluster_id desc"
+	}
 	if order != "" {
 		query = query.Order(order)
 	}
