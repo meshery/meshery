@@ -756,7 +756,7 @@ func TestGetMesheryPattern_MissingDesignReturnsResultNotFound(t *testing.T) {
 
 // Deleting a design ID that matches no row must report not found, as
 // DeleteMesheryFilter does, instead of succeeding. The handler maps
-// ErrResultNotFoundCode to 404.
+// the 404 status ErrResultNotFound carries.
 func TestDeleteMesheryPattern_UnknownIDIsNotFound(t *testing.T) {
 	db, p := newPatternPersisterTestDB(t)
 	_, _ = seedImportedPattern(t, db)

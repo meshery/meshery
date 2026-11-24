@@ -10,12 +10,26 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/events"
 )
 
 type mockPatternDeleteProvider struct {
 	*models.DefaultLocalProvider
-	deleteFn func(r *http.Request, patterns models.MesheryPatternDeleteRequestBody) ([]byte, error)
+	deleteFn    func(r *http.Request, patterns models.MesheryPatternDeleteRequestBody) ([]byte, error)
+	deleteOneFn func(r *http.Request, patternID string) ([]byte, error)
+}
+
+func (m *mockPatternDeleteProvider) DeleteMesheryPattern(r *http.Request, patternID string) ([]byte, error) {
+	if m.deleteOneFn != nil {
+		return m.deleteOneFn(r, patternID)
+	}
+	return m.DefaultLocalProvider.DeleteMesheryPattern(r, patternID)
+}
+
+func (m *mockPatternDeleteProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
+	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
 }
 
 func (m *mockPatternDeleteProvider) DeleteMesheryPatterns(r *http.Request, patterns models.MesheryPatternDeleteRequestBody) ([]byte, error) {
@@ -388,5 +402,45 @@ func TestDeleteMultiMesheryPatternsHandler_NilLoggerSafety(t *testing.T) {
 
 	if rec.Code != http.StatusRequestEntityTooLarge {
 		t.Fatalf("expected status 413, got %d", rec.Code)
+	}
+}
+
+func TestDeleteMesheryPatternHandler_ProviderErrorStatus(t *testing.T) {
+	cause := errors.New("design could not be deleted")
+	tests := []struct {
+		name       string
+		err        error
+		wantStatus int
+	}{
+		{name: "local design not found", err: models.ErrResultNotFound(cause), wantStatus: http.StatusNotFound},
+		{name: "remote design not found", err: models.ErrDelete(cause, "design", http.StatusNotFound), wantStatus: http.StatusNotFound},
+		{name: "remote unauthorized", err: models.ErrDelete(cause, "design", http.StatusUnauthorized), wantStatus: http.StatusUnauthorized},
+		{name: "remote forbidden", err: models.ErrDelete(cause, "design", http.StatusForbidden), wantStatus: http.StatusForbidden},
+		{name: "error without provider status", err: cause, wantStatus: http.StatusInternalServerError},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			h.config.EventBroadcaster = models.NewBroadcaster("test")
+			provider := newTestDeletePatternProvider(t)
+			provider.deleteOneFn = func(*http.Request, string) ([]byte, error) {
+				return nil, tt.err
+			}
+			user := &models.User{ID: uuid.Must(uuid.NewV4())}
+			id := uuid.Must(uuid.NewV4()).String()
+			req := httptest.NewRequest(http.MethodDelete, "/api/pattern/"+id, nil)
+			req = mux.SetURLVars(req, map[string]string{"id": id})
+			rec := httptest.NewRecorder()
+
+			h.DeleteMesheryPatternHandler(rec, req, nil, user, provider)
+
+			if rec.Code != tt.wantStatus {
+				t.Fatalf("expected status %d, got %d (body: %s)", tt.wantStatus, rec.Code, rec.Body.String())
+			}
+			if !strings.Contains(rec.Body.String(), ErrDeletePatternCode) {
+				t.Errorf("expected response to contain %s, got: %s", ErrDeletePatternCode, rec.Body.String())
+			}
+		})
 	}
 }
