@@ -219,6 +219,23 @@ func TestApplyCmd(t *testing.T) {
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound("missing-design"),
 		},
+		{
+			Name:             "given multi-word non existing design name with spaces when design apply then throw error without raw percent encoding",
+			Args:             []string{"apply", "my", "sample", "design"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=my+sample+design",
+					Response:     "pattern.empty.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:          filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrDesignNotFound("my sample design"),
+		},
 	}
 
 	// Run tests
