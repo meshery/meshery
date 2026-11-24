@@ -1064,13 +1064,13 @@ func TestUninstallCmdArgs(t *testing.T) {
 			Name:          "invalid with unexpected positional arguments",
 			Args:          []string{"unexpected-arg"},
 			ExpectError:   true,
-			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("uninstall does not accept positional arguments\n\n%s", uninstallUsageMsg)),
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", uninstallUsageMsg)),
 		},
 		{
 			Name:          "invalid with multiple positional arguments",
 			Args:          []string{"arg1", "arg2"},
 			ExpectError:   true,
-			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("uninstall does not accept positional arguments\n\n%s", uninstallUsageMsg)),
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", uninstallUsageMsg)),
 		},
 	}
 

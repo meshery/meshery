@@ -40,7 +40,7 @@ import (
 )
 
 // uninstallUsageMsg is the usage message displayed when invalid arguments are provided to the uninstall command.
-var uninstallUsageMsg = "Usage: mesheryctl system uninstall [flags]\nRun 'mesheryctl system uninstall --help' to see detailed help message."
+var uninstallUsageMsg = "Usage: mesheryctl system uninstall [flags]\nRun 'mesheryctl system uninstall --help' to see detailed help message"
 
 // uninstallCmd represents the uninstall command
 var uninstallCmd = &cobra.Command{
@@ -72,7 +72,7 @@ mesheryctl system uninstall --force
 	// Args validates that no positional arguments are passed to the uninstall command.
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("uninstall does not accept positional arguments\n\n%s", uninstallUsageMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", uninstallUsageMsg))
 		}
 		return nil
 	},
