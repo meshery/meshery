@@ -319,7 +319,7 @@ func (h *Handler) flushMeshsyncAction(
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("MeshSync resync failed for connection %s", existing.Name)).WithMetadata(map[string]any{"error": resyncErr, "connectionId": connectionID}).Build()
 		h.persistAndPublish(provider, token, userID, event)
 		h.log.Error(resyncErr)
-		writeJSONError(w, fmt.Sprintf("failed to resync MeshSync data: %v", resyncErr), http.StatusInternalServerError)
+		writeJSONError(w, fmt.Sprintf("failed to publish MeshSync resync request; cached resources were not flushed: %v", resyncErr), http.StatusInternalServerError)
 		return
 	}
 

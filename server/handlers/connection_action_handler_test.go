@@ -471,6 +471,9 @@ func TestPerformConnectionAction_FlushMeshsync_NilHandlerPreservesCache(t *testi
 	if !strings.Contains(rec.Body.String(), "MeshSync data handler is not initialized") {
 		t.Errorf("expected resync-failure response, got: %s", rec.Body.String())
 	}
+	if !strings.Contains(rec.Body.String(), "cached resources were not flushed") {
+		t.Errorf("expected response to confirm cached resources were not flushed, got: %s", rec.Body.String())
+	}
 
 	var count int64
 	if err := db.Model(&meshsyncmodel.KubernetesResource{}).

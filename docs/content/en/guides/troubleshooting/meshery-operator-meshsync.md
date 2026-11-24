@@ -80,7 +80,7 @@ For the full walkthrough of the Kubernetes connection lifecycle, its components,
 
 Some common failure situations that Meshery users might face are described below.
 
-[broker-config]: ../../infrastructure-management/configuring-operator-meshsync-broker/#health-endpoints-and-probes
+[broker-config]: ../infrastructure-management/configuring-operator-meshsync-broker.md#health-endpoints-and-probes
 
 1. **Situation:** No deployment of Meshery Operator, MeshSync, and Broker.
    1. **Probable cause:** Meshery Server cannot connect to Kubernetes cluster; cluster unreachable or kubeconfig without proper permissions needed to deploy Meshery Operator; Kubernetes config initialization issues.
