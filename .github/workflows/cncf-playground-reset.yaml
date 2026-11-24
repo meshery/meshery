@@ -10,6 +10,16 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
+    # ssh-action skips host-key verification when fingerprint is empty,
+    # so fail closed rather than run the cleanup on an unverified bastion.
+    - name: Require bastion host-key fingerprint
+      env:
+          OCI_BASTION_FINGERPRINT: ${{ secrets.OCI_BASTION_FINGERPRINT }}
+      run: |
+          if [ -z "$OCI_BASTION_FINGERPRINT" ]; then
+            echo "::error::OCI_BASTION_FINGERPRINT secret is not set; refusing to SSH without host-key verification."
+            exit 1
+          fi
     - name: Cluster cleanup by running the cleanup script inside VM
       uses: appleboy/ssh-action@master
       env:
