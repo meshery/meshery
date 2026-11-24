@@ -107,38 +107,57 @@ mesheryctl design export [design-name | ID] --type [design-type] --output ./expo
 // fetchPatternIDByName returns the ID of the design matching patternName, and
 // asks the user to choose when several designs match.
 func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
-	patternUrl := fmt.Sprintf("%s/api/pattern?search=%s", baseUrl, url.QueryEscape(patternName))
-	req, err := utils.NewRequest(http.MethodGet, patternUrl, nil)
+	patterns, err := searchPatternsByName(baseUrl, patternName, 0)
 	if err != nil {
 		return "", err
+	}
+	return selectPatternID(patterns, patternName, baseUrl)
+}
+
+// searchPatternsByName returns the designs the server's name search matches
+// for patternName. The search also matches partial names. A pageSize of 0
+// leaves the server's default page size.
+func searchPatternsByName(baseUrl, patternName string, pageSize int) ([]models.MesheryPattern, error) {
+	patternUrl := fmt.Sprintf("%s/api/pattern?search=%s", baseUrl, url.QueryEscape(patternName))
+	if pageSize > 0 {
+		patternUrl += fmt.Sprintf("&pagesize=%d", pageSize)
+	}
+	req, err := utils.NewRequest(http.MethodGet, patternUrl, nil)
+	if err != nil {
+		return nil, err
 	}
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("failed to fetch design %q by name: %w", patternName, utils.ErrResponseStatus(resp.StatusCode))
+		return nil, fmt.Errorf("failed to fetch design %q by name: %w", patternName, utils.ErrResponseStatus(resp.StatusCode))
 	}
 	buf, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", utils.ErrReadFromBody(err)
+		return nil, utils.ErrReadFromBody(err)
 	}
 	var response models.PatternsAPIResponse
 	if err := encoding.Unmarshal(buf, &response); err != nil {
-		return "", err
+		return nil, err
 	}
+	return response.Patterns, nil
+}
 
-	switch len(response.Patterns) {
+// selectPatternID returns the ID of the only design in patterns, and asks the
+// user to choose when there are several.
+func selectPatternID(patterns []models.MesheryPattern, patternName, baseUrl string) (string, error) {
+	switch len(patterns) {
 	case 0:
 		return "", ErrDesignNotFound(patternName)
 	case 1:
-		return utils.FormatUUID(response.Patterns[0].ID, ""), nil
+		return utils.FormatUUID(patterns[0].ID, ""), nil
 	}
 
-	selectedPattern, err := selectPatternPrompt(response.Patterns, baseUrl)
+	selectedPattern, err := selectPatternPrompt(patterns, baseUrl)
 	if err != nil {
 		return "", err
 	}
