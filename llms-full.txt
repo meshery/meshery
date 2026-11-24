@@ -8375,6 +8375,8 @@ You can now design and manage any infrastructure that Meshery supports. For the 
     
   
     
+  
+    
       
     
   
@@ -17247,7 +17249,7 @@ Creating a Connection performs two transitions in sequence: it **registers** the
 
 ### Credentials
 
-Credentials entered in the wizard are persisted as first-class, named [Credentials](/concepts/logical/credentials/), encrypted at rest, and reusable across other Connections. Meshery never exposes them in logs or API responses. To learn how Meshery interprets a credential's secret (Basic auth vs. bearer token vs. anonymous), see [Credentials](/concepts/logical/credentials/) and the [Telemetry authentication note](/guides/telemetry/).
+Credentials entered in the wizard are persisted as first-class, named [Credentials](/concepts/logical/credentials/), encrypted at rest, and reusable across other Connections. Meshery never exposes them in logs or API responses. A Kubernetes credential must carry plain data: Meshery rejects (HTTP 400) one that sets an `exec` plugin, an `auth-provider`, or a `certificate-authority`, `client-certificate`, `client-key` or `tokenFile` path, because building a client from it would run a command or read a file on the machine running Meshery Server. Credentials of Kubernetes contexts that Meshery Server imported from its own kubeconfig are the exception, and keep working. Embed the data instead (`*-data` fields or a `token`). To learn how Meshery interprets a credential's secret (Basic auth vs. bearer token vs. anonymous), see [Credentials](/concepts/logical/credentials/) and the [Telemetry authentication note](/guides/telemetry/).
 
 ## Importing a Kubernetes cluster
 
@@ -95923,6 +95925,31 @@ Older tooling wrote arbitrary version strings into design files</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrUnsafeKubeCredentialCode-1500" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnsafeKubeCredentialCode-more-info" onclick="toggle_visibility('meshery-server-ErrUnsafeKubeCredentialCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1500" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errunsafekubecredentialcode-1500/"><code>ErrUnsafeKubeCredentialCode-1500</code></a>
+            </td>
+            <td>The Kubernetes credential is not allowed to run commands or read files on the Meshery Server host</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrUnsafeKubeCredentialCode-1500" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrUnsafeKubeCredentialCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">exec plugins, auth-providers and certificate, key or token file paths are executed or read on the machine running Meshery Server, so only the server&#39;s own kubeconfig may use them</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Replace the credential with embedded data (client-certificate-data, client-key-data, certificate-authority-data, token) and save it again</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>
@@ -110990,6 +111017,12 @@ url: /reference/error-codes/component-meshery-server/errunresolveddependencycode
 --------------------------------------------------------------------------------
 title: "ErrUnsafeFilePathCode-1443"
 url: /reference/error-codes/component-meshery-server/errunsafefilepathcode-1443/index.md
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+title: "ErrUnsafeKubeCredentialCode-1500"
+url: /reference/error-codes/component-meshery-server/errunsafekubecredentialcode-1500/index.md
 --------------------------------------------------------------------------------
 
 

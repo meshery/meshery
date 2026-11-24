@@ -1119,6 +1119,7 @@ Section pages:
 - [ErrUnreachableRemoteProviderCode-1301](/reference/error-codes/component-meshery-server/errunreachableremoteprovidercode-1301/)
 - [ErrUnresolvedDependencyCode-1476](/reference/error-codes/component-meshery-server/errunresolveddependencycode-1476/)
 - [ErrUnsafeFilePathCode-1443](/reference/error-codes/component-meshery-server/errunsafefilepathcode-1443/)
+- [ErrUnsafeKubeCredentialCode-1500](/reference/error-codes/component-meshery-server/errunsafekubecredentialcode-1500/)
 - [ErrUnsupportedCloudProviderCode-11347](/reference/error-codes/library-meshkit/errunsupportedcloudprovidercode-11347/)
 - [ErrUnsupportedEventStatusCode-1121](/reference/error-codes/component-meshery-server/errunsupportedeventstatuscode-1121/)
 - [ErrUnsupportedExtensionCode-11282](/reference/error-codes/library-meshkit/errunsupportedextensioncode-11282/)

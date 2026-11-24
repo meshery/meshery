@@ -16213,6 +16213,31 @@ Older tooling wrote arbitrary version strings into design files</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrUnsafeKubeCredentialCode-1500" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrUnsafeKubeCredentialCode-more-info" onclick="toggle_visibility('meshery-server-ErrUnsafeKubeCredentialCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1500" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errunsafekubecredentialcode-1500/"><code>ErrUnsafeKubeCredentialCode-1500</code></a>
+            </td>
+            <td>The Kubernetes credential is not allowed to run commands or read files on the Meshery Server host</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrUnsafeKubeCredentialCode-1500" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrUnsafeKubeCredentialCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">exec plugins, auth-providers and certificate, key or token file paths are executed or read on the machine running Meshery Server, so only the server&#39;s own kubeconfig may use them</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Replace the credential with embedded data (client-certificate-data, client-key-data, certificate-authority-data, token) and save it again</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>
