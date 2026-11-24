@@ -1265,7 +1265,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 		if err := json.Unmarshal(bdr, &cp); err == nil && cp.Connections != nil {
 			contexts := make([]*K8sContext, 0, len(cp.Connections))
 			for _, c := range cp.Connections {
-				ctx, err := K8sContextFromConnection(Provider(l), token, c)
+				ctx, err := K8sContextFromConnectionWithCredentials(Provider(l), token, c, withCredentials)
 				if err != nil {
 					// One unsafe credential must not take the whole listing
 					// down; it simply cannot be used to build a client.

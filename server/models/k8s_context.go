@@ -111,18 +111,16 @@ type KubeconfigDiscovery struct {
 // Remote providers now return connections directly, but Meshery still expects K8sContext shapes in a few APIs.
 // token is the user auth token
 func K8sContextFromConnection(provider Provider, token string, connection *connections.Connection) (K8sContext, error) {
+	return K8sContextFromConnectionWithCredentials(provider, token, connection, true)
+}
+
+// K8sContextFromConnectionWithCredentials converts a kubernetes connection into a K8sContext.
+// When withCredentials is false, only connection metadata is converted and credentials
+// are neither fetched nor validated.
+func K8sContextFromConnectionWithCredentials(provider Provider, token string, connection *connections.Connection, withCredentials bool) (K8sContext, error) {
 	ctx := K8sContext{}
 	if connection == nil {
 		return ctx, fmt.Errorf("failed to convert connection to k8s context: connection is nil")
-	}
-
-	if connection.CredentialID == nil {
-		return ctx, fmt.Errorf("failed to convert connection to k8s context: missing credential_id")
-	}
-
-	credential, _, err := provider.GetCredentialByID(token, *connection.CredentialID)
-	if err != nil {
-		return ctx, fmt.Errorf("failed to convert connection to k8s context: failed to fetch credential: %w", err)
 	}
 
 	data, err := json.Marshal(connection.Metadata)
@@ -134,6 +132,24 @@ func K8sContextFromConnection(provider Provider, token string, connection *conne
 	}
 
 	ctx.ConnectionID = connection.ID.String()
+	ctx.CreatedAt = &connection.CreatedAt
+	ctx.UpdatedAt = &connection.UpdatedAt
+
+	// Metadata-only callers (context deletion snapshot) must not depend on the
+	// credential: a missing or unsafe one cannot block unrelated work.
+	if !withCredentials {
+		return ctx, nil
+	}
+
+	if connection.CredentialID == nil {
+		return ctx, fmt.Errorf("failed to convert connection to k8s context: missing credential_id")
+	}
+
+	credential, _, err := provider.GetCredentialByID(token, *connection.CredentialID)
+	if err != nil {
+		return ctx, fmt.Errorf("failed to convert connection to k8s context: failed to fetch credential: %w", err)
+	}
+
 	// Kubernetes credentials are persisted with the secret map as the payload
 	// ({auth, cluster}), while the credential form writes a double-nested wrapper
 	// one level up. CredentialPayload unwraps both to the payload. The form's
@@ -150,8 +166,6 @@ func K8sContextFromConnection(provider Provider, token string, connection *conne
 	if fields := UntrustedKubeCredentialFields(ctx.Auth, ctx.Cluster); len(fields) > 0 {
 		return K8sContext{}, ErrUnsafeKubeCredential(fields)
 	}
-	ctx.CreatedAt = &connection.CreatedAt
-	ctx.UpdatedAt = &connection.UpdatedAt
 
 	return ctx, nil
 }

@@ -112,6 +112,18 @@ func TestK8sContextFromConnectionRefusesUnsafeCredential(t *testing.T) {
 			t.Fatalf("K8sContextFromConnection: %v", err)
 		}
 	})
+
+	t.Run("metadata-only conversion without credentials allows connection", func(t *testing.T) {
+		auth, cluster := kubeCredential(map[string]interface{}{"exec": map[string]interface{}{"command": "unsafe"}}, map[string]interface{}{"server": "https://127.0.0.1:1"})
+		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cluster})
+		ctx, err := K8sContextFromConnectionWithCredentials(provider, "", conn, false)
+		if err != nil {
+			t.Fatalf("expected metadata-only conversion to succeed without credentials, got err=%v", err)
+		}
+		if ctx.ConnectionID != conn.ID.String() {
+			t.Fatalf("ctx.ConnectionID = %q, want %q", ctx.ConnectionID, conn.ID.String())
+		}
+	})
 }
 
 // The server's own kubeconfig legitimately uses exec plugins (EKS, GKE), and
