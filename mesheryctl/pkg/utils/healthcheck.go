@@ -44,6 +44,10 @@ func GetK8sVersionInfo() (*version.Info, error) {
 }
 
 func CheckK8sVersion(versionInfo *version.Info) error {
+	if versionInfo == nil {
+		return ErrK8sInvalidVersionFormat(fmt.Errorf("kubernetes version info is nil"))
+	}
+
 	apiVersion, err := getK8sVersion(versionInfo.String())
 	if err != nil {
 		return err
@@ -70,8 +74,8 @@ func getK8sVersion(versionString string) ([3]int, error) {
 		return version, ErrK8sInvalidVersionFormat(fmt.Errorf("unknown version string format [%s]", versionString))
 	}
 
-	for i, segment := range split {
-		v, err := strconv.Atoi(strings.TrimSpace(segment))
+	for i := 0; i < 3; i++ {
+		v, err := strconv.Atoi(strings.TrimSpace(split[i]))
 		if err != nil {
 			return version, ErrK8sInvalidVersionFormat(fmt.Errorf("unknown version string format [%s]", versionString))
 		}
@@ -121,7 +125,7 @@ func isCompatibleVersion(minimalRequirementVersion [3]int, actualVersion [3]int)
 	return false
 }
 
-var semVer = regexp.MustCompile("(v[0-9]+.[0-9]+.[0-9]+)")
+var semVer = regexp.MustCompile(`(v[0-9]+\.[0-9]+\.[0-9]+)`)
 
 func parseKubectlShortVersion(version string) ([3]int, error) {
 	versionString := semVer.FindString(version)
