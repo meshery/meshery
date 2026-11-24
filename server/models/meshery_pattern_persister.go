@@ -224,31 +224,30 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, cloneP
 // workspace design mappings in a database transaction.
 func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id core.Uuid) ([]byte, error) {
 	pattern := MesheryPattern{}
-	notFound := false
+	// Deleting the mappings first makes the transaction open with a write.
+	// SQLite fails a transaction that reads before writing with "database is
+	// locked" when another writer overlaps, so HasTable stays outside it too.
+	hasMappings := mpp.DB.Migrator().HasTable(&schemasWorkspace.WorkspacesDesignsMapping{})
 	err := mpp.DB.Transaction(func(tx *gorm.DB) error {
+		if hasMappings {
+			if err := tx.Where("design_id = ?", id).Delete(&schemasWorkspace.WorkspacesDesignsMapping{}).Error; err != nil {
+				return err
+			}
+		}
 		res := tx.Where("id = ?", id).Limit(1).Find(&pattern)
 		if res.Error != nil {
 			return res.Error
 		}
 		if res.RowsAffected == 0 {
-			notFound = true
-			return nil
+			return gorm.ErrRecordNotFound
 		}
-		if err := tx.Delete(&pattern).Error; err != nil {
-			return err
-		}
-		if tx.Migrator().HasTable(&schemasWorkspace.WorkspacesDesignsMapping{}) {
-			if err := tx.Where("design_id = ?", id).Delete(&schemasWorkspace.WorkspacesDesignsMapping{}).Error; err != nil {
-				return err
-			}
-		}
-		return nil
+		return tx.Delete(&pattern).Error
 	})
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, ErrResultNotFound(fmt.Errorf("design %s not found", id.String()))
+	}
 	if err != nil {
 		return nil, ErrDBDelete(err, "")
-	}
-	if notFound {
-		return nil, ErrResultNotFound(fmt.Errorf("design %s not found", id.String()))
 	}
 
 	return marshalMesheryPattern(&pattern), nil

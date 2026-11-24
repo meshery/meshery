@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -16,6 +18,7 @@ import (
 	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/catalog/v1alpha1"
 	"github.com/meshery/meshkit/models/patterns"
+	schemasWorkspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -793,5 +796,75 @@ func TestDeleteMesheryPattern_ResponseDescribesDeletedDesign(t *testing.T) {
 	}
 	if n := countPatterns(t, db); n != 0 {
 		t.Fatalf("stored designs after delete = %d, want 0", n)
+	}
+}
+
+// Overlapping deletes on a file-backed SQLite database must not fail with
+// "database is locked": every stored design is deleted, and of several deletes
+// of the same design exactly one succeeds and the rest report not found.
+func TestDeleteMesheryPattern_ConcurrentDeletes(t *testing.T) {
+	const workers, rounds = 8, 20
+
+	tests := []struct {
+		name          string
+		designs       int
+		wantSucceeded int
+	}{
+		{name: "different designs", designs: workers, wantSucceeded: workers},
+		{name: "same design", designs: 1, wantSucceeded: 1},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			db, err := gorm.Open(sqlite.Open(filepath.Join(t.TempDir(), "designs.db")), &gorm.Config{})
+			if err != nil {
+				t.Fatalf("open sqlite: %v", err)
+			}
+			sqlDB, err := db.DB()
+			if err != nil {
+				t.Fatalf("sql db: %v", err)
+			}
+			t.Cleanup(func() { _ = sqlDB.Close() })
+			if err := db.AutoMigrate(&MesheryPattern{}, &schemasWorkspace.WorkspacesDesignsMapping{}); err != nil {
+				t.Fatalf("migrate: %v", err)
+			}
+			p := &MesheryPatternPersister{DB: &database.Handler{DB: db, Mutex: &sync.Mutex{}}}
+
+			for round := 0; round < rounds; round++ {
+				ids := make([]uuid.UUID, tc.designs)
+				for i := range ids {
+					ids[i], _ = seedImportedPattern(t, db)
+				}
+
+				errs := make([]error, workers)
+				start := make(chan struct{})
+				var wg sync.WaitGroup
+				for i := 0; i < workers; i++ {
+					wg.Add(1)
+					go func(i int) {
+						defer wg.Done()
+						<-start
+						_, errs[i] = p.DeleteMesheryPattern(ids[i%len(ids)])
+					}(i)
+				}
+				close(start)
+				wg.Wait()
+
+				succeeded := 0
+				for _, err := range errs {
+					if err == nil {
+						succeeded++
+					} else if code := mkerrors.GetCode(err); code != ErrResultNotFoundCode {
+						t.Fatalf("round %d: error code = %q, want %q (err: %v)", round, code, ErrResultNotFoundCode, err)
+					}
+				}
+				if succeeded != tc.wantSucceeded {
+					t.Fatalf("round %d: succeeded = %d, want %d", round, succeeded, tc.wantSucceeded)
+				}
+				if n := countPatterns(t, db); n != 0 {
+					t.Fatalf("round %d: stored designs = %d, want 0", round, n)
+				}
+			}
+		})
 	}
 }
