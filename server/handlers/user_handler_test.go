@@ -289,6 +289,18 @@ func TestUserHandlers_NilGuards(t *testing.T) {
 	}
 }
 
+// errResponseWriter wraps httptest.ResponseRecorder and returns a scripted error
+// from Write without committing headers, allowing tests to deterministically
+// trigger json.NewEncoder(w).Encode failures while still observing WriteHeader.
+type errResponseWriter struct {
+	*httptest.ResponseRecorder
+	writeErr error
+}
+
+func (w *errResponseWriter) Write(_ []byte) (int, error) {
+	return 0, w.writeErr
+}
+
 // TestUserHandlers_NilLogger_DoesNotPanic verifies that user handlers guard against
 // nil logger dereferences when logging is unavailable.
 func TestUserHandlers_NilLogger_DoesNotPanic(t *testing.T) {
@@ -354,10 +366,24 @@ func TestUserHandlers_NilLogger_DoesNotPanic(t *testing.T) {
 
 	t.Run("UserHandler encoding error", func(t *testing.T) {
 		rec := httptest.NewRecorder()
+		w := &errResponseWriter{ResponseRecorder: rec, writeErr: fmt.Errorf("write failed")}
 		req := httptest.NewRequest(http.MethodGet, "/api/user", nil)
-		h.UserHandler(rec, req, nil, &models.User{}, nil)
+		h.UserHandler(w, req, nil, &models.User{}, nil)
 		if rec.Code != http.StatusInternalServerError {
-			t.Errorf("status = %d, want 500 (body=%q)", rec.Code, rec.Body.String())
+			t.Errorf("status = %d, want 500", rec.Code)
+		}
+		if ct := rec.Header().Get("Content-Type"); !strings.HasPrefix(ct, "application/json") {
+			t.Errorf("Content-Type = %q, want prefix %q", ct, "application/json")
+		}
+	})
+
+	t.Run("UserPrefsHandler GET encoding error", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		w := &errResponseWriter{ResponseRecorder: rec, writeErr: fmt.Errorf("write failed")}
+		req := httptest.NewRequest(http.MethodGet, "/api/user/prefs", nil)
+		h.UserPrefsHandler(w, req, &models.Preference{}, nil, nil)
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("status = %d, want 500", rec.Code)
 		}
 	})
 
