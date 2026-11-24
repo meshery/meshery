@@ -758,3 +758,104 @@ func TestParallelProcess_PartialDispatchPanicSignalsRemainingDependentsExactlyOn
 	default:
 	}
 }
+
+// TestParallelProcess_BoundedConcurrency verifies that ParallelProcessGraph.Traverse
+// enforces ConcurrencyLimit and does not exceed the allowed concurrent visitor execution.
+func TestParallelProcess_BoundedConcurrency(t *testing.T) {
+	const totalNodes = 20
+	const maxConcurrentLimit = 4
+
+	g := NewGraph()
+	for i := 0; i < totalNodes; i++ {
+		name := fmt.Sprintf("node-%d", i)
+		g.AddNode(name, component.ComponentDefinition{})
+	}
+
+	pg, err := NewParallelProcessGraph(g)
+	if err != nil {
+		t.Fatalf("NewParallelProcessGraph() failed: %v", err)
+	}
+
+	pg.ConcurrencyLimit = maxConcurrentLimit
+	pg.MaxJitter = 5 * time.Millisecond
+
+	var currentActive int64
+	var peakActive int64
+	var totalExecuted int64
+
+	pg.Traverse(func(name string, comp component.ComponentDefinition) bool {
+		cur := atomic.AddInt64(&currentActive, 1)
+
+		// Record peak concurrency observed
+		for {
+			oldPeak := atomic.LoadInt64(&peakActive)
+			if cur <= oldPeak || atomic.CompareAndSwapInt64(&peakActive, oldPeak, cur) {
+				break
+			}
+		}
+
+		// Simulate some work
+		time.Sleep(10 * time.Millisecond)
+
+		atomic.AddInt64(&currentActive, -1)
+		atomic.AddInt64(&totalExecuted, 1)
+		return true
+	}, nil, testLogger(t))
+
+	if totalExecuted != int64(totalNodes) {
+		t.Errorf("totalExecuted = %d, want %d", totalExecuted, totalNodes)
+	}
+
+	if peakActive > int64(maxConcurrentLimit) {
+		t.Errorf("peakActive concurrency = %d exceeded limit of %d", peakActive, maxConcurrentLimit)
+	}
+}
+
+// TestParallelProcess_BoundedConcurrency_DefaultLimitFallback verifies that when
+// ConcurrencyLimit is <= 0, Traverse falls back to DefaultConcurrencyLimit (10).
+func TestParallelProcess_BoundedConcurrency_DefaultLimitFallback(t *testing.T) {
+	const totalNodes = 25
+
+	g := NewGraph()
+	for i := 0; i < totalNodes; i++ {
+		name := fmt.Sprintf("node-%d", i)
+		g.AddNode(name, component.ComponentDefinition{})
+	}
+
+	pg, err := NewParallelProcessGraph(g)
+	if err != nil {
+		t.Fatalf("NewParallelProcessGraph() failed: %v", err)
+	}
+
+	// Explicitly set to 0 to exercise the fallback to DefaultConcurrencyLimit
+	pg.ConcurrencyLimit = 0
+
+	var currentActive int64
+	var peakActive int64
+	var totalExecuted int64
+
+	pg.Traverse(func(name string, comp component.ComponentDefinition) bool {
+		cur := atomic.AddInt64(&currentActive, 1)
+
+		for {
+			oldPeak := atomic.LoadInt64(&peakActive)
+			if cur <= oldPeak || atomic.CompareAndSwapInt64(&peakActive, oldPeak, cur) {
+				break
+			}
+		}
+
+		time.Sleep(10 * time.Millisecond)
+
+		atomic.AddInt64(&currentActive, -1)
+		atomic.AddInt64(&totalExecuted, 1)
+		return true
+	}, nil, testLogger(t))
+
+	if totalExecuted != int64(totalNodes) {
+		t.Errorf("totalExecuted = %d, want %d", totalExecuted, totalNodes)
+	}
+
+	if peakActive > int64(DefaultConcurrencyLimit) {
+		t.Errorf("peakActive concurrency = %d exceeded DefaultConcurrencyLimit of %d", peakActive, DefaultConcurrencyLimit)
+	}
+}

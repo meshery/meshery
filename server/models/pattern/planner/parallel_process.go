@@ -2,10 +2,16 @@ package planner
 
 import (
 	"fmt"
+	"math/rand"
 	"sync"
+	"time"
 
 	"github.com/meshery/meshkit/logger"
 )
+
+// DefaultConcurrencyLimit is the default maximum number of components
+// that can execute fn(...) concurrently in ParallelProcessGraph.Traverse.
+const DefaultConcurrencyLimit = 10
 
 // ParallelProcessGraph provides methods for parallel processing of the graph
 type ParallelProcessGraph struct {
@@ -16,6 +22,14 @@ type ParallelProcessGraph struct {
 	// look a node up by name again.
 	dependents map[string][]*ParallelProcessGraphNode
 	wg         sync.WaitGroup
+
+	// ConcurrencyLimit bounds the maximum number of components executing fn concurrently.
+	// If <= 0, DefaultConcurrencyLimit is used.
+	ConcurrencyLimit int
+
+	// MaxJitter is an optional upper bound for random jitter added before executing fn.
+	// Useful in high-scale deployments to desynchronize simultaneous requests.
+	MaxJitter time.Duration
 }
 
 // ParallelProcessGraphNode is the node for ParallelProcessGraph
@@ -29,6 +43,12 @@ type ParallelProcessGraphNode struct {
 	DepCancleCh chan string
 
 	DepCount int
+
+	// sem bounds concurrent execution of fn across nodes in the graph.
+	sem chan struct{}
+
+	// maxJitter specifies maximum duration for random jitter before calling fn.
+	maxJitter time.Duration
 }
 
 // NewParallelProcessGraph creates a parallel processing graph
@@ -38,6 +58,7 @@ func NewParallelProcessGraph(g *Graph) (*ParallelProcessGraph, error) {
 	pg := &ParallelProcessGraph{
 		ParallelProcessGraphNodeMap: make(map[string]*ParallelProcessGraphNode),
 		dependents:                  make(map[string][]*ParallelProcessGraphNode),
+		ConcurrencyLimit:            DefaultConcurrencyLimit,
 	}
 
 	// Copy the nodes data
@@ -82,10 +103,19 @@ func NewParallelProcessGraph(g *Graph) (*ParallelProcessGraph, error) {
 	return pg, nil
 }
 
-// Traverse spins up the processes concurrently if it can
+// Traverse spins up the processes concurrently if it can, bounding concurrent
+// visitor execution using a semaphore to avoid thundering herd on downstream APIs.
 func (g *ParallelProcessGraph) Traverse(fn VisitFn, withheld WithheldFn, log logger.Handler) {
+	limit := g.ConcurrencyLimit
+	if limit <= 0 {
+		limit = DefaultConcurrencyLimit
+	}
+	sem := make(chan struct{}, limit)
+
 	// Spin up the processes concurrently
 	for name, node := range g.ParallelProcessGraphNodeMap {
+		node.sem = sem
+		node.maxJitter = g.MaxJitter
 		g.wg.Add(1)
 		go node.Process(g.dependents[name], &g.wg, fn, withheld, log)
 	}
@@ -158,7 +188,22 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 
 	// The resources are deployed in correct order and dependsOn is respected but sometimes it has issues, for eg: CR depends on CRD, hence when deployment request to k8s to deploy CRD succeeds, we continue with the deployment of dependent CR.
 	// The 200 response from k8s doesn’t guarantee that resource is available to use, it is just an indication that req is received and being worked on, therefore in ceratin cases, deployment failures are experienced and hence we need a mechanism to ensure that the dependent resource is actually deployed and ready to use before conitnuing.
-	ok := fn(v.Name, v.Data.Data)
+	// Bounded concurrency & jitter: Apply optional jitter first to desynchronize
+	// bursts, then acquire a token from the semaphore right before calling fn so
+	// that slots are held only for actual deployment work.
+	ok := func() bool {
+		if v.maxJitter > 0 {
+			jitter := time.Duration(rand.Int63n(int64(v.maxJitter)))
+			time.Sleep(jitter)
+		}
+
+		if v.sem != nil {
+			v.sem <- struct{}{}
+			defer func() { <-v.sem }()
+		}
+
+		return fn(v.Name, v.Data.Data)
+	}()
 	log.Debug("RESPONSE GOT FOR", v.Name, ":", ok)
 
 	// Send the appropriate signal
