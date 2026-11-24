@@ -1,0 +1,20 @@
+version: 0.0.8
+name: emojivoto
+displayName: Emojivoto
+createdAt: "2026-11-22T18:12:34Z"
+description: Emojivoto is a cloud-native sample application built using multiple microservices. It includes a web frontend, emoji service, voting service, and automated vote bot. The application demonstrates communication between services using HTTP and gRPC within a Kubernetes environment.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3402e624-be49-475c-9826-731ac4046be3/0.0.8/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a sample application intended for demonstration and learning purposes. It requires a Kubernetes cluster and access to the public Emojivoto container images. The web frontend uses a ClusterIP service, so external access requires port-forwarding or an appropriate ingress or load balancer configuration. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cb7164e-e765-49e5-9ba6-8995f05935ff
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

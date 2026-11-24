@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -80,6 +81,9 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	// add token to request
 	err = AddAuthDetails(req, tokenPath)
 	if err != nil {
+		if meshkiterrors.GetCode(err) == ErrUnauthenticatedCode {
+			return nil, err
+		}
 		return nil, ErrAttachAuthToken(err)
 	}
 
@@ -239,11 +243,24 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 		err = errors.Wrap(err, "could not read token: ")
 		return err
 	}
+
 	var tokenObj map[string]string
-	if err := json.Unmarshal(file, &tokenObj); err != nil {
-		err = errors.Wrap(err, "token file invalid: ")
+	if len(bytes.TrimSpace(file)) == 0 {
+		var ok bool
+		tokenObj, ok = emptyLocalTokenObject()
+		if !ok {
+			return ErrUnauthenticated()
+		}
+	} else {
+		if err := json.Unmarshal(file, &tokenObj); err != nil {
+			err = errors.Wrap(err, "token file invalid: ")
+			return err
+		}
+	}
+	if err := validateTokenObject(tokenObj); err != nil {
 		return err
 	}
+
 	req.AddCookie(&http.Cookie{
 		Name:     tokenName,
 		Value:    tokenObj[tokenName],
@@ -301,12 +318,55 @@ func ReadToken(filepath string) (map[string]string, error) {
 		err = errors.Wrap(err, "could not read token: ")
 		return nil, ErrFileRead(err)
 	}
+	if len(bytes.TrimSpace(file)) == 0 {
+		tokenObj, ok := emptyLocalTokenObject()
+		if !ok {
+			return nil, ErrUnauthenticated()
+		}
+		return tokenObj, nil
+	}
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
 		err = errors.Wrap(err, "token file invalid: ")
 		return nil, ErrUnmarshal(err)
 	}
+	if err := validateTokenObject(tokenObj); err != nil {
+		return nil, err
+	}
 	return tokenObj, nil
+}
+
+func emptyLocalTokenObject() (map[string]string, bool) {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return nil, false
+	}
+	ctx, ok := mctlCfg.Contexts[mctlCfg.CurrentContext]
+	if !ok || !IsLocalProvider(ctx.GetProvider()) {
+		return nil, false
+	}
+	return map[string]string{
+		tokenName:    "",
+		providerName: "Local",
+	}, true
+}
+
+func validateTokenObject(tokenObj map[string]string) error {
+	if len(strings.TrimSpace(tokenObj[tokenName])) != 0 {
+		return nil
+	}
+	if !IsLocalProvider(tokenObj[providerName]) {
+		return ErrUnauthenticated()
+	}
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return ErrUnauthenticated()
+	}
+	ctx, ok := mctlCfg.Contexts[mctlCfg.CurrentContext]
+	if !ok || !IsLocalProvider(ctx.GetProvider()) {
+		return ErrUnauthenticated()
+	}
+	return nil
 }
 
 // CreateTempAuthServer creates a temporary http server
@@ -637,30 +697,10 @@ func IsServerRunning(serverAddr string) error {
 const tokenFileMode os.FileMode = 0o600
 
 // WriteTokenFile writes an auth token file and restricts it to its owner.
-// The open mode only applies when the file is created, so an existing token
-// file written by an older mesheryctl (0644 or 0666) is restricted with
-// restrictTokenFile before the new token is written into it: chmod to 0600 on
-// Unix and, on Windows where chmod does not touch ACLs, a protected DACL that
-// grants only the current user access. The file is opened without O_TRUNC and
-// truncated only after the restriction succeeds, so a failure (for example a
-// token file owned by another user) leaves the previous credentials intact
-// instead of emptying the file and then erroring.
+// On non-Windows systems it restricts the file before truncating it, so a
+// permission failure leaves existing credentials intact and no new token is
+// written to a broadly accessible file. On Windows it writes to a private
+// temporary file and replaces the destination only after the write succeeds.
 func WriteTokenFile(path string, data []byte) error {
-	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, tokenFileMode)
-	if err != nil {
-		return err
-	}
-	if err := restrictTokenFile(f); err != nil {
-		_ = f.Close()
-		return err
-	}
-	if err := f.Truncate(0); err != nil {
-		_ = f.Close()
-		return err
-	}
-	if _, err := f.Write(data); err != nil {
-		_ = f.Close()
-		return err
-	}
-	return f.Close()
+	return writeTokenFile(path, data)
 }

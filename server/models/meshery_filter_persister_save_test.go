@@ -265,6 +265,40 @@ func TestSaveMesheryFilterDeletedDuringSaveIsError(t *testing.T) {
 	}
 }
 
+// A clone is a new private filter: it takes the source's file and location,
+// but not its creation time or catalog data.
+func TestCloneMesheryFilterCreatesFreshFilter(t *testing.T) {
+	db, mfp := newFilterPersisterTestDB(t)
+	id := seedPublishedFilter(t, db)
+
+	if _, err := mfp.CloneMesheryFilter(id.String(), &MesheryCloneFilterRequestBody{Name: "copy"}); err != nil {
+		t.Fatalf("clone: %v", err)
+	}
+
+	if n := countFilters(t, db); n != 2 {
+		t.Fatalf("rows = %d, want 2", n)
+	}
+	var clone MesheryFilter
+	if err := db.First(&clone, "name = ?", "copy").Error; err != nil {
+		t.Fatalf("load clone: %v", err)
+	}
+	if clone.Visibility != Private {
+		t.Errorf("clone visibility = %q, want %q", clone.Visibility, Private)
+	}
+	if !bytes.Equal(clone.FilterFile, filterTestFile) || clone.Location["type"] != "local" {
+		t.Errorf("clone filter_file/location = %q/%v, want the source's", clone.FilterFile, clone.Location)
+	}
+	if clone.CreatedAt == nil || clone.CreatedAt.Equal(filterTestCreatedAt) {
+		t.Errorf("clone created_at = %v, want the clone's own creation time", clone.CreatedAt)
+	}
+	if len(clone.CatalogData) != 0 {
+		t.Errorf("clone catalog_data = %v, want empty", clone.CatalogData)
+	}
+	if original := loadFilter(t, db, id); original.Name != "stored" || original.Visibility != Published {
+		t.Errorf("original changed by the clone: name %q, visibility %q", original.Name, original.Visibility)
+	}
+}
+
 func TestDeleteMesheryFilterNotFound(t *testing.T) {
 	_, mfp := newFilterPersisterTestDB(t)
 	id := uuid.Must(uuid.NewV4())
@@ -292,5 +326,90 @@ func TestDeleteMesheryFilterExisting(t *testing.T) {
 
 	if n := countFilters(t, db); n != 0 {
 		t.Errorf("rows = %d, want 0 after deletion", n)
+	}
+}
+
+// TestGetMesheryFilter_MissingFilterReturnsResultNotFound pins that a lookup
+// for a filter that is not stored fails with ErrResultNotFound and no body.
+func TestGetMesheryFilter_MissingFilterReturnsResultNotFound(t *testing.T) {
+	db, persister := newFilterPersisterTestDB(t)
+	storedID := seedPublishedFilter(t, db)
+
+	tests := []struct {
+		name     string
+		id       uuid.UUID
+		wantCode string
+	}{
+		{name: "stored filter", id: storedID},
+		{name: "missing filter", id: uuid.Must(uuid.NewV4()), wantCode: ErrResultNotFoundCode},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			body, err := persister.GetMesheryFilter(tc.id)
+
+			if tc.wantCode == "" {
+				if err != nil {
+					t.Fatalf("GetMesheryFilter: %v", err)
+				}
+				var got MesheryFilter
+				if err := json.Unmarshal(body, &got); err != nil {
+					t.Fatalf("unmarshal filter: %v", err)
+				}
+				if got.ID == nil || *got.ID != tc.id {
+					t.Errorf("filter id = %v, want %s", got.ID, tc.id)
+				}
+				return
+			}
+
+			if got := mkerrors.GetCode(err); got != tc.wantCode {
+				t.Errorf("error code = %q, want %q (err: %v)", got, tc.wantCode, err)
+			}
+			if body != nil {
+				t.Errorf("body = %q, want none", body)
+			}
+		})
+	}
+}
+
+// TestGetMesheryFilterFile_MissingFilterReturnsResultNotFound pins that a file
+// request for a missing filter returns ErrResultNotFound and nil bytes.
+func TestGetMesheryFilterFile_MissingFilterReturnsResultNotFound(t *testing.T) {
+	db, persister := newFilterPersisterTestDB(t)
+	storedID := seedPublishedFilter(t, db)
+
+	body, err := persister.GetMesheryFilterFile(storedID)
+	if err != nil {
+		t.Fatalf("unexpected error for stored filter file: %v", err)
+	}
+	if !bytes.Equal(body, filterTestFile) {
+		t.Errorf("file body = %q, want %q", body, filterTestFile)
+	}
+
+	missingID := uuid.Must(uuid.NewV4())
+	missingBody, err := persister.GetMesheryFilterFile(missingID)
+	if err == nil {
+		t.Fatalf("expected error for missing filter file, got nil")
+	}
+	if got := mkerrors.GetCode(err); got != ErrResultNotFoundCode {
+		t.Errorf("error code = %q, want %q (err: %v)", got, ErrResultNotFoundCode, err)
+	}
+	if missingBody != nil {
+		t.Errorf("missingBody = %q, want none", missingBody)
+	}
+}
+
+// TestCloneMesheryFilter_MissingFilterReturnsResultNotFound pins that cloning
+// a nonexistent filter returns ErrResultNotFound.
+func TestCloneMesheryFilter_MissingFilterReturnsResultNotFound(t *testing.T) {
+	_, persister := newFilterPersisterTestDB(t)
+	missingID := uuid.Must(uuid.NewV4()).String()
+
+	_, err := persister.CloneMesheryFilter(missingID, &MesheryCloneFilterRequestBody{Name: "cloned"})
+	if err == nil {
+		t.Fatalf("expected error cloning missing filter, got nil")
+	}
+	if got := mkerrors.GetCode(err); got != ErrResultNotFoundCode {
+		t.Errorf("error code = %q, want %q (err: %v)", got, ErrResultNotFoundCode, err)
 	}
 }

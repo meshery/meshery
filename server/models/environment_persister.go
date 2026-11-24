@@ -68,7 +68,7 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 	// Fetch all environments if pageSize is "all"
 	if pageSize == "all" {
@@ -77,7 +77,7 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 		// Convert page and pageSize from string to uint
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
-			return nil, err
+			return nil, ErrPageSize(err)
 		}
 
 		// Fetch environments with pagination
@@ -371,7 +371,7 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 	var connectionsFetched []*connections.Connection
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
-		return nil, err
+		return nil, ErrPageNumber(err)
 	}
 	// Fetch all connections if pageSize is "all"
 	if pageSize == "all" {
@@ -382,7 +382,7 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 		// Convert page and pageSize from string to uint
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
-			return nil, err
+			return nil, ErrPageSize(err)
 		}
 
 		// Fetch connections with pagination

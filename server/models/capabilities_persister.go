@@ -1,7 +1,11 @@
 package models
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/meshery/meshkit/database"
+	"gorm.io/gorm"
 )
 
 // UserCapabilitiesPersister assists with persisting user capabilities in the store
@@ -26,6 +30,9 @@ func (u *UserCapabilitiesPersister) ReadCapabilitiesForUser(userID string) (*Pro
 	capabilities := &UserCapabilities{}
 	err := u.DB.Model(capabilities).Where("id = ?", userID).First(capabilities).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
 		return nil, err
 	}
 
@@ -40,6 +47,10 @@ func (u *UserCapabilitiesPersister) WriteCapabilitiesForUser(userID string, data
 
 	if userID == "" {
 		return ErrUserID
+	}
+
+	if data == nil {
+		return ErrNilConfigData
 	}
 
 	userCapabilities := &UserCapabilities{
@@ -65,5 +76,12 @@ func (u *UserCapabilitiesPersister) DeleteCapabilitiesForUser(userID string) err
 		return ErrUserID
 	}
 
-	return u.DB.Delete(&UserCapabilities{ID: userID}).Error
+	res := u.DB.Delete(&UserCapabilities{ID: userID})
+	if res.Error != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return ErrResultNotFound(fmt.Errorf("capabilities for user %s not found", userID))
+	}
+	return nil
 }

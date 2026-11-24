@@ -1,11 +1,11 @@
-{{ $linkUrlSelected := "" }}
 {{ $current := .RelPermalink }}
+{{ $activeVersionUrl := "" }}
 {{ range hugo.Data.versions }}
-  {{ $linkUrl := cond (ne .url "") (printf "/%s/" .url) "/" }}
-  {{ if or (eq $current $linkUrl) (strings.HasPrefix $current $linkUrl) }}
-    {{ $linkUrlSelected = cond (ne .url "") (printf "%s/" .url) "" }}
+  {{ if and (ne .url "") (strings.HasPrefix $current (printf "/%s/" .url)) }}
+    {{ $activeVersionUrl = .url }}
   {{ end }}
 {{ end }}
+{{ $linkUrlSelected := cond (ne $activeVersionUrl "") (printf "%s/" $activeVersionUrl) "" }}
 
 <header>
   <nav class="js-navbar-scroll navbar">
@@ -49,24 +49,22 @@
           >
 
           {{ $current := .RelPermalink }}
+          {{ $activeVersionUrl := "" }}
           {{ range hugo.Data.versions }}
-            {{ $linkUrl := cond (ne .url "") (printf "/%s/" .url) "/" }}
-            {{ $optionUrl := cond (ne .url "") ((printf "%s/" .url) | relURL) ("" | relURL) }}
-
-            {{ if or (eq $current $linkUrl) (strings.HasPrefix $current $linkUrl) }}
-            <option
-              selected
-              value="{{ $optionUrl }}"
-              class="nav-item mr-4 mb-2 text-black">
-              {{ .version }}
-            </option>
-            {{ else }}
-            <option
-              value="{{ $optionUrl }}"
-              class="nav-item mr-4 mb-2 text-black">
-              {{ .version }}
-            </option>
+            {{ if and (ne .url "") (strings.HasPrefix $current (printf "/%s/" .url)) }}
+              {{ $activeVersionUrl = .url }}
             {{ end }}
+          {{ end }}
+
+          {{ range hugo.Data.versions }}
+            {{ $optionUrl := cond (ne .url "") ((printf "%s/" .url) | relURL) ("" | relURL) }}
+            {{ $isSelected := eq .url $activeVersionUrl }}
+            <option
+              {{ if $isSelected }}selected{{ end }}
+              value="{{ $optionUrl }}"
+              class="nav-item mr-4 mb-2 text-black">
+              {{ .version }}
+            </option>
           {{ end }}
           </select>
         </li>

@@ -273,6 +273,11 @@ mesheryctl system provider switch [provider]
 		if focusedContext == "" {
 			focusedContext = mctlCfg.CurrentContext
 		}
+		// Ask the Meshery server of the context in focus for its providers. This
+		// changes only the in-memory config, not the saved current-context.
+		if err := mctlCfg.SetCurrentContext(focusedContext); err != nil {
+			return ErrSettingTemporaryContext(err)
+		}
 
 		// Check the provider before asking to replace the deployment, so an
 		// unknown provider fails without a confirmation prompt.

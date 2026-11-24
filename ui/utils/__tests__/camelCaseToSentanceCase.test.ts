@@ -47,4 +47,18 @@ describe('CamelCaseToSentanceCase', () => {
   it('handles a single uppercase + lowercase pair (matches both regexes)', () => {
     expect(CamelCaseToSentanceCase('Ab')).toBe('  Ab');
   });
+
+  it('safely handles nullish, non-string, or empty inputs without throwing', () => {
+    // @ts-expect-error testing invalid inputs
+    expect(CamelCaseToSentanceCase(null)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(CamelCaseToSentanceCase(undefined)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(CamelCaseToSentanceCase(123)).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(CamelCaseToSentanceCase({})).toBe('');
+    // @ts-expect-error testing invalid inputs
+    expect(CamelCaseToSentanceCase([])).toBe('');
+    expect(CamelCaseToSentanceCase('')).toBe('');
+  });
 });
