@@ -240,9 +240,11 @@ If the code snippet has special characters then use backtick delimiters:
 Don't use `code` shortcode when the snippet is in between an ordered list, this breaks the order and next item in the list will start numbering from 1. Instead, use `<pre class="codeblock-pre">...</pre>` method described above.
 
 **A full block:**
+````markdown
 ```
-```code snippet```
+code snippet
 ```
+````
 
 **Inline formatting:**
 
@@ -434,7 +436,7 @@ Example:
 
 file: `modelscustominfo/aad.md`
 
-```
+```yaml
 ---
 title: Azure Active Directory (AAD)
 ---

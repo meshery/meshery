@@ -108,7 +108,9 @@ func resetMesheryConfig() error {
 func resetContextInConfig(contextName, platform string) error {
 	defaultContext := utils.TemplateContext
 	defaultContext.Platform = platform
-	return config.AddContextToConfig(contextName, defaultContext, utils.GetActiveConfigPath(), true, true)
+	// Leave current-context as it is: a context picked with --context is only
+	// used for this command, and without --context it already is the current one.
+	return config.AddContextToConfig(contextName, defaultContext, utils.GetActiveConfigPath(), false, true)
 }
 
 // Fetches manifests for meshery components based on the current context

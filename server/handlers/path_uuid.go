@@ -18,7 +18,9 @@ func (h *Handler) requirePathUUID(w http.ResponseWriter, req *http.Request, name
 	raw := mux.Vars(req)[name]
 	if _, err := uuid.FromString(raw); err != nil {
 		invalidIDErr := models.ErrInvalidUUID(err)
-		h.log.Error(invalidIDErr)
+		if h.log != nil {
+			h.log.Error(invalidIDErr)
+		}
 		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return "", false
 	}
