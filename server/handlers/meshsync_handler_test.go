@@ -439,9 +439,11 @@ func TestGetMeshSyncResources_OrderByClusterAndPatternResource(t *testing.T) {
 
 	// Seeded out of order, so no case passes on insertion order. The pattern
 	// resources run opposite to the clusters, so sorting by one is not sorting
-	// by the other, and the metadata's cluster_id is constant.
+	// by the other, and the metadata's cluster_id is constant. cluster-4 has no
+	// pattern resource: such rows sort first ascending and last descending.
 	for _, seed := range []struct{ cluster, patternResource string }{
 		{"cluster-2", "00000000-0000-4000-8000-000000000002"},
+		{"cluster-4", ""},
 		{"cluster-1", "00000000-0000-4000-8000-000000000003"},
 		{"cluster-3", "00000000-0000-4000-8000-000000000001"},
 	} {
@@ -450,11 +452,15 @@ func TestGetMeshSyncResources_OrderByClusterAndPatternResource(t *testing.T) {
 		if err := db.Create(&meta).Error; err != nil {
 			t.Fatalf("seed metadata: %v", err)
 		}
-		patternResource := googleuuid.MustParse(seed.patternResource)
+		var patternResource *googleuuid.UUID
+		if seed.patternResource != "" {
+			parsed := googleuuid.MustParse(seed.patternResource)
+			patternResource = &parsed
+		}
 		res := model.KubernetesResource{
 			ID:                id,
 			ClusterID:         seed.cluster,
-			PatternResource:   &patternResource,
+			PatternResource:   patternResource,
 			ComponentMetadata: map[string]interface{}{"name": seed.cluster},
 		}
 		if err := db.Table("kubernetes_resources").Create(&res).Error; err != nil {
@@ -463,14 +469,14 @@ func TestGetMeshSyncResources_OrderByClusterAndPatternResource(t *testing.T) {
 	}
 
 	for _, tc := range []struct{ order, want string }{
-		{"cluster_id asc", "cluster-1,cluster-2,cluster-3"},
-		{"cluster_id desc", "cluster-3,cluster-2,cluster-1"},
-		{"pattern_resource asc", "cluster-3,cluster-2,cluster-1"},
-		{"pattern_resource desc", "cluster-1,cluster-2,cluster-3"},
+		{"cluster_id asc", "cluster-1,cluster-2,cluster-3,cluster-4"},
+		{"cluster_id desc", "cluster-4,cluster-3,cluster-2,cluster-1"},
+		{"pattern_resource asc", "cluster-4,cluster-3,cluster-2,cluster-1"},
+		{"pattern_resource desc", "cluster-1,cluster-2,cluster-3,cluster-4"},
 	} {
 		t.Run(tc.order, func(t *testing.T) {
 			q := url.Values{
-				"clusterIds": {`["cluster-1","cluster-2","cluster-3"]`},
+				"clusterIds": {`["cluster-1","cluster-2","cluster-3","cluster-4"]`},
 				"order":      {tc.order},
 			}
 			req := httptest.NewRequest(http.MethodGet, "/api/system/meshsync/resources?"+q.Encode(), nil)
