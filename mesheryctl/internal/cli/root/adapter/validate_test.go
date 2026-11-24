@@ -1,8 +1,11 @@
 package adapter
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
+	"net/url"
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -26,6 +29,29 @@ func resetValidateFlags(t *testing.T) {
 	})
 }
 
+// adapterLocationFromFixture returns the location of the named adapter in a
+// sync fixture.
+func adapterLocationFromFixture(t *testing.T, path, name string) string {
+	t.Helper()
+	data, err := os.ReadFile(path)
+	require.NoError(t, err)
+	var prefs struct {
+		MeshAdapters []struct {
+			Location string `json:"adapterLocation"`
+			Name     string `json:"name"`
+		} `json:"meshAdapters"`
+	}
+	require.NoError(t, json.Unmarshal(data, &prefs))
+	for _, a := range prefs.MeshAdapters {
+		if a.Name == name {
+			require.NotEmpty(t, a.Location, "adapter %s has no location in %s", name, path)
+			return a.Location
+		}
+	}
+	t.Fatalf("adapter %s not found in %s", name, path)
+	return ""
+}
+
 func TestValidateMesh(t *testing.T) {
 	utils.SetupContextEnv(t)
 
@@ -43,6 +69,11 @@ func TestValidateMesh(t *testing.T) {
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
 	testdataDir := filepath.Join(currDir, "testdata")
+
+	// The validate request must carry the location of the ISTIO adapter from
+	// the sync fixture. Read it from the fixture so the test does not depend
+	// on the fixture's order or contents.
+	expectedAdapter := adapterLocationFromFixture(t, filepath.Join(fixturesDir, "sync.golden"), "ISTIO")
 
 	syncURL := testContext.BaseURL + "/api/system/sync"
 	operationURL := testContext.BaseURL + "/api/system/adapter/operation"
@@ -129,21 +160,22 @@ func TestValidateMesh(t *testing.T) {
 			resetValidateFlags(t)
 			httpmock.Reset()
 
-			for _, url := range tc.URLs {
-				url := url
-				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
+			for _, mock := range tc.URLs {
+				apiResponse := utils.NewGoldenFile(t, mock.Response, fixturesDir).Load()
 				// mock response; for the operation POST, also check what was sent.
-				// The request has no content type, so read the raw body rather
-				// than using req.ParseForm.
-				httpmock.RegisterResponder(url.Method, url.URL,
+				// The request is form-encoded, so parse the raw body and compare
+				// complete values rather than substrings.
+				httpmock.RegisterResponder(mock.Method, mock.URL,
 					func(req *http.Request) (*http.Response, error) {
-						if url.Method == http.MethodPost {
+						if mock.Method == http.MethodPost {
 							body, err := io.ReadAll(req.Body)
 							require.NoError(t, err)
-							assert.Contains(t, string(body), "query=smi_conformance")
-							assert.Contains(t, string(body), "adapter=localhost%3A10000")
+							form, err := url.ParseQuery(string(body))
+							require.NoError(t, err)
+							assert.Equal(t, "smi_conformance", form.Get("query"))
+							assert.Equal(t, expectedAdapter, form.Get("adapter"))
 						}
-						return httpmock.NewStringResponse(url.ResponseCode, apiResponse), nil
+						return httpmock.NewStringResponse(mock.ResponseCode, apiResponse), nil
 					})
 			}
 			utils.TokenFlag = filepath.Join(fixturesDir, "token.golden")
