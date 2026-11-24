@@ -275,7 +275,6 @@ export default function MeshSyncTable(props) {
       options: {
         sort: true,
         sortThirdClickReset: true,
-        display: false,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
             <SortableTableCell

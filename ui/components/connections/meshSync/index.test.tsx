@@ -11,6 +11,7 @@ const getResponsiveColumnVisibility = vi.fn();
 let dataTableProps: any;
 let searchBarProps: any;
 let filterProps: any;
+let visibilityControlProps: any;
 let windowWidth = 1200;
 
 vi.mock('@sistent/sistent', () => ({
@@ -22,7 +23,10 @@ vi.mock('@sistent/sistent', () => ({
   MenuItem: ({ children }) => <div>{children}</div>,
   Table: ({ children }) => <div>{children}</div>,
   FormattedTime: ({ date }) => <span>{String(date)}</span>,
-  CustomColumnVisibilityControl: () => <div />,
+  CustomColumnVisibilityControl: (props) => {
+    visibilityControlProps = props;
+    return <div />;
+  },
   ResponsiveDataTable: (props) => {
     dataTableProps = props;
     return <div data-testid="mesh-sync-table" />;
@@ -94,7 +98,7 @@ vi.mock('../../../utils/utils', () => ({
   JsonParse: JSON.parse,
   camelcaseToSnakecase: (value) => value,
   getColumnValue: () => null,
-  getVisibilityColums: () => [],
+  getVisibilityColums: (columns) => columns.filter((col) => col.options?.display !== false),
 }));
 
 vi.mock('../../../utils/responsive-column', () => ({
@@ -124,6 +128,7 @@ describe('MeshSyncTable', () => {
     dataTableProps = undefined;
     searchBarProps = undefined;
     filterProps = undefined;
+    visibilityControlProps = undefined;
     notify.mockReset();
     getK8sClusterIdsFromCtxId.mockReset();
     useGetMeshSyncResourcesQuery.mockReset();
@@ -198,6 +203,23 @@ describe('MeshSyncTable', () => {
     expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
       expect.objectContaining({ order: 'pattern_resource desc' }),
     );
+  });
+
+  it('offers the pattern resources column in the column visibility menu', () => {
+    render(<MeshSyncTable />);
+
+    expect(visibilityControlProps.columns.map(({ label }) => label)).toContain('Pattern resources');
+  });
+
+  it('keeps the pattern resources column hidden until it is turned on', async () => {
+    const { getResponsiveColumnVisibility: actual } = await vi.importActual<any>(
+      '../../../utils/responsive-column',
+    );
+    getResponsiveColumnVisibility.mockImplementation(actual);
+
+    render(<MeshSyncTable />);
+
+    expect(dataTableProps.columnVisibility.pattern_resource).toBe(false);
   });
 
   it('resets to the first page when the search changes', () => {
