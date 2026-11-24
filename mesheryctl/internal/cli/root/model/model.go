@@ -133,6 +133,10 @@ func init() {
 }
 
 func generateModelDataToDisplay(modelsResponse *model.MeshModelModelsPage) ([][]string, int64) {
+	if modelsResponse == nil {
+		return [][]string{}, 0
+	}
+
 	rows := [][]string{}
 
 	count := int64(0)

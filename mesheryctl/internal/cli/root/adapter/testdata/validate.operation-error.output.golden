@@ -1,0 +1,1 @@
+Server returned with status code: 500 | Short Description: Incorrect status code | Probable Cause: Error occurred while generating a response | Suggested Remediation: Check your network connection and the status of Meshery Server via `mesheryctl system status`.

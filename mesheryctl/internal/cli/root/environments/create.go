@@ -30,7 +30,7 @@ import (
 
 type cmdEnvironmentCreateFlags struct {
 	OrganizationID string `json:"orgId" validate:"required,uuid"`
-	Name           string `json:"name" validate:"required"`
+	Name           string `json:"name" validate:"required,notblank"`
 	Description    string `json:"description" validate:"required"`
 }
 

@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // MatchLabelsPolicy handles sibling match-label relationships.
@@ -24,7 +24,7 @@ func (p *MatchLabelsPolicy) IsImplicatedBy(rel *relationship.RelationshipDefinit
 }
 
 func (p *MatchLabelsPolicy) IsInvalid(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
-	return p.IsImplicatedBy(rel)
+	return fromOrToComponentsDontExist(rel, design)
 }
 
 func (p *MatchLabelsPolicy) AlreadyExists(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
