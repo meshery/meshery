@@ -1,12 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { NoSsr } from '@sistent/sistent';
-import { ErrorBoundary, AppBar } from '@sistent/sistent';
+import {
+  NoSsr,
+  ErrorBoundary,
+  AppBar,
+  InfoTooltip,
+  useHasPermission,
+  useTheme,
+} from '@sistent/sistent';
 import Modal from '../shared/Modal/Modal';
 import { ConnectionIconText, ConnectionTab, ConnectionTabs } from './styles';
 import MeshSyncTable from './meshSync';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '../general/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
@@ -23,16 +29,24 @@ import { useRouter } from 'next/router';
  * - Keep the component's responsibilities focused on connection management. Avoid adding unrelated functionality and state.
  */
 
+/**
+ * Renders the Connections and MeshSync management views with RBAC gating and
+ * deferred schema loading.
+ */
 function ConnectionManagementPage(props) {
+  const hasViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
   const [createConnectionModal, setCreateConnectionModal] = useState({
     open: false,
   });
 
-  const { data: schemaResponse } = useGetSchemaQuery({
-    schemaName: 'helmRepo',
-  });
+  const { data: schemaResponse } = useGetSchemaQuery(
+    {
+      schemaName: 'helmRepo',
+    },
+    { skip: !hasViewConnections },
+  );
 
-  const createConnection = schemaResponse ?? {};
+  const createConnection = (hasViewConnections ? schemaResponse : undefined) ?? {};
 
   const handleCreateConnectionModalOpen = () => {
     setCreateConnectionModal({ open: true });
@@ -42,17 +56,24 @@ function ConnectionManagementPage(props) {
     setCreateConnectionModal({ open: false });
   };
 
+  useEffect(() => {
+    if (!hasViewConnections) {
+      setCreateConnectionModal((prev) => (prev.open ? { open: false } : prev));
+    }
+  }, [hasViewConnections]);
+
   const handleCreateConnectionSubmit = () => {};
 
   return (
     <>
       <Connections
+        hasViewConnections={hasViewConnections}
         createConnectionModal={createConnectionModal}
         onOpenCreateConnectionModal={handleCreateConnectionModalOpen}
         onCloseCreateConnectionModal={handleCreateConnectionModalClose}
         {...props}
       />
-      {createConnectionModal.open && (
+      {hasViewConnections && createConnectionModal.open && (
         <Modal
           open={true}
           schema={createConnection.rjsfSchema}
@@ -66,10 +87,12 @@ function ConnectionManagementPage(props) {
     </>
   );
 }
-function Connections() {
+function Connections({ hasViewConnections }) {
+  const theme = useTheme();
   const router = useRouter();
   const { query, pathname, push, isReady, replace } = router;
-  const { openCreateConnection } = useConnectionWizardModal();
+  const { openCreateConnection, closeCreateConnection } = useConnectionWizardModal();
+  const prevHasViewConnectionsRef = useRef(hasViewConnections);
   const tabParam = typeof query.tab === 'string' ? query.tab.toLowerCase() : undefined;
   const connectionId = typeof query.connectionId === 'string' ? query.connectionId : undefined;
 
@@ -87,7 +110,7 @@ function Connections() {
         : null;
 
   useEffect(() => {
-    if (!isReady || !isCreateConnectionQuery(createFlag)) {
+    if (!hasViewConnections || !isReady || !isCreateConnectionQuery(createFlag)) {
       return;
     }
     openCreateConnection({
@@ -98,7 +121,14 @@ function Connections() {
     delete nextQuery[CREATE_CONNECTION_QUERY.create];
     delete nextQuery[CREATE_CONNECTION_QUERY.kind];
     replace({ pathname, query: nextQuery }, undefined, { shallow: true });
-  }, [isReady, createFlag, kindFromQuery, openCreateConnection]);
+  }, [hasViewConnections, isReady, createFlag, kindFromQuery, openCreateConnection]);
+
+  useEffect(() => {
+    if (prevHasViewConnectionsRef.current && !hasViewConnections) {
+      closeCreateConnection();
+    }
+    prevHasViewConnectionsRef.current = hasViewConnections;
+  }, [hasViewConnections, closeCreateConnection]);
 
   // Next.js's pages-router `router.query` and `router.push` get fresh
   // references on each render, which previously cascaded into a new
@@ -170,10 +200,10 @@ function Connections() {
   );
 
   // Rendered by whichever table is active (ConnectionTable or MeshSyncTable) so
-  // the tab switcher stays visible - and functional - on both tabs, between
-  // that table's own toolbar and its data grid. Memoized so the unstable JSX
-  // identity doesn't cascade into the tables' props on every render (this page
-  // has previously hit React error #185 from exactly this kind of churn).
+  // the tab switcher stays visible - and functional - on both tabs, above
+  // that table's own toolbar. Memoized so the unstable JSX identity doesn't
+  // cascade into the tables' props on every render (this page has previously
+  // hit React error #185 from exactly this kind of churn).
   const tabs = useMemo(
     () => (
       <AppBar position="static" color="default" style={{ marginBottom: '3rem' }}>
@@ -200,35 +230,45 @@ function Connections() {
               <ConnectionIconText>
                 <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
                 <MeshsyncIcon width="20" height="20" />
+                <span
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  style={{
+                    display: 'inline-flex',
+                    marginLeft: '5px',
+                    // Info icon uses currentColor; keep it stable when the Tab
+                    // is selected (selected tabs set color to primary.main).
+                    color: theme.palette.icon.default,
+                  }}
+                >
+                  <InfoTooltip
+                    helpText={`MeshSync discovers and keeps Meshery in sync with your Kubernetes clusters. [Learn more](https://docs.meshery.io/concepts/architecture/meshsync/)`}
+                    placement="top"
+                    interactive
+                  />
+                </span>
               </ConnectionIconText>
             }
           />
         </ConnectionTabs>
       </AppBar>
     ),
-    [tab, handleTabChange],
+    [tab, handleTabChange, theme.palette.icon.default],
   );
 
   if (!isReady) return null;
 
   return (
     <NoSsr>
-      {CAN(
-        Keys.WorkspaceManagementViewConnections.id,
-        Keys.WorkspaceManagementViewConnections.function,
-      ) ? (
+      {hasViewConnections ? (
         <>
-          {tab === 0 &&
-            CAN(
-              Keys.WorkspaceManagementViewConnections.id,
-              Keys.WorkspaceManagementViewConnections.function,
-            ) && (
-              <ConnectionTable
-                selectedConnectionId={connectionId}
-                updateUrlWithConnectionId={updateUrlWithConnectionId}
-                tabs={tabs}
-              />
-            )}
+          {tab === 0 && (
+            <ConnectionTable
+              selectedConnectionId={connectionId}
+              updateUrlWithConnectionId={updateUrlWithConnectionId}
+              tabs={tabs}
+            />
+          )}
           {tab === 1 && (
             <MeshSyncTable
               selectedResourceId={connectionId}
@@ -238,7 +278,7 @@ function Connections() {
           )}
         </>
       ) : (
-        <DefaultError />
+        <DefaultError permissionKey={Keys.WorkspaceManagementViewConnections} />
       )}
     </NoSsr>
   );

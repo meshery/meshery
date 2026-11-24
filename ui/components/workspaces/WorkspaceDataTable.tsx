@@ -5,7 +5,7 @@ import {
   useGetWorkspacesQuery,
   useUnassignEnvironmentFromWorkspaceMutation,
 } from '@/rtk-query/workspace';
-import CAN from '@/utils/can';
+
 import { useNotificationHandlers } from '@/utils/hooks/useNotification';
 import { Keys } from '@meshery/schemas/permissions';
 import { getColumnValue } from '@/utils/utils';
@@ -25,6 +25,7 @@ import {
   WorkspaceIcon,
   Slide,
   ErrorBoundary,
+  useHasPermission,
 } from '@sistent/sistent';
 import { useEffect, useState } from 'react';
 import { iconSmall } from 'css/icons.styles';
@@ -44,10 +45,11 @@ const WorkspaceDataTable = ({
   search,
   viewType,
 }) => {
+  const isAssignEnvAllowed = useHasPermission(Keys.WorkspaceManagementAssignEnvironmentToWorkspace);
   let colViews = [
     ['id', 'na'],
     ['name', 'xs'],
-    ['owner_email', 'na'],
+    ['ownerEmail', 'na'],
     ['description', 'na'],
     ['designCount', 'xs'],
     ['viewCount', 'xs'],
@@ -62,6 +64,13 @@ const WorkspaceDataTable = ({
 
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  // Go back to the first page when the search changes, before the query runs,
+  // so a narrower search isn't requested at a page that no longer exists.
+  const [prevSearch, setPrevSearch] = useState(search);
+  if (search !== prevSearch) {
+    setPrevSearch(search);
+    setPage(0);
+  }
   const [sortOrder, setSortOrder] = useState('updated_at desc');
   const { selectedOrganization: organization } = useGetSelectedOrganization();
   const orgId = organization?.id;
@@ -104,7 +113,7 @@ const WorkspaceDataTable = ({
       },
     },
     {
-      name: 'org_name',
+      name: 'orgName',
       label: 'Org Name',
       filter: false,
       options: {
@@ -133,7 +142,7 @@ const WorkspaceDataTable = ({
       label: 'Description',
     },
     {
-      name: 'owner_avatar',
+      name: 'ownerAvatar',
       label: 'Owner Avatar',
       options: {
         display: 'excluded',
@@ -148,13 +157,13 @@ const WorkspaceDataTable = ({
         searchable: true,
         customBodyRender: (value, tableMeta) => {
           if (!value) {
-            return <span>{getColumnValue(tableMeta.rowData, 'org_name', columns)}</span>;
+            return <span>{getColumnValue(tableMeta.rowData, 'orgName', columns)}</span>;
           }
           return (
             <AuthorCell
-              userId={getColumnValue(tableMeta.rowData, 'owner_id', columns)}
+              userId={getColumnValue(tableMeta.rowData, 'ownerId', columns)}
               firstName={value}
-              avatarUrl={getColumnValue(tableMeta.rowData, 'owner_avatar', columns)}
+              avatarUrl={getColumnValue(tableMeta.rowData, 'ownerAvatar', columns)}
             />
           );
         },
@@ -210,10 +219,7 @@ const WorkspaceDataTable = ({
                 useUnassignEnvironmentFromWorkspaceMutation
               }
               useNotificationHandlers={useNotificationHandlers}
-              isAssignedEnvironmentAllowed={CAN(
-                Keys.WorkspaceManagementAssignEnvironmentToWorkspace.id,
-                Keys.WorkspaceManagementAssignEnvironmentToWorkspace.function,
-              )}
+              isAssignedEnvironmentAllowed={isAssignEnvAllowed}
             />
           );
         },
@@ -273,6 +279,9 @@ const WorkspaceDataTable = ({
         customBodyRender: (value, tableMeta) => {
           const workspaceId = getColumnValue(tableMeta.rowData, 'id', columns);
           const workspaceName = getColumnValue(tableMeta.rowData, 'name', columns);
+          const workspaceById = workspacesData.find((w) => w.id === workspaceId);
+
+          if (!workspaceById) return null;
 
           return (
             <WorkspaceActionList
@@ -282,7 +291,7 @@ const WorkspaceDataTable = ({
               handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
               workspaceId={workspaceId}
               workspaceName={workspaceName}
-              selectedWorkspace={workspacesData[tableMeta.rowIndex]}
+              selectedWorkspace={workspaceById}
             />
           );
         },

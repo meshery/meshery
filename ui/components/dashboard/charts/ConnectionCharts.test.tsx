@@ -1,12 +1,15 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
 let connectionsQueryReturn: { data?: { connections?: Array<{ status?: string }> } } = {
   data: { connections: [] },
 };
-const canSpy = vi.fn(() => true);
+const canSpy = vi.fn((_key?: unknown) => true);
 const bbChartSpy = vi.fn();
+const routerPushSpy = vi.fn();
+const getConnectionsQuerySpy = vi.fn();
 
 vi.mock('billboard.js', () => ({
   donut: () => 'donut',
@@ -51,15 +54,14 @@ vi.mock('@/components/meshery-mesh-interface/PatternService/CustomTextTooltip', 
 }));
 
 vi.mock('@/rtk-query/connection', () => ({
-  useGetConnectionsQuery: () => connectionsQueryReturn,
-}));
-
-vi.mock('@/utils/can', () => ({
-  default: (...args: unknown[]) => canSpy(...args),
+  useGetConnectionsQuery: (...args: unknown[]) => {
+    getConnectionsQuerySpy(...args);
+    return connectionsQueryReturn;
+  },
 }));
 
 vi.mock('next/router', () => ({
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: () => ({ push: routerPushSpy }),
 }));
 
 vi.mock('../style', () => ({
@@ -79,13 +81,19 @@ vi.mock('@sistent/sistent', () => ({
   InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
   Typography: ({ children }: { children?: React.ReactNode }) => <p>{children}</p>,
   useTheme: () => ({ palette: { mode: 'light', icon: { default: '#000' } } }),
+  // Forward the requested key so tests can pin *which* permission the chart
+  // authorizes against, not just that it asked for one.
+  useHasPermission: (key: unknown) => canSpy(key),
 }));
 
+import { Keys } from '@meshery/schemas/permissions';
 import ConnectionStatsChart from './ConnectionCharts';
 
 describe('ConnectionStatsChart (Connections donut chart)', () => {
   beforeEach(() => {
     bbChartSpy.mockReset();
+    routerPushSpy.mockReset();
+    getConnectionsQuerySpy.mockClear();
     canSpy.mockClear();
     canSpy.mockReturnValue(true);
     connectionsQueryReturn = { data: { connections: [] } };
@@ -122,11 +130,47 @@ describe('ConnectionStatsChart (Connections donut chart)', () => {
     expect(map.invalid).toBeUndefined();
   });
 
-  it('applies pointer-events:none to the link when the user lacks permission', () => {
+  it('omits the Link and blocks keyboard focus when the user lacks permission', async () => {
+    const user = userEvent.setup();
     canSpy.mockReturnValue(false);
     connectionsQueryReturn = { data: { connections: [{ status: 'connected' }] } };
     render(<ConnectionStatsChart />);
-    expect(screen.getByRole('link')).toHaveStyle({ pointerEvents: 'none' });
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    await user.tab();
+    expect(document.activeElement).toBe(document.body);
+  });
+
+  it('authorizes the connections link against WorkspaceManagementViewConnections', () => {
+    render(<ConnectionStatsChart />);
+    expect(canSpy).toHaveBeenCalledWith(Keys.WorkspaceManagementViewConnections);
+    expect(getConnectionsQuerySpy).toHaveBeenCalledWith(
+      { page: 0, pagesize: 'all' },
+      { skip: false },
+    );
+    expect(screen.getByRole('link')).toHaveAttribute('href', '/management/connections');
+  });
+
+  it('skips useGetConnectionsQuery and hides chart data when WorkspaceManagementViewConnections is denied', () => {
+    canSpy.mockReturnValue(false);
+    connectionsQueryReturn = { data: { connections: [{ status: 'connected' }] } };
+    render(<ConnectionStatsChart />);
+    expect(getConnectionsQuerySpy).toHaveBeenCalledWith(
+      { page: 0, pagesize: 'all' },
+      { skip: true },
+    );
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(screen.getByTestId('connect-cluster')).toBeInTheDocument();
+    expect(screen.queryByTestId('bb-chart')).not.toBeInTheDocument();
+  });
+
+  it('navigates on chart onclick only when permitted', () => {
+    connectionsQueryReturn = { data: { connections: [{ status: 'connected' }] } };
+    render(<ConnectionStatsChart />);
+    const options = bbChartSpy.mock.calls.at(-1)?.[0] as {
+      data: { onclick: () => void };
+    };
+    options.data.onclick();
+    expect(routerPushSpy).toHaveBeenCalledWith('/management/connections');
   });
 
   it('renders the Connections heading regardless of state', () => {

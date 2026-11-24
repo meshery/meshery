@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -53,20 +54,20 @@ func (h *Handler) UpdateControllersDefaultConfig(w http.ResponseWriter, req *htt
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	newEvent := func() *events.EventBuilder {
+		return events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	}
 
 	if err := models.SaveControllersConfigDefaults(h.dbHandler, cfg); err != nil {
 		h.log.Error(err)
-		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to persist server-wide controllers configuration defaults.").WithMetadata(map[string]interface{}{"error": err}).Build()
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		event := newEvent().WithSeverity(events.Error).WithDescription("Failed to persist server-wide controllers configuration defaults.").WithMetadata(map[string]interface{}{"error": err}).Build()
+		h.persistAndPublish(provider, token, userID, event)
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
 
-	event := eventBuilder.WithSeverity(events.Informational).WithDescription("Server-wide Meshery Operator, MeshSync, and Broker configuration defaults updated. Re-applying to connected clusters.").Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	event := newEvent().WithSeverity(events.Informational).WithDescription("Server-wide Meshery Operator, MeshSync, and Broker configuration defaults updated. Re-applying to connected clusters.").Build()
+	h.persistAndPublish(provider, token, userID, event)
 
 	// Re-apply the resolved configuration to every tracked Kubernetes
 	// connection: per-connection overrides still win, so inheriting
@@ -137,7 +138,9 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 	}
 	connectionID := connection.ID
 
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	newEvent := func() *events.EventBuilder {
+		return events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	}
 
 	metadata := connection.Metadata
 	if metadata == nil {
@@ -148,29 +151,24 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 		writeMeshkitError(w, err, http.StatusBadRequest)
 		return
 	}
-	// Materialize the effective deployment mode into the legacy
-	// meshsync_deployment_mode key so every existing consumer (state
-	// machine, header chips, kubeconfig flows) keeps working unchanged. The
-	// key is written on every update using the full precedence chain
-	// (override -> Settings-persisted server default -> server env default),
-	// not only when the override sets it: returning the field to Inherit
-	// therefore replaces a stale materialized override with the inherited
-	// mode, and the mode-change machinery below sees the correct desired
-	// mode.
+	// Refresh the materialized meshsync_deployment_mode cache so every consumer
+	// that predates the layered document (state machine, header chips,
+	// kubeconfig flows) keeps seeing the truth. The cache is recomputed from
+	// the layered document on every update, not only when the override sets a
+	// mode: returning the field to Inherit therefore replaces a stale
+	// materialization with the inherited mode, and the mode-change machinery
+	// below sees the correct desired mode. Resolution deliberately reads the
+	// *pre-update* cache only as a compatibility floor, so it can never mask
+	// the value the user just saved.
 	serverDefaults, err := models.GetControllersConfigDefaults(h.dbHandler)
 	if err != nil {
 		h.log.Error(err)
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
-	desiredMode := connections.DeploymentModeFromControllersConfig(override)
-	if desiredMode == connections.MeshsyncDeploymentModeUndefined {
-		desiredMode = connections.DeploymentModeFromControllersConfig(serverDefaults)
-	}
-	if desiredMode == connections.MeshsyncDeploymentModeUndefined {
-		desiredMode = h.MeshsyncDefaultDeploymentMode
-	}
-	connections.SetMeshsyncDeploymentModeToMetadata(metadata, desiredMode)
+	mergedForMode, _ := connections.ResolveControllersConfig(override, serverDefaults)
+	desiredMode := connections.ResolveDeploymentMode(mergedForMode, metadata, h.MeshsyncDefaultDeploymentMode)
+	connections.MaterializeMeshsyncDeploymentMode(metadata, desiredMode.Mode)
 
 	payload := &connections.ConnectionPayload{
 		ID:           connection.ID,
@@ -184,34 +182,32 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 	}
 
 	// A deployment-mode change tears down and reattaches the controller
-	// machinery for the connection (deploy/undeploy operator, restart the
-	// MeshSync data pipeline). Delegated to the existing mode-change path so
+	// machinery for the connection (deploy the operator if the cluster lacks
+	// it, or release this connection's claim on it - never uninstall - and
+	// restart the MeshSync data pipeline). Delegated to the existing mode-change path so
 	// both entry points behave identically.
 	if _, _, modeChanged, err := h.handleMeshSyncDeploymentModeChange(req.Context(), connectionID, payload, token, userID, provider); err != nil {
 		h.log.Error(err)
-		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to apply MeshSync deployment mode change.").WithMetadata(map[string]interface{}{"error": err}).Build()
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		event := newEvent().WithSeverity(events.Error).WithDescription("Failed to apply MeshSync deployment mode change.").WithMetadata(map[string]interface{}{"error": err}).Build()
+		h.persistAndPublish(provider, token, userID, event)
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	} else if modeChanged {
-		event := eventBuilder.WithSeverity(events.Informational).WithDescription("MeshSync deployment mode changed as part of the controllers configuration update.").Build()
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		event := newEvent().WithSeverity(events.Informational).WithDescription("MeshSync deployment mode changed as part of the controllers configuration update.").Build()
+		h.persistAndPublish(provider, token, userID, event)
 	}
 
 	if _, err := provider.UpdateConnectionById(token, payload, connectionID.String()); err != nil {
 		h.log.Error(err)
-		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to persist the connection's controllers configuration override.").WithMetadata(map[string]interface{}{"error": err}).Build()
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		event := newEvent().WithSeverity(events.Error).WithDescription("Failed to persist the connection's controllers configuration override.").WithMetadata(map[string]interface{}{"error": err}).Build()
+		h.persistAndPublish(provider, token, userID, event)
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	// Apply the resolved configuration to this connection's cluster (or
 	// restart the embedded run so it picks the new knobs up).
-	h.applyControllersConfigToConnection(req.Context(), connectionID, metadata, token, userID, provider, eventBuilder)
+	h.applyControllersConfigToConnection(req.Context(), connectionID, metadata, token, userID, provider, newEvent)
 
 	connection.Metadata = metadata
 	response, err := h.buildConnectionControllersConfig(connection)
@@ -287,6 +283,13 @@ func (h *Handler) fetchKubernetesConnection(w http.ResponseWriter, req *http.Req
 
 // buildConnectionControllersConfig assembles the layered view (override,
 // server default, effective) for a connection.
+//
+// The effective document reports the deployment mode the connection actually
+// runs, not just the one the two editable layers set: clients decide from it
+// which settings can reach anything on this cluster (Meshery Operator manages
+// MeshSync and Meshery Broker, so in embedded mode most of the document is
+// inert), and that decision has to be made against the mode the apply path
+// resolves.
 func (h *Handler) buildConnectionControllersConfig(connection *connections.Connection) (*controllersconfig.ConnectionControllersConfig, error) {
 	override, err := connections.ControllersConfigFromMetadata(connection.Metadata)
 	if err != nil {
@@ -296,7 +299,9 @@ func (h *Handler) buildConnectionControllersConfig(connection *connections.Conne
 	if err != nil {
 		return nil, err
 	}
-	_, effective := connections.ResolveControllersConfig(override, serverDefaults)
+	_, effective, _ := connections.ResolveConnectionControllersConfig(
+		override, serverDefaults, connection.Metadata, h.MeshsyncDefaultDeploymentMode,
+	)
 	return &controllersconfig.ConnectionControllersConfig{
 		Override:  override,
 		Default:   serverDefaults,
@@ -317,7 +322,7 @@ func (h *Handler) applyControllersConfigToConnection(
 	token string,
 	userID core.Uuid,
 	provider models.Provider,
-	eventBuilder *events.EventBuilder,
+	newEvent func() *events.EventBuilder,
 ) {
 	if h.ConnectionToStateMachineInstanceTracker == nil {
 		return
@@ -328,7 +333,7 @@ func (h *Handler) applyControllersConfigToConnection(
 		// nothing to apply now; ConnectAction applies on connect.
 		return
 	}
-	machineCtx, err := kubernetes.GetMachineCtx(machine.Context, nil)
+	machineCtx, err := kubernetes.GetMachineCtx(machine.GetContext(), nil)
 	if err != nil || machineCtx == nil {
 		h.log.Warnf("controllers config: no machine context for connection %s; configuration applies on next connect", connectionID)
 		return
@@ -340,23 +345,17 @@ func (h *Handler) applyControllersConfigToConnection(
 
 	merged, _, err := ctrlHelper.ResolveControllersConfigForConnection(metadata)
 	if err != nil {
-		h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to resolve the connection's controllers configuration.", map[string]interface{}{"error": err, "connectionId": connectionID})
+		h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Error, "Failed to resolve the connection's controllers configuration.", map[string]interface{}{"error": err, "connectionId": connectionID})
 		return
 	}
 	ctrlHelper.SetControllersConfig(merged)
 
-	// Deployment-mode precedence: explicit metadata entry -> mode carried by
-	// the resolved configuration (per-connection override merged over the
-	// Settings-persisted server default) -> server env default.
-	mode := connections.MeshsyncDeploymentModeFromMetadata(metadata)
-	if mode == connections.MeshsyncDeploymentModeUndefined {
-		mode = connections.DeploymentModeFromControllersConfig(merged)
-	}
-	if mode == connections.MeshsyncDeploymentModeUndefined {
-		mode = h.MeshsyncDefaultDeploymentMode
-	}
+	// The layered document outranks the materialized meshsync_deployment_mode
+	// cache, so a server-wide default change reaches connections that inherit
+	// it (see connections.ResolveDeploymentMode).
+	resolvedMode := connections.ResolveDeploymentMode(merged, metadata, h.MeshsyncDefaultDeploymentMode)
 
-	switch mode {
+	switch resolvedMode.Mode {
 	case connections.MeshsyncDeploymentModeEmbedded:
 		// Restart the in-process run so libmeshsync options (output
 		// filters) and, when the target cluster carries a MeshSync CR, the
@@ -364,21 +363,32 @@ func (h *Handler) applyControllersConfigToConnection(
 		contextID := machineCtx.K8sContext.ID
 		ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
 		ctrlHelper.AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, *h.SystemID, provider)
-		h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Informational, "Controllers configuration applied: embedded MeshSync restarted with the updated configuration.", map[string]interface{}{"connectionId": connectionID})
+		h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Informational, "Controllers configuration applied: embedded MeshSync restarted with the updated configuration.", map[string]interface{}{"connectionId": connectionID})
 	case connections.MeshsyncDeploymentModeOperator:
+		// operator.version fixes the Helm chart version the operator is
+		// deployed at, and the controller handler captures it at construction,
+		// so a changed version has to be redeployed here rather than waiting
+		// for the connection to reconnect.
+		if chartVersion, redeployed, verr := ctrlHelper.ReconcileOperatorChartVersion(machineCtx.K8sContext, machineCtx.OperatorTracker); verr != nil {
+			h.log.Error(verr)
+			h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Error, "Failed to deploy Meshery Operator at the configured chart version.", map[string]interface{}{"error": verr, "connectionId": connectionID, "operatorChartVersion": chartVersion})
+		} else if redeployed {
+			h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Informational, fmt.Sprintf("Meshery Operator redeployed at chart version %q.", chartVersion), map[string]interface{}{"connectionId": connectionID, "operatorChartVersion": chartVersion})
+		}
+
 		kubeClient, err := machineCtx.K8sContext.GenerateKubeHandler()
 		if err != nil {
-			h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to reach the connection's cluster to apply the controllers configuration.", map[string]interface{}{"error": err, "connectionId": connectionID})
+			h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Error, "Failed to reach the connection's cluster to apply the controllers configuration.", map[string]interface{}{"error": err, "connectionId": connectionID})
 			return
 		}
 		applyCtx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 		defer cancel()
 		result, err := models.ApplyControllersConfigToCluster(applyCtx, h.log, kubeClient, merged)
 		if err != nil {
-			h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to apply the controllers configuration to the cluster.", map[string]interface{}{"error": err, "connectionId": connectionID, "result": result})
+			h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Error, "Failed to apply the controllers configuration to the cluster.", map[string]interface{}{"error": err, "connectionId": connectionID, "result": result})
 			return
 		}
-		h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Informational, "Controllers configuration applied to the cluster.", map[string]interface{}{"connectionId": connectionID, "result": result})
+		h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Informational, "Controllers configuration applied to the cluster.", map[string]interface{}{"connectionId": connectionID, "result": result})
 	}
 }
 
@@ -386,6 +396,11 @@ func (h *Handler) applyControllersConfigToConnection(
 // change out to every tracked Kubernetes connection.
 func (h *Handler) reapplyControllersConfigToTrackedConnections(token string, userID core.Uuid, provider models.Provider) {
 	if h.ConnectionToStateMachineInstanceTracker == nil {
+		return
+	}
+	serverDefaults, err := models.GetControllersConfigDefaults(h.dbHandler)
+	if err != nil {
+		h.log.Error(err)
 		return
 	}
 	h.ConnectionToStateMachineInstanceTracker.Range(func(connectionID core.Uuid, _ *machines.StateMachine) bool {
@@ -397,16 +412,98 @@ func (h *Handler) reapplyControllersConfigToTrackedConnections(token string, use
 		if connection.Kind != "kubernetes" {
 			return true
 		}
-		eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
-		h.applyControllersConfigToConnection(context.Background(), connectionID, connection.Metadata, token, userID, provider, eventBuilder)
+		newEvent := func() *events.EventBuilder {
+			return events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+		}
+		// A deployment-mode change is not just a document to re-apply: it
+		// deploys the operator (or releases this connection's claim on it,
+		// never uninstalling it) and re-attaches the MeshSync data pipeline. Reconcile it first so the subsequent apply targets the
+		// cluster shape the new mode implies.
+		h.reconcileInheritedDeploymentMode(connection, serverDefaults, token, userID, provider, newEvent)
+		h.applyControllersConfigToConnection(context.Background(), connectionID, connection.Metadata, token, userID, provider, newEvent)
 		return true
+	})
+}
+
+// reconcileInheritedDeploymentMode brings one connection into line with the
+// server-wide defaults after they change. A connection that overrides the
+// deployment mode is untouched (its override still wins); a connection that
+// inherits follows the new default, which means persisting the refreshed
+// materialization and actually tearing down and re-attaching the controller
+// machinery. Without this, a server-wide mode change reached the document but
+// never the cluster.
+func (h *Handler) reconcileInheritedDeploymentMode(
+	connection *connections.Connection,
+	serverDefaults *controllersconfig.MesheryControllersConfig,
+	token string,
+	userID core.Uuid,
+	provider models.Provider,
+	newEvent func() *events.EventBuilder,
+) {
+	metadata := connection.Metadata
+	if metadata == nil {
+		metadata = core.Map{}
+		connection.Metadata = metadata
+	}
+
+	override, err := connections.ControllersConfigFromMetadata(metadata)
+	if err != nil {
+		// An unreadable override is unknown intent, not absent intent. Treating
+		// it as absent used to resolve the connection to the server-wide
+		// default, find that it differed from the materialized mode, and
+		// reconcile - tearing down and redeploying MeshSync into a mode the
+		// user never chose, on the strength of corrupt data. Skip this
+		// connection instead and leave it exactly as it is; the per-connection
+		// GET surfaces the parse failure so it can be corrected deliberately.
+		h.log.Error(err)
+		h.emitControllersConfigApplyEvent(
+			newEvent, provider, token, userID, events.Error,
+			"Skipped reconciling this connection's MeshSync deployment mode: its stored controllers configuration could not be parsed.",
+			map[string]interface{}{"error": err, "connectionId": connection.ID},
+		)
+		return
+	}
+	merged, _ := connections.ResolveControllersConfig(override, serverDefaults)
+	desired := connections.ResolveDeploymentMode(merged, metadata, h.MeshsyncDefaultDeploymentMode)
+
+	previous := connections.MeshsyncDeploymentModeFromMetadata(metadata)
+	if previous == desired.Mode {
+		return
+	}
+	connections.MaterializeMeshsyncDeploymentMode(metadata, desired.Mode)
+
+	payload := &connections.ConnectionPayload{
+		ID:           connection.ID,
+		Kind:         connection.Kind,
+		SubType:      connection.SubType,
+		Type:         connection.ConnectionType,
+		Name:         connection.Name,
+		MetaData:     metadata,
+		Status:       connection.Status,
+		CredentialID: connection.CredentialID,
+	}
+	if _, err := provider.UpdateConnectionById(token, payload, connection.ID.String()); err != nil {
+		h.log.Error(err)
+		h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Error, "Failed to persist the MeshSync deployment mode inherited from the server-wide default.", map[string]interface{}{"error": err, "connectionId": connection.ID})
+		return
+	}
+
+	if err := h.reconcileMeshsyncDeploymentMode(context.Background(), connection.ID, desired.Mode, merged, userID, provider); err != nil {
+		h.log.Error(err)
+		h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Error, "Failed to redeploy MeshSync for the deployment mode inherited from the server-wide default.", map[string]interface{}{"error": err, "connectionId": connection.ID})
+		return
+	}
+	h.emitControllersConfigApplyEvent(newEvent, provider, token, userID, events.Informational, fmt.Sprintf("MeshSync deployment mode changed from '%s' to '%s' following the server-wide default.", previous, desired.Mode), map[string]interface{}{
+		"meshsyncDeploymentModeOld": previous,
+		"meshsyncDeploymentModeNew": desired.Mode,
+		"connectionId":              connection.ID,
 	})
 }
 
 // emitControllersConfigApplyEvent persists and broadcasts a controllers
 // configuration apply event.
 func (h *Handler) emitControllersConfigApplyEvent(
-	eventBuilder *events.EventBuilder,
+	newEvent func() *events.EventBuilder,
 	provider models.Provider,
 	token string,
 	userID core.Uuid,
@@ -414,7 +511,6 @@ func (h *Handler) emitControllersConfigApplyEvent(
 	description string,
 	metadata map[string]interface{},
 ) {
-	event := eventBuilder.WithSeverity(severity).WithDescription(description).WithMetadata(metadata).Build()
-	_ = provider.PersistEvent(*event, token)
-	go h.config.EventBroadcaster.Publish(userID, event)
+	event := newEvent().WithSeverity(severity).WithDescription(description).WithMetadata(metadata).Build()
+	h.persistAndPublish(provider, token, userID, event)
 }

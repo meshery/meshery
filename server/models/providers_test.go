@@ -92,3 +92,59 @@ func TestResolveProviderKeyWithProbe_ResolvesCanonicalRemoteName(t *testing.T) {
 		t.Fatalf("ResolveProviderKey after probe = (%q, %v), want (%q, true)", resolvedKey, ok, parsed.Host)
 	}
 }
+
+func TestRestrictToEnforcedProvider(t *testing.T) {
+	local := &DefaultLocalProvider{}
+	local.Initialize()
+	remote := &RemoteProvider{RemoteProviderURL: "https://cloud.meshery.io"}
+	remote.Initialize()
+	remote.SetProviderProperties(ProviderProperties{
+		ProviderName: "Meshery",
+		ProviderType: RemoteProviderType,
+		ProviderURL:  remote.RemoteProviderURL,
+	})
+
+	t.Run("empty key is a no-op", func(t *testing.T) {
+		provs := map[string]Provider{LocalProviderName: local, "Meshery": remote}
+		RestrictToEnforcedProvider(provs, "")
+		if len(provs) != 2 {
+			t.Fatalf("len = %d, want 2", len(provs))
+		}
+	})
+
+	t.Run("unknown key is a no-op", func(t *testing.T) {
+		provs := map[string]Provider{LocalProviderName: local, "Meshery": remote}
+		RestrictToEnforcedProvider(provs, "DoesNotExist")
+		if len(provs) != 2 {
+			t.Fatalf("len = %d, want 2", len(provs))
+		}
+	})
+
+	t.Run("remote pin drops Local and other remotes", func(t *testing.T) {
+		other := &RemoteProvider{RemoteProviderURL: "https://cloud.layer5.io"}
+		other.Initialize()
+		provs := map[string]Provider{
+			LocalProviderName: local,
+			"Meshery":         remote,
+			"Layer5":          other,
+		}
+		RestrictToEnforcedProvider(provs, "Meshery")
+		if len(provs) != 1 {
+			t.Fatalf("len = %d, want 1; keys %v", len(provs), providerMapKeys(provs))
+		}
+		if _, ok := provs["Meshery"]; !ok {
+			t.Fatal("expected Meshery to remain")
+		}
+		if _, ok := provs[LocalProviderName]; ok {
+			t.Fatal("Local must not remain when a remote is pinned")
+		}
+	})
+}
+
+func providerMapKeys(m map[string]Provider) []string {
+	out := make([]string, 0, len(m))
+	for k := range m {
+		out = append(out, k)
+	}
+	return out
+}

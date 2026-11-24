@@ -1,0 +1,81 @@
+#!/usr/bin/env sh
+# Reject a commit whose message carries no Signed-off-by trailer for its author.
+#
+# The DCO check (https://github.com/dcoapp/app) fails a pull request when any of
+# its commits is missing that trailer. It reads its configuration from the
+# default branch only, so no change on a branch can relax it, and remediation
+# commits are not enabled for this repository - by the time CI reports the
+# failure the only remedy left is rewriting the branch. Catching it here, while
+# the commit is still being written, keeps that rewrite off the table.
+#
+# The rules below mirror the ones the DCO check applies, so a message this hook
+# accepts is one CI accepts: merge commits are exempt, and at least one
+# Signed-off-by trailer must name either the author or the committer.
+
+message_file="$1"
+
+if [ -f "$(git rev-parse --git-path MERGE_HEAD)" ]; then
+  exit 0
+fi
+
+# Git drops comment lines before recording the message, and `git commit
+# --verbose` appends the staged diff below a scissors line. Neither can carry a
+# sign-off, so remove both before looking for one.
+message=$(sed -e '/^#[[:space:]]*-\{2,\}[[:space:]]*>8[[:space:]]*-\{2,\}/,$d' -e '/^#/d' "$message_file")
+
+# husky runs this hook as `sh -e`, so every substitution that is allowed to come
+# up empty has to end on a zero status of its own - otherwise the shell exits
+# before the guidance below is ever printed.
+#
+# The trailers are collected with whatever spelling and spacing they were
+# written in and normalized to one canonical prefix, because the identity below
+# is matched as a fixed string: "Signed-off-by:  Jane <jane@example.com>" is a
+# trailer the DCO check accepts, and without this it would match no identity
+# here and be rejected as if it named nobody.
+signoffs=$(printf '%s\n' "$message" \
+  | grep -i '^Signed-off-by:[[:space:]]*..*<..*>' \
+  | sed -e 's/^[^:]*:[[:space:]]*/Signed-off-by: /' || true)
+
+# `git var` renders an identity as "Name <email> 1700000000 +0000"; drop the
+# timestamp and the timezone to leave the "Name <email>" a trailer must carry.
+identity() {
+  ident=$(git var "$1" 2>/dev/null || true)
+  ident=${ident% *}
+  ident=${ident% *}
+  printf '%s' "$ident"
+}
+
+author=$(identity GIT_AUTHOR_IDENT)
+committer=$(identity GIT_COMMITTER_IDENT)
+
+signed_off_by() {
+  printf '%s\n' "$signoffs" | grep -qiF "Signed-off-by: $1"
+}
+
+if [ -n "$signoffs" ] && { signed_off_by "$author" || signed_off_by "$committer"; }; then
+  exit 0
+fi
+
+echo "commit-msg: this commit is not signed off, and the DCO check would fail on it." >&2
+echo >&2
+if [ -z "$signoffs" ]; then
+  echo "  The message carries no Signed-off-by trailer." >&2
+else
+  echo "  The message carries a Signed-off-by trailer, but none of them names" >&2
+  echo "  the author or the committer:" >&2
+  echo >&2
+  printf '%s\n' "$signoffs" | sed 's/^/    /' >&2
+fi
+echo >&2
+echo "  Expected: Signed-off-by: $author" >&2
+echo >&2
+echo "  Nothing was committed. Re-run the commit with -s to add the trailer;" >&2
+echo "  your message was kept in .git/COMMIT_EDITMSG:" >&2
+echo >&2
+echo "    git commit -s" >&2
+echo >&2
+echo "  Signing off certifies the Developer Certificate of Origin" >&2
+echo "  (https://developercertificate.org). Use your real name and a reachable" >&2
+echo "  email address." >&2
+
+exit 1

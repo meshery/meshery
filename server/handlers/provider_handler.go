@@ -5,13 +5,42 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	models "github.com/meshery/meshery/server/models"
 )
 
+// providerStreamWriteTimeout bounds each write on the provider status stream.
+// The route is unauthenticated and the server sets no WriteTimeout, so without
+// it a client that stops reading could block a write - and with it the handler
+// goroutine and its tracker subscription - indefinitely.
+const providerStreamWriteTimeout = 30 * time.Second
+
 // ProviderHandler - handles the choice of provider
 func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
-	providerKey, ok := models.ResolveProviderKey(r.URL.Query().Get("provider"), h.config.Providers)
+	requested := r.URL.Query().Get("provider")
+	if models.NormalizeProviderName(h.Provider) != "" {
+		providerKey, ok := models.ResolveProviderKey(h.Provider, h.config.Providers)
+		if !ok {
+			http.Redirect(w, r, "/provider", http.StatusFound)
+			return
+		}
+		if requested != "" {
+			if reqKey, reqOK := models.ResolveProviderKey(requested, h.config.Providers); !reqOK || reqKey != providerKey {
+				h.log.Infof("ignoring provider switch to %q; PROVIDER is pinned to %q", requested, providerKey)
+			}
+		}
+		http.SetCookie(w, &http.Cookie{
+			Name:     h.config.ProviderCookieName,
+			Value:    providerKey,
+			Path:     "/",
+			HttpOnly: true,
+		})
+		redirectURL := "/user/login?" + r.URL.RawQuery
+		http.Redirect(w, r, redirectURL, http.StatusFound)
+		return
+	}
+	providerKey, ok := models.ResolveProviderKey(requested, h.config.Providers)
 	if !ok {
 		// An unknown or unregistered provider (e.g. a stale UI sending a
 		// name that no longer maps to a registered provider) would
@@ -61,6 +90,17 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
 			providers[key] = p.GetProviderProperties()
 		}
 	}
+	// Intentionally defensive. RestrictToEnforcedProvider already trimmed the
+	// registration map at boot, so on the real startup path this is a no-op.
+	// It is kept because this handler also serves wiring that builds
+	// h.config.Providers directly (tests, embedders) and never runs that boot
+	// step - and because the enforced provider must never be a listing away
+	// from being reintroduced if that map is ever repopulated.
+	if enforcedKey, ok := models.ResolveProviderKey(h.Provider, h.config.Providers); ok {
+		if props, exists := providers[enforcedKey]; exists {
+			providers = map[string]models.ProviderProperties{enforcedKey: props}
+		}
+	}
 	bd, err := json.Marshal(providers)
 	if err != nil {
 		obj := "provider"
@@ -100,6 +140,13 @@ func (h *Handler) ProvidersStreamHandler(w http.ResponseWriter, r *http.Request)
 	// X-Accel-Buffering disables buffering at any nginx hop in front of
 	// Meshery so the events reach the browser immediately.
 	w.Header().Set("X-Accel-Buffering", "no")
+
+	// responseController bounds each write with a deadline so a client that
+	// stops reading cannot pin this goroutine and its tracker subscription.
+	// SetWriteDeadline reports ErrNotSupported for writers that don't
+	// implement it; there writes stay unbounded, as before.
+	responseController := http.NewResponseController(w)
+	_ = responseController.SetWriteDeadline(time.Now().Add(providerStreamWriteTimeout))
 	w.WriteHeader(http.StatusOK)
 	flusher.Flush()
 
@@ -121,14 +168,19 @@ func (h *Handler) ProvidersStreamHandler(w http.ResponseWriter, r *http.Request)
 			if !ok {
 				return
 			}
+			if enforcedKey, enfOK := models.ResolveProviderKey(h.Provider, h.config.Providers); enfOK && evt.Key != enforcedKey {
+				continue
+			}
 			data, err := json.Marshal(evt)
 			if err != nil {
 				h.log.Error(models.ErrMarshal(err, "provider status event"))
 				continue
 			}
+			_ = responseController.SetWriteDeadline(time.Now().Add(providerStreamWriteTimeout))
 			if _, err := fmt.Fprintf(w, "event: provider\ndata: %s\n\n", data); err != nil {
-				// Client disconnected mid-write; ctx cancellation
-				// will close the channel and we'll exit cleanly.
+				// Client disconnected or stalled past the write deadline;
+				// ctx cancellation will close the channel and we'll exit
+				// cleanly.
 				return
 			}
 			flusher.Flush()

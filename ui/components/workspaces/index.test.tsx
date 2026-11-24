@@ -30,6 +30,7 @@ const {
   EMPTY_QUERY_RESULT,
   NOOP_MUTATION,
   UI_STATE,
+  ColumnVisibilityControl,
 } = vi.hoisted(() => ({
   notify: vi.fn(),
   createWorkspace: vi.fn(),
@@ -39,6 +40,7 @@ const {
   EMPTY_QUERY_RESULT: { data: undefined, isLoading: false },
   NOOP_MUTATION: [vi.fn()],
   UI_STATE: { ui: { organization: { id: 'org-1' } } },
+  ColumnVisibilityControl: vi.fn<(props: any) => null>(() => null),
 }));
 
 vi.mock('../../utils/hooks/useNotification', () => ({
@@ -52,8 +54,8 @@ vi.mock('../../utils/hooks/useNotification', () => ({
 }));
 
 vi.mock('../../rtk-query/workspace', () => ({
-  useCreateWorkspaceMutation: () => [createWorkspace],
-  useUpdateWorkspaceMutation: () => [updateWorkspace],
+  useCreateWorkspaceMutation: () => [createWorkspace, { isLoading: false }],
+  useUpdateWorkspaceMutation: () => [updateWorkspace, { isLoading: false }],
   useDeleteWorkspaceMutation: () => [deleteWorkspace],
   useGetWorkspacesQuery: () => WORKSPACES_QUERY_RESULT,
   useGetTeamsOfWorkspaceQuery: () => EMPTY_QUERY_RESULT,
@@ -87,9 +89,10 @@ vi.mock('@/utils/context/WorkspaceModalContextProvider', () => ({
 }));
 
 vi.mock('../shared/Modal/Modal', () => ({
-  RJSFModalWrapper: ({ handleSubmit }: any) => (
+  RJSFModalWrapper: ({ handleSubmit, isSubmitting }: any) => (
     <button
       data-testid="submit-workspace"
+      disabled={isSubmitting}
       onClick={() =>
         handleSubmit({ organizationId: 'org-1', name: 'team-space', description: 'shared' })
       }
@@ -101,8 +104,23 @@ vi.mock('../shared/Modal/Modal', () => ({
 
 vi.mock('../general/PromptComponent', () => ({ default: React.forwardRef(() => null) }));
 vi.mock('@/components/lifecycle/general', () => ({ EmptyState: () => <div>empty</div> }));
-vi.mock('@/components/general/ViewSwitch', () => ({ default: () => null }));
-vi.mock('./WorkspaceGridView', () => ({ default: () => null }));
+vi.mock('@/components/general/ViewSwitch', () => ({
+  default: ({ changeView }: any) => (
+    <button data-testid="grid-view" onClick={() => changeView('grid')}>
+      grid
+    </button>
+  ),
+}));
+vi.mock('./WorkspaceGridView', () => ({
+  default: ({ page, setPage }: any) => (
+    <div>
+      <span data-testid="grid-page">{page}</span>
+      <button data-testid="go-to-page-3" onClick={() => setPage(2)}>
+        page 3
+      </button>
+    </div>
+  ),
+}));
 vi.mock('./WorkspaceDataTable', () => ({ default: () => null }));
 vi.mock('./styles', () => ({ CreateButtonWrapper: ({ children }: any) => <div>{children}</div> }));
 vi.mock('@/assets/styles/general/tool.styles', () => ({
@@ -113,6 +131,9 @@ vi.mock('@/assets/icons/RightArrowIcon', () => ({ default: () => null }));
 vi.mock('css/icons.styles', () => ({ iconMedium: {} }));
 
 vi.mock('@sistent/sistent', () => ({
+  // This suite exercises the create flow, not authorization: grant every
+  // capability so the permission gates never mask the behaviour under test.
+  useHasPermission: () => true,
   Box: ({ children }: any) => <div>{children}</div>,
   Breadcrumbs: ({ children }: any) => <nav>{children}</nav>,
   Button: ({ children, onClick, ...rest }: any) => (
@@ -120,13 +141,18 @@ vi.mock('@sistent/sistent', () => ({
       {children}
     </button>
   ),
-  CustomColumnVisibilityControl: () => null,
+  CustomColumnVisibilityControl: ColumnVisibilityControl,
   ErrorBoundary: ({ children }: any) => <>{children}</>,
   Modal: ({ children, open }: any) => (open ? <div>{children}</div> : null),
   ModalFooter: ({ children }: any) => <div>{children}</div>,
   NoSsr: ({ children }: any) => <>{children}</>,
   PROMPT_VARIANTS: { DANGER: 'danger' },
-  SearchBar: () => null,
+  Select: ({ children, ...rest }: any) => <select {...rest}>{children}</select>,
+  SearchBar: ({ onSearch }: any) => (
+    <button data-testid="search-prod" onClick={() => onSearch('prod')}>
+      search
+    </button>
+  ),
   TeamsIcon: () => null,
   Typography: ({ children }: any) => <span>{children}</span>,
   WorkspaceIcon: () => null,
@@ -143,6 +169,22 @@ vi.mock('@sistent/sistent', () => ({
       background: { brand: { default: '#000' }, constant: { table: '#fff' } },
     },
   }),
+  // `DefaultError` (rendered by the new permission guard) imports `styled`
+  // from error-404/styles.tsx to build its `ErrorMain` wrapper. Emulate the
+  // real styled-components-style API closely enough that a tag-name call
+  // (`styled('main')`) or component call (`styled(SomeComponent)`) both
+  // return a renderable element, ignoring the style function/object passed
+  // to the second call.
+  styled: (Component: any) => () => {
+    if (typeof Component === 'string') {
+      return ({ children, ...rest }: any) => <Component {...rest}>{children}</Component>;
+    }
+    return Component;
+  },
+}));
+
+vi.mock('../general/error-404/index', () => ({
+  default: ({ permissionKey }: any) => <div data-testid="default-error">{permissionKey}</div>,
 }));
 
 import Workspaces from './index';
@@ -168,9 +210,11 @@ describe('Workspaces create flow notifications', () => {
   it('surfaces the failure when the provider rejects the create', async () => {
     // `data` is the verbatim server envelope (camelCase, per
     // server/models/httputil/httputil.go); `meshkit` is what the
-    // @meshery/schemas baseQuery wrapper actually attaches - message/code/
-    // severity only, because it reads snake_case spellings the server does not
-    // emit (meshery/schemas#1081). The real transform is pinned in
+    // @meshery/schemas baseQuery wrapper attaches - since v1.3.37
+    // (meshery/schemas#1081) it carries the full envelope, reading the
+    // server's camelCase detail arrays with a snake_case fallback, so the
+    // probable cause and remediation list arrive populated. The real
+    // transform is pinned in
     // `utils/helpers/__tests__/meshkitErrorChain.test.ts`.
     createWorkspace.mockReturnValue({
       unwrap: () =>
@@ -187,6 +231,8 @@ describe('Workspaces create flow notifications', () => {
             message: 'Unable to create the workspace',
             code: 'meshery-server-1454',
             severity: 'ALERT',
+            probableCause: ['Your account does not have permission to create workspaces.'],
+            suggestedRemediation: ['Ask an organization owner to grant the Workspace role.'],
           },
         }),
     });
@@ -244,5 +290,56 @@ describe('Workspaces create flow notifications', () => {
     createWorkspace.mockReturnValue({ unwrap: () => Promise.resolve({ id: 'ws-1' }) });
     await userEvent.setup().click(screen.getByTestId('submit-workspace'));
     await waitFor(() => expect(screen.queryByTestId('submit-workspace')).not.toBeInTheDocument());
+  });
+});
+
+describe('Workspaces search paging', () => {
+  it('goes back to the first page of the grid when the search changes', async () => {
+    const originalData = WORKSPACES_QUERY_RESULT.data;
+    // The grid only renders when the current page has workspaces.
+    WORKSPACES_QUERY_RESULT.data = {
+      workspaces: [{ id: 'ws-1', name: 'team' }],
+      totalCount: 40,
+    } as any;
+    try {
+      const user = userEvent.setup();
+      render(<Workspaces onSelectWorkspace={undefined} />);
+
+      await user.click(screen.getByTestId('grid-view'));
+      await user.click(await screen.findByTestId('go-to-page-3'));
+      expect(screen.getByTestId('grid-page')).toHaveTextContent('2');
+
+      await user.click(screen.getByTestId('search-prod'));
+      expect(screen.getByTestId('grid-page')).toHaveTextContent('0');
+    } finally {
+      WORKSPACES_QUERY_RESULT.data = originalData;
+    }
+  });
+});
+
+describe('Workspaces column visibility menu', () => {
+  it("toggles the table's camelCase column names", () => {
+    render(<Workspaces onSelectWorkspace={undefined} />);
+    const { columns } = ColumnVisibilityControl.mock.calls.at(-1)[0];
+    // The keys the menu writes into columnVisibility must be the column names
+    // WorkspaceDataTable declares (pinned in WorkspaceDataTable.test.tsx),
+    // or toggling them changes nothing.
+    expect(columns.map((c: any) => c.name)).toEqual([
+      'id',
+      'ownerEmail',
+      'ownerId',
+      'orgName',
+      'name',
+      'description',
+      'owner',
+      'teamCount',
+      'designCount',
+      'viewCount',
+      'environmentCount',
+      'environments',
+      'createdAt',
+      'updatedAt',
+      'actions',
+    ]);
   });
 });

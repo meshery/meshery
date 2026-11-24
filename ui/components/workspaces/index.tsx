@@ -17,6 +17,7 @@ import {
   Button,
   Typography,
   SearchBar,
+  useHasPermission,
   useTheme,
   PROMPT_VARIANTS,
   ModalFooter,
@@ -40,7 +41,7 @@ import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import _PromptComponent from '../general/PromptComponent';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { Keys } from '@meshery/schemas/permissions';
-import CAN from '@/utils/can';
+import DefaultError from '../general/error-404/index';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import ViewSwitch from '@/components/general/ViewSwitch';
 import { CreateButtonWrapper } from './styles';
@@ -66,15 +67,15 @@ const columnList = [
     label: 'ID',
   },
   {
-    name: 'owner_email',
+    name: 'ownerEmail',
     label: 'Owner Email',
   },
   {
-    name: 'owner_id',
+    name: 'ownerId',
     label: 'Owner Id',
   },
   {
-    name: 'org_name',
+    name: 'orgName',
     label: 'Org Name',
   },
   {
@@ -110,11 +111,11 @@ const columnList = [
     label: 'Environments',
   },
   {
-    name: 'created_at',
+    name: 'createdAt',
     label: 'Created At',
   },
   {
-    name: 'updated_at',
+    name: 'updatedAt',
     label: 'Updated At',
   },
   {
@@ -125,6 +126,16 @@ const columnList = [
 
 const Workspaces = ({ onSelectWorkspace }) => {
   const theme = useTheme();
+  const canCreateWorkspace = useHasPermission(Keys.WorkspaceManagementCreateWorkspace);
+  const canEditWorkspace = useHasPermission(Keys.WorkspaceManagementEditWorkspace);
+  const canAssignTeam = useHasPermission(Keys.WorkspaceManagementAssignTeamToWorkspace);
+  const canDeleteTeam = useHasPermission(Keys.IdentityAccessManagementDeleteTeam);
+  const canEditTeam = useHasPermission(Keys.IdentityAccessManagementEditTeam);
+  const canLeaveTeam = useHasPermission(Keys.IdentityAccessManagementLeaveTeam);
+  const canViewWorkspace = useHasPermission(Keys.WorkspaceManagementViewWorkspace);
+  const canRemoveTeamFromWorkspace = useHasPermission(
+    Keys.WorkspaceManagementRemoveTeamFromWorkspace,
+  );
   const [workspaceModal, setWorkspaceModal] = useState({
     open: false,
     schema: {},
@@ -183,13 +194,13 @@ const Workspaces = ({ onSelectWorkspace }) => {
       orgId: organization?.id,
     },
     {
-      skip: !organization?.id ? true : false,
+      skip: !organization?.id || !canViewWorkspace,
     },
   );
 
-  const [createWorkspace] = useCreateWorkspaceMutation();
+  const [createWorkspace, createResult] = useCreateWorkspaceMutation();
 
-  const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [updateWorkspace, updateResult] = useUpdateWorkspaceMutation();
 
   const [deleteWorkspace] = useDeleteWorkspaceMutation();
 
@@ -394,6 +405,10 @@ const Workspaces = ({ onSelectWorkspace }) => {
 
   const [columnVisibility, setColumnVisibility] = useState({});
 
+  if (!canViewWorkspace) {
+    return <DefaultError permissionKey={Keys.WorkspaceManagementViewWorkspace} />;
+  }
+
   return (
     <NoSsr>
       <ErrorBoundary>
@@ -460,6 +475,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
                   <SearchBar
                     onSearch={(value) => {
                       setSearch(value);
+                      setPage(0);
                     }}
                     placeholder="Search Workspaces..."
                     expanded={isSearchExpanded}
@@ -513,15 +529,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
             />
           )}
         </>
-        {(actionType === WORKSPACE_ACTION_TYPES.CREATE
-          ? CAN(
-              Keys.WorkspaceManagementCreateWorkspace.id,
-              Keys.WorkspaceManagementCreateWorkspace.function,
-            )
-          : CAN(
-              Keys.WorkspaceManagementEditWorkspace.id,
-              Keys.WorkspaceManagementEditWorkspace.function,
-            )) &&
+        {(actionType === WORKSPACE_ACTION_TYPES.CREATE ? canCreateWorkspace : canEditWorkspace) &&
           workspaceModal.open && (
             <Modal
               open={workspaceModal.open}
@@ -541,6 +549,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
                 submitBtnText={actionType === WORKSPACE_ACTION_TYPES.CREATE ? 'Save' : 'Update'}
                 initialData={initialData}
                 handleClose={handleWorkspaceModalClose}
+                isSubmitting={createResult.isLoading || updateResult.isLoading}
               />
             </Modal>
           )}
@@ -553,22 +562,10 @@ const Workspaces = ({ onSelectWorkspace }) => {
         >
           <WorkspaceTeamsTable
             workspaceId={teamsModal.workspaceId}
-            isAssignTeamAllowed={CAN(
-              Keys.WorkspaceManagementAssignTeamToWorkspace.id,
-              Keys.WorkspaceManagementAssignTeamToWorkspace.function,
-            )}
-            isDeleteTeamAllowed={CAN(
-              Keys.IdentityAccessManagementDeleteTeam.id,
-              Keys.IdentityAccessManagementDeleteTeam.function,
-            )}
-            isEditTeamAllowed={CAN(
-              Keys.IdentityAccessManagementEditTeam.id,
-              Keys.IdentityAccessManagementEditTeam.function,
-            )}
-            isLeaveTeamAllowed={CAN(
-              Keys.IdentityAccessManagementLeaveTeam.id,
-              Keys.IdentityAccessManagementLeaveTeam.function,
-            )}
+            isAssignTeamAllowed={canAssignTeam}
+            isDeleteTeamAllowed={canDeleteTeam}
+            isEditTeamAllowed={canEditTeam}
+            isLeaveTeamAllowed={canLeaveTeam}
             useAssignTeamToWorkspaceMutation={useAssignTeamToWorkspaceMutation}
             useGetTeamsOfWorkspaceQuery={useGetTeamsOfWorkspaceQuery}
             useUnassignTeamFromWorkspaceMutation={useUnassignTeamFromWorkspaceMutation}
@@ -578,10 +575,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
             useGetUsersForOrgQuery={useGetUsersForOrgQuery}
             useNotificationHandlers={useNotificationHandlers}
             useRemoveUserFromTeamMutation={useRemoveUserFromTeamMutation}
-            isRemoveTeamFromWorkspaceAllowed={CAN(
-              Keys.WorkspaceManagementRemoveTeamFromWorkspace.id,
-              Keys.WorkspaceManagementRemoveTeamFromWorkspace.function,
-            )}
+            isRemoveTeamFromWorkspaceAllowed={canRemoveTeamFromWorkspace}
           />
           <ModalFooter variant="filled"></ModalFooter>
         </Modal>

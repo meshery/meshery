@@ -1,0 +1,67 @@
+name: "Publish OSPS Baseline results to grc.store"
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: "Run scan without publishing to grc.store (bundles land in workflow artifacts)"
+        type: boolean
+        default: false
+  schedule:
+    # Run once a week (Mondays at 6:45 UTC)
+    - cron: "45 6 * * 1"
+  # Push events are intentionally omitted because grc.store rate-limits publications.
+  release:
+    types: [published]
+
+permissions: {}
+
+jobs:
+  version:
+    name: version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Read the latest release tag
+    outputs:
+      version: ${{ steps.tag.outputs.version }}
+    steps:
+      - uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: audit
+      - name: latest release
+        id: tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName)
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+
+  results:
+    name: publish-results
+    needs: version
+    permissions:
+      contents: read         
+      id-token: write        
+      security-events: write 
+    # Pinned to the immutable tag @v1 as mandated by grc.store
+    uses: revanite-io/pvtr-publish-results/.github/workflows/publish.yml@v1
+    with:
+      target: meshery/meshery@${{ needs.version.outputs.version }}
+      license: CC0-1.0
+      dry-run: ${{ inputs.dry-run == true }}
+    secrets:
+      config: |
+        targets:
+          meshery:
+            plugin: openssf/github-repo
+            policy:
+              catalogs:
+                - osps-baseline
+              applicability:
+                - maturity-1
+                - maturity-2
+            vars:
+              owner: meshery
+              repo: meshery
+              token: ${{ secrets.GH_ACCESS_TOKEN }}

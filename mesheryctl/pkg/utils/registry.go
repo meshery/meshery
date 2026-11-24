@@ -16,7 +16,6 @@ const (
 	Meshery SystemType = iota
 	Docs
 	RemoteProvider
-	rowIndex               = 1
 	shouldRegisterColIndex = -1
 )
 

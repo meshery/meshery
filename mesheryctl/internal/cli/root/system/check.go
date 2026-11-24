@@ -21,6 +21,7 @@ import (
 	"io"
 	"net/http"
 	"runtime"
+	"slices"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -50,9 +51,9 @@ var (
 type cmdSystemCheckFlags struct {
 	Preflight      bool   `json:"preflight" validate:"boolean"`
 	Pre            bool   `json:"pre" validate:"boolean"`
-	ComponentsFlag bool   `json:"componentsFlag" validate:"boolean"`
-	AdaptersFlag   bool   `json:"adaptersFlag" validate:"boolean"`
-	OperatorsFlag  bool   `json:"operatorsFlag" validate:"boolean"`
+	ComponentsFlag bool   `json:"components" validate:"boolean"`
+	AdaptersFlag   bool   `json:"adapters" validate:"boolean"`
+	OperatorsFlag  bool   `json:"operator" validate:"boolean"`
 	Adapter        string `json:"adapter" validate:"omitempty"`
 }
 
@@ -76,6 +77,10 @@ type HealthCheckOptions struct {
 	RunComponentChecks bool
 	// if RunOperatorChecks is true we run operator checks
 	RunOperatorChecks bool
+	// if SkipKubernetesVersionChecks is true the Kubernetes/kubectl minimum
+	// version checks are skipped. Teardown commands set it so an outdated
+	// cluster or kubectl cannot block the removal of an existing installation.
+	SkipKubernetesVersionChecks bool
 }
 
 type HealthChecker struct {
@@ -265,7 +270,7 @@ func (hc *HealthChecker) Run() error {
 	return nil
 }
 
-// Run preflight healthchecks to verify environment health
+// RunPreflightHealthChecks runs preflight healthchecks to verify environment health.
 func (hc *HealthChecker) RunPreflightHealthChecks() error {
 	// Docker healthchecks are only invoked when it's not a PreRunExecution
 	// or it's a PreRunExecution and current platform is docker
@@ -480,6 +485,11 @@ func (hc *HealthChecker) runKubernetesHealthChecks() error {
 	if err := hc.runKubernetesAPIHealthCheck(); err != nil {
 		return err
 	}
+	// Teardown has to work against an outdated cluster or kubectl, so the
+	// minimum version checks are skipped there.
+	if hc.Options.SkipKubernetesVersionChecks {
+		return nil
+	}
 	// Run k8s plus kubectl minimum version healthchecks
 	err = hc.runKubernetesVersionHealthCheck()
 	return err
@@ -503,19 +513,27 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	// failed to fetch response for server version
-	if err != nil || resp.StatusCode != 200 {
+	if err != nil {
 		if hc.Options.PrintLogs { // log if we're supposed to
 			utils.Log.Info("!! failed to check Meshery Server version. try starting Meshery with `mesheryctl system start`")
 			skipServerLogs = true
 		} else {
 			return err
 		}
+	} else {
+		defer func() { _ = resp.Body.Close() }()
+		if resp.StatusCode != http.StatusOK {
+			if hc.Options.PrintLogs {
+				utils.Log.Info("!! failed to check Meshery Server version. try starting Meshery with `mesheryctl system start`")
+				skipServerLogs = true
+			} else {
+				return utils.ErrResponseStatus(resp.StatusCode)
+			}
+		}
 	}
 
 	// skip this part as we failed to get a response from the api
 	if !skipServerLogs {
-		// needs multiple defer as Body.Close needs a valid response
-		defer func() { _ = resp.Body.Close() }()
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return errors.Errorf("\n  Invalid response: %v", err)
@@ -525,19 +543,23 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		if err != nil {
 			return errors.Errorf("\n  Unable to unmarshal data: %v", err)
 		}
+		// A body of null decodes without error but leaves serverVersion nil.
+		if serverVersion == nil {
+			return errors.New("\n  Invalid response: the server returned no version information")
+		}
 
 		isOutdated, _, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
 		if err != nil {
 			return err
 		}
 		if hc.Options.PrintLogs { // log if we're supposed to
-			if !*isOutdated {
+			if isOutdated != nil && !*isOutdated {
 				utils.Log.Infof("✓ Meshery Server is up-to-date (stable-%s)", serverVersion.GetBuild())
 			} else {
 				utils.Log.Info("!! Meshery Server is not up-to-date")
 			}
 		} else { // else we grab the error
-			if !*isOutdated {
+			if isOutdated != nil && *isOutdated {
 				return errors.New("!! Meshery Server is not up-to-date")
 			}
 		}
@@ -580,6 +602,25 @@ func (hc *HealthChecker) runComponentsHealthChecks() error {
 	return hc.runAdapterHealthChecks("")
 }
 
+// brokerPodNames are the cleaned pod names the Meshery Broker runs under.
+//
+// Meshery Operator >= 1.0.0 renders the broker from the official NATS chart, so
+// the workload is meshery-nats (pod meshery-nats-0); before that it was
+// meshery-broker. Both are accepted because a given cluster's operator version
+// is not ours to assume - matching only the old name reported a healthy broker
+// as "!! Meshery Broker is not running" on every current cluster.
+//
+// Only the *workload* was renamed. The Broker custom resource is still named
+// meshery-broker (see the CR lookup below, and system/stop.go), so those must
+// not be changed to match.
+var brokerPodNames = []string{"meshery-nats", "meshery-broker"}
+
+// isBrokerPodName reports whether a cleaned pod name (see utils.GetCleanPodName)
+// belongs to the Meshery Broker.
+func isBrokerPodName(cleanedName string) bool {
+	return slices.Contains(brokerPodNames, cleanedName)
+}
+
 // runOperatorHealthChecks executes health-checks for Operators
 func (hc *HealthChecker) runOperatorHealthChecks() error {
 	if hc.Options.PrintLogs {
@@ -609,7 +650,7 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 			operatorCheck = true
 		}
 
-		if name == "meshery-broker" {
+		if isBrokerPodName(name) {
 			brokerCheck = true
 		}
 
@@ -710,12 +751,14 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		}
 	}
 	if len(adapters) == 0 {
+		if adapterName != "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("adapter %q is not configured in the current context", adapterName))
+		}
 		utils.Log.Info("- No components configured in current context")
 		return nil
 	}
 	for _, adapter := range adapters {
 		name := adapter.Location
-		skipAdapter := false
 		req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters?adapter=%s", url, name), nil)
 		if err != nil {
 			return err
@@ -724,25 +767,24 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		if err != nil {
 			if hc.Options.PrintLogs { // incase we're printing logs
 				utils.Log.Infof("!! failed to connect to Meshery Adapter for %s ", name)
-				skipAdapter = true
 			} else { // or we're supposed to grab the errors
 				return utils.ErrFailedToConnectAdapter(name, err)
 			}
 			continue
 		}
-		if !skipAdapter {
-			// needs multiple defer as Body.Close needs a valid response
-			defer func() { _ = resp.Body.Close() }()
-			if resp.StatusCode != 200 {
-				if hc.Options.PrintLogs { // incase we're printing logs
-					utils.Log.Infof("!! Meshery Adapter for %s is running but not reachable", name)
-				} else { // or we're supposed to grab the errors
-					return utils.ErrAdapterNotReachable(name)
-				}
-			} else { // if status == 200 we check if we are supposed to print logs
-				if hc.Options.PrintLogs { // incase we're printing logs
-					utils.Log.Infof("✓ %s adapter is running and reachable", name)
-				}
+
+		statusCode := resp.StatusCode
+		_ = resp.Body.Close()
+
+		if statusCode != http.StatusOK {
+			if hc.Options.PrintLogs { // incase we're printing logs
+				utils.Log.Infof("!! Meshery Adapter for %s is running but not reachable", name)
+			} else { // or we're supposed to grab the errors
+				return utils.ErrAdapterNotReachable(name)
+			}
+		} else { // if status == 200 we check if we are supposed to print logs
+			if hc.Options.PrintLogs { // incase we're printing logs
+				utils.Log.Infof("✓ %s adapter is running and reachable", name)
 			}
 		}
 	}

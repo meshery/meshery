@@ -14,6 +14,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/meshery/schemas/models/core"
 	"k8s.io/client-go/util/homedir"
@@ -32,7 +33,6 @@ import (
 	"github.com/meshery/schemas/models/v1beta3/environment"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
-	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -144,7 +144,7 @@ func (l *DefaultLocalProvider) InstallExtension(extType string, packageUrl strin
 		}
 
 		l.mu.Lock()
-		l.Extensions.Acccount = upsertAccountExtension(l.Extensions.Acccount, parsed)
+		l.Extensions.Account = upsertAccountExtension(l.Extensions.Account, parsed)
 		l.mu.Unlock()
 
 	default:
@@ -213,9 +213,9 @@ func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
 		}
 		l.Extensions.Navigator = filtered
 	case "account":
-		filtered := make(AccountExtensions, 0, len(l.Extensions.Acccount))
+		filtered := make(AccountExtensions, 0, len(l.Extensions.Account))
 		removed := false
-		for _, extension := range l.Extensions.Acccount {
+		for _, extension := range l.Extensions.Account {
 			if strings.EqualFold(strings.TrimSpace(extension.Title), title) {
 				removed = true
 				continue
@@ -225,7 +225,7 @@ func (l *DefaultLocalProvider) RemoveExtension(extType, title string) error {
 		if !removed {
 			return fmt.Errorf("RemoveExtension: account extension %q not found", title)
 		}
-		l.Extensions.Acccount = filtered
+		l.Extensions.Account = filtered
 	default:
 		return fmt.Errorf("RemoveExtension: unsupported extension type %q (supported types: navigator, account)", extType)
 	}
@@ -276,7 +276,7 @@ func (l *DefaultLocalProvider) GetProviderType() ProviderType {
 func (l *DefaultLocalProvider) DownloadProviderExtensionPackage() {
 }
 
-// downloadProviderExtensionPackage will download the remote provider extensions
+// DownloadProviderExtensionPackageFromURL will download the remote provider extensions
 // package
 func (l *DefaultLocalProvider) DownloadProviderExtensionPackageFromURL(packageUrl string, log logger.Handler) error {
 	// Skip download if the SKIP_DOWNLOAD_EXTENSIONS flag is set
@@ -367,20 +367,12 @@ func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Requ
 	if fromMiddleWare {
 		return
 	}
-	redirectURL := resolvePostLoginRedirect(r.URL.Query().Get("ref"), "/")
+	redirectURL := resolvePostLoginRedirect(r.URL.Query().Get("ref"), "/", postLoginHost(r))
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
-	avatarUrl := ""
-	localEmail := types.Email("meshery@meshery.local")
-	return &User{
-		ID:        LocalProviderUserID,
-		FirstName: "Meshery",
-		LastName:  "Meshery",
-		Email:     localEmail,
-		AvatarUrl: &avatarUrl,
-	}
+	return LocalProviderUser()
 }
 
 // GetUserDetails - returns the user details
@@ -388,8 +380,22 @@ func (l *DefaultLocalProvider) GetUserDetails(_ *http.Request) (*User, error) {
 	return l.fetchUserDetails(), nil
 }
 
-func (l *DefaultLocalProvider) GetUserByID(_ *http.Request, _ string) ([]byte, error) {
-	return nil, nil
+// GetUserByID resolves a user profile by id. The built-in provider is
+// single-user, so the only id that resolves is its own system user's; every
+// other id has no record here and is reported as not found by the handler.
+// Resolving it is what lets an owner id stamped onto a locally persisted
+// resource render as a real name instead of an unresolvable lookup.
+func (l *DefaultLocalProvider) GetUserByID(_ *http.Request, userID string) ([]byte, error) {
+	if userID != LocalProviderUserID.String() {
+		return nil, nil
+	}
+
+	body, err := json.Marshal(l.fetchUserDetails())
+	if err != nil {
+		return nil, ErrMarshal(err, "user profile")
+	}
+
+	return body, nil
 }
 
 func (l *DefaultLocalProvider) GetUsers(_, _, _, _, _, _ string) ([]byte, error) {
@@ -418,6 +424,7 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 		Name:           environmentPayload.Name,
 		OrganizationID: orgId,
 		Owner:          &uuid.Nil, // "Meshery"
+		Purpose:        environment.EnvironmentPurposeUser,
 		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.SaveEnvironment(environment)
@@ -428,17 +435,22 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 	if err != nil {
 		return nil, ErrInvalidUUID(err)
 	}
+	existingEnv, err := l.EnvironmentPersister.GetEnvironment(core.Uuid(id))
+	if err != nil {
+		return nil, err
+	}
 	orgId := core.Uuid(environmentPayload.OrgID)
-	environment := &environment.Environment{
+	env := &environment.Environment{
 		ID:             id,
-		CreatedAt:      time.Now(),
+		CreatedAt:      existingEnv.CreatedAt,
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
 		OrganizationID: orgId,
-		Owner:          &uuid.Nil, // "Meshery"
+		Owner:          existingEnv.Owner,
+		Purpose:        existingEnv.Purpose,
 		UpdatedAt:      time.Now(),
 	}
-	return l.EnvironmentPersister.UpdateEnvironmentByID(environment)
+	return l.EnvironmentPersister.UpdateEnvironmentByID(env)
 }
 
 func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
@@ -510,10 +522,15 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 		connID = uuid.FromStringOrNil(id)
 	}
 
+	var mesheryInstanceID string
+	if k8sContext.MesheryInstanceID != nil {
+		mesheryInstanceID = k8sContext.MesheryInstanceID.String()
+	}
+
 	_metadata := map[string]string{
 		"id":                 k8sContext.ID,
 		"server":             k8sContext.Server,
-		"mesheryInstanceId":  k8sContext.MesheryInstanceID.String(),
+		"mesheryInstanceId":  mesheryInstanceID,
 		"deploymentType":     k8sContext.DeploymentType,
 		"version":            k8sContext.Version,
 		"name":               k8sContext.Name,
@@ -527,7 +544,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 	maps.Copy(metadata, additionalMetadata)
 
 	if connections.MeshsyncDeploymentModeFromMetadata(metadata) == connections.MeshsyncDeploymentModeUndefined {
-		connections.SetMeshsyncDeploymentModeToMetadata(
+		connections.MaterializeMeshsyncDeploymentMode(
 			metadata,
 			l.MeshsyncDefaultDeploymentMode,
 		)
@@ -554,10 +571,15 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 	if err != nil {
 		return connections.Connection{}, fmt.Errorf("error in saving k8s context %v", err)
 	}
+	if connectionCreated == nil {
+		return connections.Connection{}, ErrPersistConnection(fmt.Errorf("error in saving k8s context: nil connection returned"))
+	}
 
 	k8sContext.ConnectionID = connID.String()
 
-	_, _ = l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+	if l.MesheryK8sContextPersister != nil {
+		_, _ = l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+	}
 	return *connectionCreated, nil
 }
 
@@ -579,12 +601,29 @@ func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order s
 		return nil, ErrPageSize(err)
 	}
 
-	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
+	return l.MesheryK8sContextPersister.GetMesheryK8sContextsWithStatus(search, order, pg, pgs, withStatus)
 }
 
+// GetK8sContext returns the Kubernetes context associated with the given ID or ConnectionID.
+// It searches for an exact ID match first before falling back to a dash-normalized form.
+// Returns ErrDBConnection if MesheryK8sContextPersister is uninitialized.
 func (l *DefaultLocalProvider) GetK8sContext(_, id string) (K8sContext, error) {
+	if l.MesheryK8sContextPersister == nil {
+		return K8sContext{}, ErrDBConnection
+	}
+	// Try the exact ID (or ConnectionID fallback in persister) first.
+	k8sCtx, err := l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+	if err == nil {
+		return k8sCtx, nil
+	}
+	// Fall back to the legacy dash-normalized UUID form if different from the exact ID.
 	idStrWithoutDashes := strings.ReplaceAll(id, "-", "")
-	return l.MesheryK8sContextPersister.GetMesheryK8sContext(idStrWithoutDashes)
+	if idStrWithoutDashes != id {
+		if k8sCtxNorm, errNorm := l.MesheryK8sContextPersister.GetMesheryK8sContext(idStrWithoutDashes); errNorm == nil {
+			return k8sCtxNorm, nil
+		}
+	}
+	return K8sContext{}, err
 }
 
 func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
@@ -635,7 +674,7 @@ func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, _, _, profileID s
 	return l.ResultPersister.GetResults(pg, pgs, profileID, l.Log)
 }
 
-// FetchResults - fetches results from provider backend
+// FetchAllResults - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchAllResults(_, page, pageSize, _, _, _, _ string) ([]byte, error) {
 	if page == "" {
 		page = "0"
@@ -678,12 +717,13 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 	}
 	user, _ := l.GetUserDetails(req)
 	pref, _ := l.ReadFromPersister(user.ID.String())
-	if !pref.AnonymousPerfResults {
-		return "", nil
-	}
 
-	l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
-	resultID, _ := l.shipResults(req, data)
+	// The preference only controls sending the result. It is always saved locally.
+	var resultID string
+	if pref.AnonymousPerfResults {
+		l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
+		resultID, _ = l.shipResults(req, data)
+	}
 
 	key := uuid.FromStringOrNil(resultID)
 	l.Log.Debug(fmt.Sprintf("key: %s, is nil: %t", key.String(), (key == uuid.Nil)))
@@ -715,7 +755,7 @@ func (l *DefaultLocalProvider) FetchSmiResults(_ *http.Request, page, pageSize, 
 	return l.SmiResultPersister.GetResults(pg, pgs)
 }
 
-// FetchSmiResults - fetches results from provider backend
+// FetchSmiResult - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchSmiResult(_ *http.Request, _, _, _, _ string, resultID core.Uuid) ([]byte, error) {
 	return l.SmiResultPersister.GetResult(resultID)
 }
@@ -781,6 +821,8 @@ func (l *DefaultLocalProvider) PublishEventToProvider(_ string, _ events.Event) 
 
 // PublishMetrics - publishes metrics to the provider backend asynchronously
 func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) error {
+	const maxPublishMetricsErrorBodyBytes = 1024
+
 	data, err := json.Marshal(result)
 	if err != nil {
 		return ErrMarshal(err, "Meshery Metrics for shipping")
@@ -807,12 +849,36 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 		l.Log.Info("metrics published to remote provider")
 		return nil
 	}
-	_, err = io.ReadAll(resp.Body)
+	bdr, err := io.ReadAll(io.LimitReader(resp.Body, maxPublishMetricsErrorBodyBytes+1))
 	if err != nil {
 		l.Log.Warn(ErrDataRead(err, "body"))
 		return nil
 	}
-	l.Log.Warn(ErrDoRequest(err, resp.Request.Method, remoteProviderURL.String()))
+	truncated := len(bdr) > maxPublishMetricsErrorBodyBytes
+	if truncated {
+		bdr = bdr[:maxPublishMetricsErrorBodyBytes]
+		for i := len(bdr) - 1; i >= 0 && len(bdr)-i < utf8.UTFMax; i-- {
+			if utf8.RuneStart(bdr[i]) {
+				if !utf8.FullRune(bdr[i:]) {
+					bdr = bdr[:i]
+				}
+				break
+			}
+		}
+	}
+	obj := "metrics"
+	if body := strings.TrimSpace(string(bdr)); body != "" {
+		if truncated {
+			obj = fmt.Sprintf("metrics: %s... (truncated)", body)
+		} else {
+			obj = fmt.Sprintf("metrics: %s", body)
+		}
+	}
+	l.Log.Warn(ErrPost(
+		fmt.Errorf("unexpected HTTP status %d %s from %s %s", resp.StatusCode, http.StatusText(resp.StatusCode), cReq.Method, remoteProviderURL.String()),
+		obj,
+		resp.StatusCode,
+	))
 	return nil
 }
 
@@ -1000,7 +1066,7 @@ func (l *DefaultLocalProvider) DeleteMesheryPattern(_ *http.Request, patternID s
 	return l.MesheryPatternPersister.DeleteMesheryPattern(id)
 }
 
-// DeleteMesheryPattern deletes a meshery pattern with the given id
+// DeleteMesheryPatterns deletes the meshery patterns specified in the given request body
 func (l *DefaultLocalProvider) DeleteMesheryPatterns(_ *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
 	return l.MesheryPatternPersister.DeleteMesheryPatterns(patterns)
 }
@@ -1250,12 +1316,20 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfi
 		performanceProfile.Metadata = core.Map{}
 	}
 
-	data, err := json.Marshal(performanceProfile)
+	if err := l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile); err != nil {
+		return nil, err
+	}
+
+	// Respond with the stored profile: an edit does not carry createdAt.
+	stored, err := l.PerformanceProfilesPersister.GetPerformanceProfile(performanceProfile.ID)
+	if err != nil {
+		return nil, err
+	}
+	data, err := json.Marshal(stored)
 	if err != nil {
 		return nil, ErrMarshal(err, "Perf Profile for persisting")
 	}
-
-	return data, l.PerformanceProfilesPersister.SavePerformanceProfile(performanceProfile.ID, performanceProfile)
+	return data, nil
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
@@ -1397,6 +1471,23 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 	return updatedConnection, http.StatusOK, nil
 }
 
+// UpdateConnectionStatusIf updates a connection's status to newStatus only
+// when its stored status is one of fromStatuses, and reports whether the
+// write applied. The check and the write are a single UPDATE ... WHERE
+// status IN (...) statement in the local store, so no concurrent status
+// change can slip between them (issue #23248).
+func (l *DefaultLocalProvider) UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
+	applied, updatedConnection, err := l.ConnectionPersister.UpdateConnectionStatusIf(connectionID, fromStatuses, newStatus)
+	if err != nil {
+		return false, nil, err
+	}
+	return applied, updatedConnection, nil
+}
+
+// UpdateConnectionById updates an existing connection identified by connId (or
+// conn.ID when connId is not set), backfilling any fields omitted by the
+// partial payload and preserving the connection's original creation time and
+// owner.
 func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error) {
 	// Always persist against the connection identified by the URL id. A payload
 	// that omits `id` (e.g. an RTK mutation that only forwards status+metadata)
@@ -1415,10 +1506,16 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 	conn.ID = id
 	// A partial payload (e.g. the UI's connect action sending only {status}, or an
 	// FSM status transition sending only {kind, metadata, status}) must not
-	// clobber the columns it omits — UpdateConnection persists via GORM's Save(),
-	// which writes every column. Backfill omitted fields from the persisted row.
+	// clobber the columns it omits — UpdateConnection writes every column.
+	// Backfill omitted fields and immutable row metadata from the persisted row.
+	createdAt := time.Now()
+	var owner *core.Uuid
 	if existing, gerr := l.ConnectionPersister.GetConnection(id, ""); gerr == nil && existing != nil {
 		connections.MergePayloadOntoExisting(conn, existing)
+		if !existing.CreatedAt.IsZero() {
+			createdAt = existing.CreatedAt
+		}
+		owner = existing.Owner
 	}
 	connection := connections.Connection{
 		ID:             id,
@@ -1428,7 +1525,8 @@ func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connecti
 		Kind:           conn.Kind,
 		Metadata:       conn.MetaData,
 		Status:         conn.Status,
-		CreatedAt:      time.Now(),
+		Owner:          owner,
+		CreatedAt:      createdAt,
 		UpdatedAt:      time.Now(),
 		CredentialID:   conn.CredentialID,
 	}
@@ -1468,10 +1566,26 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 
 func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	seedContents := []string{"Pattern"}
-	nilOwner := ""
 
 	// Use the relative directory for patterns
 	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
+
+	// Every pass mints a fresh uuid.NewV4() per catalog file and
+	// SaveMesheryPattern has no dedupe, so seeding into a table that already
+	// holds designs duplicates the whole catalog. Cleanup() drops
+	// meshery_patterns on a clean shutdown, which normally hides this - but not
+	// after an unclean exit, and not on the reset path, which re-migrates the
+	// table while the process keeps running.
+	//
+	// Published designs are exactly the seeded catalog on the built-in provider:
+	// PublishCatalogPattern returns ErrLocalProviderSupport, so a local user
+	// cannot create one. Private, user-authored designs are never touched.
+	if err := l.MesheryPatternPersister.DB.
+		Where("visibility = ?", Published).
+		Delete(&MesheryPattern{}).Error; err != nil {
+		log.Error(ErrGettingSeededComponents(err, "Patterns"))
+		return
+	}
 
 	for _, seedContent := range seedContents {
 		switch seedContent {
@@ -1482,28 +1596,28 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 				return
 			}
 
+			seeded := make([]*MesheryPattern, 0, len(files))
 			for _, file := range files {
 				if file.Name != "design.yml" && file.Name != "design.yaml" {
 					continue
 				}
 
-				id, err := uuid.NewV4()
-				if err != nil {
-					log.Error(err)
-					continue
-				}
-
 				patternName, err := GetPatternName(file.Content)
 				if err != nil {
-					log.Error(err)
-					continue
+					log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
+					return
 				}
 
-				pattern := &MesheryPattern{
+				id, err := uuid.NewV4()
+				if err != nil {
+					log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
+					return
+				}
+
+				seeded = append(seeded, &MesheryPattern{
 					PatternFile: file.Content,
 					Name:        patternName,
 					ID:          &id,
-					Owner:       &nilOwner,
 					Visibility:  Published,
 					Location: map[string]interface{}{
 						"host":   "",
@@ -1511,31 +1625,50 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 						"type":   "local",
 						"branch": "",
 					},
-				}
+				})
+			}
 
-				if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
-					log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
-				}
+			if len(seeded) == 0 {
+				log.Error(ErrGettingSeededComponents(
+					fmt.Errorf("no catalog designs found under %s", catalogDir), seedContent+"s"))
+				return
+			}
+
+			if err := l.MesheryPatternPersister.ReplaceSeededPatterns(seeded); err != nil {
+				log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
 			}
 		}
 	}
-	// Seed default organization before the UI requests organizations.
-	id := uuid.Must(uuid.NewV4())
+
+	if err := l.SeedDefaultOrganization(); err != nil {
+		log.Error(err)
+	}
+}
+
+// SeedDefaultOrganization creates the built-in "My Org" organization when none
+// exists. The count guard makes it idempotent, so it is safe to call from any
+// path that may run against an already-populated database.
+func (l *DefaultLocalProvider) SeedDefaultOrganization() error {
+	count, err := l.OrganizationPersister.GetOrganizationsCount()
+	if err != nil {
+		return ErrGettingSeededComponents(err, "organization")
+	}
+	if count != 0 {
+		return nil
+	}
+
 	org := &organization.Organization{
-		ID:          id,
+		ID:          uuid.Must(uuid.NewV4()),
 		Name:        "My Org",
 		Country:     "",
 		Region:      "",
 		Description: "This is default organization",
 		Owner:       uuid.Nil,
 	}
-	count, _ := l.OrganizationPersister.GetOrganizationsCount()
-	if count == 0 {
-		_, err := l.OrganizationPersister.SaveOrganization(org)
-		if err != nil {
-			log.Error(ErrGettingSeededComponents(err, "organization"))
-		}
+	if _, err := l.OrganizationPersister.SaveOrganization(org); err != nil {
+		return ErrSavingSeededComponents(err, "organization")
 	}
+	return nil
 }
 
 func (l *DefaultLocalProvider) Cleanup() error {
@@ -1633,21 +1766,50 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 
 func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
 	updatedCredential := &Credential{}
-	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Updates(credential)
-	if db.Error != nil {
-		return nil, fmt.Errorf("error updating user credential: %v", db.Error)
-	}
-
-	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserId, credential.ID).First(updatedCredential).Error; err != nil {
-		return nil, fmt.Errorf("error getting updated user credential: %v", err)
+	err := l.GetGenericPersister().Transaction(func(tx *gorm.DB) error {
+		live := tx.Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Session(&gorm.Session{})
+		// Updates on a missing or deleted row matches nothing and is not an
+		// error, so look the credential up first.
+		if err := live.First(updatedCredential).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return ErrResultNotFound(fmt.Errorf("credential with id %s not found", credential.ID))
+			}
+			return fmt.Errorf("error getting user credential: %v", err)
+		}
+		if err := live.Updates(credential).Error; err != nil {
+			return fmt.Errorf("error updating user credential: %v", err)
+		}
+		if err := live.First(updatedCredential).Error; err != nil {
+			return fmt.Errorf("error getting updated user credential: %v", err)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 	return updatedCredential, nil
 }
 
-func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialID core.Uuid) (*Credential, error) {
+func (l *DefaultLocalProvider) DeleteUserCredential(req *http.Request, credentialID core.Uuid) (*Credential, error) {
+	// Fail-closed: require an authenticated user in the request context. An unscoped delete is never permitted.
+	if req == nil {
+		return nil, ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
+	}
+	user, ok := req.Context().Value(UserCtxKey).(*User)
+	if !ok || user == nil || user.ID == uuid.Nil {
+		return nil, ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
+	}
+
 	delCredential := &Credential{}
-	if err := l.GetGenericPersister().Model(&Credential{}).Where("id = ?", credentialID).Update("deleted_at", time.Now()).Error; err != nil {
-		return nil, err
+	// Only a live credential matching both credentialID and the caller's user_id can be deleted.
+	result := l.GetGenericPersister().Model(&Credential{}).
+		Where("id = ? AND user_id = ? AND deleted_at is NULL", credentialID, user.ID).
+		Update("deleted_at", time.Now())
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return nil, ErrResultNotFound(fmt.Errorf("credential with id %s not found", credentialID))
 	}
 	if err := l.GetGenericPersister().Where("id = ?", credentialID).First(delCredential).Error; err != nil {
 		return nil, err
@@ -1669,15 +1831,21 @@ func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order
 		return nil, ErrPageNumber(err)
 	}
 
-	pgs, err := strconv.ParseUint(pageSize, 10, 32)
-	if err != nil {
-		return nil, ErrPageSize(err)
+	// "all" lists every organization unpaginated, as the workspace and
+	// environment listings already do. mesheryctl organization --count sends it.
+	all := pageSize == "all"
+	var pgs uint64
+	if !all {
+		pgs, err = strconv.ParseUint(pageSize, 10, 32)
+		if err != nil {
+			return nil, ErrPageSize(err)
+		}
 	}
 
-	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, updatedAfter)
+	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, all, updatedAfter)
 }
 
-// GetKeys returns the list of keys
+// GetUsersKeys returns the list of keys
 func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, search, order, updatedAfter string, _ string) ([]byte, error) {
 	keys, err := l.KeyPersister.GetUsersKeys(search, order, updatedAfter)
 	if err != nil {
@@ -1686,7 +1854,7 @@ func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, search, order, updatedAfter
 	return keys, nil
 }
 
-// GetKey returns the key for the given keyID
+// GetUsersKey returns the key for the given keyID
 func (l *DefaultLocalProvider) GetUsersKey(_ *http.Request, keyID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(keyID)
 	return l.KeyPersister.GetUsersKey(id)
@@ -1889,6 +2057,8 @@ func githubRepoPatternScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
+		Timeout(remoteFileFetchTimeout).
+		MaxFileSize(maxRemoteFileSize).
 		RegisterFileInterceptor(func(f walker.File) error {
 			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
@@ -1933,6 +2103,8 @@ func githubRepoFilterScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
+		Timeout(remoteFileFetchTimeout).
+		MaxFileSize(maxRemoteFileSize).
 		RegisterFileInterceptor(func(f walker.File) error {
 			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
@@ -1964,18 +2136,8 @@ func githubRepoFilterScan(
 	return result, err
 }
 
-func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPattern, error) {
-	resp, err := http.Get(fileURL)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("file not found")
-	}
-
-	defer SafeClose(resp.Body, log)
-
-	body, err := io.ReadAll(resp.Body)
+func genericHTTPPatternFile(fileURL string, _ logger.Handler) ([]MesheryPattern, error) {
+	body, err := fetchRemoteFile(fileURL)
 	if err != nil {
 		return nil, err
 	}
@@ -2001,31 +2163,20 @@ func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPatter
 	return []MesheryPattern{pf}, nil
 }
 
-func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter, error) {
-	resp, err := http.Get(fileURL)
+func genericHTTPFilterFile(fileURL string, _ logger.Handler) ([]MesheryFilter, error) {
+	body, err := fetchRemoteFile(fileURL)
 	if err != nil {
 		return nil, err
 	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("file not found")
-	}
 
-	defer SafeClose(resp.Body, log)
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	result := string(body)
-
-	name, err := GetFilterName(result)
+	name, err := filterNameForURLImport(fileURL, body)
 	if err != nil {
 		return nil, err
 	}
 
 	ff := MesheryFilter{
 		Name:       name,
-		FilterFile: []byte(result),
+		FilterFile: body,
 		Location: map[string]interface{}{
 			"type":   "http",
 			"host":   fileURL,
@@ -2038,23 +2189,6 @@ func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter,
 }
 
 // Events
-
-func (e *EventsPersister) PersistEvent(event events.Event, token string) error {
-	// GORM's Save requires a pointer (it reflects on the struct to read/update
-	// the primary key and timestamps). Passing the value directly produced
-	// "invalid value, should be pointer to struct or slice" and dropped every
-	// system event silently — including the controller-emitted events that
-	// flow through PersistSystemEvent.
-	err := e.DB.Save(&event).Error
-	if err != nil {
-		return ErrPersistEvent(err)
-	}
-	return nil
-}
-
-func (e *EventsPersister) PersistSystemEvent(event events.Event) error {
-	return e.PersistEvent(event, "")
-}
 
 func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {
 	e := l.EventsPersister

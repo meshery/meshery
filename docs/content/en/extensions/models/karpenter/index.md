@@ -29,7 +29,19 @@ components:
   colorIcon: extensions/models/karpenter/components/oci-node-class/icons/color/oci-node-class-color.svg
   whiteIcon: extensions/models/karpenter/components/oci-node-class/icons/white/oci-node-class-white.svg
   description: 
-components-count: 5
+- name: gce-node-class
+  colorIcon: extensions/models/karpenter/components/gce-node-class/icons/color/gce-node-class-color.svg
+  whiteIcon: extensions/models/karpenter/components/gce-node-class/icons/white/gce-node-class-white.svg
+  description: 
+- name: node-overlay
+  colorIcon: extensions/models/karpenter/components/node-overlay/icons/color/node-overlay-color.svg
+  whiteIcon: extensions/models/karpenter/components/node-overlay/icons/white/node-overlay-white.svg
+  description: 
+- name: gce-custom-machine-type
+  colorIcon: extensions/models/karpenter/components/gce-custom-machine-type/icons/color/gce-custom-machine-type-color.svg
+  whiteIcon: extensions/models/karpenter/components/gce-custom-machine-type/icons/white/gce-custom-machine-type-white.svg
+  description: 
+components-count: 8
 relationships: 
 relationship-count: 0
 featureList: [

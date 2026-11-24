@@ -12,9 +12,15 @@
  * @returns {Object} - An object representing column visibility, where keys are column names, and values are booleans indicating visibility.
  */
 
-export const updateVisibleColumns = (colViews, width) => {
+export const updateVisibleColumns = (colViews?: unknown, width?: number | unknown) => {
+  if (!Array.isArray(colViews)) {
+    return {};
+  }
+
+  const screenWidth = typeof width === 'number' && !isNaN(width) ? width : 0;
+
   // Create a mapping of screen sizes to their minimum widths
-  const screenSizeMap = {
+  const screenSizeMap: Record<string, number> = {
     na: 0,
     xs: 585,
     s: 690,
@@ -24,33 +30,57 @@ export const updateVisibleColumns = (colViews, width) => {
   };
 
   // Determine the minimum width for visibility based on the provided screen size
-  const getMinWidthForScreenSize = (screenSize) => {
+  const getMinWidthForScreenSize = (screenSize: unknown) => {
+    if (typeof screenSize !== 'string') {
+      return 0;
+    }
     return screenSizeMap[screenSize] || 0;
   };
 
   // Initialize showCols as an empty object
-  const showCols = {};
+  const showCols: Record<string, boolean> = {};
 
   colViews.forEach((col) => {
+    if (!Array.isArray(col) || col.length !== 2) {
+      return;
+    }
+
     const [columnName, screenSize] = col;
-    const minScreenWidth = getMinWidthForScreenSize(screenSize);
+    if (typeof columnName !== 'string' || !columnName) {
+      return;
+    }
+
+    const normalizedScreenSize = typeof screenSize === 'string' ? screenSize : '';
+    const minScreenWidth = getMinWidthForScreenSize(normalizedScreenSize);
 
     // Determine if the column should be visible based on screen width and rules
-    if (screenSize === 'na') {
+    if (normalizedScreenSize === 'na') {
       showCols[columnName] = false; // "na" columns are not visible in any screen size
-    } else if (screenSize === 'xs') {
+    } else if (normalizedScreenSize === 'xs') {
       showCols[columnName] = true; // "xs" columns are visible in all screen sizes
     } else {
       // For other screen sizes, check if the screen width is greater than or equal to the minimum width
-      showCols[columnName] = width >= minScreenWidth;
+      showCols[columnName] = screenWidth >= minScreenWidth;
     }
   });
 
   return showCols;
 };
 
-export const getResponsiveColumnVisibility = (columnNames, colViews, width) => {
+export const getResponsiveColumnVisibility = (
+  columnNames?: unknown,
+  colViews?: unknown,
+  width?: number | unknown,
+) => {
+  if (!Array.isArray(columnNames) || !Array.isArray(colViews)) {
+    return {};
+  }
+
   const showCols = updateVisibleColumns(colViews, width);
 
-  return Object.fromEntries(columnNames.map((columnName) => [columnName, showCols[columnName]]));
+  return Object.fromEntries(
+    columnNames
+      .filter((colName): colName is string => typeof colName === 'string')
+      .map((columnName) => [columnName, showCols[columnName]]),
+  );
 };

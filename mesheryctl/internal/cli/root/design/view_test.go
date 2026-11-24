@@ -5,6 +5,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -28,8 +29,17 @@ func TestDesignView(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
 					Response:     "view.design.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					// GetID paginates: the page-0 fixture reports
+					// totalCount 318 with 10 items, so a second page is
+					// requested. The empty page lets the lookup conclude.
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000&page=1",
+					Response:     "pattern.empty.response.golden",
 					ResponseCode: 200,
 				},
 				{
@@ -48,8 +58,17 @@ func TestDesignView(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
 					Response:     "view.design.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					// GetID paginates: the page-0 fixture reports
+					// totalCount 318 with 10 items, so a second page is
+					// requested. The empty page lets the lookup conclude.
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000&page=1",
+					Response:     "pattern.empty.response.golden",
 					ResponseCode: 200,
 				},
 				{
@@ -77,8 +96,17 @@ func TestDesignView(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
 					Response:     "view.design.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					// GetID paginates: the page-0 fixture reports
+					// totalCount 318 with 10 items, so a second page is
+					// requested. The empty page lets the lookup conclude.
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000&page=1",
+					Response:     "pattern.empty.response.golden",
 					ResponseCode: 200,
 				},
 				{
@@ -91,6 +119,37 @@ func TestDesignView(t *testing.T) {
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound("nonexistent-design"),
+		},
+		{
+			Name:             "given invalid output format when design view then error is returned",
+			Args:             []string{"view", "desgin", "--output-format", "invalid"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "view.design.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					// GetID paginates: the page-0 fixture reports
+					// totalCount 318 with 10 items, so a second page is
+					// requested. The empty page lets the lookup conclude.
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000&page=1",
+					Response:     "pattern.empty.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=desgin",
+					Response:     "view.design.api.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  display.ErrUnsupportedFormat("invalid"),
 		},
 	}
 

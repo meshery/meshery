@@ -9,13 +9,16 @@ import {
   Card,
   CardContent,
   CustomTooltip,
-  Button,
   DeleteIcon,
   DragIcon,
   type Theme,
+  useMediaQuery,
 } from '@sistent/sistent';
+import { useSelector } from 'react-redux';
 
+import type { RootState } from '../../store';
 import { iconMedium } from 'css/icons.styles';
+import { ActionButton } from './style';
 
 type Widget = {
   key: string;
@@ -29,6 +32,12 @@ const layoutIconProps = (theme: Theme) => ({
   primaryFill: theme.palette.background.neutral.default,
   width: '30',
   height: '30',
+});
+
+const actionIconProps = (theme: Theme) => ({
+  fill: theme.palette.background.neutral.default,
+  primaryFill: theme.palette.background.neutral.default,
+  ...iconMedium,
 });
 
 type AddWidgetsToLayoutPanelProps = {
@@ -155,13 +164,14 @@ type LayoutActionButtonProps = {
   Icon: React.ComponentType<{
     fill?: string;
     primaryFill?: string;
-    width?: string;
-    height?: string;
+    width?: string | number;
+    height?: string | number;
   }>;
-  label: React.ReactNode;
+  label: string;
   action: () => void;
   description: React.ReactNode;
   isShown: boolean;
+  alwaysShowLabel?: boolean;
 };
 
 export const LayoutActionButton = ({
@@ -170,25 +180,37 @@ export const LayoutActionButton = ({
   action,
   description,
   isShown,
+  alwaysShowLabel = false,
 }: LayoutActionButtonProps) => {
   const theme = useTheme();
-  const iconsProps = layoutIconProps(theme);
+  const iconsProps = actionIconProps(theme);
+  const { isDrawerCollapsed } = useSelector((state: RootState) => state.ui);
+  const isSmallTablet = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   if (!isShown) {
     return null;
   }
 
+  if (!alwaysShowLabel && ((isSmallTablet && !isDrawerCollapsed) || isMobile)) {
+    return (
+      <CustomTooltip title={description} variant="standard">
+        <ActionButton
+          variant="text"
+          onClick={action}
+          aria-label={label}
+          endIcon={<Icon {...iconsProps} />}
+        ></ActionButton>
+      </CustomTooltip>
+    );
+  }
+
   return (
-    <Button
-      variant="text"
-      style={{ color: iconsProps.fill }}
-      onClick={action}
-      endIcon={<Icon {...iconsProps} />}
-    >
-      <CustomTooltip title={description} fontSize="1rem" variant="standard">
+    <ActionButton variant="text" onClick={action} endIcon={<Icon {...iconsProps} />}>
+      <CustomTooltip title={description} variant="standard">
         <div>{label}</div>
       </CustomTooltip>
-    </Button>
+    </ActionButton>
   );
 };
 

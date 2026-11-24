@@ -2,6 +2,8 @@ import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+const canSpy = vi.fn((_key?: unknown) => true);
+
 const routerPush = vi.fn();
 const dispatchMock = vi.fn();
 const notifyMock = vi.fn();
@@ -47,17 +49,20 @@ vi.mock('lib/event-types', () => ({
   EVENT_TYPES: { ERROR: 'error' },
 }));
 
-vi.mock('@/utils/can', () => ({
-  default: () => true,
-}));
-
 vi.mock('@sistent/sistent', () => ({
   MenuIcon: () => <svg data-testid="menu-icon" />,
+  // Mirrors the real NavigationNavbar contract: an item whose `permission` is
+  // false is rendered but disabled (`permission ?? true`), not hidden.
   NavigationNavbar: ({ navigationItems }: any) => (
     <ul data-testid="navigation-navbar">
       {(navigationItems || []).map((item: any) => (
         <li key={item.id}>
-          <button type="button" data-testid={`nav-item-${item.id}`} onClick={item.onClick}>
+          <button
+            type="button"
+            data-testid={`nav-item-${item.id}`}
+            disabled={!(item.permission ?? true)}
+            onClick={item.onClick}
+          >
             {item.title}
           </button>
         </li>
@@ -66,6 +71,7 @@ vi.mock('@sistent/sistent', () => ({
   ),
   Popover: ({ open, children }: any) =>
     open ? <div data-testid="header-popover">{children}</div> : null,
+  useHasPermission: (key: { id?: string }) => canSpy(key),
 }));
 
 vi.mock('./Header.styles', () => ({
@@ -90,10 +96,13 @@ vi.mock('@/utils/hooks/useRegistryModal', () => ({
   useRegistryModal: () => ({ openModal: openRegistryModalMock }),
 }));
 
+import { Keys } from '@meshery/schemas/permissions';
 import HeaderMenu from './HeaderMenu';
 
 describe('HeaderMenu', () => {
   beforeEach(() => {
+    canSpy.mockClear();
+    canSpy.mockReturnValue(true);
     routerPush.mockReset();
     dispatchMock.mockReset();
     notifyMock.mockReset();
@@ -199,6 +208,17 @@ describe('HeaderMenu', () => {
     fireEvent.click(screen.getByTestId('menu-button'));
     fireEvent.click(screen.getByTestId('nav-item-logout'));
     expect(window.location.href).toBe('/user/logout');
+  });
+
+  it('disables the Get Token item when the download-token permission is denied', () => {
+    canSpy.mockReturnValue(false);
+    render(<HeaderMenu />);
+    fireEvent.click(screen.getByTestId('menu-button'));
+
+    // NavigationNavbar renders a permission-denied item disabled rather than
+    // hiding it, so the item stays present but is not actionable.
+    expect(screen.getByTestId('nav-item-get-token')).toBeDisabled();
+    expect(canSpy).toHaveBeenCalledWith(Keys.SecurityManagementDownloadToken);
   });
 
   it('triggers a token download when the Get Token item is clicked', async () => {

@@ -1,11 +1,7 @@
-<div id="breadcrumbs">
-  {{ if not .IsHome }}
-    <a href="{{ "" | relURL }}">home</a>
-    {{ range .Ancestors.Reverse }}
-      {{ if ne . $.Site.Home }}
-        / <a href="{{ .RelPermalink }}">{{ lower .LinkTitle }}</a>
-      {{ end }}
-    {{ end }}
-    / {{ lower .Page.Title }}
+<li class="breadcrumb-item"><a href="{{ "" | relURL }}">home</a></li>
+{{ range .Ancestors.Reverse }}
+  {{ if ne . $.Site.Home }}
+    <li class="breadcrumb-item"><a href="{{ .RelPermalink }}">{{ lower .LinkTitle }}</a></li>
   {{ end }}
-</div>
+{{ end }}
+<li class="breadcrumb-item active" aria-current="page">{{ lower .Page.Title }}</li>

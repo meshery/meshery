@@ -1,7 +1,11 @@
 package models
 
 import (
+	"bytes"
 	"encoding/json"
+	"net/url"
+	"path"
+	"strings"
 	"time"
 
 	"github.com/meshery/meshery/server/internal/sql"
@@ -15,8 +19,12 @@ type MesheryFilter struct {
 
 	Name       string `json:"name,omitempty"`
 	FilterFile []byte `json:"filterFile"`
-	// Meshery doesn't have the owner field
-	// but the remote provider is allowed to provide one
+	// Owner is the id of the filter's owner. "owner" is the canonical wire key
+	// for filters per the schemas v1beta3 filter.MesheryFilter contract (and is
+	// what meshery-cloud emits) - unlike designs, whose canonical key is
+	// "userId". It is not persisted locally (gorm:"-"): the built-in provider is
+	// single-user and stamps the owner on read (see the filter persister), while
+	// the remote provider supplies it.
 	Owner *string `json:"owner" gorm:"-"`
 
 	Location       sql.Map    `json:"location"`
@@ -32,8 +40,9 @@ type MesheryFilterPayload struct {
 
 	Name       string `json:"name,omitempty"`
 	FilterFile []byte `json:"filterFile"`
-	// Meshery doesn't have the owner field
-	// but the remote provider is allowed to provide one
+	// Owner is the id of the filter's owner, keyed as "owner" per the schemas
+	// v1beta3 filter contract. The remote provider is allowed to supply one;
+	// the built-in provider derives it from its single user.
 	Owner *string `json:"owner"`
 
 	Location       sql.Map    `json:"location"`
@@ -51,7 +60,7 @@ type MesheryCatalogFilterRequestBody struct {
 	CatalogData sql.Map   `json:"catalogData,omitempty"`
 }
 
-// MesheryCatalogFilterRequestBody refers to the type of request body
+// MesheryCloneFilterRequestBody refers to the type of request body
 // that CloneMesheryFilterHandler would receive
 type MesheryCloneFilterRequestBody struct {
 	Name string `json:"name,omitempty"`
@@ -124,5 +133,37 @@ func GetFilterName(stringifiedFile string) (string, error) {
 		return "", ErrFilterFileName
 	}
 
+	return name, nil
+}
+
+// wasmMagic is the header every WebAssembly binary module starts with.
+var wasmMagic = []byte("\x00asm")
+
+// filterNameForURLImport names a filter imported from fileURL. A WebAssembly
+// module carries no name of its own, so it is named after the file in the URL
+// path without its .wasm extension, or after the host when the path names no
+// file. Any other body is a filter YAML file, named by its name field.
+func filterNameForURLImport(fileURL string, body []byte) (string, error) {
+	if !bytes.HasPrefix(body, wasmMagic) {
+		return GetFilterName(string(body))
+	}
+
+	u, err := url.Parse(fileURL)
+	if err != nil {
+		return "", err
+	}
+	name := path.Base(u.Path)
+	if ext := path.Ext(name); strings.EqualFold(ext, ".wasm") {
+		name = strings.TrimSuffix(name, ext)
+	}
+	// A path ending in a slash names a directory, not a file, so it also
+	// falls back to the host: path.Base strips the slash and would return
+	// the directory name instead.
+	if name == "" || name == "." || name == "/" || strings.HasSuffix(u.Path, "/") {
+		name = u.Hostname()
+	}
+	if name == "" {
+		return "", ErrFilterFileName
+	}
 	return name, nil
 }

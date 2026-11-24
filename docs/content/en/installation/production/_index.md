@@ -14,7 +14,7 @@ aliases:
 
 Meshery is a powerful, extensible engineering platform for the collaborative
 design and operation of cloud and cloud native infrastructure. Running it in
-production—as a shared, always-on management plane that teams depend on—calls
+production - as a shared, always-on management plane that teams depend on - calls
 for deliberate planning across reliability, scalability, security, and
 operability.
 
@@ -26,7 +26,7 @@ confidence in a production environment. It does not replace the
 
 {{% alert title="Who this guide is for" color="info" %}}
 Platform engineers, SREs, and operators who are standing up Meshery as a
-durable, multi-user service—whether self-hosted in a single cluster, spread
+durable, multi-user service - whether self-hosted in a single cluster, spread
 across multiple clusters and clouds, or run out-of-cluster alongside the
 infrastructure it manages.
 {{% /alert %}}
@@ -63,7 +63,7 @@ reference material.
 | **[Infrastructure, Sizing & Performance]({{< ref "installation/production/infrastructure-sizing-and-performance.md" >}})** | Resource requirements per component, capacity planning, MeshSync tiered discovery, Broker throughput, scalability levers, and known performance bounds. |
 | **[High Availability & Resiliency]({{< ref "installation/production/high-availability-and-resiliency.md" >}})** | Replication, health probes, failure modes and recovery, the ephemeral database, Remote Provider persistence, and backup & disaster recovery posture. |
 | **[Networking & Connectivity]({{< ref "installation/production/networking-and-connectivity.md" >}})** | Network port and directional-flow matrix, ingress and Emissary configuration, secure WebSocket support, CDN and edge caching of the UI, Broker exposure, egress, and network policies. |
-| **[Security Hardening]({{< ref "installation/production/security-hardening.md" >}})** | RBAC and least privilege, pod and container security contexts, secret and kubeconfig handling, TLS, supply-chain integrity, and namespace isolation. |
+| **[Security Hardening]({{< ref "installation/production/security-hardening.md" >}})** | RBAC and least privilege, pod and container security contexts, secret and kubeconfig handling, TLS, supply-chain integrity, namespace isolation, and [trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}). |
 | **[Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}})** | Why to preselect a Remote Provider over the Local Provider, OAuth callback configuration, identity providers, and keys/permissions. |
 | **[Multi-Cluster & Multi-Cloud Operations]({{< ref "installation/production/multi-cluster-and-multi-cloud.md" >}})** | Managed vs. unmanaged cluster connections, one Operator per cluster, kubeconfig and context management, MeshSync modes, and cloud-specific guidance. |
 | **[Monitoring, Observability & Health KPIs]({{< ref "installation/production/monitoring-observability-and-kpis.md" >}})** | Health endpoints, the key performance indicators of Meshery's health, metrics, tracing, centralized logging, and alerting. |
@@ -86,10 +86,16 @@ deployment decisions:
    driven as much by the size and number of clusters it discovers (via
    [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}})) as by user-facing API load.
 4. **Make connectivity explicit.** Know which ports flow in which direction
-   between Meshery Server, the Broker, and each managed cluster—especially for
+   between Meshery Server, the Broker, and each managed cluster - especially for
    out-of-cluster and multi-cloud topologies.
 5. **Observe the management plane itself.** Meshery exposes health endpoints and
    metrics; treat them as first-class signals and alert on them.
+6. **Treat every enabled extension as trusted code.** Meshery's
+   [extension points]({{< ref "reference/extensibility/_index.md" >}}) - adapters,
+   Providers, models and integrations, and UI extensions - run inside your
+   deployment's trust boundary, without a sandbox between them and Meshery. Enable
+   only what you need, from publishers you trust, at versions you pin. See
+   [Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}).
 
 ## Before you begin
 

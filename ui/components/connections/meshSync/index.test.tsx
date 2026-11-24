@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import MeshSyncTable from './index';
 
@@ -9,6 +9,8 @@ const useGetMeshSyncResourcesQuery = vi.fn();
 const useGetMeshSyncResourceKindsQuery = vi.fn();
 const getResponsiveColumnVisibility = vi.fn();
 let dataTableProps: any;
+let searchBarProps: any;
+let filterProps: any;
 let windowWidth = 1200;
 
 vi.mock('@sistent/sistent', () => ({
@@ -25,8 +27,14 @@ vi.mock('@sistent/sistent', () => ({
     dataTableProps = props;
     return <div data-testid="mesh-sync-table" />;
   },
-  SearchBar: () => <div />,
-  UniversalFilter: () => <div />,
+  SearchBar: (props) => {
+    searchBarProps = props;
+    return <div />;
+  },
+  UniversalFilter: (props) => {
+    filterProps = props;
+    return <div />;
+  },
   TableCell: ({ children }) => <div>{children}</div>,
   TableRow: ({ children }) => <div>{children}</div>,
   styled: (Component) => () => {
@@ -37,6 +45,13 @@ vi.mock('@sistent/sistent', () => ({
     return StyledComponent;
   },
   accentGrey: 'gray',
+  DataTableToolbar: ({ search, filter, columnVisibility }) => (
+    <div data-testid="datatable-toolbar">
+      {search}
+      {filter}
+      {columnVisibility}
+    </div>
+  ),
 }));
 
 vi.mock('../../../utils/hooks/useNotification', () => ({
@@ -100,14 +115,6 @@ vi.mock('../styles', () => ({
   InnerTableContainer: ({ children }) => <div>{children}</div>,
 }));
 
-vi.mock('@/assets/styles/general/tool.styles', () => ({
-  ToolWrapper: ({ children }) => <div>{children}</div>,
-}));
-
-vi.mock('@/store/slices/mesheryUi', () => ({
-  updateProgress: vi.fn(),
-}));
-
 vi.mock('./MeshSyncEmptyState', () => ({
   default: () => <div data-testid="mesh-sync-empty-state" />,
 }));
@@ -115,6 +122,8 @@ vi.mock('./MeshSyncEmptyState', () => ({
 describe('MeshSyncTable', () => {
   beforeEach(() => {
     dataTableProps = undefined;
+    searchBarProps = undefined;
+    filterProps = undefined;
     notify.mockReset();
     getK8sClusterIdsFromCtxId.mockReset();
     useGetMeshSyncResourcesQuery.mockReset();
@@ -170,6 +179,86 @@ describe('MeshSyncTable', () => {
     );
   });
 
+  it('resets to the first page when the search changes', () => {
+    render(<MeshSyncTable />);
+
+    act(() => {
+      dataTableProps.options.onTableChange('changePage', { page: 2 });
+    });
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: '2' }),
+    );
+
+    act(() => {
+      searchBarProps.onSearch('cor');
+    });
+
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 0, search: 'cor' }),
+    );
+  });
+
+  it('resets to the first page when rows per page changes', () => {
+    render(<MeshSyncTable />);
+
+    act(() => {
+      dataTableProps.options.onTableChange('changePage', { page: 2 });
+    });
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: '2' }),
+    );
+
+    // The datatable clamps its own page here; keeping page 2 with 25 rows
+    // would ask for a page past the end and show an empty table.
+    act(() => {
+      dataTableProps.options.onTableChange('changeRowsPerPage', { rowsPerPage: 25, page: 0 });
+    });
+
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 0, pagesize: '25' }),
+    );
+  });
+
+  it('resets to the first page when filters are applied', () => {
+    render(<MeshSyncTable />);
+
+    act(() => {
+      dataTableProps.options.onTableChange('changePage', { page: 2 });
+    });
+
+    act(() => {
+      filterProps.setSelectedFilters({ kind: 'Pod', model: 'All', namespace: 'All' });
+    });
+    act(() => {
+      filterProps.handleApplyFilter();
+    });
+
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 0, kind: 'Pod' }),
+    );
+  });
+
+  it('resets to the first page when the selected clusters change', () => {
+    const { rerender } = render(<MeshSyncTable />);
+
+    act(() => {
+      dataTableProps.options.onTableChange('changePage', { page: 2 });
+    });
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: '2' }),
+    );
+
+    getK8sClusterIdsFromCtxId.mockReturnValue(['cluster-c']);
+    rerender(<MeshSyncTable />);
+
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        page: 0,
+        clusterIds: JSON.stringify(['cluster-c']),
+      }),
+    );
+  });
+
   it('notifies when fetching mesh sync resources fails', () => {
     useGetMeshSyncResourcesQuery.mockReturnValue({
       data: { resources: [], totalCount: 0 },
@@ -187,6 +276,7 @@ describe('MeshSyncTable', () => {
         details: 'MeshSync unavailable',
       }),
     );
+    expect(notify).toHaveBeenCalledTimes(1);
   });
 
   it('recomputes responsive column visibility when the window width changes', async () => {

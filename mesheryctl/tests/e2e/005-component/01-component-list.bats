@@ -8,19 +8,19 @@ setup() {
 
 }
 
-@test "Help for components list command" {
+@test "[cut=Component][tg=Component List] Help for components list command" {
   run $MESHERYCTL_BIN component list --help
   assert_success
   assert_output --partial "List all components registered in Meshery Server"
 }
 
-@test "Count components" {
+@test "[cut=Component][tg=Component List] Count components" {
   run $MESHERYCTL_BIN component list --count
   assert_success
   assert_output --regexp "$LIST_COMMAND_OUTPUT_REGEX_PATTERN"
 }
 
-@test "component list shows header and pagination info" {
+@test "[cut=Component][tg=Component List] component list shows header and pagination info" {
   run $MESHERYCTL_BIN component list --page 1
   assert_success
   assert_line --index 0 --regexp "$LIST_COMMAND_OUTPUT_REGEX_PATTERN"

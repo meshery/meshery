@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { NoSsr } from '@sistent/sistent';
+import { NoSsr, useHasPermission } from '@sistent/sistent';
 import {
   CustomTooltip,
   Typography,
@@ -12,7 +12,7 @@ import {
   LeftArrowIcon,
   DatabaseIcon,
   MendeleyIcon,
-  FileIcon,
+  AppRegistrationIcon,
   SettingsIcon,
   useTheme,
 } from '@sistent/sistent';
@@ -28,7 +28,7 @@ import {
   getRelationshipsDetail,
   getMeshModelRegistrants,
 } from '../../api/meshmodel';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import { ADAPTERS, RESET, OVERVIEW, REGISTRY, CONTROLLERS } from '@/constants/navigator';
 import MesheryControllersConfig from './MesheryControllersConfig';
@@ -113,14 +113,22 @@ const settingsRouter = (router: ReturnType<typeof useRouter>): SettingsRouter =>
   };
 };
 
-//TODO: Tabs are hardcoded everywhere
+/**
+ * MesherySettings renders system configurations, registered adapters, and capabilities.
+ * Gated on `Keys.MesherySystemViewSettings`. Skips background queries when access is denied.
+ */
 const MesherySettings = () => {
+  const canViewSettings = useHasPermission(Keys.MesherySystemViewSettings);
+  const canViewInfra = useHasPermission(Keys.InfrastructureManagementViewCloudNativeInfrastructure);
+  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
   const router = useRouter();
   const { selectedSettingsCategory } = settingsRouter(router);
   const theme = useTheme();
   const { k8sConfig } = useSelector((state) => state.ui);
   const { meshAdapters } = useSelector((state) => state.adapter);
-  const { data: providerCapabilities } = useGetProviderCapabilitiesQuery();
+  const { data: providerCapabilities } = useGetProviderCapabilitiesQuery(undefined, {
+    skip: !canViewSettings,
+  });
   const [state, setState] = useState({
     meshAdapters,
     tabVal: selectedSettingsCategory || OVERVIEW,
@@ -134,12 +142,23 @@ const MesherySettings = () => {
   const systemResetPromptRef = useRef<{ show: (_args: any) => Promise<string> } | null>(null);
 
   useEffect(() => {
+    if (!canViewSettings) {
+      return;
+    }
+    let isCancelled = false;
+    /**
+     * Fetches models, components, relationships, and registrant counts for overview display.
+     */
     const fetchData = async () => {
       try {
         const modelsResponse = await getMeshModels();
+        if (isCancelled) return;
         const componentsResponse = await getComponentsDetail();
+        if (isCancelled) return;
         const relationshipsResponse = await getRelationshipsDetail();
+        if (isCancelled) return;
         const registrantResponce = await getMeshModelRegistrants();
+        if (isCancelled) return;
 
         const modelsCount = removeDuplicateVersions(modelsResponse.models).length;
         const componentsCount = componentsResponse.totalCount;
@@ -158,7 +177,10 @@ const MesherySettings = () => {
       }
     };
     fetchData();
-  }, []);
+    return () => {
+      isCancelled = true;
+    };
+  }, [canViewSettings]);
 
   useEffect(() => {
     const { selectedSettingsCategory } = settingsRouter(router);
@@ -200,7 +222,7 @@ const MesherySettings = () => {
   }
   return (
     <>
-      {CAN(Keys.MesherySystemViewSettings.id, Keys.MesherySystemViewSettings.function) ? (
+      {canViewSettings ? (
         <>
           <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
             <StyledPaper square>
@@ -240,26 +262,16 @@ const MesherySettings = () => {
                     label="Adapters"
                     data-cy="tabServiceMeshes"
                     value={ADAPTERS}
-                    disabled={
-                      !CAN(
-                        Keys.InfrastructureManagementViewCloudNativeInfrastructure.id,
-                        Keys.InfrastructureManagementViewCloudNativeInfrastructure.function,
-                      )
-                    }
+                    disabled={!canViewInfra}
                   />
                 </CustomTooltip>
                 <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
                   <Tab
-                    icon={<FileIcon {...iconMedium} fill={theme.palette.icon.default} />}
+                    icon={<AppRegistrationIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Registry"
                     data-testid="settings-tab-registry"
                     value={REGISTRY}
-                    disabled={
-                      !CAN(
-                        Keys.MesherySystemViewRegistry.id,
-                        Keys.MesherySystemViewRegistry.function,
-                      )
-                    }
+                    disabled={!canViewRegistry}
                   />
                 </CustomTooltip>
 
@@ -337,16 +349,12 @@ const MesherySettings = () => {
                 </NoSsr>
               </TabContainer>
             )}
-            {tabVal === ADAPTERS &&
-              CAN(
-                Keys.InfrastructureManagementViewCloudNativeInfrastructure.id,
-                Keys.InfrastructureManagementViewCloudNativeInfrastructure.function,
-              ) && (
-                <TabContainer>
-                  <MeshAdapterConfigComponent />
-                </TabContainer>
-              )}
-            {tabVal === REGISTRY && (
+            {tabVal === ADAPTERS && canViewInfra && (
+              <TabContainer>
+                <MeshAdapterConfigComponent />
+              </TabContainer>
+            )}
+            {tabVal === REGISTRY && canViewRegistry && (
               <TabContainer>
                 <MeshModelComponent settingsRouter={settingsRouter} />
               </TabContainer>
@@ -368,7 +376,7 @@ const MesherySettings = () => {
           </div>
         </>
       ) : (
-        <DefaultError />
+        <DefaultError permissionKey={Keys.MesherySystemViewSettings} />
       )}
     </>
   );

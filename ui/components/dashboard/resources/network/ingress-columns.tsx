@@ -5,7 +5,7 @@ import { SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
 import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
-import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { CoreConnectionKinds } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
 
 export const buildIngressColumns = ({
@@ -155,7 +155,7 @@ export const buildIngressColumns = ({
                 title={context.name}
                 iconSrc={
                   connectionMetadataState
-                    ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                    ? connectionMetadataState[CoreConnectionKinds.kubernetes]?.icon
                     : ''
                 }
                 handlePing={() => ping(context.name, context.server, context.connectionId)}

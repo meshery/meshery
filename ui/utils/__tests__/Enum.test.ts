@@ -2,8 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   ACTIONS,
   APP_MODE,
-  CONNECTION_KINDS,
-  CONNECTION_KINDS_DEF,
+  CoreConnectionKinds,
   CONNECTION_STATES,
   CONNECTION_STATE_TO_TRANSITION_MAP,
   CON_OPS,
@@ -122,17 +121,13 @@ describe('Enum constants', () => {
     expect(MesheryFiltersCatalog).toBe('meshery-filters-catalog');
   });
 
-  it('CONNECTION_KINDS_DEF and CONNECTION_KINDS describe the same provider set', () => {
-    expect(CONNECTION_KINDS_DEF).toEqual([
-      'MESHERY',
-      'KUBERNETES',
-      'PROMETHEUS',
-      'GRAFANA',
-      'GITHUB',
-    ]);
-    expect(Object.keys(CONNECTION_KINDS).sort()).toEqual([...CONNECTION_KINDS_DEF].sort());
-    expect(CONNECTION_KINDS.MESHERY).toBe('meshery');
-    expect(CONNECTION_KINDS.KUBERNETES).toBe('kubernetes');
+  it('re-exports first-class connection kinds from schemas', () => {
+    // The full set of kinds is fetched from the registry; only these
+    // special-cased kinds are named, and their literals are sourced from
+    // meshery/schemas (CoreConnectionKinds) rather than hardcoded here.
+    expect(CoreConnectionKinds.kubernetes).toBe('kubernetes');
+    expect(CoreConnectionKinds.grafana).toBe('grafana');
+    expect(CoreConnectionKinds.prometheus).toBe('prometheus');
   });
 
   it('MESHSYNC enums expose deployment/state strings', () => {

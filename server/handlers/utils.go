@@ -4,10 +4,13 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strconv"
 	"strings"
 
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/httputil"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	meshkitutils "github.com/meshery/meshkit/utils"
 )
 
@@ -54,6 +57,27 @@ func writeJSONEmptyObject(w http.ResponseWriter, status int) {
 	httputil.WriteJSONEmptyObject(w, status)
 }
 
+// requireProvider verifies that provider is non-nil (guarding both untyped nil
+// and typed nil pointers). When provider is nil, it logs via h.log (if non-nil),
+// writes ErrNilProvider() with HTTP 500, and returns false.
+func (h *Handler) requireProvider(w http.ResponseWriter, provider models.Provider) bool {
+	if provider == nil {
+		if h != nil && h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return false
+	}
+	if val := reflect.ValueOf(provider); val.Kind() == reflect.Pointer && val.IsNil() {
+		if h != nil && h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return false
+	}
+	return true
+}
+
 // providerStatus returns the HTTP status to surface for a failure that came
 // back from the provider layer.
 //
@@ -71,6 +95,15 @@ func writeJSONEmptyObject(w http.ResponseWriter, status int) {
 // resource that we have no evidence for.
 func providerStatus(err error) int {
 	return httputil.StatusForProviderError(err, http.StatusBadGateway)
+}
+
+// providerStatusOrInternal is providerStatus for a code path the *local*
+// provider also reaches. There the failure is a Meshery Server one - its own
+// database - and 502 would blame an upstream that was never involved, so the
+// fallback stays 500. A tagged provider status is still honoured, which is the
+// whole point of reading it back.
+func providerStatusOrInternal(err error) int {
+	return httputil.StatusForProviderError(err, http.StatusInternalServerError)
 }
 
 const (
@@ -91,7 +124,7 @@ func getPaginationParams(req *http.Request) (page, offset, limit int, search, or
 	}
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 {
+		if limit <= 0 {
 			limit = defaultPageSize
 		}
 	}
@@ -217,4 +250,11 @@ func SafeOpenFile(providedPath string) (*os.File, error) {
 	}
 
 	return nil, errFileOutsideAllowedDirs
+}
+
+// isPaginationError reports whether err is a rejected `page` or `pagesize`
+// query parameter. That is a client error: answer it with 400.
+func isPaginationError(err error) bool {
+	code := meshkiterrors.GetCode(err)
+	return code == models.ErrPageNumberCode || code == models.ErrPageSizeCode
 }

@@ -14,7 +14,7 @@ Meshery’s build and release system incorporates many tools, organized into dif
 Today, Meshery and Meshery adapters are released as Docker container images, available on Docker Hub. Meshery adapters are out-of-process adapters (meaning not compiled into the main Meshery binary), and as such, are independent build artifacts and Helm charts. The Docker images are created and tagged with the git commit SHA, then pushed to Docker Hub automatically using GitHub Actions. Subsequently, when contributions containing content for the Helm charts of Meshery and Meshery Adapter are linted and merged, they will be pushed and released to [meshery.io](https://github.com/meshery/meshery.io) Github page by GitHub Action automatically.
 
 All repositories under the `github.com/meshery` and `github.com/meshery-extensions` organizations use immutable releases.
-<img width="954" height="166" alt="immutable-releases-setting" src="https://github.com/user-attachments/assets/4435086f-db09-449e-a154-70979b8b01d1" />
+<img class="content-image" alt="GitHub Immutable Releases Setting" src="https://github.com/user-attachments/assets/4435086f-db09-449e-a154-70979b8b01d1" />
 
 
 ### Artifact Repositories
@@ -49,11 +49,11 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `METAL_AUTH_TOKEN`: Authentication token for metal provider
 - `METAL_SERVER1`: Configuration for metal server 1
 - `PLAYGROUND_CONFIG`: Configuration for playground environments
-- `PROVIDER_TOKEN`: General provider authentication token
-- `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter
-- `RELEASEDRAFTER_PAT`: Personal access token for release notes generation
+- `PROVIDER_TOKEN`: Legacy static remote-provider token, last refreshed 2024-03-08 and expired. Do not use it to authenticate against a remote provider - use `REMOTE_PROVIDER_TEST_USER_TOKEN`. Still referenced by the adapter workflows (`e2etest.yaml`, `mesheryctl-e2e.yaml`).
+- `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter, used for release notes generation
+- `REMOTE_PROVIDER_TEST_USER_TOKEN`: Maintained session token for the purpose-built remote-provider CI test user. This is the token the E2E workflow (`test-e2e.yml`, as `PROVIDER_TOKEN`) and the mesheryctl BATS suite (`mesheryctl-e2e.yaml`, as `MESHERY_PROVIDER_TOKEN`) authenticate with.
 - `REMOTE_PROVIDER_USER_EMAIL`: Email used for authentication in Playwright tests
-- `REMOTE_PROVIDER_USER_PASS`: Password used for authentication in Playwright tests
+- `REMOTE_PROVIDER_USER_PASS`: Password used for authentication in Playwright tests. Note that `ui/tests/e2e/env.js` reads `REMOTE_PROVIDER_USER_PASSWORD`, so this secret's name does not match the variable it would have to fill; the email/password path is consequently not wired into CI, which authenticates by token instead.
 
 The Docker Hub user, `mesheryci`, belongs to the "ciusers" team in Docker Hub and acts as the service account under which these automated builds are being pushed. Every time a new Docker Hub repository is created we have to grant “Admin” (in order to update the README in the Docker Hub repository) permissions to the ciusers team.
 
@@ -73,6 +73,62 @@ Collectively, Meshery repositories will generally have CI workflow for commits a
 - Docker build, tag and push
 - Helm charts lint (helm)
 - Helm charts release, tag and push(stefanprodan/helm-gh-pages@master)
+
+### No-mistakes merge gate
+
+`.github/workflows/no-mistakes-required.yml` runs on every pull request into `master`. The job name, which is the status check context, is `PR must be raised via no-mistakes`.
+
+A pull request whose every changed path is documentation, the docs website, or CI succeeds without a pipeline run. Those paths are:
+
+| Kind | Paths |
+| --- | --- |
+| Documentation and the docs website (`docs.meshery.io`) | `docs/**` |
+| Docs website hostname | root `CNAME` |
+| Markdown documentation outside product code trees | `*.md` / `*.markdown` not under `server/`, `ui/`, `provider-ui/`, `mesheryctl/`, `install/`, or `models/` (for example root `README.md`, `CONTRIBUTING.md`, `AGENTS.md`) |
+| CI | `.github/workflows/**`, `.github/actions/**`, `.github/scripts/**`, and CI config files directly under `.github/` (for example `dependabot.yml`, `.golangci.yml`, `.goreleaser.yml`, `labeler.yml`) |
+
+`docs/**` is both the documentation tree and the Hugo site this repository publishes. The product website, `meshery.io`, lives in `meshery/meshery.io`, not here. A pull request is exempt only when every changed path matches the table. A rename counts both the old path and the new path, so moving a code file into `docs/` still requires the gate. Markdown under the product code trees, install manifests, `.github/samples/**`, `.github/assets/**`, and other paths outside the table still require the gate. Markdown outside the product code trees includes contributor and agent markdown such as root `AGENTS.md`, `.github/agents/`, `.agents/**/*.md`, and `.claude/**/*.md`. GitHub's files API returns at most 3000 files; a pull request at or above that limit fails closed, because a truncated list could hide a code change.
+
+The workflow and the classifier script are loaded from the pull request revision, so a pull request can also change the gate. Those files are CI and therefore exempt. Reviewers must treat changes to `.github/workflows/no-mistakes-required.yml` and `.github/scripts/no_mistakes_exemption.py` as security-sensitive. The `require-no-mistakes` action's README records that the attestation is the pipeline's published declaration, not a cryptographic signature.
+
+Any other pull request must show a green no-mistakes run for the current head. The check calls the pinned [`require-no-mistakes`](https://github.com/kunchenguid/no-mistakes/tree/v1.106.1/.github/actions/require-no-mistakes) action, which passes only when the pull request body has the no-mistakes signature and a v1 pipeline attestation whose `head_sha` is the current head and whose `review`, `test`, and `document` steps are each `completed`. A skipped step, a failed step, or an attestation for an older commit fails the check. A test step approved over a failing configured test passes only when that attestation also carries `allow_test_command_override`. The action's README records that this is a contributor guardrail: the attestation is the pipeline's published declaration, not a cryptographic signature.
+
+The workflow always reports the check, including on exempt pull requests, so branch protection can require it. Requiring a check that does not run blocks the pull request. `master` branch protection today requires `DCO`. After this workflow is on `master`, add `PR must be raised via no-mistakes` beside it. Adding that context before the workflow is on `master` leaves every open pull request without a reported check.
+
+Agents drive the pipeline with `.agents/skills/no-mistakes/SKILL.md`. A clone without a `no-mistakes` remote needs `no-mistakes init` once, then `no-mistakes axi run --intent "<goal>"`.
+
+Human contributors should follow the step-by-step setup and daily usage guide under [Running the pre-landing Quality Gate (No-Mistakes)]({{< ref "project/contributing/_index.md#no-mistakes-quality-gate" >}}).
+
+### Test result reporting (QA dashboard)
+
+Test results from across the Meshery ecosystem are published as [Allure](https://allurereport.org/) reports on the QA dashboard at [qa.meshery.io](https://qa.meshery.io). CI in each repository converts its test output to Allure results and commits them to the [`meshery/qa`](https://github.com/meshery/qa) repository, which regenerates and deploys the dashboard via GitHub Pages. Each report on the dashboard (Meshery, Mesheryctl, Kubernetes Connections, and extension reports) is a filtered view over one shared pool of results, selected by the **labels** on each result.
+
+Result labels are injected at each test source:
+
+- **UI (Playwright):** global labels via `ALLURE_LABEL_<name>=<value>` (see `ui/package.json`), Playwright `@tag`s (surfaced as `tag` labels), and per-test `allure.label()` from `allure-playwright`'s runtime API.
+- **CLI / server (Go, BATS):** the `ALLURE_LABELS="key=value,..."` env var consumed by `mesheryctl/bats-to-allure.js` and `server/gotest-to-allure.js`.
+
+#### Test Group tagging contract (Connection Lifecycle)
+
+Reports on the QA dashboard are **keyed on the Test Plan Test Group** (the [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit) "Latest" tab, **column B**), emitted as the `testGroup` label. Any Test Group can drive its own filtered `meshery/qa` report; the **Connection Lifecycle** report is the first consumer, aggregating connection tests from both the UI and the CLI.
+
+The "Latest" tab columns are: **A = Test #, B = Test Group, C = Client, D = Component Under Test.** A connection test MUST carry these labels (the shared, cross-client contract - use these exact names so both clients group together and the report filter matches):
+
+| Label | Source (Test Plan) | Values | Purpose |
+| --- | --- | --- | --- |
+| `testGroup` | column B ("Test Group") | e.g. `Connection Lifecycle` | Report filter key |
+| `testId` | column A ("Test #") | `TC-<n>` | Stable per-behavior id |
+| `client` | column C ("Client") | `UI` or `CLI` | Groups results by which client exercised the behavior |
+| `componentUnderTest` | column D ("Component Under Test") | e.g. `Kubernetes Connection` | Component grouping |
+| `epic` | - | `Kubernetes Connections` (constant) | Legacy/transitional filter key (see below) |
+
+The report keys on `testGroup`, so tagged tests still appear in their `project` report (Meshery or Mesheryctl); the Connection Lifecycle report is an additional lens, not a relocation. **Transitional:** results carrying no `testGroup` label are still matched via the legacy `epic` (with a `componentUnderTest` fallback) selector, so results predating the `testGroup` label remain visible; this fallback drops once every connection result carries `testGroup`. The full token-to-label mapping lives in the [`mesheryctl/bats-to-allure.js`](https://github.com/meshery/meshery/blob/master/mesheryctl/bats-to-allure.js) header (CLI `[tg=...]`/`[cut=...]` tokens) and `ui/tests/e2e/connections.testmap.ts` (UI).
+
+**Row deep-link.** Each connection result also carries an Allure `tms` **link** ("Test Plan TC-\<n\>") that opens that test's exact row on the "Latest" tab, so a reviewer can click from a report test back to its source case. Both lanes derive the row from the Test # by the same fixed offset (`ROW = TestNum - 778`) encoding the *current* tab layout; the offset lives - with a prominent regenerate-if-re-sorted caveat - in `mesheryctl/bats-to-allure.js` (CLI) and `ui/tests/e2e/connections.testmap.ts` (UI), and the two MUST stay in lockstep.
+
+**Failure evidence.** A failed test carries its captured run output in the report, not just the assertion line. The CLI lane runs BATS with `--print-output-on-failure` and the converter attaches the captured `mesheryctl` transcript (`statusDetails` message + trace, plus a "CLI output (bats)" text attachment); the UI lane runs Playwright with `trace`, `screenshot`, and `video` all `retain-on-failure`, which the `allure-playwright` reporter attaches to each failed result alongside the error and stack.
+
+> The `mesheryctl` BATS e2e results and Go unit results are committed to separate directories (`mesheryctl-bats-results/` and `mesheryctl-unit-results/`) in `meshery/qa` and merged at report-build time, so the two feeders no longer overwrite each other.
 
 ### UI Build System
 
@@ -113,6 +169,25 @@ tests in adapters are end-to-end tests and use patternfile. The reusable workflo
       ...
       secrets:
         token: ${{ secrets.PROVIDER_TOKEN }}
+
+#### Two traps when calling a Meshery reusable workflow
+
+Both of these fail silently - the workflow runs and reports success while doing nothing you
+expected - so they are worth checking before you debug anything else:
+
+1. **A `with:` value is not evaluated by a shell.** Only `${{ ... }}` expressions are evaluated; shell-style expansions such as `${GITHUB_SHA}` or `${GITHUB_REF/refs\/tags\//}` in a `with:` value are
+   forwarded to the workflow verbatim, because nothing ever evaluates them. Use
+   `${{ github.sha }}` or `${{ github.ref_name }}` instead. The same expansion inside a `run:`
+   step is correct, because a shell evaluates it there.
+2. **A job guarded by `if: github.repository == 'meshery/meshery'` never runs for you.** In a
+   reusable workflow the `github` context belongs to the *caller*, so that condition is false
+   from any other repository. The adapter workflows described above carry no such guard, so
+   this does not affect them; it is a caveat for the other reusable workflows in
+   `meshery/meshery`, notably the CNCF Playground deployments.
+
+Contributors changing a shared workflow should also read the "Reusable Workflows Consumed by
+Other Repos" section of [`AGENTS.md`](https://github.com/meshery/meshery/blob/master/AGENTS.md)
+in the repository root.
 
 ### Functionality of Central Workflow
 
@@ -181,7 +256,7 @@ The pods passed in “expected_pods” are running in the subsequent namespaces 
 
 ## Automated Builds
 
-All Meshery GitHub repositories are configured with GitHub Actions. Everytime a pull request is submitted against the master branch of any repository, that repository’s GitHub Actions will be invoked (whether the PR is merged or not). Workflows defined in Meshery repository will generally (but not always) perform the following actions:
+All Meshery GitHub repositories are configured with GitHub Actions. Every time a pull request is submitted against the master branch of any repository, that repository’s GitHub Actions will be invoked (whether the PR is merged or not). Workflows defined in Meshery repository will generally (but not always) perform the following actions:
 
 1. trigger a Docker build to build a Docker container image
 1. generate two Docker tags:
@@ -220,6 +295,8 @@ The charts lint check, charts build, and charts release workflows are all trigge
 ### Check Helm Charts
 
 Every PR which includes changes to the files under `install/kubernetes/` directory in the `meshery/meshery` will trigger a Github Action to check for any mistakes in Helm charts using the `helm lint` command.
+
+The same job additionally runs `install/scripts/check-operator-chart-appversions.sh`, which fails the PR when the `meshery-operator` chart and its `meshery-broker` and `meshery-meshsync` subcharts advertise different `appVersion` values. `helm lint` does not compare a parent chart's `appVersion` with its subcharts', so a subchart left behind on an older operator release passes lint while advertising an application it was never published alongside. Run the same check locally with `make helm-operator-lint`; the script's header explains what it accepts and why.
 
 ### Release Helm Charts to Github and Artifact Hub
 
@@ -465,9 +542,17 @@ If you are passionate about CI/CD pipelines, DevOps, automated testing, managing
 Note: This biweekly meeting series is currently on hiatus. We'll share an update when it resumes. Thank you for your patience!
   
 
-<div class="training-video">
-  <iframe width="560" height="315"
-    src="https://www.youtube.com/embed/dlr_nzJV16Q"
-    title="Training Video" frameborder="0" allowfullscreen>
-  </iframe>
-</div>
+{{< youtube id="dlr_nzJV16Q" class="yt-embed-container training-video" >}}
+
+## Cutting a release
+
+Meshery has **no automatic release cadence**. Release Drafter keeps exactly one draft release current on every push to `master`. Publishing that draft creates the `v*` tag, and that tag is what fires `build-and-release-stable.yml` and its fan-out.
+
+Follow `.agents/skills/cut-release/SKILL.md`. Never hand-author a tag or release notes - the version tag is already set by Release Drafter and auto-increments after each release.
+
+### Publication is not proven by a zero exit code
+
+`gh release edit --draft=false` can exit 0 and leave the release a draft; this was observed while cutting v1.0.65. Publication is proven only by:
+
+1. Re-reading the release and seeing `draft: false` **and** a non-null `published_at`.
+2. The release-triggered workflow runs actually appearing.

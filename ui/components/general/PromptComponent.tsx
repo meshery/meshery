@@ -8,6 +8,7 @@ export interface PromptRef {
     title: string;
     subtitle?: string;
     options?: string[];
+    primaryOption?: string;
     showInfoIcon?: string;
     variant?: 'default' | 'danger' | 'warning' | 'info' | 'success';
   }) => Promise<string>;

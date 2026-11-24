@@ -17,7 +17,15 @@ vi.mock('../sortable-table-cell', () => ({
   DefaultTableCell: () => null,
   SortableTableCell: () => null,
 }));
-vi.mock('../../../../utils/Enum', () => ({ CONNECTION_KINDS: { KUBERNETES: 'kubernetes' } }));
+vi.mock('../../../../utils/Enum', () => ({
+  CoreConnectionKinds: {
+    meshery: 'meshery',
+    kubernetes: 'kubernetes',
+    prometheus: 'prometheus',
+    grafana: 'grafana',
+    github: 'github',
+  },
+}));
 vi.mock('@/components/data-formatter', () => ({ FormatId: () => null }));
 vi.mock('../../view', () => ({ Title: () => null }));
 vi.mock('@/rtk-query/meshsync', () => ({
@@ -48,7 +56,7 @@ describe('useCustomResourceConfig', () => {
   });
 
   it('builds a config map keyed by custom resource Kind', () => {
-    const result = callConfig([{ Kind: 'MyCRD', Model: 'my-model' }]);
+    const result = callConfig([{ kind: 'MyCRD', model: 'my-model' }]);
     expect(result['MyCRD']).toBeDefined();
     expect(result['MyCRD'].name).toBe('MyCRD');
     expect(result['MyCRD'].model).toBe('my-model');

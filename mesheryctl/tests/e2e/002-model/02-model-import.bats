@@ -7,7 +7,7 @@ setup() {
   export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures/model-import"
 }
 
-@test "mesheryctl model import displays usage instructions" {
+@test "[cut=Model][tg=Model Import] mesheryctl model import displays usage instructions" {
   run $MESHERYCTL_BIN model import
   assert_failure
 
@@ -15,14 +15,14 @@ setup() {
   assert_output --partial "Usage: mesheryctl model import [ file | filePath | URL ]"
 }
 
-@test "mesheryctl model import for empty model returns no components found" {
+@test "[cut=Model][tg=Model Import] mesheryctl model import for empty model returns no components found" {
   run $MESHERYCTL_BIN model import -f $FIXTURES_DIR/empty-model
   assert_failure
 
   assert_output --partial "No component found in model provided. Models must have at least one component."
 }
 
-@test "mesheryctl model import fails for invalid files" {
+@test "[cut=Model][tg=Model Import] mesheryctl model import fails for invalid files" {
   run $MESHERYCTL_BIN model import -f $FIXTURES_DIR/invalid-model
   assert_failure
 
@@ -31,14 +31,14 @@ setup() {
 
 }
 
-@test "mesheryctl model import fails for zip format" {
+@test "[cut=Model][tg=Model Import] mesheryctl model import fails for zip format" {
   run $MESHERYCTL_BIN model import -f $FIXTURES_DIR/test-model.zip
   assert_failure
 
   assert_output --partial "The archive may contain unsupported compression formats or features."
 }
 
-@test "mesheryctl model import fails for invalid model artifact" {
+@test "[cut=Model][tg=Model Import] mesheryctl model import fails for invalid model artifact" {
   run $MESHERYCTL_BIN model import -f $FIXTURES_DIR/non-oci-model-archive.tar
   assert_failure
 
@@ -46,7 +46,7 @@ setup() {
   assert_output --partial "The archive may be non OCI compliant."
 }
 
-@test "mesheryctl model import succeeds for valid model as OCI artifact" {
+@test "[cut=Model][tg=Model Import] mesheryctl model import succeeds for valid model as OCI artifact" {
   run $MESHERYCTL_BIN model import -f $FIXTURES_DIR/valid-oci-model-archive.tar
   assert_success
 
@@ -54,7 +54,7 @@ setup() {
   assert_output --partial "model-import-component_cli-e2e-test"
 }
 
-@test "mesheryctl model import succeeds for valid model in uncompressed format" {
+@test "[cut=Model][tg=Model Import] mesheryctl model import succeeds for valid model in uncompressed format" {
   run $MESHERYCTL_BIN model import -f $FIXTURES_DIR/valid-model
   assert_success
 
@@ -62,7 +62,7 @@ setup() {
   assert_output --partial "model-import-component_cli-e2e-test"
 }
 
-@test "mesheryctl model import succeeds for URL of valid model as OCI artifact" {
+@test "[cut=Model][tg=Model Import] mesheryctl model import succeeds for URL of valid model as OCI artifact" {
 
   run $MESHERYCTL_BIN model import -f https://github.com/meshery/meshery/raw/master/mesheryctl/tests/e2e/002-model/fixtures/model-import/valid-oci-model-archive.tar
 

@@ -86,6 +86,15 @@ func TestProfileCmd(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
+			Name:             "given page 0 when profile then throw invalid flag error",
+			Args:             []string{"profile", "--page", "0"},
+			URLs:             []utils.MockURL{},
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --page '0'")),
+		},
+		{
 			Name: "given invalid output format when profile then throw error",
 			Args: []string{"profile", "-o", "invalid"},
 			URLs: []utils.MockURL{
@@ -108,11 +117,13 @@ func TestProfileCmd(t *testing.T) {
 			ExpectedError: func() error {
 				cmdUsed = "profile"
 
-				// Replicate the exact JSON unmarshal error using the schema type.
-				// Body matches the canonical camelCase wire form in the
-				// `profile.invalidJSON.response.golden` fixture so the inner
-				// json.Unmarshal error references `pageSize`, not `page_size`.
-				var response perfprofile.PerformanceProfilePage
+				// Replicate the exact JSON unmarshal error by decoding the way
+				// fetchPerformanceProfiles does: into a pointer to the schema
+				// type. encoding/json names the struct in its message, so a
+				// value target drifts from what the command prints. Body matches
+				// the camelCase wire form in the
+				// `profile.invalidJSON.response.golden` fixture.
+				var response *perfprofile.PerformanceProfilePage
 				innerErr := json.Unmarshal([]byte(`{"pageSize": "25"}`), &response)
 
 				return utils.ErrLoadConfig(ErrFailUnmarshal(innerErr))

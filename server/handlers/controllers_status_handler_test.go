@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"sort"
 	"strings"
 	"testing"
 	"time"
@@ -13,6 +14,7 @@ import (
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/core"
+	system "github.com/meshery/schemas/models/v1beta1/system"
 )
 
 // trackerWith builds an instance tracker holding a single connection->machine
@@ -113,6 +115,83 @@ func TestMachineCtxForConnection(t *testing.T) {
 				t.Fatalf("expected the tracked machine context to be returned, got %#v", ctx)
 			}
 		})
+	}
+}
+
+// TestCollectControllersStatus_EveryControllerRowSurvivesMissingHandlers: the
+// SSE snapshot is the complete controller list and the client replaces its
+// state with it wholesale, so a controller missing from the snapshot is a card
+// that disappears from the UI rather than one that reports a problem.
+//
+// No handler is attached whenever Meshery could not build one - an unreadable
+// kubeconfig or a failed Kubernetes client take out all three, and an
+// unresolvable Meshery Operator chart version takes out the operator - which is
+// exactly when those cards have something to say. Every controller must get a
+// row carrying an existing status value; the reason belongs to the connection
+// diagnostics, not to this payload.
+func TestCollectControllersStatus_EveryControllerRowSurvivesMissingHandlers(t *testing.T) {
+	connID := uuid.Must(uuid.NewV4())
+	// A controllers helper with no attached handlers at all: the widest case,
+	// covering kubeconfig failure, client-creation failure, and withheld
+	// operator lifecycle alike.
+	mctx := &kubernetes.MachineCtx{MesheryCtrlsHelper: &models.MesheryControllersHelper{}}
+
+	h := &Handler{
+		config:                                  &models.HandlerConfig{},
+		log:                                     newTestLogger(t),
+		ConnectionToStateMachineInstanceTracker: trackerWith(connID, &machines.StateMachine{ID: connID, Context: mctx}),
+	}
+
+	items := h.collectControllersStatus([]string{connID.String()})
+
+	if len(items) != len(models.MesheryControllers) {
+		t.Fatalf("snapshot has %d rows, want one per controller (%d): %+v",
+			len(items), len(models.MesheryControllers), items)
+	}
+	seen := map[system.ControllerStatusController]bool{}
+	for _, item := range items {
+		if item.ConnectionId != connID {
+			t.Fatalf("connectionId = %s, want %s", item.ConnectionId, connID)
+		}
+		if item.Status != controllersStatusUnknown {
+			t.Fatalf("%s status = %q, want %q - Meshery did not probe the cluster, so it does not know",
+				item.Controller, item.Status, controllersStatusUnknown)
+		}
+		if item.Version != "" {
+			t.Fatalf("%s version = %q, want it empty for a synthesized row", item.Controller, item.Version)
+		}
+		if seen[item.Controller] {
+			t.Fatalf("%s reported twice: duplicate rows break the snapshot's sort key", item.Controller)
+		}
+		seen[item.Controller] = true
+	}
+	for _, want := range []system.ControllerStatusController{
+		system.ControllerStatusControllerBROKER,
+		system.ControllerStatusControllerMESHSYNC,
+		system.ControllerStatusControllerOPERATOR,
+	} {
+		if !seen[want] {
+			t.Fatalf("no %s row in the snapshot %+v: that card vanishes from the UI", want, items)
+		}
+	}
+	if !sort.SliceIsSorted(items, func(i, j int) bool {
+		if items[i].ConnectionId != items[j].ConnectionId {
+			return items[i].ConnectionId.String() < items[j].ConnectionId.String()
+		}
+		return items[i].Controller < items[j].Controller
+	}) {
+		t.Fatalf("snapshot is not sorted by (connectionId, controller); SSE change detection compares it byte-for-byte: %+v", items)
+	}
+}
+
+// A connection with no ready FSM instance still reports nothing: there is no
+// context to read, and inventing rows for it would report on connections
+// Meshery is not tracking.
+func TestCollectControllersStatus_UnresolvedConnectionReportsNothing(t *testing.T) {
+	h := newControllersStatusTestHandler(t)
+
+	if items := h.collectControllersStatus([]string{uuid.Must(uuid.NewV4()).String()}); len(items) != 0 {
+		t.Fatalf("snapshot = %+v, want it empty for a connection with no ready instance", items)
 	}
 }
 
@@ -220,31 +299,75 @@ func TestOperatorStatusHandler_UnknownForUnresolvedConnection(t *testing.T) {
 	}
 }
 
-// A malformed connectionId must be rejected with 400 rather than falling back
-// to uuid.Nil and echoing a zero UUID. Covers all three one-shot status
-// handlers, which share the same validation.
+// A malformed, missing, or zero connectionId must be rejected with 400 rather than
+// falling back to uuid.Nil and echoing a zero UUID. Covers all four controller status
+// and diagnostics handlers, which share the same query validation.
 func TestControllerStatusHandlers_RejectInvalidConnectionID(t *testing.T) {
 	h := newControllersStatusTestHandler(t)
 
 	handlers := map[string]func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider){
-		"operator": h.OperatorStatusHandler,
-		"meshsync": h.MeshsyncStatusHandler,
-		"broker":   h.BrokerStatusHandler,
+		"operator":    h.OperatorStatusHandler,
+		"meshsync":    h.MeshsyncStatusHandler,
+		"broker":      h.BrokerStatusHandler,
+		"diagnostics": h.ControllerDiagnosticsHandler,
 	}
 
-	for name, handler := range handlers {
-		t.Run(name, func(t *testing.T) {
+	invalidCases := []struct {
+		name string
+		url  string
+	}{
+		{name: "malformed UUID", url: "?connectionId=not-a-uuid"},
+		{name: "nil zero UUID", url: "?connectionId=" + uuid.Nil.String()},
+		{name: "empty parameter", url: "?connectionId="},
+		{name: "missing parameter", url: ""},
+	}
+
+	for handlerName, handler := range handlers {
+		for _, tc := range invalidCases {
+			t.Run(handlerName+"/"+tc.name, func(t *testing.T) {
+				req := httptest.NewRequest(http.MethodGet,
+					"/api/system/controllers/"+handlerName+"/status"+tc.url, nil)
+				rec := httptest.NewRecorder()
+
+				handler(rec, req, nil, nil, nil)
+
+				if rec.Code != http.StatusBadRequest {
+					t.Fatalf("status = %d, want 400 for invalid connectionId (%s)", rec.Code, tc.name)
+				}
+				if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
+					t.Fatalf("expected ErrInvalidUUID code %q in error response, got: %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+				}
+			})
+		}
+	}
+}
+
+// TestControllerStatusHandlers_ValidConnectionIDAcceptsRequest verifies that a
+// valid, non-nil UUID parameter passes validation across all four handlers.
+func TestControllerStatusHandlers_ValidConnectionIDAcceptsRequest(t *testing.T) {
+	h := newControllersStatusTestHandler(t)
+	validID := uuid.Must(uuid.NewV4()).String()
+
+	handlers := map[string]func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider){
+		"operator":    h.OperatorStatusHandler,
+		"meshsync":    h.MeshsyncStatusHandler,
+		"broker":      h.BrokerStatusHandler,
+		"diagnostics": h.ControllerDiagnosticsHandler,
+	}
+
+	for handlerName, handler := range handlers {
+		t.Run(handlerName, func(t *testing.T) {
 			req := httptest.NewRequest(http.MethodGet,
-				"/api/system/controllers/"+name+"/status?connectionId=not-a-uuid", nil)
+				"/api/system/controllers/"+handlerName+"/status?connectionId="+validID, nil)
 			rec := httptest.NewRecorder()
 
 			handler(rec, req, nil, nil, nil)
 
-			if rec.Code != http.StatusBadRequest {
-				t.Fatalf("status = %d, want 400 for a malformed connectionId", rec.Code)
+			if rec.Code != http.StatusOK {
+				t.Fatalf("status = %d, want 200 for valid connectionId; body: %s", rec.Code, rec.Body.String())
 			}
-			if strings.Contains(rec.Body.String(), uuid.Nil.String()) {
-				t.Fatalf("response must not echo the zero UUID, got: %q", rec.Body.String())
+			if !strings.Contains(rec.Body.String(), validID) {
+				t.Fatalf("expected response to reference valid connectionId %s, got: %s", validID, rec.Body.String())
 			}
 		})
 	}

@@ -56,7 +56,11 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
             onClick={toggleFullScreen}
           >
-            {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
+            {fullScreen ? (
+              <FullScreenExitIcon fill="currentColor" />
+            ) : (
+              <FullScreenIcon fill="currentColor" />
+            )}
           </CustomTooltip>
           <CustomTooltip placement="top" title="Exit" onClick={onClose}>
             <CloseIcon />

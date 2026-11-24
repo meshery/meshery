@@ -2,6 +2,8 @@ package planner
 
 import (
 	"testing"
+
+	"github.com/meshery/schemas/models/v1beta2/component"
 )
 
 func TestGraph_DetectCycle(t *testing.T) {
@@ -76,9 +78,39 @@ func TestGraph_DetectCycle(t *testing.T) {
 				}
 			}
 
-			if got := g.DetectCycle(); got != tt.want {
+			got, err := g.DetectCycle()
+			if err != nil {
+				t.Fatalf("Graph.DetectCycle() returned an unexpected error: %v", err)
+			}
+
+			if got != tt.want {
 				t.Errorf("Graph.DetectCycle() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestGraph_EmptyVertexName(t *testing.T) {
+	g := NewGraph()
+	g.AddNode("", component.ComponentDefinition{})
+
+	cycle, err := g.DetectCycle()
+	if err != nil {
+		t.Fatalf("DetectCycle returned unexpected error: %v", err)
+	}
+	if cycle {
+		t.Errorf("DetectCycle returned true for single node with empty name, want false")
+	}
+
+	var visited []string
+	err = g.Traverse(func(v string, _ component.ComponentDefinition) bool {
+		visited = append(visited, v)
+		return true
+	})
+	if err != nil {
+		t.Fatalf("Traverse returned unexpected error: %v", err)
+	}
+	if len(visited) != 1 || visited[0] != "" {
+		t.Errorf("expected visited [\"\"], got %v", visited)
 	}
 }

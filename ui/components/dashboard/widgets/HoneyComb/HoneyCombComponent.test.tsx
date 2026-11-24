@@ -58,7 +58,7 @@ vi.mock('./useResourceOptions', () => ({
     { value: 'all', label: 'All Resources' },
     { value: 'workload', label: 'Workload' },
   ],
-  useResourceFiltering: (kinds: Array<{ Kind: string; Count?: number }> | undefined) => kinds ?? [],
+  useResourceFiltering: (kinds: Array<{ kind: string; count?: number }> | undefined) => kinds ?? [],
 }));
 
 vi.mock('../../utils', () => ({
@@ -107,13 +107,16 @@ vi.mock('@sistent/sistent', () => ({
     children,
     value,
     onChange,
+    inputProps,
   }: {
     children?: React.ReactNode;
     value?: string;
     onChange?: (event: { target: { value: string } }) => void;
+    inputProps?: { 'aria-label'?: string };
   }) => (
     <select
       data-testid="group-select"
+      aria-label={inputProps?.['aria-label']}
       value={value}
       onChange={(e) => onChange?.({ target: { value: e.target.value } } as never)}
     >
@@ -154,8 +157,8 @@ describe('HoneycombComponent', () => {
     render(
       <HoneycombComponent
         kinds={[
-          { Kind: 'Pod', Count: 5 },
-          { Kind: 'Deployment', Count: 2 },
+          { kind: 'Pod', count: 5 },
+          { kind: 'Deployment', count: 2 },
         ]}
       />,
     );
@@ -167,7 +170,7 @@ describe('HoneycombComponent', () => {
   });
 
   it('renders the arrow-down icon by default and toggles when the sort button is pressed', async () => {
-    render(<HoneycombComponent kinds={[{ Kind: 'Pod', Count: 5 }]} />);
+    render(<HoneycombComponent kinds={[{ kind: 'Pod', count: 5 }]} />);
     expect(screen.getByTestId('arrow-down')).toBeInTheDocument();
 
     await userEvent.click(screen.getByTestId('icon-button'));
@@ -175,8 +178,9 @@ describe('HoneycombComponent', () => {
   });
 
   it('renders the group-by select with the documented options', () => {
-    render(<HoneycombComponent kinds={[{ Kind: 'Pod', Count: 1 }]} />);
+    render(<HoneycombComponent kinds={[{ kind: 'Pod', count: 1 }]} />);
     expect(screen.getByTestId('group-select')).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Group by' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'All Resources' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Workload' })).toBeInTheDocument();
   });

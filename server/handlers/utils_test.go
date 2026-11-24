@@ -9,6 +9,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/meshery/meshery/server/models"
 )
 
 // TestHandlerWrappers_ForwardToHttputil is a smoke test for the four thin
@@ -181,4 +183,78 @@ func TestSafeOpenFile(t *testing.T) {
 			t.Fatalf("SafeOpenFile(%q) followed a symlink out of the allowed dir", linkPath)
 		}
 	})
+}
+
+// TestGetPaginationParams verifies that invalid numeric page sizes fall back
+// to the default while preserving positive and "all" pagination behavior.
+func TestGetPaginationParams(t *testing.T) {
+	tests := []struct {
+		name          string
+		query         string
+		expectedLimit int
+	}{
+		{
+			name:          "negative canonical pageSize defaults",
+			query:         "?pageSize=-1",
+			expectedLimit: defaultPageSize,
+		},
+		{
+			name:          "negative legacy pagesize defaults",
+			query:         "?pagesize=-1",
+			expectedLimit: defaultPageSize,
+		},
+		{
+			name:          "zero pageSize defaults",
+			query:         "?pageSize=0",
+			expectedLimit: defaultPageSize,
+		},
+		{
+			name:          "malformed pageSize defaults",
+			query:         "?pageSize=abc",
+			expectedLimit: defaultPageSize,
+		},
+		{
+			name:          "positive pageSize preserved",
+			query:         "?pageSize=1",
+			expectedLimit: 1,
+		},
+		{
+			name:          "all preserves unlimited behavior",
+			query:         "?pageSize=all",
+			expectedLimit: 0,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, "/api/test"+tc.query, nil)
+
+			_, _, limit, _, _, _, _ := getPaginationParams(req)
+
+			if limit != tc.expectedLimit {
+				t.Errorf("getPaginationParams() limit = %d, want %d", limit, tc.expectedLimit)
+			}
+		})
+	}
+}
+
+func TestIsPaginationError(t *testing.T) {
+	tests := []struct {
+		name string
+		err  error
+		want bool
+	}{
+		{"page number error", models.ErrPageNumber(errors.New("x")), true},
+		{"page size error", models.ErrPageSize(errors.New("x")), true},
+		{"plain error", errors.New("x"), false},
+		{"nil error", nil, false},
+		{"other meshkit error", models.ErrResultNotFound(errors.New("x")), false},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := isPaginationError(tc.err); got != tc.want {
+				t.Errorf("isPaginationError(%v) = %v, want %v", tc.err, got, tc.want)
+			}
+		})
+	}
 }

@@ -10,6 +10,7 @@ vi.mock('@sistent/sistent', () => ({
   InfoOutlinedIcon: () => <svg data-testid="info-outlined" />,
   AccountTreeIcon: () => <svg data-testid="account-tree" />,
   EditIcon: () => <svg data-testid="edit" />,
+  DeleteIcon: () => <svg data-testid="delete-icon" />,
 }));
 
 vi.mock('react-moment', () => ({
@@ -100,6 +101,21 @@ const makeHandlers = () => ({
   handleUnpublishModal: vi.fn(),
   handleEvaluateRelationship: vi.fn(),
   userCanEdit: (_: any) => true,
+  handleDelete: vi.fn(),
+});
+
+const makePermissions = () => ({
+  editDesign: true,
+  cloneDesign: true,
+  validateDesign: true,
+  evaluateRelationships: true,
+  undeployDesign: true,
+  deployDesign: true,
+  downloadDesign: true,
+  detailsOfDesign: true,
+  publishDesign: true,
+  unpublishDesign: true,
+  deleteDesign: true,
 });
 
 describe('PATTERN_COL_VIEWS', () => {
@@ -123,12 +139,14 @@ describe('buildPatternActions', () => {
       patterns: [{ id: 'p1' }],
       tableMeta: { rowIndex: 0 },
       handlers,
+      permissions: makePermissions(),
     });
     const labels = actions.map((a: any) => a.label);
     expect(labels).toContain('Edit');
     expect(labels).toContain('Validate Design');
     expect(labels).toContain('Deploy');
     expect(labels).toContain('Download');
+    expect(labels).toContain('Delete');
     expect(labels).not.toContain('Unpublish');
   });
 
@@ -139,8 +157,10 @@ describe('buildPatternActions', () => {
       patterns: [{ id: 'p1' }],
       tableMeta: { rowIndex: 0 },
       handlers: makeHandlers(),
+      permissions: makePermissions(),
     });
     expect(actions.map((a: any) => a.label)).toContain('Unpublish');
+    expect(actions.map((a: any) => a.label)).toContain('Delete');
   });
 
   it('routes the Edit action through handleOpenInConfigurator', () => {
@@ -151,18 +171,56 @@ describe('buildPatternActions', () => {
       patterns: [{ id: 'p1' }],
       tableMeta: { rowIndex: 0 },
       handlers,
+      permissions: makePermissions(),
     });
     const edit = actions.find((a: any) => a.label === 'Edit');
     expect(edit).toBeDefined();
     edit!.onClick({ stopPropagation: vi.fn() } as any);
     expect(handlers.handleOpenInConfigurator).toHaveBeenCalled();
   });
+
+  it('routes the Delete action through handleDelete', () => {
+    const handlers = makeHandlers();
+    const rowData = { id: 'p1', name: 'p', patternFile: '' };
+    const actions = buildPatternActions({
+      rowData,
+      visibility: 'private',
+      patterns: [{ id: 'p1' }],
+      tableMeta: { rowIndex: 0 },
+      handlers,
+      permissions: makePermissions(),
+    });
+    const deleteAction = actions.find((a: any) => a.label === 'Delete');
+    expect(deleteAction).toBeDefined();
+    const stopPropagation = vi.fn();
+    deleteAction!.onClick({ stopPropagation } as any);
+    expect(stopPropagation).toHaveBeenCalled();
+    expect(handlers.handleDelete).toHaveBeenCalledWith(rowData);
+  });
+
+  it('omits the Delete action when arePatternsReadOnly is true', () => {
+    const handlers = makeHandlers();
+    const actions = buildPatternActions({
+      rowData: { id: 'p1' },
+      visibility: 'private',
+      patterns: [{ id: 'p1' }],
+      tableMeta: { rowIndex: 0 },
+      handlers,
+      permissions: makePermissions(),
+      arePatternsReadOnly: true,
+    });
+    expect(actions.map((a: any) => a.label)).not.toContain('Delete');
+  });
 });
 
 describe('buildPatternColumns', () => {
   it('returns columns and renders an ActionPopover for the actions column', () => {
     const patterns = [{ id: 'p1', name: 'p', visibility: 'private', patternFile: '' }];
-    const columns = buildPatternColumns({ patterns, handlers: makeHandlers() });
+    const columns = buildPatternColumns({
+      patterns,
+      handlers: makeHandlers(),
+      permissions: makePermissions(),
+    });
 
     expect(columns.map((c: any) => c.name)).toEqual([
       'name',
@@ -179,7 +237,11 @@ describe('buildPatternColumns', () => {
 
   it('renders a Moment-formatted cell for created_at and updated_at', () => {
     const patterns = [{ id: 'p1', name: 'p', visibility: 'private', patternFile: '' }];
-    const columns = buildPatternColumns({ patterns, handlers: makeHandlers() });
+    const columns = buildPatternColumns({
+      patterns,
+      handlers: makeHandlers(),
+      permissions: makePermissions(),
+    });
     const createdAt = columns.find((c: any) => c.name === 'created_at');
     render(createdAt!.options.customBodyRender('2024-01-02'));
     expect(screen.getByTestId('moment')).toHaveTextContent('2024-01-02');

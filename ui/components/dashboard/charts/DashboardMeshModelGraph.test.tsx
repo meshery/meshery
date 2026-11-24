@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
 let modelsCount = 1;
@@ -9,6 +10,13 @@ let registrantsCount = 4;
 let categorySummary: Record<string, number> = {};
 
 const bbChartSpy = vi.fn();
+const canSpy = vi.fn((_key?: unknown) => true);
+const routerPushSpy = vi.fn();
+const getMeshModelsSpy = vi.fn();
+const getComponentsSpy = vi.fn();
+const getRelationshipsSpy = vi.fn();
+const getRegistrantsSpy = vi.fn();
+const getCategoriesSummarySpy = vi.fn();
 
 vi.mock('billboard.js', () => ({ donut: () => 'donut' }));
 
@@ -44,16 +52,29 @@ vi.mock('@/components/meshery-mesh-interface/PatternService/CustomTextTooltip', 
 }));
 
 vi.mock('@/rtk-query/meshModel', () => ({
-  useGetMeshModelsQuery: () => ({ data: { totalCount: modelsCount } }),
-  useGetComponentsQuery: () => ({ data: { totalCount: componentsCount } }),
-  useGetRelationshipsQuery: () => ({ data: { totalCount: relationshipsCount } }),
-  useGetRegistrantsQuery: () => ({ data: { totalCount: registrantsCount } }),
-  useGetCategoriesSummary: () => categorySummary,
+  useGetMeshModelsQuery: (...args: unknown[]) => {
+    getMeshModelsSpy(...args);
+    return { data: { totalCount: modelsCount } };
+  },
+  useGetComponentsQuery: (...args: unknown[]) => {
+    getComponentsSpy(...args);
+    return { data: { totalCount: componentsCount } };
+  },
+  useGetRelationshipsQuery: (...args: unknown[]) => {
+    getRelationshipsSpy(...args);
+    return { data: { totalCount: relationshipsCount } };
+  },
+  useGetRegistrantsQuery: (...args: unknown[]) => {
+    getRegistrantsSpy(...args);
+    return { data: { totalCount: registrantsCount } };
+  },
+  useGetCategoriesSummary: (...args: unknown[]) => {
+    getCategoriesSummarySpy(...args);
+    return categorySummary;
+  },
 }));
 
-vi.mock('@/utils/can', () => ({ default: () => true }));
-
-vi.mock('next/router', () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock('next/router', () => ({ useRouter: () => ({ push: routerPushSpy }) }));
 
 vi.mock('../style', () => ({
   DashboardSection: ({ children }: { children?: React.ReactNode }) => <section>{children}</section>,
@@ -64,18 +85,100 @@ vi.mock('@sistent/sistent', () => ({
   InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
   Typography: ({ children }: { children?: React.ReactNode }) => <p>{children}</p>,
   useTheme: () => ({ palette: { icon: { default: '#000' } } }),
+  // Forward the requested key so tests can pin *which* permission the Registry
+  // link authorizes against, not just that it asked for one.
+  useHasPermission: (key: unknown) => canSpy(key),
 }));
 
+import { Keys } from '@meshery/schemas/permissions';
 import MeshModelGraph from './DashboardMeshModelGraph';
 
 describe('DashboardMeshModelGraph', () => {
   beforeEach(() => {
     bbChartSpy.mockReset();
+    routerPushSpy.mockReset();
+    getMeshModelsSpy.mockClear();
+    getComponentsSpy.mockClear();
+    getRelationshipsSpy.mockClear();
+    getRegistrantsSpy.mockClear();
+    getCategoriesSummarySpy.mockClear();
+    canSpy.mockClear();
+    canSpy.mockReturnValue(true);
     modelsCount = 1;
     componentsCount = 2;
     relationshipsCount = 3;
     registrantsCount = 4;
     categorySummary = { Networking: 5, Security: 3 };
+  });
+
+  it('authorizes the Registry link against MesherySystemViewRegistry', () => {
+    render(<MeshModelGraph />);
+    expect(canSpy).toHaveBeenCalledWith(Keys.MesherySystemViewRegistry);
+    expect(getMeshModelsSpy).toHaveBeenCalledWith(
+      { params: { page: 0, pagesize: '1' } },
+      { skip: false },
+    );
+    expect(getComponentsSpy).toHaveBeenCalledWith(
+      { params: { page: 0, pagesize: '1' } },
+      { skip: false },
+    );
+    expect(getRelationshipsSpy).toHaveBeenCalledWith(
+      { params: { page: 0, pagesize: '1' } },
+      { skip: false },
+    );
+    expect(getRegistrantsSpy).toHaveBeenCalledWith(
+      { params: { page: 0, pagesize: '1' } },
+      { skip: false },
+    );
+    expect(getCategoriesSummarySpy).toHaveBeenCalledWith({ skip: false });
+    expect(screen.getAllByRole('link').map((link) => link.getAttribute('href'))).toEqual(
+      expect.arrayContaining([
+        '/settings?settingsCategory=Registry',
+        '/settings?settingsCategory=Registry&tab=Models',
+      ]),
+    );
+  });
+
+  it('omits Registry links and skips all registry queries when the registry permission is denied', async () => {
+    const user = userEvent.setup();
+    canSpy.mockReturnValue(false);
+    render(<MeshModelGraph />);
+    expect(screen.queryAllByRole('link')).toHaveLength(0);
+    await user.tab();
+    expect(document.activeElement).toBe(document.body);
+    expect(getMeshModelsSpy).toHaveBeenCalledWith(
+      { params: { page: 0, pagesize: '1' } },
+      { skip: true },
+    );
+    expect(getComponentsSpy).toHaveBeenCalledWith(
+      { params: { page: 0, pagesize: '1' } },
+      { skip: true },
+    );
+    expect(getRelationshipsSpy).toHaveBeenCalledWith(
+      { params: { page: 0, pagesize: '1' } },
+      { skip: true },
+    );
+    expect(getRegistrantsSpy).toHaveBeenCalledWith(
+      { params: { page: 0, pagesize: '1' } },
+      { skip: true },
+    );
+    expect(getCategoriesSummarySpy).toHaveBeenCalledWith({ skip: true });
+
+    const callArgs = bbChartSpy.mock.calls.map((c) => c[0]) as Array<{
+      data: { columns: Array<[string, number]>; onclick: (d?: { name: string }) => void };
+    }>;
+    const registryCall = callArgs.find((call) => call.data.columns.some(([k]) => k === 'Models'));
+    const categoryCall = callArgs.find((call) => !call.data.columns.some(([k]) => k === 'Models'));
+    expect(registryCall?.data.columns).toEqual([
+      ['Models', 0],
+      ['Components', 0],
+      ['Relationships', 0],
+      ['Registrants', 0],
+    ]);
+    expect(categoryCall?.data.columns).toEqual([]);
+    registryCall?.data.onclick({ name: 'Models' });
+    categoryCall?.data.onclick();
+    expect(routerPushSpy).not.toHaveBeenCalled();
   });
 
   it('renders both subcharts (Models by Category and Registry)', () => {

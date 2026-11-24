@@ -82,8 +82,9 @@ const CustomErrorMessage = ({ message, showImage = true }: CustomErrorMessagePro
           <StyledTypographyBody1 variant="body1">
             Start a conversation at the Meshery community{' '}
             <StyledLink
-              href="https://meshery.io/community#community-forums/c/meshery/5"
+              href="https://discuss.meshery.io/c/meshery/5"
               target="_blank"
+              rel="noopener noreferrer"
             >
               discussion forum
             </StyledLink>

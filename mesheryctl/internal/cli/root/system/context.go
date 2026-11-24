@@ -101,6 +101,9 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 		}
 
 		if len(contextCreateFlags.Components) >= 1 {
+			if err := validateComponents(contextCreateFlags.Components); err != nil {
+				return err
+			}
 			tempCntxt.Components = contextCreateFlags.Components
 		}
 
@@ -150,7 +153,10 @@ mesheryctl system context delete [context name]
 			if utils.SilentFlag {
 				res = true
 			} else {
-				res = utils.AskForConfirmation("Are you sure you want to delete the current context")
+				res, err = utils.AskForConfirmation("Are you sure you want to delete the current context")
+				if err != nil {
+					return err
+				}
 			}
 
 			if !res {
@@ -204,21 +210,25 @@ mesheryctl system context delete [context name]
 	},
 }
 
+var listContextUsageMsg = "Usage: mesheryctl system context list\nRun 'mesheryctl system context list --help' to see detailed help message"
+
 // listContextCmd represents the list command
 var listContextCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list contexts",
+	Short: "List contexts",
 	Long: `List current context and available contexts.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context/list`,
 	Example: `
 // List all contexts present
 mesheryctl system context list
 	`,
-	SilenceUsage: true,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return utils.ErrInvalidArgument(errors.New(utils.SystemContextSubError("this command takes no arguments.\n", "list")))
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listContextUsageMsg))
 		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
 		if err != nil {
 			return utils.ErrUnmarshal(err)
@@ -330,8 +340,11 @@ mesheryctl system context view --all
 			return nil
 		}
 		if len(args) != 0 {
-			contextViewFlags.Context = strings.ToLower(args[0])
+			contextViewFlags.Context = args[0]
 		}
+		// Context names are stored in lowercase, so normalize the name given
+		// through --context the same way as the positional argument.
+		contextViewFlags.Context = strings.ToLower(contextViewFlags.Context)
 		if contextViewFlags.Context == "" {
 			contextViewFlags.Context = viper.GetString("current-context")
 		}
@@ -374,7 +387,7 @@ var linkDocContextSwitch = map[string]string{
 // switchContextCmd represents the switch command
 var switchContextCmd = &cobra.Command{
 	Use:   "switch context-name",
-	Short: "switch context",
+	Short: "Switch context",
 	Long: `Configure mesheryctl to actively use one one context vs. another context.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/system/context/switch`,
 	Example: `

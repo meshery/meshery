@@ -57,6 +57,21 @@ func listPageHandler[T any](displayData DisplayDataAsync, processDataFunc listRo
 			return false, nil
 		}
 
+		// Paging on a keypress needs somebody to press the key. Without a
+		// terminal the keyboard library below fails on /dev/tty and the command
+		// exits non-zero having already printed a perfectly good first page -
+		// which is how `mesheryctl connection list` came to fail outright in CI
+		// and in any pipeline, as soon as the account held more than one page.
+		// Stop after this page instead, and say so, so the output stays usable
+		// and the exit status stays honest.
+		if !utils.IsInteractiveTerminal() {
+			utils.Log.Infof(
+				"Showing page %d only: paging through results needs an interactive terminal. Use --page and --pagesize to select a page, or --count for the total.",
+				currentPage+1,
+			)
+			return false, nil
+		}
+
 		// Wait for user input to navigate pages
 		keysEvents, err := keyboard.GetKeys(10)
 		if err != nil {
@@ -103,10 +118,24 @@ func promptPageHandler[T any, R any](displayData DisplayDataAsync, processData p
 			return false, nil
 		}
 
-		// Auto-select if only one result on the first page
-		if len(rows) == 1 && currentPage == 0 {
+		// Auto-select the sole match. The test is on totalCount, not on the size
+		// of this page: a page can hold one row while further pages hold more
+		// (the caller chooses the page size, and --pagesize 1 makes every page
+		// look like a single match), and selecting then would act on the first
+		// of several candidates as though the search had been unambiguous.
+		if totalCount == 1 && len(rows) == 1 && currentPage == 0 {
 			*selectedItem = rows[0]
 			return false, nil
+		}
+
+		// More than one match needs a choice, and a choice needs somebody to
+		// make it. Unlike paging there is no sensible non-interactive fallback -
+		// picking for the user would act on a resource they did not name - so
+		// this is a genuine failure. Say what happened and what to do about it,
+		// rather than letting promptui fail on /dev/tty with an error that
+		// describes neither.
+		if !utils.IsInteractiveTerminal() {
+			return false, ErrAmbiguousSelection(totalCount)
 		}
 
 		picked, itemSelected, err := SelectFromPagedResults(rows, processData, pgSize, currentPage, totalCount)

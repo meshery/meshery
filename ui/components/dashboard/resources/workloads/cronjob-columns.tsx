@@ -5,7 +5,7 @@ import { SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
 import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
-import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { CoreConnectionKinds } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
 
 export const buildCronJobColumns = ({
@@ -101,8 +101,8 @@ export const buildCronJobColumns = ({
         },
         customBodyRender: function CustomBody(val) {
           let attribute = JSON.parse(val);
-          let suspend = attribute?.suspend;
-          return <>{suspend}</>;
+          // spec.suspend is a boolean (omitted means false); React renders booleans as nothing.
+          return <>{attribute?.suspend ? 'True' : 'False'}</>;
         },
       },
     },
@@ -139,7 +139,7 @@ export const buildCronJobColumns = ({
               title={context.name}
               iconSrc={
                 connectionMetadataState
-                  ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                  ? connectionMetadataState[CoreConnectionKinds.kubernetes]?.icon
                   : ''
               }
               handlePing={() => ping(context.name, context.server, context.connectionId)}

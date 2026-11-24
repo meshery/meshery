@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta3/environment"
+	"gorm.io/gorm"
 )
 
 // TestEnvironmentPayloadWire_UnmarshalJSON exercises the dual-accept body
@@ -59,6 +60,46 @@ func TestEnvironmentPayloadWire_UnmarshalJSON(t *testing.T) {
 			}
 			if wire.Name != "env" {
 				t.Fatalf("Name = %q, want %q", wire.Name, "env")
+			}
+		})
+	}
+}
+
+// TestEnvironmentPayloadWire_RejectsAdministrativePurpose exercises the
+// invariant that Purpose is never client-settable: incoming request bodies
+// carrying "purpose": "administrative" must be refused at decode time.
+func TestEnvironmentPayloadWire_RejectsAdministrativePurpose(t *testing.T) {
+	cases := []struct {
+		name      string
+		body      string
+		wantError bool
+	}{
+		{
+			name:      "administrative purpose rejected",
+			body:      `{"name":"env","organizationId":"11111111-1111-1111-1111-111111111111","purpose":"administrative"}`,
+			wantError: true,
+		},
+		{
+			name:      "user purpose accepted",
+			body:      `{"name":"env","organizationId":"11111111-1111-1111-1111-111111111111","purpose":"user"}`,
+			wantError: false,
+		},
+		{
+			name:      "omitted purpose accepted",
+			body:      `{"name":"env","organizationId":"11111111-1111-1111-1111-111111111111"}`,
+			wantError: false,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			var wire environmentPayloadWire
+			err := json.Unmarshal([]byte(tc.body), &wire)
+			if tc.wantError && err == nil {
+				t.Fatalf("expected error for body %s, got nil", tc.body)
+			}
+			if !tc.wantError && err != nil {
+				t.Fatalf("unexpected error: %v", err)
 			}
 		})
 	}
@@ -146,6 +187,14 @@ func (m *environmentFailingProvider) GetEnvironments(_, _, _, _, _, _, _ string)
 }
 
 func (m *environmentFailingProvider) DeleteEnvironment(_ *http.Request, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *environmentFailingProvider) UpdateEnvironment(_ *http.Request, _ *environment.EnvironmentPayload, _ string) (*environment.Environment, error) {
+	return nil, m.err
+}
+
+func (m *environmentFailingProvider) GetConnectionsOfEnvironment(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
 	return nil, m.err
 }
 
@@ -252,6 +301,68 @@ func TestSaveEnvironmentHandler_PropagatesProviderStatus(t *testing.T) {
 	}
 }
 
+// environmentAllowThenDenyProvider serves one successful SaveEnvironment call
+// and refuses every later one, so the test below can drive the same request
+// twice and observe both outcomes from a single stub.
+type environmentAllowThenDenyProvider struct {
+	*models.DefaultLocalProvider
+	calls   int
+	denyErr error
+}
+
+func newEnvironmentAllowThenDenyProvider(denyErr error) *environmentAllowThenDenyProvider {
+	base := &models.DefaultLocalProvider{}
+	base.Initialize()
+	return &environmentAllowThenDenyProvider{DefaultLocalProvider: base, denyErr: denyErr}
+}
+
+func (m *environmentAllowThenDenyProvider) SaveEnvironment(_ *http.Request, _ *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
+	m.calls++
+	if m.calls == 1 {
+		return []byte(`{"id":"env-1","name":"prod"}`), nil
+	}
+	return nil, m.denyErr
+}
+
+// TestSaveEnvironmentHandler_AllowsThenRefusesSameRequest closes the
+// "same request, one refused" gap: one SaveEnvironment request body driven
+// twice against a stub provider must succeed with 201 while the provider
+// allows it and be refused with exactly 403 once the provider says no.
+//
+// The refusal is built with the exact expression RemoteProvider.SaveEnvironment
+// evaluates when the upstream provider answers 403 (server/models/remote_provider.go,
+// non-2xx branch): models.ErrPost with the provider's own message, object and
+// status. No distinct ErrPermissionDenied value exists in this repository or
+// its Meshery-module dependencies, so this - the error the provider really
+// returns on this path - is the genuine refusal body. The status assertion is
+// deliberately exact: provider statuses are lost on most provider-error paths,
+// so accepting any non-2xx would pass while the reason is being remapped.
+func TestSaveEnvironmentHandler_AllowsThenRefusesSameRequest(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := newEnvironmentAllowThenDenyProvider(
+		models.ErrPost(errors.New("failed to save the environment"), "Environment", http.StatusForbidden),
+	)
+
+	const body = `{"name":"prod","description":"","organizationId":"11111111-1111-1111-1111-111111111111"}`
+	// One request, driven twice: request bodies are single-use streams, so
+	// each drive gets a fresh request carrying the identical bytes.
+	newReq := func() *http.Request {
+		return httptest.NewRequest(http.MethodPost, "/api/environments", strings.NewReader(body))
+	}
+
+	allowed := httptest.NewRecorder()
+	h.SaveEnvironment(allowed, newReq(), nil, nil, provider)
+	if allowed.Code != http.StatusCreated {
+		t.Fatalf("allowed request: status = %d, want %d (body=%q)", allowed.Code, http.StatusCreated, allowed.Body.String())
+	}
+
+	refused := httptest.NewRecorder()
+	h.SaveEnvironment(refused, newReq(), nil, nil, provider)
+	if refused.Code != http.StatusForbidden {
+		t.Fatalf("refused request: status = %d, want %d (body=%q)", refused.Code, http.StatusForbidden, refused.Body.String())
+	}
+}
+
 // TestGetEnvironmentsHandler_PropagatesProviderStatus covers the read path with
 // the same contract: a provider 403 must not be reported as a 404.
 func TestGetEnvironmentsHandler_PropagatesProviderStatus(t *testing.T) {
@@ -274,6 +385,35 @@ func TestGetEnvironmentsHandler_PropagatesProviderStatus(t *testing.T) {
 	}
 }
 
+// TestGetEnvironmentsHandler_InvalidPagination_ReturnsBadRequest asserts that a
+// rejected page or pagesize is answered with 400, not a provider-failure status.
+func TestGetEnvironmentsHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	cases := []struct {
+		name     string
+		query    string
+		provider error
+	}{
+		{"page", "page=-1", models.ErrPageNumber(errors.New("bad page"))},
+		{"pagesize", "pagesize=abc", models.ErrPageSize(errors.New("bad pagesize"))},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := newEnvironmentFailingProvider(tc.provider)
+
+			req := httptest.NewRequest(http.MethodGet, "/api/environments?orgId=11111111-1111-1111-1111-111111111111&"+tc.query, nil)
+			req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+			rec := httptest.NewRecorder()
+
+			h.GetEnvironments(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+			}
+		})
+	}
+}
+
 // TestDeleteEnvironmentHandler_PropagatesProviderStatus covers the delete path.
 func TestDeleteEnvironmentHandler_PropagatesProviderStatus(t *testing.T) {
 	h := newTestHandler(t, map[string]models.Provider{}, "")
@@ -281,8 +421,8 @@ func TestDeleteEnvironmentHandler_PropagatesProviderStatus(t *testing.T) {
 		models.ErrFetch(errors.New("forbidden"), "Environment", http.StatusForbidden),
 	)
 
-	req := httptest.NewRequest(http.MethodDelete, "/api/environments/env-1", nil)
-	req = mux.SetURLVars(req, map[string]string{"id": "env-1"})
+	req := httptest.NewRequest(http.MethodDelete, "/api/environments/11111111-1111-1111-1111-111111111111", nil)
+	req = mux.SetURLVars(req, map[string]string{"id": "11111111-1111-1111-1111-111111111111"})
 	rec := httptest.NewRecorder()
 
 	h.DeleteEnvironmentHandler(rec, req, nil, nil, provider)
@@ -292,5 +432,153 @@ func TestDeleteEnvironmentHandler_PropagatesProviderStatus(t *testing.T) {
 	}
 	if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != ErrDeleteEnvironmentCode {
 		t.Errorf("code = %q, want %q", decoded.Code, ErrDeleteEnvironmentCode)
+	}
+}
+
+// TestUpdateEnvironmentHandler_NotFound confirms that updating a nonexistent
+// environment (when the provider returns ErrResultNotFound) maps to HTTP 404
+// rather than a 500 or 502, carrying ErrUpdateEnvironmentCode.
+func TestUpdateEnvironmentHandler_NotFound(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := newEnvironmentFailingProvider(
+		models.ErrResultNotFound(gorm.ErrRecordNotFound),
+	)
+
+	body := `{"name":"updated","organizationId":"11111111-1111-1111-1111-111111111111"}`
+	req := httptest.NewRequest(http.MethodPut, "/api/environments/22222222-2222-2222-2222-222222222222", strings.NewReader(body))
+	req = mux.SetURLVars(req, map[string]string{"id": "22222222-2222-2222-2222-222222222222"})
+	rec := httptest.NewRecorder()
+
+	h.UpdateEnvironmentHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusNotFound, rec.Body.String())
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrUpdateEnvironmentCode {
+		t.Errorf("code = %q, want %q", decoded.Code, ErrUpdateEnvironmentCode)
+	}
+}
+
+// TestUpdateEnvironmentHandler_RawGormRecordNotFoundMapsTo404 confirms that even if
+// a provider returns raw gorm.ErrRecordNotFound, UpdateEnvironmentHandler still maps
+// it defensively to HTTP 404 rather than 500/502.
+func TestUpdateEnvironmentHandler_RawGormRecordNotFoundMapsTo404(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := newEnvironmentFailingProvider(gorm.ErrRecordNotFound)
+
+	body := `{"name":"updated","organizationId":"11111111-1111-1111-1111-111111111111"}`
+	req := httptest.NewRequest(http.MethodPut, "/api/environments/22222222-2222-2222-2222-222222222222", strings.NewReader(body))
+	req = mux.SetURLVars(req, map[string]string{"id": "22222222-2222-2222-2222-222222222222"})
+	rec := httptest.NewRecorder()
+
+	h.UpdateEnvironmentHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusNotFound, rec.Body.String())
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrUpdateEnvironmentCode {
+		t.Errorf("code = %q, want %q", decoded.Code, ErrUpdateEnvironmentCode)
+	}
+}
+
+// TestGetConnectionsOfEnvironmentHandler_InvalidPagination_ReturnsBadRequest
+// asserts that a rejected page or pagesize is answered with 400 and the
+// pagination error code, not a provider-failure status.
+func TestGetConnectionsOfEnvironmentHandler_InvalidPagination_ReturnsBadRequest(t *testing.T) {
+	cases := []struct {
+		name     string
+		query    string
+		provider error
+		wantCode string
+	}{
+		{"page", "page=-1", models.ErrPageNumber(errors.New("bad page")), models.ErrPageNumberCode},
+		{"pagesize", "pagesize=abc", models.ErrPageSize(errors.New("bad pagesize")), models.ErrPageSizeCode},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := newEnvironmentFailingProvider(tc.provider)
+
+			req := httptest.NewRequest(http.MethodGet, "/api/environments/22222222-2222-2222-2222-222222222222/connections?"+tc.query, nil)
+			req = mux.SetURLVars(req, map[string]string{"environmentID": "22222222-2222-2222-2222-222222222222"})
+			rec := httptest.NewRecorder()
+
+			h.GetConnectionsOfEnvironmentHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+			}
+			if !strings.Contains(rec.Body.String(), tc.wantCode) {
+				t.Errorf("body = %q, want it to contain code %q", rec.Body.String(), tc.wantCode)
+			}
+		})
+	}
+}
+
+// TestIsNotFoundError verifies that isNotFoundError returns true for:
+// - wrapped models.ErrResultNotFound
+// - raw gorm.ErrRecordNotFound
+// - HTTP 404 status from provider
+// and returns false for other errors and statuses.
+func TestIsNotFoundError(t *testing.T) {
+	cases := []struct {
+		name   string
+		err    error
+		status int
+		want   bool
+	}{
+		{
+			name:   "wrapped ErrResultNotFound with 404 status",
+			err:    models.ErrResultNotFound(gorm.ErrRecordNotFound),
+			status: http.StatusNotFound,
+			want:   true,
+		},
+		{
+			name:   "wrapped ErrResultNotFound with fallback status",
+			err:    models.ErrResultNotFound(errors.New("record not found")),
+			status: http.StatusInternalServerError,
+			want:   true,
+		},
+		{
+			name:   "raw gorm.ErrRecordNotFound with fallback status",
+			err:    gorm.ErrRecordNotFound,
+			status: http.StatusInternalServerError,
+			want:   true,
+		},
+		{
+			name:   "generic error with 404 status",
+			err:    errors.New("upstream reported 404"),
+			status: http.StatusNotFound,
+			want:   true,
+		},
+		{
+			name:   "generic error with 500 status",
+			err:    errors.New("database failure"),
+			status: http.StatusInternalServerError,
+			want:   false,
+		},
+		{
+			name:   "generic error with 502 status",
+			err:    errors.New("bad gateway"),
+			status: http.StatusBadGateway,
+			want:   false,
+		},
+		{
+			name:   "nil error with 200 status",
+			err:    nil,
+			status: http.StatusOK,
+			want:   false,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			got := isNotFoundError(tc.err, tc.status)
+			if got != tc.want {
+				t.Errorf("isNotFoundError(%v, %d) = %v, want %v", tc.err, tc.status, got, tc.want)
+			}
+		})
 	}
 }

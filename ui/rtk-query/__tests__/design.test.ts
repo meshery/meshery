@@ -38,7 +38,9 @@ describe('design – module surface', () => {
     expect(designsApi.endpoints.publishPattern).toBeDefined();
     expect(designsApi.endpoints.unpublishPattern).toBeDefined();
     expect(designsApi.endpoints.deletePattern).toBeDefined();
-    expect(designsApi.endpoints.importPattern).toBeDefined();
+    // `importDesign` comes from the schemas-generated client, enhanced here
+    // with the local `designs` cache tag rather than re-declared.
+    expect(designsApi.endpoints.importDesign).toBeDefined();
     expect(designsApi.endpoints.deletePatternFile).toBeDefined();
     expect(designsApi.endpoints.updatePatternFile).toBeDefined();
     expect(designsApi.endpoints.uploadPatternFile).toBeDefined();
@@ -57,7 +59,7 @@ describe('design – module surface', () => {
     expect(typeof mod.usePublishPatternMutation).toBe('function');
     expect(typeof mod.useUnpublishPatternMutation).toBe('function');
     expect(typeof mod.useDeletePatternMutation).toBe('function');
-    expect(typeof mod.useImportPatternMutation).toBe('function');
+    expect(typeof mod.useImportDesignMutation).toBe('function');
     expect(typeof mod.useUpdatePatternFileMutation).toBe('function');
     expect(typeof mod.useUploadPatternFileMutation).toBe('function');
     expect(typeof mod.useDeletePatternFileMutation).toBe('function');
@@ -159,6 +161,16 @@ describe('getDesign helper', () => {
     const result = await getDesign({ design_id: 'design-1' });
     expect(result).toEqual({ data: { id: 'design-1' }, isSuccess: true });
     expect(dispatch).toHaveBeenCalled();
+  });
+
+  it('passes { forceRefetch: true } to initiate so a fresh design is fetched', async () => {
+    const initiateSpy = vi
+      .spyOn(designsApi.endpoints.getDesign, 'initiate')
+      .mockReturnValue({ type: 'getDesign/initiate' } as never);
+    dispatch.mockResolvedValueOnce({ data: { id: 'design-1' }, isSuccess: true });
+    await getDesign({ design_id: 'design-1' });
+    expect(initiateSpy).toHaveBeenCalledWith({ design_id: 'design-1' }, { forceRefetch: true });
+    initiateSpy.mockRestore();
   });
 
   it('returns an error-shaped object when dispatch throws', async () => {

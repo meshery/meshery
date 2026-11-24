@@ -12,7 +12,14 @@ create_meshery_config_folder() {
 # Generate auth file to communicate with meshery server
 create_auth_file() {
     echo "start: authentication configuration"
-    echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = "'$MESHERY_PROVIDER_TOKEN'"' > "$MESHERY_AUTH_FILE"
+    # Build the token in with jq --arg so the value is passed as data, never
+    # spliced into the jq program. The previous form,
+    # jq '.token = "'$MESHERY_PROVIDER_TOKEN'"', interpolated the token into the
+    # filter text: any '"' or '\' in the token would break the JSON, and an
+    # unset var would silently yield an empty token. --arg is injection-safe for
+    # any token shape.
+    jq -cn --arg token "$MESHERY_PROVIDER_TOKEN" \
+        '{ "meshery-provider": "Meshery", token: $token }' > "$MESHERY_AUTH_FILE"
     echo "done: authentication configuration"
 }
 

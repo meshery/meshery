@@ -44,9 +44,20 @@ func TestWorkspaces(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [create, list]. Use 'mesheryctl workspace --help' to display usage guide", "invalidCommand")),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [create, list, view]. Use 'mesheryctl workspace --help' to display usage guide", "invalidCommand")),
 		},
 	}
 
 	utils.InvokeMesheryctlTestListCommand(t, update, WorkSpaceCmd, tests, currentDirectory, "workspace")
+}
+
+// TestWorkspaceCountFlagOnlyOnList verifies that --count is only offered by
+// workspace list, because counting workspaces needs an organization ID.
+func TestWorkspaceCountFlagOnlyOnList(t *testing.T) {
+	if WorkSpaceCmd.Flags().Lookup("count") != nil {
+		t.Error("expected workspace not to offer --count")
+	}
+	if listWorkspaceCmd.Flags().Lookup("count") == nil {
+		t.Error("expected workspace list to offer --count")
+	}
 }

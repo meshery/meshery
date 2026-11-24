@@ -4,6 +4,8 @@ package models
 import (
 	stderrors "errors"
 	"fmt"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/meshery/meshery/server/models/httputil"
@@ -114,6 +116,7 @@ const (
 	ErrPersistCredentialCode              = "meshery-server-1308"
 	ErrPersistConnectionCode              = "meshery-server-1309"
 	ErrPrometheusScanCode                 = "meshery-server-1310"
+	ErrInitLoggerCode                     = "meshery-server-1484"
 	ErrGrafanaScanCode                    = "meshery-server-1311"
 	ErrDBCreateCode                       = "meshery-server-1312"
 	ErrDoRequestCode                      = "meshery-server-1321"
@@ -144,6 +147,13 @@ const (
 	ErrUpdateResourceCode                 = "meshery-server-1355"
 	ErrEmptySessionCode                   = "meshery-server-1356"
 	ErrSeedingComponentsCode              = "meshery-server-1358"
+	ErrSeedingConnectionsCode             = "meshery-server-1462"
+	ErrSeedingConnectionKindCode          = "meshery-server-1463"
+	ErrNoSystemEventSinkCode              = "meshery-server-1482"
+	ErrSeedingStagePanicCode              = "meshery-server-1483"
+	ErrKeysRegisterColumnMissingCode      = "meshery-server-1486"
+	ErrMigrateEventCorrelationIndexCode   = "meshery-server-1487"
+	ErrAttachEventErrorCode               = "meshery-server-1488"
 	ErrImportFailureCode                  = "meshery-server-1359"
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
@@ -157,9 +167,28 @@ const (
 	ErrInvalidUUIDValueCode               = "meshery-server-1432"
 	ErrSystemSettingsCode                 = "meshery-server-1439"
 	ErrApplyControllersConfigCode         = "meshery-server-1440"
+	ErrReconcileOperatorChartVersionCode  = "meshery-server-1466"
+	ErrOperatorHandlerNotAttachedCode     = "meshery-server-1465"
+	ErrAnonymousUserIDMissingCode         = "meshery-server-1467"
+	ErrNoOperatorChartPublishedCode       = "meshery-server-1468"
+	ErrOperatorChartNotPinnedCode         = "meshery-server-1469"
+	ErrOperatorChartNotPublishedCode      = "meshery-server-1470"
+	ErrOperatorChartSubstitutedCode       = "meshery-server-1471"
+	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
+	ErrInvalidExtensionProxyPathCode      = "meshery-server-1490"
+	ErrMigrateEventIndexesCode            = "meshery-server-1491"
+	ErrHandlerPanicCode                   = "meshery-server-1495"
+	ErrInvalidDesignVersionCode           = "meshery-server-1496"
+	ErrKubeconfigUnreadableCode           = "meshery-server-1501"
+	ErrUnsafeKubeCredentialCode           = "meshery-server-1500"
 )
 
 var (
+	// ErrKubeconfigUnreadable is returned when discovery is given bytes that
+	// are not a kubeconfig. A valid kubeconfig that simply lists no contexts
+	// is not this error. It is a package-level value so callers match it with
+	// errors.Is.
+	ErrKubeconfigUnreadable    = errors.New(ErrKubeconfigUnreadableCode, errors.Alert, []string{"The kubeconfig could not be parsed"}, []string{"The uploaded file is empty, is not YAML, or does not look like a kubeconfig (it has no kind: Config, current-context, clusters, contexts, or users)."}, []string{"A different file was selected, or the kubeconfig was truncated or edited by hand."}, []string{"Upload the kubeconfig file itself (for example ~/.kube/config), and check it with kubectl config view --kubeconfig <file>."})
 	ErrResultID                = errors.New(ErrResultIDCode, errors.Alert, []string{"Given resultID is not valid"}, []string{"Given resultID is nil"}, []string{}, []string{})
 	ErrLocalProviderSupport    = errors.New(ErrLocalProviderSupportCode, errors.Alert, []string{"Method not supported by local provider"}, []string{}, []string{}, []string{})
 	ErrNilQuery                = errors.New(ErrNilQueryCode, errors.Alert, []string{"Query data passed is nil"}, []string{}, []string{}, []string{})
@@ -237,11 +266,11 @@ func ErrPageSize(err error) error {
 }
 
 func ErrPageNumber(err error) error {
-	return errors.New(ErrPageNumberCode, errors.Alert, []string{"Unable to prase the Page Numer"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrPageNumberCode, errors.Alert, []string{"Unable to parse the Page Number"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrPerfID(err error) error {
-	return errors.New(ErrPerfIDCode, errors.Alert, []string{"Invalid peformance profile ID"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrPerfIDCode, errors.Alert, []string{"Invalid performance profile ID"}, []string{err.Error()}, []string{}, []string{})
 }
 func ErrPublish(err error, obj string) error {
 	return errors.New(ErrPublishCode, errors.Alert, []string{fmt.Sprintf("Error while publishing %s to catlog", obj)}, []string{err.Error()}, []string{}, []string{})
@@ -345,8 +374,17 @@ func ErrRemoteProviderAuthExhausted(err error) error {
 	)
 }
 
+// ErrDelete reports a delete that the remote provider refused. Like ErrFetch
+// and ErrPost it tags the error with the provider's own HTTP status, so a
+// handler can answer with the status the provider actually returned instead of
+// fabricating one. Without the tag a DELETE of an id the provider had never
+// issued reached the client as a 500 "Failed to Save: .connection", which
+// reads as "the provider database is down" for what is only a missing record.
 func ErrDelete(err error, obj string, statusCode int) error {
-	return errors.New(ErrDeleteCode, errors.Alert, []string{"Unable to de-register Meshery Server from Remote Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{"Network connectivity to Remote Provider may not be available. Session might have expired; token could be invalid."}, []string{"Verify that the Remote Provider is available. Ensure that you have an active session / valid token."})
+	return httputil.WithProviderStatus(
+		errors.New(ErrDeleteCode, errors.Alert, []string{"Unable to de-register Meshery Server from Remote Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{"Network connectivity to Remote Provider may not be available. Session might have expired; token could be invalid."}, []string{"Verify that the Remote Provider is available. Ensure that you have an active session / valid token."}),
+		statusCode,
+	)
 }
 
 func ErrDecodeBase64(err error, obj string) error {
@@ -514,7 +552,7 @@ func ErrJWKsKeys(err error) error {
 }
 
 func ErrInvalidCapability(capability string, provider string) error {
-	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capability is not supported by your Provider", capability}, []string{"You dont have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the vaild remote Provider"}, []string{"Connect to the vaild remote Provider", "Ask the Provider Adim for access"})
+	return errors.New(ErrInvalidCapabilityCode, errors.Alert, []string{"Capability is not supported by your Provider", capability}, []string{"You don't have access to the capability", "Provider: " + provider, "Capability: " + capability}, []string{"Not logged in to the valid remote Provider"}, []string{"Connect to the valid remote Provider", "Ask the Provider Admin for access"})
 }
 
 func ErrFetchData(err error) error {
@@ -556,8 +594,66 @@ func ErrInvalidEventData() error {
 	return errors.New(ErrInvalidEventDataCode, errors.Alert, []string{"The event provided is not valid"}, []string{"ActedUpon, Action, Category and Severity are required fields of an event"}, []string{}, []string{"Ensure that ActedUpon, Action, Category and Severity are present in the event"})
 }
 
+// Probable cause ids of ErrUnreachableKubeAPI. They are stable once
+// published: events name them in metadata.error.matchedCauses and the error
+// code reference anchors them. Keep them equal to the ids in the NewV3 call
+// below (TestErrUnreachableKubeAPICauses pins them).
+const (
+	KubeAPICauseUnreachable          = "api-server-unreachable"
+	KubeAPICauseCredentialsRejected  = "credentials-rejected"
+	KubeAPICauseCertificateUntrusted = "certificate-untrusted"
+)
+
+// remRetryKubeConnection answers every cause of ErrUnreachableKubeAPI once the
+// cause itself is fixed, so it is declared once and repeated under each cause.
+var remRetryKubeConnection = errors.Remediation{
+	ID:          "retry-connection",
+	Description: "Once the cause is fixed, reconnect the cluster's connection from Connections, or wait for Meshery Server to discover it again.",
+}
+
+// ErrUnreachableKubeAPI reports that Meshery Server could not talk to a
+// cluster's API server. Its causes carry their own remediations (errors.NewV3),
+// and the returned error records which cause err points at, so an event that
+// reports it names that cause (see MatchedCauses).
 func ErrUnreachableKubeAPI(err error, server string) error {
-	return errors.New(ErrUnreachableKubeAPICode, errors.Alert, []string{fmt.Sprintf("Error communicating with KubeAPI at %s.", server)}, []string{err.Error()}, []string{"The Kubernetes API server is not reachable.", "Credentials are invalid."}, []string{"Verify network connectivity and Kubernetes API responsiveness between Meshery Server and your cluster.", "Ensure client credential is not expired and is properly formed.", "Remove the cluster credential and enable 'insecure-skip-tls-verify'."})
+	// errorutil reads the descriptions as string literals, so the instance
+	// text - the API server's address and the client error - is appended
+	// after NewV3 returns.
+	kubeAPIErr := errors.NewV3(ErrUnreachableKubeAPICode, errors.Alert,
+		[]string{"Error communicating with the Kubernetes API server."},
+		[]string{"Meshery Server did not get an answer from the cluster's API server."},
+		[]errors.Cause{
+			{
+				ID:          "api-server-unreachable",
+				Description: "The Kubernetes API server is not reachable.",
+				Remediations: []errors.Remediation{
+					{ID: "check-network", Description: "Verify network connectivity and Kubernetes API responsiveness between Meshery Server and your cluster."},
+					remRetryKubeConnection,
+				},
+			},
+			{
+				ID:          "credentials-rejected",
+				Description: "Credentials are invalid.",
+				Remediations: []errors.Remediation{
+					{ID: "renew-credential", Description: "Ensure client credential is not expired and is properly formed."},
+					remRetryKubeConnection,
+				},
+			},
+			{
+				ID:          "certificate-untrusted",
+				Description: "The cluster's serving certificate is not trusted by Meshery Server.",
+				Remediations: []errors.Remediation{
+					{ID: "skip-tls-verify", Description: "Remove the cluster credential and enable 'insecure-skip-tls-verify'."},
+					remRetryKubeConnection,
+				},
+			},
+		},
+	)
+	kubeAPIErr.LongDescription = append(kubeAPIErr.LongDescription, fmt.Sprintf("API server: %s", server))
+	if err != nil {
+		kubeAPIErr.LongDescription = append(kubeAPIErr.LongDescription, err.Error())
+	}
+	return withMatchedCause(kubeAPIErr, classifyKubeAPIError(err))
 }
 
 func ErrFlushMeshSyncData(err error, contextName, server string) error {
@@ -573,7 +669,10 @@ func ErrUpdateConnectionStatus(err error, statusCode int) error {
 }
 
 func ErrResultNotFound(err error) error {
-	return errors.New(ErrResultNotFoundCode, errors.Alert, []string{err.Error()}, []string{"The record in the database does not exist."}, []string{"The record might have been deleted."}, []string{""})
+	return httputil.WithProviderStatus(
+		errors.New(ErrResultNotFoundCode, errors.Alert, []string{err.Error()}, []string{"The record in the database does not exist."}, []string{"The record might have been deleted."}, []string{""}),
+		http.StatusNotFound,
+	)
 }
 
 func ErrPersistCredential(err error) error {
@@ -594,6 +693,10 @@ func ErrPrometheusScan(err error) error {
 	return errors.New(ErrPrometheusScanCode, errors.Alert, []string{"Unable to connect to prometheus"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from Meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus endpoint are correct", "Connect to Prometheus from the settings page in the UI"})
 }
 
+func ErrInitLogger(err error) error {
+	return errors.New(ErrInitLoggerCode, errors.Alert, []string{"Unable to initialize logger"}, []string{err.Error()}, []string{"LOG_LEVEL is set to an unsupported value", "Logger configuration options are malformed"}, []string{"Set LOG_LEVEL to a supported value", "Check your logger configuration settings"})
+}
+
 func ErrDBCreate(err error) error {
 	return errors.New(ErrDBCreateCode, errors.Alert, []string{"Unable to create record"}, []string{err.Error()}, []string{"Record already exist", "Database connection is not reachable"}, []string{"Delete the record or try updating the record instead of recreating", "Rest the database connection"})
 }
@@ -606,11 +709,15 @@ func ErrInitializeDBHandler(err error) error {
 }
 
 func ErrDoRequest(err error, method, endpoint string) error {
-	return errors.New(ErrDoRequestCode, errors.Alert, []string{fmt.Sprintf("unable to make %s request to %s", method, endpoint)}, []string{err.Error()}, []string{"Requested resource is not reachable.", "Unable to instantiate TCP connection"}, []string{"Ensure correct URL is specified", "Ensure network connectivity to the resource from your network"})
+	cause := ""
+	if err != nil {
+		cause = err.Error()
+	}
+	return errors.New(ErrDoRequestCode, errors.Alert, []string{fmt.Sprintf("unable to make %s request to %s", method, endpoint)}, []string{cause}, []string{"Requested resource is not reachable.", "Unable to instantiate TCP connection"}, []string{"Ensure correct URL is specified", "Ensure network connectivity to the resource from your network"})
 }
 
 func ErrMarshalYAML(err error, obj string) error {
-	return errors.New(ErrMarshalYAMLCode, errors.Alert, []string{"unable to marshal yaml \"%s\""}, []string{err.Error()}, []string{"Object has invalid yaml format"}, []string{"Make sure to input a valid yaml object"})
+	return errors.New(ErrMarshalYAMLCode, errors.Alert, []string{"Unable to marshal yaml", fmt.Sprintf("object: %s", obj)}, []string{err.Error()}, []string{"Object has invalid yaml format"}, []string{"Make sure to input a valid yaml object"})
 }
 func ErrDeleteK8sResource(err error, name, namespace string) error {
 	return errors.New(ErrDeleteK8sResourceCode, errors.Alert,
@@ -666,6 +773,71 @@ func ErrSeedingComponents(err error) error {
 	)
 }
 
+func ErrSeedingConnections(err error) error {
+	return errors.New(
+		ErrSeedingConnectionsCode,
+		errors.Alert,
+		[]string{"Failed to seed Meshery's system-owned connections"},
+		[]string{err.Error()},
+		[]string{"The registry could not be read for registered connection definitions", "Meshery's database is unreachable or its connections table could not be queried"},
+		[]string{"Confirm Meshery's database is reachable and that model registration completed; the connections are seeded again on the next restart"},
+	)
+}
+
+func ErrSeedingConnectionKind(err error, kind string) error {
+	return errors.New(
+		ErrSeedingConnectionKindCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Failed to seed the system-owned \"%s\" connection", kind)},
+		[]string{err.Error()},
+		[]string{fmt.Sprintf("The %s connection could not be written to Meshery's database", kind), "The connection definition for this kind may disagree with the connections table schema"},
+		[]string{fmt.Sprintf("Confirm the %s connection definition is valid; other connection kinds are unaffected and this one is seeded again on the next restart", kind)},
+	)
+}
+
+func ErrNoSystemEventSink() error {
+	return errors.New(
+		ErrNoSystemEventSinkCode,
+		errors.Alert,
+		[]string{"No sink is configured for Meshery's system events"},
+		[]string{"HandlerConfig.SystemEventPersister is nil, so events raised outside a user request - registry seeding summaries and registration failures - cannot be persisted"},
+		[]string{"Meshery Server was built with a HandlerConfig that does not wire SystemEventPersister"},
+		[]string{"Set HandlerConfig.SystemEventPersister when constructing the handler configuration; on a released build this indicates a defect, so please report it at https://github.com/meshery/meshery/issues/new/choose"},
+	)
+}
+
+// ErrSeedingStagePanic reports a fault that RunSeedStage recovered from. The
+// short description, probable cause and remediation are deliberately literal
+// rather than composed with the stage name: errorutil can only lift static
+// strings into docs/data/errorref, so an interpolated one publishes as an empty
+// entry (see ErrImportFailure). The stage and stack trace carry in the details.
+func ErrSeedingStagePanic(stage string, cause interface{}, stack []byte) error {
+	return errors.New(
+		ErrSeedingStagePanicCode,
+		errors.Alert,
+		[]string{"Meshery Server recovered from a fault while seeding its registry"},
+		[]string{fmt.Sprintf("faulting stage: %s", stage), fmt.Sprintf("%v\n%s", cause, stack)},
+		[]string{"An unexpected condition was hit while seeding, either at startup or while reseeding after a database reset"},
+		[]string{"Meshery Server is still serving, but whatever the faulting stage contributes may be missing or incomplete. Report the stack trace above at https://github.com/meshery/meshery/issues/new/choose, then seed again - restart Meshery Server, or re-run the reset that triggered the seeding"},
+	)
+}
+
+// ErrKeysRegisterColumnMissing reports that the keys file's header row no
+// longer carries the column that selects which keys register with the Local
+// Provider, so SeedKeys can select no row at all. The short description stays
+// literal: errorutil can only lift static strings into docs/data/errorref, so
+// the absent column name carries in the details.
+func ErrKeysRegisterColumnMissing(column string) error {
+	return errors.New(
+		ErrKeysRegisterColumnMissingCode,
+		errors.Alert,
+		[]string{"Meshery Server could not determine which keys to register with the Local Provider"},
+		[]string{fmt.Sprintf("register column %q is missing from the keys file header", column)},
+		[]string{"The header row of the keys file was renamed or dropped, so no row could be selected for registration and nothing is seeded from this file; on a fresh or reset database the Key table stays empty, while previously seeded keys are left untouched"},
+		[]string{"Restore the missing header in server/permissions/keys.csv (or the file KEYS_PATH points at) and restart Meshery Server so keys seed again"},
+	)
+}
+
 func ErrImportFailure(hostname string, failedMsg string) error {
 	return errors.New(
 		ErrImportFailureCode,
@@ -682,7 +854,7 @@ func ErrMarshallingDesignIntoYAML(err error) error {
 }
 
 func ErrMeshsyncDataHandler(err error) error {
-	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data hadler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
+	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data handler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
 }
 
 // ErrReconcileServerID wraps a failure to back-fill an already-persisted
@@ -724,9 +896,183 @@ func ErrSystemSettings(err error) error {
 	return errors.New(ErrSystemSettingsCode, errors.Alert, []string{"Error accessing server-wide system settings"}, []string{err.Error()}, []string{"The system_settings store could not be read or written, or the stored value is not valid JSON."}, []string{"Verify Meshery Server's database is reachable and writable, then retry the operation."})
 }
 
+// ErrAnonymousUserIDMissing reports that the remote provider's anonymous user
+// flow response carried no `userId`. The response is the schemas
+// v1beta2 user.AnonymousFlowResponse construct; a missing id means the
+// provider is on an incompatible contract, and proceeding would key the
+// session's capabilities on the nil UUID instead of a real user.
+func ErrAnonymousUserIDMissing() error {
+	return errors.New(
+		ErrAnonymousUserIDMissingCode,
+		errors.Alert,
+		[]string{"Anonymous user session could not be established"},
+		[]string{"The remote provider's anonymous user flow response contained no userId."},
+		[]string{"The remote provider does not implement the schemas v1beta2 AnonymousFlowResponse contract, or it returned an empty user id."},
+		[]string{"Confirm the configured remote provider is reachable and up to date, then retry signing in."},
+	)
+}
+
 // ErrApplyControllersConfig wraps failures propagating a resolved
 // controllers configuration (Meshery Operator / MeshSync / Broker) to a
 // managed cluster.
 func ErrApplyControllersConfig(err error) error {
 	return errors.New(ErrApplyControllersConfigCode, errors.Alert, []string{"Error applying controllers configuration to the cluster"}, []string{err.Error()}, []string{"The MeshSync or Broker custom resource could not be patched, or the MeshSync deployment overlay could not be applied.", "The Meshery Operator may not be deployed on the target cluster yet."}, []string{"Confirm the cluster is reachable and the Meshery Operator is deployed (operator deployment mode).", "Retry the change; configuration is re-applied whenever the connection reconnects."})
+}
+
+// ErrReconcileOperatorChartVersion wraps failures redeploying Meshery Operator
+// at the Helm chart version a connection's resolved controllers configuration
+// asks for (`operator.version`).
+func ErrReconcileOperatorChartVersion(err error) error {
+	return errors.New(ErrReconcileOperatorChartVersionCode, errors.Alert, []string{"Error deploying Meshery Operator at the configured chart version"}, []string{err.Error()}, []string{"The requested Meshery Operator Helm chart version does not exist in the chart repository, or the cluster rejected the Helm release."}, []string{"Confirm the chart version exists in the Meshery Operator Helm repository, or clear operator.version to track the Meshery Server release.", "Confirm the cluster is reachable and the Meshery namespace is writable."})
+}
+
+// ErrNoOperatorChartPublished reports that the Helm repository was read but
+// advertises no version of the Meshery Operator chart that Meshery may choose
+// on the user's behalf, so there is no version to deploy. Release candidates do
+// not count: Meshery never selects a prerelease chart by itself, though an
+// explicit operator.version naming one is honored.
+func ErrNoOperatorChartPublished(chart, repo string) error {
+	return errors.New(ErrNoOperatorChartPublishedCode, errors.Alert, []string{"No Meshery Operator Helm chart is published"}, []string{"The chart repository " + repo + " advertises no released (non-prerelease) version of the " + chart + " chart."}, []string{"The chart repository index was served from an unexpected location, its published charts were removed, or it currently carries only prerelease charts, which Meshery never selects on its own."}, []string{"Confirm " + repo + "/index.yaml lists a released version of the " + chart + " chart, then reconnect the Kubernetes connection.", "To deploy a prerelease chart deliberately, set operator.version on the Kubernetes connection to that exact version."})
+}
+
+// ErrOperatorChartNotPinned reports that an explicitly configured
+// `operator.version` is not a specific chart release. Moving tags such as
+// stable-latest name whatever was published most recently, so a cluster
+// deployed from one cannot be reproduced or reasoned about; Meshery deploys
+// only versions it can name.
+func ErrOperatorChartNotPinned(requested, newest string) error {
+	// Probable cause and remediation are static literals so errorutil can export
+	// them into the published error reference; the version-specific detail lives
+	// in the cause, which is runtime-only.
+	return errors.New(ErrOperatorChartNotPinnedCode, errors.Alert, []string{"Meshery Operator chart version is not a released version"}, []string{"operator.version is set to " + requested + ", which is not a released chart version. The newest released chart version is " + newest + "."}, []string{"A moving tag (for example stable-latest or edge-latest) or a non-version string was configured as the operator chart version."}, []string{"Set operator.version to a released chart version, or clear it to track this Meshery Server release. This error's cause names the newest released version."})
+}
+
+// ErrOperatorChartNotPublished reports that an explicitly configured
+// `operator.version` names a chart version the repository does not publish.
+// This is never substituted silently: deploying a different version than the
+// one asked for would hide the mistake.
+func ErrOperatorChartNotPublished(requested, newest string) error {
+	// Static probable cause and remediation, as above: the concrete versions are
+	// carried by the cause so the exported reference is not blank.
+	return errors.New(ErrOperatorChartNotPublishedCode, errors.Alert, []string{"Meshery Operator chart version is not published"}, []string{"operator.version is set to " + requested + ", which the Meshery chart repository does not publish. The newest published version is " + newest + "."}, []string{"The configured chart version was mistyped, or it was never published to the Meshery Helm chart repository."}, []string{"Set operator.version to a published chart version, or clear it to track this Meshery Server release. This error's cause names the newest published version."})
+}
+
+// ErrNoMesheryReleasesFound reports that the GitHub releases listing for
+// Meshery was fetched successfully but was empty, so there is no latest version
+// to compare against.
+func ErrNoMesheryReleasesFound() error {
+	return errors.New(ErrNoMesheryReleasesFoundCode, errors.Alert, []string{"No Meshery releases were found"}, []string{"The GitHub releases listing for meshery/meshery returned no tags."}, []string{"GitHub returned an empty or filtered release listing, possibly because the request was rate-limited."}, []string{"Retry later. This only affects the reported latest-version comparison; Meshery continues to run."})
+}
+
+// ErrInvalidExtensionProxyPath is returned when a requested extension proxy path
+// does not match the expected '/api/extensions' prefix or contains malformed boundary characters.
+func ErrInvalidExtensionProxyPath(path string) error {
+	return errors.New(
+		ErrInvalidExtensionProxyPathCode,
+		errors.Alert,
+		[]string{"Invalid extension proxy path"},
+		[]string{fmt.Sprintf("The requested path '%s' is not a valid extension proxy path", path)},
+		[]string{
+			"The path does not start with '/api/extensions' or has an invalid delimiter",
+			"The URL format might be malformed or manipulated",
+		},
+		[]string{
+			"Ensure the request path starts with '/api/extensions' followed by a valid subpath (e.g. '/api/extensions/users')",
+			"Check client routing and extension configuration",
+		},
+	)
+}
+
+// ErrOperatorChartSubstituted reports that the Meshery Operator chart
+// version derived from this Meshery Server's release was replaced by one the
+// chart repository publishes and that can actually run. It is a warning, not a
+// failure: the operator was deployed. It exists so the substitution is visible
+// in the events feed and the logs rather than being inferred from a version
+// number that does not match the server's.
+func ErrOperatorChartSubstituted(reason string) error {
+	return errors.New(ErrOperatorChartSubstitutedCode, errors.Alert, []string{"Meshery Operator was deployed at a different chart version than this server's release"}, []string{reason}, []string{"The chart version matching this Meshery Server release is either not published yet or is too old to deploy successfully."}, []string{"No action is required. To choose the chart version yourself, set operator.version on the Kubernetes connection."})
+}
+
+// ErrOperatorHandlerNotAttached reports that no Meshery Operator controller
+// handler is attached to a Kubernetes context, so operator-level actions
+// (deploy, undeploy, chart-version reconcile) have nothing to act through.
+func ErrOperatorHandlerNotAttached(contextID string) error {
+	return errors.New(ErrOperatorHandlerNotAttachedCode, errors.Alert, []string{"No Meshery Operator controller handler is attached"}, []string{"Controller handlers are attached when a Kubernetes connection connects; for context " + contextID + " attaching them failed or has not happened yet."}, []string{"The connection's kubeconfig could not be generated, or the Kubernetes client could not be created."}, []string{"Reconnect the Kubernetes connection and retry; the configuration is re-applied on connect."})
+}
+
+func ErrMigrateEventCorrelationIndex(err error) error {
+	return errors.New(
+		ErrMigrateEventCorrelationIndexCode,
+		errors.Alert,
+		[]string{"Meshery Server could not create the index that keeps one open event per condition"},
+		[]string{err.Error()},
+		[]string{"The events table has more than one open event (no resolved_at) with the same owner and correlation_key, which an earlier Meshery Server could have recorded", "The database is read-only, locked by another process or not reachable"},
+		[]string{"Resolve or delete the duplicate open events for that owner and correlation_key, then restart Meshery Server", "Make sure Meshery Server can write to its database, or perform a hard reset"},
+	)
+}
+
+func ErrMigrateEventIndexes(err error) error {
+	return errors.New(
+		ErrMigrateEventIndexesCode,
+		errors.Alert,
+		[]string{"Meshery Server could not create the indexes the Notification Center queries use"},
+		[]string{err.Error()},
+		[]string{"The database is read-only, locked by another process or not reachable"},
+		[]string{"Make sure Meshery Server can write to its database, then restart Meshery Server"},
+	)
+}
+
+func ErrAttachEventError(err error) error {
+	return errors.New(
+		ErrAttachEventErrorCode,
+		errors.Alert,
+		[]string{"An event's metadata.error was kept in its legacy form"},
+		[]string{err.Error()},
+		[]string{"The error the event reports carries no MeshKit error code", "The MeshKit error's causes or matched causes break the schemas EventError contract"},
+		[]string{"Report the error the event reports as a MeshKit error with a code", "Fix the probable causes of the MeshKit error, or the matched cause ids its producer names, so they satisfy the EventError contract"},
+	)
+}
+
+// ErrHandlerPanic is returned to the client when an HTTP handler panics and the
+// recovery middleware contains it. The text is fixed on purpose: the panic value
+// can carry anything the handler was holding, so it and the stack stay in the
+// server log and never reach the response.
+func ErrHandlerPanic() error {
+	return errors.New(
+		ErrHandlerPanicCode,
+		errors.Alert,
+		[]string{"Meshery Server hit an unexpected internal error while handling the request"},
+		[]string{"The handler for this request panicked. The panic value and stack are recorded in the server log, not in this response"},
+		[]string{"A defect in Meshery Server caused the handler for this request to panic"},
+		[]string{"Retry the request", "If it keeps failing, report it at https://github.com/meshery/meshery/issues/new/choose together with the request that triggered it; the server log holds the full stack"},
+	)
+}
+
+// ErrInvalidDesignVersion reports a design file whose version is not semantic
+// versioning, so the save cannot assign or bump it.
+func ErrInvalidDesignVersion(version string, err error) error {
+	return errors.New(
+		ErrInvalidDesignVersionCode,
+		errors.Alert,
+		[]string{"Invalid design version"},
+		[]string{fmt.Sprintf("The design version %q is not a valid semantic version: %v", version, err)},
+		[]string{"The design file's version is not semver, so a next version cannot be computed from it", "Older tooling wrote arbitrary version strings into design files"},
+		[]string{"Set the design file's version to a semver string such as 0.0.1 and save again"},
+	)
+}
+
+// ErrUnsafeKubeCredential reports a Kubernetes credential that would make
+// Meshery Server run a command or read a file on its own host to build a client
+// (an exec plugin, an auth-provider, or a certificate, key or token file path).
+// fields holds only field names, never their values, so the message cannot echo
+// a path or a command.
+func ErrUnsafeKubeCredential(fields []string) error {
+	return errors.New(
+		ErrUnsafeKubeCredentialCode,
+		errors.Alert,
+		[]string{"The Kubernetes credential is not allowed to run commands or read files on the Meshery Server host"},
+		[]string{fmt.Sprintf("The credential sets: %s", strings.Join(fields, ", "))},
+		[]string{"exec plugins, auth-providers and certificate, key or token file paths are executed or read on the machine running Meshery Server, so only the server's own kubeconfig may use them"},
+		[]string{"Replace the credential with embedded data (client-certificate-data, client-key-data, certificate-authority-data, token) and save it again"},
+	)
 }

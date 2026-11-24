@@ -20,6 +20,12 @@ type HandlerInterface interface {
 	//2. For adapter and other components of Meshery, they register/use endpoints without any provider authentication. Although we can have a different type of authentication built for
 	//such external systems trying to communicate without provider authentication. So for different endpoints, different authentication mechanisms other than provider can be used.
 	AuthMiddleware(http.Handler, AuthenticationMechanism) http.Handler
+	// RegistrationAuthMiddleware requires provider authentication for
+	// component registration only when a provider is enforced or a remote
+	// provider is selected. Adapters register without a provider selector
+	// on local deployments, so those requests pass through unauthenticated,
+	// matching the pre-existing behaviour the NoAuth registration routes had.
+	RegistrationAuthMiddleware(http.Handler) http.Handler
 	KubernetesMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
 	K8sFSMMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
 	SessionInjectorMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) http.Handler
@@ -291,6 +297,16 @@ type HandlerConfig struct {
 	ProviderTracker        *ProviderTracker
 	ProviderCookieName     string
 	ProviderCookieDuration time.Duration
+
+	// SystemEventPersister is the sink for events raised outside any user
+	// request - registry seeding summaries, registration failures. It is
+	// deliberately NOT resolved from Providers: PROVIDER enforcement drops
+	// every non-enforced registration (Local included), so a lookup keyed on
+	// a provider name is only valid on an unpinned deployment. Wired in
+	// cmd/main.go to the same database handler every provider's
+	// EventsPersister uses, so the events land in the same `events` table
+	// whether or not a deployment pins PROVIDER.
+	SystemEventPersister SystemEventPersister
 
 	// to be removed
 	BrokerEndpointURL *string

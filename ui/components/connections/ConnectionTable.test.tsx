@@ -6,6 +6,7 @@ import ConnectionTable from './ConnectionTable';
 
 const notify = vi.fn();
 const push = vi.fn();
+const replace = vi.fn();
 const ping = vi.fn();
 const pingGrafana = vi.fn();
 const pingPrometheus = vi.fn();
@@ -22,8 +23,10 @@ let dataTableProps: any;
 let windowWidth = 1280;
 
 const router = {
+  pathname: '/management/connections',
   query: {} as Record<string, unknown>,
   push,
+  replace,
 };
 
 vi.mock('next/router', () => ({
@@ -48,20 +51,17 @@ vi.mock('@sistent/sistent', () => ({
     search,
     filter,
     columnVisibility,
-    tabs,
   }: {
     primaryActions?: React.ReactNode;
     search?: React.ReactNode;
     filter?: React.ReactNode;
     columnVisibility?: React.ReactNode;
-    tabs?: React.ReactNode;
   }) => (
     <div data-testid="data-table-toolbar">
       {primaryActions}
       {search}
       {filter}
       {columnVisibility}
-      {tabs}
     </div>
   ),
   ResponsiveDataTable: (props) => {
@@ -80,6 +80,7 @@ vi.mock('@sistent/sistent', () => ({
     </button>
   ),
   Typography: ({ children }) => <span>{children}</span>,
+  useHasPermission: () => true,
   Table: ({ children }) => <div>{children}</div>,
   Grid2: ({ children }) => <div>{children}</div>,
   Button: ({ children, onClick, disabled, ...props }) => (
@@ -115,6 +116,11 @@ vi.mock('./styles', () => ({
   CreateButton: ({ children }) => <div>{children}</div>,
   InnerTableContainer: ({ children }) => <div>{children}</div>,
   ActionListItem: ({ children }) => <div>{children}</div>,
+  ActionButton: ({ children, ...props }) => (
+    <button type="button" {...props}>
+      {children}
+    </button>
+  ),
   ConnectionStyledSelect: ({ children }) => <div>{children}</div>,
 }));
 
@@ -157,6 +163,12 @@ vi.mock('@/utils/hooks/useGrafanaPingHook', () => ({
 
 vi.mock('@/utils/hooks/usePrometheusPingHook', () => ({
   default: () => pingPrometheus,
+}));
+
+const pingMeshery = vi.fn();
+
+vi.mock('@/utils/hooks/useMesheryPingHook', () => ({
+  default: () => pingMeshery,
 }));
 
 vi.mock('./ConnectionChip', () => ({
@@ -208,6 +220,10 @@ vi.mock('@/rtk-query/connection', () => ({
   useGetConnectionsQuery: (...args) => getConnectionsQuery(...args),
   useUpdateConnectionByIdMutation: () => [updateConnectionByIdMutator],
   usePerformConnectionActionMutation: () => [vi.fn(() => ({ unwrap: () => Promise.resolve({}) }))],
+}));
+
+vi.mock('@meshery/schemas/mesheryApi', () => ({
+  useListConnectionDefinitionsQuery: () => ({ data: { connectionDefinitions: [] } }),
 }));
 
 vi.mock('../../assets/icons/disconnect', () => ({
@@ -269,7 +285,9 @@ describe('ConnectionTable', () => {
     dataTableProps = undefined;
     notify.mockReset();
     push.mockReset();
+    replace.mockReset();
     ping.mockReset();
+    pingMeshery.mockReset();
     modalShow.mockReset();
     refetchConnections.mockReset();
 
@@ -352,6 +370,27 @@ describe('ConnectionTable', () => {
         undefined,
       );
     });
+  });
+
+  it('goes back to the first page in the same URL update when rows per page changes', async () => {
+    router.query = { con_page: '2' };
+
+    render(<ConnectionTable />);
+
+    await waitFor(() => {
+      expect(getConnectionsQuery).toHaveBeenLastCalledWith(
+        expect.objectContaining({ page: 2, pageSize: 10 }),
+        undefined,
+      );
+    });
+
+    dataTableProps.options.onTableChange('changeRowsPerPage', { rowsPerPage: 25, page: 0 });
+
+    // One replace carrying both changes: two replaces built from the same
+    // query would let the second one drop the new page size.
+    expect(replace).toHaveBeenCalledTimes(1);
+    const [{ query }] = replace.mock.calls[0];
+    expect(query).toEqual({ con_ps: '25' });
   });
 
   it('defaults to Discovered At (createdAt) descending, mapped to the server sort column', async () => {
@@ -510,6 +549,86 @@ describe('ConnectionTable', () => {
       connectionId: 'connection-2',
       body: { status: 'deleted' },
     });
+
+    // Both succeeded → one consolidated success notification, no error toast.
+    await waitFor(() => {
+      expect(notify).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: '2 Connections deleted',
+          event_type: expect.objectContaining({ type: 'success' }),
+        }),
+      );
+    });
+    expect(notify).not.toHaveBeenCalledWith(
+      expect.objectContaining({ event_type: expect.objectContaining({ type: 'error' }) }),
+    );
+  });
+
+  it('emits consolidated success and failure counts on partial bulk-delete failure', async () => {
+    const user = userEvent.setup();
+
+    // First call rejects (network error), second succeeds.
+    updateConnectionByIdMutator
+      .mockImplementationOnce(() => ({ unwrap: () => Promise.reject(new Error('server error')) }))
+      .mockImplementationOnce(({ connectionId, body }) => ({
+        unwrap: () => Promise.resolve({ connectionId, body }),
+      }));
+
+    render(<ConnectionTable />);
+
+    const toolbar = dataTableProps.options.customToolbarSelect({
+      data: [{ index: 0 }, { index: 1 }],
+    });
+    render(toolbar);
+
+    await user.click(screen.getByRole('button', { name: /delete/i }));
+
+    await waitFor(() => {
+      // 1 success, 1 failure → both notifications fired.
+      expect(notify).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: '1 Connection deleted',
+          event_type: expect.objectContaining({ type: 'success' }),
+        }),
+      );
+      expect(notify).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Failed to delete 1 Connection',
+          event_type: expect.objectContaining({ type: 'error' }),
+        }),
+      );
+    });
+  });
+
+  it('emits only a failure notification when all bulk deletions fail', async () => {
+    const user = userEvent.setup();
+
+    // Both calls reject.
+    updateConnectionByIdMutator.mockImplementation(() => ({
+      unwrap: () => Promise.reject(new Error('server error')),
+    }));
+
+    render(<ConnectionTable />);
+
+    const toolbar = dataTableProps.options.customToolbarSelect({
+      data: [{ index: 0 }, { index: 1 }],
+    });
+    render(toolbar);
+
+    await user.click(screen.getByRole('button', { name: /delete/i }));
+
+    await waitFor(() => {
+      expect(notify).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Failed to delete 2 Connections',
+          event_type: expect.objectContaining({ type: 'error' }),
+        }),
+      );
+    });
+    // No success notification at all.
+    expect(notify).not.toHaveBeenCalledWith(
+      expect.objectContaining({ event_type: expect.objectContaining({ type: 'success' }) }),
+    );
   });
 
   it('applies no transition when the bulk delete confirmation is cancelled', async () => {
@@ -553,6 +672,17 @@ describe('ConnectionTable', () => {
   // a cell that renders nothing; once the query resolved the snapshot was never
   // refreshed and the select never reappeared. ConnectionTable now keeps
   // `tableCols` following `columns`, so the resolved cell reaches the table.
+  // The server returns only its default page of 10 environments when no page
+  // size is sent, so any environment past the tenth could not be selected.
+  it('requests every environment of the organization for the Environments select', () => {
+    render(<ConnectionTable />);
+
+    expect(getEnvironmentsQuery).toHaveBeenCalledWith(
+      { orgId: 'org-1', pagesize: 'all' },
+      expect.objectContaining({ skip: false }),
+    );
+  });
+
   it('re-renders the Environments select once the environments query resolves', async () => {
     getEnvironmentsQuery.mockReturnValue({
       data: { environments: [] },
@@ -753,19 +883,24 @@ describe('ConnectionTable', () => {
       ).toBe(true);
     });
   });
-  // Regression coverage for the review feedback on PR #20695: the
-  // Connections/MeshSync tab switcher must be passed down through the
-  // toolbar (rendered between the toolbar and the data table), not dropped.
-  it('renders the tabs prop inside the toolbar, ahead of the data table', () => {
+  // Regression coverage: the Connections/MeshSync tab switcher must render
+  // above the toolbar (not inside it), ahead of the data table (#20791).
+  it('renders the tabs prop above the toolbar, ahead of the data table', () => {
     render(<ConnectionTable tabs={<div data-testid="connection-tabs">tabs</div>} />);
 
+    // Tabs should NOT be inside the toolbar — they are a sibling rendered before it.
     const toolbar = screen.getByTestId('data-table-toolbar');
-    expect(toolbar).toContainElement(screen.getByTestId('connection-tabs'));
+    const tabs = screen.getByTestId('connection-tabs');
+    expect(toolbar).not.toContainElement(tabs);
 
-    const positions = screen
-      .getByTestId('connection-tabs')
-      .compareDocumentPosition(screen.getByTestId('responsive-data-table'));
+    // Tabs should appear before the toolbar in DOM order.
+    const tabsBeforeToolbar = tabs.compareDocumentPosition(toolbar);
+    expect(tabsBeforeToolbar & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 
-    expect(positions & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // Tabs should appear before the data table in DOM order.
+    const tabsBeforeTable = tabs.compareDocumentPosition(
+      screen.getByTestId('responsive-data-table'),
+    );
+    expect(tabsBeforeTable & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });

@@ -1,0 +1,110 @@
+{
+  "evaluationQuery": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "edge",
+  "metadata": {
+    "description": "An Ingress falls back to its defaultBackend Service when no routing rule matches: the Service name and port are written into spec.defaultBackend.service. Pair with the rules-based Ingress-to-Service relationship for per-path routing.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "Kubernetes",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.37.0-rc.0"
+    },
+    "name": "kubernetes",
+    "registrant": {
+      "kind": "github"
+    },
+    "version": "v1.0.0"
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Ingress",
+            "model": {
+              "displayName": "Kubernetes",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "defaultBackend",
+                  "service",
+                  "name"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "defaultBackend",
+                  "service",
+                  "port",
+                  "number"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Service",
+            "model": {
+              "displayName": "Kubernetes",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "displayName"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "ports",
+                  "0",
+                  "port"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "status": "enabled",
+  "subType": "network",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}

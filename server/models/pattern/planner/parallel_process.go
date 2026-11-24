@@ -1,6 +1,7 @@
 package planner
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/meshery/meshkit/logger"
@@ -8,10 +9,13 @@ import (
 
 // ParallelProcessGraph provides methods for parallel processing of the graph
 type ParallelProcessGraph struct {
-	Edges map[string][]string
-
 	ParallelProcessGraphNodeMap map[string]*ParallelProcessGraphNode
-	wg                          sync.WaitGroup
+
+	// dependents maps a node to the nodes that declared a dependency on it,
+	// resolved once while the graph is built so that traversal never has to
+	// look a node up by name again.
+	dependents map[string][]*ParallelProcessGraphNode
+	wg         sync.WaitGroup
 }
 
 // ParallelProcessGraphNode is the node for ParallelProcessGraph
@@ -21,58 +25,69 @@ type ParallelProcessGraphNode struct {
 	Data *Node
 
 	DepUpdateCh chan struct{}
-	DepCancleCh chan struct{}
-	depLock     sync.Mutex
+	// DepCancleCh carries the name of the dependency that did not succeed.
+	DepCancleCh chan string
 
 	DepCount int
 }
 
 // NewParallelProcessGraph creates a parallel processing graph
 // from a simple graph returns a pointer to ParallelProcessGraph
-func NewParallelProcessGraph(g *Graph) *ParallelProcessGraph {
+func NewParallelProcessGraph(g *Graph) (*ParallelProcessGraph, error) {
 	// Create a new parallel process graph
 	pg := &ParallelProcessGraph{
-		Edges:                       make(map[string][]string),
 		ParallelProcessGraphNodeMap: make(map[string]*ParallelProcessGraphNode),
+		dependents:                  make(map[string][]*ParallelProcessGraphNode),
 	}
 
 	// Copy the nodes data
 	for node, data := range g.Nodes {
 		pg.ParallelProcessGraphNodeMap[node] = &ParallelProcessGraphNode{
-			Name:        node,
-			Data:        data,
-			DepUpdateCh: make(chan struct{}, 1),
-			DepCancleCh: make(chan struct{}, 1),
-			DepCount:    0,
+			Name:     node,
+			Data:     data,
+			DepCount: 0,
 		}
 	}
 
 	// Copy the edges data
 	for node, adjacentNodes := range g.Edges {
-		pg.Edges[node] = adjacentNodes
+		if _, known := pg.ParallelProcessGraphNodeMap[node]; !known {
+			return nil, ErrUnknownPlanNode(node, "the execution plan's dependency list")
+		}
 
 		for _, aNode := range adjacentNodes {
-			pg.ParallelProcessGraphNodeMap[aNode].DepCount++
+			dependent, known := pg.ParallelProcessGraphNodeMap[aNode]
+			if !known {
+				return nil, ErrUnknownPlanNode(aNode, fmt.Sprintf("the dependency %s -> %s", node, aNode))
+			}
+
+			dependent.DepCount++
+			pg.dependents[node] = append(pg.dependents[node], dependent)
 		}
 	}
 
-	return pg
+	// Sizing both channels to max(1, node.DepCount) ensures the buffer has sufficient
+	// capacity for all incoming signals. Given the exactly-once reporting invariant
+	// for each dependency, the buffer never saturates, allowing sends to proceed
+	// without waiting or lock contention.
+	for _, node := range pg.ParallelProcessGraphNodeMap {
+		bufSize := node.DepCount
+		if bufSize < 1 {
+			bufSize = 1
+		}
+		node.DepUpdateCh = make(chan struct{}, bufSize)
+		node.DepCancleCh = make(chan string, bufSize)
+	}
+
+	return pg, nil
 }
 
 // Traverse spins up the processes concurrently if it can
-func (g *ParallelProcessGraph) Traverse(fn VisitFn, log logger.Handler) {
-	// Create map for node deps
-	depsMap := make(map[string][]*ParallelProcessGraphNode)
-	for node, edges := range g.Edges {
-		for _, edge := range edges {
-			depsMap[node] = append(depsMap[node], g.ParallelProcessGraphNodeMap[edge])
-		}
-	}
-
+func (g *ParallelProcessGraph) Traverse(fn VisitFn, withheld WithheldFn, log logger.Handler) {
 	// Spin up the processes concurrently
 	for name, node := range g.ParallelProcessGraphNodeMap {
 		g.wg.Add(1)
-		go node.Process(depsMap[name], &g.wg, fn, log)
+		go node.Process(g.dependents[name], &g.wg, fn, withheld, log)
 	}
 
 	g.wg.Wait()
@@ -80,82 +95,84 @@ func (g *ParallelProcessGraph) Traverse(fn VisitFn, log logger.Handler) {
 
 // Process starts an internal loop which listens for the signals on the channels
 // and operate accordingly
-func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg *sync.WaitGroup, fn VisitFn, log logger.Handler) {
-	defer wg.Done()
-
-	log.Debug("started with:", v.Name, v.DepCount)
-
-	if v.DepCount == 0 {
-		ok := fn(v.Name, v.Data.Data)
-		log.Debug("RESPONSE GOT FOR", v.Name, ":", ok)
-
-		// Send the appropriate signal
-		sendSignalToDeps(deps, ok, log)
-
-		return
-	}
-
-	depSuccessCount := 0
-	depFailCount := 0
-
-	for {
-		select {
-		case <-v.DepCancleCh:
-			// Increment a dep failure
-			depFailCount++
-
-			log.Debug("REVCEIVED DEP FAILURE:", v.Name)
-
-			// Now that we know that some of the deps have completed
-			// successfully while some have failed we can proceed
-			// to shut down this node
-			if depFailCount+depSuccessCount == v.DepCount {
-				// Send the appropriate signal
-				// Propagate the abort
-				sendSignalToDeps(deps, false, log)
-				return
-			}
-		case <-v.DepUpdateCh:
-			// Increment a dep success
-			depSuccessCount++
-
-			// If all of the deps were successful then
-			// proceed to execute current node's function
-			// and upon completion send the appropriate signal
-			// to the dependent nodes
-
-			// The resources are deployed in correct order and dependsOn is respected but sometimes it has issues, for eg: CR depends on CRD, hence when deployment request to k8s to deploy CRD succeeds, we continue with the deployment of dependent CR.
-			// The 200 response from k8s doesn’t guarantee that resource is available to use, it is just an indication that req is received and being worked on, therefore in ceratin cases, deployment failures are experienced and hence we need a mechanism to ensure that the dependent resource is actually deployed and ready to use before conitnuing.
-			if depSuccessCount == v.DepCount {
-				log.Debug("Now deps 0 hence:", v.Name)
-				ok := fn(v.Name, v.Data.Data)
-
-				// Send the appropriate signal
-				sendSignalToDeps(deps, ok, log)
-				return
+func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg *sync.WaitGroup, fn VisitFn, withheld WithheldFn, log logger.Handler) {
+	signaled := make(map[*ParallelProcessGraphNode]bool, len(deps))
+	sendSignals := func(ok bool) {
+		for _, dep := range deps {
+			if !signaled[dep] {
+				signaled[dep] = true
+				func() {
+					defer func() {
+						if r := recover(); r != nil {
+							log.Errorf("panic sending signal to dependent %s: %v", dep.Name, r)
+						}
+					}()
+					sendSignalToDep(dep, ok, v.Name, log)
+				}()
 			}
 		}
 	}
-}
 
-// sendSignalToDeps sends signal on the channel
-func sendSignalToDeps(deps []*ParallelProcessGraphNode, ok bool, log logger.Handler) {
-	for _, dep := range deps {
-		sendSignalToDep(dep, ok, log)
+	defer func() {
+		if r := recover(); r != nil {
+			log.Errorf("panic in parallel process node %s: %v", v.Name, r)
+			sendSignals(false)
+		}
+		wg.Done()
+	}()
+
+	log.Debug("started with:", v.Name, v.DepCount)
+
+	depSuccessCount := 0
+	depFailCount := 0
+	failedDep := ""
+
+	// Every dependency reports exactly once, either a success or a failure, so
+	// the node is settled once as many signals have arrived as it has
+	// dependencies.
+	for depSuccessCount+depFailCount < v.DepCount {
+		select {
+		case name := <-v.DepCancleCh:
+			depFailCount++
+
+			if failedDep == "" {
+				failedDep = name
+			}
+
+			log.Debug("RECEIVED DEP FAILURE:", v.Name)
+		case <-v.DepUpdateCh:
+			depSuccessCount++
+		}
 	}
+
+	// A node whose dependency did not succeed is never visited, and propagates
+	// the abort to the nodes that depend on it in turn.
+	if depFailCount > 0 {
+		if withheld != nil {
+			withheld(v.Name, v.Data.Data, failedDep)
+		}
+
+		sendSignals(false)
+		return
+	}
+
+	// The resources are deployed in correct order and dependsOn is respected but sometimes it has issues, for eg: CR depends on CRD, hence when deployment request to k8s to deploy CRD succeeds, we continue with the deployment of dependent CR.
+	// The 200 response from k8s doesn’t guarantee that resource is available to use, it is just an indication that req is received and being worked on, therefore in ceratin cases, deployment failures are experienced and hence we need a mechanism to ensure that the dependent resource is actually deployed and ready to use before conitnuing.
+	ok := fn(v.Name, v.Data.Data)
+	log.Debug("RESPONSE GOT FOR", v.Name, ":", ok)
+
+	// Send the appropriate signal
+	sendSignals(ok)
 }
 
 // sendSignalToDep sends signal either on the DepUpdateChannel or DepCancelChannel
-// depending upon the "ok" parameter.
+// depending upon the "ok" parameter. "from" names the node the signal is sent on
+// behalf of.
 //
-// sendSignalToDep will first acquire a lock on the channel operation and then will
-// perform the acttion, hence this method SHOULD be used for sending the messages
-// on the channels to avoid races
-func sendSignalToDep(dep *ParallelProcessGraphNode, ok bool, log logger.Handler) {
-	// Lock the channel
-	dep.depLock.Lock()
-	defer dep.depLock.Unlock()
-
+// Because DepUpdateCh and DepCancleCh are buffered to the node's DepCount and each
+// dependency reports exactly once, the buffer never saturates, allowing standard channel
+// sends to complete without waiting and without requiring mutex locking.
+func sendSignalToDep(dep *ParallelProcessGraphNode, ok bool, from string, log logger.Handler) {
 	if ok {
 		log.Debug("Sending completed signal to:", dep.Name)
 		dep.DepUpdateCh <- struct{}{}
@@ -163,5 +180,5 @@ func sendSignalToDep(dep *ParallelProcessGraphNode, ok bool, log logger.Handler)
 	}
 
 	log.Debug("Sending abort signal to:", dep.Name)
-	dep.DepCancleCh <- struct{}{}
+	dep.DepCancleCh <- from
 }

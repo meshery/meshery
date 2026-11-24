@@ -9,6 +9,7 @@ package connections
 
 import (
 	"encoding/json"
+	"strings"
 
 	"github.com/meshery/schemas/models/core"
 	controllersconfig "github.com/meshery/schemas/models/v1alpha1/controllers_config"
@@ -289,6 +290,21 @@ func DeploymentModeFromControllersConfig(cfg *controllersconfig.MesheryControlle
 		return MeshsyncDeploymentModeUndefined
 	}
 	return MeshsyncDeploymentModeFromString(string(*cfg.Operator.DeploymentMode))
+}
+
+// OperatorChartVersionFromControllersConfig extracts the Meshery Operator Helm
+// chart version carried by a controllers configuration document, collapsing an
+// absent or blank value to "".
+//
+// This is the single reader of `operator.version`. "" means "no layer asked for
+// a chart version", which the operator deployment config resolves to the chart
+// version that tracks this Meshery Server release - i.e. exactly today's
+// behavior for a connection that leaves the field on Inherit.
+func OperatorChartVersionFromControllersConfig(cfg *controllersconfig.MesheryControllersConfig) string {
+	if cfg == nil || cfg.Operator == nil || cfg.Operator.Version == nil {
+		return ""
+	}
+	return strings.TrimSpace(*cfg.Operator.Version)
 }
 
 // ValidateControllersConfig enforces the guardrails that the schema cannot

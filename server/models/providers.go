@@ -31,7 +31,7 @@ type ExtensionInput struct {
 	BrokerConn      broker.Handler
 }
 
-// Router
+// Router describes the HTTP handler and path used to serve a plugin's endpoint.
 type Router struct {
 	HTTPHandler http.Handler
 	Path        string
@@ -110,7 +110,7 @@ type Extensions struct {
 	Navigator    NavigatorExtensions    `json:"navigator,omitempty"`
 	UserPrefs    UserPrefsExtensions    `json:"userPrefs,omitempty"`
 	GraphQL      GraphQLExtensions      `json:"graphql,omitempty"`
-	Acccount     AccountExtensions      `json:"account,omitempty"`
+	Account      AccountExtensions      `json:"account,omitempty"`
 	Collaborator CollaboratorExtensions `json:"collaborator,omitempty"`
 }
 
@@ -123,10 +123,10 @@ type UserPrefsExtensions []UserPrefsExtension
 // GraphQLExtensions is a collection of GraphQLExtension endpoints
 type GraphQLExtensions []GraphQLExtension
 
-// NavigatorExtensions is a collection of AccountExtension
+// AccountExtensions is a collection of AccountExtension
 type AccountExtensions []AccountExtension
 
-// CollaboratorExtension describes the Collaborator extension point in the UI
+// CollaboratorExtensions is a collection of CollaboratorExtension
 type CollaboratorExtensions []CollaboratorExtension
 
 // GraphQLExtension describes the graphql server extension point in the backend
@@ -186,7 +186,7 @@ type UserPrefsExtension struct {
 	Type      string `json:"type,omitempty"`
 }
 
-// CollaboratorsExtension is the struct for collaborators extension
+// CollaboratorExtension is the struct for collaborators extension
 type CollaboratorExtension struct {
 	Component string `json:"component,omitempty"`
 	Type      string `json:"type,omitempty"`
@@ -207,7 +207,7 @@ type Capability struct {
 	Endpoint string  `json:"endpoint,omitempty"`
 }
 
-// K8sContextResponse - struct of response sent by provider when requested to persist k8s config
+// K8sContextPersistResponse - struct of response sent by provider when requested to persist k8s config
 type K8sContextPersistResponse struct {
 	K8sContext K8sContext `json:"k8sContext,omitempty"`
 	Inserted   bool       `json:"inserted,omitempty"`
@@ -339,8 +339,14 @@ const (
 	KubeClustersKey   ContextKey = "kubeclusters"
 	AllKubeClusterKey ContextKey = "allkubeclusters"
 
-	MesheryControllerHandlersKey ContextKey = "mesherycontrollerhandlerskey"
-	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"
+	// MesheryControllerHandlersKey is retired. Nothing ever populated it, so the
+	// one reader - the changeOperatorStatus resolver - always read a nil map and
+	// called Deploy/Undeploy on a nil controller interface. Operator lifecycle
+	// now goes through the connection's MesheryControllersHelper, which is what
+	// holds the resolved Helm chart version; a context key that looks like a
+	// handler source but is never filled is how that was missed. Do not
+	// reintroduce it.
+	MeshSyncDataHandlersKey ContextKey = "meshsyncdatahandlerskey"
 
 	RegistryManagerKey ContextKey = "registrymanagerkey"
 
@@ -415,6 +421,24 @@ func matchesProviderAddress(candidate string, addresses ...string) bool {
 		}
 	}
 	return false
+}
+
+// RestrictToEnforcedProvider drops every registration except the given map
+// key. Used at boot when PROVIDER is set so the Local Provider and any other
+// remotes are not addressable. No-op when enforcedKey is empty or is not in
+// the map (the caller is expected to fail closed in that case).
+func RestrictToEnforcedProvider(provs map[string]Provider, enforcedKey string) {
+	if enforcedKey == "" {
+		return
+	}
+	if _, ok := provs[enforcedKey]; !ok {
+		return
+	}
+	for key := range provs {
+		if key != enforcedKey {
+			delete(provs, key)
+		}
+	}
 }
 
 // ResolveProviderKey maps a caller-facing provider identifier to the
@@ -528,10 +552,40 @@ func VerifyMesheryProvider(provider string, supportedProviders map[string]Provid
 	return ok
 }
 
+// SystemEventPersister persists a system-initiated event - one raised outside
+// any user request, such as the registrant summaries and registration failures
+// emitted while models are seeded at boot.
+//
+// It exists so that boot-time code does not have to reach into
+// HandlerConfig.Providers for a sink. Providers are a request-routing table:
+// which one a request is served by depends on the meshery-provider cookie, and
+// since PROVIDER enforcement (RestrictToEnforcedProvider) the table may hold a
+// single remote and no Local entry at all. System events are not
+// request-scoped, so binding them to that table was always a category error -
+// it is what made a pinned deployment panic while seeding models
+// (meshery/meshery#21584).
+//
+// Every Provider satisfies this interface, and so does *EventsPersister; all of
+// them write to the same local `events` table, so nothing about where these
+// events land changes with the provider a deployment is pinned to.
+type SystemEventPersister interface {
+	// PersistSystemEvent persists a system-initiated event to the local database
+	// and returns it as stored, which is the event to broadcast (see
+	// PersistAndPublishSystemEvent).
+	PersistSystemEvent(event events.Event) (PersistedEvent, error)
+}
+
+// GenericPersisterGetter allows consumers to access only database persistence
+// without coupling to the entire Provider lifecycle or methods.
+type GenericPersisterGetter interface {
+	GetGenericPersister() *database.Handler
+}
+
 // Provider - interface for providers
 type Provider interface {
 	PreferencePersister
 	CapabilitiesPersister
+	GenericPersisterGetter
 	// MesheryEvents
 
 	// Initialize will initialize a provider instance
@@ -576,12 +630,28 @@ type Provider interface {
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
 	// PersistEvent persists a user-initiated event to the remote provider using the given auth token.
-	PersistEvent(event events.Event, token string) error
+	// It returns the event as stored and what persisting it did: for an occurrence counted on, or a
+	// resolution of, an open condition, the stored event is the condition's, with its own ID, and is
+	// the one to broadcast or return.
+	// The event is the server's own: one that names no source is recorded with source meshery-server.
+	PersistEvent(event events.Event, token string) (PersistedEvent, error)
+
+	// PersistClientEvent persists an event a client sent (POST /api/events) as PersistEvent does,
+	// but with its source as sent: one that names no source is recorded without one.
+	PersistClientEvent(event events.Event, token string) (PersistedEvent, error)
+
+	// CorrelatesConditions reports whether the provider is known to apply the createEvent
+	// condition correlation contract to the events PersistEvent sends it, counting a create that
+	// carries an open condition's correlationKey as an occurrence instead of recording a new event.
+	// A Recurrence is persisted only while it does: a provider that ignores correlationKey would
+	// store every repeat as a new event.
+	CorrelatesConditions() bool
 
 	// PersistSystemEvent persists a system-initiated event (e.g. MeshSync updates, registry seeding,
 	// auto-registration) that occurs outside of a user request context and has no auth token.
-	// These events are persisted to the local database.
-	PersistSystemEvent(event events.Event) error
+	// These events are persisted to the local database. Like PersistEvent, it returns the event as
+	// stored, which is the one to broadcast.
+	PersistSystemEvent(event events.Event) (PersistedEvent, error)
 
 	SaveK8sContext(token string, k8sContext K8sContext, metadata map[string]any) (connections.Connection, error)
 	GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error)
@@ -592,8 +662,6 @@ type Provider interface {
 	SMPTestConfigGet(req *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error)
 	SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	SMPTestConfigDelete(req *http.Request, testUUID string) error
-
-	GetGenericPersister() *database.Handler
 
 	SetKubeClient(client *mesherykube.Client)
 	GetKubeClient() *mesherykube.Client
@@ -651,6 +719,20 @@ type Provider interface {
 	UpdateConnection(req *http.Request, conn *connections.Connection) (*connections.Connection, error)
 	UpdateConnectionById(token string, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error)
 	UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
+
+	// UpdateConnectionStatusIf updates a connection's status to newStatus
+	// only when its stored status is one of fromStatuses, and reports
+	// whether the write applied. The check and the write are one atomic
+	// step in the store, so no status change can slip between them: a
+	// background Discovery uses it to refuse to move a connection the
+	// user has since disconnected, deleted or ignored back to connected
+	// (issue #23248). A local provider evaluates the condition in a
+	// single UPDATE ... WHERE status IN (...) statement; a remote
+	// provider has no conditional-update API and evaluates it
+	// best-effort by reading the stored status immediately before the
+	// write, so callers must not rely on it alone for the remote path.
+	UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error)
+
 	DeleteConnection(req *http.Request, connID core.Uuid) (*connections.Connection, error)
 	DeleteMesheryConnection() error
 	// LogoutMesheryServer revokes the server-cached user session against the

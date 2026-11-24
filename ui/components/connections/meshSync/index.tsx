@@ -4,6 +4,7 @@ import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import {
   CustomColumnVisibilityControl,
+  DataTableToolbar,
   ResponsiveDataTable,
   SearchBar,
   UniversalFilter,
@@ -13,7 +14,6 @@ import {
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
-import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   JsonParse,
   camelcaseToSnakecase,
@@ -32,15 +32,7 @@ import {
 import { ConnectionStateChip } from '../ConnectionChip';
 import { ContentContainer, ConnectionStyledSelect, InnerTableContainer } from '../styles';
 import { useSelector } from 'react-redux';
-import { updateProgress } from '@/store/slices/mesheryUi';
 import MeshSyncEmptyState from './MeshSyncEmptyState';
-
-const ACTION_TYPES = {
-  FETCH_MESHSYNC_RESOURCES: {
-    name: 'FETCH_MESHSYNC_RESOURCES',
-    error_msg: 'Failed to fetch meshsync resources',
-  },
-};
 
 export default function MeshSyncTable(props) {
   const { selectedResourceId, updateUrlWithResourceId, tabs } = props;
@@ -73,6 +65,16 @@ export default function MeshSyncTable(props) {
     [k8sConfig, selectedK8sContexts],
   );
   const serializedClusterIds = useMemo(() => JSON.stringify(clusterIds), [clusterIds]);
+  // Tracks the cluster IDs from the previous render so the query can resolve
+  // to page 0 synchronously when clusters change, instead of firing one
+  // request with the new cluster IDs and the stale page before the reset
+  // effect below runs.
+  const previousSerializedClusterIds = useRef(serializedClusterIds);
+  const pageForQuery = previousSerializedClusterIds.current === serializedClusterIds ? page : 0;
+  useEffect(() => {
+    previousSerializedClusterIds.current = serializedClusterIds;
+    setPage(0);
+  }, [serializedClusterIds]);
 
   const handleRegistrationModalClose = () => {
     setRegistrationModal(false);
@@ -83,7 +85,7 @@ export default function MeshSyncTable(props) {
     isError: isError,
     error: meshSyncError,
   } = useGetMeshSyncResourcesQuery({
-    page: page,
+    page: pageForQuery,
     pagesize: pageSize,
     search: search,
     order: sortOrder,
@@ -112,9 +114,9 @@ export default function MeshSyncTable(props) {
     order: sortOrder,
     clusterIds: clusterIds,
   });
-  const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.Kind);
+  const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.kind);
   const availableModels = [
-    ...new Set((clusterSummary?.kinds || []).map((kind) => kind.Model).filter(Boolean)),
+    ...new Set((clusterSummary?.kinds || []).map((kind) => kind.model).filter(Boolean)),
   ];
   const availableNamespaces = clusterSummary?.namespaces || [];
   const meshSyncResources = meshSyncData?.resources || [];
@@ -466,6 +468,7 @@ export default function MeshSyncTable(props) {
           break;
         case 'changeRowsPerPage':
           setPageSize(tableState.rowsPerPage.toString());
+          setPage(0);
           break;
         case 'sort':
           if (sortInfo.length == 2) {
@@ -557,21 +560,6 @@ export default function MeshSyncTable(props) {
     },
   };
 
-  const handleError = (action) => (error) => {
-    updateProgress({ showProgress: false });
-    notify({
-      message: `${action.error_msg}: ${error}`,
-      event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
-    });
-  };
-
-  useEffect(() => {
-    if (meshSyncError) {
-      handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES)(meshSyncError);
-    }
-  }, [meshSyncError]);
-
   // Consolidate multiple useRef hooks into a single object
   const expansionFlags = useRef({
     isHandlingExpansion: false,
@@ -661,6 +649,7 @@ export default function MeshSyncTable(props) {
     setKindFilter(kindFilter);
     setModeFilter(modelFilter);
     setNamespaceFilter(namespaceFilter);
+    setPage(0);
   };
 
   const [tableCols, updateCols] = useState(columns);
@@ -689,41 +678,40 @@ export default function MeshSyncTable(props) {
 
   return (
     <>
-      <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
-        <div
-          style={{
-            display: 'flex',
-            borderRadius: '0.5rem 0.5rem 0 0',
-            width: '100%',
-            justifyContent: 'end',
-          }}
-        >
-          <SearchBar
-            onSearch={(value) => {
-              setSearch(value);
-            }}
-            expanded={isSearchExpanded}
-            setExpanded={setIsSearchExpanded}
-            placeholder="Search Connections..."
-          />
+      {tabs}
 
+      <DataTableToolbar
+        search={
+          <div data-testid="MeshSyncTable-search">
+            <SearchBar
+              onSearch={(value) => {
+                setSearch(value);
+                setPage(0);
+              }}
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
+              placeholder="Search MeshSync Resources..."
+            />
+          </div>
+        }
+        filter={
           <UniversalFilter
-            id="ref"
+            id="meshsync-table-filter"
             filters={filters}
             selectedFilters={selectedFilters}
             setSelectedFilters={setSelectedFilters}
             handleApplyFilter={handleApplyFilter}
           />
-
+        }
+        columnVisibility={
           <CustomColumnVisibilityControl
-            id="ref"
+            style={{ zIndex: 1300 }}
+            id="meshsync-table-column-visibility"
             columns={getVisibilityColums(columns)}
             customToolsProps={{ columnVisibility, setColumnVisibility }}
           />
-        </div>
-      </ToolWrapper>
-
-      {tabs}
+        }
+      />
 
       {!meshSyncResources || meshSyncResources.length === 0 ? (
         <MeshSyncEmptyState />

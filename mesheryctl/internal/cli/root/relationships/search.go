@@ -31,7 +31,7 @@ type searchRelationshipFlags struct {
 	SubType string `json:"subtype"  validate:"omitempty"`
 	Model   string `json:"model"    validate:"omitempty"`
 	Type    string `json:"type"     validate:"omitempty"`
-	Page    int    `json:"page"     validate:"omitempty,gte=1"`
+	Page    int    `json:"page"     validate:"gte=1"`
 }
 
 var (
@@ -42,7 +42,8 @@ var (
 var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search registered relationship(s)",
-	Long:  "Search registered relationship(s) used by different models",
+	Long: `Search registered relationship(s) used by different models.
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/relationship/search`,
 	Example: `
 // Search for a specific relationship
 mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]

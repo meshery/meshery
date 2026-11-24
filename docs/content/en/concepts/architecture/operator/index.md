@@ -33,12 +33,33 @@ It is recommended to deploy one Meshery Operator per cluster.
 Meshery Server installs the `meshery-operator` Helm chart from
 [meshery.io/charts](https://meshery.io/charts) into the `meshery` namespace of
 each managed cluster, requesting the chart version that **matches the Meshery
-Server release**. Upgrading Meshery Server is therefore what upgrades the
+Server release** and resolving it against the versions the repository actually
+publishes. Upgrading Meshery Server is therefore what upgrades the
 Operator: the Server re-applies the newer chart, the chart's CRD update Job
 refreshes the CRD schemas, and the Operator Deployment rolls to the operator
 version pinned in that chart. Manual operator upgrades on Server-managed
 clusters are reverted by the Server's reconciliation — see
 [How Meshery Server manages Meshery Operator]({{< ref "installation/upgrades/index.md#how-meshery-server-manages-meshery-operator" >}}).
+
+Resolution is what keeps that request honest. Because charts are published
+independently of Server releases, the version matching a Server release may not
+exist yet; it resolves to the newest published chart instead. A version below
+the oldest chart verified to deploy is raised to the oldest published chart at
+or above that boundary, and release candidates are never selected
+automatically. A per-connection `operator.version` overrides the derived
+version and is honored exactly - or refused with a visible error, never
+silently replaced. When no version can be resolved, installation is withheld
+and the error appears on the Operator's status card and in the connection's
+diagnostics; an already-installed Operator keeps reporting status and version
+throughout. What the Operator itself deploys is pinned in turn: MeshSync and
+the Broker run specific released versions, not moving channel tags.
+
+To see which Operator is actually running on a cluster:
+
+```bash
+kubectl -n meshery get deploy meshery-operator \
+  -o jsonpath='{.spec.template.spec.containers[0].image}{"\n"}'
+```
 
 ## Custom resources
 
@@ -73,6 +94,8 @@ See [Meshery Broker]({{< ref "concepts/architecture/broker/index.md" >}}) for mo
 
 MeshSync Controller manages the lifecycle of MeshSync that is deployed for resource synchronization for the cluster. It derives the Broker's address from the `Broker` resource's status and injects it into MeshSync as `BROKER_URL` (a `nats://host:port` URL); when the Broker's endpoint changes, the controller re-reconciles MeshSync so it reconnects.
 
+MeshSync reads the cluster through its own read-only ClusterRole, `meshery-meshsync-role`, while the Operator's own role can manage Broker and MeshSync workloads but not read the rest of the cluster. Operator releases up to 1.0.6 run MeshSync as `meshery-operator`, so the Helm chart binds the read-only role to that ServiceAccount. Operator releases that include the `MESHSYNC_SERVICE_ACCOUNT` setting run it as the dedicated `meshery-meshsync` ServiceAccount instead, once the chart's `meshsync.serviceAccount.dedicated` is on. On `helm uninstall`, a pre-delete hook deletes the `Broker` and `MeshSync` resources while the Operator is still running, so their finalizers are processed. See the [chart README](https://github.com/meshery/meshery/tree/master/install/kubernetes/helm/meshery-operator#meshsync-identity-and-rbac).
+
 See [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) for more information.
 
 ## Common tasks
@@ -98,12 +121,12 @@ ServiceAccount to the `meshery-metrics-reader` ClusterRole and scrape the
 `meshery-operator` Service.
 
 **Upgrade the Operator:** upgrade Meshery Server — see the
-[Upgrading Meshery guide]({{< ref "guides/upgrading-meshery/index.md" >}}).
+[Upgrading Meshery guide]({{< ref "installation/upgrades/index.md" >}}).
 
 ## Operator FAQs
 
 ### When is Meshery Operator deployed and when is it deleted?
-As a Kubernetes custom controller, Meshery Operator is provisioned and deprovisioned when Meshery Server is connected to or disconnected from Kubernetes cluster. Meshery Server connections to Kubernetes clusters are controlled using Meshery Server clients: `mesheryctl` or Meshery UI.  This behavior described below is consistent whether your Meshery deployment is using Docker or Kubernetes as the platform to host the Meshery deployment.
+As a Kubernetes custom controller, Meshery Operator is provisioned when Meshery Server connects to a Kubernetes cluster in operator mode and the cluster does not have it yet. Disconnecting does not deprovision it (see **Meshery UI** below). Meshery Server connections to Kubernetes clusters are controlled using Meshery Server clients: `mesheryctl` or Meshery UI.  This behavior described below is consistent whether your Meshery deployment is using Docker or Kubernetes as the platform to host the Meshery deployment.
 
 **Meshery CLI**
 
@@ -111,7 +134,7 @@ As a Kubernetes custom controller, Meshery Operator is provisioned and deprovisi
 
 **Meshery UI**
 
-Meshery UI offers more granular control over the deployment of Meshery Operator in that you can remove Meshery Operator from a Kubernetes cluster without disconnecting Meshery Server from the Kubernetes cluster. You can control the deployment of Meshery Operator using the on/off switch found in the Meshery Operator section of  Settings.
+Meshery Operator is installed once per cluster and shared by every connection to it, so disconnecting, deleting, or switching a connection to embedded mode leaves it installed. Removing it from a cluster without disconnecting is an explicit, cluster-wide request; see [One Operator per cluster]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#one-operator-per-cluster-shared-by-every-connection" >}}).
 
 ### Does the Meshery Operator use an SDK or framework?
 Yes. Meshery Operator is built on [Kubebuilder](https://book.kubebuilder.io)

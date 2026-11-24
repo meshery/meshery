@@ -25,7 +25,7 @@ import MesheryProgressBar from '../components/general/MesheryProgressBar';
 import getPageContext from '../components/PageContext';
 import { subscribeToControllersStatus } from 'lib/controllersStatusSubscription';
 import { useLazyGetSystemSyncQuery, useLazyGetKubernetesContextsQuery } from '../rtk-query/system';
-import { useGetUserPrefQuery } from '../rtk-query/user';
+import { useSyncCatalogContentPreference } from '@/utils/hooks/useSyncCatalogContentPreference';
 import { api } from '../rtk-query';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -73,7 +73,6 @@ import './styles/charts.css';
 import uiConfig from '../ui.config';
 import { NotificationCenterProvider } from '../components/layout/NotificationCenter';
 import { getConnectionDefinitions, getMeshModelComponentByName } from '../api/meshmodel';
-import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
 import { ability } from '../utils/can';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { formatToTitleCase } from '@/utils/utils';
@@ -97,7 +96,6 @@ import {
   setK8sContexts,
   setKeys,
   setOrganization,
-  toggleCatalogContent,
   updateExtensionType,
 } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
@@ -131,7 +129,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   const [fetchKubernetesContexts] = useLazyGetKubernetesContextsQuery();
   const [fetchOrganizations] = api.endpoints.getOrgs.useLazyQuery();
   const [fetchUserKeys] = api.endpoints.getUserKeys.useLazyQuery();
-  const { data: userPrefData } = useGetUserPrefQuery();
+  useSyncCatalogContentPreference();
   const dispatch = useDispatch();
   const [state, setState] = useState({
     mobileOpen: false,
@@ -214,6 +212,9 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
       (res?.connectionDefinitions || []).forEach((definition) => {
         if (definition?.kind) {
           connectionDef[definition.kind] = {
+            // The definition's authored display name ("Artifact Hub", "GitHub"),
+            // which title-casing the kind slug cannot reproduce.
+            name: definition.name,
             transitionMap: definition.transitionMap,
             icon: definition.styles?.svgColor,
           };
@@ -223,16 +224,17 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
       console.error('Error fetching connection definitions:', error);
     }
 
-    // Fall back to the legacy `<Kind>Connection` component for kinds without a
-    // first-class connection definition yet (e.g. meshery, github), and to
-    // backfill the flat `transitions` list / icon the definition did not provide.
-    const promises = CONNECTION_KINDS_DEF.map(async (kind) => {
+    // Backfill each discovered kind from its legacy `<Kind>Connection` mesh-model
+    // component to supply the flat `transitions` list / icon the definition did
+    // not provide. The kind set is driven by the fetched definitions above (no
+    // hardcoded list); a kind without a matching legacy component simply returns
+    // nothing and is skipped.
+    const promises = Object.keys(connectionDef).map(async (kind) => {
       try {
         const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
         if (res?.components?.length) {
-          const kindKey = CONNECTION_KINDS[kind];
-          const existing = connectionDef[kindKey] || {};
-          connectionDef[kindKey] = {
+          const existing = connectionDef[kind] || {};
+          connectionDef[kind] = {
             ...existing,
             transitions: existing.transitions ?? res.components[0].metadata?.transitions,
             icon: existing.icon || res.components[0].styles?.svgColor,
@@ -424,7 +426,10 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     }
 
     try {
-      const result = await fetchOrganizations({}).unwrap();
+      // Every organization, so a session org past the server's default first
+      // page is found instead of being replaced by organizations[0]. This is the
+      // generated endpoint, so the key is camelCase pageSize.
+      const result = await fetchOrganizations({ pageSize: 'all' }).unwrap();
       let organizationToSet;
       const sessionOrg = currentOrg ? JSON.parse(currentOrg) : null;
 
@@ -473,15 +478,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
         await loadOrg();
 
         initSubscriptions([]);
-
-        // Catalog content preference is loaded via useGetUserPrefQuery (reactive)
-        if (typeof userPrefData?.usersExtensionPreferences?.catalogContent !== 'undefined') {
-          dispatch(
-            toggleCatalogContent({
-              catalogVisibility: userPrefData?.usersExtensionPreferences?.catalogContent,
-            }),
-          );
-        }
 
         document.addEventListener('fullscreenchange', fullScreenChanged);
         await loadMeshModelComponent();

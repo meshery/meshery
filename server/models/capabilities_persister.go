@@ -1,7 +1,11 @@
 package models
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/meshery/meshkit/database"
+	"gorm.io/gorm"
 )
 
 // UserCapabilitiesPersister assists with persisting user capabilities in the store
@@ -13,9 +17,9 @@ type UserCapabilities struct {
 	Capabilities ProviderProperties `json:"capabilities" gorm:"type:bytes;serializer:json" db:"capabilities"`
 }
 
-// ReadFromPersister - reads the capabilities for the given userID
+// ReadCapabilitiesForUser - reads the capabilities for the given userID
 func (u *UserCapabilitiesPersister) ReadCapabilitiesForUser(userID string) (*ProviderProperties, error) {
-	if u.DB == nil {
+	if u == nil || u.DB == nil {
 		return nil, ErrDBConnection
 	}
 
@@ -26,20 +30,27 @@ func (u *UserCapabilitiesPersister) ReadCapabilitiesForUser(userID string) (*Pro
 	capabilities := &UserCapabilities{}
 	err := u.DB.Model(capabilities).Where("id = ?", userID).First(capabilities).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrResultNotFound(err)
+		}
 		return nil, err
 	}
 
 	return &capabilities.Capabilities, nil
 }
 
-// WriteToPersister persists the capabilities for the user
+// WriteCapabilitiesForUser persists the capabilities for the user
 func (u *UserCapabilitiesPersister) WriteCapabilitiesForUser(userID string, data *ProviderProperties) error {
-	if u.DB == nil {
+	if u == nil || u.DB == nil {
 		return ErrDBConnection
 	}
 
 	if userID == "" {
 		return ErrUserID
+	}
+
+	if data == nil {
+		return ErrNilConfigData
 	}
 
 	userCapabilities := &UserCapabilities{
@@ -55,9 +66,9 @@ func (u *UserCapabilitiesPersister) WriteCapabilitiesForUser(userID string, data
 	return nil
 }
 
-// DeleteFromPersister removes the capabilities for the user
+// DeleteCapabilitiesForUser removes the capabilities for the user
 func (u *UserCapabilitiesPersister) DeleteCapabilitiesForUser(userID string) error {
-	if u.DB == nil {
+	if u == nil || u.DB == nil {
 		return ErrDBConnection
 	}
 
@@ -65,5 +76,12 @@ func (u *UserCapabilitiesPersister) DeleteCapabilitiesForUser(userID string) err
 		return ErrUserID
 	}
 
-	return u.DB.Delete(&UserCapabilities{ID: userID}).Error
+	res := u.DB.Delete(&UserCapabilities{ID: userID})
+	if res.Error != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return ErrResultNotFound(fmt.Errorf("capabilities for user %s not found", userID))
+	}
+	return nil
 }

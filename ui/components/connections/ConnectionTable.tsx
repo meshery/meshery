@@ -5,14 +5,16 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import ConnectionStateTransitionModal from './ConnectionStateTransitionModal';
 import type { ConnectionStateTransitionModalRef } from './ConnectionStateTransitionModal';
 
-import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
+import { CONNECTION_STATES } from '../../utils/Enum';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import useGrafanaPingHook from '@/utils/hooks/useGrafanaPingHook';
 import usePrometheusPingHook from '@/utils/hooks/usePrometheusPingHook';
+import useMesheryPingHook from '@/utils/hooks/useMesheryPingHook';
 import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
+import { useListConnectionDefinitionsQuery } from '@meshery/schemas/mesheryApi';
 import { useTableUrlState } from '@/utils/hooks/useTableUrlState';
 import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibilityPreference';
 
@@ -86,6 +88,7 @@ const ConnectionTable = ({
   const ping = useKubernetesHook();
   const pingGrafana = useGrafanaPingHook();
   const pingPrometheus = usePrometheusPingHook();
+  const pingMeshery = useMesheryPingHook();
   const { width } = useWindowDimensions();
 
   const { tableState, updateTableState, copyRowDeepLink } = useTableUrlState({
@@ -104,8 +107,10 @@ const ConnectionTable = ({
 
   const { page, pageSize, sortOrder, search } = tableState;
   const setPage = useCallback((p: number) => updateTableState({ page: p }), [updateTableState]);
+  // Reset the page in the same URL update: a separate setPage(0) would be a
+  // second router.replace built from the same query and could drop the new size.
   const setPageSize = useCallback(
-    (ps: number) => updateTableState({ pageSize: ps }),
+    (ps: number) => updateTableState({ pageSize: ps, page: 0 }),
     [updateTableState],
   );
   const setSortOrder = useCallback(
@@ -149,6 +154,24 @@ const ConnectionTable = ({
     connections: '',
   });
 
+  // The set of connection kinds is fetched from the registry rather than
+  // hardcoded, so the Kind filter reflects whatever connections are registered.
+  const { data: connectionDefinitionsResponse } = useListConnectionDefinitionsQuery({});
+  const kindFilterOptions = useMemo(() => {
+    const seen = new Set<string>();
+    return (connectionDefinitionsResponse?.connectionDefinitions || []).reduce<
+      { label: string; value: string }[]
+    >((options, definition) => {
+      const kind = definition?.kind;
+      if (!kind || seen.has(kind)) {
+        return options;
+      }
+      seen.add(kind);
+      options.push({ label: definition?.name || kind, value: kind });
+      return options;
+    }, []);
+  }, [connectionDefinitionsResponse?.connectionDefinitions]);
+
   const filters = useMemo(
     () => ({
       status: {
@@ -166,10 +189,10 @@ const ConnectionTable = ({
       },
       kind: {
         name: 'Kind',
-        options: Object.entries(CONNECTION_KINDS).map(([key, value]) => ({ label: key, value })),
+        options: kindFilterOptions,
       },
     }),
-    [],
+    [kindFilterOptions],
   );
 
   const handleApplyFilter = () => {
@@ -210,7 +233,9 @@ const ConnectionTable = ({
     isError: isEnvironmentsError,
     error: environmentsError,
   } = useGetEnvironmentsQuery(
-    { orgId: organization?.id },
+    // Without a page size the server returns only its default first page of
+    // 10, which would hide every later environment from this select.
+    { orgId: organization?.id, pagesize: 'all' },
     {
       skip: !organization?.id,
     },
@@ -363,16 +388,37 @@ const ConnectionTable = ({
       });
 
       if (confirmed) {
-        await Promise.all(
+        // Use the raw mutator here so Promise.allSettled can handle
+        // success and failure for each deletion. Keep updateConnectionStatus
+        // unchanged for single-connection actions.
+        const results = await Promise.allSettled(
           selectedConnections.map(({ id }) =>
-            updateConnectionStatus(id, CONNECTION_STATES.DELETED),
+            updateConnectionByIdMutator({
+              connectionId: id,
+              body: { status: CONNECTION_STATES.DELETED },
+            }).unwrap(),
           ),
         );
+
+        const successCount = results.filter((r) => r.status === 'fulfilled').length;
+        const failureCount = results.filter((r) => r.status === 'rejected').length;
+
+        if (successCount > 0) {
+          notify({
+            message: `${successCount} Connection${successCount > 1 ? 's' : ''} deleted`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+        }
+        if (failureCount > 0) {
+          notify({
+            message: `Failed to delete ${failureCount} Connection${failureCount > 1 ? 's' : ''}`,
+            event_type: EVENT_TYPES.ERROR,
+          });
+        }
       }
     },
-    [filteredConnections, updateConnectionStatus],
+    [filteredConnections, updateConnectionByIdMutator, notify],
   );
-
   const handleActionMenuClose = useCallback(() => {
     setAnchorEl(null);
     setRowData(null);
@@ -575,6 +621,7 @@ const ConnectionTable = ({
     ping,
     pingGrafana,
     pingPrometheus,
+    pingMeshery,
     transitionMapByKind,
   });
   const columnNames = useMemo(
@@ -644,6 +691,8 @@ const ConnectionTable = ({
 
   return (
     <>
+      {tabs}
+
       <ConnectionTableToolbar
         isSearchExpanded={isSearchExpanded}
         setIsSearchExpanded={setIsSearchExpanded}
@@ -655,7 +704,6 @@ const ConnectionTable = ({
         columns={columns}
         columnVisibility={columnVisibility}
         setColumnVisibility={setColumnVisibilityByUser}
-        tabs={tabs}
       />
 
       <ResponsiveDataTable

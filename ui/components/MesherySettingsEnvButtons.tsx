@@ -2,7 +2,7 @@ import { Button, Typography } from '@sistent/sistent';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
 import { Keys } from '@meshery/schemas/permissions';
 import useTestIDsGenerator from '@/utils/hooks/useTestIDs';
-import { CONNECTION_KINDS } from '@/utils/Enum';
+import { CoreConnectionKinds } from '@/utils/Enum';
 import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 
 type MesherySettingsEnvButtonsProps = {
@@ -23,7 +23,7 @@ const MesherySettingsEnvButtons = ({ onOpened }: MesherySettingsEnvButtonsProps)
 
   const handleClick = () => {
     openCreateConnection({
-      kind: CONNECTION_KINDS.KUBERNETES,
+      kind: CoreConnectionKinds.kubernetes,
       skipKindSelection: true,
     });
     onOpened?.();

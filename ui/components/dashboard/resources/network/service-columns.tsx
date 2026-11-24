@@ -5,7 +5,7 @@ import { SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
 import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
-import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { CoreConnectionKinds } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
 
 export const buildServiceColumns = ({
@@ -119,16 +119,16 @@ export const buildServiceColumns = ({
         },
         customBodyRender: function CustomBody(val) {
           let attribute = JSON.parse(val);
-          let loadbalancer = attribute?.loadbalancer;
-          let ingresses = loadbalancer?.ingress;
+          let loadBalancer = attribute?.loadBalancer;
+          let ingresses = loadBalancer?.ingress;
           return (
             <>
               {ingresses?.map((ingress, i) => {
                 return (
-                  <>
-                    {ingress.hostname}
+                  <React.Fragment key={i}>
+                    {ingress.ip || ingress.hostname}
                     {i < ingresses.length - 1 && ','}
-                  </>
+                  </React.Fragment>
                 );
               })}
             </>
@@ -213,7 +213,7 @@ export const buildServiceColumns = ({
                 title={context.name}
                 iconSrc={
                   connectionMetadataState
-                    ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                    ? connectionMetadataState[CoreConnectionKinds.kubernetes]?.icon
                     : ''
                 }
                 handlePing={() => ping(context.name, context.server, context.connectionId)}

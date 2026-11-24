@@ -5,6 +5,10 @@ function recursivelySearchObjKey(obj, arr, index) {
     return obj;
   }
 
+  if (!obj || typeof obj !== 'object') {
+    return false;
+  }
+
   const keyName = arr[index];
   if (obj[keyName]) {
     return recursivelySearchObjKey(obj[keyName], arr, index + 1);
@@ -46,6 +50,10 @@ export class ProviderUiAccessControl {
       return true;
     }
 
+    if (!Array.isArray(navigatorWalker) || navigatorWalker.length === 0) {
+      return false;
+    }
+
     let walkerArray = ['restrictedAccess', 'allowedComponents', 'navigator', ...navigatorWalker];
 
     const searchResult = recursivelySearchObjKey(this.providerPayload, walkerArray, 0);
@@ -58,6 +66,10 @@ export class ProviderUiAccessControl {
   isHeaderComponentEnabled(headerWalker) {
     if (!this.isPlaygroundEnv) {
       return true;
+    }
+
+    if (!Array.isArray(headerWalker) || headerWalker.length === 0) {
+      return false;
     }
 
     let walkerArray = ['restrictedAccess', 'allowedComponents', 'header', ...headerWalker];
@@ -74,11 +86,21 @@ export class ProviderUiAccessControl {
       return true;
     }
 
-    if (!this.providerPayload.extensions?.navigator) {
+    if (!Array.isArray(walkerArray) || walkerArray.length === 0) {
+      return false;
+    }
+
+    if (
+      !Array.isArray(this.providerPayload?.extensions?.navigator) ||
+      this.providerPayload.extensions.navigator.length === 0
+    ) {
       return false;
     }
 
     const navigatorObj = this.providerPayload.extensions.navigator[0]?.allowedTo;
+    if (!navigatorObj || typeof navigatorObj !== 'object') {
+      return false;
+    }
 
     const searchResult = recursivelySearchObjKey(navigatorObj, walkerArray, 0);
     if (_.isObject(searchResult) && _.isEmpty(searchResult)) {

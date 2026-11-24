@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
 
 vi.mock('../../../../utils/k8s-utils', () => ({ timeAgo: (v: string) => `AGO:${v}` }));
 vi.mock('../../../../utils/multi-ctx', () => ({
@@ -11,7 +12,15 @@ vi.mock('../sortable-table-cell', () => ({
   DefaultTableCell: () => null,
   SortableTableCell: () => null,
 }));
-vi.mock('../../../../utils/Enum', () => ({ CONNECTION_KINDS: { KUBERNETES: 'kubernetes' } }));
+vi.mock('../../../../utils/Enum', () => ({
+  CoreConnectionKinds: {
+    meshery: 'meshery',
+    kubernetes: 'kubernetes',
+    prometheus: 'prometheus',
+    grafana: 'grafana',
+    github: 'github',
+  },
+}));
 vi.mock('@/components/data-formatter', () => ({ FormatId: () => null }));
 vi.mock('../../view', () => ({ Title: () => null }));
 vi.mock('../config', () => ({ SINGLE_VIEW: 'single' }));
@@ -30,5 +39,28 @@ describe('buildPodDisruptionBudgetColumns', () => {
     });
     expect(cfg.name).toBe('PodDisruptionBudget');
     expect(cfg.columns.length).toBeGreaterThan(0);
+  });
+
+  const renderMaxUnavailable = (attribute: unknown) => {
+    const cfg = buildPodDisruptionBudgetColumns({
+      switchView: () => {},
+      meshSyncResources: [],
+      k8sConfig: {},
+      connectionMetadataState: {},
+      workloadType: 'PodDisruptionBudget',
+      ping: () => {},
+    });
+    const column = cfg.columns.find((c) => c.label === 'Max Unavailable');
+    return render(<>{column?.options.customBodyRender(JSON.stringify(attribute))}</>);
+  };
+
+  it('shows spec.maxUnavailable in the Max Unavailable column', () => {
+    renderMaxUnavailable({ maxUnavailable: 1, selector: { matchLabels: { app: 'web' } } });
+    expect(screen.getByText('1')).toBeInTheDocument();
+  });
+
+  it('shows a percentage maxUnavailable as given', () => {
+    renderMaxUnavailable({ maxUnavailable: '25%' });
+    expect(screen.getByText('25%')).toBeInTheDocument();
   });
 });

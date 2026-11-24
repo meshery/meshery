@@ -11,14 +11,16 @@ import (
 	"github.com/meshery/schemas/models/v1beta2/organization"
 )
 
-// MesheryApplicationPersister is the persister for persisting
-// applications on the database
+// OrganizationPersister is the persister for persisting
+// organizations on the database
 type OrganizationPersister struct {
 	DB *database.Handler
 }
 
-// GetMesheryApplications returns all of the applications
-func (op *OrganizationPersister) GetOrganizations(search, order string, page, pageSize uint64, updatedAfter string) ([]byte, error) {
+// GetOrganizations returns one page of organizations, or every matching
+// organization when all is set, in which case pageSize is ignored and the
+// response reports the number of organizations returned.
+func (op *OrganizationPersister) GetOrganizations(search, order string, page, pageSize uint64, all bool, updatedAfter string) ([]byte, error) {
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
@@ -37,7 +39,12 @@ func (op *OrganizationPersister) GetOrganizations(search, order string, page, pa
 
 	query.Table("organizations").Count(&count)
 
-	Paginate(uint(page), uint(pageSize))(query).Find(&organizations)
+	if all {
+		query.Find(&organizations)
+		pageSize = uint64(len(organizations))
+	} else {
+		Paginate(uint(page), uint(pageSize))(query).Find(&organizations)
+	}
 
 	organizationsPage := &OrganizationsPage{
 		Page:          page,

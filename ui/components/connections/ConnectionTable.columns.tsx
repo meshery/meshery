@@ -2,23 +2,23 @@ import React, { useMemo } from 'react';
 import {
   Box,
   IconButton,
-  Grid2,
   TableCell,
   InfoOutlinedIcon,
   MoreVertIcon,
   CustomTooltip,
   getRelativeTime,
   getFullFormattedTime,
+  useHasPermission,
 } from '@sistent/sistent';
 import { FormatId } from '../data-formatter';
 import { iconMedium } from '../../css/icons.styles';
-import { CONNECTION_KINDS } from '../../utils/Enum';
+import { CoreConnectionKinds } from '../../utils/Enum';
 import { TooltipWrappedConnectionChip } from './ConnectionChip';
 import { ConnectionStatusSelect } from './ConnectionStatusSelect';
 import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue } from '../../utils/utils';
 import MultiSelectWrapper from '../general/multi-select-wrapper';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
@@ -96,6 +96,10 @@ type UseConnectionColumnsArgs = {
   ping: (name: string, server: string, id: string) => void;
   pingGrafana: (connectionID: string, name?: string) => void;
   pingPrometheus: (connectionID: string, name?: string) => void;
+  // meshery-kind connections have no by-id server ping endpoint (schemas only
+  // defines pingKubernetes), so this probes the connection's own recorded
+  // serverLocation from the browser — see useMesheryPingHook.
+  pingMeshery: (serverLocation?: string, name?: string) => void;
   // Per-kind connection state machine, keyed by connection kind. Sourced from
   // the connection definitions' `transitionMap` (see `_app.tsx`).
   transitionMapByKind: Record<string, ConnectionTransitionMap | undefined> | null;
@@ -114,8 +118,14 @@ export const useConnectionColumns = ({
   ping,
   pingGrafana,
   pingPrometheus,
+  pingMeshery,
   transitionMapByKind,
 }: UseConnectionColumnsArgs) => {
+  const canAssignConnectionsToEnv = useHasPermission(
+    Keys.WorkspaceManagementAssignConnectionsToEnvironment,
+  );
+  const canChangeConnectionState = useHasPermission(Keys.LifecycleManagementChangeConnectionState);
+
   return useMemo(() => {
     const nextColumns = [
       {
@@ -184,29 +194,33 @@ export const useConnectionColumns = ({
             // always-defined no-op handler still makes the chip swallow row
             // clicks (stopPropagation) even when it cannot ping.
             let handlePing: (() => void) | undefined;
-            if (kind === CONNECTION_KINDS.KUBERNETES) {
+            if (kind === CoreConnectionKinds.kubernetes) {
               handlePing = () =>
                 ping(
                   getColumnValue(tableMeta.rowData, 'metadata.name', nextColumns),
                   getColumnValue(tableMeta.rowData, 'metadata.server', nextColumns),
                   connectionId,
                 );
-            } else if (kind === CONNECTION_KINDS.GRAFANA) {
+            } else if (kind === CoreConnectionKinds.grafana) {
               handlePing = () =>
                 pingGrafana(connectionId, getColumnValue(tableMeta.rowData, 'name', nextColumns));
-            } else if (kind === CONNECTION_KINDS.PROMETHEUS) {
+            } else if (kind === CoreConnectionKinds.prometheus) {
               handlePing = () =>
                 pingPrometheus(
                   connectionId,
                   getColumnValue(tableMeta.rowData, 'name', nextColumns),
                 );
+            } else if (kind === CoreConnectionKinds.meshery) {
+              // `server` resolves metadata.serverLocation (camelCase, current
+              // records) or the legacy snake_case sibling for meshery rows.
+              handlePing = () => pingMeshery(server, value || name || kind);
             }
 
             return (
               <>
                 <TooltipWrappedConnectionChip
                   tooltip={server ? `Server: ${server}` : ''}
-                  title={kind === CONNECTION_KINDS.KUBERNETES ? name : value || name || kind}
+                  title={kind === CoreConnectionKinds.kubernetes ? name : value || name || kind}
                   status={getColumnValue(tableMeta.rowData, 'status', nextColumns)}
                   onDelete={() => handleDeleteConnection(connectionId)}
                   handlePing={handlePing}
@@ -252,46 +266,53 @@ export const useConnectionColumns = ({
             );
           },
           customBodyRender: (value, tableMeta) => {
+            // Skip nameless envs — id-as-label painted UUID/black chips.
             const cleanedEnvs =
-              value?.map((environment) => ({
-                label: environment.name,
-                value: environment.id,
-              })) || [];
+              value
+                ?.filter((environment) => environment?.id && String(environment?.name ?? '').trim())
+                .map((environment) => ({
+                  label: String(environment.name).trim(),
+                  value: environment.id,
+                })) || [];
 
             return (
               isEnvironmentsSuccess && (
-                <div onClick={(event) => event.stopPropagation()}>
-                  <Grid2 size={{ xs: 12 }} style={{ height: '5rem', width: '15rem' }}>
-                    <Grid2 size={{ xs: 12 }} style={{ marginTop: '2rem', cursor: 'pointer' }}>
-                      <MultiSelectWrapper
-                        updating={updatingConnection.current}
-                        onChange={(selected, unselected) =>
-                          handleEnvironmentSelect(
-                            getColumnValue(tableMeta.rowData, 'id', nextColumns),
-                            getColumnValue(tableMeta.rowData, 'name', nextColumns),
-                            cleanedEnvs,
-                            selected,
-                            unselected,
-                          )
-                        }
-                        options={environmentOptions}
-                        value={cleanedEnvs}
-                        placeholder={`Select or create an environment`}
-                        noOptionsMessage={() =>
-                          'No matching environments. Type to create a new one.'
-                        }
-                        isSelectAll={true}
-                        menuPlacement={'bottom'}
-                        disabled={
-                          !CAN(
-                            Keys.WorkspaceManagementAssignConnectionsToEnvironment.id,
-                            Keys.WorkspaceManagementAssignConnectionsToEnvironment.function,
-                          )
-                        }
-                      />
-                    </Grid2>
-                  </Grid2>
-                </div>
+                <Box
+                  onClick={(event) => event.stopPropagation()}
+                  sx={{
+                    width: '15rem',
+                    minHeight: '5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Box sx={{ width: '100%' }}>
+                    <MultiSelectWrapper
+                      updating={updatingConnection.current}
+                      disabled={!canAssignConnectionsToEnv}
+                      onChange={(selected, unselected) =>
+                        handleEnvironmentSelect(
+                          getColumnValue(tableMeta.rowData, 'id', nextColumns),
+                          getColumnValue(tableMeta.rowData, 'name', nextColumns),
+                          cleanedEnvs,
+                          selected,
+                          unselected,
+                        )
+                      }
+                      options={environmentOptions}
+                      value={cleanedEnvs}
+                      placeholder="Select or create..."
+                      noOptionsMessage={({ inputValue }) =>
+                        inputValue?.trim()
+                          ? 'No matching environments. Type to create a new one.'
+                          : null
+                      }
+                      isSelectAll={true}
+                      menuPlacement={'bottom'}
+                    />
+                  </Box>
+                </Box>
               )
             );
           },
@@ -450,13 +471,7 @@ export const useConnectionColumns = ({
           },
           customBodyRender: function CustomBody(value, tableMeta) {
             const kind = getColumnValue(tableMeta.rowData, 'kind', nextColumns);
-            const disabled =
-              value === 'deleted'
-                ? true
-                : !CAN(
-                    Keys.LifecycleManagementChangeConnectionState.id,
-                    Keys.LifecycleManagementChangeConnectionState.function,
-                  );
+            const disabled = value === 'deleted' ? true : !canChangeConnectionState;
 
             return (
               <ConnectionStatusSelect
@@ -494,7 +509,7 @@ export const useConnectionColumns = ({
             return (
               <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
                 {getColumnValue(tableMeta.rowData, 'kind', nextColumns) ===
-                CONNECTION_KINDS.KUBERNETES ? (
+                CoreConnectionKinds.kubernetes ? (
                   <IconButton
                     aria-label="more"
                     id="long-button"
@@ -536,6 +551,8 @@ export const useConnectionColumns = ({
 
     return nextColumns;
   }, [
+    canAssignConnectionsToEnv,
+    canChangeConnectionState,
     envUrl,
     environmentOptions,
     handleActionMenuOpen,
@@ -546,6 +563,7 @@ export const useConnectionColumns = ({
     ping,
     pingGrafana,
     pingPrometheus,
+    pingMeshery,
     transitionMapByKind,
     updatingConnection,
     url,

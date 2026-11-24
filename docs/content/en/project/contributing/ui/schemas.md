@@ -168,7 +168,79 @@ const validateDesign = (data) => {
 
 ## Integration Points in UI
 
-### A. RJSF JSON Schemas
+### A. Generated RTK Query Client
+
+`@meshery/schemas` publishes more than types: `@meshery/schemas/mesheryApi` is a
+generated [RTK Query](https://redux-toolkit.js.org/rtk-query/overview) client with a
+hook per API operation. `ui/rtk-query/index.ts` re-exports that client as `api`, so
+every module under `ui/rtk-query/` injects into the *same* instance and the generated
+hooks are already available from those modules.
+
+**Consume the generated hook. Do not re-declare the request.** A hand-written
+`builder.query`/`builder.mutation` for an operation schemas already defines forks the
+wire contract silently, and Meshery and Layer5 Cloud drift apart with nothing failing.
+
+```ts
+// Correct - the generated hook, imported directly.
+import { useGetWorkspacesQuery } from "@meshery/schemas/mesheryApi";
+```
+
+A local module is the right place only for *ergonomics* over a generated endpoint -
+adapting an argument shape, or attaching a Meshery-local cache tag:
+
+```ts
+// Argument adaptation: callers pass a bare id, the generated endpoint takes an object.
+export const useGetCredentialByIdQuery = (credentialId: string, options?: object) =>
+  useSchemasGetCredentialByIdQuery({ credentialId }, options);
+```
+
+```ts
+// Cache tags: the callback form of enhanceEndpoints APPENDS to the generated tags.
+// The object form Object.assigns over them and drops every schemas-side tag.
+import { appendInvalidatesTags } from "./utils";
+
+api.enhanceEndpoints({
+  addTagTypes: [TAGS.DESIGNS],
+  endpoints: {
+    importDesign: appendInvalidatesTags("importDesign", { type: TAGS.DESIGNS }),
+  },
+});
+```
+
+#### A local endpoint that shadows a generated one is dead code
+
+`injectEndpoints` **silently discards** an endpoint whose name the generated client
+already defines - a dev-only console warning, nothing more - and serves every call
+from the generated definition. Neither the typecheck nor a test that only asserts a
+hook exists will notice, so a local declaration can look authoritative while a
+different request goes over the wire. Meshery has shipped user-visible breakage this
+way: callers shaped for the discarded local definition sent `undefined` where the
+generated endpoint expected an id.
+
+Before adding an endpoint, check the name against the generated client:
+
+```bash
+grep '<operationId>:t\.' ui/node_modules/@meshery/schemas/dist/mesheryApi.js
+```
+
+Override deliberately only when the generated operation is genuinely wrong for
+Meshery today - for example when schemas has landed a path the server has not
+adopted yet. Set `overrideExisting: true` explicitly, explain why in a comment, and
+link the `meshery/schemas` issue tracking the divergence - see
+`ui/rtk-query/notificationCenter.ts` and
+[meshery/schemas#1134](https://github.com/meshery/schemas/issues/1134).
+
+Test the **effective** endpoint, not the declared one: dispatch through a real store
+and assert the URL, method and body. A test that reads the module's source shape, or
+that calls `fetch` itself and then asserts its own mock, proves nothing. The guard
+tests to copy are
+`ui/rtk-query/__tests__/{workspace-mutation-wrappers,notificationCenter-effective-endpoints}.test.ts*`;
+where a local hook only adapts an argument shape, drive that hook with `renderHook`
+so the adaptation itself is exercised rather than bypassed.
+
+---
+
+### B. RJSF JSON Schemas
 
 Meshery uses [react-jsonschema-form](https://github.com/rjsf-team/react-jsonschema-form) to render forms dynamically based on JSON schemas. All of Meshery’s RJSF schemas are defined in the `@sistent/sistent` package, which extends schemas from the `@meshery/schema` package.
 
@@ -196,7 +268,7 @@ const designSchema = {
 
 ---
 
-### B. General Form UI
+### C. General Form UI
 
 OpenAPI schemas (especially request bodies for POST/PUT operations) serve as the foundation for building form logic. These definitions include:
 
@@ -221,7 +293,7 @@ const DesignForm = ({ design }: { design: DesignTypes }) => (
 
 ---
 
-### C. UI-Specific Descriptions and Enhancements
+### D. UI-Specific Descriptions and Enhancements
 
 Any UI-specific metadata—such as `name`, `type`, `hints`, `descriptions`, `defaults`, etc.—is defined directly within the relevant schema object. Elements like tooltips, descriptions, and other metadata are frequently needed across the UI, so having a single source of truth in the schema object ensures consistency and reduces duplication.
 
@@ -229,7 +301,7 @@ For example, if we have a `Design` schema, the UI retrieves details like the des
 
 ---
 
-### D. Type Safety for Component Props
+### E. Type Safety for Component Props
 
 Generated TypeScript types from the schema ensure UI components are type-safe and consistent with backend contracts.
 

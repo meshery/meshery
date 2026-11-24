@@ -95,16 +95,14 @@ export const MesheryPatternsCatalog = 'meshery-patterns-catalog';
 
 export const MesheryFiltersCatalog = 'meshery-filters-catalog';
 
-// Remove this fetch all connections initially
-export const CONNECTION_KINDS_DEF = ['MESHERY', 'KUBERNETES', 'PROMETHEUS', 'GRAFANA', 'GITHUB'];
-
-export const CONNECTION_KINDS = {
-  MESHERY: 'meshery',
-  KUBERNETES: 'kubernetes',
-  PROMETHEUS: 'prometheus',
-  GRAFANA: 'grafana',
-  GITHUB: 'github',
-};
+// The full set of connection kinds is NOT hardcoded - it is fetched from the
+// registry (useListConnectionDefinitionsQuery / getConnectionDefinitions). The
+// few kinds whose UI is special-cased (Kubernetes cluster-import flow,
+// Grafana/Prometheus telemetry + ping hooks) are named by
+// `CoreConnectionKinds`, sourced from meshery/schemas so the literals live
+// in one place. The `kind` field itself stays open-ended.
+export { CoreConnectionKinds } from '@meshery/schemas';
+export type { CoreConnectionKind } from '@meshery/schemas';
 
 export const MESHSYNC_DEPLOYMENT_TYPE = {
   OPERATOR: 'operator',

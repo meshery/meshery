@@ -3,12 +3,26 @@ package system
 import (
 	"flag"
 	"path/filepath"
+	"reflect"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestSystemCheckFlagTagsMatchCobraFlags(t *testing.T) {
+	flagStructType := reflect.TypeOf(cmdSystemCheckFlags{})
+	for i := 0; i < flagStructType.NumField(); i++ {
+		field := flagStructType.Field(i)
+		jsonTag := strings.SplitN(field.Tag.Get("json"), ",", 2)[0]
+		if jsonTag == "" || jsonTag == "-" {
+			continue
+		}
+		assert.NotNil(t, checkCmd.Flags().Lookup(jsonTag), "expected Cobra flag --%s for struct field %s", jsonTag, field.Name)
+	}
+}
 
 var update = flag.Bool("update", false, "update golden files")
 

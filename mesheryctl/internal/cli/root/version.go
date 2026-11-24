@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
@@ -55,8 +56,10 @@ mesheryctl version
 		if err != nil {
 			// get the currCtx
 			utils.Log.Error(ErrProcessingConfig(err))
-			userResponse := false
-			userResponse = utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file?")
+			userResponse, promptErr := utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file?")
+			if promptErr != nil {
+				return promptErr
+			}
 			if userResponse {
 				utils.BackupConfigFile(utils.DefaultConfigPath)
 				// Create config file if not present in meshery folder
@@ -113,6 +116,7 @@ mesheryctl version
 		url := mctlCfg.GetBaseMesheryURL()
 		build := constants.GetMesheryctlVersion()
 		commitsha := constants.GetMesheryctlCommitsha()
+		defer utils.CheckMesheryctlClientVersion(build)
 
 		version := config.Version{
 			Build:          "unavailable",
@@ -130,11 +134,15 @@ mesheryctl version
 			return
 		}
 
-		defer utils.CheckMesheryctlClientVersion(build)
-		client := &http.Client{}
+		client := &http.Client{Timeout: 10 * time.Second}
 		resp, err := client.Do(req)
 
 		if err != nil {
+
+			// resp is nil here except when CheckRedirect fails, and in that
+			// case net/http has already closed resp.Body for us — see the
+			// (Client).Do docs — so there is nothing left to close.
+
 			utils.PrintToTable(header, rows, nil)
 			utils.Log.Warn(ErrConnectingToServer(err))
 			return

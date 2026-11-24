@@ -19,6 +19,10 @@ header {
 html {
   scroll-padding-top: var(--navbar-height);
   scroll-behavior: smooth;
+
+  @media (max-width: 600px) {
+    scroll-padding-top: calc(var(--navbar-height) - 2.5rem);
+  }
 }
 
 // Navbar styles
@@ -59,6 +63,13 @@ html {
     .nav-mode-icon {
       background: none;
       border: none;
+      padding: 4px;
+
+      &:focus-visible {
+        outline: 2px solid var(--brand-color-secondary);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
 
       & > img {
         padding: 0 !important;
@@ -99,9 +110,13 @@ html {
       }
 
       &:hover,
-      &:active,
-      &:focus {
+      &:active {
         outline: none;
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--brand-color-secondary);
+        outline-offset: 2px;
       }
     }
 
@@ -235,6 +250,16 @@ html {
           background: var(--background-primary);
           transition: all 0.3s;
         }
+
+        &.nav-item--btn {
+          & a::after {
+            display: none;
+          }
+
+          & a > .nav-btn {
+            color: var(--color-white);
+          }
+        }
       }
 
       & select {
@@ -254,15 +279,10 @@ html {
   }
 }
 
-// Ensure content is properly spaced
-.main-container {
-  padding-top: var(--navbar-height);
-}
-
 // Breadcrumb styles
 .breadcrumb {
   font-size: 1.05rem;
   line-height: 0.925rem;
   padding: 0;
-  margin-top: var(--navbar-height);
+  margin-top: 0.5rem;
 }

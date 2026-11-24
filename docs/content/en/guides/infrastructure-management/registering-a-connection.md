@@ -32,7 +32,7 @@ Meshery learns about Connections two ways. **Managed** Connections (for example,
 1. Open the **Connections** page in Meshery (**Lifecycle → Connections**).
 2. Click **Create Connection**.
 
-The wizard opens as a modal. The set of Connection kinds you can create is driven by the [connection definitions]({{< ref "project/contributing/models/connections" >}}) registered in your Meshery Server's [Registry]({{< ref "concepts/logical/registry.md" >}}). Out of the box this includes **Kubernetes**, **Grafana**, and **Prometheus**; your deployment may offer more. If a kind you need is missing, a contributor can add it - see [Contributing a Connection]({{< ref "project/contributing/models/connections" >}}).
+The wizard opens as a modal. The set of Connection kinds you can create is driven by the [connection definitions]({{< ref "project/contributing/models/connections" >}}) registered in your Meshery Server's [Registry]({{< ref "concepts/logical/registry.md" >}}). Out of the box this includes **Kubernetes**, **Grafana**, **Prometheus**, **Artifact Hub**, and **GitHub**; your deployment may offer more. Because the list is registry-driven, the wizard surfaces each kind - its name, description, icon, and its Configure and Credential fields - straight from the definition, so no kind is hard-coded into the UI. If a kind you need is missing, a contributor can add it - see [Contributing a Connection]({{< ref "project/contributing/models/connections" >}}).
 
 ## Creating a Connection
 
@@ -54,16 +54,24 @@ Creating a Connection performs two transitions in sequence: it **registers** the
 
 ### Credentials
 
-Credentials entered in the wizard are persisted as first-class, named [Credentials]({{< ref "concepts/logical/credentials.md" >}}), encrypted at rest, and reusable across other Connections. Meshery never exposes them in logs or API responses. To learn how Meshery interprets a credential's secret (Basic auth vs. bearer token vs. anonymous), see [Credentials]({{< ref "concepts/logical/credentials.md" >}}) and the [Telemetry authentication note](https://docs.meshery.io/guides/telemetry/).
+Credentials entered in the wizard are persisted as first-class, named [Credentials]({{< ref "concepts/logical/credentials.md" >}}), encrypted at rest, and reusable across other Connections. Meshery never exposes them in logs or API responses. A Kubernetes credential must carry plain data: Meshery rejects (HTTP 400) one that sets an `exec` plugin, an `auth-provider`, or a `certificate-authority`, `client-certificate`, `client-key` or `tokenFile` path, because building a client from it would run a command or read a file on the machine running Meshery Server. Credentials of Kubernetes contexts that Meshery Server imported from its own kubeconfig are the exception, and keep working. Embed the data instead (`*-data` fields or a `token`). To learn how Meshery interprets a credential's secret (Basic auth vs. bearer token vs. anonymous), see [Credentials]({{< ref "concepts/logical/credentials.md" >}}) and the [Telemetry authentication note]({{< ref "guides/telemetry/_index.md" >}}).
 
 ## Importing a Kubernetes cluster
 
 Kubernetes uses a dedicated flow because a single kubeconfig can describe many clusters and its kubeconfig also serves as its credential.
 
+The Kubernetes flow has four steps: **Choose Connection**, **Import Kubeconfig**, **Review Contexts**, and **Done**.
+
 1. **Choose Connection** → **Kubernetes**.
-2. **Import Kubeconfig.** Upload a kubeconfig file. Meshery parses it and lists the contexts it contains, indicating which are reachable - nothing is persisted yet.
-3. **Select contexts.** Choose which contexts to import. For each, you can override the Connection name and choose a [MeshSync deployment mode](#meshsync-deployment-mode).
-4. **Review Import.** Confirm your selection and import. Meshery creates one Connection per selected context and reports the outcome, grouped into connected, registered, ignored, and errored buckets.
+2. **Import Kubeconfig.** Upload a kubeconfig file. Nothing is saved yet. The kubeconfig must embed its certificates, keys and tokens (`*-data`, `token`); one that names files by path (`certificate-authority`, `client-certificate`, `client-key`, `tokenFile`) is rejected, because the Meshery Server cannot read files from your machine. Create an embedded copy with `kubectl config view --minify --flatten --raw`. Meshery reads the file and tells you which of these it found:
+   - A file that cannot be parsed is reported as an error.
+   - A valid kubeconfig that lists no contexts says that the file does not contain any contexts.
+   - Contexts whose authentication method is unsupported (an exec plugin or an auth-provider, for example), or whose credentials cannot be read, are skipped and listed with the reason. Meshery does not run exec plugins or auth-provider helpers from an imported kubeconfig, because they would execute on the Meshery Server host. This applies only to uploaded files: the kubeconfig Meshery Server reads from its own host (the `KUBECONFIG_FOLDER` directory, `~/.kube` by default) keeps its exec plugins, so a natively run server can still use `aws eks get-token` or `gke-gcloud-auth-plugin` from the operator's kubeconfig.
+3. **Review Contexts.** Each context that can be imported is marked **Reachable** or **Unreachable**. Choose which clusters to import, rename them if you want, and pick a [MeshSync deployment mode](#meshsync-deployment-mode). The checkbox is labeled: "Connect reachable clusters after import. Unreachable clusters are imported as discovered and can be connected later." When it is checked, reachable clusters are connected after they are imported. Unreachable clusters are still imported and can be connected later. Going back to Import Kubeconfig and continuing with the same file keeps these edits.
+4. **Done.** In create mode there is no Back button, so the import is not run a second time by returning to Review Contexts. The result is one of:
+   - **Success.** Every selected context was imported and none were errored, ignored, or failed to connect. A green check is shown with the heading "Kubernetes import complete".
+   - **Partial.** Some contexts were imported and some were errored, ignored, or failed to connect. The heading is "Kubernetes import completed with issues", and each of those contexts is listed with the reason when one was provided.
+   - **Failure.** Nothing was imported. The heading is "Kubernetes import failed", and errored, ignored, or failed-to-connect contexts are listed with their reasons when one was provided.
 
 Each imported cluster is created as a Kubernetes Connection that [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) keeps in sync. From there, Meshery can deploy and operate workloads, visualize the cluster, and more. See [Managing Connections]({{< ref "guides/infrastructure-management/lifecycle-management/index.md" >}}). If the cluster already runs workloads you did not deploy through Meshery, see [Bringing Existing Infrastructure Under Meshery Management]({{< ref "guides/infrastructure-management/managing-existing-infrastructure.md" >}}) for what to evaluate before importing and how discovery treats pre-existing resources.
 
@@ -80,30 +88,46 @@ When you import or reconfigure a Kubernetes cluster, you choose how [MeshSync]({
 
 Switching the mode later makes Meshery redeploy MeshSync accordingly (see [Updating a Connection](#updating-a-connection)). For the behavioral trade-offs between the two modes - cluster footprint, permissions, network requirements, and what each mode gives up - and for every other setting of these components, see [Configuring Meshery Operator, MeshSync, and Broker]({{< ref "guides/infrastructure-management/configuring-operator-meshsync-broker.md" >}}).
 
+## Connecting a source (Artifact Hub, GitHub)
+
+Some Connections are **sources** - external registries and repositories that Meshery reads from to generate [Models]({{< ref "concepts/logical/models/index.md" >}}) and components, and (for repositories) to import designs kept under version control. They follow the same generic flow described above; only their fields differ.
+
+### Artifact Hub
+
+Register an [Artifact Hub](https://artifacthub.io) instance to source Helm charts and other CNCF artifacts, then generate Meshery models and components from the CRDs they carry.
+
+- **Configure Connection.** Supply the **Artifact Hub Endpoint** - the base URL of the instance (for example `https://artifacthub.io`). Point this at your own deployment to source from a self-hosted Artifact Hub. An optional friendly **Connection Name** is also accepted.
+- **Associate Credential.** Artifact Hub's public API needs no authentication - leave both credential fields empty to use it. To raise your rate limit or reach private content, provide an **API Key ID** _and_ its **API Key Secret**. The two are paired: supply both or neither.
+
+### GitHub
+
+Register a [GitHub](https://github.com) repository to generate models and components from the Kubernetes manifests and CRDs it holds, and to import designs stored alongside the code they describe.
+
+- **Configure Connection.** Supply the **Repository URL** Meshery reads from (for example `https://github.com/meshery/meshery`); GitHub Enterprise Server URLs are accepted. Optionally set a **Branch** or tag (leave empty for the repository's default branch) and a friendly **Connection Name**.
+- **Associate Credential.** Provide an **Access Token** (a personal access token or GitHub App installation token). It is required for private repositories; for public repositories it is optional and raises the API rate limit.
+
+For both kinds you can **skip credential verification** to register the source without first probing it - useful when it is not reachable yet but you still want it on record. Once connected, a source's packages or manifests become available for [model and component generation]({{< ref "guides/configuration-management/importing-models/index.md" >}}).
+
 ## Updating a Connection
 
 The wizard also reconfigures an already-registered Connection. From the [Connections]({{< ref "concepts/logical/connections/index.md" >}}) table, open a Connection's action menu and choose **Configure**. The wizard opens in configure mode and presents only the post-registration steps relevant to that kind.
 
-For a Kubernetes Connection, this is where you change the [MeshSync deployment mode](#meshsync-deployment-mode). Selecting a different mode and clicking **Apply** makes Meshery undeploy MeshSync and redeploy it in the newly selected mode (Operator or Embedded) for that cluster.
+For a Kubernetes Connection, this is where you change the [MeshSync deployment mode](#meshsync-deployment-mode). Selecting a different mode and clicking **Apply** makes Meshery tear down MeshSync for that connection and set it up again in the newly selected mode (Operator or Embedded). Moving to Embedded leaves the cluster's Meshery Operator installed, since other connections to the cluster may share it.
 
 {{% alert color="info" title="Changing a Connection's state" %}}
 Configuring a Connection is distinct from transitioning its **state** (Connected, Ignored, Disconnected, and so on). State transitions - and the rules governing which are allowed - are driven by the connection definition and performed from the status control on the Connections table. See [States and the Lifecycle of Connections]({{< ref "concepts/logical/connections/index.md#states-and-the-lifecycle-of-connections" >}}).
 {{% /alert %}}
 
-<!-- The Telemetry pages (guides/telemetry/*) ship in meshery/meshery#20161. Until that
-     merges, these are absolute docs.meshery.io links so this page does not break the Hugo
-     build, since an unresolved ref shortcode fails the build. Convert them to ref-shortcode
-     links once the Telemetry pages exist on master. -->
 ## Using Connections for Telemetry
 
-Grafana and Prometheus Connections you register with the wizard power Meshery's [Telemetry](https://docs.meshery.io/guides/telemetry/) views. Once such a Connection reaches the **Connected** or **Registered** state, it becomes selectable in the Telemetry connection picker, where you can:
+Grafana and Prometheus Connections you register with the wizard power Meshery's [Telemetry]({{< ref "guides/telemetry/_index.md" >}}) views. Once such a Connection reaches the **Connected** or **Registered** state, it becomes selectable in the Telemetry connection picker, where you can:
 
-- Browse and render your existing dashboards - see [Grafana Dashboards](https://docs.meshery.io/guides/telemetry/grafana-dashboards).
-- Explore metrics and save PromQL panels - see [Prometheus Metrics](https://docs.meshery.io/guides/telemetry/prometheus-metrics).
+- Browse and render your existing dashboards - see [Grafana Dashboards]({{< ref "guides/telemetry/grafana-dashboards.md" >}}).
+- Explore metrics and save PromQL panels - see [Prometheus Metrics]({{< ref "guides/telemetry/prometheus-metrics.md" >}}).
 
 ## Registering Connections from the CLI
 
-Prefer the terminal? `mesheryctl` can create, list, view, and delete Connections too. See [`mesheryctl connection`]({{< ref "reference/references/mesheryctl/connection/_index.md" >}}).
+Prefer the terminal? `mesheryctl connection create --type <type>` builds a kubeconfig for that cluster and registers it with Meshery. `<type>` is one of `aks`, `eks`, `gke`, or `minikube`, for example `mesheryctl connection create --type eks`. It uses `az` for AKS and `aws` for EKS, creates a service account through your current `kubectl` context for GKE, and reads your local kubeconfig for minikube. It prompts for the cluster details it needs. `mesheryctl` can also list, view, and delete Connections. See [`mesheryctl connection`]({{< ref "reference/mesheryctl/connection/_index.md" >}}).
 
 ## Related
 

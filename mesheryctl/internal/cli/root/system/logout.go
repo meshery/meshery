@@ -15,8 +15,6 @@
 package system
 
 import (
-	"os"
-
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
@@ -30,7 +28,7 @@ var logoutCmd = &cobra.Command{
 Remove authentication for Meshery Server
 
 This command removes the authentication token from the user's filesystem`,
-	Args: cobra.MinimumNArgs(0),
+	Args: cobra.NoArgs,
 	Example: `
 // Logout current session with your Meshery Provider.
 mesheryctl system logout
@@ -41,13 +39,18 @@ mesheryctl system logout
 			return err
 		}
 
+		// if a temp context is set using the -c flag, use it as the current context
+		if err := mctlCfg.SetCurrentContext(tempContext); err != nil {
+			return ErrGetCurrentContext(err)
+		}
+
 		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
 		if err != nil {
 			return ErrGetCurrentContext(err)
 		}
 
 		// Replace the content of the token file with empty content
-		if err := os.WriteFile(token.GetLocation(), []byte{}, 0666); err != nil {
+		if err := utils.WriteTokenFile(token.GetLocation(), []byte{}); err != nil {
 			return ErrLogout(err)
 		}
 

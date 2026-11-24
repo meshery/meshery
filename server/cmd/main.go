@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
 	"os"
 	"os/signal"
 	"path"
 	"strings"
+	"syscall"
 	"time"
 
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -16,7 +19,6 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 
-	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/helpers"
@@ -30,16 +32,11 @@ import (
 	"github.com/meshery/meshery/server/router"
 	"github.com/meshery/meshkit/broker/nats"
 	"github.com/meshery/meshkit/logger"
-	_events "github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/models/meshmodel/core/policies"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/tracing"
 	"github.com/meshery/meshkit/utils/broadcast"
 	"github.com/meshery/meshkit/utils/events"
-	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
-	"github.com/meshery/schemas/models/v1beta1/environment"
-	"github.com/meshery/schemas/models/v1beta1/workspace"
-	schemasOrganization "github.com/meshery/schemas/models/v1beta2/organization"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -99,7 +96,9 @@ func main() {
 		log.SetLevel(logrus.Level(viper.GetInt("LOG_LEVEL")))
 	})
 
-	instanceID, err := uuid.NewV4()
+	// Use INSTANCE_ID from the environment or config when it is a valid UUID,
+	// else generate one, and store it for every reader (see configureInstanceID).
+	instanceID, err := configureInstanceID(viper.GetViper(), log)
 	if err != nil {
 		log.Error(ErrCreatingUUIDInstance(err))
 		os.Exit(1)
@@ -120,7 +119,6 @@ func main() {
 	viper.SetDefault("OS", "meshery")
 	viper.SetDefault("COMMITSHA", commitsha)
 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
-	viper.SetDefault("INSTANCE_ID", &instanceID)
 	viper.SetDefault(constants.ProviderENV, "")
 	// Seed the canonical active remote-provider list (install/providers.env) so a
 	// server started without PROVIDER_BASE_URLS still registers the default providers.
@@ -237,37 +235,11 @@ func main() {
 	meshsyncCh := make(chan struct{}, 10)
 	brokerConn := nats.NewEmptyConnection
 
-	err = dbHandler.AutoMigrate(
-		&meshsyncmodel.KubernetesKeyValue{},
-		&meshsyncmodel.KubernetesResource{},
-		&meshsyncmodel.KubernetesResourceSpec{},
-		&meshsyncmodel.KubernetesResourceStatus{},
-		&meshsyncmodel.KubernetesResourceObjectMeta{},
-		&models.PerformanceProfile{},
-		&models.MesheryResult{},
-		&models.MesheryPattern{},
-		&models.MesheryFilter{},
-		&models.PatternResource{},
-		&models.MesheryApplication{},
-		&models.UserPreference{},
-		&models.UserCapabilities{},
-		&models.PerformanceTestConfig{},
-		&models.SmiResultWithID{},
-		models.K8sContext{},
-		schemasOrganization.Organization{},
-		models.Key{},
-		&models.Credential{},
-		connections.Connection{},
-		environment.Environment{},
-		environment.EnvironmentConnectionMapping{},
-		workspace.Workspace{},
-		workspace.WorkspacesEnvironmentsMapping{},
-		workspace.WorkspacesDesignsMapping{},
-		workspace.WorkspacesTeamsMapping{},
-		workspace.WorkspacesViewsMapping{},
-		_events.Event{},
-		&models.SystemSetting{},
-	)
+	// All three system-database migration sites (server boot here, the database
+	// reset handler, and the GraphQL hard reset) share one authoritative model
+	// list so no path can drop every table and re-migrate only a subset. See
+	// models.SystemDatabaseModels.
+	err = models.AutoMigrateSystemTables(dbHandler)
 	if err != nil {
 		log.Error(ErrDatabaseAutoMigration(err))
 		os.Exit(1)
@@ -299,7 +271,7 @@ func main() {
 		EnvironmentPersister:            &models.EnvironmentPersister{DB: dbHandler},
 		WorkspacePersister:              &models.WorkspacePersister{DB: dbHandler},
 		KeyPersister:                    &models.KeyPersister{DB: dbHandler},
-		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
+		EventsPersister:                 &models.EventsPersister{DB: dbHandler, Log: log},
 		GenericPersister:                dbHandler,
 		Log:                             log,
 		MeshsyncDefaultDeploymentMode:   meshsyncDefaultDeploymentMode,
@@ -323,6 +295,15 @@ func main() {
 
 		EventBroadcaster: models.NewBroadcaster("Events"),
 
+		// System events (registry seeding summaries, registration failures)
+		// are raised outside any user request, so they are persisted through
+		// their own sink rather than through Providers - which PROVIDER
+		// enforcement may reduce to a single remote with no Local entry.
+		// This is the same database handler every provider's own
+		// EventsPersister wraps, so the events land in the same table either
+		// way.
+		SystemEventPersister: &models.EventsPersister{DB: dbHandler, Log: log},
+
 		K8scontextChannel: models.NewContextHelper(),
 		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
 	}
@@ -334,23 +315,43 @@ func main() {
 	//seed the local meshmodel components
 	rego := policies.Rego{}
 
+	// Seeding runs off the request path, in its own goroutine, so a fault in
+	// any stage must degrade the server rather than terminate it: an
+	// unrecovered panic here would take the HTTP listener down with it. Each
+	// stage is wrapped separately so one faulting stage still leaves the
+	// others to run.
 	go func() {
+		models.RunSeedStage(log, "user keys", func() {
+			krh.SeedKeys(viper.GetString("KEYS_PATH"))
+		})
+
 		// This is where models are seeded from meshmodel directory to registry
-		models.SeedComponents(log, hc, regManager)
+		models.RunSeedStage(log, "models", func() {
+			models.SeedComponents(log, hc, regManager, dbHandler)
+		})
 		// Rego is intialized for passing of policy if the policies are made to be per model base this needs to be removed.
-		r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
-		if err != nil {
-			log.Warn(handlers.ErrCreatingOPAInstance(err))
-		} else {
-			rego = *r
-		}
-		krh.SeedKeys(viper.GetString("KEYS_PATH"))
+		models.RunSeedStage(log, "policies", func() {
+			r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
+			if err != nil {
+				log.Warn(handlers.ErrCreatingOPAInstance(err))
+			} else {
+				rego = *r
+			}
+		})
 	}()
 
-	lProv.SeedContent(log)
+	models.RunSeedStage(log, "content", func() {
+		lProv.SeedContent(log)
+	})
 	provs[lProv.Name()] = lProv
 
-	providerEnvVar := viper.GetString(constants.ProviderENV)
+	// Trim once here so a whitespace-only PROVIDER behaves exactly like unset
+	// everywhere downstream. NormalizeProviderName does not trim, so an
+	// untrimmed "  " would satisfy the enforced-provider short-circuits in
+	// resolveProviderName and ProviderHandler while resolving to no registered
+	// provider - an enforced deployment pinned to nothing, which redirects in a
+	// loop rather than failing closed.
+	providerEnvVar := strings.TrimSpace(viper.GetString(constants.ProviderENV))
 	RemoteProviderURLs := utils.SplitAndTrim(viper.GetString("PROVIDER_BASE_URLS"), ", \t\n\r")
 	for _, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
@@ -369,7 +370,7 @@ func main() {
 			ProviderVersion:               version,
 			SmiResultPersister:            &models.SMIResultsPersister{DB: dbHandler},
 			GenericPersister:              dbHandler,
-			EventsPersister:               &models.EventsPersister{DB: dbHandler},
+			EventsPersister:               &models.EventsPersister{DB: dbHandler, Log: log},
 			Log:                           log,
 			CookieDuration:                24 * time.Hour,
 			MeshsyncDefaultDeploymentMode: meshsyncDefaultDeploymentMode,
@@ -420,7 +421,25 @@ func main() {
 		provs[key] = cp
 	}
 
-	// All providers are registered. Build the tracker now and kick off
+	// Resolve PROVIDER before the tracker is built so an enforced remote
+	// can drop Local (and any other remotes) from the registration map.
+	// The tracker holds a reference to this map and snapshots statuses at
+	// construction; callers must finish populating it first.
+	resolveStart := time.Now()
+	resolvedProviderKey, providerResolved := models.ResolveProviderKeyWithProbe(ctx, providerEnvVar, provs)
+	if probeElapsed := time.Since(resolveStart); providerEnvVar != "" && probeElapsed > time.Second {
+		log.Infof("resolving configured PROVIDER %q required a remote capability probe that took %s", providerEnvVar, probeElapsed.Round(time.Millisecond))
+	}
+	if providerResolved {
+		providerEnvVar = resolvedProviderKey
+		log.Infof("PROVIDER is pinned to %q; unregistering every other provider (including Local)", providerEnvVar)
+		models.RestrictToEnforcedProvider(provs, providerEnvVar)
+	} else if providerEnvVar != "" {
+		log.Error(fmt.Errorf("configured PROVIDER %q could not be resolved to any registered provider; refusing to start with the provider chooser (which would include the unauthenticated Local Provider). Set PROVIDER to a registered name, or unset it to keep the chooser", providerEnvVar))
+		os.Exit(1)
+	}
+
+	// Remaining providers are registered. Build the tracker now and kick off
 	// the boot-time availability probe + post-probe SyncPreferences
 	// activation in a background goroutine, so a slow remote cannot
 	// delay server startup. The probe publishes status events as each
@@ -457,32 +476,6 @@ func main() {
 		defer rp.StopSyncPreferences()
 	}
 
-	// Resolve the configured PROVIDER to Meshery's internal registration key.
-	// Remote providers are registered under a stable key (typically URL host)
-	// before their async /capabilities probe reveals the canonical
-	// providerName, so a pre-selected remote such as PROVIDER=Meshery may need
-	// one bounded probe here to avoid falling back to the chooser.
-	resolveStart := time.Now()
-	resolvedProviderKey, providerResolved := models.ResolveProviderKeyWithProbe(ctx, providerEnvVar, provs)
-	if probeElapsed := time.Since(resolveStart); providerEnvVar != "" && probeElapsed > time.Second {
-		// Surface the boot-time remote /capabilities probe so operators can
-		// see why startup paused (each parallel probe waits up to 15s on an
-		// unreachable configured remote before timing out).
-		log.Infof("resolving configured PROVIDER %q required a remote capability probe that took %s", providerEnvVar, probeElapsed.Round(time.Millisecond))
-	}
-	if providerResolved {
-		providerEnvVar = resolvedProviderKey
-	} else {
-		if providerEnvVar != "" {
-			// Informational, not an error: a configured PROVIDER that
-			// matches no registered provider is a valid fallback to the
-			// chooser, but operators should be able to see why auto-select
-			// did not engage.
-			log.Infof("configured PROVIDER %q could not be resolved to any registered provider; falling back to the provider chooser", providerEnvVar)
-		}
-		providerEnvVar = ""
-	}
-
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
 	// this mctrlHelper is not used it is being recreated per connection entity
 	mctrlHelper := models.NewMesheryControllersHelper(
@@ -491,7 +484,7 @@ func main() {
 		dbHandler,
 		hc.EventBroadcaster,
 		nil,
-		&instanceID,
+		instanceID,
 	)
 	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
 		ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine, 0),
@@ -524,18 +517,37 @@ func main() {
 	})
 
 	port := viper.GetInt("PORT")
-	r := router.NewRouter(ctx, h, port, g, gp)
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
+	r := router.NewRouter(ctx, h, port, g, gp, router.WithLogger(log))
+	shutdown, stopShutdownNotify := notifyShutdown()
 
 	go func() {
 		log.Info("Meshery Server listening on: ", port)
 		if err := r.Run(); err != nil {
+			// ErrServerClosed is the expected return once Shutdown drains
+			// the listener after the signal, not a crash.
+			if errors.Is(err, http.ErrServerClosed) {
+				log.Info("Meshery Server HTTP listener closed")
+				return
+			}
 			log.Error(ErrListenAndServe(err))
 			os.Exit(1)
 		}
 	}()
-	<-c
+	sig := <-shutdown
+	// Restore default handling, so a second signal during cleanup terminates
+	// the process instead of being swallowed.
+	stopShutdownNotify()
+	log.Info(fmt.Sprintf("Received %s, shutting down Meshery Server gracefully", sig))
+	// Drain the HTTP listener before cleanup closes the resources in-flight
+	// requests use, so no request runs against a closed provider session or
+	// database. Shutdown ends open SSE streams at once, waits up to
+	// httpShutdownTimeout for other active requests to finish, then closes
+	// the connections still open.
+	shutdownCtx, cancelShutdown := context.WithTimeout(context.Background(), httpShutdownTimeout)
+	defer cancelShutdown()
+	if err := r.Shutdown(shutdownCtx); err != nil {
+		log.Error(fmt.Errorf("failed to shut down HTTP server gracefully: %w", err))
+	}
 	regManager.Cleanup()
 	log.Info("Doing seeded content cleanup...")
 
@@ -569,4 +581,22 @@ func main() {
 	}
 
 	log.Info("Shutting down Meshery Server...")
+}
+
+// httpShutdownTimeout bounds how long the HTTP listener drains in-flight
+// requests after the shutdown signal before it is forced closed.
+const httpShutdownTimeout = 30 * time.Second
+
+// shutdownSignals start a graceful shutdown: Ctrl-C (SIGINT) interactively,
+// and SIGTERM, which is how Kubernetes, Docker and systemd stop a process.
+// Trapping only SIGINT meant every Pod restart killed the server outright, so
+// provider de-registration, session logout and the database close never ran.
+var shutdownSignals = []os.Signal{os.Interrupt, syscall.SIGTERM}
+
+// notifyShutdown returns a channel that receives the first shutdown signal,
+// and the function that stops the trap again.
+func notifyShutdown() (<-chan os.Signal, func()) {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, shutdownSignals...)
+	return c, func() { signal.Stop(c) }
 }

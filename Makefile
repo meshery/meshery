@@ -111,7 +111,7 @@ server-local: dep-check
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	OTEL_CONFIG=$(OTEL_CONFIG) \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go
+	go run main.go error.go instance_id.go
 
 ## Build Meshery Server on your local machine.
 build-server: dep-check
@@ -123,7 +123,7 @@ build-server: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	GOPROXY=https://proxy.golang.org,direct GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
+	GOPROXY=https://proxy.golang.org,direct GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go ./server/cmd/instance_id.go
 	chmod +x ./main
 
 ## Running the meshery server using binary.
@@ -161,7 +161,7 @@ server-stg: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 ## Build and run Meshery Server on your local machine.
 server: dep-check
@@ -176,7 +176,7 @@ server: dep-check
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
 	MESHSYNC_DEFAULT_DEPLOYMENT_MODE=$${MESHSYNC_DEFAULT_DEPLOYMENT_MODE:-operator} \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 ## Build and run Meshery Server with some Meshery Adapters on your local machine.
 server-with-adapters: dep-check
@@ -188,7 +188,7 @@ server-with-adapters: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 ## Build and run Meshery Server on your local machine.
 ## Disable deployment of the Meshery Operator to your Kubernetes cluster(s).
@@ -202,7 +202,7 @@ server-without-operator: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 ## Build and run Meshery Server with no Kubernetes components on your local machine.
 server-skip-compgen:
@@ -215,7 +215,7 @@ server-skip-compgen:
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
  	SKIP_COMP_GEN=true \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 ## Build and run Meshery Server on your local machine.
 ## Do not generate and register Kubernetes models.
@@ -229,7 +229,7 @@ server-without-k8s: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 server-remote-provider: dep-check
 	cd server; cd cmd; go mod tidy; \
@@ -241,7 +241,7 @@ server-remote-provider: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 server-local-provider: dep-check
 	cd server; cd cmd; go mod tidy; \
@@ -253,7 +253,7 @@ server-local-provider: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 ## Build and run Meshery Server with no seed content.
 server-no-content:
@@ -266,7 +266,7 @@ server-no-content:
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	SKIP_DOWNLOAD_CONTENT=true \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 server-playground: dep-check
 	cd server; cd cmd; go mod tidy; \
@@ -279,11 +279,12 @@ server-playground: dep-check
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	PLAYGROUND=true \
 	KEYS_PATH=$(KEYS_PATH) \
-	go run main.go error.go;
+	go run main.go error.go instance_id.go;
 
 ## Lint check Meshery Server.
 golangci: error dep-check
 	golangci-lint run --config=.github/.golangci.yml --timeout=10m
+	go run ./server/internal/lint/orderby/cmd/orderbylint ./...
 
 ## Build Meshery's protobufs.
 proto-build:
@@ -320,7 +321,7 @@ ui-setup: dep-check-node
 
 ## Clean Install dependencies for building Meshery UI.
 ui-setup-ci: dep-check-node
-	cd ui; npm ci; cd ..
+	cd ui && npm ci
 
 ## Run Meshery UI on your local machine. Listen for changes.
 ui: dep-check-node
@@ -357,7 +358,7 @@ ui-provider-build:
 
 ## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
 ui-integration-tests: ui-setup
-	cd ui; npm run ci-test-integration; cd ..
+	cd ui; npm run test:e2e:ci:local; cd ..
 
 #-----------------------------------------------------------------------------
 # Meshery Docs
@@ -412,11 +413,15 @@ check-go:
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
-.PHONY: helm-docs helm-operator-docs helm-meshery-docs helm-operator-lint helm-lint
+.PHONY: helm-docs helm-operator-docs helm-meshery-docs helm-operator-lint helm-operator-appversion-check helm-lint
 ## Generate all Meshery Helm Chart documentation in markdown format.
 helm-docs: helm-operator-docs helm-meshery-docs
 
-## Generate Meshery Operator Helm Chart documentation in markdown format.
+# WARNING: this overwrites install/kubernetes/helm/meshery-operator/README.md, which is
+# hand-maintained. values.yaml has no `# --` comments and there is no README.md.gotmpl,
+# so helm-docs would delete that README's "CRD lifecycle" section and every per-value
+# description. Read the note at the top of that file before running this.
+## Generate Meshery Operator Helm Chart docs. WARNING: overwrites the hand-maintained meshery-operator README - read the note at its top first.
 helm-operator-docs: dep-check
 	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs
 	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery-operator
@@ -430,8 +435,13 @@ helm-meshery-docs: dep-check
 helm-lint: helm-operator-lint helm-meshery-lint
 
 ## Lint Meshery Operator Helm Chart
-helm-operator-lint:
+helm-operator-lint: helm-operator-appversion-check
 	helm lint install/kubernetes/helm/meshery-operator --with-subcharts
+
+## Assert the Meshery Operator chart and its subcharts advertise the same appVersion
+helm-operator-appversion-check:
+	./install/scripts/check-operator-chart-appversions.sh --self-test
+	./install/scripts/check-operator-chart-appversions.sh install/kubernetes/helm/meshery-operator
 ## Lint Meshery Server and Adapter Helm Charts
 helm-meshery-lint:
 	helm lint install/kubernetes/helm/meshery --with-subcharts
@@ -558,7 +568,7 @@ server-integration-tests-meshsync: docker-build server-integration-tests-meshsyn
 .PHONY: ui-test-setup ui-test ui-test-e2e-full ui-test-e2e-local
 ## Install Playwright dependencies for UI tests
 ui-test-setup: dep-check-node
-	cd ui; npx playwright install chromium --with-deps; cd ..
+	cd ui && npx playwright install chromium --with-deps
 
 ## Run Meshery UI End-to-End Tests
 ui-test: dep-check-node
@@ -568,12 +578,12 @@ ui-test: dep-check-node
 ## Run Meshery UI End-to-End Tests in CI environment (Local and Remote Providers)
 ui-test-e2e-full: dep-check-node
 	 touch .env
-	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci:full ; cd ..
+	 @set -a; source .env; set +a; cd ui && npm run test:e2e:ci:full
 
 ## Run Meshery UI End-to-End Tests in CI environment (Local Provider)
 ui-test-e2e-local: dep-check-node
 	 touch .env
-	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci:local ; cd ..
+	 @set -a; source .env; set +a; cd ui && npm run test:e2e:ci:local
 
 #-----------------------------------------------------------------------------
 # Testing - Meshery CLI

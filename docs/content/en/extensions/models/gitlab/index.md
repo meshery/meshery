@@ -137,7 +137,15 @@ components:
   colorIcon: extensions/models/gitlab/components/listener-set/icons/color/listener-set-color.svg
   whiteIcon: extensions/models/gitlab/components/listener-set/icons/white/listener-set-white.svg
   description: 
-components-count: 32
+- name: x-backend
+  colorIcon: extensions/models/gitlab/components/x-backend/icons/color/x-backend-color.svg
+  whiteIcon: extensions/models/gitlab/components/x-backend/icons/white/x-backend-white.svg
+  description: 
+- name: x-backend
+  colorIcon: extensions/models/gitlab/components/x-backend/icons/color/x-backend-color.svg
+  whiteIcon: extensions/models/gitlab/components/x-backend/icons/white/x-backend-white.svg
+  description: 
+components-count: 34
 relationships: 
 relationship-count: 0
 featureList: [

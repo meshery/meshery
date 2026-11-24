@@ -32,6 +32,7 @@ import { isLocalProvider } from '@/utils/provider';
 import { updateProgressAction } from '@/store/slices/mesheryUi';
 import { updateResultsSelection } from '@/store/slices/prefTest';
 import { useGetPerformanceProfileResultsQuery } from '@meshery/schemas/mesheryApi';
+import { formatApiError } from '@/utils/helpers/meshkitError';
 
 const COL_MAPPING = {
   QPS: 3,
@@ -211,7 +212,8 @@ function generateColumnsForDisplay(
               color="inherit"
               onClick={() => setSelectedProfileIdxForChart(tableMeta.rowIndex)}
             >
-              <BarChartIcon style={iconMedium} /> {/* can change it to large */}
+              <BarChartIcon style={iconMedium} fill={theme?.palette?.icon?.default} />{' '}
+              {/* can change it to large */}
             </IconButton>
           );
         },
@@ -524,12 +526,14 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
     setSocialExpand(socialExpandUpdate);
   };
 
+  // RTK Query errors are objects ({ status, data }), so interpolating them
+  // directly would show "[object Object]".
   function handleError(error) {
     dispatch(updateProgressAction({ showProgress: false }));
+    const { message } = formatApiError(error, 'There was an error fetching results');
     notify({
-      message: `There was an error fetching results: ${error}`,
+      message,
       event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
     });
   }
 
@@ -604,6 +608,8 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
               setSearch(tableState.searchText || '');
+              // the new filter may have fewer pages than the current one
+              setPage(0);
             }
           }, 500);
           break;

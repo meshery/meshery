@@ -68,6 +68,7 @@ vi.mock('@sistent/sistent', () => ({
     },
   }),
   ErrorBoundary: ({ children }: any) => <>{children}</>,
+  useHasPermission: (key: any) => can(key?.id, key?.function),
 }));
 
 vi.mock('./styles', () => ({

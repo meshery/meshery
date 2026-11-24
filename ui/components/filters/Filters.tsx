@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTableUrlState } from '@/utils/hooks/useTableUrlState';
 import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibilityPreference';
-import { NoSsr } from '@sistent/sistent';
+import { NoSsr, useHasPermission } from '@sistent/sistent';
 import { Publish as PublishIcon } from '@/assets/icons';
 import _PromptComponent from '../general/PromptComponent';
 import { MesheryFiltersCatalog, VISIBILITY } from '../../utils/Enum';
@@ -13,7 +13,6 @@ import { modifyRJSFSchema } from '../../utils/utils';
 import { getMeshModels } from '../../api/meshmodel';
 import _ from 'lodash';
 import { useNotification } from '../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../lib/event-types';
 import {
   CustomColumnVisibilityControl,
   ResponsiveDataTable,
@@ -27,7 +26,7 @@ import {
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../shared/Modal/Information/InfoModal';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '../general/error-404/index';
 import {
@@ -44,16 +43,17 @@ import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { isLocalProvider } from '@/utils/provider';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useSelector } from 'react-redux';
-import { updateProgress } from '@/store/slices/mesheryUi';
 import { CreateButton, ViewSwitchButton, BtnText } from './Filters.styled';
 import YAMLEditor from './YAMLEditor';
 import ImportModal from './ImportModal';
 import PublishModal from './PublishModal';
-import { ACTION_TYPES, COLUMN_VIEWS } from './Filters.constants';
+import { COLUMN_VIEWS } from './Filters.constants';
 import { buildFiltersColumns } from './Filters.columns';
 import { buildFiltersTableOptions } from './Filters.tableOptions';
 import {
   createDeleteFilter,
+  createErrorHandler,
+  createFetchSchemaData,
   createHandleClone,
   createHandleDownload,
   createHandleImportFilter,
@@ -69,6 +69,10 @@ function resetSelectedFilter() {
 }
 
 function MesheryFilters() {
+  const canViewFilters = useHasPermission(Keys.CatalogManagementViewFilters);
+  const canPublishWasmFilter = useHasPermission(Keys.CatalogManagementPublishWasmFilter);
+  const canImportFilter = useHasPermission(Keys.CatalogManagementImportFilter);
+  const canViewFilterDetails = useHasPermission(Keys.CatalogManagementDetailsOfWasmFilter);
   const { tableState, updateTableState } = useTableUrlState({
     tableKey: 'fil',
     defaults: {
@@ -153,14 +157,7 @@ function MesheryFilters() {
   const [updateFilterFile] = useUpdateFilterFileMutation();
   const [uploadFilterFile] = useUploadFilterFileMutation();
 
-  const handleError = (action: { error_msg: string }) => (error: Error | string) => {
-    updateProgress({ showProgress: false });
-    notify({
-      message: `${action.error_msg}: ${error}`,
-      event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
-    });
-  };
+  const handleError = createErrorHandler({ notify });
 
   const handleSetFilters = (filters: any[] | undefined) => {
     if (filters != undefined) {
@@ -202,7 +199,10 @@ function MesheryFilters() {
   const handleInfoModal = (filter: any) => {
     setInfoModal({
       open: true,
-      ownerID: filter.userId,
+      // Filters key the owner as `owner`, not `userId`: that is the canonical
+      // wire key in the schemas v1beta3 filter contract and what both providers
+      // emit. Designs are the ones that use `userId`.
+      ownerID: filter.owner,
       selectedResource: filter,
     });
   };
@@ -294,9 +294,10 @@ function MesheryFilters() {
    * publish filter capability and setting the canPublishFilter state accordingly
    */
   useEffect(() => {
-    const fetchSchemaData = async () => {
-      try {
-        const { models } = await getMeshModels();
+    const fetchSchemaData = createFetchSchemaData({
+      getMeshModels,
+      handleError,
+      onModels: (models) => {
         const modelNames = _.uniq(models?.map((model) => model.displayName));
         modelNames.sort();
 
@@ -308,10 +309,8 @@ function MesheryFilters() {
         );
         setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
         setMeshModels(models);
-      } catch {
-        handleError(ACTION_TYPES.SCHEMA_FETCH);
-      }
-    };
+      },
+    });
 
     if (capabilitiesData) {
       // `capabilitiesData.capabilities` is the provider-declared feature list.
@@ -429,7 +428,7 @@ function MesheryFilters() {
     <>
       <>
         <NoSsr>
-          {CAN(Keys.CatalogManagementViewFilters.id, Keys.CatalogManagementViewFilters.function) ? (
+          {canViewFilters ? (
             <>
               {selectedRowData && Object.keys(selectedRowData).length > 0 && (
                 <YAMLEditor
@@ -528,50 +527,37 @@ function MesheryFilters() {
                   handleInfoModal={handleInfoModal}
                 />
               )}
-              {canPublishFilter &&
-                publishModal.open &&
-                CAN(
-                  Keys.CatalogManagementPublishWasmFilter.id,
-                  Keys.CatalogManagementPublishWasmFilter.function,
-                ) && (
-                  <PublishModal
-                    handleClose={handlePublishModalClose}
-                    title={publishModal.filter?.name}
-                    handleSubmit={handlePublish}
-                  />
-                )}
-              {importModal.open &&
-                CAN(
-                  Keys.CatalogManagementImportFilter.id,
-                  Keys.CatalogManagementImportFilter.function,
-                ) && (
-                  <ImportModal
-                    handleClose={handleUploadImportClose}
-                    handleImportFilter={handleImportFilter}
-                  />
-                )}
-              {infoModal.open &&
-                CAN(
-                  Keys.CatalogManagementDetailsOfWasmFilter.id,
-                  Keys.CatalogManagementDetailsOfWasmFilter.function,
-                ) && (
-                  <InfoModal
-                    handlePublish={handlePublish}
-                    infoModalOpen={true}
-                    handleInfoModalClose={handleInfoModalClose}
-                    dataName="filters"
-                    selectedResource={infoModal.selectedResource}
-                    resourceOwnerID={infoModal.ownerID}
-                    currentUser={user}
-                    formSchema={publishSchema}
-                    meshModels={meshModels}
-                    patternFetcher={getFilters}
-                  />
-                )}
+              {canPublishFilter && publishModal.open && canPublishWasmFilter && (
+                <PublishModal
+                  handleClose={handlePublishModalClose}
+                  title={publishModal.filter?.name}
+                  handleSubmit={handlePublish}
+                />
+              )}
+              {importModal.open && canImportFilter && (
+                <ImportModal
+                  handleClose={handleUploadImportClose}
+                  handleImportFilter={handleImportFilter}
+                />
+              )}
+              {infoModal.open && canViewFilterDetails && (
+                <InfoModal
+                  handlePublish={handlePublish}
+                  infoModalOpen={true}
+                  handleInfoModalClose={handleInfoModalClose}
+                  dataName="filters"
+                  selectedResource={infoModal.selectedResource}
+                  resourceOwnerID={infoModal.ownerID}
+                  currentUser={user}
+                  formSchema={publishSchema}
+                  meshModels={meshModels}
+                  patternFetcher={getFilters}
+                />
+              )}
               <_PromptComponent ref={modalRef} />
             </>
           ) : (
-            <DefaultError />
+            <DefaultError permissionKey={Keys.CatalogManagementViewFilters} />
           )}
         </NoSsr>
       </>

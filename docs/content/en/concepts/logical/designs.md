@@ -29,9 +29,12 @@ As the deployable unit in Meshery, a Design consists of [Components]({{< ref "co
   - Designs can be embedded in web pages either as a bundle of HTML or as a React component using the [meshery-design-embed](https://www.npmjs.com/package/@meshery/meshery-design-embed) NPM package.
 - Designs can be snapshotted. Snapshots are immutable. Snapshots can be compared for differences between Design versions.
 - Designs can be published or unpublished. Published Designs are available to all users of any Meshery instance through the [Catalog]({{< ref "concepts/architecture/catalog/index.md" >}}). Unpublished Designs can still be available to other users if that Design is made public.
-- Designs are versioned. Each time a Design is saved, a new version is created.
+- Designs are versioned. A new Design keeps the version its file carries
+  (`0.0.1` when the file has none; a supplied version must be valid SemVer, or
+  the save is rejected). Each save of an existing Design bumps the patch number
+  of the file's version.
   <!-- - You can revert to any previous version of a Design. -->
-- Designs can be deployed. Deploying a Design involves incorporating one or more components into your Design, configuring their relationships, and deploying them to one or more Environments. By default, any user of a Workspace can deploy a Design.
+- Designs can be deployed. Deploying a Design involves incorporating one or more components into your Design, configuring their relationships, and deploying them to one or more Environments. By default, any user of a Workspace can deploy a Design. Meshery resolves how to fulfill each component separately - see [Deployment Engine]({{< ref "concepts/architecture/deployment-engine/index.md" >}}).
 - Designs can be deleted.
   - Designs can be archived and restored (depending upon Remote Provider)
 - Designs can be compared.
@@ -63,6 +66,8 @@ Meshery Models represent the fundamental building blocks of your infrastructure.
 On the other hand, Meshery Designs are the practical implementations based on Meshery Models. They represent declarations of your infrastructure deployments, customized according to specific use cases, environments, and requirements. Meshery Designs allow you to create, manage, and deploy complex architectures seamlessly, leveraging the power and flexibility of Meshery Models as their foundation.
 
 Designs are the blueprints for your deployments, while Meshery Models are the internal components that provide the building blocks and knowledge to fulfill those blueprints.
+
+Because every Component in a Design comes from a Model, and every Model records the registrant that registered it, Meshery decides how to fulfill a Design one Component at a time. A Design whose Components come from different registrants is fulfilled along more than one path in a single deployment. See [Deployment Engine]({{< ref "concepts/architecture/deployment-engine/index.md" >}}).
 
 ### Using Designs
 

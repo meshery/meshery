@@ -17,7 +17,7 @@ import (
 
 var TAB = "    "
 
-// representation of what could not be registered
+// RegistrationFailureLog represents what could not be registered.
 type RegistrationFailureLog struct {
 	// {'artifacthub':{'modelname': 'component' : {'jaegar': error}}}
 	// for models, the structure will be like this:
@@ -70,9 +70,11 @@ func (rfl *RegistrationFailureLog) GetNonRegisteredEntitiesCount() map[string]v1
 				entitySummary.Models = int64(modelsCount)
 				continue
 			}
-			entitySummary.Components = int64(len(entityTypeNamespacedData[string(entity.ComponentDefinition)]))
-			entitySummary.Relationships = int64(len(entityTypeNamespacedData[string(entity.RelationshipDefinition)]))
-			entitySummary.Policies = int64(len(entityTypeNamespacedData[string(entity.PolicyDefinition)]))
+			// A registrant's failures are spread across its models, so the
+			// per-model counts must be summed rather than overwritten.
+			entitySummary.Components += int64(len(entityTypeNamespacedData[string(entity.ComponentDefinition)]))
+			entitySummary.Relationships += int64(len(entityTypeNamespacedData[string(entity.RelationshipDefinition)]))
+			entitySummary.Policies += int64(len(entityTypeNamespacedData[string(entity.PolicyDefinition)]))
 		}
 		res[registrant] = entitySummary
 	}
@@ -99,29 +101,40 @@ func failedMsgCompute(failedMsg string, hostName string, regLog *RegistrationFai
 	return failedMsg, nil
 }
 
-func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, provider *Provider, userID string, ec *Broadcast, regErrorStore *RegistrationFailureLog) (string, error) {
+// FailedEventCompute reports the registration failures recorded for hostname
+// and, when there are any, persists an error event describing them.
+//
+// persister is the sink for that event. It is a SystemEventPersister rather
+// than a Provider because the failure event is raised outside any user request:
+// the caller may be boot-time seeding, which has no provider to route through
+// once PROVIDER enforcement has emptied the registration map.
+//
+// A failure to persist that event is returned, not swallowed, alongside the
+// failure summary: both return values are independent, so the caller must
+// report the error and still act on a non-empty summary.
+func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, persister SystemEventPersister, userID string, ec *Broadcast, regErrorStore *RegistrationFailureLog) (string, error) {
 	failedMsg, err := failedMsgCompute("", hostname, regErrorStore)
 	if err != nil {
 		return "", err
 	}
+	var persistErr error
 	if failedMsg != "" {
 		filePath := viper.GetString("REGISTRY_LOG_FILE")
 		errorEventBuilder := events.NewEvent().FromOwner(mesheryInstanceID).FromSystem(mesheryInstanceID).WithCategory("registration").WithAction("get_summary")
 		errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMsg)
-		errorEvent := errorEventBuilder.Build()
 		errorEventBuilder.WithMetadata(map[string]interface{}{
 			"DownloadLink": filePath,
 			"ViewLink":     filePath,
 			"error":        ErrImportFailure(hostname, failedMsg),
 		})
-		_ = (*provider).PersistSystemEvent(*errorEvent)
+		errorEvent := errorEventBuilder.Build()
 		if userID != "" {
-			userUUID := gofrs.FromStringOrNil(userID)
-			ec.Publish(userUUID, errorEvent)
-
+			persistErr = PersistAndPublishSystemEvent(persister, ec, gofrs.FromStringOrNil(userID), errorEvent)
+		} else {
+			_, persistErr = persister.PersistSystemEvent(*errorEvent)
 		}
 	}
-	return failedMsg, nil
+	return failedMsg, persistErr
 }
 
 func writeLogsToFiles(regLog *RegistrationFailureLog) error {
@@ -221,7 +234,22 @@ func formatRegistrantSummary(kind string, summary v1beta1.EntitySummary) string 
 }
 
 func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *meshmodel.RegistryManager, regErrorStore *RegistrationFailureLog) {
-	provider := handlerConfig.Providers[LocalProviderName]
+	// Seeding runs before any user request, so there is no provider to route
+	// these events through - and, since PROVIDER enforcement, no guarantee
+	// that any particular provider is even registered. This used to read
+	// handlerConfig.Providers[LocalProviderName], which RestrictToEnforcedProvider
+	// deletes on a pinned deployment; the zero Provider it returned then
+	// panicked the seeding goroutine and, with it, the whole server
+	// (meshery/meshery#21584).
+	persister := handlerConfig.SystemEventPersister
+	if persister == nil {
+		// Reachable only if a caller built a HandlerConfig without wiring the
+		// persister. Report it rather than dropping the events silently, then
+		// keep going: the startup summaries below are still worth logging, and
+		// a missing sink must not cost the operator the boot log too.
+		log.Error(ErrNoSystemEventSink())
+		persister = discardSystemEvents{}
+	}
 
 	systemID := viper.GetString("INSTANCE_ID")
 
@@ -247,9 +275,11 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		})
 		eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
 		successEvent := eventBuilder.Build()
-		_ = provider.PersistSystemEvent(*successEvent)
+		if _, err := persister.PersistSystemEvent(*successEvent); err != nil {
+			log.Error(err)
+		}
 
-		failLog, err := FailedEventCompute(kind, sysID, &provider, "", handlerConfig.EventBroadcaster, regErrorStore)
+		failLog, err := FailedEventCompute(kind, sysID, persister, "", handlerConfig.EventBroadcaster, regErrorStore)
 		if err != nil {
 			log.Error(err)
 		}
@@ -283,4 +313,14 @@ func (rfl *RegistrationFailureLog) GetEntityRegErrors() []EntityRegError {
 		}
 	}
 	return errors
+}
+
+// discardSystemEvents is the fallback sink used when a HandlerConfig reaches
+// RegistryLog without a SystemEventPersister. It drops events, which is only
+// ever correct because the omission has already been reported as an error - it
+// is not a silent skip.
+type discardSystemEvents struct{}
+
+func (discardSystemEvents) PersistSystemEvent(event events.Event) (PersistedEvent, error) {
+	return PersistedEvent{Event: &event, Disposition: EventCreated}, nil
 }

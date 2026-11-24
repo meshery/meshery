@@ -38,6 +38,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const ts = require('typescript');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
@@ -66,8 +67,8 @@ const SCANS = [
     ],
     // Top-level config files that aren't under any scanned `dirs` entry but
     // can still hold @mui imports. The next.config.js webpack alias keys
-    // (e.g. `'@mui/material': path.resolve(...)`) don't match the audit
-    // regex (no `from`/`require(` prefix), so this list is currently just
+    // (e.g. `'@mui/material': path.resolve(...)`) are not import declarations
+    // or require() calls, so this list is currently just
     // remote-component.config.js, which has many real require() calls.
     // Listed by relative path; resolved from `root`.
     files: ['remote-component.config.js'],
@@ -135,97 +136,232 @@ const IGNORED_DIRS = new Set([
 
 const EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx']);
 
-// Match any import/require from @mui/*, @material-ui/*, or @rjsf/mui.
-// Covers:
-//   import X from '@mui/material'
-//   import { X } from '@mui/material'
-//   import '@mui/material/Button'
-//   const X = require('@mui/material')
-const IMPORT_PATTERN =
-  /(?:from\s+|require\(\s*)['"](@mui\/[^'"]+|@material-ui\/[^'"]+|@rjsf\/mui)['"]/g;
+// Match imports from @mui/*, @material-ui/*, or @rjsf/mui using
+// the TypeScript parser so comments and ordinary strings are ignored.
+function isMuiModuleSpecifier(moduleName) {
+  return (
+    moduleName.startsWith('@mui/') ||
+    moduleName.startsWith('@material-ui/') ||
+    moduleName === '@rjsf/mui'
+  );
+}
 
-function walk(dir, out) {
+function findMuiImports(file, src) {
+  const scriptKindByExtension = {
+    '.js': ts.ScriptKind.JS,
+    '.jsx': ts.ScriptKind.JSX,
+    '.ts': ts.ScriptKind.TS,
+    '.tsx': ts.ScriptKind.TSX,
+  };
+
+  const sourceFile = ts.createSourceFile(
+    file,
+    src,
+    ts.ScriptTarget.Latest,
+    true,
+    scriptKindByExtension[path.extname(file)] ?? ts.ScriptKind.TSX,
+  );
+
+  const matches = [];
+
+  function visit(node) {
+    // Detect ES module imports and re-exports.
+    if (
+      (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
+      node.moduleSpecifier &&
+      ts.isStringLiteralLike(node.moduleSpecifier) &&
+      isMuiModuleSpecifier(node.moduleSpecifier.text)
+    ) {
+      matches.push(node.moduleSpecifier.text);
+    }
+
+    // Detect TypeScript import-equals declarations.
+    // Example: import Mui = require('@mui/material/Button');
+    if (
+      ts.isImportEqualsDeclaration(node) &&
+      ts.isExternalModuleReference(node.moduleReference) &&
+      node.moduleReference.expression &&
+      ts.isStringLiteralLike(node.moduleReference.expression) &&
+      isMuiModuleSpecifier(node.moduleReference.expression.text)
+    ) {
+      matches.push(node.moduleReference.expression.text);
+    }
+
+    // Detect CommonJS require() calls.
+    if (
+      ts.isCallExpression(node) &&
+      ts.isIdentifier(node.expression) &&
+      node.expression.text === 'require' &&
+      node.arguments.length > 0 &&
+      ts.isStringLiteralLike(node.arguments[0]) &&
+      isMuiModuleSpecifier(node.arguments[0].text)
+    ) {
+      matches.push(node.arguments[0].text);
+    }
+
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return matches;
+}
+
+function walk(dir, out, scanErrors) {
   let entries;
+
   try {
     entries = fs.readdirSync(dir, { withFileTypes: true });
   } catch (err) {
-    // Always report — this function is only called for subdirectories
-    // discovered during recursion, so any read failure is unexpected.
-    // The "is this configured scan dir missing?" check happens in
-    // runScan() *before* walk() runs.
-    process.stderr.write(`audit-mui: ${dir}: ${err.message}\n`);
+    const message = `audit-mui: ${dir}: ${err.message}`;
+    process.stderr.write(`${message}\n`);
+    scanErrors.push(message);
     return;
   }
+
   for (const entry of entries) {
     if (IGNORED_DIRS.has(entry.name)) continue;
+
     const full = path.join(dir, entry.name);
+
     if (entry.isDirectory()) {
-      walk(full, out);
+      walk(full, out, scanErrors);
     } else if (entry.isFile() && EXTENSIONS.has(path.extname(entry.name))) {
       out.push(full);
     }
   }
 }
+function scanFile(file, scanErrors) {
+  let src;
 
-function scanFile(file) {
-  const src = fs.readFileSync(file, 'utf8');
-  const matches = [];
-  let m;
-  IMPORT_PATTERN.lastIndex = 0;
-  while ((m = IMPORT_PATTERN.exec(src)) !== null) {
-    matches.push(m[1]);
+  try {
+    src = fs.readFileSync(file, 'utf8');
+  } catch (error) {
+    const message = `audit-mui: unable to read scan file ${file}: ${error.message}`;
+    process.stderr.write(`${message}\n`);
+    scanErrors.push(message);
+    return null;
   }
-  return matches;
-}
 
+  return findMuiImports(file, src);
+}
 function runScan(scan) {
   const files = [];
+  const scanErrors = [];
+
   for (const dir of scan.dirs) {
     const full = path.join(scan.root, dir);
-    // A configured scan dir that doesn't exist is a config error, not
-    // expected absence. Warn loudly — otherwise a typo (or a renamed
-    // directory) would silently drop a whole scan target and `--fail-on-new`
-    // would still pass. This is exactly the audit blind-spot pattern this
-    // script exists to prevent.
+
     if (!fs.existsSync(full)) {
-      process.stderr.write(`audit-mui: missing scan dir ${full}\n`);
+      const message = `audit-mui: missing scan dir ${full}`;
+      process.stderr.write(`${message}\n`);
+      scanErrors.push(message);
       continue;
     }
-    walk(full, files);
+
+    walk(full, files, scanErrors);
   }
-  // Explicit top-level files (e.g., config files that live at the scan
-  // root and aren't reached by walking any `dirs` entry).
+
   for (const file of scan.files ?? []) {
     const full = path.join(scan.root, file);
+
     if (!fs.existsSync(full)) {
-      process.stderr.write(`audit-mui: missing scan file ${full}\n`);
+      const message = `audit-mui: missing scan file ${full}`;
+      process.stderr.write(`${message}\n`);
+      scanErrors.push(message);
       continue;
     }
+
     files.push(full);
   }
 
   const offenders = [];
   let totalMatches = 0;
+  let scannedFiles = 0;
   let skippedAllowlisted = 0;
+  const allowlistStatus = {
+    active: [],
+    unused: [],
+    missing: [],
+    uncovered: [],
+  };
+  const unreadableAllowlisted = new Set();
+
   for (const file of files) {
-    const matches = scanFile(file);
-    if (matches.length === 0) continue;
     const rel = path.relative(scan.root, file);
-    if (scan.allowlist.has(rel)) {
-      skippedAllowlisted += 1;
+    const matches = scanFile(file, scanErrors);
+
+    if (matches === null) {
+      if (scan.allowlist.has(rel)) {
+        unreadableAllowlisted.add(rel);
+      }
       continue;
     }
-    offenders.push({ scan: scan.name, file: rel, count: matches.length, imports: matches });
+    scannedFiles += 1;
+
+    if (scan.allowlist.has(rel)) {
+      if (matches.length > 0) {
+        allowlistStatus.active.push(rel);
+        skippedAllowlisted += 1;
+      } else {
+        allowlistStatus.unused.push(rel);
+      }
+
+      continue;
+    }
+
+    if (matches.length === 0) continue;
+
+    offenders.push({
+      scan: scan.name,
+      file: rel,
+      count: matches.length,
+      imports: matches,
+    });
+
     totalMatches += matches.length;
   }
+  for (const rel of scan.allowlist) {
+    if (
+      allowlistStatus.active.includes(rel) ||
+      allowlistStatus.unused.includes(rel) ||
+      unreadableAllowlisted.has(rel)
+    ) {
+      continue;
+    }
+
+    const full = path.join(scan.root, rel);
+
+    try {
+      fs.statSync(full);
+      allowlistStatus.uncovered.push(rel);
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        allowlistStatus.missing.push(rel);
+      } else {
+        const message = `audit-mui: unable to check allowlist file ${full}: ${error.message}`;
+        process.stderr.write(`${message}\n`);
+        scanErrors.push(message);
+      }
+    }
+  }
+
+  allowlistStatus.active.sort();
+  allowlistStatus.unused.sort();
+  allowlistStatus.missing.sort();
+  allowlistStatus.uncovered.sort();
   offenders.sort((a, b) => b.count - a.count || a.file.localeCompare(b.file));
+
   return {
     name: scan.name,
     files: offenders.length,
     matches: totalMatches,
+    scannedFiles,
     skippedAllowlisted,
     allowlistSize: scan.allowlist.size,
+    allowlistStatus,
     offenders,
+    scanErrors,
+    scanComplete: scanErrors.length === 0,
   };
 }
 
@@ -237,8 +373,11 @@ function main() {
 
   const results = SCANS.map(runScan);
   const totalFiles = results.reduce((acc, r) => acc + r.files, 0);
+  const totalScannedFiles = results.reduce((acc, r) => acc + r.scannedFiles, 0);
   const totalMatches = results.reduce((acc, r) => acc + r.matches, 0);
   const totalAllowlist = results.reduce((acc, r) => acc + r.allowlistSize, 0);
+  const scanComplete = results.every((r) => r.scanComplete);
+
   // Sort across all scans so the "Top N by match count" header is honest
   // when there are offenders in more than one scan.
   const allOffenders = results
@@ -251,13 +390,19 @@ function main() {
         {
           audit: 'mui',
           files: totalFiles,
+          scannedFiles: totalScannedFiles,
           matches: totalMatches,
+          scanComplete,
           scans: results.map((r) => ({
             name: r.name,
             files: r.files,
+            scannedFiles: r.scannedFiles,
             matches: r.matches,
             allowlistSize: r.allowlistSize,
             allowlistedFilesWithMuiImports: r.skippedAllowlisted,
+            allowlistStatus: r.allowlistStatus,
+            scanComplete: r.scanComplete,
+            scanErrors: r.scanErrors,
             offenders: r.offenders,
           })),
         },
@@ -265,19 +410,24 @@ function main() {
         2,
       ) + '\n',
     );
-    process.exit(failOnNew && totalFiles > 0 ? 1 : 0);
+
+    process.exitCode = failOnNew && (totalFiles > 0 || !scanComplete) ? 1 : 0;
+    return;
   }
 
   process.stdout.write('meshery @mui/* import audit\n');
   process.stdout.write('===========================\n');
   process.stdout.write('Patterns: @mui/*, @material-ui/*, @rjsf/mui\n');
+
   for (const r of results) {
     const scan = SCANS.find((s) => s.name === r.name);
     process.stdout.write(`Scan [${r.name}]: ${scan.dirs.join(', ')}\n`);
   }
+
   process.stdout.write('\n');
 
   const limit = showAll ? allOffenders.length : Math.min(20, allOffenders.length);
+
   if (allOffenders.length === 0) {
     process.stdout.write(
       'No @mui/* imports found outside the allowlists. The restructure is done.\n\n',
@@ -285,38 +435,79 @@ function main() {
   } else {
     const header = showAll ? 'Offenders' : `Top ${limit} files (by match count)`;
     process.stdout.write(`${header}:\n`);
+
     for (let i = 0; i < limit; i++) {
       const { scan: scanName, file, count } = allOffenders[i];
       process.stdout.write(`  ${String(count).padStart(3)}  [${scanName}] ${file}\n`);
     }
+
     if (!showAll && allOffenders.length > limit) {
       process.stdout.write(
         `  ... and ${allOffenders.length - limit} more (use --all to see them)\n`,
       );
     }
+
     process.stdout.write('\n');
   }
 
   process.stdout.write('Per-scan summary:\n');
+
   for (const r of results) {
     process.stdout.write(
-      `  [${r.name.padEnd(20)}] files=${r.files} matches=${r.matches} allowlist=${r.allowlistSize}\n`,
+      `  [${r.name.padEnd(20)}] files=${r.files} matches=${r.matches} allowlist=${
+        r.allowlistSize
+      }\n`,
     );
   }
-  process.stdout.write('\n');
+  const staleAllowlistEntries = results.flatMap((r) => [
+    ...r.allowlistStatus.unused.map((file) => ({
+      scan: r.name,
+      status: 'unused',
+      file,
+    })),
+    ...r.allowlistStatus.missing.map((file) => ({
+      scan: r.name,
+      status: 'missing',
+      file,
+    })),
+    ...r.allowlistStatus.uncovered.map((file) => ({
+      scan: r.name,
+      status: 'uncovered',
+      file,
+    })),
+  ]);
 
+  if (staleAllowlistEntries.length > 0) {
+    process.stdout.write('\nAllowlist maintenance:\n');
+
+    for (const entry of staleAllowlistEntries) {
+      process.stdout.write(`  [${entry.status}] [${entry.scan}] ${entry.file}\n`);
+    }
+
+    process.stdout.write(
+      '  Note: These entries are informational and do not affect --fail-on-new.\n',
+    );
+  }
+
+  if (!scanComplete) {
+    process.stderr.write('WARNING: Scan incomplete. Check the reported scan errors.\n');
+  }
+
+  process.stdout.write('\n');
   process.stdout.write('Summary:\n');
   process.stdout.write(`  Files:                ${totalFiles}\n`);
+  process.stdout.write(`  Files scanned:        ${totalScannedFiles}\n`);
   process.stdout.write(`  Matches:              ${totalMatches}\n`);
   process.stdout.write(`  Allowlisted (total):  ${totalAllowlist}\n\n`);
   process.stdout.write(`AUDIT mui files=${totalFiles} matches=${totalMatches}\n`);
 
-  if (failOnNew && totalFiles > 0) {
+  if (failOnNew && (totalFiles > 0 || !scanComplete)) {
     process.stderr.write(
       `\nFAIL: ${totalFiles} non-allowlisted file(s) import @mui/*. ` +
+        `${scanComplete ? '' : 'The scan was incomplete. Check scan errors. '}` +
         `Migrate to @sistent/sistent or update the allowlist with justification.\n`,
     );
-    process.exit(1);
+    process.exitCode = 1;
   }
 }
 

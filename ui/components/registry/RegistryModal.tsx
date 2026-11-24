@@ -21,12 +21,16 @@ import {
   ListItemText,
   Box,
   FileIcon,
+  AppRegistrationIcon,
   CustomTooltip,
   Drawer,
   DatabaseIcon,
   DARK_BLUE_GRAY,
   useMediaQuery,
+  useHasPermission,
 } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from '../general/error-404/index';
 import { styled, useTheme } from '@/theme';
 import { Modal } from '@/components/shared/Modal';
 import { ChevronButtonWrapper } from '../general/style';
@@ -105,12 +109,34 @@ const StyledDrawer = styled(Drawer, { shouldForwardProp: (prop) => prop !== 'ope
   }),
 }));
 
-const StyledMainContent = styled(Box)(() => ({
+const StyledMainContent = styled(Box, { shouldForwardProp: (prop) => prop !== 'open' })<{
+  open?: boolean;
+}>(({ theme, open }) => ({
   flexGrow: 1,
   height: '100%',
   overflow: 'auto',
   display: 'flex',
   flexDirection: 'column',
+  ...(open && {
+    marginLeft: `calc(${theme.spacing(7)} + 1px - ${DRAWER_WIDTH}px)`,
+    [theme.breakpoints.up('sm')]: {
+      marginLeft: `calc(${theme.spacing(8)} + 1px - ${DRAWER_WIDTH}px)`,
+    },
+    [theme.breakpoints.up('md')]: {
+      marginLeft: 0,
+    },
+    transition: theme.transitions.create('margin-left', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+  ...(!open && {
+    marginLeft: 0,
+    transition: theme.transitions.create('margin-left', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  }),
 }));
 
 // Override Sistent/MUI Dialog defaults so the modal occupies ~90%/80% of the
@@ -118,6 +144,10 @@ const StyledMainContent = styled(Box)(() => ({
 // screens. Mirrors the legacy `StyledModal` behaviour.
 const StyledRegistryModal = styled(Modal)(({ theme }) => ({
   zIndex: 1500,
+  '& .modal-header': {
+    position: 'relative',
+    zIndex: theme.zIndex.drawer + 1,
+  },
   '& .MuiDialog-paperFullScreen': {
     margin: 0,
   },
@@ -246,7 +276,11 @@ interface NavigationProps {
   setHeaderInfo: (_info: HeaderInfo) => void;
 }
 
+/**
+ * Registry navigation rail and content host gated by registry view permission.
+ */
 export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
+  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
   const theme = useTheme();
   const closeList = useMediaQuery(theme.breakpoints.down('xl'));
   const [open, setOpen] = useState(!closeList);
@@ -260,39 +294,64 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
     }
   }, [selectedView]);
 
-  const { data: modelsData } = useGetMeshModelsQuery({
-    params: { pagesize: 'all' },
-  });
-  const { data: componentsData } = useGetComponentsQuery({
-    params: { pagesize: 'all' },
-  });
-  const { data: relationshipsData } = useGetRelationshipsQuery({
-    params: { pagesize: 'all' },
-  });
-  const { data: registrantsData } = useGetRegistrantsQuery({
-    params: { pagesize: 'all' },
-  });
-  const counts: CountSummary = {
-    models: modelsData ? removeDuplicateVersions(modelsData.models || []).length : 0,
-    components: componentsData?.totalCount ?? componentsData?.total_count ?? 0,
-    relationships: relationshipsData?.totalCount ?? relationshipsData?.total_count ?? 0,
-    registrants: registrantsData?.totalCount ?? registrantsData?.total_count ?? 0,
-  };
+  const { data: modelsData } = useGetMeshModelsQuery(
+    {
+      params: { pagesize: 'all' },
+    },
+    { skip: !canViewRegistry },
+  );
+  const { data: componentsData } = useGetComponentsQuery(
+    {
+      params: { pagesize: 'all' },
+    },
+    { skip: !canViewRegistry },
+  );
+  const { data: relationshipsData } = useGetRelationshipsQuery(
+    {
+      params: { pagesize: 'all' },
+    },
+    { skip: !canViewRegistry },
+  );
+  const { data: registrantsData } = useGetRegistrantsQuery(
+    {
+      params: { pagesize: 'all' },
+    },
+    { skip: !canViewRegistry },
+  );
+  const counts: CountSummary = canViewRegistry
+    ? {
+        models: modelsData ? removeDuplicateVersions(modelsData.models || []).length : 0,
+        components: componentsData?.totalCount ?? componentsData?.total_count ?? 0,
+        relationships: relationshipsData?.totalCount ?? relationshipsData?.total_count ?? 0,
+        registrants: registrantsData?.totalCount ?? registrantsData?.total_count ?? 0,
+      }
+    : {
+        models: 0,
+        components: 0,
+        relationships: 0,
+        registrants: 0,
+      };
   const navConfig = getNavItems(theme, counts);
 
   const handleDrawerToggle = () => setOpen((prev) => !prev);
 
   const updateHeaderInfo = (id: string) => {
+    if (!canViewRegistry) {
+      return;
+    }
     const item = navConfig.find((nav) => nav.id === id);
     if (item) {
       setHeaderInfo({
         title: `Registry - ${id}`,
-        icon: <FileIcon {...iconMedium} fill={theme.palette.common.white} />,
+        icon: <AppRegistrationIcon {...iconMedium} fill={theme.palette.common.white} />,
       });
     }
   };
 
   const handleItemSelect = (id: string) => {
+    if (!canViewRegistry) {
+      return;
+    }
     setSelectedId(id);
     registryContext.setSelectedView(id);
     updateHeaderInfo(id);
@@ -300,8 +359,15 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
 
   // Set initial header info on component mount
   useEffect(() => {
+    if (!canViewRegistry) {
+      return;
+    }
     updateHeaderInfo(selectedId);
-  }, [selectedId, theme]);
+  }, [canViewRegistry, selectedId, theme]);
+
+  if (!canViewRegistry) {
+    return <DefaultError permissionKey={Keys.MesherySystemViewRegistry} />;
+  }
 
   return (
     <Box sx={{ display: 'flex', position: 'relative', height: '100%', gap: '1rem' }}>
@@ -318,7 +384,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
           ))}
         </List>
       </StyledDrawer>
-      <StyledMainContent>
+      <StyledMainContent open={open}>
         <RegistryContentWrapper
           selectedView={selectedId}
           searchText={searchText}
@@ -326,8 +392,11 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
         />
       </StyledMainContent>
       <ChevronButtonWrapper
+        type="button"
         isCollapsed={!open}
         onClick={handleDrawerToggle}
+        aria-label="Toggle registry navigation"
+        aria-expanded={open}
         sx={{
           position: 'absolute',
           bottom: '12%',
@@ -343,7 +412,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
         }}
       >
         <LeftArrowIcon
-          aria-label="Sidebar collapse toggle"
+          aria-hidden="true"
           style={{
             cursor: 'pointer',
             verticalAlign: 'middle',
@@ -358,13 +427,18 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
   );
 };
 
+/**
+ * Global modal shell for browsing registry resources when the user holds the
+ * registry view permission.
+ */
 const RegistryModal: FC = () => {
+  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const registryContext = useContext(RegistryModalContext);
   const [headerInfo, setHeaderInfo] = useState<HeaderInfo>({
     title: 'Registry',
-    icon: <FileIcon {...iconMedium} fill={theme.palette.icon.default} />,
+    icon: <AppRegistrationIcon {...iconMedium} fill={theme.palette.icon.default} />,
   });
 
   return (
@@ -372,12 +446,17 @@ const RegistryModal: FC = () => {
       isOpen={registryContext.open}
       onClose={registryContext.closeModal}
       headerIcon={headerInfo.icon}
-      title={headerInfo.title}
+      title={canViewRegistry ? headerInfo.title : 'Registry'}
       isFullScreenModeAllowed={!isSmallScreen}
       disableBodyWrap
     >
       <StyledModalBody>
-        {registryContext.open && <Navigation setHeaderInfo={setHeaderInfo} />}
+        {registryContext.open &&
+          (canViewRegistry ? (
+            <Navigation setHeaderInfo={setHeaderInfo} />
+          ) : (
+            <DefaultError permissionKey={Keys.MesherySystemViewRegistry} />
+          ))}
       </StyledModalBody>
     </StyledRegistryModal>
   );

@@ -1,4 +1,4 @@
-(function initLightbox() {
+function initLightbox() {
     if (document.getElementById("lightbox")) {
         return;
     }
@@ -38,6 +38,9 @@
     function isLightboxImage(element) {
         if (element.tagName !== "IMG") return false;
         if (element.dataset.noLightbox !== undefined) return false;
+        var link = element.closest("a[href]");
+        if (link && link.hasAttribute("download")) return false;
+        if (link && !/\.(?:png|jpe?g|gif|webp|svg|avif|bmp)$/i.test(link.pathname)) return false;
         if (element.height < 50 && element.width < 50) return false;
         
         var contentSelectors = [
@@ -59,10 +62,11 @@
     }
 
     document.addEventListener("click", function (e) {
-        if (isLightboxImage(e.target)) {
+        if (!e.defaultPrevented && e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey && isLightboxImage(e.target)) {
             e.preventDefault();
             e.stopPropagation();
-            openLightbox(e.target.getAttribute("src"), e.target.getAttribute("alt") || "");
+            var link = e.target.closest("a[href]");
+            openLightbox(link ? link.href : e.target.getAttribute("src"), e.target.getAttribute("alt") || "");
         }
     });
 
@@ -84,7 +88,9 @@
             closeLightbox();
         }
     });
-})();
+}
+
+initLightbox();
 
 if (window.addEventListener) {
     window.addEventListener("popstate", function() {

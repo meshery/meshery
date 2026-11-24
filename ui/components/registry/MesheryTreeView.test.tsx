@@ -19,14 +19,14 @@ vi.mock('@sistent/sistent', () => ({
       <span>{label}</span>
     </label>
   ),
-  Switch: ({ checked, onClick, disabled, ...rest }: any) => (
+  Switch: ({ checked, onClick, onChange, disabled, ...rest }: any) => (
     <input
       type="checkbox"
       data-testid="switch"
       checked={!!checked}
       onClick={onClick}
       disabled={disabled}
-      onChange={() => {}}
+      onChange={onChange}
       {...rest}
     />
   ),

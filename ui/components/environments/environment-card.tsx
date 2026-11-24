@@ -29,7 +29,12 @@ import {
 } from './styles';
 
 export const formattoLongDate = (date) => {
-  return new Date(date).toLocaleDateString('en-US', {
+  if (!date) return '-';
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime()) || parsed.getUTCFullYear() <= 1) {
+    return '-';
+  }
+  return parsed.toLocaleDateString('en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -80,6 +85,7 @@ const EnvironmentCard = ({
   onSelect,
   onAssignConnection,
 }) => {
+  const theme = useTheme();
   const { data: environmentConnections } = useGetEnvironmentConnectionsQuery(
     {
       environmentId: environmentDetails.id,
@@ -88,21 +94,16 @@ const EnvironmentCard = ({
   );
   const environmentConnectionsCount = environmentConnections?.totalCount || 0;
 
-  // this allows to handle both cases when deleted at is:
-  // - timestamp or null
-  // - object in format {Time: timestamp, Valid: boolean}
-  // --
-  // TODO:
-  // - switch remote provider to have format of deletedAt as timestamp or null
-  // - or update serialisation for deletedAt field of Environment to return object in format {Time: timestamp, Valid: boolean}
+  // this allows to handle cases when deletedAt is:
+  // - null or undefined (not deleted)
+  // - timestamp string (e.g. ISO date)
+  // - object in format {Time: timestamp, Valid: boolean} (e.g. gorm.DeletedAt / sql.NullTime)
   const deleted =
-    environmentDetails.deletedAt === null
+    environmentDetails.deletedAt == null
       ? false
-      : typeof environmentDetails.deletedAt === 'object' &&
-          environmentDetails.deletedAt !== null &&
-          'Valid' in environmentDetails.deletedAt
-        ? !!environmentDetails.deletedAt.Valid
-        : true;
+      : typeof environmentDetails.deletedAt === 'object' && 'Valid' in environmentDetails.deletedAt
+        ? Boolean(environmentDetails.deletedAt.Valid)
+        : Boolean(environmentDetails.deletedAt);
 
   return (
     <>
@@ -189,7 +190,7 @@ const EnvironmentCard = ({
                         environmentDetails.workspaces ? environmentDetails.workspaces?.length : 0
                       }
                       onAssign={onAssignConnection}
-                      disabled={!CAN(Keys.WorkspaceManagementViewWorkspace.id, Keys.WorkspaceManagementViewWorkspace.function)}
+                      disabled={false} // TODO: re-enable with permissionKey={Keys.WorkspaceManagementViewWorkspace}
                     />
                   </AllocationButton>
                 )} */}
@@ -240,7 +241,10 @@ const EnvironmentCard = ({
                     }
                     permissionKey={Keys.WorkspaceManagementEditEnvironment}
                   >
-                    <EditIcon style={{ ...iconMedium, margin: '0 2px' }} />
+                    <EditIcon
+                      style={{ ...iconMedium, margin: '0 2px' }}
+                      fill={theme?.palette?.icon?.default}
+                    />
                   </IconButton>
                 </CustomTooltip>
                 <CustomTooltip title="Delete">
@@ -255,7 +259,10 @@ const EnvironmentCard = ({
                     }
                     permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
                   >
-                    <DeleteIcon style={{ ...iconMedium, margin: '0 2px' }} />
+                    <DeleteIcon
+                      style={{ ...iconMedium, margin: '0 2px' }}
+                      fill={theme?.palette?.icon?.default}
+                    />
                   </IconButton>
                 </CustomTooltip>
               </Grid2>

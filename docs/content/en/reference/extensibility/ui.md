@@ -8,6 +8,17 @@ aliases:
 
 Meshery UI has a number of extension points that allow you to greatly customize both its functional behavior and visual appearance. These extension points come in different types, and this document describes each type, its example use, best practices to consider, and caveats of which to be aware.
 
+{{% alert color="warning" title="UI extensions share Meshery UI's origin and session" %}}
+Extension components are loaded into Meshery UI's own browser origin and JavaScript
+context. They share the DOM, the session cookie, and the ability to call any API the
+signed-in user can call. There is no iframe or sandbox boundary between an extension
+component and the rest of the UI, so an enabled UI extension is trusted code. Operators
+should read
+[Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}});
+authors should read
+[Ensuring Extension Compatibility]({{< ref "reference/extensibility/verify-compatibility.md" >}}).
+{{% /alert %}}
+
 ### Extensibility: Customizing Text-based Forms using RJSF Custom Component
 
 RJSFWrapperComponent provides customizations for RJSF forms, overriding the default behavior of meshery-ui rjsf forms. The [Rjsf forms are wrapped](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L66) in this component to receive custom props from a Meshery extension.
@@ -115,14 +126,14 @@ Submit an issue to request more documentation.
 
 ### Extension Points by File
 
-1. **/ui/components/NavigatorExtension.js** - add custom menu items in Meshery's main navigation menu.
-1. **/ui/pages/extension/[component].js** - optionally, define the state of a parent menu item: expanded or collapsed.
+1. **/ui/components/layout/Navigator/NavigatorExtension.tsx** - add custom menu items in Meshery's main navigation menu.
+1. **/ui/pages/extension/[...component].tsx** - resolves the active extension from the path, sets its title and type, and renders the matching remote or navigator component.
 1. **ui/remote-component.config.js** - list of Material UI components made available to Remote Providers and their plugins.
-1. **ui/components/MesheryMeshInterface/PatternServiceFormCore.js** - PatternServiceFormCore component which decouples the SettingsForm and TraitsForm from their UI representation while keeping the logic coupled. This design lets the Remote Provider amend the design of the components without interfering with Meshery UI's core logic.
+1. **ui/components/meshery-mesh-interface/PatternServiceFormCore.tsx** - PatternServiceFormCore component which decouples the SettingsForm from its UI representation while keeping the logic coupled. This design lets the Remote Provider amend the design of the components without interfering with Meshery UI's core logic.
 
 ### Using React JSON Schema Form
 
-Meshery exposes a custom RJSF Form component which is capable of generating "Pattern" YAMLs without being extremely opinionated about the UI. This custom component is available at `ui/components/MesheryMeshInterface/PatternServiceFormCore.js`. An example usage of the component which will render the logically coupled `SettingsForm` and `TraitsForm` in a Material UI `TabPanel`:
+Meshery exposes a custom RJSF Form component which is capable of generating "Pattern" YAMLs without being extremely opinionated about the UI. This custom component is available at `ui/components/meshery-mesh-interface/PatternServiceFormCore.tsx`. An example usage of the component which will render the `SettingsForm` in a Material UI `TabPanel`:
 
 {{< code code=`<PatternServiceFormCore
 formData={formData}
@@ -134,14 +145,11 @@ namespace={namespace}
 
 >
 
-    {(SettingsForm, TraitsForm) => {
+    {(SettingsForm) => {
     	return (
     		<div>
     			<TabPanel value={tab} index={0} style={ { marginTop: "1.1rem" } }>
     				<SettingsForm />
-    			</TabPanel>
-    			<TabPanel value={tab} index={1} style={ { marginTop: "1.1rem" } }>
-    				<TraitsForm />
     			</TabPanel>
     		</div>
     	);
@@ -156,5 +164,5 @@ Meshery UI's RJSF form accepts two props:
 
 With both of these props, Remote Providers can customize the wrapper and can also customize the body of the form. This allows full customization of the form.
 
-from _ui/components/MesheryMeshInterface/PatternService/index.js_
+from _ui/components/meshery-mesh-interface/PatternService/index.tsx_
 {{< code code="function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent })" >}}
