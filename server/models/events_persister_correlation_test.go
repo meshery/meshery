@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"sync"
 	"testing"
 	"time"
@@ -567,6 +568,68 @@ func TestPersistAndPublishSystemEventBroadcastsTheCondition(t *testing.T) {
 	}
 	if rows := storedEvents(t, p, owner); len(rows) != 1 {
 		t.Fatalf("got %d rows, want the one condition", len(rows))
+	}
+}
+
+type errSystemEventPersister struct {
+	err       error
+	persisted *PersistedEvent
+}
+
+func (m *errSystemEventPersister) PersistSystemEvent(event events.Event) (PersistedEvent, error) {
+	if m.err != nil {
+		return PersistedEvent{}, m.err
+	}
+	if m.persisted != nil {
+		return *m.persisted, nil
+	}
+	return PersistedEvent{Event: &event, Disposition: EventCreated}, nil
+}
+
+// PersistAndPublishSystemEvent suppresses broadcast when persistence fails to
+// prevent ghost notifications, and broadcasts nothing when the stored event is unknown.
+func TestPersistAndPublishSystemEvent_SuppressesBroadcastOnError(t *testing.T) {
+	owner := mustUUID(t)
+	broadcaster := NewBroadcaster("test")
+	ch, unsubscribe := broadcaster.Subscribe(owner)
+	defer unsubscribe()
+
+	sent := events.NewEvent().FromOwner(owner).WithCategory("connection").WithAction("update").
+		WithSeverity(events.Error).WithDescription("system failure").Build()
+
+	// 1. Persistence returns an error -> must not broadcast, must return error
+	expectedErr := errors.New("database locked")
+	errPersister := &errSystemEventPersister{err: expectedErr}
+	err := PersistAndPublishSystemEvent(errPersister, broadcaster, owner, sent)
+	if !errors.Is(err, expectedErr) {
+		t.Fatalf("got err %v, want %v", err, expectedErr)
+	}
+	select {
+	case got := <-ch:
+		t.Fatalf("unexpected broadcast %v when system event persistence failed", got)
+	case <-time.After(100 * time.Millisecond):
+	}
+
+	// 2. Stored event is unknown (persisted.Event == nil) -> must not broadcast, returns nil
+	nilPersister := &errSystemEventPersister{persisted: &PersistedEvent{Disposition: EventIncremented}}
+	err = PersistAndPublishSystemEvent(nilPersister, broadcaster, owner, sent)
+	if err != nil {
+		t.Fatalf("got err %v, want nil", err)
+	}
+	select {
+	case got := <-ch:
+		t.Fatalf("unexpected broadcast %v when stored event is nil", got)
+	case <-time.After(100 * time.Millisecond):
+	}
+
+	// 3. Persister is nil -> broadcasts as sent, returns nil
+	err = PersistAndPublishSystemEvent(nil, broadcaster, owner, sent)
+	if err != nil {
+		t.Fatalf("got err %v, want nil", err)
+	}
+	got := receiveSystemEvent(t, ch)
+	if got.ID != sent.ID {
+		t.Fatalf("broadcast ID %s, want sent ID %s", got.ID, sent.ID)
 	}
 }
 

@@ -4,7 +4,13 @@
     {{ partial "head.html" (dict "Title" .Title "Description" .Params.abstract "Kind" .Kind "Permalink" .Permalink "Site" .Site) }}
     {{ partialCached "header.html" . .RelPermalink }}
     <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
 
     <script src="{{ "js/error-code-handler.js" | relURL }}"></script>
     
@@ -78,13 +84,13 @@
       </div>
 
       <main class="main-container{{ block "main_class" . }}{{ end }}" role="main">
+        {{ if not .IsHome }}
         <nav aria-label="breadcrumb">
-          <ol class="breadcrumb spb-1">
-            <li class="breadcrumb-item active" aria-current="page">
-              {{ partial "breadcrumbs.html" . }}
-            </li>
+          <ol id="breadcrumbs" class="breadcrumb spb-1">
+            {{ partial "breadcrumbs.html" . }}
           </ol>
         </nav>
+        {{ end }}
         <div class="td-content{{ block "td_content_class" . }}{{ end }}">
           {{ if ne (.Params.display_title | default true) false }}
             <h1>{{ .Title }}</h1>

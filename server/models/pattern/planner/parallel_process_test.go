@@ -312,3 +312,449 @@ func TestParallelProcess_MixedOutcomesWithManyPrereqs(t *testing.T) {
 	}
 }
 
+// TestParallelProcess_PanicInPrerequisiteDoesNotDeadlockDependents verifies that when
+// a prerequisite node panics during visitor execution, downstream dependents are
+// not permanently starved on channel reads, and the plan execution does not deadlock.
+func TestParallelProcess_PanicInPrerequisiteDoesNotDeadlockDependents(t *testing.T) {
+	prereq := newComponent("prereq")
+	dependent := newComponent("dependent", "prereq")
+
+	design := newDesign("panic-recovery", prereq, dependent)
+	plan, err := CreatePlan(design, nil, false)
+	if err != nil {
+		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
+	}
+
+	var (
+		mu                sync.Mutex
+		dependentVisited  bool
+		dependentWithheld bool
+		reportedDep       string
+	)
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		defer func() {
+			_ = recover()
+		}()
+		_ = plan.Execute(
+			func(id string, comp component.ComponentDefinition) bool {
+				if comp.DisplayName == "prereq" {
+					panic("simulated fatal panic in component visitor")
+				}
+				mu.Lock()
+				if comp.DisplayName == "dependent" {
+					dependentVisited = true
+				}
+				mu.Unlock()
+				return true
+			},
+			func(id string, comp component.ComponentDefinition, failedDep string) {
+				mu.Lock()
+				if comp.DisplayName == "dependent" {
+					dependentWithheld = true
+					reportedDep = failedDep
+				}
+				mu.Unlock()
+			},
+			testLogger(t),
+		)
+	}()
+
+	select {
+	case <-done:
+		// Plan execution completed without deadlocking
+	case <-time.After(2 * time.Second):
+		t.Fatal("Plan.Execute() deadlocked; prerequisite panic bypassed signal propagation, permanently wedging dependent channel reads")
+	}
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	if dependentVisited {
+		t.Error("dependent node was visited despite prerequisite panic")
+	}
+	if !dependentWithheld {
+		t.Error("dependent node was not marked as withheld following prerequisite panic")
+	}
+	if reportedDep != prereq.ID.String() {
+		t.Errorf("dependent reported failed dependency %q, want %q", reportedDep, prereq.ID.String())
+	}
+}
+
+// TestParallelProcess_PanicInMiddleOfDeepChainPropagatesWithholding verifies that when
+// a middle node in a multi-hop dependency chain panics (A -> B -> C -> D, B panics),
+// subsequent nodes C and D are sequentially withheld without deadlock or starvation.
+func TestParallelProcess_PanicInMiddleOfDeepChainPropagatesWithholding(t *testing.T) {
+	nodeA := newComponent("nodeA")
+	nodeB := newComponent("nodeB", "nodeA")
+	nodeC := newComponent("nodeC", "nodeB")
+	nodeD := newComponent("nodeD", "nodeC")
+
+	design := newDesign("deep-chain-panic", nodeA, nodeB, nodeC, nodeD)
+	plan, err := CreatePlan(design, nil, false)
+	if err != nil {
+		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
+	}
+
+	var (
+		mu         sync.Mutex
+		aVisited   bool
+		cVisited   bool
+		dVisited   bool
+		cWithheld  bool
+		dWithheld  bool
+		cFailedDep string
+		dFailedDep string
+	)
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		defer func() {
+			_ = recover()
+		}()
+		_ = plan.Execute(
+			func(id string, comp component.ComponentDefinition) bool {
+				mu.Lock()
+				defer mu.Unlock()
+				switch comp.DisplayName {
+				case "nodeA":
+					aVisited = true
+					return true
+				case "nodeB":
+					panic("simulated fatal panic in nodeB")
+				case "nodeC":
+					cVisited = true
+					return true
+				case "nodeD":
+					dVisited = true
+					return true
+				}
+				return true
+			},
+			func(id string, comp component.ComponentDefinition, failedDep string) {
+				mu.Lock()
+				defer mu.Unlock()
+				switch comp.DisplayName {
+				case "nodeC":
+					cWithheld = true
+					cFailedDep = failedDep
+				case "nodeD":
+					dWithheld = true
+					dFailedDep = failedDep
+				}
+			},
+			testLogger(t),
+		)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(3 * time.Second):
+		t.Fatal("Plan.Execute() deadlocked; panic in middle of deep chain hung downstream nodes")
+	}
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	if !aVisited {
+		t.Error("nodeA was not visited, want it visited before nodeB")
+	}
+	if cVisited {
+		t.Error("nodeC was visited, want it withheld because nodeB panicked")
+	}
+	if dVisited {
+		t.Error("nodeD was visited, want it withheld because nodeC was withheld")
+	}
+	if !cWithheld || cFailedDep != nodeB.ID.String() {
+		t.Errorf("nodeC withheld=%v, failedDep=%q, want true and %q", cWithheld, cFailedDep, nodeB.ID.String())
+	}
+	if !dWithheld || dFailedDep != nodeC.ID.String() {
+		t.Errorf("nodeD withheld=%v, failedDep=%q, want true and %q", dWithheld, dFailedDep, nodeC.ID.String())
+	}
+}
+
+// TestParallelProcess_DiamondTopologyPanicOneBranchWithholdsSink verifies that in a diamond
+// DAG (Root -> BranchA, BranchB -> Sink), when BranchA panics while BranchB succeeds,
+// the Sink receives both signals, correctly determines it cannot proceed, and is withheld.
+func TestParallelProcess_DiamondTopologyPanicOneBranchWithholdsSink(t *testing.T) {
+	root := newComponent("root")
+	branchA := newComponent("branchA", "root")
+	branchB := newComponent("branchB", "root")
+	sink := newComponent("sink", "branchA", "branchB")
+
+	design := newDesign("diamond-panic", root, branchA, branchB, sink)
+	plan, err := CreatePlan(design, nil, false)
+	if err != nil {
+		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
+	}
+
+	var (
+		mu            sync.Mutex
+		sinkVisited   bool
+		sinkWithheld  bool
+		sinkFailedDep string
+	)
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		defer func() {
+			_ = recover()
+		}()
+		_ = plan.Execute(
+			func(id string, comp component.ComponentDefinition) bool {
+				switch comp.DisplayName {
+				case "branchA":
+					panic("simulated fatal panic in branchA")
+				case "branchB":
+					return true
+				case "sink":
+					mu.Lock()
+					sinkVisited = true
+					mu.Unlock()
+					return true
+				}
+				return true
+			},
+			func(id string, comp component.ComponentDefinition, failedDep string) {
+				if comp.DisplayName == "sink" {
+					mu.Lock()
+					sinkWithheld = true
+					sinkFailedDep = failedDep
+					mu.Unlock()
+				}
+			},
+			testLogger(t),
+		)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(3 * time.Second):
+		t.Fatal("Plan.Execute() deadlocked; panic in diamond branch hung sink node")
+	}
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	if sinkVisited {
+		t.Error("sink node was visited, want it withheld because branchA panicked")
+	}
+	if !sinkWithheld {
+		t.Error("sink node was not reported as withheld")
+	}
+	if sinkFailedDep != branchA.ID.String() {
+		t.Errorf("sink reported failed dependency %q, want %q", sinkFailedDep, branchA.ID.String())
+	}
+}
+
+// TestParallelProcess_FanInHalfPanickingPrereqsDoesNotDeadlock verifies high-concurrency fan-in
+// when 10 upstream prerequisites succeed while 10 prerequisites panic concurrently. The target
+// node must receive all 20 signals without channel buffer deadlock or dropped signals.
+func TestParallelProcess_FanInHalfPanickingPrereqsDoesNotDeadlock(t *testing.T) {
+	const totalPrereqs = 20
+	prereqNames := make([]string, totalPrereqs)
+	components := make([]*component.ComponentDefinition, 0, totalPrereqs+1)
+
+	for i := 0; i < totalPrereqs; i++ {
+		name := fmt.Sprintf("fan-prereq-%d", i)
+		prereqNames[i] = name
+		components = append(components, newComponent(name))
+	}
+
+	target := newComponent("fan-target", prereqNames...)
+	components = append(components, target)
+
+	design := newDesign("fan-in-panics", components...)
+	plan, err := CreatePlan(design, nil, false)
+	if err != nil {
+		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
+	}
+
+	var (
+		mu             sync.Mutex
+		targetVisited  bool
+		targetWithheld bool
+	)
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		defer func() {
+			_ = recover()
+		}()
+		_ = plan.Execute(
+			func(id string, comp component.ComponentDefinition) bool {
+				if comp.DisplayName == "fan-target" {
+					mu.Lock()
+					targetVisited = true
+					mu.Unlock()
+					return true
+				}
+
+				// Even indices succeed, odd indices panic
+				var idx int
+				_, _ = fmt.Sscanf(comp.DisplayName, "fan-prereq-%d", &idx)
+				if idx%2 == 1 {
+					panic(fmt.Sprintf("panic in %s", comp.DisplayName))
+				}
+				return true
+			},
+			func(id string, comp component.ComponentDefinition, failedDep string) {
+				if comp.DisplayName == "fan-target" {
+					mu.Lock()
+					targetWithheld = true
+					mu.Unlock()
+				}
+			},
+			testLogger(t),
+		)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(5 * time.Second):
+		t.Fatal("Plan.Execute() deadlocked; high-concurrency mixed panic fan-in hung target node")
+	}
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	if targetVisited {
+		t.Error("target was visited, want it withheld because half prerequisites panicked")
+	}
+	if !targetWithheld {
+		t.Error("target was not reported as withheld")
+	}
+}
+
+// TestParallelProcess_ExactSingleSignalPerDependent verifies that when a node
+// panics or completes, each dependent in deps receives exactly one signal
+// without duplicate transmissions or starvation.
+func TestParallelProcess_ExactSingleSignalPerDependent(t *testing.T) {
+	const numDeps = 5
+	deps := make([]*ParallelProcessGraphNode, numDeps)
+	for i := 0; i < numDeps; i++ {
+		deps[i] = &ParallelProcessGraphNode{
+			Name:        fmt.Sprintf("dep-%d", i),
+			DepCount:    1,
+			DepUpdateCh: make(chan struct{}, 1),
+			DepCancleCh: make(chan string, 1),
+		}
+	}
+
+	node := &ParallelProcessGraphNode{
+		Name:     "source",
+		Data:     &Node{Data: component.ComponentDefinition{}},
+		DepCount: 0,
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	// Panicking node
+	node.Process(deps, &wg, func(name string, comp component.ComponentDefinition) bool {
+		panic("deliberate source panic")
+	}, nil, testLogger(t))
+
+	wg.Wait()
+
+	// Verify each dependent received exactly one abort signal
+	for i, dep := range deps {
+		select {
+		case from := <-dep.DepCancleCh:
+			if from != "source" {
+				t.Errorf("dep-%d received cancel from %q, want 'source'", i, from)
+			}
+		default:
+			t.Errorf("dep-%d received no cancel signal", i)
+		}
+
+		// Ensure no extra/duplicate signals are present
+		select {
+		case extra := <-dep.DepCancleCh:
+			t.Errorf("dep-%d received unexpected duplicate cancel from %q", i, extra)
+		case <-dep.DepUpdateCh:
+			t.Errorf("dep-%d received unexpected update signal", i)
+		default:
+			// Buffer is empty as expected
+		}
+	}
+}
+
+// TestParallelProcess_PartialDispatchPanicSignalsRemainingDependentsExactlyOnce
+// verifies that if a panic occurs halfway through signaling dependents,
+// the deferred recovery ensures remaining unsignaled dependents still receive
+// their signal without re-transmitting to already signaled dependents.
+func TestParallelProcess_PartialDispatchPanicSignalsRemainingDependentsExactlyOnce(t *testing.T) {
+	dep0 := &ParallelProcessGraphNode{
+		Name:        "dep-0",
+		DepCount:    1,
+		DepCancleCh: make(chan string, 1),
+	}
+
+	// dep1 has a closed cancel channel, which will panic on send
+	dep1 := &ParallelProcessGraphNode{
+		Name:        "dep-1",
+		DepCount:    1,
+		DepCancleCh: make(chan string, 1),
+	}
+	close(dep1.DepCancleCh)
+
+	dep2 := &ParallelProcessGraphNode{
+		Name:        "dep-2",
+		DepCount:    1,
+		DepCancleCh: make(chan string, 1),
+	}
+
+	deps := []*ParallelProcessGraphNode{dep0, dep1, dep2}
+
+	node := &ParallelProcessGraphNode{
+		Name:     "source",
+		Data:     &Node{Data: component.ComponentDefinition{}},
+		DepCount: 0,
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	// Panicking node triggers dispatch which panics at dep1
+	node.Process(deps, &wg, func(name string, comp component.ComponentDefinition) bool {
+		panic("initial visitor panic")
+	}, nil, testLogger(t))
+
+	wg.Wait()
+
+	// Verify dep0 received exactly one signal
+	select {
+	case from := <-dep0.DepCancleCh:
+		if from != "source" {
+			t.Errorf("dep0 received from %q, want 'source'", from)
+		}
+	default:
+		t.Error("dep0 received no cancel signal")
+	}
+	select {
+	case extra := <-dep0.DepCancleCh:
+		t.Errorf("dep0 received duplicate cancel: %q", extra)
+	default:
+	}
+
+	// Verify dep2 received its signal despite dep1 panicking during dispatch
+	select {
+	case from := <-dep2.DepCancleCh:
+		if from != "source" {
+			t.Errorf("dep2 received from %q, want 'source'", from)
+		}
+	default:
+		t.Error("dep2 received no cancel signal after partial dispatch recovery")
+	}
+	select {
+	case extra := <-dep2.DepCancleCh:
+		t.Errorf("dep2 received duplicate cancel: %q", extra)
+	default:
+	}
+}

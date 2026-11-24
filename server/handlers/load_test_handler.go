@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"net/url"
 	"os"
@@ -25,6 +26,16 @@ import (
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 )
+
+// loadTestStreamWriteTimeout bounds each frame write on a load test run's SSE
+// stream. The server sets no WriteTimeout, so without it a client that stops
+// reading could block a write indefinitely.
+const loadTestStreamWriteTimeout = 30 * time.Second
+
+type loadTestTarget struct {
+	clientIndex int
+	options     *models.LoadTestOptions
+}
 
 // LoadTestUsingSMPHandler runs the load test with the given parameters and SMP
 func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, provider models.Provider) {
@@ -71,8 +82,9 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 	// testName - should be loaded from the file and updated with a random string appended to the end of the name
 	testName := perfTest.Config.Name
 	if testName == "" {
-		h.log.Error(ErrBlankName(err))
-		writeMeshkitError(w, ErrBlankName(err), http.StatusForbidden)
+		blankNameErr := ErrBlankName(nil)
+		h.log.Error(blankNameErr)
+		writeMeshkitError(w, blankNameErr, http.StatusBadRequest)
 		return
 	}
 
@@ -95,46 +107,65 @@ func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Reque
 		loadTestOptions.Duration = time.Second
 	}
 
-	// TODO: check multiple clients in case of distributed perf test
-	testClient := perfTest.Config.Clients[0]
-	if len(testClient.EndpointUrls) == 0 {
-		err := fmt.Errorf("request body is missing load-test endpoint URLs")
-		h.log.Error(models.ErrUnmarshal(err, "performance test config"))
-		writeMeshkitError(w, models.ErrUnmarshal(err, "performance test config"), http.StatusBadRequest)
-		return
-	}
-
-	// TODO: consider the multiple endpoints
-	loadTestOptions.URL = testClient.EndpointUrls[0]
-	loadTestOptions.HTTPNumThreads = int(testClient.Connections)
-	loadTestOptions.HTTPQPS = float64(testClient.Rps)
-
-	if loadTestOptions.HTTPNumThreads < 1 {
-		loadTestOptions.HTTPNumThreads = 1
-	}
-
-	ltURL, err := url.Parse(loadTestOptions.URL)
-	if err != nil || !ltURL.IsAbs() || ltURL.Host == "" {
-		invalidURL := loadTestOptions.URL
-		if err != nil {
-			invalidURL = fmt.Sprintf("%s (%v)", loadTestOptions.URL, err)
-		}
-		h.log.Error(ErrInvalidLTURL(invalidURL))
-		writeMeshkitError(w, ErrInvalidLTURL(loadTestOptions.URL), http.StatusBadRequest)
-		return
-	}
 	loadTestOptions.Name = testName
-
-	if loadTestOptions.HTTPQPS < 0 {
-		loadTestOptions.HTTPQPS = 0
-	}
-
 	// fortio is the only supported load generator. Any generator carried by
 	// an existing profile (including the removed "wrk2") runs on fortio.
 	loadTestOptions.LoadGenerator = models.FortioLG
 	loadTestOptions.AllowInitialErrors = true
 
-	h.loadTestHelperHandler(w, req, profileID, testName, meshName, "", prefObj, loadTestOptions, provider)
+	targets, err := buildLoadTestTargets(perfTest, loadTestOptions)
+	if err != nil {
+		h.log.Error(err)
+		if invalidURL, ok := err.(invalidLoadTestEndpointError); ok {
+			writeMeshkitError(w, ErrInvalidLTURL(invalidURL.endpoint), http.StatusBadRequest)
+			return
+		}
+		writeMeshkitError(w, models.ErrUnmarshal(err, "performance test config"), http.StatusBadRequest)
+		return
+	}
+	h.loadTestHelperHandler(w, req, profileID, testName, meshName, "", prefObj, targets, provider)
+}
+
+type invalidLoadTestEndpointError struct {
+	endpoint string
+	reason   error
+}
+
+func (e invalidLoadTestEndpointError) Error() string {
+	if e.reason != nil {
+		return ErrInvalidLTURL(fmt.Sprintf("%s (%v)", e.endpoint, e.reason)).Error()
+	}
+	return ErrInvalidLTURL(e.endpoint).Error()
+}
+
+func buildLoadTestTargets(perfTest *models.PerformanceTestConfigFile, base *models.LoadTestOptions) ([]loadTestTarget, error) {
+	var targets []loadTestTarget
+	for clientIndex, client := range perfTest.Config.Clients {
+		if len(client.EndpointUrls) == 0 {
+			return nil, fmt.Errorf("client %d is missing load-test endpoint URLs", clientIndex+1)
+		}
+		for _, endpoint := range client.EndpointUrls {
+			parsed, err := url.Parse(endpoint)
+			if err != nil || !parsed.IsAbs() || parsed.Host == "" {
+				return nil, invalidLoadTestEndpointError{endpoint: endpoint, reason: err}
+			}
+			options := *base
+			options.URL = endpoint
+			options.HTTPNumThreads = int(client.Connections)
+			if options.HTTPNumThreads < 1 {
+				options.HTTPNumThreads = 1
+			}
+			options.HTTPQPS = float64(client.Rps)
+			if options.HTTPQPS < 0 {
+				options.HTTPQPS = 0
+			}
+			targets = append(targets, loadTestTarget{clientIndex: clientIndex, options: &options})
+		}
+	}
+	if len(targets) == 0 {
+		return nil, fmt.Errorf("request body is missing load-test endpoint URLs")
+	}
+	return targets, nil
 }
 
 func (h *Handler) jsonToMap(headersString string) *map[string]string {
@@ -265,8 +296,9 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	testName := q.Get("name")
 	if testName == "" {
-		h.log.Error(ErrBlankName(err))
-		writeMeshkitError(w, ErrBlankName(err), http.StatusForbidden)
+		blankNameErr := ErrBlankName(nil)
+		h.log.Error(blankNameErr)
+		writeMeshkitError(w, blankNameErr, http.StatusBadRequest)
 		return
 	}
 	meshName := q.Get("mesh")
@@ -341,11 +373,17 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	// the client (including the removed "wrk2") runs on fortio.
 	loadTestOptions.LoadGenerator = models.FortioLG
 	h.log.Info("perf test with config: ", loadTestOptions)
-	h.loadTestHelperHandler(w, req, profileID, testName, meshName, testUUID, prefObj, loadTestOptions, provider)
+	h.loadTestHelperHandler(w, req, profileID, testName, meshName, testUUID, prefObj, []loadTestTarget{{options: loadTestOptions}}, provider)
 }
 
-func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request, profileID, testName, meshName, testUUID string,
-	prefObj *models.Preference, loadTestOptions *models.LoadTestOptions, provider models.Provider) {
+func (h *Handler) loadTestHelperHandler(
+	w http.ResponseWriter,
+	req *http.Request,
+	profileID, testName, meshName, testUUID string,
+	prefObj *models.Preference,
+	targets []loadTestTarget,
+	provider models.Provider,
+) {
 
 	flusher, ok := w.(http.Flusher)
 	if !ok {
@@ -360,201 +398,189 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 
 	notify := req.Context()
 
+	// Channel ownership contract:
+	// - The producer goroutine owns and closes respChan after executeLoadTest completes (deferred).
+	// - The streaming goroutine drains respChan and closes endChan to signal completion (deferred).
+	// - The main handler waits for client disconnect (notify.Done()) or completion (endChan),
+	//   and never closes endChan itself, eliminating send-on-closed-channel races.
+	// - writeMu synchronizes writes to ResponseWriter (w). On client disconnect, disconnected is set
+	//   under writeMu so no subsequent writes to w occur after the handler returns, satisfying the
+	//   Go HTTP contract while continuing to drain respChan to let the producer finish.
+	var (
+		writeMu      sync.Mutex
+		disconnected bool
+	)
+
 	respChan := make(chan *models.LoadTestResponse, 100)
 	endChan := make(chan struct{})
-	defer close(endChan)
+
+	// responseController bounds each frame write with a deadline so a client
+	// that stops reading cannot wedge the streaming goroutine (and writeMu)
+	// on the write. The deadline is reset before every frame, so a run longer
+	// than loadTestStreamWriteTimeout still delivers its final result.
+	// SetWriteDeadline reports ErrNotSupported for writers that don't
+	// implement it; there writes stay unbounded, as before.
+	responseController := http.NewResponseController(w)
 
 	go func() {
+		defer close(endChan)
+		defer func() {
+			if r := recover(); r != nil {
+				h.log.Error(ErrPanicRecovery(r))
+				// Drain respChan in recovery path so producer cannot block if it continues sending
+				for range respChan {
+				}
+			}
+		}()
+		for data := range respChan {
+			writeMu.Lock()
+			if !disconnected {
+				bd, err := json.Marshal(data)
+				if err != nil {
+					// We are inside an active SSE connection — Content-Type:
+					// text/event-stream has already been committed above. Calling
+					// http.Error here would silently corrupt the stream (it tries
+					// to set text/plain after headers are flushed, then writes a
+					// trailing newline that breaks SSE framing). Instead, emit an
+					// in-protocol error event using the same LoadTestResponse
+					// envelope the client already understands (status="error" is
+					// handled by the EventSource onmessage consumer in the UI).
+					//
+					// We deliberately do NOT return here: the worker goroutine
+					// will keep writing into respChan until executeLoadTest
+					// exits, and an early return would block the worker once
+					// the buffered slots fill. Continue draining so the worker
+					// can finish and close(respChan) terminates this loop.
+					h.log.Error(models.ErrMarshal(err, "meshery result for shipping"))
+					errPayload, mErr := json.Marshal(&models.LoadTestResponse{
+						Status:  models.LoadTestError,
+						Message: models.ErrMarshal(err, "meshery result for shipping").Error(),
+					})
+					if mErr != nil {
+						// Last-resort: a static, hand-rolled JSON literal so the
+						// stream stays well-formed even if envelope marshal fails.
+						errPayload = []byte(`{"status":"error","message":"failed to marshal load test result"}`)
+					}
+					_ = responseController.SetWriteDeadline(time.Now().Add(loadTestStreamWriteTimeout))
+					_, _ = fmt.Fprintf(w, "data: %s\n\n", errPayload)
+					flusher.Flush()
+				} else {
+					h.log.Debug("received new data on response channel")
+					_ = responseController.SetWriteDeadline(time.Now().Add(loadTestStreamWriteTimeout))
+					_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
+					flusher.Flush()
+					h.log.Debug("Flushed the messages on the wire...")
+				}
+			}
+			writeMu.Unlock()
+		}
+		h.log.Debug("response channel closed")
+	}()
+	go func() {
+		defer close(respChan)
 		defer func() {
 			if r := recover(); r != nil {
 				h.log.Error(ErrPanicRecovery(r))
 			}
 		}()
-		for data := range respChan {
-			bd, err := json.Marshal(data)
-			if err != nil {
-				// We are inside an active SSE connection — Content-Type:
-				// text/event-stream has already been committed above. Calling
-				// http.Error here would silently corrupt the stream (it tries
-				// to set text/plain after headers are flushed, then writes a
-				// trailing newline that breaks SSE framing). Instead, emit an
-				// in-protocol error event using the same LoadTestResponse
-				// envelope the client already understands (status="error" is
-				// handled by the EventSource onmessage consumer in the UI).
-				//
-				// We deliberately do NOT return here: the worker goroutine
-				// will keep writing into respChan until executeLoadTest
-				// exits, and an early return would block the worker once
-				// the buffered slots fill. Continue draining so the worker
-				// can finish and close(respChan) terminates this loop.
-				h.log.Error(models.ErrMarshal(err, "meshery result for shipping"))
-				errPayload, mErr := json.Marshal(&models.LoadTestResponse{
-					Status:  models.LoadTestError,
-					Message: models.ErrMarshal(err, "meshery result for shipping").Error(),
-				})
-				if mErr != nil {
-					// Last-resort: a static, hand-rolled JSON literal so the
-					// stream stays well-formed even if envelope marshal fails.
-					errPayload = []byte(`{"status":"error","message":"failed to marshal load test result"}`)
-				}
-				_, _ = fmt.Fprintf(w, "data: %s\n\n", errPayload)
-				flusher.Flush()
-				continue
-			}
-
-			h.log.Debug("received new data on response channel")
-			_, _ = fmt.Fprintf(w, "data: %s\n\n", bd)
-			flusher.Flush()
-			h.log.Debug("Flushed the messages on the wire...")
-		}
-		endChan <- struct{}{}
-		h.log.Debug("response channel closed")
-	}()
-	go func() {
 		ctx := context.Background()
-		h.executeLoadTest(ctx, req, profileID, testName, meshName, testUUID, prefObj, provider, loadTestOptions, respChan)
-		close(respChan)
+		h.executeLoadTest(ctx, req, profileID, testName, meshName, testUUID, prefObj, provider, targets, respChan)
 	}()
 	select {
 	case <-notify.Done():
 		h.log.Debug("received signal to close connection and channels")
-		break
+		writeMu.Lock()
+		disconnected = true
+		writeMu.Unlock()
 	case <-endChan:
 		h.log.Debug("load test completed")
-		_ = req.Body.Close()
 	}
+	_ = req.Body.Close()
 }
 
-func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profileID, testName, meshName, testUUID string, prefObj *models.Preference, provider models.Provider, loadTestOptions *models.LoadTestOptions, respChan chan *models.LoadTestResponse) {
-	respChan <- &models.LoadTestResponse{
-		Status:  models.LoadTestInfo,
-		Message: "Initiating load test . . . ",
-	}
-	var (
-		resultsMap map[string]interface{}
-		resultInst *periodic.RunnerResults
-		err        error
-	)
-	// fortio is the only supported load generator.
-	resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions, h.log)
-	if err != nil {
-		h.log.Error(ErrLoadTest(err, "unable to perform"))
-		respChan <- &models.LoadTestResponse{
-			Status:  models.LoadTestError,
-			Message: "unable to perform",
-		}
-		return
-	}
-
-	respChan <- &models.LoadTestResponse{
-		Status:  models.LoadTestInfo,
-		Message: "Load test completed, fetching metadata now",
-	}
-
-	resultsMap["load-generator"] = loadTestOptions.LoadGenerator
-
-	mk8sContexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
-	if !ok {
-		h.log.Warn(ErrInvalidK8SConfigNil)
-	}
-	var wg sync.WaitGroup
-
-	// If no Kubernetes context is selected, skip cluster discovery
-	if len(mk8sContexts) == 0 {
-		result := &models.MesheryResult{
-			Name:   testName,
-			Mesh:   meshName,
-			Result: resultsMap,
+func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profileID, testName, meshName, testUUID string, prefObj *models.Preference, provider models.Provider, targets []loadTestTarget, respChan chan *models.LoadTestResponse) {
+	respChan <- &models.LoadTestResponse{Status: models.LoadTestInfo, Message: "Initiating load test . . . "}
+	for _, target := range targets {
+		options := target.options
+		resultsMap, resultInst, err := helpers.FortioLoadTest(options, h.log)
+		if err != nil {
+			h.log.Error(ErrLoadTest(err, "unable to perform"))
+			respChan <- &models.LoadTestResponse{Status: models.LoadTestError, Message: fmt.Sprintf("unable to perform load test for client %d endpoint %s", target.clientIndex+1, options.URL)}
+			continue
 		}
 
-		h.persistPerformanceTestResult(ctx, req, result, testUUID, profileID, resultInst, prefObj, provider, respChan)
-		return
-	}
+		respChan <- &models.LoadTestResponse{Status: models.LoadTestInfo, Message: fmt.Sprintf("Load test completed for client %d endpoint %s, fetching metadata now", target.clientIndex+1, options.URL)}
+		// Saved additional options can override the URL Fortio actually tests.
+		if testedURL, _ := resultsMap["URL"].(string); testedURL == "" {
+			resultsMap["URL"] = options.URL
+		}
+		resultsMap["client-index"] = target.clientIndex + 1
+		resultsMap["load-generator"] = options.LoadGenerator
 
-	var resultsMx sync.Mutex
-	for _, k8context := range mk8sContexts {
-		wg.Add(1)
-		go func(mk8scontext models.K8sContext) {
-			defer wg.Done()
-			var serverVersion string
-			var nodes []*models.K8SNode
-			var installedMeshes map[string][]corev1.Pod
-			// Get the k8sconfig
-			k8sconfig, err := mk8scontext.GenerateKubeConfig()
-			if err == nil {
-				nodesChan := make(chan []*models.K8SNode)
-				versionChan := make(chan string)
-				installedMeshesChan := make(chan map[string][]corev1.Pod)
-
-				// Fire goroutines to get cluster information
-				go func() {
-					var nodes []*models.K8SNode
-					var err error
-					nodes, err = helpers.FetchKubernetesNodes(k8sconfig, mk8scontext.Name, h.log)
-					if err != nil {
-						err = errors.Wrap(err, "unable to ping kubernetes for context: "+mk8scontext.ID)
-						h.log.Warn(ErrFetchKubernetes(err))
-					}
-
-					nodesChan <- nodes
-				}()
-				go func() {
-					var serverVersion string
-					var err error
-					serverVersion, err = helpers.FetchKubernetesVersion(k8sconfig, mk8scontext.Name, h.log)
-					if err != nil {
-						h.log.Error(ErrFetchKubernetes(err))
-					}
-
-					versionChan <- serverVersion
-				}()
-				go func() {
-					installedMeshes, err := helpers.ScanKubernetes(k8sconfig, mk8scontext.Name, h.log)
-					if err != nil {
-						h.log.Warn(ErrFetchKubernetes(err))
-					}
-
-					installedMeshesChan <- installedMeshes
-				}()
-
-				// Retrieve cluster information from the goroutines
-				serverVersion = <-versionChan
-				nodes = <-nodesChan
-				installedMeshes = <-installedMeshesChan
-			}
-
-			// Making sure different context goroutines don't interfere with each others' results Map
-			resultsMx.Lock()
-			defer resultsMx.Unlock()
-
-			resultsMap["kubernetes"] = nil
-			if serverVersion != "" {
-				resultsMap["kubernetes"] = map[string]interface{}{
-					"server_version": serverVersion,
-					"nodes":          nodes,
-				}
-			}
-
-			resultsMap["detected-meshes"] = nil
-			if len(installedMeshes) > 0 {
-				resultsMap["detected-meshes"] = installedMeshes
-			}
-
-			respChan <- &models.LoadTestResponse{
-				Status:  models.LoadTestInfo,
-				Message: "Obtained the needed metadatas, attempting to persist the result for cluster " + mk8scontext.Name,
-			}
-
-			result := &models.MesheryResult{
-				Name:   testName,
-				Mesh:   meshName,
-				Result: resultsMap,
-			}
-
+		k8sContexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
+		if !ok {
+			h.log.Warn(ErrInvalidK8SConfigNil)
+		}
+		if len(k8sContexts) == 0 {
+			result := &models.MesheryResult{Name: testName, Mesh: meshName, Result: resultsMap}
 			h.persistPerformanceTestResult(ctx, req, result, testUUID, profileID, resultInst, prefObj, provider, respChan)
-		}(k8context)
+			continue
+		}
+
+		var wg sync.WaitGroup
+		for _, k8sContext := range k8sContexts {
+			wg.Add(1)
+			go func(k8sContext models.K8sContext) {
+				defer wg.Done()
+				var serverVersion string
+				var nodes []*models.K8SNode
+				var installedMeshes map[string][]corev1.Pod
+				k8sConfig, err := k8sContext.GenerateKubeConfig()
+				if err == nil {
+					nodesChan := make(chan []*models.K8SNode)
+					versionChan := make(chan string)
+					meshesChan := make(chan map[string][]corev1.Pod)
+					go func() {
+						value, fetchErr := helpers.FetchKubernetesNodes(k8sConfig, k8sContext.Name, h.log)
+						if fetchErr != nil {
+							h.log.Warn(ErrFetchKubernetes(errors.Wrap(fetchErr, "unable to ping kubernetes for context: "+k8sContext.ID)))
+						}
+						nodesChan <- value
+					}()
+					go func() {
+						value, fetchErr := helpers.FetchKubernetesVersion(k8sConfig, k8sContext.Name, h.log)
+						if fetchErr != nil {
+							h.log.Error(ErrFetchKubernetes(fetchErr))
+						}
+						versionChan <- value
+					}()
+					go func() {
+						value, fetchErr := helpers.ScanKubernetes(k8sConfig, k8sContext.Name, h.log)
+						if fetchErr != nil {
+							h.log.Warn(ErrFetchKubernetes(fetchErr))
+						}
+						meshesChan <- value
+					}()
+					serverVersion, nodes, installedMeshes = <-versionChan, <-nodesChan, <-meshesChan
+				}
+
+				// Each cluster's result is streamed and persisted concurrently, so it needs its own map.
+				contextResults := maps.Clone(resultsMap)
+				contextResults["kubernetes"] = nil
+				if serverVersion != "" {
+					contextResults["kubernetes"] = map[string]interface{}{"server_version": serverVersion, "nodes": nodes}
+				}
+				contextResults["detected-meshes"] = nil
+				if len(installedMeshes) > 0 {
+					contextResults["detected-meshes"] = installedMeshes
+				}
+				respChan <- &models.LoadTestResponse{Status: models.LoadTestInfo, Message: "Obtained the needed metadatas, attempting to persist the result for cluster " + k8sContext.Name}
+				result := &models.MesheryResult{Name: testName, Mesh: meshName, Result: contextResults}
+				h.persistPerformanceTestResult(ctx, req, result, testUUID, profileID, resultInst, prefObj, provider, respChan)
+			}(k8sContext)
+		}
+		wg.Wait()
 	}
-	wg.Wait()
 }
 
 // persistPerformanceTestResult takes the test result and saves it on the provider

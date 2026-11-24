@@ -34,6 +34,18 @@ func TestExportModel(t *testing.T) {
 			ExpectedError: utils.ErrInvalidArgument(errors.New("Please provide a model name. " + exportUsage)),
 		},
 		{
+			Name:          "given whitespace argument when model export then throw error",
+			Args:          []string{"export", "   "},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(errors.New("Please provide a model name. " + exportUsage)),
+		},
+		{
+			Name:          "given too many arguments when model export then throw error",
+			Args:          []string{"export", modelName, "extra-arg"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", exportUsage)),
+		},
+		{
 			Name:          "given an invalid output format when model export then throw error",
 			Args:          []string{"export", modelName, "--output-format", "invalid-format"},
 			ExpectError:   true,

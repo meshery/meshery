@@ -348,19 +348,29 @@ func (h *Handler) EvaluateDesign(
 	// via a typed shallow copy and fold the hydrated fields back onto the
 	// v1beta1 design before the policy passes run.
 	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&relationshipPolicyEvalPayload.Design); bridgeErr == nil && bridged != nil {
-		if hydrateErrs := patternHelpers.HydratePattern(bridged, h.registryManager); len(hydrateErrs) > 0 {
-			h.log.Warnf("failed to hydrate pattern for evaluation: %v", hydrateErrs)
+		if h.registryManager != nil {
+			if hydrateErrs := patternHelpers.HydratePattern(bridged, h.registryManager); len(hydrateErrs) > 0 {
+				if h.log != nil {
+					h.log.Warnf("failed to hydrate pattern for evaluation: %v", hydrateErrs)
+				}
+			}
 		}
 		if roundtripped, rtErr := utils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
 			relationshipPolicyEvalPayload.Design = *roundtripped
 		} else if rtErr != nil {
-			h.log.Warnf("failed v1beta3→v1beta1 round-trip after Hydrate; evaluation will proceed against the pre-hydration design: %v", rtErr)
+			if h.log != nil {
+				h.log.Warnf("failed v1beta3→v1beta1 round-trip after Hydrate; evaluation will proceed against the pre-hydration design: %v", rtErr)
+			}
 		}
 	} else if bridgeErr != nil {
-		h.log.Warnf("failed to bridge pattern for evaluation: %v", bridgeErr)
+		if h.log != nil {
+			h.log.Warnf("failed to bridge pattern for evaluation: %v", bridgeErr)
+		}
 	}
 
-	defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
+	if h.log != nil {
+		defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
+	}
 
 	var lastEvaluationResponse pattern.EvaluationResponse
 	lastEvaluationResponse.Design = relationshipPolicyEvalPayload.Design
@@ -369,7 +379,7 @@ func (h *Handler) EvaluateDesign(
 
 	// Pre-fetch and convert registered relationships once, outside the re-evaluation loop.
 	var convertedRels []*relationship.RelationshipDefinition
-	if useGoEngine && h.GoEngine != nil {
+	if useGoEngine && h.GoEngine != nil && h.registryManager != nil {
 		registeredRels, _, _, relErr := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
 		if relErr != nil {
 			return lastEvaluationResponse, fmt.Errorf("failed to get relationships for Go engine: %w", relErr)
@@ -396,7 +406,9 @@ func (h *Handler) EvaluateDesign(
 		}
 
 		if err != nil {
-			h.log.Debug(err)
+			if h.log != nil {
+				h.log.Debug(err)
+			}
 			// log an event
 			return pattern.EvaluationResponse{}, err
 		}
@@ -422,11 +434,15 @@ func (h *Handler) EvaluateDesign(
 		mergeTraceUnique(&lastEvaluationResponse.Trace, &evaluationResponse.Trace)
 
 		if evalIterations == i+1 || doesntNeedReeval(evaluationResponse) {
-			h.log.Info("Evaluation completed in iteration ", i+1)
+			if h.log != nil {
+				h.log.Info("Evaluation completed in iteration ", i+1)
+			}
 			break
 		}
 		if i == (MAX_RE_EVALUATION_DEPTH - 1) {
-			h.log.Warnf("Evaluation depth limit of %d reached; returning partial result", MAX_RE_EVALUATION_DEPTH)
+			if h.log != nil {
+				h.log.Warnf("Evaluation depth limit of %d reached; returning partial result", MAX_RE_EVALUATION_DEPTH)
+			}
 			break
 		}
 
@@ -446,10 +462,14 @@ func (h *Handler) EvaluateDesign(
 		if roundtripped, rtErr := utils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
 			lastEvaluationResponse.Design = *roundtripped
 		} else if rtErr != nil {
-			h.log.Warnf("failed v1beta3→v1beta1 round-trip after Dehydrate; response will ship un-dehydrated: %v", rtErr)
+			if h.log != nil {
+				h.log.Warnf("failed v1beta3→v1beta1 round-trip after Dehydrate; response will ship un-dehydrated: %v", rtErr)
+			}
 		}
 	} else if bridgeErr != nil {
-		h.log.Warnf("failed to bridge pattern for dehydration: %v", bridgeErr)
+		if h.log != nil {
+			h.log.Warnf("failed to bridge pattern for dehydration: %v", bridgeErr)
+		}
 	}
 
 	return lastEvaluationResponse, nil
@@ -759,7 +779,9 @@ func runRelationshipEvaluation(
 		// so the full stack is logged here and only the panic value
 		// propagates to errCh / coalesced followers / the response body.
 		panicErr := fmt.Errorf("panic during relationship evaluation: %v", r)
-		log.Error(fmt.Errorf("%s\n%s", panicErr.Error(), debug.Stack()))
+		if log != nil {
+			log.Error(fmt.Errorf("%s\n%s", panicErr.Error(), debug.Stack()))
+		}
 		tracker.publish(designKey, evalResult{err: panicErr})
 		// Non-blocking send: if the leader's select already returned
 		// via ctx.Done() the receiver is gone and a blocking send
@@ -792,6 +814,18 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	user *models.User,
 	provider models.Provider,
 ) {
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	// Wall-clock timeout bounds the HTTP response; the eval goroutine
 	// may still run to completion in the background.
 	evalCtx, cancel := context.WithTimeout(r.Context(), policyEvalTimeout())
@@ -799,28 +833,55 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	token, _ := evalCtx.Value(models.TokenCtxKey).(string)
 
-	userUUID := user.ID
 	defer func() {
 		_ = r.Body.Close()
 	}()
 
-	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromOwner(userUUID).WithCategory("relationship").WithAction("evaluation")
-
-	body, err := io.ReadAll(r.Body)
+	const maxPolicyPayloadSize = 4 << 20 // 4MB
+	body, err := io.ReadAll(http.MaxBytesReader(rw, r.Body, maxPolicyPayloadSize))
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			if h.log != nil {
+				h.log.Error(ErrRequestBody(err))
+			}
+			writeMeshkitError(rw, ErrRequestBody(err), http.StatusRequestEntityTooLarge)
+			return
+		}
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
+	if len(body) == 0 {
+		err := fmt.Errorf("request body is empty")
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
 	relationshipPolicyEvalPayload := pattern.EvaluationRequest{}
 	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
-
 	if err != nil {
-		h.log.Error(ErrDecoding(err, "design file"))
+		if h.log != nil {
+			h.log.Error(ErrDecoding(err, "design file"))
+		}
 		writeMeshkitError(rw, ErrDecoding(err, "design file"), http.StatusBadRequest)
 		return
 	}
+
+	userUUID := user.ID
+	var systemID legacycoremodel.Uuid
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
+
+	eventBuilder := events.NewEvent().FromSystem(systemID).FromOwner(userUUID).WithCategory("relationship").WithAction("evaluation")
+
 	// decode the pattern file
 	patternUUID := relationshipPolicyEvalPayload.Design.ID
 	eventBuilder.ActedUpon(patternUUID)
@@ -830,7 +891,9 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	leader, waitCh := h.evalTracker.acquire(designKey)
 
 	if !leader {
-		h.log.Debug("coalescing relationship evaluation request for design ", designKey)
+		if h.log != nil {
+			h.log.Debug("coalescing relationship evaluation request for design ", designKey)
+		}
 		select {
 		case result := <-waitCh:
 			h.writeEvaluationResult(rw, result)
@@ -860,7 +923,9 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	select {
 
 	case err := <-evalErrChan:
-		h.log.Debug(err)
+		if h.log != nil {
+			h.log.Debug(err)
+		}
 		// log an event
 		writeMeshkitError(rw, ErrPolicyEval(err), http.StatusInternalServerError)
 		return
@@ -872,9 +937,18 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		event := eventBuilder.WithDescription(description).
 			WithMetadata(buildPolicyEvaluationEventMetadata(evaluationResponse, models.ServerURLFromRequest(r), evalDuration)).
 			WithSeverity(events.Informational).Build()
-		go func() {
-			_, _ = provider.PersistEvent(*event, token)
-		}()
+		if provider != nil && event != nil {
+			go func() {
+				defer func() {
+					if r := recover(); r != nil {
+						if h.log != nil {
+							h.log.Error(fmt.Errorf("recovered from panic in PersistEvent: %v", r))
+						}
+					}
+				}()
+				_, _ = provider.PersistEvent(*event, token)
+			}()
+		}
 
 		h.writeEvaluationResult(rw, evalResult{resp: evaluationResponse})
 	case <-evalCtx.Done():
@@ -887,7 +961,9 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResult) {
 	if result.err != nil {
-		h.log.Debug(result.err)
+		if h.log != nil {
+			h.log.Debug(result.err)
+		}
 		writeMeshkitError(rw, ErrPolicyEval(result.err), http.StatusInternalServerError)
 		return
 	}
@@ -896,7 +972,9 @@ func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResul
 	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&result.resp.Design); bridgeErr == nil && bridged != nil {
 		design = bridged
 	} else if bridgeErr != nil {
-		h.log.Warnf("failed to bridge evaluation response design for canonical wire encoding: %v", bridgeErr)
+		if h.log != nil {
+			h.log.Warnf("failed to bridge evaluation response design for canonical wire encoding: %v", bridgeErr)
+		}
 	}
 	response := struct {
 		Design         any              `json:"design"`
@@ -917,18 +995,30 @@ func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResul
 		// Response body has already started streaming via json.Encoder —
 		// a partial JSON envelope is on the wire and a fresh error
 		// response would corrupt it, so log only.
-		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
+		if h.log != nil {
+			h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
+		}
 	}
 }
 
 func (h *Handler) writeEvalCtxError(rw http.ResponseWriter, ctx context.Context) {
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
 		timeout := policyEvalTimeout()
-		h.log.Warnf("relationship policy evaluation exceeded %s", timeout)
+		if h.log != nil {
+			h.log.Warnf("relationship policy evaluation exceeded %s", timeout)
+		}
 		writeMeshkitError(rw, ErrPolicyEvalTimeout(timeout), http.StatusGatewayTimeout)
 		return
 	}
-	h.log.Info("Evaluation terminated: request context closed")
+	if ctx.Err() != nil {
+		if h.log != nil {
+			h.log.Debug(ctx.Err())
+		}
+		writeMeshkitError(rw, ErrPolicyEval(ctx.Err()), http.StatusInternalServerError)
+	}
+	if h.log != nil {
+		h.log.Info("Evaluation terminated: request context closed")
+	}
 }
 
 // Needs to be reinstiated inorder to load the policies based on the evaluation queries.

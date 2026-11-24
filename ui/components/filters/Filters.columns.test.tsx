@@ -121,6 +121,29 @@ describe('buildFiltersColumns', () => {
     expect(getByTestId('moment')).toHaveTextContent('2026-01-02');
   });
 
+  it('renders real createdAt and updatedAt from rowData when value is undefined', () => {
+    const filtersWithDates = [
+      {
+        id: '1',
+        name: 'my-filter',
+        createdAt: '2026-01-01T10:00:00Z',
+        updatedAt: '2026-01-02T12:00:00Z',
+      },
+    ];
+    const columns = build({ filters: filtersWithDates });
+    const createdCol = columns.find((c) => c.name === 'created_at')!;
+    const updatedCol = columns.find((c) => c.name === 'updated_at')!;
+
+    // mui-datatables passes value=undefined because column name is 'created_at' but wire field is 'createdAt'
+    const { getByTestId, rerender } = render(
+      createdCol.options.customBodyRender(undefined, { rowIndex: 0 }),
+    );
+    expect(getByTestId('moment')).toHaveTextContent('2026-01-01T10:00:00Z');
+
+    rerender(updatedCol.options.customBodyRender(undefined, { rowIndex: 0 }));
+    expect(getByTestId('moment')).toHaveTextContent('2026-01-02T12:00:00Z');
+  });
+
   it('renders an Edit button for non-published filters and triggers setSelectedRowData', async () => {
     const user = userEvent.setup();
     const columns = build();
@@ -176,6 +199,22 @@ describe('buildFiltersColumns', () => {
     const actionsCol = columns.find((c) => c.name === 'Actions')!;
     render(actionsCol.options.customBodyRender(null, { rowIndex: 1 }));
     expect(screen.getByTestId('action-Unpublish')).toBeInTheDocument();
+  });
+
+  it('does not render Publish or Unpublish actions when canPublishFilter is false', () => {
+    const columns = build({ canPublishFilter: false });
+    const actionsCol = columns.find((c) => c.name === 'Actions')!;
+
+    // Non-published row
+    const { unmount } = render(actionsCol.options.customBodyRender(null, { rowIndex: 0 }));
+    expect(screen.queryByTestId('action-Publish')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('action-Unpublish')).not.toBeInTheDocument();
+    unmount();
+
+    // Published row
+    render(actionsCol.options.customBodyRender(null, { rowIndex: 1 }));
+    expect(screen.queryByTestId('action-Publish')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('action-Unpublish')).not.toBeInTheDocument();
   });
 
   it('renders Sortable headers for sortable columns', () => {

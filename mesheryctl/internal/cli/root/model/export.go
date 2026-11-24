@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
@@ -60,13 +61,16 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model export [model-name]\nRun 'mesheryctl model export --help' to see detailed help message"
-		if len(args) == 0 {
+		if len(args) == 0 || strings.TrimSpace(args[0]) == "" {
 			return utils.ErrInvalidArgument(errors.New("Please provide a model name. " + errMsg))
+		}
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", errMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		modelName := args[0]
+		modelName := strings.TrimSpace(args[0])
 		queryParams := url.Values{}
 		queryParams.Set("name", modelName)
 		queryParams.Set("outputFormat", exportModelFlagsProvided.OutputFormat)

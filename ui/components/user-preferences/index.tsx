@@ -131,6 +131,15 @@ const ThemeToggler: React.FC<ThemeTogglerProps> = ({ handleUpdateUserPref }) => 
 const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(props.anonymousStats);
   const [perfResultStats, setPerfResultStats] = useState(props.perfResultStats);
+  // Both analytics switches are saved in one request that carries both
+  // values, so only one save runs at a time and a failed save restores the
+  // last values the server confirmed.
+  const [isAnalyticsSaving, setIsAnalyticsSaving] = useState(false);
+  const analyticsSaveInFlightRef = useRef(false);
+  const lastSavedAnalyticsRef = useRef({
+    anonymousUsageStats: props.anonymousStats,
+    anonymousPerfResults: props.perfResultStats,
+  });
   const [tabVal, setTabVal] = useState(0);
   const [userPrefs, setUserPrefs] = useState(ExtensionPointSchemaValidator('userPrefs')());
   const [catalogContent, setCatalogContent] = useState(true);
@@ -207,6 +216,9 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   };
 
   const handleToggle = (name) => () => {
+    if (analyticsSaveInFlightRef.current) {
+      return;
+    }
     if (name === 'anonymousUsageStats') {
       setAnonymousStats(!anonymousStats);
       handleChange(name, !anonymousStats);
@@ -239,17 +251,32 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
       anonymousPerfResults: name === 'anonymousPerfResults' ? val : perfResultStats,
     });
 
+    analyticsSaveInFlightRef.current = true;
+    setIsAnalyticsSaving(true);
     updateProgress({ showProgress: true });
     updateUserPrefWithContext({ body: requestBody })
       .unwrap()
       .then((result) => {
+        lastSavedAnalyticsRef.current = JSON.parse(requestBody);
         updateProgress({ showProgress: false });
         if (typeof result !== 'undefined') {
           notify({ message: msg, event_type: val ? EVENT_TYPES.SUCCESS : EVENT_TYPES.INFO });
         }
       })
       .catch(() => {
+        // The switch was flipped before the request; put it back so it
+        // matches the preference that is still saved.
+        const saved = lastSavedAnalyticsRef.current;
+        if (name === 'anonymousUsageStats') {
+          setAnonymousStats(saved.anonymousUsageStats);
+        } else {
+          setPerfResultStats(saved.anonymousPerfResults);
+        }
         handleError('There was an error sending your preference')();
+      })
+      .finally(() => {
+        analyticsSaveInFlightRef.current = false;
+        setIsAnalyticsSaving(false);
       });
   };
 
@@ -664,6 +691,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                         <Switch
                           checked={anonymousStats}
                           onChange={handleToggle('anonymousUsageStats')}
+                          disabled={isAnalyticsSaving}
                           color="primary"
                           data-cy="UsageStatsPreference"
                         />
@@ -677,6 +705,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                         <Switch
                           checked={perfResultStats}
                           onChange={handleToggle('anonymousPerfResults')}
+                          disabled={isAnalyticsSaving}
                           color="primary"
                           data-cy="PerfResultPreference"
                         />

@@ -8,6 +8,14 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const productionScript = path.join(__dirname, 'audit-mui.js');
+const typescriptEntry = require.resolve('typescript', {
+  paths: [path.resolve(__dirname, '..')],
+});
+const typescriptNodeModules = path.resolve(path.dirname(typescriptEntry), '..', '..');
+const childEnv = {
+  ...process.env,
+  NODE_PATH: [typescriptNodeModules, process.env.NODE_PATH].filter(Boolean).join(path.delimiter),
+};
 
 const uiDirectories = [
   'components',
@@ -48,7 +56,7 @@ function runAudit(fixture, args = [], options = {}) {
   const script = path.join(fixture, 'ui', 'scripts', 'audit-mui.js');
   const result = spawnSync(process.execPath, [script, '--json', ...args], {
     encoding: 'utf8',
-    env: { ...process.env, ...(options.env ?? {}) },
+    env: { ...childEnv, ...(options.env ?? {}) },
   });
 
   let json;
@@ -66,7 +74,7 @@ function runAuditHuman(fixture, args = []) {
 
   return spawnSync(process.execPath, [script, ...args], {
     encoding: 'utf8',
-    env: process.env,
+    env: childEnv,
   });
 }
 
@@ -201,6 +209,110 @@ test('--fail-on-new exits 1 when non-allowlisted offending imports exist', (t) =
   assert.equal(result.status, 1);
   assert.equal(result.json.scanComplete, true);
   assert.equal(result.json.files, 1);
+});
+
+test('side-effect MUI imports are reported as offenders', (t) => {
+  const fixture = createFixture(t);
+  writeFile(fixture, 'ui/components/side-effect.js', "import '@mui/material/Button';\n");
+
+  const result = runAudit(fixture, ['--fail-on-new']);
+
+  assert.equal(result.status, 1);
+  assert.equal(result.json.scanComplete, true);
+  assert.equal(result.json.files, 1);
+  assert.equal(result.json.matches, 1);
+  assert.ok(
+    result.json.scans[0].offenders.some(
+      (offender) => offender.file === 'components/side-effect.js',
+    ),
+  );
+});
+
+test('comments between import and its module specifier do not hide MUI imports', (t) => {
+  const fixture = createFixture(t);
+  writeFile(
+    fixture,
+    'ui/components/commented-import.js',
+    "import /* polyfill */ '@mui/material/Button';\n",
+  );
+
+  const result = runAudit(fixture, ['--fail-on-new']);
+
+  assert.equal(result.status, 1);
+  assert.equal(result.json.matches, 1);
+  assert.ok(
+    result.json.scans[0].offenders.some(
+      (offender) => offender.file === 'components/commented-import.js',
+    ),
+  );
+});
+
+test('MUI import-like text in comments and strings is ignored', (t) => {
+  const fixture = createFixture(t);
+  writeFile(
+    fixture,
+    'ui/components/non-import-text.js',
+    [
+      "// import '@mui/material/Button';",
+      'const example = "import \'@mui/material/Button\';";',
+      "/* require('@mui/material'); */",
+      '',
+    ].join('\n'),
+  );
+
+  const result = runAudit(fixture, ['--fail-on-new']);
+
+  assert.equal(result.status, 0);
+  assert.equal(result.json.matches, 0);
+});
+
+test('MUI re-exports are reported', (t) => {
+  const fixture = createFixture(t);
+  writeFile(
+    fixture,
+    'ui/components/re-export.js',
+    "export { Button } from '@mui/material/Button';\n",
+  );
+
+  const result = runAudit(fixture, ['--fail-on-new']);
+
+  assert.equal(result.status, 1);
+  assert.equal(result.json.matches, 1);
+});
+
+test('MUI require calls are reported', (t) => {
+  const fixture = createFixture(t);
+  writeFile(
+    fixture,
+    'ui/components/require.js',
+    "const Button = require('@mui/material/Button');\n",
+  );
+
+  const result = runAudit(fixture, ['--fail-on-new']);
+
+  assert.equal(result.status, 1);
+  assert.equal(result.json.matches, 1);
+});
+
+test('TypeScript import-equals MUI imports are reported', (t) => {
+  const fixture = createFixture(t);
+
+  writeFile(
+    fixture,
+    'ui/components/import-equals.ts',
+    "import Mui = require('@mui/material/Button');\n",
+  );
+
+  const result = runAudit(fixture, ['--fail-on-new']);
+
+  assert.equal(result.status, 1);
+  assert.equal(result.json.matches, 1);
+
+  assert.ok(
+    result.json.scans[0].offenders.some(
+      (offender) => offender.file === 'components/import-equals.ts',
+    ),
+  );
 });
 
 test('allowlisted imports are excluded from offender counts', (t) => {
