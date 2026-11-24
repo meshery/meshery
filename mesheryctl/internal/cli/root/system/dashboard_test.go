@@ -155,13 +155,13 @@ func TestDashboardCmdArgs(t *testing.T) {
 			Name:          "invalid with unexpected positional argument",
 			Args:          []string{"unexpected-arg"},
 			ExpectError:   true,
-			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", dashboardUsageMsg)),
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s)\n\n%s", dashboardUsageMsg)),
 		},
 		{
 			Name:          "invalid with multiple unexpected positional arguments",
 			Args:          []string{"arg1", "arg2"},
 			ExpectError:   true,
-			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", dashboardUsageMsg)),
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s)\n\n%s", dashboardUsageMsg)),
 		},
 	}
 

@@ -72,7 +72,7 @@ var dashboardCmd = &cobra.Command{
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/dashboard`,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", dashboardUsageMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s)\n\n%s", dashboardUsageMsg))
 		}
 		return nil
 	},
