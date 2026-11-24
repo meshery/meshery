@@ -5,13 +5,13 @@ export class ImportModal {
     this.page = page;
     this.modal = page.locator('[role="dialog"]').filter({ hasText: 'Import Design' });
     this.designFileInput = this.modal
-      .getByLabel(/design file name/i)
+      .getByRole('textbox', { name: /design file name/i })
       .or(
         this.modal.locator('#root_name, input[placeholder="Untitled Design"], input[name="name"]'),
       )
       .first();
     this.urlInput = this.modal
-      .getByLabel(/^url/i)
+      .getByRole('textbox', { name: /^url/i })
       .or(
         this.modal.locator(
           '#root_url, input[type="url"], input[name="url"], input[placeholder*="http"]',
