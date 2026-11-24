@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   CustomTooltip,
   styled,
@@ -9,7 +9,6 @@ import {
   SearchIcon,
   useTheme,
 } from '@sistent/sistent';
-import debounce from './debounce';
 
 const SearchContainer = styled('div')({
   display: 'flex',
@@ -60,13 +59,41 @@ const SearchBar = ({
 }) => {
   const [searchText, setSearchText] = useState(value);
   const searchRef = useRef(null);
+  const onSearchRef = useRef(onSearch);
 
-  const debouncedOnSearch = useMemo(() => {
-    return typeof onSearch === 'function' ? debounce(onSearch, 500) : () => {};
+  useEffect(() => {
+    onSearchRef.current = onSearch;
   }, [onSearch]);
 
+  const timerRef = useRef(null);
+
+  const cancelPendingSearch = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  const debouncedOnSearch = useCallback(
+    (val) => {
+      cancelPendingSearch();
+      timerRef.current = setTimeout(() => {
+        if (typeof onSearchRef.current === 'function') {
+          onSearchRef.current(val);
+        }
+      }, 500);
+    },
+    [cancelPendingSearch],
+  );
+
+  useEffect(() => {
+    return () => {
+      cancelPendingSearch();
+    };
+  }, [cancelPendingSearch]);
+
   const handleSearchChange = (event) => {
-    const val = event.target.value;
+    const val = event?.target?.value ?? '';
     debouncedOnSearch(val);
     setSearchText(val);
   };

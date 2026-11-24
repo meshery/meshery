@@ -223,15 +223,53 @@ describe('SearchBar component', () => {
     }
   });
 
-  it('does not crash when window is undefined during SSR', () => {
-    const originalWindow = globalThis.window;
-    // @ts-expect-error simulating SSR
-    delete globalThis.window;
+  it('cancels pending debounced onSearch on unmount', () => {
+    const onSearch = vi.fn();
+    const { unmount } = renderWithTheme(
+      <SearchBar expanded={true} setExpanded={vi.fn()} onSearch={onSearch} placeholder="Search" />,
+    );
 
-    try {
-      expect(typeof window).toBe('undefined');
-    } finally {
-      globalThis.window = originalWindow;
-    }
+    const input = screen.getByPlaceholderText('Search') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'test' } });
+
+    unmount();
+
+    act(() => {
+      vi.advanceTimersByTime(600);
+    });
+
+    expect(onSearch).not.toHaveBeenCalled();
+  });
+
+  it('calls latest onSearch without duplicate invocations when onSearch prop changes', () => {
+    const onSearch1 = vi.fn();
+    const onSearch2 = vi.fn();
+
+    const { rerender } = renderWithTheme(
+      <SearchBar expanded={true} setExpanded={vi.fn()} onSearch={onSearch1} placeholder="Search" />,
+    );
+
+    const input = screen.getByPlaceholderText('Search') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'query' } });
+
+    // Parent re-renders with a new onSearch function reference
+    rerender(
+      <SistentThemeProvider initialTheme="dark">
+        <SearchBar
+          expanded={true}
+          setExpanded={vi.fn()}
+          onSearch={onSearch2}
+          placeholder="Search"
+        />
+      </SistentThemeProvider>,
+    );
+
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+
+    expect(onSearch1).not.toHaveBeenCalled();
+    expect(onSearch2).toHaveBeenCalledWith('query');
+    expect(onSearch2).toHaveBeenCalledTimes(1);
   });
 });
