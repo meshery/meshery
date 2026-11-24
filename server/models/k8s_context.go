@@ -366,8 +366,8 @@ func DiscoverKubeconfigContexts(ctx context.Context, _ Provider, _ string, _ *Br
 
 		handler, err := kc.GenerateKubeHandler()
 		if err != nil {
-			reason := kubeconfigSkipReason(err)
-			err = ErrUnreachableKubeAPI(err, kc.Server)
+			reason := kubeconfigUnreadableReason
+			err =ErrUnreachableKubeAPI(err, kc.Server)
 
 			metadata["error"] = err
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
@@ -490,15 +490,7 @@ func kubeconfigUnsupportedAuthReason(kind string) string {
 	return fmt.Sprintf("Authentication method is not supported (%s). Meshery does not run this method from an imported kubeconfig, because it would execute on the Meshery Server host.", kind)
 }
 
-// kubeconfigSkipReason explains why a context whose kube handler could not
-// be built was left out of discovery, keeping the underlying error so a
-// missing certificate file is not described as an auth-plugin problem.
-func kubeconfigSkipReason(cause error) string {
-	if cause != nil && cause.Error() != "" {
-		return cause.Error()
-	}
-	return "The context could not be read from the kubeconfig."
-}
+const kubeconfigUnreadableReason = "The context's credentials could not be read from the kubeconfig. Check that its certificate, key and token entries are embedded and valid."
 
 func NewK8sContextFromInClusterConfig(contextName string, instanceID *core.Uuid, log logger.Handler) (*K8sContext, error) {
 	const (

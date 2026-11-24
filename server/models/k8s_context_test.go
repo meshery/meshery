@@ -788,6 +788,40 @@ users:
 		}
 	})
 
+	t.Run("a missing server-side credential path is not echoed in the skip reason", func(t *testing.T) {
+		got, err := discoverForTest(t, []byte(`apiVersion: v1
+kind: Config
+current-context: leak
+clusters:
+- cluster:
+    server: https://127.0.0.1:1
+  name: leak
+contexts:
+- context:
+    cluster: leak
+    user: leak
+  name: leak
+users:
+- name: leak
+  user:
+    client-certificate-data: bm90LWEtY2VydA==
+    client-key: /no/such/dir/client.key
+`))
+		if err != nil {
+			t.Fatalf("discover: %v", err)
+		}
+		if len(got.Contexts) != 0 || len(got.SkippedContexts) != 1 {
+			t.Fatalf("contexts=%d skipped=%d, want 0 and 1", len(got.Contexts), len(got.SkippedContexts))
+		}
+		reason := got.SkippedContexts[0].Reason
+		if reason != kubeconfigUnreadableReason {
+			t.Fatalf("reason = %q, want the fixed reason", reason)
+		}
+		if strings.Contains(reason, "/no/such") || strings.Contains(reason, "client.key") {
+			t.Fatalf("reason %q leaks the server-side path", reason)
+		}
+	})
+
 	t.Run("a well-formed exec kubeconfig is skipped before the API probe", func(t *testing.T) {
 		kubeconfig := []byte(`apiVersion: v1
 kind: Config
