@@ -102,7 +102,7 @@ func staticUUID(seed interface{}) uuid.UUID {
 }
 
 // matchName checks if a component name matches a selector pattern.
-// Supports wildcards ("*"), exact match, and regex match.
+// Supports wildcards ("*"), exact match, and anchored regex match.
 func matchName(name, pattern string) bool {
 	if pattern == "*" {
 		return true
@@ -110,9 +110,11 @@ func matchName(name, pattern string) bool {
 	if name == pattern {
 		return true
 	}
-	matched, err := regexp.MatchString(pattern, name)
+	p := `\A(?:` + pattern + `)\z`
+	matched, err := regexp.MatchString(p, name)
 	return err == nil && matched
 }
+
 
 // getMapString safely retrieves a string value from a map.
 func getMapString(m map[string]interface{}, key string) string {
