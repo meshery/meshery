@@ -13,6 +13,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -736,7 +737,8 @@ func TestRetainSelectedContextMetadata(t *testing.T) {
 }
 
 type mockReimportProvider struct {
-	*models.DefaultLocalProvider
+	models.Provider
+	sync.Mutex
 	persistedEvents []events.Event
 	connectionID    core.Uuid
 }
@@ -745,7 +747,21 @@ func (m *mockReimportProvider) SaveK8sContext(token string, k8sContext models.K8
 	return connections.Connection{ID: m.connectionID, Status: connections.DISCOVERED}, nil
 }
 
+func (m *mockReimportProvider) GetConnectionByID(token string, connectionID core.Uuid) (*connections.Connection, int, error) {
+	return &connections.Connection{ID: m.connectionID, Status: connections.DISCOVERED}, 0, nil
+}
+
+func (m *mockReimportProvider) UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
+	return &connections.Connection{ID: m.connectionID, Status: connectionStatus}, 0, nil
+}
+
+func (m *mockReimportProvider) UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
+	return true, &connections.Connection{ID: m.connectionID, Status: newStatus}, nil
+}
+
 func (m *mockReimportProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
+	m.Lock()
+	defer m.Unlock()
 	m.persistedEvents = append(m.persistedEvents, event)
 	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
 }
@@ -781,10 +797,15 @@ users:
 		}
 		h.ConnectionToStateMachineInstanceTracker = tracker
 
+		provider := &mockReimportProvider{
+			connectionID: connID,
+		}
+
 		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
 		if err != nil {
 			t.Fatalf("failed to create state machine: %v", err)
 		}
+		inst.Provider = provider
 		storedCtx := &kubernetes.MachineCtx{
 			K8sContext: models.K8sContext{
 				Name:   "old-name",
@@ -793,10 +814,6 @@ users:
 		}
 		inst.Context = storedCtx
 		tracker.Add(connID, inst)
-
-		provider := &mockReimportProvider{
-			connectionID: connID,
-		}
 
 		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
 		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
@@ -825,16 +842,17 @@ users:
 		}
 		h.ConnectionToStateMachineInstanceTracker = tracker
 
+		provider := &mockReimportProvider{
+			connectionID: connID,
+		}
+
 		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
 		if err != nil {
 			t.Fatalf("failed to create state machine: %v", err)
 		}
+		inst.Provider = provider
 		inst.Context = nil
 		tracker.Add(connID, inst)
-
-		provider := &mockReimportProvider{
-			connectionID: connID,
-		}
 
 		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
 		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))

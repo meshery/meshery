@@ -12,6 +12,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
 	mkkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/core"
 	k8sclient "k8s.io/client-go/kubernetes"
@@ -130,5 +131,33 @@ func TestRefreshK8sContext_SynchronizesMissingServerID(t *testing.T) {
 	}
 	if m.K8sContext.KubernetesServerID == nil || *m.K8sContext.KubernetesServerID != existingID {
 		t.Fatalf("expected KubernetesServerID to be %s, got %v", existingID, m.K8sContext.KubernetesServerID)
+	}
+}
+
+func TestRefreshK8sContext_ReturnsErrorOnInvalidCredentials(t *testing.T) {
+	log, err := logger.New("test", logger.Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	m := &MachineCtx{
+		K8sContext: models.K8sContext{
+			Name:   "cluster-1",
+			Server: "https://k8s.example.com:6443",
+		},
+		log: log,
+	}
+
+	badCtx := models.K8sContext{
+		Name:   "cluster-1",
+		Server: "https://k8s-new.example.com:6443",
+	}
+
+	changed, err := m.RefreshK8sContext(badCtx, events.NewEvent(), log)
+	if err == nil {
+		t.Fatalf("expected error on invalid credentials, got nil")
+	}
+	if changed {
+		t.Fatalf("expected changed=false on error, got true")
 	}
 }
