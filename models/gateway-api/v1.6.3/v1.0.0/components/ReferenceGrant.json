@@ -1,0 +1,210 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta2",
+  "version": "v1.0.0",
+  "displayName": "Reference Grant",
+  "description": "Gateway API ReferenceGrant (gateway.networking.k8s.io/v1). Generated from the official Gateway API standard channel CRDs.",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta2",
+    "version": "v1.0.0",
+    "name": "gateway-api",
+    "displayName": "Gateway API",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "type": "registry",
+      "subType": "",
+      "kind": "github",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "API Gateway",
+    "metadata": {
+      "capabilities": null,
+      "isAnnotation": false,
+      "primaryColor": "#5f49d9",
+      "secondaryColor": "#b7a9f9",
+      "shape": "circle",
+      "styleOverrides": "",
+      "svgColor": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#b7a9f9\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+      "svgComplete": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#b7a9f9\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+      "svgWhite": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+      "source_uri": "git://github.com/kubernetes-sigs/gateway-api/main/config/crd/standard"
+    },
+    "model": {
+      "version": "v1.6.3"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "modelReference": {
+    "displayName": "Gateway API",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.6.3"
+    },
+    "name": "gateway-api",
+    "registrant": {
+      "kind": ""
+    },
+    "version": ""
+  },
+  "styles": {
+    "primaryColor": "#5f49d9",
+    "secondaryColor": "#b7a9f9",
+    "shape": "circle",
+    "svgColor": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#b7a9f9\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+    "svgComplete": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#b7a9f9\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+    "svgWhite": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/kubernetes-sigs/gateway-api/main/config/crd/standard"
+  },
+  "configuration": null,
+  "component": {
+    "version": "gateway.networking.k8s.io/v1",
+    "kind": "ReferenceGrant",
+    "schema": "{\"description\": \"ReferenceGrant identifies kinds of resources in other namespaces that are\\ntrusted to reference the specified kinds of resources in the same namespace\\nas the policy.\\n\\nEach ReferenceGrant can be used to represent a unique trust relationship.\\nAdditional Reference Grants can be used to add to the set of trusted\\nsources of inbound references for the namespace they are defined within.\\n\\nAll cross-namespace references in Gateway API (with the exception of cross-namespace\\nGateway-route attachment) require a ReferenceGrant.\\n\\nReferenceGrant is a form of runtime verification allowing users to assert\\nwhich cross-namespace object references are permitted. Implementations that\\nsupport ReferenceGrant MUST NOT permit cross-namespace references which have\\nno grant, and MUST respond to the removal of a grant by revoking the access\\nthat the grant allowed.\", \"properties\": {\"apiVersion\": {\"description\": \"APIVersion defines the versioned schema of this representation of an object.\\nServers should convert recognized schemas to the latest internal value, and\\nmay reject unrecognized values.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources\", \"type\": \"string\"}, \"kind\": {\"description\": \"Kind is a string value representing the REST resource this object represents.\\nServers may infer this from the endpoint the client submits requests to.\\nCannot be updated.\\nIn CamelCase.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\", \"type\": \"string\"}, \"metadata\": {\"type\": \"object\"}, \"spec\": {\"description\": \"Spec defines the desired state of ReferenceGrant.\", \"properties\": {\"from\": {\"description\": \"From describes the trusted namespaces and kinds that can reference the\\nresources described in \\\"To\\\". Each entry in this list MUST be considered\\nto be an additional place that references can be valid from, or to put\\nthis another way, entries MUST be combined using OR.\\n\\nSupport: Core\", \"items\": {\"description\": \"ReferenceGrantFrom describes trusted namespaces and kinds.\", \"properties\": {\"group\": {\"description\": \"Group is the group of the referent.\\nWhen empty, the Kubernetes core API group is inferred.\\n\\nSupport: Core\", \"maxLength\": 253, \"pattern\": \"^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\", \"type\": \"string\"}, \"kind\": {\"description\": \"Kind is the kind of the referent. Although implementations may support\\nadditional resources, the following types are part of the \\\"Core\\\"\\nsupport level for this field.\\n\\nWhen used to permit a SecretObjectReference:\\n\\n* Gateway\\n\\nWhen used to permit a BackendObjectReference:\\n\\n* GRPCRoute\\n* HTTPRoute\\n* TCPRoute\\n* TLSRoute\\n* UDPRoute\", \"maxLength\": 63, \"minLength\": 1, \"pattern\": \"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$\", \"type\": \"string\"}, \"namespace\": {\"description\": \"Namespace is the namespace of the referent.\\n\\nSupport: Core\", \"maxLength\": 63, \"minLength\": 1, \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?$\", \"type\": \"string\"}}, \"required\": [\"group\", \"kind\", \"namespace\"], \"type\": \"object\"}, \"maxItems\": 16, \"minItems\": 1, \"type\": \"array\", \"x-kubernetes-list-type\": \"atomic\"}, \"to\": {\"description\": \"To describes the resources that may be referenced by the resources\\ndescribed in \\\"From\\\". Each entry in this list MUST be considered to be an\\nadditional place that references can be valid to, or to put this another\\nway, entries MUST be combined using OR.\\n\\nSupport: Core\", \"items\": {\"description\": \"ReferenceGrantTo describes what Kinds are allowed as targets of the\\nreferences.\", \"properties\": {\"group\": {\"description\": \"Group is the group of the referent.\\nWhen empty, the Kubernetes core API group is inferred.\\n\\nSupport: Core\", \"maxLength\": 253, \"pattern\": \"^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\", \"type\": \"string\"}, \"kind\": {\"description\": \"Kind is the kind of the referent. Although implementations may support\\nadditional resources, the following types are part of the \\\"Core\\\"\\nsupport level for this field:\\n\\n* Secret when used to permit a SecretObjectReference\\n* Service when used to permit a BackendObjectReference\", \"maxLength\": 63, \"minLength\": 1, \"pattern\": \"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$\", \"type\": \"string\"}, \"name\": {\"description\": \"Name is the name of the referent. When unspecified, this policy\\nrefers to all resources of the specified Group and Kind in the local\\nnamespace.\", \"maxLength\": 253, \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"group\", \"kind\"], \"type\": \"object\"}, \"maxItems\": 16, \"minItems\": 1, \"type\": \"array\", \"x-kubernetes-list-type\": \"atomic\"}}, \"required\": [\"from\", \"to\"], \"type\": \"object\"}}, \"required\": [\"spec\"], \"type\": \"object\"}"
+  },
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
+}

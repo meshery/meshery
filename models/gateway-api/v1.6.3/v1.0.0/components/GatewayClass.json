@@ -1,0 +1,210 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta2",
+  "version": "v1.0.0",
+  "displayName": "Gateway Class",
+  "description": "Gateway API GatewayClass (gateway.networking.k8s.io/v1). Generated from the official Gateway API standard channel CRDs.",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta2",
+    "version": "v1.0.0",
+    "name": "gateway-api",
+    "displayName": "Gateway API",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "type": "registry",
+      "subType": "",
+      "kind": "github",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "API Gateway",
+    "metadata": {
+      "capabilities": null,
+      "isAnnotation": false,
+      "primaryColor": "#5f49d9",
+      "secondaryColor": "#b7a9f9",
+      "shape": "circle",
+      "styleOverrides": "",
+      "svgColor": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#b7a9f9\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+      "svgComplete": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#b7a9f9\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+      "svgWhite": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+      "source_uri": "git://github.com/kubernetes-sigs/gateway-api/main/config/crd/standard"
+    },
+    "model": {
+      "version": "v1.6.3"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "modelReference": {
+    "displayName": "Gateway API",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.6.3"
+    },
+    "name": "gateway-api",
+    "registrant": {
+      "kind": ""
+    },
+    "version": ""
+  },
+  "styles": {
+    "primaryColor": "#5f49d9",
+    "secondaryColor": "#b7a9f9",
+    "shape": "circle",
+    "svgColor": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#b7a9f9\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+    "svgComplete": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#b7a9f9\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#5f49d9\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n",
+    "svgWhite": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\"><rect x=\"10\" y=\"18\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><rect x=\"10\" y=\"40\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><rect x=\"10\" y=\"62\" width=\"70\" height=\"10\" rx=\"3\" fill=\"#ffffff\"/><circle cx=\"22\" cy=\"23\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"45\" r=\"4\" fill=\"#fff\"/><circle cx=\"22\" cy=\"67\" r=\"4\" fill=\"#fff\"/></svg>\n"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false,
+    "source_uri": "git://github.com/kubernetes-sigs/gateway-api/main/config/crd/standard"
+  },
+  "configuration": null,
+  "component": {
+    "version": "gateway.networking.k8s.io/v1",
+    "kind": "GatewayClass",
+    "schema": "{\"description\": \"GatewayClass describes a class of Gateways available to the user for creating\\nGateway resources.\\n\\nIt is recommended that this resource be used as a template for Gateways. This\\nmeans that a Gateway is based on the state of the GatewayClass at the time it\\nwas created and changes to the GatewayClass or associated parameters are not\\npropagated down to existing Gateways. This recommendation is intended to\\nlimit the blast radius of changes to GatewayClass or associated parameters.\\nIf implementations choose to propagate GatewayClass changes to existing\\nGateways, that MUST be clearly documented by the implementation.\\n\\nWhenever one or more Gateways are using a GatewayClass, implementations SHOULD\\nadd the `gateway-exists-finalizer.gateway.networking.k8s.io` finalizer on the\\nassociated GatewayClass. This ensures that a GatewayClass associated with a\\nGateway is not deleted while in use.\\n\\nGatewayClass is a Cluster level resource.\\n\\nA GatewayClass name SHOULD be compliant with RFC 1035, consisting of a maximum of 63 lower case alphanumeric\\ncharacters or hyphens ('-'), and MUST start and end with an alphanumeric character.\", \"properties\": {\"apiVersion\": {\"description\": \"APIVersion defines the versioned schema of this representation of an object.\\nServers should convert recognized schemas to the latest internal value, and\\nmay reject unrecognized values.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources\", \"type\": \"string\"}, \"kind\": {\"description\": \"Kind is a string value representing the REST resource this object represents.\\nServers may infer this from the endpoint the client submits requests to.\\nCannot be updated.\\nIn CamelCase.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\", \"type\": \"string\"}, \"metadata\": {\"type\": \"object\"}, \"spec\": {\"description\": \"Spec defines the desired state of GatewayClass.\", \"properties\": {\"controllerName\": {\"description\": \"ControllerName is the name of the controller that is managing Gateways of\\nthis class. The value of this field MUST be a domain prefixed path.\\n\\nExample: \\\"example.net/gateway-controller\\\".\\n\\nThis field is not mutable and cannot be empty.\\n\\nSupport: Core\", \"maxLength\": 253, \"minLength\": 1, \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*\\\\/[A-Za-z0-9\\\\/\\\\-._~%!$&'()*+,;=:]+$\", \"type\": \"string\", \"x-kubernetes-validations\": [{\"message\": \"Value is immutable\", \"rule\": \"self == oldSelf\"}]}, \"description\": {\"description\": \"Description helps describe a GatewayClass with more details.\", \"maxLength\": 64, \"type\": \"string\"}, \"parametersRef\": {\"description\": \"ParametersRef is a reference to a resource that contains the configuration\\nparameters corresponding to the GatewayClass. This is optional if the\\ncontroller does not require any additional configuration.\\n\\nParametersRef can reference a standard Kubernetes resource, i.e. ConfigMap,\\nor an implementation-specific custom resource. The resource can be\\ncluster-scoped or namespace-scoped.\\n\\nIf the referent cannot be found, refers to an unsupported kind, or when\\nthe data within that resource is malformed, the GatewayClass SHOULD be\\nrejected with the \\\"Accepted\\\" status condition set to \\\"False\\\" and an\\n\\\"InvalidParameters\\\" reason.\\n\\nA Gateway for this GatewayClass may provide its own `parametersRef`. When both are specified,\\nthe merging behavior is implementation specific.\\nIt is generally recommended that GatewayClass provides defaults that can be overridden by a Gateway.\\n\\nSupport: Implementation-specific\", \"properties\": {\"group\": {\"description\": \"Group is the group of the referent.\", \"maxLength\": 253, \"pattern\": \"^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\", \"type\": \"string\"}, \"kind\": {\"description\": \"Kind is kind of the referent.\", \"maxLength\": 63, \"minLength\": 1, \"pattern\": \"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$\", \"type\": \"string\"}, \"name\": {\"description\": \"Name is the name of the referent.\", \"maxLength\": 253, \"minLength\": 1, \"type\": \"string\"}, \"namespace\": {\"description\": \"Namespace is the namespace of the referent.\\nThis field is required when referring to a Namespace-scoped resource and\\nMUST be unset when referring to a Cluster-scoped resource.\", \"maxLength\": 63, \"minLength\": 1, \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?$\", \"type\": \"string\"}}, \"required\": [\"group\", \"kind\", \"name\"], \"type\": \"object\"}}, \"required\": [\"controllerName\"], \"type\": \"object\"}, \"status\": {\"default\": {\"conditions\": [{\"lastTransitionTime\": \"1970-01-01T00:00:00Z\", \"message\": \"Waiting for controller\", \"reason\": \"Pending\", \"status\": \"Unknown\", \"type\": \"Accepted\"}]}, \"description\": \"Status defines the current state of GatewayClass.\\n\\nImplementations MUST populate status on all GatewayClass resources which\\nspecify their controller name.\", \"properties\": {\"conditions\": {\"default\": [{\"lastTransitionTime\": \"1970-01-01T00:00:00Z\", \"message\": \"Waiting for controller\", \"reason\": \"Pending\", \"status\": \"Unknown\", \"type\": \"Accepted\"}], \"description\": \"Conditions is the current status from the controller for\\nthis GatewayClass.\\n\\nControllers should prefer to publish conditions using values\\nof GatewayClassConditionType for the type of each Condition.\", \"items\": {\"description\": \"Condition contains details for one aspect of the current state of this API Resource.\", \"properties\": {\"lastTransitionTime\": {\"description\": \"lastTransitionTime is the last time the condition transitioned from one status to another.\\nThis should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.\", \"format\": \"date-time\", \"type\": \"string\"}, \"message\": {\"description\": \"message is a human readable message indicating details about the transition.\\nThis may be an empty string.\", \"maxLength\": 32768, \"type\": \"string\"}, \"observedGeneration\": {\"description\": \"observedGeneration represents the .metadata.generation that the condition was set based upon.\\nFor instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date\\nwith respect to the current state of the instance.\", \"format\": \"int64\", \"minimum\": 0, \"type\": \"integer\"}, \"reason\": {\"description\": \"reason contains a programmatic identifier indicating the reason for the condition's last transition.\\nProducers of specific condition types may define expected values and meanings for this field,\\nand whether the values are considered a guaranteed API.\\nThe value should be a CamelCase string.\\nThis field may not be empty.\", \"maxLength\": 1024, \"minLength\": 1, \"pattern\": \"^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$\", \"type\": \"string\"}, \"status\": {\"description\": \"status of the condition, one of True, False, Unknown.\", \"enum\": [\"True\", \"False\", \"Unknown\"], \"type\": \"string\"}, \"type\": {\"description\": \"type of condition in CamelCase or in foo.example.com/CamelCase.\", \"maxLength\": 316, \"pattern\": \"^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$\", \"type\": \"string\"}}, \"required\": [\"lastTransitionTime\", \"message\", \"reason\", \"status\", \"type\"], \"type\": \"object\"}, \"maxItems\": 8, \"type\": \"array\", \"x-kubernetes-list-map-keys\": [\"type\"], \"x-kubernetes-list-type\": \"map\"}, \"supportedFeatures\": {\"description\": \"SupportedFeatures is the set of features the GatewayClass support.\\nIt MUST be sorted in ascending alphabetical order by the Name key.\", \"items\": {\"properties\": {\"name\": {\"description\": \"FeatureName is used to describe distinct features that are covered by\\nconformance tests.\", \"type\": \"string\"}}, \"required\": [\"name\"], \"type\": \"object\"}, \"maxItems\": 64, \"type\": \"array\", \"x-kubernetes-list-map-keys\": [\"name\"], \"x-kubernetes-list-type\": \"map\"}}, \"type\": \"object\"}}, \"required\": [\"spec\"], \"type\": \"object\"}"
+  },
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
+}
