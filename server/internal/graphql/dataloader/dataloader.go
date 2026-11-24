@@ -46,4 +46,3 @@ func For(ctx context.Context) *Loaders {
 func WithLoaders(ctx context.Context, loaders *Loaders) context.Context {
 	return context.WithValue(ctx, loadersKey, loaders)
 }
-
