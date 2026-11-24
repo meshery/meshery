@@ -92,7 +92,7 @@ export const buildPodDisruptionBudgetColumns = ({
     },
     {
       name: 'spec.attribute',
-      label: 'Max Available',
+      label: 'Max Unavailable',
       options: {
         sort: false,
         customHeadRender: function CustomHead({ ...column }) {
@@ -100,8 +100,8 @@ export const buildPodDisruptionBudgetColumns = ({
         },
         customBodyRender: function CustomBody(val) {
           let attribute = JSON.parse(val);
-          let maxAvailable = attribute?.maxAvailable;
-          return <>{maxAvailable}</>;
+          let maxUnavailable = attribute?.maxUnavailable;
+          return <>{maxUnavailable}</>;
         },
       },
     },

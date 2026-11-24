@@ -180,3 +180,136 @@ func TestBroadcastUnsubscribeStopsDelivery(t *testing.T) {
 		t.Fatal("closed channel did not yield")
 	}
 }
+
+// TestBroadcastUnsubscribePrunesEmptyClientsMap ensures that when all subscribers
+// for a user unsubscribe, the user entry is deleted from the clients map to prevent
+// an unbounded memory leak.
+func TestBroadcastUnsubscribePrunesEmptyClientsMap(t *testing.T) {
+	b := NewBroadcaster("test")
+	id := uuid.Must(uuid.NewV4())
+
+	_, unsubscribe1 := b.Subscribe(id)
+	_, unsubscribe2 := b.Subscribe(id)
+
+	if _, ok := b.clients.Load(id); !ok {
+		t.Fatal("expected client entry to be present in map while subscribed")
+	}
+
+	unsubscribe1()
+	// Still has one subscriber, entry must remain in map.
+	if _, ok := b.clients.Load(id); !ok {
+		t.Fatal("client entry pruned prematurely while one subscriber remains")
+	}
+
+	unsubscribe2()
+	// All subscribers gone, entry must be pruned from map.
+	if _, ok := b.clients.Load(id); ok {
+		t.Fatal("expected client entry to be pruned from map after all subscribers unsubscribed")
+	}
+}
+
+// TestBroadcastResubscribeAfterUnsubscribe ensures that resubscribing after
+// full eviction creates a fresh active entry and receives published data normally.
+func TestBroadcastResubscribeAfterUnsubscribe(t *testing.T) {
+	b := NewBroadcaster("test")
+	id := uuid.Must(uuid.NewV4())
+
+	ch1, unsub1 := b.Subscribe(id)
+	unsub1()
+
+	if _, ok := b.clients.Load(id); ok {
+		t.Fatal("entry should be pruned after unsub")
+	}
+
+	ch2, unsub2 := b.Subscribe(id)
+	defer unsub2()
+
+	if _, ok := b.clients.Load(id); !ok {
+		t.Fatal("entry should be present after resubscribe")
+	}
+
+	b.Publish(id, "resubscribed-event")
+
+	select {
+	case msg := <-ch2:
+		if msg != "resubscribed-event" {
+			t.Fatalf("got %v, want resubscribed-event", msg)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for event on resubscribed listener")
+	}
+
+	select {
+	case _, open := <-ch1:
+		if open {
+			t.Fatal("old channel should be closed")
+		}
+	default:
+	}
+}
+
+// TestBroadcastConcurrentPruneAndSubscribe hammers Subscribe, Publish, and Unsubscribe
+// on the same ID to verify that atomic eviction does not race with new subscribers
+// or panic with -race.
+func TestBroadcastConcurrentPruneAndSubscribe(t *testing.T) {
+	b := NewBroadcaster("test")
+	id := uuid.Must(uuid.NewV4())
+
+	var wg sync.WaitGroup
+	stop := make(chan struct{})
+
+	// Publishers
+	for i := 0; i < 6; i++ {
+		wg.Add(1)
+		go func(val int) {
+			defer wg.Done()
+			for {
+				select {
+				case <-stop:
+					return
+				default:
+					b.Publish(id, val)
+				}
+			}
+		}(i)
+	}
+
+	// Churning subscribers triggering eviction repeatedly
+	for i := 0; i < 6; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for {
+				select {
+				case <-stop:
+					return
+				default:
+					ch, unsubscribe := b.Subscribe(id)
+					select {
+					case <-ch:
+					default:
+					}
+					unsubscribe()
+				}
+			}
+		}()
+	}
+
+	time.Sleep(300 * time.Millisecond)
+	close(stop)
+	wg.Wait()
+
+	// After all churn finishes, resubscribing must work cleanly
+	ch, unsub := b.Subscribe(id)
+	defer unsub()
+
+	b.Publish(id, 999)
+	select {
+	case v := <-ch:
+		if v != 999 {
+			t.Fatalf("got %v, want 999", v)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for event on final subscriber")
+	}
+}

@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 
@@ -9,7 +10,9 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/url"
 	"strings"
+	"sync"
 
 	"github.com/gorilla/websocket"
 )
@@ -72,8 +75,54 @@ func appendHostToXForwardHeader(header http.Header, host string) {
 }
 
 type Proxy struct {
+	// mu guards token and authWsChan, which are shared by concurrent requests.
+	mu         sync.Mutex
 	token      string
 	authWsChan chan bool
+}
+
+func (p *Proxy) getToken() string {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return p.token
+}
+
+// setToken stores the token and tells the connected /ws client, if any, about
+// the new auth state. It never blocks: without a client there is nobody to
+// notify, and the UI reads the current state from /token when it connects.
+func (p *Proxy) setToken(token string) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.token = token
+	if p.authWsChan == nil {
+		return
+	}
+	// Replace any pending notification with the latest auth state, so a
+	// logout is never lost behind a login notification still waiting to be
+	// read. The channel is buffered (size 1) and setToken is its only
+	// sender, so once drained the send below cannot block.
+	select {
+	case <-p.authWsChan:
+	default:
+	}
+	p.authWsChan <- token != ""
+}
+
+// redactURL returns u as a string with the token query parameter masked, so
+// the auth token used by /token/store never ends up in the logs. A query that
+// does not parse cleanly is dropped entirely: url.Query silently skips
+// malformed pairs, so a token inside one would otherwise be logged as is.
+func redactURL(u *url.URL) string {
+	redacted := *u
+	q, err := url.ParseQuery(u.RawQuery)
+	switch {
+	case err != nil:
+		redacted.RawQuery = "REDACTED"
+	case q.Has("token"):
+		q.Set("token", "REDACTED")
+		redacted.RawQuery = q.Encode()
+	}
+	return redacted.String()
 }
 
 func handleWsMessage(conn *websocket.Conn) {
@@ -95,7 +144,7 @@ func handleWsMessage(conn *websocket.Conn) {
 }
 
 func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
-	log.Println(req.RemoteAddr, " ", req.Method, " ", req.URL)
+	log.Println(req.RemoteAddr, " ", req.Method, " ", redactURL(req.URL))
 
 	client := &http.Client{}
 
@@ -103,9 +152,6 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 
 	switch req.URL.Path {
 	case "/ws":
-		if p.authWsChan == nil {
-			p.authWsChan = make(chan bool)
-		}
 		upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
 		ws, err := upgrader.Upgrade(wr, req, nil)
@@ -114,9 +160,31 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		ws.SetCloseHandler(func(code int, text string) error {
+		// Each connection gets its own channel, and only the newest connection
+		// receives auth notifications. Closing the previous channel stops that
+		// connection's listener, so two connections never split notifications
+		// between them.
+		authWsChan := make(chan bool, 1)
+		p.mu.Lock()
+		if p.authWsChan != nil {
 			close(p.authWsChan)
-			p.authWsChan = nil
+		}
+		p.authWsChan = authWsChan
+		// Queue the current state for the new connection. A login that
+		// happened after the UI last read /token but before this channel was
+		// installed would otherwise never reach it.
+		if p.token != "" {
+			authWsChan <- true
+		}
+		p.mu.Unlock()
+
+		ws.SetCloseHandler(func(code int, text string) error {
+			p.mu.Lock()
+			if p.authWsChan == authWsChan {
+				close(p.authWsChan)
+				p.authWsChan = nil
+			}
+			p.mu.Unlock()
 			err := ws.Close()
 			if err != nil {
 				return err
@@ -124,29 +192,30 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			return nil
 		})
 		go handleWsMessage(ws)
-		go func() {
-			for res := range p.authWsChan {
-				log.Println("Got msg from authChan: ", res)
-				if res == true {
-					err = ws.WriteMessage(1, []byte(AuthenticatedMsg))
-					log.Println("Sent message to ws client: ", AuthenticatedMsg)
-					if err != nil {
-						log.Println(err)
-					}
-				} else {
-					err = ws.WriteMessage(1, []byte(UnauthenticatedMsg))
-					log.Println("Sent message to ws client: ", UnauthenticatedMsg)
-					if err != nil {
-						log.Println(err)
-					}
-				}
-			}
-		}()
+		// Send the handshake before starting the listener: a gorilla websocket
+		// allows only one concurrent writer, and the listener may already have
+		// a queued auth state to write.
 		err = ws.WriteMessage(1, []byte(InitiationSuccessful))
 		log.Println("Sent message to ws client: ", InitiationSuccessful)
 		if err != nil {
 			log.Println(err)
 		}
+		go func() {
+			for res := range authWsChan {
+				log.Println("Got msg from authChan: ", res)
+				if res == true {
+					if werr := ws.WriteMessage(1, []byte(AuthenticatedMsg)); werr != nil {
+						log.Println(werr)
+					}
+					log.Println("Sent message to ws client: ", AuthenticatedMsg)
+				} else {
+					if werr := ws.WriteMessage(1, []byte(UnauthenticatedMsg)); werr != nil {
+						log.Println(werr)
+					}
+					log.Println("Sent message to ws client: ", UnauthenticatedMsg)
+				}
+			}
+		}()
 
 	case "/token/store":
 		if req.Method == http.MethodGet {
@@ -156,11 +225,10 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 				token = values["token"][0]
 			}
 			if token != "" {
-				p.token = token
-				p.authWsChan <- true
-				log.Println("Setting the value of token to be: ", token)
+				p.setToken(token)
+				log.Println("Stored a new auth token")
 			}
-			if p.token == "" {
+			if p.getToken() == "" {
 				wr.WriteHeader(http.StatusUnauthorized)
 				return
 			} else {
@@ -188,18 +256,16 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 
 	case "/token":
 		if req.Method == http.MethodGet {
-			if p.token != "" {
-				fmt.Fprint(wr, p.token)
+			if token := p.getToken(); token != "" {
+				fmt.Fprint(wr, token)
 			} else {
 				fmt.Fprint(wr, "null")
 			}
 			return
 		}
 		if req.Method == http.MethodDelete {
-			p.token = ""
-			log.Println("Deleting the existing token: ", p.token)
-			log.Printf("AuthChan: %v", p.authWsChan)
-			p.authWsChan <- false
+			p.setToken("")
+			log.Println("Deleted the existing token")
 			wr.Write([]byte(""))
 			return
 		}
@@ -218,13 +284,14 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 			appendHostToXForwardHeader(req.Header, clientIP)
 		}
 
-		if p.token == "" {
+		token := p.getToken()
+		if token == "" {
 			log.Println("Sending request without auth token")
 		} else {
 			log.Println("Setting token cookie to the request")
 			req.AddCookie(&http.Cookie{
 				Name:     "token",
-				Value:    string(p.token),
+				Value:    token,
 				Path:     "/",
 				HttpOnly: true,
 			})
@@ -241,11 +308,18 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 				HttpOnly: true,
 			})
 		}
-		log.Println(*req)
+		log.Println("proxy: forwarding", req.Method, redactURL(req.URL))
 		resp, err := client.Do(req)
 		if err != nil {
 			http.Error(wr, "Server Error", http.StatusInternalServerError)
-			log.Println("proxy: backend request failed:", err)
+			// err is a *url.Error that embeds the full request URL, which can
+			// carry a token query parameter, so log the redacted URL and only
+			// the underlying cause.
+			var uerr *url.Error
+			if errors.As(err, &uerr) {
+				err = uerr.Err
+			}
+			log.Println("proxy: backend request failed:", req.Method, redactURL(req.URL), err)
 			return
 		}
 		defer resp.Body.Close()

@@ -5,11 +5,15 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/core"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"net/http"
+	"strings"
 )
 
 func newWorkspaceTestDB(t *testing.T) *database.Handler {
@@ -203,4 +207,186 @@ func TestWorkspacePersisterAddTeamToWorkspace_Deduplication(t *testing.T) {
 	if count != 1 {
 		t.Fatalf("expected 1 mapping after adding twice, got %d", count)
 	}
+}
+
+func TestWorkspacePersisterGetWorkspaces_InvalidPagination(t *testing.T) {
+	dbHandler := newWorkspaceTestDB(t)
+	if err := dbHandler.AutoMigrate(&workspace.Workspace{}); err != nil {
+		t.Fatalf("failed to auto-migrate schemas workspace: %v", err)
+	}
+	persister := &WorkspacePersister{DB: dbHandler}
+	orgID := uuid.Must(uuid.NewV4()).String()
+
+	tests := []struct {
+		name     string
+		page     string
+		pageSize string
+		wantCode string
+	}{
+		{"invalid page", "-1", "10", ErrPageNumberCode},
+		{"invalid pagesize", "0", "abc", ErrPageSizeCode},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := persister.GetWorkspaces(orgID, "", "", tc.page, tc.pageSize, "")
+			if err == nil {
+				t.Fatalf("expected an error for page=%q pagesize=%q, got nil", tc.page, tc.pageSize)
+			}
+			if got := meshkiterrors.GetCode(err); got != tc.wantCode {
+				t.Errorf("error code = %q, want %q (err: %v)", got, tc.wantCode, err)
+			}
+		})
+	}
+}
+
+// invalidPaginationCases is the shared table for the per-function
+// invalid-pagination tests: a negative page must surface ErrPageNumberCode and
+// a non-numeric pagesize (with a valid page) must surface ErrPageSizeCode.
+var invalidPaginationCases = []struct {
+	name     string
+	page     string
+	pageSize string
+	wantCode string
+}{
+	{"invalid page", "-1", "10", ErrPageNumberCode},
+	{"invalid pagesize", "0", "abc", ErrPageSizeCode},
+}
+
+func newWorkspacePaginationTestPersister(t *testing.T) *WorkspacePersister {
+	t.Helper()
+	dbHandler := newWorkspaceTestDB(t)
+	if err := dbHandler.AutoMigrate(&workspace.Workspace{}); err != nil {
+		t.Fatalf("failed to auto-migrate schemas workspace: %v", err)
+	}
+	return &WorkspacePersister{DB: dbHandler}
+}
+
+func TestWorkspacePersisterGetWorkspaceEnvironments_InvalidPagination(t *testing.T) {
+	persister := newWorkspacePaginationTestPersister(t)
+	workspaceID := uuid.Must(uuid.NewV4())
+
+	for _, tc := range invalidPaginationCases {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := persister.GetWorkspaceEnvironments(workspaceID, "", "", tc.page, tc.pageSize, "")
+			if err == nil {
+				t.Fatalf("expected an error for page=%q pagesize=%q, got nil", tc.page, tc.pageSize)
+			}
+			if got := meshkiterrors.GetCode(err); got != tc.wantCode {
+				t.Errorf("error code = %q, want %q (err: %v)", got, tc.wantCode, err)
+			}
+		})
+	}
+}
+
+func TestWorkspacePersisterGetWorkspaceDesigns_InvalidPagination(t *testing.T) {
+	persister := newWorkspacePaginationTestPersister(t)
+	workspaceID := uuid.Must(uuid.NewV4())
+
+	for _, tc := range invalidPaginationCases {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := persister.GetWorkspaceDesigns(workspaceID, "", "", tc.page, tc.pageSize, "", nil)
+			if err == nil {
+				t.Fatalf("expected an error for page=%q pagesize=%q, got nil", tc.page, tc.pageSize)
+			}
+			if got := meshkiterrors.GetCode(err); got != tc.wantCode {
+				t.Errorf("error code = %q, want %q (err: %v)", got, tc.wantCode, err)
+			}
+		})
+	}
+}
+
+func TestWorkspacePersisterGetWorkspaceViews_InvalidPagination(t *testing.T) {
+	persister := newWorkspacePaginationTestPersister(t)
+	workspaceID := uuid.Must(uuid.NewV4())
+
+	for _, tc := range invalidPaginationCases {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := persister.GetWorkspaceViews(workspaceID, "", "", tc.page, tc.pageSize, "")
+			if err == nil {
+				t.Fatalf("expected an error for page=%q pagesize=%q, got nil", tc.page, tc.pageSize)
+			}
+			if got := meshkiterrors.GetCode(err); got != tc.wantCode {
+				t.Errorf("error code = %q, want %q (err: %v)", got, tc.wantCode, err)
+			}
+		})
+	}
+}
+
+func TestWorkspacePersisterGetWorkspaceTeams_InvalidPagination(t *testing.T) {
+	persister := newWorkspacePaginationTestPersister(t)
+	workspaceID := uuid.Must(uuid.NewV4())
+
+	for _, tc := range invalidPaginationCases {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := persister.GetWorkspaceTeams(workspaceID, "", "", tc.page, tc.pageSize, "")
+			if err == nil {
+				t.Fatalf("expected an error for page=%q pagesize=%q, got nil", tc.page, tc.pageSize)
+			}
+			if got := meshkiterrors.GetCode(err); got != tc.wantCode {
+				t.Errorf("error code = %q, want %q (err: %v)", got, tc.wantCode, err)
+			}
+		})
+	}
+}
+
+func TestWorkspacePersister_MissingWorkspace_ReturnsResultNotFound(t *testing.T) {
+	dbHandler := newWorkspaceTestDB(t)
+	if err := dbHandler.AutoMigrate(&workspace.Workspace{}); err != nil {
+		t.Fatalf("failed to auto-migrate schemas workspace: %v", err)
+	}
+
+	persister := &WorkspacePersister{DB: dbHandler}
+	missingID := core.Uuid(uuid.Must(uuid.NewV4()))
+
+	assertNotFound := func(t *testing.T, err error) {
+		t.Helper()
+		if err == nil {
+			t.Fatal("expected an error for a missing workspace, got nil")
+		}
+		if got := meshkiterrors.GetCode(err); got != ErrResultNotFoundCode {
+			t.Errorf("MeshKit code = %q, want %q (err=%v)", got, ErrResultNotFoundCode, err)
+		}
+		if got := httputil.StatusForProviderError(err, http.StatusBadGateway); got != http.StatusNotFound {
+			t.Errorf("status = %d, want %d", got, http.StatusNotFound)
+		}
+	}
+
+	t.Run("GetWorkspaceByID", func(t *testing.T) {
+		_, err := persister.GetWorkspaceByID(missingID)
+		assertNotFound(t, err)
+	})
+
+	t.Run("UpdateWorkspace", func(t *testing.T) {
+		_, err := persister.UpdateWorkspace(missingID, &workspace.WorkspaceUpdatePayload{})
+		assertNotFound(t, err)
+	})
+
+	t.Run("DeleteWorkspaceByID", func(t *testing.T) {
+		_, err := persister.DeleteWorkspaceByID(missingID)
+		assertNotFound(t, err)
+	})
+
+	t.Run("existing workspace is still returned", func(t *testing.T) {
+		workspaceID := core.Uuid(uuid.Must(uuid.NewV4()))
+		now := time.Now().UTC().Round(time.Second)
+		ws := workspace.Workspace{
+			ID:             workspaceID,
+			CreatedAt:      now,
+			UpdatedAt:      now,
+			Name:           "Present Workspace",
+			Metadata:       core.Map{},
+			OrganizationID: core.Uuid(uuid.Must(uuid.NewV4())),
+		}
+		if err := dbHandler.Create(&ws).Error; err != nil {
+			t.Fatalf("failed to persist workspace: %v", err)
+		}
+
+		got, err := persister.GetWorkspaceByID(workspaceID)
+		if err != nil {
+			t.Fatalf("expected no error for an existing workspace, got %v", err)
+		}
+		if !strings.Contains(string(got), workspaceID.String()) {
+			t.Errorf("returned JSON %s does not contain workspace ID %s", got, workspaceID)
+		}
+	})
 }

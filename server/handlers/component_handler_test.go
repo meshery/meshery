@@ -18,10 +18,15 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
+	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/category"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/model"
@@ -29,6 +34,8 @@ import (
 	connv1beta3 "github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 func newTestRegistryDB(t *testing.T) (*registry.RegistryManager, *database.Handler) {
@@ -222,6 +229,9 @@ func TestExportModel_NotFound(t *testing.T) {
 	h.ExportModel(rw, req)
 
 	resp := rw.Result()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 }
 
@@ -244,6 +254,9 @@ func TestExportModel_OCI(t *testing.T) {
 	h.ExportModel(rw, req)
 
 	resp := rw.Result()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, "application/x-tar", resp.Header.Get("Content-Type"))
 	assert.NotEmpty(t, rw.Body.Bytes())
@@ -350,6 +363,9 @@ func TestExportModel_Concurrent(t *testing.T) {
 			h.ExportModel(rw, req)
 
 			resp := rw.Result()
+			defer func() {
+				_ = resp.Body.Close()
+			}()
 			if resp.StatusCode != http.StatusOK {
 				errs <- fmt.Errorf("worker %d got status %d: %s", workerID, resp.StatusCode, rw.Body.String())
 				return
@@ -407,4 +423,113 @@ func TestExportModel_Concurrent(t *testing.T) {
 	for err := range errs {
 		assert.NoError(t, err)
 	}
+}
+
+func newComponentModelTestDB(t *testing.T) *database.Handler {
+	t.Helper()
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		if strings.Contains(err.Error(), "requires cgo") {
+			t.Skip("skipping database test: sqlite requires cgo")
+		}
+		t.Fatalf("failed to open in-memory database: %v", err)
+	}
+
+	dbHandler := &database.Handler{DB: db, Mutex: &sync.Mutex{}}
+	if err := dbHandler.AutoMigrate(
+		&registry.Registry{},
+		&compv1beta3.ComponentDefinition{},
+		&relationship.RelationshipDefinition{},
+		&_models.PolicyDefinition{},
+		&model.ModelDefinition{},
+	); err != nil {
+		t.Fatalf("failed to auto migrate model definition and dependencies: %v", err)
+	}
+	return dbHandler
+}
+
+// TestDeleteModel_InvalidUUID verifies that DeleteModel returns HTTP 400 Bad Request
+// when supplied with a malformed or invalid UUID identifier.
+func TestDeleteModel_InvalidUUID(t *testing.T) {
+	h := &Handler{
+		config: &models.HandlerConfig{},
+		log:    newTestLogger(t),
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/meshmodels/models/invalid-uuid", nil)
+	req = mux.SetURLVars(req, map[string]string{
+		"id": "invalid-uuid",
+	})
+	rw := httptest.NewRecorder()
+
+	h.DeleteModel(rw, req, nil, nil, nil)
+	resp := rw.Result()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+}
+
+// TestDeleteModel_NotFound verifies that DeleteModel returns HTTP 404 Not Found
+// when attempting to delete a model whose ID does not exist in the database.
+func TestDeleteModel_NotFound(t *testing.T) {
+	dbHandler := newComponentModelTestDB(t)
+	h := &Handler{
+		config:    &models.HandlerConfig{},
+		log:       newTestLogger(t),
+		dbHandler: dbHandler,
+	}
+
+	missingID := uuid.Must(uuid.NewV4()).String()
+	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/api/meshmodels/models/%s", missingID), nil)
+	req = mux.SetURLVars(req, map[string]string{
+		"id": missingID,
+	})
+	rw := httptest.NewRecorder()
+
+	h.DeleteModel(rw, req, nil, nil, nil)
+	resp := rw.Result()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode, "deleting non-existent model must return HTTP 404")
+	assert.Contains(t, rw.Body.String(), fmt.Sprintf("model with id %s not found", missingID))
+}
+
+// TestDeleteModel_Success verifies that DeleteModel returns HTTP 204 No Content
+// and removes the model record from the database when a valid model ID is provided.
+func TestDeleteModel_Success(t *testing.T) {
+	dbHandler := newComponentModelTestDB(t)
+	h := &Handler{
+		config:    &models.HandlerConfig{},
+		log:       newTestLogger(t),
+		dbHandler: dbHandler,
+	}
+
+	modelID := uuid.Must(uuid.NewV4())
+	modelRecord := model.ModelDefinition{
+		ID:   modelID,
+		Name: "test-model",
+	}
+	require.NoError(t, dbHandler.Create(&modelRecord).Error)
+
+	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/api/meshmodels/models/%s", modelID.String()), nil)
+	req = mux.SetURLVars(req, map[string]string{
+		"id": modelID.String(),
+	})
+	rw := httptest.NewRecorder()
+
+	h.DeleteModel(rw, req, nil, nil, nil)
+	resp := rw.Result()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	assert.Equal(t, http.StatusNoContent, resp.StatusCode, "deleting existing model must return HTTP 204")
+
+	var count int64
+	dbHandler.Model(&model.ModelDefinition{}).Where("id = ?", modelID).Count(&count)
+	assert.Equal(t, int64(0), count, "model record must be deleted from database")
 }

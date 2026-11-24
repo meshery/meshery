@@ -37,6 +37,11 @@ func TestContextViewCmd(t *testing.T) {
 			ExpectedResponse: "viewWithContextExpected.golden",
 		},
 		{
+			Name:             "view with mixed-case context name through context flag",
+			Args:             []string{"context", "view", "--context", "Local2"},
+			ExpectedResponse: "viewWithContextExpected.golden",
+		},
+		{
 			Name:             "Error for viewing a non-existing context",
 			Args:             []string{"context", "view", "local3"},
 			IsOutputGolden:   false,
@@ -114,6 +119,12 @@ func TestContextListCmd(t *testing.T) {
 			Args:             []string{"context", "list"},
 			ExpectedResponse: "listExpected.golden",
 		},
+		{
+			Name:          "given extra positional arguments when context list then throw error",
+			Args:          []string{"context", "list", "extra-arg"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listContextUsageMsg)),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
@@ -125,7 +136,15 @@ func TestContextListCmd(t *testing.T) {
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
-				t.Error(err)
+				if tt.ExpectError {
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
+				}
+				t.Fatal(err)
+			}
+
+			if tt.ExpectError {
+				t.Fatalf("expected error, got nil")
 			}
 
 			actualResponse := buf.String()
@@ -141,7 +160,6 @@ func TestContextListCmd(t *testing.T) {
 
 			assert.Equal(t, expectedResponse, actualResponse)
 		})
-		t.Log("ListContextCmd test passed")
 	}
 }
 

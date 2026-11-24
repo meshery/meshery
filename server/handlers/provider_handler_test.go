@@ -567,8 +567,17 @@ func TestDeleteMeshSyncResource(t *testing.T) {
 			}
 
 			if tt.migrateResourceTable {
-				if err := db.AutoMigrate(&model.KubernetesResource{}); err != nil {
-					t.Fatalf("failed to migrate kubernetes resource table: %v", err)
+				// Migrate the MeshSync tables together, as the server does
+				// (models.SystemDatabaseModels): a delete also removes the
+				// resource's spec, status, object meta and key-value rows.
+				if err := db.AutoMigrate(
+					&model.KubernetesResource{},
+					&model.KubernetesResourceObjectMeta{},
+					&model.KubernetesResourceSpec{},
+					&model.KubernetesResourceStatus{},
+					&model.KubernetesKeyValue{},
+				); err != nil {
+					t.Fatalf("failed to migrate meshsync tables: %v", err)
 				}
 				if tt.seedResource {
 					if err := db.Table("kubernetes_resources").Create(&model.KubernetesResource{ID: tt.resourceID}).Error; err != nil {

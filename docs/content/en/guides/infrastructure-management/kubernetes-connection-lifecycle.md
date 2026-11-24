@@ -48,6 +48,49 @@ Each reports a status that surfaces on the connection (for example the Broker an
 MeshSync move to **CONNECTED** once Meshery is actually receiving data). See
 [Understanding the status]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md#understanding-the-status-of-meshery-operator-meshsync-and-meshery-broker" >}}).
 
+### One Operator per cluster, shared by every connection
+
+The Operator is a cluster singleton: one Helm release, `meshery-operator` in
+namespace `meshery`, serves every operator-mode connection to that cluster -
+several kubeconfig contexts naming the same API server, several users of one
+Meshery Server, and other Meshery Servers managing the same cluster. Meshery
+recognizes a cluster by its Kubernetes server ID (the `kube-system` namespace
+UID), so different API server addresses for one cluster count as one when
+each context was imported while the cluster was reachable. A context imported
+while its cluster was unreachable carries no server ID and is matched only by
+its exact API server address.
+
+Because of that, Meshery manages the Operator at cluster scope:
+
+- **Installing is serialized per cluster.** When several connections to one
+  cluster connect at once, one installs the Operator and the others find it
+  installed, instead of racing each other into `helm install`. The
+  serialization only covers connections whose cluster keys match: connections
+  reaching the same cluster through different addresses, with no server ID to
+  tie them together, can still race to install the Operator.
+- **Disconnecting, deleting, or switching a connection to embedded mode never
+  uninstalls the Operator.** Each only ends that connection's use of it. The
+  Operator stays installed even after the last connection on this Meshery
+  Server leaves, because Meshery cannot see every consumer - another Meshery
+  Server, or an Operator installed with Helm or `mesheryctl`, may still depend
+  on it.
+- **Uninstalling is an explicit request**, made through the GraphQL
+  `changeOperatorStatus` mutation (target status `DISABLED`). It removes the
+  Operator for every connection to the cluster. When other connections on the
+  same Meshery Server were using it, Meshery raises a warning event, **Meshery
+  Operator removed from a cluster other connections use**, that names the ones
+  it can match in `affectedConnectionIDs`. A connection reaching the same
+  cluster through a different address, with no server ID to tie it to this
+  cluster, is not listed. Those connections reinstall the Operator the next
+  time they connect in operator mode; switch them to embedded mode to keep it
+  off.
+
+To remove the Operator from a cluster nothing uses any more, first check the
+target cluster with `kubectl config current-context`, then run
+`helm uninstall meshery-operator -n meshery --kube-context <context>` with
+that cluster's context, so the removal cannot land on whatever cluster the
+active context happens to select.
+
 ### Which Operator version gets installed
 
 Meshery Server installs the Operator as a Helm chart from
@@ -102,7 +145,9 @@ Switch a connection's MeshSync mode from the Kubernetes connection's actions in
 the UI. Under the hood this calls
 `POST /api/integrations/connections/{connectionId}/actions` with
 `{"action":"setMeshsyncMode","mode":"operator"|"embedded"}`; Meshery tears down
-the old setup and redeploys MeshSync in the new mode.
+the old setup and redeploys MeshSync in the new mode. Switching to embedded mode
+leaves the cluster's Operator installed, because other connections may share it
+(see [One Operator per cluster](#one-operator-per-cluster-shared-by-every-connection)).
 {{% /alert %}}
 
 ## Broker connectivity
@@ -118,28 +163,58 @@ token in the `meshery-nats-auth` secret. Meshery Server reads that token and
 presents it when connecting; without it the Broker rejects the connection with an
 authorization violation. This is automatic - there is nothing to configure.
 
+If the Broker is recreated - the Operator reinstalled, or the `meshery`
+namespace rebuilt - it comes back with a new token and often a new endpoint,
+and the connection Meshery holds keeps presenting the old ones. Meshery notices:
+once a Broker connection has been down for about 45 seconds, it re-reads the
+Broker's endpoint and the `meshery-nats-auth` token, and if the token changed,
+or the Broker answers at a different endpoint, it rebuilds the MeshSync data
+connection with the new values and raises an informational **Meshery Broker
+changed; reconnecting MeshSync** event. A Broker
+that is only down, with the same endpoint and token, is left to reconnect on its
+own. No server restart or reconnect is needed.
+
 ### Reachability
 
-- **Meshery running in-cluster** (Helm / `mesheryctl system start --platform
-  kubernetes`): the Broker's `ClusterIP` is directly reachable. Nothing to do.
-- **Meshery running out-of-cluster** (a Docker host, your laptop, or managing a
-  _different_ cluster): the Broker is typically exposed as `ClusterIP` only, which
-  is **not reachable from outside the cluster**. Meshery needs a path to it.
+What matters is whether Meshery Server runs in **the connection's own cluster**,
+not whether it runs in a cluster at all:
+
+- **Meshery running in the connection's cluster** (Helm / `mesheryctl system
+  start --platform kubernetes`, managing the cluster it is installed in): the
+  Broker's `ClusterIP` is directly reachable. Nothing to do.
+- **Meshery running anywhere else** - a Docker host, your laptop, or a Pod in a
+  _different_ cluster: the Broker is typically exposed as `ClusterIP` only, which
+  is **not reachable from outside its cluster**. Meshery needs a path to it.
 
 ### Managed port-forward (automatic)
 
-When Meshery Server runs **out-of-cluster**, it automatically establishes a
-**self-healing port-forward** to the Broker's NATS pod through the Kubernetes API
-server (the same mechanism as `kubectl port-forward`, using the credentials
-Meshery already holds) and connects to NATS over it. It re-establishes the tunnel
-if the pod restarts or the connection drops, and tears it down when the connection
-is disconnected or deleted. **No manual `kubectl port-forward` is required.**
+Unless Meshery Server runs in the connection's own cluster, it automatically
+establishes a **self-healing port-forward** to the Broker's NATS pod through the
+Kubernetes API server (the same mechanism as `kubectl port-forward`, using the
+credentials Meshery already holds) and connects to NATS over it. It
+re-establishes the tunnel if the pod restarts or the connection drops, and tears
+it down when the connection is disconnected or deleted. **No manual `kubectl
+port-forward` is required.**
+
+Meshery recognizes its own cluster by Kubernetes server ID (the `kube-system`
+namespace UID), so a kubeconfig that names that cluster by an external address
+still counts as the same cluster. If the server ID cannot be read - for example,
+Meshery's service account may not read namespaces - only a connection that names
+the in-cluster API endpoint (`kubernetes.default.svc` or the
+`KUBERNETES_SERVICE_HOST` address) is treated as Meshery's own cluster; every
+other connection gets the port-forward, which costs at most a hop through the
+API server.
 
 | Behavior | Detail |
 |---|---|
-| Default | **On** when Meshery runs out-of-cluster. |
-| In-cluster | **Skipped** automatically (the `ClusterIP` is directly reachable). |
+| Default | **On** for every connection to a cluster other than the one Meshery runs in. |
+| Meshery's own cluster | **Skipped** automatically (the `ClusterIP` is directly reachable). |
 | Disable | Set `MESHERY_MANAGED_BROKER_PORTFORWARD=false` on Meshery Server. |
+
+Current releases treat a Meshery Server running inside *any* Kubernetes cluster as
+in-cluster, so a Server that manages a different cluster skips the port-forward
+too - see the known issue under
+[Out-of-Cluster Deployment]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md#out-of-cluster-deployment" >}}).
 
 When disabled, Meshery falls back to the resolved Broker endpoint (and
 `127.0.0.1` / `host.docker.internal` on the Broker port), so you can provide your
@@ -161,7 +236,7 @@ controller status and Meshery's actual Broker connection. The codes it reports:
 | `connection_inactive` | No active session for the connection yet. | Connect the cluster. |
 | `operator_deploy_failed` | Meshery tried to deploy the Operator and could not; the underlying cause is carried in the diagnostic. | Read the cause. An unreadable kubeconfig or missing permissions in the `meshery` namespace need fixing first; an unresolvable chart version means the requested `operator.version` is not published, or the chart repository was unreachable. Redeploying the Operator re-resolves the version, so a transient repository outage clears on retry. |
 | `operator_not_deployed` | The Operator isn't deployed (operator mode). | Reconnect the cluster, or switch MeshSync mode; ensure Meshery can create resources in the `meshery` namespace. |
-| `broker_unreachable` | The Broker is up but Meshery can't reach/authenticate to it. | Make the Broker reachable (the managed port-forward normally handles this; otherwise port-forward it, expose it via NodePort/LoadBalancer, or run Meshery in-cluster). |
+| `broker_unreachable` | The Broker is up but Meshery can't reach/authenticate to it. | Make the Broker reachable (the managed port-forward normally handles this; otherwise port-forward it, expose it via NodePort/LoadBalancer, or run Meshery in that cluster). |
 | `broker_networking` | Informational: how Meshery reaches the Broker - managed port-forward, in-cluster ClusterIP, or a direct endpoint - and the address in use. | Nothing to fix; it reports the transport behind a Broker that Meshery can see. |
 
 The same diagnostics are available programmatically at
@@ -172,11 +247,12 @@ The same diagnostics are available programmatically at
 From the connection in Meshery UI you can:
 
 - **Switch MeshSync mode** (operator ↔ embedded) - see [MeshSync deployment modes](#meshsync-deployment-modes).
-- **(Re)deploy or uninstall** Operator / MeshSync / Broker.
+- **(Re)deploy** Operator / MeshSync / Broker. Uninstalling is cluster-wide and
+  explicit - see [One Operator per cluster](#one-operator-per-cluster-shared-by-every-connection).
 - **Reconnect** Meshery Server to the Broker, or run an ad-hoc connectivity test.
 - **Rediscover / re-upload** the kubeconfig, or **disconnect / delete** the
   connection (which also tears down the managed port-forward and MeshSync data
-  handler).
+  handler, and leaves the cluster's Operator installed).
 - **Reset the Meshery Database** if the cached cluster state looks stale.
 
 ## Known kinks
@@ -190,9 +266,9 @@ From the connection in Meshery UI you can:
   operator (quote it: `token: "$NATS_TOKEN"`). Redeploying often generates a token
   that parses.
 - **"MeshSync running but not connected to Broker."** Almost always a Broker
-  reachability or authentication problem for an out-of-cluster Meshery - see
-  [Broker connectivity](#broker-connectivity). The Diagnostics section will say
-  `broker_unreachable` with remediation.
+  reachability or authentication problem for a Meshery running outside the
+  connection's cluster - see [Broker connectivity](#broker-connectivity). The
+  Diagnostics section will say `broker_unreachable` with remediation.
 
 ## See Also
 

@@ -62,6 +62,9 @@ export const SchemaValidationFormatter = ({ event }: { event: SchemaValidationEv
       0,
     );
 
+  // A stored event has no live designer to navigate into, so its errors are
+  // listed without deep links (ValidationResults defaults canNavigateToErrors
+  // to false) and this machine is never sent anything.
   const validationMachine = {
     send: () => {},
   };

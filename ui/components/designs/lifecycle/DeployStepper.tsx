@@ -145,6 +145,7 @@ const DryRunStep = ({
   selectedK8sContexts,
   design,
   validationMachine,
+  canNavigateToErrors,
   includeDependencies,
   setIncludeDependencies,
 }) => {
@@ -160,6 +161,7 @@ const DryRunStep = ({
         includeDependencies={includeDependencies}
         design={design}
         validationMachine={validationMachine}
+        canNavigateToErrors={canNavigateToErrors}
         deployment_type={deployment_type}
       />
 
@@ -184,12 +186,15 @@ const DryRunStep = ({
 };
 
 // Component to handle the deployment process ie. deploy, undeploy and update ( as all have similar steps)
+// canNavigateToErrors: see ValidateDesign. True by default for Kanvas Designer;
+// Meshery UI pages, which have no designer to navigate into, pass false.
 export const UpdateDeploymentStepper = ({
   handleClose,
   deployment_type,
   handlePerformDeployment,
   design,
   validationMachine,
+  canNavigateToErrors = true,
 }) => {
   const [includeDependencies, setIncludeDependencies] = useState(false);
   const [bypassDryRun, setBypassDryRun] = useState(false);
@@ -222,6 +227,7 @@ export const UpdateDeploymentStepper = ({
               data-testid="validate-design-step"
               handleClose={handleClose}
               validationMachine={validationMachine}
+              canNavigateToErrors={canNavigateToErrors}
               design={design}
             />
           </StepContent>
@@ -249,6 +255,7 @@ export const UpdateDeploymentStepper = ({
               selectedK8sContexts={selectedDeployableK8scontextIds}
               design={design}
               validationMachine={validationMachine}
+              canNavigateToErrors={canNavigateToErrors}
               handleClose={handleClose}
               deployment_type={deployment_type}
               includeDependencies={includeDependencies}
@@ -370,25 +377,39 @@ export const UpdateDeploymentStepper = ({
   );
 };
 
-export const DeployStepper = ({ handleClose, design, validationMachine, handleDeploy }) => (
+export const DeployStepper = ({
+  handleClose,
+  design,
+  validationMachine,
+  handleDeploy,
+  canNavigateToErrors = true,
+}) => (
   <ProviderStoreWrapper>
     <UpdateDeploymentStepper
       handleClose={handleClose}
       design={design}
       handlePerformDeployment={handleDeploy}
       validationMachine={validationMachine}
+      canNavigateToErrors={canNavigateToErrors}
       deployment_type={DEPLOYMENT_TYPE.DEPLOY}
     />
   </ProviderStoreWrapper>
 );
 
-export const UnDeployStepper = ({ handleClose, design, handleUndeploy, validationMachine }) => (
+export const UnDeployStepper = ({
+  handleClose,
+  design,
+  handleUndeploy,
+  validationMachine,
+  canNavigateToErrors = true,
+}) => (
   <ProviderStoreWrapper>
     <UpdateDeploymentStepper
       handleClose={handleClose}
       design={design}
       handlePerformDeployment={handleUndeploy}
       validationMachine={validationMachine}
+      canNavigateToErrors={canNavigateToErrors}
       deployment_type={DEPLOYMENT_TYPE.UNDEPLOY}
     />
   </ProviderStoreWrapper>
