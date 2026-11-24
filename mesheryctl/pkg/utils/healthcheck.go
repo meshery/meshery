@@ -71,6 +71,12 @@ func getK8sVersion(versionString string) ([3]int, error) {
 	}
 
 	for i, segment := range split {
+		// Versions with more than three numeric segments (vendor forks and
+		// enterprise builds, e.g. "1.28.3.1") must not index past the triad.
+		// Fixes #21761: previously triggered "index out of range [3]" panic.
+		if i >= len(version) {
+			break
+		}
 		v, err := strconv.Atoi(strings.TrimSpace(segment))
 		if err != nil {
 			return version, ErrK8sInvalidVersionFormat(fmt.Errorf("unknown version string format [%s]", versionString))
