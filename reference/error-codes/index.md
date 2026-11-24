@@ -16238,6 +16238,31 @@ Older tooling wrote arbitrary version strings into design files</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrKubeconfigUnreadableCode-1501" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrKubeconfigUnreadableCode-more-info" onclick="toggle_visibility('meshery-server-ErrKubeconfigUnreadableCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1501" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errkubeconfigunreadablecode-1501/"><code>ErrKubeconfigUnreadableCode-1501</code></a>
+            </td>
+            <td>The kubeconfig could not be parsed</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrKubeconfigUnreadableCode-1501" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrKubeconfigUnreadableCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">The uploaded file is empty, is not YAML, or does not look like a kubeconfig (it has no kind: Config, current-context, clusters, contexts, or users).</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">A different file was selected, or the kubeconfig was truncated or edited by hand.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Upload the kubeconfig file itself (for example ~/.kube/config), and check it with kubectl config view --kubeconfig &lt;file&gt;.</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>

@@ -8377,6 +8377,8 @@ You can now design and manage any infrastructure that Meshery supports. For the 
     
   
     
+  
+    
       
     
   
@@ -14302,8 +14304,8 @@ Then connect Meshery to your cluster:
 1. In the Meshery UI, navigate to **Lifecycle** from the menu on the left.
 2. Select **Connections**.
 3. Click **Create Connection** and choose **Kubernetes**.
-4. In the **Import Kubeconfig** step, upload your kubeconfig file and select the contexts to import.
-5. Review the import and confirm it.
+4. In the **Import Kubeconfig** step, upload your kubeconfig file.
+5. On **Review Contexts**, choose the contexts to import, then click **Import** to save them as connections.
 
 **Note**: Meshery rejects an uploaded kubeconfig whose `certificate-authority`, `client-certificate`, `client-key` or `tokenFile` entries are file paths, because the Meshery Server cannot (and must not) read files from your machine. Minikube writes `client-certificate` and `client-key` as paths, so embed them before you upload:
 
@@ -17255,10 +17257,18 @@ Credentials entered in the wizard are persisted as first-class, named [Credentia
 
 Kubernetes uses a dedicated flow because a single kubeconfig can describe many clusters and its kubeconfig also serves as its credential.
 
+The Kubernetes flow has four steps: **Choose Connection**, **Import Kubeconfig**, **Review Contexts**, and **Done**.
+
 1. **Choose Connection** → **Kubernetes**.
-2. **Import Kubeconfig.** Upload a kubeconfig file. Meshery parses it and lists the contexts it contains, indicating which are reachable - nothing is persisted yet. The kubeconfig must embed its certificates, keys and tokens (`*-data`, `token`); one that names files by path (`certificate-authority`, `client-certificate`, `client-key`, `tokenFile`) is rejected, because the Meshery Server cannot read files from your machine. Create an embedded copy with `kubectl config view --minify --flatten --raw`.
-3. **Select contexts.** Choose which contexts to import. For each, you can override the Connection name and choose a [MeshSync deployment mode](#meshsync-deployment-mode).
-4. **Review Import.** Confirm your selection and import. Meshery creates one Connection per selected context and reports the outcome, grouped into connected, registered, ignored, and errored buckets.
+2. **Import Kubeconfig.** Upload a kubeconfig file. Nothing is saved yet. The kubeconfig must embed its certificates, keys and tokens (`*-data`, `token`); one that names files by path (`certificate-authority`, `client-certificate`, `client-key`, `tokenFile`) is rejected, because the Meshery Server cannot read files from your machine. Create an embedded copy with `kubectl config view --minify --flatten --raw`. Meshery reads the file and tells you which of these it found:
+   - A file that cannot be parsed is reported as an error.
+   - A valid kubeconfig that lists no contexts says that the file does not contain any contexts.
+   - Contexts whose authentication method is unsupported (an exec plugin or an auth-provider, for example), or whose credentials cannot be read, are skipped and listed with the reason. Meshery does not run exec plugins or auth-provider helpers from an imported kubeconfig, because they would execute on the Meshery Server host. This applies only to uploaded files: the kubeconfig Meshery Server reads from its own host (the `KUBECONFIG_FOLDER` directory, `~/.kube` by default) keeps its exec plugins, so a natively run server can still use `aws eks get-token` or `gke-gcloud-auth-plugin` from the operator's kubeconfig.
+3. **Review Contexts.** Each context that can be imported is marked **Reachable** or **Unreachable**. Choose which clusters to import, rename them if you want, and pick a [MeshSync deployment mode](#meshsync-deployment-mode). The checkbox is labeled: "Connect reachable clusters after import. Unreachable clusters are imported as discovered and can be connected later." When it is checked, reachable clusters are connected after they are imported. Unreachable clusters are still imported and can be connected later. Going back to Import Kubeconfig and continuing with the same file keeps these edits.
+4. **Done.** In create mode there is no Back button, so the import is not run a second time by returning to Review Contexts. The result is one of:
+   - **Success.** Every selected context was imported and none were errored, ignored, or failed to connect. A green check is shown with the heading "Kubernetes import complete".
+   - **Partial.** Some contexts were imported and some were errored, ignored, or failed to connect. The heading is "Kubernetes import completed with issues", and each of those contexts is listed with the reason when one was provided.
+   - **Failure.** Nothing was imported. The heading is "Kubernetes import failed", and errored, ignored, or failed-to-connect contexts are listed with their reasons when one was provided.
 
 Each imported cluster is created as a Kubernetes Connection that [MeshSync](/concepts/architecture/meshsync/) keeps in sync. From there, Meshery can deploy and operate workloads, visualize the cluster, and more. See [Managing Connections](/guides/infrastructure-management/lifecycle-management/). If the cluster already runs workloads you did not deploy through Meshery, see [Bringing Existing Infrastructure Under Meshery Management](/guides/infrastructure-management/managing-existing-infrastructure/) for what to evaluate before importing and how discovery treats pre-existing resources.
 
@@ -27384,6 +27394,13 @@ An extension matches a Connection by `kind` (optionally narrowed by `type`/`subT
 - `postConfigSteps` - extra steps appended after registration; these also drive the wizard's **configure** mode for an already-registered Connection.
 
 Each step implements a small contract - an `id` and `label`, a `Component` to render, and optional `canProceed`, `onNext`, `nextLabel`, and `hidden` hooks. Use the existing `kubernetesExtension` as a worked example, and see [Contributing to the Meshery UI](/project/contributing/ui/) for building and testing UI changes.
+
+<div class="alert alert-warning" role="alert"><div class="h4 alert-heading" role="heading">Kubeconfig discovery and who may run exec plugins</div>
+
+
+Kubeconfig upload, discovery, and registration go through `models.DiscoverKubeconfigContexts` in `server/models/k8s_context.go`. Its `KubeconfigDiscoveryOptions.Source` says who supplied the file. `KubeconfigFromUpload`, the zero value, is any kubeconfig that arrived over the API: its exec-plugin and auth-provider contexts are skipped before a client is built, because client-go would otherwise run the named command on the Meshery Server host during the reachability probe. `KubeconfigFromServer` is reserved for the server operator's own kubeconfig (`KUBECONFIG_FOLDER`) and the contexts discovered from it; their authentication runs as configured. A new caller that handles a user-supplied kubeconfig must not pass `KubeconfigFromServer`. This guard applies at discovery only: it does not re-check the credentials of a connection that is already saved, so code that builds a client from stored credentials must not assume they were screened.
+</div>
+
 
 <div class="alert alert-warning" role="alert"><div class="h4 alert-heading" role="heading">Prefer schemas over code</div>
 
@@ -78839,6 +78856,12 @@ url: /reference/error-codes/component-meshery-server/errkubeconfigfilereferencec
 
 
 --------------------------------------------------------------------------------
+title: "ErrKubeconfigUnreadableCode-1501"
+url: /reference/error-codes/component-meshery-server/errkubeconfigunreadablecode-1501/index.md
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
 title: "ErrKubectlDescribeCode-1198"
 url: /reference/error-codes/component-meshery-server/errkubectldescribecode-1198/index.md
 --------------------------------------------------------------------------------
@@ -95947,6 +95970,31 @@ Older tooling wrote arbitrary version strings into design files</p>
               <p class="error-details">exec plugins, auth-providers and certificate, key or token file paths are executed or read on the machine running Meshery Server, so only the server&#39;s own kubeconfig may use them</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Replace the credential with embedded data (client-certificate-data, client-key-data, certificate-authority-data, token) and save it again</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrKubeconfigUnreadableCode-1501" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrKubeconfigUnreadableCode-more-info" onclick="toggle_visibility('meshery-server-ErrKubeconfigUnreadableCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1501" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errkubeconfigunreadablecode-1501/"><code>ErrKubeconfigUnreadableCode-1501</code></a>
+            </td>
+            <td>The kubeconfig could not be parsed</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrKubeconfigUnreadableCode-1501" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrKubeconfigUnreadableCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">The uploaded file is empty, is not YAML, or does not look like a kubeconfig (it has no kind: Config, current-context, clusters, contexts, or users).</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">A different file was selected, or the kubeconfig was truncated or edited by hand.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Upload the kubeconfig file itself (for example ~/.kube/config), and check it with kubectl config view --kubeconfig &lt;file&gt;.</p>
             </td>
           </tr>
         

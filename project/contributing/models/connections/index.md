@@ -249,6 +249,13 @@ An extension matches a Connection by `kind` (optionally narrowed by `type`/`subT
 
 Each step implements a small contract - an `id` and `label`, a `Component` to render, and optional `canProceed`, `onNext`, `nextLabel`, and `hidden` hooks. Use the existing `kubernetesExtension` as a worked example, and see [Contributing to the Meshery UI](/project/contributing/ui/) for building and testing UI changes.
 
+<div class="alert alert-warning" role="alert"><div class="h4 alert-heading" role="heading">Kubeconfig discovery and who may run exec plugins</div>
+
+
+Kubeconfig upload, discovery, and registration go through `models.DiscoverKubeconfigContexts` in `server/models/k8s_context.go`. Its `KubeconfigDiscoveryOptions.Source` says who supplied the file. `KubeconfigFromUpload`, the zero value, is any kubeconfig that arrived over the API: its exec-plugin and auth-provider contexts are skipped before a client is built, because client-go would otherwise run the named command on the Meshery Server host during the reachability probe. `KubeconfigFromServer` is reserved for the server operator's own kubeconfig (`KUBECONFIG_FOLDER`) and the contexts discovered from it; their authentication runs as configured. A new caller that handles a user-supplied kubeconfig must not pass `KubeconfigFromServer`. This guard applies at discovery only: it does not re-check the credentials of a connection that is already saved, so code that builds a client from stored credentials must not assume they were screened.
+</div>
+
+
 <div class="alert alert-warning" role="alert"><div class="h4 alert-heading" role="heading">Prefer schemas over code</div>
 
 

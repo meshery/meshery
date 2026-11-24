@@ -1182,6 +1182,7 @@ Bookinfo The sample BookInfo …
 - [ErrKeysRegisterColumnMissingCode-1486](/reference/error-codes/component-meshery-server/errkeysregistercolumnmissingcode-1486/index.md)
 - [ErrKubeClientCode-1066](/reference/error-codes/component-meshery-server/errkubeclientcode-1066/index.md)
 - [ErrKubeConfigFileReferenceCode-1499](/reference/error-codes/component-meshery-server/errkubeconfigfilereferencecode-1499/index.md)
+- [ErrKubeconfigUnreadableCode-1501](/reference/error-codes/component-meshery-server/errkubeconfigunreadablecode-1501/index.md)
 - [ErrKubectlDescribeCode-1198](/reference/error-codes/component-meshery-server/errkubectldescribecode-1198/index.md)
 - [ErrKubernetesConnectivityCode-1138](/reference/error-codes/client-mesheryctl/errkubernetesconnectivitycode-1138/index.md)
 - [ErrKubernetesQueryCode-1139](/reference/error-codes/client-mesheryctl/errkubernetesquerycode-1139/index.md)
