@@ -69,11 +69,9 @@ type operatorCluster struct {
 // replaces.
 //
 // Deriving identity this way needs no cluster I/O, so nothing has to resolve
-// or rewrite a context before it is keyed. The edge it leaves: aliasing is not
-// transitive, so a context with no server ID whose API server URL no other
-// context names cannot be unified with the cluster's other connections - and
-// neither can two contexts that are only linked through a third context
-// carrying both their keys.
+// or rewrite a context before it is keyed. The edge it leaves: a context with
+// no server ID whose API server URL no other context names cannot be unified
+// with the cluster's other connections.
 func operatorClusterKeys(k8sctx K8sContext) []string {
 	keys := make([]string, 0, 2)
 	if id := k8sctx.KubernetesServerID; id != nil && *id != uuid.Nil {
@@ -99,15 +97,44 @@ func operatorConsumerID(k8sctx K8sContext) string {
 	return k8sctx.ID
 }
 
-// clusters returns the lifecycle state for each of k8sctx's cluster keys, in
-// key order, creating any on first use.
+// clusters returns the lifecycle state for each cluster key transitively linked
+// to k8sctx's cluster keys, in key order, creating any on first use.
 func (ot *OperatorTracker) clusters(k8sctx K8sContext) []*operatorCluster {
-	keys := operatorClusterKeys(k8sctx)
+	own := operatorClusterKeys(k8sctx)
 	ot.mx.Lock()
 	defer ot.mx.Unlock()
 	if ot.clustersByKey == nil {
 		ot.clustersByKey = make(map[string]*operatorCluster)
 	}
+	if ot.clusterKeyLinks == nil {
+		ot.clusterKeyLinks = make(map[string]map[string]struct{})
+	}
+	for _, a := range own {
+		for _, b := range own {
+			if ot.clusterKeyLinks[a] == nil {
+				ot.clusterKeyLinks[a] = make(map[string]struct{})
+			}
+			ot.clusterKeyLinks[a][b] = struct{}{}
+		}
+	}
+	seen := map[string]struct{}{}
+	queue := append([]string(nil), own...)
+	for len(queue) > 0 {
+		key := queue[0]
+		queue = queue[1:]
+		if _, ok := seen[key]; ok {
+			continue
+		}
+		seen[key] = struct{}{}
+		for linked := range ot.clusterKeyLinks[key] {
+			queue = append(queue, linked)
+		}
+	}
+	keys := make([]string, 0, len(seen))
+	for key := range seen {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
 	cs := make([]*operatorCluster, 0, len(keys))
 	for _, key := range keys {
 		c, ok := ot.clustersByKey[key]
