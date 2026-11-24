@@ -1,0 +1,20 @@
+version: 0.0.33
+name: meshery-playground---web-app
+displayName: Meshery Playground - Web App
+createdAt: "2026-11-17T20:29:08Z"
+description: A conceptual Meshery Kanvas canvas for a simple web application, created to demonstrate the visual design workspace.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/7eb77447-adb1-4091-83ed-1f9d1546f4fa/0.0.33/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This version is an illustrative visual canvas with text and annotation shapes only. It contains no Kubernetes workload components or manifests and is not deployable. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: c8b66d46-43e2-4eab-9a57-834cfb07b88b
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

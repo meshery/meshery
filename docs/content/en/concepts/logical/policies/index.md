@@ -20,7 +20,10 @@ Meshery Server has a built-in policy engine implemented natively in Go (ported f
 Each evaluation cycle visits every registered policy and applies it to the current design in three phases:
 
 - **Identify** — propose new relationships from the policy's selectors and the matching component configuration. The hierarchical parent-child policy, for example, connects a Pod that declares `namespace: production` to the `Namespace/production` declaration in the same design.
-- **Validate** — drop existing relationships whose endpoints no longer satisfy the policy (the from or to component was removed, or its kind / labels no longer match).
+- **Validate** — mark existing relationships deleted when their endpoints no
+  longer satisfy the policy (the from or to component was removed, or its kind /
+  labels no longer match).
+  Pending relationships remain pending until their components become available.
 - **Apply side effects** — patch component configuration when a relationship requires it. A binding relationship copies a value from its mutator endpoint into a field on the bound component, and reverses that patch on deletion.
 
 **Built-in policies**
@@ -40,10 +43,9 @@ The same Go codebase is built for two targets: the native server binary that shi
 In any given Meshery deployment, you can reference and search the full set of registered policies (in Meshery's internal registry) in using either of Meshery's client interfaces.
 
 {{% alert color="info" title="Viewing All Registered Relationships" %}}
-You can view all registered relationships using either Meshery UI or Meshery CLI.
+You can view all registered relationships in the Meshery UI.
 
 - **Using Meshery UI**: Navigate to *Settings*, then to *Registry*
-- **Using Meshery CLI**: `mesheryctl policy list`
 {{% /alert %}}
 
 <!-- There are different points in time in which policy evaluations are invoked

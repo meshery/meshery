@@ -157,6 +157,24 @@ func (h *Handler) handleFilterPOST(
 		return
 	}
 
+	if parsedBody == nil {
+		err := fmt.Errorf("request body cannot be empty")
+		errSaveFilter := ErrSaveFilter(err)
+		if h.log != nil {
+			h.log.Error(errSaveFilter)
+		}
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": errSaveFilter,
+		}).WithDescription("Filter request body is empty.").Build()
+		h.persistAndPublish(provider, token, userID, event)
+		writeMeshkitError(rw, errSaveFilter, http.StatusBadRequest)
+		addMeshkitErr(&res, errSaveFilter)
+		if h.EventsBuffer != nil {
+			go h.EventsBuffer.Publish(&res)
+		}
+		return
+	}
+
 	if parsedBody.FilterData != nil && parsedBody.FilterData.ID != nil {
 		actedUpon = parsedBody.FilterData.ID
 	}
@@ -520,6 +538,21 @@ func (h *Handler) PublishCatalogFilterHandler(
 		return
 	}
 
+	if parsedBody == nil {
+		err := fmt.Errorf("request body cannot be empty")
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
+		e := eventBuilder.WithSeverity(events.Error).
+			WithMetadata(map[string]interface{}{
+				"error": ErrRequestBody(err),
+			}).
+			WithDescription("Filter payload cannot be empty.").Build()
+		h.persistAndPublish(provider, token, userID, e)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
 	resp, err := provider.PublishCatalogFilter(r, parsedBody)
 	if err != nil {
 		if h.log != nil {
@@ -614,6 +647,22 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
+
+	if parsedBody == nil {
+		err := fmt.Errorf("request body cannot be empty")
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
+		e := eventBuilder.WithSeverity(events.Error).
+			WithMetadata(map[string]interface{}{
+				"error": ErrRequestBody(err),
+			}).
+			WithDescription("Filter payload cannot be empty.").Build()
+		h.persistAndPublish(provider, token, userID, e)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
 	resp, err := provider.UnPublishCatalogFilter(r, parsedBody)
 	if err != nil {
 		if h.log != nil {
