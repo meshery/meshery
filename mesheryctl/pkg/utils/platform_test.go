@@ -542,3 +542,545 @@ func TestDeleteDeployments(t *testing.T) {
 		}
 	})
 }
+
+func TestGetDeploymentVersion(t *testing.T) {
+	tests := []struct {
+		name        string
+		content     string
+		wantVersion string
+		wantErr     bool
+		errContains string
+	}{
+		{
+			name: "channel and version tag (stable-v0.7.0)",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:stable-v0.7.0
+`,
+			wantVersion: "v0.7.0",
+		},
+		{
+			name: "edge channel latest tag (edge-latest)",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:edge-latest
+`,
+			wantVersion: "latest",
+		},
+		{
+			name: "plain semver tag without channel (v0.7.0)",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:v0.7.0
+`,
+			wantVersion: "v0.7.0",
+		},
+		{
+			name: "plain latest tag without channel",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:latest
+`,
+			wantVersion: "latest",
+		},
+		{
+			name: "multi-hyphen tag (edge-2024-01-15)",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:edge-2024-01-15
+`,
+			wantVersion: "2024-01-15",
+		},
+		{
+			name: "prerelease semver tag without channel (v0.7.0-beta.1)",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:v0.7.0-beta.1
+`,
+			wantVersion: "v0.7.0-beta.1",
+		},
+		{
+			name: "channel with prerelease semver tag (stable-v0.7.0-rc.1)",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:stable-v0.7.0-rc.1
+`,
+			wantVersion: "v0.7.0-rc.1",
+		},
+		{
+			name: "missing tag on image (no colon)",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery
+`,
+			wantErr:     true,
+			errContains: "missing tag",
+		},
+		{
+			name: "empty containers slice",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers: []
+`,
+			wantErr:     true,
+			errContains: "no containers",
+		},
+		{
+			name: "invalid yaml",
+			content: `
+:::invalid yaml
+`,
+			wantErr: true,
+		},
+		{
+			name: "port-qualified image with channel (localhost:5000/meshery/meshery:stable-v0.7.0)",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: localhost:5000/meshery/meshery:stable-v0.7.0
+`,
+			wantVersion: "v0.7.0",
+		},
+		{
+			name: "port-qualified image without tag (localhost:5000/meshery/meshery)",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: localhost:5000/meshery/meshery
+`,
+			wantErr:     true,
+			errContains: "missing tag",
+		},
+		{
+			name: "digest-only image without tag (meshery/meshery@sha256:abc)",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery@sha256:abc123def456
+`,
+			wantErr:     true,
+			errContains: "missing tag",
+		},
+		{
+			name: "unprefixed semver with prerelease (meshery/meshery:0.7.0-rc1)",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:0.7.0-rc1
+`,
+			wantVersion: "0.7.0-rc1",
+		},
+		{
+			name: "channel tag with trailing hyphen and empty version (meshery/meshery:stable-)",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:stable-
+`,
+			wantErr:     true,
+			errContains: "empty version",
+		},
+		{
+			name: "prerelease tag with non-channel prefix (meshery/meshery:beta-1)",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:beta-1
+`,
+			wantVersion: "beta-1",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tmpDir := t.TempDir()
+			filePath := filepath.Join(tmpDir, "meshery-deployment.yaml")
+			if err := os.WriteFile(filePath, []byte(strings.TrimSpace(tt.content)), 0644); err != nil {
+				t.Fatalf("failed to write test deployment file: %v", err)
+			}
+
+			gotVersion, err := GetDeploymentVersion(filePath)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("GetDeploymentVersion() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if tt.wantErr {
+				if tt.errContains != "" && !strings.Contains(err.Error(), tt.errContains) {
+					t.Errorf("GetDeploymentVersion() error = %v, want error containing %q", err, tt.errContains)
+				}
+				return
+			}
+			if gotVersion != tt.wantVersion {
+				t.Errorf("GetDeploymentVersion() = %q, want %q", gotVersion, tt.wantVersion)
+			}
+		})
+	}
+
+	t.Run("non-existent file", func(t *testing.T) {
+		_, err := GetDeploymentVersion("/non/existent/path/file.yaml")
+		if err == nil {
+			t.Errorf("expected error for non-existent file, got nil")
+		}
+	})
+}
+
+func TestChangeManifestVersion(t *testing.T) {
+	t.Run("empty containers returns error", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		filePath := filepath.Join(tmpDir, "deployment.yaml")
+		content := `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers: []
+`
+		if err := os.WriteFile(filePath, []byte(strings.TrimSpace(content)), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
+
+		err := ChangeManifestVersion("edge", "latest", filePath)
+		if err == nil || !strings.Contains(err.Error(), "no containers") {
+			t.Errorf("expected no-containers error, got %v", err)
+		}
+	})
+
+	t.Run("successfully updates manifest image", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		filePath := filepath.Join(tmpDir, "deployment.yaml")
+		content := `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:stable-v0.6.0
+`
+		if err := os.WriteFile(filePath, []byte(strings.TrimSpace(content)), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
+
+		err := ChangeManifestVersion("stable", "v0.7.0", filePath)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		gotVersion, err := GetDeploymentVersion(filePath)
+		if err != nil {
+			t.Fatalf("GetDeploymentVersion failed on updated manifest: %v", err)
+		}
+		if gotVersion != "v0.7.0" {
+			t.Errorf("expected updated version %q, got %q", "v0.7.0", gotVersion)
+		}
+	})
+
+	t.Run("edge channel sets version to latest", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		filePath := filepath.Join(tmpDir, "deployment.yaml")
+		content := `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:stable-v0.6.0
+`
+		if err := os.WriteFile(filePath, []byte(strings.TrimSpace(content)), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
+
+		err := ChangeManifestVersion("edge", "v0.7.0", filePath)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		gotVersion, err := GetDeploymentVersion(filePath)
+		if err != nil {
+			t.Fatalf("GetDeploymentVersion failed on updated manifest: %v", err)
+		}
+		if gotVersion != "latest" {
+			t.Errorf("expected updated version %q, got %q", "latest", gotVersion)
+		}
+	})
+
+	t.Run("port-qualified image preserves repository on update", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		filePath := filepath.Join(tmpDir, "deployment.yaml")
+		content := `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: localhost:5000/meshery/meshery:stable-v0.6.0
+`
+		if err := os.WriteFile(filePath, []byte(strings.TrimSpace(content)), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
+
+		err := ChangeManifestVersion("stable", "v0.7.0", filePath)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		updatedContent, err := os.ReadFile(filePath)
+		if err != nil {
+			t.Fatalf("failed to read updated file: %v", err)
+		}
+		wantImage := "localhost:5000/meshery/meshery:stable-v0.7.0"
+		if !strings.Contains(string(updatedContent), wantImage) {
+			t.Errorf("expected updated file to contain %q, got:\n%s", wantImage, string(updatedContent))
+		}
+
+		gotVersion, err := GetDeploymentVersion(filePath)
+		if err != nil {
+			t.Fatalf("GetDeploymentVersion failed on updated manifest: %v", err)
+		}
+		if gotVersion != "v0.7.0" {
+			t.Errorf("expected updated version %q, got %q", "v0.7.0", gotVersion)
+		}
+	})
+
+	t.Run("digest-pinned image replaces digest with channel tag on update", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		filePath := filepath.Join(tmpDir, "deployment.yaml")
+		content := `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery@sha256:abc123def456
+`
+		if err := os.WriteFile(filePath, []byte(strings.TrimSpace(content)), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
+
+		err := ChangeManifestVersion("stable", "v0.7.0", filePath)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		updatedContent, err := os.ReadFile(filePath)
+		if err != nil {
+			t.Fatalf("failed to read updated file: %v", err)
+		}
+		wantImage := "meshery/meshery:stable-v0.7.0"
+		if !strings.Contains(string(updatedContent), wantImage) {
+			t.Errorf("expected updated file to contain %q, got:\n%s", wantImage, string(updatedContent))
+		}
+
+		gotVersion, err := GetDeploymentVersion(filePath)
+		if err != nil {
+			t.Fatalf("GetDeploymentVersion failed on updated manifest: %v", err)
+		}
+		if gotVersion != "v0.7.0" {
+			t.Errorf("expected updated version %q, got %q", "v0.7.0", gotVersion)
+		}
+	})
+
+	t.Run("empty image returns error", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		filePath := filepath.Join(tmpDir, "deployment.yaml")
+		content := `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: ""
+`
+		if err := os.WriteFile(filePath, []byte(strings.TrimSpace(content)), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
+
+		err := ChangeManifestVersion("stable", "v0.7.0", filePath)
+		if err == nil || !strings.Contains(err.Error(), "repository is empty") {
+			t.Errorf("expected repository is empty error, got %v", err)
+		}
+	})
+
+	t.Run("empty channel returns error", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		filePath := filepath.Join(tmpDir, "deployment.yaml")
+		content := `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:stable-v0.6.0
+`
+		if err := os.WriteFile(filePath, []byte(strings.TrimSpace(content)), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
+
+		err := ChangeManifestVersion("", "v0.7.0", filePath)
+		if err == nil || !strings.Contains(err.Error(), "invalid channel") {
+			t.Errorf("expected invalid channel error, got %v", err)
+		}
+	})
+
+	t.Run("empty version returns error", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		filePath := filepath.Join(tmpDir, "deployment.yaml")
+		content := `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:stable-v0.6.0
+`
+		if err := os.WriteFile(filePath, []byte(strings.TrimSpace(content)), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
+
+		err := ChangeManifestVersion("stable", "", filePath)
+		if err == nil || !strings.Contains(err.Error(), "invalid channel") {
+			t.Errorf("expected invalid channel error, got %v", err)
+		}
+	})
+}
