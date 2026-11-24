@@ -155,7 +155,7 @@ Use the UI, or `mesheryctl`, or both.
 
 **Meshery UI**
 
-1. Go to **Configuration** > **Designs**, or open https://playground.meshery.io/configuration/designs?view=table. The page opens in grid view; the steps in this lab use the table view, so click **Switch View** (top right) if you see cards.
+1. Go to **Configuration** > **Designs**, or open https://playground.meshery.io/configuration/designs?view=table. The page opens in grid view; the steps in this lab use the table view, so if you see cards, click the view toggle at the top right (its tooltip reads **Grid View**).
 2. Click **Import Design**.
 3. Enter the **Design Name** `kubecon-<your-handle>-design`, for example `kubecon-octocat-design`.
 4. Choose **File Upload**, then pick `kubecon-design.yaml` from your computer.
@@ -308,7 +308,6 @@ Confirm `mesheryctl system context view` shows the Playground endpoint before yo
    - Delete the sample relationship. Its `relationships.meshery.io/v1beta3` schema version is also rejected, and the model only needs the component.
 
    An SVG is full of double quotes and line breaks, so pasting it into a JSON string by hand breaks the file. Let `jq` do the escaping instead.
-
 3. **Apply the edits with `jq`.** Run this from the directory where you ran `model init`. Set `HANDLE` to your handle and `DL` to the folder holding the two downloaded SVGs:
 
    ```sh
@@ -481,15 +480,14 @@ Room-level target: at least 80% of attendees complete both labs. Track it with a
 | Model name rejected | Use lowercase letters, digits, and hyphens only, no spaces or underscores. |
 | Create Model will not leave the Source step | The wizard requires a GitHub or Artifact Hub URL and generates components from that URL. It cannot create a component from an SVG alone. Use **Import Model** with [kubecon-logo.tar.gz](kubecon-logo.tar.gz) instead. |
 | `mesheryctl` talks to the wrong server | Run `mesheryctl system context view` and confirm the endpoint is `https://playground.meshery.io` before import or delete. Recreate the context and token if it is not. |
-| `model import` says *No valid component or relationship found* | The component still has the scaffold's `schemaVersion: components.meshery.io/v1beta3`. Change it to `components.meshery.io/v1beta1`, then run `model build` and `model import` again. |
-| `model import` reports *encountered error for 1 entity (1 relationship)* | The scaffold's sample `relationships/relationship.json` is still there. Delete it, rebuild and re-import. The logo component itself imported. |
-| `model build` or `model import` fails | Open the Notification Center or the CLI error. Check that `metadata.isAnnotation` is `true`, that each SVG is a JSON-escaped string (see step 3), and that the component `schemaVersion` is `components.meshery.io/v1beta1`. If it stays stuck, import the ready-made [kubecon-logo.tar.gz](kubecon-logo.tar.gz). |
+| `model build` or `model import` fails | Open the Notification Center or the CLI error. Check that each file is valid JSON (`jq . model.json components/kubecon-logo.json`), that `metadata.isAnnotation` is `true`, that each SVG is a JSON-escaped string (see step 3), and that the component `schemaVersion` is `components.meshery.io/v1beta1`. "No valid component or relationship found" almost always means the component kept the scaffold's `v1beta3` schema version. If it stays stuck, import the ready-made [kubecon-logo.tar.gz](kubecon-logo.tar.gz). |
+| `model import` reports an error for 1 relationship | The sample `relationships/relationship.json` was left in place. The component still imports; delete the file and rebuild to clear the error. |
 | `jq: command not found` | Install `jq` (see Prerequisites), or use the ready-made [kubecon-logo.tar.gz](kubecon-logo.tar.gz). |
 | Model shows version `v0.0.1` | `model init` from `mesheryctl` v1.0.76 and earlier does not write `--version` into the files. Setting `version` and `model.version` in step 3 fixes it. |
 | Model not in the Kanvas component list | Refresh the Kanvas tab, then search by display name (`KubeCon Logo`). If you used Import Model, confirm the model is listed in the Registry first. |
 | KubeCon Logo shows "(contains invalid schema)" in the Design Configurator | Expected: an annotation component has no configuration form. Use the export-and-update path in Lab 2, Path B. |
 | `design import` says "Invalid design source type" | Use `-s design` (or `kubernetes manifest`, `helm chart`, `docker compose`), or leave `-s` out and let Meshery Server detect the format. |
-| Validate Design or Design Information is not in the menu | You are in grid view. Click **Switch View**, or use the card's **Action** menu and info icon. |
+| Validate Design or Design Information is not in the menu | You are in grid view. Click the view toggle at the top right (its tooltip reads **Grid View**), or use the card's **Action** menu and info icon. |
 | Service does not target the Deployment | The Service selector must match a label on the Deployment, for example `app: kubecon-<your-handle>` or `app: kubecon-demo` if you imported the ready-made manifest unchanged. Port and targetPort should both be `80`. |
 | Publish to Catalog is disabled | Sign in again and reopen **Design Information**. Publish requires a signed-in account that owns the design and has the Publish Design permission. |
 | Catalog request still says it is queued or pending | That is expected for a regular user. The lab is complete once the request is submitted. Keep editing if you are still in Lab 2; a pending request on the same design updates automatically. |
