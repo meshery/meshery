@@ -239,8 +239,6 @@ func GetChannelAndVersion(currCtx *(config.Context)) (string, string, error) {
 	return channel, version, nil
 }
 
-var channelPrefix = regexp.MustCompile(`^[a-zA-Z]+$`)
-
 // splitImage returns the repository and tag of an image reference.
 // The tag is empty when the image has no tag (including digest-only images).
 func splitImage(image string) (repo, tag string) {
@@ -285,7 +283,7 @@ func GetDeploymentVersion(filePath string) (string, error) {
 	if tag == "" {
 		return "", fmt.Errorf("invalid image format %q: missing tag", image)
 	}
-	if prefix, rest, found := strings.Cut(tag, "-"); found && channelPrefix.MatchString(prefix) {
+	if prefix, rest, found := strings.Cut(tag, "-"); found && (prefix == "stable" || prefix == "edge") {
 		if rest == "" {
 			return "", fmt.Errorf("invalid image format %q: empty version", image)
 		}
@@ -656,6 +654,9 @@ func ChangeManifestVersion(channel, version, filePath string) error {
 	repo, _ := splitImage(image)
 	if repo == "" {
 		return fmt.Errorf("invalid image %q in %s: repository is empty", image, filePath)
+	}
+	if channel == "" || version == "" {
+		return fmt.Errorf("invalid channel %q or version %q for %s", channel, version, filePath)
 	}
 	compose.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s:%s-%s", repo, channel, version)
 

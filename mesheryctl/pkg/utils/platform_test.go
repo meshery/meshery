@@ -785,6 +785,22 @@ spec:
 			wantErr:     true,
 			errContains: "empty version",
 		},
+		{
+			name: "prerelease tag with non-channel prefix (meshery/meshery:beta-1)",
+			content: `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:beta-1
+`,
+			wantVersion: "beta-1",
+		},
 	}
 
 	for _, tt := range tests {
@@ -1015,6 +1031,56 @@ spec:
 		err := ChangeManifestVersion("stable", "v0.7.0", filePath)
 		if err == nil || !strings.Contains(err.Error(), "repository is empty") {
 			t.Errorf("expected repository is empty error, got %v", err)
+		}
+	})
+
+	t.Run("empty channel returns error", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		filePath := filepath.Join(tmpDir, "deployment.yaml")
+		content := `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:stable-v0.6.0
+`
+		if err := os.WriteFile(filePath, []byte(strings.TrimSpace(content)), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
+
+		err := ChangeManifestVersion("", "v0.7.0", filePath)
+		if err == nil || !strings.Contains(err.Error(), "invalid channel") {
+			t.Errorf("expected invalid channel error, got %v", err)
+		}
+	})
+
+	t.Run("empty version returns error", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		filePath := filepath.Join(tmpDir, "deployment.yaml")
+		content := `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshery
+spec:
+  template:
+    spec:
+      containers:
+        - name: meshery
+          image: meshery/meshery:stable-v0.6.0
+`
+		if err := os.WriteFile(filePath, []byte(strings.TrimSpace(content)), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
+
+		err := ChangeManifestVersion("stable", "", filePath)
+		if err == nil || !strings.Contains(err.Error(), "invalid channel") {
+			t.Errorf("expected invalid channel error, got %v", err)
 		}
 	})
 }
