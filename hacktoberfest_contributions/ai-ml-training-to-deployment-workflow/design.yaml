@@ -1,0 +1,1150 @@
+id: 00000000-0000-0000-0000-000000000000
+name: ai-ml-training-to-deployment-workflow
+schemaVersion: designs.meshery.io/v1beta3
+version: 0.0.3
+components:
+  - id: c539ff11-9fa7-4ff9-bcec-b6537ada419c
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Model Training Pipeline
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Amazon Web Services
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: aws
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 0
+      height: 174.87645
+      opacity: 1
+      padding: 6
+      position:
+        x: 472.85709892669547
+        y: 254.74189441005404
+      primaryColor: '#01A88D'
+      secondaryColor: '#00D3A9'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/aws/color/aws sagemaker-color.svg
+      svgComplete: ui/public/static/img/meshmodels/aws/complete/aws sagemaker-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/aws/white/aws sagemaker-white.svg
+      width: 177.07521
+      z-index: 3
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration:
+      metadata:
+        name: Model Training Pipeline
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: AWS SageMaker
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 7c50e603-09b4-4802-8892-c9068d16a57a
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Model Registry
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Amazon Web Services
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: aws
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 0
+      height: 189.5089
+      opacity: 1
+      padding: 6
+      position:
+        x: 832.7587821301329
+        y: 255.52647933191955
+      primaryColor: '#7AA116'
+      secondaryColor: '#00D3A9'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/aws/color/aws s3 on outposts-color.svg
+      svgComplete: ui/public/static/img/meshmodels/aws/complete/aws s3 on outposts-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/aws/white/aws s3 on outposts-white.svg
+      width: 197.35428
+      z-index: 5
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration:
+      metadata:
+        name: Model Registry
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: AWS S3 on Outposts
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 89d2ba2e-54d8-43db-815e-3d688b1201f9
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Inference Service
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Amazon Web Services
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: aws
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 0
+      height: 151.44037
+      opacity: 1
+      padding: 6
+      position:
+        x: 1196.8551080388065
+        y: 255.52647933191952
+      primaryColor: '#ED7100'
+      secondaryColor: '#00D3A9'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/aws/color/aws lambda-color.svg
+      svgComplete: ui/public/static/img/meshmodels/aws/complete/aws lambda-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/aws/white/aws lambda-white.svg
+      width: 159.37154
+      z-index: 6
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration:
+      metadata:
+        name: Inference Service
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: AWS Lambda
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: a232e546-1bf0-4b76-9811-307eac2f2c1f
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Vector Database
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Amazon Web Services
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: aws
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 0
+      height: 161.59918
+      opacity: 1
+      padding: 6
+      position:
+        x: 1547.6145721925823
+        y: 287.53494754367085
+      primaryColor: '#8C4FFF'
+      secondaryColor: '#00D3A9'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/aws/color/aws opensearch service-color.svg
+      svgComplete: ui/public/static/img/meshmodels/aws/complete/aws opensearch service-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/aws/white/aws opensearch service-white.svg
+      width: 161.63359
+      z-index: 7
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration:
+      metadata:
+        name: Vector Database
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: AWS OpenSearch Service
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 8b3639f4-3b40-4622-ab2f-68ccddaa8a28
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: GPU Cluster (NVIDIA)
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Amazon Web Services
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: aws
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 0
+      height: 188.2934
+      opacity: 1
+      padding: 6
+      position:
+        x: 832.7450567218543
+        y: 595.4210303823791
+      primaryColor: '#ED7100'
+      secondaryColor: '#00D3A9'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/aws/color/aws ec2-color.svg
+      svgComplete: ui/public/static/img/meshmodels/aws/complete/aws ec2-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/aws/white/aws ec2-white.svg
+      width: 177.26413
+      z-index: 8
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration:
+      metadata:
+        name: GPU Cluster (NVIDIA)
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: AWS EC2
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: d9e28b89-6fb4-4c95-8a4f-2c42b258627d
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: API Gateway
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Amazon Web Services
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: aws
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-width: 0
+      height: 158.51585
+      opacity: 1
+      padding: 6
+      position:
+        x: 1190.9500864369793
+        y: 616.6137250144204
+      primaryColor: '#E7157B'
+      secondaryColor: '#00D3A9'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/aws/color/aws api gateway-color.svg
+      svgComplete: ui/public/static/img/meshmodels/aws/complete/aws api gateway-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/aws/white/aws api gateway-white.svg
+      width: 180.57349
+      z-index: 9
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration:
+      metadata:
+        name: API Gateway
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: AWS API Gateway
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: c4306175-a955-4321-ba44-1b5cb2698f6b
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 0
+      body-text: Trains models using CUDA/TensorRT acceleration, distributed training across multiple GPUs
+      body-text-color: rgb(255,255,255)
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 15
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 63.904465
+      opacity: 1
+      padding: 6
+      position:
+        x: 580.9368548963665
+        y: 486.9458670626335
+      primaryColor: '#00B39F'
+      secondaryColor: '#FFDE00'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+      width: 175.44276
+      z-index: 10
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: TextBox
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 49dfa14f-87d7-436b-9f1b-ecd943ca1ee1
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 0
+      body-text: Saves trained models with versions, metadata, and performance metrics
+      body-text-color: rgb(255,255,255)
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 15
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 60
+      opacity: 1
+      padding: 6
+      position:
+        x: 658.3434833370148
+        y: 212.66079730311026
+      primaryColor: '#00B39F'
+      secondaryColor: '#FFDE00'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+      width: 180
+      z-index: 11
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: TextBox
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 942cfd12-a76e-4411-91b0-4dc455eb0faf
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 0
+      body-text: Deploys models for real-time or batch predictions
+      body-text-color: rgb(255,255,255)
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 15
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 60
+      opacity: 1
+      padding: 6
+      position:
+        x: 1024.3559866081764
+        y: 201.3241268478087
+      primaryColor: '#00B39F'
+      secondaryColor: '#FFDE00'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+      width: 180
+      z-index: 12
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: TextBox
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 425e923f-4161-47dc-bfd9-27e88e6bf21f
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 0
+      body-text: Stores/retrieves embeddings for semantic search and RAG applications
+      body-text-color: rgb(255,255,255)
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 15
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 60
+      opacity: 1
+      padding: 6
+      position:
+        x: 1372.553722021007
+        y: 222.37794340765433
+      primaryColor: '#00B39F'
+      secondaryColor: '#FFDE00'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+      width: 180
+      z-index: 13
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: TextBox
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 723870e4-9353-49b0-9507-7e17029c156b
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 0
+      body-text: Routes prediction requests with authentication and rate limiting
+      body-text-color: rgb(255,255,255)
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 15
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 60
+      opacity: 1
+      padding: 6
+      position:
+        x: 1320.728942796772
+        y: 450.7308768644408
+      primaryColor: '#00B39F'
+      secondaryColor: '#FFDE00'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+      width: 180
+      z-index: 14
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: TextBox
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 77943b71-b752-4fbb-8f5c-bf6b90f4e736
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 0
+      body-text: GPU-accelerated inference for low-latency predictions
+      body-text-color: rgb(255,255,255)
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 16
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 60
+      opacity: 1
+      padding: 6
+      position:
+        x: 906.1307090028898
+        y: 444.2527794614116
+      primaryColor: '#00B39F'
+      secondaryColor: '#FFDE00'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+      width: 180
+      z-index: 15
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: TextBox
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: a675fe64-766b-4a59-af35-d58ae6b6b74d
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 0
+      body-text: 'AI/ML Workflow: Training to Deployment'
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 44
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 60
+      opacity: 1
+      padding: 6
+      position:
+        x: 975.4263207358226
+        y: 17.180602755499955
+      primaryColor: '#00B39F'
+      secondaryColor: '#FFDE00'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+      width: 813.5145
+      z-index: 16
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: false
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: TextBox
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+relationships:
+  - id: 996acadc-0695-4bb7-af54-89e560b87e53
+    evaluationQuery: null
+    kind: edge
+    metadata:
+      description: ""
+      isAnnotation: false
+      styles:
+        label: ""
+        primaryColor: ""
+        svgColor: ""
+        svgWhite: ""
+    model:
+      displayName: Meshery Shapes
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-shapes
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    schemaVersion: ""
+    selectors:
+      - allow:
+          from:
+            - id: c539ff11-9fa7-4ff9-bcec-b6537ada419c
+              kind: '*'
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: '*'
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+          to:
+            - id: 7c50e603-09b4-4802-8892-c9068d16a57a
+              kind: '*'
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: '*'
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+        deny:
+          from: []
+          to: []
+    subType: annotation
+    status: pending
+    type: non-binding
+    version: ""
+  - id: 37b7e2c0-6909-4c77-8b5b-99c350453491
+    evaluationQuery: null
+    kind: edge
+    metadata:
+      description: ""
+      isAnnotation: false
+      styles:
+        primaryColor: ""
+        svgColor: ""
+        svgWhite: ""
+    model:
+      displayName: Meshery Shapes
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-shapes
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    schemaVersion: ""
+    selectors:
+      - allow:
+          from:
+            - id: c539ff11-9fa7-4ff9-bcec-b6537ada419c
+              kind: '*'
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: '*'
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+          to:
+            - id: 8b3639f4-3b40-4622-ab2f-68ccddaa8a28
+              kind: '*'
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: '*'
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+        deny:
+          from: []
+          to: []
+    subType: annotation
+    status: pending
+    type: non-binding
+    version: ""
+  - id: 5beedd09-78df-4755-8684-c2e68d6b738e
+    evaluationQuery: null
+    kind: edge
+    metadata:
+      description: ""
+      isAnnotation: false
+      styles:
+        primaryColor: ""
+        svgColor: ""
+        svgWhite: ""
+    model:
+      displayName: Meshery Shapes
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-shapes
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    schemaVersion: ""
+    selectors:
+      - allow:
+          from:
+            - id: 7c50e603-09b4-4802-8892-c9068d16a57a
+              kind: '*'
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: '*'
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+          to:
+            - id: 89d2ba2e-54d8-43db-815e-3d688b1201f9
+              kind: '*'
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: '*'
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+        deny:
+          from: []
+          to: []
+    subType: annotation
+    status: pending
+    type: non-binding
+    version: ""
+  - id: 5b9a9f75-026f-4c9d-b55d-ad4c0d7faa02
+    evaluationQuery: null
+    kind: edge
+    metadata:
+      description: ""
+      isAnnotation: false
+      styles:
+        primaryColor: ""
+        svgColor: ""
+        svgWhite: ""
+    model:
+      displayName: Meshery Shapes
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-shapes
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    schemaVersion: ""
+    selectors:
+      - allow:
+          from:
+            - id: 89d2ba2e-54d8-43db-815e-3d688b1201f9
+              kind: '*'
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: '*'
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+          to:
+            - id: a232e546-1bf0-4b76-9811-307eac2f2c1f
+              kind: '*'
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: '*'
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+        deny:
+          from: []
+          to: []
+    subType: annotation
+    status: pending
+    type: non-binding
+    version: ""
+  - id: 227c9021-1114-4456-8dac-5dbf2598d426
+    evaluationQuery: null
+    kind: edge
+    metadata:
+      description: ""
+      isAnnotation: false
+      styles:
+        primaryColor: ""
+        svgColor: ""
+        svgWhite: ""
+    model:
+      displayName: Meshery Shapes
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-shapes
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    schemaVersion: ""
+    selectors:
+      - allow:
+          from:
+            - id: d9e28b89-6fb4-4c95-8a4f-2c42b258627d
+              kind: '*'
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: '*'
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+          to:
+            - id: 89d2ba2e-54d8-43db-815e-3d688b1201f9
+              kind: '*'
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: '*'
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+        deny:
+          from: []
+          to: []
+    subType: annotation
+    status: pending
+    type: non-binding
+    version: ""
+  - id: db10eb37-18ad-4e02-9771-a9e0a87ac801
+    evaluationQuery: null
+    kind: edge
+    metadata:
+      description: ""
+      isAnnotation: false
+      styles:
+        primaryColor: ""
+        svgColor: ""
+        svgWhite: ""
+    model:
+      displayName: Meshery Shapes
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-shapes
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    schemaVersion: ""
+    selectors:
+      - allow:
+          from:
+            - id: 89d2ba2e-54d8-43db-815e-3d688b1201f9
+              kind: '*'
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: '*'
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+          to:
+            - id: 8b3639f4-3b40-4622-ab2f-68ccddaa8a28
+              kind: '*'
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: '*'
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+        deny:
+          from: []
+          to: []
+    subType: annotation
+    status: pending
+    type: non-binding
+    version: ""
