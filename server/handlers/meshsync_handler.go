@@ -369,7 +369,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		}
 
 		resources = []model.KubernetesResource{} // clear resources to save memory
-		// evalResponse, error := h.Rego.RegoPolicyHandler(rawDesign, RelationshipPolicyPackageName)
+		// evalResponse, error := h.regoEngine().RegoPolicyHandler(rawDesign, RelationshipPolicyPackageName) (engine may be unpublished during boot)
 		evalResponse, error := h.EvaluateDesign(pattern.EvaluationRequest{
 			Design: rawDesign,
 		}, 1)
