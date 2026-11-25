@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"sync"
 	"time"
 
 	"github.com/meshery/meshery/server/machines"
@@ -41,6 +42,9 @@ type Handler struct {
 	notFoundProbeThrottle *notFoundProbeThrottle
 	evalTracker           *evaluationTracker
 	adapterOperations     *adapterOperationOwners
+	// policyEvalTimeoutWarnOnce limits the invalid POLICY_EVAL_TIMEOUT
+	// warning to one per Handler; see policyEvalTimeout.
+	policyEvalTimeoutWarnOnce sync.Once
 }
 
 // NewHandlerInstance returns a Handler instance
