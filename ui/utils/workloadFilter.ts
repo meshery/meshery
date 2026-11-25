@@ -26,12 +26,20 @@ export function groupWorkloadByVersion(meshfilteredWorkloads) {
 }
 
 export function getUnformattedName(oamWorkloadOrTrait) {
-  return oamWorkloadOrTrait?.workload?.oam_definition?.metadata?.name || 'Un-Named';
+  if (!oamWorkloadOrTrait || typeof oamWorkloadOrTrait !== 'object') {
+    return '';
+  }
+  return oamWorkloadOrTrait.workload?.oam_definition?.metadata?.name || 'Un-Named';
 }
 
 export function findWorkloadByName(name, workloads) {
   if (!Array.isArray(workloads)) {
     return undefined;
   }
-  return workloads.find((workload) => workload && getUnformattedName(workload) === name);
+  return workloads.find(
+    (workload) =>
+      workload?.workload &&
+      typeof workload.workload === 'object' &&
+      getUnformattedName(workload) === name,
+  );
 }

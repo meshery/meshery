@@ -106,9 +106,10 @@ describe('getUnformattedName', () => {
     expect(getUnformattedName({ workload: {} })).toBe('Un-Named');
   });
 
-  it('returns "Un-Named" when input is null, undefined, or workload is null', () => {
-    expect(getUnformattedName(null)).toBe('Un-Named');
-    expect(getUnformattedName(undefined)).toBe('Un-Named');
+  it('returns "" when input is null, undefined, or non-object and "Un-Named" when workload is nullish', () => {
+    expect(getUnformattedName(null)).toBe('');
+    expect(getUnformattedName(undefined)).toBe('');
+    expect(getUnformattedName(42 as unknown as Record<string, unknown>)).toBe('');
     expect(getUnformattedName({ workload: null })).toBe('Un-Named');
     expect(getUnformattedName({ workload: undefined })).toBe('Un-Named');
   });
@@ -144,9 +145,11 @@ describe('findWorkloadByName', () => {
     );
   });
 
-  it('does not match nullish items when searching for "Un-Named"', () => {
+  it('does not match nullish items or invalid workloads when searching for "Un-Named"', () => {
     const realUnnamed = { workload: { oam_definition: { metadata: {} } } };
-    expect(findWorkloadByName('Un-Named', [null, undefined, realUnnamed])).toBe(realUnnamed);
-    expect(findWorkloadByName('Un-Named', [null, undefined])).toBeUndefined();
+    expect(findWorkloadByName('Un-Named', [null, undefined, { workload: null }, realUnnamed])).toBe(
+      realUnnamed,
+    );
+    expect(findWorkloadByName('Un-Named', [null, undefined, { workload: null }])).toBeUndefined();
   });
 });
