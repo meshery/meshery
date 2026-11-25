@@ -333,7 +333,6 @@ func buildPolicyEvaluationEventMetadata(resp pattern.EvaluationResponse, serverU
 // it was ignored. That includes a bare number such as "300", which
 // viper.GetDuration would read as 300ns (#24330).
 func parsePolicyEvalTimeout(raw string) (time.Duration, error) {
-	raw = strings.TrimSpace(raw)
 	if raw == "" {
 		return defaultPolicyEvalTimeout, nil
 	}

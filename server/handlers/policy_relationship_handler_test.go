@@ -1371,7 +1371,7 @@ func TestParsePolicyEvalTimeout(t *testing.T) {
 		wantErr bool
 	}{
 		{name: "go duration", raw: "5m", want: 5 * time.Minute},
-		{name: "surrounding spaces", raw: " 90s ", want: 90 * time.Second},
+		{name: "surrounding spaces uses default", raw: " 90s ", want: defaultPolicyEvalTimeout, wantErr: true},
 		{name: "empty uses default", raw: "", want: defaultPolicyEvalTimeout},
 		{name: "bare number uses default", raw: "300", want: defaultPolicyEvalTimeout, wantErr: true},
 		{name: "not a duration", raw: "abc", want: defaultPolicyEvalTimeout, wantErr: true},
