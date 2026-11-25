@@ -148,8 +148,14 @@ mesheryctl version
 			return
 		}
 
-		// needs multiple defer as Body.Close needs a valid response
-		defer func() { _ = resp.Body.Close() }()
+		defer utils.SafeClose(resp.Body)
+
+		if resp.StatusCode != http.StatusOK {
+			utils.PrintToTable(header, rows, nil)
+			utils.Log.Error(utils.ErrResponseStatus(resp.StatusCode))
+			return
+		}
+
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.PrintToTable(header, rows, nil)
