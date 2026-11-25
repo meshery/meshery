@@ -1,7 +1,9 @@
 package design
 
 import (
+	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -22,6 +24,11 @@ func TestDeployCmd(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
+
+	validationErrorResponse, err := os.ReadFile(filepath.Join(fixturesDir, "deploy.validationError.response.golden"))
+	if err != nil {
+		t.Fatalf("failed to read deploy.validationError fixture: %v", err)
+	}
 
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
@@ -165,6 +172,40 @@ func TestDeployCmd(t *testing.T) {
 				},
 			},
 			ExpectError: false,
+		},
+		{
+			Name:             "given invalid component configuration when design deploy then the server validation detail is reported",
+			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "Kubernetes Manifest"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern/types",
+					Response:     "view.designTypes.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/Kubernetes%20Manifest",
+					Response:     "deploy.applicationSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/import",
+					Response:     "apply.designSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
+					Response:     "deploy.validationError.response.golden",
+					ResponseCode: 500,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  utils.ErrMesheryServerInternalError(errors.New(string(validationErrorResponse))),
 		},
 	}
 

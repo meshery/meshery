@@ -51,9 +51,10 @@ mesheryctl design apply [design-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -f, --file string   Path to design file
-  -h, --help          help for apply
-      --skip-save     Skip saving a design
+  -f, --file string       Path to design file
+  -h, --help              help for apply
+      --skip-save         Skip saving a design
+      --skip-validation   Skip server-side validation of the design before deploying
 
 </div>
 </pre>

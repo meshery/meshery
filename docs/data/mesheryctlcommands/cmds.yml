@@ -638,6 +638,11 @@ design:
           description: apply design file will trigger deploy of the design file and also supports file retrieval from GitHub
           usage: mesheryctl design apply --file [path to design file]
           example: mesheryctl design apply -f "bookInfo.yaml"
+        skip-validation:
+          name: --skip-validation
+          description: Skip server-side validation of the design before deploying
+          usage: mesheryctl design apply --file [path to design file] --skip-validation
+          example: mesheryctl design apply -f "bookInfo.yaml" --skip-validation
     delete:
       name: delete
       description: Deprovision cloud native infrastructure using a design file
@@ -663,6 +668,11 @@ design:
           description: Skip saving an application
           usage: mesheryctl design deploy --file [filepath] --skip-save
           example: mesheryctl design deploy -f "bookInfo.yaml" --skip-save
+        skip-validation:
+          name: --skip-validation
+          description: Skip server-side validation of the design before deploying
+          usage: mesheryctl design deploy --file [filepath] --skip-validation
+          example: mesheryctl design deploy -f "bookInfo.yaml" --skip-validation
         source-type:
           name: --source-type, -s
           description: Type of source file (ex. manifest / compose / helm)

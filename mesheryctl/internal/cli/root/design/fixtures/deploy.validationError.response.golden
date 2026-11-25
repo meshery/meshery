@@ -1,0 +1,1 @@
+{"error":"Deploying design failed: invalid component configuration for Deployment: spec.replicas: Invalid type. Expected: integer, given: string"}

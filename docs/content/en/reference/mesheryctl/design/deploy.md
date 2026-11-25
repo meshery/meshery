@@ -44,6 +44,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
   -f, --file string          Path to design file
   -h, --help                 help for deploy
       --skip-save            Skip saving a design
+      --skip-validation      Skip server-side validation of the design before deploying
   -s, --source-type string   Type of source file (ex. manifest / compose / helm)
 
 </div>

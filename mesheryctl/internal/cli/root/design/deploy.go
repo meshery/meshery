@@ -31,7 +31,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/patterns"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	"github.com/spf13/cobra"
@@ -164,9 +163,6 @@ mesheryctl design deploy -f [filepath] -s [source type]
 
 		res, err := api.Add(deployURLPath, bytes.NewBuffer(payloadBytes), nil)
 		if err != nil {
-			if errors.GetCode(err) == utils.ErrMesheryServerInternalErrorCode {
-				return ErrDeployDesign()
-			}
 			return err
 		}
 
