@@ -2,6 +2,7 @@
 {{- $commands := hugo.Data.mesheryctlcommands.cmds -}}
 {{- $command := index $commands $command_name -}}
 
+<div class="mesheryctl-table-wrapper">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
@@ -119,3 +120,4 @@
   {{- end }}
 </tbody>
 </table>
+</div>

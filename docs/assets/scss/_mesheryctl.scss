@@ -18,13 +18,17 @@ table.mesherycomponents {
 }
 
 .mesheryctl-reference-page {
+  .mesheryctl-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
   .td-content > table,
   .td-content table.mesheryctl-reference-table {
     display: table;
-    width: max-content;
-    min-width: 100%;
+    width: 100%;
     table-layout: auto;
-    overflow-x: visible;
   }
 
   .td-content > table th,
@@ -32,7 +36,7 @@ table.mesherycomponents {
   .td-content table.mesheryctl-reference-table th,
   .td-content table.mesheryctl-reference-table td {
     max-width: none;
-    overflow-wrap: normal;
+    overflow-wrap: break-word;
     word-break: normal;
   }
 }
