@@ -136,7 +136,7 @@ export function normalizeUnit(resourceType, quantity) {
         bytes /= 1000 * 1000;
       } else if (quantity.endsWith('n')) {
         bytes /= 1000 * 1000 * 1000;
-      } else if (quantity.endsWith('k')) {
+      } else if (quantity.endsWith('k') || quantity.endsWith('K')) {
         bytes *= 1000;
       } else if (quantity.endsWith('M')) {
         bytes *= 1000 * 1000;
@@ -200,7 +200,7 @@ function parseUnitsOfBytes(value) {
     return number * 10 ** parseInt(groups[4], 10);
   }
 
-  const rawUnit = groups[2] === 'k' ? 'K' : groups[2];
+  const rawUnit = groups[2].toUpperCase();
   const unitIndex = _.indexOf(UNITS, rawUnit);
 
   // Unit + i ex. 1Ki

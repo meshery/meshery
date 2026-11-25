@@ -168,6 +168,7 @@ describe('normalizeUnit', () => {
 
   it('handles decimal memory suffixes', () => {
     expect(normalizeUnit('memory', '1k')).toBe('1 KB');
+    expect(normalizeUnit('memory', '1K')).toBe('1 KB');
     expect(normalizeUnit('memory', '1M')).toBe('1 MB');
     expect(normalizeUnit('memory', '1G')).toBe('1 GB');
     expect(normalizeUnit('memory', '1T')).toBe('1 TB');
@@ -200,6 +201,8 @@ describe('parseDiskSpace / parseRam (parseUnitsOfBytes)', () => {
 
   it('parses decimal-suffix bytes', () => {
     expect(parseRam('1K')).toBe(1000);
+    expect(parseRam('1k')).toBe(1000);
+    expect(parseRam('16777217k')).toBe(16_777_217_000);
     expect(parseRam('2M')).toBe(2_000_000);
     expect(parseRam('1G')).toBe(1_000_000_000);
   });
