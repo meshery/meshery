@@ -313,7 +313,11 @@ func main() {
 		os.Exit(1)
 	}
 	//seed the local meshmodel components
-	rego := policies.Rego{}
+	// regoReady carries the OPA/Rego instance built by the boot seeding
+	// goroutine to the Handler. The channel (buffered, one value) orders the
+	// goroutine's publish against main's handoff, replacing the plain
+	// `rego` variable write that raced every h.Rego dereference.
+	regoReady := make(chan *policies.Rego, 1)
 
 	// Seeding runs off the request path, in its own goroutine, so a fault in
 	// any stage must degrade the server rather than terminate it: an
@@ -321,6 +325,14 @@ func main() {
 	// stage is wrapped separately so one faulting stage still leaves the
 	// others to run.
 	go func() {
+		// regoReady is closed on every exit of this goroutine (this defer is
+		// registered before any stage runs, so even a panic in the goroutine
+		// body closes it), so the publisher goroutine exits cleanly instead
+		// of blocking forever when seeding degrades without building an
+		// engine. The send below runs before this deferred close, so nothing
+		// is ever sent on a closed channel.
+		defer close(regoReady)
+
 		models.RunSeedStage(log, "user keys", func() {
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		})
@@ -330,14 +342,22 @@ func main() {
 			models.SeedComponents(log, hc, regManager, dbHandler)
 		})
 		// Rego is intialized for passing of policy if the policies are made to be per model base this needs to be removed.
+		var regoInst *policies.Rego
 		models.RunSeedStage(log, "policies", func() {
 			r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
 			if err != nil {
 				log.Warn(handlers.ErrCreatingOPAInstance(err))
 			} else {
-				rego = *r
+				regoInst = r
 			}
 		})
+		// The send happens after the stage closure wrote regoInst, and the
+		// receive in the publisher goroutine below happens before
+		// PublishBootRego, so the channel orders the publication. Buffered so
+		// the seeding goroutine never blocks.
+		if regoInst != nil {
+			regoReady <- regoInst
+		}
 	}()
 
 	models.RunSeedStage(log, "content", func() {
@@ -495,8 +515,25 @@ func main() {
 	models.InitMeshSyncRegistrationQueue()
 	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker, hc.EventBroadcaster)
 	policies.SyncRelationship.Lock()
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, providerEnvVar, &rego, &connToInstanceTracker, meshsyncDefaultDeploymentMode)
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, providerEnvVar, &connToInstanceTracker, meshsyncDefaultDeploymentMode)
 	policies.SyncRelationship.Unlock()
+
+	// Publish the seeded Rego engine to the handler. This goroutine only
+	// receives and publishes; it recovers per the RunSeedStage rule that a
+	// spawned goroutine carries its own recover. PublishBootRego (not
+	// SetRego) so a runtime reload that beat the boot publish keeps its
+	// engine. regoReady is closed by the seeding goroutine on every exit,
+	// including the failure/degrade path, so this exits cleanly.
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Error(fmt.Errorf("panic publishing seeded Rego engine: %v", r))
+			}
+		}()
+		if regoInst, ok := <-regoReady; ok && regoInst != nil {
+			h.PublishBootRego(regoInst)
+		}
+	}()
 
 	b := broadcast.NewBroadcaster(100)
 	defer func() {

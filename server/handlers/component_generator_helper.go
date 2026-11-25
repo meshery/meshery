@@ -267,16 +267,17 @@ func (h *Handler) handleRegistrationAndError(registrationHelper registration.Reg
 			relationshipBytes, _ := json.Marshal(rel)
 			addSuccessfulEntry(relationshipBytes, entity.RelationshipDefinition, response)
 			policies.SyncRelationship.Lock()
-			rego := policies.Rego{}
 
-			// reload the rego instance with latest relationships data
+			// reload the rego instance with latest relationships data and
+			// swap it in atomically, so a concurrent evaluation keeps the
+			// engine instance it already loaded instead of racing a field
+			// write. A failed reload keeps the previously published instance.
 			r, err := policies.NewRegoInstance(models.PoliciesPath, h.registryManager)
 			if err != nil {
 				h.log.Warn(ErrCreatingOPAInstance(err))
 			} else {
-				rego = *r
+				h.SetRego(r)
 			}
-			h.Rego = &rego
 			policies.SyncRelationship.Unlock()
 		}
 		modelBytes, _ := json.Marshal(registeredModel)

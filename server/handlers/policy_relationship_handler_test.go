@@ -19,6 +19,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
+	corepolicies "github.com/meshery/meshkit/models/meshmodel/core/policies"
 	policyv1beta1 "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/schemas/models/core"
@@ -1431,4 +1432,131 @@ func TestPolicyEvalTimeout_WarnsOncePerHandler(t *testing.T) {
 	other, otherBuf := newHandler()
 	assert.Equal(t, defaultPolicyEvalTimeout, other.policyEvalTimeout())
 	assert.Equal(t, 1, strings.Count(otherBuf.String(), "ignoring POLICY_EVAL_TIMEOUT"))
+}
+
+// TestEvaluateRelationshipPolicy_RegoEngineNotReady pins the boot handoff of
+// the OPA/Rego engine (#rego-boot-data-race): the engine is published by the
+// boot seeding goroutine (server/cmd/main.go), so a request arriving before
+// publication must get a retryable 503 with a structured MeshKit error, not an
+// evaluation against a zero-value Rego.
+func TestEvaluateRelationshipPolicy_RegoEngineNotReady(t *testing.T) {
+	viper.Set("USE_GO_POLICY_ENGINE", false)
+	t.Cleanup(func() {
+		viper.Set("USE_GO_POLICY_ENGINE", false)
+	})
+
+	logger := newTestLogger(t)
+	// Zero-value Handler: rego is unpublished, which is exactly the boot
+	// state before the seeding goroutine finishes.
+	h := &Handler{
+		log:         logger,
+		evalTracker: newEvaluationTracker(),
+	}
+
+	provider := &models.DefaultLocalProvider{}
+	provider.Initialize()
+
+	validJSON := `{"design":{"id":"21111111-1111-1111-1111-111111111111","name":"not-ready-eval","version":"1.0.0"}}`
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(validJSON))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusServiceUnavailable, rec.Code)
+
+	var errResp struct {
+		Error                string   `json:"error"`
+		Code                 string   `json:"code"`
+		Severity             string   `json:"severity"`
+		ProbableCause        []string `json:"probableCause"`
+		SuggestedRemediation []string `json:"suggestedRemediation"`
+	}
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errResp))
+	assert.Equal(t, "meshery-server-1502", errResp.Code)
+	assert.Equal(t, "Relationship policy engine is starting", errResp.Error)
+	assert.Equal(t, "ALERT", errResp.Severity)
+	assert.NotEmpty(t, errResp.SuggestedRemediation)
+}
+
+// TestEvaluateRelationshipPolicy_RegoEngineReady_Evaluates is the positive
+// counterpart of TestEvaluateRelationshipPolicy_RegoEngineNotReady: once the
+// engine is published through SetRego, the Rego path evaluates the design and
+// returns the full 200 response.
+func TestEvaluateRelationshipPolicy_RegoEngineReady_Evaluates(t *testing.T) {
+	viper.Set("USE_GO_POLICY_ENGINE", false)
+	t.Cleanup(func() {
+		viper.Set("USE_GO_POLICY_ENGINE", false)
+	})
+
+	logger := newTestLogger(t)
+	regManager, db := newTestRegistryManager(t)
+	t.Cleanup(func() { _ = db.DBClose() })
+
+	rego, err := corepolicies.NewRegoInstance(models.PoliciesPath, regManager)
+	require.NoError(t, err, "failed to build Rego instance")
+
+	h := &Handler{
+		log:             logger,
+		evalTracker:     newEvaluationTracker(),
+		GoEngine:        gopolicies.NewGoEngine(logger),
+		registryManager: regManager,
+	}
+	h.SetRego(rego)
+
+	provider := &models.DefaultLocalProvider{}
+	provider.Initialize()
+
+	designID := uuid.Must(uuid.NewV4())
+	validJSON := fmt.Sprintf(`{"design":{"id":"%s","name":"rego-ready-eval","version":"1.0.0"}}`, designID)
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(validJSON))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	var resp pattern.EvaluationResponse
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &resp))
+	assert.Equal(t, designID, resp.Design.ID)
+	assert.Equal(t, "rego-ready-eval", resp.Design.Name)
+	assert.NotNil(t, resp.Timestamp)
+	assertSuccessResponseKeys(t, rec.Body.Bytes())
+}
+
+// TestEvaluateRelationshipPolicy_GoEngineSkipsRegoGate pins that the not-ready
+// gate applies only to the Rego path: a deployment running the Go policy
+// engine never needs Rego and must not be rejected while seeding is in
+// flight.
+func TestEvaluateRelationshipPolicy_GoEngineSkipsRegoGate(t *testing.T) {
+	viper.Set("USE_GO_POLICY_ENGINE", true)
+	t.Cleanup(func() {
+		viper.Set("USE_GO_POLICY_ENGINE", false)
+	})
+
+	logger := newTestLogger(t)
+	h := &Handler{
+		log:         logger,
+		evalTracker: newEvaluationTracker(),
+		GoEngine:    gopolicies.NewGoEngine(logger),
+	}
+
+	provider := &models.DefaultLocalProvider{}
+	provider.Initialize()
+
+	designID := uuid.Must(uuid.NewV4())
+	validJSON := fmt.Sprintf(`{"design":{"id":"%s","name":"go-engine-skip-gate","version":"1.0.0"}}`, designID)
+	req := httptest.NewRequest(http.MethodPost, "/api/policy/relationship/evaluate", strings.NewReader(validJSON))
+	rec := httptest.NewRecorder()
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	h.EvaluateRelationshipPolicy(rec, req, nil, user, provider)
+
+	require.Equal(t, http.StatusOK, rec.Code)
+
+	var resp pattern.EvaluationResponse
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &resp))
+	assert.Equal(t, designID, resp.Design.ID)
+	assertSuccessResponseKeys(t, rec.Body.Bytes())
 }

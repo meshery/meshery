@@ -4408,6 +4408,15 @@
         "short_description": "The kubeconfig could not be parsed",
         "probable_cause": "A different file was selected, or the kubeconfig was truncated or edited by hand.",
         "suggested_remediation": "Upload the kubeconfig file itself (for example ~/.kube/config), and check it with kubectl config view --kubeconfig <file>."
+      },
+      "1502": {
+        "name": "ErrPolicyEngineNotReadyCode",
+        "code": "1502",
+        "severity": "Alert",
+        "long_description": "The OPA/Rego relationship-policy engine has not finished loading policies from the registry.",
+        "short_description": "Relationship policy engine is starting",
+        "probable_cause": "The evaluation request arrived in the short window right after server startup, before the background seeding goroutine finished loading relationship policies.",
+        "suggested_remediation": "Retry the evaluation in a few seconds. If the error persists, check the server logs for relationship-policy loading errors during startup."
       }
     }
   }

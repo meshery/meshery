@@ -205,6 +205,7 @@ const (
 	ErrPolicyEvalTimeoutCode               = "meshery-server-1417"
 	ErrPolicyEvalCode                      = "meshery-server-1418"
 	ErrInvalidBase64DataCode               = "meshery-server-1419"
+	ErrPolicyEngineNotReadyCode            = "meshery-server-1502"
 	ErrInvalidImportRequestCode            = "meshery-server-1422"
 	ErrConvertToDesignCode                 = "meshery-server-1423"
 	ErrCompressArtifactCode                = "meshery-server-1424"
@@ -1083,6 +1084,18 @@ func ErrEmptyConnectionID() error {
 func ErrPolicyEvalTimeout(timeout fmt.Stringer) error {
 	return errors.New(ErrPolicyEvalTimeoutCode, errors.Alert, []string{"Relationship policy evaluation timed out"}, []string{fmt.Sprintf("The relationship policy evaluator did not return a response within %s.", timeout)}, []string{"The design is large enough that the policy engine needs more than the configured timeout.", "One of the Rego/Go policies under evaluation is in a slow path or infinite loop."}, []string{"Increase the POLICY_EVAL_TIMEOUT setting (default 3m) if the design genuinely needs more time, or retry with a smaller design."})
 }
+
+// ErrPolicyEngineNotReady is returned while the OPA/Rego relationship-policy
+// engine has not been published by the boot seeding goroutine yet. Emitted
+// with HTTP 503 Service Unavailable so clients retry.
+//
+// The error is a singleton: callers identify it with errors.Is to map it to
+// its own status, distinct from the generic ErrPolicyEval 500.
+func ErrPolicyEngineNotReady() error {
+	return errRegoEngineNotReady
+}
+
+var errRegoEngineNotReady = errors.New(ErrPolicyEngineNotReadyCode, errors.Alert, []string{"Relationship policy engine is starting"}, []string{"The OPA/Rego relationship-policy engine has not finished loading policies from the registry."}, []string{"The evaluation request arrived in the short window right after server startup, before the background seeding goroutine finished loading relationship policies."}, []string{"Retry the evaluation in a few seconds. If the error persists, check the server logs for relationship-policy loading errors during startup."})
 
 // ErrPolicyEval wraps a generic policy-evaluation failure returned by the
 // relationship evaluator (OPA/Rego or the Go engine). Emitted with HTTP 500.

@@ -7743,6 +7743,24 @@
       "suggestedRemediation": [
         "Upload the kubeconfig file itself (for example ~/.kube/config), and check it with kubectl config view --kubeconfig <file>."
       ]
+    },
+    {
+      "code": "meshery-server-1502",
+      "moniker": "ErrPolicyEngineNotReadyCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1502",
+      "severity": "alert",
+      "shortDescription": "Relationship policy engine is starting",
+      "longDescription": "The OPA/Rego relationship-policy engine has not finished loading policies from the registry.",
+      "probableCause": [
+        "The evaluation request arrived in the short window right after server startup, before the background seeding goroutine finished loading relationship policies."
+      ],
+      "suggestedRemediation": [
+        "Retry the evaluation in a few seconds. If the error persists, check the server logs for relationship-policy loading errors during startup."
+      ]
     }
   ],
   "schemaVersion": 2
