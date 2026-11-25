@@ -29,6 +29,47 @@ func newTestComponent(name, kind string) *component.ComponentDefinition {
 	}
 }
 
+func TestMatchComponentPairsRequiresSelectorModels(t *testing.T) {
+	fromComp := newTestComponent("pod-a", "Pod")
+	fromComp.Configuration = map[string]interface{}{
+		"metadata": map[string]interface{}{"namespace": "team-a"},
+	}
+	toComp := newTestComponent("pod-b", "Pod")
+	toComp.ModelReference.Name = "istio"
+	toComp.Configuration = map[string]interface{}{
+		"metadata": map[string]interface{}{"namespace": "team-a"},
+	}
+
+	kind := "Pod"
+	mutatorRef := [][]string{{"configuration", "metadata", "namespace"}}
+	mutatedRef := [][]string{{"configuration", "metadata", "namespace"}}
+	fromSel := relationship.SelectorItem{
+		Kind:  &kind,
+		Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatorRef: &mutatorRef,
+		},
+	}
+	toSel := relationship.SelectorItem{
+		Kind:  &kind,
+		Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatedRef: &mutatedRef,
+		},
+	}
+	relDef := &relationship.RelationshipDefinition{}
+	design := &pattern.PatternFile{Components: []*component.ComponentDefinition{fromComp, toComp}}
+
+	if got := matchComponentPairs(fromSel, toSel, design.Components, relDef, design); len(got) != 0 {
+		t.Fatalf("cross-model Pod pair matched selector models: got %d relationships", len(got))
+	}
+
+	toComp.ModelReference.Name = "kubernetes"
+	if got := matchComponentPairs(fromSel, toSel, design.Components, relDef, design); len(got) != 2 {
+		t.Fatalf("same-model Pod pairs should match in both directions: got %d relationships", len(got))
+	}
+}
+
 // TestFromAndToComponentsExist_MultiComponentRelationship verifies that
 // fromAndToComponentsExist checks all referenced components in a multi-component
 // relationship (such as sibling matchLabels with 3+ components), not just index 0.
@@ -154,6 +195,198 @@ func TestValidateRelationshipsInDesign_OrphanedMultiComponentRelationship(t *tes
 	}
 	if actions[0].StringValue != StatusDeleted {
 		t.Fatalf("expected status %s, got %v", StatusDeleted, actions[0].StringValue)
+	}
+}
+
+func TestValidateRelationshipsInDesign_SeveredConfigurationPathWhenComponentsExist(t *testing.T) {
+	podComp := newTestComponent("pod-1", "Pod")
+	// Port initially exists in containers configuration
+	podComp.Configuration = map[string]interface{}{
+		"spec": map[string]interface{}{
+			"containers": []interface{}{
+				map[string]interface{}{
+					"name": "nginx",
+					"ports": []interface{}{
+						map[string]interface{}{
+							"containerPort": 80,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	aliasComp := newTestComponent("port-alias", "Container")
+
+	path := []string{"configuration", "spec", "containers", "0", "ports", "0"}
+	mutatorRef := relationship.MutatorRef{path}
+	mutatedRef := relationship.MutatedRef{path}
+	patch := relationship.RelationshipDefinitionSelectorsPatch{
+		MutatorRef: &mutatorRef,
+		MutatedRef: &mutatedRef,
+	}
+
+	rel := &relationship.RelationshipDefinition{
+		ID:               uuid.Must(uuid.NewV4()),
+		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+		RelationshipType: "parent",
+		SubType:          "alias",
+		Selectors: &relationship.SelectorSet{
+			{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{{ID: &aliasComp.ID, RelationshipDefinitionSelectorsPatch: &patch}},
+					To:   []relationship.SelectorItem{{ID: &podComp.ID, RelationshipDefinitionSelectorsPatch: &patch}},
+				},
+			},
+		},
+	}
+	setRelStatus(rel, StatusApproved)
+
+	// Both components exist in the design
+	design := &pattern.PatternFile{
+		Components:    []*component.ComponentDefinition{podComp, aliasComp},
+		Relationships: []*relationship.RelationshipDefinition{rel},
+	}
+
+	policy := &AliasPolicy{}
+
+	// Step 1: Intact port is valid and produces no deletion action
+	if policy.IsInvalid(rel, design) {
+		t.Fatalf("expected policy.IsInvalid to return false when referenced configuration path exists")
+	}
+	initialActions := validateRelationshipsInDesign(design, policy)
+	if len(initialActions) != 0 {
+		t.Fatalf("expected 0 deletion actions for intact alias relationship, got %d", len(initialActions))
+	}
+
+	// Step 2: Remove the port so configuration path is severed
+	podComp.Configuration = map[string]interface{}{
+		"spec": map[string]interface{}{
+			"containers": []interface{}{
+				map[string]interface{}{
+					"name": "nginx",
+					// ports array removed
+				},
+			},
+		},
+	}
+
+	// Step 3: policy.IsInvalid returns true (the relationship is semantically invalid)
+	if !policy.IsInvalid(rel, design) {
+		t.Fatalf("expected policy.IsInvalid to return true for severed alias configuration path")
+	}
+
+	// Step 4: Both components exist (fromOrToComponentsDontExist returns false)
+	if fromOrToComponentsDontExist(rel, design) {
+		t.Fatalf("expected fromOrToComponentsDontExist to return false because both components are declared in design")
+	}
+
+	// Step 5: Run validateRelationshipsInDesign.
+	actions := validateRelationshipsInDesign(design, policy)
+	if len(actions) != 1 {
+		t.Fatalf("expected 1 validation action marking severed alias relationship as deleted, got %d actions", len(actions))
+	}
+	if actions[0].StringValue != StatusDeleted {
+		t.Fatalf("expected status %s, got %v", StatusDeleted, actions[0].StringValue)
+	}
+}
+
+func TestValidateRelationshipsInDesign_PendingAliasPreservedWhenComponentMissing(t *testing.T) {
+	podComp := newTestComponent("pod-1", "Pod")
+	podComp.Configuration = map[string]interface{}{
+		"spec": map[string]interface{}{
+			"containers": []interface{}{
+				map[string]interface{}{
+					"name": "nginx",
+					"ports": []interface{}{
+						map[string]interface{}{
+							"containerPort": 80,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	aliasCompID := uuid.Must(uuid.NewV4())
+	path := []string{"configuration", "spec", "containers", "0", "ports", "0"}
+	mutatorRef := relationship.MutatorRef{path}
+	mutatedRef := relationship.MutatedRef{path}
+	patch := relationship.RelationshipDefinitionSelectorsPatch{
+		MutatorRef: &mutatorRef,
+		MutatedRef: &mutatedRef,
+	}
+
+	rel := &relationship.RelationshipDefinition{
+		ID:               uuid.Must(uuid.NewV4()),
+		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+		RelationshipType: "parent",
+		SubType:          "alias",
+		Selectors: &relationship.SelectorSet{
+			{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{{ID: &aliasCompID, RelationshipDefinitionSelectorsPatch: &patch}},
+					To:   []relationship.SelectorItem{{ID: &podComp.ID, RelationshipDefinitionSelectorsPatch: &patch}},
+				},
+			},
+		},
+	}
+	setRelStatus(rel, StatusPending)
+
+	// Design only contains podComp; aliasComp has not been created yet by Phase 3 side effects
+	design := &pattern.PatternFile{
+		Components:    []*component.ComponentDefinition{podComp},
+		Relationships: []*relationship.RelationshipDefinition{rel},
+	}
+
+	policy := &AliasPolicy{}
+
+	// Endpoint absence evaluates to true because aliasComp is not yet in the design
+	if !fromOrToComponentsDontExist(rel, design) {
+		t.Fatalf("expected fromOrToComponentsDontExist to return true for missing alias component")
+	}
+
+	// Pending alias relationships must not be treated as invalid
+	if policy.IsInvalid(rel, design) {
+		t.Fatalf("expected policy.IsInvalid to return false for pending alias relationship")
+	}
+
+	// validateRelationshipsInDesign must NOT mark the pending relationship as deleted
+	actions := validateRelationshipsInDesign(design, policy)
+	if len(actions) != 0 {
+		t.Fatalf("expected 0 actions for pending alias with missing component, got %d", len(actions))
+	}
+}
+
+func TestValidateRelationshipsInDesign_PendingMatchLabelsPreservedWhenComponentMissing(t *testing.T) {
+	compA := newTestComponent("pod-a", "Pod")
+	compBID := uuid.Must(uuid.NewV4())
+	kind := "Pod"
+
+	rel := &relationship.RelationshipDefinition{
+		ID:               uuid.Must(uuid.NewV4()),
+		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+		RelationshipType: "sibling",
+		SubType:          "matchlabels",
+		Selectors: &relationship.SelectorSet{
+			{
+				Allow: relationship.Selector{
+					From: []relationship.SelectorItem{{ID: &compA.ID, Kind: &kind}},
+					To:   []relationship.SelectorItem{{ID: &compBID, Kind: &kind}},
+				},
+			},
+		},
+	}
+	setRelStatus(rel, StatusPending)
+
+	design := &pattern.PatternFile{
+		Components:    []*component.ComponentDefinition{compA},
+		Relationships: []*relationship.RelationshipDefinition{rel},
+	}
+
+	actions := validateRelationshipsInDesign(design, &MatchLabelsPolicy{})
+	if len(actions) != 0 {
+		t.Fatalf("expected 0 actions for pending matchLabels with missing component, got %d", len(actions))
 	}
 }
 
@@ -458,11 +691,11 @@ func TestBindingMatchSelectors_MultiItemMatchResolutionAndIDStamping(t *testing.
 	sel := relationship.SelectorItem{
 		Match: &relationship.MatchSelector{
 			From: &[]relationship.MatchSelectorItem{
-				{Kind: "Service"}, // index 0 has no mutatorRef
+				{Kind: "Service"},                          // index 0 has no mutatorRef
 				{Kind: "Service", MutatorRef: &mutatorRef}, // index 1 has mutatorRef
 			},
 			To: &[]relationship.MatchSelectorItem{
-				{Kind: "Pod"}, // index 0 has no mutatedRef
+				{Kind: "Pod"},                          // index 0 has no mutatedRef
 				{Kind: "Pod", MutatedRef: &mutatedRef}, // index 1 has mutatedRef
 			},
 		},

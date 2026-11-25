@@ -4138,6 +4138,44 @@
       "suggestedRemediation": [
         "Rerun the command to refresh the matching profile list"
       ]
+    },
+    {
+      "code": "mesheryctl-1266",
+      "moniker": "ErrAcquireTokenFileLockCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1266",
+      "severity": "alert",
+      "shortDescription": "Failed to acquire token file lock",
+      "probableCause": [
+        "Another process may be holding the token file lock longer than expected",
+        "The named mutex may be inaccessible"
+      ],
+      "suggestedRemediation": [
+        "Retry the operation",
+        "Run `mesheryctl system login` to re-authenticate"
+      ]
+    },
+    {
+      "code": "mesheryctl-1267",
+      "moniker": "ErrReplaceTokenFileCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1267",
+      "severity": "alert",
+      "shortDescription": "Failed to replace token file",
+      "probableCause": [
+        "The destination path may be locked by another process",
+        "The filesystem may not support atomic rename"
+      ],
+      "suggestedRemediation": [
+        "Retry the operation",
+        "Run `mesheryctl system login` to re-authenticate"
+      ]
     }
   ],
   "schemaVersion": 2
