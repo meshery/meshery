@@ -285,4 +285,15 @@ describe('buildPatternsTableOptions', () => {
     expect(build({ isLocalProvider: true }).sort).toBe(false);
     expect(build().sort).toBe(true);
   });
+
+  it('changes rows per page in one update without a separate page change', () => {
+    const setPage = vi.fn();
+    const setPageSize = vi.fn();
+    const options = build({ setPage, setPageSize });
+
+    options.onTableChange('changeRowsPerPage', { rowsPerPage: 25, page: 2 });
+
+    expect(setPageSize).toHaveBeenCalledWith(25);
+    expect(setPage).not.toHaveBeenCalled();
+  });
 });

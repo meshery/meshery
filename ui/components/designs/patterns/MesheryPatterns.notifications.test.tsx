@@ -5,15 +5,28 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // Covers the notification the Designs page raises when the publish schema
 // (built from the mesh model list) can't be loaded. The page's children,
 // RTK Query hooks and the validation actor are stubbed; only the container's
-// own mount effects run.
+// own mount effects run. Also covers how the container wires rows-per-page
+// changes into the URL table state.
 
 // Hook results must be referentially stable across renders: the container
 // keys effects on them.
-const { notify, getMeshModels, actionDeps, PATTERNS_QUERY_RESULT, TABLE_STATE, REDUX_STATE } =
-  vi.hoisted(() => ({
+const {
+  notify,
+  getMeshModels,
+  actionDeps,
+  buildTableOptions,
+  updateTableState,
+  PATTERNS_QUERY_RESULT,
+  TABLE_STATE,
+  REDUX_STATE,
+} = vi.hoisted(() => {
+  const updateTableState = vi.fn();
+  return {
     notify: vi.fn(),
     getMeshModels: vi.fn(),
     actionDeps: vi.fn(),
+    buildTableOptions: vi.fn((_options: any) => ({})),
+    updateTableState,
     PATTERNS_QUERY_RESULT: {
       data: { patterns: [], totalCount: 0 },
       isLoading: false,
@@ -27,10 +40,11 @@ const { notify, getMeshModels, actionDeps, PATTERNS_QUERY_RESULT, TABLE_STATE, R
         search: '',
         filters: { vis: '' },
       },
-      updateTableState: () => {},
+      updateTableState,
     },
     REDUX_STATE: { ui: { selectedK8sContexts: [], catalogVisibility: true, user: {} } },
-  }));
+  };
+});
 
 vi.mock('../../../api/meshmodel', () => ({ getMeshModels }));
 // Record what the container passes to its actions so a test can tell when the
@@ -101,7 +115,7 @@ vi.mock('@/assets/icons/Pattern', () => ({ default: () => null }));
 // test transform can't parse; they're covered by their own tests.
 vi.mock('./MesheryPatterns.columns', () => ({
   buildPatternColumns: () => [],
-  buildPatternsTableOptions: () => ({}),
+  buildPatternsTableOptions: buildTableOptions,
   PATTERN_COL_VIEWS: [],
 }));
 vi.mock('./design-lifecycle-handlers', () => ({ buildDesignLifecycleHandlers: () => ({}) }));
@@ -151,5 +165,22 @@ describe('MesheryPatterns publish schema notifications', () => {
       ),
     );
     expect(notify).not.toHaveBeenCalled();
+  });
+});
+
+describe('MesheryPatterns rows per page', () => {
+  it('resets to the first page in the same URL update as the new page size', () => {
+    getMeshModels.mockResolvedValue({ models: [] });
+
+    render(<MesheryPatterns />);
+    // Ignore updates the page makes on mount.
+    updateTableState.mockReset();
+    const { setPageSize } = buildTableOptions.mock.calls.at(-1)[0];
+    setPageSize(25);
+
+    // One update carrying both keys: two separate updates would each be built
+    // from the same URL snapshot, and the second would drop the first.
+    expect(updateTableState).toHaveBeenCalledTimes(1);
+    expect(updateTableState).toHaveBeenCalledWith({ pageSize: 25, page: 0 });
   });
 });
