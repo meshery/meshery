@@ -113,7 +113,7 @@ mesheryctl design delete -f [file | URL]
 			utils.Log.Info("Design ", args[0], " deleted")
 			return nil
 		}
-		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
+		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy?contexts=all"
 
 		var patternFileByt []byte
 		// If file path not a valid URL, treat it like a local file path
