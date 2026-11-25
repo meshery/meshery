@@ -662,7 +662,12 @@ func (sap *serviceActionProvider) provisionOnAdapter(hostName string, hostPort i
 		err = errors.Wrapf(err, "error marshalling component \"%s\" of type : %s", comp.DisplayName, comp.Component.Kind)
 		return patterns.DeploymentMessagePerContext{}, err
 	}
-	resp, err := mClient.MClient.Provision(sap.ctx, &meshes.ProvisionRequest{
+	ctx := sap.ctx
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	resp, err := mClient.MClient.Provision(ctx, &meshes.ProvisionRequest{
 		Username:     sap.userID,
 		DeleteOp:     sap.opIsDelete,
 		KubeConfigs:  kconfigs,

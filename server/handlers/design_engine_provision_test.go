@@ -180,7 +180,10 @@ func TestProvisionPropagatesRequestContextCancellation(t *testing.T) {
 	}
 
 	select {
-	case <-done:
+	case err := <-done:
+		if err == nil {
+			t.Fatal("Provision returned nil error after context cancellation")
+		}
 	case <-time.After(3 * time.Second):
 		t.Fatal("Provision did not return after cancellation")
 	}
