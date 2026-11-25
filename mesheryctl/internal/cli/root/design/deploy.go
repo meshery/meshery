@@ -98,7 +98,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 		var err error
 		var patternFile *pattern.PatternFile
 
-		deployURLPath := "api/pattern/deploy"
+		deployURLPath := "api/pattern/deploy?contexts=all"
 		patternURLPath := "api/pattern"
 
 		// pattern name has been passed
