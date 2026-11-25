@@ -61,7 +61,7 @@ func checkTokenName(n int) cobra.PositionalArgs {
 }
 
 var createTokenCmd = &cobra.Command{
-	Use:   "create",
+	Use:   "create <token-name>",
 	Short: "Create a token in your meshconfig",
 	Long: `Create the token with provided token name (optionally token path) to your meshconfig tokens.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/token/create`,
@@ -99,7 +99,7 @@ mesheryctl system token create [token-name] -f [token-path] --set
 	},
 }
 var deleteTokenCmd = &cobra.Command{
-	Use:   "delete",
+	Use:   "delete <token-name>",
 	Short: "Delete a token from your meshconfig",
 	Long:  "Delete the token with provided token name from your meshconfig tokens. A token that a context still uses cannot be deleted; set another token on that context first.",
 	Example: `
@@ -118,7 +118,7 @@ mesheryctl system token delete [token-name]
 	},
 }
 var setTokenCmd = &cobra.Command{
-	Use:   "set",
+	Use:   "set <token-name>",
 	Short: "Set token for context",
 	Long:  "Set token for current context or context specified with --context flag. The token must already exist in your meshconfig tokens.",
 	Example: `

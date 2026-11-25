@@ -19,7 +19,7 @@ Create the token with provided token name (optionally token path) to your meshco
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token create [flags]
+mesheryctl system token create &lt;token-name&gt; [flags]
 
 </div>
 </div>

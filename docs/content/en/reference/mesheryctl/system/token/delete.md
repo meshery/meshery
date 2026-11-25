@@ -18,7 +18,7 @@ Delete the token with provided token name from your meshconfig tokens. A token t
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token delete [flags]
+mesheryctl system token delete &lt;token-name&gt; [flags]
 
 </div>
 </div>
