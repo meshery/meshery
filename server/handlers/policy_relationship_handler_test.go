@@ -1362,3 +1362,45 @@ func TestEvaluateRelationshipPolicy_Success_ResponsePayloadStructure(t *testing.
 	assert.NotNil(t, resp.Timestamp)
 	assertSuccessResponseKeys(t, rec.Body.Bytes())
 }
+
+func TestParsePolicyEvalTimeout(t *testing.T) {
+	tests := []struct {
+		name    string
+		raw     string
+		want    time.Duration
+		wantErr bool
+	}{
+		{name: "go duration", raw: "5m", want: 5 * time.Minute},
+		{name: "surrounding spaces", raw: " 90s ", want: 90 * time.Second},
+		{name: "empty uses default", raw: "", want: defaultPolicyEvalTimeout},
+		{name: "bare number uses default", raw: "300", want: defaultPolicyEvalTimeout, wantErr: true},
+		{name: "not a duration", raw: "abc", want: defaultPolicyEvalTimeout, wantErr: true},
+		{name: "negative", raw: "-1s", want: defaultPolicyEvalTimeout, wantErr: true},
+		{name: "zero", raw: "0s", want: defaultPolicyEvalTimeout, wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := parsePolicyEvalTimeout(tt.raw)
+			assert.Equal(t, tt.want, got)
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
+// TestPolicyEvalTimeout_BareNumberUsesDefault pins #24330: viper.GetDuration
+// read POLICY_EVAL_TIMEOUT=300 as 300ns, so every evaluation timed out at once.
+func TestPolicyEvalTimeout_BareNumberUsesDefault(t *testing.T) {
+	prev := viper.Get("POLICY_EVAL_TIMEOUT")
+	t.Cleanup(func() { viper.Set("POLICY_EVAL_TIMEOUT", prev) })
+
+	h := &Handler{}
+	viper.Set("POLICY_EVAL_TIMEOUT", "300")
+	assert.Equal(t, defaultPolicyEvalTimeout, h.policyEvalTimeout())
+
+	viper.Set("POLICY_EVAL_TIMEOUT", "5m")
+	assert.Equal(t, 5*time.Minute, h.policyEvalTimeout())
+}
