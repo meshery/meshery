@@ -87,4 +87,67 @@ describe('useStateCB', () => {
     expect(changeTrack).toHaveBeenCalledTimes(3);
     expect(changeTrack.mock.calls.map((c) => c[0])).toEqual([1, 2, 3]);
   });
+
+  it('always invokes the latest changeTrackCB after rerenders', () => {
+    const firstTrack = vi.fn();
+    const secondTrack = vi.fn();
+    const { result, rerender } = renderHook(({ cb }) => useStateCB(0, cb), {
+      initialProps: { cb: firstTrack },
+    });
+
+    rerender({ cb: secondTrack });
+
+    act(() => {
+      result.current[1](10);
+    });
+
+    expect(firstTrack).not.toHaveBeenCalled();
+    expect(secondTrack).toHaveBeenCalledTimes(1);
+    expect(secondTrack).toHaveBeenCalledWith(10);
+  });
+
+  it('supports lazy initializer functions and keeps getStateRefValue accurate', () => {
+    const init = vi.fn(() => 99);
+    const { result } = renderHook(() => useStateCB(init));
+
+    expect(init).toHaveBeenCalledTimes(1);
+    expect(result.current[0]).toBe(99);
+    expect(result.current[2]()).toBe(99);
+  });
+
+  it('supports functional state updaters and keeps stateRef in sync across sequential updates', () => {
+    const changeTrack = vi.fn();
+    const after = vi.fn();
+    const { result } = renderHook(() => useStateCB(0, changeTrack));
+
+    act(() => {
+      result.current[1]((prev) => prev + 1);
+      result.current[1]((prev) => prev + 2, after);
+      expect(result.current[2]()).toBe(3);
+    });
+
+    expect(result.current[0]).toBe(3);
+    expect(result.current[2]()).toBe(3);
+    expect(after).toHaveBeenCalledTimes(1);
+    expect(after).toHaveBeenCalledWith(3);
+    expect(changeTrack).toHaveBeenCalledTimes(1);
+    expect(changeTrack).toHaveBeenCalledWith(3);
+  });
+
+  it('ignores non-callable callbacks and preserves setState and getter identities', () => {
+    const invalidTrack = 'not-a-function' as unknown as (value: number) => void;
+    const { result, rerender } = renderHook(() => useStateCB(0, invalidTrack));
+    const [, initialSetState, initialGetRef] = result.current;
+
+    expect(() => {
+      act(() => {
+        initialSetState(5, 'invalid' as unknown as (value: number) => void);
+      });
+    }).not.toThrow();
+
+    rerender();
+    expect(result.current[0]).toBe(5);
+    expect(result.current[1]).toBe(initialSetState);
+    expect(result.current[2]).toBe(initialGetRef);
+  });
 });
