@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"io"
 	"math/big"
@@ -103,28 +104,37 @@ type tokenRefreshCall struct {
 // refresh per token is sent at a time, while callers waiting on that refresh
 // remain independently cancellable.
 func (l *RemoteProvider) refreshToken(ctx context.Context, tokenString string) (string, error) {
-	l.TokenStoreMut.Lock()
-	newTokenString := strings.TrimSpace(l.TokenStore[tokenString])
-	if newTokenString != "" {
-		l.TokenStoreMut.Unlock()
-		return newTokenString, nil
-	}
-	if l.tokenRefreshes == nil {
-		l.tokenRefreshes = make(map[string]*tokenRefreshCall)
-	}
-	if call, ok := l.tokenRefreshes[tokenString]; ok {
+	for {
+		l.TokenStoreMut.Lock()
+		newTokenString := strings.TrimSpace(l.TokenStore[tokenString])
+		if newTokenString != "" {
+			l.TokenStoreMut.Unlock()
+			return newTokenString, nil
+		}
+		if l.tokenRefreshes == nil {
+			l.tokenRefreshes = make(map[string]*tokenRefreshCall)
+		}
+		call, ok := l.tokenRefreshes[tokenString]
+		if !ok {
+			call = &tokenRefreshCall{done: make(chan struct{})}
+			l.tokenRefreshes[tokenString] = call
+			l.TokenStoreMut.Unlock()
+			return l.runTokenRefresh(ctx, tokenString, call)
+		}
 		l.TokenStoreMut.Unlock()
 		select {
 		case <-ctx.Done():
 			return "", ctx.Err()
 		case <-call.done:
+			if ctx.Err() == nil && (errors.Is(call.err, context.Canceled) || errors.Is(call.err, context.DeadlineExceeded)) {
+				continue
+			}
 			return call.token, call.err
 		}
 	}
-	call := &tokenRefreshCall{done: make(chan struct{})}
-	l.tokenRefreshes[tokenString] = call
-	l.TokenStoreMut.Unlock()
+}
 
+func (l *RemoteProvider) runTokenRefresh(ctx context.Context, tokenString string, call *tokenRefreshCall) (string, error) {
 	newTokenString, err := l.requestTokenRefresh(ctx, tokenString)
 
 	l.TokenStoreMut.Lock()

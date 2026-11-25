@@ -252,6 +252,95 @@ func TestRemoteProviderMarkAllEventsReadCancelsWhileRefreshInFlight(t *testing.T
 	}
 }
 
+func TestRemoteProviderMarkAllEventsReadRetriesAfterRefreshLeaderCancellation(t *testing.T) {
+	markAllStarted := make(chan struct{}, 2)
+	firstRefreshStarted := make(chan struct{})
+	cleanup := make(chan struct{})
+	var refreshCalls atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/api/events/mark-all-read":
+			if r.Header.Get("Authorization") == "bearer fresh-token" {
+				w.WriteHeader(http.StatusOK)
+				return
+			}
+			markAllStarted <- struct{}{}
+			w.WriteHeader(http.StatusUnauthorized)
+		case "/refresh":
+			if refreshCalls.Add(1) == 1 {
+				close(firstRefreshStarted)
+				select {
+				case <-r.Context().Done():
+				case <-cleanup:
+				}
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write([]byte(`{"token":"fresh-token"}`))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	t.Cleanup(func() {
+		close(cleanup)
+		server.Close()
+	})
+
+	provider := newTestRemoteProvider(t, server.URL)
+	provider.Capabilities = Capabilities{{Feature: PersistEvents, Endpoint: "/events"}}
+	token := encodeTestToken(t, oauth2.Token{AccessToken: "expired", RefreshToken: "refreshable"})
+
+	leaderCtx, cancelLeader := context.WithCancel(context.Background())
+	defer cancelLeader()
+	leaderDone := make(chan error, 1)
+	go func() {
+		leaderDone <- provider.MarkAllEventsRead(leaderCtx, token, uuid.Nil)
+	}()
+
+	select {
+	case <-firstRefreshStarted:
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for leader token refresh")
+	}
+
+	waiterDone := make(chan error, 1)
+	go func() {
+		waiterDone <- provider.MarkAllEventsRead(context.Background(), token, uuid.Nil)
+	}()
+	select {
+	case <-markAllStarted:
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for leader mark-all request")
+	}
+	select {
+	case <-markAllStarted:
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for waiter mark-all request")
+	}
+
+	cancelLeader()
+	select {
+	case err := <-leaderDone:
+		if err == nil {
+			t.Fatal("leader MarkAllEventsRead returned nil after cancellation")
+		}
+	case <-time.After(time.Second):
+		t.Fatal("leader MarkAllEventsRead did not return after cancellation")
+	}
+
+	select {
+	case err := <-waiterDone:
+		if err != nil {
+			t.Fatalf("waiter MarkAllEventsRead returned error: %v", err)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("waiter MarkAllEventsRead did not retry after leader cancellation")
+	}
+	if got := refreshCalls.Load(); got != 2 {
+		t.Fatalf("refresh calls = %d, want 2", got)
+	}
+}
+
 func TestRemoteProviderMarkAllEventsReadPreservesRefreshFailureStatus(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
