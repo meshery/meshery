@@ -69,11 +69,11 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 	}
 
 	if err := query.Table("performance_profiles").Count(&count).Error; err != nil {
-		return nil, err
+		return nil, ErrDBRead(err)
 	}
 
 	if err := Paginate(uint(page), uint(pageSize))(query).Find(&profiles).Error; err != nil {
-		return nil, err
+		return nil, ErrDBRead(err)
 	}
 
 	performanceProfilePage := &PerformanceProfilePage{
@@ -120,12 +120,15 @@ func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ core.Uuid, prof
 
 	res := ppp.DB.Model(profile).Select("*").Omit("created_at").Updates(profile)
 	if res.Error != nil {
-		return res.Error
+		return ErrDBPut(res.Error)
 	}
 	if res.RowsAffected > 0 {
 		return nil
 	}
-	return ppp.DB.Create(profile).Error
+	if err := ppp.DB.Create(profile).Error; err != nil {
+		return ErrDBCreate(err)
+	}
+	return nil
 }
 
 // GetPerformanceProfile returns a performance profile by ID. When no profile

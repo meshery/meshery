@@ -128,8 +128,33 @@ func TestGetPerformanceProfilesPropagatesQueryError(t *testing.T) {
 	ppp := &PerformanceProfilePersister{DB: &db}
 
 	raw, err := ppp.GetPerformanceProfiles("", "", "", 0, 10)
+	if raw != nil {
+		t.Errorf("expected nil raw body on DB error, got %s", raw)
+	}
 	if err == nil {
 		t.Fatalf("expected an error querying a missing table, got body %s", raw)
+	}
+	if code := mkerrors.GetCode(err); code != ErrDBReadCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBReadCode, err)
+	}
+}
+
+func TestGetPerformanceProfiles_FindDBError(t *testing.T) {
+	db := newMigratedDB(t)
+	if err := db.Exec("DROP TABLE meshery_results").Error; err != nil {
+		t.Fatalf("drop meshery_results: %v", err)
+	}
+	ppp := &PerformanceProfilePersister{DB: db}
+
+	raw, err := ppp.GetPerformanceProfiles("", "", "", 0, 10)
+	if raw != nil {
+		t.Errorf("expected nil raw body on DB error, got %s", raw)
+	}
+	if err == nil {
+		t.Fatalf("expected ErrDBRead on missing meshery_results table, got nil")
+	}
+	if code := mkerrors.GetCode(err); code != ErrDBReadCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBReadCode, err)
 	}
 }
 
@@ -297,4 +322,40 @@ func TestSavePerformanceProfile_NilGuard(t *testing.T) {
 	if code := mkerrors.GetCode(err); code != ErrInvalidPerformanceProfileCode {
 		t.Errorf("error code = %q, want %q (err: %v)", code, ErrInvalidPerformanceProfileCode, err)
 	}
+}
+
+func TestSavePerformanceProfile_DBErrors(t *testing.T) {
+	t.Run("update error returns ErrDBPut", func(t *testing.T) {
+		db, err := database.New(database.Options{Engine: database.SQLITE, Filename: ":memory:"})
+		if err != nil {
+			t.Fatalf("open database: %v", err)
+		}
+		ppp := &PerformanceProfilePersister{DB: &db}
+
+		profile := &PerformanceProfile{ID: mustUUID(t), Name: "unmigrated"}
+		err = ppp.SavePerformanceProfile(profile.ID, profile)
+		if err == nil {
+			t.Fatalf("expected ErrDBPut on unmigrated table, got nil")
+		}
+		if code := mkerrors.GetCode(err); code != ErrDBPutCode {
+			t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBPutCode, err)
+		}
+	})
+
+	t.Run("create error returns ErrDBCreate", func(t *testing.T) {
+		db := newMigratedDB(t)
+		if err := db.Exec(`CREATE TRIGGER block_perf_profile_insert BEFORE INSERT ON performance_profiles BEGIN SELECT RAISE(ABORT, 'insert blocked'); END`).Error; err != nil {
+			t.Fatalf("create trigger: %v", err)
+		}
+		ppp := &PerformanceProfilePersister{DB: db}
+
+		profile := &PerformanceProfile{ID: mustUUID(t), Name: "blocked", Owner: mustUUID(t), Duration: "10s"}
+		err := ppp.SavePerformanceProfile(profile.ID, profile)
+		if err == nil {
+			t.Fatalf("expected ErrDBCreate when insert fails, got nil")
+		}
+		if code := mkerrors.GetCode(err); code != ErrDBCreateCode {
+			t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBCreateCode, err)
+		}
+	})
 }
