@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-# End-to-end tests for `mesheryctl system login`.
+# End-to-end tests for `mesheryctl system login` and `mesheryctl system logout`.
 #
 # Assumes Meshery is already deployed and running in Kubernetes.
 #
@@ -8,45 +8,58 @@
 # do not modify the user's existing Meshery configuration.
 #
 # Port forwarding is started once for the whole test file.
-
+#
+# Background jobs (port-forward, login) run in their own process group
+# (via setsid, available on Ubuntu) so cleanup can signal the whole group.
 
 # Execute mesheryctl using the isolated test configuration.
 mesheryctl_cmd() {
     "$MESHERYCTL_BIN" --config "$TEST_MESHERY_CONFIG" "$@"
 }
 
-# Terminates a process and its descendants.
+# Start a command in its own process group (PGID == PID).
+# Sets PROCESS_GROUP_PID. Call directly, not inside $(...).
+start_process_group() {
+    set -m
+    "$@" </dev/null &
+    PROCESS_GROUP_PID=$!
+    set +m
+}
+
+# Terminate every process in a process group created by start_process_group.
 # Uses SIGTERM first, followed by SIGKILL if necessary.
-stop_process_tree() {
-    local pid="$1"
-    local child
+stop_process_group() {
+    local pgid="$1"
+    local own_pgid
     local attempt
 
-    # Terminate child processes before their parent.
-    for child in $(pgrep -P "$pid" 2>/dev/null || true); do
-        stop_process_tree "$child"
-    done
+    [[ "$pgid" =~ ^[0-9]+$ ]] || return 0
 
-    kill -TERM "$pid" 2>/dev/null || return 0
+    # Never signal the Bats process group.
+    own_pgid="$(ps -o pgid= -p "$$" | tr -d ' ')"
+    [[ "$pgid" != "$own_pgid" ]] || return 0
 
-    # Allow the process time to terminate gracefully.
-    for ((attempt = 0; attempt < 10; attempt++)); do
-        kill -0 "$pid" 2>/dev/null || return 0
+    # Send SIGTERM to the entire process group.
+    kill -TERM -- "-$pgid" 2>/dev/null || return 0
+
+    # Wait for graceful termination.
+    for ((attempt = 0; attempt < 20; attempt++)); do
+        kill -0 -- "-$pgid" 2>/dev/null || return 0
         sleep 0.1
     done
 
-    # Force termination if the process is still running.
-    kill -KILL "$pid" 2>/dev/null || true
+    # Force termination if processes remain.
+    kill -KILL -- "-$pgid" 2>/dev/null || true
 }
 
 setup_file() {
-    export MESHERY_NAMESPACE="meshery"
-    export MESHERY_SERVICE="meshery"
-    export DASHBOARD_PORT="9081"
-    
     local source_config
     local service_port
     local i
+
+    export MESHERY_NAMESPACE="meshery"
+    export MESHERY_SERVICE="meshery"
+    export DASHBOARD_PORT="9081"
 
     source_config="${MESHERY_CONFIG:-$HOME/.meshery/config.yaml}"
 
@@ -57,7 +70,8 @@ setup_file() {
     fi
 
     # Create an isolated configuration for this test run.
-    export TEST_CONFIG_DIR="$(mktemp -d)"
+    TEST_CONFIG_DIR="$(mktemp -d)" || return 1
+    export TEST_CONFIG_DIR
 
     export TEST_MESHERY_CONFIG="$TEST_CONFIG_DIR/config.yaml"
 
@@ -88,17 +102,18 @@ setup_file() {
         return 1
     fi
 
-    # Start Kubernetes port forwarding independently of mesheryctl.
-    # Forward the local test port to the Meshery Service port.
-    export PORT_FORWARD_LOG="$(mktemp)"
+    # Start Kubernetes port forwarding independently of mesheryctl,
+    # in its own process group.
+    PORT_FORWARD_LOG="$(mktemp)" || return 1
+    export PORT_FORWARD_LOG
 
-    kubectl port-forward \
+    start_process_group kubectl port-forward \
         -n "$MESHERY_NAMESPACE" \
         "svc/$MESHERY_SERVICE" \
         "${DASHBOARD_PORT}:${service_port}" \
-        >"$PORT_FORWARD_LOG" 2>&1 3>&- &
+        >"$PORT_FORWARD_LOG" 2>&1 3>&-
 
-    export PORT_FORWARD_PID=$!
+    export PORT_FORWARD_PID=$PROCESS_GROUP_PID
 
     # Wait until the Meshery API becomes reachable.
     for ((i = 0; i < 60; i++)); do
@@ -122,14 +137,15 @@ setup_file() {
     echo "Meshery API not reachable at $TEST_ENDPOINT:" >&3
     cat "$PORT_FORWARD_LOG" >&3
 
-    stop_process_tree "$PORT_FORWARD_PID"
+    stop_process_group "$PORT_FORWARD_PID"
     return 1
 }
 
 teardown_file() {
-    # Stop Kubernetes port forwarding.
+    # Stop the port-forward process group.
     if [[ -n "${PORT_FORWARD_PID:-}" ]]; then
-        stop_process_tree "$PORT_FORWARD_PID"
+        stop_process_group "$PORT_FORWARD_PID"
+        wait "$PORT_FORWARD_PID" 2>/dev/null || true
     fi
 
     # Remove temporary files and configuration.
@@ -139,7 +155,7 @@ teardown_file() {
 
 setup() {
     load "$E2E_HELPERS_PATH/bats_libraries"
-	_load_bats_libraries
+    _load_bats_libraries
 
     # Start each test logged out.
     # Logging out when already logged out is expected.
@@ -156,15 +172,19 @@ verify_meshery_login_initiation() {
     local found=0
     local i
     local login_log
-    local login_pid
+    local login_pgid
 
     login_log="$(mktemp)" || return 1
 
-    # Start login independently so its output can be monitored.
-    mesheryctl_cmd system login -p Meshery \
-        >"$login_log" 2>&1 3>&- &
+    # Start login in its own process group so that any helper it spawns
+    # (for example a browser opener) is cleaned up with it.
+    # mesheryctl_cmd is intentionally not used here: setsid must execute
+    # the binary directly so the recorded PID is the CLI's own PID.
+    start_process_group "$MESHERYCTL_BIN" --config "$TEST_MESHERY_CONFIG" \
+        system login -p Meshery \
+        >"$login_log" 2>&1 3>&-
 
-    login_pid=$!
+    login_pgid=$PROCESS_GROUP_PID
 
     # Wait up to 30 seconds for the authentication initiation message.
     for ((i = 0; i < 30; i++)); do
@@ -174,7 +194,7 @@ verify_meshery_login_initiation() {
         fi
 
         # Stop waiting if the login process exits prematurely.
-        if ! kill -0 "$login_pid" 2>/dev/null; then
+        if ! kill -0 "$login_pgid" 2>/dev/null; then
             grep -Fq "Initiating login..." "$login_log" && found=1
             break
         fi
@@ -182,9 +202,11 @@ verify_meshery_login_initiation() {
         sleep 1
     done
 
-    # Terminate the CLI without waiting for browser-based authentication.
-    stop_process_tree "$login_pid"
-    wait "$login_pid" 2>/dev/null || true
+    # Terminate the entire login process group.
+    stop_process_group "$login_pgid"
+
+    # Reap the background CLI process.
+    wait "$login_pgid" 2>/dev/null || true
 
     if [[ "$found" -ne 1 ]]; then
         echo "Meshery authentication was not initiated."
@@ -216,4 +238,16 @@ verify_meshery_login_initiation() {
 
     assert_failure
     assert_output --partial 'Provider "Unknown" is not offered by this Meshery Server.'
+}
+
+@test "[cut=System][tg=System Logout] Given the user is logged in, When logout is run, Then the session should end" {
+    # Log in first so there is a session to end.
+    run mesheryctl_cmd system login -p Local
+    assert_success
+
+    run mesheryctl_cmd system logout
+
+    assert_success
+    assert_output --regexp 'logged out'
+
 }
