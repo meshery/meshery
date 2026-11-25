@@ -182,10 +182,14 @@ const (
 	remoteDownloadURL = "/download"
 	refURLCookie      = "meshery_ref"
 
-	defaultRemoteHTTPTimeout = 15 * time.Second
-	defaultAuthCacheTTL      = 30 * time.Second
-	maxAuthCacheEntries      = 4096
+	defaultAuthCacheTTL = 30 * time.Second
+	maxAuthCacheEntries = 4096
 )
+
+// remoteAuthRequestTimeout bounds auth/profile control-plane calls
+// (/introspect, /refresh, /revoke, /keys, and UsersProfile) without cutting off
+// large or slow /upload and /download transfers routed through DoRequest.
+var remoteAuthRequestTimeout = 15 * time.Second
 
 // Initialize stamps the minimum addressable metadata onto the
 // RemoteProvider so it can be inserted into the registration map and
@@ -824,7 +828,7 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 func (l *RemoteProvider) fetchUserDetails(token string) (*User, error) {
 	ep, _ := l.Capabilities.GetEndpointForFeature(UsersProfile)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	ctx, cancel := context.WithTimeout(context.Background(), defaultRemoteHTTPTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), remoteAuthRequestTimeout)
 	defer cancel()
 	cReq, err := http.NewRequestWithContext(ctx, http.MethodGet, remoteProviderURL.String(), nil)
 	if err != nil {

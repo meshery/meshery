@@ -2,6 +2,7 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"crypto/rsa"
 	"crypto/sha256"
 	"crypto/x509"
@@ -179,14 +180,26 @@ func (l *RemoteProvider) getHTTPClient() *http.Client {
 		transport.MaxIdleConnsPerHost = 20
 		transport.IdleConnTimeout = 90 * time.Second
 		transport.TLSHandshakeTimeout = 10 * time.Second
-		transport.ResponseHeaderTimeout = defaultRemoteHTTPTimeout
 
+		// Do not set a blanket http.Client.Timeout or ResponseHeaderTimeout here:
+		// DoRequest shares this pooled transport for /upload and /download transfers,
+		// while auth/profile paths enforce remoteAuthRequestTimeout via request context.
 		l.httpClient = &http.Client{
-			Timeout:   defaultRemoteHTTPTimeout,
 			Transport: tracing.NewTransport(transport),
 		}
 	})
 	return l.httpClient
+}
+
+type cancelOnCloseReadCloser struct {
+	io.ReadCloser
+	cancel context.CancelFunc
+}
+
+func (c *cancelOnCloseReadCloser) Close() error {
+	err := c.ReadCloser.Close()
+	c.cancel()
+	return err
 }
 
 func tokenCacheKey(token string) string {
@@ -229,7 +242,7 @@ func (l *RemoteProvider) tokenExpiry(tokenString string) time.Time {
 	if err != nil || len(parts) < 2 {
 		return time.Time{}
 	}
-	rawClaims, err := base64.RawStdEncoding.DecodeString(parts[1])
+	rawClaims, err := base64.RawURLEncoding.DecodeString(parts[1])
 	if err != nil {
 		return time.Time{}
 	}
@@ -348,12 +361,20 @@ func (l *RemoteProvider) invalidateTokenCache(tokenString string) {
 }
 
 func (l *RemoteProvider) postJSON(urlStr, contentType string, body []byte) (*http.Response, error) {
-	req, err := http.NewRequest(http.MethodPost, urlStr, bytes.NewReader(body))
+	ctx, cancel := context.WithTimeout(context.Background(), remoteAuthRequestTimeout)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, urlStr, bytes.NewReader(body))
 	if err != nil {
+		cancel()
 		return nil, err
 	}
 	req.Header.Set("Content-Type", contentType)
-	return l.getHTTPClient().Do(req)
+	resp, err := l.getHTTPClient().Do(req)
+	if err != nil {
+		cancel()
+		return nil, err
+	}
+	resp.Body = &cancelOnCloseReadCloser{ReadCloser: resp.Body, cancel: cancel}
+	return resp, nil
 }
 
 func (l *RemoteProvider) doRequestHelper(req *http.Request, token string) (*http.Response, error) {
@@ -403,7 +424,9 @@ func (l *RemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.Token, 
 
 // UpdateJWKs - Updates Keys to the JWKS
 func (l *RemoteProvider) UpdateJWKs() error {
-	req, err := http.NewRequest(http.MethodGet, l.RemoteProviderURL+"/keys", nil)
+	ctx, cancel := context.WithTimeout(context.Background(), remoteAuthRequestTimeout)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, l.RemoteProviderURL+"/keys", nil)
 	if err != nil {
 		return ErrJWKsKeys(err)
 	}
@@ -483,14 +506,23 @@ func (l *RemoteProvider) getParsedKey(kid string) (*rsa.PublicKey, error) {
 		return nil, err
 	}
 
+	l.storeParsedKeyIfCurrent(kid, keyJSON, key)
+
+	return key, nil
+}
+
+func (l *RemoteProvider) storeParsedKeyIfCurrent(kid string, keyJSON JWK, key *rsa.PublicKey) {
 	l.keysMu.Lock()
+	defer l.keysMu.Unlock()
 	if l.parsedKeys == nil {
 		l.parsedKeys = make(map[string]*rsa.PublicKey)
 	}
-	l.parsedKeys[kid] = key
-	l.keysMu.Unlock()
-
-	return key, nil
+	for _, current := range l.Keys {
+		if current["kid"] == kid && current["n"] == keyJSON["n"] && current["e"] == keyJSON["e"] {
+			l.parsedKeys[kid] = key
+			break
+		}
+	}
 }
 
 // GenerateKey - generate the actual key from the JWK
@@ -550,7 +582,7 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	}
 
 	var jtk map[string]interface{}
-	t, _ := base64.RawStdEncoding.DecodeString(x[1])
+	t, _ := base64.RawURLEncoding.DecodeString(x[1])
 	if err := json.Unmarshal(t, &jtk); err != nil {
 		return nil, ErrPraseUnverified(err)
 	}

@@ -640,19 +640,76 @@ func signTestJWT(t *testing.T, priv *rsa.PrivateKey, kid string, exp time.Time) 
 	})
 }
 
-func TestRemoteProviderGetHTTPClient_SharedWithTimeout(t *testing.T) {
-	provider := newTestRemoteProvider(t, "http://localhost:9876")
+func TestRemoteProviderHTTPClient_SharedPoolAndScopedTimeouts(t *testing.T) {
+	origTimeout := remoteAuthRequestTimeout
+	remoteAuthRequestTimeout = 50 * time.Millisecond
+	t.Cleanup(func() { remoteAuthRequestTimeout = origTimeout })
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/keys", "/introspect", "/profile":
+			time.Sleep(150 * time.Millisecond)
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{}`))
+		case "/download":
+			time.Sleep(120 * time.Millisecond)
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte("large-transfer-ok"))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+	provider.Capabilities = Capabilities{
+		{Feature: UsersProfile, Endpoint: "/profile"},
+	}
+
 	c1 := provider.getHTTPClient()
 	c2 := provider.getHTTPClient()
-
 	if c1 == nil {
 		t.Fatal("expected non-nil shared HTTP client")
 	}
 	if c1 != c2 {
 		t.Fatal("expected getHTTPClient to return the same shared *http.Client instance")
 	}
-	if c1.Timeout != defaultRemoteHTTPTimeout {
-		t.Fatalf("expected timeout %v, got %v", defaultRemoteHTTPTimeout, c1.Timeout)
+	if c1.Timeout != 0 {
+		t.Fatalf("expected shared http.Client.Timeout to be 0 so transfers are not cut off, got %v", c1.Timeout)
+	}
+
+	if err := provider.UpdateJWKs(); err == nil || !strings.Contains(err.Error(), context.DeadlineExceeded.Error()) {
+		t.Fatalf("expected UpdateJWKs to honor auth timeout (%v), got %v", context.DeadlineExceeded, err)
+	}
+
+	token := encodeTestToken(t, oauth2.Token{AccessToken: "tok", TokenType: "Bearer"})
+	if err := provider.introspectToken(token); err == nil || !strings.Contains(err.Error(), context.DeadlineExceeded.Error()) {
+		t.Fatalf("expected introspectToken to honor auth timeout (%v), got %v", context.DeadlineExceeded, err)
+	}
+
+	profileReq := httptest.NewRequest(http.MethodGet, "/api/user", nil)
+	profileReq.AddCookie(&http.Cookie{Name: TokenCookieName, Value: token})
+	if _, err := provider.GetUserDetails(profileReq); err == nil || !strings.Contains(err.Error(), context.DeadlineExceeded.Error()) {
+		t.Fatalf("expected GetUserDetails to honor auth timeout (%v), got %v", context.DeadlineExceeded, err)
+	}
+
+	downloadReq, err := http.NewRequest(http.MethodGet, server.URL+"/download", nil)
+	if err != nil {
+		t.Fatalf("build download request: %v", err)
+	}
+	resp, err := provider.DoRequest(downloadReq, token)
+	if err != nil {
+		t.Fatalf("expected DoRequest /download not to be cut off by auth timeout, got: %v", err)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("read download body: %v", err)
+	}
+	if string(body) != "large-transfer-ok" {
+		t.Fatalf("expected full download body, got %q", string(body))
 	}
 }
 
@@ -922,5 +979,105 @@ func TestRemoteProviderGetUserDetails_SingleflightAndTTLCache(t *testing.T) {
 	}
 	if got := profileCalls.Load(); got != 2 {
 		t.Fatalf("expected cached GetUserDetails not to hit /profile again, got %d calls", got)
+	}
+}
+
+func TestRemoteProviderTokenExpiry_DecodesBase64URLWithDashAndUnderscore(t *testing.T) {
+	const kid = "kid-b64url"
+	priv, jwk := generateTestRSAKeyAndJWK(t, kid)
+
+	expTime := time.Now().Add(3 * time.Second).Truncate(time.Second)
+	claims := jwt.MapClaims{
+		"sub": "user-b64url",
+		"n1":  "~~~",
+		"n2":  "~~~",
+		"n3":  "~~~",
+		"q1":  "???",
+		"q2":  "???",
+		"q3":  "???", // guarantees both '-' and '_' in Base64URL-encoded claims segment
+		"exp": expTime.Unix(),
+	}
+	tok := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	tok.Header["kid"] = kid
+	signed, err := tok.SignedString(priv)
+	if err != nil {
+		t.Fatalf("sign jwt: %v", err)
+	}
+	parts := strings.Split(signed, ".")
+	if len(parts) != 3 || !strings.Contains(parts[1], "-") || !strings.Contains(parts[1], "_") {
+		t.Fatalf("test precondition failed: expected Base64URL claims segment with both '-' and '_', got %q", parts[1])
+	}
+
+	wrappedToken := encodeTestToken(t, oauth2.Token{
+		AccessToken:  signed,
+		RefreshToken: "refresh-b64url",
+		TokenType:    "Bearer",
+	})
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/keys":
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(map[string]any{"keys": []map[string]string{jwk}})
+		case "/introspect":
+			w.WriteHeader(http.StatusOK)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+
+	gotExp := provider.tokenExpiry(wrappedToken)
+	if !gotExp.Equal(expTime) {
+		t.Fatalf("tokenExpiry() = %v, want %v (RawStdEncoding would fail on '-'/'_')", gotExp, expTime)
+	}
+
+	ttl := provider.authCacheTTLForToken(wrappedToken)
+	if ttl <= 0 || ttl > 3*time.Second {
+		t.Fatalf("expected TTL capped at <= 3s by JWT exp, got %v", ttl)
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/user", nil)
+	req.AddCookie(&http.Cookie{Name: TokenCookieName, Value: wrappedToken})
+	if err := provider.GetSession(req); err != nil {
+		t.Fatalf("GetSession failed for Base64URL '-'/'_' payload: %v", err)
+	}
+
+	cacheKey := tokenCacheKey(wrappedToken)
+	provider.authCacheMu.RLock()
+	cachedUntil := provider.introspectCache[cacheKey]
+	provider.authCacheMu.RUnlock()
+	if cachedUntil.IsZero() || cachedUntil.After(expTime.Add(time.Second)) {
+		t.Fatalf("expected introspectCache expiry <= %v, got %v", expTime, cachedUntil)
+	}
+}
+
+func TestRemoteProviderGetParsedKey_SameKidRotationDoesNotPersistStaleKey(t *testing.T) {
+	const sharedKid = "kid-shared"
+	priv1, jwk1 := generateTestRSAKeyAndJWK(t, sharedKid)
+	priv2, jwk2 := generateTestRSAKeyAndJWK(t, sharedKid)
+
+	provider := newTestRemoteProvider(t, "http://localhost:9876")
+	provider.Keys = []map[string]string{jwk2}
+
+	// Simulate an in-flight goroutine attempting to store the old parsed key
+	// after UpdateJWKs rotated key material under the same kid.
+	provider.storeParsedKeyIfCurrent(sharedKid, jwk1, &priv1.PublicKey)
+
+	provider.keysMu.RLock()
+	stale := provider.parsedKeys[sharedKid]
+	provider.keysMu.RUnlock()
+	if stale != nil {
+		t.Fatal("expected stale parsed key from rotated same-kid JWK not to be cached")
+	}
+
+	got, err := provider.getParsedKey(sharedKid)
+	if err != nil {
+		t.Fatalf("getParsedKey after rotation failed: %v", err)
+	}
+	if got.N.Cmp(priv2.N) != 0 {
+		t.Fatal("expected getParsedKey to parse and cache the current key material for sharedKid")
 	}
 }
