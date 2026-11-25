@@ -22,6 +22,14 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// remoteAuthTimeout bounds each call Meshery makes to the remote provider for token
+// refresh, key retrieval, revocation and introspection.
+const remoteAuthTimeout = 30 * time.Second
+
+// remoteAuthClient is the HTTP client for those calls. http.DefaultClient has no
+// timeout, so an unresponsive provider would otherwise block the caller indefinitely.
+var remoteAuthClient = &http.Client{Timeout: remoteAuthTimeout}
+
 const (
 	// Stores meshery provider related info.
 	ProviderCookieName = "meshery-provider"
@@ -102,7 +110,7 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	if err != nil {
 		return "", ErrMarshal(err, "refreshing token")
 	}
-	r, err := http.Post(l.RemoteProviderURL+"/refresh", "application/json; charset=utf-8", bytes.NewReader(jsonString))
+	r, err := remoteAuthClient.Post(l.RemoteProviderURL+"/refresh", "application/json; charset=utf-8", bytes.NewReader(jsonString))
 	if err != nil {
 		return "", err
 	}
@@ -214,7 +222,7 @@ func (l *RemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.Token, 
 
 // UpdateJWKs - Updates Keys to the JWKS
 func (l *RemoteProvider) UpdateJWKs() error {
-	resp, err := http.Get(l.RemoteProviderURL + "/keys")
+	resp, err := remoteAuthClient.Get(l.RemoteProviderURL + "/keys")
 	if err != nil {
 		return ErrJWKsKeys(err)
 	}
@@ -376,7 +384,7 @@ func (l *RemoteProvider) revokeToken(tokenString string) error {
 		l.Log.Error(ErrUrlParse(err))
 		return err
 	}
-	r, err := http.Post(remoteURL.String(), "application/json", bytes.NewReader(body))
+	r, err := remoteAuthClient.Post(remoteURL.String(), "application/json", bytes.NewReader(body))
 
 	if err != nil {
 		err = ErrTokenRevoke(err)
@@ -411,7 +419,7 @@ func (l *RemoteProvider) introspectToken(tokenString string) error {
 		l.Log.Error(ErrUrlParse(err))
 		return err
 	}
-	r, err := http.Post(remoteURL.String(), "application/json", bytes.NewReader(body))
+	r, err := remoteAuthClient.Post(remoteURL.String(), "application/json", bytes.NewReader(body))
 	if err != nil {
 		err = ErrTokenIntrospect(err)
 		l.Log.Error(err)
