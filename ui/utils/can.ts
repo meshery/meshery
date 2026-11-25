@@ -7,8 +7,16 @@ import { mesheryEventBus } from './eventBus';
 
 export const ability = new Ability([]);
 
-export default function CAN(action, subject) {
-  return ability.can(action, _.lowerCase(subject));
+export default function CAN(action?: unknown, subject?: unknown): boolean {
+  if (
+    typeof action !== 'string' ||
+    !action.trim() ||
+    typeof subject !== 'string' ||
+    !subject.trim()
+  ) {
+    return false;
+  }
+  return ability.can(action.trim(), _.lowerCase(subject.trim()));
 }
 
 const getProviderUiAccessControl = () =>
