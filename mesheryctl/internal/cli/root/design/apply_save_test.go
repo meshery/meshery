@@ -134,11 +134,9 @@ func TestDeleteWithGithubURLUndeploysTheDownloadedDesign(t *testing.T) {
 	content := sampleDesign(t)
 	requests := mockDesignServer(t, testContext.BaseURL, content)
 
-	originalFile := file
-	defer func() { file = originalFile }()
-	file = githubBlobURL
-
-	require.NoError(t, deleteCmd.RunE(deleteCmd, nil))
+	defer utils.ResetCommandFlags(DesignCmd, t)
+	DesignCmd.SetArgs([]string{"delete", "--yes", "-f", githubBlobURL})
+	require.NoError(t, DesignCmd.Execute())
 
 	assert.Equal(t, []string{"github", "undeploy"}, requests.calls)
 	assertUndeployPayload(t, requests.deployBody, content)
@@ -153,10 +151,9 @@ func TestDeleteWithLocalFileUndeploysWithDeployPayload(t *testing.T) {
 
 	tests := []struct {
 		name string
-		file string
 		args []string
 	}{
-		{name: "file flag", file: localFile},
+		{name: "file flag", args: []string{"-f", localFile}},
 		{name: "positional file argument", args: []string{localFile}},
 	}
 
@@ -170,11 +167,9 @@ func TestDeleteWithLocalFileUndeploysWithDeployPayload(t *testing.T) {
 			content := sampleDesign(t)
 			requests := mockDesignServer(t, testContext.BaseURL, content)
 
-			originalFile := file
-			defer func() { file = originalFile }()
-			file = tt.file
-
-			require.NoError(t, deleteCmd.RunE(deleteCmd, tt.args))
+			defer utils.ResetCommandFlags(DesignCmd, t)
+			DesignCmd.SetArgs(append([]string{"delete", "--yes"}, tt.args...))
+			require.NoError(t, DesignCmd.Execute())
 
 			assert.Equal(t, []string{"undeploy"}, requests.calls)
 			assertUndeployPayload(t, requests.deployBody, content)

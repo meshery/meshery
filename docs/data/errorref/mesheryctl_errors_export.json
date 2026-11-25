@@ -2225,6 +2225,15 @@
         "short_description": "Failed to replace token file",
         "probable_cause": "The destination path may be locked by another process\nThe filesystem may not support atomic rename",
         "suggested_remediation": "Retry the operation\nRun `mesheryctl system login` to re-authenticate"
+      },
+      "1268": {
+        "name": "ErrConfirmClusterRemovalCode",
+        "code": "1268",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to read cluster removal confirmation. Pass --yes for non-interactive use",
+        "probable_cause": "Interactive confirmation could not be read",
+        "suggested_remediation": "Pass --yes for non-interactive use"
       }
     }
   }

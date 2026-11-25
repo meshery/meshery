@@ -35,7 +35,7 @@ delete a design file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl design delete [file | URL]
+mesheryctl design delete [file | URL] --yes
 
 </div>
 </div>
@@ -55,7 +55,7 @@ delete a design using --file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl design delete -f [file | URL]
+mesheryctl design delete -f [file | URL] --yes
 
 </div>
 </div>
@@ -67,6 +67,7 @@ mesheryctl design delete -f [file | URL]
 <div class='codeblock'>
   -f, --file string   Path to design file
   -h, --help          help for delete
+  -y, --yes           (optional) assume yes for user interactive prompts.
 
 </div>
 </pre>

@@ -31,18 +31,7 @@ import (
 // designs share a name, `design deploy` lists every design's own file so the
 // user can tell them apart before picking an index.
 func TestMultiplePatternsConfirmationShowsEachDesign(t *testing.T) {
-	stdinR, stdinW, err := os.Pipe()
-	require.NoError(t, err)
-	stdoutR, stdoutW, err := os.Pipe()
-	require.NoError(t, err)
-
-	origStdin, origStdout := os.Stdin, os.Stdout
-	os.Stdin, os.Stdout = stdinR, stdoutW
-	t.Cleanup(func() { os.Stdin, os.Stdout = origStdin, origStdout })
-
-	_, err = stdinW.WriteString("1\n")
-	require.NoError(t, err)
-	require.NoError(t, stdinW.Close())
+	readPrompt := capturePrompt(t, "1\n")
 
 	first, second := uuid.Must(uuid.NewV4()), uuid.Must(uuid.NewV4())
 	designs := []models.MesheryPattern{
@@ -52,15 +41,13 @@ func TestMultiplePatternsConfirmationShowsEachDesign(t *testing.T) {
 
 	index := multiplepatternsConfirmation(designs)
 
-	require.NoError(t, stdoutW.Close())
-	out, err := io.ReadAll(stdoutR)
-	require.NoError(t, err)
+	out := readPrompt()
 
 	assert.Equal(t, 1, index)
 
 	// Each entry has to show its own file, in the order the designs were
 	// given, so the index the user types picks the file they saw.
-	entries := strings.Split(string(out), "---------------------")
+	entries := strings.Split(out, "---------------------")
 	require.GreaterOrEqual(t, len(entries), 2)
 	for i, want := range []struct {
 		id      string
@@ -75,4 +62,33 @@ func TestMultiplePatternsConfirmationShowsEachDesign(t *testing.T) {
 	}
 	assert.NotContains(t, entries[0], "version: 0.0.2")
 	assert.NotContains(t, entries[1], "version: 0.0.1")
+}
+
+func capturePrompt(t *testing.T, input string) func() string {
+	t.Helper()
+	stdinR, stdinW, err := os.Pipe()
+	require.NoError(t, err)
+	stdoutR, stdoutW, err := os.Pipe()
+	require.NoError(t, err)
+
+	origStdin, origStdout := os.Stdin, os.Stdout
+	os.Stdin, os.Stdout = stdinR, stdoutW
+	t.Cleanup(func() {
+		os.Stdin, os.Stdout = origStdin, origStdout
+		_ = stdinR.Close()
+		_ = stdoutR.Close()
+		_ = stdoutW.Close()
+	})
+
+	_, err = stdinW.WriteString(input)
+	require.NoError(t, err)
+	require.NoError(t, stdinW.Close())
+
+	return func() string {
+		t.Helper()
+		require.NoError(t, stdoutW.Close())
+		out, err := io.ReadAll(stdoutR)
+		require.NoError(t, err)
+		return string(out)
+	}
 }

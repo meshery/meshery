@@ -63,13 +63,13 @@ var deleteCmd = &cobra.Command{
 	},
 	Example: `
 // delete a design file
-mesheryctl design delete [file | URL]
+mesheryctl design delete [file | URL] --yes
 
 // delete a design by ID
 mesheryctl design delete [ID]
 
 // delete a design using --file
-mesheryctl design delete -f [file | URL]
+mesheryctl design delete -f [file | URL] --yes
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
@@ -137,6 +137,15 @@ mesheryctl design delete -f [file | URL]
 			}
 		}
 
+		confirmed, err := confirmClusterRemoval(targetFile, patternFileByt)
+		if err != nil {
+			return err
+		}
+		if !confirmed {
+			utils.Log.Info("Delete cancelled")
+			return nil
+		}
+
 		// The server decodes this endpoint's body as a JSON
 		// MesheryPatternFileDeployPayload, so send the design the same way
 		// design deploy does rather than as raw file content.
@@ -170,5 +179,6 @@ mesheryctl design delete -f [file | URL]
 }
 
 func init() {
+	deleteCmd.Flags().BoolVarP(&utils.SilentFlag, "yes", "y", false, "(optional) assume yes for user interactive prompts.")
 	deleteCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
 }

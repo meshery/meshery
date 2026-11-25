@@ -648,6 +648,11 @@ design:
           description: Deletes the resources that were created, using design file
           usage: mesheryctl design delete -f [path to design file]
           example: mesheryctl design delete -f "bookInfo.yaml"
+        yes:
+          name: --yes, -y
+          description: (optional) assume yes for user interactive prompts.
+          usage: mesheryctl design delete -f [filepath] --yes
+          example: mesheryctl design delete -f "bookInfo.yaml" --yes
     deploy:
       name: deploy
       description: Deploy application
@@ -753,6 +758,11 @@ design:
           description: Undeploy application with an application file
           usage: mesheryctl design undeploy -f [filepath]
           example: mesheryctl design undeploy -f "bookInfo.yaml"
+        yes:
+          name: --yes, -y
+          description: (optional) assume yes for user interactive prompts.
+          usage: mesheryctl design undeploy -f [filepath] --yes
+          example: mesheryctl design undeploy -f "bookInfo.yaml" --yes
     view:
       name: view
       description: Displays the contents of a specific design file

@@ -7,6 +7,8 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const nonExistentID = "a12b3c4d-5e6f-4890-abcd-ef1234567890"
@@ -27,7 +29,7 @@ func TestDeleteCmd(t *testing.T) {
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
 			Name:             "given valid file when design delete then design is deleted",
-			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			Args:             []string{"delete", "--yes", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "delete.output.golden",
 			URLs: []utils.MockURL{
 				{
@@ -41,7 +43,7 @@ func TestDeleteCmd(t *testing.T) {
 		},
 		{
 			Name:             "given valid file as positional argument when design delete then design is deleted",
-			Args:             []string{"delete", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			Args:             []string{"delete", "--yes", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "delete.output.golden",
 			URLs: []utils.MockURL{
 				{
@@ -55,7 +57,7 @@ func TestDeleteCmd(t *testing.T) {
 		},
 		{
 			Name:             "given valid relative file as positional argument when design delete then design is deleted",
-			Args:             []string{"delete", filepath.Join("fixtures", "sampleDesign.golden")},
+			Args:             []string{"delete", "--yes", filepath.Join("fixtures", "sampleDesign.golden")},
 			ExpectedResponse: "delete.output.golden",
 			URLs: []utils.MockURL{
 				{
@@ -201,4 +203,23 @@ func TestDeleteCmd(t *testing.T) {
 
 	// Run tests
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}
+
+func TestDeleteFileConfirmation(t *testing.T) {
+	target := filepath.Join("fixtures", "sampleDesign.golden")
+	t.Run("decline", func(t *testing.T) {
+		output, prompt, err, gets, deletes := runRemovalPromptTest(t, []string{"delete", target}, "n\n")
+		require.NoError(t, err)
+		assert.Equal(t, 1, gets)
+		assert.Zero(t, deletes)
+		assert.Contains(t, prompt, "Design 'SampleApp' will be undeployed from 2 connected Kubernetes cluster(s): east, west.")
+		assert.Contains(t, output, "Delete cancelled")
+	})
+	t.Run("skip", func(t *testing.T) {
+		_, prompt, err, gets, deletes := runRemovalPromptTest(t, []string{"delete", "-f", target, "--yes"}, "")
+		require.NoError(t, err)
+		assert.Zero(t, gets)
+		assert.Equal(t, 1, deletes)
+		assert.Empty(t, prompt)
+	})
 }

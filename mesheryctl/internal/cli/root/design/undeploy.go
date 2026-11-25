@@ -39,7 +39,7 @@ var designUndeployCmd = &cobra.Command{
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/design/undeploy`,
 	Example: `
 // Undeploy design by providing file path
-mesheryctl design undeploy -f [filepath]
+mesheryctl design undeploy -f [filepath] --yes
 	`,
 
 	Args: func(cmd *cobra.Command, args []string) error {
@@ -143,6 +143,15 @@ mesheryctl design undeploy -f [filepath]
 			return models.ErrMarshallingDesignIntoYAML(err)
 		}
 
+		confirmed, err := confirmClusterRemoval(file, []byte(designFile))
+		if err != nil {
+			return err
+		}
+		if !confirmed {
+			utils.Log.Info("Undeploy cancelled")
+			return nil
+		}
+
 		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer(patternFileByt))
 		if err != nil {
 			return err
@@ -169,5 +178,6 @@ mesheryctl design undeploy -f [filepath]
 }
 
 func init() {
+	designUndeployCmd.Flags().BoolVarP(&utils.SilentFlag, "yes", "y", false, "(optional) assume yes for user interactive prompts.")
 	designUndeployCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
 }

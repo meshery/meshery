@@ -4176,6 +4176,23 @@
         "Retry the operation",
         "Run `mesheryctl system login` to re-authenticate"
       ]
+    },
+    {
+      "code": "mesheryctl-1268",
+      "moniker": "ErrConfirmClusterRemovalCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1268",
+      "severity": "alert",
+      "shortDescription": "Unable to read cluster removal confirmation. Pass --yes for non-interactive use",
+      "probableCause": [
+        "Interactive confirmation could not be read"
+      ],
+      "suggestedRemediation": [
+        "Pass --yes for non-interactive use"
+      ]
     }
   ],
   "schemaVersion": 2

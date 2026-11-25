@@ -31,7 +31,7 @@ Undeploy design by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl design undeploy -f [filepath]
+mesheryctl design undeploy -f [filepath] --yes
 
 </div>
 </div>
@@ -43,6 +43,7 @@ mesheryctl design undeploy -f [filepath]
 <div class='codeblock'>
   -f, --file string   Path to design file
   -h, --help          help for undeploy
+  -y, --yes           (optional) assume yes for user interactive prompts.
 
 </div>
 </pre>

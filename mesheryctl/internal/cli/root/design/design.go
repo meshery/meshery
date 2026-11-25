@@ -19,6 +19,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"path/filepath"
 	"slices"
 	"strings"
 	"time"
@@ -29,7 +31,9 @@ import (
 	"github.com/meshery/meshery/server/models/pattern/core"
 	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v2"
 )
 
 // githubDownloadTimeout bounds the download of a design file from GitHub.
@@ -170,4 +174,56 @@ func fetchDesignFromGithub(fileURL string) ([]byte, error) {
 		return nil, utils.ErrReadFromBody(err)
 	}
 	return content, nil
+}
+
+const connectedClustersPath = "api/integrations/connections?kind=kubernetes&status=connected&pagesize=all"
+
+func confirmClusterRemoval(target string, content []byte) (bool, error) {
+	if utils.SilentFlag {
+		return true, nil
+	}
+
+	var names []string
+	requestPath := connectedClustersPath
+	for page := 0; ; page++ {
+		result, err := api.Fetch[connection.ConnectionPage](requestPath)
+		if err != nil {
+			return false, err
+		}
+		for _, conn := range result.Connections {
+			names = append(names, conn.Name)
+		}
+		if len(names) >= result.TotalCount {
+			break
+		}
+		if len(result.Connections) == 0 {
+			return false, ErrDesignInvalidApiResponse("Connected Kubernetes cluster listing ended before reaching its total count")
+		}
+		// The server accepts pagesize=all but caps each page at 100.
+		requestPath = fmt.Sprintf("%s&page=%d", connectedClustersPath, page+1)
+	}
+	if len(names) == 0 {
+		return true, nil
+	}
+
+	var design struct {
+		Name string `yaml:"name"`
+	}
+	if err := yaml.Unmarshal(content, &design); err != nil || strings.TrimSpace(design.Name) == "" {
+		if utils.IsValidUrl(target) {
+			if parsed, err := url.Parse(target); err == nil {
+				target = parsed.Path
+			}
+		}
+		design.Name = filepath.Base(target)
+	}
+
+	confirmed, err := utils.AskForConfirmation(fmt.Sprintf(
+		"Design '%s' will be undeployed from %d connected Kubernetes cluster(s): %s. Are you sure you want to continue",
+		design.Name, len(names), strings.Join(names, ", "),
+	))
+	if err != nil {
+		return false, ErrConfirmClusterRemoval(err)
+	}
+	return confirmed, nil
 }

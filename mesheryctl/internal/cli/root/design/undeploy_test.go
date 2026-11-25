@@ -7,7 +7,10 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUndeployCmd(t *testing.T) {
@@ -28,7 +31,7 @@ func TestUndeployCmd(t *testing.T) {
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
 			Name:             "given valid file when design undeploy then design is undeployed",
-			Args:             []string{"undeploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			Args:             []string{"undeploy", "--yes", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "undeploy.output.golden",
 			URLs: []utils.MockURL{
 				{
@@ -48,7 +51,7 @@ func TestUndeployCmd(t *testing.T) {
 		},
 		{
 			Name:             "given valid relative file when design undeploy then design is undeployed",
-			Args:             []string{"undeploy", "-f", filepath.Join("fixtures", "sampleDesign.golden")},
+			Args:             []string{"undeploy", "--yes", "-f", filepath.Join("fixtures", "sampleDesign.golden")},
 			ExpectedResponse: "undeploy.output.golden",
 			URLs: []utils.MockURL{
 				{
@@ -135,7 +138,7 @@ func TestUndeployCmd(t *testing.T) {
 		},
 		{
 			Name:             "given nonexistent design provided when design undeploy then error is thrown",
-			Args:             []string{"undeploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			Args:             []string{"undeploy", "--yes", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
 				{
@@ -165,4 +168,70 @@ func TestUndeployCmd(t *testing.T) {
 
 	// Run tests
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}
+
+func TestUndeployConfirmation(t *testing.T) {
+	for _, test := range []struct {
+		name, input string
+		yes         bool
+		wantDeletes int
+	}{
+		{name: "decline", input: "n\n"},
+		{name: "accept", input: "y\n", wantDeletes: 1},
+		{name: "skip", yes: true, wantDeletes: 1},
+		{name: "EOF"},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			args := []string{"undeploy", "-f", filepath.Join("fixtures", "sampleDesign.golden")}
+			if test.yes {
+				args = append(args, "--yes")
+			}
+			output, prompt, err, gets, deletes := runRemovalPromptTest(t, args, test.input)
+			if test.name == "EOF" {
+				require.ErrorContains(t, err, "--yes")
+			} else {
+				require.NoError(t, err)
+			}
+			assert.Equal(t, test.wantDeletes, deletes)
+			if test.yes {
+				assert.Zero(t, gets)
+				assert.Empty(t, prompt)
+			} else {
+				assert.Equal(t, 1, gets)
+				assert.Contains(t, prompt, "Design 'SampleApp' will be undeployed from 2 connected Kubernetes cluster(s): east, west.")
+			}
+			if test.name == "decline" {
+				assert.Contains(t, output, "Undeploy cancelled")
+			}
+		})
+	}
+}
+
+func runRemovalPromptTest(t *testing.T, args []string, input string) (output, prompt string, err error, gets, deletes int) {
+	t.Helper()
+	ctx := utils.InitTestEnvironment(t)
+	t.Cleanup(func() {
+		utils.StopMockery(t)
+		utils.ResetCommandFlags(DesignCmd, t)
+		resetVariables()
+	})
+	utils.TokenFlag = utils.GetToken(t)
+
+	getURL := ctx.BaseURL + "/" + connectedClustersPath
+	deleteURL := ctx.BaseURL + "/api/pattern/deploy?contexts=all"
+	fixtures := "fixtures"
+	httpmock.RegisterResponder("GET", getURL, httpmock.NewStringResponder(200,
+		utils.NewGoldenFile(t, "removal.connections.response.golden", fixtures).Load()))
+	httpmock.RegisterResponder("POST", ctx.BaseURL+"/api/pattern", httpmock.NewStringResponder(200,
+		utils.NewGoldenFile(t, "apply.designSave.response.golden", fixtures).Load()))
+	httpmock.RegisterResponder("DELETE", deleteURL, httpmock.NewStringResponder(200,
+		utils.NewGoldenFile(t, args[0]+".response.golden", fixtures).Load()))
+
+	buf := utils.SetupMeshkitLoggerTesting(t, false)
+	readPrompt := capturePrompt(t, input)
+	DesignCmd.SetArgs(args)
+	DesignCmd.SetOut(buf)
+	err = DesignCmd.Execute()
+	calls := httpmock.GetCallCountInfo()
+	return buf.String(), readPrompt(), err, calls["GET "+getURL], calls["DELETE "+deleteURL]
 }
