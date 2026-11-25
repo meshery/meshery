@@ -215,5 +215,5 @@ func ErrNoConnectedClusters() error {
 		[]string{"No Kubernetes cluster is connected, so there is nothing to remove from"},
 		[]string{"Removal targets every connected Kubernetes cluster, and none are connected"},
 		[]string{"Meshery has no connected Kubernetes clusters"},
-		[]string{"Connect a Kubernetes cluster using mesheryctl connections or the Meshery UI and retry"})
+		[]string{"Connect a Kubernetes cluster using mesheryctl connection create --type <aks|eks|gke|minikube> or the Meshery UI and retry"})
 }

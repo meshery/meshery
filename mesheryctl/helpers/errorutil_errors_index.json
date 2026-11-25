@@ -4209,7 +4209,7 @@
         "Meshery has no connected Kubernetes clusters"
       ],
       "suggestedRemediation": [
-        "Connect a Kubernetes cluster using mesheryctl connections or the Meshery UI and retry"
+        "Connect a Kubernetes cluster using mesheryctl connection create --type \u003caks|eks|gke|minikube\u003e or the Meshery UI and retry"
       ]
     }
   ],
