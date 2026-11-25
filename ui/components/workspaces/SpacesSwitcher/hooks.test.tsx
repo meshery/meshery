@@ -173,7 +173,7 @@ describe('visibility update helpers', () => {
     expect(out.error).toBe('oops');
   });
 
-  it('propagates HTTP errors (status and data) for handleUpdateViewVisibility', async () => {
+  it('propagates 4xx HTTP error for handleUpdateViewVisibility', async () => {
     const updateView = vi.fn().mockResolvedValue({
       error: { status: 400, data: 'Bad Request' },
     });
@@ -185,7 +185,58 @@ describe('visibility update helpers', () => {
     expect(out.error).toBe('Bad Request');
   });
 
-  it('propagates HTTP errors (status and data) for handleUpdatePatternVisibility', async () => {
+  it('propagates 5xx HTTP error for handleUpdateViewVisibility', async () => {
+    const updateView = vi.fn().mockResolvedValue({
+      error: { status: 500, data: { message: 'Internal Server Error' } },
+    });
+    const out = await handleUpdateViewVisibility({
+      value: 'private',
+      updateView,
+      selectedResource: { id: 'v-1' },
+    });
+    expect(out.error).toEqual({ message: 'Internal Server Error' });
+  });
+
+  it('propagates network error for handleUpdateViewVisibility', async () => {
+    const updateView = vi.fn().mockResolvedValue({
+      error: { status: 'FETCH_ERROR', error: 'Failed to fetch' },
+    });
+    const out = await handleUpdateViewVisibility({
+      value: 'private',
+      updateView,
+      selectedResource: { id: 'v-1' },
+    });
+    expect(out.error).toBe('Failed to fetch');
+  });
+
+  it('returns undefined error on successful view visibility update', async () => {
+    const updateView = vi.fn().mockResolvedValue({ data: { success: true } });
+    const out = await handleUpdateViewVisibility({
+      value: 'private',
+      updateView,
+      selectedResource: { id: 'v-1' },
+    });
+    expect(out.error).toBeUndefined();
+  });
+
+  it('propagates 4xx HTTP error for handleUpdatePatternVisibility', async () => {
+    const updatePatterns = vi.fn().mockResolvedValue({
+      error: { status: 403, data: 'Forbidden' },
+    });
+    const out = await handleUpdatePatternVisibility({
+      value: 'public',
+      updatePatterns,
+      selectedResource: {
+        id: 'p-1',
+        name: 'design',
+        catalogData: {},
+        patternFile: JSON.stringify({}),
+      },
+    });
+    expect(out.error).toBe('Forbidden');
+  });
+
+  it('propagates 5xx HTTP error for handleUpdatePatternVisibility', async () => {
     const updatePatterns = vi.fn().mockResolvedValue({
       error: { status: 500, data: { message: 'Internal Server Error' } },
     });
@@ -202,7 +253,24 @@ describe('visibility update helpers', () => {
     expect(out.error).toEqual({ message: 'Internal Server Error' });
   });
 
-  it('returns undefined error on successful visibility update', async () => {
+  it('propagates network error for handleUpdatePatternVisibility', async () => {
+    const updatePatterns = vi.fn().mockResolvedValue({
+      error: { status: 'FETCH_ERROR', error: 'Failed to fetch' },
+    });
+    const out = await handleUpdatePatternVisibility({
+      value: 'public',
+      updatePatterns,
+      selectedResource: {
+        id: 'p-1',
+        name: 'design',
+        catalogData: {},
+        patternFile: JSON.stringify({}),
+      },
+    });
+    expect(out.error).toBe('Failed to fetch');
+  });
+
+  it('returns undefined error on successful pattern visibility update', async () => {
     const updatePatterns = vi.fn().mockResolvedValue({ data: { success: true } });
     const out = await handleUpdatePatternVisibility({
       value: 'public',
