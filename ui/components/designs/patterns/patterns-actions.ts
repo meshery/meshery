@@ -374,8 +374,9 @@ export function createPatternsActions(deps) {
       downloadContent({ id, name, type: 'pattern', source_type, params });
       updateProgress({ showProgress: false });
       notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
+      handleError(ACTION_TYPES.DOWNLOAD_PATTERN)(error);
     }
   };
 

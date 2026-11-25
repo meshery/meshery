@@ -18,6 +18,7 @@ describe('ACTION_TYPES', () => {
       'PUBLISH_CATALOG',
       'UNPUBLISH_CATALOG',
       'SCHEMA_FETCH',
+      'DOWNLOAD_PATTERN',
     ];
 
     keys.forEach((key) => {

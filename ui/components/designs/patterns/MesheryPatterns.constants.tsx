@@ -43,6 +43,10 @@ export const ACTION_TYPES = {
     name: 'EVALUATE_RELATIONSHIP',
     error_msg: 'Failed to evaluate design relationships',
   },
+  DOWNLOAD_PATTERN: {
+    name: 'DOWNLOAD_PATTERN',
+    error_msg: 'Failed to download design file',
+  },
 };
 
 export const genericClickHandler = (ev, fn) => {
