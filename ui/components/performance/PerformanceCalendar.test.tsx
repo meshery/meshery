@@ -1,11 +1,12 @@
 import React from 'react';
 import { render, act } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import PerformanceCalendar, { generateDateRange } from './PerformanceCalendar';
 
-const { resultsQuerySpy, calendarComponentSpy } = vi.hoisted(() => ({
+const { resultsQuerySpy, calendarComponentSpy, mockResults } = vi.hoisted(() => ({
   resultsQuerySpy: vi.fn(),
   calendarComponentSpy: vi.fn(),
+  mockResults: { data: { results: [] }, isFetching: false, isError: false },
 }));
 
 vi.mock('react-big-calendar', () => ({ momentLocalizer: () => ({}) }));
@@ -18,7 +19,7 @@ vi.mock('../../utils/hooks/useNotification', () => ({
 vi.mock('@meshery/schemas/mesheryApi', () => ({
   useGetPerformanceResultsQuery: (args: any) => {
     resultsQuerySpy(args);
-    return { data: { results: [] }, isFetching: false, isError: false };
+    return mockResults;
   },
 }));
 vi.mock('./style', () => ({
@@ -80,13 +81,23 @@ describe('generateDateRange', () => {
 });
 
 describe('PerformanceCalendar onRangeChange', () => {
+  let unmountComponent: (() => void) | null = null;
+
   beforeEach(() => {
     resultsQuerySpy.mockClear();
     calendarComponentSpy.mockClear();
   });
 
+  afterEach(() => {
+    if (unmountComponent) {
+      unmountComponent();
+      unmountComponent = null;
+    }
+  });
+
   it('updates query date range when onRangeChange is triggered with week view dates', async () => {
-    render(<PerformanceCalendar />);
+    const { unmount } = render(<PerformanceCalendar />);
+    unmountComponent = unmount;
 
     const latestProps = calendarComponentSpy.mock.calls[0][0];
     expect(typeof latestProps.onRangeChange).toBe('function');
@@ -114,7 +125,8 @@ describe('PerformanceCalendar onRangeChange', () => {
   });
 
   it('updates query date range when onRangeChange is triggered with a single day view date', async () => {
-    render(<PerformanceCalendar />);
+    const { unmount } = render(<PerformanceCalendar />);
+    unmountComponent = unmount;
 
     const latestProps = calendarComponentSpy.mock.calls[0][0];
 
