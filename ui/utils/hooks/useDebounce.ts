@@ -4,7 +4,7 @@ const DEFAULT_DEBOUNCE_DELAY = 300;
 
 const useDebouncedCallback = <TArgs extends unknown[]>(
   callback: ((...args: TArgs) => void) | null | undefined,
-  delay: number | null | undefined = DEFAULT_DEBOUNCE_DELAY,
+  delay?: number | null | undefined,
 ): ((...args: TArgs) => void) => {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const savedCallback = useRef(callback);

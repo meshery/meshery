@@ -250,8 +250,8 @@ describe('useDebouncedCallback', () => {
   it('cancels pending invocation when supplied delay changes even if normalized delay stays 300ms', () => {
     const fn = vi.fn();
     const { result, rerender } = renderHook(
-      ({ delay }: { delay: number | null }) => useDebouncedCallback(fn, delay),
-      { initialProps: { delay: 300 as number | null } },
+      ({ delay }: { delay: number | null | undefined }) => useDebouncedCallback(fn, delay),
+      { initialProps: { delay: 300 as number | null | undefined } },
     );
 
     act(() => {
@@ -259,6 +259,20 @@ describe('useDebouncedCallback', () => {
     });
 
     rerender({ delay: null });
+
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+
+    expect(fn).not.toHaveBeenCalled();
+
+    rerender({ delay: 300 });
+
+    act(() => {
+      result.current();
+    });
+
+    rerender({ delay: undefined });
 
     act(() => {
       vi.advanceTimersByTime(300);
