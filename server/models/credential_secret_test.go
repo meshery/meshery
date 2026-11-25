@@ -173,3 +173,104 @@ func TestCredentialAuthSecret(t *testing.T) {
 		})
 	}
 }
+
+func TestMergeCredentialSecrets(t *testing.T) {
+	t.Run("preserves omitted top-level and nested secret keys and updates provided ones", func(t *testing.T) {
+		existing := map[string]interface{}{
+			"clusterName":      "prod",
+			"clusterServerURL": "https://old.example",
+			"auth": map[string]interface{}{
+				"clusterUserName":                 "admin",
+				"clusterToken":                    "stored-token",
+				"clusterClientCertificateData":    "stored-cert",
+				"clusterCertificateAuthorityData": "stored-ca",
+			},
+		}
+		incoming := map[string]interface{}{
+			"clusterServerURL": "https://new.example",
+			"auth": map[string]interface{}{
+				"clusterUserName": "new-admin",
+			},
+		}
+
+		got := MergeCredentialSecrets(existing, incoming)
+		want := map[string]interface{}{
+			"clusterName":      "prod",
+			"clusterServerURL": "https://new.example",
+			"auth": map[string]interface{}{
+				"clusterUserName":                 "new-admin",
+				"clusterToken":                    "stored-token",
+				"clusterClientCertificateData":    "stored-cert",
+				"clusterCertificateAuthorityData": "stored-ca",
+			},
+		}
+		if !reflect.DeepEqual(got, want) {
+			t.Fatalf("MergeCredentialSecrets() = %#v, want %#v", got, want)
+		}
+		// Must not mutate caller's existing map.
+		if existing["clusterServerURL"] != "https://old.example" {
+			t.Fatalf("existing map mutated: %#v", existing)
+		}
+	})
+
+	t.Run("overwrites secret value when explicitly provided and handles nil maps", func(t *testing.T) {
+		got := MergeCredentialSecrets(
+			map[string]interface{}{"grafanaURL": "https://g", "grafanaAPIKey": "old"},
+			map[string]interface{}{"grafanaAPIKey": "new"},
+		)
+		want := map[string]interface{}{"grafanaURL": "https://g", "grafanaAPIKey": "new"}
+		if !reflect.DeepEqual(got, want) {
+			t.Fatalf("got %#v, want %#v", got, want)
+		}
+		if MergeCredentialSecrets(nil, nil) != nil {
+			t.Fatalf("expected nil when both maps are nil")
+		}
+	})
+
+	t.Run("normalizes legacy-wrapped stored secret before merging canonical root updates", func(t *testing.T) {
+		existing := map[string]interface{}{
+			"credentialName": "legacy-grafana",
+			"secret": map[string]interface{}{
+				"grafanaURL":    "https://old.grafana.example",
+				"grafanaAPIKey": "stored-api-key",
+			},
+		}
+		incoming := map[string]interface{}{
+			"grafanaURL": "https://new.grafana.example",
+		}
+
+		got := MergeCredentialSecrets(existing, incoming)
+		want := map[string]interface{}{
+			"grafanaURL":    "https://new.grafana.example",
+			"grafanaAPIKey": "stored-api-key",
+		}
+		if !reflect.DeepEqual(got, want) {
+			t.Fatalf("MergeCredentialSecrets() = %#v, want %#v", got, want)
+		}
+		if auth := CredentialAuthSecret(got); auth != "stored-api-key" {
+			t.Fatalf("CredentialAuthSecret() = %q, want %q", auth, "stored-api-key")
+		}
+	})
+
+	t.Run("rotates canonical auth key when incoming uses legacy string shape", func(t *testing.T) {
+		existing := map[string]interface{}{
+			"grafanaURL":    "https://grafana.example",
+			"grafanaAPIKey": "old-api-key",
+		}
+		incoming := map[string]interface{}{
+			"secret": "rotated-api-key",
+		}
+
+		got := MergeCredentialSecrets(existing, incoming)
+		want := map[string]interface{}{
+			"grafanaURL":    "https://grafana.example",
+			"grafanaAPIKey": "rotated-api-key",
+		}
+		if !reflect.DeepEqual(got, want) {
+			t.Fatalf("MergeCredentialSecrets() = %#v, want %#v", got, want)
+		}
+		if auth := CredentialAuthSecret(got); auth != "rotated-api-key" {
+			t.Fatalf("CredentialAuthSecret() = %q, want %q", auth, "rotated-api-key")
+		}
+	})
+}
