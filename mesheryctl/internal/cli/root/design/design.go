@@ -20,6 +20,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"path"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -154,6 +155,8 @@ func fetchDesignFromGithub(fileURL string) ([]byte, error) {
 	rawURL := repoURL
 	if filePath != "" {
 		rawURL = strings.Replace(repoURL, "https://github.com/", "https://raw.githubusercontent.com/", 1) + "/" + filePath
+	} else {
+		rawURL = fileURL
 	}
 
 	client := &http.Client{Timeout: githubDownloadTimeout}
@@ -186,11 +189,12 @@ func isGithubURL(fileURL string) bool {
 func designFileName(filePathOrURL string) string {
 	if utils.IsValidUrl(filePathOrURL) {
 		if u, err := url.Parse(filePathOrURL); err == nil && u.Path != "" {
-			base := filepath.Base(u.Path)
+			base := path.Base(u.Path)
 			if base != "." && base != "/" && base != "" {
 				return base
 			}
 		}
+		return "design.yaml"
 	}
 	return filepath.Base(filePathOrURL)
 }
@@ -199,6 +203,15 @@ func designFileName(filePathOrURL string) string {
 // it is normalized and fetched via fetchDesignFromGithub. For other HTTP/HTTPS URLs,
 // it is fetched directly.
 func fetchDesignFile(fileURL string) ([]byte, error) {
+	u, err := url.Parse(fileURL)
+	if err != nil {
+		return nil, utils.ErrFailRequest(err)
+	}
+	scheme := strings.ToLower(u.Scheme)
+	if scheme != "http" && scheme != "https" {
+		return nil, ErrInvalidDesignFile(fmt.Errorf("unsupported URL scheme %q: only http and https are supported", u.Scheme))
+	}
+
 	if isGithubURL(fileURL) {
 		return fetchDesignFromGithub(fileURL)
 	}

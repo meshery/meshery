@@ -237,6 +237,11 @@ func TestFetchDesignFile_GenericURL(t *testing.T) {
 	httpmock.RegisterResponder("GET", genericURL, httpmock.NewStringResponder(http.StatusNotFound, "404 Not Found"))
 	_, err = fetchDesignFile(genericURL)
 	assert.Error(t, err)
+
+	// Non-HTTP(S) schemes are rejected cleanly
+	_, err = fetchDesignFile("ftp://example.com/designs/sample.yaml")
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "unsupported URL scheme")
 }
 
 func TestFetchDesignFile_GithubURL(t *testing.T) {
@@ -248,6 +253,12 @@ func TestFetchDesignFile_GithubURL(t *testing.T) {
 	content, err := fetchDesignFile(githubBlobURL)
 	require.NoError(t, err)
 	assert.Equal(t, "github design content", string(content))
+
+	authedRawURL := githubRawURL + "?token=secret123"
+	httpmock.RegisterResponder("GET", authedRawURL, httpmock.NewStringResponder(http.StatusOK, "authed raw content"))
+	authedContent, err := fetchDesignFile(authedRawURL)
+	require.NoError(t, err)
+	assert.Equal(t, "authed raw content", string(authedContent))
 }
 
 func TestIsGithubURL(t *testing.T) {
@@ -261,6 +272,8 @@ func TestIsGithubURL(t *testing.T) {
 
 func TestDesignFileName(t *testing.T) {
 	assert.Equal(t, "design.yaml", designFileName("https://example.com/designs/design.yaml?token=secret&sig=123"))
+	assert.Equal(t, "design.yaml", designFileName("https://example.com/?token=secret"))
+	assert.Equal(t, "design.yaml", designFileName("https://example.com"))
 	assert.Equal(t, "sample.yaml", designFileName("https://example.com/sample.yaml"))
 	assert.Equal(t, "local.yaml", designFileName("designs/local.yaml"))
 }
