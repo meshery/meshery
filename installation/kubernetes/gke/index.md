@@ -196,6 +196,18 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/guidance-needed-recurring-ci-failures-on-pr-24033/8355" target="_blank" rel="noopener noreferrer">
+            Guidance needed: Recurring CI failures on PR #24033
+          </a>
+        </li><li>
+          <a href="https://discuss.meshery.io/t/looking-for-meshmate-guidance-as-a-new-contributor/8351" target="_blank" rel="noopener noreferrer">
+            Looking for MeshMate Guidance as a New Contributor
+          </a>
+        </li><li>
+          <a href="https://discuss.meshery.io/t/new-to-meshery-looking-forward-to-contributing/8347" target="_blank" rel="noopener noreferrer">
+            New to Meshery – Looking Forward to Contributing!
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/cannot-read-properties-of-undefined-reading-selectedenvs/8273" target="_blank" rel="noopener noreferrer">
             Cannot read properties of undefined (reading &#39;selectedEnvs&#39;)
           </a>
@@ -214,18 +226,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-meshmate-to-learn-from/8316" target="_blank" rel="noopener noreferrer">
             Looking for MeshMate to learn from
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-seeking-an-experienced-meshery-contributor-as-a-guide/8166" target="_blank" rel="noopener noreferrer">
-            Looking for a MeshMate: Seeking an Experienced Meshery Contributor as a Guide
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/new-contributor-intro-chitrashree-nanjundachitra100-del-looking-for-a-meshmate-ui-web-dev/8306" target="_blank" rel="noopener noreferrer">
-            New Contributor Intro: Chitrashree (@nanjundachitra100-del) | Looking for a MeshMate (UI &amp; Web Dev)
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/authorization-required-missing-requisite-key/8275" target="_blank" rel="noopener noreferrer">
-            Authorization Required , missing requisite key
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
