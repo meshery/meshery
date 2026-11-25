@@ -1,0 +1,13 @@
+# v0.3.9
+
+LLMS index: [llms.txt](/pr-preview/pr-22648/llms.txt)
+
+---
+
+### What's new?
+
+- Mesheryctl
+  - Addition of `mesheryctl version` to provide server-side version number.
+  - Improvement of `mesheryctl logs | stop | start` to provide appropriate grammar in situations when Meshery is stopped or Docker is not present.
+- Meshery Server
+  - Strip off extraneous information beyond IP address and port in Grafana and Prometheus endpoints ([#612](https://github.com/meshery/meshery/issues/612))
