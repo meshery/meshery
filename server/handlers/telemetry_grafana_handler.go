@@ -47,8 +47,10 @@ func (h *Handler) grafanaClientForConnection(token string, connectionID uuid.UUI
 
 	baseURL, _ := connection.Metadata["url"].(string)
 	secret := ""
-	if connection.CredentialID != nil {
-		cred, sc, cerr := p.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
+	// DefaultLocalProvider.SaveConnection persists a nil CredentialID as the
+	// zero UUID for compatibility, so treat both nil and uuid.Nil as anonymous.
+	if credID := core.UUIDOrUUIDNil(connection.CredentialID); !credID.IsNil() {
+		cred, sc, cerr := p.GetCredentialByID(token, credID)
 		if cerr != nil {
 			return nil, connection, sc, cerr
 		}
