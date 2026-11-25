@@ -384,3 +384,46 @@ func TestPromptAsyncPagination(t *testing.T) {
 		})
 	}
 }
+
+func TestHandlePaginationAsync_PrePopulatedPageAdvances(t *testing.T) {
+	utils.SetupContextEnv(t)
+	utils.StartMockery(t)
+	testContext := utils.NewTestHelper(t)
+	utils.TokenFlag = utils.GetToken(t)
+	defer func() {
+		utils.TokenFlag = "Not Set"
+	}()
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	httpmock.RegisterResponder("GET", testContext.BaseURL+"/test?orgId=org-123&page=0&pagesize=25",
+		httpmock.NewStringResponder(200, `{"items":[{"id":"1"}]}`))
+	httpmock.RegisterResponder("GET", testContext.BaseURL+"/test?orgId=org-123&page=1&pagesize=25",
+		httpmock.NewStringResponder(200, `{"items":[{"id":"2"}]}`))
+	httpmock.RegisterResponder("GET", testContext.BaseURL+"/test?orgId=org-123&page=2&pagesize=25",
+		httpmock.NewStringResponder(200, `{"items":[{"id":"3"}]}`))
+
+	var visitedPages []int
+	var fetchedIDs []string
+	err := HandlePaginationAsync(
+		DisplayDataAsync{
+			PageSize: 25,
+			Page:     1,
+			UrlPath:  "test?orgId=org-123&page=1&pagesize=25",
+		},
+		func(data *struct {
+			Items []struct {
+				ID string `json:"id"`
+			} `json:"items"`
+		}, currentPage, _ int) (bool, error) {
+			visitedPages = append(visitedPages, currentPage)
+			if len(data.Items) > 0 {
+				fetchedIDs = append(fetchedIDs, data.Items[0].ID)
+			}
+			return currentPage < 2, nil
+		},
+	)
+
+	assert.NoError(t, err)
+	assert.Equal(t, []int{0, 1, 2}, visitedPages)
+	assert.Equal(t, []string{"1", "2", "3"}, fetchedIDs)
+}

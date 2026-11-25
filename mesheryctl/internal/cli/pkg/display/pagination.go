@@ -52,7 +52,7 @@ func HandlePaginationAsync[T any](
 
 		if !existingQuery.Has("page") {
 			pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
-		} else if currentPage > 0 {
+		} else {
 			existingQuery.Set("page", fmt.Sprintf("%d", currentPage))
 		}
 
@@ -65,7 +65,7 @@ func HandlePaginationAsync[T any](
 			existingQuery.Set("search", displayData.SearchTerm)
 		}
 
-		if (existingQuery.Has("search") && displayData.SearchTerm != "") || (existingQuery.Has("page") && currentPage > 0) {
+		if (existingQuery.Has("search") && displayData.SearchTerm != "") || existingQuery.Has("page") {
 			parsedURL.RawQuery = existingQuery.Encode()
 			urlPath = parsedURL.String()
 		} else if displayData.SearchTerm != "" && !existingQuery.Has("search") {
