@@ -14,7 +14,7 @@ aliases:
 
 Meshery is a powerful, extensible engineering platform for the collaborative
 design and operation of cloud and cloud native infrastructure. Running it in
-production—as a shared, always-on management plane that teams depend on—calls
+production - as a shared, always-on management plane that teams depend on - calls
 for deliberate planning across reliability, scalability, security, and
 operability.
 
@@ -26,7 +26,7 @@ confidence in a production environment. It does not replace the
 
 {{% alert title="Who this guide is for" color="info" %}}
 Platform engineers, SREs, and operators who are standing up Meshery as a
-durable, multi-user service—whether self-hosted in a single cluster, spread
+durable, multi-user service - whether self-hosted in a single cluster, spread
 across multiple clusters and clouds, or run out-of-cluster alongside the
 infrastructure it manages.
 {{% /alert %}}
@@ -86,7 +86,7 @@ deployment decisions:
    driven as much by the size and number of clusters it discovers (via
    [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}})) as by user-facing API load.
 4. **Make connectivity explicit.** Know which ports flow in which direction
-   between Meshery Server, the Broker, and each managed cluster—especially for
+   between Meshery Server, the Broker, and each managed cluster - especially for
    out-of-cluster and multi-cloud topologies.
 5. **Observe the management plane itself.** Meshery exposes health endpoints and
    metrics; treat them as first-class signals and alert on them.

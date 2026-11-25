@@ -29,7 +29,8 @@ import { DeploymentModeBanner, SectionHeading, SectionNotice } from './Deploymen
  * Both layers (server-wide defaults and the per-connection override) accept
  * this exact shape.
  */
-export type ControllersConfigDoc = UpdateControllersDefaultConfigApiArg['body'];
+export type ControllersConfigDoc =
+  UpdateControllersDefaultConfigApiArg['mesheryControllersConfigurationMesheryControllersConfigPayload'];
 
 /** As returned by the server, which stamps the schema revision onto the document. */
 export type VersionedControllersConfigDoc = ControllersConfigDoc & { schemaVersion?: string };

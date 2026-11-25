@@ -9,6 +9,7 @@ import { CONNECTION_STATES } from '../../utils/Enum';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import useGrafanaPingHook from '@/utils/hooks/useGrafanaPingHook';
 import usePrometheusPingHook from '@/utils/hooks/usePrometheusPingHook';
+import useMesheryPingHook from '@/utils/hooks/useMesheryPingHook';
 import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
@@ -87,6 +88,7 @@ const ConnectionTable = ({
   const ping = useKubernetesHook();
   const pingGrafana = useGrafanaPingHook();
   const pingPrometheus = usePrometheusPingHook();
+  const pingMeshery = useMesheryPingHook();
   const { width } = useWindowDimensions();
 
   const { tableState, updateTableState, copyRowDeepLink } = useTableUrlState({
@@ -105,8 +107,10 @@ const ConnectionTable = ({
 
   const { page, pageSize, sortOrder, search } = tableState;
   const setPage = useCallback((p: number) => updateTableState({ page: p }), [updateTableState]);
+  // Reset the page in the same URL update: a separate setPage(0) would be a
+  // second router.replace built from the same query and could drop the new size.
   const setPageSize = useCallback(
-    (ps: number) => updateTableState({ pageSize: ps }),
+    (ps: number) => updateTableState({ pageSize: ps, page: 0 }),
     [updateTableState],
   );
   const setSortOrder = useCallback(
@@ -229,7 +233,9 @@ const ConnectionTable = ({
     isError: isEnvironmentsError,
     error: environmentsError,
   } = useGetEnvironmentsQuery(
-    { orgId: organization?.id },
+    // Without a page size the server returns only its default first page of
+    // 10, which would hide every later environment from this select.
+    { orgId: organization?.id, pagesize: 'all' },
     {
       skip: !organization?.id,
     },
@@ -615,6 +621,7 @@ const ConnectionTable = ({
     ping,
     pingGrafana,
     pingPrometheus,
+    pingMeshery,
     transitionMapByKind,
   });
   const columnNames = useMemo(

@@ -27,6 +27,7 @@ permissions:
 jobs:
   build-and-scan:
     name: Build & Scan Container Image
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
 
     steps:

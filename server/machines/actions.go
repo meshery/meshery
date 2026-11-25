@@ -26,21 +26,35 @@ type Action interface {
 	ExecuteOnExit(context context.Context, machinectx interface{}, data interface{}) (EventType, *events.Event, error)
 }
 
+// DefaultAction does nothing on entry, execution or exit.
+type DefaultAction struct{}
+
+func (da *DefaultAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+
+func (da *DefaultAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+
+func (da *DefaultAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+
 type DefaultConnectAction struct{}
 
 func (da *DefaultConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
 	return NoOp, nil, nil
 }
 
+// Execute persists the connection and user credential for the default connect state transition.
 func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
 
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	userUUID := user.ID
+	userUUID, systemID := ResolveUserAndSystemID(ctx)
 
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(systemID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
 
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
@@ -52,6 +66,10 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 	credential := &models.Credential{}
 	// If existing credential is used do not persist again
 	if !ok {
+		if guardErr := models.RejectUnsafeKubeCredential(payload.CredentialSecret); guardErr != nil {
+			return NoOp, eventBuilder.WithDescription(fmt.Sprintf("Refused credential for the connection %s", payload.Name)).
+				WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": guardErr}).Build(), guardErr
+		}
 		credName, _ := payload.CredentialSecret["name"].(string)
 		credential, err = provider.SaveUserCredential(token, &models.Credential{
 			Name:   credName,

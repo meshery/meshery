@@ -18,6 +18,10 @@ func TestResetCmd(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 	utils.SetupCustomContextEnv(t, currDir+"/testdata/reset/TestResetContexts.yaml")
+	// `-c local2` and `-y` are bound to package-level variables that cobra
+	// never resets, so clear them or later tests run against local2 with
+	// confirmation prompts skipped.
+	t.Cleanup(BreakupFunc)
 
 	tests := []utils.CmdTestInput{
 		//Test for platform docker

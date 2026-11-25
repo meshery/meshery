@@ -52,7 +52,7 @@ A working Dart Sass prints a JSON blob containing `protocolVersion`. If it print
 
 ## `make docs-mesheryctl` rewrites ~100 pages with your home directory
 
-`make docs-mesheryctl` (that is, `cd mesheryctl/doc && go run doc.go`) bakes the machine's `$HOME` into every generated page's "Options inherited from parent commands" block, via the `--config` default path. Running it locally rewrites all ~100 pages under `docs/content/en/reference/references/mesheryctl/` with your local home directory, even when only one command changed.
+`make docs-mesheryctl` (that is, `cd mesheryctl/doc && go run doc.go`) bakes the machine's `$HOME` into every generated page's "Options inherited from parent commands" block, via the `--config` default path. Running it locally rewrites all ~100 pages under `docs/content/en/reference/mesheryctl/` with your local home directory, even when only one command changed.
 
 Committed docs use `/home/runner/...`, the GitHub Actions runner home. After regenerating:
 

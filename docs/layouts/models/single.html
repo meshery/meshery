@@ -45,12 +45,7 @@
     {{ partialCached "integration/meshery-registry.html" . }}
 
     <section>
-        {{ $tech := "" }}
-        {{ with .Params.docURL }}
-            {{ $tech = lower (path.Base (strings.TrimSuffix "/" .)) }}
-        {{ else }}
-            {{ $tech = lower .File.TranslationBaseName }}
-        {{ end }}
+        {{ $tech := lower .File.ContentBaseName }}
         {{ $catalogIndex := partialCached "integration/catalog-design-index.html" "catalog" }}
         {{ $relatedDesigns := index $catalogIndex $tech }}
         <h3 id="related-designs-header">
@@ -59,7 +54,7 @@
         {{ if $relatedDesigns }}
         <div class="related-designs-grid">
             {{ range $relatedDesigns }}
-            <a class="design-card" href="https://meshery.io/catalog/{{ .catalogType }}/{{ replace .name "." "-" | urlize }}-{{ .patternId }}" target="_blank" rel="noopener">
+            <a class="design-card" href="https://meshery.io/catalog/{{ .catalogType }}/{{ strings.Trim (lower .name | replaceRE "[^a-z0-9]+" "-") "-" }}-{{ .patternId }}" target="_blank" rel="noopener">
                 <span class="design-card-badge">{{ humanize .catalogType }}</span>
                 <span class="design-card-name">{{ .name }}</span>
             </a>

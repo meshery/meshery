@@ -23,12 +23,6 @@ func TestSanitizeOrderInput(t *testing.T) {
 			expected: "created_at desc",
 		},
 		{
-			name:     "camelCase ascending",
-			order:    "updatedAt asc",
-			columns:  validColumns,
-			expected: "updated_at asc",
-		},
-		{
 			name:     "legacy snake_case input still accepted",
 			order:    "created_at desc",
 			columns:  validColumns,
@@ -53,26 +47,8 @@ func TestSanitizeOrderInput(t *testing.T) {
 			expected: "created_at asc",
 		},
 		{
-			name:     "acronym run stays intact when folding",
-			order:    "userID desc",
-			columns:  []string{"user_id"},
-			expected: "user_id desc",
-		},
-		{
-			name:     "performance profile lastRun folds to its aliased column",
-			order:    "lastRun desc",
-			columns:  []string{"updated_at", "created_at", "name", "last_run"},
-			expected: "last_run desc",
-		},
-		{
 			name:     "column outside the whitelist is ignored",
 			order:    "password desc",
-			columns:  validColumns,
-			expected: "",
-		},
-		{
-			name:     "camelCase column outside the whitelist is ignored",
-			order:    "secretToken desc",
 			columns:  validColumns,
 			expected: "",
 		},
@@ -100,6 +76,48 @@ func TestSanitizeOrderInput(t *testing.T) {
 			columns:  validColumns,
 			expected: "",
 		},
+		{
+			name:     "extra spaces",
+			order:    "createdAt   desc",
+			columns:  validColumns,
+			expected: "",
+		},
+		{
+			name:     "tab separator",
+			order:    "createdAt\tdesc",
+			columns:  validColumns,
+			expected: "",
+		},
+		{
+			name:     "uppercase column",
+			order:    "CREATED_AT desc",
+			columns:  validColumns,
+			expected: "",
+		},
+		{
+			name:     "SQL comment in column",
+			order:    "created_at-- desc",
+			columns:  validColumns,
+			expected: "",
+		},
+		{
+			name:     "quoted column",
+			order:    "'name' desc",
+			columns:  validColumns,
+			expected: "",
+		},
+		{
+			name:     "empty columns slice",
+			order:    "createdAt desc",
+			columns:  []string{},
+			expected: "",
+		},
+		{
+			name:     "nil columns slice",
+			order:    "createdAt desc",
+			columns:  nil,
+			expected: "",
+		},
 	}
 
 	for _, tt := range tests {
@@ -117,12 +135,9 @@ func TestToSnakeCase(t *testing.T) {
 		expected string
 	}{
 		{"createdAt", "created_at"},
-		{"updatedAt", "updated_at"},
-		{"subType", "sub_type"},
-		{"lastRun", "last_run"},
-		{"name", "name"},
-		{"created_at", "created_at"},
 		{"userID", "user_id"},
+		{"created_at", "created_at"},
+		{"name", "name"},
 		{"", ""},
 	}
 

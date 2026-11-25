@@ -1,11 +1,13 @@
 package environments
 
 import (
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/pkg/errors"
 )
 
@@ -29,24 +31,78 @@ func TestListEnvironment(t *testing.T) {
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(errors.New("[ orgId ] isn't specified\n\nUsage: mesheryctl environment list --orgId [orgId]\nRun 'mesheryctl environment list --help' to see detailed help message")),
 		},
-		// TODO: Enable this test case after other opened PR is merged
-		// {
-		// 	Name:             "List environments non available",
-		// 	Args:             []string{"list", "--orgId", testConstants["orgId"]},
-		// 	URL:              fmt.Sprintf("/%s?orgId=%s?page=0&pagesize=10", environmentApiPath, testConstants["orgId"]),
-		// 	Fixture:          "list.environment.empty.response.golden",
-		// 	ExpectedResponse: "list.environment.empty.golden",
-		// 	ExpectError:      false,
-		// },
-		// {
-		// 	Name:             "List environments available",
-		// 	Args:             []string{"list", "--orgId", testConstants["orgId"]},
-		// 	URL:              fmt.Sprintf("/%s?orgId=%s", environmentApiPath, testConstants["orgId"]),
-		// 	Fixture:          "list.environment.response.golden",
-		// 	ExpectedResponse: "list.environment.success.golden",
-		// 	ExpectError:      false,
-		// },
+		{
+			Name:             "List environments non available",
+			Args:             []string{"list", "--orgId", testConstants["orgId"]},
+			URL:              fmt.Sprintf("/%s?orgId=%s&page=0&pagesize=10", environmentApiPath, testConstants["orgId"]),
+			Fixture:          "list.environment.empty.response.golden",
+			ExpectedResponse: "list.environment.empty.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "List environments available",
+			Args:             []string{"list", "--orgId", testConstants["orgId"]},
+			URL:              fmt.Sprintf("/%s?orgId=%s&page=0&pagesize=10", environmentApiPath, testConstants["orgId"]),
+			Fixture:          "list.environment.response.golden",
+			ExpectedResponse: "list.environment.success.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "given extra positional arguments when environment list then throw error",
+			Args:             []string{"list", "extra-arg", "--orgId", testConstants["orgId"]},
+			Fixture:          "list.environment.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg)),
+		},
 	}
 
 	utils.InvokeMesheryctlTestListCommand(t, update, EnvironmentCmd, tests, currDir, "environments")
+}
+
+func TestProcessEnvironmentData_NilResponse(t *testing.T) {
+	rows, total := processEnvironmentData(nil)
+	if len(rows) != 0 {
+		t.Fatalf("expected 0 rows on nil response, got %d", len(rows))
+	}
+	if total != 0 {
+		t.Fatalf("expected 0 total on nil response, got %d", total)
+	}
+}
+
+func TestProcessEnvironmentData_EmptyDescriptionFallback(t *testing.T) {
+	envPage := &environment.EnvironmentPage{
+		TotalCount: 3,
+		Environments: []environment.Environment{
+			{
+				Name:        "empty-desc-env",
+				Description: "",
+			},
+			{
+				Name:        "whitespace-desc-env",
+				Description: "   \t\n  ",
+			},
+			{
+				Name:        "valid-desc-env",
+				Description: "Production Environment",
+			},
+		},
+	}
+	rows, total := processEnvironmentData(envPage)
+	if total != 3 {
+		t.Fatalf("expected total 3, got %d", total)
+	}
+	if len(rows) != 3 {
+		t.Fatalf("expected 3 rows, got %d", len(rows))
+	}
+	if rows[0][3] != "N/A" {
+		t.Fatalf("expected empty description 'N/A', got %q", rows[0][3])
+	}
+	if rows[1][3] != "N/A" {
+		t.Fatalf("expected whitespace-only description 'N/A', got %q", rows[1][3])
+	}
+	if rows[2][3] != "Production Environment" {
+		t.Fatalf("expected preserved description 'Production Environment', got %q", rows[2][3])
+	}
 }

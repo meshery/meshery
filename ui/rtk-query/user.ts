@@ -325,7 +325,7 @@ export const useGetUsersForOrgQuery = (queryArg, options) =>
     {
       orgId: queryArg?.orgId,
       page: queryArg?.page?.toString(),
-      pagesize: queryArg?.pagesize?.toString(),
+      pageSize: queryArg?.pagesize?.toString(),
       search: queryArg?.search,
       order: queryArg?.order,
       filter: queryArg?.filter,
@@ -370,7 +370,7 @@ export const getProviderCapabilities = async () => {
 };
 
 export const getUserAccessToken = async () => {
-  const accessToken = await initiateQuery(userApi.endpoints.getAccessToken, {}, {});
+  const accessToken = await initiateQuery(userApi.endpoints.getAccessToken, {});
   return accessToken;
 };
 
@@ -385,11 +385,20 @@ export const getSystemVersion = async () => {
 };
 
 export const getAllUsers = async ({ page, pagesize, search }) => {
-  const users = await initiateQuery(
-    userApi.endpoints.getAllUsers,
-    { page, pagesize, search },
-    { skip: !search },
-  );
+  // `skip` is a hook option and is not honored by the imperative
+  // `query.initiate` call, so an empty search used to dispatch a users request
+  // anyway. Return the empty result up front instead; the shape mirrors the
+  // endpoint response the autocomplete caller reads (`data.data`).
+  if (!search) {
+    return {
+      data: { data: [] },
+      isSuccess: true,
+      isError: false,
+      isLoading: false,
+      isFetching: false,
+    };
+  }
+  const users = await initiateQuery(userApi.endpoints.getAllUsers, { page, pagesize, search });
   return users;
 };
 
@@ -399,11 +408,13 @@ export const useGetSelectedOrganization = () => {
     isLoading: isLoadingUserPrefs,
     error: errorLoadingUserPrefs,
   } = useGetUserPrefQuery();
+  // Every organization, so the selected one is found even when it is not on
+  // the server's default first page (otherwise this falls back to orgs[0]).
   const {
     data: allOrgs,
     isLoading: isLoadingAllOrgs,
     error: errorLoadingAllOrgs,
-  } = useGetOrgsQuery();
+  } = useGetOrgsQuery({ pagesize: 'all' });
 
   // `selectedOrganizationId` is the canonical key (schemas v1beta1
   // user.Preference, and what meshery-cloud reads and writes). Meshery Server

@@ -1,0 +1,24 @@
+version: 0.0.2
+name: meal-plan
+displayName: MEAL PLAN
+createdAt: "2026-10-14T15:00:07Z"
+description: |-
+    A creator of this wanted to show how to plan weekly meal in Africa.
+    Normally, as a planer you have to consider what is called portion size. Mostly we say that we don't have enough money but it is not that issue the issue is that we don't count what we put in a pan.
+    Remember that the meal is always composed by:
+    25% carbohydrates, 50% vegetables and 25 proteins
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/5711bcf9-9711-4447-8a23-6307c032f59c/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "What are frequently carbohydrates used in your regions, which vegetables and protein? plan each while meal plan your kids will grow well \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 16f313c4-19f6-4b90-ad97-94833c1147e5
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -341,6 +341,26 @@ func DesignNameFromFileName(fileName string) string {
 	return strings.TrimSuffix(name, filepath.Ext(name))
 }
 
+// maxUnmatchedResourcesInError caps how many unmatched resource references
+// are inlined into the all-resources-dropped error, so a large manifest
+// cannot produce an unbounded error message.
+const maxUnmatchedResourcesInError = 5
+
+// k8sResourceRef returns an "apiVersion Kind" identifier for a manifest,
+// for naming unmatched resources in error messages.
+func k8sResourceRef(manifest map[string]interface{}) string {
+	apiVersion, _ := mutils.Cast[string](manifest["apiVersion"])
+	kind, _ := mutils.Cast[string](manifest["kind"])
+	switch {
+	case apiVersion == "" && kind == "":
+		return "unknown resource"
+	case apiVersion == "":
+		return kind
+	default:
+		return apiVersion + " " + kind
+	}
+}
+
 func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bool, reg *registry.RegistryManager) (pattern.PatternFile, error) {
 	fileName = DesignNameFromFileName(fileName)
 
@@ -354,6 +374,7 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 
 	decoder := yaml.NewDecoder(bytes.NewBufferString(data))
 	resourceCount := 0
+	var unmatchedResources []string
 
 	for {
 		manifest := map[string]interface{}{}
@@ -388,6 +409,7 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 						declaration, err := createPatternDeclarationFromK8s(itemMap, reg, registryCache)
 						if err != nil {
 							if ignoreErrors {
+								unmatchedResources = append(unmatchedResources, k8sResourceRef(itemMap))
 								continue
 							}
 							return pattern, ErrCreatePatternService(fmt.Errorf("failed to create design service from kubernetes component: %s", err))
@@ -404,6 +426,7 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 		declaration, err := createPatternDeclarationFromK8s(manifest, reg, registryCache)
 		if err != nil {
 			if ignoreErrors {
+				unmatchedResources = append(unmatchedResources, k8sResourceRef(manifest))
 				continue
 			}
 			return pattern, ErrCreatePatternService(fmt.Errorf("failed to create design service from kubernetes component: %s", err))
@@ -413,6 +436,19 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 
 	if resourceCount == 0 {
 		return pattern, ErrParseK8sManifest(fmt.Errorf("kubernetes manifest is empty"))
+	}
+
+	// A non-empty manifest that produced zero components means every resource
+	// was dropped (e.g. the registry has not finished model registration yet).
+	// Fail loudly and name the unmatched resources instead of returning an
+	// empty design that would be saved as if the import had succeeded.
+	if len(pattern.Components) == 0 {
+		named := unmatchedResources
+		if len(unmatchedResources) > maxUnmatchedResourcesInError {
+			named = append([]string{}, unmatchedResources[:maxUnmatchedResourcesInError]...)
+			named = append(named, fmt.Sprintf("and %d more", len(unmatchedResources)-maxUnmatchedResourcesInError))
+		}
+		return pattern, ErrCreatePatternService(fmt.Errorf("no resources in the manifest matched a registered component: %s", strings.Join(named, ", ")))
 	}
 
 	return pattern, nil

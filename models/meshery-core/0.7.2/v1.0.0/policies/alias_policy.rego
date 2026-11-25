@@ -101,12 +101,14 @@ relationship_side_effects(relationship, design_file, policy_identifier) := side_
 		length := count(path)
 		displayName := sprintf("%s.%s", [path[length - 2], path[length - 1]])
 
+		is_annotation := object_get_nested(relationship, ["metadata", "isAnnotation"], false)
+
 		component := {
 			"id": from.id,
 			"component": {"kind": from.kind},
 			"model": from.model,
 			"displayName": displayName,
-			"metadata": {"isAnnotation": true},
+			"metadata": {"isAnnotation": is_annotation},
 		}
 
 		action := {

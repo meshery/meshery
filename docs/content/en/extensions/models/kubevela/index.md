@@ -57,7 +57,19 @@ components:
   colorIcon: extensions/models/kubevela/components/package/icons/color/package-color.svg
   whiteIcon: extensions/models/kubevela/components/package/icons/white/package-white.svg
   description: 
-components-count: 12
+- name: config
+  colorIcon: extensions/models/kubevela/components/config/icons/color/config-color.svg
+  whiteIcon: extensions/models/kubevela/components/config/icons/white/config-white.svg
+  description: 
+- name: config-template
+  colorIcon: extensions/models/kubevela/components/config-template/icons/color/config-template-color.svg
+  whiteIcon: extensions/models/kubevela/components/config-template/icons/white/config-template-white.svg
+  description: 
+- name: source-definition
+  colorIcon: extensions/models/kubevela/components/source-definition/icons/color/source-definition-color.svg
+  whiteIcon: extensions/models/kubevela/components/source-definition/icons/white/source-definition-white.svg
+  description: 
+components-count: 15
 relationships: 
 relationship-count: 0
 featureList: [
