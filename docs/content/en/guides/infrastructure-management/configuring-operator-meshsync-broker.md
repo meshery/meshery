@@ -388,7 +388,7 @@ mesheryctl system check --operator
 kubectl -n meshery get broker meshery-broker -o jsonpath='{.status.conditions}{"\n"}'
 kubectl -n meshery get meshsync meshery-meshsync -o jsonpath='{.status.conditions}{"\n"}'
 
-# MeshSync readiness (connected to Broker)
+# MeshSync startup readiness (after initial Broker connection)
 kubectl -n meshery port-forward deploy/meshery-meshsync 11000:11000 &
 curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:11000/readyz
 ```

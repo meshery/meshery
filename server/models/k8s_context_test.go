@@ -2,7 +2,6 @@ package models
 
 import (
 	"context"
-	"sync"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -11,6 +10,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/gofrs/uuid"
