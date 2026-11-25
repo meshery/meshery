@@ -168,10 +168,17 @@ func TestValidateMesh(t *testing.T) {
 				httpmock.RegisterResponder(mock.Method, mock.URL,
 					func(req *http.Request) (*http.Response, error) {
 						if mock.Method == http.MethodPost {
+							// This runs inside the HTTP transport, not the test
+							// goroutine, so use assert (not require, which calls
+							// t.FailNow) and return the error to the client.
 							body, err := io.ReadAll(req.Body)
-							require.NoError(t, err)
+							if !assert.NoError(t, err) {
+								return nil, err
+							}
 							form, err := url.ParseQuery(string(body))
-							require.NoError(t, err)
+							if !assert.NoError(t, err) {
+								return nil, err
+							}
 							assert.Equal(t, "smi_conformance", form.Get("query"))
 							assert.Equal(t, expectedAdapter, form.Get("adapter"))
 						}
