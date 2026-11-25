@@ -173,7 +173,6 @@ func InvokeCompUpdate() (err error) {
 
 		// Iterate all models
 		for modelName, components := range model {
-			availableComponentsPerModelPerVersion := 0
 			modelPath := filepath.Join(pwd, modelLocation, modelName)
 			utils.Log.Info("Starting to update components of model ", modelName)
 
@@ -188,6 +187,7 @@ func InvokeCompUpdate() (err error) {
 			// Comps, relationships, policies
 			compUpdateArray := []compUpdateTracker{}
 			for _, content := range modelContents {
+				availableComponentsPerModelPerVersion := 0
 				totalCompsUpdatedPerModelPerVersion := 0
 
 				if content.IsDir() {
@@ -197,8 +197,12 @@ func InvokeCompUpdate() (err error) {
 
 					// A model can have components with multiple versions
 					versionPath := filepath.Join(modelPath, content.Name(), "v1.0.0") // remove the hard coded definition version, add just for testing
-					entries, _ := os.ReadDir(versionPath)
-					availableComponentsPerModelPerVersion += len(entries)
+					entries, _ := os.ReadDir(filepath.Join(versionPath, "components"))
+					for _, entry := range entries {
+						if !entry.IsDir() && filepath.Ext(entry.Name()) == ".json" {
+							availableComponentsPerModelPerVersion++
+						}
+					}
 
 					utils.Log.Info("Updating component of model ", modelName, " with version: ", content.Name())
 
@@ -258,14 +262,21 @@ func InvokeCompUpdate() (err error) {
 
 func logModelUpdateSummary(modelToCompUpdateTracker *store.GenerticThreadSafeStore[[]compUpdateTracker]) {
 	values := modelToCompUpdateTracker.GetAllPairs()
-	for key, val := range values {
-		for _, value := range val {
+	for key, val := range values { // once per model
+		modelUpdated := false
+		for _, value := range val { // once per version
 			utils.Log.Info(fmt.Sprintf("For model %s-%s, updated %d out of %d components.", key, value.version, value.totalCompsUpdated, value.totalComps))
 			totalAggregateComponents += value.totalCompsUpdated
+			if value.totalCompsUpdated > 0 {
+				modelUpdated = true
+			}
+		}
+		if modelUpdated {
+			totalAggregateModel++
 		}
 	}
 
-	utils.Log.Info(fmt.Sprintf("For %d models updated %d components", len(values), totalAggregateComponents))
+	utils.Log.Info(fmt.Sprintf("For %d models updated %d components", totalAggregateModel, totalAggregateComponents))
 }
 
 func init() {
