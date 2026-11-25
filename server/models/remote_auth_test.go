@@ -594,3 +594,61 @@ func TestRemoteProviderInitiateLogin_RefCookieCarriesOnlyThisAttemptsDestination
 		})
 	}
 }
+
+// TestRemoteProviderGetJWK_ConcurrentRefreshIsRaceFree exercises the real
+// GetJWK/UpdateJWKs pair from many goroutines. Cache hits read Keys while
+// cache misses force UpdateJWKs to replace it. Run with -race.
+func TestRemoteProviderGetJWK_ConcurrentRefreshIsRaceFree(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/keys" {
+			http.NotFound(w, r)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string][]map[string]string{
+			"keys": {{"kid": "known", "kty": "RSA"}},
+		})
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+
+	// Warm the cache so "known" is a pure read path (no refresh).
+	if err := provider.UpdateJWKs(); err != nil {
+		t.Fatalf("failed to seed JWK cache: %v", err)
+	}
+
+	const (
+		goroutines = 16
+		iterations = 25
+	)
+
+	var wg sync.WaitGroup
+	for g := 0; g < goroutines; g++ {
+		wg.Add(1)
+		go func(g int) {
+			defer wg.Done()
+			for i := 0; i < iterations; i++ {
+				if (g+i)%2 == 0 {
+					// Cache hit: reads Keys.
+					key, err := provider.GetJWK("known")
+					if err != nil {
+						t.Errorf("expected known kid to resolve, got error: %v", err)
+						return
+					}
+					if key["kid"] != "known" {
+						t.Errorf("expected kid %q, got %q", "known", key["kid"])
+						return
+					}
+				} else {
+					// Cache miss: lookup -> UpdateJWKs (writes Keys) -> lookup.
+					if _, err := provider.GetJWK("missing"); err == nil {
+						t.Error("expected error for unknown kid, got nil")
+						return
+					}
+				}
+			}
+		}(g)
+	}
+	wg.Wait()
+}
