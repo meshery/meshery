@@ -174,30 +174,32 @@ func TestUndeployConfirmation(t *testing.T) {
 	for _, test := range []struct {
 		name, input string
 		yes         bool
+		wantGets    int
+		wantPosts   int
 		wantDeletes int
 	}{
-		{name: "decline", input: "n\n"},
-		{name: "accept", input: "y\n", wantDeletes: 1},
-		{name: "skip", yes: true, wantDeletes: 1},
-		{name: "EOF"},
+		{name: "decline", input: "n\n", wantGets: 1},
+		{name: "accept", input: "y\n", wantGets: 1, wantPosts: 1, wantDeletes: 1},
+		{name: "skip", yes: true, wantPosts: 1, wantDeletes: 1},
+		{name: "EOF", wantGets: 1},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			args := []string{"undeploy", "-f", filepath.Join("fixtures", "sampleDesign.golden")}
 			if test.yes {
 				args = append(args, "--yes")
 			}
-			output, prompt, err, gets, deletes := runRemovalPromptTest(t, args, test.input)
+			output, prompt, err, gets, posts, deletes := runRemovalPromptTest(t, args, test.input)
 			if test.name == "EOF" {
 				require.ErrorContains(t, err, "--yes")
 			} else {
 				require.NoError(t, err)
 			}
+			assert.Equal(t, test.wantGets, gets)
+			assert.Equal(t, test.wantPosts, posts)
 			assert.Equal(t, test.wantDeletes, deletes)
 			if test.yes {
-				assert.Zero(t, gets)
 				assert.Empty(t, prompt)
 			} else {
-				assert.Equal(t, 1, gets)
 				assert.Contains(t, prompt, "Design 'SampleApp' will be undeployed from 2 connected Kubernetes cluster(s): east, west.")
 			}
 			if test.name == "decline" {
@@ -207,7 +209,25 @@ func TestUndeployConfirmation(t *testing.T) {
 	}
 }
 
-func runRemovalPromptTest(t *testing.T, args []string, input string) (output, prompt string, err error, gets, deletes int) {
+func TestUndeployConfirmationListsEveryConnectedClusterPage(t *testing.T) {
+	output, prompt, err, gets, posts, deletes := runRemovalPromptTestWithClusterPages(t,
+		[]string{"undeploy", "-f", filepath.Join("fixtures", "sampleDesign.golden")}, "n\n",
+		"removal.connections.page0.response.golden", "removal.connections.page1.response.golden")
+
+	require.NoError(t, err)
+	assert.Equal(t, 2, gets)
+	assert.Zero(t, posts)
+	assert.Zero(t, deletes)
+	assert.Contains(t, prompt, "Design 'SampleApp' will be undeployed from 3 connected Kubernetes cluster(s): east, west, north.")
+	assert.Contains(t, output, "Undeploy cancelled")
+}
+
+func runRemovalPromptTest(t *testing.T, args []string, input string) (output, prompt string, err error, gets, posts, deletes int) {
+	t.Helper()
+	return runRemovalPromptTestWithClusterPages(t, args, input, "removal.connections.response.golden")
+}
+
+func runRemovalPromptTestWithClusterPages(t *testing.T, args []string, input string, clusterPages ...string) (output, prompt string, err error, gets, posts, deletes int) {
 	t.Helper()
 	ctx := utils.InitTestEnvironment(t)
 	t.Cleanup(func() {
@@ -217,15 +237,22 @@ func runRemovalPromptTest(t *testing.T, args []string, input string) (output, pr
 	})
 	utils.TokenFlag = utils.GetToken(t)
 
-	getURL := ctx.BaseURL + "/" + connectedClustersPath
+	clusterURLs := make([]string, 0, len(clusterPages))
+	for i, page := range clusterPages {
+		pageURL := ctx.BaseURL + "/" + connectedClustersPath
+		if i > 0 {
+			pageURL = fmt.Sprintf("%s&page=%d", pageURL, i)
+		}
+		clusterURLs = append(clusterURLs, pageURL)
+		httpmock.RegisterResponder("GET", pageURL, httpmock.NewStringResponder(200,
+			utils.NewGoldenFile(t, page, "fixtures").Load()))
+	}
+	patternURL := ctx.BaseURL + "/api/pattern"
 	deleteURL := ctx.BaseURL + "/api/pattern/deploy?contexts=all"
-	fixtures := "fixtures"
-	httpmock.RegisterResponder("GET", getURL, httpmock.NewStringResponder(200,
-		utils.NewGoldenFile(t, "removal.connections.response.golden", fixtures).Load()))
-	httpmock.RegisterResponder("POST", ctx.BaseURL+"/api/pattern", httpmock.NewStringResponder(200,
-		utils.NewGoldenFile(t, "apply.designSave.response.golden", fixtures).Load()))
+	httpmock.RegisterResponder("POST", patternURL, httpmock.NewStringResponder(200,
+		utils.NewGoldenFile(t, "apply.designSave.response.golden", "fixtures").Load()))
 	httpmock.RegisterResponder("DELETE", deleteURL, httpmock.NewStringResponder(200,
-		utils.NewGoldenFile(t, args[0]+".response.golden", fixtures).Load()))
+		utils.NewGoldenFile(t, args[0]+".response.golden", "fixtures").Load()))
 
 	buf := utils.SetupMeshkitLoggerTesting(t, false)
 	readPrompt := capturePrompt(t, input)
@@ -233,5 +260,8 @@ func runRemovalPromptTest(t *testing.T, args []string, input string) (output, pr
 	DesignCmd.SetOut(buf)
 	err = DesignCmd.Execute()
 	calls := httpmock.GetCallCountInfo()
-	return buf.String(), readPrompt(), err, calls["GET "+getURL], calls["DELETE "+deleteURL]
+	for _, pageURL := range clusterURLs {
+		gets += calls["GET "+pageURL]
+	}
+	return buf.String(), readPrompt(), err, gets, calls["POST "+patternURL], calls["DELETE "+deleteURL]
 }

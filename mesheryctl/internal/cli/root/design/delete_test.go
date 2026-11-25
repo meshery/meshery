@@ -208,7 +208,7 @@ func TestDeleteCmd(t *testing.T) {
 func TestDeleteFileConfirmation(t *testing.T) {
 	target := filepath.Join("fixtures", "sampleDesign.golden")
 	t.Run("decline", func(t *testing.T) {
-		output, prompt, err, gets, deletes := runRemovalPromptTest(t, []string{"delete", target}, "n\n")
+		output, prompt, err, gets, _, deletes := runRemovalPromptTest(t, []string{"delete", target}, "n\n")
 		require.NoError(t, err)
 		assert.Equal(t, 1, gets)
 		assert.Zero(t, deletes)
@@ -216,7 +216,7 @@ func TestDeleteFileConfirmation(t *testing.T) {
 		assert.Contains(t, output, "Delete cancelled")
 	})
 	t.Run("skip", func(t *testing.T) {
-		_, prompt, err, gets, deletes := runRemovalPromptTest(t, []string{"delete", "-f", target, "--yes"}, "")
+		_, prompt, err, gets, _, deletes := runRemovalPromptTest(t, []string{"delete", "-f", target, "--yes"}, "")
 		require.NoError(t, err)
 		assert.Zero(t, gets)
 		assert.Equal(t, 1, deletes)

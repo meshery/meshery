@@ -35,7 +35,7 @@ delete a design file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl design delete [file | URL] --yes
+mesheryctl design delete [file | URL]
 
 </div>
 </div>
@@ -52,6 +52,16 @@ mesheryctl design delete [ID]
 </pre> 
 
 delete a design using --file
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design delete -f [file | URL]
+
+</div>
+</div>
+</pre> 
+
+delete a design file without listing the target clusters and asking for confirmation
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>

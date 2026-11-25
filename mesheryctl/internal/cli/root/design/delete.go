@@ -63,12 +63,15 @@ var deleteCmd = &cobra.Command{
 	},
 	Example: `
 // delete a design file
-mesheryctl design delete [file | URL] --yes
+mesheryctl design delete [file | URL]
 
 // delete a design by ID
 mesheryctl design delete [ID]
 
 // delete a design using --file
+mesheryctl design delete -f [file | URL]
+
+// delete a design file without listing the target clusters and asking for confirmation
 mesheryctl design delete -f [file | URL] --yes
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {

@@ -39,6 +39,9 @@ var designUndeployCmd = &cobra.Command{
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/design/undeploy`,
 	Example: `
 // Undeploy design by providing file path
+mesheryctl design undeploy -f [filepath]
+
+// Undeploy design without listing the target clusters and asking for confirmation
 mesheryctl design undeploy -f [filepath] --yes
 	`,
 
@@ -109,6 +112,15 @@ mesheryctl design undeploy -f [filepath] --yes
 			return utils.ErrInvalidArgument(fmt.Errorf("URLs are not currently supported"))
 		}
 
+		confirmed, err := confirmClusterRemoval(file, []byte(designFile))
+		if err != nil {
+			return err
+		}
+		if !confirmed {
+			utils.Log.Info("Undeploy cancelled")
+			return nil
+		}
+
 		jsonValues, _ := json.Marshal(map[string]interface{}{
 			"K8sManifest": designFile,
 		})
@@ -141,15 +153,6 @@ mesheryctl design undeploy -f [filepath] --yes
 		patternFileByt, err := yaml.Marshal(patternFile)
 		if err != nil {
 			return models.ErrMarshallingDesignIntoYAML(err)
-		}
-
-		confirmed, err := confirmClusterRemoval(file, []byte(designFile))
-		if err != nil {
-			return err
-		}
-		if !confirmed {
-			utils.Log.Info("Undeploy cancelled")
-			return nil
 		}
 
 		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer(patternFileByt))

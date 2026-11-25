@@ -31,6 +31,16 @@ Undeploy design by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
+mesheryctl design undeploy -f [filepath]
+
+</div>
+</div>
+</pre> 
+
+Undeploy design without listing the target clusters and asking for confirmation
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design undeploy -f [filepath] --yes
 
 </div>
