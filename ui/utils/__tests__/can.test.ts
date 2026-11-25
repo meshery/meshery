@@ -68,6 +68,42 @@ describe('ability + CAN', () => {
     expect(CAN('update', 'design')).toBe(true);
     expect(CAN('delete', 'design')).toBe(true);
   });
+
+  it('trims leading and trailing whitespace from action and subject', () => {
+    ability.update([{ action: 'read', subject: 'pattern' }]);
+    expect(CAN('  read  ', '  Pattern  ')).toBe(true);
+  });
+
+  it('returns false for nullish action or subject', () => {
+    ability.update([{ action: 'read', subject: 'pattern' }]);
+    expect(CAN(null, 'pattern')).toBe(false);
+    expect(CAN(undefined, 'pattern')).toBe(false);
+    expect(CAN('read', null)).toBe(false);
+    expect(CAN('read', undefined)).toBe(false);
+    expect(CAN(null, null)).toBe(false);
+    expect(CAN(undefined, undefined)).toBe(false);
+  });
+
+  it('returns false for empty or whitespace-only action or subject', () => {
+    ability.update([{ action: 'read', subject: 'pattern' }]);
+    expect(CAN('', 'pattern')).toBe(false);
+    expect(CAN('   ', 'pattern')).toBe(false);
+    expect(CAN('read', '')).toBe(false);
+    expect(CAN('read', '   ')).toBe(false);
+    expect(CAN('', '')).toBe(false);
+    expect(CAN('   ', '   ')).toBe(false);
+  });
+
+  it('returns false for non-string action or subject', () => {
+    ability.update([{ action: 'read', subject: 'pattern' }]);
+    expect(CAN(123 as unknown as string, 'pattern')).toBe(false);
+    expect(CAN('read', 123 as unknown as string)).toBe(false);
+    expect(CAN({} as unknown as string, 'pattern')).toBe(false);
+    expect(CAN('read', {} as unknown as string)).toBe(false);
+    expect(CAN([] as unknown as string, 'pattern')).toBe(false);
+    expect(CAN('read', [] as unknown as string)).toBe(false);
+    expect(CAN(true as unknown as string, false as unknown as string)).toBe(false);
+  });
 });
 
 describe('CanShow', () => {
