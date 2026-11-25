@@ -106,28 +106,35 @@ mesheryctl design deploy -f [filepath] -s [source type]
 			// Merge args to get pattern-name
 			patternName := strings.Join(args, " ")
 
-			queryParams := url.Values{}
-			queryParams.Set("populate", "pattern_file")
-			queryParams.Set("search", url.QueryEscape(patternName))
-			urlPath := fmt.Sprintf("%s?%s", patternURLPath, queryParams.Encode())
 			// search and fetch patterns with pattern-name
 			utils.Log.Debug("Fetching designs")
 
-			response, err := api.Fetch[models.PatternsAPIResponse](urlPath)
+			fetchPage := func(page uint) (*models.PatternsAPIResponse, error) {
+				queryParams := url.Values{}
+				queryParams.Set("populate", "pattern_file")
+				queryParams.Set("search", url.QueryEscape(patternName))
+				if page > 0 {
+					queryParams.Set("page", strconv.FormatUint(uint64(page), 10))
+				}
+				urlPath := fmt.Sprintf("%s?%s", patternURLPath, queryParams.Encode())
+				return api.Fetch[models.PatternsAPIResponse](urlPath)
+			}
+
+			allPatterns, err := fetchAllPatternPages(fetchPage)
 			if err != nil {
 				return err
 			}
 
 			index := 0
-			response.Patterns = exactNameMatches(response.Patterns, patternName)
-			if len(response.Patterns) == 0 {
+			matches := exactNameMatches(allPatterns, patternName)
+			if len(matches) == 0 {
 				return ErrDesignNotFound(patternName)
-			} else if len(response.Patterns) == 1 {
-				patternFile, _ = patterns.GetPatternFormat(response.Patterns[0].PatternFile)
+			} else if len(matches) == 1 {
+				patternFile, _ = patterns.GetPatternFormat(matches[0].PatternFile)
 			} else {
 				// Multiple patterns with same name
-				index = multiplepatternsConfirmation(response.Patterns)
-				patternFile, _ = patterns.GetPatternFormat(response.Patterns[index].PatternFile)
+				index = multiplepatternsConfirmation(matches)
+				patternFile, _ = patterns.GetPatternFormat(matches[index].PatternFile)
 			}
 		} else if designDeployFlags.SkipSave {
 			patternFile, err = readPatternFromFile(designDeployFlags.File)

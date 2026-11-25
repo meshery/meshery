@@ -90,39 +90,49 @@ mesheryctl design apply [design-name]
 			// search and fetch patterns with pattern-name
 			utils.Log.Debug("Fetching designs")
 
-			req, err = utils.NewRequest("GET", patternURL+"?populate=pattern_file&search="+patternName, nil)
-			if err != nil {
-				return err
+			searchURL := patternURL + "?populate=pattern_file&search=" + patternName
+			fetchPage := func(page uint) (*models.PatternsAPIResponse, error) {
+				pageURL := searchURL
+				if page > 0 {
+					pageURL = fmt.Sprintf("%s&page=%d", searchURL, page)
+				}
+				pageReq, err := utils.NewRequest("GET", pageURL, nil)
+				if err != nil {
+					return nil, err
+				}
+				resp, err := utils.MakeRequest(pageReq)
+				if err != nil {
+					return nil, err
+				}
+				defer func() { _ = resp.Body.Close() }()
+				body, err := io.ReadAll(resp.Body)
+				if err != nil {
+					return nil, utils.ErrReadFromBody(err)
+				}
+				// Decode into a value, not a pointer: a null response body
+				// leaves a value as an empty list, where a pointer would be nil.
+				var response models.PatternsAPIResponse
+				if err := json.Unmarshal(body, &response); err != nil {
+					return nil, utils.ErrInvalidAPIResponse(err)
+				}
+				return &response, nil
 			}
 
-			resp, err := utils.MakeRequest(req)
+			allPatterns, err := fetchAllPatternPages(fetchPage)
 			if err != nil {
 				return err
-			}
-
-			// Decode into a value, not a pointer: a response body of null leaves a value as
-			// an empty list, but would leave a pointer nil for the lines below to crash on.
-			var response models.PatternsAPIResponse
-			defer func() { _ = resp.Body.Close() }()
-			body, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return utils.ErrReadFromBody(err)
-			}
-			err = json.Unmarshal(body, &response)
-			if err != nil {
-				return utils.ErrInvalidAPIResponse(err)
 			}
 
 			index := 0
-			response.Patterns = exactNameMatches(response.Patterns, strings.Join(args, " "))
-			if len(response.Patterns) == 0 {
+			matches := exactNameMatches(allPatterns, strings.Join(args, " "))
+			if len(matches) == 0 {
 				return ErrDesignNotFound(patternName)
-			} else if len(response.Patterns) == 1 {
-				designFile = response.Patterns[0].PatternFile
+			} else if len(matches) == 1 {
+				designFile = matches[0].PatternFile
 			} else {
 				// Multiple patterns with same name
-				index = multiplePatternsConfirmation(response.Patterns)
-				designFile = response.Patterns[index].PatternFile
+				index = multiplePatternsConfirmation(matches)
+				designFile = matches[index].PatternFile
 			}
 		} else {
 			// Method to check if the entered file is a URL or not

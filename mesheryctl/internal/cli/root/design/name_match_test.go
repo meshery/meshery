@@ -78,3 +78,65 @@ func TestExactNameMatches(t *testing.T) {
 		})
 	}
 }
+
+// The server returns the design search one page at a time (10 per page by
+// default). fetchAllPatternPages must gather every page so an exact design past
+// the first page is not reported as missing, and it must stop instead of
+// looping forever.
+func TestFetchAllPatternPages(t *testing.T) {
+	design := func(name string) models.MesheryPattern { return models.MesheryPattern{Name: name} }
+
+	t.Run("collects designs across every page until totalCount is reached", func(t *testing.T) {
+		pages := []*models.PatternsAPIResponse{
+			{Page: 0, PageSize: 2, TotalCount: 3, Patterns: []models.MesheryPattern{design("a"), design("b")}},
+			{Page: 1, PageSize: 2, TotalCount: 3, Patterns: []models.MesheryPattern{design("exact")}},
+		}
+		var requested []uint
+		got, err := fetchAllPatternPages(func(page uint) (*models.PatternsAPIResponse, error) {
+			requested = append(requested, page)
+			return pages[page], nil
+		})
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		var names []string
+		for _, p := range got {
+			names = append(names, p.Name)
+		}
+		if !slices.Equal(names, []string{"a", "b", "exact"}) {
+			t.Errorf("collected %q, want [a b exact]", names)
+		}
+		if !slices.Equal(requested, []uint{0, 1}) {
+			t.Errorf("requested pages %v, want [0 1]", requested)
+		}
+	})
+
+	t.Run("stops at the first page when it holds every design", func(t *testing.T) {
+		calls := 0
+		got, err := fetchAllPatternPages(func(_ uint) (*models.PatternsAPIResponse, error) {
+			calls++
+			return &models.PatternsAPIResponse{Page: 0, PageSize: 10, TotalCount: 1, Patterns: []models.MesheryPattern{design("only")}}, nil
+		})
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if calls != 1 {
+			t.Errorf("fetched %d pages, want 1", calls)
+		}
+		if len(got) != 1 || got[0].Name != "only" {
+			t.Errorf("collected %v, want [only]", got)
+		}
+	})
+
+	t.Run("stops on an empty page instead of looping forever", func(t *testing.T) {
+		got, err := fetchAllPatternPages(func(page uint) (*models.PatternsAPIResponse, error) {
+			return &models.PatternsAPIResponse{Page: page, PageSize: 10, TotalCount: 999, Patterns: nil}, nil
+		})
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if len(got) != 0 {
+			t.Errorf("collected %v, want none", got)
+		}
+	})
+}
