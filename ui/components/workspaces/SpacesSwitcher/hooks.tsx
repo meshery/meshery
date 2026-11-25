@@ -115,6 +115,11 @@ export const getModelNamesBasedOnDisplayNames = (meshModels, displayNames) => {
   return compatibilityStore;
 };
 
+const extractMutationError = (res) => {
+  const error = res?.error;
+  return error ? error?.data || error?.error || error?.message || error : undefined;
+};
+
 export const handleUpdatePatternVisibility = async ({
   value,
   updatePatterns,
@@ -123,15 +128,14 @@ export const handleUpdatePatternVisibility = async ({
   const res = await updatePatterns({
     updateBody: {
       id: selectedResource?.id,
-      name: selectedResource.name,
-      catalogData: selectedResource.catalogData,
-      designFile: JsonParse(selectedResource.patternFile),
+      name: selectedResource?.name,
+      catalogData: selectedResource?.catalogData,
+      designFile: JsonParse(selectedResource?.patternFile),
       visibility: value,
     },
   });
-  const error = res?.error;
   return {
-    error: error ? error?.data || error?.error || error?.message || error : undefined,
+    error: extractMutationError(res),
   };
 };
 
@@ -142,9 +146,8 @@ export const handleUpdateViewVisibility = async ({ value, updateView, selectedRe
       visibility: value,
     },
   });
-  const error = res?.error;
   return {
-    error: error ? error?.data || error?.error || error?.message || error : undefined,
+    error: extractMutationError(res),
   };
 };
 
