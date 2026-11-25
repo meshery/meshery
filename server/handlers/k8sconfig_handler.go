@@ -376,12 +376,52 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				log.Error(err)
 			}
 
+			// When the instance was already present in the tracker (cache hit),
+			// InitializeMachineWithContext returns it as-is and drops machineCtx.
+			// Refresh its stored context so credential updates are applied and,
+			// if the machine previously failed initial startup with a nil Context,
+			// its Context is properly initialized.
+			var refreshErr error
+			if inst != nil {
+				inst.UpdateContext(func(oldCtx interface{}) interface{} {
+					if oldCtx == nil {
+						assigned, _, aerr := kubernetes.AssignInitialCtx(req.Context(), machineCtx, log)
+						if aerr != nil {
+							refreshErr = aerr
+							log.Error(aerr)
+							return oldCtx
+						}
+						return assigned
+					}
+					if stored, ok := oldCtx.(*kubernetes.MachineCtx); ok && stored != nil {
+						if _, rerr := stored.RefreshK8sContext(*ctx, models.NewServerEvent(req.Context()), log); rerr != nil {
+							refreshErr = rerr
+							log.Error(rerr)
+						}
+						return stored
+					}
+					return oldCtx
+				})
+			}
+
 			// An unreachable context cannot build a client set, so the state
 			// machine fails to initialize - either returning a nil instance, or,
 			// on a cache hit, one whose Context was never assigned. The connection
 			// has still been persisted in the discovered state; just skip the
 			// event. See mhelpers.HasMachineContext.
-			if mhelpers.HasMachineContext(inst) {
+			//
+			// If refreshing the stored context failed (e.g. invalid rotation credentials),
+			// capture the error on the context metadata and skip the event so we do not
+			// probe or report success against the stale credentials.
+			if refreshErr != nil {
+				ctx.ImportError = fmt.Sprintf("Failed to refresh Kubernetes context \"%s\": %v", ctx.Name, refreshErr)
+				metadata["error"] = refreshErr
+				if status == connections.DISCOVERED && len(saveK8sContextResponse.RegisteredContexts) > 0 {
+					saveK8sContextResponse.RegisteredContexts[len(saveK8sContextResponse.RegisteredContexts)-1].ImportError = ctx.ImportError
+				} else if status == connections.CONNECTED && len(saveK8sContextResponse.ConnectedContexts) > 0 {
+					saveK8sContextResponse.ConnectedContexts[len(saveK8sContextResponse.ConnectedContexts)-1].ImportError = ctx.ImportError
+				}
+			} else if mhelpers.HasMachineContext(inst) {
 				// Import returns before the transition finishes, so keep its values
 				// without tying discovery to the request's cancellation.
 				transitionCtx, cancel := backgroundDiscoveryContext(req.Context())

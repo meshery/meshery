@@ -43,7 +43,7 @@ address (sorry, no pseudonyms or anonymous contributions). An example of signing
 </li>
 
 <li>
-To ensure all your commits are signed, you may choose to add this alias to your global <code>.gitconfig</code>:
+To sign off without typing <code>-s</code> each time, you may add these aliases to your global <code>.gitconfig</code> and use <code>git cm</code> and <code>git amend</code>. Git ignores an alias that has the same name as a built-in command, so a plain <code>git commit</code> cannot be made to sign off this way:
 
 ~/.gitconfig
 
@@ -51,7 +51,6 @@ To ensure all your commits are signed, you may choose to add this alias to your 
 [alias]
   amend = commit -s --amend
   cm = commit -s -m
-  commit = commit -s
 </code></pre>
 
 Or you may configure your IDE, for example, VSCode to automatically sign-off commits for you:<a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%"/></a>
