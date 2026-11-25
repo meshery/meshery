@@ -141,6 +141,20 @@ func MergeCredentialSecrets(existing, incoming map[string]interface{}) map[strin
 		resolvedIncoming = unwrapped
 	}
 	merged := cloneSecretMap(resolvedExisting)
+	if incoming != nil && isLegacyWrapper(incoming) {
+		if secretStr, ok := incoming["secret"].(string); ok {
+			rotated := false
+			for _, authKey := range canonicalAuthSecretKeys {
+				if _, exists := merged[authKey]; exists {
+					merged[authKey] = secretStr
+					rotated = true
+				}
+			}
+			if rotated {
+				return merged
+			}
+		}
+	}
 	for k, v := range resolvedIncoming {
 		if inMap, ok := v.(map[string]interface{}); ok {
 			if exMap, ok := merged[k].(map[string]interface{}); ok {

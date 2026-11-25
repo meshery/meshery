@@ -251,4 +251,26 @@ func TestMergeCredentialSecrets(t *testing.T) {
 			t.Fatalf("CredentialAuthSecret() = %q, want %q", auth, "stored-api-key")
 		}
 	})
+
+	t.Run("rotates canonical auth key when incoming uses legacy string shape", func(t *testing.T) {
+		existing := map[string]interface{}{
+			"grafanaURL":    "https://grafana.example",
+			"grafanaAPIKey": "old-api-key",
+		}
+		incoming := map[string]interface{}{
+			"secret": "rotated-api-key",
+		}
+
+		got := MergeCredentialSecrets(existing, incoming)
+		want := map[string]interface{}{
+			"grafanaURL":    "https://grafana.example",
+			"grafanaAPIKey": "rotated-api-key",
+		}
+		if !reflect.DeepEqual(got, want) {
+			t.Fatalf("MergeCredentialSecrets() = %#v, want %#v", got, want)
+		}
+		if auth := CredentialAuthSecret(got); auth != "rotated-api-key" {
+			t.Fatalf("CredentialAuthSecret() = %q, want %q", auth, "rotated-api-key")
+		}
+	})
 }
