@@ -40,7 +40,7 @@ var (
 	forceDelete bool
 )
 
-var stopUsageMsg = "Usage: mesheryctl system stop [flags]\nRun 'mesheryctl system stop --help' to see detailed help message"
+var stopUsageMsg = "Usage: mesheryctl system stop [flags]\nRun 'mesheryctl system stop --help' to see detailed help message."
 
 // stopCmd represents the stop command
 var stopCmd = &cobra.Command{
@@ -61,9 +61,9 @@ mesheryctl system stop --keep-namespace
 // Stop Meshery forcefully (use it when system stop doesn't work)
 mesheryctl system stop --force
 	`,
-	Args: func(cmd *cobra.Command, args []string) error {
+	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", stopUsageMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("stop does not accept positional arguments\n\n%s", stopUsageMsg))
 		}
 		return nil
 	},

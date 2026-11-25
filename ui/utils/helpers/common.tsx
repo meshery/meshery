@@ -8,7 +8,12 @@ import { EVENT_TYPES } from '../../lib/event-types';
  * @returns {function} - A function that generates a close button component.
  */
 export const closeButtonForSnackbarAction = (closeSnackbar) => (key) => (
-  <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+  <IconButton
+    key="close"
+    aria-label="Close"
+    color="inherit"
+    onClick={() => typeof closeSnackbar === 'function' && closeSnackbar(key)}
+  >
     <CloseIcon />
   </IconButton>
 );
@@ -22,11 +27,26 @@ export const closeButtonForSnackbarAction = (closeSnackbar) => (key) => (
  */
 export const successHandlerGenerator = (notify, msg, cb) => (res) => {
   if (res !== undefined) {
-    if (cb !== undefined) cb(res);
-    if (typeof res == 'object') {
-      res = JSON.stringify(res);
+    if (typeof cb === 'function') cb(res);
+    let details = res;
+    if (typeof res === 'object' && res !== null) {
+      try {
+        details = JSON.stringify(res);
+      } catch {
+        try {
+          details = String(res);
+        } catch {
+          details = '';
+        }
+      }
     }
-    notify({ message: `${msg}`, details: `${res}`, event_type: EVENT_TYPES.SUCCESS });
+    if (typeof notify === 'function') {
+      notify({
+        message: `${msg ?? ''}`,
+        details: `${details ?? ''}`,
+        event_type: EVENT_TYPES.SUCCESS,
+      });
+    }
   }
 };
 
@@ -38,7 +58,22 @@ export const successHandlerGenerator = (notify, msg, cb) => (res) => {
  * @returns {function} - An error handler function
  */
 export const errorHandlerGenerator = (notify, msg, cb) => (err) => {
-  if (cb !== undefined) cb(err);
-  err = typeof err !== 'string' ? err.toString() : err;
-  notify({ message: `${msg}`, details: err, event_type: EVENT_TYPES.ERROR });
+  if (typeof cb === 'function') cb(err);
+  let errorDetails = '';
+  if (typeof err === 'string') {
+    errorDetails = err;
+  } else if (err !== null && err !== undefined) {
+    try {
+      errorDetails = typeof err.toString === 'function' ? err.toString() : String(err);
+    } catch {
+      try {
+        errorDetails = typeof err.message === 'string' ? err.message : '';
+      } catch {
+        errorDetails = '';
+      }
+    }
+  }
+  if (typeof notify === 'function') {
+    notify({ message: `${msg ?? ''}`, details: errorDetails, event_type: EVENT_TYPES.ERROR });
+  }
 };
