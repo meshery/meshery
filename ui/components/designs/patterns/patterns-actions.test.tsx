@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const encodeDesignFile = vi.fn((d: any) => `encoded:${JSON.stringify(d)}`);
 const getUnit8ArrayDecodedFile = vi.fn((f: any) => `decoded:${f}`);
 const downloadContent = vi.fn();
+const updateProgress = vi.fn();
 const buildImportDesignRequestBody = vi.fn();
 
 vi.mock('@sistent/sistent', () => ({
@@ -37,7 +38,7 @@ vi.mock('../../../utils/fileDownloader', () => ({
 }));
 
 vi.mock('@/store/slices/mesheryUi', () => ({
-  updateProgress: vi.fn(),
+  updateProgress: (...args: any[]) => updateProgress(...args),
 }));
 
 vi.mock('../import-design-request', () => ({
@@ -85,6 +86,8 @@ const baseDeps = () => {
 
 describe('createPatternsActions', () => {
   beforeEach(() => {
+    downloadContent.mockReset();
+    updateProgress.mockReset();
     buildImportDesignRequestBody.mockReset();
   });
 
@@ -188,7 +191,7 @@ describe('createPatternsActions', () => {
     expect(deps.setSelectedRowData).toHaveBeenCalledWith(null);
   });
 
-  it('handleDownload triggers download and notifies', () => {
+  it('handleDownload triggers download, notifies, and resets progress', () => {
     const deps = baseDeps();
     const actions = createPatternsActions(deps);
     const stop = vi.fn();
@@ -207,7 +210,59 @@ describe('createPatternsActions', () => {
       source_type: 'manifest',
       params: { param: 'v' },
     });
-    expect(deps.notify).toHaveBeenCalled();
+    expect(updateProgress.mock.calls).toEqual([
+      [{ showProgress: true }],
+      [{ showProgress: false }],
+    ]);
+    expect(deps.notify).toHaveBeenCalledWith({
+      message: '"Design 1" design downloaded',
+      event_type: 'info',
+    });
+  });
+
+  it('handleDownload clears progress and notifies error when downloadContent throws', () => {
+    const deps = baseDeps();
+    const actions = createPatternsActions(deps);
+    const stop = vi.fn();
+    downloadContent.mockImplementationOnce(() => {
+      throw new Error('Download blocked');
+    });
+
+    actions.handleDownload(
+      { stopPropagation: stop } as any,
+      { id: 'd1', name: 'Broken Design' },
+      undefined,
+      undefined,
+    );
+
+    expect(stop).toHaveBeenCalled();
+    expect(updateProgress.mock.calls).toEqual([
+      [{ showProgress: true }],
+      [{ showProgress: false }],
+    ]);
+    expect(deps.notify).toHaveBeenCalledTimes(1);
+    expect(deps.notify).toHaveBeenCalledWith({
+      message: 'Failed to download "Broken Design": Error: Download blocked',
+      event_type: 'error',
+    });
+  });
+
+  it('handleDownload falls back to generic design label and clears progress when design is null', () => {
+    const deps = baseDeps();
+    const actions = createPatternsActions(deps);
+    const stop = vi.fn();
+
+    actions.handleDownload({ stopPropagation: stop } as any, null, undefined, undefined);
+
+    expect(stop).toHaveBeenCalled();
+    expect(updateProgress.mock.calls).toEqual([
+      [{ showProgress: true }],
+      [{ showProgress: false }],
+    ]);
+    expect(deps.notify).toHaveBeenCalledTimes(1);
+    const [notification] = deps.notify.mock.calls[0];
+    expect(notification.event_type).toBe('error');
+    expect(notification.message).toMatch(/^Failed to download "design": TypeError:/);
   });
 
   it('handleError surfaces the failure as a notification', () => {
