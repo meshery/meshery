@@ -37,7 +37,9 @@ vi.mock('../../meshery-mesh-interface/PatternService/RJSF_wrapper', () => ({
 }));
 
 vi.mock('../../meshery-mesh-interface/PatternService/helper', () => ({
-  getSchema: (type: string) => ({ schemaType: type }),
+  getSchema: (type: string) => (type === 'unsupported' ? undefined : { schemaType: type }),
+  getUiSchema: (type: string) => ({ uiType: type }),
+  getCredentialTypes: () => ['prometheus', 'grafana', 'kubernetes'],
 }));
 
 vi.mock('@sistent/sistent', () => ({
@@ -429,6 +431,44 @@ describe('Modal (RJSF version)', () => {
 
     expect(screen.getByTestId('circular-progress')).toBeInTheDocument();
     expect(screen.getByTestId('primary-button')).toBeDisabled();
+  });
+
+  it('renders graceful fallback message and disables submit when type has no schema', () => {
+    render(
+      <Modal
+        open={true}
+        title="Credentials"
+        type="unsupported"
+        handleClose={vi.fn()}
+        handleSubmit={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('No form is available for this credential type.')).toBeInTheDocument();
+    expect(screen.getByTestId('primary-button')).toBeDisabled();
+    expect(screen.queryByTestId('circular-progress')).not.toBeInTheDocument();
+  });
+
+  it('defers closing when closeOnSubmit is false so async submit errors can keep the modal open', async () => {
+    const user = userEvent.setup();
+    const handleSubmit = vi.fn();
+    const handleClose = vi.fn();
+
+    render(
+      <Modal
+        open={true}
+        title="Credentials"
+        schema={{ type: 'object' }}
+        handleClose={handleClose}
+        handleSubmit={handleSubmit}
+        closeOnSubmit={false}
+      />,
+    );
+
+    await user.click(screen.getByTestId('primary-button'));
+
+    expect(handleSubmit).toHaveBeenCalledWith({ name: 'submission' });
+    expect(handleClose).not.toHaveBeenCalled();
   });
 });
 
