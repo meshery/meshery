@@ -2225,6 +2225,15 @@
         "short_description": "Failed to replace token file",
         "probable_cause": "The destination path may be locked by another process\nThe filesystem may not support atomic rename",
         "suggested_remediation": "Retry the operation\nRun `mesheryctl system login` to re-authenticate"
+      },
+      "1270": {
+        "name": "ErrDesignValidationFailedCode",
+        "code": "1270",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Design failed server-side validation",
+        "probable_cause": "Meshery Server rejected the design during validation",
+        "suggested_remediation": "Fix the reported component configuration, or rerun with --skip-validation to deploy without server-side validation"
       }
     }
   }

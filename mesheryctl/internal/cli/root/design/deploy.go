@@ -163,7 +163,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 
 		res, err := api.Add(deployURLPath, bytes.NewBuffer(payloadBytes), nil)
 		if err != nil {
-			return err
+			return designDeployRequestError(err, designDeployFlags.SkipValidation)
 		}
 
 		defer func() { _ = res.Body.Close() }()

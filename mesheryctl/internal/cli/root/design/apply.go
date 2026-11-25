@@ -180,7 +180,7 @@ mesheryctl design apply [design-name]
 		s.Start()
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
+			return designDeployRequestError(err, skipValidation)
 		}
 
 		defer func() { _ = res.Body.Close() }()

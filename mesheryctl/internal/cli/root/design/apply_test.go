@@ -3,11 +3,14 @@ package design
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	"github.com/pkg/errors"
 )
@@ -24,6 +27,10 @@ func TestApplyCmd(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
+	validationErrorResponse, err := os.ReadFile(filepath.Join(fixturesDir, "deploy.validationError.response.golden"))
+	if err != nil {
+		t.Fatalf("failed to read validation response fixture: %v", err)
+	}
 
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
@@ -247,8 +254,43 @@ func TestApplyCmd(t *testing.T) {
 			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
+		{
+			Name: "reports a deployment HTTP 500 when validation is requested",
+			Args: []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save"},
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
+					Response:     "deploy.validationError.response.golden",
+					ResponseCode: 500,
+				},
+			},
+			ExpectError:   true,
+			ExpectedError: ErrDesignValidationFailed(errors.New(string(validationErrorResponse))),
+		},
+		{
+			Name: "reports a deployment HTTP 500 with --skip-validation",
+			Args: []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save", "--skip-validation"},
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "deploy.validationError.response.golden",
+					ResponseCode: 500,
+				},
+			},
+			ExpectError:   true,
+			ExpectedError: utils.ErrMesheryServerInternalError(errors.New(string(validationErrorResponse))),
+		},
 	}
 
 	// Run tests
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}
+
+func TestDesignDeployRequestErrorRemediation(t *testing.T) {
+	err := designDeployRequestError(utils.ErrMesheryServerInternalError(errors.New("invalid spec.replicas")), false)
+	if remedy := meshkiterrors.GetRemedy(err); !strings.Contains(remedy, "--skip-validation") {
+		t.Errorf("expected remediation to mention --skip-validation, got %q", remedy)
+	}
 }

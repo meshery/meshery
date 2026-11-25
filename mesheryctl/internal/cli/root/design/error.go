@@ -15,6 +15,7 @@
 package design
 
 import (
+	stderrors "errors"
 	"fmt"
 	"strings"
 
@@ -40,6 +41,7 @@ const (
 	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
 	ErrEvaluateDesignCode             = "mesheryctl-1247"
 	ErrEvaluateDesignResponseCode     = "mesheryctl-1248"
+	ErrDesignValidationFailedCode     = "mesheryctl-1270"
 )
 
 const (
@@ -198,4 +200,19 @@ func ErrEvaluateDesignResponse(err error) error {
 		[]string{err.Error()},
 		[]string{"The Meshery server returned an error while evaluating the design", "The design file may be invalid or the server may be experiencing issues"},
 		[]string{"Ensure the design file is valid", "Check that the Meshery server is running and accessible", "Verify that the server has the required policies loaded"})
+}
+
+func ErrDesignValidationFailed(err error) error {
+	return errors.New(ErrDesignValidationFailedCode, errors.Alert,
+		[]string{"Design failed server-side validation"},
+		[]string{err.Error()},
+		[]string{"Meshery Server rejected the design during validation, or hit an internal error while deploying it"},
+		[]string{"Fix the reported component configuration, or rerun with --skip-validation to deploy without server-side validation"})
+}
+
+func designDeployRequestError(err error, skipValidation bool) error {
+	if !skipValidation && errors.GetCode(err) == utils.ErrMesheryServerInternalErrorCode {
+		return ErrDesignValidationFailed(stderrors.New(errors.GetLDescription(err)))
+	}
+	return err
 }

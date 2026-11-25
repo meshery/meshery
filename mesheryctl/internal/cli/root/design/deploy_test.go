@@ -205,7 +205,7 @@ func TestDeployCmd(t *testing.T) {
 			},
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  utils.ErrMesheryServerInternalError(errors.New(string(validationErrorResponse))),
+			ExpectedError:  ErrDesignValidationFailed(errors.New(string(validationErrorResponse))),
 		},
 	}
 
