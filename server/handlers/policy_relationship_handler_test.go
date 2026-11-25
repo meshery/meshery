@@ -17,6 +17,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	gopolicies "github.com/meshery/meshery/server/policies"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	policyv1beta1 "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -29,6 +30,7 @@ import (
 	modelv1beta2 "github.com/meshery/schemas/models/v1beta2/model"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	v1beta3comp "github.com/meshery/schemas/models/v1beta3/component"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -1361,4 +1363,72 @@ func TestEvaluateRelationshipPolicy_Success_ResponsePayloadStructure(t *testing.
 	assert.Equal(t, "1.0.1", resp.Design.Version)
 	assert.NotNil(t, resp.Timestamp)
 	assertSuccessResponseKeys(t, rec.Body.Bytes())
+}
+
+func TestParsePolicyEvalTimeout(t *testing.T) {
+	tests := []struct {
+		name    string
+		raw     string
+		want    time.Duration
+		wantErr bool
+	}{
+		{name: "go duration", raw: "5m", want: 5 * time.Minute},
+		{name: "surrounding spaces uses default", raw: " 90s ", want: defaultPolicyEvalTimeout, wantErr: true},
+		{name: "empty uses default", raw: "", want: defaultPolicyEvalTimeout},
+		{name: "bare number uses default", raw: "300", want: defaultPolicyEvalTimeout, wantErr: true},
+		{name: "not a duration", raw: "abc", want: defaultPolicyEvalTimeout, wantErr: true},
+		{name: "negative", raw: "-1s", want: defaultPolicyEvalTimeout, wantErr: true},
+		{name: "zero", raw: "0s", want: defaultPolicyEvalTimeout, wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := parsePolicyEvalTimeout(tt.raw)
+			assert.Equal(t, tt.want, got)
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
+// TestPolicyEvalTimeout_BareNumberUsesDefault pins #24330: viper.GetDuration
+// read POLICY_EVAL_TIMEOUT=300 as 300ns, so every evaluation timed out at once.
+func TestPolicyEvalTimeout_BareNumberUsesDefault(t *testing.T) {
+	prev := viper.Get("POLICY_EVAL_TIMEOUT")
+	t.Cleanup(func() { viper.Set("POLICY_EVAL_TIMEOUT", prev) })
+
+	h := &Handler{}
+	viper.Set("POLICY_EVAL_TIMEOUT", "300")
+	assert.Equal(t, defaultPolicyEvalTimeout, h.policyEvalTimeout())
+
+	viper.Set("POLICY_EVAL_TIMEOUT", "5m")
+	assert.Equal(t, 5*time.Minute, h.policyEvalTimeout())
+}
+
+// TestPolicyEvalTimeout_WarnsOncePerHandler checks that an invalid value is
+// logged once per Handler, not once per evaluation, and that a new Handler
+// warns again.
+func TestPolicyEvalTimeout_WarnsOncePerHandler(t *testing.T) {
+	prev := viper.Get("POLICY_EVAL_TIMEOUT")
+	t.Cleanup(func() { viper.Set("POLICY_EVAL_TIMEOUT", prev) })
+	viper.Set("POLICY_EVAL_TIMEOUT", "300")
+
+	newHandler := func() (*Handler, *bytes.Buffer) {
+		var buf bytes.Buffer
+		log, err := logger.New("policy-eval-timeout-test", logger.Options{Output: &buf, LogLevel: int(logrus.WarnLevel)})
+		require.NoError(t, err)
+		return &Handler{log: log}, &buf
+	}
+
+	h, buf := newHandler()
+	for i := 0; i < 3; i++ {
+		assert.Equal(t, defaultPolicyEvalTimeout, h.policyEvalTimeout())
+	}
+	assert.Equal(t, 1, strings.Count(buf.String(), "ignoring POLICY_EVAL_TIMEOUT"))
+
+	other, otherBuf := newHandler()
+	assert.Equal(t, defaultPolicyEvalTimeout, other.policyEvalTimeout())
+	assert.Equal(t, 1, strings.Count(otherBuf.String(), "ignoring POLICY_EVAL_TIMEOUT"))
 }
