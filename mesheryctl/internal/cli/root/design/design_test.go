@@ -10,6 +10,8 @@ var (
 
 func resetVariables() {
 	skipSave = false
+	skipValidation = false
 	designFile = ""
 	file = ""
+	designDeployFlags = cmdDesignDeployFlags{}
 }

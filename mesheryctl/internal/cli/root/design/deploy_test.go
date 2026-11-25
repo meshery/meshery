@@ -127,6 +127,45 @@ func TestDeployCmd(t *testing.T) {
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound("nonexistent-design"),
 		},
+		{
+			Name:             "given valid file and source type when design deploy uses --skip-validation then design is deployed",
+			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "Kubernetes Manifest", "--skip-validation"},
+			ExpectedResponse: "deploy.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern/types",
+					Response:     "view.designTypes.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/Kubernetes%20Manifest",
+					Response:     "deploy.applicationSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/import",
+					Response:     "apply.designSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "deploy.designdeploy.response.golden",
+					ResponseCode: 200,
+				},
+				// Override the responder from the default cases to catch an unexpected query.
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
+					Response:     "deploy.designdeploy.response.golden",
+					ResponseCode: 400,
+				},
+			},
+			ExpectError: false,
+		},
 	}
 
 	// Run tests

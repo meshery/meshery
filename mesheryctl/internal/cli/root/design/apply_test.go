@@ -219,6 +219,34 @@ func TestApplyCmd(t *testing.T) {
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound("missing-design"),
 		},
+		{
+			Name:             "given valid file when design apply uses --skip-validation then design is applied",
+			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-validation"},
+			ExpectedResponse: "apply.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/import",
+					Response:     "apply.designSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "apply.designDeploy.response.golden",
+					ResponseCode: 200,
+				},
+				// Override the responder from the default cases to catch an unexpected query.
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
+					Response:     "apply.designDeploy.response.golden",
+					ResponseCode: 400,
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: false,
+		},
 	}
 
 	// Run tests
