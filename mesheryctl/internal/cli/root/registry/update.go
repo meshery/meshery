@@ -143,6 +143,7 @@ func InvokeCompUpdate() (err error) {
 		totalAggregateComponents = 0
 	}()
 	modelToCompUpdateTracker := store.NewGenericThreadSafeStore[[]compUpdateTracker]()
+	updatedCompPaths := map[string]map[string]bool{}
 
 	url := GoogleSpreadSheetURL + spreadsheeetID
 
@@ -188,7 +189,6 @@ func InvokeCompUpdate() (err error) {
 			compUpdateArray := []compUpdateTracker{}
 			for _, content := range modelContents {
 				availableComponentsPerModelPerVersion := 0
-				totalCompsUpdatedPerModelPerVersion := 0
 
 				if content.IsDir() {
 					if mutils.FindIndexInSlice(content.Name(), ExcludeDirs) != -1 {
@@ -206,6 +206,9 @@ func InvokeCompUpdate() (err error) {
 
 					utils.Log.Info("Updating component of model ", modelName, " with version: ", content.Name())
 
+					if updatedCompPaths[versionPath] == nil {
+						updatedCompPaths[versionPath] = map[string]bool{}
+					}
 					for _, component := range components {
 						compPath := filepath.Join(versionPath, "components", fmt.Sprintf("%s.json", component.Component))
 						componentByte, err := os.ReadFile(compPath)
@@ -241,12 +244,12 @@ func InvokeCompUpdate() (err error) {
 							utils.Log.Error(err)
 							continue
 						}
-						totalCompsUpdatedPerModelPerVersion++
+						updatedCompPaths[versionPath][compPath] = true
 					}
 
 					compUpdateArray = append(compUpdateArray, compUpdateTracker{
 						totalComps:        availableComponentsPerModelPerVersion,
-						totalCompsUpdated: totalCompsUpdatedPerModelPerVersion,
+						totalCompsUpdated: len(updatedCompPaths[versionPath]),
 						version:           content.Name(),
 					})
 				}

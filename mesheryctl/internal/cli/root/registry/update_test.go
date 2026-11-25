@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -91,12 +92,21 @@ func TestInvokeCompUpdate_Summary(t *testing.T) {
 	root := t.TempDir()
 	csv := "ignored,ignored,ignored,ignored\nregistrant,model,component,description\n"
 	for _, c := range []string{"BrowserSet", "Config", "DeviceSet", "License", "Quota"} {
-		csv += "meshery,aerokube," + c + ",repro\n"
 		for _, v := range []string{"2.8.1", "2.8.2", "2.8.3"} {
 			dir := filepath.Join(root, "models", "aerokube", v, "v1.0.0", "components")
 			require.NoError(t, os.MkdirAll(dir, 0o755))
 			require.NoError(t, os.WriteFile(filepath.Join(dir, c+".json"), []byte("{}"), 0o644))
 		}
+	}
+
+	// aerokube is split across registrants: "github" repeats Config from
+	// "meshery" and lists Quota twice, and every "artifacthub" row fails.
+	for _, row := range []string{
+		"meshery,aerokube,BrowserSet", "meshery,aerokube,Config", "meshery,aerokube,DeviceSet",
+		"github,aerokube,Config", "github,aerokube,License", "github,aerokube,Quota", "github,aerokube,Quota",
+		"artifacthub,aerokube,Missing",
+	} {
+		csv += row + ",repro\n"
 	}
 
 	// "ghost" is listed in the CSV, but its only component has no JSON file.
@@ -120,5 +130,6 @@ func TestInvokeCompUpdate_Summary(t *testing.T) {
 	assert.Contains(t, out.String(), "ghost-1.0.0, updated 0 out of 1 components")
 	for _, v := range []string{"2.8.1", "2.8.2", "2.8.3"} {
 		assert.Contains(t, out.String(), "aerokube-"+v+", updated 5 out of 5 components")
+		assert.Equal(t, 1, strings.Count(out.String(), "For model aerokube-"+v+","))
 	}
 }
