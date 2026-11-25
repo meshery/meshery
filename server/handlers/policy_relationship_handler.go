@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"runtime/debug"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/Masterminds/semver/v3"
@@ -346,17 +345,14 @@ func parsePolicyEvalTimeout(raw string) (time.Duration, error) {
 	return d, nil
 }
 
-// warnPolicyEvalTimeoutOnce keeps an invalid POLICY_EVAL_TIMEOUT from adding
-// a warning to every evaluation.
-var warnPolicyEvalTimeoutOnce sync.Once
-
 // policyEvalTimeout returns the timeout for one relationship evaluation. An
-// invalid POLICY_EVAL_TIMEOUT falls back to the default and is logged once.
+// invalid POLICY_EVAL_TIMEOUT falls back to the default and is logged once per
+// Handler (h.policyEvalTimeoutWarnOnce), not once per evaluation.
 func (h *Handler) policyEvalTimeout() time.Duration {
 	raw := viper.GetString("POLICY_EVAL_TIMEOUT")
 	d, err := parsePolicyEvalTimeout(raw)
 	if err != nil && h.log != nil {
-		warnPolicyEvalTimeoutOnce.Do(func() {
+		h.policyEvalTimeoutWarnOnce.Do(func() {
 			h.log.Warnf("ignoring POLICY_EVAL_TIMEOUT=%q (%v); using the default %s. Set a Go duration such as 5m.", raw, err, defaultPolicyEvalTimeout)
 		})
 	}
@@ -858,7 +854,8 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	// Wall-clock timeout bounds the HTTP response; the eval goroutine
 	// may still run to completion in the background.
-	evalCtx, cancel := context.WithTimeout(r.Context(), h.policyEvalTimeout())
+	evalTimeout := h.policyEvalTimeout()
+	evalCtx, cancel := context.WithTimeout(r.Context(), evalTimeout)
 	defer cancel()
 
 	token, _ := evalCtx.Value(models.TokenCtxKey).(string)
@@ -929,7 +926,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 			h.writeEvaluationResult(rw, result)
 			return
 		case <-evalCtx.Done():
-			h.writeEvalCtxError(rw, evalCtx)
+			h.writeEvalCtxError(rw, evalCtx, evalTimeout)
 			return
 		}
 	}
@@ -984,7 +981,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	case <-evalCtx.Done():
 		// Unblock any followers waiting on this designID.
 		h.evalTracker.publish(designKey, evalResult{err: errEvalTimeout})
-		h.writeEvalCtxError(rw, evalCtx)
+		h.writeEvalCtxError(rw, evalCtx, evalTimeout)
 		return
 	}
 }
@@ -1031,9 +1028,10 @@ func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResul
 	}
 }
 
-func (h *Handler) writeEvalCtxError(rw http.ResponseWriter, ctx context.Context) {
+// writeEvalCtxError reports why evalCtx ended. timeout is the value that
+// bounded the evaluation, so the log line and the 504 name the same timeout.
+func (h *Handler) writeEvalCtxError(rw http.ResponseWriter, ctx context.Context, timeout time.Duration) {
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
-		timeout := h.policyEvalTimeout()
 		if h.log != nil {
 			h.log.Warnf("relationship policy evaluation exceeded %s", timeout)
 		}
