@@ -96,13 +96,13 @@ describe('ability + CAN', () => {
 
   it('returns false for non-string action or subject', () => {
     ability.update([{ action: 'read', subject: 'pattern' }]);
-    expect(CAN(123 as unknown as string, 'pattern')).toBe(false);
-    expect(CAN('read', 123 as unknown as string)).toBe(false);
-    expect(CAN({} as unknown as string, 'pattern')).toBe(false);
-    expect(CAN('read', {} as unknown as string)).toBe(false);
-    expect(CAN([] as unknown as string, 'pattern')).toBe(false);
-    expect(CAN('read', [] as unknown as string)).toBe(false);
-    expect(CAN(true as unknown as string, false as unknown as string)).toBe(false);
+    expect(CAN(123, 'pattern')).toBe(false);
+    expect(CAN('read', 123)).toBe(false);
+    expect(CAN({}, 'pattern')).toBe(false);
+    expect(CAN('read', {})).toBe(false);
+    expect(CAN([], 'pattern')).toBe(false);
+    expect(CAN('read', [])).toBe(false);
+    expect(CAN(true, false)).toBe(false);
   });
 });
 

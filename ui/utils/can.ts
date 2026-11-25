@@ -16,7 +16,7 @@ export default function CAN(action?: unknown, subject?: unknown): boolean {
   ) {
     return false;
   }
-  return ability.can(action.trim(), _.lowerCase(subject));
+  return ability.can(action.trim(), _.lowerCase(subject.trim()));
 }
 
 const getProviderUiAccessControl = () =>
