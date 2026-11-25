@@ -6,6 +6,7 @@ import ConnectionTable from './ConnectionTable';
 
 const notify = vi.fn();
 const push = vi.fn();
+const replace = vi.fn();
 const ping = vi.fn();
 const pingGrafana = vi.fn();
 const pingPrometheus = vi.fn();
@@ -22,8 +23,10 @@ let dataTableProps: any;
 let windowWidth = 1280;
 
 const router = {
+  pathname: '/management/connections',
   query: {} as Record<string, unknown>,
   push,
+  replace,
 };
 
 vi.mock('next/router', () => ({
@@ -282,6 +285,7 @@ describe('ConnectionTable', () => {
     dataTableProps = undefined;
     notify.mockReset();
     push.mockReset();
+    replace.mockReset();
     ping.mockReset();
     pingMeshery.mockReset();
     modalShow.mockReset();
@@ -366,6 +370,27 @@ describe('ConnectionTable', () => {
         undefined,
       );
     });
+  });
+
+  it('goes back to the first page in the same URL update when rows per page changes', async () => {
+    router.query = { con_page: '2' };
+
+    render(<ConnectionTable />);
+
+    await waitFor(() => {
+      expect(getConnectionsQuery).toHaveBeenLastCalledWith(
+        expect.objectContaining({ page: 2, pageSize: 10 }),
+        undefined,
+      );
+    });
+
+    dataTableProps.options.onTableChange('changeRowsPerPage', { rowsPerPage: 25, page: 0 });
+
+    // One replace carrying both changes: two replaces built from the same
+    // query would let the second one drop the new page size.
+    expect(replace).toHaveBeenCalledTimes(1);
+    const [{ query }] = replace.mock.calls[0];
+    expect(query).toEqual({ con_ps: '25' });
   });
 
   it('defaults to Discovered At (createdAt) descending, mapped to the server sort column', async () => {
