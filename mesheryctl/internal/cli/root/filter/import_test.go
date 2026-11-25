@@ -121,6 +121,11 @@ func TestImportCmdArgsValidation(t *testing.T) {
 			args:           []string{"import", "filter1.wasm", "filter2.wasm"},
 			expectedSubstr: "expected 1 argument (URI or file path), received 2",
 		},
+		{
+			name:           "whitespace-only first argument with extra positional argument",
+			args:           []string{"import", "   ", "filter.wasm"},
+			expectedSubstr: "expected 1 argument (URI or file path), received 2",
+		},
 	}
 
 	for _, tc := range tests {

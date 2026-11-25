@@ -57,11 +57,14 @@ mesheryctl filter import /path/to/filter.wasm --wasm-config [filepath|string]
 mesheryctl filter import /path/to/filter.wasm --name [string]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 || strings.TrimSpace(args[0]) == "" {
+		if len(args) == 0 {
 			return ErrFilterURIRequired(cmd.Name())
 		}
 		if len(args) > 1 {
-			return utils.ErrInvalidArgument(fmt.Errorf("expected 1 argument (URI or file path), received %d\n\nUsage: mesheryctl filter import [URI]\nRun 'mesheryctl filter import --help' to see detailed help message", len(args)))
+			return utils.ErrInvalidArgument(fmt.Errorf("expected 1 argument (URI or file path), received %d\n\nUsage: %s\nRun '%s --help' to see detailed help message", len(args), cmd.UseLine(), cmd.CommandPath()))
+		}
+		if strings.TrimSpace(args[0]) == "" {
+			return ErrFilterURIRequired(cmd.Name())
 		}
 		return nil
 	},
