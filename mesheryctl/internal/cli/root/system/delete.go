@@ -42,7 +42,7 @@ mesheryctl system delete
 // Delete Meshery containers without confirmation
 mesheryctl system delete -y
 `,
-	Args: func(cmd *cobra.Command, args []string) error {
+	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) != 0 {
 			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", deleteUsageMsg))
 		}

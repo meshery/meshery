@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import { useTheme } from '@/theme';
+import { CredentialRjsfSchemasV1Beta1, CredentialRjsfUiSchemasV1Beta1 } from '@meshery/schemas';
 
 /**
  * Returns a value safe to use as React child or tooltip/label text.
@@ -216,21 +217,136 @@ export const HyperLinkDiv = ({ text }) => {
 // Backward-compatible alias for legacy callers that imported `getHyperLinkDiv`.
 export const getHyperLinkDiv = (text) => <HyperLinkDiv text={text} />;
 /**
- * Returns the schema for the credentials.
- * @param {String} type
- * @returns
+ * Returns the supported credential types from the canonical schemas package.
+ * @returns {string[]}
+ */
+export const getCredentialTypes = () => {
+  return Object.keys(CredentialRjsfSchemasV1Beta1);
+};
+
+/**
+ * Returns the canonical RJSF schema for the credentials from @meshery/schemas.
+ * @param {string} [type]
+ * @returns {object | undefined}
  */
 export const getSchema = (type) => {
-  switch (type) {
-    case 'grafana':
-      return require('../../schemas/credentials/grafana').grafanaSchema;
-    case 'prometheus':
-      return require('../../schemas/credentials/prometheus').prometheusSchema;
-    case 'kubernetes':
-      return require('../../schemas/credentials/kubernetes').kubernetesSchema;
-    default:
-      return;
+  if (!type) return undefined;
+  return CredentialRjsfSchemasV1Beta1[type.toLowerCase()];
+};
+
+/**
+ * Returns the canonical RJSF uiSchema for the credentials from @meshery/schemas.
+ * @param {string} [type]
+ * @returns {object | undefined}
+ */
+export const getUiSchema = (type) => {
+  if (!type) return undefined;
+  return CredentialRjsfUiSchemasV1Beta1[type.toLowerCase()];
+};
+
+const isRecord = (v: unknown): v is Record<string, unknown> =>
+  Boolean(v) && typeof v === 'object' && !Array.isArray(v);
+
+const isSecretField = (propSchema: unknown, propUi: unknown): boolean =>
+  Boolean(
+    (isRecord(propSchema) && propSchema.writeOnly) ||
+    (isRecord(propUi) && propUi['ui:widget'] === 'password'),
+  );
+
+/**
+ * Strips writeOnly / password fields from initialData so sensitive credentials
+ * are not echoed back into form fields on edit.
+ */
+export const sanitizeInitialData = (
+  data: Record<string, unknown>,
+  schema: Record<string, unknown> | undefined,
+  uiSchema: Record<string, unknown> | undefined,
+): Record<string, unknown> => {
+  if (!isRecord(data)) return data;
+  const props = isRecord(schema?.properties) ? schema.properties : undefined;
+  const result: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(data)) {
+    const propSchema = props?.[k];
+    const propUi = uiSchema?.[k];
+    if (isSecretField(propSchema, propUi)) continue;
+    result[k] = isRecord(v)
+      ? sanitizeInitialData(
+          v,
+          isRecord(propSchema) ? propSchema : undefined,
+          isRecord(propUi) ? propUi : undefined,
+        )
+      : v;
   }
+  return result;
+};
+
+/**
+ * Removes empty password / writeOnly fields from submitted form secret data
+ * so an empty password field on edit does not blank out the stored secret.
+ */
+export const cleanEmptyPasswordFields = (
+  data: Record<string, unknown>,
+  schema: Record<string, unknown> | undefined,
+  uiSchema: Record<string, unknown> | undefined,
+): Record<string, unknown> => {
+  if (!isRecord(data)) return data;
+  const props = isRecord(schema?.properties) ? schema.properties : undefined;
+  const result: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(data)) {
+    const propSchema = props?.[k];
+    const propUi = uiSchema?.[k];
+    if (isSecretField(propSchema, propUi) && (v === '' || v == null)) continue;
+    if (isRecord(v)) {
+      const nested = cleanEmptyPasswordFields(
+        v,
+        isRecord(propSchema) ? propSchema : undefined,
+        isRecord(propUi) ? propUi : undefined,
+      );
+      if (Object.keys(nested).length > 0) result[k] = nested;
+    } else if (v !== undefined) {
+      result[k] = v;
+    }
+  }
+  return result;
+};
+
+/**
+ * Derives an edit-safe RJSF JSON Schema by recursively removing writeOnly /
+ * password fields from `required` when editing an existing credential, while
+ * keeping non-secret fields required and leaving creation schemas untouched.
+ */
+export const buildCredentialFormSchema = (
+  schema: Record<string, unknown> | undefined,
+  uiSchema: Record<string, unknown> | undefined,
+  isEdit: boolean,
+): Record<string, unknown> | undefined => {
+  if (!schema || !isEdit || !isRecord(schema)) return schema;
+  const props = isRecord(schema.properties) ? schema.properties : undefined;
+  const clone: Record<string, unknown> = { ...schema };
+
+  if (Array.isArray(schema.required) && props) {
+    const remaining = schema.required.filter(
+      (key) => typeof key === 'string' && !isSecretField(props[key], uiSchema?.[key]),
+    );
+    if (remaining.length > 0) {
+      clone.required = remaining;
+    } else {
+      delete clone.required;
+    }
+  }
+
+  if (props) {
+    const nextProps: Record<string, unknown> = {};
+    for (const [k, propSchema] of Object.entries(props)) {
+      const propUi = uiSchema?.[k];
+      nextProps[k] = isRecord(propSchema)
+        ? buildCredentialFormSchema(propSchema, isRecord(propUi) ? propUi : undefined, true)
+        : propSchema;
+    }
+    clone.properties = nextProps;
+  }
+
+  return clone;
 };
 
 /**
