@@ -1,30 +1,56 @@
 import { useCallback, useRef, useEffect } from 'react';
 
-const useDebouncedCallback = (callback, delay = 300) => {
-  const timeoutRef = useRef(null);
+const DEFAULT_DEBOUNCE_DELAY = 300;
+
+const useDebouncedCallback = <TArgs extends unknown[]>(
+  callback: ((...args: TArgs) => void) | null | undefined,
+  delay: number | null | undefined = DEFAULT_DEBOUNCE_DELAY,
+): ((...args: TArgs) => void) => {
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const savedCallback = useRef(callback);
+
+  const clearPendingTimeout = useCallback(() => {
+    if (timeoutRef.current !== null) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    savedCallback.current = callback;
+    if (typeof callback !== 'function') {
+      clearPendingTimeout();
+    }
+  }, [callback, clearPendingTimeout]);
+
+  const normalizedDelay =
+    typeof delay === 'number' && Number.isFinite(delay) && delay >= 0
+      ? delay
+      : DEFAULT_DEBOUNCE_DELAY;
 
   const debouncedFunction = useCallback(
-    (...args) => {
-      // Clear any existing timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+    (...args: TArgs) => {
+      clearPendingTimeout();
+
+      if (typeof savedCallback.current !== 'function') {
+        return;
       }
-      // Set a new timeout to call the callback
+
       timeoutRef.current = setTimeout(() => {
-        callback(...args);
-      }, delay);
+        timeoutRef.current = null;
+        if (typeof savedCallback.current === 'function') {
+          savedCallback.current(...args);
+        }
+      }, normalizedDelay);
     },
-    [callback, delay],
+    [clearPendingTimeout, normalizedDelay],
   );
 
-  // Clean up timeout on unmount
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      clearPendingTimeout();
     };
-  }, []);
+  }, [clearPendingTimeout, normalizedDelay]);
 
   return debouncedFunction;
 };
