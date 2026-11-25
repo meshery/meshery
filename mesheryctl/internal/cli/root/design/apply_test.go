@@ -290,7 +290,11 @@ func TestApplyCmd(t *testing.T) {
 
 func TestDesignDeployRequestErrorRemediation(t *testing.T) {
 	err := designDeployRequestError(utils.ErrMesheryServerInternalError(errors.New("invalid spec.replicas")), false)
-	if remedy := meshkiterrors.GetRemedy(err); !strings.Contains(remedy, "--skip-validation") {
+	remedy := meshkiterrors.GetRemedy(err)
+	if !strings.Contains(remedy, "--skip-validation") {
 		t.Errorf("expected remediation to mention --skip-validation, got %q", remedy)
+	}
+	if !strings.Contains(remedy, "mesheryctl system logs") {
+		t.Errorf("expected remediation to mention mesheryctl system logs for server-side failures, got %q", remedy)
 	}
 }
