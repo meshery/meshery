@@ -135,7 +135,7 @@ func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepres
 		PerformanceProfile: local.PerformanceProfile,
 		Result:             jsonmap,
 		ServerMetrics:      local.ServerMetrics,
-		ServerBoardConfig:  local.ServerMetrics,
+		ServerBoardConfig:  local.ServerBoardConfig,
 		TestStartTime:      local.TestStartTime,
 	}
 
@@ -152,7 +152,7 @@ func convertMesheryResultToLocalRepresentation(mr *MesheryResult) *localMesheryR
 		PerformanceProfile: mr.PerformanceProfile,
 		Result:             byt,
 		ServerMetrics:      mr.ServerMetrics,
-		ServerBoardConfig:  mr.ServerMetrics,
+		ServerBoardConfig:  mr.ServerBoardConfig,
 		TestStartTime:      mr.TestStartTime,
 	}
 
