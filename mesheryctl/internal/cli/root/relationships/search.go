@@ -56,16 +56,23 @@ mesheryctl relationship search [--kind <kind>] [--page <int>]`,
 			return err
 		}
 
-		if searchRelationshipFlagsProvided.Kind == "" &&
-			searchRelationshipFlagsProvided.SubType == "" &&
-			searchRelationshipFlagsProvided.Type == "" &&
-			searchRelationshipFlagsProvided.Model == "" {
+		kind := strings.TrimSpace(searchRelationshipFlagsProvided.Kind)
+		subType := strings.TrimSpace(searchRelationshipFlagsProvided.SubType)
+		relType := strings.TrimSpace(searchRelationshipFlagsProvided.Type)
+		model := strings.TrimSpace(searchRelationshipFlagsProvided.Model)
+
+		if kind == "" && subType == "" && relType == "" && model == "" {
 			return utils.ErrFlagsInvalid(fmt.Errorf(
 				"at least one of [--kind, --subtype, --type, --model] is required\n\n" +
 					"Usage: mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]\n" +
 					"Run 'mesheryctl relationship search --help'",
 			))
 		}
+
+		searchRelationshipFlagsProvided.Kind = kind
+		searchRelationshipFlagsProvided.SubType = subType
+		searchRelationshipFlagsProvided.Type = relType
+		searchRelationshipFlagsProvided.Model = model
 
 		return nil
 	},
@@ -109,22 +116,25 @@ func init() {
 func buildSearchUrl() string {
 	base := "api/registry/relationships"
 
-	if searchRelationshipFlagsProvided.Model != "" {
+	if model := strings.TrimSpace(searchRelationshipFlagsProvided.Model); model != "" {
 		base = fmt.Sprintf("api/registry/models/%s/relationships",
-			url.PathEscape(searchRelationshipFlagsProvided.Model))
+			url.PathEscape(model))
 	}
 
 	params := url.Values{}
 
-	if searchRelationshipFlagsProvided.Type != "" {
-		params.Set("type", searchRelationshipFlagsProvided.Type)
+	if relType := strings.TrimSpace(searchRelationshipFlagsProvided.Type); relType != "" {
+		params.Set("type", relType)
 	}
-	if searchRelationshipFlagsProvided.Kind != "" {
-		params.Set("kind", searchRelationshipFlagsProvided.Kind)
+	if kind := strings.TrimSpace(searchRelationshipFlagsProvided.Kind); kind != "" {
+		params.Set("kind", kind)
 	}
-	if searchRelationshipFlagsProvided.SubType != "" {
-		params.Set("subType", searchRelationshipFlagsProvided.SubType)
+	if subType := strings.TrimSpace(searchRelationshipFlagsProvided.SubType); subType != "" {
+		params.Set("subType", subType)
 	}
 
-	return base + "?" + params.Encode()
+	if encoded := params.Encode(); encoded != "" {
+		return base + "?" + encoded
+	}
+	return base
 }

@@ -37,11 +37,27 @@ func TestSearch_WithoutFlags(t *testing.T) {
 			ExpectError:   true,
 			ExpectedError: expectedSearchMissingFlagsError(),
 		},
+		{
+			Name:          "Search with whitespace-only --kind flag",
+			Args:          []string{"search", "--kind", "   "},
+			ExpectError:   true,
+			ExpectedError: expectedSearchMissingFlagsError(),
+		},
+		{
+			Name:          "Search with whitespace-only --model, --type, and --subtype flags",
+			Args:          []string{"search", "--model", "   ", "--type", "\t", "--subtype", "  "},
+			ExpectError:   true,
+			ExpectedError: expectedSearchMissingFlagsError(),
+		},
 	}
 
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			origFlags := searchRelationshipFlagsProvided
+			t.Cleanup(func() {
+				searchRelationshipFlagsProvided = origFlags
+			})
 			mesheryctlflags.InitValidators(RelationshipCmd)
 			RelationshipCmd.SetArgs(tt.Args)
 			err := RelationshipCmd.Execute()
@@ -116,4 +132,33 @@ func TestSearch_WithFlags(t *testing.T) {
 
 	mesheryctlflags.InitValidators(RelationshipCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, RelationshipCmd, tests, currDir, "relationships")
+}
+
+func TestBuildSearchUrl_TrimsWhitespace(t *testing.T) {
+	origFlags := searchRelationshipFlagsProvided
+	t.Cleanup(func() {
+		searchRelationshipFlagsProvided = origFlags
+	})
+
+	searchRelationshipFlagsProvided = searchRelationshipFlags{
+		Model:   " kubernetes ",
+		Kind:    " edge ",
+		Type:    "   ",
+		SubType: "\tinventory\n",
+	}
+
+	got := buildSearchUrl()
+	want := "api/registry/models/kubernetes/relationships?kind=edge&subType=inventory"
+	if got != want {
+		t.Fatalf("expected %q, got %q", want, got)
+	}
+
+	searchRelationshipFlagsProvided = searchRelationshipFlags{
+		Model: " kubernetes ",
+	}
+	gotNoParams := buildSearchUrl()
+	wantNoParams := "api/registry/models/kubernetes/relationships"
+	if gotNoParams != wantNoParams {
+		t.Fatalf("expected %q, got %q", wantNoParams, gotNoParams)
+	}
 }
