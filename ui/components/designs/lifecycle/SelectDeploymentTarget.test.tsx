@@ -4,14 +4,15 @@ import { SistentThemeProvider } from '@sistent/sistent';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const getEnvironmentsQuery = vi.fn();
+const getEnvironmentConnectionsQuery = vi.fn();
 
 vi.mock('@/rtk-query/environments', () => ({
   useGetEnvironmentsQuery: (...args) => getEnvironmentsQuery(...args),
-  useGetEnvironmentConnectionsQuery: vi.fn(() => ({ data: undefined, isLoading: true })),
+  useGetEnvironmentConnectionsQuery: (...args) => getEnvironmentConnectionsQuery(...args),
 }));
 
 vi.mock('../../layout/Header/Header', () => ({
-  K8sContextConnectionChip: () => null,
+  K8sContextConnectionChip: ({ ctx }) => <div data-testid={`k8s-${ctx.connectionId}`} />,
 }));
 
 // ./common imports utils/utils, which reaches pages/_app and the navigator's
@@ -72,6 +73,8 @@ describe('SelectTargetEnvironments', () => {
   beforeEach(() => {
     getEnvironmentsQuery.mockReset();
     getEnvironmentsQuery.mockReturnValue({ data: undefined, isLoading: true, isError: false });
+    getEnvironmentConnectionsQuery.mockReset();
+    getEnvironmentConnectionsQuery.mockReturnValue({ data: undefined, isLoading: true });
   });
 
   // The server returns only its default page of 10 environments when no page
@@ -97,5 +100,49 @@ describe('SelectTargetEnvironments', () => {
     for (const name of names) {
       expect(screen.getByTestId(`env-${name}`)).toBeTruthy();
     }
+  });
+
+  // Each environment card lists that environment's Kubernetes connections. With
+  // no page size the server returns only the 10 most recently updated
+  // connections of any kind, and the card keeps the Kubernetes ones from that
+  // page, so older clusters could not be chosen as deployment targets.
+  it("requests every connection of each environment, not only the server's first page", () => {
+    getEnvironmentsQuery.mockReturnValue({
+      data: { environments: [{ id: 'env-1', name: 'prod' }] },
+      isLoading: false,
+      isError: false,
+    });
+
+    renderSelectTargetEnvironments();
+
+    expect(getEnvironmentConnectionsQuery).toHaveBeenCalledWith({
+      environmentId: 'env-1',
+      pagesize: 'all',
+    });
+  });
+
+  it('offers every Kubernetes connection of an environment, past the tenth connection', () => {
+    getEnvironmentsQuery.mockReturnValue({
+      data: { environments: [{ id: 'env-1', name: 'prod' }] },
+      isLoading: false,
+      isError: false,
+    });
+    const clusters = Array.from({ length: 11 }, (_, i) => ({
+      id: `k8s-${i + 1}`,
+      kind: 'kubernetes',
+      metadata: {},
+    }));
+    getEnvironmentConnectionsQuery.mockReturnValue({
+      data: { connections: [...clusters, { id: 'prom-1', kind: 'prometheus', metadata: {} }] },
+      isLoading: false,
+    });
+
+    renderSelectTargetEnvironments();
+
+    for (const { id } of clusters) {
+      expect(screen.getByTestId(`k8s-${id}`)).toBeTruthy();
+    }
+    expect(screen.queryByTestId('k8s-prom-1')).toBeNull();
+    expect(screen.getByText('(0/11)')).toBeTruthy();
   });
 });

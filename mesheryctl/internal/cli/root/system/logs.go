@@ -15,6 +15,7 @@
 package system
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"io"
@@ -45,12 +46,33 @@ func IsPodRequired(requiredPods []string, pod string) bool {
 	return false
 }
 
-func printLogs(logs string, podName string) {
+func printLogs(logs string, source string) {
 	for _, logMsg := range strings.Split(logs, "\n") {
-		logStr := fmt.Sprintf("%s\t|\t%s", podName, logMsg)
+		logStr := fmt.Sprintf("%s\t|\t%s", source, logMsg)
 
 		utils.Log.Info(logStr)
 	}
+}
+
+// printLogStream buffers across reads so a stream read boundary does not split a log line.
+func printLogStream(stream io.Reader, source string) error {
+	reader := bufio.NewReader(stream)
+	for {
+		line, err := reader.ReadString('\n')
+		if len(line) > 0 {
+			printLogs(strings.TrimSuffix(line, "\n"), source)
+		}
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+	}
+}
+
+func formatLogSource(podName, containerName string) string {
+	return fmt.Sprintf("%s/%s", podName, containerName)
 }
 
 type cmdSystemLogsFlags struct {
@@ -58,8 +80,6 @@ type cmdSystemLogsFlags struct {
 }
 
 var systemLogsFlags cmdSystemLogsFlags
-
-const BYTE_SIZE = 2000
 
 // logsCmd represents the logs command
 var logsCmd = &cobra.Command{
@@ -234,28 +254,16 @@ mesheryctl system logs meshery-istio
 						if err != nil {
 							return utils.ErrReadResponseBody(err)
 						}
-						printLogs(string(logBuf), name)
+						printLogs(string(logBuf), formatLogSource(name, containerName))
 					} else {
 						wg.Add(1)
-						go func(stream io.ReadCloser, podName string) {
+						go func(stream io.ReadCloser, source string) {
 							defer wg.Done()
 							defer func() { _ = stream.Close() }()
-							buf := make([]byte, BYTE_SIZE)
-							for {
-								numBytes, err := stream.Read(buf)
-								if numBytes > 0 {
-									logBuf := buf[0:numBytes]
-									printLogs(string(logBuf), podName)
-								}
-								if err == io.EOF {
-									break
-								}
-								if err != nil {
-									utils.Log.Errorf("error occurred while processing logs %v", err)
-									break
-								}
+							if err := printLogStream(stream, source); err != nil {
+								utils.Log.Errorf("error occurred while processing logs %v", err)
 							}
-						}(logs, name)
+						}(logs, formatLogSource(name, containerName))
 					}
 				}
 			}

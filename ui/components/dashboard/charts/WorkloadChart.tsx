@@ -99,6 +99,7 @@ export default function WorkloadChart({
           <Select
             value={selectedNamespace}
             onChange={(event) => handleSetNamespace(event.target.value)}
+            inputProps={{ 'aria-label': 'Namespace' }}
           >
             {(namespaces || []).map((ns) => (
               <MenuItem key={ns} value={ns}>

@@ -42,11 +42,25 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 		return
 	}
 
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	registrationEvent := connectionv1beta3.ConnectionRegistrationEvent{}
 	userUUID := user.ID
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
-		h.log.Error(ErrRetrieveUserToken(err))
+		if h.log != nil {
+			h.log.Error(ErrRetrieveUserToken(err))
+		}
 		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
@@ -56,7 +70,11 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*h.SystemID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
+	systemID := uuid.Nil
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(systemID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
 
 	if registrationEvent.Status == connectionv1beta3.ConnectionRegistrationEventStatusInitialize {
 		h.handleRegistrationInitEvent(w, &registrationEvent)
@@ -279,10 +297,24 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, event *conn
 }
 
 func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	bd, err := io.ReadAll(req.Body)
 	userID := user.ID
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
 		return
 	}
@@ -292,12 +324,18 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	obj := "connection"
 
 	if err != nil {
-		h.log.Error(models.ErrUnmarshal(err, obj))
+		if h.log != nil {
+			h.log.Error(models.ErrUnmarshal(err, obj))
+		}
 		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
+	systemID := uuid.Nil
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
+	eventBuilder := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(systemID).WithCategory("connection").WithAction("create")
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	if token == "" {
@@ -330,6 +368,18 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 }
 
 func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	q := req.URL.Query()
 	page, _ := strconv.Atoi(q.Get("page"))
 	order := q.Get("order")
@@ -403,6 +453,18 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 // Note: This handler is used internally by other handlers (e.g., GrafanaConfigHandler, PrometheusConfigHandler)
 // and is not exposed as an HTTP route since the route was deprecated in schemas v0.8.115.
 func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	q := req.URL.Query()
 	connectionKind := mux.Vars(req)["connectionKind"]
 	page, _ := strconv.Atoi(q.Get("page"))
@@ -449,10 +511,20 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 }
 
 func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	if connectionID == uuid.Nil {
 		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID"))
-		h.log.Error(invalidIDErr)
+		if h.log != nil {
+			h.log.Error(invalidIDErr)
+		}
 		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
 	}
@@ -462,23 +534,41 @@ func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ 
 	obj := "connection"
 
 	if err != nil {
-		h.log.Error(ErrQueryGet(obj))
+		if h.log != nil {
+			h.log.Error(ErrQueryGet(obj))
+		}
 		writeMeshkitError(w, ErrQueryGet(obj), statusCode)
 		return
 	}
 
 	if err := json.NewEncoder(w).Encode(connection); err != nil {
-		h.log.Error(models.ErrEncoding(err, obj))
+		if h.log != nil {
+			h.log.Error(models.ErrEncoding(err, obj))
+		}
 		writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
 		return
 	}
 }
 
 func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	if user == nil {
+		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(w, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	connectionID, err := uuid.FromString(mux.Vars(req)["connectionId"])
 	if err != nil {
 		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %w", err))
-		h.log.Error(invalidIDErr)
+		if h.log != nil {
+			h.log.Error(invalidIDErr)
+		}
 		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
 	}
@@ -487,7 +577,9 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	// to answer 400, not 404.
 	if connectionID == uuid.Nil {
 		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %s", connectionID))
-		h.log.Error(invalidIDErr)
+		if h.log != nil {
+			h.log.Error(invalidIDErr)
+		}
 		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
 	}
@@ -495,12 +587,18 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	systemID := uuid.Nil
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(systemID).WithCategory("connection").WithAction("update")
 
 	connection := &connections.ConnectionPayload{}
 	err = json.Unmarshal(bd, connection)
@@ -613,7 +711,11 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID core.Uuid, provider models.Provider, token string, connection *connections.ConnectionPayload, kind string) (events.Event, error) {
 	connectionID := connection.ID
 
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	systemID := uuid.Nil
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(systemID).WithCategory("connection").WithAction("update")
 
 	if connection.Status != "" {
 		// Everything below is Kubernetes specific: the K8s context lookup, the
@@ -680,7 +782,9 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 		// after a SendEvent that cannot succeed without a Context.
 		usable := err == nil && helpers.HasMachineContext(inst)
 		if !usable && connection.Status == connections.DELETED {
-			smInstanceTracker.Remove(connectionID)
+			if inst != nil {
+				smInstanceTracker.CompareAndDelete(connectionID, inst)
+			}
 		}
 
 		if err != nil {
@@ -711,7 +815,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 			}
 
 			if status == connections.DELETED {
-				smInstanceTracker.Remove(inst.ID)
+				smInstanceTracker.CompareAndDelete(inst.ID, inst)
 			}
 
 			h.reportMachineOutcome(provider, token, userID, event, nil)
@@ -722,8 +826,34 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 }
 
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
-	userID := user.ID
+	connectionID, err := uuid.FromString(mux.Vars(req)["connectionId"])
+	if err != nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %w", err))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
+		return
+	}
+	// No connection has the nil ID, so there is nothing to delete. Like a
+	// malformed ID, it is a client error: issue #22999 requires a nil ID
+	// to answer 400, not 404.
+	if connectionID == uuid.Nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID: %s", connectionID))
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
+		return
+	}
+
+	if provider == nil {
+		nilProviderErr := ErrNilProvider()
+		h.log.Error(nilProviderErr)
+		writeMeshkitError(w, nilProviderErr, http.StatusInternalServerError)
+		return
+	}
+
+	var userID core.Uuid
+	if user != nil {
+		userID = user.ID
+	}
 
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
@@ -731,7 +861,12 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+
+	var systemID uuid.UUID
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(systemID).WithCategory("connection").WithAction("delete")
 
 	// A Kubernetes connection deleted while NOTFOUND retires its unreachable
 	// condition, so the deletion event resolves it.
@@ -741,18 +876,20 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		resolvesUnreachable = existing.Kind == "kubernetes" && existing.Status == connections.ConnectionStatus(machines.NOTFOUND)
 	}
 
-	// For Kubernetes connections, trigger cluster teardown (undeploying deployed operators,
-	// removing controller handlers, stopping MeshSync, and flushing MeshSync data)
-	// before the connection and its context rows are deleted from the database.
+	// For Kubernetes connections, trigger cluster teardown (releasing the
+	// connection's claim on the cluster-scoped Meshery Operator - which stays
+	// installed - removing controller handlers, stopping MeshSync, and flushing
+	// MeshSync data) before the connection and its context rows are deleted from
+	// the database.
 	isKubernetes := (gerr == nil && existing != nil && strings.EqualFold(existing.Kind, "kubernetes"))
+	var inst *machines.StateMachine
 
 	if isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil {
-		var inst *machines.StateMachine
 		if tracked, ok := h.ConnectionToStateMachineInstanceTracker.Get(connectionID); ok && tracked != nil && helpers.HasMachineContext(tracked) {
 			inst = tracked
 		} else {
-			if h.ConnectionToStateMachineInstanceTracker != nil {
-				h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+			if h.ConnectionToStateMachineInstanceTracker != nil && tracked != nil {
+				h.ConnectionToStateMachineInstanceTracker.CompareAndDelete(connectionID, tracked)
 			}
 			contextID := connectionID.String()
 			hasMetadataContextID := false
@@ -851,8 +988,8 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
-		if isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil {
-			h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+		if isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil && inst != nil {
+			h.ConnectionToStateMachineInstanceTracker.CompareAndDelete(connectionID, inst)
 		}
 		// Deleting an id the provider never issued is "not found", not a
 		// failure to write. The local provider says so with ErrResultNotFound;
@@ -900,7 +1037,11 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	// Nothing can drive a deleted connection's machine any more; left in the
 	// tracker, the Kubernetes middlewares would keep probing it.
 	if h.ConnectionToStateMachineInstanceTracker != nil {
-		h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+		if inst != nil {
+			h.ConnectionToStateMachineInstanceTracker.CompareAndDelete(connectionID, inst)
+		} else if !isKubernetes {
+			h.ConnectionToStateMachineInstanceTracker.Remove(connectionID)
+		}
 	}
 
 	// A provider is free to answer a successful delete without echoing the
@@ -998,7 +1139,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 		}
 
 		// Resolve BEFORE tearing anything down. A resolution failure means the
-		// intended configuration is unknown, and undeploying the operators only
+		// intended configuration is unknown, and tearing the controllers down only
 		// to rebuild them from the last-known-good document is a partial
 		// reconciliation performed on unreadable input - the same fault as
 		// reconciling a connection whose override will not parse. Fail with the
@@ -1009,15 +1150,10 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return existingMeshSyncMode, newMeshSyncMode, false, resolveErr
 		}
 
-		// disconnect
-		{
-			contextID := k8sCtx.ID
-			ctrlHelper.
-				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				UndeployDeployedOperators(machineCtx.OperatorTracker, contextID).
-				RemoveCtxControllerHandler(ctx, contextID)
-			ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
-		}
+		// disconnect. The cluster's Meshery Operator stays installed: it is
+		// cluster-scoped, and this connection's mode change does not speak for
+		// the others using it.
+		ctrlHelper.DetachFromCluster(ctx, machineCtx.OperatorTracker, k8sCtx)
 		// connect. The controllers configuration is refreshed and stashed
 		// before AddCtxControllerHandlers, which constructs the operator
 		// controller handler with the Helm chart version that document
@@ -1030,7 +1166,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
 				AddCtxControllerHandlers(k8sCtx).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				DeployUndeployedOperators(machineCtx.OperatorTracker, k8sCtx.ID).
+				DeployUndeployedOperators(machineCtx.OperatorTracker, k8sCtx).
 				AddMeshsyncDataHandlers(ctx, k8sCtx, userID, mesheryInstanceID, provider)
 		}
 

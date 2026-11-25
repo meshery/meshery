@@ -124,7 +124,7 @@ func (pf *PortForward) run() error {
 	}
 
 	out := io.Discard
-	errOut := io.Discard
+	var errOut io.Writer
 	if pf.emitLogs {
 		out = os.Stdout
 		errOut = io.MultiWriter(&pf.listenerErrors, os.Stderr)

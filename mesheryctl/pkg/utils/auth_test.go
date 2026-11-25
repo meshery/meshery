@@ -26,6 +26,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshkit/errors"
+	"github.com/spf13/viper"
 )
 
 // testcases for auth.go
@@ -387,7 +388,7 @@ func TestInitiateLogin_PersistsRegistrationKey(t *testing.T) {
 				}
 			}
 			w.Header().Set("Content-Type", "application/json")
-			_, _ = fmt.Fprint(w, `{"meshery-provider":"Meshery","meshery-token":"tok"}`)
+			_, _ = fmt.Fprint(w, `{"token":"tok","meshery-provider":"Meshery","meshery-token":"tok"}`)
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}
@@ -441,8 +442,13 @@ func TestInitiateLogin_PersistsRegistrationKey(t *testing.T) {
 func TestWriteTokenFile(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "auth.json")
 
-	// A token file left behind by an older mesheryctl is world-readable.
-	if err := os.WriteFile(path, []byte("old"), 0o644); err != nil {
+	// On Unix, simulate a token file left world-readable by an older version.
+	// Windows creates it with an explicit user owner for the ACL test.
+	if runtime.GOOS == "windows" {
+		if err := WriteTokenFile(path, []byte("old")); err != nil {
+			t.Fatal(err)
+		}
+	} else if err := os.WriteFile(path, []byte("old"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	if err := WriteTokenFile(path, []byte(`{"token":"t"}`)); err != nil {
@@ -453,7 +459,8 @@ func TestWriteTokenFile(t *testing.T) {
 		t.Fatal(err)
 	}
 	// Windows only tracks the read-only attribute, so a mode check is
-	// meaningless there; the content check below still applies.
+	// meaningless there; its ACL is checked in tokenfile_windows_test.go. The
+	// content check below applies everywhere.
 	if runtime.GOOS != "windows" {
 		if mode := info.Mode().Perm(); mode != 0o600 {
 			t.Fatalf("token file mode = %o, want 600", mode)
@@ -465,5 +472,523 @@ func TestWriteTokenFile(t *testing.T) {
 	}
 	if string(data) != `{"token":"t"}` {
 		t.Fatalf("token file content = %q", data)
+	}
+}
+
+func TestWriteTokenFileNewFileMode(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Windows access is controlled by a DACL")
+	}
+	path := filepath.Join(t.TempDir(), "auth.json")
+	if err := WriteTokenFile(path, []byte("token")); err != nil {
+		t.Fatal(err)
+	}
+	info, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if mode := info.Mode().Perm(); mode != 0600 {
+		t.Fatalf("token file mode = %o, want 600", mode)
+	}
+}
+
+// Requests must read a token from the file system login and logout write it
+// to, which they find with config.Token.GetLocation.
+func TestGetTokenLocationMatchesTokenGetLocation(t *testing.T) {
+	mesheryDir := IsolateMesheryHome(t)
+	home := filepath.Dir(mesheryDir)
+	outside := filepath.Join(t.TempDir(), "meshery.json")
+	inside := filepath.Join(home, "tok", "auth.json")
+
+	tests := []struct {
+		name     string
+		location string
+		want     string
+	}{
+		{"relative name", "auth.json", filepath.Join(mesheryDir, "auth.json")},
+		{"absolute path outside home", outside, outside},
+		{"home-relative path", "~/tok/auth.json", inside},
+		{"absolute path inside home", inside, inside},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			token := config.Token{Name: "default", Location: tc.location}
+			got, err := GetTokenLocation(token)
+			if err != nil {
+				t.Fatalf("GetTokenLocation(%q): %v", tc.location, err)
+			}
+			if got != tc.want {
+				t.Errorf("GetTokenLocation(%q) = %q, want %q", tc.location, got, tc.want)
+			}
+			if login := token.GetLocation(); got != login {
+				t.Errorf("requests read %q, but system login writes %q", got, login)
+			}
+		})
+	}
+}
+
+// A token kept outside HOME, such as a secret mounted into a CI job or a
+// container, must be the file a request attaches.
+func TestNewRequestReadsTokenOutsideHome(t *testing.T) {
+	mesheryDir := IsolateMesheryHome(t)
+
+	tokenFile := filepath.Join(t.TempDir(), "meshery.json")
+	if err := os.WriteFile(tokenFile, []byte(`{"token":"secret","meshery-provider":"Meshery"}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	cfgFile := filepath.Join(mesheryDir, "config.yaml")
+	contents := fmt.Sprintf(`contexts:
+  local:
+    endpoint: http://127.0.0.1:19999
+    token: default
+    platform: docker
+current-context: local
+tokens:
+- name: default
+  location: %q
+`, tokenFile)
+	if err := os.WriteFile(cfgFile, []byte(contents), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	origDefaultConfigPath, origCfgFile, origTokenFlag := DefaultConfigPath, CfgFile, TokenFlag
+	t.Cleanup(func() {
+		DefaultConfigPath, CfgFile, TokenFlag = origDefaultConfigPath, origCfgFile, origTokenFlag
+		viper.Reset()
+	})
+	DefaultConfigPath, CfgFile, TokenFlag = cfgFile, cfgFile, ""
+
+	viper.Reset()
+	viper.SetConfigFile(cfgFile)
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Fatal(err)
+	}
+	token, err := mctlCfg.GetTokenForContext("local")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := token.GetLocation(); got != tokenFile {
+		t.Fatalf("system login would write %q, want %q", got, tokenFile)
+	}
+
+	req, err := NewRequest(http.MethodGet, "http://127.0.0.1:19999/api/system/version", nil)
+	if err != nil {
+		t.Fatalf("NewRequest: %v", err)
+	}
+	cookie, err := req.Cookie(tokenName)
+	if err != nil || cookie.Value != "secret" {
+		t.Errorf("request token cookie = %v, %v; want the one in %s", cookie, err, tokenFile)
+	}
+}
+
+// A context passed with --config that names a token its file does not define
+// must get that token added to the same file, and later requests must keep
+// using that file's server rather than the default meshconfig's.
+func TestGetCurrentAuthTokenAddsMissingTokenToActiveConfig(t *testing.T) {
+	mesheryDir := IsolateMesheryHome(t)
+
+	defaultConfig := filepath.Join(mesheryDir, "config.yaml")
+	defaultContents := []byte(`contexts:
+  local:
+    endpoint: http://127.0.0.1:19999
+    token: default
+    platform: docker
+current-context: local
+tokens:
+- name: default
+  location: auth.json
+`)
+	if err := os.WriteFile(defaultConfig, defaultContents, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	activeConfig := filepath.Join(t.TempDir(), "custom.yaml")
+	if err := os.WriteFile(activeConfig, []byte(`contexts:
+  staging:
+    endpoint: http://127.0.0.1:19181
+    token: missingtok
+    platform: docker
+current-context: staging
+tokens:
+- name: default
+  location: auth.json
+`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	origDefaultConfigPath, origCfgFile, origAuthConfigFile := DefaultConfigPath, CfgFile, AuthConfigFile
+	t.Cleanup(func() {
+		DefaultConfigPath, CfgFile, AuthConfigFile = origDefaultConfigPath, origCfgFile, origAuthConfigFile
+		viper.Reset()
+	})
+	DefaultConfigPath = defaultConfig
+	CfgFile = activeConfig
+	AuthConfigFile = filepath.Join(mesheryDir, "auth.json")
+
+	viper.Reset()
+	viper.SetConfigFile(activeConfig)
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+
+	location, err := GetCurrentAuthToken()
+	if err != nil {
+		t.Fatalf("GetCurrentAuthToken: %v", err)
+	}
+	if location != AuthConfigFile {
+		t.Errorf("token location = %q, want %q", location, AuthConfigFile)
+	}
+
+	if got := viper.ConfigFileUsed(); got != activeConfig {
+		t.Errorf("viper now reads %q, want the --config file %q: later requests would go to another server", got, activeConfig)
+	}
+
+	gotDefault, err := os.ReadFile(defaultConfig)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(gotDefault) != string(defaultContents) {
+		t.Errorf("default meshconfig was rewritten:\n%s", gotDefault)
+	}
+
+	v := viper.New()
+	v.SetConfigFile(activeConfig)
+	if err := v.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	active, err := config.GetMesheryCtl(v)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if token, err := active.GetTokenForContext("staging"); err != nil || token.Location != AuthConfigFile {
+		t.Errorf("--config file token for context staging = %+v, %v; want location %q", token, err, AuthConfigFile)
+	}
+
+	// The entry now exists, so a second command, which starts by reading the
+	// --config file afresh, must reuse it rather than fail on adding a duplicate.
+	viper.Reset()
+	viper.SetConfigFile(activeConfig)
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := GetCurrentAuthToken(); err != nil {
+		t.Errorf("second GetCurrentAuthToken: %v", err)
+	}
+}
+
+// A context that does not exist names no token, so there is nothing to add:
+// EnsureContextToken must return GetTokenForContext's error and leave the
+// meshconfig untouched instead of appending a token with an empty name.
+func TestEnsureContextTokenRejectsUnknownContext(t *testing.T) {
+	mesheryDir := IsolateMesheryHome(t)
+
+	activeConfig := filepath.Join(mesheryDir, "config.yaml")
+	contents := []byte(`contexts:
+  local:
+    endpoint: http://127.0.0.1:19999
+    token: default
+    platform: docker
+current-context: local
+tokens:
+- name: default
+  location: auth.json
+`)
+	if err := os.WriteFile(activeConfig, contents, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	origDefaultConfigPath, origCfgFile, origAuthConfigFile := DefaultConfigPath, CfgFile, AuthConfigFile
+	t.Cleanup(func() {
+		DefaultConfigPath, CfgFile, AuthConfigFile = origDefaultConfigPath, origCfgFile, origAuthConfigFile
+		viper.Reset()
+	})
+	DefaultConfigPath = activeConfig
+	CfgFile = activeConfig
+	AuthConfigFile = filepath.Join(mesheryDir, "auth.json")
+
+	viper.Reset()
+	viper.SetConfigFile(activeConfig)
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token, err := EnsureContextToken(mctlCfg, "no-such-context")
+	if err == nil {
+		t.Errorf("EnsureContextToken(no-such-context) = %+v, nil; want an error", token)
+	} else if want := "no token is associated with context: no-such-context"; err.Error() != want {
+		t.Errorf("error = %q, want %q", err, want)
+	}
+	if token != (config.Token{}) {
+		t.Errorf("token = %+v, want the zero Token", token)
+	}
+
+	got, err := os.ReadFile(activeConfig)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got) != string(contents) {
+		t.Errorf("meshconfig was rewritten:\n%s", got)
+	}
+}
+
+func TestAddAuthDetails_EmptyTokenFileReturnsUnauthenticated(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+
+	if err := os.WriteFile(tokenPath, []byte{}, 0600); err != nil {
+		t.Fatalf("failed to create token file: %v", err)
+	}
+
+	req, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
+
+	err = AddAuthDetails(req, tokenPath)
+	if err == nil {
+		t.Fatal("expected unauthenticated error for empty token file")
+	}
+
+	if got := errors.GetCode(err); got != ErrUnauthenticatedCode {
+		t.Fatalf("expected error code %s, got %s", ErrUnauthenticatedCode, got)
+	}
+}
+
+func TestAddAuthDetails_EmptyTokenForRemoteProviderReturnsUnauthenticated(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tokenPath, []byte(`{"token":"  ","meshery-provider":"Meshery"}`), 0600); err != nil {
+		t.Fatalf("failed to create token file: %v", err)
+	}
+
+	req, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
+
+	err = AddAuthDetails(req, tokenPath)
+	if err == nil {
+		t.Fatal("expected unauthenticated error for remote provider with empty token")
+	}
+	if got := errors.GetCode(err); got != ErrUnauthenticatedCode {
+		t.Fatalf("expected error code %s, got %s", ErrUnauthenticatedCode, got)
+	}
+}
+
+func TestAddAuthDetails_AllowsEmptyTokenFileForLocalProvider(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tokenPath, nil, 0600); err != nil {
+		t.Fatalf("failed to create token file: %v", err)
+	}
+
+	viper.Reset()
+	viper.Set("current-context", "local")
+	viper.Set("contexts.local.provider", "Local")
+	t.Cleanup(viper.Reset)
+
+	req, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
+
+	if err := AddAuthDetails(req, tokenPath); err != nil {
+		t.Fatalf("expected Local provider with empty token file to be allowed, got: %v", err)
+	}
+
+	tokenCookie, err := req.Cookie(tokenName)
+	if err != nil || tokenCookie.Value != "" {
+		t.Fatalf("expected empty token cookie, got cookie=%v err=%v", tokenCookie, err)
+	}
+	providerCookie, err := req.Cookie(providerName)
+	if err != nil || providerCookie.Value != "Local" {
+		t.Fatalf("expected Local provider cookie, got cookie=%v err=%v", providerCookie, err)
+	}
+}
+
+func TestAddAuthDetails_AllowsEmptyTokenForLocalProvider(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	tokenData := []byte(`{"token":"","meshery-provider":"Local"}`)
+
+	if err := os.WriteFile(tokenPath, tokenData, 0600); err != nil {
+		t.Fatalf("failed to create token file: %v", err)
+	}
+
+	viper.Reset()
+	viper.Set("current-context", "local")
+	viper.Set("contexts.local.provider", "Local")
+	t.Cleanup(viper.Reset)
+
+	req, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
+
+	if err := AddAuthDetails(req, tokenPath); err != nil {
+		t.Fatalf("expected Local provider with empty token to be allowed, got: %v", err)
+	}
+
+	tokenCookie, err := req.Cookie(tokenName)
+	if err != nil {
+		t.Fatalf("expected token cookie, got: %v", err)
+	}
+	if tokenCookie.Value != "" {
+		t.Fatalf("expected empty token value, got %q", tokenCookie.Value)
+	}
+
+	providerCookie, err := req.Cookie(providerName)
+	if err != nil {
+		t.Fatalf("expected provider cookie, got: %v", err)
+	}
+	if providerCookie.Value != "Local" {
+		t.Fatalf("expected provider Local, got %q", providerCookie.Value)
+	}
+}
+
+func TestAddAuthDetailsRejectsEmptyLocalTokenForRemoteContext(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	tokenData := []byte(`{"token":"","meshery-provider":"Local"}`)
+
+	if err := os.WriteFile(tokenPath, tokenData, 0600); err != nil {
+		t.Fatalf("failed to create token file: %v", err)
+	}
+
+	viper.Reset()
+	viper.Set("current-context", "remote")
+	viper.Set("contexts.remote.provider", "Meshery")
+	t.Cleanup(viper.Reset)
+
+	req, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
+
+	err = AddAuthDetails(req, tokenPath)
+	if err == nil {
+		t.Fatal("expected unauthenticated error for empty Local token in remote context")
+	}
+	if got := errors.GetCode(err); got != ErrUnauthenticatedCode {
+		t.Fatalf("expected error code %s, got %s", ErrUnauthenticatedCode, got)
+	}
+}
+
+func TestNewRequestWithEmptyTokenFileReturnsUnauthenticatedError(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+
+	if err := os.WriteFile(tokenPath, []byte{}, 0o600); err != nil {
+		t.Fatalf("failed to create empty token file: %v", err)
+	}
+
+	originalTokenFlag := TokenFlag
+	TokenFlag = tokenPath
+	t.Cleanup(func() {
+		TokenFlag = originalTokenFlag
+	})
+
+	_, err := NewRequest(http.MethodGet, "http://localhost", nil)
+	if err == nil {
+		t.Fatal("expected authentication error for empty token file")
+	}
+
+	if got := errors.GetCode(err); got != ErrUnauthenticatedCode {
+		t.Fatalf("expected error code %s, got %s", ErrUnauthenticatedCode, got)
+	}
+}
+
+func TestReadTokenEmptyAndWhitespaceFilesReturnUnauthenticated(t *testing.T) {
+	for _, test := range []struct {
+		name string
+		data []byte
+	}{
+		{name: "empty", data: []byte{}},
+		{name: "whitespace", data: []byte(" \n\t")},
+		{name: "remote provider empty token", data: []byte(`{"token":"","meshery-provider":"Meshery"}`)},
+		{name: "remote provider whitespace token", data: []byte(`{"token":"  ","meshery-provider":"Meshery"}`)},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			tokenPath := filepath.Join(t.TempDir(), "auth.json")
+			if err := os.WriteFile(tokenPath, test.data, 0600); err != nil {
+				t.Fatalf("failed to create token file: %v", err)
+			}
+
+			_, err := ReadToken(tokenPath)
+			if err == nil {
+				t.Fatal("expected unauthenticated error")
+			}
+			if got := errors.GetCode(err); got != ErrUnauthenticatedCode {
+				t.Fatalf("expected error code %s, got %s", ErrUnauthenticatedCode, got)
+			}
+		})
+	}
+}
+
+func TestReadTokenAllowsEmptyTokenForLocalProvider(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tokenPath, []byte(`{"token":"","meshery-provider":"Local"}`), 0600); err != nil {
+		t.Fatalf("failed to create token file: %v", err)
+	}
+
+	viper.Reset()
+	viper.Set("current-context", "local")
+	viper.Set("contexts.local.provider", "Local")
+	t.Cleanup(viper.Reset)
+
+	tokenObj, err := ReadToken(tokenPath)
+	if err != nil {
+		t.Fatalf("expected Local provider with empty token to be allowed, got: %v", err)
+	}
+	if tokenObj[tokenName] != "" {
+		t.Fatalf("expected empty token value, got %q", tokenObj[tokenName])
+	}
+	if tokenObj[providerName] != "Local" {
+		t.Fatalf("expected provider Local, got %q", tokenObj[providerName])
+	}
+}
+
+func TestReadTokenRejectsEmptyLocalTokenForRemoteContext(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tokenPath, []byte(`{"token":"","meshery-provider":"Local"}`), 0600); err != nil {
+		t.Fatalf("failed to create token file: %v", err)
+	}
+
+	viper.Reset()
+	viper.Set("current-context", "remote")
+	viper.Set("contexts.remote.provider", "Meshery")
+	t.Cleanup(viper.Reset)
+
+	_, err := ReadToken(tokenPath)
+	if err == nil {
+		t.Fatal("expected unauthenticated error for empty Local token in remote context")
+	}
+	if got := errors.GetCode(err); got != ErrUnauthenticatedCode {
+		t.Fatalf("expected error code %s, got %s", ErrUnauthenticatedCode, got)
+	}
+}
+
+func TestReadTokenAllowsEmptyTokenFileForLocalProvider(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tokenPath, nil, 0600); err != nil {
+		t.Fatalf("failed to create token file: %v", err)
+	}
+
+	viper.Reset()
+	viper.Set("current-context", "local")
+	viper.Set("contexts.local.provider", "Local")
+	t.Cleanup(viper.Reset)
+
+	tokenObj, err := ReadToken(tokenPath)
+	if err != nil {
+		t.Fatalf("expected Local provider with empty token file to be allowed, got: %v", err)
+	}
+	if tokenObj[tokenName] != "" {
+		t.Fatalf("expected empty token value, got %q", tokenObj[tokenName])
+	}
+	if tokenObj[providerName] != "Local" {
+		t.Fatalf("expected provider Local, got %q", tokenObj[providerName])
 	}
 }

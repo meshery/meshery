@@ -1,7 +1,6 @@
 import { fromPromise } from 'xstate';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
-import _ from 'lodash';
 
 import { dataValidatorMachine } from '@sistent/sistent';
 
@@ -116,8 +115,18 @@ const SchemaValidateDesignActor = fromPromise(async ({ input }) => {
       componentDef,
     );
 
+    const previousResults = prevValidationResults || {};
+    // A string is the message of a failed validation. It stands until a design
+    // validation replaces it rather than being overwritten by one component's result.
+    if (typeof previousResults !== 'object') {
+      return { validationResults: previousResults };
+    }
+
+    // Merge into a copy. The previous results are this validator's current
+    // context; mutating them hands every consumer the same object back, so a
+    // selector compared by reference never sees the component's new result.
     return {
-      validationResults: _.set(prevValidationResults || {}, component.id, validationResults),
+      validationResults: { ...previousResults, [component.id]: validationResults },
     };
   }
 

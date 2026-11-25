@@ -13,6 +13,7 @@ import (
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestTokenCreateCmd(t *testing.T) {
@@ -132,11 +133,11 @@ func TestTokenDeleteCmd(t *testing.T) {
 	currDir := filepath.Dir(filename)
 	tests := []utils.CmdTestInput{
 		{
-			Name:                 "delete the passed token",
+			Name:                 "delete a token that a context still uses",
 			Args:                 []string{"token", "delete", "default"},
 			ExpectedResponse:     "delete_default.golden",
 			ExpectedResponseYaml: "delete_default.yaml",
-			ExpectError:          false,
+			ExpectError:          true,
 		},
 		{
 			Name:                 "delete the passed token(with a token name that doesn't exist)",
@@ -953,5 +954,93 @@ tokens:
 	t.Run("token MeshKit error builders handle nil inputs safely", func(t *testing.T) {
 		assert.NoError(t, ErrAssignToken(nil, "tok", "local"))
 		assert.NoError(t, ErrTokenRollback("tok", "local", nil, nil))
+	})
+}
+
+// TestTokenSetAndDeleteKeepContextTokensResolvable covers the two ways a context
+// could end up naming a token that meshconfig does not define. Requests then fell
+// back to ~/.meshery/auth.json, sending that token to the context's server.
+func TestTokenSetAndDeleteKeepContextTokensResolvable(t *testing.T) {
+	baseConfig := `contexts:
+  local:
+    endpoint: http://localhost:9081
+    token: token-local
+    platform: docker
+    provider: Meshery
+  prod:
+    endpoint: http://localhost:9082
+    token: token-prod
+    platform: kubernetes
+    provider: Meshery
+current-context: local
+tokens:
+  - location: auth-local.json
+    name: token-local
+  - location: auth-prod.json
+    name: token-prod
+  - location: auth-spare.json
+    name: token-spare
+`
+
+	run := func(t *testing.T, args ...string) (string, *config.MesheryCtlConfig, error) {
+		t.Helper()
+		configPath := filepath.Join(t.TempDir(), "config.yaml")
+		if err := os.WriteFile(configPath, []byte(baseConfig), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		origCfg, origDefault := utils.CfgFile, utils.DefaultConfigPath
+		viper.Reset()
+		utils.CfgFile = configPath
+		utils.DefaultConfigPath = configPath
+		t.Cleanup(func() {
+			utils.CfgFile = origCfg
+			utils.DefaultConfigPath = origDefault
+			utils.Log.UpdateErrorLogOutput(os.Stderr)
+			viper.Reset()
+			BreakupFunc()
+		})
+
+		b := utils.SetupMeshkitLoggerTesting(t, false)
+		var errBuf bytes.Buffer
+		utils.Log.UpdateErrorLogOutput(&errBuf)
+		SystemCmd.SetOut(b)
+		SystemCmd.SetArgs(args)
+		err := SystemCmd.Execute()
+
+		v := viper.New()
+		v.SetConfigFile(configPath)
+		if readErr := v.ReadInConfig(); readErr != nil {
+			t.Fatal(readErr)
+		}
+		cfg, cfgErr := config.GetMesheryCtl(v)
+		if cfgErr != nil {
+			t.Fatal(cfgErr)
+		}
+		return b.String() + errBuf.String(), cfg, err
+	}
+
+	t.Run("set rejects a token name that is not in meshconfig", func(t *testing.T) {
+		out, cfg, err := run(t, "token", "set", "token-prodd", "-c", "prod")
+		require.Error(t, err)
+		assert.Equal(t, ErrAssignTokenCode, meshkiterrors.GetCode(err))
+		assert.Contains(t, err.Error(), `token "token-prodd" does not exist`)
+		assert.Contains(t, out, "Short Description: Unable to assign token to context")
+		assert.Equal(t, "token-prod", cfg.Contexts["prod"].Token)
+		assert.Len(t, cfg.Tokens, 3)
+	})
+
+	t.Run("delete refuses a token that a context still uses", func(t *testing.T) {
+		_, cfg, err := run(t, "token", "delete", "token-prod")
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), `token "token-prod" is still used by context(s) prod`)
+		assert.Len(t, cfg.Tokens, 3)
+		assert.Equal(t, "token-prod", cfg.Contexts["prod"].Token)
+	})
+
+	t.Run("delete removes a token that no context uses", func(t *testing.T) {
+		out, cfg, err := run(t, "token", "delete", "token-spare")
+		assert.NoError(t, err)
+		assert.Contains(t, out, "Token token-spare deleted.")
+		assert.Len(t, cfg.Tokens, 2)
 	})
 }

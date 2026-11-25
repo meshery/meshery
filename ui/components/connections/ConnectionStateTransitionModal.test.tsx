@@ -210,7 +210,7 @@ describe('ConnectionStateTransitionModal', () => {
     const description = screen.getByTestId('connection-transition-description');
     expect(description).toHaveTextContent('associated credential');
     expect(description).toHaveTextContent('Meshery Operator');
-    expect(description).toHaveTextContent('when present');
+    expect(description).toHaveTextContent('uninstall the meshery-operator Helm release');
     expect(description).toHaveTextContent('The Kubernetes cluster itself is not deleted');
     expect(description).toHaveTextContent('auto-reconnect');
     expect(screen.queryByTestId('connection-transition-fallback')).not.toBeInTheDocument();

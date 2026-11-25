@@ -273,6 +273,8 @@ var linkDocContextView = map[string]string{
 	"caption": "Usage of mesheryctl context view",
 }
 
+var contextViewUsageMsg = "Usage: mesheryctl system context view [context-name | --context context-name | --all]\nRun 'mesheryctl system context view --help' to see detailed help message"
+
 type cmdContextViewFlags struct {
 	Context string `json:"context" validate:"omitempty"`
 	All     bool   `json:"all" validate:"boolean"`
@@ -305,6 +307,17 @@ mesheryctl system context view --all
 	SilenceUsage: true,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &contextViewFlags)
+	},
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", contextViewUsageMsg))
+		}
+		isContextSpecified := len(args) > 0 || (cmd != nil && cmd.Flags().Changed("context"))
+		isAllSpecified := contextViewFlags.All || (cmd != nil && cmd.Flags().Changed("all"))
+		if isAllSpecified && isContextSpecified {
+			return utils.ErrInvalidArgument(fmt.Errorf("--all flag cannot be used when context name is specified\n\n%s", contextViewUsageMsg))
+		}
+		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := viper.Unmarshal(&configuration)
@@ -340,8 +353,11 @@ mesheryctl system context view --all
 			return nil
 		}
 		if len(args) != 0 {
-			contextViewFlags.Context = strings.ToLower(args[0])
+			contextViewFlags.Context = args[0]
 		}
+		// Context names are stored in lowercase, so normalize the name given
+		// through --context the same way as the positional argument.
+		contextViewFlags.Context = strings.ToLower(contextViewFlags.Context)
 		if contextViewFlags.Context == "" {
 			contextViewFlags.Context = viper.GetString("current-context")
 		}

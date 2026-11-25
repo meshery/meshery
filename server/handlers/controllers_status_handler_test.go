@@ -299,31 +299,75 @@ func TestOperatorStatusHandler_UnknownForUnresolvedConnection(t *testing.T) {
 	}
 }
 
-// A malformed connectionId must be rejected with 400 rather than falling back
-// to uuid.Nil and echoing a zero UUID. Covers all three one-shot status
-// handlers, which share the same validation.
+// A malformed, missing, or zero connectionId must be rejected with 400 rather than
+// falling back to uuid.Nil and echoing a zero UUID. Covers all four controller status
+// and diagnostics handlers, which share the same query validation.
 func TestControllerStatusHandlers_RejectInvalidConnectionID(t *testing.T) {
 	h := newControllersStatusTestHandler(t)
 
 	handlers := map[string]func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider){
-		"operator": h.OperatorStatusHandler,
-		"meshsync": h.MeshsyncStatusHandler,
-		"broker":   h.BrokerStatusHandler,
+		"operator":    h.OperatorStatusHandler,
+		"meshsync":    h.MeshsyncStatusHandler,
+		"broker":      h.BrokerStatusHandler,
+		"diagnostics": h.ControllerDiagnosticsHandler,
 	}
 
-	for name, handler := range handlers {
-		t.Run(name, func(t *testing.T) {
+	invalidCases := []struct {
+		name string
+		url  string
+	}{
+		{name: "malformed UUID", url: "?connectionId=not-a-uuid"},
+		{name: "nil zero UUID", url: "?connectionId=" + uuid.Nil.String()},
+		{name: "empty parameter", url: "?connectionId="},
+		{name: "missing parameter", url: ""},
+	}
+
+	for handlerName, handler := range handlers {
+		for _, tc := range invalidCases {
+			t.Run(handlerName+"/"+tc.name, func(t *testing.T) {
+				req := httptest.NewRequest(http.MethodGet,
+					"/api/system/controllers/"+handlerName+"/status"+tc.url, nil)
+				rec := httptest.NewRecorder()
+
+				handler(rec, req, nil, nil, nil)
+
+				if rec.Code != http.StatusBadRequest {
+					t.Fatalf("status = %d, want 400 for invalid connectionId (%s)", rec.Code, tc.name)
+				}
+				if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
+					t.Fatalf("expected ErrInvalidUUID code %q in error response, got: %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+				}
+			})
+		}
+	}
+}
+
+// TestControllerStatusHandlers_ValidConnectionIDAcceptsRequest verifies that a
+// valid, non-nil UUID parameter passes validation across all four handlers.
+func TestControllerStatusHandlers_ValidConnectionIDAcceptsRequest(t *testing.T) {
+	h := newControllersStatusTestHandler(t)
+	validID := uuid.Must(uuid.NewV4()).String()
+
+	handlers := map[string]func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider){
+		"operator":    h.OperatorStatusHandler,
+		"meshsync":    h.MeshsyncStatusHandler,
+		"broker":      h.BrokerStatusHandler,
+		"diagnostics": h.ControllerDiagnosticsHandler,
+	}
+
+	for handlerName, handler := range handlers {
+		t.Run(handlerName, func(t *testing.T) {
 			req := httptest.NewRequest(http.MethodGet,
-				"/api/system/controllers/"+name+"/status?connectionId=not-a-uuid", nil)
+				"/api/system/controllers/"+handlerName+"/status?connectionId="+validID, nil)
 			rec := httptest.NewRecorder()
 
 			handler(rec, req, nil, nil, nil)
 
-			if rec.Code != http.StatusBadRequest {
-				t.Fatalf("status = %d, want 400 for a malformed connectionId", rec.Code)
+			if rec.Code != http.StatusOK {
+				t.Fatalf("status = %d, want 200 for valid connectionId; body: %s", rec.Code, rec.Body.String())
 			}
-			if strings.Contains(rec.Body.String(), uuid.Nil.String()) {
-				t.Fatalf("response must not echo the zero UUID, got: %q", rec.Body.String())
+			if !strings.Contains(rec.Body.String(), validID) {
+				t.Fatalf("expected response to reference valid connectionId %s, got: %s", validID, rec.Body.String())
 			}
 		})
 	}
