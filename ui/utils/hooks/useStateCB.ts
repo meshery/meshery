@@ -1,29 +1,61 @@
 import React from 'react';
 
-function useStateCB(initState, changeTrackCB) {
-  const [state, _setState] = React.useState(initState);
-  const stateRef = React.useRef(initState);
+type StateCallback<T> = (state: T) => void;
+type SetStateAction<T> = T | ((prevState: T) => T);
+type UseStateCBReturn<T> = [
+  T,
+  (nextState: SetStateAction<T>, callback?: StateCallback<T>) => void,
+  () => T,
+];
 
-  const callbackRef = React.useRef();
-  const changeTrackCBRef = React.useRef(changeTrackCB);
+function useStateCB<T>(
+  initState: T | (() => T),
+  changeTrackCB?: StateCallback<NoInfer<T>>,
+): UseStateCBReturn<T> {
+  const [state, _setState] = React.useState<T>(initState);
+  const stateRef = React.useRef<T>(state);
+
+  const callbackRef = React.useRef<StateCallback<T> | undefined>(undefined);
+  const changeTrackCBRef = React.useRef<StateCallback<T> | undefined>(changeTrackCB);
   const isFirstCBCall = React.useRef(true);
 
   React.useEffect(() => {
-    if (isFirstCBCall.current) isFirstCBCall.current = false;
-    else {
-      callbackRef.current?.(state);
-      changeTrackCBRef.current?.(state);
+    changeTrackCBRef.current = changeTrackCB;
+  }, [changeTrackCB]);
+
+  React.useEffect(() => {
+    if (isFirstCBCall.current) {
+      isFirstCBCall.current = false;
+      return;
+    }
+
+    const pendingCallback = callbackRef.current;
+    callbackRef.current = undefined;
+    if (typeof pendingCallback === 'function') {
+      pendingCallback(state);
+    }
+
+    if (typeof changeTrackCBRef.current === 'function') {
+      changeTrackCBRef.current(state);
     }
   }, [state]);
 
-  const setState = (state, callback) => {
-    callbackRef.current = callback;
+  const setState = React.useCallback(
+    (nextState: SetStateAction<T>, callback?: StateCallback<T>) => {
+      callbackRef.current = callback;
 
-    stateRef.current = state;
-    _setState(state);
-  };
+      const resolvedState =
+        typeof nextState === 'function'
+          ? (nextState as (prevState: T) => T)(stateRef.current)
+          : nextState;
 
-  const getStateRefValue = () => stateRef.current;
+      stateRef.current = resolvedState;
+      _setState(() => resolvedState);
+    },
+    [],
+  );
+
+  const getStateRefValue = React.useCallback(() => stateRef.current, []);
 
   return [state, setState, getStateRefValue];
 }
