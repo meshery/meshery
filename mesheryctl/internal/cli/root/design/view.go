@@ -45,6 +45,11 @@ var designViewFlagsProvided designViewFlags
 // designs is the last one.
 const designSearchPageSize = 10000
 
+// designSearchMaxPages bounds fetchDesignSearch's pagination loop, matching
+// the cap utils.GetID uses for the same risk: a total the returned designs
+// never reach must not keep the loop requesting pages forever.
+const designSearchMaxPages = 50
+
 var linkDocPatternView = map[string]string{
 	"link":    "![pattern-view-usage](../../../images/patternView.png)",
 	"caption": "Usage of mesheryctl design view",
@@ -148,7 +153,7 @@ func getDesignViewUrlPath(design string, isID bool) string {
 func fetchDesignSearch(name string, fetch func(string) (*map[string]interface{}, error)) ([]map[string]interface{}, error) {
 	var designs []map[string]interface{}
 	seen := map[string]bool{}
-	for page := 0; ; page++ {
+	for page := 0; page < designSearchMaxPages; page++ {
 		queryParams := url.Values{}
 		queryParams.Add("populate", "pattern_file")
 		queryParams.Add("search", name)
@@ -197,8 +202,8 @@ func fetchDesignSearch(name string, fetch func(string) (*map[string]interface{},
 			}
 		} else if len(arr) < designSearchPageSize {
 			// Without a total a short page is the only sign of the last one,
-			// as in utils.getIDsFromPaginatedList. Stopping after page 0
-			// would miss a design on page 1 when page 0 came back full.
+			// as in utils.GetID. Stopping after page 0 would miss a design on
+			// page 1 when page 0 came back full.
 			return designs, nil
 		}
 		// Each further page must add designs, or the loop would never end.
@@ -209,6 +214,7 @@ func fetchDesignSearch(name string, fetch func(string) (*map[string]interface{},
 			return nil, ErrDesignInvalidApiResponse(fmt.Sprintf("search for %q repeated a full page of designs", name))
 		}
 	}
+	return nil, ErrDesignInvalidApiResponse(fmt.Sprintf("search for %q did not complete within %d pages", name, designSearchMaxPages))
 }
 
 // designSearchTotal reads the number of designs matching a search, from the

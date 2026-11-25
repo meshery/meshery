@@ -337,6 +337,23 @@ func TestFetchDesignSearch(t *testing.T) {
 		utils.AssertMeshkitErrorsEqual(t, err, ErrDesignInvalidApiResponse(`search for "nginx" repeated a full page of designs`))
 	})
 
+	t.Run("given a total the pages never reach when searching then the loop stops at the page cap", func(t *testing.T) {
+		var requests []string
+		fetch := func(u string) (*map[string]interface{}, error) {
+			requests = append(requests, u)
+			var n int
+			if _, err := fmt.Sscanf(u, "api/pattern?page=%d&", &n); err != nil {
+				return nil, err
+			}
+			return viewTestPage(designSearchMaxPages+100, viewTestDesign(fmt.Sprintf("p%03d", n), fmt.Sprintf("nginx-%03d", n))), nil
+		}
+		_, err := fetchDesignSearch("nginx", fetch)
+		utils.AssertMeshkitErrorsEqual(t, err, ErrDesignInvalidApiResponse(fmt.Sprintf(`search for "nginx" did not complete within %d pages`, designSearchMaxPages)))
+		if len(requests) != designSearchMaxPages {
+			t.Fatalf("requests %d, want %d", len(requests), designSearchMaxPages)
+		}
+	})
+
 	t.Run("given a name with spaces when searching then it is query-escaped", func(t *testing.T) {
 		var requests []string
 		pages := map[string]*map[string]interface{}{
