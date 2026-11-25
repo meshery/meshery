@@ -1,9 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  AddIcon,
+  Button,
   Chip,
   CustomColumnVisibilityControl,
   DeleteIcon,
+  EditIcon,
   IconButton,
+  LockIcon,
   PROMPT_VARIANTS,
   ResponsiveDataTable,
   styled,
@@ -15,16 +19,25 @@ import {
 } from '@sistent/sistent';
 import { Keys } from '@meshery/schemas/permissions';
 import { useGetUserCredentialsQuery } from '@meshery/schemas/mesheryApi';
+import {
+  buildCredentialFormSchema,
+  cleanEmptyPasswordFields,
+  getCredentialTypes,
+  getSchema,
+  getUiSchema,
+  sanitizeInitialData,
+} from './meshery-mesh-interface/PatternService/helper';
 import DefaultError from './general/error-404/index';
 import Modal from './shared/Modal/Modal';
 import _PromptComponent, { PromptRef } from './general/PromptComponent';
-import { CON_OPS, CoreConnectionKinds } from '../utils/Enum';
+import { CoreConnectionKinds } from '../utils/Enum';
 import LoadingScreen from './shared/LoadingState/LoadingComponent';
 import { useNotification, useNotificationHandlers } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
 import { normalizeStaticImagePath } from '../utils/fallback';
+import { resolveCredentialPayload } from '../utils/credentialSecret';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   useCreateCredentialMutation,
@@ -52,9 +65,11 @@ const CustomTableCell = styled(TableCell)({
   },
 });
 
-const schema_array = ['prometheus', 'grafana', 'kubernetes'];
+const credentialTypes = getCredentialTypes();
+const DEFAULT_CREDENTIAL_TYPE = credentialTypes.includes('prometheus')
+  ? 'prometheus'
+  : credentialTypes[0] || 'kubernetes';
 
-type CredentialType = 'prometheus' | 'grafana' | 'kubernetes';
 type ActionType = 'create' | 'update' | 'delete' | null;
 
 interface CredentialModalState {
@@ -62,16 +77,8 @@ interface CredentialModalState {
   data: Record<string, unknown> | null;
   actionType: ActionType;
   id: string | null;
-}
-
-interface CredentialFormData {
-  credentialName?: string;
-  [key: string]: unknown;
-}
-
-interface HandleSubmitPayload {
-  type: string;
-  id?: string;
+  originalType: string | null;
+  openId: number;
 }
 
 interface ColumnMeta {
@@ -79,6 +86,19 @@ interface ColumnMeta {
   label: string;
   sortDirection?: 'asc' | 'desc' | null;
 }
+
+export { buildCredentialFormSchema, cleanEmptyPasswordFields, sanitizeInitialData };
+
+const renderSortableHead = (columnMeta: ColumnMeta, sortColumn: (_idx: number) => void) => (
+  <CustomTableCell key={columnMeta.index} onClick={() => sortColumn(columnMeta.index)}>
+    <TableSortLabel
+      active={columnMeta.sortDirection != null}
+      direction={columnMeta.sortDirection || 'asc'}
+    >
+      {columnMeta.label}
+    </TableSortLabel>
+  </CustomTableCell>
+);
 
 const MesheryCredentialComponent: React.FC = () => {
   const canViewCredentials = useHasPermission(Keys.SecurityManagementViewCredentials);
@@ -108,44 +128,126 @@ const MesheryCredentialComponent: React.FC = () => {
   const { connectionMetadataState } = useSelector((state: RootState) => state.ui);
 
   const modalRef = useRef<PromptRef>(null);
-  const [formData, setFormData] = useState<CredentialFormData>({});
+  const modalOpenIdRef = useRef(0);
+  const [formData, setFormData] = useState<Record<string, any>>({});
   const [credModal, setCredModal] = useState<CredentialModalState>({
     open: false,
     data: null,
     actionType: null,
     id: null,
+    originalType: null,
+    openId: 0,
   });
-  const [credentialType, setCredentialType] = useState<CredentialType>(
-    schema_array[0] as CredentialType,
-  );
+  const [credentialType, setCredentialType] = useState<string>(DEFAULT_CREDENTIAL_TYPE);
   const [credentialName, setCredentialName] = useState<string | null>(null);
   const { notify } = useNotification();
   const { notifyApiError } = useNotificationHandlers();
   const { width } = useWindowDimensions();
   const theme = useTheme();
 
-  const schemaChangeHandler = (type: CredentialType): void => {
+  const baseSchema = credentialType ? getSchema(credentialType) : undefined;
+  const currentUiSchema = credentialType ? getUiSchema(credentialType) : undefined;
+  const isSameTypeEdit =
+    credModal.actionType === 'update' &&
+    Boolean(credModal.originalType) &&
+    credentialType.toLowerCase() === credModal.originalType!.toLowerCase();
+  const currentSchema = buildCredentialFormSchema(
+    baseSchema as Record<string, unknown> | undefined,
+    currentUiSchema as Record<string, unknown> | undefined,
+    isSameTypeEdit,
+  );
+
+  const handleCreateCredential = (ev: React.MouseEvent): void => {
+    ev.stopPropagation();
+    const openId = ++modalOpenIdRef.current;
+    setCredentialType(DEFAULT_CREDENTIAL_TYPE);
+    setCredentialName(null);
+    setFormData({});
+    setCredModal({
+      open: true,
+      data: {},
+      actionType: 'create',
+      id: null,
+      originalType: null,
+      openId,
+    });
+  };
+
+  const handleEditCredential = (
+    e: React.MouseEvent,
+    rowData?: { id: string; name?: string; type?: string; secret?: Record<string, any> },
+  ): void => {
+    e.stopPropagation();
+    if (!rowData?.id) return;
+
+    const openId = ++modalOpenIdRef.current;
+    const credType = rowData.type || DEFAULT_CREDENTIAL_TYPE;
+    setCredentialType(credType);
+    setCredentialName(rowData.name || null);
+
+    const schema = getSchema(credType) as Record<string, any> | undefined;
+    const uiSchema = getUiSchema(credType) as Record<string, any> | undefined;
+    const resolvedSecret = resolveCredentialPayload(rowData.secret);
+    const secretObj =
+      resolvedSecret && typeof resolvedSecret === 'object' && !Array.isArray(resolvedSecret)
+        ? (resolvedSecret as Record<string, unknown>)
+        : {};
+    const sanitizedSecret = sanitizeInitialData(
+      secretObj,
+      schema?.properties?.secret,
+      uiSchema?.secret,
+    );
+    const initialFormData = { name: rowData.name || '', secret: sanitizedSecret };
+
+    setFormData(initialFormData);
+    setCredModal({
+      open: true,
+      data: initialFormData,
+      actionType: 'update',
+      id: rowData.id,
+      originalType: credType,
+      openId,
+    });
+  };
+
+  const schemaChangeHandler = (type: string): void => {
     setCredentialType(type);
+    const nextData =
+      credModal.actionType === 'update'
+        ? {
+            name:
+              (typeof formData?.name === 'string' ? formData.name : undefined) ??
+              (typeof credModal.data?.name === 'string' ? credModal.data.name : undefined),
+            secret: {},
+          }
+        : {};
+    setFormData(nextData);
     setCredModal((prev) => ({
       ...prev,
       open: true,
-      data: null,
+      data: prev.actionType === 'update' ? nextData : {},
     }));
   };
 
-  const _onChange = (formData: CredentialFormData): void => {
-    setCredentialName(formData?.credentialName || null);
-    setFormData(formData);
+  const _onChange = (data: Record<string, any>): void => {
+    if (data?.name !== undefined) {
+      setCredentialName(data.name || null);
+    } else if (data?.credentialName !== undefined) {
+      setCredentialName(data.credentialName || null);
+    }
+    setFormData(data || {});
   };
 
-  const handleClose = (ev: React.MouseEvent): void => {
-    ev.stopPropagation();
-    setCredModal({
+  const handleClose = (ev?: React.MouseEvent): void => {
+    ev?.stopPropagation?.();
+    setCredModal((prev) => ({
+      ...prev,
       open: false,
       data: null,
       actionType: null,
       id: null,
-    });
+      originalType: null,
+    }));
   };
 
   /**
@@ -160,26 +262,47 @@ const MesheryCredentialComponent: React.FC = () => {
   };
 
   const getCredentialsIcon = (type: string): React.ReactNode => {
-    switch (type) {
-      case 'prometheus':
-        return <CredentialIcon src="/static/img/integrations/prometheus_logo_orange_circle.svg" />;
-      case 'grafana':
-        return <CredentialIcon src="/static/img/integrations/grafana_icon.svg" />;
-      case 'kubernetes':
-        return (
-          <CredentialIcon
-            src={
-              normalizeStaticImagePath(
-                connectionMetadataState?.[CoreConnectionKinds.kubernetes]?.icon,
-              ) || undefined
-            }
-            alt=""
-            aria-hidden="true"
-          />
-        );
-      default:
-        return null;
+    const lower = type?.toLowerCase();
+    if (lower === 'prometheus') {
+      return (
+        <CredentialIcon
+          src="/static/img/integrations/prometheus_logo_orange_circle.svg"
+          alt="Prometheus"
+        />
+      );
     }
+    if (lower === 'grafana') {
+      return <CredentialIcon src="/static/img/integrations/grafana_icon.svg" alt="Grafana" />;
+    }
+    if (lower === 'kubernetes') {
+      return (
+        <CredentialIcon
+          src={
+            normalizeStaticImagePath(
+              connectionMetadataState?.[CoreConnectionKinds.kubernetes]?.icon,
+            ) || '/static/img/integrations/kubernetes.svg'
+          }
+          alt="Kubernetes"
+          aria-hidden="true"
+        />
+      );
+    }
+    if (lower === 'github' || lower === 'github-oauth') {
+      return <CredentialIcon src="/static/img/extensions/github.svg" alt="GitHub" />;
+    }
+    const metaIcon = connectionMetadataState?.[type]?.icon;
+    if (metaIcon) {
+      return (
+        <CredentialIcon
+          src={normalizeStaticImagePath(metaIcon) || undefined}
+          alt={type}
+          aria-hidden="true"
+        />
+      );
+    }
+    return (
+      <LockIcon style={{ width: '20px', height: '20px', fill: theme?.palette?.icon?.default }} />
+    );
   };
 
   const colViews: [string, string][] = [
@@ -198,21 +321,7 @@ const MesheryCredentialComponent: React.FC = () => {
         filter: true,
         sort: false,
         searchable: true,
-        customHeadRender: function CustomHead(
-          columnMeta: ColumnMeta,
-          sortColumn: (_idx: number) => void,
-        ) {
-          return (
-            <CustomTableCell key={columnMeta.index} onClick={() => sortColumn(columnMeta.index)}>
-              <TableSortLabel
-                active={columnMeta.sortDirection != null}
-                direction={columnMeta.sortDirection || 'asc'}
-              >
-                {columnMeta.label}
-              </TableSortLabel>
-            </CustomTableCell>
-          );
-        },
+        customHeadRender: renderSortableHead,
       },
     },
     {
@@ -222,21 +331,7 @@ const MesheryCredentialComponent: React.FC = () => {
         filter: true,
         sort: false,
         searchable: true,
-        customHeadRender: function CustomHead(
-          columnMeta: ColumnMeta,
-          sortColumn: (_idx: number) => void,
-        ) {
-          return (
-            <CustomTableCell key={columnMeta.index} onClick={() => sortColumn(columnMeta.index)}>
-              <TableSortLabel
-                active={columnMeta.sortDirection != null}
-                direction={columnMeta.sortDirection || 'asc'}
-              >
-                {columnMeta.label}
-              </TableSortLabel>
-            </CustomTableCell>
-          );
-        },
+        customHeadRender: renderSortableHead,
         customBodyRender: function CustomBody(_: unknown, tableMeta: MUIDataTableMeta) {
           return (
             <Tooltip title={tableMeta.rowData[1]}>
@@ -260,21 +355,7 @@ const MesheryCredentialComponent: React.FC = () => {
         sort: false,
         searchable: true,
         sortDescFirst: true,
-        customHeadRender: function CustomHead(
-          columnMeta: ColumnMeta,
-          sortColumn: (_idx: number) => void,
-        ) {
-          return (
-            <CustomTableCell key={columnMeta.index} onClick={() => sortColumn(columnMeta.index)}>
-              <TableSortLabel
-                active={columnMeta.sortDirection != null}
-                direction={columnMeta.sortDirection || 'asc'}
-              >
-                {columnMeta.label}
-              </TableSortLabel>
-            </CustomTableCell>
-          );
-        },
+        customHeadRender: renderSortableHead,
       },
     },
     {
@@ -285,21 +366,7 @@ const MesheryCredentialComponent: React.FC = () => {
         sort: false,
         searchable: true,
         sortDescFirst: true,
-        customHeadRender: function CustomHead(
-          columnMeta: ColumnMeta,
-          sortColumn: (_idx: number) => void,
-        ) {
-          return (
-            <CustomTableCell key={columnMeta.index} onClick={() => sortColumn(columnMeta.index)}>
-              <TableSortLabel
-                active={columnMeta.sortDirection != null}
-                direction={columnMeta.sortDirection || 'asc'}
-              >
-                {columnMeta.label}
-              </TableSortLabel>
-            </CustomTableCell>
-          );
-        },
+        customHeadRender: renderSortableHead,
       },
     },
     {
@@ -315,10 +382,20 @@ const MesheryCredentialComponent: React.FC = () => {
         customBodyRender: (_: unknown, tableMeta: MUIDataTableMeta) => {
           const credentials = credentialsData?.credentials || [];
           const rowData = credentials[tableMeta.rowIndex] as
-            | { id: string; name?: string; type?: string }
+            | { id: string; name?: string; type?: string; secret?: Record<string, any> }
             | undefined;
           return (
             <ActionContainer>
+              <Tooltip key={`edit_credential-${tableMeta.rowIndex}`} title="Edit Credential">
+                <IconButton
+                  aria-label="edit"
+                  onClick={(e) => handleEditCredential(e, rowData)}
+                  size="large"
+                  permissionKey={Keys.SecurityManagementEditCredential}
+                >
+                  <EditIcon fill={theme?.palette?.icon?.default} />
+                </IconButton>
+              </Tooltip>
               <Tooltip key={`delete_credential-${tableMeta.rowIndex}`} title="Delete Credential">
                 <IconButton
                   aria-label="delete"
@@ -343,16 +420,10 @@ const MesheryCredentialComponent: React.FC = () => {
     page,
     rowsPerPage: pageSize,
     onTableChange: (action: string, tableState: { page: number; rowsPerPage: number }) => {
-      switch (action) {
-        case 'changePage':
-          setPage(tableState.page);
-          break;
-        case 'changeRowsPerPage':
-          setPageSize(tableState.rowsPerPage);
-          setPage(0);
-          break;
-        default:
-          break;
+      if (action === 'changePage') setPage(tableState.page);
+      if (action === 'changeRowsPerPage') {
+        setPageSize(tableState.rowsPerPage);
+        setPage(0);
       }
     },
     filterType: 'textField' as const,
@@ -364,9 +435,7 @@ const MesheryCredentialComponent: React.FC = () => {
     selectToolbarPlacement: 'none' as const,
     selectableRows: 'none' as const,
     elevation: 0,
-    draggableColumns: {
-      enabled: true,
-    },
+    draggableColumns: { enabled: true },
   };
 
   const handleDeleteCredentialConfirm = async (
@@ -388,57 +457,65 @@ const MesheryCredentialComponent: React.FC = () => {
     });
 
     if (response === 'DELETE') {
-      handleSubmit({ type: CON_OPS.DELETE, id: rowData.id });
+      updateProgress({ showProgress: true });
+      try {
+        await deleteCredential(rowData.id).unwrap();
+        notify({ message: `Credential deleted.`, event_type: EVENT_TYPES.SUCCESS });
+      } catch (error) {
+        handleError(error, 'Failed to delete credentials.');
+      } finally {
+        updateProgress({ showProgress: false });
+      }
     }
   };
 
-  // control the entire submit
-  const handleSubmit = async ({ id, type }: HandleSubmitPayload): Promise<void> => {
+  const handleModalSubmit = async (submittedFormData?: Record<string, any>): Promise<void> => {
+    const dataToSubmit = submittedFormData || formData;
+    const { actionType, id, openId: submitOpenId } = credModal;
+
     updateProgress({ showProgress: true });
-
     try {
-      if (type === CON_OPS.DELETE && id) {
-        await deleteCredential(id).unwrap();
-        notify({ message: `Credential deleted.`, event_type: EVENT_TYPES.SUCCESS });
-      }
+      const name = dataToSubmit?.name ?? credentialName ?? '';
+      const secret = dataToSubmit?.secret ?? {};
 
-      if (type === CON_OPS.CREATE) {
-        const data = {
-          name: credentialName,
-          type: credentialType,
-          secret: formData,
-        };
-        await createCredential(data).unwrap();
+      if (actionType === 'create') {
+        await createCredential({ name, type: credentialType, secret }).unwrap();
         notify({ message: `"${credentialType}" created.`, event_type: EVENT_TYPES.SUCCESS });
       }
 
-      if (type === CON_OPS.UPDATE && id) {
-        const data = {
-          id: id,
-          name: credentialName,
+      if (actionType === 'update' && id) {
+        const schema = getSchema(credentialType) as Record<string, any> | undefined;
+        const uiSchema = getUiSchema(credentialType) as Record<string, any> | undefined;
+
+        // Honor writeOnly / password widgets only when keeping the original credential type.
+        const submittedSecret = isSameTypeEdit
+          ? cleanEmptyPasswordFields(secret, schema?.properties?.secret, uiSchema?.secret)
+          : secret;
+
+        await updateCredential({
+          id,
+          name,
           type: credentialType,
-          secret: formData,
-        };
-        await updateCredential(data).unwrap();
+          secret: submittedSecret,
+        }).unwrap();
         notify({ message: `"${credentialType}" updated.`, event_type: EVENT_TYPES.SUCCESS });
       }
 
-      // Close modal if needed
-      if (credModal.open) {
-        setCredModal({
-          open: false,
-          data: null,
-          actionType: null,
-          id: null,
-        });
-      }
+      setCredModal((prev) =>
+        prev.openId === submitOpenId
+          ? {
+              open: false,
+              data: null,
+              actionType: null,
+              id: null,
+              originalType: null,
+              openId: prev.openId,
+            }
+          : prev,
+      );
     } catch (error) {
       const errorMessage =
-        type === CON_OPS.DELETE
-          ? 'Failed to delete credentials.'
-          : type === CON_OPS.CREATE
-            ? 'Failed to create credentials.'
-            : 'Failed to update credentials.';
+        actionType === 'create' ? 'Failed to create credentials.' : 'Failed to update credentials.';
       handleError(error, errorMessage);
     } finally {
       updateProgress({ showProgress: false });
@@ -449,12 +526,7 @@ const MesheryCredentialComponent: React.FC = () => {
 
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(() => {
     const showCols = updateVisibleColumns(colViews, width);
-    // Initialize column visibility based on the original columns' visibility
-    const initialVisibility: Record<string, boolean> = {};
-    columns.forEach((col) => {
-      initialVisibility[col.name] = showCols[col.name];
-    });
-    return initialVisibility;
+    return Object.fromEntries(columns.map((col) => [col.name, showCols[col.name]]));
   });
 
   const customInlineStyle = {
@@ -474,7 +546,23 @@ const MesheryCredentialComponent: React.FC = () => {
     <div style={{ display: 'table', tableLayout: 'fixed', width: '100%' }}>
       <ToolWrapper style={customInlineStyle}>
         <div>
-          {/* TODO: Uncomment this when schema spec is ready to support various credential */}
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={handleCreateCredential}
+            style={{
+              padding: '0.5rem',
+              borderRadius: 5,
+              marginRight: '2rem',
+            }}
+            permissionKey={Keys.SecurityManagementCreateCredential}
+            data-cy="btnCreateCredential"
+          >
+            <AddIcon style={{ width: '1.25rem', height: '1.25rem' }} />
+            <span style={{ paddingLeft: '0.25rem' }}>Create</span>
+          </Button>
         </div>
         <div>
           <CustomColumnVisibilityControl
@@ -498,17 +586,22 @@ const MesheryCredentialComponent: React.FC = () => {
       />
 
       <Modal
+        key={credModal.openId}
         open={credModal.open}
+        schema={currentSchema}
+        uiSchema={currentUiSchema}
         formData={credModal.data}
-        title="Credentials"
+        initialData={credModal.data}
+        title={credModal.actionType === 'update' ? 'Edit Credential' : 'Create Credential'}
         handleClose={handleClose}
         onChange={_onChange}
-        schema_array={schema_array}
+        schema_array={credentialTypes}
         type={credentialType}
         schemaChangeHandler={schemaChangeHandler}
-        handleSubmit={handleSubmit}
-        payload={{ type: credModal.actionType, id: credModal.id }}
+        handleSubmit={handleModalSubmit}
         submitBtnText="Save"
+        submitDisabled={!currentSchema}
+        closeOnSubmit={false}
       />
       <_PromptComponent ref={modalRef} />
     </div>
