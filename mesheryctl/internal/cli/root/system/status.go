@@ -42,6 +42,8 @@ var linkDocStatus = map[string]string{
 	"caption": "Usage of mesheryctl system status",
 }
 
+var statusUsageMsg = "Usage: mesheryctl system status [flags]\nRun 'mesheryctl system status --help' to see detailed help message"
+
 // statusCmd represents the status command
 var statusCmd = &cobra.Command{
 	Use:   "status",
@@ -56,6 +58,12 @@ mesheryctl system status
 mesheryctl system status --verbose
 	`,
 	Annotations: linkDocStatus,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", statusUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Check prerequisite
 		if err := mesheryctlflags.ValidateCmdFlags(cmd, &systemStatusFlags); err != nil {
@@ -79,11 +87,6 @@ mesheryctl system status --verbose
 		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			return utils.ErrInvalidArgument(
-				fmt.Errorf("this command takes no arguments. See '%s --help' for more information", cmd.CommandPath()),
-			)
-		}
 		// Get viper instance used for context
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
