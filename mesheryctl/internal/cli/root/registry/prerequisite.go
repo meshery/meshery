@@ -282,16 +282,36 @@ func cleanGitConfigValue(val string) string {
 	return strings.TrimSpace(sb.String())
 }
 
+// isContinuationLine reports whether a line ends with an unescaped trailing backslash.
+func isContinuationLine(s string) bool {
+	trimmed := strings.TrimRight(s, " \t\r\n")
+	backslashes := 0
+	for i := len(trimmed) - 1; i >= 0 && trimmed[i] == '\\'; i-- {
+		backslashes++
+	}
+	return backslashes%2 == 1
+}
+
 // joinGitConfigLines splits Git config text into logical lines by joining lines
-// that end with a trailing backslash continuation character ('\').
+// that end with an unescaped trailing backslash continuation character ('\').
+// Comments (# or ;) do not support line continuation per Git specification.
 func joinGitConfigLines(configText string) []string {
 	rawLines := strings.Split(configText, "\n")
 	var lines []string
 	var current strings.Builder
 	for _, raw := range rawLines {
 		trimmedRight := strings.TrimRight(raw, "\r")
-		if strings.HasSuffix(trimmedRight, "\\") {
-			current.WriteString(trimmedRight[:len(trimmedRight)-1])
+		trimmedLeft := strings.TrimSpace(trimmedRight)
+
+		// Comment lines never continue onto subsequent lines in Git config
+		if current.Len() == 0 && (strings.HasPrefix(trimmedLeft, "#") || strings.HasPrefix(trimmedLeft, ";")) {
+			lines = append(lines, trimmedRight)
+			continue
+		}
+
+		if isContinuationLine(trimmedRight) {
+			trimmed := strings.TrimRight(trimmedRight, " \t")
+			current.WriteString(trimmed[:len(trimmed)-1])
 		} else {
 			current.WriteString(trimmedRight)
 			lines = append(lines, current.String())

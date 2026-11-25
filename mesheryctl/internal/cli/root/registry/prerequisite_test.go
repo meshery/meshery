@@ -237,6 +237,16 @@ func TestVerifyRepoRoot_CaseInsensitiveGitConfigAndFormats(t *testing.T) {
 			expectMatch: true,
 		},
 		{
+			name:        "Comment ending with backslash does not continue",
+			configText:  "# comment ending in backslash \\\n[remote \"origin\"]\n  url = https://github.com/meshery/meshery.git\n",
+			expectMatch: true,
+		},
+		{
+			name:        "Escaped backslash does not continue line",
+			configText:  "[core]\n  example = value\\\\\n[remote \"origin\"]\n  url = https://github.com/meshery/meshery.git\n",
+			expectMatch: true,
+		},
+		{
 			name: "Unrelated repo with meshery prefix rejected",
 			configText: `[remote "origin"]
 	url = https://github.com/meshery/meshery-operator.git
