@@ -422,3 +422,70 @@ func TestDefaultLocalProviderSaveK8sContextNilMesheryInstanceID(t *testing.T) {
 		t.Fatalf("expected empty kubernetesServerId metadata for nil KubernetesServerID, got %q", got)
 	}
 }
+
+func TestDefaultLocalProviderLoadAllK8sContext_StopsWithoutRedundantEmptyPage(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to open in-memory database: %v", err)
+	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		t.Fatalf("failed to inspect sqlite handle: %v", err)
+	}
+	sqlDB.SetMaxOpenConns(1)
+
+	if err := db.AutoMigrate(&connections.Connection{}, &Credential{}, &K8sContext{}); err != nil {
+		t.Fatalf("failed to migrate k8s context tables: %v", err)
+	}
+
+	// Seed 3 connected contexts (well below pageSize=25) so page=0 returns all of them.
+	for i := 0; i < 3; i++ {
+		conn := connections.Connection{
+			ID:      uuid.Must(uuid.NewV4()),
+			Kind:    "kubernetes",
+			SubType: "kubernetes",
+			Status:  connections.CONNECTED,
+		}
+		if err := db.Create(&conn).Error; err != nil {
+			t.Fatalf("seed connection %d: %v", i, err)
+		}
+		ctx := K8sContext{
+			ID:           uuid.Must(uuid.NewV4()).String(),
+			Name:         "ctx-" + string(rune('a'+i)),
+			Server:       "https://127.0.0.1:6443",
+			ConnectionID: conn.ID.String(),
+		}
+		if err := db.Create(&ctx).Error; err != nil {
+			t.Fatalf("seed context %d: %v", i, err)
+		}
+	}
+
+	var k8sQueryCount int
+	if err := db.Callback().Query().Before("gorm:query").Register("count_k8s_context_queries", func(tx *gorm.DB) {
+		if tx.Statement != nil && tx.Statement.Table == "k8s_contexts" {
+			k8sQueryCount++
+		}
+	}); err != nil {
+		t.Fatalf("register query callback: %v", err)
+	}
+
+	dbHandler := &database.Handler{DB: db}
+	provider := &DefaultLocalProvider{
+		GenericPersister:           dbHandler,
+		ConnectionPersister:        &ConnectionPersister{DB: dbHandler},
+		MesheryK8sContextPersister: &MesheryK8sContextPersister{DB: dbHandler},
+	}
+
+	contexts, err := provider.LoadAllK8sContext("")
+	if err != nil {
+		t.Fatalf("LoadAllK8sContext failed: %v", err)
+	}
+	if len(contexts) != 3 {
+		t.Fatalf("expected 3 contexts, got %d", len(contexts))
+	}
+	// Each page executes 1 Count + 1 Find query against k8s_contexts.
+	// With 3 contexts and pageSize=25, only page=0 should be queried (2 queries total, not 4).
+	if k8sQueryCount != 2 {
+		t.Fatalf("expected 2 k8s_contexts queries for single-page result, got %d", k8sQueryCount)
+	}
+}

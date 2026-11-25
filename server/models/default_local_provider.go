@@ -645,7 +645,7 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 		}
 		results = append(results, k8scontext.Contexts...)
 
-		if page*pageSize >= k8scontext.TotalCount {
+		if (page+1)*pageSize >= k8scontext.TotalCount {
 			break
 		}
 

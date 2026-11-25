@@ -187,3 +187,24 @@ func TestMapPreferencePersisterCorruptedSessionFallback(t *testing.T) {
 		t.Error("expected default flags to be true for corrupted session fallback")
 	}
 }
+
+func TestMapPreferencePersisterReusesInitializedLogger(t *testing.T) {
+	persister := newTestMapPreferencePersister(t)
+	defer persister.db.Clear()
+
+	if persister.log == nil {
+		t.Fatal("expected NewMapPreferencePersister to initialize logger on struct")
+	}
+	initialLogger := persister.log
+
+	if _, err := persister.ReadFromPersister("user-1"); err != nil {
+		t.Fatalf("first ReadFromPersister failed: %v", err)
+	}
+	if _, err := persister.ReadFromPersister("user-2"); err != nil {
+		t.Fatalf("second ReadFromPersister failed: %v", err)
+	}
+
+	if persister.log != initialLogger {
+		t.Fatal("expected MapPreferencePersister.ReadFromPersister to reuse struct logger")
+	}
+}
