@@ -220,6 +220,10 @@ type mesheryServerError struct {
 
 // serverErrorCause extracts the actionable detail from a server error body,
 // falling back to the short description and then to the body itself.
+//
+// It deliberately reads less than the client contract in
+// docs/content/en/project/contributing/error-contract.md: mesheryctl supplies
+// its own remediation, and a non-JSON body is passed through as the cause.
 func serverErrorCause(body string) string {
 	var resp mesheryServerError
 	if err := json.Unmarshal([]byte(body), &resp); err != nil {
