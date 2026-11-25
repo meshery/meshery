@@ -2,6 +2,10 @@
 // "kubernetes": interactive terminals backed by the pods/exec subresource, and
 // log tails backed by pods/log.
 //
+// A console always attaches to a pod. A target may name an owner workload
+// (Deployment, StatefulSet, ...) instead; it is resolved to one of the pods that
+// workload runs before any console is opened.
+//
 // Importing this package registers the driver with the consoles registry. The
 // HTTP layer never imports it directly; it is pulled in for its side effect
 // wherever consoles are served.
@@ -31,12 +35,23 @@ const (
 	// ConnectionKind is the connections.Connection.Kind this driver serves.
 	ConnectionKind = "kubernetes"
 
-	// ResourcePod is the only resource type that supports consoles today.
-	// Terminals and logs are properties of a running container, and a pod is
-	// the smallest thing that has one. Owner workloads (Deployment,
-	// StatefulSet, ...) would be served by resolving them to pods; that
-	// resolution belongs here, behind Capabilities, when it is added.
+	// ResourcePod is the resource a console attaches to directly. Terminals and
+	// logs are properties of a running container, and a pod is the smallest thing
+	// that has one.
 	ResourcePod = "pod"
+
+	// The owner workloads a console target may name. Each is resolved to one of
+	// the pods it runs, so a console opened on a Deployment lands on a pod rather
+	// than asking the API server for a pod called after the deployment.
+	//
+	// CronJob is deliberately absent: its pods belong to the Jobs it creates, and
+	// naming one of those Jobs (or its pod) is the honest way to reach them.
+	ResourceDeployment            = "deployment"
+	ResourceStatefulSet           = "statefulset"
+	ResourceDaemonSet             = "daemonset"
+	ResourceJob                   = "job"
+	ResourceReplicaSet            = "replicaset"
+	ResourceReplicationController = "replicationcontroller"
 
 	// defaultContainerAnnotation is the well-known annotation kubectl honours
 	// to pick a container when the user does not name one.
@@ -98,21 +113,39 @@ var (
 
 // Capabilities inspects the live pod to decide what it admits.
 func (d *driver) Capabilities(ctx context.Context, target console.TargetRef) (console.Capabilities, error) {
-	if !strings.EqualFold(target.Resource, ResourcePod) {
-		return console.Capabilities{
-			Reason: "Terminal and log consoles are available for pods; '" + target.Resource + "' resources do not run containers directly.",
-		}, nil
-	}
+	_, caps, err := d.attach(ctx, target)
+	return caps, err
+}
+
+// attach resolves the target onto the concrete pod a console attaches to, and
+// reports what that pod admits. Capabilities, OpenTerminal and StreamLogs all go
+// through it, so a workload means the same pod on the handshake as it does on the
+// exec or log request.
+//
+// A resource the driver cannot address at all — a ConfigMap, a Service — is not
+// an error: it answers with no supported kind and the reason, which the panel
+// renders. Only a target that does not exist is an error, so a stale row in the
+// UI is reported as missing rather than as unsupported.
+func (d *driver) attach(ctx context.Context, target console.TargetRef) (*corev1.Pod, console.Capabilities, error) {
 	if target.Name == "" || target.Namespace == "" {
-		return console.Capabilities{}, console.ErrInvalidTarget("a pod console requires both `namespace` and `name`")
+		return nil, console.Capabilities{}, console.ErrInvalidTarget("a Kubernetes console target requires both `namespace` and `name`")
 	}
 
-	pod, err := d.clientset.CoreV1().Pods(target.Namespace).Get(ctx, target.Name, metav1.GetOptions{})
+	resource := normalizeResource(target.Resource)
+	if !isConsoleResource(resource) {
+		return nil, console.Capabilities{
+			Reason: "Terminal and log consoles attach to a pod; '" + target.Resource + "' does not run containers of its own.",
+		}, nil
+	}
+
+	pod, err := d.podFor(ctx, resource, target)
 	if err != nil {
-		if apierrors.IsNotFound(err) {
-			return console.Capabilities{}, console.ErrTargetNotFound(err, target.Namespace+"/"+target.Name)
-		}
-		return console.Capabilities{}, console.ErrOpenConsole(err, "capability")
+		return nil, console.Capabilities{}, err
+	}
+	if pod == nil {
+		return nil, console.Capabilities{
+			Reason: "The " + resource + " '" + target.Name + "' has no pods to attach to.",
+		}, nil
 	}
 
 	caps := console.Capabilities{
@@ -132,12 +165,150 @@ func (d *driver) Capabilities(ctx context.Context, target console.TargetRef) (co
 		caps.Reason = "The pod is in the " + string(pod.Status.Phase) + " phase; an interactive terminal requires a running pod."
 	}
 
-	return caps, nil
+	return pod, caps, nil
+}
+
+// podFor resolves a console target onto one pod. A pod target is used as named;
+// an owner workload is found through the label selector it stamps on its pods.
+//
+// A nil pod with no error means the resource exists but runs nothing, which the
+// caller reports as an unsupported console rather than a missing target.
+func (d *driver) podFor(ctx context.Context, resource string, target console.TargetRef) (*corev1.Pod, error) {
+	if resource == ResourcePod {
+		pod, err := d.clientset.CoreV1().Pods(target.Namespace).Get(ctx, target.Name, metav1.GetOptions{})
+		if err != nil {
+			return nil, resourceError(err, target)
+		}
+		return pod, nil
+	}
+
+	selector, err := d.workloadSelector(ctx, resource, target)
+	if err != nil {
+		return nil, err
+	}
+	if selector == "" {
+		// An owner resource with no selector names no pods. Listing everything in
+		// the namespace would attach the console to somebody else's workload.
+		return nil, nil
+	}
+
+	pods, err := d.clientset.CoreV1().Pods(target.Namespace).List(ctx, metav1.ListOptions{LabelSelector: selector})
+	if err != nil {
+		return nil, resourceError(err, target)
+	}
+	if len(pods.Items) == 0 {
+		return nil, nil
+	}
+	return selectPod(pods.Items), nil
+}
+
+// workloadSelector returns the label selector the owner workload uses to name its
+// pods. Fetching the owner is not incidental: it is what separates "this
+// deployment has no pods" from "this deployment does not exist".
+func (d *driver) workloadSelector(ctx context.Context, resource string, target console.TargetRef) (string, error) {
+	opts := metav1.GetOptions{}
+	switch resource {
+	case ResourceDeployment:
+		deployment, err := d.clientset.AppsV1().Deployments(target.Namespace).Get(ctx, target.Name, opts)
+		if err != nil {
+			return "", resourceError(err, target)
+		}
+		return selectorString(deployment.Spec.Selector)
+	case ResourceStatefulSet:
+		statefulSet, err := d.clientset.AppsV1().StatefulSets(target.Namespace).Get(ctx, target.Name, opts)
+		if err != nil {
+			return "", resourceError(err, target)
+		}
+		return selectorString(statefulSet.Spec.Selector)
+	case ResourceDaemonSet:
+		daemonSet, err := d.clientset.AppsV1().DaemonSets(target.Namespace).Get(ctx, target.Name, opts)
+		if err != nil {
+			return "", resourceError(err, target)
+		}
+		return selectorString(daemonSet.Spec.Selector)
+	case ResourceReplicaSet:
+		replicaSet, err := d.clientset.AppsV1().ReplicaSets(target.Namespace).Get(ctx, target.Name, opts)
+		if err != nil {
+			return "", resourceError(err, target)
+		}
+		return selectorString(replicaSet.Spec.Selector)
+	case ResourceJob:
+		job, err := d.clientset.BatchV1().Jobs(target.Namespace).Get(ctx, target.Name, opts)
+		if err != nil {
+			return "", resourceError(err, target)
+		}
+		return selectorString(job.Spec.Selector)
+	case ResourceReplicationController:
+		controller, err := d.clientset.CoreV1().ReplicationControllers(target.Namespace).Get(ctx, target.Name, opts)
+		if err != nil {
+			return "", resourceError(err, target)
+		}
+		return selectorString(&metav1.LabelSelector{MatchLabels: controller.Spec.Selector})
+	default:
+		return "", console.ErrInvalidTarget("unsupported console resource '" + target.Resource + "'")
+	}
+}
+
+// selectPod picks the pod a console attaches to when an owner workload runs
+// several. Running pods win, so a terminal finds a process to attach to; among
+// them the most recently created wins, because after a rollout the pods created
+// last carry the current spec while the older ones are draining. Ties are broken
+// by name, so two consoles opened against one workload land on the same pod
+// rather than on whichever the API server happened to return first.
+func selectPod(pods []corev1.Pod) *corev1.Pod {
+	best := &pods[0]
+	bestRunning := best.Status.Phase == corev1.PodRunning
+	for i := 1; i < len(pods); i++ {
+		candidate := &pods[i]
+		running := candidate.Status.Phase == corev1.PodRunning
+		switch {
+		case running && !bestRunning:
+			best, bestRunning = candidate, true
+		case running == bestRunning && isNewerPod(candidate, best):
+			best = candidate
+		}
+	}
+	return best
+}
+
+func isNewerPod(candidate, existing *corev1.Pod) bool {
+	if !candidate.CreationTimestamp.Equal(&existing.CreationTimestamp) {
+		return candidate.CreationTimestamp.After(existing.CreationTimestamp.Time)
+	}
+	return candidate.Name < existing.Name
+}
+
+// selectorString renders a label selector as the query string a pod list expects.
+// A nil or empty selector yields "", which podFor reads as "this workload names
+// no pods": listing the whole namespace would attach the console to somebody
+// else's workload.
+func selectorString(selector *metav1.LabelSelector) (string, error) {
+	if selector == nil {
+		return "", nil
+	}
+	// LabelSelectorAsSelector normalises matchExpressions into the `key in (a,b)`
+	// form the selector grammar accepts. LabelSelector.String() is protobuf's debug
+	// rendering of the struct, not a selector.
+	parsed, err := metav1.LabelSelectorAsSelector(selector)
+	if err != nil {
+		return "", console.ErrOpenConsole(err, "capability")
+	}
+	return parsed.String(), nil
+}
+
+// resourceError maps a Kubernetes API failure onto a coded console error. A
+// missing resource is a 404 the user needs to hear about; anything else is a
+// failure reaching the target behind the console.
+func resourceError(err error, target console.TargetRef) error {
+	if apierrors.IsNotFound(err) {
+		return console.ErrTargetNotFound(err, target.Namespace+"/"+target.Name)
+	}
+	return console.ErrOpenConsole(err, "capability")
 }
 
 // OpenTerminal execs an interactive shell in the target container.
 func (d *driver) OpenTerminal(ctx context.Context, target console.TargetRef, opts console.TerminalOptions, stream console.TerminalIO) error {
-	caps, err := d.Capabilities(ctx, target)
+	pod, caps, err := d.attach(ctx, target)
 	if err != nil {
 		return err
 	}
@@ -158,7 +329,7 @@ func (d *driver) OpenTerminal(ctx context.Context, target console.TargetRef, opt
 		Post().
 		Resource("pods").
 		Namespace(target.Namespace).
-		Name(target.Name).
+		Name(pod.Name).
 		SubResource("exec").
 		VersionedParams(&corev1.PodExecOptions{
 			Container: container,
@@ -203,7 +374,7 @@ func (d *driver) OpenTerminal(ctx context.Context, target console.TargetRef, opt
 
 // StreamLogs opens the target container's log stream.
 func (d *driver) StreamLogs(ctx context.Context, target console.TargetRef, opts console.LogOptions) (io.ReadCloser, error) {
-	caps, err := d.Capabilities(ctx, target)
+	pod, caps, err := d.attach(ctx, target)
 	if err != nil {
 		return nil, err
 	}
@@ -215,7 +386,7 @@ func (d *driver) StreamLogs(ctx context.Context, target console.TargetRef, opts 
 		return nil, err
 	}
 
-	req := d.clientset.CoreV1().Pods(target.Namespace).GetLogs(target.Name, &corev1.PodLogOptions{
+	req := d.clientset.CoreV1().Pods(target.Namespace).GetLogs(pod.Name, &corev1.PodLogOptions{
 		Container:    container,
 		Follow:       opts.Follow,
 		Previous:     opts.Previous,
@@ -259,6 +430,24 @@ func (d *driver) newExecutor(u *url.URL) (remotecommand.Executor, error) {
 	return remotecommand.NewFallbackExecutor(websocketExec, spdyExec, func(err error) bool {
 		return httpstream.IsUpgradeFailure(err) || httpstream.IsHTTPSProxyError(err)
 	})
+}
+
+// normalizeResource canonicalises the resource kind a target names. MeshSync
+// reports Kubernetes kinds in PascalCase ("Deployment"); the driver's constants
+// are lowercase.
+func normalizeResource(resource string) string {
+	return strings.ToLower(strings.TrimSpace(resource))
+}
+
+// isConsoleResource reports whether this driver can address a resource kind at
+// all, before any of it is looked up in the cluster.
+func isConsoleResource(resource string) bool {
+	switch resource {
+	case ResourcePod, ResourceDeployment, ResourceStatefulSet, ResourceDaemonSet, ResourceJob, ResourceReplicaSet, ResourceReplicationController:
+		return true
+	default:
+		return false
+	}
 }
 
 // resolveContainer picks the container a console attaches to, and refuses a
