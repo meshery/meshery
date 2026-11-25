@@ -226,8 +226,8 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, cloneP
 	return marshalMesheryPatterns([]MesheryPattern{clone}), nil
 }
 
-// DeleteMesheryPattern deletes a pattern by ID and removes any associated
-// workspace design mappings in a database transaction.
+// DeleteMesheryPattern deletes a pattern by ID and removes its version history
+// and any associated workspace design mappings in a database transaction.
 func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id core.Uuid) ([]byte, error) {
 	pattern := MesheryPattern{ID: &id}
 	err := mpp.DB.Transaction(func(tx *gorm.DB) error {
@@ -252,7 +252,8 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id core.Uuid) ([]byte, 
 }
 
 // DeleteMesheryPatterns batch deletes the specified patterns and cleans up their
-// associated workspace design mappings within a database transaction.
+// version history and associated workspace design mappings within a database
+// transaction.
 func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
 	var deletedMaptterns []MesheryPattern
 	err := mpp.DB.Transaction(func(tx *gorm.DB) error {
@@ -285,6 +286,8 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 // the non-zero fields of pattern. A design saved without an ID keeps the version
 // its file carries (0.0.1 when it carries none); a save with an ID (an update,
 // or a clone/seed that minted its own ID) bumps the patch of the file's version.
+// A save that carries a design file also records it as a revision in the same
+// transaction; a metadata-only save records none.
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
 	pf, err := patterns.GetPatternFormat(pattern.PatternFile)
 	if err != nil {
@@ -469,7 +472,8 @@ func (mpp *MesheryPatternPersister) updateSavedColumns(db *gorm.DB, pattern *Mes
 	return nil
 }
 
-// SaveMesheryPatterns batch inserts the given patterns
+// SaveMesheryPatterns batch inserts the given patterns and one revision per
+// design, all in a single transaction.
 func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []MesheryPattern) ([]byte, error) {
 	finalPatterns := []MesheryPattern{}
 	versions := make([]string, 0, len(mesheryPatterns))
