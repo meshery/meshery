@@ -231,6 +231,9 @@ describe('getConnectionIDsFromContextIds', () => {
 
   it('safely handles nullish entries inside contexts and k8sConfig arrays', () => {
     expect(getConnectionIDsFromContextIds([null as any], [null as any])).toEqual([]);
+    expect(
+      getConnectionIDsFromContextIds([null as any], [{ connectionId: 'conn-1' } as any]),
+    ).toEqual([]);
     expect(getConnectionIDsFromContextIds([undefined as any], [null as any])).toEqual([]);
     expect(
       getConnectionIDsFromContextIds(['ctx-1', null as any], [null as any, ...sampleConfig]),
@@ -289,6 +292,21 @@ describe('getControllerPollConnectionIDsFromContextIds', () => {
 
   it('respects the context filter', () => {
     expect(getControllerPollConnectionIDsFromContextIds(['ctx-1'], pollConfig)).toEqual(['conn-1']);
+  });
+
+  it('excludes nullish context entries when config lacks an id', () => {
+    expect(
+      getControllerPollConnectionIDsFromContextIds(
+        [null as any],
+        [
+          {
+            connectionId: 'conn-no-id',
+            meshsync_deployment_mode: 'operator',
+            connectionStatus: 'connected',
+          } as any,
+        ],
+      ),
+    ).toEqual([]);
   });
 });
 

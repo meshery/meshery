@@ -283,7 +283,9 @@ export function getControllerPollConnectionIDsFromContextIds(contexts, k8sConfig
     return [];
   }
   return k8sConfig
-    .filter((config) => contexts.some((context) => context == config.id))
+    .filter((config) =>
+      contexts.some((context) => context != null && config != null && context == config.id),
+    )
     .filter((config) => getMeshsyncDeploymentMode(config) === MESHSYNC_DEPLOYMENT_TYPE.OPERATOR)
     .filter((config) => getConnectionStatus(config) === CONNECTION_STATES.CONNECTED)
     .map((config) => config.connectionId);
