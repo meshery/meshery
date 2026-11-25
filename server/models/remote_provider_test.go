@@ -389,12 +389,12 @@ func TestRemoteProvider_OutboundOrgIdIsCanonical(t *testing.T) {
 	}
 
 	cases := []struct {
-		name      string
-		feature   Feature
-		endpoint  string
-		invoke    func(t *testing.T, l *RemoteProvider)
-		wantOrgID string
-		wantPath  string
+		name       string
+		feature    Feature
+		endpoint   string
+		invoke     func(t *testing.T, l *RemoteProvider)
+		wantOrgID  string
+		wantPath   string
 	}{
 		{
 			name:     "GetEnvironments uses orgId",
