@@ -112,6 +112,44 @@ func TestLocalUpdateUserCredential(t *testing.T) {
 		}
 	})
 
+	t.Run("preserves API key when partially updating a legacy-wrapped credential with canonical fields", func(t *testing.T) {
+		provider := newTestProviderWithCredentialDB(t)
+		cred, err := provider.SaveUserCredential("", &Credential{
+			Name:   "legacy-grafana",
+			Type:   "grafana",
+			UserId: userID,
+			Secret: core.Map{
+				"credentialName": "legacy-grafana",
+				"secret": map[string]interface{}{
+					"grafanaURL":    "https://old.grafana.example",
+					"grafanaAPIKey": "keep-api-key",
+				},
+			},
+		})
+		if err != nil {
+			t.Fatalf("save credential: %v", err)
+		}
+
+		got, err := provider.UpdateUserCredential(nil, &Credential{
+			ID:     cred.ID,
+			UserId: userID,
+			Name:   "legacy-grafana-renamed",
+			Type:   "grafana",
+			Secret: core.Map{
+				"grafanaURL": "https://new.grafana.example",
+			},
+		})
+		if err != nil {
+			t.Fatalf("update: %v", err)
+		}
+		if got.Secret["grafanaURL"] != "https://new.grafana.example" {
+			t.Errorf("grafanaURL = %v, want %q", got.Secret["grafanaURL"], "https://new.grafana.example")
+		}
+		if auth := CredentialAuthSecret(got.Secret); auth != "keep-api-key" {
+			t.Errorf("CredentialAuthSecret() = %q, want %q (merged=%#v)", auth, "keep-api-key", got.Secret)
+		}
+	})
+
 	t.Run("unknown id is not found", func(t *testing.T) {
 		provider := newTestProviderWithCredentialDB(t)
 

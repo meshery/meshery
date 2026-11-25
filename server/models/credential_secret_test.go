@@ -226,4 +226,29 @@ func TestMergeCredentialSecrets(t *testing.T) {
 			t.Fatalf("expected nil when both maps are nil")
 		}
 	})
+
+	t.Run("normalizes legacy-wrapped stored secret before merging canonical root updates", func(t *testing.T) {
+		existing := map[string]interface{}{
+			"credentialName": "legacy-grafana",
+			"secret": map[string]interface{}{
+				"grafanaURL":    "https://old.grafana.example",
+				"grafanaAPIKey": "stored-api-key",
+			},
+		}
+		incoming := map[string]interface{}{
+			"grafanaURL": "https://new.grafana.example",
+		}
+
+		got := MergeCredentialSecrets(existing, incoming)
+		want := map[string]interface{}{
+			"grafanaURL":    "https://new.grafana.example",
+			"grafanaAPIKey": "stored-api-key",
+		}
+		if !reflect.DeepEqual(got, want) {
+			t.Fatalf("MergeCredentialSecrets() = %#v, want %#v", got, want)
+		}
+		if auth := CredentialAuthSecret(got); auth != "stored-api-key" {
+			t.Fatalf("CredentialAuthSecret() = %q, want %q", auth, "stored-api-key")
+		}
+	})
 }

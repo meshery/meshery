@@ -37,6 +37,7 @@ import { EVENT_TYPES } from '../lib/event-types';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
 import { normalizeStaticImagePath } from '../utils/fallback';
+import { resolveCredentialPayload } from '../utils/credentialSecret';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   useCreateCredentialMutation,
@@ -76,6 +77,7 @@ interface CredentialModalState {
   data: Record<string, unknown> | null;
   actionType: ActionType;
   id: string | null;
+  originalType: string | null;
   openId: number;
 }
 
@@ -133,6 +135,7 @@ const MesheryCredentialComponent: React.FC = () => {
     data: null,
     actionType: null,
     id: null,
+    originalType: null,
     openId: 0,
   });
   const [credentialType, setCredentialType] = useState<string>(DEFAULT_CREDENTIAL_TYPE);
@@ -144,10 +147,14 @@ const MesheryCredentialComponent: React.FC = () => {
 
   const baseSchema = credentialType ? getSchema(credentialType) : undefined;
   const currentUiSchema = credentialType ? getUiSchema(credentialType) : undefined;
+  const isSameTypeEdit =
+    credModal.actionType === 'update' &&
+    Boolean(credModal.originalType) &&
+    credentialType.toLowerCase() === credModal.originalType!.toLowerCase();
   const currentSchema = buildCredentialFormSchema(
     baseSchema as Record<string, unknown> | undefined,
     currentUiSchema as Record<string, unknown> | undefined,
-    credModal.actionType === 'update',
+    isSameTypeEdit,
   );
 
   const handleCreateCredential = (ev: React.MouseEvent): void => {
@@ -156,7 +163,14 @@ const MesheryCredentialComponent: React.FC = () => {
     setCredentialType(DEFAULT_CREDENTIAL_TYPE);
     setCredentialName(null);
     setFormData({});
-    setCredModal({ open: true, data: {}, actionType: 'create', id: null, openId });
+    setCredModal({
+      open: true,
+      data: {},
+      actionType: 'create',
+      id: null,
+      originalType: null,
+      openId,
+    });
   };
 
   const handleEditCredential = (
@@ -173,8 +187,13 @@ const MesheryCredentialComponent: React.FC = () => {
 
     const schema = getSchema(credType) as Record<string, any> | undefined;
     const uiSchema = getUiSchema(credType) as Record<string, any> | undefined;
+    const resolvedSecret = resolveCredentialPayload(rowData.secret);
+    const secretObj =
+      resolvedSecret && typeof resolvedSecret === 'object' && !Array.isArray(resolvedSecret)
+        ? (resolvedSecret as Record<string, unknown>)
+        : {};
     const sanitizedSecret = sanitizeInitialData(
-      rowData.secret || {},
+      secretObj,
       schema?.properties?.secret,
       uiSchema?.secret,
     );
@@ -186,6 +205,7 @@ const MesheryCredentialComponent: React.FC = () => {
       data: initialFormData,
       actionType: 'update',
       id: rowData.id,
+      originalType: credType,
       openId,
     });
   };
@@ -220,7 +240,14 @@ const MesheryCredentialComponent: React.FC = () => {
 
   const handleClose = (ev?: React.MouseEvent): void => {
     ev?.stopPropagation?.();
-    setCredModal((prev) => ({ ...prev, open: false, data: null, actionType: null, id: null }));
+    setCredModal((prev) => ({
+      ...prev,
+      open: false,
+      data: null,
+      actionType: null,
+      id: null,
+      originalType: null,
+    }));
   };
 
   /**
@@ -460,20 +487,30 @@ const MesheryCredentialComponent: React.FC = () => {
         const schema = getSchema(credentialType) as Record<string, any> | undefined;
         const uiSchema = getUiSchema(credentialType) as Record<string, any> | undefined;
 
-        // Honor writeOnly / password widgets: do not blank a stored secret when the password field is left empty on edit
-        const cleanedSecret = cleanEmptyPasswordFields(
-          secret,
-          schema?.properties?.secret,
-          uiSchema?.secret,
-        );
+        // Honor writeOnly / password widgets only when keeping the original credential type.
+        const submittedSecret = isSameTypeEdit
+          ? cleanEmptyPasswordFields(secret, schema?.properties?.secret, uiSchema?.secret)
+          : secret;
 
-        await updateCredential({ id, name, type: credentialType, secret: cleanedSecret }).unwrap();
+        await updateCredential({
+          id,
+          name,
+          type: credentialType,
+          secret: submittedSecret,
+        }).unwrap();
         notify({ message: `"${credentialType}" updated.`, event_type: EVENT_TYPES.SUCCESS });
       }
 
       setCredModal((prev) =>
         prev.openId === submitOpenId
-          ? { open: false, data: null, actionType: null, id: null, openId: prev.openId }
+          ? {
+              open: false,
+              data: null,
+              actionType: null,
+              id: null,
+              originalType: null,
+              openId: prev.openId,
+            }
           : prev,
       );
     } catch (error) {

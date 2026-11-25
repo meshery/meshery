@@ -132,8 +132,16 @@ func MergeCredentialSecrets(existing, incoming map[string]interface{}) map[strin
 	if existing == nil && incoming == nil {
 		return nil
 	}
-	merged := cloneSecretMap(existing)
-	for k, v := range incoming {
+	resolvedExisting := existing
+	if unwrapped := CredentialPayload(existing); unwrapped != nil {
+		resolvedExisting = unwrapped
+	}
+	resolvedIncoming := incoming
+	if unwrapped := CredentialPayload(incoming); unwrapped != nil {
+		resolvedIncoming = unwrapped
+	}
+	merged := cloneSecretMap(resolvedExisting)
+	for k, v := range resolvedIncoming {
 		if inMap, ok := v.(map[string]interface{}); ok {
 			if exMap, ok := merged[k].(map[string]interface{}); ok {
 				merged[k] = MergeCredentialSecrets(exMap, inMap)

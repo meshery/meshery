@@ -46,13 +46,20 @@ vi.mock('./general/error-404/index', () => ({
 }));
 vi.mock('./shared/Modal/Modal', () => ({
   default: (props: any) => {
+    const [localData, setLocalData] = React.useState<Record<string, any>>(props.formData || {});
+    React.useEffect(() => {
+      setLocalData(props.formData || {});
+    }, [props.formData, props.type]);
     if (!props.open) return null;
     const handleSave = () => {
-      const data = props.formData || {};
-      const validation = customValidator.validateFormData(data, props.schema);
+      const validation = customValidator.validateFormData(localData, props.schema);
       if (validation.errors.length === 0) {
-        props.handleSubmit?.(data);
+        props.handleSubmit?.(localData);
       }
+    };
+    const updateLocal = (next: Record<string, any>) => {
+      setLocalData(next);
+      props.onChange?.(next);
     };
     return (
       <div
@@ -82,6 +89,31 @@ vi.mock('./shared/Modal/Modal', () => ({
           onClick={() => props.schemaChangeHandler?.('prometheus')}
         >
           Switch Prometheus
+        </button>
+        <button
+          data-testid="modal-fill-grafana-no-key-btn"
+          onClick={() =>
+            updateLocal({
+              name: localData?.name || 'prom-cred',
+              secret: { grafanaURL: 'https://grafana.new.example' },
+            })
+          }
+        >
+          Fill Grafana URL only
+        </button>
+        <button
+          data-testid="modal-fill-grafana-with-key-btn"
+          onClick={() =>
+            updateLocal({
+              name: localData?.name || 'prom-cred',
+              secret: {
+                grafanaURL: 'https://grafana.new.example',
+                grafanaAPIKey: 'new-grafana-key',
+              },
+            })
+          }
+        >
+          Fill Grafana URL and Key
         </button>
       </div>
     );
@@ -478,6 +510,61 @@ describe('MesheryCredentialComponent schema forms and toolbar actions', () => {
     expect(modal).toHaveAttribute('data-type', 'grafana');
     const switchedForm = JSON.parse(modal.getAttribute('data-form-data') || '{}');
     expect(switchedForm).toEqual({ name: 'prom-cred', secret: {} });
+  });
+
+  it('requires new-type password fields after switching credential type during edit', async () => {
+    const putPayloads: any[] = [];
+    storedCredentials = [
+      {
+        id: '00000000-0000-0000-0000-000000000104',
+        name: 'prom-to-grafana',
+        type: 'prometheus',
+        secret: { prometheusURL: 'https://prom.example.com' },
+        createdAt: '2026-11-11T10:00:00Z',
+        updatedAt: '2026-11-11T10:00:00Z',
+      } as any,
+    ];
+    vi.restoreAllMocks();
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async (req) => {
+      const request = req as Request;
+      if (request.method === 'PUT') {
+        putPayloads.push(await request.clone().json());
+        return new Response(JSON.stringify({}), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        });
+      }
+      return credentialsResponse(new URL(request.url));
+    });
+
+    renderPage();
+    expect(await screen.findByText('prom-to-grafana')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /edit/i }));
+    fireEvent.click(screen.getByTestId('modal-switch-grafana-btn'));
+
+    // Switching type retains full creation requirements for Grafana: URL without API key must fail validation.
+    fireEvent.click(screen.getByTestId('modal-fill-grafana-no-key-btn'));
+    fireEvent.click(screen.getByTestId('modal-save-btn'));
+    expect(putPayloads).toHaveLength(0);
+    expect(screen.getByTestId('credential-modal')).toBeInTheDocument();
+
+    // Providing both URL and the required Grafana API key passes validation and submits.
+    fireEvent.click(screen.getByTestId('modal-fill-grafana-with-key-btn'));
+    fireEvent.click(screen.getByTestId('modal-save-btn'));
+
+    await waitFor(() => {
+      expect(putPayloads).toHaveLength(1);
+    });
+    expect(putPayloads[0]).toEqual({
+      id: '00000000-0000-0000-0000-000000000104',
+      name: 'prom-to-grafana',
+      type: 'grafana',
+      secret: {
+        grafanaURL: 'https://grafana.new.example',
+        grafanaAPIKey: 'new-grafana-key',
+      },
+    });
   });
 
   it('keeps the modal open on failed save and prevents a slow save from closing a newly opened modal', async () => {
