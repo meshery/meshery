@@ -326,11 +326,37 @@ func buildPolicyEvaluationEventMetadata(resp pattern.EvaluationResponse, serverU
 	return metadata
 }
 
-func policyEvalTimeout() time.Duration {
-	if d := viper.GetDuration("POLICY_EVAL_TIMEOUT"); d > 0 {
-		return d
+// parsePolicyEvalTimeout reads a POLICY_EVAL_TIMEOUT value as a Go duration
+// such as "90s" or "5m". An empty value means the default. A value that does
+// not parse, or is not positive, returns the default and an error saying why
+// it was ignored. That includes a bare number such as "300", which
+// viper.GetDuration would read as 300ns (#24330).
+func parsePolicyEvalTimeout(raw string) (time.Duration, error) {
+	if raw == "" {
+		return defaultPolicyEvalTimeout, nil
 	}
-	return defaultPolicyEvalTimeout
+	d, err := time.ParseDuration(raw)
+	if err != nil {
+		return defaultPolicyEvalTimeout, err
+	}
+	if d <= 0 {
+		return defaultPolicyEvalTimeout, fmt.Errorf("duration must be positive, got %q", raw)
+	}
+	return d, nil
+}
+
+// policyEvalTimeout returns the timeout for one relationship evaluation. An
+// invalid POLICY_EVAL_TIMEOUT falls back to the default and is logged once per
+// Handler (h.policyEvalTimeoutWarnOnce), not once per evaluation.
+func (h *Handler) policyEvalTimeout() time.Duration {
+	raw := viper.GetString("POLICY_EVAL_TIMEOUT")
+	d, err := parsePolicyEvalTimeout(raw)
+	if err != nil && h.log != nil {
+		h.policyEvalTimeoutWarnOnce.Do(func() {
+			h.log.Warnf("ignoring POLICY_EVAL_TIMEOUT=%q (%v); using the default %s. Set a Go duration such as 5m.", raw, err, defaultPolicyEvalTimeout)
+		})
+	}
+	return d
 }
 
 // EvaluateDesign evaluates the design based on the relationship policies.
@@ -828,7 +854,8 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	// Wall-clock timeout bounds the HTTP response; the eval goroutine
 	// may still run to completion in the background.
-	evalCtx, cancel := context.WithTimeout(r.Context(), policyEvalTimeout())
+	evalTimeout := h.policyEvalTimeout()
+	evalCtx, cancel := context.WithTimeout(r.Context(), evalTimeout)
 	defer cancel()
 
 	token, _ := evalCtx.Value(models.TokenCtxKey).(string)
@@ -899,7 +926,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 			h.writeEvaluationResult(rw, result)
 			return
 		case <-evalCtx.Done():
-			h.writeEvalCtxError(rw, evalCtx)
+			h.writeEvalCtxError(rw, evalCtx, evalTimeout)
 			return
 		}
 	}
@@ -954,7 +981,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	case <-evalCtx.Done():
 		// Unblock any followers waiting on this designID.
 		h.evalTracker.publish(designKey, evalResult{err: errEvalTimeout})
-		h.writeEvalCtxError(rw, evalCtx)
+		h.writeEvalCtxError(rw, evalCtx, evalTimeout)
 		return
 	}
 }
@@ -1001,9 +1028,10 @@ func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResul
 	}
 }
 
-func (h *Handler) writeEvalCtxError(rw http.ResponseWriter, ctx context.Context) {
+// writeEvalCtxError reports why evalCtx ended. timeout is the value that
+// bounded the evaluation, so the log line and the 504 name the same timeout.
+func (h *Handler) writeEvalCtxError(rw http.ResponseWriter, ctx context.Context, timeout time.Duration) {
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
-		timeout := policyEvalTimeout()
 		if h.log != nil {
 			h.log.Warnf("relationship policy evaluation exceeded %s", timeout)
 		}
