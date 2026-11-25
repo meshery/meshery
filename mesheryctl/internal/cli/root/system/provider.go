@@ -327,6 +327,8 @@ func validateProvider(mctlCfg *config.MesheryCtlConfig, provider string) error {
 	return nil
 }
 
+var resetProviderUsageMsg = "Usage: mesheryctl system provider reset\nRun 'mesheryctl system provider reset --help' to see detailed help message"
+
 // resetProviderCmd represents the reset command
 var resetProviderCmd = &cobra.Command{
 	Use:   "reset",
@@ -337,11 +339,13 @@ var resetProviderCmd = &cobra.Command{
 mesheryctl system provider reset
 	`,
 	SilenceUsage: true,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return errors.New(utils.SystemProviderSubError("this command takes no arguments.\n", "reset"))
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", resetProviderUsageMsg))
 		}
-
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
