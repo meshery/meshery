@@ -212,15 +212,11 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, cloneP
 		Type:          mesheryPattern.Type,
 		SourceContent: mesheryPattern.SourceContent,
 	}
-	cloneFile, err := patterns.GetPatternFormat(clone.PatternFile)
-	if err != nil {
-		return nil, err
-	}
 	if err := mpp.DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(&clone).Error; err != nil {
 			return ErrDBCreate(err)
 		}
-		return recordPatternVersion(tx, &clone, cloneFile.Version)
+		return recordPatternVersion(tx, &clone, pf.Version)
 	}); err != nil {
 		return nil, err
 	}
@@ -519,6 +515,21 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 	return body, err
 }
 
+// deletePublishedPatterns deletes every published design along with its version
+// history, so no revision is left referencing a design that no longer exists.
+// Published designs on the local provider are always seeded catalog entries, so
+// this is the shared boundary for both the seed and replace paths.
+func deletePublishedPatterns(db *gorm.DB) error {
+	return db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("design_id IN (?)",
+			tx.Model(&MesheryPattern{}).Select("id").Where("visibility = ?", Published),
+		).Delete(&MesheryPatternVersion{}).Error; err != nil {
+			return err
+		}
+		return tx.Where("visibility = ?", Published).Delete(&MesheryPattern{}).Error
+	})
+}
+
 // ReplaceSeededPatterns makes the published designs in the database mirror the
 // supplied set, which SeedContent derives from the on-disk catalog directory.
 //
@@ -535,8 +546,7 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 // rows here are always seeded, and private user-authored designs never match.
 func (mpp *MesheryPatternPersister) ReplaceSeededPatterns(seeded []*MesheryPattern) error {
 	return mpp.DB.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Where("visibility = ?", Published).
-			Delete(&MesheryPattern{}).Error; err != nil {
+		if err := deletePublishedPatterns(tx); err != nil {
 			return err
 		}
 

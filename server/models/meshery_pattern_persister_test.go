@@ -598,6 +598,37 @@ func TestReplaceSeededPatterns_InsertsSeededDesigns(t *testing.T) {
 	}
 }
 
+// Seeding mints a fresh ID per catalog file on every pass, so the previous
+// pass's designs are deleted rather than overwritten. Their revision rows must
+// go with them, otherwise every reseed leaves another full copy of the catalog
+// behind pointing at a design that no longer exists.
+func TestReplaceSeededPatterns_DropsHistoryOfReplacedDesigns(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+
+	var latest uuid.UUID
+	for pass := 0; pass < 2; pass++ {
+		id := uuid.Must(uuid.NewV4())
+		latest = id
+		seeded := []*MesheryPattern{{
+			ID: &id, Name: "seed", PatternFile: persisterTestDesign, Visibility: Published,
+		}}
+		if err := mpp.ReplaceSeededPatterns(seeded); err != nil {
+			t.Fatalf("replace seeded patterns (pass %d): %v", pass+1, err)
+		}
+	}
+
+	var revisions []MesheryPatternVersion
+	if err := db.Find(&revisions).Error; err != nil {
+		t.Fatalf("load revisions: %v", err)
+	}
+	if len(revisions) != 1 {
+		t.Fatalf("revisions after two seeding passes = %d, want 1 (only the surviving design)", len(revisions))
+	}
+	if revisions[0].DesignID != latest {
+		t.Errorf("revision design id = %s, want the surviving design %s", revisions[0].DesignID, latest)
+	}
+}
+
 func TestSaveMesheryPattern_DatabaseErrorIsMeshKitError(t *testing.T) {
 	db, mpp := newPatternPersisterTestDB(t)
 	id, _ := seedImportedPattern(t, db)
