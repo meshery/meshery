@@ -266,7 +266,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 			},
 			ExpectError:   true,
-			ExpectedError: ErrDesignValidationFailed(errors.New(string(validationErrorResponse))),
+			ExpectedError: ErrDesignValidationFailed(errors.New(validationErrorDetail)),
 		},
 		{
 			Name: "reports a deployment HTTP 500 with --skip-validation",
@@ -296,5 +296,21 @@ func TestDesignDeployRequestErrorRemediation(t *testing.T) {
 	}
 	if !strings.Contains(remedy, "mesheryctl system logs") {
 		t.Errorf("expected remediation to mention mesheryctl system logs for server-side failures, got %q", remedy)
+	}
+}
+
+func TestDesignDeployRequestErrorSurfacesServerDetail(t *testing.T) {
+	// Body shape written by server/models/httputil.WriteMeshkitError for
+	// server/handlers.ErrPatternDeploy: the actionable detail is carried in
+	// longDescription, while error and probableCause describe the wrapper.
+	body := `{"error":"Unable to deploy the selected design \"SampleApp\"","code":"meshery-server-1073","severity":"ALERT","probableCause":["Connection Error: There was an error connecting to the selected target platform (i.e. Kubernetes cluster(s))."],"suggestedRemediation":["Verify that the Kubernetes connection status is 'Connected' or try uploading a new kubeconfig."],"longDescription":["` + validationErrorDetail + `"]}`
+
+	err := designDeployRequestError(utils.ErrMesheryServerInternalError(errors.New(body)), false)
+
+	if code := meshkiterrors.GetCode(err); code != ErrDesignValidationFailedCode {
+		t.Errorf("expected error code %s, got %s", ErrDesignValidationFailedCode, code)
+	}
+	if desc := meshkiterrors.GetLDescription(err); desc != validationErrorDetail {
+		t.Errorf("expected the server's long description %q, got %q", validationErrorDetail, desc)
 	}
 }

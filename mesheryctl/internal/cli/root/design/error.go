@@ -15,6 +15,7 @@
 package design
 
 import (
+	"encoding/json"
 	stderrors "errors"
 	"fmt"
 	"strings"
@@ -210,9 +211,33 @@ func ErrDesignValidationFailed(err error) error {
 		[]string{"Fix the reported component configuration, or rerun with --skip-validation to deploy without server-side validation", "Check `mesheryctl system logs` if the design configuration is valid, since the server may have failed while deploying it"})
 }
 
+// mesheryServerError is the wire shape Meshery Server uses for non-2xx
+// responses written through WriteMeshkitError.
+type mesheryServerError struct {
+	Error           string   `json:"error"`
+	LongDescription []string `json:"longDescription"`
+}
+
+// serverErrorCause extracts the actionable detail from a server error body,
+// falling back to the short description and then to the body itself.
+func serverErrorCause(body string) string {
+	var resp mesheryServerError
+	if err := json.Unmarshal([]byte(body), &resp); err != nil {
+		return body
+	}
+
+	if detail := strings.TrimSpace(strings.Join(resp.LongDescription, "\n")); detail != "" {
+		return detail
+	}
+	if short := strings.TrimSpace(resp.Error); short != "" {
+		return short
+	}
+	return body
+}
+
 func designDeployRequestError(err error, skipValidation bool) error {
 	if !skipValidation && errors.GetCode(err) == utils.ErrMesheryServerInternalErrorCode {
-		return ErrDesignValidationFailed(stderrors.New(errors.GetLDescription(err)))
+		return ErrDesignValidationFailed(stderrors.New(serverErrorCause(errors.GetLDescription(err))))
 	}
 	return err
 }

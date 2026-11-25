@@ -3,7 +3,6 @@ package design
 import (
 	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -24,11 +23,6 @@ func TestDeployCmd(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
-
-	validationErrorResponse, err := os.ReadFile(filepath.Join(fixturesDir, "deploy.validationError.response.golden"))
-	if err != nil {
-		t.Fatalf("failed to read deploy.validationError fixture: %v", err)
-	}
 
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
@@ -205,7 +199,7 @@ func TestDeployCmd(t *testing.T) {
 			},
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  ErrDesignValidationFailed(errors.New(string(validationErrorResponse))),
+			ExpectedError:  ErrDesignValidationFailed(errors.New(validationErrorDetail)),
 		},
 	}
 
