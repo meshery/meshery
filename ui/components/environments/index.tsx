@@ -102,6 +102,7 @@ const Environments = () => {
 
   const {
     data: environmentsData,
+    isFetching: isFetchingEnvironments,
     isError: isEnvironmentsError,
     error: environmentsError,
   } = useGetEnvironmentsQuery(
@@ -115,6 +116,22 @@ const Environments = () => {
       skip: !orgId || !canViewEnv,
     },
   );
+
+  // Deleting the last environment on the last page leaves that page empty, and
+  // the empty state hides the pager. Step back to the new last page once the
+  // refetch reports the smaller total.
+  useEffect(() => {
+    if (!environmentsData || isFetchingEnvironments) {
+      return;
+    }
+    const lastPage = Math.max(
+      0,
+      Math.ceil(Number(environmentsData.totalCount ?? 0) / pageSize) - 1,
+    );
+    if (page > lastPage) {
+      setPage(lastPage);
+    }
+  }, [environmentsData, isFetchingEnvironments, page, pageSize]);
 
   const [createEnvironment, createEnvResult] = useCreateEnvironmentMutation();
   const isCreatingEnvironment = Boolean(createEnvResult?.isLoading);
