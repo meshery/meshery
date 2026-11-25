@@ -6,11 +6,11 @@ LLMS index: [llms.txt](/pr-preview/pr-24333/llms.txt)
 
 # mesheryctl adapter deploy
 
-Deploy infrastructure to the Kubernetes cluster
+Deploy infrastructure to the connected Kubernetes clusters
 
 ## Synopsis
 
-Deploy infrastructure to the connected Kubernetes cluster
+Deploy infrastructure to every Kubernetes cluster connected to Meshery Server
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>

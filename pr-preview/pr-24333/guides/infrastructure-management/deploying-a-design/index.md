@@ -57,7 +57,7 @@ Undeploying deletes the resources that the design describes from the selected cl
 <div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Deploying from mesheryctl</div>
 
 
-`mesheryctl design deploy`, `mesheryctl design apply`, `mesheryctl design undeploy`, and `mesheryctl design delete -f` target every Kubernetes cluster connected to Meshery Server, and no flag narrows that set. A deployment fails when no cluster is connected. To deploy to a subset of your clusters, use Meshery UI.
+`mesheryctl design deploy`, `mesheryctl design apply`, `mesheryctl design undeploy`, and `mesheryctl design delete` (with a file or URL) target every Kubernetes cluster connected to Meshery Server, and no flag narrows that set. A deployment fails when no cluster is connected. File-based `undeploy` and file- or URL-based `delete` list the target clusters and ask for confirmation before removing resources. Use `--yes` to skip confirmation in scripts. To deploy to a subset of your clusters, use Meshery UI.
 </div>
 
 

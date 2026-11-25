@@ -57,12 +57,23 @@ mesheryctl design delete -f [file | URL]
 </div>
 </pre> 
 
+delete a design file without listing the target clusters and asking for confirmation
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design delete -f [file | URL] --yes
+
+</div>
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -f, --file string   Path to design file
   -h, --help          help for delete
+  -y, --yes           (optional) assume yes for user interactive prompts.
 
 </div>
 </pre>

@@ -103,7 +103,7 @@ mesheryctl connection list
 
 ## Run commands without prompts
 
-- Pass `--yes` (`-y`) to commands that ask for confirmation, such as `system` subcommands and `perf apply`.
+- Pass `--yes` (`-y`) to commands that ask for confirmation, such as `system` subcommands, `perf apply`, and `design undeploy` or `design delete` with a file or URL.
 - Refer to designs, profiles, and other resources by ID, or by a name that matches only one of them. Some commands prompt you to choose when a name matches more than one resource, and a prompt stalls the job.
 - Use `--output-format json` (`-o json`) on `view` commands, and parse the result with `jq`, instead of scraping table output.
 - Add `--verbose` when a step fails, to see the requests `mesheryctl` makes.

@@ -417,7 +417,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       
       <tr><td><a href="/pr-preview/pr-24333/reference/mesheryctl/adapter/deploy/">deploy</a></td>
         <td></td>
-        <td>Deploy infrastructure into the cluster</td>
+        <td>Deploy infrastructure into every Kubernetes cluster connected to Meshery Server</td>
       </tr>
       <tr>
         <td></td>
@@ -431,7 +431,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       </tr>
       <tr><td><a href="/pr-preview/pr-24333/reference/mesheryctl/adapter/remove/">remove</a></td>
         <td></td>
-        <td>Remove infrastructure in the connected Kubernetes cluster</td>
+        <td>Remove infrastructure in every Kubernetes cluster connected to Meshery Server</td>
       </tr>
       <tr>
         <td></td>
@@ -500,6 +500,11 @@ Installation, troubleshooting and debugging of Meshery and its adapters
         <td></td>
         <td>--file, -f</td>
         <td>Deletes the resources that were created, using design file</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--yes, -y</td>
+        <td>(optional) assume yes for user interactive prompts.</td>
       </tr>
       <tr><td><a href="/pr-preview/pr-24333/reference/mesheryctl/design/deploy/">deploy</a></td>
         <td></td>
@@ -599,6 +604,11 @@ Installation, troubleshooting and debugging of Meshery and its adapters
         <td></td>
         <td>--file, -f</td>
         <td>Undeploy application with an application file</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>--yes, -y</td>
+        <td>(optional) assume yes for user interactive prompts.</td>
       </tr>
       <tr><td><a href="/pr-preview/pr-24333/reference/mesheryctl/design/view/">view</a></td>
         <td></td>

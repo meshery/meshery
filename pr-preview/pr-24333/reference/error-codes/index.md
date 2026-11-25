@@ -22575,6 +22575,31 @@ Run `mesheryctl system login` to re-authenticate</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrConfirmClusterRemovalCode-1268" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrConfirmClusterRemovalCode-more-info" onclick="toggle_visibility('mesheryctl-ErrConfirmClusterRemovalCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1268" class="error-name-code">
+              <a href="/pr-preview/pr-24333/reference/error-codes/client-mesheryctl/errconfirmclusterremovalcode-1268/"><code>ErrConfirmClusterRemovalCode-1268</code></a>
+            </td>
+            <td>Unable to read cluster removal confirmation. Pass --yes for non-interactive use</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrConfirmClusterRemovalCode-1268" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="mesheryctl-ErrConfirmClusterRemovalCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Interactive confirmation could not be read</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Pass --yes for non-interactive use</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>

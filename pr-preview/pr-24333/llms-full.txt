@@ -8393,6 +8393,8 @@ You can now design and manage any infrastructure that Meshery supports. For the 
     
   
     
+  
+    
       
     
   
@@ -17993,7 +17995,7 @@ Undeploying deletes the resources that the design describes from the selected cl
 <div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Deploying from mesheryctl</div>
 
 
-`mesheryctl design deploy`, `mesheryctl design apply`, `mesheryctl design undeploy`, and `mesheryctl design delete -f` target every Kubernetes cluster connected to Meshery Server, and no flag narrows that set. A deployment fails when no cluster is connected. To deploy to a subset of your clusters, use Meshery UI.
+`mesheryctl design deploy`, `mesheryctl design apply`, `mesheryctl design undeploy`, and `mesheryctl design delete` (with a file or URL) target every Kubernetes cluster connected to Meshery Server, and no flag narrows that set. A deployment fails when no cluster is connected. File-based `undeploy` and file- or URL-based `delete` list the target clusters and ask for confirmation before removing resources. Use `--yes` to skip confirmation in scripts. To deploy to a subset of your clusters, use Meshery UI.
 </div>
 
 
@@ -23043,7 +23045,7 @@ mesheryctl connection list
 
 ## Run commands without prompts
 
-- Pass `--yes` (`-y`) to commands that ask for confirmation, such as `system` subcommands and `perf apply`.
+- Pass `--yes` (`-y`) to commands that ask for confirmation, such as `system` subcommands, `perf apply`, and `design undeploy` or `design delete` with a file or URL.
 - Refer to designs, profiles, and other resources by ID, or by a name that matches only one of them. Some commands prompt you to choose when a name matches more than one resource, and a prompt stalls the job.
 - Use `--output-format json` (`-o json`) on `view` commands, and parse the result with `jq`, instead of scraping table output.
 - Add `--verbose` when a step fails, to see the requests `mesheryctl` makes.
@@ -75906,6 +75908,12 @@ url: /pr-preview/pr-24333/reference/error-codes/library-meshkit/errcompressingla
 
 
 --------------------------------------------------------------------------------
+title: "ErrConfirmClusterRemovalCode-1268"
+url: /pr-preview/pr-24333/reference/error-codes/client-mesheryctl/errconfirmclusterremovalcode-1268/index.md
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
 title: "ErrConnectActionCode-1373"
 url: /pr-preview/pr-24333/reference/error-codes/component-meshery-server/errconnectactioncode-1373/index.md
 --------------------------------------------------------------------------------
@@ -102438,6 +102446,31 @@ Run `mesheryctl system login` to re-authenticate</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrConfirmClusterRemovalCode-1268" class="tbl-body-row hover-effect" data-details-id="mesheryctl-ErrConfirmClusterRemovalCode-more-info" onclick="toggle_visibility('mesheryctl-ErrConfirmClusterRemovalCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1268" class="error-name-code">
+              <a href="/pr-preview/pr-24333/reference/error-codes/client-mesheryctl/errconfirmclusterremovalcode-1268/"><code>ErrConfirmClusterRemovalCode-1268</code></a>
+            </td>
+            <td>Unable to read cluster removal confirmation. Pass --yes for non-interactive use</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrConfirmClusterRemovalCode-1268" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="mesheryctl-ErrConfirmClusterRemovalCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Interactive confirmation could not be read</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Pass --yes for non-interactive use</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>
@@ -114604,11 +114637,11 @@ url: /pr-preview/pr-24333/reference/mesheryctl/adapter/deploy/index.md
 
 # mesheryctl adapter deploy
 
-Deploy infrastructure to the Kubernetes cluster
+Deploy infrastructure to the connected Kubernetes clusters
 
 ## Synopsis
 
-Deploy infrastructure to the connected Kubernetes cluster
+Deploy infrastructure to every Kubernetes cluster connected to Meshery Server
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -115718,12 +115751,23 @@ mesheryctl design delete -f [file | URL]
 </div>
 </pre> 
 
+delete a design file without listing the target clusters and asking for confirmation
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design delete -f [file | URL] --yes
+
+</div>
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -f, --file string   Path to design file
   -h, --help          help for delete
+  -y, --yes           (optional) assume yes for user interactive prompts.
 
 </div>
 </pre>
@@ -116225,12 +116269,23 @@ mesheryctl design undeploy -f [filepath]
 </div>
 </pre> 
 
+Undeploy design without listing the target clusters and asking for confirmation
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design undeploy -f [filepath] --yes
+
+</div>
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -f, --file string   Path to design file
   -h, --help          help for undeploy
+  -y, --yes           (optional) assume yes for user interactive prompts.
 
 </div>
 </pre>

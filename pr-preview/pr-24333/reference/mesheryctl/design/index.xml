@@ -289,6 +289,15 @@ mesheryctl design undeploy -f [filepath]
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
+&lt;p&gt;Undeploy design without listing the target clusters and asking for confirmation&lt;/p&gt;
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
+mesheryctl design undeploy -f [filepath] --yes
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/pre&gt; 
 &lt;h2 id="options"&gt;
 	Options
 &lt;/h2&gt;
@@ -296,6 +305,7 @@ mesheryctl design undeploy -f [filepath]
 &lt;div class='codeblock'&gt;
  -f, --file string Path to design file
  -h, --help help for undeploy
+ -y, --yes (optional) assume yes for user interactive prompts.
 
 &lt;/div&gt;
 &lt;/pre&gt;

@@ -143,6 +143,7 @@ Section pages:
 - [ErrComponentGenerateCode-11136](/pr-preview/pr-24333/reference/error-codes/library-meshkit/errcomponentgeneratecode-11136/)
 - [ErrCompressArtifactCode-1424](/pr-preview/pr-24333/reference/error-codes/component-meshery-server/errcompressartifactcode-1424/)
 - [ErrCompressingLayerCode-11151](/pr-preview/pr-24333/reference/error-codes/library-meshkit/errcompressinglayercode-11151/)
+- [ErrConfirmClusterRemovalCode-1268](/pr-preview/pr-24333/reference/error-codes/client-mesheryctl/errconfirmclusterremovalcode-1268/)
 - [ErrConnectActionCode-1373](/pr-preview/pr-24333/reference/error-codes/component-meshery-server/errconnectactioncode-1373/)
 - [ErrConnectCode-11118](/pr-preview/pr-24333/reference/error-codes/library-meshkit/errconnectcode-11118/)
 - [ErrConnectingToServerCode-1017](/pr-preview/pr-24333/reference/error-codes/client-mesheryctl/errconnectingtoservercode-1017/)
