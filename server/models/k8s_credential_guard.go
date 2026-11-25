@@ -8,6 +8,7 @@ import (
 	"sort"
 
 	"github.com/spf13/viper"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
@@ -147,15 +148,16 @@ func UntrustedKubeCredentialFields(auth, cluster map[string]interface{}) []strin
 }
 
 // pairsMatchServerContext reports whether every user of cfg is paired, in a
-// context of srv, with a cluster of srv that has the same name, endpoint, and
-// effective CA trust as the one cfg carries.
+// context of srv, with a cluster of srv that has the same name, endpoint,
+// effective CA trust, and exec cluster extension as the one cfg carries.
 func pairsMatchServerContext(cfg, srv *clientcmdapi.Config) bool {
 	for uname := range cfg.AuthInfos {
 		for cname, c := range cfg.Clusters {
 			sc := srv.Clusters[cname]
 			if sc == nil || c.Server != sc.Server || c.ProxyURL != sc.ProxyURL ||
 				c.TLSServerName != sc.TLSServerName || c.InsecureSkipTLSVerify != sc.InsecureSkipTLSVerify ||
-				!clusterCAMatches(c, sc) {
+				!clusterCAMatches(c, sc) ||
+				!clusterExecExtensionMatches(c, sc) {
 				return false
 			}
 			paired := false
@@ -171,6 +173,35 @@ func pairsMatchServerContext(cfg, srv *clientcmdapi.Config) bool {
 		}
 	}
 	return len(cfg.AuthInfos) > 0
+}
+
+const execClusterExtensionKey = "client.authentication.k8s.io/exec"
+
+// clusterExecExtensionMatches reports whether c's exec cluster extension matches
+// sc's exec cluster extension.
+func clusterExecExtensionMatches(c, sc *clientcmdapi.Cluster) bool {
+	var cExt, scExt runtime.Object
+	if c.Extensions != nil {
+		cExt = c.Extensions[execClusterExtensionKey]
+	}
+	if sc.Extensions != nil {
+		scExt = sc.Extensions[execClusterExtensionKey]
+	}
+	if cExt == nil && scExt == nil {
+		return true
+	}
+	if cExt == nil || scExt == nil {
+		return false
+	}
+	if reflect.DeepEqual(cExt, scExt) {
+		return true
+	}
+	cu, ok1 := cExt.(*runtime.Unknown)
+	scu, ok2 := scExt.(*runtime.Unknown)
+	if ok1 && ok2 {
+		return bytes.Equal(bytes.TrimSpace(cu.Raw), bytes.TrimSpace(scu.Raw))
+	}
+	return false
 }
 
 // clusterCAMatches reports whether c's CA trust matches sc's effective CA trust,

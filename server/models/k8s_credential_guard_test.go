@@ -371,3 +371,158 @@ current-context: c
 		}
 	})
 }
+
+// TestK8sContextFromConnectionRequiresMatchingExecClusterExtension pins issue #24234 (item 2):
+// a credential that reuses the server's exec plugin must match the server's exec cluster extension
+// (client.authentication.k8s.io/exec). Tampering with or omitting the extension must be refused.
+func TestK8sContextFromConnectionRequiresMatchingExecClusterExtension(t *testing.T) {
+	folder := t.TempDir()
+	if err := os.WriteFile(filepath.Join(folder, "config"), []byte(`apiVersion: v1
+kind: Config
+clusters:
+- name: c
+  cluster:
+    server: https://127.0.0.1:1
+    extensions:
+    - name: client.authentication.k8s.io/exec
+      extension:
+        audience: aud-trusted
+users:
+- name: u
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1
+      command: aws
+      args: [eks, get-token]
+contexts:
+- name: c
+  context: {cluster: c, user: u}
+current-context: c
+`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	setKubeconfigFolder(t, folder)
+
+	ownExec := map[string]interface{}{"apiVersion": "client.authentication.k8s.io/v1", "command": "aws", "args": []interface{}{"eks", "get-token"}}
+	trustedExt := []interface{}{map[string]interface{}{
+		"name":      "client.authentication.k8s.io/exec",
+		"extension": map[string]interface{}{"audience": "aud-trusted"},
+	}}
+	attackerExt := []interface{}{map[string]interface{}{
+		"name":      "client.authentication.k8s.io/exec",
+		"extension": map[string]interface{}{"audience": "aud-attacker"},
+	}}
+
+	t.Run("identical exec cluster extension is allowed", func(t *testing.T) {
+		auth, cl := kubeCredential(map[string]interface{}{"exec": ownExec}, map[string]interface{}{
+			"server":     "https://127.0.0.1:1",
+			"extensions": trustedExt,
+		})
+		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cl})
+		if _, err := K8sContextFromConnection(provider, "", conn); err != nil {
+			t.Fatalf("expected allowed for matching exec cluster extension, got %v", err)
+		}
+	})
+
+	t.Run("substituted exec cluster extension is refused", func(t *testing.T) {
+		auth, cl := kubeCredential(map[string]interface{}{"exec": ownExec}, map[string]interface{}{
+			"server":     "https://127.0.0.1:1",
+			"extensions": attackerExt,
+		})
+		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cl})
+		if _, err := K8sContextFromConnection(provider, "", conn); meshkiterrors.GetCode(err) != ErrUnsafeKubeCredentialCode {
+			t.Fatalf("err = %v, want ErrUnsafeKubeCredentialCode", err)
+		}
+	})
+
+	t.Run("server with exec extension and credential missing extension is refused", func(t *testing.T) {
+		auth, cl := kubeCredential(map[string]interface{}{"exec": ownExec}, map[string]interface{}{
+			"server": "https://127.0.0.1:1",
+		})
+		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cl})
+		if _, err := K8sContextFromConnection(provider, "", conn); meshkiterrors.GetCode(err) != ErrUnsafeKubeCredentialCode {
+			t.Fatalf("err = %v, want ErrUnsafeKubeCredentialCode", err)
+		}
+	})
+
+	t.Run("server without exec extension and credential injecting extension is refused", func(t *testing.T) {
+		noExtFolder := t.TempDir()
+		if err := os.WriteFile(filepath.Join(noExtFolder, "config"), []byte(`apiVersion: v1
+kind: Config
+clusters:
+- name: c
+  cluster:
+    server: https://127.0.0.1:1
+users:
+- name: u
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1
+      command: aws
+      args: [eks, get-token]
+contexts:
+- name: c
+  context: {cluster: c, user: u}
+current-context: c
+`), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		setKubeconfigFolder(t, noExtFolder)
+
+		auth, cl := kubeCredential(map[string]interface{}{"exec": ownExec}, map[string]interface{}{
+			"server":     "https://127.0.0.1:1",
+			"extensions": attackerExt,
+		})
+		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cl})
+		if _, err := K8sContextFromConnection(provider, "", conn); meshkiterrors.GetCode(err) != ErrUnsafeKubeCredentialCode {
+			t.Fatalf("err = %v, want ErrUnsafeKubeCredentialCode", err)
+		}
+	})
+
+	t.Run("server without exec extension and credential without extension is allowed", func(t *testing.T) {
+		noExtFolder := t.TempDir()
+		if err := os.WriteFile(filepath.Join(noExtFolder, "config"), []byte(`apiVersion: v1
+kind: Config
+clusters:
+- name: c
+  cluster:
+    server: https://127.0.0.1:1
+users:
+- name: u
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1
+      command: aws
+      args: [eks, get-token]
+contexts:
+- name: c
+  context: {cluster: c, user: u}
+current-context: c
+`), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		setKubeconfigFolder(t, noExtFolder)
+
+		auth, cl := kubeCredential(map[string]interface{}{"exec": ownExec}, map[string]interface{}{
+			"server": "https://127.0.0.1:1",
+		})
+		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cl})
+		if _, err := K8sContextFromConnection(provider, "", conn); err != nil {
+			t.Fatalf("expected allowed when neither has extension, got %v", err)
+		}
+	})
+
+	t.Run("unrelated cluster extension is ignored", func(t *testing.T) {
+		auth, cl := kubeCredential(map[string]interface{}{"exec": ownExec}, map[string]interface{}{
+			"server": "https://127.0.0.1:1",
+			"extensions": []interface{}{
+				map[string]interface{}{"name": "client.authentication.k8s.io/exec", "extension": map[string]interface{}{"audience": "aud-trusted"}},
+				map[string]interface{}{"name": "vendor.example.com/other", "extension": map[string]interface{}{"foo": "bar"}},
+			},
+		})
+		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cl})
+		if _, err := K8sContextFromConnection(provider, "", conn); err != nil {
+			t.Fatalf("expected allowed with unrelated extension, got %v", err)
+		}
+	})
+}
