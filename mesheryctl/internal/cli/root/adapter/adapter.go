@@ -151,7 +151,7 @@ func validateMesh(mctlCfg *config.MesheryCtlConfig, meshName string) (string, er
 }
 
 func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool, spec string) (string, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/operation"
+	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/operation?contexts=all"
 	method := "POST"
 	data := url.Values{}
 	data.Set("adapter", adapterURL)
