@@ -47,13 +47,13 @@ describe('generateDateRange', () => {
 
   it('handles Week view date array spanning a month boundary', () => {
     const days = [
-      new Date('2024-01-28T00:00:00Z'),
-      new Date('2024-01-29T00:00:00Z'),
-      new Date('2024-01-30T00:00:00Z'),
-      new Date('2024-01-31T00:00:00Z'),
-      new Date('2024-02-01T00:00:00Z'),
-      new Date('2024-02-02T00:00:00Z'),
-      new Date('2024-02-03T00:00:00Z'),
+      new Date('2024-01-28T12:00:00Z'),
+      new Date('2024-01-29T12:00:00Z'),
+      new Date('2024-01-30T12:00:00Z'),
+      new Date('2024-01-31T12:00:00Z'),
+      new Date('2024-02-01T12:00:00Z'),
+      new Date('2024-02-02T12:00:00Z'),
+      new Date('2024-02-03T12:00:00Z'),
     ];
     const range = generateDateRange(days);
     expect(range).toEqual({
@@ -64,8 +64,8 @@ describe('generateDateRange', () => {
 
   it('handles Month view range object with start and end', () => {
     const range = generateDateRange({
-      start: new Date('2024-02-01T00:00:00Z'),
-      end: new Date('2024-02-29T00:00:00Z'),
+      start: new Date('2024-02-01T12:00:00Z'),
+      end: new Date('2024-02-29T12:00:00Z'),
     });
     expect(range).toEqual({
       start: '2024-02-01',
@@ -103,13 +103,13 @@ describe('PerformanceCalendar onRangeChange', () => {
     expect(typeof latestProps.onRangeChange).toBe('function');
 
     const weekDates = [
-      new Date('2024-01-28T00:00:00Z'),
-      new Date('2024-01-29T00:00:00Z'),
-      new Date('2024-01-30T00:00:00Z'),
-      new Date('2024-01-31T00:00:00Z'),
-      new Date('2024-02-01T00:00:00Z'),
-      new Date('2024-02-02T00:00:00Z'),
-      new Date('2024-02-03T00:00:00Z'),
+      new Date('2024-01-28T12:00:00Z'),
+      new Date('2024-01-29T12:00:00Z'),
+      new Date('2024-01-30T12:00:00Z'),
+      new Date('2024-01-31T12:00:00Z'),
+      new Date('2024-02-01T12:00:00Z'),
+      new Date('2024-02-02T12:00:00Z'),
+      new Date('2024-02-03T12:00:00Z'),
     ];
 
     await act(async () => {
