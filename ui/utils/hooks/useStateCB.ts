@@ -50,7 +50,7 @@ function useStateCB<T>(
           : nextState;
 
       stateRef.current = resolvedState;
-      _setState(resolvedState);
+      _setState(() => resolvedState);
     },
     [],
   );

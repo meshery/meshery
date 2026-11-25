@@ -150,4 +150,20 @@ describe('useStateCB', () => {
     expect(result.current[1]).toBe(initialSetState);
     expect(result.current[2]).toBe(initialGetRef);
   });
+
+  it('preserves function-valued state when resolved from an updater', () => {
+    const initialFn = () => 1;
+    const nextFn = () => 2;
+    const after = vi.fn();
+    const { result } = renderHook(() => useStateCB<() => number>(() => initialFn));
+
+    act(() => {
+      result.current[1](() => nextFn, after);
+    });
+
+    expect(result.current[0]).toBe(nextFn);
+    expect(result.current[0]()).toBe(2);
+    expect(result.current[2]()).toBe(nextFn);
+    expect(after).toHaveBeenCalledWith(nextFn);
+  });
 });
