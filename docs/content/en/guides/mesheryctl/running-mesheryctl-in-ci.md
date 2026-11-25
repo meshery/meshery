@@ -105,7 +105,7 @@ mesheryctl design export "my-app" --type oci
 ```
 
 {{% alert color="info" title="Deploying designs from CI" %}}
-`mesheryctl design deploy` and `mesheryctl design apply` do not currently tell Meshery Server which clusters to target, so Meshery Server rejects them. To deploy a design, use Meshery UI as described in [Deploying a Design]({{< ref "guides/infrastructure-management/deploying-a-design.md" >}}).
+`mesheryctl design deploy` and `mesheryctl design apply` target every cluster connected to Meshery Server, so a pipeline step deploys to all of them, not to a chosen few. [Deploying a Design]({{< ref "guides/infrastructure-management/deploying-a-design.md" >}}) covers which clusters a deployment reaches.
 {{% /alert %}}
 
 ## A complete GitHub Actions job
