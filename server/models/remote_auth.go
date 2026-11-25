@@ -301,7 +301,9 @@ func (l *RemoteProvider) setIntrospectCacheIfEpoch(cacheKey string, ttl time.Dur
 	if l.introspectCache == nil {
 		l.introspectCache = make(map[string]time.Time)
 	}
-	evictExpiredAndCap(l.introspectCache, now, func(exp time.Time) time.Time { return exp }, maxAuthCacheEntries)
+	if _, exists := l.introspectCache[cacheKey]; !exists {
+		evictExpiredAndCap(l.introspectCache, now, func(exp time.Time) time.Time { return exp }, maxAuthCacheEntries)
+	}
 	l.introspectCache[cacheKey] = now.Add(ttl)
 }
 
@@ -356,7 +358,9 @@ func (l *RemoteProvider) setCachedUserProfileIfEpoch(cacheKey string, user *User
 	if l.userProfileCache == nil {
 		l.userProfileCache = make(map[string]cachedUserEntry)
 	}
-	evictExpiredAndCap(l.userProfileCache, now, func(e cachedUserEntry) time.Time { return e.expiresAt }, maxAuthCacheEntries)
+	if _, exists := l.userProfileCache[cacheKey]; !exists {
+		evictExpiredAndCap(l.userProfileCache, now, func(e cachedUserEntry) time.Time { return e.expiresAt }, maxAuthCacheEntries)
+	}
 	l.userProfileCache[cacheKey] = cachedUserEntry{
 		user:      *user,
 		expiresAt: now.Add(ttl),

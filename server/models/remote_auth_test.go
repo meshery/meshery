@@ -7,6 +7,7 @@ import (
 	"crypto/rsa"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"io"
 	"math/big"
 	"net/http"
@@ -1198,5 +1199,62 @@ func TestRemoteProviderGetUserDetails_MidFlightInvalidationSkipsCacheWrite(t *te
 	}
 	if got := profileCalls.Load(); got != 2 {
 		t.Fatalf("expected post-invalidation GetUserDetails to re-fetch /profile (2 calls), got %d", got)
+	}
+}
+
+func TestRemoteProviderAuthCache_UpdateExistingKeyDoesNotEvictAtCapacity(t *testing.T) {
+	provider := &RemoteProvider{
+		introspectCache:  make(map[string]time.Time),
+		userProfileCache: make(map[string]cachedUserEntry),
+	}
+
+	future := time.Now().Add(10 * time.Minute)
+	for i := 0; i < maxAuthCacheEntries; i++ {
+		key := fmt.Sprintf("key-%d", i)
+		provider.introspectCache[key] = future
+		provider.userProfileCache[key] = cachedUserEntry{
+			user:      User{FirstName: fmt.Sprintf("User-%d", i)},
+			expiresAt: future,
+		}
+	}
+
+	existingKey := "key-0"
+	provider.setIntrospectCacheIfEpoch(existingKey, 5*time.Minute, provider.authCacheEpoch)
+	if len(provider.introspectCache) != maxAuthCacheEntries {
+		t.Fatalf("expected introspectCache size to stay at %d after updating existing key, got %d", maxAuthCacheEntries, len(provider.introspectCache))
+	}
+	if _, exists := provider.introspectCache[existingKey]; !exists {
+		t.Fatalf("expected existing key %q to remain in introspectCache", existingKey)
+	}
+	if _, exists := provider.introspectCache["key-1"]; !exists {
+		t.Fatalf("expected unrelated key to not be evicted when updating existing key")
+	}
+
+	provider.setCachedUserProfileIfEpoch(existingKey, &User{FirstName: "Updated-0"}, 5*time.Minute, provider.authCacheEpoch)
+	if len(provider.userProfileCache) != maxAuthCacheEntries {
+		t.Fatalf("expected userProfileCache size to stay at %d after updating existing key, got %d", maxAuthCacheEntries, len(provider.userProfileCache))
+	}
+	if _, exists := provider.userProfileCache[existingKey]; !exists {
+		t.Fatalf("expected existing key %q to remain in userProfileCache", existingKey)
+	}
+	if _, exists := provider.userProfileCache["key-1"]; !exists {
+		t.Fatalf("expected unrelated key to not be evicted when updating existing key")
+	}
+
+	newKey := "key-new"
+	provider.setIntrospectCacheIfEpoch(newKey, 5*time.Minute, provider.authCacheEpoch)
+	if len(provider.introspectCache) != maxAuthCacheEntries {
+		t.Fatalf("expected introspectCache size to remain capped at %d after inserting new key, got %d", maxAuthCacheEntries, len(provider.introspectCache))
+	}
+	if _, exists := provider.introspectCache[newKey]; !exists {
+		t.Fatalf("expected new key %q to be present in introspectCache", newKey)
+	}
+
+	provider.setCachedUserProfileIfEpoch(newKey, &User{FirstName: "New"}, 5*time.Minute, provider.authCacheEpoch)
+	if len(provider.userProfileCache) != maxAuthCacheEntries {
+		t.Fatalf("expected userProfileCache size to remain capped at %d after inserting new key, got %d", maxAuthCacheEntries, len(provider.userProfileCache))
+	}
+	if _, exists := provider.userProfileCache[newKey]; !exists {
+		t.Fatalf("expected new key %q to be present in userProfileCache", newKey)
 	}
 }

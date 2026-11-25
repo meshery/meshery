@@ -173,6 +173,12 @@ type UserPref struct {
 	Preferences *Preference `json:"preferences,omitempty"`
 }
 
+// cachedUserEntry stores a cached User and its expiration time.
+// Note: user is shallow-copied on read (userCopy := entry.user in readUserProfileCacheOrEpoch
+// and *v.(*User) in GetUserDetails). Pointer, slice, and map fields on v1beta3.User
+// (Preferences, Organizations, Teams, Country, Region, RoleNames, Socials) share underlying
+// memory with the cached struct. Callers must treat the returned User as read-only and
+// must not mutate these nested fields in place.
 type cachedUserEntry struct {
 	user      User
 	expiresAt time.Time
