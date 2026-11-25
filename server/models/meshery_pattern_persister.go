@@ -21,6 +21,7 @@ import (
 
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/encoding"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/patterns"
 )
 
@@ -317,17 +318,15 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 	stampLocalProviderOwner(pattern)
 
 	updated := false
-	readPending := true
 	err = mpp.DB.Transaction(func(tx *gorm.DB) error {
 		// A caller can supply an ID for a design that has yet to be inserted.
 		if !isNew {
 			var count int64
 			if err := tx.Model(&MesheryPattern{}).Where("id = ?", *pattern.ID).Count(&count).Error; err != nil {
-				return err
+				return ErrDBRead(err)
 			}
 			updated = count > 0
 		}
-		readPending = false
 
 		if !updated {
 			suppliedVisibility := pattern.Visibility
@@ -354,8 +353,16 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 		}
 		return recordPatternVersion(tx, pattern, pf.Version)
 	})
-	if err != nil && readPending {
-		return nil, ErrDBRead(err)
+	if err != nil {
+		var meshkitErr *meshkiterrors.Error
+		if !errors.As(err, &meshkitErr) {
+			// A transaction that failed before or after its body ran carries no
+			// MeshKit code of its own, so report it as a write failure.
+			err = ErrDBPut(err)
+		}
+		if meshkiterrors.GetCode(err) == ErrDBReadCode {
+			return nil, err
+		}
 	}
 
 	// The saved struct holds only what the request carried; respond with the

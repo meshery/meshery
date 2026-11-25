@@ -629,6 +629,8 @@ func TestReplaceSeededPatterns_DropsHistoryOfReplacedDesigns(t *testing.T) {
 	}
 }
 
+// A closed database fails when the save's transaction starts, before the
+// existence check runs, so the failure is a write failure and not a read one.
 func TestSaveMesheryPattern_DatabaseErrorIsMeshKitError(t *testing.T) {
 	db, mpp := newPatternPersisterTestDB(t)
 	id, _ := seedImportedPattern(t, db)
@@ -639,6 +641,24 @@ func TestSaveMesheryPattern_DatabaseErrorIsMeshKitError(t *testing.T) {
 	_ = sqlDB.Close()
 
 	_, err = mpp.SaveMesheryPattern(postStylePattern(id))
+	if code := mkerrors.GetCode(err); code != ErrDBPutCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBPutCode, err)
+	}
+}
+
+// A save whose existence check fails reports a read failure with no body, so
+// the handler answers with the MeshKit error rather than echoing a design.
+func TestSaveMesheryPattern_CountErrorIsReadError(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	id, _ := seedImportedPattern(t, db)
+	if err := db.Migrator().DropTable(&MesheryPattern{}); err != nil {
+		t.Fatalf("drop designs table: %v", err)
+	}
+
+	body, err := mpp.SaveMesheryPattern(postStylePattern(id))
+	if body != nil {
+		t.Errorf("body = %s, want no body alongside a read error", body)
+	}
 	if code := mkerrors.GetCode(err); code != ErrDBReadCode {
 		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBReadCode, err)
 	}
