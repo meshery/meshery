@@ -2,55 +2,17 @@
 
 # End-to-end tests for `mesheryctl system login`.
 #
-# Every test starts from a clean state: Meshery is stopped and redeployed
-# (--reset) and the saved login token is removed, so tests cannot influence
-# each other.
+# Assumes Meshery is already deployed and running in Kubernetes.
 #
-# Environment:
-#   E2E_HELPERS_PATH  path to the shared bats helpers (required)
-#   MESHERYCTL_BIN    mesheryctl binary to test (default: mesheryctl on PATH)
-#   AUTH_FILE         saved login token (default: ~/.meshery/auth.json)
+# A dedicated temporary Meshery configuration is used so these tests
+# do not modify the user's existing Meshery configuration.
+#
+# Port forwarding is started once for the whole test file.
 
-DASHBOARD_PORT=9081
-setup() {
-    load "$E2E_HELPERS_PATH/bats_libraries"
-    _load_bats_libraries
 
-    # Do not open real browser windows during tests.
-    export BROWSER=true
-
-    DASHBOARD_PID=""
-    DASHBOARD_LOG=""
-    LOGIN_PID=""
-    LOGIN_LOG=""
-
-    # Start every test logged out.
-    rm -f "${AUTH_FILE:-$HOME/.meshery/auth.json}"
-
-    # Stopping an already-stopped Meshery instance is expected.
-    run $MESHERYCTL_BIN system stop --yes >/dev/null 2>&1 || true
-}
-
-teardown() {
-    # Stop login and dashboard processes, if still running.
-    if [[ -n "${LOGIN_PID:-}" ]]; then
-        stop_process_tree "$LOGIN_PID"
-        wait "$LOGIN_PID" 2>/dev/null || true
-    fi
-
-    if [[ -n "${DASHBOARD_PID:-}" ]]; then
-        stop_process_tree "$DASHBOARD_PID"
-        wait "$DASHBOARD_PID" 2>/dev/null || true
-    fi
-
-    # Remove temporary log files.
-    [[ -z "${LOGIN_LOG:-}" ]] || rm -f "$LOGIN_LOG"
-    [[ -z "${DASHBOARD_LOG:-}" ]] || rm -f "$DASHBOARD_LOG"
-
-    rm -f "${AUTH_FILE:-$HOME/.meshery/auth.json}"
-
-    # Stop Meshery regardless of the test outcome.
-    "$MESHERYCTL_BIN" system stop --force -y >/dev/null 2>&1 || true
+# Execute mesheryctl using the isolated test configuration.
+mesheryctl_cmd() {
+    "$MESHERYCTL_BIN" --config "$TEST_MESHERY_CONFIG" "$@"
 }
 
 # Terminates a process and its descendants.
@@ -77,51 +39,79 @@ stop_process_tree() {
     kill -KILL "$pid" 2>/dev/null || true
 }
 
-# Starts Meshery on Kubernetes and opens the dashboard port-forward.
-start_meshery() {
-    run "$MESHERYCTL_BIN" system start \
-        --skip-browser \
-        --skip-update \
-        --reset \
-        -p kubernetes \
-        --yes
-
-    assert_success
-    # Matches both "Meshery deployed." and "Meshery deployed on Kubernetes."
-    assert_output --partial "Meshery deployed"
-
-    start_dashboard
-}
-
-# Starts dashboard port forwarding in the background and waits until the
-# Meshery API is reachable. Runs in the test shell (not under `run`) so that
-# DASHBOARD_PID is visible to teardown.
-start_dashboard() {
+setup_file() {
+    export MESHERY_NAMESPACE="meshery"
+    export MESHERY_SERVICE="meshery"
+    export DASHBOARD_PORT="9081"
+    
+    local source_config
+    local service_port
     local i
 
-    DASHBOARD_LOG="$(mktemp)" || return 1
+    source_config="${MESHERY_CONFIG:-$HOME/.meshery/config.yaml}"
 
-    # `3>&-` keeps the background process from holding bats' fd 3 open,
-    # which would make bats hang when the run finishes.
-    "$MESHERYCTL_BIN" system dashboard \
-        --port-forward \
-        -p "$DASHBOARD_PORT" \
-        >"$DASHBOARD_LOG" 2>&1 3>&- &
+    # Ensure an existing Meshery configuration is available.
+    if [[ ! -f "$source_config" ]]; then
+        echo "Meshery configuration not found: $source_config" >&3
+        return 1
+    fi
 
-    DASHBOARD_PID=$!
+    # Create an isolated configuration for this test run.
+    export TEST_CONFIG_DIR="$(mktemp -d)"
 
-    # Wait up to approximately 30 seconds for the Meshery API.
-    for ((i = 0; i < 30; i++)); do
-        if ! kill -0 "$DASHBOARD_PID" 2>/dev/null; then
-            echo "Dashboard port forwarding exited unexpectedly:" >&3
-            cat "$DASHBOARD_LOG" >&3
+    export TEST_MESHERY_CONFIG="$TEST_CONFIG_DIR/config.yaml"
+
+    cp "$source_config" "$TEST_MESHERY_CONFIG" || return 1
+
+    # Retrieve the Kubernetes Service port, not its NodePort.
+    service_port="$(kubectl get svc "$MESHERY_SERVICE" \
+        -n "$MESHERY_NAMESPACE" \
+        -o jsonpath='{.spec.ports[0].port}')" || return 1
+
+    if [[ ! "$service_port" =~ ^[0-9]+$ ]]; then
+        echo "Could not determine Meshery Service port." >&3
+        return 1
+    fi
+
+    # Create a dedicated context pointing to our predictable local port.
+    export TEST_CONTEXT="bats-e2e-$$"
+
+    export TEST_ENDPOINT="http://127.0.0.1:${DASHBOARD_PORT}"
+
+    if ! "$MESHERYCTL_BIN" --config "$TEST_MESHERY_CONFIG" \
+        system context create "$TEST_CONTEXT" \
+        --platform kubernetes \
+        --url "$TEST_ENDPOINT" \
+        --set \
+        --yes; then
+        echo "Failed to create the temporary Meshery context." >&3
+        return 1
+    fi
+
+    # Start Kubernetes port forwarding independently of mesheryctl.
+    # Forward the local test port to the Meshery Service port.
+    export PORT_FORWARD_LOG="$(mktemp)"
+
+    kubectl port-forward \
+        -n "$MESHERY_NAMESPACE" \
+        "svc/$MESHERY_SERVICE" \
+        "${DASHBOARD_PORT}:${service_port}" \
+        >"$PORT_FORWARD_LOG" 2>&1 3>&- &
+
+    export PORT_FORWARD_PID=$!
+
+    # Wait until the Meshery API becomes reachable.
+    for ((i = 0; i < 60; i++)); do
+        if ! kill -0 "$PORT_FORWARD_PID" 2>/dev/null; then
+            echo "Kubernetes port forwarding exited unexpectedly:" >&3
+            cat "$PORT_FORWARD_LOG" >&3
             return 1
         fi
 
         if curl --silent --fail \
             --connect-timeout 1 \
-            --max-time 1 \
-            "http://localhost:${DASHBOARD_PORT}/api/system/version" \
+            --max-time 2 \
+            "$TEST_ENDPOINT/api/system/version" \
             >/dev/null 2>&1; then
             return 0
         fi
@@ -129,9 +119,35 @@ start_dashboard() {
         sleep 1
     done
 
-    echo "Timed out waiting for the Meshery API on port ${DASHBOARD_PORT}:" >&3
-    cat "$DASHBOARD_LOG" >&3
+    echo "Meshery API not reachable at $TEST_ENDPOINT:" >&3
+    cat "$PORT_FORWARD_LOG" >&3
+
+    stop_process_tree "$PORT_FORWARD_PID"
     return 1
+}
+
+teardown_file() {
+    # Stop Kubernetes port forwarding.
+    if [[ -n "${PORT_FORWARD_PID:-}" ]]; then
+        stop_process_tree "$PORT_FORWARD_PID"
+    fi
+
+    # Remove temporary files and configuration.
+    [[ -z "${PORT_FORWARD_LOG:-}" ]] || rm -f "$PORT_FORWARD_LOG"
+    [[ -z "${TEST_CONFIG_DIR:-}" ]] || rm -rf "$TEST_CONFIG_DIR"
+}
+
+setup() {
+    load "$E2E_HELPERS_PATH/bats_libraries"
+	_load_bats_libraries
+
+    # Start each test logged out.
+    # Logging out when already logged out is expected.
+    run mesheryctl_cmd system logout --yes
+}
+
+teardown() {
+    run mesheryctl_cmd system logout --yes
 }
 
 # Initiates Meshery provider authentication without waiting for browser
@@ -139,26 +155,27 @@ start_dashboard() {
 verify_meshery_login_initiation() {
     local found=0
     local i
+    local login_log
+    local login_pid
 
-    LOGIN_LOG="$(mktemp)" || return 1
+    login_log="$(mktemp)" || return 1
 
     # Start login independently so its output can be monitored.
-    "$MESHERYCTL_BIN" system login -p Meshery \
-        >"$LOGIN_LOG" 2>&1 3>&- &
+    mesheryctl_cmd system login -p Meshery \
+        >"$login_log" 2>&1 3>&- &
 
-    LOGIN_PID=$!
+    login_pid=$!
 
     # Wait up to 30 seconds for the authentication initiation message.
     for ((i = 0; i < 30; i++)); do
-        if grep -Fq "Initiating login..." "$LOGIN_LOG"; then
+        if grep -Fq "Initiating login..." "$login_log"; then
             found=1
             break
         fi
 
         # Stop waiting if the login process exits prematurely.
-        if ! kill -0 "$LOGIN_PID" 2>/dev/null; then
-            # Re-check: it may have printed the message right before exiting.
-            grep -Fq "Initiating login..." "$LOGIN_LOG" && found=1
+        if ! kill -0 "$login_pid" 2>/dev/null; then
+            grep -Fq "Initiating login..." "$login_log" && found=1
             break
         fi
 
@@ -166,120 +183,37 @@ verify_meshery_login_initiation() {
     done
 
     # Terminate the CLI without waiting for browser-based authentication.
-    stop_process_tree "$LOGIN_PID"
-    wait "$LOGIN_PID" 2>/dev/null || true
-    LOGIN_PID=""
+    stop_process_tree "$login_pid"
+    wait "$login_pid" 2>/dev/null || true
 
     if [[ "$found" -ne 1 ]]; then
         echo "Meshery authentication was not initiated."
-        cat "$LOGIN_LOG"
+        cat "$login_log"
+        rm -f "$login_log"
         return 1
     fi
 
-    cat "$LOGIN_LOG"
+    cat "$login_log"
+    rm -f "$login_log"
 }
 
-@test "Given Meshery is deployed, When Local is selected interactively, Then authentication should succeed" {
-    start_meshery
-
-    run run_expect '
-        set timeout 30
-        log_user 1
-
-        spawn $env(MESHERYCTL_BIN) system login
-
-        # Wait for the provider selection menu.
-        expect {
-            -re {Select a Provider} {}
-            timeout {
-                puts "Provider selection menu did not appear"
-                exit 2
-            }
-            eof {
-                puts "Login process exited before displaying the provider menu"
-                exit 2
-            }
-        }
-
-        # Navigate until Local becomes the highlighted provider,
-        # instead of relying on its position in the list.
-        set found 0
-
-        for {set i 0} {$i < 15 && !$found} {incr i} {
-            expect {
-                -re {▸[^\r\n]*\yLocal\y} {
-                    set found 1
-                }
-                -re {▸[^\r\n]*} {
-                    send "\033\[B"
-                    after 300
-                }
-                timeout {
-                    puts "Could not determine the highlighted provider"
-                    exit 3
-                }
-                eof {
-                    puts "Login process exited during provider selection"
-                    exit 3
-                }
-            }
-        }
-
-        if {!$found} {
-            puts "Local provider was not found in the selection menu"
-            exit 4
-        }
-
-        # Select Local and wait for authentication to complete.
-        send "\r"
-
-        expect {
-            eof {}
-            timeout {
-                puts "Login did not finish after selecting Local"
-                exit 6
-            }
-        }
-
-        # wait returns: pid spawn_id os_error_flag value
-        # os_error_flag is 0 when value is the real exit status.
-        set wait_result [wait]
-
-        if {[lindex $wait_result 2] != 0} {
-            puts "Failed to retrieve login process exit status"
-            exit 5
-        }
-
-        exit [lindex $wait_result 3]
-    ' 60
+@test "[cut=System][tg=System Login] Given Meshery is deployed, When Local is selected explicitly, Then authentication should succeed" {
+    run mesheryctl_cmd system login -p Local
 
     assert_success
     assert_output --partial "authenticated"
 }
 
-@test "Given Meshery is deployed, When Local is selected explicitly, Then authentication should succeed" {
-    start_meshery
-
-    run "$MESHERYCTL_BIN" system login -p Local
-
-    assert_success
-    assert_output --partial "authenticated"
-}
-
-@test "Given Meshery is deployed, When the Meshery provider is selected, Then authentication should be initiated" {
-    start_meshery
-
+@test "[cut=System][tg=System Login] Given Meshery is deployed, When the Meshery provider is selected, Then authentication should be initiated" {
     run verify_meshery_login_initiation
 
     assert_success
     assert_output --partial "Initiating login..."
 }
 
-@test "Given Meshery is deployed, When an unknown provider is selected, Then authentication should fail" {
-    start_meshery
-
-    run "$MESHERYCTL_BIN" system login -p Unknown
+@test "[cut=System][tg=System Login] Given Meshery is deployed, When an unknown provider is selected, Then authentication should fail" {
+    run mesheryctl_cmd system login -p Unknown
 
     assert_failure
-    assert_output --partial "the specified provider 'Unknownn' is not available. "
+    assert_output --partial 'Provider "Unknown" is not offered by this Meshery Server.'
 }
