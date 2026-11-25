@@ -104,30 +104,40 @@ describe('useEventListener', () => {
   });
 
   it('gracefully no-ops and does not subscribe when eventName is empty or whitespace-only', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const target = new EventTarget();
     const addSpy = vi.spyOn(target, 'addEventListener');
     const handler = vi.fn();
 
-    renderHook(() => useEventListener('', handler, target));
-    renderHook(() => useEventListener('   ', handler, target));
-    renderHook(() => useEventListener('\t\n', handler, target));
+    try {
+      renderHook(() => useEventListener('', handler, target));
+      renderHook(() => useEventListener('   ', handler, target));
+      renderHook(() => useEventListener('\t\n', handler, target));
 
-    expect(addSpy).not.toHaveBeenCalled();
+      expect(addSpy).not.toHaveBeenCalled();
+    } finally {
+      warnSpy.mockRestore();
+    }
   });
 
   it('gracefully no-ops and does not subscribe when eventName is not a string', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const target = new EventTarget();
     const addSpy = vi.spyOn(target, 'addEventListener');
     const handler = vi.fn();
 
-    // @ts-expect-error testing invalid eventName inputs
-    renderHook(() => useEventListener(null, handler, target));
-    // @ts-expect-error testing invalid eventName inputs
-    renderHook(() => useEventListener(undefined, handler, target));
-    // @ts-expect-error testing invalid eventName inputs
-    renderHook(() => useEventListener(123, handler, target));
+    try {
+      // @ts-expect-error testing invalid eventName inputs
+      renderHook(() => useEventListener(null, handler, target));
+      // @ts-expect-error testing invalid eventName inputs
+      renderHook(() => useEventListener(undefined, handler, target));
+      // @ts-expect-error testing invalid eventName inputs
+      renderHook(() => useEventListener(123, handler, target));
 
-    expect(addSpy).not.toHaveBeenCalled();
+      expect(addSpy).not.toHaveBeenCalled();
+    } finally {
+      warnSpy.mockRestore();
+    }
   });
 
   it('trims whitespace from eventName when subscribing', () => {
@@ -206,5 +216,43 @@ describe('useEventListener', () => {
     const { unmount } = renderHook(() => useEventListener('ping', vi.fn(), fakeTarget));
 
     expect(() => unmount()).not.toThrow();
+  });
+
+  it('does not re-subscribe when only surrounding whitespace in eventName changes', () => {
+    const target = new EventTarget();
+    const addSpy = vi.spyOn(target, 'addEventListener');
+    const removeSpy = vi.spyOn(target, 'removeEventListener');
+    const handler = vi.fn();
+
+    const { rerender } = renderHook(({ name }) => useEventListener(name, handler, target), {
+      initialProps: { name: '  ping  ' },
+    });
+
+    expect(addSpy).toHaveBeenCalledTimes(1);
+    expect(removeSpy).not.toHaveBeenCalled();
+
+    rerender({ name: 'ping' });
+
+    expect(addSpy).toHaveBeenCalledTimes(1);
+    expect(removeSpy).not.toHaveBeenCalled();
+  });
+
+  it('logs a dev-only warning when eventName is empty or non-string outside production', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const target = new EventTarget();
+
+    try {
+      renderHook(() => useEventListener('', vi.fn(), target));
+      expect(warnSpy).toHaveBeenCalledTimes(1);
+
+      vi.stubEnv('NODE_ENV', 'production');
+      warnSpy.mockClear();
+
+      renderHook(() => useEventListener('   ', vi.fn(), target));
+      expect(warnSpy).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllEnvs();
+      warnSpy.mockRestore();
+    }
   });
 });
