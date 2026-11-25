@@ -229,9 +229,10 @@ describe('useDebouncedCallback', () => {
 
   it('cancels pending invocation when delay changes before timer fires', () => {
     const fn = vi.fn();
-    const { result, rerender } = renderHook(({ delay }) => useDebouncedCallback(fn, delay), {
-      initialProps: { delay: 100 },
-    });
+    const { result, rerender } = renderHook(
+      ({ delay }: { delay: number | null }) => useDebouncedCallback(fn, delay),
+      { initialProps: { delay: 100 as number | null } },
+    );
 
     act(() => {
       result.current();
@@ -241,6 +242,26 @@ describe('useDebouncedCallback', () => {
 
     act(() => {
       vi.advanceTimersByTime(500);
+    });
+
+    expect(fn).not.toHaveBeenCalled();
+  });
+
+  it('cancels pending invocation when supplied delay changes even if normalized delay stays 300ms', () => {
+    const fn = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ delay }: { delay: number | null }) => useDebouncedCallback(fn, delay),
+      { initialProps: { delay: 300 as number | null } },
+    );
+
+    act(() => {
+      result.current();
+    });
+
+    rerender({ delay: null });
+
+    act(() => {
+      vi.advanceTimersByTime(300);
     });
 
     expect(fn).not.toHaveBeenCalled();

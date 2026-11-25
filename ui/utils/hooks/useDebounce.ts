@@ -46,11 +46,13 @@ const useDebouncedCallback = <TArgs extends unknown[]>(
     [clearPendingTimeout, normalizedDelay],
   );
 
+  // Runs on unmount and whenever delay or normalizedDelay changes, so a
+  // pending invocation is also cancelled when the delay changes. Keep them in deps.
   useEffect(() => {
     return () => {
       clearPendingTimeout();
     };
-  }, [clearPendingTimeout, normalizedDelay]);
+  }, [clearPendingTimeout, delay, normalizedDelay]);
 
   return debouncedFunction;
 };
