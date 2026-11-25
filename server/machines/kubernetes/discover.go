@@ -94,6 +94,13 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", k8sContext.Name, k8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
 	}
 
+	// Update only the enriched server ID and version under setupLock, preserving
+	// any concurrent updates to other fields on the stored context.
+	machinectx.setupLock.Lock()
+	machinectx.K8sContext.KubernetesServerID = k8sContext.KubernetesServerID
+	machinectx.K8sContext.Version = k8sContext.Version
+	machinectx.setupLock.Unlock()
+
 	// machinectx.log.Debug("exiting execute func from discovered state", connection)
 
 	return machines.Register, nil, nil
