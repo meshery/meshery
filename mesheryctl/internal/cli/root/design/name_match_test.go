@@ -45,6 +45,42 @@ func TestDesignByNameRejectsSubstringMatch(t *testing.T) {
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
 }
 
+// The server's `page` parameter is zero-based with 10 designs per page. When 10
+// designs containing "nginx" fill page 0 and the design named exactly "nginx" is
+// on page 1, `design deploy nginx` and `design apply nginx` must deploy it.
+func TestDesignByNameFindsExactMatchOnSecondPage(t *testing.T) {
+	testContext := utils.NewTestHelper(t)
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+
+	searchURLs := []utils.MockURL{
+		{Method: "GET", URL: testContext.BaseURL + "/api/pattern/types", Response: "view.designTypes.response.golden", ResponseCode: 200},
+		{Method: "GET", URL: testContext.BaseURL + "/api/pattern?populate=pattern_file&search=nginx", Response: "design.search.page0.response.golden", ResponseCode: 200},
+		{Method: "GET", URL: testContext.BaseURL + "/api/pattern?page=1&populate=pattern_file&search=nginx", Response: "design.search.page1.response.golden", ResponseCode: 200},
+	}
+	withDeploy := func(response string) []utils.MockURL {
+		return append(slices.Clone(searchURLs), utils.MockURL{Method: "POST", URL: testContext.BaseURL + "/api/pattern/deploy", Response: response, ResponseCode: 200})
+	}
+	tests := []utils.MesheryMultiURLCommamdTest{
+		{
+			Name:             "given nginx is on the second page when design deploy nginx then design is deployed",
+			Args:             []string{"deploy", "nginx"},
+			URLs:             withDeploy("deploy.designdeploy.response.golden"),
+			ExpectedResponse: "deploy.output.golden",
+		},
+		{
+			Name:             "given nginx is on the second page when design apply nginx then design is applied",
+			Args:             []string{"apply", "nginx"},
+			URLs:             withDeploy("apply.designDeploy.response.golden"),
+			ExpectedResponse: "apply.output.golden",
+		},
+	}
+	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}
+
 func TestExactNameMatches(t *testing.T) {
 	designs := func(names ...string) []models.MesheryPattern {
 		out := make([]models.MesheryPattern, 0, len(names))
