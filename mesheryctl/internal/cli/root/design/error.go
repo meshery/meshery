@@ -41,6 +41,7 @@ const (
 	ErrEvaluateDesignCode             = "mesheryctl-1247"
 	ErrEvaluateDesignResponseCode     = "mesheryctl-1248"
 	ErrConfirmClusterRemovalCode      = "mesheryctl-1268"
+	ErrNoConnectedClustersCode        = "mesheryctl-1269"
 )
 
 const (
@@ -207,4 +208,12 @@ func ErrConfirmClusterRemoval(err error) error {
 		[]string{err.Error()},
 		[]string{"Interactive confirmation could not be read"},
 		[]string{"Pass --yes for non-interactive use"})
+}
+
+func ErrNoConnectedClusters() error {
+	return errors.New(ErrNoConnectedClustersCode, errors.Alert,
+		[]string{"No Kubernetes cluster is connected, so there is nothing to remove from"},
+		[]string{"Removal targets every connected Kubernetes cluster, and none are connected"},
+		[]string{"Meshery has no connected Kubernetes clusters"},
+		[]string{"Connect a Kubernetes cluster using mesheryctl connections or the Meshery UI and retry"})
 }

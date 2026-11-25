@@ -19,6 +19,7 @@ import (
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/design"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -28,10 +29,13 @@ var (
 	removeCmd = &cobra.Command{
 		Use:   "remove",
 		Short: "Remove cloud and cloud native infrastructure",
-		Long:  `Remove cloud and cloud native infrastructure`,
+		Long:  `Remove cloud and cloud native infrastructure from every connected Kubernetes cluster.`,
 		Example: `
 // Remove Linkerd deployment
 mesheryctl adapter remove linkerd
+
+// Remove Linkerd without an interactive prompt
+mesheryctl adapter remove linkerd --yes
 
 // Remove a Linkerd control plane found under a specific namespace (linkerd-ns)
 mesheryctl adapter remove linkerd --namespace linkerd-ns
@@ -49,6 +53,15 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
+			confirmed, err := design.ConfirmClusterRemoval(fmt.Sprintf("Adapter '%s' will be removed", strings.ToLower(meshName)))
+			if err != nil {
+				return err
+			}
+			if !confirmed {
+				utils.Log.Info("Remove cancelled")
+				return nil
+			}
+
 			s := utils.CreateDefaultSpinner(fmt.Sprintf("Removing %s", meshName), fmt.Sprintf("\n%s infrastructure removed", meshName))
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
@@ -69,6 +82,7 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 )
 
 func init() {
+	removeCmd.Flags().BoolVarP(&utils.SilentFlag, "yes", "y", false, "(optional) assume yes for user interactive prompts.")
 	removeCmd.Flags().StringVarP(
 		&namespace, "namespace", "n", "default",
 		"Kubernetes namespace where the mesh is deployed",

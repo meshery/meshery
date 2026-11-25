@@ -2234,6 +2234,15 @@
         "short_description": "Unable to read cluster removal confirmation. Pass --yes for non-interactive use",
         "probable_cause": "Interactive confirmation could not be read",
         "suggested_remediation": "Pass --yes for non-interactive use"
+      },
+      "1269": {
+        "name": "ErrNoConnectedClustersCode",
+        "code": "1269",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "No Kubernetes cluster is connected, so there is nothing to remove from",
+        "probable_cause": "Meshery has no connected Kubernetes clusters",
+        "suggested_remediation": "Connect a Kubernetes cluster using mesheryctl connections or the Meshery UI and retry"
       }
     }
   }

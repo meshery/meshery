@@ -14,7 +14,7 @@ Remove cloud and cloud native infrastructure
 
 ## Synopsis
 
-Remove cloud and cloud native infrastructure
+Remove cloud and cloud native infrastructure from every connected Kubernetes cluster.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -36,6 +36,16 @@ mesheryctl adapter remove linkerd
 </div>
 </pre> 
 
+Remove Linkerd without an interactive prompt
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl adapter remove linkerd --yes
+
+</div>
+</div>
+</pre> 
+
 Remove a Linkerd control plane found under a specific namespace (linkerd-ns)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -52,6 +62,7 @@ mesheryctl adapter remove linkerd --namespace linkerd-ns
 <div class='codeblock'>
   -h, --help               help for remove
   -n, --namespace string   Kubernetes namespace where the mesh is deployed (default "default")
+  -y, --yes                (optional) assume yes for user interactive prompts.
 
 </div>
 </pre>

@@ -1,0 +1,6 @@
+[
+  {
+    "name": "SampleApp",
+    "patternFile": "name: SampleApp\nschemaVersion: designs.meshery.io/v1beta3\nversion: 0.0.1\ncomponents:\n  - id: 3817ec9a-1d83-4f6f-9154-0fd4408ba9f0\n    displayName: myapp\n    component:\n      kind: Deployment\n      version: apps/v1\n"
+  }
+]

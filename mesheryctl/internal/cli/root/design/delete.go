@@ -71,7 +71,7 @@ mesheryctl design delete [ID]
 // delete a design using --file
 mesheryctl design delete -f [file | URL]
 
-// delete a design file without listing the target clusters and asking for confirmation
+// delete a design file without an interactive prompt
 mesheryctl design delete -f [file | URL] --yes
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {

@@ -32,6 +32,7 @@ func TestDeleteCmd(t *testing.T) {
 			Args:             []string{"delete", "--yes", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "delete.output.golden",
 			URLs: []utils.MockURL{
+				{Method: "GET", URL: "/" + connectedClustersPath, Response: "removal.connections.response.golden", ResponseCode: 200},
 				{
 					Method:       "DELETE",
 					URL:          testContext.BaseURL + "/api/pattern/deploy?contexts=all",
@@ -46,6 +47,7 @@ func TestDeleteCmd(t *testing.T) {
 			Args:             []string{"delete", "--yes", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "delete.output.golden",
 			URLs: []utils.MockURL{
+				{Method: "GET", URL: "/" + connectedClustersPath, Response: "removal.connections.response.golden", ResponseCode: 200},
 				{
 					Method:       "DELETE",
 					URL:          testContext.BaseURL + "/api/pattern/deploy?contexts=all",
@@ -60,6 +62,7 @@ func TestDeleteCmd(t *testing.T) {
 			Args:             []string{"delete", "--yes", filepath.Join("fixtures", "sampleDesign.golden")},
 			ExpectedResponse: "delete.output.golden",
 			URLs: []utils.MockURL{
+				{Method: "GET", URL: "/" + connectedClustersPath, Response: "removal.connections.response.golden", ResponseCode: 200},
 				{
 					Method:       "DELETE",
 					URL:          testContext.BaseURL + "/api/pattern/deploy?contexts=all",
@@ -218,7 +221,7 @@ func TestDeleteFileConfirmation(t *testing.T) {
 	t.Run("skip", func(t *testing.T) {
 		_, prompt, gets, _, deletes, err := runRemovalPromptTest(t, []string{"delete", "-f", target, "--yes"}, "")
 		require.NoError(t, err)
-		assert.Zero(t, gets)
+		assert.Equal(t, 1, gets)
 		assert.Equal(t, 1, deletes)
 		assert.Empty(t, prompt)
 	})

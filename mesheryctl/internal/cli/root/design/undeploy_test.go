@@ -1,7 +1,9 @@
 package design
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -9,6 +11,8 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/patterns"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -34,10 +38,11 @@ func TestUndeployCmd(t *testing.T) {
 			Args:             []string{"undeploy", "--yes", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "undeploy.output.golden",
 			URLs: []utils.MockURL{
+				{Method: "GET", URL: "/" + connectedClustersPath, Response: "removal.connections.response.golden", ResponseCode: 200},
 				{
 					Method:       "POST",
-					URL:          "/api/pattern",
-					Response:     "apply.designSave.response.golden",
+					URL:          testContext.BaseURL + "/api/pattern/import",
+					Response:     "undeploy.import.response.golden",
 					ResponseCode: 200,
 				},
 				{
@@ -54,10 +59,11 @@ func TestUndeployCmd(t *testing.T) {
 			Args:             []string{"undeploy", "--yes", "-f", filepath.Join("fixtures", "sampleDesign.golden")},
 			ExpectedResponse: "undeploy.output.golden",
 			URLs: []utils.MockURL{
+				{Method: "GET", URL: "/" + connectedClustersPath, Response: "removal.connections.response.golden", ResponseCode: 200},
 				{
 					Method:       "POST",
-					URL:          "/api/pattern",
-					Response:     "apply.designSave.response.golden",
+					URL:          testContext.BaseURL + "/api/pattern/import",
+					Response:     "undeploy.import.response.golden",
 					ResponseCode: 200,
 				},
 				{
@@ -137,32 +143,21 @@ func TestUndeployCmd(t *testing.T) {
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a positional argument and the --file flag")),
 		},
 		{
-			Name:             "given nonexistent design provided when design undeploy then error is thrown",
+			Name:             "given import returns no design when design undeploy then error is thrown",
 			Args:             []string{"undeploy", "--yes", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
+				{Method: "GET", URL: "/" + connectedClustersPath, Response: "removal.connections.response.golden", ResponseCode: 200},
 				{
 					Method:       "POST",
-					URL:          "/api/pattern",
-					Response:     "apply.designSave.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "DELETE",
-					URL:          "/api/pattern/deploy?contexts=all",
-					Response:     "undeploy.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "POST",
-					URL:          fmt.Sprintf("%s/api/pattern", testContext.BaseURL),
+					URL:          testContext.BaseURL + "/api/pattern/import",
 					Response:     "undeploy.empty.response.golden",
 					ResponseCode: 200,
 				},
 			},
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  ErrDesignNotFound(filepath.Join(fixturesDir, "sampleDesign.golden")),
+			ExpectedError:  ErrDesignInvalidApiResponse("design import returned no design"),
 		},
 	}
 
@@ -179,8 +174,8 @@ func TestUndeployConfirmation(t *testing.T) {
 		wantDeletes int
 	}{
 		{name: "decline", input: "n\n", wantGets: 1},
-		{name: "accept", input: "y\n", wantGets: 1, wantPosts: 1, wantDeletes: 1},
-		{name: "skip", yes: true, wantPosts: 1, wantDeletes: 1},
+		{name: "accept sends JSON deploy payload", input: "y\n", wantGets: 1, wantPosts: 1, wantDeletes: 1},
+		{name: "skip", yes: true, wantGets: 1, wantPosts: 1, wantDeletes: 1},
 		{name: "EOF", wantGets: 1},
 	} {
 		t.Run(test.name, func(t *testing.T) {
@@ -249,10 +244,22 @@ func runRemovalPromptTestWithClusterPages(t *testing.T, args []string, input str
 	}
 	patternURL := ctx.BaseURL + "/api/pattern"
 	deleteURL := ctx.BaseURL + "/api/pattern/deploy?contexts=all"
-	httpmock.RegisterResponder("POST", patternURL, httpmock.NewStringResponder(200,
-		utils.NewGoldenFile(t, "apply.designSave.response.golden", "fixtures").Load()))
-	httpmock.RegisterResponder("DELETE", deleteURL, httpmock.NewStringResponder(200,
-		utils.NewGoldenFile(t, args[0]+".response.golden", "fixtures").Load()))
+	importURL := patternURL + "/import"
+	httpmock.RegisterResponder("POST", importURL, httpmock.NewStringResponder(http.StatusOK,
+		utils.NewGoldenFile(t, "undeploy.import.response.golden", "fixtures").Load()))
+	response := utils.NewGoldenFile(t, args[0]+".response.golden", "fixtures").Load()
+	httpmock.RegisterResponder("DELETE", deleteURL, func(req *http.Request) (*http.Response, error) {
+		var payload models.MesheryPatternFileDeployPayload
+		require.NoError(t, json.NewDecoder(req.Body).Decode(&payload))
+		require.NotEmpty(t, payload.PatternFile)
+		require.Zero(t, payload.PatternID)
+		if args[0] == "undeploy" {
+			pf, err := patterns.GetPatternFormat(payload.PatternFile)
+			require.NoError(t, err)
+			require.NotEmpty(t, pf.Components)
+		}
+		return httpmock.NewStringResponse(http.StatusOK, response), nil
+	})
 
 	buf := utils.SetupMeshkitLoggerTesting(t, false)
 	readPrompt := capturePrompt(t, input)
@@ -263,5 +270,21 @@ func runRemovalPromptTestWithClusterPages(t *testing.T, args []string, input str
 	for _, pageURL := range clusterURLs {
 		gets += calls["GET "+pageURL]
 	}
-	return buf.String(), readPrompt(), gets, calls["POST "+patternURL], calls["DELETE "+deleteURL], err
+	posts = calls["POST "+importURL] + calls["POST "+patternURL]
+	return buf.String(), readPrompt(), gets, posts, calls["DELETE "+deleteURL], err
+}
+
+func TestFileRemovalRequiresConnectedClusters(t *testing.T) {
+	for _, command := range []string{"undeploy", "delete"} {
+		t.Run(command, func(t *testing.T) {
+			_, prompt, gets, posts, deletes, err := runRemovalPromptTestWithClusterPages(t,
+				[]string{command, "-f", filepath.Join("fixtures", "sampleDesign.golden"), "--yes"}, "",
+				"removal.connections.empty.response.golden")
+			utils.AssertMeshkitErrorsEqual(t, err, ErrNoConnectedClusters())
+			assert.Equal(t, 1, gets)
+			assert.Zero(t, posts)
+			assert.Zero(t, deletes)
+			assert.Empty(t, prompt)
+		})
+	}
 }

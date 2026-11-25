@@ -69,6 +69,8 @@ func mockDesignServer(t *testing.T, baseURL string, content []byte) *designReque
 	httpmock.RegisterResponder("POST", baseURL+"/api/pattern/import", record("import", http.StatusOK, `[{"name":"saved"}]`))
 	httpmock.RegisterResponder("POST", baseURL+"/api/pattern/deploy?contexts=all", record("deploy", http.StatusOK, `{}`))
 	httpmock.RegisterResponder("DELETE", baseURL+"/api/pattern/deploy?contexts=all", record("undeploy", http.StatusOK, `{}`))
+	httpmock.RegisterResponder("GET", baseURL+"/"+connectedClustersPath, record("clusters", http.StatusOK,
+		utils.NewGoldenFile(t, "removal.connections.response.golden", "fixtures").Load()))
 	httpmock.RegisterResponder("GET", githubRawURL, record("github", http.StatusOK, string(content)))
 	return requests
 }
@@ -138,7 +140,7 @@ func TestDeleteWithGithubURLUndeploysTheDownloadedDesign(t *testing.T) {
 	DesignCmd.SetArgs([]string{"delete", "--yes", "-f", githubBlobURL})
 	require.NoError(t, DesignCmd.Execute())
 
-	assert.Equal(t, []string{"github", "undeploy"}, requests.calls)
+	assert.Equal(t, []string{"github", "clusters", "undeploy"}, requests.calls)
 	assertUndeployPayload(t, requests.deployBody, content)
 }
 
@@ -171,7 +173,7 @@ func TestDeleteWithLocalFileUndeploysWithDeployPayload(t *testing.T) {
 			DesignCmd.SetArgs(append([]string{"delete", "--yes"}, tt.args...))
 			require.NoError(t, DesignCmd.Execute())
 
-			assert.Equal(t, []string{"undeploy"}, requests.calls)
+			assert.Equal(t, []string{"clusters", "undeploy"}, requests.calls)
 			assertUndeployPayload(t, requests.deployBody, content)
 		})
 	}

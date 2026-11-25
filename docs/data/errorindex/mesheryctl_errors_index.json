@@ -4193,6 +4193,23 @@
       "suggestedRemediation": [
         "Pass --yes for non-interactive use"
       ]
+    },
+    {
+      "code": "mesheryctl-1269",
+      "moniker": "ErrNoConnectedClustersCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1269",
+      "severity": "alert",
+      "shortDescription": "No Kubernetes cluster is connected, so there is nothing to remove from",
+      "probableCause": [
+        "Meshery has no connected Kubernetes clusters"
+      ],
+      "suggestedRemediation": [
+        "Connect a Kubernetes cluster using mesheryctl connections or the Meshery UI and retry"
+      ]
     }
   ],
   "schemaVersion": 2

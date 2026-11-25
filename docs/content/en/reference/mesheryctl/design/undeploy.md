@@ -15,6 +15,7 @@ Undeploy design
 ## Synopsis
 
 Undeploy design will trigger undeploy of design.
+	With -f, Meshery imports and saves the design file before removal, as it does with design deploy -f.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -37,7 +38,7 @@ mesheryctl design undeploy -f [filepath]
 </div>
 </pre> 
 
-Undeploy design without listing the target clusters and asking for confirmation
+Undeploy design without an interactive prompt
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
