@@ -275,25 +275,34 @@ func authCacheTTLFromExpiry(expTime time.Time) time.Duration {
 }
 
 func (l *RemoteProvider) isIntrospectCached(cacheKey string) bool {
-	now := time.Now()
-	l.authCacheMu.RLock()
-	exp, ok := l.introspectCache[cacheKey]
-	l.authCacheMu.RUnlock()
-	return ok && now.Before(exp)
+	_, ok := l.readIntrospectCacheOrEpoch(cacheKey)
+	return ok
 }
 
-func (l *RemoteProvider) setIntrospectCache(cacheKey string, ttl time.Duration) {
+func (l *RemoteProvider) readIntrospectCacheOrEpoch(cacheKey string) (uint64, bool) {
+	now := time.Now()
+	l.authCacheMu.RLock()
+	epoch := l.authCacheEpoch
+	exp, ok := l.introspectCache[cacheKey]
+	l.authCacheMu.RUnlock()
+	return epoch, ok && now.Before(exp)
+}
+
+func (l *RemoteProvider) setIntrospectCacheIfEpoch(cacheKey string, ttl time.Duration, expectedEpoch uint64) {
 	if ttl <= 0 {
 		return
 	}
 	now := time.Now()
 	l.authCacheMu.Lock()
+	defer l.authCacheMu.Unlock()
+	if l.authCacheEpoch != expectedEpoch {
+		return
+	}
 	if l.introspectCache == nil {
 		l.introspectCache = make(map[string]time.Time)
 	}
 	evictExpiredAndCap(l.introspectCache, now, func(exp time.Time) time.Time { return exp }, maxAuthCacheEntries)
 	l.introspectCache[cacheKey] = now.Add(ttl)
-	l.authCacheMu.Unlock()
 }
 
 func (l *RemoteProvider) introspectTokenCached(tokenString string, expTime time.Time) error {
@@ -303,36 +312,47 @@ func (l *RemoteProvider) introspectTokenCached(tokenString string, expTime time.
 	}
 
 	_, err, _ := l.introspectFlight.Do(cacheKey, func() (interface{}, error) {
-		if l.isIntrospectCached(cacheKey) {
+		epoch, ok := l.readIntrospectCacheOrEpoch(cacheKey)
+		if ok {
 			return nil, nil
 		}
 		if err := l.introspectToken(tokenString); err != nil {
 			return nil, err
 		}
-		l.setIntrospectCache(cacheKey, authCacheTTLFromExpiry(expTime))
+		l.setIntrospectCacheIfEpoch(cacheKey, authCacheTTLFromExpiry(expTime), epoch)
 		return nil, nil
 	})
 	return err
 }
 
 func (l *RemoteProvider) getCachedUserProfile(cacheKey string) (*User, bool) {
+	_, user, ok := l.readUserProfileCacheOrEpoch(cacheKey)
+	return user, ok
+}
+
+func (l *RemoteProvider) readUserProfileCacheOrEpoch(cacheKey string) (uint64, *User, bool) {
 	now := time.Now()
 	l.authCacheMu.RLock()
+	epoch := l.authCacheEpoch
 	entry, ok := l.userProfileCache[cacheKey]
 	l.authCacheMu.RUnlock()
 	if !ok || !now.Before(entry.expiresAt) {
-		return nil, false
+		return epoch, nil, false
 	}
 	userCopy := entry.user
-	return &userCopy, true
+	return epoch, &userCopy, true
 }
 
-func (l *RemoteProvider) setCachedUserProfile(cacheKey string, user *User, ttl time.Duration) {
+func (l *RemoteProvider) setCachedUserProfileIfEpoch(cacheKey string, user *User, ttl time.Duration, expectedEpoch uint64) {
 	if user == nil || ttl <= 0 {
 		return
 	}
 	now := time.Now()
 	l.authCacheMu.Lock()
+	defer l.authCacheMu.Unlock()
+	if l.authCacheEpoch != expectedEpoch {
+		return
+	}
 	if l.userProfileCache == nil {
 		l.userProfileCache = make(map[string]cachedUserEntry)
 	}
@@ -341,7 +361,6 @@ func (l *RemoteProvider) setCachedUserProfile(cacheKey string, user *User, ttl t
 		user:      *user,
 		expiresAt: now.Add(ttl),
 	}
-	l.authCacheMu.Unlock()
 }
 
 func (l *RemoteProvider) invalidateTokenCache(tokenString string) {
@@ -353,6 +372,7 @@ func (l *RemoteProvider) invalidateTokenCache(tokenString string) {
 		keys = append(keys, tokenCacheKey(effective))
 	}
 	l.authCacheMu.Lock()
+	l.authCacheEpoch++
 	for _, k := range keys {
 		delete(l.introspectCache, k)
 		delete(l.userProfileCache, k)

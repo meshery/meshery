@@ -1081,3 +1081,122 @@ func TestRemoteProviderGetParsedKey_SameKidRotationDoesNotPersistStaleKey(t *tes
 		t.Fatal("expected getParsedKey to parse and cache the current key material for sharedKid")
 	}
 }
+
+func TestRemoteProviderGetSession_MidFlightInvalidationSkipsCacheWrite(t *testing.T) {
+	const kid = "kid-inflight-introspect"
+	priv, jwk := generateTestRSAKeyAndJWK(t, kid)
+
+	var introspectCalls atomic.Int32
+	inFlightStarted := make(chan struct{})
+	releaseIntrospect := make(chan struct{})
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/keys":
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(map[string]any{"keys": []map[string]string{jwk}})
+		case "/introspect":
+			if introspectCalls.Add(1) == 1 {
+				close(inFlightStarted)
+				<-releaseIntrospect
+			}
+			w.WriteHeader(http.StatusOK)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+	token := signTestJWT(t, priv, kid, time.Now().Add(5*time.Minute))
+
+	makeReq := func() *http.Request {
+		req := httptest.NewRequest(http.MethodGet, "/api/user", nil)
+		req.AddCookie(&http.Cookie{Name: TokenCookieName, Value: token})
+		return req
+	}
+
+	errCh := make(chan error, 1)
+	go func() {
+		errCh <- provider.GetSession(makeReq())
+	}()
+
+	<-inFlightStarted
+	provider.invalidateTokenCache(token)
+	close(releaseIntrospect)
+
+	if err := <-errCh; err != nil {
+		t.Fatalf("in-flight GetSession failed: %v", err)
+	}
+
+	if err := provider.GetSession(makeReq()); err != nil {
+		t.Fatalf("post-invalidation GetSession failed: %v", err)
+	}
+	if got := introspectCalls.Load(); got != 2 {
+		t.Fatalf("expected post-invalidation GetSession to re-introspect (2 calls), got %d", got)
+	}
+}
+
+func TestRemoteProviderGetUserDetails_MidFlightInvalidationSkipsCacheWrite(t *testing.T) {
+	const kid = "kid-inflight-profile"
+	priv, _ := generateTestRSAKeyAndJWK(t, kid)
+	userID := uuid.Must(uuid.NewV4())
+
+	var profileCalls atomic.Int32
+	inFlightStarted := make(chan struct{})
+	releaseProfile := make(chan struct{})
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/profile" {
+			http.NotFound(w, r)
+			return
+		}
+		if profileCalls.Add(1) == 1 {
+			close(inFlightStarted)
+			<-releaseProfile
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(UserPref{
+			User: User{
+				ID:        userID,
+				FirstName: "Steve",
+				LastName:  "Rogers",
+				Email:     "cap@avengers.io",
+			},
+		})
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+	provider.Capabilities = Capabilities{
+		{Feature: UsersProfile, Endpoint: "/profile"},
+	}
+
+	token := signTestJWT(t, priv, kid, time.Now().Add(5*time.Minute))
+	makeReq := func() *http.Request {
+		req := httptest.NewRequest(http.MethodGet, "/api/user", nil)
+		req.AddCookie(&http.Cookie{Name: TokenCookieName, Value: token})
+		return req
+	}
+
+	errCh := make(chan error, 1)
+	go func() {
+		_, err := provider.GetUserDetails(makeReq())
+		errCh <- err
+	}()
+
+	<-inFlightStarted
+	provider.invalidateTokenCache(token)
+	close(releaseProfile)
+
+	if err := <-errCh; err != nil {
+		t.Fatalf("in-flight GetUserDetails failed: %v", err)
+	}
+
+	if _, err := provider.GetUserDetails(makeReq()); err != nil {
+		t.Fatalf("post-invalidation GetUserDetails failed: %v", err)
+	}
+	if got := profileCalls.Load(); got != 2 {
+		t.Fatalf("expected post-invalidation GetUserDetails to re-fetch /profile (2 calls), got %d", got)
+	}
+}

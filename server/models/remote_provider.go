@@ -111,6 +111,7 @@ type RemoteProvider struct {
 	// Short-TTL caches for token introspection and user profile lookups, paired
 	// with singleflight groups to collapse concurrent cache misses.
 	authCacheMu       sync.RWMutex
+	authCacheEpoch    uint64
 	introspectCache   map[string]time.Time
 	userProfileCache  map[string]cachedUserEntry
 	introspectFlight  singleflight.Group
@@ -796,8 +797,9 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 	}
 
 	v, err, _ := l.userProfileFlight.Do(cacheKey, func() (interface{}, error) {
-		if user, ok := l.getCachedUserProfile(cacheKey); ok {
-			return user, nil
+		epoch, cachedUser, ok := l.readUserProfileCacheOrEpoch(cacheKey)
+		if ok {
+			return cachedUser, nil
 		}
 
 		user, fetchErr := l.fetchUserDetails(effectiveToken)
@@ -809,9 +811,9 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 		activeKey := tokenCacheKey(activeToken)
 		ttl := l.authCacheTTLForToken(activeToken)
 		if ttl > 0 {
-			l.setCachedUserProfile(activeKey, user, ttl)
+			l.setCachedUserProfileIfEpoch(activeKey, user, ttl, epoch)
 			if activeKey != cacheKey {
-				l.setCachedUserProfile(cacheKey, user, ttl)
+				l.setCachedUserProfileIfEpoch(cacheKey, user, ttl, epoch)
 			}
 		}
 
