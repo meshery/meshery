@@ -366,13 +366,17 @@ export function createPatternsActions(deps) {
     e.stopPropagation();
     updateProgress({ showProgress: true });
     try {
+      if (!design?.id) {
+        throw new Error('Missing design ID');
+      }
       let id = design.id;
       let name = design.name;
       downloadContent({ id, name, type: 'pattern', source_type, params });
       notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       notify({
-        message: `Failed to download "${design?.name ?? 'design'}": ${error}`,
+        message: `Failed to download "${design?.name ?? 'design'}": ${errorMessage}`,
         event_type: EVENT_TYPES.ERROR,
       });
     } finally {

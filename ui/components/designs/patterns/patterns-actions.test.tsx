@@ -242,7 +242,7 @@ describe('createPatternsActions', () => {
     ]);
     expect(deps.notify).toHaveBeenCalledTimes(1);
     expect(deps.notify).toHaveBeenCalledWith({
-      message: 'Failed to download "Broken Design": Error: Download blocked',
+      message: 'Failed to download "Broken Design": Download blocked',
       event_type: 'error',
     });
   });
@@ -255,14 +255,41 @@ describe('createPatternsActions', () => {
     actions.handleDownload({ stopPropagation: stop } as any, null, undefined, undefined);
 
     expect(stop).toHaveBeenCalled();
+    expect(downloadContent).not.toHaveBeenCalled();
     expect(updateProgress.mock.calls).toEqual([
       [{ showProgress: true }],
       [{ showProgress: false }],
     ]);
     expect(deps.notify).toHaveBeenCalledTimes(1);
-    const [notification] = deps.notify.mock.calls[0];
-    expect(notification.event_type).toBe('error');
-    expect(notification.message).toMatch(/^Failed to download "design": TypeError:/);
+    expect(deps.notify).toHaveBeenCalledWith({
+      message: 'Failed to download "design": Missing design ID',
+      event_type: 'error',
+    });
+  });
+
+  it('handleDownload does not call downloadContent and clears progress when design.id is missing', () => {
+    const deps = baseDeps();
+    const actions = createPatternsActions(deps);
+    const stop = vi.fn();
+
+    actions.handleDownload(
+      { stopPropagation: stop } as any,
+      { name: 'No ID Design' },
+      undefined,
+      undefined,
+    );
+
+    expect(stop).toHaveBeenCalled();
+    expect(downloadContent).not.toHaveBeenCalled();
+    expect(updateProgress.mock.calls).toEqual([
+      [{ showProgress: true }],
+      [{ showProgress: false }],
+    ]);
+    expect(deps.notify).toHaveBeenCalledTimes(1);
+    expect(deps.notify).toHaveBeenCalledWith({
+      message: 'Failed to download "No ID Design": Missing design ID',
+      event_type: 'error',
+    });
   });
 
   it('handleError surfaces the failure as a notification', () => {
