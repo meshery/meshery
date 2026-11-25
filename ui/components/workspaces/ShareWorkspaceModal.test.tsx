@@ -77,6 +77,7 @@ describe('ShareWorkspaceModal visibility updates', () => {
   beforeEach(() => {
     updatePatterns.mockReset().mockResolvedValue({});
     updateView.mockReset().mockResolvedValue({});
+    shareModalProps = undefined;
   });
 
   it('sends the design and its new visibility as updateBody, the key the mutation posts', async () => {
@@ -114,5 +115,15 @@ describe('ShareWorkspaceModal visibility updates', () => {
       id: 'p-1',
       visibility: 'private',
     });
+  });
+
+  it('returns an error and calls no mutation when the list is empty', async () => {
+    render(<ShareWorkspaceModal resource={[]} type="design" handleClose={vi.fn()} />);
+
+    await expect(shareModalProps.handleUpdateVisibility('public')).resolves.toEqual({
+      error: 'No resource selected',
+    });
+    expect(updatePatterns).not.toHaveBeenCalled();
+    expect(updateView).not.toHaveBeenCalled();
   });
 });

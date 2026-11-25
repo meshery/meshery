@@ -85,6 +85,9 @@ export const ShareWorkspaceModal_: FC<ShareWorkspaceModalInternalProps> = ({
   );
 
   const handleUpdateVisibility = (value: string) => {
+    if (!firstSelectedResource) {
+      return Promise.resolve({ error: 'No resource selected' });
+    }
     if (dataName === RESOURCE_TYPE.DESIGN) {
       return handleUpdatePatternVisibility({
         value,
