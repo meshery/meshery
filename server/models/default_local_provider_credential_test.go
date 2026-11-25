@@ -49,6 +49,105 @@ func TestLocalUpdateUserCredential(t *testing.T) {
 		if got.Name != "after" {
 			t.Errorf("name = %q, want %q", got.Name, "after")
 		}
+		if got.Secret["token"] != "old" {
+			t.Errorf("secret[token] = %v, want %q", got.Secret["token"], "old")
+		}
+	})
+
+	t.Run("preserves omitted nested secret keys on partial update", func(t *testing.T) {
+		provider := newTestProviderWithCredentialDB(t)
+		cred, err := provider.SaveUserCredential("", &Credential{
+			Name:   "k8s-cred",
+			Type:   "kubernetes",
+			UserId: userID,
+			Secret: core.Map{
+				"clusterName": "prod",
+				"auth": map[string]interface{}{
+					"clusterUserName": "admin",
+					"clusterToken":    "keep-me",
+				},
+			},
+		})
+		if err != nil {
+			t.Fatalf("save credential: %v", err)
+		}
+
+		got, err := provider.UpdateUserCredential(nil, &Credential{
+			ID:     cred.ID,
+			UserId: userID,
+			Name:   "k8s-cred-renamed",
+			Type:   "kubernetes",
+			Secret: core.Map{
+				"clusterName": "prod-2",
+				"auth": map[string]interface{}{
+					"clusterUserName": "ops",
+				},
+			},
+		})
+		if err != nil {
+			t.Fatalf("update: %v", err)
+		}
+		auth, _ := got.Secret["auth"].(map[string]interface{})
+		if auth["clusterToken"] != "keep-me" || auth["clusterUserName"] != "ops" {
+			t.Errorf("unexpected merged auth secret: %#v", got.Secret)
+		}
+	})
+
+	t.Run("replaces stale secret keys when credential type changes", func(t *testing.T) {
+		provider := newTestProviderWithCredentialDB(t)
+		cred := saveTestCredential(t, provider, userID, "prom")
+
+		got, err := provider.UpdateUserCredential(nil, &Credential{
+			ID:     cred.ID,
+			UserId: userID,
+			Name:   "grafana",
+			Type:   "grafana",
+			Secret: core.Map{},
+		})
+		if err != nil {
+			t.Fatalf("update: %v", err)
+		}
+		if _, exists := got.Secret["token"]; exists {
+			t.Errorf("expected old secret key to be cleared on type change, got %#v", got.Secret)
+		}
+	})
+
+	t.Run("preserves API key when partially updating a legacy-wrapped credential with canonical fields", func(t *testing.T) {
+		provider := newTestProviderWithCredentialDB(t)
+		cred, err := provider.SaveUserCredential("", &Credential{
+			Name:   "legacy-grafana",
+			Type:   "grafana",
+			UserId: userID,
+			Secret: core.Map{
+				"credentialName": "legacy-grafana",
+				"secret": map[string]interface{}{
+					"grafanaURL":    "https://old.grafana.example",
+					"grafanaAPIKey": "keep-api-key",
+				},
+			},
+		})
+		if err != nil {
+			t.Fatalf("save credential: %v", err)
+		}
+
+		got, err := provider.UpdateUserCredential(nil, &Credential{
+			ID:     cred.ID,
+			UserId: userID,
+			Name:   "legacy-grafana-renamed",
+			Type:   "grafana",
+			Secret: core.Map{
+				"grafanaURL": "https://new.grafana.example",
+			},
+		})
+		if err != nil {
+			t.Fatalf("update: %v", err)
+		}
+		if got.Secret["grafanaURL"] != "https://new.grafana.example" {
+			t.Errorf("grafanaURL = %v, want %q", got.Secret["grafanaURL"], "https://new.grafana.example")
+		}
+		if auth := CredentialAuthSecret(got.Secret); auth != "keep-api-key" {
+			t.Errorf("CredentialAuthSecret() = %q, want %q (merged=%#v)", auth, "keep-api-key", got.Secret)
+		}
 	})
 
 	t.Run("unknown id is not found", func(t *testing.T) {
