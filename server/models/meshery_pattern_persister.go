@@ -322,31 +322,20 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 
 	updated := false
 	err = mpp.DB.Transaction(func(tx *gorm.DB) error {
-		// A caller can supply an ID for a design that has yet to be inserted.
-		if !isNew {
-			var count int64
-			if err := tx.Model(&MesheryPattern{}).Where("id = ?", *pattern.ID).Count(&count).Error; err != nil {
-				return ErrDBRead(err)
-			}
-			updated = count > 0
+		suppliedVisibility := pattern.Visibility
+		createdAt, updatedAt := pattern.CreatedAt, pattern.UpdatedAt
+		if pattern.Visibility == "" {
+			pattern.Visibility = Private
 		}
-
-		if !updated {
-			suppliedVisibility := pattern.Visibility
-			if pattern.Visibility == "" {
-				pattern.Visibility = Private
-			}
-			res := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(pattern)
-			if res.Error != nil {
-				return ErrDBCreate(res.Error)
-			}
-			if res.RowsAffected == 0 {
-				// Keep the winning insert's visibility on a concurrent save.
-				pattern.Visibility = suppliedVisibility
-				updated = true
-			}
+		// Write first so SQLite acquires the write lock before taking a read snapshot.
+		res := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(pattern)
+		if res.Error != nil {
+			return ErrDBCreate(res.Error)
 		}
-		if updated {
+		if res.RowsAffected == 0 {
+			pattern.Visibility = suppliedVisibility
+			pattern.CreatedAt, pattern.UpdatedAt = createdAt, updatedAt
+			updated = true
 			if err := mpp.updateSavedColumns(tx, pattern); err != nil {
 				return err
 			}
@@ -362,9 +351,6 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 			// A transaction that failed before or after its body ran carries no
 			// MeshKit code of its own, so report it as a write failure.
 			err = ErrDBPut(err)
-		}
-		if meshkiterrors.GetCode(err) == ErrDBReadCode {
-			return nil, err
 		}
 	}
 
@@ -461,8 +447,6 @@ func (mpp *MesheryPatternPersister) updateSavedColumns(db *gorm.DB, pattern *Mes
 		omit = append(omit, "pattern_file")
 	}
 	res := db.Model(pattern).Omit(omit...).Updates(pattern)
-	// updated_at always changes, so no affected row means the design was
-	// deleted after the existence check.
 	if res.Error == nil && res.RowsAffected == 0 {
 		res.Error = fmt.Errorf("design %s was deleted while saving", pattern.ID)
 	}

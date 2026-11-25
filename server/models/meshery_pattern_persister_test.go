@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -629,8 +630,7 @@ func TestReplaceSeededPatterns_DropsHistoryOfReplacedDesigns(t *testing.T) {
 	}
 }
 
-// A closed database fails when the save's transaction starts, before the
-// existence check runs, so the failure is a write failure and not a read one.
+// A closed database fails when the save's transaction starts.
 func TestSaveMesheryPattern_DatabaseErrorIsMeshKitError(t *testing.T) {
 	db, mpp := newPatternPersisterTestDB(t)
 	id, _ := seedImportedPattern(t, db)
@@ -646,27 +646,20 @@ func TestSaveMesheryPattern_DatabaseErrorIsMeshKitError(t *testing.T) {
 	}
 }
 
-// A save whose existence check fails reports a read failure with no body, so
-// the handler answers with the MeshKit error rather than echoing a design.
-func TestSaveMesheryPattern_CountErrorIsReadError(t *testing.T) {
+func TestSaveMesheryPattern_InsertErrorIsCreateError(t *testing.T) {
 	db, mpp := newPatternPersisterTestDB(t)
 	id, _ := seedImportedPattern(t, db)
 	if err := db.Migrator().DropTable(&MesheryPattern{}); err != nil {
 		t.Fatalf("drop designs table: %v", err)
 	}
 
-	body, err := mpp.SaveMesheryPattern(postStylePattern(id))
-	if body != nil {
-		t.Errorf("body = %s, want no body alongside a read error", body)
-	}
-	if code := mkerrors.GetCode(err); code != ErrDBReadCode {
-		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBReadCode, err)
+	_, err := mpp.SaveMesheryPattern(postStylePattern(id))
+	if code := mkerrors.GetCode(err); code != ErrDBCreateCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBCreateCode, err)
 	}
 }
 
-// A concurrent first save can insert the same ID between the existence check
-// and the insert. The losing save must then update the winner's row like any
-// existing row: no zero-valued overwrite and no visibility default.
+// A concurrent insert's stored fields must survive the update on conflict.
 func TestSaveMesheryPattern_ConcurrentFirstSaveKeepsWinnerFields(t *testing.T) {
 	db, mpp := newPatternPersisterTestDB(t)
 	id := uuid.Must(uuid.NewV4())
@@ -813,6 +806,66 @@ func loadPatternVersions(t *testing.T, db *gorm.DB, id uuid.UUID) []MesheryPatte
 		t.Fatalf("load versions for %s: %v", id, err)
 	}
 	return revisions
+}
+
+func TestSaveMesheryPattern_OverlappingSavesOnSeparateConnections(t *testing.T) {
+	dsn := "file:" + filepath.Join(t.TempDir(), "designs.db") + "?cache=private&mode=rwc&_busy_timeout=10000&_journal_mode=WAL"
+	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("open database: %v", err)
+	}
+	pool, err := db.DB()
+	if err != nil {
+		t.Fatalf("get connection pool: %v", err)
+	}
+	t.Cleanup(func() { _ = pool.Close() })
+	pool.SetMaxOpenConns(2)
+	if err := db.AutoMigrate(&MesheryPattern{}, &MesheryPatternVersion{}); err != nil {
+		t.Fatalf("migrate design tables: %v", err)
+	}
+	id, _ := seedImportedPattern(t, db)
+	persister := &MesheryPatternPersister{DB: &database.Handler{DB: db}}
+	first := &MesheryPattern{ID: &id, Name: "first save", PatternFile: persisterTestDesign}
+	second := &MesheryPattern{ID: &id, Name: "second save", PatternFile: designWithVersion("0.0.2")}
+
+	var secondErr error
+	fired := false
+	// Run the second save after the old Count, or before the new INSERT.
+	commitSecond := func(tx *gorm.DB) {
+		if fired {
+			return
+		}
+		if _, ok := tx.Statement.ConnPool.(*sql.Tx); !ok {
+			return
+		}
+		fired = true
+		// The first transaction holds its connection, so this uses the other one.
+		_, secondErr = persister.SaveMesheryPattern(second)
+	}
+	if err := db.Callback().Query().After("gorm:query").Register("test:save_after_read", commitSecond); err != nil {
+		t.Fatalf("register query callback: %v", err)
+	}
+	if err := db.Callback().Create().Before("gorm:create").Register("test:save_before_insert", commitSecond); err != nil {
+		t.Fatalf("register create callback: %v", err)
+	}
+	_, firstErr := persister.SaveMesheryPattern(first)
+	if !fired || secondErr != nil {
+		t.Fatalf("overlapping save ran = %t, error = %v", fired, secondErr)
+	}
+	if firstErr != nil {
+		t.Fatalf("first save failed after overlapping save committed: %v", firstErr)
+	}
+
+	revisions := loadPatternVersions(t, db, id)
+	if len(revisions) != 2 {
+		t.Fatalf("revision count = %d, want 2", len(revisions))
+	}
+	wantVersions := []string{"0.0.2", "0.0.3"}
+	for i, saved := range []*MesheryPattern{first, second} {
+		if revisions[i].Version != wantVersions[i] || revisions[i].PatternFile != saved.PatternFile {
+			t.Errorf("revision %d = %q / %q, want %q / %q", i, revisions[i].Version, revisions[i].PatternFile, wantVersions[i], saved.PatternFile)
+		}
+	}
 }
 
 func TestSaveMesheryPattern_RecordsVersionHistory(t *testing.T) {
