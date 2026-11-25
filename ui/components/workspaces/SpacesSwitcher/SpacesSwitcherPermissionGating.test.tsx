@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Keys } from '@meshery/schemas/permissions';
 
@@ -9,6 +9,7 @@ let mockUseGetUserDesignsQuery = vi.fn();
 let mockUseGetViewsOfWorkspaceQuery = vi.fn();
 let mockUseGetDesignsOfWorkspaceQuery = vi.fn();
 let mockIsInOperatorMode = vi.fn();
+let mockSetMultiSelectedContent = vi.fn();
 
 vi.mock('@sistent/sistent', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@sistent/sistent')>();
@@ -74,6 +75,13 @@ vi.mock('next/router', () => ({
 
 vi.mock('@/utils/hooks/useNotification', () => ({
   useNotification: () => ({ notify: vi.fn() }),
+}));
+
+vi.mock('@/utils/context/WorkspaceModalContextProvider', () => ({
+  WorkspaceModalContext: React.createContext({
+    multiSelectedContent: [],
+    setMultiSelectedContent: (...args: any[]) => mockSetMultiSelectedContent(...args),
+  }),
 }));
 
 vi.mock('./components', () => ({
@@ -263,7 +271,37 @@ describe('SpacesSwitcher View Permission Gating', () => {
       expect(screen.queryByTestId('main-designs-content')).not.toBeInTheDocument();
     });
 
-    it('safely resets to DESIGN when permission is dynamically revoked after mount', () => {
+    it('clears multi-selected content when switching content types', () => {
+      mockIsInOperatorMode.mockReturnValue(true);
+      mockHasPermission.mockReturnValue(true);
+
+      render(<WorkspaceContent workspace={mockWorkspace} />);
+
+      const select = screen.getByTestId('type-select') as HTMLSelectElement;
+      expect(select.value).toBe('view');
+      expect(mockSetMultiSelectedContent).not.toHaveBeenCalled();
+
+      fireEvent.change(select, { target: { value: 'design' } });
+
+      expect(mockSetMultiSelectedContent).toHaveBeenCalledTimes(1);
+      expect(mockSetMultiSelectedContent).toHaveBeenCalledWith([]);
+      expect(select.value).toBe('design');
+      expect(screen.queryByTestId('main-views-content')).not.toBeInTheDocument();
+      expect(screen.getByTestId('main-designs-content')).toBeInTheDocument();
+      expect(mockUseGetViewsOfWorkspaceQuery.mock.calls.at(-1)?.[1]).toEqual(
+        expect.objectContaining({ skip: true }),
+      );
+
+      fireEvent.change(select, { target: { value: 'view' } });
+
+      expect(mockSetMultiSelectedContent).toHaveBeenCalledTimes(2);
+      expect(mockSetMultiSelectedContent).toHaveBeenLastCalledWith([]);
+      expect(select.value).toBe('view');
+      expect(screen.getByTestId('main-views-content')).toBeInTheDocument();
+      expect(screen.queryByTestId('main-designs-content')).not.toBeInTheDocument();
+    });
+
+    it('safely resets to DESIGN and clears multi-selected content when permission is dynamically revoked after mount', () => {
       mockIsInOperatorMode.mockReturnValue(true);
       mockHasPermission.mockReturnValue(true);
 
@@ -271,6 +309,7 @@ describe('SpacesSwitcher View Permission Gating', () => {
 
       expect((screen.getByTestId('type-select') as HTMLSelectElement).value).toBe('view');
       expect(screen.getByTestId('menu-item-view')).toBeInTheDocument();
+      expect(mockSetMultiSelectedContent).not.toHaveBeenCalled();
 
       // Revoke permission dynamically
       mockHasPermission.mockReturnValue(false);
@@ -279,6 +318,8 @@ describe('SpacesSwitcher View Permission Gating', () => {
       const select = screen.getByTestId('type-select') as HTMLSelectElement;
       expect(select.value).toBe('design');
       expect(screen.queryByTestId('menu-item-view')).not.toBeInTheDocument();
+      expect(mockSetMultiSelectedContent).toHaveBeenCalledTimes(1);
+      expect(mockSetMultiSelectedContent).toHaveBeenCalledWith([]);
 
       const getViewsCall = mockUseGetViewsOfWorkspaceQuery.mock.calls.at(-1);
       expect(getViewsCall[1]).toEqual(expect.objectContaining({ skip: true }));
