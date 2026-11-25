@@ -257,8 +257,7 @@ func (mh *MeshsyncDataHandler) Unmarshal(object interface{}) (meshsyncmodel.Kube
 
 // derives the state of the cluster from the events and persists it in the database
 func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) error {
-	mh.dbHandler.Lock()
-	defer mh.dbHandler.Unlock()
+	defer lockDatabaseHandler(&mh.dbHandler)()
 
 	obj, err := mh.Unmarshal(event.Object)
 	if err != nil {
@@ -300,8 +299,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 }
 
 func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.KubernetesResource) error {
-	mh.dbHandler.Lock()
-	defer mh.dbHandler.Unlock()
+	defer lockDatabaseHandler(&mh.dbHandler)()
 	compMetadata, model := mh.getComponentMetadata(object.APIVersion, object.Kind)
 	object.ComponentMetadata = utils.MergeMaps(object.ComponentMetadata, compMetadata)
 	object.Model = model
@@ -338,8 +336,7 @@ func (mh *MeshsyncDataHandler) replaceMeshsyncResource(obj *meshsyncmodel.Kubern
 }
 
 func RemoveStaleObjects(dbHandler database.Handler) error {
-	dbHandler.Lock()
-	defer dbHandler.Unlock()
+	defer lockDatabaseHandler(&dbHandler)()
 
 	// Clear stale meshsync data
 	err := dbHandler.Migrator().DropTable(

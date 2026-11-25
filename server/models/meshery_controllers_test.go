@@ -325,3 +325,36 @@ func TestMeshsyncDataHandlerResyncReturnsErrorWhenBrokerDisconnected(t *testing.
 		t.Fatal("expected Resync to return an error when broker is disconnected")
 	}
 }
+
+func TestFlushAndResyncMeshsyncAllowsNilDatabaseMutex(t *testing.T) {
+	log, _ := logger.New("test", logger.Options{})
+	mch := NewMesheryControllersHelper(log, controllers.OperatorDeploymentConfig{}, nil, nil, nil, nil)
+
+	testBroker := &testMeshsyncBroker{}
+	handler := newTestMeshsyncHandler(t, testBroker, nil)
+	handler.dbHandler.Mutex = nil
+	mch.ctxMeshsyncDataHandler = handler
+
+	flushCalled := false
+	flushErr, resyncErr := mch.FlushAndResyncMeshsync(func() error {
+		flushCalled = true
+		return nil
+	})
+
+	if !flushCalled {
+		t.Fatal("expected cache flush callback to run")
+	}
+	if flushErr != nil {
+		t.Fatalf("flush error = %v, want nil", flushErr)
+	}
+	if resyncErr != nil {
+		t.Fatalf("resync error = %v, want nil", resyncErr)
+	}
+
+	testBroker.mu.Lock()
+	published := testBroker.published
+	testBroker.mu.Unlock()
+	if published != 1 {
+		t.Fatalf("broker publish count = %d, want 1", published)
+	}
+}

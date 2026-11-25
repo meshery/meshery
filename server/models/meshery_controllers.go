@@ -911,8 +911,7 @@ func (mch *MesheryControllersHelper) FlushAndResyncMeshsync(flush func() error) 
 	if flush == nil {
 		return fmt.Errorf("MeshSync cache flush callback is nil"), nil
 	}
-	mch.ctxMeshsyncDataHandler.dbHandler.Lock()
-	defer mch.ctxMeshsyncDataHandler.dbHandler.Unlock()
+	defer lockDatabaseHandler(&mch.ctxMeshsyncDataHandler.dbHandler)()
 
 	if err := mch.ctxMeshsyncDataHandler.Resync(); err != nil {
 		return nil, err

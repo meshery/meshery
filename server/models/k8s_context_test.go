@@ -498,6 +498,49 @@ func TestFlushMeshSyncDataWithoutContextAllKubeClusterKey(t *testing.T) {
 	})
 }
 
+func TestFlushMeshSyncDataNilDatabaseMutexDoesNotPanic(t *testing.T) {
+	serverID := uuid.Must(uuid.NewV4())
+	current := K8sContext{
+		ID:                 uuid.Must(uuid.NewV4()).String(),
+		Name:               "cluster-a",
+		Server:             "https://k8s.example.com",
+		KubernetesServerID: &serverID,
+	}
+	ctx := context.WithValue(context.Background(), AllKubeClusterKey, []*K8sContext{&current})
+
+	t.Run("nil DB and nil Mutex emits flush error event", func(t *testing.T) {
+		provider := &flushDatabaseProvider{db: &database.Handler{}}
+		FlushMeshSyncData(ctx, current, provider, nil, "", nil, nil)
+		if len(provider.persistedEvents) != 1 {
+			t.Fatalf("expected 1 persisted event, got %d", len(provider.persistedEvents))
+		}
+		if provider.persistedEvents[0].Severity != events.Error {
+			t.Fatalf("event severity = %s, want %s", provider.persistedEvents[0].Severity, events.Error)
+		}
+		if provider.persistedEvents[0].Action != "flush" {
+			t.Fatalf("event action = %s, want flush", provider.persistedEvents[0].Action)
+		}
+	})
+
+	t.Run("populated DB and nil Mutex flushes cluster resources", func(t *testing.T) {
+		db := newMeshSyncTestDB(t)
+		seedMeshSyncResource(t, db, "res-nil-mutex", serverID.String())
+		provider := &flushDatabaseProvider{db: &database.Handler{DB: db.DB}}
+		FlushMeshSyncData(ctx, current, provider, nil, "", nil, nil)
+
+		var count int64
+		if err := db.Model(&meshsyncmodel.KubernetesResource{}).Where("cluster_id = ?", serverID.String()).Count(&count).Error; err != nil {
+			t.Fatal(err)
+		}
+		if count != 0 {
+			t.Fatalf("remaining resources = %d, want 0", count)
+		}
+		if len(provider.persistedEvents) != 1 || provider.persistedEvents[0].Severity != events.Informational {
+			t.Fatalf("expected 1 informational flush event, got %+v", provider.persistedEvents)
+		}
+	})
+}
+
 func TestK8sContext_RedactCredentials(t *testing.T) {
 	ctx := &K8sContext{
 		ID:             "test-id",
