@@ -13,11 +13,15 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
@@ -728,6 +732,144 @@ func TestRetainSelectedContextMetadata(t *testing.T) {
 		retainSelectedContextMetadata(metadata, []*models.K8sContext{picked, dropped}, nil)
 		if len(metadata) != 3 || !k8sEventMetadataHasError(metadata) {
 			t.Fatalf("metadata = %#v, want all three entries kept", metadata)
+		}
+	})
+}
+
+type mockReimportProvider struct {
+	models.Provider
+	sync.Mutex
+	persistedEvents []events.Event
+	connectionID    core.Uuid
+}
+
+func (m *mockReimportProvider) SaveK8sContext(token string, k8sContext models.K8sContext, metadata map[string]any) (connections.Connection, error) {
+	return connections.Connection{ID: m.connectionID, Status: connections.DISCOVERED}, nil
+}
+
+func (m *mockReimportProvider) GetConnectionByID(token string, connectionID core.Uuid) (*connections.Connection, int, error) {
+	return &connections.Connection{ID: m.connectionID, Status: connections.DISCOVERED}, 0, nil
+}
+
+func (m *mockReimportProvider) UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
+	return &connections.Connection{ID: m.connectionID, Status: connectionStatus}, 0, nil
+}
+
+func (m *mockReimportProvider) UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
+	return true, &connections.Connection{ID: m.connectionID, Status: newStatus}, nil
+}
+
+func (m *mockReimportProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
+	m.Lock()
+	defer m.Unlock()
+	m.persistedEvents = append(m.persistedEvents, event)
+	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
+}
+
+func TestK8SConfigHandler_ReimportRefreshesCachedStateMachineContext(t *testing.T) {
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+	connUUID := uuid.Must(uuid.NewV4())
+	connID := core.Uuid(connUUID)
+
+	kubeconfig := []byte(`apiVersion: v1
+kind: Config
+current-context: reimported
+clusters:
+- cluster:
+    server: https://127.0.0.1:6443
+  name: reimported
+contexts:
+- context:
+    cluster: reimported
+    user: reimported-user
+  name: reimported
+users:
+- name: reimported-user
+  user:
+    token: token-reimported
+`)
+
+	t.Run("refreshes credentials on cache hit with existing context", func(t *testing.T) {
+		h := newTestHandler(t, map[string]models.Provider{}, "")
+		h.config.K8scontextChannel = &models.K8scontextChan{}
+		tracker := &machines.ConnectionToStateMachineInstanceTracker{
+			ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
+		}
+		h.ConnectionToStateMachineInstanceTracker = tracker
+
+		provider := &mockReimportProvider{
+			connectionID: connID,
+		}
+
+		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
+		if err != nil {
+			t.Fatalf("failed to create state machine: %v", err)
+		}
+		inst.Provider = provider
+		storedCtx := &kubernetes.MachineCtx{
+			K8sContext: models.K8sContext{
+				Name:   "old-name",
+				Server: "https://old-server:6443",
+			},
+		}
+		inst.Context = storedCtx
+		tracker.Add(connID, inst)
+
+		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
+		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+		rec := httptest.NewRecorder()
+
+		h.K8SConfigHandler(rec, req, nil, authUser, provider)
+		if rec.Code != http.StatusOK {
+			t.Fatalf("expected 200 OK, got %d: %s", rec.Code, rec.Body.String())
+		}
+
+		ctxObj := inst.GetContext()
+		updatedCtx, ok := ctxObj.(*kubernetes.MachineCtx)
+		if !ok || updatedCtx == nil {
+			t.Fatalf("expected *kubernetes.MachineCtx, got %#v", ctxObj)
+		}
+		if updatedCtx.K8sContext.Server != "https://127.0.0.1:6443" {
+			t.Fatalf("expected server https://127.0.0.1:6443, got %s", updatedCtx.K8sContext.Server)
+		}
+	})
+
+	t.Run("initializes context on cache hit when initial startup left Context nil", func(t *testing.T) {
+		h := newTestHandler(t, map[string]models.Provider{}, "")
+		h.config.K8scontextChannel = &models.K8scontextChan{}
+		tracker := &machines.ConnectionToStateMachineInstanceTracker{
+			ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
+		}
+		h.ConnectionToStateMachineInstanceTracker = tracker
+
+		provider := &mockReimportProvider{
+			connectionID: connID,
+		}
+
+		inst, err := kubernetes.New(connID.String(), core.Uuid(uuid.Nil), h.log)
+		if err != nil {
+			t.Fatalf("failed to create state machine: %v", err)
+		}
+		inst.Provider = provider
+		inst.Context = nil
+		tracker.Add(connID, inst)
+
+		req := uploadKubeconfigRequest(t, "/api/system/kubernetes", kubeconfig)
+		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+		rec := httptest.NewRecorder()
+
+		h.K8SConfigHandler(rec, req, nil, authUser, provider)
+		if rec.Code != http.StatusOK {
+			t.Fatalf("expected 200 OK, got %d: %s", rec.Code, rec.Body.String())
+		}
+
+		ctxObj := inst.GetContext()
+		initializedCtx, ok := ctxObj.(*kubernetes.MachineCtx)
+		if !ok || initializedCtx == nil {
+			t.Fatalf("expected initialized *kubernetes.MachineCtx, got %#v", ctxObj)
+		}
+		if initializedCtx.K8sContext.Server != "https://127.0.0.1:6443" {
+			t.Fatalf("expected server https://127.0.0.1:6443, got %s", initializedCtx.K8sContext.Server)
 		}
 	})
 }
