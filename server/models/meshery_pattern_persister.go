@@ -171,7 +171,8 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, se
 // CloneMesheryPattern saves a private copy of a design under a new ID. The copy
 // is a new design: it keeps the source's content and import source, but gets
 // its own creation time, zero usage counters and no catalog data, and its
-// design file carries the copy's id and name at the first version.
+// design file carries the copy's id and name at the first version, which the
+// clone records as its first revision.
 func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
 	var mesheryPattern MesheryPattern
 	patternUUID, err := uuid.FromString(patternID)
