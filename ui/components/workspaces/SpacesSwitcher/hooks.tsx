@@ -129,8 +129,9 @@ export const handleUpdatePatternVisibility = async ({
       visibility: value,
     },
   });
+  const error = res?.error;
   return {
-    error: res?.error?.error,
+    error: error ? error?.data || error?.error || error?.message || error : undefined,
   };
 };
 
@@ -141,8 +142,9 @@ export const handleUpdateViewVisibility = async ({ value, updateView, selectedRe
       visibility: value,
     },
   });
+  const error = res?.error;
   return {
-    error: res.error?.error,
+    error: error ? error?.data || error?.error || error?.message || error : undefined,
   };
 };
 

@@ -172,6 +172,50 @@ describe('visibility update helpers', () => {
     });
     expect(out.error).toBe('oops');
   });
+
+  it('propagates HTTP errors (status and data) for handleUpdateViewVisibility', async () => {
+    const updateView = vi.fn().mockResolvedValue({
+      error: { status: 400, data: 'Bad Request' },
+    });
+    const out = await handleUpdateViewVisibility({
+      value: 'private',
+      updateView,
+      selectedResource: { id: 'v-1' },
+    });
+    expect(out.error).toBe('Bad Request');
+  });
+
+  it('propagates HTTP errors (status and data) for handleUpdatePatternVisibility', async () => {
+    const updatePatterns = vi.fn().mockResolvedValue({
+      error: { status: 500, data: { message: 'Internal Server Error' } },
+    });
+    const out = await handleUpdatePatternVisibility({
+      value: 'public',
+      updatePatterns,
+      selectedResource: {
+        id: 'p-1',
+        name: 'design',
+        catalogData: {},
+        patternFile: JSON.stringify({}),
+      },
+    });
+    expect(out.error).toEqual({ message: 'Internal Server Error' });
+  });
+
+  it('returns undefined error on successful visibility update', async () => {
+    const updatePatterns = vi.fn().mockResolvedValue({ data: { success: true } });
+    const out = await handleUpdatePatternVisibility({
+      value: 'public',
+      updatePatterns,
+      selectedResource: {
+        id: 'p-1',
+        name: 'design',
+        catalogData: {},
+        patternFile: JSON.stringify({}),
+      },
+    });
+    expect(out.error).toBeUndefined();
+  });
 });
 
 describe('getDefaultFilterType', () => {
