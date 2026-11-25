@@ -19,7 +19,14 @@ import {
 } from '@sistent/sistent';
 import { Keys } from '@meshery/schemas/permissions';
 import { useGetUserCredentialsQuery } from '@meshery/schemas/mesheryApi';
-import { CredentialRjsfSchemasV1Beta1, CredentialRjsfUiSchemasV1Beta1 } from '@meshery/schemas';
+import {
+  buildCredentialFormSchema,
+  cleanEmptyPasswordFields,
+  getCredentialTypes,
+  getSchema,
+  getUiSchema,
+  sanitizeInitialData,
+} from './meshery-mesh-interface/PatternService/helper';
 import DefaultError from './general/error-404/index';
 import Modal from './shared/Modal/Modal';
 import _PromptComponent, { PromptRef } from './general/PromptComponent';
@@ -57,7 +64,10 @@ const CustomTableCell = styled(TableCell)({
   },
 });
 
-const credentialTypes = Object.keys(CredentialRjsfSchemasV1Beta1);
+const credentialTypes = getCredentialTypes();
+const DEFAULT_CREDENTIAL_TYPE = credentialTypes.includes('prometheus')
+  ? 'prometheus'
+  : credentialTypes[0] || 'kubernetes';
 
 type ActionType = 'create' | 'update' | 'delete' | null;
 
@@ -66,6 +76,7 @@ interface CredentialModalState {
   data: Record<string, unknown> | null;
   actionType: ActionType;
   id: string | null;
+  openId: number;
 }
 
 interface ColumnMeta {
@@ -74,53 +85,7 @@ interface ColumnMeta {
   sortDirection?: 'asc' | 'desc' | null;
 }
 
-/**
- * Strips password / writeOnly fields from initialData so sensitive credentials
- * are not echoed back into form fields on edit.
- */
-export function sanitizeInitialData(
-  data: Record<string, any>,
-  schema: any,
-  uiSchema: any,
-): Record<string, any> {
-  if (!data || typeof data !== 'object') return data;
-  const result: Record<string, any> = {};
-  for (const [k, v] of Object.entries(data)) {
-    const isSecret =
-      schema?.properties?.[k]?.writeOnly || uiSchema?.[k]?.['ui:widget'] === 'password';
-    if (isSecret) continue;
-    result[k] =
-      v && typeof v === 'object' && !Array.isArray(v)
-        ? sanitizeInitialData(v, schema?.properties?.[k], uiSchema?.[k])
-        : v;
-  }
-  return result;
-}
-
-/**
- * Removes empty password/writeOnly fields from submitted form secret data
- * so an empty password field on edit does not blank out the stored secret.
- */
-export function cleanEmptyPasswordFields(
-  data: Record<string, any>,
-  schema: any,
-  uiSchema: any,
-): Record<string, any> {
-  if (!data || typeof data !== 'object') return data;
-  const result: Record<string, any> = {};
-  for (const [k, v] of Object.entries(data)) {
-    const isSecret =
-      schema?.properties?.[k]?.writeOnly || uiSchema?.[k]?.['ui:widget'] === 'password';
-    if (isSecret && (v === '' || v == null)) continue;
-    if (v && typeof v === 'object' && !Array.isArray(v)) {
-      const nested = cleanEmptyPasswordFields(v, schema?.properties?.[k], uiSchema?.[k]);
-      if (Object.keys(nested).length > 0) result[k] = nested;
-    } else if (v !== undefined) {
-      result[k] = v;
-    }
-  }
-  return result;
-}
+export { buildCredentialFormSchema, cleanEmptyPasswordFields, sanitizeInitialData };
 
 const renderSortableHead = (columnMeta: ColumnMeta, sortColumn: (_idx: number) => void) => (
   <CustomTableCell key={columnMeta.index} onClick={() => sortColumn(columnMeta.index)}>
@@ -161,33 +126,37 @@ const MesheryCredentialComponent: React.FC = () => {
   const { connectionMetadataState } = useSelector((state: RootState) => state.ui);
 
   const modalRef = useRef<PromptRef>(null);
+  const modalOpenIdRef = useRef(0);
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [credModal, setCredModal] = useState<CredentialModalState>({
     open: false,
     data: null,
     actionType: null,
     id: null,
+    openId: 0,
   });
-  const [credentialType, setCredentialType] = useState<string>(credentialTypes[0] || 'kubernetes');
+  const [credentialType, setCredentialType] = useState<string>(DEFAULT_CREDENTIAL_TYPE);
   const [credentialName, setCredentialName] = useState<string | null>(null);
   const { notify } = useNotification();
   const { notifyApiError } = useNotificationHandlers();
   const { width } = useWindowDimensions();
   const theme = useTheme();
 
-  const currentSchema = credentialType
-    ? CredentialRjsfSchemasV1Beta1[credentialType.toLowerCase()]
-    : undefined;
-  const currentUiSchema = credentialType
-    ? CredentialRjsfUiSchemasV1Beta1[credentialType.toLowerCase()]
-    : undefined;
+  const baseSchema = credentialType ? getSchema(credentialType) : undefined;
+  const currentUiSchema = credentialType ? getUiSchema(credentialType) : undefined;
+  const currentSchema = buildCredentialFormSchema(
+    baseSchema as Record<string, unknown> | undefined,
+    currentUiSchema as Record<string, unknown> | undefined,
+    credModal.actionType === 'update',
+  );
 
   const handleCreateCredential = (ev: React.MouseEvent): void => {
     ev.stopPropagation();
-    setCredentialType(credentialTypes[0] || 'kubernetes');
+    const openId = ++modalOpenIdRef.current;
+    setCredentialType(DEFAULT_CREDENTIAL_TYPE);
     setCredentialName(null);
     setFormData({});
-    setCredModal({ open: true, data: {}, actionType: 'create', id: null });
+    setCredModal({ open: true, data: {}, actionType: 'create', id: null, openId });
   };
 
   const handleEditCredential = (
@@ -197,12 +166,13 @@ const MesheryCredentialComponent: React.FC = () => {
     e.stopPropagation();
     if (!rowData?.id) return;
 
-    const credType = rowData.type || credentialTypes[0] || 'kubernetes';
+    const openId = ++modalOpenIdRef.current;
+    const credType = rowData.type || DEFAULT_CREDENTIAL_TYPE;
     setCredentialType(credType);
     setCredentialName(rowData.name || null);
 
-    const schema = CredentialRjsfSchemasV1Beta1[credType.toLowerCase()];
-    const uiSchema = CredentialRjsfUiSchemasV1Beta1[credType.toLowerCase()];
+    const schema = getSchema(credType) as Record<string, any> | undefined;
+    const uiSchema = getUiSchema(credType) as Record<string, any> | undefined;
     const sanitizedSecret = sanitizeInitialData(
       rowData.secret || {},
       schema?.properties?.secret,
@@ -211,15 +181,31 @@ const MesheryCredentialComponent: React.FC = () => {
     const initialFormData = { name: rowData.name || '', secret: sanitizedSecret };
 
     setFormData(initialFormData);
-    setCredModal({ open: true, data: initialFormData, actionType: 'update', id: rowData.id });
+    setCredModal({
+      open: true,
+      data: initialFormData,
+      actionType: 'update',
+      id: rowData.id,
+      openId,
+    });
   };
 
   const schemaChangeHandler = (type: string): void => {
     setCredentialType(type);
+    const nextData =
+      credModal.actionType === 'update'
+        ? {
+            name:
+              (typeof formData?.name === 'string' ? formData.name : undefined) ??
+              (typeof credModal.data?.name === 'string' ? credModal.data.name : undefined),
+            secret: {},
+          }
+        : {};
+    setFormData(nextData);
     setCredModal((prev) => ({
       ...prev,
       open: true,
-      data: prev.actionType === 'update' ? prev.data : {},
+      data: prev.actionType === 'update' ? nextData : {},
     }));
   };
 
@@ -234,7 +220,7 @@ const MesheryCredentialComponent: React.FC = () => {
 
   const handleClose = (ev?: React.MouseEvent): void => {
     ev?.stopPropagation?.();
-    setCredModal({ open: false, data: null, actionType: null, id: null });
+    setCredModal((prev) => ({ ...prev, open: false, data: null, actionType: null, id: null }));
   };
 
   /**
@@ -458,8 +444,7 @@ const MesheryCredentialComponent: React.FC = () => {
 
   const handleModalSubmit = async (submittedFormData?: Record<string, any>): Promise<void> => {
     const dataToSubmit = submittedFormData || formData;
-    const actionType = credModal.actionType;
-    const id = credModal.id;
+    const { actionType, id, openId: submitOpenId } = credModal;
 
     updateProgress({ showProgress: true });
     try {
@@ -467,18 +452,13 @@ const MesheryCredentialComponent: React.FC = () => {
       const secret = dataToSubmit?.secret ?? {};
 
       if (actionType === 'create') {
-        const payload = {
-          name,
-          type: credentialType,
-          secret,
-        };
-        await createCredential(payload).unwrap();
+        await createCredential({ name, type: credentialType, secret }).unwrap();
         notify({ message: `"${credentialType}" created.`, event_type: EVENT_TYPES.SUCCESS });
       }
 
       if (actionType === 'update' && id) {
-        const schema = CredentialRjsfSchemasV1Beta1[credentialType.toLowerCase()];
-        const uiSchema = CredentialRjsfUiSchemasV1Beta1[credentialType.toLowerCase()];
+        const schema = getSchema(credentialType) as Record<string, any> | undefined;
+        const uiSchema = getUiSchema(credentialType) as Record<string, any> | undefined;
 
         // Honor writeOnly / password widgets: do not blank a stored secret when the password field is left empty on edit
         const cleanedSecret = cleanEmptyPasswordFields(
@@ -487,22 +467,15 @@ const MesheryCredentialComponent: React.FC = () => {
           uiSchema?.secret,
         );
 
-        const payload = {
-          id,
-          name,
-          type: credentialType,
-          secret: cleanedSecret,
-        };
-        await updateCredential(payload).unwrap();
+        await updateCredential({ id, name, type: credentialType, secret: cleanedSecret }).unwrap();
         notify({ message: `"${credentialType}" updated.`, event_type: EVENT_TYPES.SUCCESS });
       }
 
-      setCredModal({
-        open: false,
-        data: null,
-        actionType: null,
-        id: null,
-      });
+      setCredModal((prev) =>
+        prev.openId === submitOpenId
+          ? { open: false, data: null, actionType: null, id: null, openId: prev.openId }
+          : prev,
+      );
     } catch (error) {
       const errorMessage =
         actionType === 'create' ? 'Failed to create credentials.' : 'Failed to update credentials.';
@@ -576,6 +549,7 @@ const MesheryCredentialComponent: React.FC = () => {
       />
 
       <Modal
+        key={credModal.openId}
         open={credModal.open}
         schema={currentSchema}
         uiSchema={currentUiSchema}
@@ -590,6 +564,7 @@ const MesheryCredentialComponent: React.FC = () => {
         handleSubmit={handleModalSubmit}
         submitBtnText="Save"
         submitDisabled={!currentSchema}
+        closeOnSubmit={false}
       />
       <_PromptComponent ref={modalRef} />
     </div>

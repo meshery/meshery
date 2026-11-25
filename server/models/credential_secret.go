@@ -124,3 +124,40 @@ func authSecretFromPayload(payload map[string]interface{}) string {
 	value, _ := payload["secret"].(string)
 	return value
 }
+
+// MergeCredentialSecrets returns a new map containing existing secret entries
+// overlaid recursively with incoming entries. Keys omitted by incoming (such as
+// unchanged writeOnly password fields) remain intact at every nesting level.
+func MergeCredentialSecrets(existing, incoming map[string]interface{}) map[string]interface{} {
+	if existing == nil && incoming == nil {
+		return nil
+	}
+	merged := cloneSecretMap(existing)
+	for k, v := range incoming {
+		if inMap, ok := v.(map[string]interface{}); ok {
+			if exMap, ok := merged[k].(map[string]interface{}); ok {
+				merged[k] = MergeCredentialSecrets(exMap, inMap)
+				continue
+			}
+			merged[k] = cloneSecretMap(inMap)
+			continue
+		}
+		merged[k] = v
+	}
+	return merged
+}
+
+func cloneSecretMap(src map[string]interface{}) map[string]interface{} {
+	if src == nil {
+		return map[string]interface{}{}
+	}
+	dst := make(map[string]interface{}, len(src))
+	for k, v := range src {
+		if nested, ok := v.(map[string]interface{}); ok {
+			dst[k] = cloneSecretMap(nested)
+			continue
+		}
+		dst[k] = v
+	}
+	return dst
+}

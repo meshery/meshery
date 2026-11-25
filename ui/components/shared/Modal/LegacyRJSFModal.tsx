@@ -80,6 +80,7 @@ const SchemaVersion: FC<SchemaVersionProps> = ({ schema_array, type, schemaChang
  * @param {string} props.submitBtnText - The text for the submit button.
  * @param {Object} props.uiSchema - The UI schema for the form fields.
  * @param {boolean} [props.submitDisabled=false] - Optional consumer-controlled flag to disable the submit button (OR-ed with forbidden title and schema-loading pending states).
+ * @param {boolean} [props.closeOnSubmit=true] - Whether to close the modal immediately upon valid submission; set false when callers close only after an async save succeeds.
  */
 
 // Meshery extensions also uses this modal
@@ -88,6 +89,7 @@ function Modal(props) {
     open,
     title,
     handleClose,
+    onChange,
     schema,
     schema_array,
     type,
@@ -100,6 +102,7 @@ function Modal(props) {
     RJSFWrapperComponent = null,
     initialData = {},
     submitDisabled = false,
+    closeOnSubmit = true,
   } = props;
 
   const resolvedSchema = schema !== undefined ? schema : getSchema(type);
@@ -123,7 +126,9 @@ function Modal(props) {
       return;
     }
     if (formRef.current && formRef.current.validateForm()) {
-      handleClose();
+      if (closeOnSubmit) {
+        handleClose();
+      }
       handleSubmit(formRef.current.state.formData);
     }
   };
@@ -150,6 +155,7 @@ function Modal(props) {
 
   const handleFormChange = (data) => {
     formStateRef.current = data;
+    onChange?.(data);
   };
 
   useEffect(() => {

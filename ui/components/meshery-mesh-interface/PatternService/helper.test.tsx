@@ -10,6 +10,7 @@ vi.mock('@/theme', () => ({
 
 import {
   HyperLinkDiv,
+  buildCredentialFormSchema,
   calculateGrid,
   getCredentialTypes,
   getHyperLinkDiv,
@@ -183,5 +184,37 @@ describe('getCredentialTypes', () => {
     expect(types).toContain('slack');
     expect(types).toContain('github');
     expect(types.length).toBeGreaterThanOrEqual(21);
+  });
+});
+
+describe('buildCredentialFormSchema', () => {
+  it('keeps writeOnly and password fields required on create', () => {
+    const grafanaSchema = getSchema('grafana') as Record<string, any>;
+    const grafanaUi = getUiSchema('grafana') as Record<string, any>;
+    const createSchema = buildCredentialFormSchema(grafanaSchema, grafanaUi, false) as Record<
+      string,
+      any
+    >;
+
+    expect(createSchema.properties.secret.required).toContain('grafanaAPIKey');
+    expect(createSchema.properties.secret.required).toContain('grafanaURL');
+  });
+
+  it('removes writeOnly and password fields from required on edit without mutating the source schema', () => {
+    const grafanaSchema = getSchema('grafana') as Record<string, any>;
+    const grafanaUi = getUiSchema('grafana') as Record<string, any>;
+    const editSchema = buildCredentialFormSchema(grafanaSchema, grafanaUi, true) as Record<
+      string,
+      any
+    >;
+
+    expect(editSchema.required).toEqual(['name']);
+    expect(editSchema.properties.secret.required).toEqual(['grafanaURL']);
+    expect(grafanaSchema.properties.secret.required).toContain('grafanaAPIKey');
+
+    const k8sSchema = getSchema('kubernetes') as Record<string, any>;
+    const k8sUi = getUiSchema('kubernetes') as Record<string, any>;
+    const k8sEdit = buildCredentialFormSchema(k8sSchema, k8sUi, true) as Record<string, any>;
+    expect(k8sEdit.properties.secret.properties.auth.required).toEqual(['clusterUserName']);
   });
 });

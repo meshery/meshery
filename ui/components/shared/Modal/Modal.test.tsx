@@ -448,6 +448,28 @@ describe('Modal (RJSF version)', () => {
     expect(screen.getByTestId('primary-button')).toBeDisabled();
     expect(screen.queryByTestId('circular-progress')).not.toBeInTheDocument();
   });
+
+  it('defers closing when closeOnSubmit is false so async submit errors can keep the modal open', async () => {
+    const user = userEvent.setup();
+    const handleSubmit = vi.fn();
+    const handleClose = vi.fn();
+
+    render(
+      <Modal
+        open={true}
+        title="Credentials"
+        schema={{ type: 'object' }}
+        handleClose={handleClose}
+        handleSubmit={handleSubmit}
+        closeOnSubmit={false}
+      />,
+    );
+
+    await user.click(screen.getByTestId('primary-button'));
+
+    expect(handleSubmit).toHaveBeenCalledWith({ name: 'submission' });
+    expect(handleClose).not.toHaveBeenCalled();
+  });
 });
 
 describe('RJSFModalWrapper', () => {
