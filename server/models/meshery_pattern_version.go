@@ -11,6 +11,8 @@ import (
 // MesheryPatternVersion is one saved revision of a design's file. A revision is
 // written in the same transaction as the design it belongs to, so the two can
 // never disagree.
+// Each design keeps only its latest maxPatternVersions revisions, and recording
+// a new one prunes the oldest in the same transaction.
 //
 // Every path that deletes a design deletes its revisions in that same
 // transaction: the two persister deletes, deletePublishedPatterns (seed and
@@ -25,6 +27,10 @@ type MesheryPatternVersion struct {
 	CreatedAt   time.Time `json:"createdAt"`
 }
 
+// maxPatternVersions is how many revisions are kept per design; recording a
+// new revision prunes the oldest beyond it.
+const maxPatternVersions = 20
+
 func recordPatternVersion(tx *gorm.DB, p *MesheryPattern, version string) error {
 	id, err := uuid.NewV4()
 	if err != nil {
@@ -38,6 +44,14 @@ func recordPatternVersion(tx *gorm.DB, p *MesheryPattern, version string) error 
 	}
 	if err := tx.Create(&revision).Error; err != nil {
 		return ErrDBCreate(err)
+	}
+	keep := tx.Model(&MesheryPatternVersion{}).Select("id").
+		Where("design_id = ?", *p.ID).
+		Order("created_at DESC, id DESC").
+		Limit(maxPatternVersions)
+	if err := tx.Where("design_id = ? AND id NOT IN (?)", *p.ID, keep).
+		Delete(&MesheryPatternVersion{}).Error; err != nil {
+		return ErrDBDelete(err, "")
 	}
 	return nil
 }

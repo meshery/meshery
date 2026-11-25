@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -808,6 +809,15 @@ func loadPatternVersions(t *testing.T, db *gorm.DB, id uuid.UUID) []MesheryPatte
 	return revisions
 }
 
+func loadPatternVersionsByAge(t *testing.T, db *gorm.DB, id uuid.UUID) []MesheryPatternVersion {
+	t.Helper()
+	var revisions []MesheryPatternVersion
+	if err := db.Where("design_id = ?", id).Order("created_at, id").Find(&revisions).Error; err != nil {
+		t.Fatalf("load versions for %s: %v", id, err)
+	}
+	return revisions
+}
+
 func TestSaveMesheryPattern_OverlappingSavesOnSeparateConnections(t *testing.T) {
 	dsn := "file:" + filepath.Join(t.TempDir(), "designs.db") + "?cache=private&mode=rwc&_busy_timeout=10000&_journal_mode=WAL"
 	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
@@ -891,6 +901,55 @@ func TestSaveMesheryPattern_RecordsVersionHistory(t *testing.T) {
 			}
 		}
 		record = loadPattern(t, db, *record.ID)
+	}
+}
+
+func TestSaveMesheryPattern_KeepsLatestRevisions(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	record := MesheryPattern{Name: "retention", PatternFile: persisterTestDesignWithoutVersion}
+
+	for save := 1; save <= maxPatternVersions+1; save++ {
+		if _, err := mpp.SaveMesheryPattern(&record); err != nil {
+			t.Fatalf("save %d: %v", save, err)
+		}
+		record = loadPattern(t, db, *record.ID)
+	}
+
+	revisions := loadPatternVersionsByAge(t, db, *record.ID)
+	if len(revisions) != maxPatternVersions {
+		t.Fatalf("revision count = %d, want %d", len(revisions), maxPatternVersions)
+	}
+	for i, revision := range revisions {
+		if want := fmt.Sprintf("0.0.%d", i+2); revision.Version != want {
+			t.Errorf("revision %d = %q, want %q", i+1, revision.Version, want)
+		}
+	}
+}
+
+func TestSaveMesheryPattern_PruneLeavesOtherDesignsHistory(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	designA := MesheryPattern{Name: "design-a", PatternFile: persisterTestDesignWithoutVersion}
+	designB := MesheryPattern{Name: "design-b", PatternFile: designWithVersion("0.0.1")}
+
+	for save := 1; save <= maxPatternVersions+1; save++ {
+		if _, err := mpp.SaveMesheryPattern(&designA); err != nil {
+			t.Fatalf("save design A (%d): %v", save, err)
+		}
+		designA = loadPattern(t, db, *designA.ID)
+
+		if save <= 3 {
+			if _, err := mpp.SaveMesheryPattern(&designB); err != nil {
+				t.Fatalf("save design B (%d): %v", save, err)
+			}
+			designB = loadPattern(t, db, *designB.ID)
+		}
+	}
+
+	if revisions := loadPatternVersionsByAge(t, db, *designA.ID); len(revisions) != maxPatternVersions {
+		t.Errorf("design A has %d revisions, want %d", len(revisions), maxPatternVersions)
+	}
+	if revisions := loadPatternVersionsByAge(t, db, *designB.ID); len(revisions) != 3 {
+		t.Errorf("design B has %d revisions, want 3", len(revisions))
 	}
 }
 
