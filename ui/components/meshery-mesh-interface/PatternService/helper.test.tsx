@@ -10,10 +10,13 @@ vi.mock('@/theme', () => ({
 
 import {
   HyperLinkDiv,
+  buildCredentialFormSchema,
   calculateGrid,
+  getCredentialTypes,
   getHyperLinkDiv,
   getRefinedJsonSchema,
   getSchema,
+  getUiSchema,
   safeDisplayValue,
   safeStringTitle,
   userPromptKeys,
@@ -146,7 +149,72 @@ describe('HyperLinkDiv / getHyperLinkDiv', () => {
 });
 
 describe('getSchema', () => {
-  it('returns undefined for unknown credential types', () => {
+  it('returns undefined for unknown or null credential types', () => {
     expect(getSchema('unknown')).toBeUndefined();
+    expect(getSchema(null)).toBeUndefined();
+    expect(getSchema(undefined)).toBeUndefined();
+  });
+
+  it('resolves canonical schemas for known credential types case-insensitively', () => {
+    expect(getSchema('prometheus')).toBeDefined();
+    expect(getSchema('PROMETHEUS')).toBeDefined();
+    expect(getSchema('kubernetes')?.properties?.secret).toBeDefined();
+    expect(getSchema('slack')?.properties?.name).toBeDefined();
+  });
+});
+
+describe('getUiSchema', () => {
+  it('returns undefined for unknown or null credential types', () => {
+    expect(getUiSchema('unknown')).toBeUndefined();
+    expect(getUiSchema(null)).toBeUndefined();
+  });
+
+  it('resolves canonical uiSchemas for known credential types', () => {
+    expect(getUiSchema('slack')?.secret?.SLACK_BOT_TOKEN?.['ui:widget']).toBe('password');
+    expect(getUiSchema('kubernetes')?.secret?.auth?.clusterToken?.['ui:widget']).toBe('password');
+  });
+});
+
+describe('getCredentialTypes', () => {
+  it('returns canonical credential types from @meshery/schemas', () => {
+    const types = getCredentialTypes();
+    expect(types).toContain('prometheus');
+    expect(types).toContain('grafana');
+    expect(types).toContain('kubernetes');
+    expect(types).toContain('slack');
+    expect(types).toContain('github');
+    expect(types.length).toBeGreaterThanOrEqual(21);
+  });
+});
+
+describe('buildCredentialFormSchema', () => {
+  it('keeps writeOnly and password fields required on create', () => {
+    const grafanaSchema = getSchema('grafana') as Record<string, any>;
+    const grafanaUi = getUiSchema('grafana') as Record<string, any>;
+    const createSchema = buildCredentialFormSchema(grafanaSchema, grafanaUi, false) as Record<
+      string,
+      any
+    >;
+
+    expect(createSchema.properties.secret.required).toContain('grafanaAPIKey');
+    expect(createSchema.properties.secret.required).toContain('grafanaURL');
+  });
+
+  it('removes writeOnly and password fields from required on edit without mutating the source schema', () => {
+    const grafanaSchema = getSchema('grafana') as Record<string, any>;
+    const grafanaUi = getUiSchema('grafana') as Record<string, any>;
+    const editSchema = buildCredentialFormSchema(grafanaSchema, grafanaUi, true) as Record<
+      string,
+      any
+    >;
+
+    expect(editSchema.required).toEqual(['name']);
+    expect(editSchema.properties.secret.required).toEqual(['grafanaURL']);
+    expect(grafanaSchema.properties.secret.required).toContain('grafanaAPIKey');
+
+    const k8sSchema = getSchema('kubernetes') as Record<string, any>;
+    const k8sUi = getUiSchema('kubernetes') as Record<string, any>;
+    const k8sEdit = buildCredentialFormSchema(k8sSchema, k8sUi, true) as Record<string, any>;
+    expect(k8sEdit.properties.secret.properties.auth.required).toEqual(['clusterUserName']);
   });
 });

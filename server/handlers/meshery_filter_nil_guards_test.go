@@ -460,3 +460,48 @@ func TestFilterHandler_NilLogger_DoesNotPanic(t *testing.T) {
 		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
 	}
 }
+
+func TestHandleFilterPOST_NullBody_ReturnsBadRequest(t *testing.T) {
+	h, provider := newFilterNilGuardsFixture(t)
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	ctx := context.WithValue(context.Background(), models.TokenCtxKey, "fake-token")
+	req := httptest.NewRequest(http.MethodPost, "/api/filter", strings.NewReader("null")).WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	h.handleFilterPOST(rec, req, nil, authUser, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 Bad Request, got %d", rec.Code)
+	}
+}
+
+func TestPublishCatalogFilterHandler_NullBody_ReturnsBadRequest(t *testing.T) {
+	h, provider := newFilterNilGuardsFixture(t)
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	ctx := context.WithValue(context.Background(), models.TokenCtxKey, "fake-token")
+	req := httptest.NewRequest(http.MethodPost, "/api/filter/catalog/publish", strings.NewReader("null")).WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	h.PublishCatalogFilterHandler(rec, req, nil, authUser, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 Bad Request, got %d", rec.Code)
+	}
+}
+
+func TestUnPublishCatalogFilterHandler_NullBody_ReturnsBadRequest(t *testing.T) {
+	h, provider := newFilterNilGuardsFixture(t)
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	ctx := context.WithValue(context.Background(), models.TokenCtxKey, "fake-token")
+	req := httptest.NewRequest(http.MethodDelete, "/api/filter/catalog/unpublish", strings.NewReader("null")).WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	h.UnPublishCatalogFilterHandler(rec, req, nil, authUser, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 Bad Request, got %d", rec.Code)
+	}
+}

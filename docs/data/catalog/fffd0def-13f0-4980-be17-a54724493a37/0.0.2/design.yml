@@ -1,0 +1,1871 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "AKS Store Demo",
+  "schemaVersion": "designs.meshery.io/v1beta3",
+  "version": "0.0.2",
+  "components": [
+    {
+      "id": "f3e8251c-0086-49dc-ae9f-f4f4bedf45fe",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "documentdb",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 0.2,
+        "height": 15,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg",
+        "width": 15,
+        "x": 12,
+        "y": 20
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "documentdb"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "documentdb"
+            }
+          },
+          "serviceName": "documentdb",
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "documentdb"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "args": [
+                    "--username",
+                    "username",
+                    "--password",
+                    "password"
+                  ],
+                  "image": "ghcr.io/documentdb/documentdb/documentdb-local:pg17-0.112.0",
+                  "livenessProbe": {
+                    "failureThreshold": 3,
+                    "periodSeconds": 10,
+                    "tcpSocket": {
+                      "port": 10260
+                    },
+                    "timeoutSeconds": 5
+                  },
+                  "name": "documentdb",
+                  "ports": [
+                    {
+                      "containerPort": 10260,
+                      "name": "documentdb"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 3,
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 5,
+                    "tcpSocket": {
+                      "port": 10260
+                    },
+                    "timeoutSeconds": 5
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "25m",
+                      "memory": "1024Mi"
+                    },
+                    "requests": {
+                      "cpu": "5m",
+                      "memory": "75Mi"
+                    }
+                  },
+                  "startupProbe": {
+                    "failureThreshold": 30,
+                    "periodSeconds": 5,
+                    "tcpSocket": {
+                      "port": 10260
+                    }
+                  }
+                }
+              ],
+              "enableServiceLinks": false,
+              "nodeSelector": {
+                "kubernetes.io/os": "linux"
+              }
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "bcc7e7e7-482e-46f0-bb53-1b602c92b56e",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "documentdb",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "documentdb"
+        },
+        "spec": {
+          "ports": [
+            {
+              "port": 10260
+            }
+          ],
+          "selector": {
+            "app": "documentdb"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "ece40d6c-c6ac-4e0e-b12d-7552c366543c",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "rabbitmq-secrets",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-image-containment": "over",
+        "background-opacity": 0,
+        "height": 32,
+        "padding": 1,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "RABBITMQ_DEFAULT_PASS": "cGFzc3dvcmQ=",
+          "RABBITMQ_DEFAULT_USER": "dXNlcm5hbWU="
+        },
+        "metadata": {
+          "name": "rabbitmq-secrets"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "74069241-5f8c-47ca-b94b-7ec82323cabc",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "rabbitmq",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-opacity": 0.2,
+        "height": 15,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/statefulset-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/statefulset-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/statefulset-white.svg",
+        "width": 15,
+        "x": 12,
+        "y": 20
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "rabbitmq"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "rabbitmq"
+            }
+          },
+          "serviceName": "rabbitmq",
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "rabbitmq"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "envFrom": [
+                    {
+                      "secretRef": {
+                        "name": "rabbitmq-secrets"
+                      }
+                    }
+                  ],
+                  "image": "rabbitmq:4.3.2-management-alpine",
+                  "livenessProbe": {
+                    "failureThreshold": 3,
+                    "initialDelaySeconds": 30,
+                    "periodSeconds": 10,
+                    "tcpSocket": {
+                      "port": 5672
+                    }
+                  },
+                  "name": "rabbitmq",
+                  "ports": [
+                    {
+                      "containerPort": 5672,
+                      "name": "rabbitmq-amqp"
+                    },
+                    {
+                      "containerPort": 15672,
+                      "name": "rabbitmq-http"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 3,
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 5,
+                    "tcpSocket": {
+                      "port": 5672
+                    }
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "250m",
+                      "memory": "256Mi"
+                    },
+                    "requests": {
+                      "cpu": "10m",
+                      "memory": "128Mi"
+                    }
+                  },
+                  "startupProbe": {
+                    "failureThreshold": 30,
+                    "initialDelaySeconds": 10,
+                    "periodSeconds": 10,
+                    "tcpSocket": {
+                      "port": 5672
+                    }
+                  }
+                }
+              ],
+              "nodeSelector": {
+                "kubernetes.io/os": "linux"
+              }
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "StatefulSet",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "3e4536f6-0f56-4204-9a82-0733ba836985",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "rabbitmq",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "rabbitmq"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "rabbitmq-amqp",
+              "port": 5672,
+              "targetPort": 5672
+            },
+            {
+              "name": "rabbitmq-http",
+              "port": 15672,
+              "targetPort": 15672
+            }
+          ],
+          "selector": {
+            "app": "rabbitmq"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "7c1903bb-a39f-4278-992a-0c560b36f485",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "order-service-configs",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "bottom-round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "FASTIFY_ADDRESS": "0.0.0.0",
+          "ORDER_QUEUE_HOSTNAME": "rabbitmq",
+          "ORDER_QUEUE_NAME": "orders",
+          "ORDER_QUEUE_PORT": "5672"
+        },
+        "metadata": {
+          "name": "order-service-configs"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "ConfigMap",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "36da170d-8cb9-473f-877e-f087378a24b0",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "order-service-secrets",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-clip": "node",
+        "background-image-containment": "over",
+        "background-opacity": 0,
+        "height": 32,
+        "padding": 1,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg",
+        "width": 32
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "data": {
+          "ORDER_QUEUE_PASSWORD": "cGFzc3dvcmQ=",
+          "ORDER_QUEUE_USERNAME": "dXNlcm5hbWU="
+        },
+        "metadata": {
+          "name": "order-service-secrets"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Secret",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "0443f812-d6b6-4c54-909e-949dacdb2df2",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "order-service",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "order-service"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "order-service"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "order-service"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "envFrom": [
+                    {
+                      "configMapRef": {
+                        "name": "order-service-configs"
+                      }
+                    },
+                    {
+                      "secretRef": {
+                        "name": "order-service-secrets"
+                      }
+                    }
+                  ],
+                  "image": "ghcr.io/azure-samples/aks-store-demo/order-service:2.2.0",
+                  "livenessProbe": {
+                    "failureThreshold": 5,
+                    "httpGet": {
+                      "path": "/health",
+                      "port": 3000
+                    },
+                    "initialDelaySeconds": 3,
+                    "periodSeconds": 3
+                  },
+                  "name": "order-service",
+                  "ports": [
+                    {
+                      "containerPort": 3000
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 3,
+                    "httpGet": {
+                      "path": "/health",
+                      "port": 3000
+                    },
+                    "initialDelaySeconds": 3,
+                    "periodSeconds": 5
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "100m",
+                      "memory": "256Mi"
+                    },
+                    "requests": {
+                      "cpu": "1m",
+                      "memory": "50Mi"
+                    }
+                  },
+                  "startupProbe": {
+                    "failureThreshold": 5,
+                    "httpGet": {
+                      "path": "/health",
+                      "port": 3000
+                    },
+                    "initialDelaySeconds": 20,
+                    "periodSeconds": 10
+                  }
+                }
+              ],
+              "initContainers": [
+                {
+                  "command": [
+                    "sh",
+                    "-c",
+                    "until nc -zv rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done;"
+                  ],
+                  "image": "busybox:1.37.0",
+                  "name": "wait-for-rabbitmq",
+                  "resources": {
+                    "limits": {
+                      "cpu": "100m",
+                      "memory": "256Mi"
+                    },
+                    "requests": {
+                      "cpu": "1m",
+                      "memory": "50Mi"
+                    }
+                  }
+                }
+              ],
+              "nodeSelector": {
+                "kubernetes.io/os": "linux"
+              }
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "9850656a-97c5-484b-927e-7a8151ef815b",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "order-service",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "order-service"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "port": 3000,
+              "targetPort": 3000
+            }
+          ],
+          "selector": {
+            "app": "order-service"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "08b288f7-3b70-40d1-9424-9c8a047ebb32",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "makeline-service",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "makeline-service"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "makeline-service"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "makeline-service"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "ORDER_QUEUE_URI",
+                      "value": "amqp://rabbitmq:5672"
+                    },
+                    {
+                      "name": "ORDER_QUEUE_USERNAME",
+                      "value": "username"
+                    },
+                    {
+                      "name": "ORDER_QUEUE_PASSWORD",
+                      "value": "password"
+                    },
+                    {
+                      "name": "ORDER_QUEUE_NAME",
+                      "value": "orders"
+                    },
+                    {
+                      "name": "ORDER_DB_URI",
+                      "value": "mongodb://documentdb:10260/?tls=true\u0026tlsAllowInvalidCertificates=true"
+                    },
+                    {
+                      "name": "ORDER_DB_NAME",
+                      "value": "orderdb"
+                    },
+                    {
+                      "name": "ORDER_DB_COLLECTION_NAME",
+                      "value": "orders"
+                    },
+                    {
+                      "name": "ORDER_DB_USERNAME",
+                      "value": "username"
+                    },
+                    {
+                      "name": "ORDER_DB_PASSWORD",
+                      "value": "password"
+                    }
+                  ],
+                  "image": "ghcr.io/azure-samples/aks-store-demo/makeline-service:2.2.0",
+                  "livenessProbe": {
+                    "failureThreshold": 5,
+                    "httpGet": {
+                      "path": "/liveness",
+                      "port": 3001
+                    },
+                    "initialDelaySeconds": 3,
+                    "periodSeconds": 3
+                  },
+                  "name": "makeline-service",
+                  "ports": [
+                    {
+                      "containerPort": 3001
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 3,
+                    "httpGet": {
+                      "path": "/health",
+                      "port": 3001
+                    },
+                    "initialDelaySeconds": 3,
+                    "periodSeconds": 5
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "5m",
+                      "memory": "20Mi"
+                    },
+                    "requests": {
+                      "cpu": "1m",
+                      "memory": "6Mi"
+                    }
+                  },
+                  "startupProbe": {
+                    "failureThreshold": 10,
+                    "httpGet": {
+                      "path": "/liveness",
+                      "port": 3001
+                    },
+                    "periodSeconds": 5
+                  }
+                }
+              ],
+              "nodeSelector": {
+                "kubernetes.io/os": "linux"
+              }
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "422a1f73-2aa6-41db-a0eb-1aa51168f567",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "makeline-service",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "makeline-service"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "port": 3001,
+              "targetPort": 3001
+            }
+          ],
+          "selector": {
+            "app": "makeline-service"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "4be00645-28af-4ce4-97be-f4e91a746500",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "product-service",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "product-service"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "product-service"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "product-service"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "AI_SERVICE_URL",
+                      "value": "http://ai-service:5001/"
+                    }
+                  ],
+                  "image": "ghcr.io/azure-samples/aks-store-demo/product-service:2.2.0",
+                  "livenessProbe": {
+                    "failureThreshold": 5,
+                    "httpGet": {
+                      "path": "/health",
+                      "port": 3002
+                    },
+                    "initialDelaySeconds": 3,
+                    "periodSeconds": 3
+                  },
+                  "name": "product-service",
+                  "ports": [
+                    {
+                      "containerPort": 3002
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 3,
+                    "httpGet": {
+                      "path": "/health",
+                      "port": 3002
+                    },
+                    "initialDelaySeconds": 3,
+                    "periodSeconds": 5
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "2m",
+                      "memory": "20Mi"
+                    },
+                    "requests": {
+                      "cpu": "1m",
+                      "memory": "1Mi"
+                    }
+                  }
+                }
+              ],
+              "nodeSelector": {
+                "kubernetes.io/os": "linux"
+              }
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "2843a25f-0a7d-4011-9bc6-30018a561af5",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "product-service",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "product-service"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "port": 3002,
+              "targetPort": 3002
+            }
+          ],
+          "selector": {
+            "app": "product-service"
+          },
+          "type": "ClusterIP"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "9e0c5ef0-debf-42bb-9d41-b4f8cac9e092",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "store-front",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "store-front"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "store-front"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "store-front"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "ghcr.io/azure-samples/aks-store-demo/store-front:2.2.0",
+                  "livenessProbe": {
+                    "failureThreshold": 5,
+                    "httpGet": {
+                      "path": "/health",
+                      "port": 8080
+                    },
+                    "initialDelaySeconds": 3,
+                    "periodSeconds": 3
+                  },
+                  "name": "store-front",
+                  "ports": [
+                    {
+                      "containerPort": 8080,
+                      "name": "store-front"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 3,
+                    "httpGet": {
+                      "path": "/health",
+                      "port": 8080
+                    },
+                    "initialDelaySeconds": 3,
+                    "periodSeconds": 3
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "1000m",
+                      "memory": "512Mi"
+                    },
+                    "requests": {
+                      "cpu": "1m",
+                      "memory": "200Mi"
+                    }
+                  },
+                  "startupProbe": {
+                    "failureThreshold": 3,
+                    "httpGet": {
+                      "path": "/health",
+                      "port": 8080
+                    },
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 5
+                  }
+                }
+              ],
+              "nodeSelector": {
+                "kubernetes.io/os": "linux"
+              }
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "7b10a0a2-9ebe-4c46-9ded-07233a6d8164",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "store-front",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "store-front"
+        },
+        "spec": {
+          "ports": [
+            {
+              "port": 80,
+              "targetPort": 8080
+            }
+          ],
+          "selector": {
+            "app": "store-front"
+          },
+          "type": "LoadBalancer"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "f3b4ec90-1739-4a94-be71-e7edb132bcb8",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "store-admin",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "store-admin"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "store-admin"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "store-admin"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "ghcr.io/azure-samples/aks-store-demo/store-admin:2.2.0",
+                  "livenessProbe": {
+                    "failureThreshold": 5,
+                    "httpGet": {
+                      "path": "/health",
+                      "port": 8081
+                    },
+                    "initialDelaySeconds": 3,
+                    "periodSeconds": 3
+                  },
+                  "name": "store-admin",
+                  "ports": [
+                    {
+                      "containerPort": 8081,
+                      "name": "store-admin"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "failureThreshold": 3,
+                    "httpGet": {
+                      "path": "/health",
+                      "port": 8081
+                    },
+                    "initialDelaySeconds": 3,
+                    "periodSeconds": 5
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "1000m",
+                      "memory": "512Mi"
+                    },
+                    "requests": {
+                      "cpu": "1m",
+                      "memory": "200Mi"
+                    }
+                  },
+                  "startupProbe": {
+                    "failureThreshold": 3,
+                    "httpGet": {
+                      "path": "/health",
+                      "port": 8081
+                    },
+                    "initialDelaySeconds": 5,
+                    "periodSeconds": 5
+                  }
+                }
+              ],
+              "nodeSelector": {
+                "kubernetes.io/os": "linux"
+              }
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "0930161f-3c3f-4f2e-98c7-d10740e497b7",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "store-admin",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "store-admin"
+        },
+        "spec": {
+          "ports": [
+            {
+              "port": 80,
+              "targetPort": 8081
+            }
+          ],
+          "selector": {
+            "app": "store-admin"
+          },
+          "type": "LoadBalancer"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "65ef3976-9116-4a57-82cd-aa38cd0a32f1",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "virtual-customer",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "virtual-customer"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "virtual-customer"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "virtual-customer"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "ORDER_SERVICE_URL",
+                      "value": "http://order-service:3000/"
+                    },
+                    {
+                      "name": "ORDERS_PER_HOUR",
+                      "value": "100"
+                    }
+                  ],
+                  "image": "ghcr.io/azure-samples/aks-store-demo/virtual-customer:2.2.0",
+                  "livenessProbe": {
+                    "exec": {
+                      "command": [
+                        "cat",
+                        "/proc/1/status"
+                      ]
+                    },
+                    "failureThreshold": 5,
+                    "initialDelaySeconds": 10,
+                    "periodSeconds": 10
+                  },
+                  "name": "virtual-customer",
+                  "readinessProbe": {
+                    "exec": {
+                      "command": [
+                        "cat",
+                        "/proc/1/status"
+                      ]
+                    },
+                    "failureThreshold": 3,
+                    "initialDelaySeconds": 3,
+                    "periodSeconds": 5
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "2m",
+                      "memory": "20Mi"
+                    },
+                    "requests": {
+                      "cpu": "1m",
+                      "memory": "1Mi"
+                    }
+                  }
+                }
+              ],
+              "nodeSelector": {
+                "kubernetes.io/os": "linux"
+              }
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "4fa7892d-ca73-44a1-a315-02d95a76350a",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "virtual-worker",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "virtual-worker"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "virtual-worker"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "virtual-worker"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "env": [
+                    {
+                      "name": "MAKELINE_SERVICE_URL",
+                      "value": "http://makeline-service:3001"
+                    },
+                    {
+                      "name": "ORDERS_PER_HOUR",
+                      "value": "100"
+                    }
+                  ],
+                  "image": "ghcr.io/azure-samples/aks-store-demo/virtual-worker:2.2.0",
+                  "livenessProbe": {
+                    "exec": {
+                      "command": [
+                        "cat",
+                        "/proc/1/status"
+                      ]
+                    },
+                    "failureThreshold": 5,
+                    "initialDelaySeconds": 10,
+                    "periodSeconds": 10
+                  },
+                  "name": "virtual-worker",
+                  "readinessProbe": {
+                    "exec": {
+                      "command": [
+                        "cat",
+                        "/proc/1/status"
+                      ]
+                    },
+                    "failureThreshold": 3,
+                    "initialDelaySeconds": 3,
+                    "periodSeconds": 5
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "2m",
+                      "memory": "20Mi"
+                    },
+                    "requests": {
+                      "cpu": "1m",
+                      "memory": "1Mi"
+                    }
+                  }
+                }
+              ],
+              "nodeSelector": {
+                "kubernetes.io/os": "linux"
+              }
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "relationships": null
+}
