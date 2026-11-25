@@ -37,7 +37,7 @@ var deleteCmd = &cobra.Command{
 	Long: `delete design file will trigger deletion of the design file.
 	When a positional target is passed, it is resolved with the following precedence:
 	1. Existing local file path
-	2. Remote URL
+	2. GitHub URL
 	3. Design ID or name lookup
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/design/delete`,
 	Args: func(cmd *cobra.Command, args []string) error {
@@ -63,16 +63,16 @@ var deleteCmd = &cobra.Command{
 	},
 	Example: `
 // delete a design file
-mesheryctl design delete [file | URL]
+mesheryctl design delete [file | GitHub URL]
 
 // delete a design by ID
 mesheryctl design delete [ID]
 
 // delete a design using --file
-mesheryctl design delete -f [file | URL]
+mesheryctl design delete -f [file | GitHub URL]
 
 // delete a design file without an interactive prompt
-mesheryctl design delete -f [file | URL] --yes
+mesheryctl design delete -f [file | GitHub URL] --yes
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request

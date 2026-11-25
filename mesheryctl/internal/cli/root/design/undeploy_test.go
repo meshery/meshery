@@ -13,6 +13,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/patterns"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -179,11 +180,24 @@ func TestUndeployConfirmation(t *testing.T) {
 		{name: "EOF", wantGets: 1},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			args := []string{"undeploy", "-f", filepath.Join("fixtures", "sampleDesign.golden")}
+			fixture := filepath.Join("fixtures", "sampleDesign.golden")
+			args := []string{"undeploy", "-f", fixture}
+			var onClusterLookup func()
+			if test.input == "y\n" {
+				content, err := os.ReadFile(fixture)
+				require.NoError(t, err)
+				localFile := filepath.Join(t.TempDir(), filepath.Base(fixture))
+				require.NoError(t, os.WriteFile(localFile, content, 0600))
+				args[2] = localFile
+				// Change the file after the prompt has derived the design name.
+				onClusterLookup = func() {
+					require.NoError(t, os.WriteFile(localFile, []byte("name: ChangedApp\n"), 0600))
+				}
+			}
 			if test.yes {
 				args = append(args, "--yes")
 			}
-			output, prompt, gets, posts, deletes, err := runRemovalPromptTest(t, args, test.input)
+			output, prompt, gets, posts, deletes, err := runRemovalPromptTestWithClusterPages(t, args, test.input, onClusterLookup, "removal.connections.response.golden")
 			if test.name == "EOF" {
 				require.ErrorContains(t, err, "--yes")
 			} else {
@@ -206,7 +220,7 @@ func TestUndeployConfirmation(t *testing.T) {
 
 func TestUndeployConfirmationListsEveryConnectedClusterPage(t *testing.T) {
 	output, prompt, gets, posts, deletes, err := runRemovalPromptTestWithClusterPages(t,
-		[]string{"undeploy", "-f", filepath.Join("fixtures", "sampleDesign.golden")}, "n\n",
+		[]string{"undeploy", "-f", filepath.Join("fixtures", "sampleDesign.golden")}, "n\n", nil,
 		"removal.connections.page0.response.golden", "removal.connections.page1.response.golden")
 
 	require.NoError(t, err)
@@ -219,10 +233,10 @@ func TestUndeployConfirmationListsEveryConnectedClusterPage(t *testing.T) {
 
 func runRemovalPromptTest(t *testing.T, args []string, input string) (output, prompt string, gets, posts, deletes int, err error) {
 	t.Helper()
-	return runRemovalPromptTestWithClusterPages(t, args, input, "removal.connections.response.golden")
+	return runRemovalPromptTestWithClusterPages(t, args, input, nil, "removal.connections.response.golden")
 }
 
-func runRemovalPromptTestWithClusterPages(t *testing.T, args []string, input string, clusterPages ...string) (output, prompt string, gets, posts, deletes int, err error) {
+func runRemovalPromptTestWithClusterPages(t *testing.T, args []string, input string, onClusterLookup func(), clusterPages ...string) (output, prompt string, gets, posts, deletes int, err error) {
 	t.Helper()
 	ctx := utils.InitTestEnvironment(t)
 	t.Cleanup(func() {
@@ -239,14 +253,26 @@ func runRemovalPromptTestWithClusterPages(t *testing.T, args []string, input str
 			pageURL = fmt.Sprintf("%s&page=%d", pageURL, i)
 		}
 		clusterURLs = append(clusterURLs, pageURL)
-		httpmock.RegisterResponder("GET", pageURL, httpmock.NewStringResponder(200,
-			utils.NewGoldenFile(t, page, "fixtures").Load()))
+		responder := httpmock.NewStringResponder(http.StatusOK, utils.NewGoldenFile(t, page, "fixtures").Load())
+		httpmock.RegisterResponder("GET", pageURL, func(req *http.Request) (*http.Response, error) {
+			if onClusterLookup != nil {
+				onClusterLookup()
+			}
+			return responder(req)
+		})
 	}
 	patternURL := ctx.BaseURL + "/api/pattern"
 	deleteURL := ctx.BaseURL + "/api/pattern/deploy?contexts=all"
 	importURL := patternURL + "/import"
-	httpmock.RegisterResponder("POST", importURL, httpmock.NewStringResponder(http.StatusOK,
-		utils.NewGoldenFile(t, "undeploy.import.response.golden", "fixtures").Load()))
+	importResponse := utils.NewGoldenFile(t, "undeploy.import.response.golden", "fixtures").Load()
+	httpmock.RegisterResponder("POST", importURL, func(req *http.Request) (*http.Response, error) {
+		var payload pattern.MesheryPatternImportFilePayload
+		require.NoError(t, json.NewDecoder(req.Body).Decode(&payload))
+		expected, err := os.ReadFile(filepath.Join("fixtures", "sampleDesign.golden"))
+		require.NoError(t, err)
+		assert.Equal(t, expected, payload.File)
+		return httpmock.NewStringResponse(http.StatusOK, importResponse), nil
+	})
 	response := utils.NewGoldenFile(t, args[0]+".response.golden", "fixtures").Load()
 	httpmock.RegisterResponder("DELETE", deleteURL, func(req *http.Request) (*http.Response, error) {
 		var payload models.MesheryPatternFileDeployPayload
@@ -278,7 +304,7 @@ func TestFileRemovalRequiresConnectedClusters(t *testing.T) {
 	for _, command := range []string{"undeploy", "delete"} {
 		t.Run(command, func(t *testing.T) {
 			_, prompt, gets, posts, deletes, err := runRemovalPromptTestWithClusterPages(t,
-				[]string{command, "-f", filepath.Join("fixtures", "sampleDesign.golden"), "--yes"}, "",
+				[]string{command, "-f", filepath.Join("fixtures", "sampleDesign.golden"), "--yes"}, "", nil,
 				"removal.connections.empty.response.golden")
 			utils.AssertMeshkitErrorsEqual(t, err, ErrNoConnectedClusters())
 			assert.Equal(t, 1, gets)

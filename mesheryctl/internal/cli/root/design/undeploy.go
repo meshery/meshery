@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -118,7 +119,12 @@ mesheryctl design undeploy -f [filepath] --yes
 		}
 
 		importURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/import"
-		imported, err := importPattern("", file, importURL)
+		fileName := filepath.Base(file)
+		patternName := name
+		if patternName == "" {
+			patternName = fileName
+		}
+		imported, err := importDesignFile(importURL, patternName, fileName, []byte(designFile))
 		if err != nil {
 			return err
 		}
