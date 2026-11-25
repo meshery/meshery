@@ -602,6 +602,11 @@ adapter:
           description: Kubernetes namespace from which to remove infrastructure
           usage: mesheryctl adapter remove [args] --namespace [namespace to be used]
           example: mesheryctl adapter remove linkerd --namespace linkerd-ns -t "~/Download/auth.json"
+        yes:
+          name: --yes, -y
+          description: (optional) assume yes for user interactive prompts.
+          usage: mesheryctl adapter remove linkerd --yes
+          example: mesheryctl adapter remove linkerd --yes
 
     deploy:
       name: deploy
