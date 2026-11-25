@@ -18,8 +18,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshkit/errors"
 	"github.com/stretchr/testify/assert"
 )
 
