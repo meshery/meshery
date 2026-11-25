@@ -108,6 +108,24 @@ func TestVersionCmd(t *testing.T) {
 			wantStdout: []string{"Client", "Server", "unavailable"},
 			wantLog:    "Error processing json API data",
 		},
+		{
+			name:       "given server returns 502 bad gateway when version then show server version as unavailable and log status code error",
+			responder:  httpmock.NewStringResponder(http.StatusBadGateway, `<html><body>502 Bad Gateway</body></html>`),
+			wantStdout: []string{"Client", "Server", "unavailable"},
+			wantLog:    "Server returned with status code: 502",
+		},
+		{
+			name:       "given server returns 401 unauthorized when version then show server version as unavailable and log status code error",
+			responder:  httpmock.NewStringResponder(http.StatusUnauthorized, `{"message":"Unauthorized"}`),
+			wantStdout: []string{"Client", "Server", "unavailable"},
+			wantLog:    "Server returned with status code: 401",
+		},
+		{
+			name:       "given server returns 500 internal server error when version then show server version as unavailable and log status code error",
+			responder:  httpmock.NewStringResponder(http.StatusInternalServerError, `Internal Server Error`),
+			wantStdout: []string{"Client", "Server", "unavailable"},
+			wantLog:    "Server returned with status code: 500",
+		},
 	}
 
 	for _, tt := range tests {
