@@ -188,7 +188,7 @@ func TestUndeployConfirmation(t *testing.T) {
 			if test.yes {
 				args = append(args, "--yes")
 			}
-			output, prompt, err, gets, posts, deletes := runRemovalPromptTest(t, args, test.input)
+			output, prompt, gets, posts, deletes, err := runRemovalPromptTest(t, args, test.input)
 			if test.name == "EOF" {
 				require.ErrorContains(t, err, "--yes")
 			} else {
@@ -210,7 +210,7 @@ func TestUndeployConfirmation(t *testing.T) {
 }
 
 func TestUndeployConfirmationListsEveryConnectedClusterPage(t *testing.T) {
-	output, prompt, err, gets, posts, deletes := runRemovalPromptTestWithClusterPages(t,
+	output, prompt, gets, posts, deletes, err := runRemovalPromptTestWithClusterPages(t,
 		[]string{"undeploy", "-f", filepath.Join("fixtures", "sampleDesign.golden")}, "n\n",
 		"removal.connections.page0.response.golden", "removal.connections.page1.response.golden")
 
@@ -222,12 +222,12 @@ func TestUndeployConfirmationListsEveryConnectedClusterPage(t *testing.T) {
 	assert.Contains(t, output, "Undeploy cancelled")
 }
 
-func runRemovalPromptTest(t *testing.T, args []string, input string) (output, prompt string, err error, gets, posts, deletes int) {
+func runRemovalPromptTest(t *testing.T, args []string, input string) (output, prompt string, gets, posts, deletes int, err error) {
 	t.Helper()
 	return runRemovalPromptTestWithClusterPages(t, args, input, "removal.connections.response.golden")
 }
 
-func runRemovalPromptTestWithClusterPages(t *testing.T, args []string, input string, clusterPages ...string) (output, prompt string, err error, gets, posts, deletes int) {
+func runRemovalPromptTestWithClusterPages(t *testing.T, args []string, input string, clusterPages ...string) (output, prompt string, gets, posts, deletes int, err error) {
 	t.Helper()
 	ctx := utils.InitTestEnvironment(t)
 	t.Cleanup(func() {
@@ -263,5 +263,5 @@ func runRemovalPromptTestWithClusterPages(t *testing.T, args []string, input str
 	for _, pageURL := range clusterURLs {
 		gets += calls["GET "+pageURL]
 	}
-	return buf.String(), readPrompt(), err, gets, calls["POST "+patternURL], calls["DELETE "+deleteURL]
+	return buf.String(), readPrompt(), gets, calls["POST "+patternURL], calls["DELETE "+deleteURL], err
 }
