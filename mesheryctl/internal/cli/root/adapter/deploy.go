@@ -33,8 +33,8 @@ var (
 	meshName  string
 	deployCmd = &cobra.Command{
 		Use:   "deploy",
-		Short: "Deploy infrastructure to the Kubernetes cluster",
-		Long:  `Deploy infrastructure to the connected Kubernetes cluster`,
+		Short: "Deploy infrastructure to the connected Kubernetes clusters",
+		Long:  `Deploy infrastructure to every Kubernetes cluster connected to Meshery Server`,
 		Example: `
 // Deploy a infrastructure from an interactive on the default namespace
 mesheryctl adapter deploy

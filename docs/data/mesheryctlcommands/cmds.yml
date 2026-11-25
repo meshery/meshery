@@ -594,7 +594,7 @@ adapter:
 
     remove:
       name: remove
-      description: Remove infrastructure in the connected Kubernetes cluster
+      description: Remove infrastructure in every Kubernetes cluster connected to Meshery Server
       usage: mesheryctl adapter remove [args] [flags] [args]
       flags:
         namespace:
@@ -605,7 +605,7 @@ adapter:
 
     deploy:
       name: deploy
-      description: Deploy infrastructure into the cluster
+      description: Deploy infrastructure into every Kubernetes cluster connected to Meshery Server
       usage: mesheryctl adapter deploy [flags]
       example: mesheryctl adapter deploy -t "~/Downloads/auth.json"
       flags:
