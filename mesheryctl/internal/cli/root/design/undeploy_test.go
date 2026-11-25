@@ -39,7 +39,7 @@ func TestUndeployCmd(t *testing.T) {
 				},
 				{
 					Method:       "DELETE",
-					URL:          "/api/pattern/deploy",
+					URL:          "/api/pattern/deploy?contexts=all",
 					Response:     "undeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -59,7 +59,7 @@ func TestUndeployCmd(t *testing.T) {
 				},
 				{
 					Method:       "DELETE",
-					URL:          "/api/pattern/deploy",
+					URL:          "/api/pattern/deploy?contexts=all",
 					Response:     "undeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -146,7 +146,7 @@ func TestUndeployCmd(t *testing.T) {
 				},
 				{
 					Method:       "DELETE",
-					URL:          "/api/pattern/deploy",
+					URL:          "/api/pattern/deploy?contexts=all",
 					Response:     "undeploy.response.golden",
 					ResponseCode: 200,
 				},

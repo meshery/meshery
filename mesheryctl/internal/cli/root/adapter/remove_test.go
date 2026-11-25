@@ -46,7 +46,7 @@ func TestRemoveMesh(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/system/adapter/operation",
+					URL:          testContext.BaseURL + "/api/system/adapter/operation?contexts=all",
 					Response:     "deploy.golden",
 					ResponseCode: 200,
 				},
@@ -67,7 +67,7 @@ func TestRemoveMesh(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/system/adapter/operation",
+					URL:          testContext.BaseURL + "/api/system/adapter/operation?contexts=all",
 					Response:     "deploy.golden",
 					ResponseCode: 200,
 				},
@@ -88,7 +88,7 @@ func TestRemoveMesh(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/system/adapter/operation",
+					URL:          testContext.BaseURL + "/api/system/adapter/operation?contexts=all",
 					Response:     "deploy.golden",
 					ResponseCode: 200,
 				},

@@ -32,7 +32,7 @@ func TestDeleteCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?contexts=all",
 					Response:     "delete.response.golden",
 					ResponseCode: 200,
 				},
@@ -46,7 +46,7 @@ func TestDeleteCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?contexts=all",
 					Response:     "delete.response.golden",
 					ResponseCode: 200,
 				},
@@ -60,7 +60,7 @@ func TestDeleteCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "DELETE",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?contexts=all",
 					Response:     "delete.response.golden",
 					ResponseCode: 200,
 				},
@@ -188,7 +188,7 @@ func TestDeleteCmd(t *testing.T) {
 				},
 				{
 					Method:       "DELETE",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?contexts=all",
 					Response:     "delete.response.golden",
 					ResponseCode: 200,
 				},

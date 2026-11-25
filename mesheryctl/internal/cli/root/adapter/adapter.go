@@ -150,7 +150,7 @@ func parseAndValidateMesh(mctlCfg *config.MesheryCtlConfig, args []string) error
 }
 
 func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete bool, spec string) (string, error) {
-	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/operation"
+	path := mctlCfg.GetBaseMesheryURL() + "/api/system/adapter/operation?" + utils.AllK8sContextsQuery
 	method := "POST"
 	data := url.Values{}
 	data.Set("adapter", adapterURL)

@@ -44,7 +44,7 @@ func TestValidateMesh(t *testing.T) {
 	testdataDir := filepath.Join(currDir, "testdata")
 
 	syncURL := testContext.BaseURL + "/api/system/sync"
-	operationURL := testContext.BaseURL + "/api/system/adapter/operation"
+	operationURL := testContext.BaseURL + "/api/system/adapter/operation?contexts=all"
 
 	tests := []struct {
 		Name             string
