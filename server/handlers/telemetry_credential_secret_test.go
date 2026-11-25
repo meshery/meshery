@@ -363,9 +363,9 @@ func TestTelemetryClientForConnection_NonZeroMissingCredentialStillReturns404(t 
 				clientErr  error
 			)
 			if kind == "prometheus" {
-				_, _, statusCode, clientErr = h.prometheusTelemetryClientForConnection("", connID, provider)
+				_, _, statusCode, clientErr = h.prometheusTelemetryClientForConnection("", "", connID, provider)
 			} else {
-				_, _, statusCode, clientErr = h.grafanaClientForConnection("", connID, provider)
+				_, _, statusCode, clientErr = h.grafanaClientForConnection("", "", connID, provider)
 			}
 
 			if clientErr == nil {
