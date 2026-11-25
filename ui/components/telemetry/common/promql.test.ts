@@ -24,6 +24,29 @@ describe('resolveExpr', () => {
     expect(resolveExpr('rate(x[$__rate_interval_ms])', {}, win)).toBe('rate(x[60000])');
   });
 
+  // Grafana: $__rate_interval = max($__interval + scrape_interval, 4 * scrape_interval),
+  // with Grafana's default 15s scrape interval.
+  it.each([
+    // [step, expected $__rate_interval in seconds]
+    [15, 60], // 4 * scrape interval is the floor
+    [36, 60], // "Last 3 hours" step
+    [72, 87], // "Last 6 hours" step: step + scrape interval
+    [288, 303], // "Last 24 hours" step
+    [2016, 2031], // "Last 7 days" step
+  ])('computes $__rate_interval like Grafana for a %is step', (step, expectedSec) => {
+    const w: TimeWindow = { start: 0, end: step * 300, step };
+    expect(resolveExpr('rate(x[$__rate_interval])', {}, w)).toBe(`rate(x[${expectedSec}s])`);
+    expect(resolveExpr('$__rate_interval_ms', {}, w)).toBe(String(expectedSec * 1000));
+  });
+
+  it('keeps $__rate_interval longer than one step so rate() never skips samples', () => {
+    for (const step of [15, 36, 72, 144, 288, 2016]) {
+      const w: TimeWindow = { start: 0, end: step * 300, step };
+      const sec = Number(resolveExpr('$__rate_interval', {}, w).replace(/s$/, ''));
+      expect(sec).toBeGreaterThan(step);
+    }
+  });
+
   it('upgrades exact matchers to regex when a variable resolves to match-all or multi-value', () => {
     const vars = { cluster: '.*', namespace: '.*', pod: '.*' };
     // Real kube-prometheus panel: exact matchers must become =~ so .* matches.
