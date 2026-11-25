@@ -32,6 +32,7 @@ import (
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	patternHelpers "github.com/meshery/meshkit/models/patterns"
 	mutils "github.com/meshery/meshkit/utils"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -327,10 +328,20 @@ func buildPolicyEvaluationEventMetadata(resp pattern.EvaluationResponse, serverU
 }
 
 func policyEvalTimeout() time.Duration {
-	if d := viper.GetDuration("POLICY_EVAL_TIMEOUT"); d > 0 {
-		return d
+	raw := strings.TrimSpace(viper.GetString("POLICY_EVAL_TIMEOUT"))
+	if raw == "" {
+		return defaultPolicyEvalTimeout
 	}
-	return defaultPolicyEvalTimeout
+	d, err := time.ParseDuration(raw)
+	if err != nil {
+		logrus.Warnf("Invalid POLICY_EVAL_TIMEOUT %q: %v; falling back to default %s", raw, err, defaultPolicyEvalTimeout)
+		return defaultPolicyEvalTimeout
+	}
+	if d <= 0 {
+		logrus.Warnf("Invalid POLICY_EVAL_TIMEOUT %q: duration must be positive; falling back to default %s", raw, defaultPolicyEvalTimeout)
+		return defaultPolicyEvalTimeout
+	}
+	return d
 }
 
 // EvaluateDesign evaluates the design based on the relationship policies.

@@ -1362,3 +1362,64 @@ func TestEvaluateRelationshipPolicy_Success_ResponsePayloadStructure(t *testing.
 	assert.NotNil(t, resp.Timestamp)
 	assertSuccessResponseKeys(t, rec.Body.Bytes())
 }
+
+func TestPolicyEvalTimeout(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    interface{}
+		expected time.Duration
+	}{
+		{
+			name:     "empty value returns default 3m",
+			input:    "",
+			expected: defaultPolicyEvalTimeout,
+		},
+		{
+			name:     "valid duration string 5m returns 5m",
+			input:    "5m",
+			expected: 5 * time.Minute,
+		},
+		{
+			name:     "valid duration string 30s returns 30s",
+			input:    "30s",
+			expected: 30 * time.Second,
+		},
+		{
+			name:     "bare number without unit 300 returns default 3m",
+			input:    "300",
+			expected: defaultPolicyEvalTimeout,
+		},
+		{
+			name:     "bare integer without unit 180 returns default 3m",
+			input:    180,
+			expected: defaultPolicyEvalTimeout,
+		},
+		{
+			name:     "invalid non-duration string returns default 3m",
+			input:    "invalid-duration",
+			expected: defaultPolicyEvalTimeout,
+		},
+		{
+			name:     "zero duration 0s returns default 3m",
+			input:    "0s",
+			expected: defaultPolicyEvalTimeout,
+		},
+		{
+			name:     "negative duration -1s returns default 3m",
+			input:    "-1s",
+			expected: defaultPolicyEvalTimeout,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			viper.Set("POLICY_EVAL_TIMEOUT", tt.input)
+			t.Cleanup(func() {
+				viper.Set("POLICY_EVAL_TIMEOUT", nil)
+			})
+
+			got := policyEvalTimeout()
+			assert.Equal(t, tt.expected, got)
+		})
+	}
+}
