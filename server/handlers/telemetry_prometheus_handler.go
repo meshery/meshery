@@ -102,7 +102,12 @@ func (h *Handler) PrometheusTelemetryPingHandler(w http.ResponseWriter, req *htt
 
 	client, connection, statusCode, err := h.prometheusTelemetryClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
-		h.emitPrometheusPingFailure(p, token, userID, eventBuilder, connectionLabel(connection, connectionID), err)
+		// A missing organization selection is not a connectivity failure:
+		// no health check ran, so no "unreachable" event is recorded.
+		// writeCredentialProviderError returns the 409 selection body.
+		if _, ok := models.AsOrganizationSelectionRequired(err); !ok {
+			h.emitPrometheusPingFailure(p, token, userID, eventBuilder, connectionLabel(connection, connectionID), err)
+		}
 		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}

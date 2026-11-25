@@ -119,7 +119,7 @@ func (l *RemoteProvider) resolveActingOrganizationID(req *http.Request, userID, 
 		return "", nil
 	}
 
-	if !l.Capabilities.IsSupported(PersistOrganizations) {
+	if !l.GetProviderProperties().Capabilities.IsSupported(PersistOrganizations) {
 		return "", nil
 	}
 
@@ -200,23 +200,27 @@ func organizationSelectionChoices(orgs []*organization.Organization) []core.Orga
 	return choices
 }
 
-func (l *RemoteProvider) organizationChoicesFromRequest(req *http.Request) []core.OrganizationSelectionChoice {
+// organizationChoicesFromRequest lists the caller's organizations. The bool
+// reports whether the lookup succeeded: a successful empty list (the caller
+// left their last organization) is distinct from a failed lookup, so callers
+// must not treat an empty return as "could not list organizations".
+func (l *RemoteProvider) organizationChoicesFromRequest(req *http.Request) ([]core.OrganizationSelectionChoice, bool) {
 	if l == nil || req == nil {
-		return nil
+		return nil, false
 	}
 	token, err := l.GetToken(req)
 	if err != nil {
-		return nil
+		return nil, false
 	}
 	body, err := l.GetOrganizations(token, "0", "all", "", "", "")
 	if err != nil {
-		return nil
+		return nil, false
 	}
 	orgs, _, err := parseActingOrganizations(body)
 	if err != nil {
-		return nil
+		return nil, false
 	}
-	return organizationSelectionChoices(orgs)
+	return organizationSelectionChoices(orgs), true
 }
 
 // persistActingOrganization records orgID as the user's selected organization
@@ -258,6 +262,21 @@ func (l *RemoteProvider) persistActingOrganization(req *http.Request, userID, or
 
 	if userID == "" || l.SessionPreferencePersister == nil {
 		return
+	}
+	// Re-read the stored preference immediately before the write. The
+	// request-context copy above predates the GetOrganizations lookup, so
+	// a preference save by another request in the meantime would be
+	// clobbered by this whole-record write. The freshly read copy is the
+	// object written and synced. A read failure skips the persist; the
+	// in-flight call already has the organization id to send.
+	if stored, err := l.ReadFromPersister(userID); err != nil {
+		if l.Log != nil {
+			l.Log.Error(err)
+		}
+		return
+	} else if stored != nil {
+		stored.SelectedOrganizationID = orgID
+		pref = stored
 	}
 	if err := l.WriteToPersister(userID, pref); err != nil {
 		if l.Log != nil {
@@ -386,9 +405,10 @@ var (
 	}
 )
 
-// organizationScopeError maps a Cloud organization-scope response. 409 and a
-// contract 403 become organization_selection_required. A plain 403 is "no
-// qualifying organization". A 404 is "not a member of selected org" when
+// organizationScopeError maps a Cloud organization-scope response. A 409
+// with the organization_selection_required contract body becomes
+// organization_selection_required. A plain 403 is "no qualifying
+// organization". A 404 is "not a member of selected org" when
 // treatNotFoundAsMembership is true, or when the org we sent is no longer
 // one the caller belongs to. It returns nil when the status is not an
 // organization-scope failure (including a resource 404 on get/update/delete).
@@ -396,22 +416,14 @@ func (l *RemoteProvider) organizationScopeError(req *http.Request, status int, b
 	switch status {
 	case http.StatusConflict:
 		sel := parseOrganizationSelectionRequired(body)
-		if sel != nil {
-			if len(sel.Choices) < 2 {
-				if choices := l.organizationChoicesFromRequest(req); len(choices) >= 2 {
-					sel.Choices = choices
-				}
-			}
-			return httputil.WithProviderStatus(sel, http.StatusConflict)
-		}
-		if !policy.treatConflictAsSelection {
-			return nil
-		}
 		if sel == nil {
+			if !policy.treatConflictAsSelection {
+				return nil
+			}
 			sel = &OrganizationSelectionRequired{Message: organizationSelectionRequiredMessage}
 		}
 		if len(sel.Choices) < 2 {
-			if choices := l.organizationChoicesFromRequest(req); len(choices) >= 2 {
+			if choices, ok := l.organizationChoicesFromRequest(req); ok && len(choices) >= 2 {
 				sel.Choices = choices
 			}
 		}
@@ -444,11 +456,14 @@ func (l *RemoteProvider) actingOrganizationIsNotMember(req *http.Request, orgID 
 	if l == nil || orgID == "" {
 		return false
 	}
-	choices := l.organizationChoicesFromRequest(req)
-	if len(choices) == 0 {
+	choices, ok := l.organizationChoicesFromRequest(req)
+	if !ok {
 		// Could not list organizations; do not claim a membership failure.
 		return false
 	}
+	// A successful empty list means the caller belongs to no organization
+	// (for example they left their last one), so the sent org is not one
+	// of theirs and the 404 is a membership failure.
 	for _, choice := range choices {
 		if choice.ID.String() == orgID {
 			return false

@@ -4295,7 +4295,10 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		return
 	}
 
-	l.ProviderProperties = providerProperties
+	// Write through the locked accessor: resolveActingOrganizationID and
+	// other readers take propertiesMu, so a direct assignment here would
+	// race them.
+	l.SetProviderProperties(providerProperties)
 
 	// Download the package for the user only if they have extension capability
 	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {

@@ -186,6 +186,69 @@ func TestGetUserCredentialsAutoSelectsAndPersistsSoleOrganization(t *testing.T) 
 	}
 }
 
+func TestGetUserCredentialsAutoSelectKeepsConcurrentPreferenceSave(t *testing.T) {
+	// The request-context preference predates the GetOrganizations lookup.
+	// A preference saved by another request in the meantime must survive
+	// the auto-select persist, not be clobbered by the whole-record write.
+	var credsCalls, orgsCalls int
+	var gotOrg string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsOrgEndpoint):
+			orgsCalls++
+			_, _ = w.Write(orgsPageJSON(t, testSoleOrgID))
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsAPIEndpoint):
+			credsCalls++
+			gotOrg = r.Header.Get(CurrentOrgIDHeader)
+			_, _ = w.Write(credentialsPageJSON(t))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := newCredentialsOrgProvider(t, server.URL)
+	concurrent := NewDefaultPreference()
+	concurrent.DashboardPreferences = map[string]interface{}{"concurrent": "save"}
+	if err := provider.WriteToPersister(testCredsUserID, concurrent); err != nil {
+		t.Fatalf("seed persister: %v", err)
+	}
+	stale := NewDefaultPreference()
+	if _, err := provider.GetUserCredentials(newCredentialsOrgRequest(t, stale), testCredsUserID, 0, 10, "", ""); err != nil {
+		t.Fatalf("GetUserCredentials: %v", err)
+	}
+	if orgsCalls != 1 || credsCalls != 1 {
+		t.Fatalf("organizations calls = %d, credentials calls = %d, want 1 and 1", orgsCalls, credsCalls)
+	}
+	if gotOrg != testSoleOrgID {
+		t.Errorf("X-Current-Orgid = %q, want the auto-selected %q", gotOrg, testSoleOrgID)
+	}
+	stored, err := provider.ReadFromPersister(testCredsUserID)
+	if err != nil {
+		t.Fatalf("ReadFromPersister: %v", err)
+	}
+	if stored.SelectedOrganizationID != testSoleOrgID {
+		t.Errorf("persisted selection = %q, want %q", stored.SelectedOrganizationID, testSoleOrgID)
+	}
+	if stored.DashboardPreferences["concurrent"] != "save" {
+		t.Errorf("persisted dashboard preferences = %#v, want the concurrent save kept", stored.DashboardPreferences)
+	}
+	select {
+	case sess := <-provider.syncChan:
+		if sess == nil || sess.session == nil {
+			t.Fatal("preference sync carried no session")
+		}
+		if sess.session.SelectedOrganizationID != testSoleOrgID {
+			t.Errorf("synced selection = %q, want %q", sess.session.SelectedOrganizationID, testSoleOrgID)
+		}
+		if sess.session.DashboardPreferences["concurrent"] != "save" {
+			t.Errorf("synced dashboard preferences = %#v, want the object actually written", sess.session.DashboardPreferences)
+		}
+	default:
+		t.Error("expected a preference sync to be enqueued for the auto-selected organization")
+	}
+}
+
 func TestGetUserCredentialsRequiresSelectionWhenSeveralOrganizations(t *testing.T) {
 	var credsCalls int
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -767,6 +830,73 @@ func TestGetCredentialByIDMapsCloudNotFoundToMembershipWhenOrgIsNotTheCallers(t 
 	_, status, err := provider.GetCredentialByID(testCredsToken, cred.UserId.String(), cred.ID)
 	if errors.GetCode(err) != ErrOrganizationMembershipCode {
 		t.Fatalf("error code = %q, want %q (err=%v)", errors.GetCode(err), ErrOrganizationMembershipCode, err)
+	}
+	if status != http.StatusNotFound {
+		t.Errorf("status = %d, want 404", status)
+	}
+}
+
+func TestGetCredentialByIDMapsCloudNotFoundToMembershipWhenCallerHasNoOrganizations(t *testing.T) {
+	// A successful empty organization list means the caller belongs to no
+	// organization (they left their last one), so the sent org is not one
+	// of theirs and the credential 404 is a membership failure.
+	cred := testCredential(t)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsAPIEndpoint+"/"):
+			w.WriteHeader(http.StatusNotFound)
+			_, _ = io.WriteString(w, `{"error":"not a member"}`)
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsOrgEndpoint):
+			_, _ = w.Write(orgsPageJSON(t))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := newCredentialsOrgProvider(t, server.URL)
+	pref := &Preference{SelectedOrganizationID: testSelectedOrg}
+	if err := provider.WriteToPersister(cred.UserId.String(), pref); err != nil {
+		t.Fatalf("seed persister: %v", err)
+	}
+	_, status, err := provider.GetCredentialByID(testCredsToken, cred.UserId.String(), cred.ID)
+	if errors.GetCode(err) != ErrOrganizationMembershipCode {
+		t.Fatalf("error code = %q, want %q (err=%v)", errors.GetCode(err), ErrOrganizationMembershipCode, err)
+	}
+	if status != http.StatusNotFound {
+		t.Errorf("status = %d, want 404", status)
+	}
+}
+
+func TestGetCredentialByIDKeepsResourceNotFoundWhenOrganizationLookupFails(t *testing.T) {
+	// A failed organization lookup must not claim a membership failure: the
+	// credential 404 stays a resource error.
+	cred := testCredential(t)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsAPIEndpoint+"/"):
+			w.WriteHeader(http.StatusNotFound)
+			_, _ = io.WriteString(w, `{"error":"credential not found"}`)
+		case r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, credsOrgEndpoint):
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = io.WriteString(w, "organizations unavailable")
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := newCredentialsOrgProvider(t, server.URL)
+	pref := &Preference{SelectedOrganizationID: testSelectedOrg}
+	if err := provider.WriteToPersister(cred.UserId.String(), pref); err != nil {
+		t.Fatalf("seed persister: %v", err)
+	}
+	_, status, err := provider.GetCredentialByID(testCredsToken, cred.UserId.String(), cred.ID)
+	if err == nil {
+		t.Fatal("expected a not-found error")
+	}
+	if errors.GetCode(err) == ErrOrganizationMembershipCode {
+		t.Fatalf("resource 404 was mapped to membership on a failed lookup: %v", err)
 	}
 	if status != http.StatusNotFound {
 		t.Errorf("status = %d, want 404", status)

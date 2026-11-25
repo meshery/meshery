@@ -107,7 +107,12 @@ func (h *Handler) GrafanaTelemetryPingHandler(w http.ResponseWriter, req *http.R
 
 	client, connection, statusCode, err := h.grafanaClientForConnection(token, providerUserID(user), connectionID, p)
 	if err != nil {
-		h.emitGrafanaPingFailure(p, token, userID, eventBuilder, connectionLabel(connection, connectionID), err)
+		// A missing organization selection is not a connectivity failure:
+		// no health check ran, so no "unreachable" event is recorded.
+		// writeCredentialProviderError returns the 409 selection body.
+		if _, ok := models.AsOrganizationSelectionRequired(err); !ok {
+			h.emitGrafanaPingFailure(p, token, userID, eventBuilder, connectionLabel(connection, connectionID), err)
+		}
 		h.writeCredentialProviderError(w, err, nil, statusCode)
 		return
 	}
