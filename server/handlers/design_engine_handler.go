@@ -237,6 +237,7 @@ func _processPattern(opts *patterncore.ProcessPatternOptions) (map[string]interf
 			opIsDelete: opts.IsDelete,
 		}
 		sap := &serviceActionProvider{
+			ctx:                    opts.Context,
 			token:                  token,
 			log:                    opts.Log,
 			provider:               opts.Provider,
@@ -326,6 +327,7 @@ func (sip *serviceInfoProvider) IsDelete() bool {
 }
 
 type serviceActionProvider struct {
+	ctx      context.Context
 	token    string
 	log      logger.Handler
 	provider models.Provider
@@ -660,7 +662,7 @@ func (sap *serviceActionProvider) provisionOnAdapter(hostName string, hostPort i
 		err = errors.Wrapf(err, "error marshalling component \"%s\" of type : %s", comp.DisplayName, comp.Component.Kind)
 		return patterns.DeploymentMessagePerContext{}, err
 	}
-	resp, err := mClient.MClient.Provision(context.TODO(), &meshes.ProvisionRequest{
+	resp, err := mClient.MClient.Provision(sap.ctx, &meshes.ProvisionRequest{
 		Username:     sap.userID,
 		DeleteOp:     sap.opIsDelete,
 		KubeConfigs:  kconfigs,

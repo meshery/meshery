@@ -20,12 +20,12 @@ import (
 type provisionAdapter struct {
 	meshes.UnimplementedMeshServiceServer
 	openConns   atomic.Int32
-	onProvision func()
+	onProvision func(context.Context)
 }
 
-func (a *provisionAdapter) Provision(context.Context, *meshes.ProvisionRequest) (*meshes.ProvisionResponse, error) {
+func (a *provisionAdapter) Provision(ctx context.Context, _ *meshes.ProvisionRequest) (*meshes.ProvisionResponse, error) {
 	if a.onProvision != nil {
-		a.onProvision()
+		a.onProvision(ctx)
 	}
 	return &meshes.ProvisionResponse{Message: "provisioned"}, nil
 }
@@ -93,14 +93,19 @@ func TestProvisionClosesEachAdapterClientBeforeTheNextHost(t *testing.T) {
 	second, secondHost := startProvisionAdapter(t)
 
 	var firstStillOpen atomic.Int32
-	second.onProvision = func() {
+	second.onProvision = func(ctx context.Context) {
 		firstStillOpen.Store(first.waitForNoOpenConns())
 	}
 
 	comp := mutateTestComponent("workload", "Deployment")
 	comp.Model = &modelv1beta1.ModelDefinition{Name: "kubernetes"}
 
-	sap := &serviceActionProvider{log: log, userID: "user", patternName: "design"}
+	sap := &serviceActionProvider{
+		ctx:         context.Background(),
+		log:         log,
+		userID:      "user",
+		patternName: "design",
+	}
 	msgs, err := sap.Provision(stages.CompConfigPair{
 		Component: *comp,
 		Hosts:     []connection.Connection{firstHost, secondHost},
@@ -119,5 +124,64 @@ func TestProvisionClosesEachAdapterClientBeforeTheNextHost(t *testing.T) {
 		if open := adapter.waitForNoOpenConns(); open != 0 {
 			t.Errorf("the %s adapter still holds %d client connection(s) after Provision returned, want 0", name, open)
 		}
+	}
+}
+func TestProvisionPropagatesRequestContextCancellation(t *testing.T) {
+	log, err := logger.New("provision-cancel-test", logger.Options{})
+	if err != nil {
+		t.Fatalf("failed to build a logger: %v", err)
+	}
+
+	adapter, host := startProvisionAdapter(t)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	adapterStarted := make(chan struct{})
+	adapterReceivedCancellation := make(chan struct{})
+
+	adapter.onProvision = func(rpcCtx context.Context) {
+		close(adapterStarted)
+		<-rpcCtx.Done()
+		close(adapterReceivedCancellation)
+	}
+
+	comp := mutateTestComponent("workload", "Deployment")
+	comp.Model = &modelv1beta1.ModelDefinition{Name: "kubernetes"}
+
+	sap := &serviceActionProvider{
+		log:         log,
+		userID:      "user",
+		patternName: "design",
+		ctx:         ctx,
+	}
+
+	done := make(chan error, 1)
+	go func() {
+		_, err := sap.Provision(stages.CompConfigPair{
+			Component: *comp,
+			Hosts:     []connection.Connection{host},
+		})
+		done <- err
+	}()
+
+	select {
+	case <-adapterStarted:
+		cancel()
+	case <-time.After(3 * time.Second):
+		t.Fatal("adapter RPC did not start")
+	}
+
+	select {
+	case <-adapterReceivedCancellation:
+		// The adapter received cancellation.
+	case <-time.After(3 * time.Second):
+		t.Fatal("adapter RPC did not receive context cancellation")
+	}
+
+	select {
+	case <-done:
+	case <-time.After(3 * time.Second):
+		t.Fatal("Provision did not return after cancellation")
 	}
 }

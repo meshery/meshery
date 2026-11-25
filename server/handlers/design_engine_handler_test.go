@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -41,7 +42,10 @@ func newMutateActionProvider(t *testing.T) *serviceActionProvider {
 		t.Fatalf("failed to build a logger: %v", err)
 	}
 
-	return &serviceActionProvider{log: log}
+	return &serviceActionProvider{
+		ctx: context.Background(),
+		log: log,
+	}
 }
 
 // The dependency Mutate writes has to be one the execution plan can resolve: a
