@@ -56,23 +56,16 @@ mesheryctl relationship search [--kind <kind>] [--page <int>]`,
 			return err
 		}
 
-		kind := strings.TrimSpace(searchRelationshipFlagsProvided.Kind)
-		subType := strings.TrimSpace(searchRelationshipFlagsProvided.SubType)
-		relType := strings.TrimSpace(searchRelationshipFlagsProvided.Type)
-		model := strings.TrimSpace(searchRelationshipFlagsProvided.Model)
-
-		if kind == "" && subType == "" && relType == "" && model == "" {
+		if strings.TrimSpace(searchRelationshipFlagsProvided.Kind) == "" &&
+			strings.TrimSpace(searchRelationshipFlagsProvided.SubType) == "" &&
+			strings.TrimSpace(searchRelationshipFlagsProvided.Type) == "" &&
+			strings.TrimSpace(searchRelationshipFlagsProvided.Model) == "" {
 			return utils.ErrFlagsInvalid(fmt.Errorf(
 				"at least one of [--kind, --subtype, --type, --model] is required\n\n" +
 					"Usage: mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]\n" +
 					"Run 'mesheryctl relationship search --help'",
 			))
 		}
-
-		searchRelationshipFlagsProvided.Kind = kind
-		searchRelationshipFlagsProvided.SubType = subType
-		searchRelationshipFlagsProvided.Type = relType
-		searchRelationshipFlagsProvided.Model = model
 
 		return nil
 	},

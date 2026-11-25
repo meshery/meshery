@@ -140,25 +140,30 @@ func TestBuildSearchUrl_TrimsWhitespace(t *testing.T) {
 		searchRelationshipFlagsProvided = origFlags
 	})
 
-	searchRelationshipFlagsProvided = searchRelationshipFlags{
-		Model:   " kubernetes ",
-		Kind:    " edge ",
-		Type:    "   ",
-		SubType: "\tinventory\n",
-	}
+	t.Run("trims flag values and omits whitespace-only params", func(t *testing.T) {
+		searchRelationshipFlagsProvided = searchRelationshipFlags{
+			Model:   " kubernetes ",
+			Kind:    " edge ",
+			Type:    "   ",
+			SubType: "\tinventory\n",
+		}
 
-	got := buildSearchUrl()
-	want := "api/registry/models/kubernetes/relationships?kind=edge&subType=inventory"
-	if got != want {
-		t.Fatalf("expected %q, got %q", want, got)
-	}
+		got := buildSearchUrl()
+		want := "api/registry/models/kubernetes/relationships?kind=edge&subType=inventory"
+		if got != want {
+			t.Errorf("expected %q, got %q", want, got)
+		}
+	})
 
-	searchRelationshipFlagsProvided = searchRelationshipFlags{
-		Model: " kubernetes ",
-	}
-	gotNoParams := buildSearchUrl()
-	wantNoParams := "api/registry/models/kubernetes/relationships"
-	if gotNoParams != wantNoParams {
-		t.Fatalf("expected %q, got %q", wantNoParams, gotNoParams)
-	}
+	t.Run("omits trailing question mark when no query params remain", func(t *testing.T) {
+		searchRelationshipFlagsProvided = searchRelationshipFlags{
+			Model: " kubernetes ",
+		}
+
+		got := buildSearchUrl()
+		want := "api/registry/models/kubernetes/relationships"
+		if got != want {
+			t.Errorf("expected %q, got %q", want, got)
+		}
+	})
 }
