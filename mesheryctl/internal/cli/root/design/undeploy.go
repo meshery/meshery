@@ -85,7 +85,7 @@ mesheryctl design undeploy -f [filepath]
 
 		designURLPath := "api/pattern"
 
-		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
+		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy?contexts=all"
 
 		if !utils.IsValidUrl(file) {
 			content, err := os.ReadFile(file)
