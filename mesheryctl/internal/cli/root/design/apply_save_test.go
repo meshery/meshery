@@ -67,7 +67,7 @@ func mockDesignServer(t *testing.T, baseURL string, content []byte) *designReque
 
 	httpmock.RegisterResponder("POST", baseURL+"/api/pattern", record("save", http.StatusOK, `[{"name":""}]`))
 	httpmock.RegisterResponder("POST", baseURL+"/api/pattern/import", record("import", http.StatusOK, `[{"name":"saved"}]`))
-	httpmock.RegisterResponder("POST", baseURL+"/api/pattern/deploy", record("deploy", http.StatusOK, `{}`))
+	httpmock.RegisterResponder("POST", baseURL+"/api/pattern/deploy?verify=true", record("deploy", http.StatusOK, `{}`))
 	httpmock.RegisterResponder("DELETE", baseURL+"/api/pattern/deploy", record("undeploy", http.StatusOK, `{}`))
 	httpmock.RegisterResponder("GET", githubRawURL, record("github", http.StatusOK, string(content)))
 	return requests

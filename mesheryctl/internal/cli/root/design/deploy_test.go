@@ -50,7 +50,7 @@ func TestDeployCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
 					Response:     "deploy.designdeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -76,7 +76,7 @@ func TestDeployCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
 					Response:     "deploy.designdeploy.response.golden",
 					ResponseCode: 200,
 				},

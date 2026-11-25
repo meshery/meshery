@@ -40,7 +40,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
 					Response:     "apply.designDeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -55,7 +55,7 @@ func TestApplyCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
 					Response:     "apply.designDeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -154,7 +154,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
 					Response:     "apply.designDeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -175,7 +175,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
 					Response:     "apply.designDeploy.response.golden",
 					ResponseCode: 200,
 				},

@@ -98,7 +98,8 @@ mesheryctl design deploy -f [filepath] -s [source type]
 		var err error
 		var patternFile *pattern.PatternFile
 
-		deployURLPath := "api/pattern/deploy"
+		// The CLI relies on the server to validate component configuration.
+		deployURLPath := "api/pattern/deploy?verify=true"
 		patternURLPath := "api/pattern"
 
 		// pattern name has been passed

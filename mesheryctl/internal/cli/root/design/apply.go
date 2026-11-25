@@ -79,7 +79,8 @@ mesheryctl design apply [design-name]
 			return err
 		}
 
-		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
+		// The CLI relies on the server to validate component configuration.
+		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy?verify=true"
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
 		// pattern name has been passed
