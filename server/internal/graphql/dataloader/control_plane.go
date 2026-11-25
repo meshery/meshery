@@ -13,7 +13,7 @@ import (
 // ControlPlaneBatchLoader batches and caches control plane lookups per cluster for a single request.
 type ControlPlaneBatchLoader struct {
 	ctx            context.Context
-	providerGetter func(ctx context.Context) models.Provider
+	providerGetter func(ctx context.Context) models.GenericPersisterGetter
 	mu             sync.Mutex
 	cache          map[string][]*model.ControlPlane
 	queue          map[string][]chan batchResult
@@ -27,7 +27,7 @@ type batchResult struct {
 }
 
 // newControlPlaneBatchLoader constructs a new loader instance scoped to the request context.
-func newControlPlaneBatchLoader(ctx context.Context, providerGetter func(ctx context.Context) models.Provider) *ControlPlaneBatchLoader {
+func newControlPlaneBatchLoader(ctx context.Context, providerGetter func(ctx context.Context) models.GenericPersisterGetter) *ControlPlaneBatchLoader {
 	return &ControlPlaneBatchLoader{
 		ctx:            ctx,
 		providerGetter: providerGetter,
@@ -122,7 +122,7 @@ func (l *ControlPlaneBatchLoader) dispatch() {
 		clusterIDs = append(clusterIDs, cid)
 	}
 
-	var provider models.Provider
+	var provider models.GenericPersisterGetter
 	if l.providerGetter != nil {
 		provider = l.providerGetter(l.ctx)
 	}
@@ -155,7 +155,7 @@ func (l *ControlPlaneBatchLoader) dispatch() {
 }
 
 // safeBatch wraps BatchGetControlPlaneState with panic recovery to protect the timer goroutine.
-func (l *ControlPlaneBatchLoader) safeBatch(selectors []model.MeshType, provider models.Provider, clusterIDs []string) (res map[string][]*model.ControlPlane, err error) {
+func (l *ControlPlaneBatchLoader) safeBatch(selectors []model.MeshType, provider models.GenericPersisterGetter, clusterIDs []string) (res map[string][]*model.ControlPlane, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("control plane batch loader panic: %v", r)
