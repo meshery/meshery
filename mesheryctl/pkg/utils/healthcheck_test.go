@@ -25,6 +25,9 @@ var versionCheck = []struct {
 	{"1.12.8", [3]int{1, 12, 8}},
 	{"1.12.9", [3]int{1, 12, 9}},
 	{"1.12.10", [3]int{1, 12, 10}},
+	{"1.28.2.1", [3]int{1, 28, 2}},
+	{"v1.28.2-eks-ba43c7", [3]int{1, 28, 2}},
+	{"v1.27.3-gke.100", [3]int{1, 27, 3}},
 }
 
 func TestGetK8sVersion(t *testing.T) {
@@ -35,6 +38,21 @@ func TestGetK8sVersion(t *testing.T) {
 			}
 		})
 	}
+
+	t.Run("invalid version formats return error", func(t *testing.T) {
+		invalidVersions := []string{
+			"",
+			"1",
+			"1.2",
+			"1.2.abc",
+			"not-a-version",
+		}
+		for _, v := range invalidVersions {
+			if _, err := getK8sVersion(v); err == nil {
+				t.Errorf("expected error for invalid version %q, got nil", v)
+			}
+		}
+	})
 }
 
 func TestCheckKubectlVersion(t *testing.T) {
@@ -93,6 +111,11 @@ func TestCheckKubectlVersion(t *testing.T) {
 		t.Fatalf("Expected to get an error")
 	}
 
+	_, err = parseKubectlShortVersion("v1a2b3")
+	if err == nil {
+		t.Errorf("Expected error for non-semver string with invalid dot separators, got nil")
+	}
+
 	for _, tt := range tests {
 		t.Run(tt.version, func(t *testing.T) {
 			if got, _ := parseKubectlShortVersion(tt.version); got != tt.expected {
@@ -131,6 +154,30 @@ func TestCheckK8sVersion(t *testing.T) {
 		})
 	}
 
+	t.Run("nil version info returns error without panicking", func(t *testing.T) {
+		err := CheckK8sVersion(nil)
+		if err == nil {
+			t.Errorf("expected error for nil versionInfo, got nil")
+		}
+	})
+
+	t.Run("four-segment version string does not panic", func(t *testing.T) {
+		vInfo := &version.Info{
+			GitVersion: "v1.28.2.1",
+		}
+		if err := CheckK8sVersion(vInfo); err != nil {
+			t.Errorf("unexpected error for four-segment version: %v", err)
+		}
+	})
+
+	t.Run("incompatible old version returns error", func(t *testing.T) {
+		vInfo := &version.Info{
+			GitVersion: "v1.10.0",
+		}
+		if err := CheckK8sVersion(vInfo); err == nil {
+			t.Errorf("expected error for incompatible version, got nil")
+		}
+	})
 }
 
 func TestIsCompatibleVersion(t *testing.T) {
