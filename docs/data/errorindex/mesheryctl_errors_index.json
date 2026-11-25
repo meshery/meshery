@@ -4186,7 +4186,7 @@
       },
       "numericCode": "1270",
       "severity": "alert",
-      "shortDescription": "Design failed server-side validation",
+      "shortDescription": "Meshery Server could not deploy the design",
       "probableCause": [
         "Meshery Server rejected the design during validation, or hit an internal error while deploying it"
       ],

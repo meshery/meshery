@@ -2231,7 +2231,7 @@
         "code": "1270",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Design failed server-side validation",
+        "short_description": "Meshery Server could not deploy the design",
         "probable_cause": "Meshery Server rejected the design during validation, or hit an internal error while deploying it",
         "suggested_remediation": "Fix the reported component configuration, or rerun with --skip-validation to deploy without server-side validation\nCheck `mesheryctl system logs` if the design configuration is valid, since the server may have failed while deploying it"
       }

@@ -205,7 +205,7 @@ func ErrEvaluateDesignResponse(err error) error {
 
 func ErrDesignValidationFailed(err error) error {
 	return errors.New(ErrDesignValidationFailedCode, errors.Alert,
-		[]string{"Design failed server-side validation"},
+		[]string{"Meshery Server could not deploy the design"},
 		[]string{err.Error()},
 		[]string{"Meshery Server rejected the design during validation, or hit an internal error while deploying it"},
 		[]string{"Fix the reported component configuration, or rerun with --skip-validation to deploy without server-side validation", "Check `mesheryctl system logs` if the design configuration is valid, since the server may have failed while deploying it"})
