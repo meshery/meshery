@@ -212,8 +212,17 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, cloneP
 		Type:          mesheryPattern.Type,
 		SourceContent: mesheryPattern.SourceContent,
 	}
-	if err := mpp.DB.Create(&clone).Error; err != nil {
-		return nil, ErrDBCreate(err)
+	cloneFile, err := patterns.GetPatternFormat(clone.PatternFile)
+	if err != nil {
+		return nil, err
+	}
+	if err := mpp.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&clone).Error; err != nil {
+			return ErrDBCreate(err)
+		}
+		return recordPatternVersion(tx, &clone, cloneFile.Version)
+	}); err != nil {
+		return nil, err
 	}
 
 	stampLocalProviderOwner(&clone)
@@ -226,6 +235,9 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id core.Uuid) ([]byte, 
 	pattern := MesheryPattern{ID: &id}
 	err := mpp.DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Delete(&pattern).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("design_id = ?", id).Delete(&MesheryPatternVersion{}).Error; err != nil {
 			return err
 		}
 		if tx.Migrator().HasTable(&schemasWorkspace.WorkspacesDesignsMapping{}) {
@@ -251,6 +263,9 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 			id := uuid.FromStringOrNil(pObj.ID)
 			pattern := MesheryPattern{ID: &id}
 			if err := tx.Delete(&pattern).Error; err != nil {
+				return err
+			}
+			if err := tx.Where("design_id = ?", id).Delete(&MesheryPatternVersion{}).Error; err != nil {
 				return err
 			}
 			if tx.Migrator().HasTable(&schemasWorkspace.WorkspacesDesignsMapping{}) {
@@ -305,36 +320,46 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 	// response shaping only - nothing extra is persisted.
 	stampLocalProviderOwner(pattern)
 
-	// An ID does not mean the row exists: clone and seeding save new rows
-	// under IDs they minted themselves.
-	exists := false
-	if !isNew {
-		var count int64
-		if err := mpp.DB.Model(&MesheryPattern{}).Where("id = ?", *pattern.ID).Count(&count).Error; err != nil {
-			return nil, ErrDBRead(err)
+	updated := false
+	readPending := true
+	err = mpp.DB.Transaction(func(tx *gorm.DB) error {
+		// A caller can supply an ID for a design that has yet to be inserted.
+		if !isNew {
+			var count int64
+			if err := tx.Model(&MesheryPattern{}).Where("id = ?", *pattern.ID).Count(&count).Error; err != nil {
+				return err
+			}
+			updated = count > 0
 		}
-		exists = count > 0
-	}
+		readPending = false
 
-	updated := exists
-	if exists {
-		err = mpp.updateSavedColumns(pattern)
-	} else {
-		suppliedVisibility := pattern.Visibility
-		if pattern.Visibility == "" {
-			pattern.Visibility = Private
+		if !updated {
+			suppliedVisibility := pattern.Visibility
+			if pattern.Visibility == "" {
+				pattern.Visibility = Private
+			}
+			res := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(pattern)
+			if res.Error != nil {
+				return ErrDBCreate(res.Error)
+			}
+			if res.RowsAffected == 0 {
+				// Keep the winning insert's visibility on a concurrent save.
+				pattern.Visibility = suppliedVisibility
+				updated = true
+			}
 		}
-		res := mpp.DB.Clauses(clause.OnConflict{DoNothing: true}).Create(pattern)
-		if res.Error != nil {
-			return marshalMesheryPatterns([]MesheryPattern{*pattern}), ErrDBCreate(res.Error)
+		if updated {
+			if err := mpp.updateSavedColumns(tx, pattern); err != nil {
+				return err
+			}
 		}
-		if res.RowsAffected == 0 {
-			// A concurrent save inserted this ID first: update it like any
-			// existing row, without the insert-only visibility default.
-			pattern.Visibility = suppliedVisibility
-			updated = true
-			err = mpp.updateSavedColumns(pattern)
+		if pattern.PatternFileOmitted {
+			return nil
 		}
+		return recordPatternVersion(tx, pattern, pf.Version)
+	})
+	if err != nil && readPending {
+		return nil, ErrDBRead(err)
 	}
 
 	// The saved struct holds only what the request carried; respond with the
@@ -424,12 +449,12 @@ func savedPatternFile(patternFile, version string) (string, error) {
 // time - so Updates skips zero-valued fields and those columns keep their
 // stored values. created_at and the usage counters are never written by a save,
 // and pattern_file is not written when the request carried no design file.
-func (mpp *MesheryPatternPersister) updateSavedColumns(pattern *MesheryPattern) error {
+func (mpp *MesheryPatternPersister) updateSavedColumns(db *gorm.DB, pattern *MesheryPattern) error {
 	omit := []string{"created_at", "view_count", "share_count", "download_count", "clone_count", "deployment_count"}
 	if pattern.PatternFileOmitted {
 		omit = append(omit, "pattern_file")
 	}
-	res := mpp.DB.Model(pattern).Omit(omit...).Updates(pattern)
+	res := db.Model(pattern).Omit(omit...).Updates(pattern)
 	// updated_at always changes, so no affected row means the design was
 	// deleted after the existence check.
 	if res.Error == nil && res.RowsAffected == 0 {
@@ -444,6 +469,7 @@ func (mpp *MesheryPatternPersister) updateSavedColumns(pattern *MesheryPattern) 
 // SaveMesheryPatterns batch inserts the given patterns
 func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []MesheryPattern) ([]byte, error) {
 	finalPatterns := []MesheryPattern{}
+	versions := make([]string, 0, len(mesheryPatterns))
 	for _, pattern := range mesheryPatterns {
 
 		pf, err := patterns.GetPatternFormat(pattern.PatternFile)
@@ -475,9 +501,22 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 		stampLocalProviderOwner(&pattern)
 
 		finalPatterns = append(finalPatterns, pattern)
+		versions = append(versions, pf.Version)
 	}
 
-	return marshalMesheryPatterns(finalPatterns), mpp.DB.Create(finalPatterns).Error
+	body := marshalMesheryPatterns(finalPatterns)
+	err := mpp.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(finalPatterns).Error; err != nil {
+			return err
+		}
+		for i := range finalPatterns {
+			if err := recordPatternVersion(tx, &finalPatterns[i], versions[i]); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	return body, err
 }
 
 // ReplaceSeededPatterns makes the published designs in the database mirror the

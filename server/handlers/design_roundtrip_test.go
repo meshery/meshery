@@ -70,7 +70,7 @@ func TestDesignExportImportRoundtrip(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open database: %v", err)
 	}
-	if err := db.AutoMigrate(events.Event{}, models.MesheryPattern{}); err != nil {
+	if err := db.AutoMigrate(events.Event{}, models.MesheryPattern{}, &models.MesheryPatternVersion{}); err != nil {
 		t.Fatalf("migrate tables: %v", err)
 	}
 
