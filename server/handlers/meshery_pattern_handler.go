@@ -1574,6 +1574,20 @@ func (h *Handler) PublishCatalogPatternHandler(
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
+
+	if parsedBody == nil {
+		err := fmt.Errorf("request body cannot be empty")
+		h.log.Error(ErrRequestBody(err))
+		e := eventBuilder.WithSeverity(events.Error).
+			WithMetadata(map[string]interface{}{
+				"error": ErrRequestBody(err),
+			}).
+			WithDescription("Design payload cannot be empty.").Build()
+		h.persistAndPublish(provider, token, userID, e)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
 	resp, err := provider.PublishCatalogPattern(r, parsedBody)
 	if err != nil {
 		h.log.Error(ErrPublishCatalogPattern(err))
@@ -1667,6 +1681,20 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
+
+	if parsedBody == nil {
+		err := fmt.Errorf("request body cannot be empty")
+		h.log.Error(ErrRequestBody(err))
+		e := eventBuilder.WithSeverity(events.Error).
+			WithMetadata(map[string]interface{}{
+				"error": ErrRequestBody(err),
+			}).
+			WithDescription("Design payload cannot be empty.").Build()
+		h.persistAndPublish(provider, token, userID, e)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
 	resp, err := provider.UnPublishCatalogPattern(r, parsedBody)
 	if err != nil {
 		h.log.Error(ErrPublishCatalogPattern(err))

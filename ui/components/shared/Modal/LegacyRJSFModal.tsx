@@ -14,7 +14,7 @@ import {
 } from '@sistent/sistent';
 import RJSFWrapper from '../../meshery-mesh-interface/PatternService/RJSF_wrapper';
 import { ArrowDropDown } from '@/assets/icons';
-import { getSchema } from '../../meshery-mesh-interface/PatternService/helper';
+import { getSchema, getUiSchema } from '../../meshery-mesh-interface/PatternService/helper';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 
@@ -80,6 +80,7 @@ const SchemaVersion: FC<SchemaVersionProps> = ({ schema_array, type, schemaChang
  * @param {string} props.submitBtnText - The text for the submit button.
  * @param {Object} props.uiSchema - The UI schema for the form fields.
  * @param {boolean} [props.submitDisabled=false] - Optional consumer-controlled flag to disable the submit button (OR-ed with forbidden title and schema-loading pending states).
+ * @param {boolean} [props.closeOnSubmit=true] - Whether to close the modal immediately upon valid submission; set false when callers close only after an async save succeeds.
  */
 
 // Meshery extensions also uses this modal
@@ -88,6 +89,7 @@ function Modal(props) {
     open,
     title,
     handleClose,
+    onChange,
     schema,
     schema_array,
     type,
@@ -100,23 +102,33 @@ function Modal(props) {
     RJSFWrapperComponent = null,
     initialData = {},
     submitDisabled = false,
+    closeOnSubmit = true,
   } = props;
 
   const resolvedSchema = schema !== undefined ? schema : getSchema(type);
+  const resolvedUiSchema =
+    uiSchema && Object.keys(uiSchema).length > 0
+      ? uiSchema
+      : (typeof getUiSchema === 'function' ? getUiSchema(type) : undefined) || {};
+  const isSchemaPending = schema === null || (schema === undefined && !type);
   const hasResolvedSchema = Boolean(resolvedSchema);
   const [canNotSubmit, setCanNotSubmit] = useState(false);
   const formStateRef = useRef({});
   const formRef = React.createRef();
-  const [loadingSchema, setLoadingSchema] = useState(!hasResolvedSchema);
+  const [loadingSchema, setLoadingSchema] = useState(isSchemaPending);
   const { notify } = useNotification();
-  const isSubmitDisabled = Boolean(canNotSubmit || loadingSchema || submitDisabled);
+  const isSubmitDisabled = Boolean(
+    canNotSubmit || loadingSchema || submitDisabled || !hasResolvedSchema,
+  );
 
   const handleFormSubmit = () => {
     if (isSubmitDisabled) {
       return;
     }
     if (formRef.current && formRef.current.validateForm()) {
-      handleClose();
+      if (closeOnSubmit) {
+        handleClose();
+      }
       handleSubmit(formRef.current.state.formData);
     }
   };
@@ -143,11 +155,12 @@ function Modal(props) {
 
   const handleFormChange = (data) => {
     formStateRef.current = data;
+    onChange?.(data);
   };
 
   useEffect(() => {
-    setLoadingSchema(!hasResolvedSchema);
-  }, [hasResolvedSchema]);
+    setLoadingSchema(isSchemaPending);
+  }, [isSchemaPending]);
 
   return (
     <>
@@ -166,12 +179,18 @@ function Modal(props) {
             <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
               <CircularProgress />
             </div>
+          ) : !hasResolvedSchema ? (
+            <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+              <Typography variant="body1" color="textSecondary">
+                No form is available for this credential type.
+              </Typography>
+            </div>
           ) : (
             <RJSFWrapper
               key={type}
               formData={initialData || formStateRef}
               jsonSchema={resolvedSchema}
-              uiSchema={uiSchema}
+              uiSchema={resolvedUiSchema}
               onChange={handleFormChange}
               liveValidate={false}
               formRef={formRef}

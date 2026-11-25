@@ -32,7 +32,7 @@ func validateRelationshipsInDesign(design *pattern.PatternFile, policy Relations
 
 	var actions []PolicyAction
 	for _, rel := range implicated {
-		if policy.IsInvalid(rel, design) || (fromOrToComponentsDontExist(rel, design) && getRelStatus(rel) != StatusPending) {
+		if getRelStatus(rel) != StatusPending && (policy.IsInvalid(rel, design) || fromOrToComponentsDontExist(rel, design)) {
 			actions = append(actions, newUpdateRelationshipAction(rel.ID.String(), "/status", StatusDeleted))
 		}
 	}
