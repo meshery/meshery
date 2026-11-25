@@ -1776,8 +1776,21 @@ func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential 
 			}
 			return fmt.Errorf("error getting user credential: %v", err)
 		}
-		if err := live.Updates(credential).Error; err != nil {
+		toUpdate := *credential
+		typeChanged := toUpdate.Type != "" && !strings.EqualFold(toUpdate.Type, updatedCredential.Type)
+		if !typeChanged {
+			toUpdate.Secret = MergeCredentialSecrets(updatedCredential.Secret, credential.Secret)
+		} else if toUpdate.Secret == nil {
+			toUpdate.Secret = core.Map{}
+		}
+		if err := live.Updates(&toUpdate).Error; err != nil {
 			return fmt.Errorf("error updating user credential: %v", err)
+		}
+		// GORM's struct Updates ignores an empty map, so clear stale secret keys explicitly on a type switch.
+		if typeChanged && len(toUpdate.Secret) == 0 {
+			if err := live.Update("secret", core.Map{}).Error; err != nil {
+				return fmt.Errorf("error clearing credential secret on type change: %v", err)
+			}
 		}
 		if err := live.First(updatedCredential).Error; err != nil {
 			return fmt.Errorf("error getting updated user credential: %v", err)
