@@ -19,9 +19,12 @@ export const downloadFileFromUrl = (url, name) => {
 };
 
 /*
- * @param {string} type - application, pattern, filter
+ * Fetches the file before initiating a browser download. Rejections let callers
+ * distinguish request failures from successful retrieval; resolution does not
+ * confirm that the browser has saved the file to disk.
+ * @param {string} type - pattern or filter
  * @param {string} id - id of the file to download
- * @param {string} name - name of the file to download
+ * @param {string} name - fallback filename when Content-Disposition has no filename
  * @param {string} source_type - source type of the file to download
  * @returns {Promise<void>}
  */
