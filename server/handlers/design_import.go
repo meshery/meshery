@@ -305,10 +305,11 @@ func (h *Handler) DesignFileImportHandler(
 		return
 	}
 	if provider == nil {
+		err := ErrNilProvider()
 		if h.log != nil {
-			h.log.Error(ErrNilProvider)
+			h.log.Error(err)
 		}
-		writeMeshkitError(rw, ErrNilProvider, http.StatusInternalServerError)
+		writeMeshkitError(rw, err, http.StatusInternalServerError)
 		return
 	}
 
