@@ -76,23 +76,23 @@ const selectIsConnectionSelected = (state, envId, connectionId) => {
   if (!selectIsEnvSelected(state, envId)) {
     return false;
   }
-  return state.globalEnvironmentContext.selectedEnvs[envId].selectedConnections
+  return (state?.globalEnvironmentContext?.selectedEnvs?.[envId]?.selectedConnections || [])
     .map((connection) => connection.id)
     .includes(connectionId);
 };
 
 const selectIsEnvSelected = (state, envId) =>
-  Boolean(state.globalEnvironmentContext.selectedEnvs[envId]);
+  Boolean(state?.globalEnvironmentContext?.selectedEnvs?.[envId]);
 
-const selectSelectedEnvs = (state) => state.globalEnvironmentContext.selectedEnvs;
+const selectSelectedEnvs = (state) => state?.globalEnvironmentContext?.selectedEnvs || {};
 
 const selectSelectedConnections = (state, envId) =>
-  state.globalEnvironmentContext.selectedEnvs[envId]?.selectedConnections || [];
+  state?.globalEnvironmentContext?.selectedEnvs?.[envId]?.selectedConnections || [];
 
 const selectAllSelectedConnections = (state) => {
   const selectedEnvs = selectSelectedEnvs(state);
   return Object.values(selectedEnvs).reduce((acc, { selectedConnections }) => {
-    return [...acc, ...selectedConnections];
+    return [...acc, ...(selectedConnections || [])];
   }, []);
 };
 

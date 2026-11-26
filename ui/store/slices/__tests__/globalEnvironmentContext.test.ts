@@ -246,6 +246,16 @@ describe('globalEnvironmentContext slice', () => {
       expect(selectAllSelectedConnections(stateWith({}))).toEqual([]);
     });
 
+    it('handles undefined globalEnvironmentContext or selectedEnvs gracefully', () => {
+      expect(selectSelectedEnvs({})).toEqual({});
+      expect(selectSelectedEnvs({ globalEnvironmentContext: undefined })).toEqual({});
+      expect(selectAllSelectedConnections({})).toEqual([]);
+      expect(selectAllSelectedConnections({ globalEnvironmentContext: {} })).toEqual([]);
+      expect(selectSelectedConnections({}, 'any-id')).toEqual([]);
+      expect(selectIsEnvSelected({}, 'any-id')).toBe(false);
+      expect(selectIsConnectionSelected({}, 'any-id', 'conn-id')).toBe(false);
+    });
+
     it('selectSelectedK8sConnections returns only kubernetes connections for an env', () => {
       const state = stateWith({
         [env1.id]: { ...env1, selectedConnections: [k8sConn, dockerConn] },
