@@ -122,7 +122,7 @@ var setTokenCmd = &cobra.Command{
 	Short: "Set token for context",
 	Long:  "Set token for current context or context specified with --context flag. The token must already exist in your meshconfig tokens.",
 	Example: `
-mesheryctl system token set my-token 
+mesheryctl system token set my-token
 	`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {

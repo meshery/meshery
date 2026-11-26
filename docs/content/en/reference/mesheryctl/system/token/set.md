@@ -29,7 +29,7 @@ mesheryctl system token set &lt;token-name&gt; [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token set my-token 
+mesheryctl system token set my-token
 
 </div>
 </div>
