@@ -282,6 +282,31 @@ func cleanGitConfigValue(val string) string {
 	return strings.TrimSpace(sb.String())
 }
 
+// stripGitConfigInlineComment strips unquoted inline comments (# or ;) from a Git config line.
+func stripGitConfigInlineComment(line string) string {
+	inQuotes := false
+	escaped := false
+	for i := 0; i < len(line); i++ {
+		ch := line[i]
+		if escaped {
+			escaped = false
+			continue
+		}
+		if ch == '\\' {
+			escaped = true
+			continue
+		}
+		if ch == '"' {
+			inQuotes = !inQuotes
+			continue
+		}
+		if !inQuotes && (ch == '#' || ch == ';') {
+			return line[:i]
+		}
+	}
+	return line
+}
+
 // isContinuationLine reports whether a line ends with an unescaped trailing backslash.
 func isContinuationLine(s string) bool {
 	trimmed := strings.TrimRight(s, " \t\r\n")
@@ -301,19 +326,20 @@ func joinGitConfigLines(configText string) []string {
 	var current strings.Builder
 	for _, raw := range rawLines {
 		trimmedRight := strings.TrimRight(raw, "\r")
-		trimmedLeft := strings.TrimSpace(trimmedRight)
+		content := stripGitConfigInlineComment(trimmedRight)
+		trimmedLeft := strings.TrimSpace(content)
 
-		// Comment lines never continue onto subsequent lines in Git config
+		// Full comment lines never continue onto subsequent lines in Git config
 		if current.Len() == 0 && (strings.HasPrefix(trimmedLeft, "#") || strings.HasPrefix(trimmedLeft, ";")) {
 			lines = append(lines, trimmedRight)
 			continue
 		}
 
-		if isContinuationLine(trimmedRight) {
-			trimmed := strings.TrimRight(trimmedRight, " \t")
+		if isContinuationLine(content) {
+			trimmed := strings.TrimRight(content, " \t")
 			current.WriteString(trimmed[:len(trimmed)-1])
 		} else {
-			current.WriteString(trimmedRight)
+			current.WriteString(content)
 			lines = append(lines, current.String())
 			current.Reset()
 		}
