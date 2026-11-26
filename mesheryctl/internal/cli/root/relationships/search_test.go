@@ -58,6 +58,7 @@ func TestSearch_WithoutFlags(t *testing.T) {
 			t.Cleanup(func() {
 				searchRelationshipFlagsProvided = origFlags
 			})
+			defer utils.ResetCommandFlags(RelationshipCmd, t)
 			mesheryctlflags.InitValidators(RelationshipCmd)
 			RelationshipCmd.SetArgs(tt.Args)
 			err := RelationshipCmd.Execute()
