@@ -108,7 +108,7 @@ describe('dataToColors', () => {
     expect(mapping).toEqual({});
   });
 
-  it('skips nullish or empty rows gracefully and assigns consecutive palette colors to valid rows', () => {
+  it('skips nullish, empty, or blank-label rows gracefully and assigns consecutive palette colors to valid rows', () => {
     const theme = makeTheme();
     const data = [
       ['valid', 5],
@@ -116,6 +116,8 @@ describe('dataToColors', () => {
       undefined as never,
       [] as never,
       [null as never, 10],
+      ['', 12],
+      ['   ', 15],
       ['another', 20],
     ];
     const mapping = dataToColors(data, theme);
