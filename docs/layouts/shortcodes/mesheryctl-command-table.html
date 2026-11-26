@@ -2,7 +2,7 @@
 {{- $commands := hugo.Data.mesheryctlcommands.cmds -}}
 {{- $command := index $commands $command_name -}}
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
