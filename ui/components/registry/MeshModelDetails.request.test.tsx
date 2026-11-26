@@ -158,4 +158,97 @@ describe('MeshModelDetails component request', () => {
 
     expect(await screen.findByText('Declarative updates for Pods')).toBeInTheDocument();
   });
+
+  const renderDetailsWithSchema = async (
+    schema: unknown,
+    extraFields: Record<string, unknown> = {},
+  ) => {
+    fetchMock.mockImplementationOnce(async () =>
+      okJsonResponse({
+        page: 0,
+        pageSize: 1,
+        totalCount: 1,
+        components: [
+          {
+            ...componentDef,
+            ...extraFields,
+            component: {
+              ...componentDef.component,
+              ...(schema === Symbol.for('OMIT_SCHEMA') ? {} : { schema }),
+            },
+            registrant: { hostname: 'artifacthub' },
+            duplicates: 0,
+          },
+        ],
+      }),
+    );
+
+    const store = configureStore({
+      reducer: { [api.reducerPath]: api.reducer },
+      middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
+    });
+
+    render(
+      <Provider store={store}>
+        <MeshModelDetails
+          view="Components"
+          showDetailsData={{ type: 'Components', data: componentDef }}
+        />
+      </Provider>,
+    );
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+  };
+
+  it('renders without crashing when component.schema is an empty string', async () => {
+    await renderDetailsWithSchema('', {
+      displayName: 'KubeCon Logo',
+      description: 'Visual annotation logo component',
+    });
+
+    expect(await screen.findByText('KubeCon Logo')).toBeInTheDocument();
+    expect(screen.getByText('Description')).toBeInTheDocument();
+    expect(screen.getByText('Visual annotation logo component')).toBeInTheDocument();
+  });
+
+  it('renders without crashing when component.schema is whitespace-only', async () => {
+    await renderDetailsWithSchema('   \n\t ');
+
+    expect(await screen.findByText('Deployment')).toBeInTheDocument();
+    expect(screen.getByText('Description')).toBeInTheDocument();
+  });
+
+  it('renders without crashing when component.schema is missing (undefined)', async () => {
+    await renderDetailsWithSchema(Symbol.for('OMIT_SCHEMA'));
+
+    expect(await screen.findByText('Deployment')).toBeInTheDocument();
+    expect(screen.getByText('Description')).toBeInTheDocument();
+  });
+
+  it('renders without crashing when component.schema is null', async () => {
+    await renderDetailsWithSchema(null);
+
+    expect(await screen.findByText('Deployment')).toBeInTheDocument();
+    expect(screen.getByText('Description')).toBeInTheDocument();
+  });
+
+  it('renders without crashing when component.schema is malformed JSON', async () => {
+    await renderDetailsWithSchema('{invalid-json');
+
+    expect(await screen.findByText('Deployment')).toBeInTheDocument();
+    expect(screen.getByText('Description')).toBeInTheDocument();
+  });
+
+  it('renders without crashing when component.schema is a non-object JSON value', async () => {
+    await renderDetailsWithSchema('[]');
+
+    expect(await screen.findByText('Deployment')).toBeInTheDocument();
+    expect(screen.getByText('Description')).toBeInTheDocument();
+  });
+
+  it('extracts description when component.schema is already an object', async () => {
+    await renderDetailsWithSchema({ description: 'Pre-parsed schema description' });
+
+    expect(await screen.findByText('Pre-parsed schema description')).toBeInTheDocument();
+  });
 });
