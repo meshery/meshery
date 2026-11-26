@@ -44,7 +44,7 @@ var updateCmd = &cobra.Command{
 // Pull new Meshery images from Docker Hub. This does not update mesheryctl. This command may be executed while Meshery is running.
 mesheryctl system update
 
-// Pull the latest manifest files alone
+// Skip checking for new Meshery manifest files
 mesheryctl system update --skip-reset
 	`,
 	Annotations: linkDocUpdate,
@@ -89,7 +89,9 @@ mesheryctl system update --skip-reset
 		if err != nil {
 			return err
 		}
-		if currCtx.GetVersion() != "latest" {
+		// On Kubernetes, --skip-reset skips the Helm upgrade, so the pinned version still applies
+		skipUpgrade := utils.SkipResetFlag && currCtx.GetPlatform() == platformKubernetes
+		if currCtx.GetVersion() != "latest" && !skipUpgrade {
 			// ask confirmation if user has pinned the version in config
 			utils.Log.Infof("You have pinned version: %s in your current context", currCtx.GetVersion())
 			userResponse := false
@@ -132,7 +134,7 @@ mesheryctl system update --skip-reset
 				return err
 			}
 			mesheryImageVersion := currCtx.GetVersion()
-			// If the user skips reset, then just restart the pods else fetch updated manifest files and apply them
+			// Apply the latest manifest files unless the user skips reset
 			if !utils.SkipResetFlag {
 
 				// Apply the latest helm chart along with the default image tag specified in the charts "stable-latest"
@@ -168,7 +170,6 @@ mesheryctl system update --skip-reset
 				}
 			}
 
-			currCtx.SetVersion("latest")
 			err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
 			if err != nil {
 				return err
