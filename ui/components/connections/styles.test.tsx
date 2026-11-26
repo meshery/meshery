@@ -78,6 +78,7 @@ import {
   ConnectionTabs,
   ConnectionStyledSelect,
   ConnectionStyledMenuItem,
+  MeshSyncNonInteractiveStatus,
   ConnectionIconText,
   ChipWrapper,
   DiscoveredChip,
@@ -137,6 +138,24 @@ describe('connections/styles - styled components', () => {
     );
     expect(screen.getByTestId('select')).toBeInTheDocument();
     expect(screen.getByTestId('menu')).toHaveTextContent('one');
+  });
+
+  it('MeshSyncNonInteractiveStatus renders with default cursor styles', () => {
+    render(
+      <MeshSyncNonInteractiveStatus data-testid="non-interactive">
+        discovered
+      </MeshSyncNonInteractiveStatus>,
+    );
+    expect(screen.getByTestId('non-interactive')).toHaveTextContent('discovered');
+    expect((MeshSyncNonInteractiveStatus as unknown as { __styleArg: unknown }).__styleArg).toEqual(
+      {
+        display: 'inline-flex',
+        cursor: 'default',
+        '& .MuiChip-root': {
+          cursor: 'default',
+        },
+      },
+    );
   });
 
   it('ConnectionIconText renders as a styled div', () => {

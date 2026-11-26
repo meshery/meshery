@@ -818,3 +818,115 @@ func TestReplaceMeshsyncResourceRejectsMissingIdentity(t *testing.T) {
 		}
 	}
 }
+
+func TestPersistStoreUpdatePreservesMeshSyncCapabilities(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to create in-memory database: %v", err)
+	}
+
+	if err := db.AutoMigrate(
+		&modelv1beta1.ModelDefinition{},
+		&component.ComponentDefinition{},
+		&meshsyncmodel.KubernetesResource{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
+		&meshsyncmodel.KubernetesKeyValue{},
+		&meshsyncmodel.KubernetesResourceSpec{},
+		&meshsyncmodel.KubernetesResourceStatus{},
+	); err != nil {
+		t.Fatalf("failed to migrate schema: %v", err)
+	}
+
+	modelID := uuid.FromStringOrNil("11111111-1111-1111-1111-111111111111")
+	if err := db.Create(&modelv1beta1.ModelDefinition{ID: modelID, Name: "kubernetes"}).Error; err != nil {
+		t.Fatalf("failed to create model definition: %v", err)
+	}
+
+	componentDef := component.ComponentDefinition{
+		ID:      uuid.FromStringOrNil("22222222-2222-2222-2222-222222222222"),
+		ModelID: &modelID,
+		Component: component.Component{
+			Kind:    "Service",
+			Version: "v1",
+		},
+		Styles:       &core.ComponentStyles{SvgColor: "<svg></svg>"},
+		Capabilities: &[]capabilityv1beta1.Capability{{Kind: "action", DisplayName: "Connect"}},
+	}
+	if err := db.Create(&componentDef).Error; err != nil {
+		t.Fatalf("failed to create component definition: %v", err)
+	}
+
+	handler := &MeshsyncDataHandler{
+		dbHandler: database.Handler{DB: db, Mutex: &sync.Mutex{}},
+		log:       &fakeMeshsyncLogger{},
+	}
+
+	obj := &meshsyncmodel.KubernetesResource{
+		APIVersion: "v1",
+		Kind:       "Service",
+		ClusterID:  "cluster-1",
+		KubernetesResourceMeta: &meshsyncmodel.KubernetesResourceObjectMeta{
+			Name:      "prometheus-service",
+			Namespace: "monitoring",
+		},
+		ComponentMetadata: map[string]interface{}{
+			"capabilities": map[string]interface{}{
+				"connection": true,
+				"urls":       []interface{}{"http://10.0.0.1:9090"},
+			},
+		},
+	}
+
+	if err := handler.persistStoreUpdate(obj); err != nil {
+		t.Fatalf("persistStoreUpdate failed: %v", err)
+	}
+
+	assertPreserved := func(resourceID string, expectedURL string) {
+		t.Helper()
+		var stored meshsyncmodel.KubernetesResource
+		if err := db.First(&stored, "id = ?", resourceID).Error; err != nil {
+			t.Fatalf("failed to read stored resource: %v", err)
+		}
+
+		caps, ok := stored.ComponentMetadata["capabilities"].(map[string]interface{})
+		if !ok {
+			t.Fatalf("expected MeshSync capabilities map to be preserved, got %#v", stored.ComponentMetadata["capabilities"])
+		}
+		if conn, ok := caps["connection"].(bool); !ok || !conn {
+			t.Fatalf("expected capabilities.connection=true to be preserved, got %#v", caps["connection"])
+		}
+		urls, ok := caps["urls"].([]interface{})
+		if !ok || len(urls) != 1 || urls[0] != expectedURL {
+			t.Fatalf("expected capabilities.urls to be preserved, got %#v", caps["urls"])
+		}
+		styles, ok := stored.ComponentMetadata["styles"].(map[string]interface{})
+		if !ok || styles["svgColor"] != "<svg></svg>" {
+			t.Fatalf("expected component styles from registry metadata, got %#v", stored.ComponentMetadata["styles"])
+		}
+	}
+
+	assertPreserved(obj.ID, "http://10.0.0.1:9090")
+
+	if err := handler.meshsyncEventsAccumulator(&meshkitBroker.Message{
+		EventType: meshkitBroker.Update,
+		Object: map[string]interface{}{
+			"apiVersion": "v1",
+			"kind":       "Service",
+			"cluster_id": "cluster-1",
+			"metadata": map[string]interface{}{
+				"name":      "prometheus-service",
+				"namespace": "monitoring",
+			},
+			"component_metadata": map[string]interface{}{
+				"capabilities": map[string]interface{}{
+					"connection": true,
+					"urls":       []interface{}{"http://10.0.0.2:9090"},
+				},
+			},
+		},
+	}); err != nil {
+		t.Fatalf("meshsyncEventsAccumulator Update failed: %v", err)
+	}
+
+	assertPreserved(obj.ID, "http://10.0.0.2:9090")
+}

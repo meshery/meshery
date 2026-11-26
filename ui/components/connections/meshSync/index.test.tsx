@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, render, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import MeshSyncTable from './index';
 
@@ -116,7 +116,11 @@ vi.mock('../RegisterConnectionModal', () => ({
 }));
 
 vi.mock('../ConnectionChip', () => ({
-  ConnectionStateChip: () => <div />,
+  ConnectionStateChip: ({ status }) => (
+    <div data-testid="connection-state-chip" data-status={status}>
+      {status}
+    </div>
+  ),
 }));
 
 vi.mock('../styles', () => ({
@@ -125,6 +129,11 @@ vi.mock('../styles', () => ({
     statusSelectProps = props;
     return <div>{children}</div>;
   },
+  MeshSyncNonInteractiveStatus: ({ children, ...props }) => (
+    <span data-testid="meshsync-status-non-interactive" {...props}>
+      {children}
+    </span>
+  ),
   InnerTableContainer: ({ children }) => <div>{children}</div>,
 }));
 
@@ -348,6 +357,91 @@ describe('MeshSyncTable', () => {
     });
   });
 
+  it('renders non-connection-capable discovered rows non-interactively with cursor: default and does not open the modal on click', () => {
+    getColumnValue.mockImplementation((rowData, columnName, cols) => {
+      const idx = cols.findIndex((col) => col?.name === columnName);
+      return idx === -1 ? undefined : rowData[idx];
+    });
+
+    render(<MeshSyncTable />);
+
+    const statusCol = dataTableProps.columns.find((col) => col.name === 'status');
+    const rowData = dataTableProps.columns.map((col) => {
+      if (col.name === 'id') return 'resource-uuid-non-conn';
+      if (col.name === 'kind') return 'Pod';
+      if (col.name === 'component_metadata') return { capabilities: [] };
+      return null;
+    });
+
+    render(statusCol.options.customBodyRender('discovered', { rowData, rowIndex: 0 }));
+
+    const wrapper = screen.getByTestId('meshsync-status-non-interactive');
+    expect(wrapper).toHaveStyle({ cursor: 'default' });
+    expect(screen.getByTestId('connection-state-chip')).toHaveAttribute(
+      'data-status',
+      'discovered',
+    );
+    expect(statusSelectProps).toBeUndefined();
+
+    const parentClick = vi.fn();
+    const { container } = render(
+      <div onClick={parentClick}>
+        {statusCol.options.customBodyRender('discovered', { rowData, rowIndex: 0 })}
+      </div>,
+    );
+    fireEvent.click(
+      container.querySelector('[data-testid="meshsync-status-non-interactive"]') as Element,
+    );
+
+    expect(parentClick).not.toHaveBeenCalled();
+    expect(registerConnectionModalProps.openRegistrationModal).toBe(false);
+  });
+
+  it('stops click propagation on connection-capable rows and opens the registration modal on register selection', () => {
+    getColumnValue.mockImplementation((rowData, columnName, cols) => {
+      const idx = cols.findIndex((col) => col?.name === columnName);
+      return idx === -1 ? undefined : rowData[idx];
+    });
+
+    render(<MeshSyncTable />);
+
+    const statusCol = dataTableProps.columns.find((col) => col.name === 'status');
+    const capabilities = { connection: true, urls: ['http://10.0.0.1:9090'] };
+    const rowData = dataTableProps.columns.map((col) => {
+      if (col.name === 'id') return 'resource-uuid-123';
+      if (col.name === 'kind') return 'Service';
+      if (col.name === 'metadata') return { name: 'prom-svc', uid: 'k8s-uid' };
+      if (col.name === 'component_metadata') {
+        return { capabilities, metadata: '{"host":"10.0.0.1"}' };
+      }
+      return null;
+    });
+
+    render(statusCol.options.customBodyRender('discovered', { rowData, rowIndex: 0 }));
+
+    expect(statusSelectProps.value).toBe('discovered');
+    expect(statusSelectProps.defaultValue).toBeUndefined();
+
+    const stopPropagation = vi.fn();
+    act(() => {
+      statusSelectProps.onClick({ stopPropagation, target: {} });
+    });
+    expect(stopPropagation).toHaveBeenCalledTimes(1);
+    expect(registerConnectionModalProps.openRegistrationModal).toBe(false);
+
+    act(() => {
+      statusSelectProps.onChange({ target: { value: 'register' } });
+    });
+
+    expect(registerConnectionModalProps.openRegistrationModal).toBe(true);
+    expect(registerConnectionModalProps.connectionData).toEqual({
+      capabilities,
+      metadata: { host: '10.0.0.1' },
+      kind: 'Service',
+      resourceID: 'resource-uuid-123',
+    });
+  });
+
   it('resolves resourceID from the id column instead of the trailing metadata column when registering', () => {
     getColumnValue.mockImplementation((rowData, columnName, cols) => {
       const idx = cols.findIndex((col) => col?.name === columnName);
@@ -359,6 +453,7 @@ describe('MeshSyncTable', () => {
     const statusCol = dataTableProps.columns.find((col) => col.name === 'status');
     const rowData = dataTableProps.columns.map((col) => {
       if (col.name === 'id') return 'resource-uuid-123';
+      if (col.name === 'kind') return 'Service';
       if (col.name === 'metadata') return { name: 'pod-a', uid: 'k8s-uid' };
       if (col.name === 'component_metadata') {
         return { capabilities: { connection: true }, metadata: '{"host":"10.0.0.1"}' };
@@ -369,17 +464,18 @@ describe('MeshSyncTable', () => {
     render(statusCol.options.customBodyRender('discovered', { rowData, rowIndex: 0 }));
 
     act(() => {
-      statusSelectProps.onChange();
+      statusSelectProps.onChange({ target: { value: 'register' } });
     });
 
     expect(registerConnectionModalProps.connectionData).toEqual({
       capabilities: { connection: true },
       metadata: { host: '10.0.0.1' },
+      kind: 'Service',
       resourceID: 'resource-uuid-123',
     });
   });
 
-  it('does not throw when componentMetadata is undefined during status onChange', () => {
+  it('does not throw when componentMetadata.metadata is undefined during status onChange', () => {
     getColumnValue.mockImplementation((rowData, columnName, cols) => {
       const idx = cols.findIndex((col) => col?.name === columnName);
       return idx === -1 ? undefined : rowData[idx];
@@ -388,21 +484,25 @@ describe('MeshSyncTable', () => {
     render(<MeshSyncTable />);
 
     const statusCol = dataTableProps.columns.find((col) => col.name === 'status');
-    const rowData = dataTableProps.columns.map((col) =>
-      col.name === 'id' ? 'resource-uuid-456' : undefined,
-    );
+    const rowData = dataTableProps.columns.map((col) => {
+      if (col.name === 'id') return 'resource-uuid-456';
+      if (col.name === 'kind') return 'Service';
+      if (col.name === 'component_metadata') return { capabilities: { connection: true } };
+      return undefined;
+    });
 
     render(statusCol.options.customBodyRender('discovered', { rowData, rowIndex: 0 }));
 
     expect(() => {
       act(() => {
-        statusSelectProps.onChange();
+        statusSelectProps.onChange({ target: { value: 'register' } });
       });
     }).not.toThrow();
 
     expect(registerConnectionModalProps.connectionData).toEqual({
-      capabilities: undefined,
+      capabilities: { connection: true },
       metadata: undefined,
+      kind: 'Service',
       resourceID: 'resource-uuid-456',
     });
   });

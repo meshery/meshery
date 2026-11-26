@@ -269,7 +269,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 	switch event.EventType {
 	case broker.Add:
 		compMetadata, model := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
-		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
+		obj.ComponentMetadata = mergeComponentMetadata(obj.ComponentMetadata, compMetadata)
 		obj.Model = model
 		result := mh.dbHandler.Create(&obj)
 		go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: obj})
@@ -281,7 +281,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 		}
 	case broker.Update:
 		compMetadata, model := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
-		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
+		obj.ComponentMetadata = mergeComponentMetadata(obj.ComponentMetadata, compMetadata)
 		obj.Model = model
 		if err := mh.replaceMeshsyncResource(&obj); err != nil {
 			return ErrDBPut(err)
@@ -303,7 +303,7 @@ func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Kubernet
 	mh.dbHandler.Lock()
 	defer mh.dbHandler.Unlock()
 	compMetadata, model := mh.getComponentMetadata(object.APIVersion, object.Kind)
-	object.ComponentMetadata = utils.MergeMaps(object.ComponentMetadata, compMetadata)
+	object.ComponentMetadata = mergeComponentMetadata(object.ComponentMetadata, compMetadata)
 	object.Model = model
 	result := mh.dbHandler.Create(object)
 	regQueue := GetMeshSyncRegistrationQueue()
@@ -377,6 +377,19 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 		return ErrRequestMeshsyncStore(err)
 	}
 	return nil
+}
+
+// mergeComponentMetadata merges registry component metadata onto MeshSync-populated
+// metadata while preserving non-nil MeshSync capabilities (such as Service
+// connection discovery metadata) that ComponentDefinition.Capabilities would
+// otherwise overwrite.
+func mergeComponentMetadata(existing, compMetadata map[string]interface{}) map[string]interface{} {
+	existingCapabilities, hasExistingCapabilities := existing["capabilities"]
+	merged := utils.MergeMaps(existing, compMetadata)
+	if hasExistingCapabilities && existingCapabilities != nil {
+		merged["capabilities"] = existingCapabilities
+	}
+	return merged
 }
 
 // Returns metadata for the component identified by apiVersion and kind.

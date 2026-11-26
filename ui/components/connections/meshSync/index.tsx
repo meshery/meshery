@@ -30,7 +30,12 @@ import {
   useGetMeshSyncResourcesQuery,
 } from '@/rtk-query/meshsync';
 import { ConnectionStateChip } from '../ConnectionChip';
-import { ContentContainer, ConnectionStyledSelect, InnerTableContainer } from '../styles';
+import {
+  ContentContainer,
+  ConnectionStyledSelect,
+  InnerTableContainer,
+  MeshSyncNonInteractiveStatus,
+} from '../styles';
 import { useSelector } from 'react-redux';
 import MeshSyncEmptyState from './MeshSyncEmptyState';
 
@@ -53,7 +58,12 @@ export default function MeshSyncTable(props) {
     model: 'All',
     namespace: 'All',
   });
-  const [registerConnection, setRegisterConnection] = useState({
+  const [registerConnection, setRegisterConnection] = useState<{
+    metadata?: unknown;
+    kind?: string;
+    capabilities?: unknown;
+    resourceID?: string;
+  }>({
     metadata: {},
     kind: '',
   });
@@ -342,37 +352,47 @@ export default function MeshSyncTable(props) {
             'component_metadata',
             columns,
           );
-          const DISCOVERED = {
-            DISCOVERED: MESHSYNC_STATES.DISCOVERED,
-          };
-          const meshSyncStates =
-            componentMetadata?.capabilities?.connection === true ? MESHSYNC_STATES : DISCOVERED;
-          const disabled =
-            componentMetadata?.capabilities?.connection === true &&
-            value !== CONNECTION_STATES.REGISTERED
-              ? false
-              : true;
+          const currentStatus =
+            typeof value === 'string' && value.length > 0 ? value : MESHSYNC_STATES.DISCOVERED;
+          const isConnectionCapable = componentMetadata?.capabilities?.connection === true;
+          const canRegister = isConnectionCapable && currentStatus !== CONNECTION_STATES.REGISTERED;
+
+          if (!canRegister) {
+            return (
+              <MeshSyncNonInteractiveStatus
+                style={{ cursor: 'default' }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ConnectionStateChip status={currentStatus} />
+              </MeshSyncNonInteractiveStatus>
+            );
+          }
+
           return (
             <FormControl>
               <ConnectionStyledSelect
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                defaultValue={MESHSYNC_STATES.DISCOVERED}
-                disabled={disabled}
+                value={currentStatus}
+                renderValue={(selected) => <ConnectionStateChip status={selected as string} />}
                 onClick={(e) => {
                   e.stopPropagation();
-                  const clickedValue = e.target.value;
-                  if (clickedValue !== MESHSYNC_STATES.DISCOVERED && clickedValue !== value) {
-                    setRegistrationModal((open) => !open);
-                  }
                 }}
-                onChange={() => {
-                  callbackRef?.current?.(tableMeta);
-                  setRegisterConnection({
-                    capabilities: componentMetadata?.capabilities,
-                    metadata: JsonParse(componentMetadata?.metadata),
-                    resourceID: getColumnValue(tableMeta.rowData, 'id', columns),
-                  });
+                onChange={(e) => {
+                  const nextStatus = e?.target?.value;
+                  if (
+                    currentStatus === MESHSYNC_STATES.DISCOVERED &&
+                    nextStatus === MESHSYNC_STATES.REGISTER
+                  ) {
+                    callbackRef?.current?.(tableMeta);
+                    setRegisterConnection({
+                      capabilities: componentMetadata?.capabilities,
+                      metadata: JsonParse(componentMetadata?.metadata),
+                      kind: getColumnValue(tableMeta.rowData, 'kind', columns) || '',
+                      resourceID: getColumnValue(tableMeta.rowData, 'id', columns),
+                    });
+                    setRegistrationModal(true);
+                  }
                 }}
                 disableUnderline
                 MenuProps={{
@@ -389,19 +409,17 @@ export default function MeshSyncTable(props) {
                   PaperProps: { square: true },
                 }}
               >
-                {Object.keys(meshSyncStates).map((s) => (
+                {Object.keys(MESHSYNC_STATES).map((s) => (
                   <MenuItem
                     disabled={
-                      meshSyncStates[s] === value ||
-                      meshSyncStates[s] === CONNECTION_STATES.REGISTERED
-                        ? true
-                        : false
+                      MESHSYNC_STATES[s] === currentStatus ||
+                      MESHSYNC_STATES[s] === CONNECTION_STATES.REGISTERED
                     }
-                    value={meshSyncStates[s]}
-                    key={meshSyncStates[s]}
+                    value={MESHSYNC_STATES[s]}
+                    key={MESHSYNC_STATES[s]}
                     style={{ padding: '0' }}
                   >
-                    <ConnectionStateChip status={meshSyncStates[s]} />
+                    <ConnectionStateChip status={MESHSYNC_STATES[s]} />
                   </MenuItem>
                 ))}
               </ConnectionStyledSelect>
