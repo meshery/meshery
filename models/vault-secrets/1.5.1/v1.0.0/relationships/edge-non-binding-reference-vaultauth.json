@@ -1,0 +1,169 @@
+{
+  "evaluationQuery": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "edge",
+  "metadata": {
+    "description": "VaultStaticSecret, VaultDynamicSecret, VaultPKISecret, and CSISecrets reference a VaultAuth resource by name via spec.vaultAuthRef. The VaultAuth's displayName is written into spec.vaultAuthRef (or spec.vaultAuthRef.name for CSISecrets).",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "Vault Secrets",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "1.5.1"
+    },
+    "name": "vault-secrets",
+    "registrant": {
+      "kind": "artifacthub"
+    },
+    "version": "v1.0.0"
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "VaultAuth",
+            "model": {
+              "displayName": "Vault Secrets",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "vault-secrets",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "VaultStaticSecret",
+            "model": {
+              "displayName": "Vault Secrets",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "vault-secrets",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "vaultAuthRef"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          },
+          {
+            "kind": "VaultDynamicSecret",
+            "model": {
+              "displayName": "Vault Secrets",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "vault-secrets",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "vaultAuthRef"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          },
+          {
+            "kind": "VaultPKISecret",
+            "model": {
+              "displayName": "Vault Secrets",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "vault-secrets",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "vaultAuthRef"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          },
+          {
+            "kind": "CSISecrets",
+            "model": {
+              "displayName": "Vault Secrets",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "vault-secrets",
+              "registrant": {
+                "kind": "artifacthub"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "vaultAuthRef",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "status": "enabled",
+  "subType": "reference",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}
