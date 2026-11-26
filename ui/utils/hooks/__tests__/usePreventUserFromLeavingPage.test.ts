@@ -89,6 +89,34 @@ describe('usePreventUserFromLeavingPage', () => {
     expect(ret).toBe(false);
   });
 
+  it('keeps handlers active across overlapping enabled instances regardless of unmount order', () => {
+    const first = renderHook(() => usePreventUserFromLeavingPage(true));
+    const second = renderHook(() => usePreventUserFromLeavingPage(true));
+
+    expect(typeof window.onbeforeunload).toBe('function');
+    expect(typeof routerInstance.change).toBe('function');
+
+    // Unmounting the second instance first must preserve handlers for the first.
+    second.unmount();
+    expect(typeof window.onbeforeunload).toBe('function');
+    expect(typeof routerInstance.change).toBe('function');
+
+    // Unmounting the remaining instance clears both handlers.
+    first.unmount();
+    expect(window.onbeforeunload).toBeNull();
+    expect(routerInstance.change).toBeUndefined();
+
+    // Reverse unmount order: first unmounts while second stays active.
+    const a = renderHook(() => usePreventUserFromLeavingPage(true));
+    const b = renderHook(() => usePreventUserFromLeavingPage(true));
+    a.unmount();
+    expect(typeof window.onbeforeunload).toBe('function');
+    expect(typeof routerInstance.change).toBe('function');
+    b.unmount();
+    expect(window.onbeforeunload).toBeNull();
+    expect(routerInstance.change).toBeUndefined();
+  });
+
   it('does not clear external handlers when unmounting a disabled or superseded instance', () => {
     const first = renderHook(() => usePreventUserFromLeavingPage(true));
     const externalUnload = vi.fn();
