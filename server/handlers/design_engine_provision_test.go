@@ -188,3 +188,75 @@ func TestProvisionPropagatesRequestContextCancellation(t *testing.T) {
 		t.Fatal("Provision did not return after cancellation")
 	}
 }
+
+func TestProvisionDoesNotStartNextAdapterAfterCancellation(t *testing.T) {
+	log, err := logger.New("provision-next-host-cancel-test", logger.Options{})
+	if err != nil {
+		t.Fatalf("failed to build a logger: %v", err)
+	}
+
+	first, firstHost := startProvisionAdapter(t)
+	second, secondHost := startProvisionAdapter(t)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	firstStarted := make(chan struct{})
+	var secondCalls atomic.Int32
+
+	first.onProvision = func(rpcCtx context.Context) {
+		close(firstStarted)
+		<-rpcCtx.Done()
+	}
+	second.onProvision = func(context.Context) {
+		secondCalls.Add(1)
+	}
+
+	comp := mutateTestComponent("workload", "Deployment")
+	comp.Model = &modelv1beta1.ModelDefinition{Name: "kubernetes"}
+
+	sap := &serviceActionProvider{
+		log:         log,
+		userID:      "user",
+		patternName: "design",
+		ctx:         ctx,
+	}
+
+	done := make(chan error, 1)
+	go func() {
+		_, err := sap.Provision(stages.CompConfigPair{
+			Component: *comp,
+			Hosts:     []connection.Connection{firstHost, secondHost},
+		})
+		done <- err
+	}()
+
+	select {
+	case <-firstStarted:
+		cancel()
+	case <-time.After(3 * time.Second):
+		t.Fatal("first adapter RPC did not start")
+	}
+
+	select {
+	case err := <-done:
+		if err == nil {
+			t.Fatal("Provision returned nil error after cancellation")
+		}
+	case <-time.After(3 * time.Second):
+		t.Fatal("Provision did not return after cancellation")
+	}
+
+	if calls := secondCalls.Load(); calls != 0 {
+		t.Errorf("second adapter received %d Provision call(s) after cancellation, want 0", calls)
+	}
+
+	for name, adapter := range map[string]*provisionAdapter{
+		"first":  first,
+		"second": second,
+	} {
+		if open := adapter.waitForNoOpenConns(); open != 0 {
+			t.Errorf("the %s adapter still holds %d client connection(s) after Provision returned, want 0", name, open)
+		}
+	}
+}

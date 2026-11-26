@@ -583,10 +583,22 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 	// }
 
 	msgs := []patterns.DeploymentMessagePerContext{}
+	ctx := sap.ctx
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
 	for _, host := range ccp.Hosts {
+		if err := ctx.Err(); err != nil {
+			return msgs, err
+		}
 		// Hack until adapters fix the concurrent client
 		// creation issue: https://github.com/meshery/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
+		if err := ctx.Err(); err != nil {
+			return msgs, err
+		}
+
 		sap.log.Debug("Execute operations on: ", host.Kind)
 
 		_hostPort, ok := host.Metadata["port"]
@@ -623,10 +635,12 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 		}
 
 		msg, err := sap.provisionOnAdapter(hostName, hostPort, ccp.Component)
-		if err != nil {
-			return nil, err
+		if err == nil || len(msg.Summary) > 0 {
+			msgs = append(msgs, msg)
 		}
-		msgs = append(msgs, msg)
+		if err != nil {
+			return msgs, err
+		}
 	}
 
 	return msgs, nil
@@ -635,13 +649,21 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 // provisionOnAdapter provisions comp through one gRPC adapter, closing its client
 // on return so hosts do not hold connections open until Provision ends.
 func (sap *serviceActionProvider) provisionOnAdapter(hostName string, hostPort int, comp component.ComponentDefinition) (patterns.DeploymentMessagePerContext, error) {
+	ctx := sap.ctx
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	if err := ctx.Err(); err != nil {
+		return patterns.DeploymentMessagePerContext{}, err
+	}
+
 	addr := hostName
 	if hostPort != 0 {
 		addr += ":" + strconv.Itoa(hostPort)
 	}
 	// Create mesh client
 	mClient, err := meshes.CreateClient(
-		context.TODO(),
+		ctx,
 		addr,
 	)
 	if err != nil {
@@ -662,11 +684,6 @@ func (sap *serviceActionProvider) provisionOnAdapter(hostName string, hostPort i
 		err = errors.Wrapf(err, "error marshalling component \"%s\" of type : %s", comp.DisplayName, comp.Component.Kind)
 		return patterns.DeploymentMessagePerContext{}, err
 	}
-	ctx := sap.ctx
-	if ctx == nil {
-		ctx = context.Background()
-	}
-
 	resp, err := mClient.MClient.Provision(ctx, &meshes.ProvisionRequest{
 		Username:     sap.userID,
 		DeleteOp:     sap.opIsDelete,
@@ -674,7 +691,7 @@ func (sap *serviceActionProvider) provisionOnAdapter(hostName string, hostPort i
 		Declarations: []string{compStr},
 	})
 	success := err == nil
-	return patterns.DeploymentMessagePerContext{
+	msg := patterns.DeploymentMessagePerContext{
 		SystemName: hostName,
 		Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
 		Summary: []patterns.DeploymentMessagePerComp{
@@ -688,7 +705,8 @@ func (sap *serviceActionProvider) provisionOnAdapter(hostName string, hostPort i
 				Error:      err,
 			},
 		},
-	}, nil
+	}
+	return msg, err
 }
 
 // func (sap *serviceActionProvider) Persist(name string, svc patterncore.Service, isUpdate bool) error {
