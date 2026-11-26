@@ -69,7 +69,7 @@ export const ResourceMenuConfig = {
     'PodDisruptionBudget',
     'PriorityClass',
     'RuntimeClass',
-    'Leases',
+    'Lease',
     'MutatingWebhookConfiguration',
   ],
   Network: ['Service', 'Endpoints', 'EndpointSlice', 'Ingress', 'IngressClass', 'NetworkPoliciy'],
