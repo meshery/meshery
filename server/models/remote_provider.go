@@ -1956,11 +1956,20 @@ func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilt
 		return nil, ErrUnmarshal(err, "Events Response")
 	}
 
+	// A remote provider may send null (or omit) data and countBySeverityLevel
+	// when there are no events. A nil slice encodes as JSON null, which breaks
+	// the UI; normalize to empty slices, as the local provider does.
 	eventsResponse.Events = response.Data
+	if eventsResponse.Events == nil {
+		eventsResponse.Events = []*events.Event{}
+	}
 	eventsResponse.Page = response.Page
 	eventsResponse.TotalCount = response.TotalCount
 	eventsResponse.PageSize = response.PageSize
 	eventsResponse.CountBySeverityLevel = response.CountBySeverityLevel
+	if eventsResponse.CountBySeverityLevel == nil {
+		eventsResponse.CountBySeverityLevel = []*CountBySeverityLevel{}
+	}
 	eventsResponse.ReadCount = response.ReadCount
 
 	return eventsResponse, nil
