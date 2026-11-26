@@ -66,9 +66,9 @@ var createTokenCmd = &cobra.Command{
 	Long: `Create the token with provided token name (optionally token path) to your meshconfig tokens.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/token/create`,
 	Example: `
-mesheryctl system token create [token-name] -f [token-path]
-mesheryctl system token create [token-name] (default path is auth.json)
-mesheryctl system token create [token-name] -f [token-path] --set
+mesheryctl system token create my-token -f [token-path]
+mesheryctl system token create my-token (default path is auth.json)
+mesheryctl system token create my-token -f [token-path] --set
 	`,
 	Args: checkTokenName(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -103,7 +103,7 @@ var deleteTokenCmd = &cobra.Command{
 	Short: "Delete a token from your meshconfig",
 	Long:  "Delete the token with provided token name from your meshconfig tokens. A token that a context still uses cannot be deleted; set another token on that context first.",
 	Example: `
-mesheryctl system token delete [token-name]
+mesheryctl system token delete my-token
 	`,
 	Args: checkTokenName(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -122,7 +122,7 @@ var setTokenCmd = &cobra.Command{
 	Short: "Set token for context",
 	Long:  "Set token for current context or context specified with --context flag. The token must already exist in your meshconfig tokens.",
 	Example: `
-mesheryctl system token set [token-name] 
+mesheryctl system token set my-token 
 	`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -178,7 +178,7 @@ var viewTokenCmd = &cobra.Command{
 	Long:  "View a specific token in meshery config",
 	Example: `
 // View a specific token
-mesheryctl system token view [token-name]
+mesheryctl system token view my-token
 
 // View token of current context
 mesheryctl system token view

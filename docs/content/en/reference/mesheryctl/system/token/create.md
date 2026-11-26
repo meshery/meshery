@@ -30,7 +30,7 @@ mesheryctl system token create &lt;token-name&gt; [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token create [token-name] -f [token-path]
+mesheryctl system token create my-token -f [token-path]
 
 </div>
 </div>
@@ -39,7 +39,7 @@ mesheryctl system token create [token-name] -f [token-path]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token create [token-name] (default path is auth.json)
+mesheryctl system token create my-token (default path is auth.json)
 
 </div>
 </div>
@@ -48,7 +48,7 @@ mesheryctl system token create [token-name] (default path is auth.json)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token create [token-name] -f [token-path] --set
+mesheryctl system token create my-token -f [token-path] --set
 
 </div>
 </div>
