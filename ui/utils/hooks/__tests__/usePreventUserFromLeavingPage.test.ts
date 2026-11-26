@@ -78,6 +78,35 @@ describe('usePreventUserFromLeavingPage', () => {
     expect(ret).toBe(false);
   });
 
+  it('blocks navigation fail-safe when window.confirm is unavailable', async () => {
+    renderHook(() => usePreventUserFromLeavingPage(true));
+    // @ts-expect-error simulating missing confirm function
+    window.confirm = undefined;
+
+    const ret = await routerInstance.change!('/new');
+    expect(RouterPrototype.change).not.toHaveBeenCalled();
+    expect(ret).toBe(false);
+  });
+
+  it('does not clear external handlers when unmounting a disabled or superseded instance', () => {
+    const first = renderHook(() => usePreventUserFromLeavingPage(true));
+    const externalUnload = vi.fn();
+    const externalChange = vi.fn();
+    window.onbeforeunload = externalUnload;
+    routerInstance.change = externalChange;
+
+    first.unmount();
+    expect(window.onbeforeunload).toBe(externalUnload);
+    expect(routerInstance.change).toBe(externalChange);
+
+    const disabled = renderHook(() => usePreventUserFromLeavingPage(false));
+    routerInstance.change = externalChange;
+    window.onbeforeunload = externalUnload;
+    disabled.unmount();
+    expect(window.onbeforeunload).toBe(externalUnload);
+    expect(routerInstance.change).toBe(externalChange);
+  });
+
   it('clears the router.change override on unmount', () => {
     const { unmount } = renderHook(() => usePreventUserFromLeavingPage(true));
     expect(routerInstance.change).toBeDefined();

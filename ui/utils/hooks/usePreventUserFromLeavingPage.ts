@@ -13,37 +13,44 @@ export default function usePreventUserFromLeavingPage(
   const [shouldPreventLeaving, setShouldPreventLeaving] = React.useState(!!preventLeave);
 
   React.useEffect(() => {
-    // Prevents tab quit / tab refresh
-    if (typeof window !== 'undefined') {
-      if (shouldPreventLeaving) {
-        // Adding window alert if the user quits without saving
-        window.onbeforeunload = function () {
+    let beforeUnloadHandler: (() => string) | null = null;
+    let routerChangeHandler: typeof Router.prototype.change | null = null;
+
+    if (shouldPreventLeaving) {
+      // Prevents tab quit / tab refresh
+      if (typeof window !== 'undefined') {
+        beforeUnloadHandler = function () {
           return confirmationMsg;
         };
-      } else {
-        window.onbeforeunload = () => {};
+        window.onbeforeunload = beforeUnloadHandler;
       }
-    }
 
-    if (shouldPreventLeaving && SingletonRouter.router) {
-      // Prevents next routing
-      SingletonRouter.router.change = (...args) => {
-        if (typeof window !== 'undefined' && typeof window.confirm === 'function') {
-          if (window.confirm(confirmationMsg)) {
-            return Router.prototype.change.apply(SingletonRouter.router, args);
+      if (SingletonRouter.router) {
+        // Prevents next routing
+        routerChangeHandler = (...args) => {
+          if (typeof window !== 'undefined' && typeof window.confirm === 'function') {
+            if (window.confirm(confirmationMsg)) {
+              return Router.prototype.change.apply(SingletonRouter.router, args);
+            }
           }
           return Promise.resolve(false);
-        }
-        return Router.prototype.change.apply(SingletonRouter.router, args);
-      };
+        };
+        SingletonRouter.router.change = routerChangeHandler;
+      }
+    } else if (typeof window !== 'undefined') {
+      window.onbeforeunload = () => {};
     }
 
     // unmount
     return () => {
-      if (typeof window !== 'undefined') {
+      if (
+        beforeUnloadHandler &&
+        typeof window !== 'undefined' &&
+        window.onbeforeunload === beforeUnloadHandler
+      ) {
         window.onbeforeunload = null;
       }
-      if (SingletonRouter?.router) {
+      if (routerChangeHandler && SingletonRouter?.router?.change === routerChangeHandler) {
         delete SingletonRouter.router.change;
       }
     };
