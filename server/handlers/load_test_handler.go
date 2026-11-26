@@ -226,6 +226,21 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	isSSLCertificateProvided := req.URL.Query().Get("cert") == queryParamTrue
 
+	// Validate profileID early so that a malformed or zero UUID is rejected
+	// with HTTP 400 before SMP dispatch or provider checks.
+	profileID := mux.Vars(req)["id"]
+	if profileID != "" {
+		key, err := uuid.FromString(profileID)
+		if err != nil || key == uuid.Nil {
+			invalidUUIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid performance profile id: %q", profileID))
+			if h != nil && h.log != nil {
+				h.log.Error(invalidUUIDErr)
+			}
+			writeMeshkitError(w, invalidUUIDErr, http.StatusBadRequest)
+			return
+		}
+	}
+
 	/*
 	 When "cert" query param is set the body contains self-signed certs
 	 and not the SMP config, hence we shouldn't use SMP Handler,
@@ -246,19 +261,6 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	}
 
 	loadTestOptions := &models.LoadTestOptions{}
-
-	profileID := mux.Vars(req)["id"]
-	if profileID != "" {
-		key, err := uuid.FromString(profileID)
-		if err != nil || key == uuid.Nil {
-			invalidUUIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid performance profile id: %q", profileID))
-			if h != nil && h.log != nil {
-				h.log.Error(invalidUUIDErr)
-			}
-			writeMeshkitError(w, invalidUUIDErr, http.StatusBadRequest)
-			return
-		}
-	}
 
 	performanceProfileData, err := provider.GetPerformanceProfile(req, profileID)
 	if err != nil {

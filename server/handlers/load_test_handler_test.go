@@ -196,8 +196,9 @@ func TestLoadTestUsingSMPHandlerInvalidURL(t *testing.T) {
 
 			req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/run", bytes.NewReader(payloadBytes))
 			rec := httptest.NewRecorder()
+			provider := &fakeLoadTestProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
 
-			h.LoadTestUsingSMPHandler(rec, req, nil, nil, nil)
+			h.LoadTestUsingSMPHandler(rec, req, nil, nil, provider)
 
 			if rec.Code != http.StatusBadRequest {
 				t.Fatalf("expected status 400 Bad Request, got %d. Body: %s", rec.Code, rec.Body.String())
@@ -326,13 +327,17 @@ func TestLoadTestHandler_CertificateTempFileCleanedUpOnExit(t *testing.T) {
 		log:    newTestLogger(t),
 	}
 
-	req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/test-profile-id/run?cert=true&name=test-run&url=:", nil)
+	profileID := uuid.Must(uuid.NewV4()).String()
+	req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/"+profileID+"/run?cert=true&name=test-run&url=:", nil)
 	req = mux.SetURLVars(req, map[string]string{
-		"id": "test-profile-id",
+		"id": profileID,
 	})
 	rec := httptest.NewRecorder()
 
 	h.LoadTestHandler(rec, req, nil, nil, provider)
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+	assert.Contains(t, rec.Body.String(), ErrInvalidLTURLCode)
 
 	// Verify that any temp certificate created with pattern "meshery-test-ca-*.crt" was deleted
 	tempDir := os.TempDir()
@@ -382,9 +387,10 @@ func TestLoadTestHandler_CertificateInvalidFile_NoPanic(t *testing.T) {
 				log:    newTestLogger(t),
 			}
 
-			req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/test-profile-id/run?cert=true&name=test-run&url=:", nil)
+			profileID := uuid.Must(uuid.NewV4()).String()
+			req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/"+profileID+"/run?cert=true&name=test-run&url=:", nil)
 			req = mux.SetURLVars(req, map[string]string{
-				"id": "test-profile-id",
+				"id": profileID,
 			})
 			rec := httptest.NewRecorder()
 
@@ -394,6 +400,7 @@ func TestLoadTestHandler_CertificateInvalidFile_NoPanic(t *testing.T) {
 			})
 
 			assert.Equal(t, http.StatusBadRequest, rec.Code)
+			assert.Contains(t, rec.Body.String(), ErrCreateFileCode)
 
 			// Verify temp file is cleaned up
 			tempDir := os.TempDir()
@@ -426,15 +433,19 @@ func TestLoadTestHandler_CertificateUnsetParam_DoesNotCreateTempFile(t *testing.
 	}
 
 	// Request without cert=true param
-	req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/test-profile-id/run?name=test-run&url=:", nil)
+	profileID := uuid.Must(uuid.NewV4()).String()
+	req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/"+profileID+"/run?name=test-run&url=:", nil)
 	req = mux.SetURLVars(req, map[string]string{
-		"id": "test-profile-id",
+		"id": profileID,
 	})
 	rec := httptest.NewRecorder()
 
 	assert.NotPanics(t, func() {
 		h.LoadTestHandler(rec, req, nil, nil, provider)
 	})
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+	assert.Contains(t, rec.Body.String(), ErrInvalidLTURLCode)
 
 	tempDir := os.TempDir()
 	matches, err := filepath.Glob(filepath.Join(tempDir, "meshery-nocert-test-*.crt"))
@@ -646,6 +657,51 @@ func TestLoadTestHandler_NilProfileID(t *testing.T) {
 	if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
 		t.Errorf("expected error body to contain %s, got: %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
 	}
+}
+
+func TestLoadTestHandler_InvalidProfileIDRejectedBeforeSMPDispatch(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	provider := &fakeLoadTestProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
+	smpBody := `{"test":{"name":"smp-test","duration":"1s","clients":[{"endpointUrls":["http://example.com"]}]}}`
+
+	for _, tc := range []struct {
+		name string
+		id   string
+	}{
+		{"malformed UUID with SMP body", "not-a-valid-uuid"},
+		{"zero UUID with SMP body", uuid.Nil.String()},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodPost, "/api/user/performance/profiles/"+tc.id+"/run", bytes.NewBufferString(smpBody))
+			req = mux.SetURLVars(req, map[string]string{"id": tc.id})
+			rec := httptest.NewRecorder()
+
+			h.LoadTestHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want 400 before SMP dispatch; body: %s", rec.Code, rec.Body.String())
+			}
+			if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
+				t.Errorf("expected error body to contain %s, got: %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+			}
+		})
+	}
+
+	// Preserve body-based SMP dispatch when profileID is empty.
+	t.Run("empty profile ID still dispatches to SMP handler", func(t *testing.T) {
+		invalidURLBody := `{"test":{"name":"smp-test","duration":"1s","clients":[{"endpointUrls":["example.com"]}]}}`
+		req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/run", bytes.NewBufferString(invalidURLBody))
+		rec := httptest.NewRecorder()
+
+		h.LoadTestHandler(rec, req, nil, nil, provider)
+
+		if rec.Code != http.StatusBadRequest {
+			t.Fatalf("status = %d, want 400 from SMP handler; body: %s", rec.Code, rec.Body.String())
+		}
+		if !strings.Contains(rec.Body.String(), ErrInvalidLTURLCode) {
+			t.Errorf("expected error body to contain %s (proving SMP dispatch ran), got: %s", ErrInvalidLTURLCode, rec.Body.String())
+		}
+	})
 }
 
 func TestLoadTestHandler_NotFoundProfileID(t *testing.T) {
