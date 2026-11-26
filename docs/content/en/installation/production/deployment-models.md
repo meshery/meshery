@@ -23,13 +23,13 @@ long-lived.
 
 Every Meshery deployment is either _in-cluster_ or _out-of-cluster_ with respect
 to the clusters it manages. The distinction is not about how Meshery is
-packaged—it is about the network and trust relationship between Meshery Server
+packaged - it is about the network and trust relationship between Meshery Server
 and the clusters under management.
 
 | Topology | What it means | Best suited to |
 | :--- | :--- | :--- |
 | **In-cluster** | Meshery Server runs as a workload inside a Kubernetes cluster that it also manages. | Teams standardizing on Kubernetes who want Meshery co-located with their primary cluster and managed by the same platform tooling (Helm, GitOps). |
-| **Out-of-cluster** | Meshery Server runs separately—on a Docker host or in a dedicated cluster—and manages one or more remote clusters over the network. | Central management planes that manage many clusters, manage clusters across clouds, or must remain available independently of any single managed cluster. |
+| **Out-of-cluster** | Meshery Server runs separately - on a Docker host or in a dedicated cluster - and manages one or more remote clusters over the network. | Central management planes that manage many clusters, manage clusters across clouds, or must remain available independently of any single managed cluster. |
 
 A single Meshery Server commonly does both at once: it runs _in_ one cluster
 while managing that cluster _and_ additional remote clusters
@@ -44,7 +44,7 @@ When Meshery Server is out-of-cluster, it must be able to reach the
 [Meshery Broker]({{< ref "concepts/architecture/broker/index.md" >}}) running inside each managed
 cluster. The Broker's externally reachable endpoint is derived from the
 cluster's Service type (LoadBalancer, NodePort, or ClusterIP). Plan Broker
-exposure deliberately—see
+exposure deliberately - see
 [Networking & Connectivity]({{< ref "installation/production/networking-and-connectivity.md" >}})
 and [Multi-Cluster & Multi-Cloud]({{< ref "installation/production/multi-cluster-and-multi-cloud.md" >}}).
 {{% /alert %}}
@@ -69,21 +69,21 @@ run on a single Docker host.
 
 ## Component inventory and statefulness
 
-Knowing which components hold state—and what kind—is foundational to sizing,
+Knowing which components hold state - and what kind - is foundational to sizing,
 high availability, backup, and upgrade planning. The following table summarizes
 Meshery's components and their persistence characteristics.
 
 | Component | Role | Persistence |
 | :--- | :--- | :--- |
 | **Meshery Server** | Core control plane: REST/GraphQL APIs, orchestration, capability registry. | Caches state in an on-disk database under `~/.meshery/`. Treat as a cache. |
-| **Meshery Database** | SQLite/Bitcask file database backing Server state and the MeshSync snapshot. | Ephemeral; tied to the Server instance lifetime. Not a system of record. |
+| **Meshery Database** | SQLite file database backing Server state and the MeshSync snapshot. | Ephemeral; tied to the Server instance lifetime. Not a system of record. |
 | **Meshery UI** | React/Next.js web interface served by the Server. | Stateless. |
 | **Meshery Operator** | Kubernetes operator that manages MeshSync and Broker; one per managed cluster. | Stateless. |
 | **MeshSync** | Custom controller performing continuous, tiered discovery of cluster state. | Stateless; its working snapshot lives in the Server's database. |
 | **Meshery Broker** | NATS-based event bus streaming discovery and events between clusters and Server. | Messages persist **in-memory only** until consumed; no persistent volume. |
 | **Meshery Adapters** | Optional, capability-specific integrations registered with the Server. | Stateless; transactional interaction with infrastructure. |
 | **`mesheryctl`** | Command-line client. | Stateless; has a local config file. |
-| **Remote Provider** | Pluggable extension supplying identity and **durable, long-term persistence**. | Stateful—the system of record for user data, environments, and saved work. |
+| **Remote Provider** | Pluggable extension supplying identity and **durable, long-term persistence**. | Stateful - the system of record for user data, environments, and saved work. |
 
 Two implications dominate production planning:
 
@@ -104,12 +104,11 @@ For each Kubernetes cluster under management, Meshery deploys exactly one
 [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}), which in turn manages one
 [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) and one
 [Broker]({{< ref "concepts/architecture/broker/index.md" >}}) in that cluster. This holds whether
-Meshery Server is in-cluster or out-of-cluster. The Operator is deployed when
-Meshery Server connects to a cluster and removed when it disconnects (or via the
-on/off control in the UI).
+Meshery Server is in-cluster or out-of-cluster. Disconnecting a connection does
+not remove it. See [One Operator per cluster]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#one-operator-per-cluster-shared-by-every-connection" >}}).
 
-MeshSync can instead run in **embedded mode**—the default for new Kubernetes
-connections—where it executes as a library inside Meshery Server and deploys no
+MeshSync can instead run in **embedded mode** - the default for new Kubernetes
+connections - where it executes as a library inside Meshery Server and deploys no
 resources into the managed cluster. The mode is chosen per connection and has
 meaningful production trade-offs covered in
 [Multi-Cluster & Multi-Cloud Operations]({{< ref "installation/production/multi-cluster-and-multi-cloud.md" >}}).
@@ -145,8 +144,8 @@ cross-region latency. See
 
 Any of the above can be made highly available by running Meshery Server with
 appropriate replication and health probes on Kubernetes, and by relying on a
-Remote Provider for durable state. The mechanics—and the caveats around the
-single-writer SQLite database and the in-memory Broker—are covered in
+Remote Provider for durable state. The mechanics - and the caveats around the
+single-writer SQLite database and the in-memory Broker - are covered in
 [High Availability & Resiliency]({{< ref "installation/production/high-availability-and-resiliency.md" >}}).
 
 ## Choosing a model

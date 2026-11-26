@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
+  CircularProgress,
   DeleteIcon,
   NoSsr,
   Pagination,
@@ -48,9 +49,9 @@ import {
   useUpdateEnvironmentMutation,
   useDeleteEnvironmentMutation,
 } from '../../rtk-query/environments';
+import { useGetSelectedOrganization } from '../../rtk-query/user';
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '../general/error-404/index';
-import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
 const ACTION_TYPES = {
@@ -69,7 +70,8 @@ const Environments = () => {
     Keys.WorkspaceManagementRemoveConnectionsFromEnvironments,
   );
   const theme = useTheme();
-  const { organization } = useSelector((state) => state.ui);
+  const { selectedOrganization: organization, isLoading: isLoadingOrganization } =
+    useGetSelectedOrganization();
   const [environmentModal, setEnvironmentModal] = useState({
     open: false,
     schema: {},
@@ -79,15 +81,16 @@ const Environments = () => {
   const [editEnvId, setEditEnvId] = useState('');
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
-  const [orgId, setOrgId] = useState('');
   const [selectedEnvironments, setSelectedEnvironments] = useState([]);
   const [assignConnectionModal, setAssignConnectionModal] = useState(false);
   const [connectionAssignEnv, setConnectionAssignEnv] = useState({});
   const [assignedConnections, setAssignedConnections] = useState([]);
   const [connectionsData, setConnectionsData] = useState([]);
   const [connectionsPage, setConnectionsPage] = useState(0);
+  const [loadedAssignablePage, setLoadedAssignablePage] = useState(-1);
   const [environmentConnectionsData, setEnvironmentConnectionsData] = useState([]);
   const [connectionsOfEnvironmentPage, setConnectionsOfEnvironmentPage] = useState(0);
+  const [loadedAssignedPage, setLoadedAssignedPage] = useState(-1);
   const [skip, setSkip] = useState(true);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [disableTranferButton, setDisableTranferButton] = useState(true);
@@ -96,10 +99,16 @@ const Environments = () => {
   const connectionPageSize = 25;
 
   const modalRef = useRef(null);
+  const organizationScopeRef = useRef({ id: organization?.id, generation: 0 });
+  const previousOrganizationIdRef = useRef(organization?.id);
+  const environmentFormSessionRef = useRef(0);
+  const connectionAssignmentSessionRef = useRef(0);
   const { notify } = useNotification();
 
   const {
-    data: environmentsData,
+    currentData: environmentsData,
+    isLoading: isLoadingEnvironments,
+    isFetching: isFetchingEnvironments,
     isError: isEnvironmentsError,
     error: environmentsError,
   } = useGetEnvironmentsQuery(
@@ -107,10 +116,10 @@ const Environments = () => {
       search: search,
       page: page,
       pagesize: pageSize,
-      orgId: orgId,
+      orgId: organization?.id,
     },
     {
-      skip: !orgId ? true : false,
+      skip: isLoadingOrganization || !organization?.id || !canViewEnv,
     },
   );
 
@@ -122,8 +131,16 @@ const Environments = () => {
 
   const [deleteEnvironment] = useDeleteEnvironmentMutation();
 
+  const environments = environmentsData?.environments ? environmentsData.environments : [];
+  const isEnvironmentsPending =
+    isLoadingOrganization || isLoadingEnvironments || isFetchingEnvironments;
+  const isConnectionAssignmentCurrent = environments.some(
+    (environment) => environment.id === connectionAssignEnv.id,
+  );
+
   const {
     data: connections,
+    currentData: currentConnections,
     isError: isConnectionsError,
     error: connectionsError,
   } = useGetEnvironmentConnectionsQuery(
@@ -134,12 +151,13 @@ const Environments = () => {
       filter: '{"assigned":false}',
     },
     {
-      skip,
+      skip: skip || !canViewEnv || !isConnectionAssignmentCurrent,
     },
   );
 
   const {
     data: environmentConnections,
+    currentData: currentEnvironmentConnections,
     isError: isEnvironmentConnectionsError,
     error: environmentConnectionsError,
   } = useGetEnvironmentConnectionsQuery(
@@ -149,23 +167,50 @@ const Environments = () => {
       pagesize: connectionPageSize,
     },
     {
-      skip,
+      skip: skip || !canViewEnv || !isConnectionAssignmentCurrent,
     },
   );
 
-  const environments = environmentsData?.environments ? environmentsData.environments : [];
-  const connectionsDataRtk = connections?.connections ? connections.connections : [];
-  const environmentConnectionsDataRtk = environmentConnections?.connections
-    ? environmentConnections.connections
+  const connectionsDataRtk = currentConnections?.connections ? currentConnections.connections : [];
+  const environmentConnectionsDataRtk = currentEnvironmentConnections?.connections
+    ? currentEnvironmentConnections.connections
     : [];
 
   useEffect(() => {
-    setConnectionsData((prevData) => [...prevData, ...connectionsDataRtk]);
-  }, [connections]);
+    if (!currentConnections) return;
+    if (connectionsDataRtk.length > 0) {
+      setConnectionsData((prevData) => {
+        const seen = new Set(prevData.map((conn) => conn.id));
+        const next = [...prevData];
+        for (const conn of connectionsDataRtk) {
+          if (conn?.id && !seen.has(conn.id)) {
+            seen.add(conn.id);
+            next.push(conn);
+          }
+        }
+        return next;
+      });
+    }
+    setLoadedAssignablePage(connectionsPage);
+  }, [currentConnections]);
 
   useEffect(() => {
-    setEnvironmentConnectionsData((prevData) => [...prevData, ...environmentConnectionsDataRtk]);
-  }, [environmentConnections]);
+    if (!currentEnvironmentConnections) return;
+    if (environmentConnectionsDataRtk.length > 0) {
+      setEnvironmentConnectionsData((prevData) => {
+        const seen = new Set(prevData.map((conn) => conn.id));
+        const next = [...prevData];
+        for (const conn of environmentConnectionsDataRtk) {
+          if (conn?.id && !seen.has(conn.id)) {
+            seen.add(conn.id);
+            next.push(conn);
+          }
+        }
+        return next;
+      });
+    }
+    setLoadedAssignedPage(connectionsOfEnvironmentPage);
+  }, [currentEnvironmentConnections]);
 
   useEffect(() => {
     if (isEnvironmentsError) {
@@ -214,9 +259,41 @@ const Environments = () => {
     });
   };
 
+  useLayoutEffect(() => {
+    if (organizationScopeRef.current.id === organization?.id) return;
+    organizationScopeRef.current = {
+      id: organization?.id,
+      generation: organizationScopeRef.current.generation + 1,
+    };
+    environmentFormSessionRef.current += 1;
+    connectionAssignmentSessionRef.current += 1;
+  }, [organization?.id]);
+
   useEffect(() => {
-    setOrgId(organization?.id);
-  }, [organization]);
+    if (previousOrganizationIdRef.current === organization?.id) return;
+    previousOrganizationIdRef.current = organization?.id;
+
+    setPage(0);
+    setSelectedEnvironments([]);
+    setAssignConnectionModal(false);
+    setConnectionAssignEnv({});
+    setAssignedConnections([]);
+    setConnectionsData([]);
+    setConnectionsPage(0);
+    setLoadedAssignablePage(-1);
+    setEnvironmentConnectionsData([]);
+    setConnectionsOfEnvironmentPage(0);
+    setLoadedAssignedPage(-1);
+    setSkip(true);
+    setDisableTranferButton(true);
+
+    if (actionType === ACTION_TYPES.EDIT) {
+      setEnvironmentModal({ open: false, schema: {} });
+      setActionType('');
+      setInitialData({});
+      setEditEnvId('');
+    }
+  }, [organization?.id, actionType]);
 
   const fetchSchema = () => {
     // Organization is derived from the user's active session and hidden by the
@@ -250,12 +327,13 @@ const Environments = () => {
 
   const handleEnvironmentModalOpen = (e, actionType, envObject) => {
     e.stopPropagation();
+    environmentFormSessionRef.current += 1;
     if (actionType === ACTION_TYPES.EDIT) {
       setActionType(ACTION_TYPES.EDIT);
       setInitialData({
         name: envObject.name,
         description: envObject.description,
-        organizationId: envObject.organizationId,
+        organizationId: organization?.id,
       });
       setEditEnvId(envObject.id);
     } else {
@@ -263,7 +341,7 @@ const Environments = () => {
       setInitialData({
         name: undefined,
         description: '',
-        organizationId: orgId,
+        organizationId: organization?.id,
       });
       setEditEnvId('');
     }
@@ -271,6 +349,7 @@ const Environments = () => {
   };
 
   const handleEnvironmentModalClose = () => {
+    environmentFormSessionRef.current += 1;
     setEnvironmentModal({
       open: false,
       schema: {},
@@ -278,25 +357,40 @@ const Environments = () => {
     setActionType('');
   };
 
-  const handleCreateEnvironment = ({ organizationId, name, description }) => {
-    if (isCreatingEnvironment) return;
+  const handleCreateEnvironment = ({ name, description }) => {
+    if (isCreatingEnvironment || isLoadingOrganization || !organization?.id) return;
+    const originatingOrganizationGeneration = organizationScopeRef.current.generation;
+    const originatingFormSession = environmentFormSessionRef.current;
     createEnvironment({
       environmentPayload: {
         name: name,
         description: description,
-        organizationId: organizationId,
+        organizationId: organization.id,
       },
     })
       .unwrap()
       .then(() => {
         handleSuccess(`Environment "${name}" created`);
-        handleEnvironmentModalClose();
+        if (
+          organizationScopeRef.current.generation === originatingOrganizationGeneration &&
+          environmentFormSessionRef.current === originatingFormSession
+        ) {
+          handleEnvironmentModalClose();
+        }
       })
       .catch(handleError({ error_msg: `Unable to create environment "${name}"` }));
   };
 
   const handleEditEnvironment = ({ name, description }) => {
     if (isUpdatingEnvironment) return;
+    if (initialData.organizationId !== organization?.id) {
+      handleEnvironmentModalClose();
+      setInitialData({});
+      setEditEnvId('');
+      return;
+    }
+    const originatingOrganizationGeneration = organizationScopeRef.current.generation;
+    const originatingFormSession = environmentFormSessionRef.current;
     updateEnvironment({
       environmentId: editEnvId,
       environmentPayload: {
@@ -308,13 +402,19 @@ const Environments = () => {
       .unwrap()
       .then(() => {
         handleSuccess(`Environment "${name}" updated`);
-        handleEnvironmentModalClose();
+        if (
+          organizationScopeRef.current.generation === originatingOrganizationGeneration &&
+          environmentFormSessionRef.current === originatingFormSession
+        ) {
+          handleEnvironmentModalClose();
+        }
       })
       .catch(handleError({ error_msg: `Unable to update environment "${name}"` }));
   };
 
   const handleDeleteEnvironmentConfirm = async (e, environment) => {
     e.stopPropagation();
+    const originatingOrganizationGeneration = organizationScopeRef.current.generation;
     let response = await modalRef.current.show({
       title: `Delete "${environment.name}" environment?`,
       subtitle: deleteEnvironmentModalContent(environment.name),
@@ -324,7 +424,10 @@ const Environments = () => {
       Learn more about the behavior of [lifecycle of environments and their resources](https://docs.meshery.io/concepts/logical/environments) in Meshery Docs.`,
       variant: PROMPT_VARIANTS.DANGER,
     });
-    if (response === 'DELETE') {
+    if (
+      response === 'DELETE' &&
+      organizationScopeRef.current.generation === originatingOrganizationGeneration
+    ) {
       handleDeleteEnvironment(environment.id);
     }
   };
@@ -362,13 +465,17 @@ const Environments = () => {
 
   const handleBulkDeleteEnvironmentConfirm = async (e) => {
     e.stopPropagation();
+    const originatingOrganizationGeneration = organizationScopeRef.current.generation;
     let response = await modalRef.current.show({
       title: `Delete Environment(s) ?`,
       subtitle: `Do you want to delete ${selectedEnvironments.length} environment(s) ?`,
       primaryOption: 'DELETE',
       variant: PROMPT_VARIANTS.DANGER,
     });
-    if (response === 'DELETE') {
+    if (
+      response === 'DELETE' &&
+      organizationScopeRef.current.generation === originatingOrganizationGeneration
+    ) {
       handleBulkDeleteEnv();
     }
   };
@@ -381,6 +488,11 @@ const Environments = () => {
   };
 
   const handleAssignConnection = async () => {
+    if (!isConnectionAssignmentCurrent) return;
+    const originatingOrganizationGeneration = organizationScopeRef.current.generation;
+    const originatingAssignmentSession = connectionAssignmentSessionRef.current;
+    const environmentId = connectionAssignEnv.id;
+
     const { addedConnectionsIds, removedConnectionsIds } =
       getAddedAndRemovedConnection(assignedConnections);
 
@@ -390,30 +502,48 @@ const Environments = () => {
     // failure from aborting the rest; each rejection is reported by the
     // mutators' own .catch above.
     await Promise.allSettled([
-      ...addedConnectionsIds.map((id) => addConnectionToEnvironment(connectionAssignEnv.id, id)),
-      ...removedConnectionsIds.map((id) =>
-        removeConnectionFromEnvironment(connectionAssignEnv.id, id),
-      ),
+      ...addedConnectionsIds.map((id) => addConnectionToEnvironment(environmentId, id)),
+      ...removedConnectionsIds.map((id) => removeConnectionFromEnvironment(environmentId, id)),
     ]);
-    setEnvironmentConnectionsData([]);
-    setConnectionsData([]);
-    handleonAssignConnectionModalClose();
+    if (
+      organizationScopeRef.current.generation === originatingOrganizationGeneration &&
+      connectionAssignmentSessionRef.current === originatingAssignmentSession
+    ) {
+      setEnvironmentConnectionsData([]);
+      setConnectionsData([]);
+      handleonAssignConnectionModalClose();
+    }
   };
 
   const handleonAssignConnectionModalOpen = (e, environment) => {
     e.stopPropagation();
+    connectionAssignmentSessionRef.current += 1;
     setAssignConnectionModal(true);
-    if (connectionAssignEnv.id !== environment.id) {
-      setConnectionsData([]);
-      setEnvironmentConnectionsData([]);
-    }
+    setConnectionsData([]);
+    setEnvironmentConnectionsData([]);
+    setConnectionsPage(0);
+    setLoadedAssignablePage(-1);
+    setConnectionsOfEnvironmentPage(0);
+    setLoadedAssignedPage(-1);
+    setAssignedConnections([]);
+    setDisableTranferButton(true);
     setConnectionAssignEnv(environment);
     setSkip(false);
   };
 
   const handleonAssignConnectionModalClose = () => {
+    connectionAssignmentSessionRef.current += 1;
     setAssignConnectionModal(false);
+    setConnectionAssignEnv({});
     setSkip(true);
+    setConnectionsData([]);
+    setEnvironmentConnectionsData([]);
+    setConnectionsPage(0);
+    setLoadedAssignablePage(-1);
+    setConnectionsOfEnvironmentPage(0);
+    setLoadedAssignedPage(-1);
+    setAssignedConnections([]);
+    setDisableTranferButton(true);
   };
 
   const handleAssignConnectionData = (updatedAssignedData) => {
@@ -429,7 +559,7 @@ const Environments = () => {
 
   const getAddedAndRemovedConnection = (allAssignedConnections) => {
     const originalConnectionsIds = environmentConnectionsData.map((conn) => conn.id);
-    const updatedConnectionsIds = allAssignedConnections.map((conn) => conn.id);
+    const updatedConnectionsIds = (allAssignedConnections || []).map((conn) => conn.id);
 
     const addedConnectionsIds = updatedConnectionsIds.filter(
       (id) => !originalConnectionsIds.includes(id),
@@ -444,22 +574,35 @@ const Environments = () => {
     };
   };
 
+  const assignableTotalCount = Number(connections?.totalCount ?? 0);
+  const assignablePagesCount = Math.ceil(assignableTotalCount / connectionPageSize);
+  const isAssignableFullyLoaded =
+    assignablePagesCount > 0 && loadedAssignablePage >= assignablePagesCount - 1;
+  const originalLeftCount = isAssignableFullyLoaded ? connectionsData.length : assignableTotalCount;
+
+  const assignedTotalCount = Number(environmentConnections?.totalCount ?? 0);
+  const assignedPagesCount = Math.ceil(assignedTotalCount / connectionPageSize);
+  const isAssignedFullyLoaded =
+    assignedPagesCount > 0 && loadedAssignedPage >= assignedPagesCount - 1;
+  const originalRightCount = isAssignedFullyLoaded
+    ? environmentConnectionsData.length
+    : assignedTotalCount;
+
   const handleAssignablePage = () => {
-    const pagesCount = Math.ceil(Number(connections?.totalCount ?? 0) / connectionPageSize);
-    if (connectionsPage < pagesCount - 1) {
-      setConnectionsPage((prevConnectionsPage) => prevConnectionsPage + 1);
-    }
+    setConnectionsPage((prevConnectionsPage) =>
+      prevConnectionsPage < assignablePagesCount - 1 && loadedAssignablePage >= prevConnectionsPage
+        ? prevConnectionsPage + 1
+        : prevConnectionsPage,
+    );
   };
 
   const handleAssignedPage = () => {
-    const pagesCount = Math.ceil(
-      Number(environmentConnections?.totalCount ?? 0) / connectionPageSize,
+    setConnectionsOfEnvironmentPage((prevConnectionsOfEnvironmentPage) =>
+      prevConnectionsOfEnvironmentPage < assignedPagesCount - 1 &&
+      loadedAssignedPage >= prevConnectionsOfEnvironmentPage
+        ? prevConnectionsOfEnvironmentPage + 1
+        : prevConnectionsOfEnvironmentPage,
     );
-    if (connectionsOfEnvironmentPage < pagesCount - 1) {
-      setConnectionsOfEnvironmentPage(
-        (prevConnectionsOfEnvironmentPage) => prevConnectionsOfEnvironmentPage + 1,
-      );
-    }
   };
 
   return (
@@ -495,6 +638,7 @@ const Environments = () => {
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
+                setPage(0);
               }}
               placeholder="Search Environments..."
               expanded={isSearchExpanded}
@@ -516,7 +660,11 @@ const Environments = () => {
               </Button>
             </BulkActionWrapper>
           )}
-          {environments.length > 0 ? (
+          {isEnvironmentsPending ? (
+            <Grid2 container justifyContent="center" sx={{ padding: '2rem 0' }}>
+              <CircularProgress data-testid="environments-loading" />
+            </Grid2>
+          ) : environments.length > 0 ? (
             <>
               <Grid2 container spacing={2} sx={{ marginTop: '10px' }} size="grow">
                 {environments.map((environment) => (
@@ -586,7 +734,8 @@ const Environments = () => {
                 submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
                 initialData={initialData}
                 handleClose={handleEnvironmentModalClose}
-                isLoading={isCreatingEnvironment || isUpdatingEnvironment}
+                isSubmitting={isCreatingEnvironment || isUpdatingEnvironment}
+                submitDisabled={isLoadingOrganization}
               />
             </SisitentModal>
           )}
@@ -622,8 +771,8 @@ const Environments = () => {
                 transferComponentType={TRANSFER_COMPONENT.CHIP}
                 assignablePage={handleAssignablePage}
                 assignedPage={handleAssignedPage}
-                originalLeftCount={connections?.totalCount}
-                originalRightCount={environmentConnections?.totalCount}
+                originalLeftCount={originalLeftCount}
+                originalRightCount={originalRightCount}
                 leftPermission={canRemoveConnFromEnv}
                 rightPermission={canAssignConnToEnv}
               />

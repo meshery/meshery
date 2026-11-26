@@ -3,12 +3,15 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import {
   useAddKubernetesConfigMutation,
   useDiscoverKubernetesContextsMutation,
-  useGetCredentialsQuery,
   usePerformConnectionActionMutation,
   useProcessConnectionRegistrationMutation,
   useUpdateConnectionByIdMutation,
 } from '@/rtk-query/connection';
-import type { ConnectionWizardKindConfig } from '../ConnectionWizard.helpers';
+import { useAllUserCredentials } from '@/utils/hooks/useAllUserCredentials';
+import {
+  normalizeKubeconfigDiscovery,
+  type ConnectionWizardKindConfig,
+} from '../ConnectionWizard.helpers';
 import { buildSteps } from './registry';
 import { useKindPermission } from './useKindPermission';
 import type {
@@ -80,7 +83,9 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
   const [discoverKubernetesContexts] = useDiscoverKubernetesContextsMutation();
   const [updateConnectionById] = useUpdateConnectionByIdMutation();
   const [performConnectionAction] = usePerformConnectionActionMutation();
-  const { data: credentialsResponse } = useGetCredentialsQuery(undefined, { skip: !isOpen });
+  // The credential step filters by kind on the client, so it needs every
+  // credential, not only the first page the endpoint returns by default.
+  const { credentials } = useAllUserCredentials({ skip: !isOpen });
 
   const formRefs = useRef<WizardFormRefs>({
     connection: createRef(),
@@ -217,8 +222,11 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
       discoverKubeContexts: async (file) => {
         const formData = new FormData();
         formData.append('k8sfile', file);
+        // Ask for skipped contexts. Servers that still return a bare array are
+        // normalized the same way.
+        formData.append('discoveryDetail', 'true');
         const result = await discoverKubernetesContexts({ body: formData }).unwrap();
-        return Array.isArray(result) ? result : [];
+        return normalizeKubeconfigDiscovery(result);
       },
       uploadKubeconfig: (file, options) => {
         const formData = new FormData();
@@ -250,7 +258,7 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
           // once @meshery/schemas exposes the `flushMeshsync` action.
           body: { action: 'flushMeshsync' } as unknown as { action: 'setMeshsyncMode' },
         }).unwrap(),
-      credentials: credentialsResponse?.credentials || [],
+      credentials,
     }),
     [
       notify,
@@ -259,7 +267,7 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
       discoverKubernetesContexts,
       updateConnectionById,
       performConnectionAction,
-      credentialsResponse,
+      credentials,
     ],
   );
 
@@ -283,7 +291,9 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
 
   const isKindAllowed = !data.kindConfig || kindPermission(data.kindConfig);
   const canProceed = isKindAllowed && (activeStep?.canProceed ? activeStep.canProceed(ctx) : true);
-  const canGoBack = safeIndex > 0;
+  const hideBackFlag = activeStep?.hideBack;
+  const backHidden = typeof hideBackFlag === 'function' ? hideBackFlag(ctx) : Boolean(hideBackFlag);
+  const canGoBack = safeIndex > 0 && !backHidden;
   const nextLabel = activeStep?.nextLabel ? activeStep.nextLabel(ctx) : isLast ? 'Finish' : 'Next';
 
   const next = async () => {

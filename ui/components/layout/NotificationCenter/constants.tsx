@@ -81,6 +81,10 @@ export const EVENT_TYPE = {
     category: 'pattern',
     action: 'validate',
   },
+  DRY_RUN_DESIGN: {
+    category: 'pattern',
+    action: 'dry-run',
+  },
   EVALUATE_DESIGN: {
     category: 'relationship',
     action: 'evaluation',

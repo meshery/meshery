@@ -10,56 +10,50 @@ description: Install Docker Extension for Meshery
 
 <h1>Quick Start with Docker Extension <img src="../images/docker.svg" style="width:35px;height:35px;" /></h1>
 
-The Docker Extension for Meshery extends Docker Desktop's position as the developer's go-to Kubernetes environment with easy access to the full capabilities of Meshery's collaborative cloud native management features.
+The Docker Extension for Meshery runs Meshery inside Docker Desktop, so you can use Meshery's collaborative cloud native management features right next to Docker Desktop's built-in Kubernetes.
 
 ## Prerequisites
 
-- You need Docker Desktop version of 4.10 or higher for this.
-- This document applies only when Docker Desktop uses kubeadm with Kubernetes enabled. If you are using kind, please refer to the [Kind]({{< ref "installation/kubernetes/kinD/index.md" >}}) section.
+- Docker Desktop 4.10 or later.
+- Kubernetes enabled in Docker Desktop, using the kubeadm cluster type. If you use kind, see [Install on kind]({{< ref "installation/kubernetes/kinD/index.md" >}}) instead.
 
 ## Install the Docker Meshery Extension
 
-Select one of the following three options to install the Docker Meshery Extension:
+Install the extension in one of three ways:
 
-- [Prerequisites](#prerequisites)
-- [Install the Docker Meshery Extension](#install-the-docker-meshery-extension)
-  - [Using Docker Desktop](#using-docker-desktop)
-  - [Using Docker Hub](#using-docker-hub)
-  - [Using Docker CLI](#using-docker-cli)
-- [Remove Meshery as a Docker Extension](#remove-meshery-as-a-docker-extension)
-  - [Removing from Docker Desktop](#removing-from-docker-desktop)
-  - [Removing using Docker CLI](#removing-using-docker-cli)
-  - [Additional Cleanup](#additional-cleanup)
+- [Using Docker Desktop](#using-docker-desktop)
+- [Using Docker Hub](#using-docker-hub)
+- [Using Docker CLI](#using-docker-cli)
 
 ### Using Docker Desktop
 
-Navigate to the **Extensions** marketplace of Docker Desktop. Search for Meshery and click the Install button to install the extension.
+Open the **Extensions** marketplace in Docker Desktop, search for Meshery, and click **Install**.
 
 [![Docker Meshery Extension Install](images/docker-desktop-meshery-extension-install.png)](images/docker-desktop-meshery-extension-install.png)
 
-Click **Open** when installation is done or click **Meshery** on the left under **Extensions**.
+When the installation finishes, click **Open**, or click **Meshery** under **Extensions** in the left sidebar.
 
 [![Docker Meshery Extension Open](images/docker-desktop-meshery-extension-open.png)](images/docker-desktop-meshery-extension-open.png)
 
-Click **Login** to open the _Meshery Cloud_ login page. Log in or sign up and you will be redirected back to Docker Desktop.
+Click **Login** to open the _Meshery Cloud_ login page. Log in or sign up, and Meshery Cloud returns you to Docker Desktop. The extension always uses the Meshery Cloud Provider (`PROVIDER=Meshery`).
 
 [![Docker Meshery Extension Login](images/docker-desktop-meshery-extension-login.png)](images/docker-desktop-meshery-extension-login.png)
 
-Finally, click **Launch Meshery** to load Meshery Dashboard in a browser window. It runs at http://localhost:9081/ by default.
+Finally, click **Launch Meshery** to open Meshery UI in a browser window. It runs at `http://localhost:9081/` by default.
 
 [![Docker Meshery Extension Launch](images/docker-desktop-meshery-extension-launch.png)](images/docker-desktop-meshery-extension-launch.png)
 
-You can also open http://localhost:9081/ directly on a browser on the local machine after installing the Docker extension and complete the _Meshery Cloud_ login process to achieve the same result.
+You can also open `http://localhost:9081/` directly in a browser on the same machine and complete the _Meshery Cloud_ login there.
 
 ### Using Docker Hub
 
-Another way to install the Meshery Docker Extension is from the Docker Hub. Navigate to the [Meshery Docker Extension](https://hub.docker.com/extensions/meshery/docker-extension-meshery) page and click Open in Docker Desktop to get started. Once installed, the rest of the process is same as above.
+You can also install the extension from Docker Hub. Go to the [Meshery Docker Extension](https://hub.docker.com/extensions/meshery/docker-extension-meshery) page and click **Open in Docker Desktop**. After installation, the steps are the same as above.
 
 [![Docker Hub Extension](images/docker-hub-meshery-extension.png)](images/docker-hub-meshery-extension.png)
 
 ### Using Docker CLI
 
-Finally, you can also install the Meshery Docker Extension using the Docker CLI. Follow the commands in the clipboard below. 
+To install the extension from the command line, run:
 
 <!--
 {% capture code_content %}docker extension install meshery/docker-extension-meshery{% endcapture %} -->
@@ -81,40 +75,38 @@ Finally, you can also install the Meshery Docker Extension using the Docker CLI.
   </div>
 </pre>
 
-It runs as a set of one or more containers inside your Docker Desktop virtual machine.
-
-Finally, you can now fully utilize Meshery to manage and monitor your cloud-native infrastructure.
+The extension runs as a set of containers inside your Docker Desktop virtual machine. You can now use Meshery to manage and monitor your cloud native infrastructure.
 
 ## Remove Meshery as a Docker Extension
 
-You can remove the Docker Extension from the Docker Desktop interface or from the CLI. 
+Remove the extension from Docker Desktop or from the command line.
 
 ### Removing from Docker Desktop
 
-Navigate to **Manage** under Extensions, click the ellipsis button (three vertical dots) and select **Uninstall**.
+Go to **Manage** under **Extensions**, click the ellipsis button (three vertical dots), and select **Uninstall**.
 
 [![Remove Meshery Docker Desktop Extension](images/docker-desktop-meshery-extension-remove.png)](images/docker-desktop-meshery-extension-remove.png)
 
 ### Removing using Docker CLI
 
-To remove the extension from the command line, use the `docker extension rm` command.
+To remove the extension from the command line, run `docker extension rm`:
 
 {{< code code="$ docker extension rm meshery/docker-extension-meshery" >}}
 
 ### Additional Cleanup
 
-There could be residual images and networks to remove after removing/uninstalling the extension. Follow the steps below to do so. 
+Uninstalling the extension can leave images and networks behind. To remove them:
 
 **Remove Meshery Images (if necessary)**
 
-Meshery pulls Docker images for deploying the extension and there could be additional Meshery images based on how it was configured. You can remove these images using the `docker rmi` command. Start by listing all the images and then running the command for each image you want to remove. For example:
+The extension pulls Docker images, and depending on how you configured Meshery, it may have pulled more. List your images with `docker images`, then remove each Meshery image you no longer need with `docker rmi`. For example:
 
 {{< code code="docker rmi meshery/meshery:stable-latest" >}}
 
 
 **Remove Meshery Docker Networks (if necessary)**
 
-Meshery creates custom Docker networks, and they could still be left after the extension uninstall. These can be removed using the `docker network rm` command. For example:
+Meshery creates its own Docker networks, which can remain after you uninstall the extension. List them with `docker network ls`, then remove each one with `docker network rm`. For example:
 
 {{< code code="docker network rm meshery_default" >}}
 

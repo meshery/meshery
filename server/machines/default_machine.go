@@ -14,8 +14,13 @@ func Discovered() State {
 	// RegisterAction(DiscoverAction)
 }
 
+// Registered carries a no-op action so kinds without a verification step can
+// enter REGISTERED: SendEvent rejects a transition into a state with no action.
+// getMachine replaces it with a kind-specific action (grafana, prometheus).
 func Registered() State {
-	state := &State{}
+	state := &State{
+		Action: &DefaultAction{},
+	}
 	return *state.
 		RegisterEvent(Connect, CONNECTED).
 		RegisterEvent(Ignore, IGNORED)

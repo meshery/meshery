@@ -1,0 +1,54 @@
+# INTERIM - grants MeshSync the read access the meshery-operator chart stopped granting.
+#
+# Target cluster: the SANDBOX cluster the playground manages.
+#
+# Meshery Operator runs the MeshSync Deployment under the operator's own ServiceAccount
+# (`meshery/meshery-operator`). Since the operator chart became least-privilege (chart
+# v1.0.0 and later), that ServiceAccount has no cluster-wide read, so MeshSync fails with
+# `forbidden` on every resource it watches and operator-mode discovery returns nothing.
+#
+# This grant is read-only (get/list/watch). The `*.*` scope is deliberately broad
+# because MeshSync watches many resource types, so it also covers Secrets: MeshSync
+# can read them cluster-wide while this interim grant is in place. It also grants
+# `get` on subresources, including `nodes/proxy`, which Kubernetes documents as
+# usable to execute commands in Pods through the kubelet API, so the interim grant
+# is broader than discovery read. Listing only the watched resource types would
+# close that gap, but MeshSync also tracks newly installed custom resources as CRDs
+# appear, so no static list covers its watch set; that enumeration is follow-up work
+# for the operator-side fix that gives MeshSync its own chart-managed ServiceAccount
+# (`meshery-meshsync`). Remove this grant once that chart is installed:
+#
+#   kubectl --context <sandbox> delete clusterrolebinding,clusterrole meshery-meshsync-discovery-interim
+#
+# Applied by ./apply.sh together with the Broker exposure.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: meshery-meshsync-discovery-interim
+  labels:
+    app.kubernetes.io/part-of: meshery
+    app.kubernetes.io/component: meshsync
+  annotations:
+    meshery.io/interim-fix: "Remove after MeshSync runs under its own chart-managed ServiceAccount (meshery-operator + meshery chart fix)."
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: meshery-meshsync-discovery-interim
+  labels:
+    app.kubernetes.io/part-of: meshery
+    app.kubernetes.io/component: meshsync
+  annotations:
+    meshery.io/interim-fix: "Remove after MeshSync runs under its own chart-managed ServiceAccount (meshery-operator + meshery chart fix)."
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: meshery-meshsync-discovery-interim
+subjects:
+  - kind: ServiceAccount
+    name: meshery-operator
+    namespace: meshery

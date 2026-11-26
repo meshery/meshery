@@ -47,7 +47,7 @@ var createConnectionCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new connection",
 	Long: `Create a new connection to a Kubernetes cluster or other supported platform.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/connection/create`,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/connection/create`,
 	Example: `
 // Create a new Kubernetes connection using a specific type
 mesheryctl connection create --type aks
@@ -59,6 +59,10 @@ mesheryctl connection create --type minikube
 mesheryctl connection create --type gke --token auth.json
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
+		errMsg := "Usage: mesheryctl connection create --type [" + strings.Join(supportedConnectionTypes, "|") + "]\nRun 'mesheryctl connection create --help' to see detailed help message"
+		if len(args) > 0 {
+			return utils.ErrInvalidArgument(errors.New(errMsg))
+		}
 		if connectionType == "" {
 			return utils.ErrInvalidArgument(fmt.Errorf("connection type is required. Use --type flag to specify the type (%s)", strings.Join(supportedConnectionTypes, "|")))
 		}

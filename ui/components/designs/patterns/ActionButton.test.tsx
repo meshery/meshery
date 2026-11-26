@@ -17,7 +17,7 @@ vi.mock('@sistent/sistent', () => ({
       {children}
     </button>
   ),
-  ButtonGroup: ({ children }: any) => <div>{children}</div>,
+  ButtonGroup: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
   ClickAwayListener: ({ children, onClickAway }: any) => (
     <div>
       {children}
@@ -30,9 +30,9 @@ vi.mock('@sistent/sistent', () => ({
       </button>
     </div>
   ),
-  MenuItem: ({ children, onClick, disabled }: any) => (
+  MenuItem: ({ children, onClick, disabled, ...rest }: any) => (
     <li>
-      <button type="button" onClick={onClick} disabled={disabled}>
+      <button type="button" onClick={onClick} disabled={disabled} {...rest}>
         {children}
       </button>
     </li>
@@ -113,5 +113,28 @@ describe('ActionButton', () => {
     const mainBtn = screen.getByRole('button', { name: 'Action' });
     expect(mainBtn).toHaveAttribute('data-permission-key', JSON.stringify(keyObj));
     expect(mainBtn).toHaveAttribute('data-permission-action', 'hide');
+  });
+
+  it('forwards data-testid to the button group and uses option data-testid when provided', () => {
+    render(
+      <ActionButton
+        data-testid="pattern-btn-action-dropdown"
+        defaultActionClick={vi.fn()}
+        options={[
+          {
+            label: 'Delete',
+            icon: <svg />,
+            onClick: vi.fn(),
+            'data-testid': 'pattern-btn-action-delete',
+          },
+          { label: 'Edit', icon: <svg />, onClick: vi.fn() },
+        ]}
+      />,
+    );
+
+    expect(screen.getByTestId('pattern-btn-action-dropdown')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('action-btn-toggle'));
+    expect(screen.getByTestId('pattern-btn-action-delete')).toBeInTheDocument();
+    expect(screen.getByTestId('action-btn-option-Edit')).toBeInTheDocument();
   });
 });

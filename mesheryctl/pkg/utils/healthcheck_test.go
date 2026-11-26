@@ -1,8 +1,12 @@
 package utils
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/spf13/viper"
 	"k8s.io/apimachinery/pkg/version"
 )
 
@@ -21,6 +25,9 @@ var versionCheck = []struct {
 	{"1.12.8", [3]int{1, 12, 8}},
 	{"1.12.9", [3]int{1, 12, 9}},
 	{"1.12.10", [3]int{1, 12, 10}},
+	{"1.28.2.1", [3]int{1, 28, 2}},
+	{"v1.28.2-eks-ba43c7", [3]int{1, 28, 2}},
+	{"v1.27.3-gke.100", [3]int{1, 27, 3}},
 }
 
 func TestGetK8sVersion(t *testing.T) {
@@ -31,6 +38,21 @@ func TestGetK8sVersion(t *testing.T) {
 			}
 		})
 	}
+
+	t.Run("invalid version formats return error", func(t *testing.T) {
+		invalidVersions := []string{
+			"",
+			"1",
+			"1.2",
+			"1.2.abc",
+			"not-a-version",
+		}
+		for _, v := range invalidVersions {
+			if _, err := getK8sVersion(v); err == nil {
+				t.Errorf("expected error for invalid version %q, got nil", v)
+			}
+		}
+	})
 }
 
 func TestCheckKubectlVersion(t *testing.T) {
@@ -89,6 +111,11 @@ func TestCheckKubectlVersion(t *testing.T) {
 		t.Fatalf("Expected to get an error")
 	}
 
+	_, err = parseKubectlShortVersion("v1a2b3")
+	if err == nil {
+		t.Errorf("Expected error for non-semver string with invalid dot separators, got nil")
+	}
+
 	for _, tt := range tests {
 		t.Run(tt.version, func(t *testing.T) {
 			if got, _ := parseKubectlShortVersion(tt.version); got != tt.expected {
@@ -127,6 +154,30 @@ func TestCheckK8sVersion(t *testing.T) {
 		})
 	}
 
+	t.Run("nil version info returns error without panicking", func(t *testing.T) {
+		err := CheckK8sVersion(nil)
+		if err == nil {
+			t.Errorf("expected error for nil versionInfo, got nil")
+		}
+	})
+
+	t.Run("four-segment version string does not panic", func(t *testing.T) {
+		vInfo := &version.Info{
+			GitVersion: "v1.28.2.1",
+		}
+		if err := CheckK8sVersion(vInfo); err != nil {
+			t.Errorf("unexpected error for four-segment version: %v", err)
+		}
+	})
+
+	t.Run("incompatible old version returns error", func(t *testing.T) {
+		vInfo := &version.Info{
+			GitVersion: "v1.10.0",
+		}
+		if err := CheckK8sVersion(vInfo); err == nil {
+			t.Errorf("expected error for incompatible version, got nil")
+		}
+	})
 }
 
 func TestIsCompatibleVersion(t *testing.T) {
@@ -207,6 +258,75 @@ func TestCheckMesheryNsDelete(t *testing.T) {
 	t.Run("Test Existing Meshery Namespace", func(t *testing.T) {
 		if got, _ := CheckMesheryNsDelete(); got != expected {
 			t.Errorf("Namespace not deleted got %v want %v ", got, expected)
+		}
+	})
+}
+
+func TestIsMesheryRunning(t *testing.T) {
+	_ = SetupMeshkitLoggerTesting(t, false)
+
+	t.Run("Returns true and closes body when Meshery server is reachable with 200 OK", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path == "/api/system/version" {
+				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write([]byte(`{"build":"v0.7.0"}`))
+				return
+			}
+			w.WriteHeader(http.StatusNotFound)
+		}))
+		defer server.Close()
+
+		transport := &trackingTransport{base: http.DefaultTransport}
+		previousTransport := http.DefaultClient.Transport
+		http.DefaultClient.Transport = transport
+		t.Cleanup(func() { http.DefaultClient.Transport = previousTransport })
+
+		running, err := IsMesheryRunning(&config.Context{Endpoint: server.URL, Platform: "docker"})
+		if err != nil {
+			t.Fatalf("unexpected error from IsMesheryRunning: %v", err)
+		}
+		if !running {
+			t.Errorf("expected running to be true, got false")
+		}
+		if transport.body == nil || !transport.body.closed {
+			t.Fatal("expected the health-check response body to be closed")
+		}
+	})
+
+	t.Run("Closes response body before entering fallback platform checks on non-200 response", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusServiceUnavailable)
+		}))
+		defer server.Close()
+
+		transport := &trackingTransport{base: http.DefaultTransport}
+		previousTransport := http.DefaultClient.Transport
+		http.DefaultClient.Transport = transport
+		t.Cleanup(func() { http.DefaultClient.Transport = previousTransport })
+
+		_, _ = IsMesheryRunning(&config.Context{Endpoint: server.URL, Platform: "invalid-platform"})
+
+		if transport.body == nil || !transport.body.closed {
+			t.Fatal("expected the health-check response body to be closed on non-200 response")
+		}
+	})
+	t.Run("Checks the given context, not the saved current-context", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer server.Close()
+
+		viper.Reset()
+		t.Cleanup(func() { viper.Reset() })
+		viper.Set("contexts.local.endpoint", "http://127.0.0.1:1")
+		viper.Set("current-context", "local")
+
+		running, err := IsMesheryRunning(&config.Context{Endpoint: server.URL, Platform: "invalid-platform"})
+		if err != nil {
+			t.Fatalf("unexpected error from IsMesheryRunning: %v", err)
+		}
+		if !running {
+			t.Error("expected the given context's endpoint to be checked")
 		}
 	})
 }

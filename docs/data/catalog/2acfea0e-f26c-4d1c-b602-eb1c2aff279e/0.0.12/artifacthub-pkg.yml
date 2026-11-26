@@ -1,0 +1,20 @@
+version: 0.0.12
+name: load--balancer-aws-architecture
+displayName: Load- Balancer-AWS-Architecture
+createdAt: "2026-10-23T08:17:27Z"
+description: This design illustrates a robust and scalable architecture for deploying applications on Amazon Web Services (AWS) with load balancing capabilities. This design leverages AWS Elastic Load Balancers (ELB) to distribute incoming traffic across multiple instances of your application, ensuring high availability and reliability. The architecture typically includes Auto Scaling groups to automatically adjust the number of running instances based on traffic demand, further enhancing the system’s ability to handle varying loads.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/2acfea0e-f26c-4d1c-b602-eb1c2aff279e/0.0.12/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. AWS services can accumulate costs quickly, especially with high traffic volumes and large-scale deployments. It's essential to monitor and manage usage to avoid unexpected expenses.\n\n2. Network latency can be introduced by load balancers and cross-region data transfers. It's important to design your architecture to minimize latency, particularly for latency-sensitive applications. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 6d8f0768-ad93-4eaa-8ba2-81d733dd694e
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

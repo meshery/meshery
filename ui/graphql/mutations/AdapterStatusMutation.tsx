@@ -8,7 +8,7 @@ interface AdapterStatusVariables {
 }
 
 export default function changeAdapterState(
-  onComplete: (_response: unknown) => void,
+  onComplete: (_response: unknown, _errors?: unknown) => void,
   variables: AdapterStatusVariables,
 ) {
   const environment = createRelayEnvironment({});
@@ -30,6 +30,8 @@ export default function changeAdapterState(
     mutation: adapterStatusMutation,
     variables: vars,
     onCompleted: onComplete,
-    onError: (error) => console.log(`An error occured:`, error),
+    // Hand network/server failures to the caller too, otherwise it never hears
+    // back and can't reset its spinner or show an error.
+    onError: (error) => onComplete(null, [error]),
   });
 }
