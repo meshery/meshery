@@ -90,11 +90,11 @@ function walk(dir, out) {
 function countSignificantLines(src, file) {
   const extension = path.extname(file).toLowerCase();
   const scriptKind =
-    extension === '.tsx' || extension === '.jsx'
+    extension === '.tsx'
       ? ts.ScriptKind.TSX
       : extension === '.ts'
         ? ts.ScriptKind.TS
-        : ts.ScriptKind.JS;
+        : ts.ScriptKind.JSX;
 
   const sourceFile = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true, scriptKind);
 
@@ -111,11 +111,6 @@ function countSignificantLines(src, file) {
   ]);
 
   function collectRanges(node) {
-    commentRanges.push(
-      ...(ts.getLeadingCommentRanges(src, node.getFullStart()) || []),
-      ...(ts.getTrailingCommentRanges(src, node.end) || []),
-    );
-
     if (opaqueTextKinds.has(node.kind)) {
       opaqueTextRanges.push({
         start: node.getStart(sourceFile),
@@ -123,20 +118,35 @@ function countSignificantLines(src, file) {
       });
     }
 
-    ts.forEachChild(node, collectRanges);
+    if (node.kind === ts.SyntaxKind.JsxText) {
+      return;
+    }
+
+    const children = node.getChildren(sourceFile);
+    if (children.length === 0) {
+      commentRanges.push(
+        ...(ts.getLeadingCommentRanges(src, node.pos) || []),
+        ...(ts.getTrailingCommentRanges(src, node.end) || []),
+      );
+      return;
+    }
+
+    for (const child of children) {
+      collectRanges(child);
+    }
   }
 
   collectRanges(sourceFile);
 
   // Trailing-comment detection can mistake JSX text for comments.
-  // Ignore candidate comment ranges contained in opaque source-text nodes.
+  // Ignore candidate comment ranges overlapping opaque source-text nodes.
   const comments = [
     ...new Map(
       commentRanges
         .filter(
           (range) =>
             !opaqueTextRanges.some(
-              (opaque) => range.pos >= opaque.start && range.end <= opaque.end,
+              (opaque) => range.pos < opaque.end && range.end > opaque.start,
             ),
         )
         .map((range) => [`${range.pos}:${range.end}`, range]),
