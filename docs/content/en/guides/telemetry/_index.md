@@ -35,6 +35,10 @@ Before using Telemetry, register at least one Grafana or Prometheus connection:
 
 Once a connection reaches the **Connected** or **Registered** state, it becomes selectable in the Telemetry connection picker.
 
+{{% alert title="Network reachability" color="warning" %}}
+The Meshery server blocks Telemetry requests to non-public destinations as SSRF protection: loopback and `localhost` hosts, private (RFC 1918), link-local and carrier-grade NAT addresses, and cloud metadata hosts. The check runs on the resolved IP address when connecting, and again on every redirect, so a hostname that resolves to a blocked address is also refused. Requests also do not use `HTTP_PROXY` / `HTTPS_PROXY`. A Grafana or Prometheus instance that is reachable only at such an address, for example an in-cluster service IP, fails with a `connection to restricted IP ... is forbidden` error. Register an instance URL that resolves to a public address.
+{{% /alert %}}
+
 ## Shared controls
 
 Both Telemetry modes share a common set of controls:

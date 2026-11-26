@@ -12,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models/telemetry"
 	"github.com/meshery/meshkit/logger"
 )
@@ -33,6 +34,12 @@ type Client struct {
 	log        logger.Handler
 }
 
+// safeHTTPClient is the single SSRF-guarded client shared by every Client in
+// this package. Sharing one transport keeps connection pooling effective: the
+// telemetry handlers build a Client per request, and *http.Client is safe for
+// concurrent use and carries no per-Client state.
+var safeHTTPClient = utils.NewSafeHTTPClient(defaultTimeout)
+
 // New builds a Client for the given Prometheus base URL and secret.
 //
 // The secret is interpreted the same way the connection wizard captures it:
@@ -40,10 +47,23 @@ type Client struct {
 //   - any other non-empty value             -> Bearer token (API key / service-account token)
 //   - empty                                  -> no auth (anonymous Prometheus)
 func New(baseURL, secret string, log logger.Handler) *Client {
+	return NewWithHTTPClient(baseURL, secret, log, safeHTTPClient)
+}
+
+// NewWithHTTPClient builds a Client around a caller-supplied HTTP client. New is
+// the production entry point and installs the guarded client; this exists for
+// tests that drive a local httptest server and therefore need a transport
+// permitted to reach private addresses (utils.NewSafeHTTPClientWithAllowPrivate).
+// A nil httpClient falls back to the guarded client, so the safe behaviour is the
+// default rather than a nil-dereference at request time.
+func NewWithHTTPClient(baseURL, secret string, log logger.Handler, httpClient *http.Client) *Client {
+	if httpClient == nil {
+		httpClient = safeHTTPClient
+	}
 	return &Client{
-		baseURL:    strings.TrimRight(strings.TrimSpace(baseURL), "/"),
+		baseURL:    telemetry.NormalizeBaseURL(baseURL),
 		authHeader: authHeader(secret),
-		httpClient: &http.Client{Timeout: defaultTimeout},
+		httpClient: httpClient,
 		log:        log,
 	}
 }

@@ -24,7 +24,7 @@ func TestQueryRangeResponseSizeLimit(t *testing.T) {
 				_, _ = w.Write([]byte(payload))
 			}))
 			defer srv.Close()
-			body, err := New(srv.URL, "", nil).QueryRange(context.Background(), "ds1", nil)
+			body, err := newTestClient(srv.URL, "", nil).QueryRange(context.Background(), "ds1", nil)
 			if size == limit {
 				if err != nil || string(body) != payload {
 					t.Fatalf("at limit: body length %d, error %v", len(body), err)
@@ -66,7 +66,7 @@ func TestQueryRangeFallbackPreservesSizeErrors(t *testing.T) {
 				}
 			}))
 			defer srv.Close()
-			c := New(srv.URL, "", nil)
+			c := newTestClient(srv.URL, "", nil)
 			body, err := c.QueryRange(context.Background(), "prometheus", url.Values{"query": {"bad"}})
 			if body != nil || !errors.Is(err, ErrResponseTooLarge) || StatusCode(err) != tc.wantStatus {
 				t.Fatalf("single query: body length %d, error %v", len(body), err)
@@ -112,7 +112,7 @@ func TestSearchBoards(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := New(srv.URL, "glsa_token", nil)
+	c := newTestClient(srv.URL, "glsa_token", nil)
 	boards, err := c.SearchBoards(context.Background(), "node")
 	if err != nil {
 		t.Fatalf("SearchBoards: %v", err)
@@ -153,7 +153,7 @@ func TestGetBoardNormalizesPanelsAndDatasources(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := New(srv.URL, "", nil)
+	c := newTestClient(srv.URL, "", nil)
 	board, err := c.GetBoard(context.Background(), "abc")
 	if err != nil {
 		t.Fatalf("GetBoard: %v", err)
@@ -261,7 +261,7 @@ func TestNormalizeBoardCollapsedRow(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	board, err := New(srv.URL, "", nil).GetBoard(context.Background(), "abc")
+	board, err := newTestClient(srv.URL, "", nil).GetBoard(context.Background(), "abc")
 	if err != nil {
 		t.Fatalf("GetBoard: %v", err)
 	}
@@ -289,7 +289,7 @@ func TestNormalizeBoardTemplateVars(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	board, err := New(srv.URL, "", nil).GetBoard(context.Background(), "abc")
+	board, err := newTestClient(srv.URL, "", nil).GetBoard(context.Background(), "abc")
 	if err != nil {
 		t.Fatalf("GetBoard: %v", err)
 	}
@@ -320,7 +320,7 @@ func TestQueryRangeProxiesVerbatim(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := New(srv.URL, "admin:pass", nil)
+	c := newTestClient(srv.URL, "admin:pass", nil)
 	params := url.Values{}
 	params.Set("query", "up")
 	params.Set("start", "1")
@@ -368,7 +368,7 @@ func TestQueryRangeResolvesDatasourceName(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := New(srv.URL, "", nil)
+	c := newTestClient(srv.URL, "", nil)
 	body, err := c.QueryRange(context.Background(), "dev-cortex", url.Values{})
 	if err != nil {
 		t.Fatalf("QueryRange: %v", err)
@@ -398,7 +398,7 @@ func TestQueryRangeValidUIDNoResolution(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := New(srv.URL, "", nil)
+	c := newTestClient(srv.URL, "", nil)
 	if _, err := c.QueryRange(context.Background(), "good-uid", url.Values{}); err != nil {
 		t.Fatalf("QueryRange: %v", err)
 	}
@@ -420,7 +420,7 @@ func TestQueryRangeUnresolvableSurfacesOriginalError(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := New(srv.URL, "", nil)
+	c := newTestClient(srv.URL, "", nil)
 	_, err := c.QueryRange(context.Background(), "ghost", url.Values{})
 	if err == nil {
 		t.Fatal("expected error for unresolvable datasource, got nil")
@@ -468,7 +468,7 @@ func TestQueryRangeBatch(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := New(srv.URL, "", nil)
+	c := newTestClient(srv.URL, "", nil)
 	queries := []BatchQuery{
 		{ID: "1:A", DS: "good-uid", Query: "up"},    // valid uid, direct success
 		{ID: "2:B", DS: "dev-cortex", Query: "mem"}, // name -> resolves to abc123
@@ -505,7 +505,7 @@ func TestQueryRangeBatch(t *testing.T) {
 }
 
 func TestQueryRangeBatchEmpty(t *testing.T) {
-	c := New("http://example.invalid", "", nil)
+	c := newTestClient("http://example.invalid", "", nil)
 	if got := c.QueryRangeBatch(context.Background(), "1", "2", "15", nil); len(got) != 0 {
 		t.Errorf("empty batch = %v, want no results", got)
 	}
@@ -518,7 +518,7 @@ func TestDoSurfacesNon2xx(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := New(srv.URL, "bad", nil)
+	c := newTestClient(srv.URL, "bad", nil)
 	if _, err := c.Health(context.Background()); err == nil {
 		t.Fatal("expected error on 401, got nil")
 	}
@@ -530,7 +530,7 @@ func TestHealthReturnsVersion(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := New(srv.URL, "glsa_token", nil)
+	c := newTestClient(srv.URL, "glsa_token", nil)
 	info, err := c.Health(context.Background())
 	if err != nil {
 		t.Fatalf("Health: %v", err)
