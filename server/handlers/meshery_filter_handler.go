@@ -157,15 +157,19 @@ func (h *Handler) handleFilterPOST(
 		return
 	}
 
-	if parsedBody == nil {
-		err := fmt.Errorf("request body cannot be empty")
+	if parsedBody == nil || (parsedBody.FilterData == nil && parsedBody.URL == "") {
+		err := fmt.Errorf("either filterData or url must be provided in request body")
 		errSaveFilter := ErrSaveFilter(err)
 		if h.log != nil {
 			h.log.Error(errSaveFilter)
 		}
+		description := "Filter request body is missing required filterData or url."
+		if parsedBody == nil {
+			description = "Filter request body is empty."
+		}
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": errSaveFilter,
-		}).WithDescription("Filter request body is empty.").Build()
+		}).WithDescription(description).Build()
 		h.persistAndPublish(provider, token, userID, event)
 		writeMeshkitError(rw, errSaveFilter, http.StatusBadRequest)
 		addMeshkitErr(&res, errSaveFilter)
