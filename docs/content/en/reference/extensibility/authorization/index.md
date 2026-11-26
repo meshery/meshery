@@ -50,7 +50,11 @@ Generate a unique, lowercase UUID v4 for the new permission key:
 {{< code code=`uuidgen | tr '[:upper:]' '[:lower:]'` >}}
 
 ##### Step 2: Add to the Permissions Spreadsheet
-Add a new row to the authoritative [Permissions Spreadsheet](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwzrUSKfuSRcpkp7sJTw1cSB63s4HCjYLJeGPWECsvqn222hjaaONQlN4X8auKvlaB0es3BqV5rQyz/pubhtml?gid=64355745&single=true) (also accessible as the synced [`build/permissions.csv`](https://github.com/meshery/schemas/blob/master/build/permissions.csv) in `meshery/schemas`). Ensure the following columns are set:
+Add a new row to the authoritative [Permissions Spreadsheet](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwzrUSKfuSRcpkp7sJTw1cSB63s4HCjYLJeGPWECsvqn222hjaaONQlN4X8auKvlaB0es3BqV5rQyz/pubhtml?gid=64355745&single=true) (also accessible as the synced [`build/permissions.csv`](https://github.com/meshery/schemas/blob/master/build/permissions.csv) in `meshery/schemas`).
+
+> **Note**: Direct edit access to the authoritative Permissions Spreadsheet is restricted to maintainers. Contributors who need a new permission row added should reach out on the `#meshery-ci` channel on the [Layer5 Community Slack](https://slack.layer5.io) or open an issue in the [`meshery/schemas`](https://github.com/meshery/schemas) repository with the proposed details below so a maintainer can add the entry.
+
+Ensure the following columns are set:
 *   **Theme**: The high-level category (e.g. `Catalog Management`).
 *   **Category**: Specific feature area (e.g. `Designs`).
 *   **Function**: Human-readable operation name (e.g. `Evaluate Relationships`). This value becomes `key.function` in the Provider API.
