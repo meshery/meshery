@@ -286,3 +286,26 @@ html {
   padding: 0;
   margin-top: 0.5rem;
 }
+
+// Animate the mobile navigation hamburger into a close icon.
+#menu-nav-toggle-btn {
+  line {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  &.is-open {
+    .menu-line--middle {
+      opacity: 0;
+    }
+
+    .menu-line--top {
+      transform: translateY(6px) rotate(45deg);
+    }
+
+    .menu-line--bottom {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+  }
+}
