@@ -120,6 +120,12 @@ func (h *Handler) SubscribeEventsHandler(w http.ResponseWriter, req *http.Reques
 // writeEventFrame marshals an event and writes it as an SSE frame. It returns
 // false only when writing to w fails, signaling the caller to abort the stream.
 func (h *Handler) writeEventFrame(w http.ResponseWriter, flusher http.Flusher, rc *http.ResponseController, data interface{}) bool {
+	cursor := ""
+	if re, ok := data.(models.ReplayEvent); ok {
+		cursor = re.Cursor
+		data = re.Data
+	}
+
 	var event *events.Event
 	switch e := data.(type) {
 	case *events.Event:
@@ -139,9 +145,14 @@ func (h *Handler) writeEventFrame(w http.ResponseWriter, flusher http.Flusher, r
 		return true
 	}
 
+	sseID := cursor
+	if sseID == "" && event.ID != uuid.Nil {
+		sseID = event.ID.String()
+	}
+
 	_ = rc.SetWriteDeadline(time.Now().Add(eventStreamWriteTimeout))
-	if event.ID != uuid.Nil {
-		_, err = fmt.Fprintf(w, "id: %s\ndata: %s\n\n", event.ID.String(), payload)
+	if sseID != "" {
+		_, err = fmt.Fprintf(w, "id: %s\ndata: %s\n\n", sseID, payload)
 	} else {
 		_, err = fmt.Fprintf(w, "data: %s\n\n", payload)
 	}

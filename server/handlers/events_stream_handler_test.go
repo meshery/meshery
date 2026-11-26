@@ -183,7 +183,7 @@ func TestSubscribeEventsHandler_FramesEventID(t *testing.T) {
 		}
 	}
 
-	wantIDLine := fmt.Sprintf("id: %s\ndata: ", eventWithID.ID.String())
+	wantIDLine := fmt.Sprintf("id: %s:", eventWithID.ID.String())
 	if !strings.Contains(rec.body.String(), wantIDLine) {
 		t.Fatalf("expected SSE frame to contain %q, got: %q", wantIDLine, rec.body.String())
 	}
@@ -252,8 +252,8 @@ func TestSubscribeEventsHandler_ReplaysMissedEventsOnLastEventID(t *testing.T) {
 	if idx2 == -1 || idx3 == -1 || idx2 >= idx3 {
 		t.Fatalf("expected event-two before event-three in replay; got: %q", body)
 	}
-	if !strings.Contains(body, fmt.Sprintf("id: %s\ndata: ", e2.ID.String())) ||
-		!strings.Contains(body, fmt.Sprintf("id: %s\ndata: ", e3.ID.String())) {
+	if !strings.Contains(body, fmt.Sprintf("id: %s:", e2.ID.String())) ||
+		!strings.Contains(body, fmt.Sprintf("id: %s:", e3.ID.String())) {
 		t.Fatalf("replayed events missing id: framing; got: %q", body)
 	}
 
@@ -273,11 +273,12 @@ func TestSubscribeEventsHandler_ReplaysMissedEventsOnLastEventID(t *testing.T) {
 
 func TestSubscribeEventsHandler_LastEventIDEdgeCases(t *testing.T) {
 	cases := []struct {
-		name        string
-		lastEventID string
+		name         string
+		lastEventID  string
+		expectReplay bool
 	}{
-		{name: "malformed", lastEventID: "not-a-uuid"},
-		{name: "unknown", lastEventID: uuid.Must(uuid.NewV4()).String()},
+		{name: "malformed", lastEventID: "not-a-uuid", expectReplay: false},
+		{name: "unknown", lastEventID: uuid.Must(uuid.NewV4()).String(), expectReplay: true},
 	}
 
 	for _, tc := range cases {
@@ -318,12 +319,103 @@ func TestSubscribeEventsHandler_LastEventIDEdgeCases(t *testing.T) {
 				}
 			}
 
-			if strings.Contains(rec.body.String(), "prior-event") {
-				t.Fatalf("did not expect prior-event replay for %s Last-Event-ID; got: %q", tc.name, rec.body.String())
+			hasPrior := strings.Contains(rec.body.String(), "prior-event")
+			if hasPrior != tc.expectReplay {
+				t.Fatalf("prior-event replay = %v, want %v for %s Last-Event-ID; got: %q",
+					hasPrior, tc.expectReplay, tc.name, rec.body.String())
 			}
 
 			cancel()
 			<-done
 		})
 	}
+}
+
+func TestSubscribeEventsHandler_RepeatedEventIDsReplay(t *testing.T) {
+	h := newEventsTestHandler(t)
+	userID := uuid.Must(uuid.NewV4())
+	user := &models.User{ID: userID}
+
+	ctx1, cancel1 := context.WithCancel(context.Background())
+	defer cancel1()
+	req1 := httptest.NewRequest(http.MethodGet, "/api/system/events/subscribe", nil).WithContext(ctx1)
+	writeCh1 := make(chan struct{}, 8)
+	rec1 := newSSERecorder(writeCh1)
+
+	done1 := make(chan struct{})
+	go func() {
+		h.SubscribeEventsHandler(rec1, req1, nil, user, nil)
+		close(done1)
+	}()
+
+	sharedID := uuid.Must(uuid.NewV4())
+	firstA := newTestEventWithID(userID, "first-A")
+	firstA.ID = sharedID
+
+	deadline := time.After(testTimeout)
+	for !strings.Contains(rec1.body.String(), "first-A") {
+		select {
+		case <-deadline:
+			t.Fatalf("timed out waiting for first-A; got: %q", rec1.body.String())
+		default:
+		}
+		h.config.EventBroadcaster.Publish(userID, firstA)
+		select {
+		case <-writeCh1:
+		case <-time.After(20 * time.Millisecond):
+		}
+	}
+
+	var firstCursor string
+	for _, frame := range strings.Split(rec1.body.String(), "\n\n") {
+		if strings.Contains(frame, "first-A") {
+			for _, line := range strings.Split(frame, "\n") {
+				if strings.HasPrefix(line, "id: ") {
+					firstCursor = strings.TrimPrefix(line, "id: ")
+					break
+				}
+			}
+			break
+		}
+	}
+	if firstCursor == "" {
+		t.Fatalf("failed to extract SSE id cursor from first-A frame: %q", rec1.body.String())
+	}
+
+	cancel1()
+	<-done1
+
+	// Publish B and a second A with the same UUID while the client is disconnected.
+	eventB := newTestEventWithID(userID, "event-B")
+	secondA := newTestEventWithID(userID, "second-A")
+	secondA.ID = sharedID
+	h.config.EventBroadcaster.Publish(userID, eventB)
+	h.config.EventBroadcaster.Publish(userID, secondA)
+
+	ctx2, cancel2 := context.WithCancel(context.Background())
+	defer cancel2()
+	req2 := httptest.NewRequest(http.MethodGet, "/api/system/events/subscribe", nil).WithContext(ctx2)
+	req2.Header.Set("Last-Event-ID", firstCursor)
+	writeCh2 := make(chan struct{}, 8)
+	rec2 := newSSERecorder(writeCh2)
+
+	done2 := make(chan struct{})
+	go func() {
+		h.SubscribeEventsHandler(rec2, req2, nil, user, nil)
+		close(done2)
+	}()
+
+	waitForBodyContains(t, rec2, writeCh2, "second-A")
+	body := rec2.body.String()
+	if strings.Contains(body, "first-A") {
+		t.Fatalf("did not expect first-A to be replayed; got: %q", body)
+	}
+	idxB := strings.Index(body, "event-B")
+	idxA2 := strings.Index(body, "second-A")
+	if idxB == -1 || idxA2 == -1 || idxB >= idxA2 {
+		t.Fatalf("expected event-B before second-A on replay; got: %q", body)
+	}
+
+	cancel2()
+	<-done2
 }

@@ -346,20 +346,65 @@ func TestBroadcastSubscribeFromReplaysMissedEvents(t *testing.T) {
 	if len(replay) != 2 {
 		t.Fatalf("replay len = %d, want 2", len(replay))
 	}
-	if replay[0].(*events.Event).ID != e2.ID || replay[1].(*events.Event).ID != e3.ID {
+	if replay[0].Data.(*events.Event).ID != e2.ID || replay[1].Data.(*events.Event).ID != e3.ID {
 		t.Fatalf("unexpected replay order/IDs: got [%v, %v], want [%v, %v]",
-			replay[0].(*events.Event).ID, replay[1].(*events.Event).ID, e2.ID, e3.ID)
+			replay[0].Data.(*events.Event).ID, replay[1].Data.(*events.Event).ID, e2.ID, e3.ID)
 	}
 
 	e4 := newTestEventWithID(userID, "e4")
 	b.Publish(userID, e4)
 	select {
 	case got := <-ch:
-		if got.(*events.Event).ID != e4.ID {
-			t.Fatalf("live event ID = %v, want %v", got.(*events.Event).ID, e4.ID)
+		re, ok := got.(ReplayEvent)
+		if !ok {
+			t.Fatalf("expected ReplayEvent, got %T", got)
+		}
+		if re.Data.(*events.Event).ID != e4.ID || re.Cursor == "" {
+			t.Fatalf("live event = (%v, %q), want ID %v with non-empty cursor", re.Data.(*events.Event).ID, re.Cursor, e4.ID)
 		}
 	case <-time.After(time.Second):
 		t.Fatal("timed out waiting for live event after replay")
+	}
+}
+
+func TestBroadcastSubscribeFromRepeatedEventIDs(t *testing.T) {
+	b := NewBroadcaster("test")
+	userID := uuid.Must(uuid.NewV4())
+
+	_, liveCh, liveUnsub := b.SubscribeFrom(userID, "")
+	defer liveUnsub()
+
+	sharedID := uuid.Must(uuid.NewV4())
+	firstA := newTestEventWithID(userID, "first-A")
+	firstA.ID = sharedID
+	eventB := newTestEventWithID(userID, "event-B")
+	secondA := newTestEventWithID(userID, "second-A")
+	secondA.ID = sharedID
+
+	b.Publish(userID, firstA)
+	firstMsg := (<-liveCh).(ReplayEvent)
+
+	b.Publish(userID, eventB)
+	<-liveCh
+	b.Publish(userID, secondA)
+	<-liveCh
+
+	if firstMsg.Cursor == "" || firstMsg.Cursor == sharedID.String() {
+		t.Fatalf("expected sequence-qualified cursor, got %q", firstMsg.Cursor)
+	}
+
+	// Reconnecting with the first A's cursor must replay B and the second A.
+	replay, _, unsub := b.SubscribeFrom(userID, firstMsg.Cursor)
+	defer unsub()
+
+	if len(replay) != 2 {
+		t.Fatalf("replay len = %d, want 2 (B and second A)", len(replay))
+	}
+	if replay[0].Data.(*events.Event).Description != "event-B" ||
+		replay[1].Data.(*events.Event).Description != "second-A" {
+		t.Fatalf("unexpected replay sequence: got [%q, %q], want [event-B, second-A]",
+			replay[0].Data.(*events.Event).Description,
+			replay[1].Data.(*events.Event).Description)
 	}
 }
 
@@ -387,17 +432,18 @@ func TestBroadcastSubscribeFromEdgeCases(t *testing.T) {
 	unsub()
 	_ = ch
 
-	// Unknown/malformed lastEventID -> nil replay.
+	// Malformed lastEventID -> nil replay.
 	replay, _, unsub = b.SubscribeFrom(userA, "not-a-valid-uuid")
 	if replay != nil {
 		t.Fatalf("malformed lastEventID: got %v, want nil", replay)
 	}
 	unsub()
 
-	// Cross-user isolation: userB's event ID must not match userA's buffer.
+	// Cross-user isolation: userB's event ID must never return userB's event,
+	// and as an unknown valid UUID on userA it replays only userA's buffer.
 	replay, _, unsub = b.SubscribeFrom(userA, eB.ID.String())
-	if replay != nil {
-		t.Fatalf("cross-user lastEventID: got %v, want nil", replay)
+	if len(replay) != 1 || replay[0].Data.(*events.Event).ID != eA.ID {
+		t.Fatalf("cross-user lastEventID: got %v, want [eA]", replay)
 	}
 	unsub()
 
@@ -420,11 +466,14 @@ func TestBroadcastReplayBufferRingWrap(t *testing.T) {
 		b.Publish(userID, published[i])
 	}
 
-	// Evicted oldest event returns nil replay.
+	// Evicted oldest valid UUID replays the full retained buffer as best effort.
 	replay, _, unsub := b.SubscribeFrom(userID, published[0].ID.String())
 	unsub()
-	if replay != nil {
-		t.Fatalf("evicted event ID returned %d replay items, want nil", len(replay))
+	if len(replay) != replayBufferSize {
+		t.Fatalf("evicted event ID returned %d replay items, want %d", len(replay), replayBufferSize)
+	}
+	if replay[0].Data.(*events.Event).ID != published[10].ID {
+		t.Fatalf("replay[0] ID = %v, want %v", replay[0].Data.(*events.Event).ID, published[10].ID)
 	}
 
 	// Retained event near tail replays only the events strictly after it.
@@ -436,10 +485,39 @@ func TestBroadcastReplayBufferRingWrap(t *testing.T) {
 	}
 	for i, item := range replay {
 		want := published[anchorIdx+1+i].ID
-		got := item.(*events.Event).ID
+		got := item.Data.(*events.Event).ID
 		if got != want {
 			t.Fatalf("replay[%d] ID = %v, want %v", i, got, want)
 		}
+	}
+}
+
+func TestBroadcastHistoryIdleEviction(t *testing.T) {
+	b := &Broadcast{
+		historyIdleTTL:       20 * time.Millisecond,
+		historySweepInterval: time.Millisecond,
+	}
+	idleUser := uuid.Must(uuid.NewV4())
+	activeUser := uuid.Must(uuid.NewV4())
+	triggerUser := uuid.Must(uuid.NewV4())
+
+	b.Publish(idleUser, newTestEventWithID(idleUser, "idle"))
+
+	// activeUser has a connected listener, so its history must not be evicted.
+	_, unsubActive := b.Subscribe(activeUser)
+	defer unsubActive()
+	b.Publish(activeUser, newTestEventWithID(activeUser, "active"))
+
+	time.Sleep(35 * time.Millisecond)
+
+	// Trigger lazy sweep via another publish.
+	b.Publish(triggerUser, newTestEventWithID(triggerUser, "trigger"))
+
+	if _, ok := b.history.Load(idleUser); ok {
+		t.Fatal("expected idle user history entry to be evicted after TTL")
+	}
+	if _, ok := b.history.Load(activeUser); !ok {
+		t.Fatal("expected active user history entry to be retained while listener is connected")
 	}
 }
 
