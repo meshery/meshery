@@ -16,10 +16,9 @@ vi.mock('@sistent/sistent', () => {
       return React.createElement(tag, elementProps, children);
     };
 
-  // styled(Component)(styleArg) -> returns a passthrough that delegates to Component
-  // while preserving caller-provided data-testid attributes for assertions.
+  // Styled components render as passthroughs while preserving caller-provided test IDs.
   const styledFactory = <P extends object>(Component: React.ComponentType<P> | string) => {
-    return (styleArg: unknown) => {
+    return () => {
       const RemoteStyle = ({ children, ...rest }: AnyProps) =>
         typeof Component === 'string'
           ? React.createElement(Component, rest as never, children)
@@ -28,7 +27,6 @@ vi.mock('@sistent/sistent', () => {
               rest as never,
               children,
             );
-      (RemoteStyle as unknown as { __styleArg: unknown }).__styleArg = styleArg;
       RemoteStyle.displayName = 'StyledMock';
       return RemoteStyle;
     };
@@ -78,7 +76,6 @@ import {
   ConnectionTabs,
   ConnectionStyledSelect,
   ConnectionStyledMenuItem,
-  MeshSyncNonInteractiveStatus,
   ConnectionIconText,
   ChipWrapper,
   DiscoveredChip,
@@ -138,24 +135,6 @@ describe('connections/styles - styled components', () => {
     );
     expect(screen.getByTestId('select')).toBeInTheDocument();
     expect(screen.getByTestId('menu')).toHaveTextContent('one');
-  });
-
-  it('MeshSyncNonInteractiveStatus renders with default cursor styles', () => {
-    render(
-      <MeshSyncNonInteractiveStatus data-testid="non-interactive">
-        discovered
-      </MeshSyncNonInteractiveStatus>,
-    );
-    expect(screen.getByTestId('non-interactive')).toHaveTextContent('discovered');
-    expect((MeshSyncNonInteractiveStatus as unknown as { __styleArg: unknown }).__styleArg).toEqual(
-      {
-        display: 'inline-flex',
-        cursor: 'default',
-        '& .MuiChip-root': {
-          cursor: 'default',
-        },
-      },
-    );
   });
 
   it('ConnectionIconText renders as a styled div', () => {

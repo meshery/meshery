@@ -442,6 +442,29 @@ describe('MeshSyncTable', () => {
     });
   });
 
+  it.each(['ignored', 'connected', 'registered'])(
+    'renders connection-capable %s rows without a registration dropdown',
+    (status) => {
+      getColumnValue.mockImplementation((rowData, columnName, cols) => {
+        const idx = cols.findIndex((col) => col?.name === columnName);
+        return idx === -1 ? undefined : rowData[idx];
+      });
+
+      render(<MeshSyncTable />);
+
+      const statusCol = dataTableProps.columns.find((col) => col.name === 'status');
+      const rowData = dataTableProps.columns.map((col) =>
+        col.name === 'component_metadata' ? { capabilities: { connection: true } } : null,
+      );
+
+      render(statusCol.options.customBodyRender(status, { rowData, rowIndex: 0 }));
+
+      expect(statusSelectProps).toBeUndefined();
+      expect(screen.getByTestId('meshsync-status-non-interactive')).toBeInTheDocument();
+      expect(screen.getByTestId('connection-state-chip')).toHaveAttribute('data-status', status);
+    },
+  );
+
   it('resolves resourceID from the id column instead of the trailing metadata column when registering', () => {
     getColumnValue.mockImplementation((rowData, columnName, cols) => {
       const idx = cols.findIndex((col) => col?.name === columnName);
