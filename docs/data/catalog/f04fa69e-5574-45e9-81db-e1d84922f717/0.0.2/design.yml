@@ -1,0 +1,784 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "Canary Release with Policy Guardrails",
+  "schemaVersion": "designs.meshery.io/v1beta3",
+  "version": "0.0.2",
+  "components": [
+    {
+      "id": "0afe6d78-8c94-4e95-995c-8c54b98aed6b",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "progressive-demo",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-style": "dashed",
+        "border-width": 2,
+        "height": 80,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg",
+        "width": 80
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app.kubernetes.io/part-of": "progressive-delivery"
+          },
+          "name": "progressive-demo"
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Namespace",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "823cd75e-835b-47c2-8bc5-c24558ae59fe",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "require-resource-limits",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kyverno",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.20.0-rc.5"
+        },
+        "name": "kyverno",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "primaryColor": "#e77e5b",
+        "secondaryColor": "#e77e5b",
+        "shape": "shield",
+        "svgColor": "ui/public/static/img/meshmodels/kyverno/color/clusterpolicy-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kyverno/white/clusterpolicy-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false,
+        "source_uri": "git://github.com/kyverno/kyverno/main/config/crds/kyverno"
+      },
+      "configuration": {
+        "metadata": {
+          "annotations": {
+            "policies.kyverno.io/description": "Pods in progressive-demo must set CPU and memory limits.",
+            "policies.kyverno.io/title": "Require resource limits"
+          },
+          "name": "require-resource-limits"
+        },
+        "spec": {
+          "background": true,
+          "rules": [
+            {
+              "match": {
+                "any": [
+                  {
+                    "resources": {
+                      "kinds": [
+                        "Pod"
+                      ],
+                      "namespaces": [
+                        "progressive-demo"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "name": "require-cpu-and-memory-limits",
+              "validate": {
+                "cel": {
+                  "expressions": [
+                    {
+                      "expression": "object.spec.containers.all(c, has(c.resources) \u0026\u0026 has(c.resources.limits) \u0026\u0026 has(c.resources.limits.cpu) \u0026\u0026 has(c.resources.limits.memory))",
+                      "message": "CPU and memory limits are required for every container."
+                    }
+                  ]
+                }
+              }
+            }
+          ],
+          "validationFailureAction": "Enforce"
+        }
+      },
+      "component": {
+        "version": "kyverno.io/v1",
+        "kind": "ClusterPolicy",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "d7e86335-8d2b-4593-933c-a3f8a97fd0d8",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "web-stable",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app": "web",
+            "track": "stable"
+          },
+          "name": "web-stable",
+          "namespace": "progressive-demo"
+        },
+        "spec": {
+          "replicas": 3,
+          "selector": {
+            "matchLabels": {
+              "app": "web",
+              "track": "stable"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "web",
+                "track": "stable"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "argoproj/rollouts-demo:blue",
+                  "name": "web",
+                  "ports": [
+                    {
+                      "containerPort": 8080,
+                      "name": "http"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "httpGet": {
+                      "path": "/",
+                      "port": "http"
+                    }
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "250m",
+                      "memory": "128Mi"
+                    },
+                    "requests": {
+                      "cpu": "100m",
+                      "memory": "64Mi"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "96f0f4b4-d02d-4a5e-8339-5816f663c043",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "web-canary",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-image": "none",
+        "background-opacity": 0.5,
+        "border-width": 2,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg",
+        "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "parent",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app": "web",
+            "track": "canary"
+          },
+          "name": "web-canary",
+          "namespace": "progressive-demo"
+        },
+        "spec": {
+          "replicas": 1,
+          "selector": {
+            "matchLabels": {
+              "app": "web",
+              "track": "canary"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "web",
+                "track": "canary"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "argoproj/rollouts-demo:yellow",
+                  "name": "web",
+                  "ports": [
+                    {
+                      "containerPort": 8080,
+                      "name": "http"
+                    }
+                  ],
+                  "readinessProbe": {
+                    "httpGet": {
+                      "path": "/",
+                      "port": "http"
+                    }
+                  },
+                  "resources": {
+                    "limits": {
+                      "cpu": "250m",
+                      "memory": "128Mi"
+                    },
+                    "requests": {
+                      "cpu": "100m",
+                      "memory": "64Mi"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "aa63c448-92d9-4d48-9879-666ee1db3120",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "web-stable",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "web-stable",
+          "namespace": "progressive-demo"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "port": 80,
+              "targetPort": "http"
+            }
+          ],
+          "selector": {
+            "app": "web",
+            "track": "stable"
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "47f7d30f-1b7f-47fc-9f65-428a6b4365cf",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "web-canary",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.38.0-beta.0"
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "background-position-y": "4.5",
+        "height": 20,
+        "padding": 12,
+        "primaryColor": "#326CE5",
+        "secondaryColor": "#7aa1f0",
+        "shape": "round-triangle",
+        "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/service-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/service-white.svg",
+        "width": 20
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "web-canary",
+          "namespace": "progressive-demo"
+        },
+        "spec": {
+          "ports": [
+            {
+              "name": "http",
+              "port": 80,
+              "targetPort": "http"
+            }
+          ],
+          "selector": {
+            "app": "web",
+            "track": "canary"
+          }
+        }
+      },
+      "component": {
+        "version": "v1",
+        "kind": "Service",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "06c107c8-2ebb-4b1b-b5aa-adda4a97627e",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "selfsigned",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "cert-manager",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.21.3"
+        },
+        "name": "cert-manager",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "primaryColor": "#005FEE",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/cert-manager/color/issuer-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/cert-manager/white/issuer-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/cert-manager/cert-manager/master/deploy/crds"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "selfsigned",
+          "namespace": "progressive-demo"
+        },
+        "spec": {
+          "selfSigned": {}
+        }
+      },
+      "component": {
+        "version": "cert-manager.io/v1",
+        "kind": "Issuer",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "d7c22878-d220-4ecb-8622-d47e77dcfcdb",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "web-tls",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "cert-manager",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "v1.21.3"
+        },
+        "name": "cert-manager",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "primaryColor": "#005FEE",
+        "secondaryColor": "#00D3A9",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/cert-manager/color/certificate-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/cert-manager/white/certificate-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "git://github.com/cert-manager/cert-manager/master/deploy/crds"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "web-tls",
+          "namespace": "progressive-demo"
+        },
+        "spec": {
+          "dnsNames": [
+            "web.example.com"
+          ],
+          "issuerRef": {
+            "kind": "Issuer",
+            "name": "selfsigned"
+          },
+          "secretName": "web-tls"
+        }
+      },
+      "component": {
+        "version": "cert-manager.io/v1",
+        "kind": "Certificate",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "bd9cb168-cdc0-4f24-953c-d12f83d2abfd",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "web-gateway",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "GitLab",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "10.5.7"
+        },
+        "name": "gitlab",
+        "registrant": {
+          "kind": "artifacthub"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "primaryColor": "#1988d9",
+        "secondaryColor": "#54aef0",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/gitlab/color/gateway-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/gitlab/white/gateway-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "https://gitlab-charts.s3.amazonaws.com/gitlab-10.5.7.tgz"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "web-gateway",
+          "namespace": "progressive-demo"
+        },
+        "spec": {
+          "gatewayClassName": "example",
+          "listeners": [
+            {
+              "hostname": "web.example.com",
+              "name": "https",
+              "port": 443,
+              "protocol": "HTTPS",
+              "tls": {
+                "certificateRefs": [
+                  {
+                    "kind": "Secret",
+                    "name": "web-tls"
+                  }
+                ],
+                "mode": "Terminate"
+              }
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "gateway.networking.k8s.io/v1",
+        "kind": "Gateway",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    },
+    {
+      "id": "937116c1-93a8-48fc-b92b-d834969fdb43",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "web",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "GitLab",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "10.5.7"
+        },
+        "name": "gitlab",
+        "registrant": {
+          "kind": "artifacthub"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "primaryColor": "#1988d9",
+        "secondaryColor": "#54aef0",
+        "shape": "rectangle",
+        "svgColor": "ui/public/static/img/meshmodels/gitlab/color/httproute-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/gitlab/white/httproute-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "https://gitlab-charts.s3.amazonaws.com/gitlab-10.5.7.tgz"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "web",
+          "namespace": "progressive-demo"
+        },
+        "spec": {
+          "hostnames": [
+            "web.example.com"
+          ],
+          "parentRefs": [
+            {
+              "name": "web-gateway"
+            }
+          ],
+          "rules": [
+            {
+              "backendRefs": [
+                {
+                  "name": "web-stable",
+                  "port": 80,
+                  "weight": 80
+                },
+                {
+                  "name": "web-canary",
+                  "port": 80,
+                  "weight": 20
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "component": {
+        "version": "gateway.networking.k8s.io/v1",
+        "kind": "HTTPRoute",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "relationships": null
+}

@@ -76,18 +76,22 @@ const selectIsConnectionSelected = (state, envId, connectionId) => {
   if (!selectIsEnvSelected(state, envId)) {
     return false;
   }
-  return state.globalEnvironmentContext.selectedEnvs[envId].selectedConnections
+  return selectSelectedConnections(state, envId)
     .map((connection) => connection.id)
     .includes(connectionId);
 };
 
-const selectIsEnvSelected = (state, envId) =>
-  Boolean(state.globalEnvironmentContext.selectedEnvs[envId]);
+// Shared fallback so selectors return a stable reference when the slice is missing
+// (e.g. a component rendered under a different Redux store).
+const EMPTY_SELECTED_ENVS = {};
 
-const selectSelectedEnvs = (state) => state.globalEnvironmentContext.selectedEnvs;
+const selectSelectedEnvs = (state) =>
+  state?.globalEnvironmentContext?.selectedEnvs ?? EMPTY_SELECTED_ENVS;
+
+const selectIsEnvSelected = (state, envId) => Boolean(selectSelectedEnvs(state)[envId]);
 
 const selectSelectedConnections = (state, envId) =>
-  state.globalEnvironmentContext.selectedEnvs[envId]?.selectedConnections || [];
+  selectSelectedEnvs(state)[envId]?.selectedConnections || [];
 
 const selectAllSelectedConnections = (state) => {
   const selectedEnvs = selectSelectedEnvs(state);
