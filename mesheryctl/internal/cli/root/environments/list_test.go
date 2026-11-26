@@ -93,6 +93,14 @@ func TestListEnvironment(t *testing.T) {
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '-1'")),
 		},
+		{
+			Name:             "given valid --page and --pagesize when environment list then list environments",
+			Args:             []string{"list", "--orgId", testConstants["orgId"], "--page", "2", "--pagesize", "5"},
+			URL:              fmt.Sprintf("/%s?orgId=%s&page=1&pagesize=5", environmentApiPath, testConstants["orgId"]),
+			Fixture:          "list.environment.response.golden",
+			ExpectedResponse: "list.environment.page2.golden",
+			ExpectError:      false,
+		},
 	}
 
 	mesheryctlflags.InitValidators(EnvironmentCmd)

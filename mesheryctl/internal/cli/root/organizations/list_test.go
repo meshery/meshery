@@ -78,6 +78,14 @@ func TestListOrganizations(t *testing.T) {
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '-1'")),
 		},
+		{
+			Name:             "given valid --page and --pagesize when organization list then list organizations",
+			Args:             []string{"list", "--page", "2", "--pagesize", "5"},
+			URL:              fmt.Sprintf("/%s?page=1&pagesize=5", organizationsApiPath),
+			Fixture:          "list.organization.response.golden",
+			ExpectedResponse: "list.organization.page2.golden",
+			ExpectError:      false,
+		},
 	}
 
 	mesheryctlflags.InitValidators(OrgCmd)
