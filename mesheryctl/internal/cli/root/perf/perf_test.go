@@ -17,6 +17,7 @@ func TestPerfCmd(t *testing.T) {
 		ExpectError bool
 	}{
 		{"Invalid command", []string{"invalid"}, true},
+		{"Empty command argument", []string{""}, true},
 	}
 
 	// Run tests

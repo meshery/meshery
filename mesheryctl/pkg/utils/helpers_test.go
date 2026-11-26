@@ -1466,6 +1466,77 @@ func TestGetCurrentK8sContext(t *testing.T) {
 	}
 }
 
+func TestIsValidSubcommand(t *testing.T) {
+	available := []*cobra.Command{
+		{Use: "apply"},
+		{Use: "profile [profile-name]", Aliases: []string{"prof"}},
+	}
+
+	tests := []struct {
+		name      string
+		available []*cobra.Command
+		sub       string
+		want      bool
+	}{
+		{
+			name:      "empty string is rejected with uninvoked subcommands",
+			available: available,
+			sub:       "",
+			want:      false,
+		},
+		{
+			name:      "empty string is rejected with empty Use command",
+			available: []*cobra.Command{{}},
+			sub:       "",
+			want:      false,
+		},
+		{
+			name:      "valid command name matches",
+			available: available,
+			sub:       "apply",
+			want:      true,
+		},
+		{
+			name:      "command name extracted from usage string matches",
+			available: available,
+			sub:       "profile",
+			want:      true,
+		},
+		{
+			name:      "command alias matches",
+			available: available,
+			sub:       "prof",
+			want:      true,
+		},
+		{
+			name:      "unknown command is rejected",
+			available: available,
+			sub:       "invalid",
+			want:      false,
+		},
+		{
+			name:      "whitespace command is rejected",
+			available: available,
+			sub:       "   ",
+			want:      false,
+		},
+		{
+			name:      "nil command entry is ignored",
+			available: []*cobra.Command{nil, {Use: "apply"}},
+			sub:       "apply",
+			want:      true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IsValidSubcommand(tt.available, tt.sub); got != tt.want {
+				t.Errorf("IsValidSubcommand(%q) = %v, want %v", tt.sub, got, tt.want)
+			}
+		})
+	}
+}
+
 // TestSubcommandNames pins the contract that makes an "invalid subcommand"
 // message self-maintaining: the advertised list is derived from the same slice
 // the command validates against, so adding a subcommand cannot leave the error
