@@ -14,6 +14,7 @@ import { ErrorIcon, Box, Button, ButtonGroup } from '@sistent/sistent';
 import { useTheme } from '@/theme';
 import { useSelector } from 'react-redux';
 import { selectAllSelectedK8sConnections } from '@/store/slices/globalEnvironmentContext';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import { CrossClusterCompatibilityAnalysis } from './CrossClusterCompatibilityAnalysis';
 import { FormatStructuredData } from '../../data-formatter';
 import {
@@ -392,17 +393,22 @@ export const DryRunDesign = ({
     return null;
   }
 
+  // Wrapped so the component always reads Meshery's store, even when an embedding
+  // host (e.g. the Kanvas designer extension) renders it under a different Redux
+  // Provider whose store has no globalEnvironmentContext slice.
   return (
-    <DryRunComponent
-      design={design}
-      includeDependencies={includeDependencies}
-      validationMachine={validationMachine}
-      canNavigateToErrors={canNavigateToErrors}
-      deployment_type={deployment_type}
-      handleClose={handleClose}
-      selectedK8sContexts={selectedK8sContexts}
-      currentComponentId={currentComponentId}
-      currentComponentName={currentComponentName}
-    />
+    <ProviderStoreWrapper>
+      <DryRunComponent
+        design={design}
+        includeDependencies={includeDependencies}
+        validationMachine={validationMachine}
+        canNavigateToErrors={canNavigateToErrors}
+        deployment_type={deployment_type}
+        handleClose={handleClose}
+        selectedK8sContexts={selectedK8sContexts}
+        currentComponentId={currentComponentId}
+        currentComponentName={currentComponentName}
+      />
+    </ProviderStoreWrapper>
   );
 };
