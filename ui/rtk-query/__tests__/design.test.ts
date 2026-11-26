@@ -16,8 +16,10 @@ vi.mock('@/utils/utils', () => ({
 }));
 
 vi.mock('@/utils/multi-ctx', () => ({
-  ctxUrl: (url: string, ctx?: string[]) =>
-    ctx?.length ? `${url}?${ctx.map((c) => `contexts=${c}`).join('&')}` : url,
+  ctxUrl: (url: string, ctx?: string[], params: string[] = []) => {
+    const query = [...(ctx?.length ? ctx.map((c) => `contexts=${c}`) : []), ...params];
+    return query.length ? `${url}?${query.join('&')}` : url;
+  },
 }));
 
 // Mock store before utils is loaded — must hoist to share with vi.mock factory.

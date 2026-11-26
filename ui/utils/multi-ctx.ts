@@ -49,14 +49,14 @@ export function persistSelectedK8sContexts(selectedK8sContexts: string[]): void 
  *
  * @param {string} url The request URL
  * @param {Array.<string>} ctx The context Array
+ * @param {Array.<string>} [params] Further query parameters, such as `dryRun=true`. They are
+ *   added after the contexts, and start the query string when there are no contexts, so a
+ *   caller need not know whether a `?` is already there.
  * @returns {string} The final query-parametrised URL
  */
-export function ctxUrl(url, ctx) {
-  if (ctx?.length) {
-    const contextQuery = ctx.map((context) => `contexts=${context}`).join('&');
-    return `${url}?${contextQuery}`;
-  }
-  return url;
+export function ctxUrl(url, ctx, params = []) {
+  const query = [...(ctx?.length ? ctx.map((context) => `contexts=${context}`) : []), ...params];
+  return query.length ? `${url}?${query.join('&')}` : url;
 }
 
 /**
