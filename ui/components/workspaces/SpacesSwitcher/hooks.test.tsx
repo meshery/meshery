@@ -274,10 +274,10 @@ describe('useContentDelete', () => {
 });
 
 describe('useContentDownload', () => {
-  it('handleDesignDownload calls downloadContent and notifies', () => {
+  it('handleDesignDownload calls downloadContent and notifies', async () => {
     const { result } = renderHook(() => useContentDownload());
     const ev = { stopPropagation: vi.fn() } as any;
-    result.current.handleDesignDownload(ev, { id: 'd-1', name: 'a' }, 'src', {});
+    await result.current.handleDesignDownload(ev, { id: 'd-1', name: 'a' }, 'src', {});
     expect(downloadContent).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'd-1', name: 'a', type: 'pattern' }),
     );
@@ -287,9 +287,9 @@ describe('useContentDownload', () => {
     });
   });
 
-  it('handleDesignDownload supports an array of designs', () => {
+  it('handleDesignDownload supports an array of designs', async () => {
     const { result } = renderHook(() => useContentDownload());
-    result.current.handleDesignDownload(
+    await result.current.handleDesignDownload(
       { stopPropagation: vi.fn() } as any,
       [
         { id: 'd-1', name: 'a' },

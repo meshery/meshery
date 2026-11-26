@@ -42,8 +42,18 @@ describe('downloadFileFromUrl', () => {
 describe('downloadContent', () => {
   let createElementSpy: ReturnType<typeof vi.spyOn>;
   let setAttributeSpy: ReturnType<typeof vi.fn>;
+  let fetchMock: ReturnType<typeof vi.fn>;
+  let createObjectURL: ReturnType<typeof vi.fn>;
+  let revokeObjectURL: ReturnType<typeof vi.fn>;
+  let blob: Blob;
 
   beforeEach(() => {
+    blob = new Blob(['download bytes'], { type: 'application/wasm' });
+    fetchMock = vi.fn().mockResolvedValue({ ok: true, blob: async () => blob });
+    vi.stubGlobal('fetch', fetchMock);
+    createObjectURL = vi.fn().mockReturnValue('blob:download');
+    revokeObjectURL = vi.fn();
+    vi.stubGlobal('URL', { createObjectURL, revokeObjectURL });
     setAttributeSpy = vi.fn();
     createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue({
       setAttribute: setAttributeSpy,
@@ -54,42 +64,68 @@ describe('downloadContent', () => {
 
   afterEach(() => {
     createElementSpy.mockRestore();
+    vi.unstubAllGlobals();
   });
 
-  it('builds the pattern download URL with id only when no source_type/params', () => {
-    downloadContent({ id: 'p1', type: PATTERN, name: 'pattern.yaml' });
-    expect(setAttributeSpy).toHaveBeenCalledWith('href', '/api/pattern/download/p1');
-    expect(setAttributeSpy).toHaveBeenCalledWith('download', 'pattern.yaml');
+  it.each([
+    [{ id: 'p1', type: PATTERN }, '/api/pattern/download/p1'],
+    [{ id: 'p1', type: PATTERN, source_type: 'helm' }, '/api/pattern/download/p1/helm'],
+    [{ id: 'p1', type: PATTERN, params: 'export=true' }, '/api/pattern/download/p1?export=true'],
+    [
+      { id: 'p1', type: PATTERN, source_type: 'helm', params: 'foo=bar' },
+      '/api/pattern/download/p1/helm',
+    ],
+    [{ id: 'f1', type: FILTER }, '/api/filter/download/f1'],
+  ])('downloads the response bytes from %j', async (args, uri) => {
+    await downloadContent({ ...args, name: 'download' });
+    expect(fetchMock).toHaveBeenCalledWith(uri);
+    expect(createObjectURL).toHaveBeenCalledWith(blob);
+    expect(setAttributeSpy).toHaveBeenCalledWith('href', 'blob:download');
+    expect(setAttributeSpy).toHaveBeenCalledWith('download', 'download');
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:download');
   });
 
-  it('uses source_type in the pattern download URL when supplied', () => {
-    downloadContent({ id: 'p1', type: PATTERN, name: 'p.yaml', source_type: 'helm' });
-    expect(setAttributeSpy).toHaveBeenCalledWith('href', '/api/pattern/download/p1/helm');
-  });
-
-  it('falls back to params in the pattern download URL when source_type is not given', () => {
-    downloadContent({ id: 'p1', type: PATTERN, name: 'p.yaml', params: 'export=true' });
-    expect(setAttributeSpy).toHaveBeenCalledWith('href', '/api/pattern/download/p1?export=true');
-  });
-
-  it('prefers source_type over params when both are provided', () => {
-    downloadContent({
-      id: 'p1',
-      type: PATTERN,
-      name: 'p.yaml',
-      source_type: 'helm',
-      params: 'foo=bar',
+  it('waits for the response body before starting the download', async () => {
+    let finishBody!: (_blob: Blob) => void;
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      blob: () =>
+        new Promise<Blob>((resolve) => {
+          finishBody = resolve;
+        }),
     });
-    expect(setAttributeSpy).toHaveBeenCalledWith('href', '/api/pattern/download/p1/helm');
+    const download = downloadContent({ id: 'f1', type: FILTER, name: 'filter.wasm' });
+    await Promise.resolve();
+    expect(createElementSpy).not.toHaveBeenCalled();
+    finishBody(blob);
+    await download;
+    expect(setAttributeSpy).toHaveBeenCalledWith('download', 'filter.wasm');
   });
 
-  it('builds the filter download URL', () => {
-    downloadContent({ id: 'f1', type: FILTER, name: 'filter.wasm' });
-    expect(setAttributeSpy).toHaveBeenCalledWith('href', '/api/filter/download/f1');
+  it.each([FILTER, PATTERN])('rejects HTTP errors for %s without saving an error body', async (type) => {
+    fetchMock.mockResolvedValueOnce({ ok: false, status: 404 });
+    await expect(downloadContent({ id: 'missing', type, name: 'missing' })).rejects.toThrow(
+      'Download failed (HTTP 404)',
+    );
+    expect(createElementSpy).not.toHaveBeenCalled();
+    expect(createObjectURL).not.toHaveBeenCalled();
   });
 
-  it('throws for an unknown content type', () => {
-    expect(() => downloadContent({ id: 'x', type: 'unknown', name: 'x' })).toThrow();
+  it('propagates network and body-read failures without starting a download', async () => {
+    fetchMock.mockRejectedValueOnce(new Error('Network failed'));
+    await expect(downloadContent({ id: 'f1', type: FILTER, name: 'f' })).rejects.toThrow(
+      'Network failed',
+    );
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      blob: () => Promise.reject(new Error('Body failed')),
+    });
+    await expect(downloadContent({ id: 'f1', type: FILTER, name: 'f' })).rejects.toThrow('Body failed');
+    expect(createElementSpy).not.toHaveBeenCalled();
+  });
+
+  it('rejects an unknown content type', async () => {
+    await expect(downloadContent({ id: 'x', type: 'unknown', name: 'x' })).rejects.toThrow();
   });
 });
 

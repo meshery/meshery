@@ -191,11 +191,11 @@ describe('createPatternsActions', () => {
     expect(deps.setSelectedRowData).toHaveBeenCalledWith(null);
   });
 
-  it('handleDownload triggers download, notifies, and resets progress', () => {
+  it('handleDownload triggers download, notifies, and resets progress', async () => {
     const deps = baseDeps();
     const actions = createPatternsActions(deps);
     const stop = vi.fn();
-    actions.handleDownload(
+    await actions.handleDownload(
       { stopPropagation: stop } as any,
       { id: 'd1', name: 'Design 1' },
       'manifest',
@@ -220,7 +220,7 @@ describe('createPatternsActions', () => {
     });
   });
 
-  it('handleDownload clears progress and notifies error when downloadContent throws', () => {
+  it('handleDownload clears progress and notifies error when downloadContent throws', async () => {
     const deps = baseDeps();
     const actions = createPatternsActions(deps);
     const stop = vi.fn();
@@ -228,7 +228,7 @@ describe('createPatternsActions', () => {
       throw new Error('Download blocked');
     });
 
-    actions.handleDownload(
+    await actions.handleDownload(
       { stopPropagation: stop } as any,
       { id: 'd1', name: 'Broken Design' },
       undefined,
@@ -247,12 +247,12 @@ describe('createPatternsActions', () => {
     });
   });
 
-  it('handleDownload falls back to generic design label and clears progress when design is null', () => {
+  it('handleDownload falls back to generic design label and clears progress when design is null', async () => {
     const deps = baseDeps();
     const actions = createPatternsActions(deps);
     const stop = vi.fn();
 
-    actions.handleDownload({ stopPropagation: stop } as any, null, undefined, undefined);
+    await actions.handleDownload({ stopPropagation: stop } as any, null, undefined, undefined);
 
     expect(stop).toHaveBeenCalled();
     expect(downloadContent).not.toHaveBeenCalled();
@@ -267,12 +267,12 @@ describe('createPatternsActions', () => {
     });
   });
 
-  it('handleDownload does not call downloadContent and clears progress when design.id is missing', () => {
+  it('handleDownload does not call downloadContent and clears progress when design.id is missing', async () => {
     const deps = baseDeps();
     const actions = createPatternsActions(deps);
     const stop = vi.fn();
 
-    actions.handleDownload(
+    await actions.handleDownload(
       { stopPropagation: stop } as any,
       { name: 'No ID Design' },
       undefined,

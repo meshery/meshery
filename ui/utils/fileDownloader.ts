@@ -23,14 +23,24 @@ export const downloadFileFromUrl = (url, name) => {
  * @param {string} id - id of the file to download
  * @param {string} name - name of the file to download
  * @param {string} source_type - source type of the file to download
- * @returns {void}
+ * @returns {Promise<void>}
  */
-export default function downloadContent({ id, type, name, source_type, params }) {
+export default async function downloadContent({ id, type, name, source_type, params }) {
   const uri = DOWNLOAD_PATH[type]({ id, source_type, params });
   if (!uri) {
     throw new Error('Invalid type of content to download', type);
   }
-  downloadFileFromUrl(uri, name);
+  const response = await fetch(uri);
+  if (!response.ok) {
+    throw new Error(`Download failed (HTTP ${response.status})`);
+  }
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+  try {
+    downloadFileFromUrl(url, name);
+  } finally {
+    window.URL.revokeObjectURL(url);
+  }
 }
 
 export const downloadFileFromContent = (content, fileName, type) => {

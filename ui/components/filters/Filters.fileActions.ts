@@ -135,11 +135,11 @@ type CreateHandleDownloadArgs = {
 };
 
 export function createHandleDownload({ notify }: CreateHandleDownloadArgs) {
-  return (e: React.MouseEvent, id: string, name: string) => {
+  return async (e: React.MouseEvent, id: string, name: string) => {
     e.stopPropagation();
     updateProgress({ showProgress: true });
     try {
-      downloadContent({ id, name, type: 'filter' });
+      await downloadContent({ id, name, type: 'filter' });
       notify({ message: `"${name}" filter downloaded`, event_type: EVENT_TYPES.INFO });
     } catch (err) {
       console.error(err);
