@@ -1169,7 +1169,7 @@ func (l *DefaultLocalProvider) GetCatalogMesheryFilters(_ string, page, pageSize
 // PublishCatalogFilter publishes filter to catalog
 // Not supported by local provider
 func (l *DefaultLocalProvider) PublishCatalogFilter(_ *http.Request, _ *MesheryCatalogFilterRequestBody) ([]byte, error) {
-	return []byte(""), nil
+	return []byte(""), ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) UnPublishCatalogFilter(_ *http.Request, _ *MesheryCatalogFilterRequestBody) ([]byte, error) {

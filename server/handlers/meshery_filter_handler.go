@@ -570,7 +570,10 @@ func (h *Handler) PublishCatalogFilterHandler(
 
 	var respBody *models.CatalogRequest
 	err = json.Unmarshal(resp, &respBody)
-	if err != nil {
+	if err != nil || respBody == nil {
+		if err == nil {
+			err = fmt.Errorf("empty or null response from provider")
+		}
 		if h.log != nil {
 			h.log.Error(ErrPublishCatalogFilter(err))
 		}
@@ -680,7 +683,10 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 
 	var respBody *models.CatalogRequest
 	err = json.Unmarshal(resp, &respBody)
-	if err != nil {
+	if err != nil || respBody == nil {
+		if err == nil {
+			err = fmt.Errorf("empty or null response from provider")
+		}
 		if h.log != nil {
 			h.log.Error(ErrPublishCatalogFilter(err))
 		}
