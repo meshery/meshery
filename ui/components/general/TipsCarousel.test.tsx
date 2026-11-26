@@ -44,10 +44,13 @@ describe('TipsCarousel', () => {
     expect(screen.getByText('Tip A')).toBeInTheDocument();
   });
 
-  it('renders one bullet per tip', () => {
+  it('renders one bullet per tip as an accessible button', () => {
     render(<TipsCarousel tips={['Tip A', 'Tip B', 'Tip C']} />);
-    const bullets = screen.getAllByText('•');
-    expect(bullets).toHaveLength(3);
+    const buttons = screen.getAllByRole('button');
+    expect(buttons).toHaveLength(3);
+    expect(buttons[0]).toHaveAttribute('aria-label', 'Show tip 1 of 3');
+    expect(buttons[0]).toHaveAttribute('aria-current', 'true');
+    expect(buttons[1]).not.toHaveAttribute('aria-current');
   });
 
   it('changes active tip when a bullet is clicked', async () => {
