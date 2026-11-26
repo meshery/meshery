@@ -30,7 +30,7 @@ Meshery CLI commands are categorized by function, which are:
 
 ## Global Commands and Flags
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
@@ -83,7 +83,7 @@ Meshery CLI commands are categorized by function, which are:
 
 Installation, troubleshooting and debugging of Meshery and its adapters
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
@@ -277,7 +277,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 
 ## Service Performance Management
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
@@ -401,7 +401,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 
 ## Infrastructure Lifecycle and Configuration Management
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
@@ -471,7 +471,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 
 ## Infrastructure Design Configuration and Management
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
@@ -630,7 +630,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 
 ## Data Plane Intelligence
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
@@ -699,7 +699,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 
 ## Meshery Registry Management
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
@@ -813,7 +813,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 
 ## Meshery Models
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
@@ -972,7 +972,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 
 ## Meshery Components
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
@@ -1037,7 +1037,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 
 ## Meshery Environment
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
@@ -1111,7 +1111,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 
 ## Meshery Connection
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
@@ -1210,7 +1210,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 
 ## Meshery Organization
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
@@ -1262,7 +1262,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 
 ## Meshery Relationship
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
@@ -1341,7 +1341,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 
 ## Meshery Workspace
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
@@ -1416,7 +1416,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 
 ## Experimental Features(exp)
 
-<div class="mesheryctl-table-wrapper">
+<div class="mesheryctl-table-wrapper" tabindex="0" aria-label="Mesheryctl command reference table">
 <table class="mesheryctl-reference-table">
 <thead>
   <tr>
