@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -304,4 +305,54 @@ func TestFilterPOSTResponseUndecodableProviderResponse(t *testing.T) {
 	var eventCount int64
 	require.NoError(t, db.Model(&events.Event{}).Where("description = ?", "Filter rate-limit saved").Count(&eventCount).Error)
 	assert.Equal(t, int64(1), eventCount, "fallback description must be persisted even if decoding fails")
+}
+
+// TestFilterPOSTRejectsMissingFilterDataAndURL verifies that POST /api/filter
+// rejects payloads that supply neither filterData nor url with 400 Bad Request
+// instead of falling through and returning an empty 200 OK.
+func TestFilterPOSTRejectsMissingFilterDataAndURL(t *testing.T) {
+	tests := []struct {
+		name string
+		body string
+	}{
+		{name: "empty object", body: `{}`},
+		{name: "save true only", body: `{"save": true}`},
+		{name: "save false only", body: `{"save": false}`},
+		{name: "empty url", body: `{"url": ""}`},
+		{name: "whitespace url", body: `{"url": "   "}`},
+		{name: "null filterData and empty url", body: `{"filterData": null, "url": ""}`},
+		{name: "config only", body: `{"config": "some-config"}`},
+		{name: "path without url", body: `{"path": "filters/example.yaml", "save": true}`},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h, provider, db := newFilterPOSTFixture(t)
+			req := httptest.NewRequest(http.MethodPost, "/api/filter", strings.NewReader(tt.body))
+			req.AddCookie(&http.Cookie{Name: models.TokenCookieName, Value: "test-token"})
+			rec := httptest.NewRecorder()
+
+			h.FilterFileRequestHandler(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
+
+			require.Equal(t, http.StatusBadRequest, rec.Code, rec.Body.String())
+
+			var errResp struct {
+				Error           string   `json:"error"`
+				Code            string   `json:"code"`
+				LongDescription []string `json:"longDescription"`
+			}
+			require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &errResp), "response must be valid JSON: %s", rec.Body.String())
+			assert.Equal(t, ErrSaveFilterCode, errResp.Code)
+			assert.Equal(t, "Error failed to save filter", errResp.Error)
+			assert.Contains(t, errResp.LongDescription, "either filterData or url is required")
+
+			var filterCount int64
+			require.NoError(t, db.Model(&models.MesheryFilter{}).Count(&filterCount).Error)
+			assert.Zero(t, filterCount, "invalid request must not persist a filter")
+
+			var eventCount int64
+			require.NoError(t, db.Model(&events.Event{}).Where("description = ?", "Filter request body must include either filterData or url.").Count(&eventCount).Error)
+			assert.Equal(t, int64(1), eventCount, "rejected request must persist an error event")
+		})
+	}
 }

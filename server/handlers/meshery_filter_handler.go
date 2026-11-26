@@ -128,21 +128,17 @@ func (h *Handler) handleFilterPOST(
 	var parsedBody *models.MesheryFilterRequestBody
 
 	actedUpon := &userID
-	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
-		// Wrap the decode error in the operation-level ErrSaveFilter so log,
+	writeBadRequest := func(err error, description string) {
+		// Wrap validation/decode errors in the operation-level ErrSaveFilter so log,
 		// event metadata, wire response, and EventsBuffer publish all carry the
 		// same code. Per-reviewer feedback (PR #18919): clients of a save
-		// endpoint expect a save-side error code; the underlying decode failure
+		// endpoint expect a save-side error code; the underlying failure detail
 		// is preserved on the wrapper's LongDescription via err.Error().
 		errSaveFilter := ErrSaveFilter(err)
 		if h.log != nil {
 			h.log.Error(errSaveFilter)
 		}
 
-		description := "Filter request body is corrupted."
-		if parsedBody != nil && parsedBody.FilterData != nil {
-			description = fmt.Sprintf("Filter %s is corrupted.", parsedBody.FilterData.Name)
-		}
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": errSaveFilter,
 		}).WithDescription(description).Build()
@@ -154,24 +150,19 @@ func (h *Handler) handleFilterPOST(
 		if h.EventsBuffer != nil {
 			go h.EventsBuffer.Publish(&res)
 		}
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+		description := "Filter request body is corrupted."
+		if parsedBody != nil && parsedBody.FilterData != nil {
+			description = fmt.Sprintf("Filter %s is corrupted.", parsedBody.FilterData.Name)
+		}
+		writeBadRequest(err, description)
 		return
 	}
 
 	if parsedBody == nil {
-		err := fmt.Errorf("request body cannot be empty")
-		errSaveFilter := ErrSaveFilter(err)
-		if h.log != nil {
-			h.log.Error(errSaveFilter)
-		}
-		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": errSaveFilter,
-		}).WithDescription("Filter request body is empty.").Build()
-		h.persistAndPublish(provider, token, userID, event)
-		writeMeshkitError(rw, errSaveFilter, http.StatusBadRequest)
-		addMeshkitErr(&res, errSaveFilter)
-		if h.EventsBuffer != nil {
-			go h.EventsBuffer.Publish(&res)
-		}
+		writeBadRequest(fmt.Errorf("request body cannot be empty"), "Filter request body is empty.")
 		return
 	}
 
@@ -180,6 +171,14 @@ func (h *Handler) handleFilterPOST(
 	}
 
 	eventBuilder.ActedUpon(*actedUpon)
+
+	if parsedBody.FilterData == nil && strings.TrimSpace(parsedBody.URL) == "" {
+		writeBadRequest(
+			fmt.Errorf("either filterData or url is required"),
+			"Filter request body must include either filterData or url.",
+		)
+		return
+	}
 
 	format := r.URL.Query().Get("output")
 
