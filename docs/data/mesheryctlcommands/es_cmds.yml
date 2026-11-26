@@ -85,7 +85,7 @@ system:
       flags:
         skip-reset:
           name: --skip-reset
-          description: Extraiga los archivos de manifiesto más recientes
+          description: Omita la comprobación de nuevos archivos de manifiesto de Meshery
           usage: mesheryctl system update --skip-reset
 
     config:
