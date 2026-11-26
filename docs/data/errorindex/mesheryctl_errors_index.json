@@ -4176,6 +4176,27 @@
         "Retry the operation",
         "Run `mesheryctl system login` to re-authenticate"
       ]
+    },
+    {
+      "code": "mesheryctl-1268",
+      "moniker": "ErrDesignSelectNotInteractiveCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1268",
+      "severity": "fatal",
+      "shortDescription": "Cannot choose between multiple designs without an interactive terminal",
+      "longDescription": "",
+      "probableCause": [
+        "The command was run from a script, a pipe, a CI job, or with standard input redirected",
+        "More than one design shares the given name"
+      ],
+      "suggestedRemediation": [
+        "Pass the design file with -f instead of the name",
+        "Run the command from an interactive terminal",
+        "Give the design a unique name with 'mesheryctl design list' to find the one you want"
+      ]
     }
   ],
   "schemaVersion": 2
