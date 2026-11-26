@@ -37,8 +37,9 @@ func HandlePaginationAsync[T any](
 	}
 
 	for {
-		// Clear the terminal screen
-		if currentPage > 0 {
+		// Clear only when a human is watching; ClearLine runs `clear`/`cls` and
+		// would wipe or spam redirected/piped output between pages.
+		if currentPage > 0 && utils.IsInteractiveTerminal() {
 			utils.ClearLine()
 		}
 

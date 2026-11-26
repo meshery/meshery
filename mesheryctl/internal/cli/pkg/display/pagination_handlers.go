@@ -62,14 +62,11 @@ func listPageHandler[T any](displayData DisplayDataAsync, processDataFunc listRo
 		// exits non-zero having already printed a perfectly good first page -
 		// which is how `mesheryctl connection list` came to fail outright in CI
 		// and in any pipeline, as soon as the account held more than one page.
-		// Stop after this page instead, and say so, so the output stays usable
-		// and the exit status stays honest.
+		// Advance pages automatically instead so scripts/CI get the full list
+		// without hanging (AXI non-interactive path; see #20979 / #21334).
 		if !utils.IsInteractiveTerminal() {
-			utils.Log.Infof(
-				"Showing page %d only: paging through results needs an interactive terminal. Use --page and --pagesize to select a page, or --count for the total.",
-				currentPage+1,
-			)
-			return false, nil
+			startIndex += pgSize
+			return true, nil
 		}
 
 		// Wait for user input to navigate pages

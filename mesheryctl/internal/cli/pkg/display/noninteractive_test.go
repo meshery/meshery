@@ -24,17 +24,11 @@ func withTerminal(t *testing.T, interactive bool) {
 	t.Cleanup(func() { utils.IsInteractiveTerminal = original })
 }
 
-// TestListPageHandlerStopsWithoutTerminal pins the behaviour that makes
-// mesheryctl usable in scripts, pipelines and CI: with more results than fit on
-// one page and no terminal to page on, the handler stops after the page it has
-// printed and reports success.
-//
-// It used to fall through to the keyboard library, which reads the controlling
-// terminal directly and fails with "open /dev/tty: no such device or address"
-// where there isn't one - so `mesheryctl connection list` printed a correct
-// first page and then exited non-zero, which is how it failed in CI for an
-// account holding more than one page of connections.
-func TestListPageHandlerStopsWithoutTerminal(t *testing.T) {
+// TestListPageHandlerAutoPagesWithoutTerminal pins the AXI non-interactive
+// path: with more results than fit on one page and no terminal to page on, the
+// handler advances automatically instead of blocking on a keypress (or failing
+// on /dev/tty). Scripts, pipelines and CI get the full list without hanging.
+func TestListPageHandlerAutoPagesWithoutTerminal(t *testing.T) {
 	withTerminal(t, false)
 
 	handler := listPageHandler(
@@ -50,8 +44,8 @@ func TestListPageHandlerStopsWithoutTerminal(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expected no error without a terminal, got %v", err)
 	}
-	if shouldContinue {
-		t.Error("expected paging to stop without a terminal, got shouldContinue=true")
+	if !shouldContinue {
+		t.Error("expected paging to continue without a terminal, got shouldContinue=false")
 	}
 }
 
