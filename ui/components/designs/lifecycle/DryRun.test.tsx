@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@sistent/sistent', () => {
@@ -70,6 +70,10 @@ vi.mock('../../../machines/validator/designValidator', () => ({
 
 vi.mock('react-redux', () => ({
   useSelector: vi.fn(() => []),
+}));
+
+vi.mock('@/store/ProviderStoreWrapper', () => ({
+  default: ({ children }: any) => <div data-testid="provider-store-wrapper">{children}</div>,
 }));
 
 vi.mock('./CrossClusterCompatibilityAnalysis', () => ({
@@ -226,6 +230,19 @@ describe('DryRunDesign view fallback', () => {
 
     expect(screen.getByTestId('toggle-view-matrix')).toBeInTheDocument();
     expect(screen.getByTestId('compatibility-matrix')).toBeInTheDocument();
+  });
+
+  it("renders inside ProviderStoreWrapper so it reads Meshery's store under a foreign Provider (#24217)", () => {
+    vi.mocked(useDryRunValidationResults).mockReturnValue([]);
+    vi.mocked(useIsValidatingDryRun).mockReturnValue(false);
+    vi.mocked(useDryRunRawResponse).mockReturnValue(null);
+
+    render(<DryRunDesign {...baseProps} />);
+
+    // The wrapper supplies Meshery's store, which has the globalEnvironmentContext
+    // slice, regardless of which Provider the embedding host (Kanvas) renders under.
+    const wrapper = screen.getByTestId('provider-store-wrapper');
+    expect(within(wrapper).getByTestId('dry-run-summary-errors')).toBeInTheDocument();
   });
 });
 
