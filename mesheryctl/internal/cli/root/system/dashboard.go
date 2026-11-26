@@ -232,6 +232,8 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 							currCtx.SetEndpoint(mesheryEndpoint)
 						}
 					}
+				} else {
+					utils.Log.Debugf("External endpoint unavailable; keeping internal endpoint %s", mesheryEndpoint)
 				}
 			}
 
