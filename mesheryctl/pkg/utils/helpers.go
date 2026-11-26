@@ -325,11 +325,10 @@ var Services = map[string]Service{
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Environment: []string{
 			"PROVIDER_BASE_URLS=" + DefaultProviderBaseURLs,
-			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-kuma:10007 meshery-traefik-mesh:10006 meshery-cilium:10012",
 			"EVENT=mesheryLocal",
 			"PORT=9081",
 		},
-		Volumes: []string{"$HOME/.kube:/home/appuser/.kube:ro", "$HOME/.minikube:$HOME/.minikube:ro"},
+		Volumes: []string{"$HOME/.kube:/home/appuser/.kube:ro", "$HOME/.minikube:$HOME/.minikube:ro", "/var/run/docker.sock:/var/run/docker.sock"},
 		Ports:   []string{"9081:9081"},
 	},
 	"meshery-istio": {

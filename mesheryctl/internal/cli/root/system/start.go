@@ -341,6 +341,19 @@ func buildAllowedDockerServices(currCtx *config.Context, mesheryImageVersion, ca
 		if serviceName == "meshery" {
 			service.Environment = upsertServiceEnvVar(service.Environment, pkgconstants.CallbackURLENV, callbackURL)
 
+			var adapterURLs []string
+			for _, comp := range currCtx.GetComponents() {
+				if svc, ok := utils.Services[comp]; ok && len(svc.Ports) > 0 {
+					// Ports are formatted as "host:container", e.g. "10000:10000"
+					portParts := strings.Split(svc.Ports[0], ":")
+					containerPort := portParts[len(portParts)-1]
+					adapterURLs = append(adapterURLs, fmt.Sprintf("%s:%s", comp, containerPort))
+				}
+			}
+			if len(adapterURLs) > 0 {
+				service.Environment = upsertServiceEnvVar(service.Environment, "ADAPTER_URLS", strings.Join(adapterURLs, " "))
+			}
+
 			providerEnvVar := currCtx.GetProvider()
 			if providerFlag != "" {
 				providerEnvVar = providerFlag
