@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
@@ -421,4 +422,48 @@ func TestDefaultLocalProviderSaveK8sContextNilMesheryInstanceID(t *testing.T) {
 	if got, _ := conn.Metadata["kubernetesServerId"].(string); got != "" {
 		t.Fatalf("expected empty kubernetesServerId metadata for nil KubernetesServerID, got %q", got)
 	}
+}
+
+func TestDefaultLocalProviderCatalogPublishAndUnpublishReturnErrLocalProviderSupport(t *testing.T) {
+	provider := &DefaultLocalProvider{}
+
+	t.Run("PublishCatalogFilter", func(t *testing.T) {
+		resp, err := provider.PublishCatalogFilter(nil, &MesheryCatalogFilterRequestBody{})
+		if !errors.Is(err, ErrLocalProviderSupport) {
+			t.Fatalf("expected ErrLocalProviderSupport, got %v", err)
+		}
+		if len(resp) != 0 {
+			t.Fatalf("expected empty response bytes, got %q", string(resp))
+		}
+	})
+
+	t.Run("UnPublishCatalogFilter", func(t *testing.T) {
+		resp, err := provider.UnPublishCatalogFilter(nil, &MesheryCatalogFilterRequestBody{})
+		if !errors.Is(err, ErrLocalProviderSupport) {
+			t.Fatalf("expected ErrLocalProviderSupport, got %v", err)
+		}
+		if len(resp) != 0 {
+			t.Fatalf("expected empty response bytes, got %q", string(resp))
+		}
+	})
+
+	t.Run("PublishCatalogPattern", func(t *testing.T) {
+		resp, err := provider.PublishCatalogPattern(nil, &MesheryCatalogPatternRequestBody{})
+		if !errors.Is(err, ErrLocalProviderSupport) {
+			t.Fatalf("expected ErrLocalProviderSupport, got %v", err)
+		}
+		if len(resp) != 0 {
+			t.Fatalf("expected empty response bytes, got %q", string(resp))
+		}
+	})
+
+	t.Run("UnPublishCatalogPattern", func(t *testing.T) {
+		resp, err := provider.UnPublishCatalogPattern(nil, &MesheryCatalogPatternRequestBody{})
+		if !errors.Is(err, ErrLocalProviderSupport) {
+			t.Fatalf("expected ErrLocalProviderSupport, got %v", err)
+		}
+		if len(resp) != 0 {
+			t.Fatalf("expected empty response bytes, got %q", string(resp))
+		}
+	})
 }

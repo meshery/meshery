@@ -505,3 +505,131 @@ func TestUnPublishCatalogFilterHandler_NullBody_ReturnsBadRequest(t *testing.T) 
 		t.Fatalf("expected 400 Bad Request, got %d", rec.Code)
 	}
 }
+
+type nullCatalogFilterResponseProvider struct {
+	*models.DefaultLocalProvider
+	overridePublish   bool
+	publishResp       []byte
+	overrideUnpublish bool
+	unpublishResp     []byte
+}
+
+func (p *nullCatalogFilterResponseProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
+	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
+}
+
+func (p *nullCatalogFilterResponseProvider) GetProviderToken(_ *http.Request) (string, error) {
+	return "fake-token", nil
+}
+
+func (p *nullCatalogFilterResponseProvider) PublishCatalogFilter(r *http.Request, body *models.MesheryCatalogFilterRequestBody) ([]byte, error) {
+	if p.overridePublish {
+		return p.publishResp, nil
+	}
+	return p.DefaultLocalProvider.PublishCatalogFilter(r, body)
+}
+
+func (p *nullCatalogFilterResponseProvider) UnPublishCatalogFilter(r *http.Request, body *models.MesheryCatalogFilterRequestBody) ([]byte, error) {
+	if p.overrideUnpublish {
+		return p.unpublishResp, nil
+	}
+	return p.DefaultLocalProvider.UnPublishCatalogFilter(r, body)
+}
+
+func newCatalogGuardHandler(t *testing.T) *Handler {
+	t.Helper()
+	systemID := uuid.Must(uuid.NewV4())
+	return &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+}
+
+func TestPublishCatalogFilterHandler_LocalProvider_ReturnsUnsupportedProviderError(t *testing.T) {
+	h := newCatalogGuardHandler(t)
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+	filterID := uuid.Must(uuid.NewV4())
+	provider := &nullCatalogFilterResponseProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+	}
+
+	body := `{"id":"` + filterID.String() + `"}`
+	req := httptest.NewRequest(http.MethodPost, "/api/filter/catalog/publish", strings.NewReader(body))
+	rec := httptest.NewRecorder()
+
+	h.PublishCatalogFilterHandler(rec, req, nil, authUser, provider)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 Internal Server Error, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrPublishCatalogFilterCode {
+		t.Fatalf("expected %s, got %s", ErrPublishCatalogFilterCode, decoded.Code)
+	}
+	if !strings.Contains(rec.Body.String(), models.ErrLocalProviderSupport.Error()) {
+		t.Fatalf("expected response body to report %q, got %s", models.ErrLocalProviderSupport.Error(), rec.Body.String())
+	}
+}
+
+func TestPublishCatalogFilterHandler_NullProviderResponse_ReturnsInternalServerErrorWithoutPanic(t *testing.T) {
+	h := newCatalogGuardHandler(t)
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+	filterID := uuid.Must(uuid.NewV4())
+	provider := &nullCatalogFilterResponseProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		overridePublish:      true,
+		publishResp:          []byte("null"),
+	}
+
+	body := `{"id":"` + filterID.String() + `"}`
+	req := httptest.NewRequest(http.MethodPost, "/api/filter/catalog/publish", strings.NewReader(body))
+	rec := httptest.NewRecorder()
+
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("PublishCatalogFilterHandler panicked on JSON null provider response: %v", r)
+		}
+	}()
+
+	h.PublishCatalogFilterHandler(rec, req, nil, authUser, provider)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 Internal Server Error, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrPublishCatalogFilterCode {
+		t.Fatalf("expected %s, got %s", ErrPublishCatalogFilterCode, decoded.Code)
+	}
+}
+
+func TestUnPublishCatalogFilterHandler_NullProviderResponse_ReturnsInternalServerErrorWithoutPanic(t *testing.T) {
+	h := newCatalogGuardHandler(t)
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+	filterID := uuid.Must(uuid.NewV4())
+	provider := &nullCatalogFilterResponseProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		overrideUnpublish:    true,
+		unpublishResp:        []byte("null"),
+	}
+
+	body := `{"id":"` + filterID.String() + `"}`
+	req := httptest.NewRequest(http.MethodDelete, "/api/filter/catalog/unpublish", strings.NewReader(body))
+	rec := httptest.NewRecorder()
+
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("UnPublishCatalogFilterHandler panicked on JSON null provider response: %v", r)
+		}
+	}()
+
+	h.UnPublishCatalogFilterHandler(rec, req, nil, authUser, provider)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 Internal Server Error, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrPublishCatalogFilterCode {
+		t.Fatalf("expected %s, got %s", ErrPublishCatalogFilterCode, decoded.Code)
+	}
+}

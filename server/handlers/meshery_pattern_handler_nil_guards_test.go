@@ -11,6 +11,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/events"
 )
 
 func TestPatternPOST_NilUser_ReturnsUnauthorized(t *testing.T) {
@@ -512,5 +513,87 @@ func TestUnPublishCatalogPatternHandler_NullBody_ReturnsBadRequest(t *testing.T)
 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("expected 400 Bad Request, got %d", rec.Code)
+	}
+}
+
+type nullCatalogPatternResponseProvider struct {
+	*models.DefaultLocalProvider
+	publishResp   []byte
+	unpublishResp []byte
+}
+
+func (p *nullCatalogPatternResponseProvider) PersistEvent(event events.Event, _ string) (models.PersistedEvent, error) {
+	return models.PersistedEvent{Event: &event, Disposition: models.EventCreated}, nil
+}
+
+func (p *nullCatalogPatternResponseProvider) GetProviderToken(_ *http.Request) (string, error) {
+	return "fake-token", nil
+}
+
+func (p *nullCatalogPatternResponseProvider) PublishCatalogPattern(_ *http.Request, _ *models.MesheryCatalogPatternRequestBody) ([]byte, error) {
+	return p.publishResp, nil
+}
+
+func (p *nullCatalogPatternResponseProvider) UnPublishCatalogPattern(_ *http.Request, _ *models.MesheryCatalogPatternRequestBody) ([]byte, error) {
+	return p.unpublishResp, nil
+}
+
+func TestPublishCatalogPatternHandler_NullProviderResponse_ReturnsInternalServerErrorWithoutPanic(t *testing.T) {
+	h := newCatalogGuardHandler(t)
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+	patternID := uuid.Must(uuid.NewV4())
+	provider := &nullCatalogPatternResponseProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		publishResp:          []byte("null"),
+	}
+
+	body := `{"id":"` + patternID.String() + `"}`
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/catalog/publish", strings.NewReader(body))
+	rec := httptest.NewRecorder()
+
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("PublishCatalogPatternHandler panicked on JSON null provider response: %v", r)
+		}
+	}()
+
+	h.PublishCatalogPatternHandler(rec, req, nil, authUser, provider)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 Internal Server Error, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrPublishCatalogPatternCode {
+		t.Fatalf("expected %s, got %s", ErrPublishCatalogPatternCode, decoded.Code)
+	}
+}
+
+func TestUnPublishCatalogPatternHandler_NullProviderResponse_ReturnsInternalServerErrorWithoutPanic(t *testing.T) {
+	h := newCatalogGuardHandler(t)
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+	patternID := uuid.Must(uuid.NewV4())
+	provider := &nullCatalogPatternResponseProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		unpublishResp:        []byte("null"),
+	}
+
+	body := `{"id":"` + patternID.String() + `"}`
+	req := httptest.NewRequest(http.MethodDelete, "/api/pattern/catalog/unpublish", strings.NewReader(body))
+	rec := httptest.NewRecorder()
+
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("UnPublishCatalogPatternHandler panicked on JSON null provider response: %v", r)
+		}
+	}()
+
+	h.UnPublishCatalogPatternHandler(rec, req, nil, authUser, provider)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 Internal Server Error, got %d", rec.Code)
+	}
+	decoded := decodeErrorBody(t, rec.Body.Bytes())
+	if decoded.Code != ErrPublishCatalogPatternCode {
+		t.Fatalf("expected %s, got %s", ErrPublishCatalogPatternCode, decoded.Code)
 	}
 }
