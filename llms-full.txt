@@ -120826,7 +120826,7 @@ Create the token with provided token name (optionally token path) to your meshco
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token create [flags]
+mesheryctl system token create &lt;token-name&gt; [flags]
 
 </div>
 </div>
@@ -120837,7 +120837,7 @@ mesheryctl system token create [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token create [token-name] -f [token-path]
+mesheryctl system token create my-token -f [token-path]
 
 </div>
 </div>
@@ -120846,7 +120846,7 @@ mesheryctl system token create [token-name] -f [token-path]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token create [token-name] (default path is auth.json)
+mesheryctl system token create my-token (default path is auth.json)
 
 </div>
 </div>
@@ -120855,7 +120855,7 @@ mesheryctl system token create [token-name] (default path is auth.json)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token create [token-name] -f [token-path] --set
+mesheryctl system token create my-token -f [token-path] --set
 
 </div>
 </div>
@@ -120904,7 +120904,7 @@ Delete the token with provided token name from your meshconfig tokens. A token t
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token delete [flags]
+mesheryctl system token delete &lt;token-name&gt; [flags]
 
 </div>
 </div>
@@ -120915,7 +120915,7 @@ mesheryctl system token delete [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token delete [token-name]
+mesheryctl system token delete my-token
 
 </div>
 </div>
@@ -121020,7 +121020,7 @@ Set token for current context or context specified with --context flag. The toke
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token set [flags]
+mesheryctl system token set &lt;token-name&gt; [flags]
 
 </div>
 </div>
@@ -121031,7 +121031,7 @@ mesheryctl system token set [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token set [token-name] 
+mesheryctl system token set my-token
 
 </div>
 </div>
@@ -121090,7 +121090,7 @@ View a specific token
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token view [token-name]
+mesheryctl system token view my-token
 
 </div>
 </div>

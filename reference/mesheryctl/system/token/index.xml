@@ -9,7 +9,7 @@
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl system token create [flags]
+mesheryctl system token create &amp;lt;token-name&amp;gt; [flags]
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -20,7 +20,7 @@ mesheryctl system token create [flags]
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl system token create [token-name] -f [token-path]
+mesheryctl system token create my-token -f [token-path]
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -28,7 +28,7 @@ mesheryctl system token create [token-name] -f [token-path]
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl system token create [token-name] (default path is auth.json)
+mesheryctl system token create my-token (default path is auth.json)
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -36,7 +36,7 @@ mesheryctl system token create [token-name] (default path is auth.json)
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl system token create [token-name] -f [token-path] --set
+mesheryctl system token create my-token -f [token-path] --set
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -78,7 +78,7 @@ mesheryctl system token create [token-name] -f [token-path] --set
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl system token delete [flags]
+mesheryctl system token delete &amp;lt;token-name&amp;gt; [flags]
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -89,7 +89,7 @@ mesheryctl system token delete [flags]
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl system token delete [token-name]
+mesheryctl system token delete my-token
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -180,7 +180,7 @@ mesheryctl system token list
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl system token set [flags]
+mesheryctl system token set &amp;lt;token-name&amp;gt; [flags]
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -191,7 +191,7 @@ mesheryctl system token set [flags]
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl system token set [token-name] 
+mesheryctl system token set my-token
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -243,7 +243,7 @@ mesheryctl system token view [token-name] [flags]
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl system token view [token-name]
+mesheryctl system token view my-token
 
 &lt;/div&gt;
 &lt;/div&gt;
