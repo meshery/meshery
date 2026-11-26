@@ -11,8 +11,8 @@ import (
 )
 
 // The remote provider calls for token refresh, keys, revoke and introspect should
-// carry the same trace context as the other outbound provider calls, so a trace
-// that reaches the provider is not broken at these requests.
+// send trace headers, as the other outbound provider calls do. They are made without
+// a request context, so this checks the headers and not that a caller's trace continues.
 func TestRemoteAuthClient_PropagatesTraceContext(t *testing.T) {
 	// InitTracer is what the server uses at startup: it installs the global tracer
 	// provider and the W3C trace context propagator. The exporter connects lazily,

@@ -28,8 +28,9 @@ const remoteAuthTimeout = 30 * time.Second
 
 // remoteAuthClient is the HTTP client for those calls. http.DefaultClient has no
 // timeout, so an unresponsive provider would otherwise block the caller indefinitely.
-// Its transport is wrapped for tracing, as in doRequestHelper, so these calls carry the
-// same trace context as the other outbound provider requests.
+// Its transport is wrapped for tracing, as in doRequestHelper, so these calls are traced
+// and send trace headers. They are made without a request context, so each one starts its
+// own trace and does not join the caller's.
 var remoteAuthClient = &http.Client{
 	Timeout:   remoteAuthTimeout,
 	Transport: tracing.NewTransport(http.DefaultTransport),
