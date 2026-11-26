@@ -618,12 +618,19 @@ func TestRemoteProviderGetJWK_ConcurrentRefreshIsRaceFree(t *testing.T) {
 		go func(id int) {
 			defer wg.Done()
 			if id%2 == 0 {
-				_, _ = provider.GetJWK("known-key")
-			} else {
-				_, _ = provider.GetJWK("unknown-key")
+				key, err := provider.GetJWK("known-key")
+				if err != nil || key["kid"] != "known-key" {
+					t.Errorf("GetJWK(known-key) = (%v, %v), want the known key", key, err)
+				}
+			} else if _, err := provider.GetJWK("unknown-key"); err != ErrNilKeys {
+				t.Errorf("GetJWK(unknown-key) error = %v, want ErrNilKeys", err)
 			}
 		}(i)
 	}
 
 	wg.Wait()
+
+	if count := atomic.LoadInt32(&requestCount); count == 0 {
+		t.Errorf("expected at least 1 request to /keys, got %d", count)
+	}
 }
