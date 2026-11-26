@@ -48,17 +48,40 @@ describe('useResourceOwner', () => {
     const { owner } = useResourceOwner();
 
     expect(owner).toBeUndefined();
-    expect(mockGetUserById).toHaveBeenCalledWith(undefined, expect.objectContaining({ skip: true }));
+    expect(mockGetUserById).toHaveBeenCalledWith(
+      undefined,
+      expect.objectContaining({ skip: true }),
+    );
   });
 
-  it('skips the by-id lookup and leaves owner undefined when ownerId is empty or whitespace string', () => {
-    const { owner: emptyOwner } = useResourceOwner('');
-    expect(emptyOwner).toBeUndefined();
-    expect(mockGetUserById).toHaveBeenCalledWith(undefined, expect.objectContaining({ skip: true }));
+  it('skips the by-id lookup and leaves owner undefined when ownerId is an empty string', () => {
+    const { owner } = useResourceOwner('');
 
-    const { owner: whitespaceOwner } = useResourceOwner('   ');
-    expect(whitespaceOwner).toBeUndefined();
-    expect(mockGetUserById).toHaveBeenCalledWith(undefined, expect.objectContaining({ skip: true }));
+    expect(owner).toBeUndefined();
+    expect(mockGetUserById).toHaveBeenCalledWith(
+      undefined,
+      expect.objectContaining({ skip: true }),
+    );
+  });
+
+  it('skips the by-id lookup and leaves owner undefined when ownerId is whitespace', () => {
+    const { owner } = useResourceOwner('   ');
+
+    expect(owner).toBeUndefined();
+    expect(mockGetUserById).toHaveBeenCalledWith(
+      undefined,
+      expect.objectContaining({ skip: true }),
+    );
+  });
+
+  it('trims padded valid ownerId and queries with normalized id', () => {
+    const { owner } = useResourceOwner('  u1  ');
+
+    expect(owner).toBe(fetchedOwner);
+    expect(mockGetUserById).toHaveBeenCalledWith(
+      'u1',
+      expect.objectContaining({ skip: false }),
+    );
   });
 
   it('reports a cloud profile on a remote provider', () => {
