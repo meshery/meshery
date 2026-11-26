@@ -4,21 +4,21 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 	"time"
 
-	"fmt"
-	"strings"
-
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/httputil"
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -714,6 +714,7 @@ func TestLoadTestHandler_NotFoundProfileID(t *testing.T) {
 	}{
 		{"gorm record not found", gorm.ErrRecordNotFound},
 		{"meshkit result not found", models.ErrResultNotFound(fmt.Errorf("profile not found"))},
+		{"provider 404 status", httputil.WithProviderStatus(fmt.Errorf("remote profile not found"), http.StatusNotFound)},
 	}
 
 	for _, tc := range tests {
@@ -731,6 +732,16 @@ func TestLoadTestHandler_NotFoundProfileID(t *testing.T) {
 
 			if rec.Code != http.StatusNotFound {
 				t.Fatalf("status = %d, want 404 for not found profile; body: %s", rec.Code, rec.Body.String())
+			}
+
+			var body struct {
+				Code string `json:"code"`
+			}
+			if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+				t.Fatalf("failed to decode response JSON: %v; body: %s", err, rec.Body.String())
+			}
+			if body.Code != models.ErrResultNotFoundCode {
+				t.Errorf("code = %q, want %q; body: %s", body.Code, models.ErrResultNotFoundCode, rec.Body.String())
 			}
 		})
 	}

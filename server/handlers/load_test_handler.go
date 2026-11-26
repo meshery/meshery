@@ -269,7 +269,11 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 			if h != nil && h.log != nil {
 				h.log.Warnf("No %s with ID %q found", obj, profileID)
 			}
-			writeMeshkitError(w, err, http.StatusNotFound)
+			notFoundErr := err
+			if meshkiterrors.GetCode(err) != models.ErrResultNotFoundCode {
+				notFoundErr = models.ErrResultNotFound(err)
+			}
+			writeMeshkitError(w, notFoundErr, http.StatusNotFound)
 			return
 		}
 		if h != nil && h.log != nil {
