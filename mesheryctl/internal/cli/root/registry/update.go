@@ -197,8 +197,8 @@ func InvokeCompUpdate() (err error) {
 
 					// A model can have components with multiple versions
 					versionPath := filepath.Join(modelPath, content.Name(), "v1.0.0") // remove the hard coded definition version, add just for testing
-					entries, _ := os.ReadDir(versionPath)
-					availableComponentsPerModelPerVersion += len(entries)
+					compDirEntries, _ := os.ReadDir(filepath.Join(versionPath, "components"))
+					availableComponentsPerModelPerVersion := len(compDirEntries)
 
 					utils.Log.Info("Updating component of model ", modelName, " with version: ", content.Name())
 
@@ -258,12 +258,21 @@ func InvokeCompUpdate() (err error) {
 
 func logModelUpdateSummary(modelToCompUpdateTracker *store.GenerticThreadSafeStore[[]compUpdateTracker]) {
 	values := modelToCompUpdateTracker.GetAllPairs()
+	updatedModelsCount := 0
 	for key, val := range values {
+		modelHadUpdates := false
 		for _, value := range val {
 			utils.Log.Info(fmt.Sprintf("For model %s-%s, updated %d out of %d components.", key, value.version, value.totalCompsUpdated, value.totalComps))
 			totalAggregateComponents += value.totalCompsUpdated
+			if value.totalCompsUpdated > 0 {
+				modelHadUpdates = true
+			}
+		}
+		if modelHadUpdates {
+			updatedModelsCount++
 		}
 	}
+	totalAggregateModel = updatedModelsCount
 
 	utils.Log.Info(fmt.Sprintf("For %d models updated %d components", len(values), totalAggregateComponents))
 }
