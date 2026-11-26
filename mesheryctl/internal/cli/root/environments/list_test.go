@@ -56,6 +56,42 @@ func TestListEnvironment(t *testing.T) {
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg)),
 		},
+		{
+			Name:             "list registered environments with --page 0",
+			Args:             []string{"list", "--orgId", testConstants["orgId"], "--page", "0"},
+			Fixture:          "list.environment.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '0'")),
+		},
+		{
+			Name:             "list registered environments with a negative --page",
+			Args:             []string{"list", "--orgId", testConstants["orgId"], "--page", "-1"},
+			Fixture:          "list.environment.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '-1'")),
+		},
+		{
+			Name:             "list registered environments with --pagesize 0",
+			Args:             []string{"list", "--orgId", testConstants["orgId"], "--pagesize", "0"},
+			Fixture:          "list.environment.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '0'")),
+		},
+		{
+			Name:             "list registered environments with a negative --pagesize",
+			Args:             []string{"list", "--orgId", testConstants["orgId"], "--pagesize", "-1"},
+			Fixture:          "list.environment.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '-1'")),
+		},
 	}
 
 	utils.InvokeMesheryctlTestListCommand(t, update, EnvironmentCmd, tests, currDir, "environments")

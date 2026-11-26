@@ -19,6 +19,7 @@ import (
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/pkg/errors"
@@ -29,10 +30,10 @@ import (
 var listUsageMsg = "Usage: mesheryctl environment list --orgId [orgId]\nRun 'mesheryctl environment list --help' to see detailed help message"
 
 type environmentListFlags struct {
-	count    bool
-	orgId    string
-	page     int
-	pagesize int
+	Count    bool   `json:"count" validate:"boolean"`
+	OrgId    string `json:"orgId"`
+	Page     int    `json:"page" validate:"gte=1"`
+	Pagesize int    `json:"pagesize" validate:"gte=1"`
 }
 
 var environmentListFlagsProvided environmentListFlags
@@ -62,13 +63,17 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 		return nil
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if environmentListFlagsProvided.orgId == "" {
+		if err := mesheryctlflags.ValidateCmdFlags(cmd, &environmentListFlagsProvided); err != nil {
+			return err
+		}
+
+		if environmentListFlagsProvided.OrgId == "" {
 			errMsg := "[ orgId ] isn't specified\n\n" + listUsageMsg
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 
-		if !utils.IsUUID(environmentListFlagsProvided.orgId) {
-			return utils.ErrInvalidUUID(fmt.Errorf("invalid orgId: %s", environmentListFlagsProvided.orgId))
+		if !utils.IsUUID(environmentListFlagsProvided.OrgId) {
+			return utils.ErrInvalidUUID(fmt.Errorf("invalid orgId: %s", environmentListFlagsProvided.OrgId))
 		}
 
 		return nil
@@ -76,12 +81,12 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		data := display.DisplayDataAsync{
-			UrlPath:          fmt.Sprintf("%s?orgId=%s", environmentApiPath, environmentListFlagsProvided.orgId),
+			UrlPath:          fmt.Sprintf("%s?orgId=%s", environmentApiPath, environmentListFlagsProvided.OrgId),
 			DataType:         "environments",
 			Header:           []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"},
-			Page:             environmentListFlagsProvided.page,
-			PageSize:         environmentListFlagsProvided.pagesize,
-			DisplayCountOnly: environmentListFlagsProvided.count,
+			Page:             environmentListFlagsProvided.Page,
+			PageSize:         environmentListFlagsProvided.Pagesize,
+			DisplayCountOnly: environmentListFlagsProvided.Count,
 			IsPage:           cmd.Flags().Changed("page"),
 		}
 
@@ -107,8 +112,8 @@ func processEnvironmentData(environmentResponse *environment.EnvironmentPage) ([
 }
 
 func init() {
-	listEnvironmentCmd.Flags().BoolVarP(&environmentListFlagsProvided.count, "count", "c", false, "(optional) Display count only")
-	listEnvironmentCmd.Flags().StringVarP(&environmentListFlagsProvided.orgId, "orgId", "", "", "Organization ID")
-	listEnvironmentCmd.Flags().IntVarP(&environmentListFlagsProvided.page, "page", "", 1, "(optional) Page number of paginated results")
-	listEnvironmentCmd.Flags().IntVarP(&environmentListFlagsProvided.pagesize, "pagesize", "", 10, "(optional) Number of results per page")
+	listEnvironmentCmd.Flags().BoolVarP(&environmentListFlagsProvided.Count, "count", "c", false, "(optional) Display count only")
+	listEnvironmentCmd.Flags().StringVarP(&environmentListFlagsProvided.OrgId, "orgId", "", "", "Organization ID")
+	listEnvironmentCmd.Flags().IntVarP(&environmentListFlagsProvided.Page, "page", "", 1, "(optional) Page number of paginated results")
+	listEnvironmentCmd.Flags().IntVarP(&environmentListFlagsProvided.Pagesize, "pagesize", "", 10, "(optional) Number of results per page")
 }

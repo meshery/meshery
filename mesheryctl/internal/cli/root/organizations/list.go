@@ -18,12 +18,21 @@ import (
 	"fmt"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 )
 
 var listUsageMsg = "Usage: mesheryctl organization list\nRun 'mesheryctl organization list --help' to see detailed help message"
+
+type organizationListFlags struct {
+	Count    bool `json:"count" validate:"boolean"`
+	Page     int  `json:"page" validate:"gte=1"`
+	Pagesize int  `json:"pagesize" validate:"gte=1"`
+}
+
+var orgListFlags organizationListFlags
 
 var listOrgCmd = &cobra.Command{
 	Use:   "list",
@@ -46,17 +55,17 @@ mesheryctl organization list --count
 		}
 		return nil
 	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &orgListFlags)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		page, _ := cmd.Flags().GetInt("page")
-		pagesize, _ := cmd.Flags().GetInt("pagesize")
-		count, _ := cmd.Flags().GetBool("count")
 		data := display.DisplayDataAsync{
 			UrlPath:          organizationsApiPath,
-			Page:             page,
-			PageSize:         pagesize,
+			Page:             orgListFlags.Page,
+			PageSize:         orgListFlags.Pagesize,
 			DataType:         "organizations",
 			Header:           []string{"ID", "NAME", "CREATED-AT"},
-			DisplayCountOnly: count,
+			DisplayCountOnly: orgListFlags.Count,
 			IsPage:           cmd.Flags().Changed("page"),
 		}
 
@@ -78,8 +87,7 @@ func processOrgData(orgs *models.OrganizationsPage) ([][]string, int64) {
 }
 
 func init() {
-	listOrgCmd.Flags().IntP("page", "p", 1, "(optional) Page number of paginated results")
-	listOrgCmd.Flags().IntP("pagesize", "s", 10, "(optional) Number of organizations per page")
-	listOrgCmd.Flags().BoolP("count", "", false, "total number of registered orgs")
-
+	listOrgCmd.Flags().IntVarP(&orgListFlags.Page, "page", "p", 1, "(optional) Page number of paginated results")
+	listOrgCmd.Flags().IntVarP(&orgListFlags.Pagesize, "pagesize", "s", 10, "(optional) Number of organizations per page")
+	listOrgCmd.Flags().BoolVarP(&orgListFlags.Count, "count", "", false, "total number of registered orgs")
 }
