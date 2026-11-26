@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/helpers"
@@ -72,9 +73,9 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		Offset:           offset,
 		OrderOn:          order,
 		Sort:             sort,
-		Kind:             r.URL.Query().Get("kind"),
-		SubType:          r.URL.Query().Get("subType"),
-		RelationshipType: r.URL.Query().Get("type"),
+		Kind:             strings.ToLower(strings.TrimSpace(r.URL.Query().Get("kind"))),
+		SubType:          strings.ToLower(strings.TrimSpace(r.URL.Query().Get("subType"))),
+		RelationshipType: strings.ToLower(strings.TrimSpace(r.URL.Query().Get("type"))),
 	})
 
 	var pgSize int64
@@ -118,6 +119,7 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 			return
 		}
+		helpers.NormalizeRelationshipDefinition(&r)
 		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &r)
 		helpers.HandleError(registry.RegistrantHostToV1beta1(cc.Connection), &r, err, isModelError, isRegistranError)
 	}

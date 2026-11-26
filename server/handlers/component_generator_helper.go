@@ -9,6 +9,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/core"
 
@@ -262,9 +263,10 @@ func (h *Handler) handleRegistrationAndError(registrationHelper registration.Reg
 			componentBytes, _ := json.Marshal(comp)
 			addSuccessfulEntry(componentBytes, entity.ComponentDefinition, response)
 		}
-		for _, rel := range pkg.Relationships {
+		for i := range pkg.Relationships {
+			helpers.NormalizeRelationshipDefinition(&pkg.Relationships[i])
 			incrementCountersOnSuccess(mu, entity.RelationshipDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
-			relationshipBytes, _ := json.Marshal(rel)
+			relationshipBytes, _ := json.Marshal(pkg.Relationships[i])
 			addSuccessfulEntry(relationshipBytes, entity.RelationshipDefinition, response)
 			policies.SyncRelationship.Lock()
 			rego := policies.Rego{}
