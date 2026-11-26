@@ -232,6 +232,12 @@ describe('globalEnvironmentContext slice', () => {
       expect(selectSelectedConnections(stateWith({}), 'missing')).toEqual([]);
     });
 
+    it('selectSelectedConnections returns a stable reference when env is missing', () => {
+      expect(selectSelectedConnections(stateWith({}), 'missing')).toBe(
+        selectSelectedConnections(stateWith({}), 'missing'),
+      );
+    });
+
     it('selectAllSelectedConnections aggregates from every env', () => {
       const state = stateWith({
         [env1.id]: { ...env1, selectedConnections: [k8sConn] },
@@ -290,6 +296,12 @@ describe('globalEnvironmentContext slice', () => {
 
       it('selectSelectedConnections returns []', () => {
         expect(selectSelectedConnections(stateWithoutSlice, env1.id)).toEqual([]);
+      });
+
+      it('selectSelectedConnections returns a stable reference across calls', () => {
+        expect(selectSelectedConnections(stateWithoutSlice, env1.id)).toBe(
+          selectSelectedConnections(stateWithoutSlice, env1.id),
+        );
       });
 
       it('selectAllSelectedConnections returns []', () => {
