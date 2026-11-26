@@ -46,33 +46,19 @@ func New(baseURL, secret string, log logger.Handler) *Client {
 }
 
 // NewForTest builds a Client for testing against local httptest servers,
-// bypassing loopback address restrictions.
+// bypassing loopback address restrictions. It must not be called from
+// production code; use New instead.
 func NewForTest(baseURL, secret string, log logger.Handler) *Client {
 	return newClient(baseURL, secret, log, true)
 }
 
 func newClient(baseURL, secret string, log logger.Handler, allowPrivate bool) *Client {
 	return &Client{
-		baseURL:    normalizeBaseURL(baseURL),
+		baseURL:    telemetry.NormalizeBaseURL(baseURL),
 		authHeader: authHeader(secret),
 		httpClient: utils.NewSafeHTTPClientWithAllowPrivate(defaultTimeout, allowPrivate),
 		log:        log,
 	}
-}
-
-func normalizeBaseURL(baseURL string) string {
-	raw := strings.TrimSpace(baseURL)
-	if raw == "" {
-		return ""
-	}
-	parsed, err := url.Parse(raw)
-	if err != nil {
-		return strings.TrimRight(raw, "/")
-	}
-	parsed.RawQuery = ""
-	parsed.Fragment = ""
-	parsed.Path = strings.TrimRight(parsed.Path, "/")
-	return strings.TrimRight(parsed.String(), "/")
 }
 
 func authHeader(secret string) string {

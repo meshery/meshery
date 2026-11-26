@@ -399,7 +399,8 @@ func TestNewSafeHTTPClientSSRF(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	// New uses NewSafeHTTPClient which forbids loopback destinations.
+	// New uses NewSafeHTTPClientWithAllowPrivate with allowPrivate=false,
+	// which forbids loopback destinations.
 	c := New(srv.URL, "", nil)
 	_, err := c.Health(context.Background())
 	if err == nil {
@@ -416,6 +417,7 @@ func TestNormalizeBaseURL(t *testing.T) {
 		{"http://example.com:9090/", "http://example.com:9090"},
 		{"http://example.com:9090/sub/path/", "http://example.com:9090/sub/path"},
 		{"http://example.com:9090/sub?foo=bar#frag", "http://example.com:9090/sub"},
+		{"http://example.com:9090/sub?", "http://example.com:9090/sub"},
 		{"http://example.com:9090/#/dashboard", "http://example.com:9090"},
 		{"  https://prometheus.internal.net/api/v1  ", "https://prometheus.internal.net/api/v1"},
 	}
