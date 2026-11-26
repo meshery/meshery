@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"sort"
 
@@ -20,9 +21,16 @@ type SMPMeshes struct {
 // the legacy, fixed service-mesh enum, so users can target any registered
 // model and are not constrained to service-mesh technologies.
 func (h *Handler) GetSMPServiceMeshes(w http.ResponseWriter, _ *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
+	if h == nil || h.registryManager == nil {
+		writeMeshkitError(w, ErrRetrieveData(fmt.Errorf("registry manager not initialized")), http.StatusInternalServerError)
+		return
+	}
+
 	entities, _, _, err := h.registryManager.GetEntities(&regv1beta1.ModelFilter{})
 	if err != nil {
-		h.log.Error(ErrRetrieveData(err))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrRetrieveData(err))
+		}
 		writeMeshkitError(w, ErrRetrieveData(err), http.StatusInternalServerError)
 		return
 	}
@@ -56,7 +64,9 @@ func (h *Handler) GetSMPServiceMeshes(w http.ResponseWriter, _ *http.Request, _ 
 		// a partial JSON envelope is on the wire and a fresh error
 		// response would corrupt it, so log only.
 		obj := "meshlist object"
-		h.log.Error(models.ErrEncoding(err, obj))
+		if h != nil && h.log != nil {
+			h.log.Error(models.ErrEncoding(err, obj))
+		}
 		return
 	}
 }
