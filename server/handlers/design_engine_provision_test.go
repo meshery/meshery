@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"net"
 	"sync/atomic"
 	"testing"
@@ -19,13 +20,17 @@ import (
 // provisionAdapter is an in-process adapter that counts its open client connections.
 type provisionAdapter struct {
 	meshes.UnimplementedMeshServiceServer
-	openConns   atomic.Int32
-	onProvision func(context.Context)
+	openConns    atomic.Int32
+	onProvision  func(context.Context)
+	provisionErr error
 }
 
 func (a *provisionAdapter) Provision(ctx context.Context, _ *meshes.ProvisionRequest) (*meshes.ProvisionResponse, error) {
 	if a.onProvision != nil {
 		a.onProvision(ctx)
+	}
+	if a.provisionErr != nil {
+		return nil, a.provisionErr
 	}
 	return &meshes.ProvisionResponse{Message: "provisioned"}, nil
 }
@@ -258,5 +263,55 @@ func TestProvisionDoesNotStartNextAdapterAfterCancellation(t *testing.T) {
 		if open := adapter.waitForNoOpenConns(); open != 0 {
 			t.Errorf("the %s adapter still holds %d client connection(s) after Provision returned, want 0", name, open)
 		}
+	}
+}
+func TestProvisionContinuesAfterAdapterRPCError(t *testing.T) {
+	log, err := logger.New("provision-rpc-error-test", logger.Options{})
+	if err != nil {
+		t.Fatalf("failed to build a logger: %v", err)
+	}
+
+	first, firstHost := startProvisionAdapter(t)
+	second, secondHost := startProvisionAdapter(t)
+
+	first.provisionErr = errors.New("first adapter failed")
+
+	var secondCalls atomic.Int32
+	second.onProvision = func(context.Context) {
+		secondCalls.Add(1)
+	}
+
+	comp := mutateTestComponent("workload", "Deployment")
+	comp.Model = &modelv1beta1.ModelDefinition{Name: "kubernetes"}
+
+	sap := &serviceActionProvider{
+		ctx:         context.Background(),
+		log:         log,
+		userID:      "user",
+		patternName: "design",
+	}
+
+	msgs, err := sap.Provision(stages.CompConfigPair{
+		Component: *comp,
+		Hosts:     []connection.Connection{firstHost, secondHost},
+	})
+	if err != nil {
+		t.Fatalf("Provision returned unexpected error: %v", err)
+	}
+
+	if calls := secondCalls.Load(); calls != 1 {
+		t.Errorf("second adapter received %d Provision call(s), want 1", calls)
+	}
+
+	if len(msgs) != 2 {
+		t.Fatalf("Provision returned %d messages, want 2", len(msgs))
+	}
+
+	if msgs[0].Summary[0].Success {
+		t.Error("first adapter summary marked successful after RPC failure")
+	}
+
+	if !msgs[1].Summary[0].Success {
+		t.Error("second adapter summary marked failed, want success")
 	}
 }

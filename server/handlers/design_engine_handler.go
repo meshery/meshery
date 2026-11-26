@@ -635,12 +635,24 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 		}
 
 		msg, err := sap.provisionOnAdapter(hostName, hostPort, ccp.Component)
-		if err == nil || len(msg.Summary) > 0 {
+
+		if len(msg.Summary) > 0 {
 			msgs = append(msgs, msg)
 		}
-		if err != nil {
+
+		// Request cancellation must always stop further provisioning.
+		if ctxErr := ctx.Err(); ctxErr != nil {
+			return msgs, ctxErr
+		}
+
+		// Errors without a deployment summary indicate a failure before
+		// the adapter RPC was attempted. Preserve the existing error behavior.
+		if err != nil && len(msg.Summary) == 0 {
 			return msgs, err
 		}
+
+		// An adapter RPC failure has a failed deployment summary.
+		// Keep that summary and continue to the next host.
 	}
 
 	return msgs, nil
