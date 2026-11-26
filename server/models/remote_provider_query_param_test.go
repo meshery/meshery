@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -70,6 +71,7 @@ func TestRemoteProviderDeleteUserCredential_SendsCanonicalCredentialIdParam(t *t
 
 	req := httptest.NewRequest(http.MethodDelete, "/api/integrations/credentials", nil)
 	req.AddCookie(&http.Cookie{Name: TokenCookieName, Value: "token"})
+	req = req.WithContext(context.WithValue(req.Context(), PerfObjCtxKey, &Preference{SelectedOrganizationID: "cccccccc-cccc-cccc-cccc-cccccccccccc"}))
 
 	if _, err := provider.DeleteUserCredential(req, credentialID); err != nil {
 		t.Fatalf("DeleteUserCredential: %v", err)

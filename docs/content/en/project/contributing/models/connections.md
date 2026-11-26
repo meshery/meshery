@@ -145,6 +145,10 @@ The helpers resolve the wrapper, not the field names inside it. A Kubernetes cre
 The server rehydrates `credentialSecret.secret` into `PromCred`/`GrafanaCred`, whose `secret` field is a plain string. Handing it an object fails the `register` (verify) step outright, which is why the wizard sends `resolveCredentialAuthSecret(...)` rather than the payload object.
 {{% /alert %}}
 
+#### Which organization a Cloud credential call acts for
+
+Meshery Cloud scopes its credential endpoints (list, get, save, update, delete) to the caller's acting organization, named by the `X-Current-Orgid` header. The server resolves it in `server/models/acting_organization.go`: a saved selection is always sent; with none saved, a user in exactly one organization is auto-selected and persisted; a user in several gets a `409` `organization_selection_required` body (the `meshery/schemas` `v1beta2/core` contract, not a MeshKit error) whose `choices[]` the UI shows for selection. The capability gates discovery, not forwarding: a saved selection is always sent, even when the provider does not advertise organizations; only the auto-select and the `409` choices list need the capability. Token-only callers with no user id (such as `K8sContextFromConnection`) send no header. Cloud's `403` (no qualifying organization) and `404` (organization the caller is not in) surface as distinct errors; a resource-level `403`, `404` or `409` (for example a duplicate name) is never read as an organization-scope error.
+
 ### Visual identity: `styles`
 
 `styles` carries inline SVG markup for the kind's icon: `svgColor` (for light backgrounds), `svgWhite` (for dark backgrounds), and optionally `svgComplete`. Follow the same icon conventions as [Components]({{< ref "project/contributing/models/components" >}}).

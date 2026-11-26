@@ -4295,7 +4295,10 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		return
 	}
 
-	l.ProviderProperties = providerProperties
+	// Write through the locked accessor: resolveActingOrganizationID and
+	// other readers take propertiesMu, so a direct assignment here would
+	// race them.
+	l.SetProviderProperties(providerProperties)
 
 	// Download the package for the user only if they have extension capability
 	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
@@ -5490,10 +5493,15 @@ func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential
 	bf := bytes.NewBuffer(_creds)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	req := requestWithToken(nil, token)
+	orgID, err := l.setActingOrganizationHeader(req, credentialUserID(credential), token, cReq)
+	if err != nil {
+		return nil, err
+	}
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
-		return nil, ErrFetch(err, "Save Credential", http.StatusInternalServerError)
+		return nil, ErrFetch(err, "Save Credential", statusOf(resp))
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
@@ -5513,12 +5521,15 @@ func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential
 		}
 		return &createdCredential, nil
 	}
+	if scopeErr := l.organizationScopeError(req, resp.StatusCode, bdr, orgID, credentialSaveScope); scopeErr != nil {
+		return nil, scopeErr
+	}
 
 	return nil, ErrFetch(fmt.Errorf("failed to save the credential"), string(bdr), resp.StatusCode)
 }
 
 // GetUserCredentials - to get saved credentials
-func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, pageSize int, search, order string) (*CredentialsPage, error) {
+func (l *RemoteProvider) GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error) {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
@@ -5535,6 +5546,10 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 	remoteProviderURL.RawQuery = q.Encode()
 	l.Log.Debug("Making request to : ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	orgID, err := l.setActingOrganizationHeader(req, userID, "", cReq)
+	if err != nil {
+		return nil, err
+	}
 	tokenString, err := l.GetToken(req)
 	if err != nil {
 		return nil, err
@@ -5550,18 +5565,20 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 	}()
 
 	bdr, _ := io.ReadAll(resp.Body)
-	if resp.StatusCode != http.StatusOK {
-		return nil, ErrFetch(fmt.Errorf("could not retrieve list of test profiles: %d", resp.StatusCode), string(bdr), resp.StatusCode)
+	if resp.StatusCode == http.StatusOK {
+		var cp CredentialsPage
+		if err = json.Unmarshal(bdr, &cp); err != nil {
+			return nil, ErrFetch(err, "Unmarshal Credentials Page", resp.StatusCode)
+		}
+		return &cp, nil
 	}
-
-	var cp CredentialsPage
-	if err = json.Unmarshal(bdr, &cp); err != nil {
-		return nil, ErrFetch(err, "Unmarshal Credentials Page", resp.StatusCode)
+	if scopeErr := l.organizationScopeError(req, resp.StatusCode, bdr, orgID, credentialCollectionScope); scopeErr != nil {
+		return nil, scopeErr
 	}
-	return &cp, nil
+	return nil, ErrFetch(fmt.Errorf("could not retrieve credentials: %d", resp.StatusCode), string(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetCredentialByID(token string, credentialID core.Uuid) (*Credential, int, error) {
+func (l *RemoteProvider) GetCredentialByID(token, userID string, credentialID core.Uuid) (*Credential, int, error) {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		l.Log.Error(ErrOperationNotAvailable)
 		return nil, http.StatusForbidden, ErrInvalidCapability("PersistCredentials", l.ProviderName)
@@ -5570,6 +5587,11 @@ func (l *RemoteProvider) GetCredentialByID(token string, credentialID core.Uuid)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, credentialID))
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	req := requestWithToken(nil, token)
+	orgID, err := l.setActingOrganizationHeader(req, userID, token, cReq)
+	if err != nil {
+		return nil, providerErrorStatus(err, http.StatusInternalServerError), err
+	}
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
@@ -5586,15 +5608,18 @@ func (l *RemoteProvider) GetCredentialByID(token string, credentialID core.Uuid)
 	}()
 
 	bdr, _ := io.ReadAll(resp.Body)
-	if resp.StatusCode != http.StatusOK {
-		return nil, resp.StatusCode, ErrFetch(fmt.Errorf("could not retrieve credential with id %s", credentialID), string(bdr), resp.StatusCode)
+	if resp.StatusCode == http.StatusOK {
+		var cp Credential
+		if err = json.Unmarshal(bdr, &cp); err != nil {
+			return nil, http.StatusInternalServerError, ErrFetch(err, "Unmarshal Credentials Page", resp.StatusCode)
+		}
+		return &cp, resp.StatusCode, nil
+	}
+	if scopeErr := l.organizationScopeError(req, resp.StatusCode, bdr, orgID, credentialResourceScope); scopeErr != nil {
+		return nil, providerErrorStatus(scopeErr, resp.StatusCode), scopeErr
 	}
 
-	var cp Credential
-	if err = json.Unmarshal(bdr, &cp); err != nil {
-		return nil, http.StatusInternalServerError, ErrFetch(err, "Unmarshal Credentials Page", resp.StatusCode)
-	}
-	return &cp, resp.StatusCode, nil
+	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("could not retrieve credential with id %s", credentialID), string(bdr), resp.StatusCode)
 }
 
 // UpdateUserCredential - to update an existing credential
@@ -5611,7 +5636,12 @@ func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Cre
 	bf := bytes.NewBuffer(_creds)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
-	tokenString, _ := l.GetToken(req)
+	userID := credentialUserID(credential)
+	orgID, err := l.setActingOrganizationHeader(req, userID, "", cReq)
+	if err != nil {
+		return nil, err
+	}
+	tokenString, err := l.GetToken(req)
 	if err != nil {
 		l.Log.Error(ErrGetToken(err))
 		return nil, err
@@ -5619,7 +5649,7 @@ func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Cre
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "Update Credential", http.StatusInternalServerError)
+		return nil, ErrFetch(err, "Update Credential", statusOf(resp))
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
@@ -5638,6 +5668,9 @@ func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Cre
 			return nil, err
 		}
 		return &cred, nil
+	}
+	if scopeErr := l.organizationScopeError(req, resp.StatusCode, bdr, orgID, credentialResourceScope); scopeErr != nil {
+		return nil, scopeErr
 	}
 
 	return nil, ErrFetch(fmt.Errorf("failed to update the credential"), string(bdr), resp.StatusCode)
@@ -5660,6 +5693,10 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID co
 	remoteProviderURL.RawQuery = q.Encode()
 	l.Log.Debug("constructed credential url: ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+	orgID, err := l.setActingOrganizationHeader(req, "", "", cReq)
+	if err != nil {
+		return nil, err
+	}
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
@@ -5685,6 +5722,9 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID co
 	if resp.StatusCode == http.StatusOK {
 		l.Log.Info("credential deleted from remote provider")
 		return nil, nil
+	}
+	if scopeErr := l.organizationScopeError(req, resp.StatusCode, bdr, orgID, credentialResourceScope); scopeErr != nil {
+		return nil, scopeErr
 	}
 	err = ErrDelete(fmt.Errorf("error while deleting credential: %s", bdr), string(bdr), resp.StatusCode)
 	l.Log.Error(err)

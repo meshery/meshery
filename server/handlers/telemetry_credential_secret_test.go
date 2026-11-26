@@ -138,7 +138,7 @@ func TestGrafanaClientForConnectionCredentialShapes(t *testing.T) {
 			server, gotHdr := newAuthCapturingServer(t)
 			h, provider, connectionID := newTelemetryCredentialFixture(t, "grafana", server.URL, tt.secret)
 
-			client, _, _, err := h.grafanaClientForConnection("", connectionID, provider)
+			client, _, _, err := h.grafanaClientForConnection("", "", connectionID, provider)
 			if err != nil {
 				t.Fatalf("grafanaClientForConnection: %v", err)
 			}
@@ -192,7 +192,7 @@ func TestPrometheusClientForConnectionCredentialShapes(t *testing.T) {
 			server, gotHdr := newAuthCapturingServer(t)
 			h, provider, connectionID := newTelemetryCredentialFixture(t, "prometheus", server.URL, tt.secret)
 
-			client, _, _, err := h.prometheusTelemetryClientForConnection("", connectionID, provider)
+			client, _, _, err := h.prometheusTelemetryClientForConnection("", "", connectionID, provider)
 			if err != nil {
 				t.Fatalf("prometheusTelemetryClientForConnection: %v", err)
 			}
@@ -363,9 +363,9 @@ func TestTelemetryClientForConnection_NonZeroMissingCredentialStillReturns404(t 
 				clientErr  error
 			)
 			if kind == "prometheus" {
-				_, _, statusCode, clientErr = h.prometheusTelemetryClientForConnection("", connID, provider)
+				_, _, statusCode, clientErr = h.prometheusTelemetryClientForConnection("", "", connID, provider)
 			} else {
-				_, _, statusCode, clientErr = h.grafanaClientForConnection("", connID, provider)
+				_, _, statusCode, clientErr = h.grafanaClientForConnection("", "", connID, provider)
 			}
 
 			if clientErr == nil {

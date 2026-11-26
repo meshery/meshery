@@ -7692,6 +7692,24 @@
       ]
     },
     {
+      "code": "meshery-server-1498",
+      "moniker": "ErrOrganizationMembershipCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1498",
+      "severity": "alert",
+      "shortDescription": "not a member of selected org",
+      "longDescription": "The selected organization is not one the caller belongs to",
+      "probableCause": [
+        "The X-Current-Orgid header named an organization the user is not a member of"
+      ],
+      "suggestedRemediation": [
+        "Select an organization the current user belongs to and retry"
+      ]
+    },
+    {
       "code": "meshery-server-1499",
       "moniker": "ErrKubeConfigFileReferenceCode",
       "component": {
@@ -7742,6 +7760,24 @@
       ],
       "suggestedRemediation": [
         "Upload the kubeconfig file itself (for example ~/.kube/config), and check it with kubectl config view --kubeconfig <file>."
+      ]
+    },
+    {
+      "code": "meshery-server-1502",
+      "moniker": "ErrNoQualifyingOrganizationCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1502",
+      "severity": "alert",
+      "shortDescription": "no qualifying organization",
+      "longDescription": "The caller has no live organization this request can act in",
+      "probableCause": [
+        "Meshery Cloud scopes this API to a live organization the caller belongs to"
+      ],
+      "suggestedRemediation": [
+        "Join or create an organization and retry"
       ]
     }
   ],

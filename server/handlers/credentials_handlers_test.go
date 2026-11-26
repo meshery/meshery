@@ -14,6 +14,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/schemas/models/v1beta2/core"
 )
 
 // credentialSpyProvider captures the Credential passed to SaveUserCredential
@@ -58,7 +59,7 @@ func (m *credentialSpyProvider) DeleteUserCredential(req *http.Request, id uuid.
 	return nil, nil
 }
 
-func (m *credentialSpyProvider) GetCredentialByID(_ string, id uuid.UUID) (*models.Credential, int, error) {
+func (m *credentialSpyProvider) GetCredentialByID(_, _ string, id uuid.UUID) (*models.Credential, int, error) {
 	m.observedGet.Store(&id)
 	if m.stubbedCredential != nil {
 		return m.stubbedCredential, http.StatusOK, nil
@@ -711,4 +712,277 @@ func TestSaveAndUpdateUserCredential_RejectUnsafeKubeCredential(t *testing.T) {
 			t.Fatalf("status = %d, saved = %v (body=%q)", rec.Code, p.observedSave.Load() != nil, rec.Body.String())
 		}
 	})
+}
+
+// orgScopedCredentialProvider is a list-only stub that returns a tagged
+// provider error so the handler's 403/404 mapping can be tested without a
+// remote provider.
+type orgScopedCredentialProvider struct {
+	*models.DefaultLocalProvider
+	listErr   error
+	saveErr   error
+	updateErr error
+	deleteErr error
+	getErr    error
+	getStatus int
+	called    atomic.Bool
+}
+
+func (m *orgScopedCredentialProvider) GetUserCredentials(_ *http.Request, _ string, _, _ int, _, _ string) (*models.CredentialsPage, error) {
+	m.called.Store(true)
+	if m.listErr != nil {
+		return nil, m.listErr
+	}
+	return &models.CredentialsPage{}, nil
+}
+
+func (m *orgScopedCredentialProvider) SaveUserCredential(_ string, c *models.Credential) (*models.Credential, error) {
+	m.called.Store(true)
+	if m.saveErr != nil {
+		return nil, m.saveErr
+	}
+	return c, nil
+}
+
+func (m *orgScopedCredentialProvider) UpdateUserCredential(_ *http.Request, c *models.Credential) (*models.Credential, error) {
+	m.called.Store(true)
+	if m.updateErr != nil {
+		return nil, m.updateErr
+	}
+	return c, nil
+}
+
+func (m *orgScopedCredentialProvider) DeleteUserCredential(_ *http.Request, _ uuid.UUID) (*models.Credential, error) {
+	m.called.Store(true)
+	if m.deleteErr != nil {
+		return nil, m.deleteErr
+	}
+	return nil, nil
+}
+
+func (m *orgScopedCredentialProvider) GetCredentialByID(_, _ string, id uuid.UUID) (*models.Credential, int, error) {
+	m.called.Store(true)
+	if m.getErr != nil {
+		status := m.getStatus
+		if status == 0 {
+			status = http.StatusInternalServerError
+		}
+		return nil, status, m.getErr
+	}
+	return &models.Credential{ID: id}, http.StatusOK, nil
+}
+
+// TestGetUserCredentials_SurfacesOrganizationSelectionErrors pins that
+// organization-scope failures reach the client as their real status and
+// message, not a generic 500, and that no credentials payload is written
+// alongside them. A 409 is the schemas OrganizationSelectionRequiredError
+// body (code plus choices), not MeshKit. 403 and 404 stay distinct MeshKit
+// errors.
+func TestGetUserCredentials_SurfacesOrganizationSelectionErrors(t *testing.T) {
+	choiceA := uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+	choiceB := uuid.Must(uuid.FromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"))
+	selectionErr := models.ErrOrganizationSelectionRequired([]core.OrganizationSelectionChoice{
+		{ID: choiceA, Name: "Org A", Description: "first"},
+		{ID: choiceB, Name: "Org B", Description: "second"},
+	})
+
+	t.Run("organization_selection_required", func(t *testing.T) {
+		h := newTestHandler(t, map[string]models.Provider{}, "")
+		p := &orgScopedCredentialProvider{
+			DefaultLocalProvider: newCredentialSpyProvider().DefaultLocalProvider,
+			listErr:              selectionErr,
+		}
+		req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials", nil)
+		rec := httptest.NewRecorder()
+		h.GetUserCredentials(rec, req, &models.Preference{}, &models.User{ID: uuid.Must(uuid.NewV4())}, p)
+
+		if !p.called.Load() {
+			t.Fatal("provider GetUserCredentials was not invoked")
+		}
+		if rec.Code != http.StatusConflict {
+			t.Fatalf("status = %d, want 409 (body=%q)", rec.Code, rec.Body.String())
+		}
+		var body core.OrganizationSelectionRequiredError
+		if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+			t.Fatalf("409 body did not parse as OrganizationSelectionRequiredError: %v (body=%q)", err, rec.Body.String())
+		}
+		if body.Code != core.OrganizationSelectionRequiredErrorCodeOrganizationSelectionRequired {
+			t.Errorf("code = %q, want %q", body.Code, core.OrganizationSelectionRequiredErrorCodeOrganizationSelectionRequired)
+		}
+		if body.Message != "select an organization" {
+			t.Errorf("message = %q, want %q", body.Message, "select an organization")
+		}
+		if len(body.Choices) != 2 || body.Choices[0].Name != "Org A" || body.Choices[1].Description != "second" {
+			t.Errorf("choices = %#v, want the two organizations from the provider error", body.Choices)
+		}
+		if strings.Contains(rec.Body.String(), `"credentials"`) {
+			t.Errorf("response unexpectedly included a credentials payload: %s", rec.Body.String())
+		}
+	})
+
+	for _, tc := range []struct {
+		name       string
+		err        error
+		wantStatus int
+		wantCode   string
+		wantMsg    string
+	}{
+		{
+			name:       "no qualifying organization",
+			err:        models.ErrNoQualifyingOrganization(),
+			wantStatus: http.StatusForbidden,
+			wantCode:   models.ErrNoQualifyingOrganizationCode,
+			wantMsg:    "no qualifying organization",
+		},
+		{
+			name:       "not a member of selected org",
+			err:        models.ErrOrganizationMembership(),
+			wantStatus: http.StatusNotFound,
+			wantCode:   models.ErrOrganizationMembershipCode,
+			wantMsg:    "not a member of selected org",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			p := &orgScopedCredentialProvider{
+				DefaultLocalProvider: newCredentialSpyProvider().DefaultLocalProvider,
+				listErr:              tc.err,
+			}
+			req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials", nil)
+			rec := httptest.NewRecorder()
+			h.GetUserCredentials(rec, req, &models.Preference{SelectedOrganizationID: "cccccccc-cccc-cccc-cccc-cccccccccccc"}, &models.User{ID: uuid.Must(uuid.NewV4())}, p)
+
+			if !p.called.Load() {
+				t.Fatal("provider GetUserCredentials was not invoked")
+			}
+			if rec.Code != tc.wantStatus {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, tc.wantStatus, rec.Body.String())
+			}
+			decoded := decodeErrorBody(t, rec.Body.Bytes())
+			if decoded.Code != tc.wantCode {
+				t.Errorf("code = %q, want %q", decoded.Code, tc.wantCode)
+			}
+			if !strings.Contains(strings.ToLower(rec.Body.String()), tc.wantMsg) {
+				t.Errorf("body = %q, want it to contain %q", rec.Body.String(), tc.wantMsg)
+			}
+			if strings.Contains(rec.Body.String(), `"credentials"`) {
+				t.Errorf("response unexpectedly included a credentials payload: %s", rec.Body.String())
+			}
+		})
+	}
+}
+
+func TestCredentialHandlers_SurfaceOrganizationSelectionErrors(t *testing.T) {
+	choiceA := uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+	choiceB := uuid.Must(uuid.FromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"))
+	selectionErr := models.ErrOrganizationSelectionRequired([]core.OrganizationSelectionChoice{
+		{ID: choiceA, Name: "Org A", Description: "first"},
+		{ID: choiceB, Name: "Org B", Description: "second"},
+	})
+	credID := uuid.Must(uuid.NewV4())
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+	pref := &models.Preference{}
+
+	type verb struct {
+		name string
+		call func(h *Handler, rec *httptest.ResponseRecorder, p *orgScopedCredentialProvider)
+		set  func(p *orgScopedCredentialProvider, err error)
+	}
+	verbs := []verb{
+		{
+			name: "save",
+			set:  func(p *orgScopedCredentialProvider, err error) { p.saveErr = err },
+			call: func(h *Handler, rec *httptest.ResponseRecorder, p *orgScopedCredentialProvider) {
+				req := httptest.NewRequest(http.MethodPost, "/api/integrations/credentials", bytes.NewBufferString(`{"name":"cred","type":"token"}`))
+				h.SaveUserCredential(rec, req, pref, authUser, p)
+			},
+		},
+		{
+			name: "update",
+			set:  func(p *orgScopedCredentialProvider, err error) { p.updateErr = err },
+			call: func(h *Handler, rec *httptest.ResponseRecorder, p *orgScopedCredentialProvider) {
+				body := `{"id":"` + credID.String() + `","name":"cred","type":"token"}`
+				req := httptest.NewRequest(http.MethodPut, "/api/integrations/credentials", bytes.NewBufferString(body))
+				h.UpdateUserCredential(rec, req, pref, authUser, p)
+			},
+		},
+		{
+			name: "delete",
+			set:  func(p *orgScopedCredentialProvider, err error) { p.deleteErr = err },
+			call: func(h *Handler, rec *httptest.ResponseRecorder, p *orgScopedCredentialProvider) {
+				req := httptest.NewRequest(http.MethodDelete, "/api/integrations/credentials?credentialId="+credID.String(), nil)
+				h.DeleteUserCredential(rec, req, pref, authUser, p)
+			},
+		},
+		{
+			name: "getByID",
+			set: func(p *orgScopedCredentialProvider, err error) {
+				p.getErr = err
+				switch err {
+				case selectionErr:
+					p.getStatus = http.StatusConflict
+				default:
+					// 403/404 organization errors carry provider status, but
+					// GetUserCredentialByID also has a fallback statusCode.
+					p.getStatus = http.StatusInternalServerError
+				}
+			},
+			call: func(h *Handler, rec *httptest.ResponseRecorder, p *orgScopedCredentialProvider) {
+				req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials/"+credID.String(), nil)
+				req = mux.SetURLVars(req, map[string]string{"credentialID": credID.String()})
+				h.GetUserCredentialByID(rec, req, pref, authUser, p)
+			},
+		},
+	}
+
+	for _, tc := range verbs {
+		t.Run(tc.name+"/organization_selection_required", func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			p := &orgScopedCredentialProvider{DefaultLocalProvider: newCredentialSpyProvider().DefaultLocalProvider}
+			tc.set(p, selectionErr)
+			rec := httptest.NewRecorder()
+			tc.call(h, rec, p)
+			if !p.called.Load() {
+				t.Fatal("provider was not invoked")
+			}
+			if rec.Code != http.StatusConflict {
+				t.Fatalf("status = %d, want 409 (body=%q)", rec.Code, rec.Body.String())
+			}
+			var body core.OrganizationSelectionRequiredError
+			if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+				t.Fatalf("409 body did not parse as OrganizationSelectionRequiredError: %v (body=%q)", err, rec.Body.String())
+			}
+			if body.Code != core.OrganizationSelectionRequiredErrorCodeOrganizationSelectionRequired || len(body.Choices) != 2 {
+				t.Errorf("body = %#v, want organization_selection_required with two choices", body)
+			}
+		})
+		t.Run(tc.name+"/no_qualifying_organization", func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			p := &orgScopedCredentialProvider{DefaultLocalProvider: newCredentialSpyProvider().DefaultLocalProvider}
+			tc.set(p, models.ErrNoQualifyingOrganization())
+			rec := httptest.NewRecorder()
+			tc.call(h, rec, p)
+			if rec.Code != http.StatusForbidden {
+				t.Fatalf("status = %d, want 403 (body=%q)", rec.Code, rec.Body.String())
+			}
+			decoded := decodeErrorBody(t, rec.Body.Bytes())
+			if decoded.Code != models.ErrNoQualifyingOrganizationCode {
+				t.Errorf("code = %q, want %q", decoded.Code, models.ErrNoQualifyingOrganizationCode)
+			}
+		})
+		t.Run(tc.name+"/not_a_member", func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			p := &orgScopedCredentialProvider{DefaultLocalProvider: newCredentialSpyProvider().DefaultLocalProvider}
+			tc.set(p, models.ErrOrganizationMembership())
+			rec := httptest.NewRecorder()
+			tc.call(h, rec, p)
+			if rec.Code != http.StatusNotFound {
+				t.Fatalf("status = %d, want 404 (body=%q)", rec.Code, rec.Body.String())
+			}
+			decoded := decodeErrorBody(t, rec.Body.Bytes())
+			if decoded.Code != models.ErrOrganizationMembershipCode {
+				t.Errorf("code = %q, want %q", decoded.Code, models.ErrOrganizationMembershipCode)
+			}
+		})
+	}
 }

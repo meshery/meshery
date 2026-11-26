@@ -120,7 +120,7 @@ func K8sContextFromConnection(provider Provider, token string, connection *conne
 		return ctx, fmt.Errorf("failed to convert connection to k8s context: missing credential_id")
 	}
 
-	credential, _, err := provider.GetCredentialByID(token, *connection.CredentialID)
+	credential, _, err := provider.GetCredentialByID(token, "", *connection.CredentialID)
 	if err != nil {
 		return ctx, fmt.Errorf("failed to convert connection to k8s context: failed to fetch credential: %w", err)
 	}

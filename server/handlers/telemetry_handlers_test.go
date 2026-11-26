@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -13,13 +14,15 @@ import (
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	_events "github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
+	corev1beta2 "github.com/meshery/schemas/models/v1beta2/core"
 )
 
 // telemetrySpyProvider is a mock provider used for testing telemetry handlers.
 type telemetrySpyProvider struct {
 	models.DefaultLocalProvider
-	persistedEvents []*_events.Event
-	getConnectionFn func(token string, connectionID core.Uuid) (*connections.Connection, int, error)
+	persistedEvents     []*_events.Event
+	getConnectionFn     func(token string, connectionID core.Uuid) (*connections.Connection, int, error)
+	getCredentialByIDFn func(token, userID string, credentialID core.Uuid) (*models.Credential, int, error)
 }
 
 // newTelemetrySpyProvider constructs an initialized telemetrySpyProvider.
@@ -41,6 +44,14 @@ func (s *telemetrySpyProvider) GetConnectionByID(token string, connectionID core
 		return s.getConnectionFn(token, connectionID)
 	}
 	return s.DefaultLocalProvider.GetConnectionByID(token, connectionID)
+}
+
+// GetCredentialByID dispatches to getCredentialByIDFn when non-nil, or delegates to DefaultLocalProvider.
+func (s *telemetrySpyProvider) GetCredentialByID(token, userID string, credentialID core.Uuid) (*models.Credential, int, error) {
+	if s.getCredentialByIDFn != nil {
+		return s.getCredentialByIDFn(token, userID, credentialID)
+	}
+	return s.DefaultLocalProvider.GetCredentialByID(token, userID, credentialID)
 }
 
 // TestPrometheusTelemetryHandlers_RejectsInvalidConnectionID pins that malformed,
@@ -229,7 +240,7 @@ func TestGrafanaTelemetryHandlers_RejectsInvalidConnectionID(t *testing.T) {
 // prometheusTelemetryClientForConnection rejects nil UUID with ErrInvalidUUID.
 func TestPrometheusTelemetryClientForConnection_NilUUID(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
-	client, conn, code, err := h.prometheusTelemetryClientForConnection("", uuid.Nil, &models.DefaultLocalProvider{})
+	client, conn, code, err := h.prometheusTelemetryClientForConnection("", "", uuid.Nil, &models.DefaultLocalProvider{})
 	if client != nil || conn != nil {
 		t.Errorf("expected nil client and connection, got client=%v, conn=%v", client, conn)
 	}
@@ -245,7 +256,7 @@ func TestPrometheusTelemetryClientForConnection_NilUUID(t *testing.T) {
 // grafanaClientForConnection rejects nil UUID with ErrInvalidUUID.
 func TestGrafanaClientForConnection_NilUUID(t *testing.T) {
 	h := &Handler{log: newTestLogger(t)}
-	client, conn, code, err := h.grafanaClientForConnection("", uuid.Nil, &models.DefaultLocalProvider{})
+	client, conn, code, err := h.grafanaClientForConnection("", "", uuid.Nil, &models.DefaultLocalProvider{})
 	if client != nil || conn != nil {
 		t.Errorf("expected nil client and connection, got client=%v, conn=%v", client, conn)
 	}
@@ -438,6 +449,79 @@ func TestTelemetryPingHandlers_NilSystemID_DoesNotPanic(t *testing.T) {
 	}
 }
 
+// TestTelemetryPingHandlers_OrganizationSelectionRequired_Returns409WithoutPingFailureEvent
+// verifies that a missing organization selection on a ping is not recorded as
+// a connectivity failure: no "unreachable" event is persisted, and the 409
+// organization_selection_required body is returned so the UI can prompt.
+func TestTelemetryPingHandlers_OrganizationSelectionRequired_Returns409WithoutPingFailureEvent(t *testing.T) {
+	choiceA := uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+	choiceB := uuid.Must(uuid.FromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"))
+	selectionErr := models.ErrOrganizationSelectionRequired([]corev1beta2.OrganizationSelectionChoice{
+		{ID: choiceA, Name: "Org A", Description: "first"},
+		{ID: choiceB, Name: "Org B", Description: "second"},
+	})
+	connectionID := uuid.Must(uuid.NewV4())
+	credentialID := uuid.Must(uuid.NewV4())
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	cases := []struct {
+		name   string
+		kind   string
+		invoke func(h *Handler, rec *httptest.ResponseRecorder, req *http.Request, p models.Provider)
+	}{
+		{"grafana", "grafana", func(h *Handler, rec *httptest.ResponseRecorder, req *http.Request, p models.Provider) {
+			h.GrafanaTelemetryPingHandler(rec, req, nil, user, p)
+		}},
+		{"prometheus", "prometheus", func(h *Handler, rec *httptest.ResponseRecorder, req *http.Request, p models.Provider) {
+			h.PrometheusTelemetryPingHandler(rec, req, nil, user, p)
+		}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			systemID := uuid.Must(uuid.NewV4())
+			h := &Handler{
+				config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+				log:      newTestLogger(t),
+				SystemID: &systemID,
+			}
+			provider := newTelemetrySpyProvider()
+			provider.getConnectionFn = func(_ string, _ core.Uuid) (*connections.Connection, int, error) {
+				return &connections.Connection{
+					ID:           connectionID,
+					Kind:         tc.kind,
+					Name:         "test-" + tc.kind,
+					CredentialID: &credentialID,
+				}, http.StatusOK, nil
+			}
+			provider.getCredentialByIDFn = func(_, _ string, _ core.Uuid) (*models.Credential, int, error) {
+				return nil, http.StatusConflict, selectionErr
+			}
+
+			req := httptest.NewRequest(http.MethodGet, "/api/telemetry/"+tc.kind+"/"+connectionID.String()+"/ping", nil)
+			req = mux.SetURLVars(req, map[string]string{"connectionID": connectionID.String()})
+			rec := httptest.NewRecorder()
+			tc.invoke(h, rec, req, provider)
+
+			if rec.Code != http.StatusConflict {
+				t.Fatalf("status = %d, want 409 (body=%q)", rec.Code, rec.Body.String())
+			}
+			var body corev1beta2.OrganizationSelectionRequiredError
+			if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+				t.Fatalf("409 body did not parse as OrganizationSelectionRequiredError: %v (body=%q)", err, rec.Body.String())
+			}
+			if body.Code != corev1beta2.OrganizationSelectionRequiredErrorCodeOrganizationSelectionRequired {
+				t.Errorf("code = %q, want %q", body.Code, corev1beta2.OrganizationSelectionRequiredErrorCodeOrganizationSelectionRequired)
+			}
+			if len(body.Choices) != 2 {
+				t.Errorf("choices = %#v, want the two organizations from the provider error", body.Choices)
+			}
+			if len(provider.persistedEvents) != 0 {
+				t.Errorf("ping persisted %d failure events, want 0: no health check ran", len(provider.persistedEvents))
+			}
+		})
+	}
+}
+
 // TestTelemetryHandlers_NilProvider_ReturnsServerError verifies that all Grafana
 // and Prometheus telemetry endpoints and client resolvers return 500 Internal Server
 // Error when provider is nil, preventing panics.
@@ -540,12 +624,12 @@ func TestTelemetryHandlers_NilProvider_ReturnsServerError(t *testing.T) {
 	}
 
 	// Client constructor helpers with nil provider
-	_, _, gCode, gErr := h.grafanaClientForConnection("token", connUUID, nil)
+	_, _, gCode, gErr := h.grafanaClientForConnection("token", "", connUUID, nil)
 	if gCode != http.StatusInternalServerError || gErr == nil {
 		t.Errorf("grafanaClientForConnection expected 500 and error for nil provider, got code=%d, err=%v", gCode, gErr)
 	}
 
-	_, _, prCode, prErr := h.prometheusTelemetryClientForConnection("token", connUUID, nil)
+	_, _, prCode, prErr := h.prometheusTelemetryClientForConnection("token", "", connUUID, nil)
 	if prCode != http.StatusInternalServerError || prErr == nil {
 		t.Errorf("prometheusTelemetryClientForConnection expected 500 and error for nil provider, got code=%d, err=%v", prCode, prErr)
 	}
@@ -658,12 +742,12 @@ func TestTelemetryHandlers_NilConnection_ReturnsNotFound(t *testing.T) {
 	}
 
 	// Client constructor helpers
-	_, _, gCode, gErr := h.grafanaClientForConnection("token", connUUID, provider)
+	_, _, gCode, gErr := h.grafanaClientForConnection("token", "", connUUID, provider)
 	if gCode != http.StatusNotFound || meshkiterrors.GetCode(gErr) != models.ErrResultNotFoundCode {
 		t.Errorf("grafanaClientForConnection expected 404 and ErrResultNotFoundCode for nil connection, got code=%d, err=%v", gCode, gErr)
 	}
 
-	_, _, prCode, prErr := h.prometheusTelemetryClientForConnection("token", connUUID, provider)
+	_, _, prCode, prErr := h.prometheusTelemetryClientForConnection("token", "", connUUID, provider)
 	if prCode != http.StatusNotFound || meshkiterrors.GetCode(prErr) != models.ErrResultNotFoundCode {
 		t.Errorf("prometheusTelemetryClientForConnection expected 404 and ErrResultNotFoundCode for nil connection, got code=%d, err=%v", prCode, prErr)
 	}

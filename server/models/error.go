@@ -181,6 +181,8 @@ const (
 	ErrInvalidDesignVersionCode           = "meshery-server-1496"
 	ErrKubeconfigUnreadableCode           = "meshery-server-1501"
 	ErrUnsafeKubeCredentialCode           = "meshery-server-1500"
+	ErrOrganizationMembershipCode         = "meshery-server-1498"
+	ErrNoQualifyingOrganizationCode       = "meshery-server-1502"
 )
 
 var (
@@ -1074,5 +1076,40 @@ func ErrUnsafeKubeCredential(fields []string) error {
 		[]string{fmt.Sprintf("The credential sets: %s", strings.Join(fields, ", "))},
 		[]string{"exec plugins, auth-providers and certificate, key or token file paths are executed or read on the machine running Meshery Server, so only the server's own kubeconfig may use them"},
 		[]string{"Replace the credential with embedded data (client-certificate-data, client-key-data, certificate-authority-data, token) and save it again"},
+	)
+}
+
+// ErrNoQualifyingOrganization is the defensive fallback when the caller has
+// no saved organization selection and no live organization qualifies, or when
+// Meshery Cloud answers 403 on GET /api/integrations/credentials. This is
+// distinct from a 409 organization_selection_required, which is used when
+// several organizations qualify and the caller must pick one.
+func ErrNoQualifyingOrganization() error {
+	return httputil.WithProviderStatus(
+		errors.New(
+			ErrNoQualifyingOrganizationCode,
+			errors.Alert,
+			[]string{"no qualifying organization"},
+			[]string{"The caller has no live organization this request can act in"},
+			[]string{"Meshery Cloud scopes this API to a live organization the caller belongs to"},
+			[]string{"Join or create an organization and retry"},
+		),
+		http.StatusForbidden,
+	)
+}
+
+// ErrOrganizationMembership is the defensive fallback when Meshery Cloud
+// answers 404 because the named organization is not one the caller belongs to.
+func ErrOrganizationMembership() error {
+	return httputil.WithProviderStatus(
+		errors.New(
+			ErrOrganizationMembershipCode,
+			errors.Alert,
+			[]string{"not a member of selected org"},
+			[]string{"The selected organization is not one the caller belongs to"},
+			[]string{"The X-Current-Orgid header named an organization the user is not a member of"},
+			[]string{"Select an organization the current user belongs to and retry"},
+		),
+		http.StatusNotFound,
 	)
 }

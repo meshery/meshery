@@ -14,6 +14,70 @@ import (
 	"github.com/meshery/meshkit/errors"
 )
 
+func providerUserID(user *models.User) string {
+	if user == nil || user.ID == uuid.Nil {
+		return ""
+	}
+	return user.ID.String()
+}
+
+func sessionRequest(req *http.Request, prefObj *models.Preference, user *models.User) *http.Request {
+	if req == nil {
+		return req
+	}
+	if prefObj != nil {
+		req = req.WithContext(context.WithValue(req.Context(), models.PerfObjCtxKey, prefObj))
+	}
+	if user != nil {
+		req = req.WithContext(context.WithValue(req.Context(), models.UserCtxKey, user))
+	}
+	return req
+}
+
+// writeCredentialProviderError writes a provider failure from a credential
+// endpoint. 409 is the organization_selection_required contract body, not
+// MeshKit. 403 and 404 stay distinct MeshKit errors. Missing local
+// credentials (ErrResultNotFound) stay 404. Other failures are wrapped and
+// written with the provider status, falling back to fallback (or 500).
+func (h *Handler) writeCredentialProviderError(w http.ResponseWriter, err error, wrap func(error) error, fallback int) {
+	if err == nil {
+		return
+	}
+	if sel, ok := models.AsOrganizationSelectionRequired(err); ok {
+		if h.log != nil {
+			h.log.Error(err)
+		}
+		writeJSONMessage(w, sel.Body(), http.StatusConflict)
+		return
+	}
+	code := errors.GetCode(err)
+	status := providerStatusOrInternal(err)
+	if status == http.StatusInternalServerError && fallback != 0 {
+		status = fallback
+	}
+	// Organization-scope and local "credential not found" errors keep their
+	// MeshKit body and real status. Other failures are wrapped in the
+	// handler-specific error, as they were before this mapping existed.
+	if code == models.ErrResultNotFoundCode || code == models.ErrNoQualifyingOrganizationCode || code == models.ErrOrganizationMembershipCode || status == http.StatusNotFound {
+		if h.log != nil {
+			h.log.Error(err)
+		}
+		if code == models.ErrResultNotFoundCode || status == http.StatusNotFound {
+			status = http.StatusNotFound
+		}
+		writeMeshkitError(w, err, status)
+		return
+	}
+	out := err
+	if wrap != nil {
+		out = wrap(err)
+	}
+	if h.log != nil {
+		h.log.Error(out)
+	}
+	writeMeshkitError(w, out, status)
+}
+
 func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	if user == nil {
 		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
@@ -61,12 +125,11 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 		return
 	}
 
+	// SaveUserCredential takes a token, not the request, so the saved
+	// selection is read from the local persister via credential.UserId.
 	createdCredential, err := provider.SaveUserCredential(token, &credential)
 	if err != nil {
-		if h.log != nil {
-			h.log.Error(ErrSaveUserCredential(err))
-		}
-		writeMeshkitError(w, ErrSaveUserCredential(err), http.StatusInternalServerError)
+		h.writeCredentialProviderError(w, err, ErrSaveUserCredential, 0)
 		return
 	}
 
@@ -95,12 +158,9 @@ func (h *Handler) GetUserCredentialByID(w http.ResponseWriter, req *http.Request
 		return
 	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	credential, statusCode, err := provider.GetCredentialByID(token, credentialID)
+	credential, statusCode, err := provider.GetCredentialByID(token, providerUserID(user), credentialID)
 	if err != nil {
-		if h.log != nil {
-			h.log.Error(ErrGetUserCredential(err))
-		}
-		writeMeshkitError(w, ErrGetUserCredential(err), statusCode)
+		h.writeCredentialProviderError(w, err, ErrGetUserCredential, statusCode)
 		return
 	}
 
@@ -121,7 +181,7 @@ func (h *Handler) GetUserCredentialByID(w http.ResponseWriter, req *http.Request
 	}
 }
 
-func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if user == nil {
 		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
 		return
@@ -163,12 +223,17 @@ func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _
 		h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
 	}
 
+	// The remote provider reads the saved selection off the session preference
+	// (and auto-selects a sole organization when none is saved). Put it on the
+	// request so GetUserCredentials can see the same Preference the middleware
+	// already loaded, including a selection the handler just mutated.
+	if prefObj != nil {
+		req = req.WithContext(context.WithValue(req.Context(), models.PerfObjCtxKey, prefObj))
+	}
+
 	credentialsPage, err := provider.GetUserCredentials(req, user.ID.String(), page, pageSize, search, order)
 	if err != nil {
-		if h.log != nil {
-			h.log.Error(ErrGetUserCredential(err))
-		}
-		writeMeshkitError(w, ErrGetUserCredential(err), http.StatusInternalServerError)
+		h.writeCredentialProviderError(w, err, ErrGetUserCredential, 0)
 		return
 	}
 
@@ -181,7 +246,7 @@ func (h *Handler) GetUserCredentials(w http.ResponseWriter, req *http.Request, _
 	}
 }
 
-func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if user == nil {
 		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
 		return
@@ -226,18 +291,10 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
+	req = sessionRequest(req, prefObj, user)
 	_, err = provider.UpdateUserCredential(req, credential)
 	if err != nil {
-		// The local provider reports a missing or deleted credential with
-		// ErrResultNotFound, the remote provider with its own 404.
-		if errors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
-			writeMeshkitError(w, err, http.StatusNotFound)
-			return
-		}
-		if h.log != nil {
-			h.log.Error(ErrUpdateUserCredential(err))
-		}
-		writeMeshkitError(w, ErrUpdateUserCredential(err), http.StatusInternalServerError)
+		h.writeCredentialProviderError(w, err, ErrUpdateUserCredential, 0)
 		return
 	}
 
@@ -247,7 +304,7 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if provider == nil {
 		if h.log != nil {
 			h.log.Error(ErrNilProvider())
@@ -282,21 +339,11 @@ func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	if user != nil {
-		req = req.WithContext(context.WithValue(req.Context(), models.UserCtxKey, user))
-	}
+	req = sessionRequest(req, prefObj, user)
 
 	_, err = provider.DeleteUserCredential(req, credentialID)
 	if err != nil {
-		if errors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
-			writeMeshkitError(w, err, http.StatusNotFound)
-			return
-		}
-		deleteErr := ErrDeleteUserCredential(err)
-		if h.log != nil {
-			h.log.Error(deleteErr)
-		}
-		writeMeshkitError(w, deleteErr, http.StatusInternalServerError)
+		h.writeCredentialProviderError(w, err, ErrDeleteUserCredential, 0)
 		return
 	}
 

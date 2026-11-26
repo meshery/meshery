@@ -1712,7 +1712,7 @@ func (l *DefaultLocalProvider) SaveUserCredential(token string, credential *Cred
 	return credential, nil
 }
 
-func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID core.Uuid) (*Credential, int, error) {
+func (l *DefaultLocalProvider) GetCredentialByID(token, _ string, credentialID core.Uuid) (*Credential, int, error) {
 	credential := &Credential{}
 	result := l.GetGenericPersister().Model(&Credential{}).Where("id = ? AND deleted_at is NULL", credentialID).First(credential)
 	if result.Error != nil {
