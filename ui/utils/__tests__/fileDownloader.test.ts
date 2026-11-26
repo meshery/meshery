@@ -107,35 +107,38 @@ describe('downloadContent', () => {
     expect(setAttributeSpy).toHaveBeenCalledWith('download', filename);
   });
 
-  it.each([FILTER, PATTERN])('rejects an authentication redirect for %s without saving HTML', async (type) => {
-    vi.stubGlobal('URL', realURL);
-    const requests: string[] = [];
-    const server = createServer((req, res) => {
-      requests.push(req.url!);
-      if (req.url === '/provider') {
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end('<html>Choose a provider</html>');
-      } else {
-        res.writeHead(302, { Location: '/provider' });
-        res.end();
+  it.each([FILTER, PATTERN])(
+    'rejects an authentication redirect for %s without saving HTML',
+    async (type) => {
+      vi.stubGlobal('URL', realURL);
+      const requests: string[] = [];
+      const server = createServer((req, res) => {
+        requests.push(req.url!);
+        if (req.url === '/provider') {
+          res.writeHead(200, { 'Content-Type': 'text/html' });
+          res.end('<html>Choose a provider</html>');
+        } else {
+          res.writeHead(302, { Location: '/provider' });
+          res.end();
+        }
+      });
+      await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+      try {
+        const address = server.address() as { port: number };
+        fetchMock.mockImplementation((uri, options) =>
+          realFetch(`http://127.0.0.1:${address.port}${uri}`, options),
+        );
+        await expect(downloadContent({ id: 'f1', type, name: 'example' })).rejects.toThrow();
+        expect(requests).toEqual([`/api/${type}/download/f1`]);
+        expect(createElementSpy).not.toHaveBeenCalled();
+        expect(createObjectURL).not.toHaveBeenCalled();
+      } finally {
+        await new Promise<void>((resolve, reject) =>
+          server.close((error) => (error ? reject(error) : resolve())),
+        );
       }
-    });
-    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
-    try {
-      const address = server.address() as { port: number };
-      fetchMock.mockImplementation((uri, options) =>
-        realFetch(`http://127.0.0.1:${address.port}${uri}`, options),
-      );
-      await expect(downloadContent({ id: 'f1', type, name: 'example' })).rejects.toThrow();
-      expect(requests).toEqual([`/api/${type}/download/f1`]);
-      expect(createElementSpy).not.toHaveBeenCalled();
-      expect(createObjectURL).not.toHaveBeenCalled();
-    } finally {
-      await new Promise<void>((resolve, reject) =>
-        server.close((error) => (error ? reject(error) : resolve())),
-      );
-    }
-  });
+    },
+  );
 
   it('waits for the response body before starting the download', async () => {
     let finishBody!: (_blob: Blob) => void;
@@ -155,14 +158,17 @@ describe('downloadContent', () => {
     expect(setAttributeSpy).toHaveBeenCalledWith('download', 'filter.wasm');
   });
 
-  it.each([FILTER, PATTERN])('rejects HTTP errors for %s without saving an error body', async (type) => {
-    fetchMock.mockResolvedValueOnce({ ok: false, status: 404 });
-    await expect(downloadContent({ id: 'missing', type, name: 'missing' })).rejects.toThrow(
-      'Download failed (HTTP 404)',
-    );
-    expect(createElementSpy).not.toHaveBeenCalled();
-    expect(createObjectURL).not.toHaveBeenCalled();
-  });
+  it.each([FILTER, PATTERN])(
+    'rejects HTTP errors for %s without saving an error body',
+    async (type) => {
+      fetchMock.mockResolvedValueOnce({ ok: false, status: 404 });
+      await expect(downloadContent({ id: 'missing', type, name: 'missing' })).rejects.toThrow(
+        'Download failed (HTTP 404)',
+      );
+      expect(createElementSpy).not.toHaveBeenCalled();
+      expect(createObjectURL).not.toHaveBeenCalled();
+    },
+  );
 
   it('propagates network and body-read failures without starting a download', async () => {
     fetchMock.mockRejectedValueOnce(new Error('Network failed'));
@@ -174,7 +180,9 @@ describe('downloadContent', () => {
       headers: new Headers(),
       blob: () => Promise.reject(new Error('Body failed')),
     });
-    await expect(downloadContent({ id: 'f1', type: FILTER, name: 'f' })).rejects.toThrow('Body failed');
+    await expect(downloadContent({ id: 'f1', type: FILTER, name: 'f' })).rejects.toThrow(
+      'Body failed',
+    );
     expect(createElementSpy).not.toHaveBeenCalled();
   });
 
