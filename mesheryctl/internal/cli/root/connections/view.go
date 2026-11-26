@@ -169,7 +169,7 @@ func isArgumentUUID(arg string) bool {
 	return err == nil
 }
 
-var fetchConnectionByID = func(connectionID string) (*connection.Connection, error) {
+func fetchConnectionByID(connectionID string) (*connection.Connection, error) {
 	url := fmt.Sprintf("%s/%s", connectionApiPath, connectionID)
 	fetchedConnection, err := api.Fetch[connection.Connection](url)
 	if err != nil {
