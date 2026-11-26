@@ -102,7 +102,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		if err != nil {
 			return ErrGetCurrentContext(err)
 		}
-		running, err := utils.IsMesheryRunning(currCtx.GetPlatform())
+		running, err := utils.IsMesheryRunning(currCtx)
 		if err != nil {
 			return err
 		}

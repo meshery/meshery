@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/pkg/errors"
@@ -56,8 +57,53 @@ func TestListEnvironment(t *testing.T) {
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listUsageMsg)),
 		},
+		{
+			Name:             "given --page 0 when environment list then throw invalid flag error",
+			Args:             []string{"list", "--orgId", testConstants["orgId"], "--page", "0"},
+			Fixture:          "list.environment.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '0'")),
+		},
+		{
+			Name:             "given a negative --page when environment list then throw invalid flag error",
+			Args:             []string{"list", "--orgId", testConstants["orgId"], "--page", "-1"},
+			Fixture:          "list.environment.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '-1'")),
+		},
+		{
+			Name:             "given --pagesize 0 when environment list then throw invalid flag error",
+			Args:             []string{"list", "--orgId", testConstants["orgId"], "--pagesize", "0"},
+			Fixture:          "list.environment.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '0'")),
+		},
+		{
+			Name:             "given a negative --pagesize when environment list then throw invalid flag error",
+			Args:             []string{"list", "--orgId", testConstants["orgId"], "--pagesize", "-1"},
+			Fixture:          "list.environment.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pagesize '-1'")),
+		},
+		{
+			Name:             "given valid --page and --pagesize when environment list then list environments",
+			Args:             []string{"list", "--orgId", testConstants["orgId"], "--page", "2", "--pagesize", "5"},
+			URL:              fmt.Sprintf("/%s?orgId=%s&page=1&pagesize=5", environmentApiPath, testConstants["orgId"]),
+			Fixture:          "list.environment.response.golden",
+			ExpectedResponse: "list.environment.page2.golden",
+			ExpectError:      false,
+		},
 	}
 
+	mesheryctlflags.InitValidators(EnvironmentCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, EnvironmentCmd, tests, currDir, "environments")
 }
 
