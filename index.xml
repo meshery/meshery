@@ -40984,7 +40984,7 @@ mesheryctl system context list
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;Configure mesheryctl to actively use one one context vs. another context.&lt;/p&gt;
+&lt;p&gt;Configure mesheryctl to actively use one context vs. another context.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
