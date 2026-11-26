@@ -125,7 +125,7 @@ export const extractMutationError = (error: any) => {
     if (typeof error.data?.error === 'string') return error.data.error;
   }
   if (typeof error.message === 'string') return error.message;
-  return error;
+  return error.status ? `Request failed (${error.status})` : 'Request failed';
 };
 
 export const handleUpdatePatternVisibility = async ({

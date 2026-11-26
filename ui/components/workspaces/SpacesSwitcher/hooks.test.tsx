@@ -189,6 +189,14 @@ describe('visibility update helpers', () => {
       selectedResource: { id: 'p-1', name: 'p', patternFile: '{}' },
     });
     expect(outPattern.error).toBe('internal server error');
+
+    const updateStatusOnly = vi.fn().mockResolvedValue({ error: { status: 503 } });
+    const outStatusOnly = await handleUpdateViewVisibility({
+      value: 'private',
+      updateView: updateStatusOnly,
+      selectedResource: { id: 'v-1' },
+    });
+    expect(outStatusOnly.error).toBe('Request failed (503)');
   });
 });
 
