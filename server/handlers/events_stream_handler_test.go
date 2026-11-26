@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -121,5 +122,208 @@ func TestSubscribeEventsHandler_StopsOnContextCancellation(t *testing.T) {
 	case <-done:
 	case <-time.After(testTimeout):
 		t.Fatal("handler did not return after context cancellation")
+	}
+}
+
+func newTestEventWithID(userID uuid.UUID, desc string) *events.Event {
+	ev := events.NewEvent().
+		FromOwner(userID).
+		WithCategory("test").
+		WithAction("streamed").
+		WithSeverity(events.Informational).
+		WithDescription(desc).
+		Build()
+	ev.ID = uuid.Must(uuid.NewV4())
+	return ev
+}
+
+func waitForBodyContains(t *testing.T, rec *sseRecorder, writeCh chan struct{}, substr string) {
+	t.Helper()
+	deadline := time.After(testTimeout)
+	for !strings.Contains(rec.body.String(), substr) {
+		select {
+		case <-deadline:
+			t.Fatalf("timed out waiting for %q in SSE body; got: %q", substr, rec.body.String())
+		case <-writeCh:
+		case <-time.After(20 * time.Millisecond):
+		}
+	}
+}
+
+func TestSubscribeEventsHandler_FramesEventID(t *testing.T) {
+	h := newEventsTestHandler(t)
+	userID := uuid.Must(uuid.NewV4())
+	user := &models.User{ID: userID}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	req := httptest.NewRequest(http.MethodGet, "/api/system/events/subscribe", nil).WithContext(ctx)
+
+	writeCh := make(chan struct{}, 16)
+	rec := newSSERecorder(writeCh)
+
+	done := make(chan struct{})
+	go func() {
+		h.SubscribeEventsHandler(rec, req, nil, user, nil)
+		close(done)
+	}()
+
+	eventWithID := newTestEventWithID(userID, "with-id-event")
+	deadline := time.After(testTimeout)
+	for !strings.Contains(rec.body.String(), "with-id-event") {
+		select {
+		case <-deadline:
+			t.Fatalf("timed out waiting for event; got: %q", rec.body.String())
+		default:
+		}
+		h.config.EventBroadcaster.Publish(userID, eventWithID)
+		select {
+		case <-writeCh:
+		case <-time.After(20 * time.Millisecond):
+		}
+	}
+
+	wantIDLine := fmt.Sprintf("id: %s\ndata: ", eventWithID.ID.String())
+	if !strings.Contains(rec.body.String(), wantIDLine) {
+		t.Fatalf("expected SSE frame to contain %q, got: %q", wantIDLine, rec.body.String())
+	}
+
+	// An event with uuid.Nil ID must omit the `id:` line.
+	nilIDEvent := events.NewEvent().
+		FromOwner(userID).
+		WithCategory("test").
+		WithAction("streamed").
+		WithSeverity(events.Informational).
+		WithDescription("nil-id-event").
+		Build()
+	nilIDEvent.ID = uuid.Nil
+	h.config.EventBroadcaster.Publish(userID, nilIDEvent)
+	waitForBodyContains(t, rec, writeCh, "nil-id-event")
+
+	for _, frame := range strings.Split(rec.body.String(), "\n\n") {
+		if strings.Contains(frame, "nil-id-event") {
+			if strings.Contains(frame, "id: ") {
+				t.Fatalf("expected nil-ID event to omit id: line, got frame %q", frame)
+			}
+			break
+		}
+	}
+
+	cancel()
+	<-done
+}
+
+func TestSubscribeEventsHandler_ReplaysMissedEventsOnLastEventID(t *testing.T) {
+	h := newEventsTestHandler(t)
+	userID := uuid.Must(uuid.NewV4())
+	user := &models.User{ID: userID}
+
+	e1 := newTestEventWithID(userID, "event-one")
+	e2 := newTestEventWithID(userID, "event-two")
+	e3 := newTestEventWithID(userID, "event-three")
+
+	// Published before the client reconnects with Last-Event-ID = e1.ID.
+	h.config.EventBroadcaster.Publish(userID, e1)
+	h.config.EventBroadcaster.Publish(userID, e2)
+	h.config.EventBroadcaster.Publish(userID, e3)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	req := httptest.NewRequest(http.MethodGet, "/api/system/events/subscribe", nil).WithContext(ctx)
+	req.Header.Set("Last-Event-ID", e1.ID.String())
+
+	writeCh := make(chan struct{}, 16)
+	rec := newSSERecorder(writeCh)
+
+	done := make(chan struct{})
+	go func() {
+		h.SubscribeEventsHandler(rec, req, nil, user, nil)
+		close(done)
+	}()
+
+	waitForBodyContains(t, rec, writeCh, "event-three")
+
+	body := rec.body.String()
+	if strings.Contains(body, "event-one") {
+		t.Fatalf("did not expect Last-Event-ID anchor event-one to be replayed; got: %q", body)
+	}
+	idx2 := strings.Index(body, "event-two")
+	idx3 := strings.Index(body, "event-three")
+	if idx2 == -1 || idx3 == -1 || idx2 >= idx3 {
+		t.Fatalf("expected event-two before event-three in replay; got: %q", body)
+	}
+	if !strings.Contains(body, fmt.Sprintf("id: %s\ndata: ", e2.ID.String())) ||
+		!strings.Contains(body, fmt.Sprintf("id: %s\ndata: ", e3.ID.String())) {
+		t.Fatalf("replayed events missing id: framing; got: %q", body)
+	}
+
+	// Subsequent live event still streams after replay.
+	e4 := newTestEventWithID(userID, "event-four")
+	h.config.EventBroadcaster.Publish(userID, e4)
+	waitForBodyContains(t, rec, writeCh, "event-four")
+
+	body = rec.body.String()
+	if strings.Index(body, "event-three") >= strings.Index(body, "event-four") {
+		t.Fatalf("expected live event-four after replayed event-three; got: %q", body)
+	}
+
+	cancel()
+	<-done
+}
+
+func TestSubscribeEventsHandler_LastEventIDEdgeCases(t *testing.T) {
+	cases := []struct {
+		name        string
+		lastEventID string
+	}{
+		{name: "malformed", lastEventID: "not-a-uuid"},
+		{name: "unknown", lastEventID: uuid.Must(uuid.NewV4()).String()},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newEventsTestHandler(t)
+			userID := uuid.Must(uuid.NewV4())
+			user := &models.User{ID: userID}
+
+			prior := newTestEventWithID(userID, "prior-event")
+			h.config.EventBroadcaster.Publish(userID, prior)
+
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			req := httptest.NewRequest(http.MethodGet, "/api/system/events/subscribe", nil).WithContext(ctx)
+			req.Header.Set("Last-Event-ID", tc.lastEventID)
+
+			writeCh := make(chan struct{}, 8)
+			rec := newSSERecorder(writeCh)
+
+			done := make(chan struct{})
+			go func() {
+				h.SubscribeEventsHandler(rec, req, nil, user, nil)
+				close(done)
+			}()
+
+			live := newTestEventWithID(userID, "live-event")
+			deadline := time.After(testTimeout)
+			for !strings.Contains(rec.body.String(), "live-event") {
+				select {
+				case <-deadline:
+					t.Fatalf("timed out waiting for live-event; got: %q", rec.body.String())
+				default:
+				}
+				h.config.EventBroadcaster.Publish(userID, live)
+				select {
+				case <-writeCh:
+				case <-time.After(20 * time.Millisecond):
+				}
+			}
+
+			if strings.Contains(rec.body.String(), "prior-event") {
+				t.Fatalf("did not expect prior-event replay for %s Last-Event-ID; got: %q", tc.name, rec.body.String())
+			}
+
+			cancel()
+			<-done
+		})
 	}
 }

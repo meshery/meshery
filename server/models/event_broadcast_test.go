@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshkit/models/events"
 )
 
 // TestBroadcastDeliversToSubscriber is the happy path: a published value reaches
@@ -312,4 +313,182 @@ func TestBroadcastConcurrentPruneAndSubscribe(t *testing.T) {
 	case <-time.After(time.Second):
 		t.Fatal("timed out waiting for event on final subscriber")
 	}
+}
+
+func newTestEventWithID(userID uuid.UUID, desc string) *events.Event {
+	ev := events.NewEvent().
+		FromOwner(userID).
+		WithCategory("test").
+		WithAction("replay").
+		WithSeverity(events.Informational).
+		WithDescription(desc).
+		Build()
+	ev.ID = uuid.Must(uuid.NewV4())
+	return ev
+}
+
+func TestBroadcastSubscribeFromReplaysMissedEvents(t *testing.T) {
+	b := NewBroadcaster("test")
+	userID := uuid.Must(uuid.NewV4())
+
+	e1 := newTestEventWithID(userID, "e1")
+	e2 := newTestEventWithID(userID, "e2")
+	e3 := newTestEventWithID(userID, "e3")
+
+	// Published while no subscriber is connected.
+	b.Publish(userID, e1)
+	b.Publish(userID, e2)
+	b.Publish(userID, e3)
+
+	replay, ch, unsub := b.SubscribeFrom(userID, e1.ID.String())
+	defer unsub()
+
+	if len(replay) != 2 {
+		t.Fatalf("replay len = %d, want 2", len(replay))
+	}
+	if replay[0].(*events.Event).ID != e2.ID || replay[1].(*events.Event).ID != e3.ID {
+		t.Fatalf("unexpected replay order/IDs: got [%v, %v], want [%v, %v]",
+			replay[0].(*events.Event).ID, replay[1].(*events.Event).ID, e2.ID, e3.ID)
+	}
+
+	e4 := newTestEventWithID(userID, "e4")
+	b.Publish(userID, e4)
+	select {
+	case got := <-ch:
+		if got.(*events.Event).ID != e4.ID {
+			t.Fatalf("live event ID = %v, want %v", got.(*events.Event).ID, e4.ID)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for live event after replay")
+	}
+}
+
+func TestBroadcastSubscribeFromEdgeCases(t *testing.T) {
+	// Zero-value Broadcast must work without panicking.
+	var b Broadcast
+	userA := uuid.Must(uuid.NewV4())
+	userB := uuid.Must(uuid.NewV4())
+
+	eA := newTestEventWithID(userA, "a1")
+	eB := newTestEventWithID(userB, "b1")
+	nilIDEvent := events.NewEvent().FromOwner(userA).WithDescription("nil-id").Build()
+	nilIDEvent.ID = uuid.Nil
+
+	b.Publish(userA, eA)
+	b.Publish(userA, nilIDEvent)
+	b.Publish(userA, "non-event")
+	b.Publish(userB, eB)
+
+	// Empty lastEventID -> nil replay.
+	replay, ch, unsub := b.SubscribeFrom(userA, "")
+	if replay != nil {
+		t.Fatalf("empty lastEventID: got %v, want nil", replay)
+	}
+	unsub()
+	_ = ch
+
+	// Unknown/malformed lastEventID -> nil replay.
+	replay, _, unsub = b.SubscribeFrom(userA, "not-a-valid-uuid")
+	if replay != nil {
+		t.Fatalf("malformed lastEventID: got %v, want nil", replay)
+	}
+	unsub()
+
+	// Cross-user isolation: userB's event ID must not match userA's buffer.
+	replay, _, unsub = b.SubscribeFrom(userA, eB.ID.String())
+	if replay != nil {
+		t.Fatalf("cross-user lastEventID: got %v, want nil", replay)
+	}
+	unsub()
+
+	// Latest event ID -> nil replay (no missed events).
+	replay, _, unsub = b.SubscribeFrom(userA, eA.ID.String())
+	if replay != nil {
+		t.Fatalf("latest lastEventID: got %v, want nil", replay)
+	}
+	unsub()
+}
+
+func TestBroadcastReplayBufferRingWrap(t *testing.T) {
+	b := NewBroadcaster("test")
+	userID := uuid.Must(uuid.NewV4())
+
+	total := replayBufferSize + 10
+	published := make([]*events.Event, total)
+	for i := 0; i < total; i++ {
+		published[i] = newTestEventWithID(userID, "ring")
+		b.Publish(userID, published[i])
+	}
+
+	// Evicted oldest event returns nil replay.
+	replay, _, unsub := b.SubscribeFrom(userID, published[0].ID.String())
+	unsub()
+	if replay != nil {
+		t.Fatalf("evicted event ID returned %d replay items, want nil", len(replay))
+	}
+
+	// Retained event near tail replays only the events strictly after it.
+	anchorIdx := total - 5
+	replay, _, unsub = b.SubscribeFrom(userID, published[anchorIdx].ID.String())
+	defer unsub()
+	if len(replay) != 4 {
+		t.Fatalf("replay len = %d, want 4", len(replay))
+	}
+	for i, item := range replay {
+		want := published[anchorIdx+1+i].ID
+		got := item.(*events.Event).ID
+		if got != want {
+			t.Fatalf("replay[%d] ID = %v, want %v", i, got, want)
+		}
+	}
+}
+
+func TestBroadcastConcurrentPublishAndSubscribeFromNoRace(t *testing.T) {
+	b := NewBroadcaster("test")
+	userID := uuid.Must(uuid.NewV4())
+
+	seed := newTestEventWithID(userID, "seed")
+	b.Publish(userID, seed)
+
+	var wg sync.WaitGroup
+	stop := make(chan struct{})
+
+	for i := 0; i < 4; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for {
+				select {
+				case <-stop:
+					return
+				default:
+					b.Publish(userID, newTestEventWithID(userID, "concurrent"))
+				}
+			}
+		}()
+	}
+
+	for i := 0; i < 4; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for {
+				select {
+				case <-stop:
+					return
+				default:
+					_, ch, unsub := b.SubscribeFrom(userID, seed.ID.String())
+					select {
+					case <-ch:
+					default:
+					}
+					unsub()
+				}
+			}
+		}()
+	}
+
+	time.Sleep(200 * time.Millisecond)
+	close(stop)
+	wg.Wait()
 }
