@@ -21,8 +21,11 @@ import {
 } from '@/rtk-query/user';
 import { useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import { useNotification } from '@/utils/hooks/useNotification';
-import { getShareableResourceRoute } from './SpacesSwitcher/hooks';
-import { JsonParse } from '@/utils/utils';
+import {
+  getShareableResourceRoute,
+  handleUpdatePatternVisibility,
+  handleUpdateViewVisibility,
+} from './SpacesSwitcher/hooks';
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 
@@ -81,39 +84,23 @@ export const ShareWorkspaceModal_: FC<ShareWorkspaceModalInternalProps> = ({
     firstSelectedResource?.name,
   );
 
-  const handleUpdatePatternVisibility = async (value: string) => {
-    const res = await updatePatterns({
-      body: {
-        id: firstSelectedResource?.id,
-        name: firstSelectedResource?.name,
-        catalogData: firstSelectedResource?.catalogData,
-        designFile: JsonParse(firstSelectedResource?.patternFile),
-        visibility: value,
-      },
-    });
-    return {
-      error: res?.error?.error,
-    };
-  };
-
-  const handleUpdateViewVisibilityCall = async (value: string) => {
-    const res = await updateView({
-      id: firstSelectedResource?.id,
-      body: {
-        visibility: value,
-      },
-    });
-    return {
-      error: res.error?.error,
-    };
-  };
-
-  const handleUpdateVisibility = (updatedVisibility: string) => {
+  const handleUpdateVisibility = (value: string) => {
+    if (!firstSelectedResource) {
+      return Promise.resolve({ error: 'No resource selected' });
+    }
     if (dataName === RESOURCE_TYPE.DESIGN) {
-      return handleUpdatePatternVisibility(updatedVisibility);
+      return handleUpdatePatternVisibility({
+        value,
+        updatePatterns,
+        selectedResource: firstSelectedResource,
+      });
     }
     if (dataName === RESOURCE_TYPE.VIEW) {
-      return handleUpdateViewVisibilityCall(updatedVisibility);
+      return handleUpdateViewVisibility({
+        value,
+        updateView,
+        selectedResource: firstSelectedResource,
+      });
     }
     return Promise.resolve({ error: undefined });
   };
