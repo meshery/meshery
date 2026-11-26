@@ -203,7 +203,7 @@ describe('Adapters component', () => {
     switches.forEach((sw) => expect(sw).not.toBeChecked());
   });
 
-  it('handles null sync response without showing error toast', async () => {
+  it('handles a defensive null sync response without showing error toast', async () => {
     fetchSystemSyncMock.mockReturnValue({
       unwrap: () => Promise.resolve(null),
     });
@@ -216,8 +216,39 @@ describe('Adapters component', () => {
       await Promise.resolve();
     });
 
+    expect(screen.getAllByText(/Meshery Adapter for Istio/i).length).toBeGreaterThan(0);
     expect(notifyMock).not.toHaveBeenCalled();
     expect(updateProgressMock).toHaveBeenLastCalledWith({ showProgress: false });
+    const switches = screen.getAllByTestId('switch-OperatorSwitch');
+    switches.forEach((sw) => expect(sw).not.toBeChecked());
+  });
+
+  it('does not overwrite an adapter toggled by the user while initial sync is pending', async () => {
+    let resolveSync: (value: unknown) => void = () => {};
+    fetchSystemSyncMock.mockReturnValue({
+      unwrap: () =>
+        new Promise((resolve) => {
+          resolveSync = resolve;
+        }),
+    });
+    changeAdapterStateMock.mockImplementation((cb: any) => cb({}, null));
+
+    await act(async () => {
+      render(<Adapters />);
+    });
+
+    const istioSwitch = screen.getAllByTestId('switch-OperatorSwitch')[0];
+    await act(async () => {
+      fireEvent.click(istioSwitch);
+    });
+    expect(istioSwitch).toBeChecked();
+
+    await act(async () => {
+      resolveSync({});
+      await Promise.resolve();
+    });
+
+    expect(screen.getAllByTestId('switch-OperatorSwitch')[0]).toBeChecked();
   });
 
   it('passes the deploy payload through to changeAdapterState on toggle', async () => {

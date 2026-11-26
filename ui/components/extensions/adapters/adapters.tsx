@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { isNil } from 'lodash';
 import { CardContainer, FrontSideDescription, ImageWrapper } from '../../../css/icons.styles';
 import { ADAPTER_STATUS, adaptersList, AdaptersListType } from './constants';
@@ -31,6 +31,9 @@ const Adapters: React.FC = () => {
   // Adapters with a deploy/undeploy request still in flight. Their switch is
   // disabled so a second toggle can't race the first one's rollback.
   const [pendingAdapters, setPendingAdapters] = useState<Record<string, boolean>>({});
+  // Track adapters toggled by the user so an in-flight sync cannot overwrite
+  // a newer user choice when it resolves.
+  const userToggledAdaptersRef = useRef<Set<string>>(new Set());
 
   // Hooks.
   const { notify } = useNotification();
@@ -49,22 +52,34 @@ const Adapters: React.FC = () => {
 
     fetchSystemSync()
       .unwrap()
-      .then((result: SyncResult) => {
+      .then((result: SyncResult | null | undefined) => {
         showLoader && updateProgress({ showProgress: false });
 
+        // Defensive guard: SessionSyncHandler encodes a SessionSyncData object,
+        // so null/undefined only occurs on unexpected empty bodies.
         if (!isNil(result)) {
-          // Deep copying to avoid mutability.
-          const currentAdaptersList = structuredClone(adaptersList);
           const meshAdapters = Array.isArray(result.meshAdapters) ? result.meshAdapters : [];
 
-          meshAdapters.forEach((element) => {
-            const adapterId = element?.name;
-            if (adapterId && currentAdaptersList[adapterId]) {
-              currentAdaptersList[adapterId].enabled = true;
-              currentAdaptersList[adapterId].url = element.adapter_location;
-            }
+          setAvailableAdapters((prev) => {
+            // Deep copying to avoid mutability.
+            const currentAdaptersList = structuredClone(adaptersList);
+
+            meshAdapters.forEach((element) => {
+              const adapterId = element?.name;
+              if (adapterId && currentAdaptersList[adapterId]) {
+                currentAdaptersList[adapterId].enabled = true;
+                currentAdaptersList[adapterId].url = element.adapter_location;
+              }
+            });
+
+            userToggledAdaptersRef.current.forEach((adapterId) => {
+              if (currentAdaptersList[adapterId] && prev[adapterId]) {
+                currentAdaptersList[adapterId] = prev[adapterId];
+              }
+            });
+
+            return currentAdaptersList;
           });
-          setAvailableAdapters(currentAdaptersList);
         }
       })
       .catch((error) => handleError('Unable to fetch list of adapters.')(error));
@@ -114,6 +129,7 @@ const Adapters: React.FC = () => {
 
   const handleToggle = (selectedAdapter: AdaptersListType[string], adapterId: string): void => {
     if (pendingAdapters[adapterId]) return;
+    userToggledAdaptersRef.current.add(adapterId);
     setAvailableAdapters({
       ...availableAdapters,
       [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled },
