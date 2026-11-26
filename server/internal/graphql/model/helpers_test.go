@@ -70,6 +70,12 @@ func TestHelpers_NilProviderSafety(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Empty(t, addons)
 
+	// BatchGetAddonsState with nil provider
+	batchAddons, err := model.BatchGetAddonsState(ctx, model.AllMeshType, nil, []string{"c1"})
+	assert.NoError(t, err)
+	assert.NotNil(t, batchAddons)
+	assert.Empty(t, batchAddons["c1"])
+
 	// 4. GetDataPlaneState with nil provider
 	dpState, err := model.GetDataPlaneState(ctx, model.AllMeshType, nil, []string{"c1"})
 	assert.NoError(t, err)
@@ -107,6 +113,12 @@ func TestHelpers_LightweightStubExecution(t *testing.T) {
 	addons, err := model.GetAddonsState(ctx, model.AllMeshType, persister, []string{"cluster-1"})
 	assert.NoError(t, err)
 	assert.Empty(t, addons)
+
+	// BatchGetAddonsState with lightweight stub
+	batchAddonsMap, err := model.BatchGetAddonsState(ctx, model.AllMeshType, persister, []string{"cluster-1"})
+	assert.NoError(t, err)
+	assert.NotNil(t, batchAddonsMap)
+	assert.Empty(t, batchAddonsMap["cluster-1"])
 
 	// 4. GetDataPlaneState with lightweight stub
 	dp, err := model.GetDataPlaneState(ctx, model.AllMeshType, persister, []string{"cluster-1"})
