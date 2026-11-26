@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"net/url"
 	"path/filepath"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
@@ -55,13 +56,13 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentViewFlags)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) != 1 {
+		if len(args) != 1 || strings.TrimSpace(args[0]) == "" {
 			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errInvalidArg, viewUsageMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		componentDefinition := args[0]
+		componentDefinition := strings.TrimSpace(args[0])
 		urlPath := componentApiPath
 		searchTerm := ""
 

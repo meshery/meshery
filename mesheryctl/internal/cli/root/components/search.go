@@ -17,6 +17,7 @@ package components
 import (
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
@@ -51,14 +52,14 @@ mesheryctl component search [query-text] [--page 1]
 		return mesheryctlflags.ValidateCmdFlags(cmd, &componentSearchFlags)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) != 1 {
+		if len(args) != 1 || strings.TrimSpace(args[0]) == "" {
 			return utils.ErrInvalidArgument(fmt.Errorf("%v\n%v", errInvalidArg, searchUsageMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		searchValue := url.Values{}
-		searchValue.Add("search", args[0])
+		searchValue.Add("search", strings.TrimSpace(args[0]))
 
 		modelData := display.DisplayDataAsync{
 			UrlPath:  fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()),

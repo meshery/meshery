@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
@@ -37,7 +38,7 @@ mesheryctl model search [query-text] --pagesize [pagesize-number]
 		return mesheryctlflags.ValidateCmdFlags(cmd, &modelSearchFlags)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) == 0 {
+		if len(args) == 0 || strings.TrimSpace(args[0]) == "" {
 			return utils.ErrInvalidArgument(errors.New(errSearchModelName))
 		}
 		if len(args) > 1 {
@@ -50,7 +51,7 @@ mesheryctl model search [query-text] --pagesize [pagesize-number]
 		page, _ := cmd.Flags().GetInt("page")
 		pageSize, _ := cmd.Flags().GetInt("pagesize")
 		modelData := display.DisplayDataAsync{
-			UrlPath:  fmt.Sprintf("%s?search=%s", modelsApiPath, url.QueryEscape(args[0])),
+			UrlPath:  fmt.Sprintf("%s?search=%s", modelsApiPath, url.QueryEscape(strings.TrimSpace(args[0]))),
 			DataType: "model",
 			Header:   []string{"ID", "Model", "Category", "Version"},
 			Page:     page,
