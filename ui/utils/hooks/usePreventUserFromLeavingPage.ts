@@ -37,8 +37,6 @@ export default function usePreventUserFromLeavingPage(
         };
         SingletonRouter.router.change = routerChangeHandler;
       }
-    } else if (typeof window !== 'undefined') {
-      window.onbeforeunload = () => {};
     }
 
     // unmount

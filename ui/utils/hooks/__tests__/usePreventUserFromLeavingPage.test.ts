@@ -29,6 +29,7 @@ describe('usePreventUserFromLeavingPage', () => {
   beforeEach(() => {
     originalOnBeforeUnload = window.onbeforeunload;
     originalConfirm = window.confirm;
+    window.onbeforeunload = null;
     window.confirm = vi.fn(() => true);
     routerInstance.change = undefined;
     (RouterPrototype.change as unknown as ReturnType<typeof vi.fn>).mockClear();
@@ -49,14 +50,14 @@ describe('usePreventUserFromLeavingPage', () => {
     expect(typeof routerInstance.change).toBe('function');
   });
 
-  it('skips installation when starting disabled', () => {
-    renderHook(() => usePreventUserFromLeavingPage(false));
+  it('skips installation when starting disabled and leaves handler null on unmount', () => {
+    const { unmount } = renderHook(() => usePreventUserFromLeavingPage(false));
 
-    // onbeforeunload was assigned a noop, not the confirmation function.
-    expect(typeof window.onbeforeunload).toBe('function');
-    const result = (window.onbeforeunload as () => unknown)();
-    expect(result).toBeUndefined();
+    expect(window.onbeforeunload).toBeNull();
     expect(routerInstance.change).toBeUndefined();
+
+    unmount();
+    expect(window.onbeforeunload).toBeNull();
   });
 
   it('routes navigation through prototype.change when the user confirms', async () => {
@@ -135,9 +136,10 @@ describe('usePreventUserFromLeavingPage', () => {
     }
   });
 
-  it('returns a setter that toggles the prevention state and re-runs the effect', () => {
-    const { result } = renderHook(() => usePreventUserFromLeavingPage(false));
+  it('returns a setter that toggles the prevention state and leaves handler null after disabling and unmount', () => {
+    const { result, unmount } = renderHook(() => usePreventUserFromLeavingPage(false));
     expect(routerInstance.change).toBeUndefined();
+    expect(window.onbeforeunload).toBeNull();
 
     act(() => {
       result.current(true);
@@ -149,7 +151,10 @@ describe('usePreventUserFromLeavingPage', () => {
     act(() => {
       result.current(false);
     });
-    // The effect cleanup runs and the new effect installs an inert noop handler.
     expect(routerInstance.change).toBeUndefined();
+    expect(window.onbeforeunload).toBeNull();
+
+    unmount();
+    expect(window.onbeforeunload).toBeNull();
   });
 });
