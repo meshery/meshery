@@ -253,6 +253,25 @@ describe('createHandleDownload', () => {
       event_type: 'INFO',
     });
   });
+
+  it('resets progress and emits an error notification when downloadContent throws', () => {
+    const notify = vi.fn();
+    vi.mocked(downloadContent).mockImplementationOnce(() => {
+      throw new Error('Download failed');
+    });
+    const handler = createHandleDownload({ notify });
+    const ev = { stopPropagation: vi.fn() } as any;
+
+    handler(ev, 'i-1', 'foo');
+
+    expect(updateProgress).toHaveBeenCalledWith({ showProgress: true });
+    expect(updateProgress).toHaveBeenLastCalledWith({ showProgress: false });
+    expect(notify).toHaveBeenCalledWith({
+      message: 'Error downloading "foo" filter',
+      event_type: 'ERROR',
+      details: 'Download failed',
+    });
+  });
 });
 
 describe('createUploadHandler', () => {
