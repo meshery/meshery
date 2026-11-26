@@ -46,7 +46,7 @@ describe('TipsCarousel', () => {
 
   it('renders one bullet per tip as an accessible button', () => {
     render(<TipsCarousel tips={['Tip A', 'Tip B', 'Tip C']} />);
-    const buttons = screen.getAllByRole('button');
+    const buttons = screen.getAllByRole('button', { name: /Show tip \d+ of 3/ });
     expect(buttons).toHaveLength(3);
     expect(buttons[0]).toHaveAttribute('aria-label', 'Show tip 1 of 3');
     expect(buttons[0]).toHaveAttribute('aria-current', 'true');
