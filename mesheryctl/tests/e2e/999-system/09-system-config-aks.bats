@@ -17,7 +17,7 @@ setup() {
     run $MESHERYCTL_BIN system config aks extra-arg
 
     assert_failure
-    assert_output --partial "more than one config name provided"
+    assert_output --partial "too many arguments specified"
 }
 
 @test "[TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] given azure CLI is not installed when running mesheryctl system config aks then an error is displayed" {

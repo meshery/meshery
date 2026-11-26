@@ -125,6 +125,13 @@ func setContext(configFile, cname string) error {
 	return nil
 }
 
+var (
+	aksConfigUsageMsg      = "Usage: mesheryctl system config aks [flags]\nRun 'mesheryctl system config aks --help' to see detailed help message"
+	eksConfigUsageMsg      = "Usage: mesheryctl system config eks [flags]\nRun 'mesheryctl system config eks --help' to see detailed help message"
+	gkeConfigUsageMsg      = "Usage: mesheryctl system config gke [flags]\nRun 'mesheryctl system config gke --help' to see detailed help message"
+	minikubeConfigUsageMsg = "Usage: mesheryctl system config minikube [flags]\nRun 'mesheryctl system config minikube --help' to see detailed help message"
+)
+
 var aksConfigCmd = &cobra.Command{
 	Use:   "aks",
 	Short: "Configure Meshery to use AKS cluster",
@@ -136,9 +143,9 @@ mesheryctl system config aks --token auth.json
 // Configure Meshery to connect to AKS cluster (if session is logged in using login subcommand)
 mesheryctl system config aks
 	`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) >= 1 {
-			return errors.New("more than one config name provided")
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", aksConfigUsageMsg))
 		}
 		return nil
 	},
@@ -204,9 +211,9 @@ mesheryctl system config eks --token auth.json
 // Configure Meshery to connect to EKS cluster (if session is logged in using login subcommand)
 mesheryctl system config eks
 	`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) >= 1 {
-			return errors.New("more than one config name provided")
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", eksConfigUsageMsg))
 		}
 		return nil
 	},
@@ -272,9 +279,9 @@ mesheryctl system config gke --token auth.json
 // Configure Meshery to connect to GKE cluster (if session is logged in using login subcommand)
 mesheryctl system config gke
 	`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) >= 1 {
-			return errors.New("more than one config name provided")
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", gkeConfigUsageMsg))
 		}
 		return nil
 	},
@@ -303,9 +310,9 @@ mesheryctl system config minikube --token auth.json
 // Configure Meshery to connect to minikube cluster (if session is logged in using login subcommand)
 mesheryctl system config minikube
 	`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) >= 1 {
-			return errors.New("more than one config name provided")
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", minikubeConfigUsageMsg))
 		}
 		return nil
 	},

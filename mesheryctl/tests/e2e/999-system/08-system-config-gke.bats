@@ -39,7 +39,7 @@ setup() {
     run $MESHERYCTL_BIN system config gke extra-arg
 
     assert_failure
-    assert_output --partial "more than one config name provided"
+    assert_output --partial "too many arguments specified"
 }
 
 @test "[TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] given no GKE cluster credentials when running mesheryctl system config gke then an error is displayed" {
