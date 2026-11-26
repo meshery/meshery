@@ -89,26 +89,9 @@ mesheryctl system update --skip-reset
 		if err != nil {
 			return err
 		}
-		// On Kubernetes, --skip-reset skips the Helm upgrade, so the pinned version still applies
-		skipUpgrade := utils.SkipResetFlag && currCtx.GetPlatform() == platformKubernetes
-		if currCtx.GetVersion() != "latest" && !skipUpgrade {
-			// ask confirmation if user has pinned the version in config
-			utils.Log.Infof("You have pinned version: %s in your current context", currCtx.GetVersion())
-			userResponse := false
-			if utils.SilentFlag {
-				userResponse = true
-			} else {
-				userResponse, err = utils.AskForConfirmation("Updating Meshery container images/manifest files will supersede the version to latest. Are you sure you want to continue")
-				if err != nil {
-					return err
-				}
-			}
-
-			if !userResponse {
-				utils.Log.Info("Update aborted.")
-				return nil
-			}
-			currCtx.SetVersion("latest")
+		proceed, err := supersedePinnedVersion(currCtx)
+		if err != nil || !proceed {
+			return err
 		}
 
 		utils.Log.Info("Updating Meshery...")
@@ -184,6 +167,30 @@ mesheryctl system update --skip-reset
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		utils.CheckMesheryctlClientVersion(constants.GetMesheryctlVersion())
 	},
+}
+
+// supersedePinnedVersion moves a pinned context version to latest once the user
+// confirms. It returns false when the user declines the update.
+func supersedePinnedVersion(currCtx *config.Context) (bool, error) {
+	// On Kubernetes, --skip-reset skips the Helm upgrade, so the pinned version still applies
+	skipUpgrade := utils.SkipResetFlag && currCtx.GetPlatform() == platformKubernetes
+	if currCtx.GetVersion() == "latest" || skipUpgrade {
+		return true, nil
+	}
+	// ask confirmation if user has pinned the version in config
+	utils.Log.Infof("You have pinned version: %s in your current context", currCtx.GetVersion())
+	if !utils.SilentFlag {
+		userResponse, err := utils.AskForConfirmation("Updating Meshery container images/manifest files will supersede the version to latest. Are you sure you want to continue")
+		if err != nil {
+			return false, err
+		}
+		if !userResponse {
+			utils.Log.Info("Update aborted.")
+			return false, nil
+		}
+	}
+	currCtx.SetVersion("latest")
+	return true, nil
 }
 
 // applyHelmChartsFn applies the Meshery Helm charts. Tests replace it.
