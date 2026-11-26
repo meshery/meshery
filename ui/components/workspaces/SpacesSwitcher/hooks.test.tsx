@@ -306,10 +306,53 @@ describe('useContentDownload', () => {
     result.current.handleViewDownload([{ id: 'v-1', name: 'one' }]);
     expect(downloadFileFromContent).toHaveBeenCalled();
     expect(downloadFileFromContent.mock.calls[0][1]).toBe('one.json');
+    expect(updateProgress).toHaveBeenNthCalledWith(1, { showProgress: true });
+    expect(updateProgress).toHaveBeenLastCalledWith({ showProgress: false });
     expect(notify).toHaveBeenCalledWith({
       message: '"one" view downloaded',
       event_type: 'INFO',
     });
+  });
+
+  it('handleDesignDownload hides progress indicator and notifies error when download fails', () => {
+    downloadContent.mockImplementationOnce(() => {
+      throw new Error('Download failed');
+    });
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { result } = renderHook(() => useContentDownload());
+
+    result.current.handleDesignDownload(
+      { stopPropagation: vi.fn() } as any,
+      { id: 'd-1', name: 'a' },
+      'src',
+      {},
+    );
+
+    expect(updateProgress).toHaveBeenNthCalledWith(1, { showProgress: true });
+    expect(updateProgress).toHaveBeenLastCalledWith({ showProgress: false });
+    expect(notify).toHaveBeenCalledWith({
+      message: 'Failed to download design',
+      event_type: 'ERROR',
+    });
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('handleViewDownload hides progress indicator and notifies error when download fails', () => {
+    downloadFileFromContent.mockImplementationOnce(() => {
+      throw new Error('Download failed');
+    });
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { result } = renderHook(() => useContentDownload());
+
+    result.current.handleViewDownload([{ id: 'v-1', name: 'one' }]);
+
+    expect(updateProgress).toHaveBeenNthCalledWith(1, { showProgress: true });
+    expect(updateProgress).toHaveBeenLastCalledWith({ showProgress: false });
+    expect(notify).toHaveBeenCalledWith({
+      message: 'Failed to download view',
+      event_type: 'ERROR',
+    });
+    consoleErrorSpy.mockRestore();
   });
 });
 

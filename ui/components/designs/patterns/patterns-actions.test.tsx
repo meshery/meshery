@@ -44,6 +44,7 @@ vi.mock('../import-design-request', () => ({
   buildImportDesignRequestBody: (data: any) => buildImportDesignRequestBody(data),
 }));
 
+import { updateProgress } from '@/store/slices/mesheryUi';
 import { createPatternsActions } from './patterns-actions';
 
 const baseDeps = () => {
@@ -86,6 +87,8 @@ const baseDeps = () => {
 describe('createPatternsActions', () => {
   beforeEach(() => {
     buildImportDesignRequestBody.mockReset();
+    downloadContent.mockReset();
+    vi.mocked(updateProgress).mockReset();
   });
 
   it('returns the canonical set of action methods', () => {
@@ -207,7 +210,37 @@ describe('createPatternsActions', () => {
       source_type: 'manifest',
       params: { param: 'v' },
     });
-    expect(deps.notify).toHaveBeenCalled();
+    expect(updateProgress).toHaveBeenNthCalledWith(1, { showProgress: true });
+    expect(updateProgress).toHaveBeenLastCalledWith({ showProgress: false });
+    expect(deps.notify).toHaveBeenCalledWith({
+      message: '"Design 1" design downloaded',
+      event_type: 'info',
+    });
+  });
+
+  it('handleDownload hides progress indicator and notifies error when download fails', () => {
+    downloadContent.mockImplementationOnce(() => {
+      throw new Error('Download failed');
+    });
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const deps = baseDeps();
+    const actions = createPatternsActions(deps);
+    const stop = vi.fn();
+
+    actions.handleDownload(
+      { stopPropagation: stop } as any,
+      { id: 'd1', name: 'Design 1' },
+      'manifest',
+      { param: 'v' },
+    );
+
+    expect(updateProgress).toHaveBeenNthCalledWith(1, { showProgress: true });
+    expect(updateProgress).toHaveBeenLastCalledWith({ showProgress: false });
+    expect(deps.notify).toHaveBeenCalledWith({
+      message: 'Failed to download design',
+      event_type: 'error',
+    });
+    consoleErrorSpy.mockRestore();
   });
 
   it('handleError surfaces the failure as a notification', () => {
