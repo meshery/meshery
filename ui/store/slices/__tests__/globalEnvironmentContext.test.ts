@@ -263,6 +263,43 @@ describe('globalEnvironmentContext slice', () => {
       expect(all).toEqual(expect.arrayContaining([k8sConn, k8sConn2]));
       expect(all).not.toContain(dockerConn);
     });
+
+    describe('when the globalEnvironmentContext slice is missing from the store', () => {
+      // e.g. a component rendered under a different Redux Provider (#24217)
+      const stateWithoutSlice = { ui: {} } as any;
+
+      it('selectSelectedEnvs returns an empty map', () => {
+        expect(selectSelectedEnvs(stateWithoutSlice)).toEqual({});
+      });
+
+      it('selectSelectedEnvs returns a stable reference across calls', () => {
+        expect(selectSelectedEnvs(stateWithoutSlice)).toBe(selectSelectedEnvs(stateWithoutSlice));
+      });
+
+      it('selectSelectedEnvs does not throw for an undefined state', () => {
+        expect(() => selectSelectedEnvs(undefined)).not.toThrow();
+      });
+
+      it('selectIsEnvSelected returns false', () => {
+        expect(selectIsEnvSelected(stateWithoutSlice, env1.id)).toBe(false);
+      });
+
+      it('selectIsConnectionSelected returns false', () => {
+        expect(selectIsConnectionSelected(stateWithoutSlice, env1.id, k8sConn.id)).toBe(false);
+      });
+
+      it('selectSelectedConnections returns []', () => {
+        expect(selectSelectedConnections(stateWithoutSlice, env1.id)).toEqual([]);
+      });
+
+      it('selectAllSelectedConnections returns []', () => {
+        expect(selectAllSelectedConnections(stateWithoutSlice)).toEqual([]);
+      });
+
+      it('selectAllSelectedK8sConnections returns []', () => {
+        expect(selectAllSelectedK8sConnections(stateWithoutSlice)).toEqual([]);
+      });
+    });
   });
 
   it('action types have the expected slice prefix', () => {
