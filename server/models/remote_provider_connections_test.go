@@ -62,7 +62,7 @@ func TestRemoteProviderGetK8sContextsReportsConversionErrors(t *testing.T) {
 	provider := newTestRemoteProvider(t, server.URL)
 	provider.Capabilities = persistConnectionCapability()
 
-	_, err := provider.GetK8sContexts("test-token", "0", "10", "", "", "", false)
+	_, err := provider.GetK8sContexts("test-token", "0", "10", "", "", "", true)
 	if err == nil {
 		t.Fatal("expected an error when a connection cannot be converted into a Kubernetes context")
 	}
@@ -407,5 +407,52 @@ func TestRemoteProviderGetK8sContextsTypedNilInstanceID(t *testing.T) {
 	_, err := provider.GetK8sContexts("test-token", "0", "10", "", "", "", false)
 	if !stderrors.Is(err, ErrMesheryInstanceID) {
 		t.Fatalf("err = %v, want ErrMesheryInstanceID", err)
+	}
+}
+
+func TestRemoteProviderGetK8sContextsMetadataOnlyWithoutCredentials(t *testing.T) {
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+	setViperKeyForRemoteAuthTest(t, "INSTANCE_ID", &instanceID)
+
+	// The second connection has no credentialId at all. A metadata-only listing
+	// must still return it, so TotalCount always matches the page (issue #24279).
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.Contains(r.URL.Path, "/credentials") {
+			t.Errorf("credential fetched during a metadata-only listing: %s", r.URL.Path)
+		}
+		_, _ = io.WriteString(w, fmt.Sprintf(`{
+			"page": 0,
+			"pageSize": 10,
+			"totalCount": 2,
+			"connections": [
+				{"id": %q, "name": "a", "kind": "kubernetes", "type": "platform", "subType": "orchestrator",
+				 "credentialId": "33333333-3333-3333-3333-333333333333",
+				 "metadata": {"id": "ctx-a", "name": "a", "server": "https://127.0.0.1:6443"}},
+				{"id": %q, "name": "b", "kind": "kubernetes", "type": "platform", "subType": "orchestrator",
+				 "metadata": {"id": "ctx-b", "name": "b", "server": "https://127.0.0.1:6444"}}
+			]
+		}`, remoteShapeConnectionID, remoteShapeOtherID))
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+	provider.Capabilities = persistConnectionCapability()
+
+	out, err := provider.GetK8sContexts("test-token", "0", "10", "", "", "", false)
+	if err != nil {
+		t.Fatalf("GetK8sContexts failed: %v", err)
+	}
+
+	var page MesheryK8sContextPage
+	if err := json.Unmarshal(out, &page); err != nil {
+		t.Fatalf("unmarshal page: %v", err)
+	}
+	if len(page.Contexts) != page.TotalCount || page.TotalCount != 2 {
+		t.Fatalf("contexts=%d totalCount=%d, want both 2", len(page.Contexts), page.TotalCount)
+	}
+
+	// With credentials requested, the missing credentialId is still an error.
+	if _, err := provider.GetK8sContexts("test-token", "0", "10", "", "", "", true); err == nil {
+		t.Fatal("expected missing credential_id error when withCredentials=true")
 	}
 }

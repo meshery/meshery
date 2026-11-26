@@ -323,7 +323,7 @@ func loadContextsForDeletion(provider interface {
 	var expectedTotal int
 	seen := make(map[string]struct{})
 	for page := 0; ; page++ {
-		data, err := provider.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", "", true)
+		data, err := provider.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", "", false)
 		if err != nil {
 			return nil, err
 		}
