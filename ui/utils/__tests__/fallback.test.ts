@@ -12,6 +12,10 @@ describe('getFallbackImageBasedOnKind', () => {
     );
   });
 
+  it('returns the github svg for the github kind', () => {
+    expect(getFallbackImageBasedOnKind('github')).toBe('static/img/extensions/github.svg');
+  });
+
   it('returns undefined for unknown kinds', () => {
     expect(getFallbackImageBasedOnKind('istio')).toBeUndefined();
     expect(getFallbackImageBasedOnKind('')).toBeUndefined();
