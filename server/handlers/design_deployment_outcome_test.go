@@ -203,8 +203,12 @@ func TestDeploymentOutcome_CountsSurviveMetadataSizeGuard(t *testing.T) {
 	if len(b) > models.MaxEventMetadataBytes {
 		t.Fatalf("metadata is %d bytes, over the %d-byte guard", len(b), models.MaxEventMetadataBytes)
 	}
-	if metadata["total"] != 500 || metadata["succeeded"] != 250 || metadata["failed"] != 250 {
-		t.Errorf("got total=%v succeeded=%v failed=%v, want 500/250/250", metadata["total"], metadata["succeeded"], metadata["failed"])
+
+	// Run the metadata through the guard the persister applies, so the test
+	// fails if the guard would strip the counts, not only if the size grows.
+	guarded := models.GuardEventMetadataSize(events.Event{Metadata: metadata}, nil).Metadata
+	if guarded["total"] != 500 || guarded["succeeded"] != 250 || guarded["failed"] != 250 {
+		t.Errorf("after GuardEventMetadataSize got total=%v succeeded=%v failed=%v, want 500/250/250", guarded["total"], guarded["succeeded"], guarded["failed"])
 	}
 }
 
