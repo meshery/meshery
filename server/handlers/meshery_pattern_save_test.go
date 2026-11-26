@@ -33,7 +33,7 @@ func newPatternPOSTFixture(t *testing.T) patternPOSTFixture {
 	if err != nil {
 		t.Fatalf("open database: %v", err)
 	}
-	if err := db.AutoMigrate(&models.MesheryPattern{}, &events.Event{}); err != nil {
+	if err := db.AutoMigrate(&models.MesheryPattern{}, &models.MesheryPatternVersion{}, &events.Event{}); err != nil {
 		t.Fatalf("migrate: %v", err)
 	}
 	systemID := uuid.Must(uuid.NewV4())

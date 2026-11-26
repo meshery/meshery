@@ -21,6 +21,7 @@ import (
 
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/encoding"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/patterns"
 )
 
@@ -170,7 +171,8 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, se
 // CloneMesheryPattern saves a private copy of a design under a new ID. The copy
 // is a new design: it keeps the source's content and import source, but gets
 // its own creation time, zero usage counters and no catalog data, and its
-// design file carries the copy's id and name at the first version.
+// design file carries the copy's id and name at the first version, which the
+// clone records as its first revision.
 func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
 	var mesheryPattern MesheryPattern
 	patternUUID, err := uuid.FromString(patternID)
@@ -212,20 +214,28 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, cloneP
 		Type:          mesheryPattern.Type,
 		SourceContent: mesheryPattern.SourceContent,
 	}
-	if err := mpp.DB.Create(&clone).Error; err != nil {
-		return nil, ErrDBCreate(err)
+	if err := mpp.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&clone).Error; err != nil {
+			return ErrDBCreate(err)
+		}
+		return recordPatternVersion(tx, &clone, pf.Version)
+	}); err != nil {
+		return nil, err
 	}
 
 	stampLocalProviderOwner(&clone)
 	return marshalMesheryPatterns([]MesheryPattern{clone}), nil
 }
 
-// DeleteMesheryPattern deletes a pattern by ID and removes any associated
-// workspace design mappings in a database transaction.
+// DeleteMesheryPattern deletes a pattern by ID and removes its version history
+// and any associated workspace design mappings in a database transaction.
 func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id core.Uuid) ([]byte, error) {
 	pattern := MesheryPattern{ID: &id}
 	err := mpp.DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Delete(&pattern).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("design_id = ?", id).Delete(&MesheryPatternVersion{}).Error; err != nil {
 			return err
 		}
 		if tx.Migrator().HasTable(&schemasWorkspace.WorkspacesDesignsMapping{}) {
@@ -243,7 +253,8 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id core.Uuid) ([]byte, 
 }
 
 // DeleteMesheryPatterns batch deletes the specified patterns and cleans up their
-// associated workspace design mappings within a database transaction.
+// version history and associated workspace design mappings within a database
+// transaction.
 func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
 	var deletedMaptterns []MesheryPattern
 	err := mpp.DB.Transaction(func(tx *gorm.DB) error {
@@ -251,6 +262,9 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 			id := uuid.FromStringOrNil(pObj.ID)
 			pattern := MesheryPattern{ID: &id}
 			if err := tx.Delete(&pattern).Error; err != nil {
+				return err
+			}
+			if err := tx.Where("design_id = ?", id).Delete(&MesheryPatternVersion{}).Error; err != nil {
 				return err
 			}
 			if tx.Migrator().HasTable(&schemasWorkspace.WorkspacesDesignsMapping{}) {
@@ -273,6 +287,8 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 // the non-zero fields of pattern. A design saved without an ID keeps the version
 // its file carries (0.0.1 when it carries none); a save with an ID (an update,
 // or a clone/seed that minted its own ID) bumps the patch of the file's version.
+// A save that carries a design file also records it as a revision in the same
+// transaction; a metadata-only save records none.
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
 	pf, err := patterns.GetPatternFormat(pattern.PatternFile)
 	if err != nil {
@@ -305,35 +321,37 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 	// response shaping only - nothing extra is persisted.
 	stampLocalProviderOwner(pattern)
 
-	// An ID does not mean the row exists: clone and seeding save new rows
-	// under IDs they minted themselves.
-	exists := false
-	if !isNew {
-		var count int64
-		if err := mpp.DB.Model(&MesheryPattern{}).Where("id = ?", *pattern.ID).Count(&count).Error; err != nil {
-			return nil, ErrDBRead(err)
-		}
-		exists = count > 0
-	}
-
-	updated := exists
-	if exists {
-		err = mpp.updateSavedColumns(pattern)
-	} else {
+	updated := false
+	err = mpp.DB.Transaction(func(tx *gorm.DB) error {
 		suppliedVisibility := pattern.Visibility
+		createdAt, updatedAt := pattern.CreatedAt, pattern.UpdatedAt
 		if pattern.Visibility == "" {
 			pattern.Visibility = Private
 		}
-		res := mpp.DB.Clauses(clause.OnConflict{DoNothing: true}).Create(pattern)
+		// Write first so SQLite acquires the write lock before taking a read snapshot.
+		res := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(pattern)
 		if res.Error != nil {
-			return marshalMesheryPatterns([]MesheryPattern{*pattern}), ErrDBCreate(res.Error)
+			return ErrDBCreate(res.Error)
 		}
 		if res.RowsAffected == 0 {
-			// A concurrent save inserted this ID first: update it like any
-			// existing row, without the insert-only visibility default.
 			pattern.Visibility = suppliedVisibility
+			pattern.CreatedAt, pattern.UpdatedAt = createdAt, updatedAt
 			updated = true
-			err = mpp.updateSavedColumns(pattern)
+			if err := mpp.updateSavedColumns(tx, pattern); err != nil {
+				return err
+			}
+		}
+		if pattern.PatternFileOmitted {
+			return nil
+		}
+		return recordPatternVersion(tx, pattern, pf.Version)
+	})
+	if err != nil {
+		var meshkitErr *meshkiterrors.Error
+		if !errors.As(err, &meshkitErr) {
+			// A transaction that failed before or after its body ran carries no
+			// MeshKit code of its own, so report it as a write failure.
+			err = ErrDBPut(err)
 		}
 	}
 
@@ -424,14 +442,12 @@ func savedPatternFile(patternFile, version string) (string, error) {
 // time - so Updates skips zero-valued fields and those columns keep their
 // stored values. created_at and the usage counters are never written by a save,
 // and pattern_file is not written when the request carried no design file.
-func (mpp *MesheryPatternPersister) updateSavedColumns(pattern *MesheryPattern) error {
+func (mpp *MesheryPatternPersister) updateSavedColumns(db *gorm.DB, pattern *MesheryPattern) error {
 	omit := []string{"created_at", "view_count", "share_count", "download_count", "clone_count", "deployment_count"}
 	if pattern.PatternFileOmitted {
 		omit = append(omit, "pattern_file")
 	}
-	res := mpp.DB.Model(pattern).Omit(omit...).Updates(pattern)
-	// updated_at always changes, so no affected row means the design was
-	// deleted after the existence check.
+	res := db.Model(pattern).Omit(omit...).Updates(pattern)
 	if res.Error == nil && res.RowsAffected == 0 {
 		res.Error = fmt.Errorf("design %s was deleted while saving", pattern.ID)
 	}
@@ -441,9 +457,11 @@ func (mpp *MesheryPatternPersister) updateSavedColumns(pattern *MesheryPattern) 
 	return nil
 }
 
-// SaveMesheryPatterns batch inserts the given patterns
+// SaveMesheryPatterns batch inserts the given patterns and one revision per
+// design, all in a single transaction.
 func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []MesheryPattern) ([]byte, error) {
 	finalPatterns := []MesheryPattern{}
+	versions := make([]string, 0, len(mesheryPatterns))
 	for _, pattern := range mesheryPatterns {
 
 		pf, err := patterns.GetPatternFormat(pattern.PatternFile)
@@ -475,9 +493,37 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 		stampLocalProviderOwner(&pattern)
 
 		finalPatterns = append(finalPatterns, pattern)
+		versions = append(versions, pf.Version)
 	}
 
-	return marshalMesheryPatterns(finalPatterns), mpp.DB.Create(finalPatterns).Error
+	body := marshalMesheryPatterns(finalPatterns)
+	err := mpp.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(finalPatterns).Error; err != nil {
+			return err
+		}
+		for i := range finalPatterns {
+			if err := recordPatternVersion(tx, &finalPatterns[i], versions[i]); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	return body, err
+}
+
+// deletePublishedPatterns deletes every published design along with its version
+// history, so no revision is left referencing a design that no longer exists.
+// Published designs on the local provider are always seeded catalog entries, so
+// this is the shared boundary for both the seed and replace paths.
+func deletePublishedPatterns(db *gorm.DB) error {
+	return db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("design_id IN (?)",
+			tx.Model(&MesheryPattern{}).Select("id").Where("visibility = ?", Published),
+		).Delete(&MesheryPatternVersion{}).Error; err != nil {
+			return err
+		}
+		return tx.Where("visibility = ?", Published).Delete(&MesheryPattern{}).Error
+	})
 }
 
 // ReplaceSeededPatterns makes the published designs in the database mirror the
@@ -496,8 +542,7 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 // rows here are always seeded, and private user-authored designs never match.
 func (mpp *MesheryPatternPersister) ReplaceSeededPatterns(seeded []*MesheryPattern) error {
 	return mpp.DB.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Where("visibility = ?", Published).
-			Delete(&MesheryPattern{}).Error; err != nil {
+		if err := deletePublishedPatterns(tx); err != nil {
 			return err
 		}
 

@@ -3,7 +3,9 @@ package models
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -63,8 +65,8 @@ func newPatternPersisterTestDB(t *testing.T) (*gorm.DB, *MesheryPatternPersister
 		t.Fatalf("get sql.DB: %v", err)
 	}
 	sqlDB.SetMaxOpenConns(1)
-	if err := db.AutoMigrate(&MesheryPattern{}); err != nil {
-		t.Fatalf("migrate meshery_patterns: %v", err)
+	if err := db.AutoMigrate(&MesheryPattern{}, &MesheryPatternVersion{}); err != nil {
+		t.Fatalf("migrate design tables: %v", err)
 	}
 	return db, &MesheryPatternPersister{DB: &database.Handler{DB: db}}
 }
@@ -598,6 +600,38 @@ func TestReplaceSeededPatterns_InsertsSeededDesigns(t *testing.T) {
 	}
 }
 
+// Seeding mints a fresh ID per catalog file on every pass, so the previous
+// pass's designs are deleted rather than overwritten. Their revision rows must
+// go with them, otherwise every reseed leaves another full copy of the catalog
+// behind pointing at a design that no longer exists.
+func TestReplaceSeededPatterns_DropsHistoryOfReplacedDesigns(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+
+	var latest uuid.UUID
+	for pass := 0; pass < 2; pass++ {
+		id := uuid.Must(uuid.NewV4())
+		latest = id
+		seeded := []*MesheryPattern{{
+			ID: &id, Name: "seed", PatternFile: persisterTestDesign, Visibility: Published,
+		}}
+		if err := mpp.ReplaceSeededPatterns(seeded); err != nil {
+			t.Fatalf("replace seeded patterns (pass %d): %v", pass+1, err)
+		}
+	}
+
+	var revisions []MesheryPatternVersion
+	if err := db.Find(&revisions).Error; err != nil {
+		t.Fatalf("load revisions: %v", err)
+	}
+	if len(revisions) != 1 {
+		t.Fatalf("revisions after two seeding passes = %d, want 1 (only the surviving design)", len(revisions))
+	}
+	if revisions[0].DesignID != latest {
+		t.Errorf("revision design id = %s, want the surviving design %s", revisions[0].DesignID, latest)
+	}
+}
+
+// A closed database fails when the save's transaction starts.
 func TestSaveMesheryPattern_DatabaseErrorIsMeshKitError(t *testing.T) {
 	db, mpp := newPatternPersisterTestDB(t)
 	id, _ := seedImportedPattern(t, db)
@@ -608,14 +642,25 @@ func TestSaveMesheryPattern_DatabaseErrorIsMeshKitError(t *testing.T) {
 	_ = sqlDB.Close()
 
 	_, err = mpp.SaveMesheryPattern(postStylePattern(id))
-	if code := mkerrors.GetCode(err); code != ErrDBReadCode {
-		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBReadCode, err)
+	if code := mkerrors.GetCode(err); code != ErrDBPutCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBPutCode, err)
 	}
 }
 
-// A concurrent first save can insert the same ID between the existence check
-// and the insert. The losing save must then update the winner's row like any
-// existing row: no zero-valued overwrite and no visibility default.
+func TestSaveMesheryPattern_InsertErrorIsCreateError(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	id, _ := seedImportedPattern(t, db)
+	if err := db.Migrator().DropTable(&MesheryPattern{}); err != nil {
+		t.Fatalf("drop designs table: %v", err)
+	}
+
+	_, err := mpp.SaveMesheryPattern(postStylePattern(id))
+	if code := mkerrors.GetCode(err); code != ErrDBCreateCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBCreateCode, err)
+	}
+}
+
+// A concurrent insert's stored fields must survive the update on conflict.
 func TestSaveMesheryPattern_ConcurrentFirstSaveKeepsWinnerFields(t *testing.T) {
 	db, mpp := newPatternPersisterTestDB(t)
 	id := uuid.Must(uuid.NewV4())
@@ -673,8 +718,9 @@ func TestSaveMesheryPattern_DeletedDuringSaveIsError(t *testing.T) {
 	if code := mkerrors.GetCode(err); code != ErrDBPutCode {
 		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBPutCode, err)
 	}
-	if n := countPatterns(t, db); n != 0 {
-		t.Errorf("rows = %d, want the deleted design to stay deleted", n)
+	// The simulated delete uses the save transaction, so it rolls back too.
+	if n := countPatterns(t, db); n != 1 {
+		t.Errorf("rows = %d, want 1 after rollback", n)
 	}
 }
 
@@ -751,5 +797,239 @@ func TestGetMesheryPattern_MissingDesignReturnsResultNotFound(t *testing.T) {
 				t.Errorf("body = %q, want none", body)
 			}
 		})
+	}
+}
+
+func loadPatternVersions(t *testing.T, db *gorm.DB, id uuid.UUID) []MesheryPatternVersion {
+	t.Helper()
+	var revisions []MesheryPatternVersion
+	if err := db.Where("design_id = ?", id).Order("version").Find(&revisions).Error; err != nil {
+		t.Fatalf("load versions for %s: %v", id, err)
+	}
+	return revisions
+}
+
+func loadPatternVersionsByAge(t *testing.T, db *gorm.DB, id uuid.UUID) []MesheryPatternVersion {
+	t.Helper()
+	var revisions []MesheryPatternVersion
+	if err := db.Where("design_id = ?", id).Order("created_at, id").Find(&revisions).Error; err != nil {
+		t.Fatalf("load versions for %s: %v", id, err)
+	}
+	return revisions
+}
+
+func TestSaveMesheryPattern_OverlappingSavesOnSeparateConnections(t *testing.T) {
+	dsn := "file:" + filepath.Join(t.TempDir(), "designs.db") + "?cache=private&mode=rwc&_busy_timeout=10000&_journal_mode=WAL"
+	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("open database: %v", err)
+	}
+	pool, err := db.DB()
+	if err != nil {
+		t.Fatalf("get connection pool: %v", err)
+	}
+	t.Cleanup(func() { _ = pool.Close() })
+	pool.SetMaxOpenConns(2)
+	if err := db.AutoMigrate(&MesheryPattern{}, &MesheryPatternVersion{}); err != nil {
+		t.Fatalf("migrate design tables: %v", err)
+	}
+	id, _ := seedImportedPattern(t, db)
+	persister := &MesheryPatternPersister{DB: &database.Handler{DB: db}}
+	first := &MesheryPattern{ID: &id, Name: "first save", PatternFile: persisterTestDesign}
+	second := &MesheryPattern{ID: &id, Name: "second save", PatternFile: designWithVersion("0.0.2")}
+
+	var secondErr error
+	fired := false
+	// Run the second save after the old Count, or before the new INSERT.
+	commitSecond := func(tx *gorm.DB) {
+		if fired {
+			return
+		}
+		if _, ok := tx.Statement.ConnPool.(*sql.Tx); !ok {
+			return
+		}
+		fired = true
+		// The first transaction holds its connection, so this uses the other one.
+		_, secondErr = persister.SaveMesheryPattern(second)
+	}
+	if err := db.Callback().Query().After("gorm:query").Register("test:save_after_read", commitSecond); err != nil {
+		t.Fatalf("register query callback: %v", err)
+	}
+	if err := db.Callback().Create().Before("gorm:create").Register("test:save_before_insert", commitSecond); err != nil {
+		t.Fatalf("register create callback: %v", err)
+	}
+	_, firstErr := persister.SaveMesheryPattern(first)
+	if !fired || secondErr != nil {
+		t.Fatalf("overlapping save ran = %t, error = %v", fired, secondErr)
+	}
+	if firstErr != nil {
+		t.Fatalf("first save failed after overlapping save committed: %v", firstErr)
+	}
+
+	revisions := loadPatternVersions(t, db, id)
+	if len(revisions) != 2 {
+		t.Fatalf("revision count = %d, want 2", len(revisions))
+	}
+	wantVersions := []string{"0.0.2", "0.0.3"}
+	for i, saved := range []*MesheryPattern{first, second} {
+		if revisions[i].Version != wantVersions[i] || revisions[i].PatternFile != saved.PatternFile {
+			t.Errorf("revision %d = %q / %q, want %q / %q", i, revisions[i].Version, revisions[i].PatternFile, wantVersions[i], saved.PatternFile)
+		}
+	}
+}
+
+func TestSaveMesheryPattern_RecordsVersionHistory(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	record := MesheryPattern{Name: "history", PatternFile: persisterTestDesignWithoutVersion}
+	want := []string{"0.0.1", "0.0.2", "0.0.3"}
+
+	for i := range want {
+		if _, err := mpp.SaveMesheryPattern(&record); err != nil {
+			t.Fatalf("save %d: %v", i+1, err)
+		}
+		revisions := loadPatternVersions(t, db, *record.ID)
+		if len(revisions) != i+1 {
+			t.Fatalf("save %d left %d revisions, want %d", i+1, len(revisions), i+1)
+		}
+		for j, revision := range revisions {
+			file, err := patterns.GetPatternFormat(revision.PatternFile)
+			if err != nil {
+				t.Fatalf("parse revision %s: %v", revision.ID, err)
+			}
+			if revision.Version != want[j] || file.Version != want[j] {
+				t.Errorf("revision %d row/file versions = %q/%q, want %q", j+1, revision.Version, file.Version, want[j])
+			}
+		}
+		record = loadPattern(t, db, *record.ID)
+	}
+}
+
+func TestSaveMesheryPattern_KeepsLatestRevisions(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	record := MesheryPattern{Name: "retention", PatternFile: persisterTestDesignWithoutVersion}
+
+	for save := 1; save <= maxPatternVersions+1; save++ {
+		if _, err := mpp.SaveMesheryPattern(&record); err != nil {
+			t.Fatalf("save %d: %v", save, err)
+		}
+		record = loadPattern(t, db, *record.ID)
+	}
+
+	revisions := loadPatternVersionsByAge(t, db, *record.ID)
+	if len(revisions) != maxPatternVersions {
+		t.Fatalf("revision count = %d, want %d", len(revisions), maxPatternVersions)
+	}
+	for i, revision := range revisions {
+		if want := fmt.Sprintf("0.0.%d", i+2); revision.Version != want {
+			t.Errorf("revision %d = %q, want %q", i+1, revision.Version, want)
+		}
+	}
+}
+
+func TestSaveMesheryPattern_PruneLeavesOtherDesignsHistory(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	designA := MesheryPattern{Name: "design-a", PatternFile: persisterTestDesignWithoutVersion}
+	designB := MesheryPattern{Name: "design-b", PatternFile: designWithVersion("0.0.1")}
+
+	for save := 1; save <= maxPatternVersions+1; save++ {
+		if _, err := mpp.SaveMesheryPattern(&designA); err != nil {
+			t.Fatalf("save design A (%d): %v", save, err)
+		}
+		designA = loadPattern(t, db, *designA.ID)
+
+		if save <= 3 {
+			if _, err := mpp.SaveMesheryPattern(&designB); err != nil {
+				t.Fatalf("save design B (%d): %v", save, err)
+			}
+			designB = loadPattern(t, db, *designB.ID)
+		}
+	}
+
+	if revisions := loadPatternVersionsByAge(t, db, *designA.ID); len(revisions) != maxPatternVersions {
+		t.Errorf("design A has %d revisions, want %d", len(revisions), maxPatternVersions)
+	}
+	if revisions := loadPatternVersionsByAge(t, db, *designB.ID); len(revisions) != 3 {
+		t.Errorf("design B has %d revisions, want 3", len(revisions))
+	}
+}
+
+func TestSaveMesheryPattern_OmittedFileRecordsNoVersion(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	record := &MesheryPattern{Name: "original", PatternFile: designWithVersion("1.2.3")}
+	if _, err := mpp.SaveMesheryPattern(record); err != nil {
+		t.Fatalf("create: %v", err)
+	}
+	update := &MesheryPattern{
+		ID: record.ID, Name: "renamed", PatternFile: record.PatternFile, PatternFileOmitted: true,
+	}
+	if _, err := mpp.SaveMesheryPattern(update); err != nil {
+		t.Fatalf("rename: %v", err)
+	}
+	got := loadPattern(t, db, *record.ID)
+	if got.Name != update.Name || got.PatternFile != record.PatternFile {
+		t.Errorf("rename stored name %q and file %q", got.Name, got.PatternFile)
+	}
+	if revisions := loadPatternVersions(t, db, *record.ID); len(revisions) != 1 {
+		t.Errorf("rename left %d revisions, want 1", len(revisions))
+	}
+}
+
+func TestSaveMesheryPatterns_RecordsVersionPerDesign(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	body, err := mpp.SaveMesheryPatterns([]MesheryPattern{
+		{Name: "first", PatternFile: persisterTestDesignWithoutVersion},
+		{Name: "second", PatternFile: designWithVersion("1.2.3")},
+	})
+	if err != nil {
+		t.Fatalf("batch save: %v", err)
+	}
+	var saved []MesheryPattern
+	want := []string{"0.0.1", "1.2.3"}
+	if err := json.Unmarshal(body, &saved); err != nil || len(saved) != len(want) {
+		t.Fatalf("decode response %s: %v", body, err)
+	}
+	for i, record := range saved {
+		if got := storedDesignVersion(t, db, *record.ID); got != want[i] {
+			t.Errorf("%s stored version = %q, want %q", record.Name, got, want[i])
+		}
+		revisions := loadPatternVersions(t, db, *record.ID)
+		if len(revisions) != 1 || revisions[0].Version != want[i] || revisions[0].PatternFile != record.PatternFile {
+			t.Errorf("%s revisions = %+v, want one matching the saved file at %s", record.Name, revisions, want[i])
+		}
+	}
+}
+
+func TestDeleteMesheryPattern_RemovesVersionHistory(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	deleted := &MesheryPattern{Name: "deleted", PatternFile: persisterTestDesign}
+	kept := &MesheryPattern{Name: "kept", PatternFile: persisterTestDesign}
+	for _, record := range []*MesheryPattern{deleted, kept} {
+		if _, err := mpp.SaveMesheryPattern(record); err != nil {
+			t.Fatalf("save %s: %v", record.Name, err)
+		}
+	}
+	if _, err := mpp.DeleteMesheryPattern(*deleted.ID); err != nil {
+		t.Fatalf("delete: %v", err)
+	}
+	if revisions := loadPatternVersions(t, db, *deleted.ID); len(revisions) != 0 {
+		t.Errorf("deleted design has %d revisions, want 0", len(revisions))
+	}
+	if revisions := loadPatternVersions(t, db, *kept.ID); len(revisions) != 1 {
+		t.Errorf("kept design has %d revisions, want 1", len(revisions))
+	}
+}
+
+func TestSaveMesheryPattern_VersionInsertFailureRollsBack(t *testing.T) {
+	db, mpp := newPatternPersisterTestDB(t)
+	before := countPatterns(t, db)
+	if err := db.Migrator().DropTable(&MesheryPatternVersion{}); err != nil {
+		t.Fatalf("drop versions table: %v", err)
+	}
+	record := &MesheryPattern{Name: "failed save", PatternFile: persisterTestDesign}
+	if _, err := mpp.SaveMesheryPattern(record); mkerrors.GetCode(err) != ErrDBCreateCode {
+		t.Errorf("save error = %v, want ErrDBCreate", err)
+	}
+	if after := countPatterns(t, db); after != before {
+		t.Errorf("design count changed from %d to %d", before, after)
 	}
 }

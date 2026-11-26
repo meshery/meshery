@@ -38,6 +38,7 @@ func SystemDatabaseModels() []interface{} {
 		&PerformanceProfile{},
 		&MesheryResult{},
 		&MesheryPattern{},
+		&MesheryPatternVersion{},
 		&MesheryFilter{},
 		&PatternResource{},
 		&MesheryApplication{},

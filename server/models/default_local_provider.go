@@ -1580,9 +1580,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	// Published designs are exactly the seeded catalog on the built-in provider:
 	// PublishCatalogPattern returns ErrLocalProviderSupport, so a local user
 	// cannot create one. Private, user-authored designs are never touched.
-	if err := l.MesheryPatternPersister.DB.
-		Where("visibility = ?", Published).
-		Delete(&MesheryPattern{}).Error; err != nil {
+	if err := deletePublishedPatterns(l.MesheryPatternPersister.DB.DB); err != nil {
 		log.Error(ErrGettingSeededComponents(err, "Patterns"))
 		return
 	}
@@ -1676,6 +1674,9 @@ func (l *DefaultLocalProvider) Cleanup() error {
 		return err
 	}
 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&connections.Connection{}); err != nil {
+		return err
+	}
+	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryPatternVersion{}); err != nil {
 		return err
 	}
 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryPattern{}); err != nil {
