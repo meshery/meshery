@@ -49,8 +49,15 @@ Follow these steps to generate, register, sync, and wire up a new permission key
 Generate a unique, lowercase UUID v4 for the new permission key:
 {{< code code=`uuidgen | tr '[:upper:]' '[:lower:]'` >}}
 
-##### Step 2: Add to the Permissions Spreadsheet
-Add a new row to the authoritative **Permissions Spreadsheet**. Ensure the following columns are set:
+
+
+##### Step 2: Review the Permissions Spreadsheet
+
+Review the authoritative [Permissions Spreadsheet](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwzrUSKfuSRcpkp7sJTw1cSB63s4HCjYLJeGPWECsvqn222hjaaONQlN4X8auKvlaB0es3BqV5rQyz/pub?gid=829069645&single=true&output=csv) to check existing permission keys. A version-controlled copy is also available in [`build/permissions.csv`](https://github.com/meshery/schemas/blob/master/build/permissions.csv) in the `meshery/schemas` repository.
+
+The master spreadsheet is maintained by Meshery maintainers and is not directly editable by contributors. If you need to register a new permission key, submit the proposed addition through the project's contribution process.
+
+
 *   **Theme**: The high-level category (e.g. `Catalog Management`).
 *   **Category**: Specific feature area (e.g. `Designs`).
 *   **Function**: Human-readable operation name (e.g. `Evaluate Relationships`). This value becomes `key.function` in the Provider API.
