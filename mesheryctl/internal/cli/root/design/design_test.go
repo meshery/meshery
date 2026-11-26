@@ -1,6 +1,10 @@
 package design
 
-import "flag"
+import (
+	"flag"
+
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+)
 
 var (
 	update                 = flag.Bool("update", false, "update golden files")
@@ -10,6 +14,7 @@ var (
 
 func resetVariables() {
 	skipSave = false
+	utils.SilentFlag = false
 	designFile = ""
 	file = ""
 }

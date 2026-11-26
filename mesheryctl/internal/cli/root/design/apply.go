@@ -79,7 +79,7 @@ mesheryctl design apply [design-name]
 			return err
 		}
 
-		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
+		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy?" + utils.AllK8sContextsQuery
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
 		// pattern name has been passed

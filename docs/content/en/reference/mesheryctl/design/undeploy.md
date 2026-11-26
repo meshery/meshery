@@ -15,6 +15,7 @@ Undeploy design
 ## Synopsis
 
 Undeploy design will trigger undeploy of design.
+	With -f, Meshery imports and saves the design file before removal, as it does with design deploy -f.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -37,12 +38,23 @@ mesheryctl design undeploy -f [filepath]
 </div>
 </pre> 
 
+Undeploy design without an interactive prompt
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design undeploy -f [filepath] --yes
+
+</div>
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -f, --file string   Path to design file
   -h, --help          help for undeploy
+  -y, --yes           (optional) assume yes for user interactive prompts.
 
 </div>
 </pre>

@@ -1,0 +1,1 @@
+{"page":0,"pageSize":2,"totalCount":3,"connections":[{"name":"east","kind":"kubernetes","status":"connected"},{"name":"west","kind":"kubernetes","status":"connected"}]}

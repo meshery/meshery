@@ -48,6 +48,10 @@ const (
 	dockerComposeBinaryURL      = "https://github.com/docker/compose/releases/download/"
 	dockerComposeBinary         = "/usr/local/bin/docker-compose"
 
+	// AllK8sContextsQuery asks Meshery Server to act on every Kubernetes context
+	// connected to it, in place of a list of context IDs.
+	AllK8sContextsQuery = "contexts=all"
+
 	// Meshery Kubernetes Deployment URLs
 	baseConfigURL = "https://raw.githubusercontent.com/meshery/meshery-operator/master/config/"
 	OperatorURL   = baseConfigURL + "manifests/default.yaml"

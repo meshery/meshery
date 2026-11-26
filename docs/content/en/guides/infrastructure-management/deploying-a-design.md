@@ -51,8 +51,8 @@ From the design's actions, click **Validate Design** to run only the schema chec
 
 Undeploying deletes the resources that the design describes from the selected clusters, removing dependents before what they depend on. If a component can't be removed, Meshery leaves what it depends on in place, so part of the design can keep running. Check the summary on the last step for failed and withheld components before you assume the cluster is clean. The design itself stays in Meshery, so you can deploy it again later.
 
-{{% alert color="warning" title="Deploying from mesheryctl" %}}
-`mesheryctl design deploy`, `mesheryctl design apply`, and `mesheryctl design undeploy` do not currently tell Meshery Server which clusters to target, and Meshery Server rejects a deployment that names no cluster. Deploy and undeploy designs from Meshery UI.
+{{% alert color="info" title="Deploying from mesheryctl" %}}
+`mesheryctl design deploy`, `mesheryctl design apply`, `mesheryctl design undeploy -f`, and `mesheryctl design delete` with a file or URL target every Kubernetes cluster connected to Meshery Server, and no flag narrows that set. A deployment fails when no cluster is connected. `undeploy -f` and `delete` with a local file or a GitHub URL list the target clusters and ask for confirmation before removing resources. Use `--yes` to skip confirmation in scripts. Given an ID instead of a file, `undeploy` and `delete` remove the design from Meshery and never contact a cluster. To deploy to a subset of your clusters, use Meshery UI.
 {{% /alert %}}
 
 ## Related

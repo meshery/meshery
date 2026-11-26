@@ -40,6 +40,8 @@ const (
 	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
 	ErrEvaluateDesignCode             = "mesheryctl-1247"
 	ErrEvaluateDesignResponseCode     = "mesheryctl-1248"
+	ErrConfirmClusterRemovalCode      = "mesheryctl-1268"
+	ErrNoConnectedClustersCode        = "mesheryctl-1269"
 )
 
 const (
@@ -198,4 +200,20 @@ func ErrEvaluateDesignResponse(err error) error {
 		[]string{err.Error()},
 		[]string{"The Meshery server returned an error while evaluating the design", "The design file may be invalid or the server may be experiencing issues"},
 		[]string{"Ensure the design file is valid", "Check that the Meshery server is running and accessible", "Verify that the server has the required policies loaded"})
+}
+
+func ErrConfirmClusterRemoval(err error) error {
+	return errors.New(ErrConfirmClusterRemovalCode, errors.Alert,
+		[]string{"Unable to read cluster removal confirmation. Pass --yes for non-interactive use"},
+		[]string{err.Error()},
+		[]string{"Interactive confirmation could not be read"},
+		[]string{"Pass --yes for non-interactive use"})
+}
+
+func ErrNoConnectedClusters() error {
+	return errors.New(ErrNoConnectedClustersCode, errors.Alert,
+		[]string{"No Kubernetes cluster is connected, so there is nothing to remove from"},
+		[]string{"Removal targets every connected Kubernetes cluster, and none are connected"},
+		[]string{"Meshery has no connected Kubernetes clusters"},
+		[]string{"Connect a Kubernetes cluster using mesheryctl connection create --type <aks|eks|gke|minikube> or the Meshery UI and retry"})
 }

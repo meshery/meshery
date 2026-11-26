@@ -1,13 +1,21 @@
 package design
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/patterns"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUndeployCmd(t *testing.T) {
@@ -28,18 +36,19 @@ func TestUndeployCmd(t *testing.T) {
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
 			Name:             "given valid file when design undeploy then design is undeployed",
-			Args:             []string{"undeploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			Args:             []string{"undeploy", "--yes", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "undeploy.output.golden",
 			URLs: []utils.MockURL{
+				{Method: "GET", URL: "/" + connectedClustersPath, Response: "removal.connections.response.golden", ResponseCode: 200},
 				{
 					Method:       "POST",
-					URL:          "/api/pattern",
-					Response:     "apply.designSave.response.golden",
+					URL:          testContext.BaseURL + "/api/pattern/import",
+					Response:     "undeploy.import.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "DELETE",
-					URL:          "/api/pattern/deploy",
+					URL:          "/api/pattern/deploy?contexts=all",
 					Response:     "undeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -48,18 +57,19 @@ func TestUndeployCmd(t *testing.T) {
 		},
 		{
 			Name:             "given valid relative file when design undeploy then design is undeployed",
-			Args:             []string{"undeploy", "-f", filepath.Join("fixtures", "sampleDesign.golden")},
+			Args:             []string{"undeploy", "--yes", "-f", filepath.Join("fixtures", "sampleDesign.golden")},
 			ExpectedResponse: "undeploy.output.golden",
 			URLs: []utils.MockURL{
+				{Method: "GET", URL: "/" + connectedClustersPath, Response: "removal.connections.response.golden", ResponseCode: 200},
 				{
 					Method:       "POST",
-					URL:          "/api/pattern",
-					Response:     "apply.designSave.response.golden",
+					URL:          testContext.BaseURL + "/api/pattern/import",
+					Response:     "undeploy.import.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "DELETE",
-					URL:          "/api/pattern/deploy",
+					URL:          "/api/pattern/deploy?contexts=all",
 					Response:     "undeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -134,35 +144,173 @@ func TestUndeployCmd(t *testing.T) {
 			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a positional argument and the --file flag")),
 		},
 		{
-			Name:             "given nonexistent design provided when design undeploy then error is thrown",
-			Args:             []string{"undeploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			Name:             "given import returns no design when design undeploy then error is thrown",
+			Args:             []string{"undeploy", "--yes", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
+				{Method: "GET", URL: "/" + connectedClustersPath, Response: "removal.connections.response.golden", ResponseCode: 200},
 				{
 					Method:       "POST",
-					URL:          "/api/pattern",
-					Response:     "apply.designSave.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "DELETE",
-					URL:          "/api/pattern/deploy",
-					Response:     "undeploy.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "POST",
-					URL:          fmt.Sprintf("%s/api/pattern", testContext.BaseURL),
+					URL:          testContext.BaseURL + "/api/pattern/import",
 					Response:     "undeploy.empty.response.golden",
 					ResponseCode: 200,
 				},
 			},
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  ErrDesignNotFound(filepath.Join(fixturesDir, "sampleDesign.golden")),
+			ExpectedError:  ErrDesignInvalidApiResponse("design import returned no design"),
 		},
 	}
 
 	// Run tests
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}
+
+func TestUndeployConfirmation(t *testing.T) {
+	for _, test := range []struct {
+		name, input string
+		yes         bool
+		wantGets    int
+		wantPosts   int
+		wantDeletes int
+	}{
+		{name: "decline", input: "n\n", wantGets: 1},
+		{name: "accept sends JSON deploy payload", input: "y\n", wantGets: 1, wantPosts: 1, wantDeletes: 1},
+		{name: "skip", yes: true, wantGets: 1, wantPosts: 1, wantDeletes: 1},
+		{name: "EOF", wantGets: 1},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			fixture := filepath.Join("fixtures", "sampleDesign.golden")
+			args := []string{"undeploy", "-f", fixture}
+			var onClusterLookup func()
+			if test.input == "y\n" {
+				content, err := os.ReadFile(fixture)
+				require.NoError(t, err)
+				localFile := filepath.Join(t.TempDir(), filepath.Base(fixture))
+				require.NoError(t, os.WriteFile(localFile, content, 0600))
+				args[2] = localFile
+				// Change the file after the prompt has derived the design name.
+				onClusterLookup = func() {
+					require.NoError(t, os.WriteFile(localFile, []byte("name: ChangedApp\n"), 0600))
+				}
+			}
+			if test.yes {
+				args = append(args, "--yes")
+			}
+			output, prompt, gets, posts, deletes, err := runRemovalPromptTestWithClusterPages(t, args, test.input, onClusterLookup, "removal.connections.response.golden")
+			if test.name == "EOF" {
+				require.ErrorContains(t, err, "--yes")
+			} else {
+				require.NoError(t, err)
+			}
+			assert.Equal(t, test.wantGets, gets)
+			assert.Equal(t, test.wantPosts, posts)
+			assert.Equal(t, test.wantDeletes, deletes)
+			if test.yes {
+				assert.Empty(t, prompt)
+			} else {
+				assert.Contains(t, prompt, "Design 'SampleApp' will be undeployed from 2 connected Kubernetes cluster(s): east, west.")
+			}
+			if test.name == "decline" {
+				assert.Contains(t, output, "Undeploy cancelled")
+			}
+		})
+	}
+}
+
+func TestUndeployConfirmationListsEveryConnectedClusterPage(t *testing.T) {
+	output, prompt, gets, posts, deletes, err := runRemovalPromptTestWithClusterPages(t,
+		[]string{"undeploy", "-f", filepath.Join("fixtures", "sampleDesign.golden")}, "n\n", nil,
+		"removal.connections.page0.response.golden", "removal.connections.page1.response.golden")
+
+	require.NoError(t, err)
+	assert.Equal(t, 2, gets)
+	assert.Zero(t, posts)
+	assert.Zero(t, deletes)
+	assert.Contains(t, prompt, "Design 'SampleApp' will be undeployed from 3 connected Kubernetes cluster(s): east, west, north.")
+	assert.Contains(t, output, "Undeploy cancelled")
+}
+
+func runRemovalPromptTest(t *testing.T, args []string, input string) (output, prompt string, gets, posts, deletes int, err error) {
+	t.Helper()
+	return runRemovalPromptTestWithClusterPages(t, args, input, nil, "removal.connections.response.golden")
+}
+
+func runRemovalPromptTestWithClusterPages(t *testing.T, args []string, input string, onClusterLookup func(), clusterPages ...string) (output, prompt string, gets, posts, deletes int, err error) {
+	t.Helper()
+	ctx := utils.InitTestEnvironment(t)
+	t.Cleanup(func() {
+		utils.StopMockery(t)
+		utils.ResetCommandFlags(DesignCmd, t)
+		resetVariables()
+	})
+	utils.TokenFlag = utils.GetToken(t)
+
+	clusterURLs := make([]string, 0, len(clusterPages))
+	for i, page := range clusterPages {
+		pageURL := ctx.BaseURL + "/" + connectedClustersPath
+		if i > 0 {
+			pageURL = fmt.Sprintf("%s&page=%d", pageURL, i)
+		}
+		clusterURLs = append(clusterURLs, pageURL)
+		responder := httpmock.NewStringResponder(http.StatusOK, utils.NewGoldenFile(t, page, "fixtures").Load())
+		httpmock.RegisterResponder("GET", pageURL, func(req *http.Request) (*http.Response, error) {
+			if onClusterLookup != nil {
+				onClusterLookup()
+			}
+			return responder(req)
+		})
+	}
+	patternURL := ctx.BaseURL + "/api/pattern"
+	deleteURL := ctx.BaseURL + "/api/pattern/deploy?contexts=all"
+	importURL := patternURL + "/import"
+	importResponse := utils.NewGoldenFile(t, "undeploy.import.response.golden", "fixtures").Load()
+	httpmock.RegisterResponder("POST", importURL, func(req *http.Request) (*http.Response, error) {
+		var payload pattern.MesheryPatternImportFilePayload
+		require.NoError(t, json.NewDecoder(req.Body).Decode(&payload))
+		expected, err := os.ReadFile(filepath.Join("fixtures", "sampleDesign.golden"))
+		require.NoError(t, err)
+		assert.Equal(t, expected, payload.File)
+		return httpmock.NewStringResponse(http.StatusOK, importResponse), nil
+	})
+	response := utils.NewGoldenFile(t, args[0]+".response.golden", "fixtures").Load()
+	httpmock.RegisterResponder("DELETE", deleteURL, func(req *http.Request) (*http.Response, error) {
+		var payload models.MesheryPatternFileDeployPayload
+		require.NoError(t, json.NewDecoder(req.Body).Decode(&payload))
+		require.NotEmpty(t, payload.PatternFile)
+		require.Zero(t, payload.PatternID)
+		if args[0] == "undeploy" {
+			pf, err := patterns.GetPatternFormat(payload.PatternFile)
+			require.NoError(t, err)
+			require.NotEmpty(t, pf.Components)
+		}
+		return httpmock.NewStringResponse(http.StatusOK, response), nil
+	})
+
+	buf := utils.SetupMeshkitLoggerTesting(t, false)
+	readPrompt := capturePrompt(t, input)
+	DesignCmd.SetArgs(args)
+	DesignCmd.SetOut(buf)
+	err = DesignCmd.Execute()
+	calls := httpmock.GetCallCountInfo()
+	for _, pageURL := range clusterURLs {
+		gets += calls["GET "+pageURL]
+	}
+	posts = calls["POST "+importURL] + calls["POST "+patternURL]
+	return buf.String(), readPrompt(), gets, posts, calls["DELETE "+deleteURL], err
+}
+
+func TestFileRemovalRequiresConnectedClusters(t *testing.T) {
+	for _, command := range []string{"undeploy", "delete"} {
+		t.Run(command, func(t *testing.T) {
+			_, prompt, gets, posts, deletes, err := runRemovalPromptTestWithClusterPages(t,
+				[]string{command, "-f", filepath.Join("fixtures", "sampleDesign.golden"), "--yes"}, "", nil,
+				"removal.connections.empty.response.golden")
+			utils.AssertMeshkitErrorsEqual(t, err, ErrNoConnectedClusters())
+			assert.Equal(t, 1, gets)
+			assert.Zero(t, posts)
+			assert.Zero(t, deletes)
+			assert.Empty(t, prompt)
+		})
+	}
 }

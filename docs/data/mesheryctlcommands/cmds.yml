@@ -594,7 +594,7 @@ adapter:
 
     remove:
       name: remove
-      description: Remove infrastructure in the connected Kubernetes cluster
+      description: Remove infrastructure in every Kubernetes cluster connected to Meshery Server
       usage: mesheryctl adapter remove [args] [flags] [args]
       flags:
         namespace:
@@ -602,10 +602,15 @@ adapter:
           description: Kubernetes namespace from which to remove infrastructure
           usage: mesheryctl adapter remove [args] --namespace [namespace to be used]
           example: mesheryctl adapter remove linkerd --namespace linkerd-ns -t "~/Download/auth.json"
+        yes:
+          name: --yes, -y
+          description: (optional) assume yes for user interactive prompts.
+          usage: mesheryctl adapter remove linkerd --yes
+          example: mesheryctl adapter remove linkerd --yes
 
     deploy:
       name: deploy
-      description: Deploy infrastructure into the cluster
+      description: Deploy infrastructure into every Kubernetes cluster connected to Meshery Server
       usage: mesheryctl adapter deploy [flags]
       example: mesheryctl adapter deploy -t "~/Downloads/auth.json"
       flags:
@@ -648,6 +653,11 @@ design:
           description: Deletes the resources that were created, using design file
           usage: mesheryctl design delete -f [path to design file]
           example: mesheryctl design delete -f "bookInfo.yaml"
+        yes:
+          name: --yes, -y
+          description: (optional) assume yes for user interactive prompts.
+          usage: mesheryctl design delete -f [filepath] --yes
+          example: mesheryctl design delete -f "bookInfo.yaml" --yes
     deploy:
       name: deploy
       description: Deploy application
@@ -753,6 +763,11 @@ design:
           description: Undeploy application with an application file
           usage: mesheryctl design undeploy -f [filepath]
           example: mesheryctl design undeploy -f "bookInfo.yaml"
+        yes:
+          name: --yes, -y
+          description: (optional) assume yes for user interactive prompts.
+          usage: mesheryctl design undeploy -f [filepath] --yes
+          example: mesheryctl design undeploy -f "bookInfo.yaml" --yes
     view:
       name: view
       description: Displays the contents of a specific design file

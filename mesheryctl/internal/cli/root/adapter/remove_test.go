@@ -1,6 +1,8 @@
 package adapter
 
 import (
+	"io"
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -8,6 +10,7 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestRemoveMesh(t *testing.T) {
@@ -36,7 +39,7 @@ func TestRemoveMesh(t *testing.T) {
 	}{
 		{
 			Name: "Test Remove Linkerd ",
-			Args: []string{"remove", "linkerd"},
+			Args: []string{"remove", "--yes", "linkerd"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -46,7 +49,7 @@ func TestRemoveMesh(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/system/adapter/operation",
+					URL:          testContext.BaseURL + "/api/system/adapter/operation?contexts=all",
 					Response:     "deploy.golden",
 					ResponseCode: 200,
 				},
@@ -57,7 +60,7 @@ func TestRemoveMesh(t *testing.T) {
 		},
 		{
 			Name: "Test Remove Linkerd with Namespace",
-			Args: []string{"remove", "linkerd", "--namespace", "linkerd-ns"},
+			Args: []string{"remove", "--yes", "linkerd", "--namespace", "linkerd-ns"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -67,7 +70,7 @@ func TestRemoveMesh(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/system/adapter/operation",
+					URL:          testContext.BaseURL + "/api/system/adapter/operation?contexts=all",
 					Response:     "deploy.golden",
 					ResponseCode: 200,
 				},
@@ -78,7 +81,7 @@ func TestRemoveMesh(t *testing.T) {
 		},
 		{
 			Name: "Test Remove Cilium ",
-			Args: []string{"remove", "cilium", "service", "mesh"},
+			Args: []string{"remove", "--yes", "cilium", "service", "mesh"},
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -88,7 +91,7 @@ func TestRemoveMesh(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/system/adapter/operation",
+					URL:          testContext.BaseURL + "/api/system/adapter/operation?contexts=all",
 					Response:     "deploy.golden",
 					ResponseCode: 200,
 				},
@@ -100,6 +103,9 @@ func TestRemoveMesh(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
+			t.Cleanup(func() { utils.ResetCommandFlags(AdapterCmd, t) })
+			httpmock.RegisterResponder("GET", testContext.BaseURL+"/"+removeClustersPath,
+				httpmock.NewStringResponder(200, connectedRemoveClusters))
 			for _, url := range tc.URLs {
 				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
 				// mock response
@@ -142,4 +148,89 @@ func TestRemoveMesh(t *testing.T) {
 		t.Log("Mesh Deploy test Passed")
 	}
 	utils.StopMockery(t)
+}
+
+const (
+	removeClustersPath      = "api/integrations/connections?kind=kubernetes&status=connected&pagesize=all"
+	connectedRemoveClusters = `{"totalCount":2,"connections":[{"name":"east"},{"name":"west"}]}`
+)
+
+func TestRemoveMeshConfirmation(t *testing.T) {
+	const removalPrompt = "Adapter 'linkerd' will be removed from 2 connected Kubernetes cluster(s): east, west."
+	for _, tc := range []struct {
+		name, input, clusters, flag, wantError string
+		wantPosts                              int
+		wantPrompt                             bool
+	}{
+		{name: "decline", input: "n\n", clusters: connectedRemoveClusters, wantPrompt: true},
+		{name: "yes", flag: "--yes", clusters: connectedRemoveClusters, wantPosts: 1},
+		{name: "zero clusters", flag: "-y", clusters: `{"totalCount":0,"connections":[]}`, wantError: "No Kubernetes cluster is connected"},
+		{name: "EOF", clusters: connectedRemoveClusters, wantError: "--yes", wantPrompt: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			ctx := utils.InitTestEnvironment(t)
+			t.Cleanup(func() {
+				utils.StopMockery(t)
+				utils.ResetCommandFlags(AdapterCmd, t)
+			})
+			utils.TokenFlag = utils.GetToken(t)
+			clusterURL := ctx.BaseURL + "/" + removeClustersPath
+			operationURL := ctx.BaseURL + "/api/system/adapter/operation?contexts=all"
+			httpmock.RegisterResponder("GET", ctx.BaseURL+"/api/system/sync", httpmock.NewStringResponder(200,
+				utils.NewGoldenFile(t, "sync.golden", "fixtures").Load()))
+			httpmock.RegisterResponder("GET", clusterURL, httpmock.NewStringResponder(200, tc.clusters))
+			httpmock.RegisterResponder("POST", operationURL, httpmock.NewStringResponder(200,
+				utils.NewGoldenFile(t, "deploy.golden", "fixtures").Load()))
+
+			input, err := os.CreateTemp(t.TempDir(), "stdin")
+			require.NoError(t, err)
+			originalStdin := os.Stdin
+			os.Stdin = input
+			t.Cleanup(func() {
+				os.Stdin = originalStdin
+				_ = input.Close()
+			})
+			_, err = input.WriteString(tc.input)
+			require.NoError(t, err)
+			_, err = input.Seek(0, 0)
+			require.NoError(t, err)
+
+			args := []string{"remove", "linkerd"}
+			if tc.flag != "" {
+				args = append(args, tc.flag)
+			}
+			AdapterCmd.SetArgs(args)
+			AdapterCmd.SetOut(utils.SetupMeshkitLoggerTesting(t, false))
+
+			stdoutR, stdoutW, err := os.Pipe()
+			require.NoError(t, err)
+			originalStdout := os.Stdout
+			os.Stdout = stdoutW
+			t.Cleanup(func() {
+				os.Stdout = originalStdout
+				_ = stdoutR.Close()
+				_ = stdoutW.Close()
+			})
+
+			err = AdapterCmd.Execute()
+			os.Stdout = originalStdout
+			if tc.wantError == "" {
+				require.NoError(t, err)
+			} else {
+				require.ErrorContains(t, err, tc.wantError)
+			}
+			require.NoError(t, stdoutW.Close())
+			out, err := io.ReadAll(stdoutR)
+			require.NoError(t, err)
+			if tc.wantPrompt {
+				assert.Contains(t, string(out), removalPrompt)
+			} else {
+				assert.Empty(t, string(out))
+			}
+
+			calls := httpmock.GetCallCountInfo()
+			assert.Equal(t, 1, calls["GET "+clusterURL])
+			assert.Equal(t, tc.wantPosts, calls["POST "+operationURL])
+		})
+	}
 }

@@ -19,14 +19,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/patterns"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -36,10 +36,14 @@ var designUndeployCmd = &cobra.Command{
 	Use:   "undeploy",
 	Short: "Undeploy design",
 	Long: `Undeploy design will trigger undeploy of design.
+	With -f, Meshery imports and saves the design file before removal, as it does with design deploy -f.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/design/undeploy`,
 	Example: `
 // Undeploy design by providing file path
 mesheryctl design undeploy -f [filepath]
+
+// Undeploy design without an interactive prompt
+mesheryctl design undeploy -f [filepath] --yes
 	`,
 
 	Args: func(cmd *cobra.Command, args []string) error {
@@ -69,8 +73,6 @@ mesheryctl design undeploy -f [filepath]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var req *http.Request
-		var err error
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
@@ -95,9 +97,7 @@ mesheryctl design undeploy -f [filepath]
 			return nil
 		}
 
-		designURLPath := "api/pattern"
-
-		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
+		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy?" + utils.AllK8sContextsQuery
 
 		if !utils.IsValidUrl(file) {
 			content, err := os.ReadFile(file)
@@ -109,41 +109,44 @@ mesheryctl design undeploy -f [filepath]
 			return utils.ErrInvalidArgument(fmt.Errorf("URLs are not currently supported"))
 		}
 
-		jsonValues, _ := json.Marshal(map[string]interface{}{
-			"K8sManifest": designFile,
-		})
-
-		resp, err := api.Add(designURLPath, bytes.NewBuffer(jsonValues), nil)
+		confirmed, err := confirmClusterRemoval(file, []byte(designFile))
 		if err != nil {
 			return err
 		}
-		defer func() { _ = resp.Body.Close() }()
+		if !confirmed {
+			utils.Log.Info("Undeploy cancelled")
+			return nil
+		}
 
-		var response []*models.MesheryPattern
-
-		body, err := io.ReadAll(resp.Body)
+		importURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/import"
+		fileName := filepath.Base(file)
+		patternName := name
+		if patternName == "" {
+			patternName = fileName
+		}
+		imported, err := importDesignFile(importURL, patternName, fileName, []byte(designFile))
 		if err != nil {
-			return utils.ErrReadFromBody(err)
+			return err
 		}
 
-		err = json.Unmarshal(body, &response)
+		pf, err := patterns.GetPatternFormat(imported.PatternFile)
 		if err != nil {
-			return utils.ErrUnmarshal(err)
+			return ErrParseDesignFile(err)
 		}
 
-		if len(response) == 0 {
-			return ErrDesignNotFound(file)
-		}
-
-		utils.Log.Debug("design file converted to design")
-
-		patternFile := response[0].PatternFile
-		patternFileByt, err := yaml.Marshal(patternFile)
+		pfByt, err := yaml.Marshal(pf)
 		if err != nil {
-			return models.ErrMarshallingDesignIntoYAML(err)
+			return utils.ErrMarshal(err)
 		}
 
-		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer(patternFileByt))
+		payloadBytes, err := json.Marshal(models.MesheryPatternFileDeployPayload{
+			PatternFile: string(pfByt),
+		})
+		if err != nil {
+			return utils.ErrMarshal(err)
+		}
+
+		req, err := utils.NewRequest("DELETE", deployURL, bytes.NewBuffer(payloadBytes))
 		if err != nil {
 			return err
 		}
@@ -154,7 +157,7 @@ mesheryctl design undeploy -f [filepath]
 		}
 
 		defer func() { _ = res.Body.Close() }()
-		body, err = io.ReadAll(res.Body)
+		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			return utils.ErrReadFromBody(err)
 		}
@@ -169,5 +172,6 @@ mesheryctl design undeploy -f [filepath]
 }
 
 func init() {
+	designUndeployCmd.Flags().BoolVarP(&utils.SilentFlag, "yes", "y", false, "(optional) assume yes for user interactive prompts.")
 	designUndeployCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
 }
