@@ -44,6 +44,23 @@ describe('useResourceOwner', () => {
     expect(mockGetUserById).toHaveBeenCalledWith('u1', expect.objectContaining({ skip: false }));
   });
 
+  it('skips the by-id lookup and leaves owner undefined when ownerId is missing and no profile is embedded', () => {
+    const { owner } = useResourceOwner();
+
+    expect(owner).toBeUndefined();
+    expect(mockGetUserById).toHaveBeenCalledWith(undefined, expect.objectContaining({ skip: true }));
+  });
+
+  it('skips the by-id lookup and leaves owner undefined when ownerId is empty or whitespace string', () => {
+    const { owner: emptyOwner } = useResourceOwner('');
+    expect(emptyOwner).toBeUndefined();
+    expect(mockGetUserById).toHaveBeenCalledWith(undefined, expect.objectContaining({ skip: true }));
+
+    const { owner: whitespaceOwner } = useResourceOwner('   ');
+    expect(whitespaceOwner).toBeUndefined();
+    expect(mockGetUserById).toHaveBeenCalledWith(undefined, expect.objectContaining({ skip: true }));
+  });
+
   it('reports a cloud profile on a remote provider', () => {
     expect(useResourceOwner('u1').hasCloudProfile).toBe(true);
   });

@@ -39,13 +39,16 @@ export const useResourceOwner = (
   ownerId?: string,
   embeddedOwner?: OwnerProfile | null,
 ): UseResourceOwnerResult => {
-  const { data: fetchedOwner } = useGetUserByIdQuery(ownerId, {
-    skip: Boolean(embeddedOwner),
+  const normalizedOwnerId = typeof ownerId === 'string' ? ownerId.trim() : '';
+  const shouldSkip = Boolean(embeddedOwner) || !normalizedOwnerId;
+
+  const { data: fetchedOwner } = useGetUserByIdQuery(normalizedOwnerId || undefined, {
+    skip: shouldSkip,
   });
   const { data: providerCapabilities } = useGetProviderCapabilitiesQuery();
 
   return {
-    owner: embeddedOwner ?? fetchedOwner,
+    owner: embeddedOwner ?? (normalizedOwnerId ? fetchedOwner : undefined),
     hasCloudProfile: isRemoteProvider(providerCapabilities),
   };
 };
