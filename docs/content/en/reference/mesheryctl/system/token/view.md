@@ -30,7 +30,7 @@ View a specific token
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token view [token-name]
+mesheryctl system token view my-token
 
 </div>
 </div>
