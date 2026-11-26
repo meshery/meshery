@@ -4176,6 +4176,23 @@
         "Retry the operation",
         "Run `mesheryctl system login` to re-authenticate"
       ]
+    },
+    {
+      "code": "mesheryctl-1268",
+      "moniker": "ErrAmbiguousDesignNameCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1268",
+      "severity": "alert",
+      "shortDescription": "More than one design has this name",
+      "probableCause": [
+        "Design names are not unique, so the name alone does not say which design to use."
+      ],
+      "suggestedRemediation": [
+        "Pass the design ID instead. Run 'mesheryctl design list' to see the IDs."
+      ]
     }
   ],
   "schemaVersion": 2
