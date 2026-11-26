@@ -221,7 +221,8 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, cloneP
 }
 
 // DeleteMesheryPattern deletes a pattern by ID and removes any associated
-// workspace design mappings in a database transaction.
+// workspace design mappings in a database transaction. A design that does not
+// exist is reported as ErrResultNotFound.
 func (mpp *MesheryPatternPersister) DeleteMesheryPattern(id core.Uuid) ([]byte, error) {
 	pattern := MesheryPattern{}
 	// Deleting the mappings first makes the transaction open with a write.
