@@ -85,6 +85,27 @@ describe('usePreventUserFromLeavingPage', () => {
     expect(routerInstance.change).toBeUndefined();
   });
 
+  it('clears window.onbeforeunload on unmount', () => {
+    const { unmount } = renderHook(() => usePreventUserFromLeavingPage(true));
+    expect(typeof window.onbeforeunload).toBe('function');
+    unmount();
+    expect(window.onbeforeunload).toBeNull();
+  });
+
+  it('safely handles missing or nullish SingletonRouter.router without throwing', () => {
+    const originalRouter = hoisted.singleton.router;
+    try {
+      // @ts-expect-error testing runtime missing router
+      hoisted.singleton.router = null;
+      expect(() => {
+        const { unmount } = renderHook(() => usePreventUserFromLeavingPage(true));
+        unmount();
+      }).not.toThrow();
+    } finally {
+      hoisted.singleton.router = originalRouter;
+    }
+  });
+
   it('returns a setter that toggles the prevention state and re-runs the effect', () => {
     const { result } = renderHook(() => usePreventUserFromLeavingPage(false));
     expect(routerInstance.change).toBeUndefined();
