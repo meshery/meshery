@@ -277,13 +277,16 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
             if (sortInfo.length == 2) {
               if (sortInfo[1] === 'ascending') {
                 order = `${columnName} asc`;
-              } else {
+              } else if (sortInfo[1] === 'descending') {
                 order = `${columnName} desc`;
+              } else {
+                // The third click on a sortThirdClickReset column announces "none".
+                order = '';
               }
             }
-            if (order !== sortOrder) {
-              setSortOrder(order);
-            }
+            // sortOrder here can be stale (it is not a memo dep), so let React
+            // skip the update when the order hasn't changed.
+            setSortOrder(order);
             break;
         }
       },
