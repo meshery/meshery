@@ -31,13 +31,13 @@ const eventStreamWriteTimeout = 30 * time.Second
 // ClientEventHandler) reaches this stream unchanged.
 //
 // Each message is the raw meshkit events.Event marshalled to JSON, framed as an
-// unnamed SSE event (`id: <event.ID>\ndata: <json>\n\n` when event.ID is
-// non-nil, or `data: <json>\n\n` otherwise) so the browser's
-// EventSource.onmessage receives it and records the last event ID. On
-// reconnect, a `Last-Event-ID` header replays any buffered events published
-// after that ID before streaming live events. Only newly-published (or
-// buffered replay) events are streamed; the initial list is still fetched over
-// REST from GET /api/system/events.
+// unnamed SSE event (`id: <event.ID>:<seq>\ndata: <json>\n\n` or
+// `id: <event.ID>\ndata: <json>\n\n` when event.ID is non-nil, or
+// `data: <json>\n\n` otherwise) so the browser's EventSource.onmessage
+// receives it and records the last event ID. On reconnect, a `Last-Event-ID`
+// header replays any buffered events published after that ID before streaming
+// live events. Only newly-published (or buffered replay) events are streamed;
+// the initial list is still fetched over REST from GET /api/system/events.
 //
 // The subscription lives for the duration of the request: when the client
 // disconnects the request context is cancelled, we unsubscribe from the

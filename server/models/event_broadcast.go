@@ -130,12 +130,12 @@ type clients struct {
 }
 
 type Broadcast struct {
-	clients             sync.Map
-	history             sync.Map // core.Uuid -> *replayBuffer
-	lastHistorySweepNs  atomic.Int64
-	historyIdleTTL      time.Duration
+	clients              sync.Map
+	history              sync.Map // core.Uuid -> *replayBuffer
+	lastHistorySweepNs   atomic.Int64
+	historyIdleTTL       time.Duration
 	historySweepInterval time.Duration
-	Name                string
+	Name                 string
 }
 
 // Subscribe registers a new listener for id and returns its channel plus an

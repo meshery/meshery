@@ -3,7 +3,9 @@
  *
  * Replaces the former `subscribeEvents` GraphQL subscription. It opens a native
  * EventSource against the backend SSE endpoint (GET /api/system/events/subscribe)
- * which streams the user's events, each framed as `data: <event-json>\n\n`.
+ * which streams the user's events. ID-bearing events are framed with an SSE `id:`
+ * cursor so EventSource automatically tracks the last event ID and sends
+ * `Last-Event-ID` on reconnect to recover missed events.
  *
  * Being same-origin, the EventSource automatically carries the `meshery-provider`
  * auth cookie and natively reconnects on transient drops. `onError` is only
