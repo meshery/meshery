@@ -13,6 +13,7 @@ import (
 	"path"
 	"time"
 
+	"github.com/gofrs/uuid"
 	serverutils "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
 	pCore "github.com/meshery/meshery/server/models/pattern/core"
@@ -245,7 +246,9 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 
 func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider models.Provider, err error, userID core.Uuid, eventBuilder *events.EventBuilder) {
 
-	h.log.Error(ErrRetrieveUserToken(err))
+	if h.log != nil {
+		h.log.Error(ErrRetrieveUserToken(err))
+	}
 	writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 
 	if eventBuilder != nil {
@@ -260,7 +263,9 @@ func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider mode
 
 func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider models.Provider, err error, userID core.Uuid, eventBuilder *events.EventBuilder) {
 
-	h.log.Error(ErrRequestBody(err))
+	if h.log != nil {
+		h.log.Error(ErrRequestBody(err))
+	}
 	writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 
 	if eventBuilder != nil {
@@ -295,9 +300,25 @@ func (h *Handler) DesignFileImportHandler(
 		_ = r.Body.Close()
 	}()
 
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider)
+		}
+		writeMeshkitError(rw, ErrNilProvider, http.StatusInternalServerError)
+		return
+	}
+
 	var err error
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(userID).WithSeverity(events.Informational)
+	systemID := uuid.Nil
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(systemID).WithCategory("pattern").WithAction("create").ActedUpon(userID).WithSeverity(events.Informational)
 
 	var importBody pattern.MesheryPatternImportRequestBody
 
@@ -322,7 +343,9 @@ func (h *Handler) DesignFileImportHandler(
 		// fetched (already wrapped as models.ErrDoRequest). Either way
 		// the caller needs to correct the request, not the server to
 		// recover.
-		h.log.Error(fmt.Errorf("resolve import variant: %w", err))
+		if h.log != nil {
+			h.log.Error(fmt.Errorf("resolve import variant: %w", err))
+		}
 		writeMeshkitError(rw, err, http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, variant, err)
 		h.persistAndPublish(provider, token, userID, event)
@@ -340,7 +363,9 @@ func (h *Handler) DesignFileImportHandler(
 		// Wrap so the JSON envelope returned to the client always
 		// carries MeshKit metadata.
 		wrappedErr := ErrConvertToDesign(err)
-		h.log.Error(fmt.Errorf("conversion: failed to convert to design %w", err))
+		if h.log != nil {
+			h.log.Error(fmt.Errorf("conversion: failed to convert to design %w", err))
+		}
 		writeMeshkitError(rw, wrappedErr, http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, variant, wrappedErr)
 		h.persistAndPublish(provider, token, userID, event)
@@ -363,7 +388,9 @@ func (h *Handler) DesignFileImportHandler(
 	patternFile, err := encoding.Marshal(design)
 
 	if err != nil {
-		h.log.Error(ErrSavePattern(err))
+		if h.log != nil {
+			h.log.Error(ErrSavePattern(err))
+		}
 		writeMeshkitError(rw, ErrSavePattern(err), http.StatusInternalServerError)
 
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{

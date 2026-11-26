@@ -1,9 +1,12 @@
 package handlers
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
@@ -72,5 +75,47 @@ func TestResolveImportVariant_URLImportSSRF(t *testing.T) {
 
 	if !strings.Contains(err.Error(), "restricted") && !strings.Contains(err.Error(), "forbidden") && !strings.Contains(err.Error(), "unable to make") {
 		t.Errorf("unexpected error message: %v", err)
+	}
+}
+
+func TestDesignFileImportHandler_NilUser_ReturnsUnauthorized(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/import", strings.NewReader("{}"))
+	rec := httptest.NewRecorder()
+
+	h.DesignFileImportHandler(rec, req, nil, nil, &models.DefaultLocalProvider{})
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for nil user, got %d", rec.Code)
+	}
+}
+
+func TestDesignFileImportHandler_NilProvider_ReturnsInternalServerError(t *testing.T) {
+	h := &Handler{}
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/import", strings.NewReader("{}"))
+	rec := httptest.NewRecorder()
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	h.DesignFileImportHandler(rec, req, nil, user, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("expected 500 InternalServerError for nil provider, got %d", rec.Code)
+	}
+}
+
+func TestDesignFileImportHandler_NilSystemID_DoesNotPanic(t *testing.T) {
+	h := &Handler{
+		SystemID: nil,
+		config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+	}
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern/import", strings.NewReader("invalid json"))
+	rec := httptest.NewRecorder()
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	provider := &models.DefaultLocalProvider{}
+
+	h.DesignFileImportHandler(rec, req, nil, user, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 BadRequest for invalid body, got %d", rec.Code)
 	}
 }
