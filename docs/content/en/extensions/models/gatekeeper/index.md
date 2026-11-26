@@ -85,11 +85,7 @@ components:
   colorIcon: extensions/models/gatekeeper/components/audit-trigger/icons/color/audit-trigger-color.svg
   whiteIcon: extensions/models/gatekeeper/components/audit-trigger/icons/white/audit-trigger-white.svg
   description: 
-- name: audit-trigger
-  colorIcon: extensions/models/gatekeeper/components/audit-trigger/icons/color/audit-trigger-color.svg
-  whiteIcon: extensions/models/gatekeeper/components/audit-trigger/icons/white/audit-trigger-white.svg
-  description: 
-components-count: 20
+components-count: 19
 relationships: 
 relationship-count: 0
 featureList: [
