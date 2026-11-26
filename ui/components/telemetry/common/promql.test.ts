@@ -5,6 +5,34 @@ import type { TimeWindow } from './types';
 const win: TimeWindow = { start: 1000, end: 4600, step: 15 }; // range 3600s
 
 describe('resolveExpr', () => {
+  it.each(['$pod', '${pod}', '${pod:regex}'])('upgrades an exact matcher for %s', (ref) => {
+    expect(resolveExpr(`m{pod="${ref}"}`, {}, win)).toBe('m{pod=~".*"}');
+  });
+
+  it('keeps exact matching when an unresolved variable is only part of the value', () => {
+    expect(resolveExpr('m{app="app.v1-$pod",node="${pod}[0]",zone="$pod$region"}', {}, win)).toBe(
+      'm{app="app.v1-.*",node=".*[0]",zone=".*.*"}',
+    );
+  });
+
+  it('preserves exact matching for a known value containing a variable reference', () => {
+    expect(resolveExpr('m{app="$app",pod="$pod"}', { app: '$pod' }, win)).toBe(
+      'm{app=".*",pod=~".*"}',
+    );
+  });
+
+  it('preserves exact literals, negative matchers, and existing regex syntax', () => {
+    expect(resolveExpr('m{a=".*",b!="$pod",c!~"v.+$pod",d=~"v.+$pod"}', {}, win)).toBe(
+      'm{a=".*",b!=".*",c!~"v.+.*",d=~"v.+.*"}',
+    );
+  });
+
+  it('only upgrades actual matchers in expressions containing matcher-shaped strings', () => {
+    expect(resolveExpr(`label_join(m{pod = "$pod"}, "out", 'pod="$pod"', "src")`, {}, win)).toBe(
+      `label_join(m{pod =~ ".*"}, "out", 'pod=".*"', "src")`,
+    );
+  });
+
   it('substitutes time macros', () => {
     expect(resolveExpr('rate(x[$__rate_interval])', {}, win)).toBe('rate(x[60s])');
     expect(resolveExpr('x[$__interval]', {}, win)).toBe('x[15s]');
@@ -22,6 +50,7 @@ describe('resolveExpr', () => {
 
   it('does not treat $__ macros as unknown variables', () => {
     expect(resolveExpr('rate(x[$__rate_interval_ms])', {}, win)).toBe('rate(x[60000])');
+    expect(resolveExpr('m{pod="$__custom"}', {}, win)).toBe('m{pod="$__custom"}');
   });
 
   it('upgrades exact matchers to regex when a variable resolves to match-all or multi-value', () => {

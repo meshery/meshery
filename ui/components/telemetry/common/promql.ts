@@ -6,8 +6,7 @@ export const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$
  * resolveExpr substitutes Grafana global time macros and (optionally) dashboard
  * template variables into a PromQL expression so it can be executed directly.
  * Any remaining (unknown) `$var` token falls back to `.*` for a best-effort
- * render. With an empty varValues map it performs macro expansion only — which
- * is the common case for hand-written Prometheus panel queries.
+ * render. A positive exact matcher uses `=~` when its entire value is an unknown variable.
  */
 export function resolveExpr(
   expr: string,
@@ -56,6 +55,19 @@ export function resolveExpr(
     );
   }
 
+  const variable = /\$(?:\{(?!__)([A-Za-z_]\w*)(?::[^}]+)?\}|(?!__)([A-Za-z_]\w*))/;
+  // Upgrade only a whole unresolved reference. Skip matcher-like text inside strings and comments.
+  out = out.replace(
+    /(?:(\b[a-zA-Z_]\w*\s*=)(\s*))?"((?:\\.|[^"\\])*)"|'(?:\\.|[^'\\])*'|`[^`]*`|#[^\n]*/g,
+    (match, exact, space, value) => {
+      const ref = exact && variable.exec(value);
+      if (ref && ref[0] === value && !Object.hasOwn(varValues, ref[1] ?? ref[2])) {
+        return `${exact}~${space}".*"`;
+      }
+      return match;
+    },
+  );
+
   // Known template variables: ${name}, $name, [[name]] / [[name:format]].
   for (const [name, value] of Object.entries(varValues)) {
     const n = escapeRegExp(name);
@@ -63,8 +75,5 @@ export function resolveExpr(
     out = out.replace(re, value);
   }
 
-  // Any leftover non-macro variable -> match-all, so the query still runs.
-  out = out.replace(/\$\{(?!__)[A-Za-z_]\w*(?::[^}]+)?\}|\$(?!__)[A-Za-z_]\w*/g, '.*');
-
-  return out;
+  return out.replace(new RegExp(variable.source, 'g'), '.*');
 }
