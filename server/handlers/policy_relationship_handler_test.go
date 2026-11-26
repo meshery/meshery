@@ -27,6 +27,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	coremodelv1beta2 "github.com/meshery/schemas/models/v1beta2/core"
 	modelv1beta2 "github.com/meshery/schemas/models/v1beta2/model"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	v1beta3comp "github.com/meshery/schemas/models/v1beta3/component"
@@ -836,6 +837,200 @@ func TestParseRelationshipToAlias(t *testing.T) {
 			}
 		})
 	}
+}
+
+func makeTestAliasRelationship(fromID, toID uuid.UUID, mutatedRefPath []string) *relationship.RelationshipDefinition {
+	refs := [][]string{mutatedRefPath}
+	ss := relationship.SelectorSet{
+		{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						ID: &fromID,
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &refs,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{{ID: &toID}},
+			},
+		},
+	}
+	rd := &relationship.RelationshipDefinition{
+		SubType:   RELATIONSHIP_SUBTYPE_ALIAS,
+		Selectors: &ss,
+	}
+	rd.ID = uuid.Must(uuid.NewV4())
+	return rd
+}
+
+func makeTestAliasComponent(id uuid.UUID, name string) *component.ComponentDefinition {
+	return &component.ComponentDefinition{
+		ID:          id,
+		DisplayName: name,
+	}
+}
+
+func TestResolveAliasesInDesign_MultiHopAndImmutability(t *testing.T) {
+	rootID := uuid.Must(uuid.NewV4())
+	childID := uuid.Must(uuid.NewV4())
+	grandChildID := uuid.Must(uuid.NewV4())
+
+	// Give parentPath extra slice capacity to verify ResolveAlias never mutates its backing array.
+	parentPath := make([]string, 3, 10)
+	copy(parentPath, []string{"configuration", "spec", "template"})
+	childPath := []string{"configuration", "spec", "containers"}
+
+	childRel := makeTestAliasRelationship(childID, rootID, parentPath)
+	grandChildRel := makeTestAliasRelationship(grandChildID, childID, childPath)
+
+	design := pattern.PatternFile{
+		Components: []*component.ComponentDefinition{
+			makeTestAliasComponent(rootID, "root"),
+			makeTestAliasComponent(childID, "child"),
+			makeTestAliasComponent(grandChildID, "grandchild"),
+		},
+		Relationships: []*relationship.RelationshipDefinition{
+			childRel,
+			grandChildRel,
+		},
+	}
+
+	resolved := ResolveAliasesInDesign(design)
+	require.Len(t, resolved, 2)
+
+	assert.Equal(t, rootID, resolved[childID.String()].ResolvedParentId)
+	assert.Equal(t, []string{"configuration", "spec", "template"}, resolved[childID.String()].ResolvedRefFieldPath)
+
+	assert.Equal(t, rootID, resolved[grandChildID.String()].ResolvedParentId)
+	assert.Equal(t, []string{"configuration", "spec", "template", "spec", "containers"}, resolved[grandChildID.String()].ResolvedRefFieldPath)
+
+	// Parent relationship's MutatedRef backing array must remain untouched.
+	assert.Equal(t, []string{"configuration", "spec", "template"}, (*(*childRel.Selectors)[0].Allow.From[0].RelationshipDefinitionSelectorsPatch.MutatedRef)[0])
+}
+
+func TestResolveAliasesInDesign_CyclesTerminateSafely(t *testing.T) {
+	t.Run("two-node cycle terminates without stack overflow", func(t *testing.T) {
+		idA := uuid.Must(uuid.NewV4())
+		idB := uuid.Must(uuid.NewV4())
+
+		design := pattern.PatternFile{
+			Components: []*component.ComponentDefinition{
+				makeTestAliasComponent(idA, "comp-a"),
+				makeTestAliasComponent(idB, "comp-b"),
+			},
+			Relationships: []*relationship.RelationshipDefinition{
+				makeTestAliasRelationship(idA, idB, []string{"configuration", "spec", "a"}),
+				makeTestAliasRelationship(idB, idA, []string{"configuration", "spec", "b"}),
+			},
+		}
+
+		var resolved map[string]coremodelv1beta2.ResolvedAlias
+		require.NotPanics(t, func() {
+			resolved = ResolveAliasesInDesign(design)
+		})
+		require.Len(t, resolved, 2)
+		assert.Equal(t, idA, resolved[idA.String()].AliasComponentId)
+		assert.Equal(t, idB, resolved[idB.String()].AliasComponentId)
+	})
+
+	t.Run("self-referencing alias terminates without stack overflow", func(t *testing.T) {
+		idA := uuid.Must(uuid.NewV4())
+
+		design := pattern.PatternFile{
+			Components: []*component.ComponentDefinition{
+				makeTestAliasComponent(idA, "self"),
+			},
+			Relationships: []*relationship.RelationshipDefinition{
+				makeTestAliasRelationship(idA, idA, []string{"configuration", "spec", "self"}),
+			},
+		}
+
+		var resolved map[string]coremodelv1beta2.ResolvedAlias
+		require.NotPanics(t, func() {
+			resolved = ResolveAliasesInDesign(design)
+		})
+		require.Len(t, resolved, 1)
+		assert.Equal(t, idA, resolved[idA.String()].ResolvedParentId)
+	})
+
+	t.Run("tail leading into cycle terminates without stack overflow", func(t *testing.T) {
+		idA := uuid.Must(uuid.NewV4())
+		idB := uuid.Must(uuid.NewV4())
+		idC := uuid.Must(uuid.NewV4())
+
+		design := pattern.PatternFile{
+			Components: []*component.ComponentDefinition{
+				makeTestAliasComponent(idA, "comp-a"),
+				makeTestAliasComponent(idB, "comp-b"),
+				makeTestAliasComponent(idC, "comp-c"),
+			},
+			Relationships: []*relationship.RelationshipDefinition{
+				makeTestAliasRelationship(idC, idA, []string{"configuration", "spec", "c"}),
+				makeTestAliasRelationship(idA, idB, []string{"configuration", "spec", "a"}),
+				makeTestAliasRelationship(idB, idA, []string{"configuration", "spec", "b"}),
+			},
+		}
+
+		var resolved map[string]coremodelv1beta2.ResolvedAlias
+		require.NotPanics(t, func() {
+			resolved = ResolveAliasesInDesign(design)
+		})
+		require.Len(t, resolved, 3)
+	})
+}
+
+func TestResolveAliasesInDesign_EmptyMutatedRefPathDoesNotPanic(t *testing.T) {
+	rootID := uuid.Must(uuid.NewV4())
+	childID := uuid.Must(uuid.NewV4())
+	grandChildID := uuid.Must(uuid.NewV4())
+
+	design := pattern.PatternFile{
+		Components: []*component.ComponentDefinition{
+			makeTestAliasComponent(rootID, "root"),
+			makeTestAliasComponent(childID, "child"),
+			makeTestAliasComponent(grandChildID, "grandchild"),
+		},
+		Relationships: []*relationship.RelationshipDefinition{
+			makeTestAliasRelationship(childID, rootID, []string{"configuration", "spec", "template"}),
+			makeTestAliasRelationship(grandChildID, childID, []string{}),
+		},
+	}
+
+	var resolved map[string]coremodelv1beta2.ResolvedAlias
+	require.NotPanics(t, func() {
+		resolved = ResolveAliasesInDesign(design)
+	})
+	require.Len(t, resolved, 2)
+	assert.Equal(t, rootID, resolved[grandChildID.String()].ResolvedParentId)
+	assert.Equal(t, []string{"configuration", "spec", "template"}, resolved[grandChildID.String()].ResolvedRefFieldPath)
+}
+
+func TestResolveAliasesInDesign_SkipsNilEntries(t *testing.T) {
+	rootID := uuid.Must(uuid.NewV4())
+	childID := uuid.Must(uuid.NewV4())
+
+	design := pattern.PatternFile{
+		Components: []*component.ComponentDefinition{
+			nil,
+			makeTestAliasComponent(rootID, "root"),
+			nil,
+			makeTestAliasComponent(childID, "child"),
+		},
+		Relationships: []*relationship.RelationshipDefinition{
+			nil,
+			makeTestAliasRelationship(childID, rootID, []string{"configuration", "spec", "containers"}),
+			nil,
+		},
+	}
+
+	var resolved map[string]coremodelv1beta2.ResolvedAlias
+	require.NotPanics(t, func() {
+		resolved = ResolveAliasesInDesign(design)
+	})
+	require.Len(t, resolved, 1)
+	assert.Equal(t, rootID, resolved[childID.String()].ResolvedParentId)
+	assert.Equal(t, []string{"configuration", "spec", "containers"}, resolved[childID.String()].ResolvedRefFieldPath)
 }
 
 // TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys pins
