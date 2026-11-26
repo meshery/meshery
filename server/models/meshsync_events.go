@@ -395,8 +395,11 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 	}()
 
 	// Query the database for the complete component definition.
+	// The registry holds many model versions of each kind; pick deterministically -
+	// most recently registered wins, id as stable tie-break (meshery#14401).
 	result := mh.dbHandler.Model(component.ComponentDefinition{}).
 		Where("component->>'version' = ? AND component->>'kind' = ?", apiVersion, kind).
+		Order("created_at DESC, id ASC").
 		First(&componentDef)
 
 	if result.Error != nil {
