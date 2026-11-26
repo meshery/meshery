@@ -3,9 +3,9 @@ package utils
 import (
 	"net/http"
 	"net/http/httptest"
-	"path/filepath"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/spf13/viper"
 	"k8s.io/apimachinery/pkg/version"
 )
@@ -276,19 +276,12 @@ func TestIsMesheryRunning(t *testing.T) {
 		}))
 		defer server.Close()
 
-		tempConfig := filepath.Join(t.TempDir(), "config.yaml")
-		viper.Reset()
-		t.Cleanup(func() { viper.Reset() })
-		viper.SetConfigFile(tempConfig)
-		viper.Set("contexts.local.endpoint", server.URL)
-		viper.Set("current-context", "local")
-
 		transport := &trackingTransport{base: http.DefaultTransport}
 		previousTransport := http.DefaultClient.Transport
 		http.DefaultClient.Transport = transport
 		t.Cleanup(func() { http.DefaultClient.Transport = previousTransport })
 
-		running, err := IsMesheryRunning("docker")
+		running, err := IsMesheryRunning(&config.Context{Endpoint: server.URL, Platform: "docker"})
 		if err != nil {
 			t.Fatalf("unexpected error from IsMesheryRunning: %v", err)
 		}
@@ -306,22 +299,34 @@ func TestIsMesheryRunning(t *testing.T) {
 		}))
 		defer server.Close()
 
-		tempConfig := filepath.Join(t.TempDir(), "config.yaml")
-		viper.Reset()
-		t.Cleanup(func() { viper.Reset() })
-		viper.SetConfigFile(tempConfig)
-		viper.Set("contexts.local.endpoint", server.URL)
-		viper.Set("current-context", "local")
-
 		transport := &trackingTransport{base: http.DefaultTransport}
 		previousTransport := http.DefaultClient.Transport
 		http.DefaultClient.Transport = transport
 		t.Cleanup(func() { http.DefaultClient.Transport = previousTransport })
 
-		_, _ = IsMesheryRunning("invalid-platform")
+		_, _ = IsMesheryRunning(&config.Context{Endpoint: server.URL, Platform: "invalid-platform"})
 
 		if transport.body == nil || !transport.body.closed {
 			t.Fatal("expected the health-check response body to be closed on non-200 response")
+		}
+	})
+	t.Run("Checks the given context, not the saved current-context", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer server.Close()
+
+		viper.Reset()
+		t.Cleanup(func() { viper.Reset() })
+		viper.Set("contexts.local.endpoint", "http://127.0.0.1:1")
+		viper.Set("current-context", "local")
+
+		running, err := IsMesheryRunning(&config.Context{Endpoint: server.URL, Platform: "invalid-platform"})
+		if err != nil {
+			t.Fatalf("unexpected error from IsMesheryRunning: %v", err)
+		}
+		if !running {
+			t.Error("expected the given context's endpoint to be checked")
 		}
 	})
 }
