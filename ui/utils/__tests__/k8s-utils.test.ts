@@ -204,6 +204,14 @@ describe('normalizeUnit', () => {
   it('passes through quantities for unknown resource types', () => {
     expect(normalizeUnit('unknown', '42')).toBe('42');
   });
+
+  it('handles nullish or numeric inputs defensively', () => {
+    expect(normalizeUnit(undefined, '100Mi')).toBe('100Mi');
+    expect(normalizeUnit('cpu', null)).toBe('');
+    expect(normalizeUnit('memory', undefined)).toBe('');
+    expect(normalizeUnit('cpu', 2)).toBe('2 cores');
+    expect(normalizeUnit('memory', 1024)).toBe('1.02 KB');
+  });
 });
 
 describe('parseDiskSpace / parseRam (parseUnitsOfBytes)', () => {
@@ -298,6 +306,7 @@ describe('resourceParsers / getResourceStr', () => {
   it('falls back gracefully on unknown resource types', () => {
     expect(getResourceStr('100Gi', 'storage')).toBe('100Gi');
     expect(getResourceStr(50, undefined)).toBe('50');
+    expect(getResourceStr(50, 'toString')).toBe('50');
   });
 });
 

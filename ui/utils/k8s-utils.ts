@@ -272,7 +272,9 @@ export function getResourceStr(value, resourceType) {
     memory: unparseRam,
   };
 
-  const formatter = resourceFormatters[resourceType];
+  const formatter = Object.prototype.hasOwnProperty.call(resourceFormatters, resourceType)
+    ? resourceFormatters[resourceType]
+    : undefined;
   if (typeof formatter !== 'function') {
     return `${value ?? ''}`;
   }
