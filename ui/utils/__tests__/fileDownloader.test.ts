@@ -1,3 +1,4 @@
+import { createServer } from 'node:http';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import downloadContent, { downloadFileFromUrl, downloadFileFromContent } from '../fileDownloader';
 import { FILTER, PATTERN } from '@/constants/navigator';
@@ -40,6 +41,8 @@ describe('downloadFileFromUrl', () => {
 });
 
 describe('downloadContent', () => {
+  const realFetch = globalThis.fetch;
+  const realURL = globalThis.URL;
   let createElementSpy: ReturnType<typeof vi.spyOn>;
   let setAttributeSpy: ReturnType<typeof vi.fn>;
   let fetchMock: ReturnType<typeof vi.fn>;
@@ -49,7 +52,11 @@ describe('downloadContent', () => {
 
   beforeEach(() => {
     blob = new Blob(['download bytes'], { type: 'application/wasm' });
-    fetchMock = vi.fn().mockResolvedValue({ ok: true, blob: async () => blob });
+    fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      headers: new Headers(),
+      blob: async () => blob,
+    });
     vi.stubGlobal('fetch', fetchMock);
     createObjectURL = vi.fn().mockReturnValue('blob:download');
     revokeObjectURL = vi.fn();
@@ -78,17 +85,63 @@ describe('downloadContent', () => {
     [{ id: 'f1', type: FILTER }, '/api/filter/download/f1'],
   ])('downloads the response bytes from %j', async (args, uri) => {
     await downloadContent({ ...args, name: 'download' });
-    expect(fetchMock).toHaveBeenCalledWith(uri);
+    expect(fetchMock).toHaveBeenCalledWith(uri, { redirect: 'error' });
     expect(createObjectURL).toHaveBeenCalledWith(blob);
     expect(setAttributeSpy).toHaveBeenCalledWith('href', 'blob:download');
     expect(setAttributeSpy).toHaveBeenCalledWith('download', 'download');
     expect(revokeObjectURL).toHaveBeenCalledWith('blob:download');
   });
 
+  it.each([
+    ['attachment;filename=example.yml', 'example.yml'],
+    ['attachment;filename=example.tgz', 'example.tgz'],
+    ['attachment;filename=example.tar', 'example.tar'],
+    ['attachment; filename="example design.yml"', 'example design.yml'],
+  ])('preserves the response filename from %s', async (disposition, filename) => {
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      headers: new Headers({ 'Content-Disposition': disposition }),
+      blob: async () => blob,
+    });
+    await downloadContent({ id: 'p1', type: PATTERN, name: 'example' });
+    expect(setAttributeSpy).toHaveBeenCalledWith('download', filename);
+  });
+
+  it.each([FILTER, PATTERN])('rejects an authentication redirect for %s without saving HTML', async (type) => {
+    vi.stubGlobal('URL', realURL);
+    const requests: string[] = [];
+    const server = createServer((req, res) => {
+      requests.push(req.url!);
+      if (req.url === '/provider') {
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end('<html>Choose a provider</html>');
+      } else {
+        res.writeHead(302, { Location: '/provider' });
+        res.end();
+      }
+    });
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+    try {
+      const address = server.address() as { port: number };
+      fetchMock.mockImplementation((uri, options) =>
+        realFetch(`http://127.0.0.1:${address.port}${uri}`, options),
+      );
+      await expect(downloadContent({ id: 'f1', type, name: 'example' })).rejects.toThrow();
+      expect(requests).toEqual([`/api/${type}/download/f1`]);
+      expect(createElementSpy).not.toHaveBeenCalled();
+      expect(createObjectURL).not.toHaveBeenCalled();
+    } finally {
+      await new Promise<void>((resolve, reject) =>
+        server.close((error) => (error ? reject(error) : resolve())),
+      );
+    }
+  });
+
   it('waits for the response body before starting the download', async () => {
     let finishBody!: (_blob: Blob) => void;
     fetchMock.mockResolvedValueOnce({
       ok: true,
+      headers: new Headers(),
       blob: () =>
         new Promise<Blob>((resolve) => {
           finishBody = resolve;
@@ -118,6 +171,7 @@ describe('downloadContent', () => {
     );
     fetchMock.mockResolvedValueOnce({
       ok: true,
+      headers: new Headers(),
       blob: () => Promise.reject(new Error('Body failed')),
     });
     await expect(downloadContent({ id: 'f1', type: FILTER, name: 'f' })).rejects.toThrow('Body failed');

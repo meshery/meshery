@@ -223,14 +223,18 @@ export const useContentDownload = () => {
     updateProgress({ showProgress: true });
     try {
       designs = Array.isArray(designs) ? designs : [designs];
-      for (const design of designs) {
-        let id = design.id;
-        let name = design.name;
-        await downloadContent({ id, name, type: 'pattern', source_type, params });
-        notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
-      }
-    } catch (e) {
-      console.error(e);
+      await Promise.all(
+        designs.map(async (design) => {
+          try {
+            let id = design.id;
+            let name = design.name;
+            await downloadContent({ id, name, type: 'pattern', source_type, params });
+            notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
+          } catch (e) {
+            console.error(e);
+          }
+        }),
+      );
     } finally {
       updateProgress({ showProgress: false });
     }
