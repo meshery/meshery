@@ -168,12 +168,12 @@ function MesheryPatternGrid({
     open: false,
     content: null,
   });
-  const handleDownload = (e, design, source_type, params) => {
+  const handleDownload = async (e, design, source_type, params) => {
     e.stopPropagation();
     try {
       let id = design.id;
       let name = design.name;
-      downloadContent({ id, name, type: 'pattern', source_type, params });
+      await downloadContent({ id, name, type: 'pattern', source_type, params });
       notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
     } catch (e) {
       console.error(e);

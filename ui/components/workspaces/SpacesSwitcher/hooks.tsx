@@ -217,21 +217,26 @@ export const useContentDelete = (modalRef) => {
 
 export const useContentDownload = () => {
   const { notify } = useNotification();
-  const handleDesignDownload = (e, designs, source_type, params) => {
+  const handleDesignDownload = async (e, designs, source_type, params) => {
     e.stopPropagation();
 
+    updateProgress({ showProgress: true });
     try {
       designs = Array.isArray(designs) ? designs : [designs];
-      designs.forEach((design) => {
-        updateProgress({ showProgress: true });
-        let id = design.id;
-        let name = design.name;
-        downloadContent({ id, name, type: 'pattern', source_type, params });
-        updateProgress({ showProgress: false });
-        notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
-      });
-    } catch (e) {
-      console.error(e);
+      await Promise.all(
+        designs.map(async (design) => {
+          try {
+            let id = design.id;
+            let name = design.name;
+            await downloadContent({ id, name, type: 'pattern', source_type, params });
+            notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
+          } catch (e) {
+            console.error(e);
+          }
+        }),
+      );
+    } finally {
+      updateProgress({ showProgress: false });
     }
   };
 

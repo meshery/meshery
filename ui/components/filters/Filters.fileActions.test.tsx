@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 
 const updateProgress = vi.fn();
 const downloadContent = vi.fn();
@@ -241,16 +241,62 @@ describe('createHandleSubmit', () => {
 });
 
 describe('createHandleDownload', () => {
-  it('downloads via downloadContent and emits an info notification', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('downloads via downloadContent and emits an info notification', async () => {
     const notify = vi.fn();
     const handler = createHandleDownload({ notify });
     const ev = { stopPropagation: vi.fn() } as any;
-    handler(ev, 'i-1', 'foo');
+    await handler(ev, 'i-1', 'foo');
     expect(ev.stopPropagation).toHaveBeenCalled();
     expect(downloadContent).toHaveBeenCalledWith({ id: 'i-1', name: 'foo', type: 'filter' });
     expect(notify).toHaveBeenCalledWith({
       message: '"foo" filter downloaded',
       event_type: 'INFO',
+    });
+  });
+
+  it('keeps progress visible and waits to notify until the download finishes', async () => {
+    let finish!: () => void;
+    downloadContent.mockReturnValueOnce(
+      new Promise<void>((resolve) => {
+        finish = resolve;
+      }),
+    );
+    const notify = vi.fn();
+    const pending = createHandleDownload({ notify })(
+      { stopPropagation: vi.fn() } as any,
+      'i-1',
+      'foo',
+    );
+    expect(updateProgress).toHaveBeenCalledTimes(1);
+    expect(updateProgress).toHaveBeenLastCalledWith({ showProgress: true });
+    expect(notify).not.toHaveBeenCalled();
+    finish();
+    await pending;
+    expect(updateProgress).toHaveBeenLastCalledWith({ showProgress: false });
+    expect(notify).toHaveBeenCalledWith({ message: '"foo" filter downloaded', event_type: 'INFO' });
+  });
+
+  it('resets progress and reports an HTTP 404 without announcing success', async () => {
+    const notify = vi.fn();
+    const actual = await vi.importActual<typeof import('../../utils/fileDownloader')>(
+      '../../utils/fileDownloader',
+    );
+    downloadContent.mockImplementationOnce(actual.default);
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }));
+    const handler = createHandleDownload({ notify });
+    const ev = { stopPropagation: vi.fn() } as any;
+
+    await handler(ev, 'i-1', 'foo');
+
+    expect(notify).toHaveBeenCalledTimes(1);
+    expect(updateProgress).toHaveBeenCalledWith({ showProgress: true });
+    expect(updateProgress).toHaveBeenLastCalledWith({ showProgress: false });
+    expect(notify).toHaveBeenCalledWith({
+      message: 'Error downloading "foo" filter',
+      event_type: 'ERROR',
+      details: 'Download failed (HTTP 404)',
     });
   });
 });
