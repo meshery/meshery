@@ -163,6 +163,10 @@ deployment, harden it, make it resilient, and observe it.
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-building-first-principles-fluency-in-ci-cd-mesheryctl-backend-kubernetes/8366" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate — Building First-Principles Fluency in CI/CD, mesheryctl/Backend &amp; Kubernetes
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/guidance-needed-recurring-ci-failures-on-pr-24033/8355" target="_blank" rel="noopener noreferrer">
             Guidance needed: Recurring CI failures on PR #24033
           </a>
@@ -189,10 +193,6 @@ deployment, harden it, make it resilient, and observe it.
         </li><li>
           <a href="https://discuss.meshery.io/t/need-meshmate-to-assist-in-start-contributing-to-meshery-doc/8324" target="_blank" rel="noopener noreferrer">
             Need meshmate to assist in start contributing to meshery Doc
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/looking-for-meshmate-to-learn-from/8316" target="_blank" rel="noopener noreferrer">
-            Looking for MeshMate to learn from
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">

@@ -84,6 +84,10 @@ For every `mesheryctl` command and flag, see the [`mesheryctl` command reference
 
 <div class="related-discussions">
   <h3>Recent Discussions with "mesheryctl" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-building-first-principles-fluency-in-ci-cd-mesheryctl-backend-kubernetes/8366" target="_blank" rel="noopener noreferrer">
+            Looking for a MeshMate — Building First-Principles Fluency in CI/CD, mesheryctl/Backend &amp; Kubernetes
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/pairing-up-with-a-meshmate-to-gacefully-start-contributing-to-meshery-and-its-project-ecosystem/6957" target="_blank" rel="noopener noreferrer">
             Pairing up with a Meshmate to gacefully start contributing to Meshery and its project ecosystem
           </a>
@@ -110,10 +114,6 @@ For every `mesheryctl` command and flag, see the [`mesheryctl` command reference
         </li><li>
           <a href="https://discuss.meshery.io/t/error-while-launching-the-meshery-dashboard/6600" target="_blank" rel="noopener noreferrer">
             Error while launching the Meshery Dashboard
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/cant-find-the-file-path-for-meshery-designs/6319" target="_blank" rel="noopener noreferrer">
-            Can&#39;t find the file path for meshery designs
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/mesheryctl" target="_blank" rel="noopener noreferrer">
