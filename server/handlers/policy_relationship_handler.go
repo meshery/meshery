@@ -159,7 +159,7 @@ func resolveAlias(
 		return coremodelv1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
 	}
 
-	visited[parentAlias.AliasComponentId] = true
+	visited[currentNonResolved.ImmediateParentId] = true
 
 	// slicing from 1 to remove "configuration" prefix when building the resolved ref
 	// so we dont get something like configuration,spec,configuration , containers , _

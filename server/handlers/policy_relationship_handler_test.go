@@ -931,7 +931,11 @@ func TestResolveAliasesInDesign_CyclesTerminateSafely(t *testing.T) {
 		})
 		require.Len(t, resolved, 2)
 		assert.Equal(t, idA, resolved[idA.String()].AliasComponentId)
+		assert.Equal(t, idA, resolved[idA.String()].ResolvedParentId)
+		assert.Equal(t, []string{"configuration", "spec", "b", "spec", "a"}, resolved[idA.String()].ResolvedRefFieldPath)
 		assert.Equal(t, idB, resolved[idB.String()].AliasComponentId)
+		assert.Equal(t, idB, resolved[idB.String()].ResolvedParentId)
+		assert.Equal(t, []string{"configuration", "spec", "a", "spec", "b"}, resolved[idB.String()].ResolvedRefFieldPath)
 	})
 
 	t.Run("self-referencing alias terminates without stack overflow", func(t *testing.T) {
@@ -952,6 +956,7 @@ func TestResolveAliasesInDesign_CyclesTerminateSafely(t *testing.T) {
 		})
 		require.Len(t, resolved, 1)
 		assert.Equal(t, idA, resolved[idA.String()].ResolvedParentId)
+		assert.Equal(t, []string{"configuration", "spec", "self"}, resolved[idA.String()].ResolvedRefFieldPath)
 	})
 
 	t.Run("tail leading into cycle terminates without stack overflow", func(t *testing.T) {
@@ -977,6 +982,12 @@ func TestResolveAliasesInDesign_CyclesTerminateSafely(t *testing.T) {
 			resolved = ResolveAliasesInDesign(design)
 		})
 		require.Len(t, resolved, 3)
+		assert.Equal(t, idA, resolved[idC.String()].ResolvedParentId)
+		assert.Equal(t, []string{"configuration", "spec", "b", "spec", "a", "spec", "c"}, resolved[idC.String()].ResolvedRefFieldPath)
+		assert.Equal(t, idA, resolved[idA.String()].ResolvedParentId)
+		assert.Equal(t, []string{"configuration", "spec", "b", "spec", "a"}, resolved[idA.String()].ResolvedRefFieldPath)
+		assert.Equal(t, idB, resolved[idB.String()].ResolvedParentId)
+		assert.Equal(t, []string{"configuration", "spec", "a", "spec", "b"}, resolved[idB.String()].ResolvedRefFieldPath)
 	})
 }
 
@@ -1626,4 +1637,47 @@ func TestPolicyEvalTimeout_WarnsOncePerHandler(t *testing.T) {
 	other, otherBuf := newHandler()
 	assert.Equal(t, defaultPolicyEvalTimeout, other.policyEvalTimeout())
 	assert.Equal(t, 1, strings.Count(otherBuf.String(), "ignoring POLICY_EVAL_TIMEOUT"))
+}
+
+func TestEvaluateDesign_CyclicAliasDoesNotPanicOrLoop(t *testing.T) {
+	viper.Set("USE_GO_POLICY_ENGINE", true)
+	t.Cleanup(func() {
+		viper.Set("USE_GO_POLICY_ENGINE", false)
+	})
+
+	logger := newTestLogger(t)
+	h := &Handler{
+		log:      logger,
+		GoEngine: gopolicies.NewGoEngine(logger),
+	}
+
+	idA := uuid.Must(uuid.NewV4())
+	idB := uuid.Must(uuid.NewV4())
+	design := pattern.PatternFile{
+		SchemaVersion: "designs.meshery.io/v1beta1",
+		Name:          "cyclic-alias-eval-test",
+		Version:       "1.0.0",
+		Components: []*component.ComponentDefinition{
+			makeTestAliasComponent(idA, "comp-a"),
+			makeTestAliasComponent(idB, "comp-b"),
+		},
+		Relationships: []*relationship.RelationshipDefinition{
+			makeTestAliasRelationship(idA, idB, []string{"configuration", "spec", "a"}),
+			makeTestAliasRelationship(idB, idA, []string{"configuration", "spec", "b"}),
+		},
+	}
+
+	// Pass 1: EvaluateDesign resolves the cycle into Design.Metadata.ResolvedAliases without panicking or looping.
+	resp, err := h.EvaluateDesign(pattern.EvaluationRequest{Design: design}, MAX_RE_EVALUATION_DEPTH)
+	require.NoError(t, err)
+	require.NotNil(t, resp.Design.Metadata)
+	require.NotNil(t, resp.Design.Metadata.ResolvedAliases)
+	assert.Len(t, *resp.Design.Metadata.ResolvedAliases, 2)
+
+	// Pass 2: Re-evaluating with cyclic ResolvedParentId already present terminates cleanly via bounded O(1) lookups.
+	resp2, err := h.EvaluateDesign(pattern.EvaluationRequest{Design: resp.Design}, MAX_RE_EVALUATION_DEPTH)
+	require.NoError(t, err)
+	require.NotNil(t, resp2.Design.Metadata)
+	require.NotNil(t, resp2.Design.Metadata.ResolvedAliases)
+	assert.Len(t, *resp2.Design.Metadata.ResolvedAliases, 2)
 }
