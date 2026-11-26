@@ -83,7 +83,12 @@ export function getTotalReplicas(item) {
 
 // compareUnits compares two units and returns true if they are equal
 export function compareUnits(quantity1, quantity2) {
-  if (quantity1 === null || quantity1 === undefined || quantity2 === null || quantity2 === undefined) {
+  if (
+    quantity1 === null ||
+    quantity1 === undefined ||
+    quantity2 === null ||
+    quantity2 === undefined
+  ) {
     return false;
   }
   // strip whitespace and convert to lowercase
