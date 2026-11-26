@@ -284,7 +284,11 @@ describe('resources-table fetch errors', () => {
 });
 
 describe('resources-table sorting', () => {
-  const columns = [{ name: 'metadata.name' }, { name: 'apiVersion' }];
+  const columns = [
+    { name: 'metadata.name' },
+    { name: 'apiVersion' },
+    { name: 'metadata.namespace' },
+  ];
 
   const renderTable = () =>
     render(
@@ -350,5 +354,14 @@ describe('resources-table sorting', () => {
     } finally {
       fetchResources.mockImplementation(echoPage);
     }
+  });
+
+  it('sorts metadata columns by the column name the server accepts', async () => {
+    // The server only orders by its own columns (e.g. "namespace"), so a
+    // "metadata.namespace" order is dropped and the rows come back unsorted.
+    renderTable();
+
+    sortBy(2, 'ascending');
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: 'namespace asc' }));
   });
 });

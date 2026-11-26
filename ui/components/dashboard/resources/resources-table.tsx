@@ -260,7 +260,10 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
       expandableRowsOnClick: true,
       onTableChange: (action, tableState) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
-        const columnName = camelcaseToSnakecase(tableConfig.columns[tableState.activeColumn]?.name);
+        // The server orders by its own columns, so "metadata.namespace" becomes "namespace".
+        const columnName = camelcaseToSnakecase(
+          tableConfig.columns[tableState.activeColumn]?.name,
+        )?.replace(/^metadata\./, '');
 
         let order = '';
         if (tableState.activeColumn) {
