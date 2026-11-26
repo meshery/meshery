@@ -99,4 +99,5 @@ jobs:
             <b>WORKFLOW:</b> ${{ github.workflow }}<br />
             <b>JOB:</b> ${{ github.job }}<br />
             <b>REASON:</b> ${{ env.msg }}<br />
-            <b>DETAILS:</b> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}${{ job.status }}">${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}</a><br />
+            <b>STATUS:</b> ${{ job.status }}<br />
+            <b>DETAILS:</b> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">View workflow run</a><br />
