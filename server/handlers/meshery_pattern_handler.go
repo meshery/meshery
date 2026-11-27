@@ -1612,8 +1612,13 @@ func (h *Handler) PublishCatalogPatternHandler(
 
 	var respBody *models.CatalogRequest
 	err = json.Unmarshal(resp, &respBody)
-	if err != nil {
-		h.log.Error(ErrPublishCatalogPattern(err))
+	if err != nil || respBody == nil {
+		if err == nil {
+			err = fmt.Errorf("empty or null response from provider")
+		}
+		if h.log != nil {
+			h.log.Error(ErrPublishCatalogPattern(err))
+		}
 		e := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrPublishCatalogPattern(err),
 		}).WithDescription("Error parsing response.").Build()
@@ -1719,8 +1724,13 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 
 	var respBody *models.CatalogRequest
 	err = json.Unmarshal(resp, &respBody)
-	if err != nil {
-		h.log.Error(ErrPublishCatalogPattern(err))
+	if err != nil || respBody == nil {
+		if err == nil {
+			err = fmt.Errorf("empty or null response from provider")
+		}
+		if h.log != nil {
+			h.log.Error(ErrPublishCatalogPattern(err))
+		}
 		e := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrPublishCatalogPattern(err),
 		}).WithDescription("Error parsing response.").Build()

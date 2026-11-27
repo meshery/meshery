@@ -505,3 +505,11 @@ func TestUnPublishCatalogFilterHandler_NullBody_ReturnsBadRequest(t *testing.T) 
 		t.Fatalf("expected 400 Bad Request, got %d", rec.Code)
 	}
 }
+
+func TestDefaultLocalProvider_PublishCatalogFilter_ReturnsErrLocalProviderSupport(t *testing.T) {
+	provider := &models.DefaultLocalProvider{}
+	_, err := provider.PublishCatalogFilter(nil, nil)
+	if err != models.ErrLocalProviderSupport {
+		t.Fatalf("expected ErrLocalProviderSupport, got %v", err)
+	}
+}
