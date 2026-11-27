@@ -1,6 +1,7 @@
 package system
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -87,5 +88,44 @@ func TestKeepConnectionAlive_Failure(t *testing.T) {
 	}
 	if strings.Contains(output, "connection request success") {
 		t.Fatal("did not expect success to be logged after connection failure")
+	}
+}
+
+func TestDashboardCmdArgs(t *testing.T) {
+	tests := []struct {
+		name          string
+		args          []string
+		wantErr       bool
+		expectedError error
+	}{
+		{
+			name:    "no arguments",
+			args:    []string{},
+			wantErr: false,
+		},
+		{
+			name:          "single unexpected argument",
+			args:          []string{"foo"},
+			wantErr:       true,
+			expectedError: utils.ErrInvalidArgument(fmt.Errorf("this command takes no arguments. See '%s --help' for more information", dashboardCmd.CommandPath())),
+		},
+		{
+			name:          "multiple unexpected arguments",
+			args:          []string{"foo", "bar"},
+			wantErr:       true,
+			expectedError: utils.ErrInvalidArgument(fmt.Errorf("this command takes no arguments. See '%s --help' for more information", dashboardCmd.CommandPath())),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := dashboardCmd.Args(dashboardCmd, tt.args)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("dashboardCmd.Args() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if tt.wantErr && err != nil {
+				utils.AssertMeshkitErrorsEqual(t, err, tt.expectedError)
+			}
+		})
 	}
 }

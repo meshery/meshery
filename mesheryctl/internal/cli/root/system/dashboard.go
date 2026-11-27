@@ -68,7 +68,14 @@ var dashboardCmd = &cobra.Command{
 	Short: "Open Meshery UI in browser.",
 	Long: `Open Meshery UI in browser.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/dashboard`,
-	Args: cobra.NoArgs,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) > 0 {
+			return utils.ErrInvalidArgument(
+				fmt.Errorf("this command takes no arguments. See '%s --help' for more information", cmd.CommandPath()),
+			)
+		}
+		return nil
+	},
 	Example: `
 // Open Meshery UI in browser
 mesheryctl system dashboard
