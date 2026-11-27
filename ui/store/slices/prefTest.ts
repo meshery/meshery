@@ -24,8 +24,13 @@ const initialState = {
   },
 };
 
-const isPlainObject = (value: unknown): boolean =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
+const isPlainObject = (value: unknown): boolean => {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return false;
+  }
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+};
 
 const isValidSelectionPage = (page: unknown): boolean =>
   (typeof page === 'number' && Number.isFinite(page) && page >= 0) ||

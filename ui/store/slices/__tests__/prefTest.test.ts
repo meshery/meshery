@@ -104,6 +104,30 @@ describe('prefTest slice', () => {
       expect(prefTestReducer(initial, updateLoadTestPref({ loadTestPref: [] } as never))).toBe(
         initial,
       );
+      expect(
+        prefTestReducer(initial, updateLoadTestPref({ loadTestPref: new Date(0) } as never)),
+      ).toBe(initial);
+      expect(
+        prefTestReducer(initial, updateLoadTestPref({ loadTestPref: new Map() } as never)),
+      ).toBe(initial);
+    });
+
+    it('accepts null-prototype records including Date in ts', () => {
+      const initial = prefTestReducer(undefined, { type: 'init' } as any);
+      const dateObj = new Date('2024-06-01T00:01:00Z');
+      const nullProtoPayload = Object.assign(Object.create(null), {
+        qps: 25,
+        t: '45s',
+        c: 3,
+        gen: 'fortio',
+        ts: dateObj,
+      });
+      const state = prefTestReducer(
+        initial,
+        updateLoadTestPref({ loadTestPref: nullProtoPayload }),
+      );
+      expect(state.loadTestPref.qps).toBe(25);
+      expect(state.loadTestPref.ts).toBe(dateObj.getTime());
     });
   });
 
@@ -128,6 +152,12 @@ describe('prefTest slice', () => {
       expect(prefTestReducer(initial, updateLoadTest(undefined as never))).toBe(initial);
       expect(prefTestReducer(initial, updateLoadTest({ loadTest: null } as never))).toBe(initial);
       expect(prefTestReducer(initial, updateLoadTest({ loadTest: 'bad' } as never))).toBe(initial);
+      expect(prefTestReducer(initial, updateLoadTest({ loadTest: new Date(0) } as never))).toBe(
+        initial,
+      );
+      expect(prefTestReducer(initial, updateLoadTest({ loadTest: new Map() } as never))).toBe(
+        initial,
+      );
     });
   });
 
