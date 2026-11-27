@@ -144,7 +144,15 @@ function MesheryPatternCard_({
         data-testid="pattern-flip-card"
       >
         {/* FRONT PART */}
-        <div data-testid="pattern-card-front">
+        <div
+          data-testid="pattern-card-front"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            justifyContent: 'space-between',
+          }}
+        >
           <div>
             <div
               style={{ height: 'max', display: 'flex', justifyContent: 'space-between' }}
