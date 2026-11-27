@@ -247,6 +247,7 @@ const (
 	ErrResetInProgressCode       = "meshery-server-1481"
 	ErrInvalidClientEventCode    = "meshery-server-1489"
 	ErrNilProviderCode           = "meshery-server-1492"
+	ErrRequestTooLargeCode       = "meshery-server-1494"
 )
 
 var (
@@ -1313,5 +1314,17 @@ func ErrNilProvider() error {
 		[]string{"Provider instance passed to the handler is nil"},
 		[]string{"The handler was invoked without an initialized provider instance"},
 		[]string{"Ensure the provider is properly initialized before handling the request"},
+	)
+}
+
+func ErrRequestTooLarge(maxSize int) error {
+	msg := fmt.Sprintf("request body exceeds maximum allowed size of %dMB", maxSize/(1024*1024))
+	return errors.New(
+		ErrRequestTooLargeCode,
+		errors.Alert,
+		[]string{msg},
+		[]string{msg},
+		[]string{"Request payload exceeds maximum allowed size"},
+		[]string{"Reduce request payload size to within acceptable limits"},
 	)
 }

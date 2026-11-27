@@ -2207,6 +2207,24 @@
         "short_description": "Unable to complete performance profile lookup",
         "probable_cause": "Profiles were added, deleted, or reordered during lookup, or the provider returned inconsistent pagination data",
         "suggested_remediation": "Rerun the command to refresh the matching profile list"
+      },
+      "1266": {
+        "name": "ErrAcquireTokenFileLockCode",
+        "code": "1266",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to acquire token file lock",
+        "probable_cause": "Another process may be holding the token file lock longer than expected\nThe named mutex may be inaccessible",
+        "suggested_remediation": "Retry the operation\nRun `mesheryctl system login` to re-authenticate"
+      },
+      "1267": {
+        "name": "ErrReplaceTokenFileCode",
+        "code": "1267",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to replace token file",
+        "probable_cause": "The destination path may be locked by another process\nThe filesystem may not support atomic rename",
+        "suggested_remediation": "Retry the operation\nRun `mesheryctl system login` to re-authenticate"
       }
     }
   }

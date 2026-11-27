@@ -34,9 +34,9 @@ var (
 	exportModelFlagsProvided exportModelFlags
 )
 
-// mesheryctl model export <designname>
+// mesheryctl model export [model-name]
 var exportModelCmd = &cobra.Command{
-	Use:   "export",
+	Use:   "export [model-name]",
 	Short: "Export registered models",
 	Long: `Export the registered model to the specified output type
 Find more information at: https://docs.meshery.io/reference/mesheryctl/model/export`,

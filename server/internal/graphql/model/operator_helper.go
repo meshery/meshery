@@ -25,8 +25,6 @@ import (
 const (
 	Namespace                = "meshery"
 	RequestSubject           = "meshery.meshsync.request"
-	MeshsyncSubject          = "meshery.meshsync.core"
-	BrokerQueue              = "meshery"
 	MeshSyncBrokerConnection = "meshsync"
 )
 
@@ -120,7 +118,7 @@ func GetMeshSyncInfo(meshsync controllers.IMesheryController, broker controllers
 	return meshsyncControllerStatus
 }
 
-func SubscribeToBroker(_ models.Provider, mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message, brokerConn brokerpkg.Handler, ct *K8sConnectionTracker) (string, error) {
+func SubscribeToBroker(_ models.Provider, mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler, ct *K8sConnectionTracker) (string, error) {
 	var broker *operatorv1alpha1.Broker
 	var endpoints []string
 	if ct != nil {
@@ -200,10 +198,6 @@ func SubscribeToBroker(_ models.Provider, mesheryKubeClient *mesherykube.Client,
 		ct.ResetEndpoints(available)
 	}()
 	conn.DeepCopyInto(brokerConn)
-	err = brokerConn.SubscribeWithChannel(MeshsyncSubject, BrokerQueue, datach)
-	if err != nil {
-		return endpoint, ErrSubscribeChannel(err)
-	}
 
 	err = brokerConn.Publish(RequestSubject, &brokerpkg.Message{
 		Request: &brokerpkg.RequestObject{
