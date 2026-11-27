@@ -188,3 +188,67 @@ func TestCloneFilterSuccess(t *testing.T) {
 		t.Errorf("cloned visibility = %q, want %q", cloned[0].Visibility, models.Private)
 	}
 }
+
+func TestCloneFilterRemoteNotFound(t *testing.T) {
+	testCases := []struct {
+		name           string
+		remoteStatus   int
+		remoteBody     string
+		wantHTTPStatus int
+		wantCode       string
+	}{
+		{
+			name:           "remote 404 surfaces as 404",
+			remoteStatus:   http.StatusNotFound,
+			remoteBody:     "filter not found",
+			wantHTTPStatus: http.StatusNotFound,
+			wantCode:       models.ErrCloneCode,
+		},
+		{
+			name:           "remote 403 surfaces as 403",
+			remoteStatus:   http.StatusForbidden,
+			remoteBody:     "forbidden",
+			wantHTTPStatus: http.StatusForbidden,
+			wantCode:       ErrCloneFilterCode,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(tc.remoteStatus)
+				_, _ = w.Write([]byte(tc.remoteBody))
+			}))
+			defer srv.Close()
+
+			h, _, _ := newCloneFilterFixture(t)
+			remoteProvider := &models.RemoteProvider{
+				ProviderProperties: models.ProviderProperties{
+					ProviderName: "Meshery",
+					Capabilities: models.Capabilities{
+						{Feature: models.CloneMesheryFilters, Endpoint: "/api/content/filters/clone"},
+					},
+				},
+				RemoteProviderURL: srv.URL,
+				TokenStore:        make(map[string]string),
+				Log:               newTestLogger(t),
+			}
+
+			filterID := uuid.Must(uuid.NewV4()).String()
+			body, _ := json.Marshal(&models.MesheryCloneFilterRequestBody{Name: "cloned"})
+			req := httptest.NewRequest(http.MethodPost, "/api/filter/clone/"+filterID, bytes.NewReader(body))
+			req.AddCookie(&http.Cookie{Name: models.TokenCookieName, Value: "test-token"})
+			req = mux.SetURLVars(req, map[string]string{"id": filterID})
+			rec := httptest.NewRecorder()
+
+			h.CloneMesheryFilterHandler(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, remoteProvider)
+
+			if rec.Code != tc.wantHTTPStatus {
+				t.Fatalf("status = %d, want %d. body: %s", rec.Code, tc.wantHTTPStatus, rec.Body.String())
+			}
+			if !strings.Contains(rec.Body.String(), tc.wantCode) {
+				t.Errorf("expected error body to contain %s, got: %s", tc.wantCode, rec.Body.String())
+			}
+		})
+	}
+}
