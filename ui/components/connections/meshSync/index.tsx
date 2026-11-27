@@ -39,6 +39,15 @@ import {
 import { useSelector } from 'react-redux';
 import MeshSyncEmptyState from './MeshSyncEmptyState';
 
+const meshSyncLifecycleStates = new Set<string>(Object.values(CONNECTION_STATES));
+
+const resolveMeshSyncLifecycleStatus = (value: unknown): string => {
+  if (typeof value === 'string' && meshSyncLifecycleStates.has(value)) {
+    return value;
+  }
+  return MESHSYNC_STATES.DISCOVERED;
+};
+
 export default function MeshSyncTable(props) {
   const { selectedResourceId, updateUrlWithResourceId, tabs } = props;
   const callbackRef = useRef();
@@ -352,7 +361,7 @@ export default function MeshSyncTable(props) {
             'component_metadata',
             columns,
           );
-          const currentStatus = typeof value === 'string' ? value : '';
+          const currentStatus = resolveMeshSyncLifecycleStatus(value);
           const isConnectionCapable = componentMetadata?.capabilities?.connection === true;
           const canRegister = isConnectionCapable && currentStatus === MESHSYNC_STATES.DISCOVERED;
 

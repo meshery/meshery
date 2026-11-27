@@ -466,7 +466,7 @@ describe('MeshSyncTable', () => {
   );
 
   it.each([undefined, null, '', 0, 'unknown', { phase: 'Running' }])(
-    'does not offer registration for a connection-capable row with status %s',
+    'derives discovered lifecycle status for an inventory row with status %s',
     (status) => {
       getColumnValue.mockImplementation((rowData, columnName, cols) => {
         const idx = cols.findIndex((col) => col?.name === columnName);
@@ -482,9 +482,14 @@ describe('MeshSyncTable', () => {
 
       render(statusCol.options.customBodyRender(status, { rowData, rowIndex: 0 }));
 
-      expect(statusSelectProps).toBeUndefined();
-      expect(screen.getByTestId('meshsync-status-non-interactive')).toBeInTheDocument();
-      expect(registerConnectionModalProps.openRegistrationModal).toBe(false);
+      expect(statusSelectProps.value).toBe('discovered');
+      expect(statusSelectProps.defaultValue).toBeUndefined();
+
+      act(() => {
+        statusSelectProps.onChange({ target: { value: 'register' } });
+      });
+
+      expect(registerConnectionModalProps.openRegistrationModal).toBe(true);
     },
   );
 
