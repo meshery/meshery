@@ -1,3 +1,0 @@
-# ErrFetchCiliumVersionsCode-1031
-
-LLMS index: [llms.txt](/pr-preview/pr-22552/llms.txt)

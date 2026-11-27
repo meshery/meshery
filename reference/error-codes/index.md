@@ -227,6 +227,16 @@ Troubleshooting guides to using Meshery's various features and components.
       
     
     <tr>
+      <td style="text-align:left">controller</td>
+      <td class="title"><a href="#meshsync-controller">meshsync</a></td>
+    </tr>
+  
+    
+    
+    
+      
+    
+    <tr>
       <td style="text-align:left">adapter</td>
       <td class="title"><a href="#meshery-adapter-for-nsm">nsm</a></td>
     </tr>
@@ -28422,6 +28432,455 @@ Retry the request; every new request starts a fresh attempt</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">No action is needed if this cluster should use in-process token minting
 To use the exec plugin for this context instead, disable in-process cloud auth for that context&#39;s kubeconfig user (every context sharing that user switches with it), or set MESHKIT_DISABLE_INPROCESS_CLOUD_AUTH=true for the whole process</p>
+            </td>
+          </tr>
+        
+      </tbody>
+    </table>
+    <a href="#error-code-reference">Top</a>
+    <hr>
+    <br>
+
+  
+  
+  
+  
+
+    <h2 class="title"></h2>
+    <table class="tbl">
+      <thead>
+        <tr class="tbl-head-row">
+          <th style="width:5%">Severity</th>
+          <th class="error-name-code"><span>Error Name - Code</span></th>
+          <th style="width:85%">Short Description</th>
+          <th>Discussion</th>
+        </tr>
+      </thead>
+      <tbody class="tbl-body">
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrInitConfigCode-1000" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrInitConfigCode-more-info" onclick="toggle_visibility('meshsync-ErrInitConfigCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1000" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errinitconfigcode-1000/"><code>ErrInitConfigCode-1000</code></a>
+            </td>
+            <td>Error while initializing MeshSync configuration. </td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInitConfigCode-1000" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrInitConfigCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">Missing or outdated CRD. </p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Missing or outdated CRD.</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Confirm that meshsyncs custom resource is present in the cluster.</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrListCode-1001" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrListCode-more-info" onclick="toggle_visibility('meshsync-ErrListCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1001" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errlistcode-1001/"><code>ErrListCode-1001</code></a>
+            </td>
+            <td></td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrListCode-1001" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrListCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details"></p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrPublishCode-1002" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrPublishCode-more-info" onclick="toggle_visibility('meshsync-ErrPublishCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1002" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errpublishcode-1002/"><code>ErrPublishCode-1002</code></a>
+            </td>
+            <td></td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrPublishCode-1002" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrPublishCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details"></p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrDynamicClientCode-1003" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrDynamicClientCode-more-info" onclick="toggle_visibility('meshsync-ErrDynamicClientCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1003" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errdynamicclientcode-1003/"><code>ErrDynamicClientCode-1003</code></a>
+            </td>
+            <td></td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrDynamicClientCode-1003" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrDynamicClientCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details"></p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrGetObjectCode-1004" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrGetObjectCode-more-info" onclick="toggle_visibility('meshsync-ErrGetObjectCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1004" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errgetobjectcode-1004/"><code>ErrGetObjectCode-1004</code></a>
+            </td>
+            <td>Error getting config object</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrGetObjectCode-1004" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrGetObjectCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Config doesnt exist</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Check application config is configured correct or restart the server</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrNewPipelineCode-1005" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrNewPipelineCode-more-info" onclick="toggle_visibility('meshsync-ErrNewPipelineCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1005" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errnewpipelinecode-1005/"><code>ErrNewPipelineCode-1005</code></a>
+            </td>
+            <td>Error creating pipeline</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrNewPipelineCode-1005" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrNewPipelineCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Pipeline step failed</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Investigate on the respective pipeline step that has failed to figure the cause</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrNewInformerCode-1006" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrNewInformerCode-more-info" onclick="toggle_visibility('meshsync-ErrNewInformerCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1006" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errnewinformercode-1006/"><code>ErrNewInformerCode-1006</code></a>
+            </td>
+            <td>Error initializing informer</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrNewInformerCode-1006" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrNewInformerCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Resource is invalid or doesnt exist</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Make sure to input the existing valid resource</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrKubeConfigCode-1007" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrKubeConfigCode-more-info" onclick="toggle_visibility('meshsync-ErrKubeConfigCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1007" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errkubeconfigcode-1007/"><code>ErrKubeConfigCode-1007</code></a>
+            </td>
+            <td>Error creating kubernetes client</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrKubeConfigCode-1007" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrKubeConfigCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Kubernetes config is invalid or APi server is not reachable</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Make sure to upload a valid kubernetes config
+Make sure kubernetes API server is reachable</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrInitRequestCode-1008" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrInitRequestCode-more-info" onclick="toggle_visibility('meshsync-ErrInitRequestCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1008" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errinitrequestcode-1008/"><code>ErrInitRequestCode-1008</code></a>
+            </td>
+            <td>Error while initializing requests channel</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInitRequestCode-1008" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrInitRequestCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Application resource deficit</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Make sure meshsync has enough resources to create channels</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrSubscribeRequestCode-1009" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrSubscribeRequestCode-more-info" onclick="toggle_visibility('meshsync-ErrSubscribeRequestCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1009" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errsubscriberequestcode-1009/"><code>ErrSubscribeRequestCode-1009</code></a>
+            </td>
+            <td>Error while subscribing to requests</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrSubscribeRequestCode-1009" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrSubscribeRequestCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Broker resource deficit</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Make sure Broker has enough resources to create channels</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrLogStreamCode-1010" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrLogStreamCode-more-info" onclick="toggle_visibility('meshsync-ErrLogStreamCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1010" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errlogstreamcode-1010/"><code>ErrLogStreamCode-1010</code></a>
+            </td>
+            <td>Error while open log stream connection</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrLogStreamCode-1010" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrLogStreamCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">requested Resource could be invalid</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Make sure the requested resource is valid and existing</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrCopyBufferCode-1011" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrCopyBufferCode-more-info" onclick="toggle_visibility('meshsync-ErrCopyBufferCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1011" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errcopybuffercode-1011/"><code>ErrCopyBufferCode-1011</code></a>
+            </td>
+            <td>Error while copying log buffer</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrCopyBufferCode-1011" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrCopyBufferCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details"></p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrInvalidRequestCode-1012" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrInvalidRequestCode-more-info" onclick="toggle_visibility('meshsync-ErrInvalidRequestCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1012" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errinvalidrequestcode-1012/"><code>ErrInvalidRequestCode-1012</code></a>
+            </td>
+            <td>Request is invalid</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInvalidRequestCode-1012" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrInvalidRequestCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Stale request on the broker</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Make sure the request format is correctly configured</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrExecTerminalCode-1013" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrExecTerminalCode-more-info" onclick="toggle_visibility('meshsync-ErrExecTerminalCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1013" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errexecterminalcode-1013/"><code>ErrExecTerminalCode-1013</code></a>
+            </td>
+            <td>Error while opening a terminal session</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrExecTerminalCode-1013" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrExecTerminalCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">requested Resource could be invalid</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Make sure the requested resource is valid and existing</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrCacheSyncCode-1014" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrCacheSyncCode-more-info" onclick="toggle_visibility('meshsync-ErrCacheSyncCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1014" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errcachesynccode-1014/"><code>ErrCacheSyncCode-1014</code></a>
+            </td>
+            <td></td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrCacheSyncCode-1014" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrCacheSyncCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details"></p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrWriteOutputCode-1015" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrWriteOutputCode-more-info" onclick="toggle_visibility('meshsync-ErrWriteOutputCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1015" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errwriteoutputcode-1015/"><code>ErrWriteOutputCode-1015</code></a>
+            </td>
+            <td></td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrWriteOutputCode-1015" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrWriteOutputCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details"></p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrNilClientCode-1016" class="tbl-body-row hover-effect" data-details-id="meshsync-ErrNilClientCode-more-info" onclick="toggle_visibility('meshsync-ErrNilClientCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1016" class="error-name-code">
+              <a href="/reference/error-codes/controller-meshsync/errnilclientcode-1016/"><code>ErrNilClientCode-1016</code></a>
+            </td>
+            <td>Kubernetes client is nil</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrNilClientCode-1016" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshsync-ErrNilClientCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details">Handler has no active kubernetes client initialized</p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Handler was invoked with an uninitialized or nil Kubernetes client</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Supply a valid Kubernetes client to meshsync.New</p>
             </td>
           </tr>
         
