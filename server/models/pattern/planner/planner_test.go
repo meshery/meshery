@@ -1,6 +1,7 @@
 package planner
 
 import (
+	"context"
 	"sync"
 	"testing"
 	"time"
@@ -77,7 +78,8 @@ func (e *execution) run(t *testing.T, plan *Plan, fails map[string]bool) {
 
 	go func() {
 		done <- plan.Execute(
-			func(id string, _ component.ComponentDefinition) bool {
+			context.Background(),
+			func(_ context.Context, id string, _ component.ComponentDefinition) bool {
 				e.mx.Lock()
 				e.dispatched = append(e.dispatched, names[id])
 				e.mx.Unlock()

@@ -1,6 +1,7 @@
 package planner
 
 import (
+	"context"
 	"testing"
 
 	"github.com/meshery/schemas/models/v1beta2/component"
@@ -103,7 +104,7 @@ func TestGraph_EmptyVertexName(t *testing.T) {
 	}
 
 	var visited []string
-	err = g.Traverse(func(v string, _ component.ComponentDefinition) bool {
+	err = g.Traverse(func(_ context.Context, v string, _ component.ComponentDefinition) bool {
 		visited = append(visited, v)
 		return true
 	})

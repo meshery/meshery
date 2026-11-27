@@ -1,6 +1,7 @@
 package patterns
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
@@ -44,7 +45,14 @@ type DeploymentMessagePerContext struct {
 	Location   string
 }
 
-func Process(kconfigs []string, componets []component.ComponentDefinition, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, connection connection.Connection, skipCrdAndOperator, upgradeExistingRelease bool) ([]DeploymentMessagePerContext, error) {
+func Process(ctx context.Context, kconfigs []string, componets []component.ComponentDefinition, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, connection connection.Connection, skipCrdAndOperator, upgradeExistingRelease bool) ([]DeploymentMessagePerContext, error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+
 	action := "deploy"
 	if isDel {
 		action = "undeploy"
@@ -77,6 +85,20 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 
 			msgsPerComp := make([]DeploymentMessagePerComp, 0)
 			for _, comp := range componets {
+				if err := ctx.Err(); err != nil {
+					_msg := DeploymentMessagePerComp{
+						Kind:       comp.Component.Kind,
+						Model:      comp.Model.Name,
+						CompName:   comp.DisplayName,
+						Success:    false,
+						DesignName: patternName,
+						Message:    fmt.Sprintf("Cancelled %sing %s/%s", action, patternName, comp.DisplayName),
+						Error:      err,
+					}
+					msgsPerComp = append(msgsPerComp, _msg)
+					continue
+				}
+
 				if !skipCrdAndOperator && depHandler != nil && comp.Model.Name != (_models.Kubernetes{}).String() {
 					deploymentMsg := DeploymentMessagePerComp{
 						Kind:           comp.Component.Kind,
@@ -120,7 +142,7 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 					Message:    fmt.Sprintf("%sed %s/%s", action, patternName, comp.DisplayName),
 				}
 
-				if err := k8s.Deploy(kcli, comp, isDel); err != nil {
+				if err := k8s.Deploy(ctx, kcli, comp, isDel); err != nil {
 					_msg.Message = fmt.Sprintf("Error %sing %s/%s", action, patternName, comp.DisplayName)
 					_msg.Error = err
 					_msg.Success = false
@@ -139,6 +161,9 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 		}(kcli)
 	}
 	wg.Wait()
+	if err := ctx.Err(); err != nil {
+		return msgs, err
+	}
 	return msgs, mergeErrors(errs)
 }
 

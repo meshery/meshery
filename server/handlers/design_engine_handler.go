@@ -291,6 +291,7 @@ func _processPattern(opts *patterncore.ProcessPatternOptions) (map[string]interf
 				sap.err = err
 			}).
 			Process(&stages.Data{
+				Ctx:                           opts.Context,
 				Pattern:                       &opts.Pattern,
 				Other:                         map[string]interface{}{},
 				DeclartionToDefinitionMapping: make(map[core.Uuid]component.ComponentDefinition),
@@ -595,7 +596,12 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			for _, v := range sap.ctxTokubeconfig {
 				kconfigs = append(kconfigs, v)
 			}
+			ctx := ccp.Context
+			if ctx == nil {
+				ctx = context.TODO()
+			}
 			resp, err := patterns.Process(
+				ctx,
 				kconfigs,
 				[]component.ComponentDefinition{ccp.Component},
 				sap.opIsDelete,
@@ -620,7 +626,11 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			return nil, fmt.Errorf("error execute operation on %v: %v", host, err)
 		}
 
-		msg, err := sap.provisionOnAdapter(hostName, hostPort, ccp.Component)
+		ctx := ccp.Context
+		if ctx == nil {
+			ctx = context.TODO()
+		}
+		msg, err := sap.provisionOnAdapter(ctx, hostName, hostPort, ccp.Component)
 		if err != nil {
 			return nil, err
 		}
@@ -632,14 +642,17 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 
 // provisionOnAdapter provisions comp through one gRPC adapter, closing its client
 // on return so hosts do not hold connections open until Provision ends.
-func (sap *serviceActionProvider) provisionOnAdapter(hostName string, hostPort int, comp component.ComponentDefinition) (patterns.DeploymentMessagePerContext, error) {
+func (sap *serviceActionProvider) provisionOnAdapter(ctx context.Context, hostName string, hostPort int, comp component.ComponentDefinition) (patterns.DeploymentMessagePerContext, error) {
+	if ctx == nil {
+		ctx = context.TODO()
+	}
 	addr := hostName
 	if hostPort != 0 {
 		addr += ":" + strconv.Itoa(hostPort)
 	}
 	// Create mesh client
 	mClient, err := meshes.CreateClient(
-		context.TODO(),
+		ctx,
 		addr,
 	)
 	if err != nil {
@@ -660,7 +673,7 @@ func (sap *serviceActionProvider) provisionOnAdapter(hostName string, hostPort i
 		err = errors.Wrapf(err, "error marshalling component \"%s\" of type : %s", comp.DisplayName, comp.Component.Kind)
 		return patterns.DeploymentMessagePerContext{}, err
 	}
-	resp, err := mClient.MClient.Provision(context.TODO(), &meshes.ProvisionRequest{
+	resp, err := mClient.MClient.Provision(ctx, &meshes.ProvisionRequest{
 		Username:     sap.userID,
 		DeleteOp:     sap.opIsDelete,
 		KubeConfigs:  kconfigs,

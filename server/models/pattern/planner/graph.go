@@ -1,6 +1,7 @@
 package planner
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"sync/atomic"
@@ -30,7 +31,7 @@ func NewGraph() *Graph {
 }
 
 // VisitFn is the function definition for the visitor function
-type VisitFn func(name string, node component.ComponentDefinition) bool
+type VisitFn func(ctx context.Context, name string, node component.ComponentDefinition) bool
 
 // WithheldFn is the function definition invoked for a node that is never
 // visited because a node it depends on did not succeed. failedDependency names
@@ -135,7 +136,7 @@ func (g *Graph) topologicalSort(fn VisitFn) (bool, error) {
 		}
 
 		if fn != nil {
-			if ok := fn(v, node.Data); !ok {
+			if ok := fn(context.Background(), v, node.Data); !ok {
 				return false, nil
 			}
 		}
@@ -169,7 +170,7 @@ func (g *Graph) Visit(fn VisitFn) error {
 				return ErrUnknownPlanNode(edgeNode, fmt.Sprintf("the dependency %s -> %s", node, edgeNode))
 			}
 
-			fn(edgeNode, target.Data)
+			fn(context.Background(), edgeNode, target.Data)
 		}
 	}
 

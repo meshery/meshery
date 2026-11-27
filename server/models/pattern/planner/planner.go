@@ -1,6 +1,7 @@
 package planner
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/meshery/meshkit/logger"
@@ -29,7 +30,14 @@ func (p *Plan) IsFeasible() (bool, error) {
 //
 // A component that is never dispatched, because a component it declared a
 // dependency on did not succeed, is reported to withheld instead.
-func (p *Plan) Execute(cb VisitFn, withheld WithheldFn, log logger.Handler) error {
+func (p *Plan) Execute(ctx context.Context, cb VisitFn, withheld WithheldFn, log logger.Handler) error {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+
 	feasible, err := p.IsFeasible()
 	if err != nil {
 		return err
@@ -43,9 +51,7 @@ func (p *Plan) Execute(cb VisitFn, withheld WithheldFn, log logger.Handler) erro
 		return err
 	}
 
-	parallelGraph.Traverse(cb, withheld, log)
-
-	return nil
+	return parallelGraph.Traverse(ctx, cb, withheld, log)
 }
 
 // DeclaredDependencies reads the names a component declares a dependency on.

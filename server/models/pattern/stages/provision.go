@@ -1,6 +1,7 @@
 package stages
 
 import (
+	"context"
 	stderrors "errors"
 	"fmt"
 
@@ -17,6 +18,7 @@ import (
 )
 
 type CompConfigPair struct {
+	Context   context.Context
 	Component component.ComponentDefinition
 	Hosts     []connection.Connection
 }
@@ -67,7 +69,11 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 		}
 
 		// Execute the plan
-		err = plan.Execute(func(name string, component component.ComponentDefinition) (ok bool) {
+		ctx := data.Ctx
+		if ctx == nil {
+			ctx = context.Background()
+		}
+		err = plan.Execute(ctx, func(ctx context.Context, name string, component component.ComponentDefinition) (ok bool) {
 			defer func() {
 				if r := recover(); r != nil {
 					log.Errorf("panic during component provisioning for %s (%s): %v", component.DisplayName, name, r)
@@ -79,7 +85,17 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 				}
 			}()
 
-			ccp := CompConfigPair{}
+			if err := ctx.Err(); err != nil {
+				data.Lock.Lock()
+				data.Other[fmt.Sprintf("%s%s", name, ProvisionSuffixKey)] = dispatchFailureMessage(component, err, data.Pattern.Name, prov.IsDelete())
+				errs = append(errs, err)
+				data.Lock.Unlock()
+				return false
+			}
+
+			ccp := CompConfigPair{
+				Context: ctx,
+			}
 
 			// meshkit's orchestration.EnrichComponentWithMesheryMetadata operates
 			// on *v1beta3/component.ComponentDefinition; bridge to that type,
@@ -144,6 +160,16 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			data.Lock.Unlock()
 		}, log)
 		if err != nil {
+			if stderrors.Is(err, context.Canceled) || stderrors.Is(err, context.DeadlineExceeded) {
+				data.Lock.Lock()
+				for _, comp := range data.Pattern.Components {
+					key := fmt.Sprintf("%s%s", comp.ID.String(), ProvisionSuffixKey)
+					if _, exists := data.Other[key]; !exists {
+						data.Other[key] = dispatchFailureMessage(*comp, err, data.Pattern.Name, prov.IsDelete())
+					}
+				}
+				data.Lock.Unlock()
+			}
 			act.Terminate(err)
 			return
 		}
