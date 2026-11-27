@@ -51,5 +51,39 @@ describe('MesheryResultDialog', () => {
     expect(screen.getByText('Environment')).toBeInTheDocument();
     expect(screen.getByText('v1.30.0')).toBeInTheDocument();
     expect(screen.getByText('Load Profile')).toBeInTheDocument();
+    expect(screen.getByText('Average Response Time:')).toBeInTheDocument();
+    expect(screen.getByText('Maximum Response Time:')).toBeInTheDocument();
+  });
+
+  it('renders without crashing when kubernetes.nodes is a non-array and renders DurationHistogram values when present', () => {
+    render(
+      <MesheryResultDialog
+        close={vi.fn()}
+        rowData={{
+          name: 'non-array-nodes-run',
+          runner_results: {
+            URL: 'http://example.com/2',
+            RequestedQPS: '20',
+            ActualQPS: 20,
+            NumThreads: 4,
+            SocketCount: 4,
+            RequestedDuration: '10s',
+            ActualDuration: 10000000000,
+            DurationHistogram: {
+              Avg: 0.015,
+              Max: 0.09,
+            },
+            kubernetes: {
+              server_version: 'v1.31.0',
+              nodes: { unexpected: true },
+            },
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByText('v1.31.0')).toBeInTheDocument();
+    expect(screen.getByText('0.015')).toBeInTheDocument();
+    expect(screen.getByText('0.09')).toBeInTheDocument();
   });
 });

@@ -127,8 +127,8 @@ describe('PerformanceCard', () => {
     expect(screen.getByTestId('avatar').closest('a')).toBeNull();
   });
 
-  it('renders without crashing when metadata.additional_options is empty or invalid JSON', () => {
-    render(
+  it('renders without crashing when metadata.additional_options is empty, valid, or invalid JSON', () => {
+    const { unmount } = render(
       <PerformanceCard
         {...baseProps}
         profile={{
@@ -138,8 +138,10 @@ describe('PerformanceCard', () => {
       />,
     );
     expect(screen.getByText('my perf profile')).toBeInTheDocument();
+    expect(screen.getByText('""')).toBeInTheDocument();
+    unmount();
 
-    render(
+    const { unmount: unmountInvalid } = render(
       <PerformanceCard
         {...baseProps}
         profile={{
@@ -148,6 +150,20 @@ describe('PerformanceCard', () => {
         }}
       />,
     );
-    expect(screen.getAllByText('my perf profile')).toHaveLength(2);
+    expect(screen.getByText('my perf profile')).toBeInTheDocument();
+    expect(screen.getByText('"not-valid-json"')).toBeInTheDocument();
+    unmountInvalid();
+
+    render(
+      <PerformanceCard
+        {...baseProps}
+        profile={{
+          ...baseProps.profile,
+          metadata: { additional_options: ['{"concurrency":4}'] },
+        }}
+      />,
+    );
+    expect(screen.getByText('my perf profile')).toBeInTheDocument();
+    expect(screen.getByText('{"concurrency":4}')).toBeInTheDocument();
   });
 });

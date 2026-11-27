@@ -622,4 +622,51 @@ describe('user endpoints', () => {
 
     expect('error' in result).toBe(false);
   });
+
+  it('updateUserPrefWithContext reverts optimistic getUserPref update when mutation fails', async () => {
+    const { store, userMod } = await setupStore();
+    fetchMock
+      .mockResolvedValueOnce(
+        okResponse({ anonymousUsageStats: false, anonymousPerfResults: false }),
+      )
+      .mockResolvedValueOnce(textResponse('internal error', 500))
+      .mockResolvedValue(
+        okResponse({ anonymousUsageStats: false, anonymousPerfResults: false }),
+      );
+
+    await store.dispatch(userMod.userApi.endpoints.getUserPref.initiate(undefined));
+
+    const result = await store.dispatch(
+      userMod.userApi.endpoints.updateUserPrefWithContext.initiate({
+        body: JSON.stringify({ anonymousUsageStats: true }),
+      }),
+    );
+
+    expect('error' in result).toBe(true);
+    const cached = userMod.userApi.endpoints.getUserPref.select(undefined)(store.getState());
+    expect(cached.data).toEqual({
+      anonymousUsageStats: false,
+      anonymousPerfResults: false,
+    });
+  });
+
+  it('updateUserPrefWithContext does not throw synchronously on invalid JSON string body', async () => {
+    const { store, userMod } = await setupStore();
+    fetchMock
+      .mockResolvedValueOnce(okResponse({ anonymousUsageStats: false }))
+      .mockResolvedValueOnce(okResponse({ anonymousUsageStats: false }))
+      .mockResolvedValue(okResponse({ anonymousUsageStats: false }));
+
+    await store.dispatch(userMod.userApi.endpoints.getUserPref.initiate(undefined));
+
+    const result = await store.dispatch(
+      userMod.userApi.endpoints.updateUserPrefWithContext.initiate({
+        body: '{invalid-json',
+      }),
+    );
+
+    expect('error' in result).toBe(false);
+    const cached = userMod.userApi.endpoints.getUserPref.select(undefined)(store.getState());
+    expect(cached.data).toEqual({ anonymousUsageStats: false });
+  });
 });
