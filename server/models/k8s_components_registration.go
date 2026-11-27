@@ -174,7 +174,18 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		cg.mx.Unlock()
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
 
-		event := events.NewEvent().ActedUpon(connectionID).FromSystem(mesheryInstanceID).WithSeverity(events.Informational).WithCategory("connection").WithAction(Registering.String()).FromOwner(userUUID).WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).Build()
+		event := events.NewEvent().
+			ActedUpon(connectionID).
+			FromSystem(mesheryInstanceID).
+			WithSeverity(events.Informational).
+			WithCategory("connection").
+			WithAction(Registering.String()).
+			FromOwner(userUUID).
+			WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).
+			WithMetadata(map[string]interface{}{
+				"doclink": "https://docs.meshery.io/installation/kubernetes",
+			}).
+			Build()
 		// Even if the event was not persisted, the event is published to the user
 		// and the operation continues.
 		if err := PersistAndPublishSystemEvent(provider, eventsBrodcaster, userUUID, event); err != nil {

@@ -215,6 +215,9 @@ func TestRegisterComponents_FailureResetsStatusAndAllowsRetry(t *testing.T) {
 	require.GreaterOrEqual(t, len(evts), 2, "must have emitted started and failure events")
 	assert.Equal(t, events.Informational, evts[0].Severity)
 	assert.Contains(t, evts[0].Description, "started")
+	// Notification Center renders a Doc link only when the event carries a
+	// doclink; the registration-started event must include it.
+	assert.Equal(t, "https://docs.meshery.io/installation/kubernetes", evts[0].Metadata["doclink"])
 	assert.Equal(t, events.Error, evts[1].Severity)
 	assert.Contains(t, evts[1].Description, "Failed to register components")
 	assert.Contains(t, evts[1].Metadata["error"], "simulated cluster unreachable error")
