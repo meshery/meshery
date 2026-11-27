@@ -5,6 +5,7 @@ import (
 
 	"time"
 
+	"github.com/meshery/meshkit/models/meshmodel/core/policies"
 	"github.com/meshery/meshkit/utils/events"
 )
 
@@ -271,6 +272,16 @@ type HandlerInterface interface {
 	K8sHealthzHandler(w http.ResponseWriter, r *http.Request)
 
 	ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath string)
+
+	// SetRego publishes the OPA/Rego relationship-policy engine for runtime
+	// reloads (component_generator_helper.go). Requests evaluated before any
+	// publication get a not-ready error rather than a zero-value engine.
+	SetRego(*policies.Rego)
+
+	// PublishBootRego publishes the boot seeding engine (server/cmd/main.go)
+	// only while no engine is published, so it can never overwrite a
+	// runtime reload.
+	PublishBootRego(*policies.Rego)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods

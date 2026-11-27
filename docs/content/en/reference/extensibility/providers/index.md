@@ -209,7 +209,7 @@ process down. A stage that spawns one therefore recovers at its own spawn site
 and reports through the same `ErrSeedingStagePanic`, making the failure
 indistinguishable in the log from one `RunSeedStage` caught itself. `SeedKeys`
 (`server/models/keys_helper.go`), which parses `keys.csv` on a spawned
-goroutine, is the only seeding callee that spawns one today; give any new one
+goroutine, is the only seeding stage that spawns one today; the boot Rego publisher in `server/cmd/main.go` also spawns a goroutine (with its own recover) to hand the seeded engine to the Handler. Give any new spawned goroutine
 the same deferred recover rather than widening `RunSeedStage`, which cannot
 reach a child goroutine. Both halves are pinned by tests in `server/models`:
 `TestRunSeedStageRecoversPanic` and

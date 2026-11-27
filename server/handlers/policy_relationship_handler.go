@@ -426,7 +426,11 @@ func (h *Handler) EvaluateDesign(
 			evaluationResponse, err = h.GoEngine.EvaluateDesign(lastEvaluationResponse.Design, convertedRels)
 		} else {
 			// Use OPA/Rego policy engine (default)
-			evaluationResponse, err = h.Rego.RegoPolicyHandler(lastEvaluationResponse.Design,
+			rego, regoErr := h.regoEngine()
+			if regoErr != nil {
+				return pattern.EvaluationResponse{}, regoErr
+			}
+			evaluationResponse, err = rego.RegoPolicyHandler(lastEvaluationResponse.Design,
 				RelationshipPolicyPackageName,
 			)
 		}
@@ -954,6 +958,13 @@ func (h *Handler) EvaluateRelationshipPolicy(
 			h.log.Debug(err)
 		}
 		// log an event
+		if errors.Is(err, ErrPolicyEngineNotReady()) {
+			if h.log != nil {
+				h.log.Warn(err)
+			}
+			writeMeshkitError(rw, err, http.StatusServiceUnavailable)
+			return
+		}
 		writeMeshkitError(rw, ErrPolicyEval(err), http.StatusInternalServerError)
 		return
 
@@ -990,6 +1001,15 @@ func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResul
 	if result.err != nil {
 		if h.log != nil {
 			h.log.Debug(result.err)
+		}
+		// A coalesced follower can observe the not-ready error the leader
+		// published; surface the same retryable 503 to it.
+		if errors.Is(result.err, ErrPolicyEngineNotReady()) {
+			if h.log != nil {
+				h.log.Warn(result.err)
+			}
+			writeMeshkitError(rw, result.err, http.StatusServiceUnavailable)
+			return
 		}
 		writeMeshkitError(rw, ErrPolicyEval(result.err), http.StatusInternalServerError)
 		return
