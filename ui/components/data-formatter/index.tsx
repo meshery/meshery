@@ -100,16 +100,19 @@ export const FormattedDate = ({ date }) => {
 export const FormatId = ({ id }) => {
   const [copied, setCopied] = React.useState(false);
   const copyTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isMountedRef = React.useRef(true);
   const theme = useTheme();
 
-  React.useEffect(
-    () => () => {
+  React.useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
       if (copyTimerRef.current) {
         clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = null;
       }
-    },
-    [],
-  );
+    };
+  }, []);
 
   // truncates the id to 15 characters and adds an ellipsis and adds a clipboard copy button
   const copyToClipboard = (e) => {
@@ -117,16 +120,23 @@ export const FormatId = ({ id }) => {
     if (id == null || typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
       return;
     }
-    Promise.resolve(navigator.clipboard.writeText(String(id))).catch(() => {});
-    setCopied(true);
-
-    if (copyTimerRef.current) {
-      clearTimeout(copyTimerRef.current);
-    }
-    copyTimerRef.current = setTimeout(() => {
-      copyTimerRef.current = null;
-      setCopied(false);
-    }, 2000);
+    Promise.resolve(navigator.clipboard.writeText(String(id)))
+      .then(() => {
+        if (!isMountedRef.current) {
+          return;
+        }
+        setCopied(true);
+        if (copyTimerRef.current) {
+          clearTimeout(copyTimerRef.current);
+        }
+        copyTimerRef.current = setTimeout(() => {
+          copyTimerRef.current = null;
+          if (isMountedRef.current) {
+            setCopied(false);
+          }
+        }, 2000);
+      })
+      .catch(() => {});
   };
 
   const displayId = id == null ? '' : String(id);
@@ -153,7 +163,8 @@ export const FormatId = ({ id }) => {
   );
 };
 
-export const createColumnUiSchema = ({ metadata, numCols }: any = {}) => {
+export const createColumnUiSchema = (input: any = {}) => {
+  const { metadata, numCols } = input ?? {};
   if (!metadata || typeof metadata !== 'object' || !numCols || typeof numCols !== 'object') {
     return {};
   }

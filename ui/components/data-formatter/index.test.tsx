@@ -137,20 +137,26 @@ describe('FormatId', () => {
     expect(writeTextSpy).toHaveBeenCalledWith('abc-xyz');
   });
 
-  it('resets prior copy timer on consecutive clicks and clears timer on unmount', () => {
+  it('resets prior copy timer on consecutive clicks and clears timer on unmount', async () => {
     vi.useFakeTimers();
     const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
     try {
       const { unmount } = render(<FormatId id="abc-xyz" />);
       const button = screen.getByTestId('icon-button');
 
-      fireEvent.click(button);
+      await act(async () => {
+        fireEvent.click(button);
+        await Promise.resolve();
+      });
       expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copied!');
 
       act(() => {
         vi.advanceTimersByTime(1500);
       });
-      fireEvent.click(button);
+      await act(async () => {
+        fireEvent.click(button);
+        await Promise.resolve();
+      });
       expect(clearTimeoutSpy).toHaveBeenCalled();
 
       act(() => {
@@ -163,11 +169,55 @@ describe('FormatId', () => {
       });
       expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copy');
 
-      fireEvent.click(button);
+      await act(async () => {
+        fireEvent.click(button);
+        await Promise.resolve();
+      });
       unmount();
       expect(clearTimeoutSpy).toHaveBeenCalled();
     } finally {
       clearTimeoutSpy.mockRestore();
+      vi.useRealTimers();
+    }
+  });
+
+  it('does not show Copy success on rejection or start timer after unmount', async () => {
+    vi.useFakeTimers();
+    const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
+    try {
+      Object.defineProperty(window.navigator, 'clipboard', {
+        configurable: true,
+        writable: true,
+        value: { writeText: vi.fn().mockRejectedValue(new Error('denied')) },
+      });
+      const { unmount: unmountRejected } = render(<FormatId id="id-123" />);
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('icon-button'));
+        await Promise.resolve();
+      });
+      expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copy');
+      unmountRejected();
+
+      let resolveCopy!: () => void;
+      const pendingCopy = new Promise<void>((resolve) => {
+        resolveCopy = resolve;
+      });
+      Object.defineProperty(window.navigator, 'clipboard', {
+        configurable: true,
+        writable: true,
+        value: { writeText: vi.fn().mockReturnValue(pendingCopy) },
+      });
+      setTimeoutSpy.mockClear();
+      const { unmount } = render(<FormatId id="id-456" />);
+      fireEvent.click(screen.getByTestId('icon-button'));
+      unmount();
+      await act(async () => {
+        resolveCopy();
+        await Promise.resolve();
+      });
+      expect(setTimeoutSpy).not.toHaveBeenCalled();
+    } finally {
+      setTimeoutSpy.mockRestore();
       vi.useRealTimers();
     }
   });
@@ -188,8 +238,11 @@ describe('FormatId', () => {
     });
     const { rerender } = render(<FormatId id="id-123" />);
     rerender(<FormatId id="id-123" />);
-    expect(() => fireEvent.click(screen.getAllByTestId('icon-button')[1])).not.toThrow();
-    await Promise.resolve();
+    await act(async () => {
+      expect(() => fireEvent.click(screen.getAllByTestId('icon-button')[1])).not.toThrow();
+      await Promise.resolve();
+    });
+    expect(screen.getAllByTestId('tooltip')[3].getAttribute('data-title')).toBe('Copy');
   });
 });
 
@@ -211,6 +264,7 @@ describe('createColumnUiSchema', () => {
 
   it('returns empty schema safely for nullish metadata or numCols', () => {
     expect(createColumnUiSchema(undefined as any)).toEqual({});
+    expect(createColumnUiSchema(null as any)).toEqual({});
     expect(createColumnUiSchema({ metadata: null, numCols: { md: 2 } } as any)).toEqual({});
     expect(createColumnUiSchema({ metadata: { a: {} }, numCols: null } as any)).toEqual({});
   });
