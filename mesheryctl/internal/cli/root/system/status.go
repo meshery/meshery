@@ -37,6 +37,9 @@ type cmdSystemStatusFlags struct {
 
 var systemStatusFlags cmdSystemStatusFlags
 
+var statusUsageMsg = `Usage: mesheryctl system status [flags]
+Run 'mesheryctl system status --help' to see detailed help message`
+
 var linkDocStatus = map[string]string{
 	"link":    "![status-usage](../../../images/status.png)",
 	"caption": "Usage of mesheryctl system status",
@@ -48,6 +51,12 @@ var statusCmd = &cobra.Command{
 	Short: "Check Meshery status",
 	Long: `Check status of Meshery and Meshery components.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/status`,
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s)\n\n%s", statusUsageMsg))
+		}
+		return nil
+	},
 	Example: `
 // Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
 mesheryctl system status
