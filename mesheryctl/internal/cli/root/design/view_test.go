@@ -10,6 +10,10 @@ import (
 )
 
 func TestDesignView(t *testing.T) {
+	origPrompt := runDesignSelectPrompt
+	t.Cleanup(func() { runDesignSelectPrompt = origPrompt })
+	runDesignSelectPrompt = func(_ string, _ []string) (int, error) { return 0, nil }
+
 	// create a test helper
 	testContext := utils.NewTestHelper(t)
 
@@ -24,7 +28,7 @@ func TestDesignView(t *testing.T) {
 	tests := []utils.MesheryMultiURLCommamdTest{
 		{
 			Name:             "given name provided when design view then design is displayed",
-			Args:             []string{"view", "desgin"},
+			Args:             []string{"view", "Untitled Design"},
 			ExpectedResponse: "view.design.output.golden",
 			URLs: []utils.MockURL{
 				{
@@ -44,8 +48,17 @@ func TestDesignView(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=desgin",
+					URL:          testContext.BaseURL + "/api/pattern?page=0&pagesize=10000&populate=pattern_file&search=Untitled+Design",
 					Response:     "view.design.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					// Search paginates: the page-0 fixture reports totalCount 318
+					// with 10 items, so a second page is requested. The empty page
+					// lets the search conclude.
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?page=1&pagesize=10000&populate=pattern_file&search=Untitled+Design",
+					Response:     "pattern.empty.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -111,7 +124,7 @@ func TestDesignView(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=nonexistent-design",
+					URL:          testContext.BaseURL + "/api/pattern?page=0&pagesize=10000&populate=pattern_file&search=nonexistent-design",
 					Response:     "pattern.empty.response.golden",
 					ResponseCode: 200,
 				},
@@ -122,7 +135,7 @@ func TestDesignView(t *testing.T) {
 		},
 		{
 			Name:             "given invalid output format when design view then error is returned",
-			Args:             []string{"view", "desgin", "--output-format", "invalid"},
+			Args:             []string{"view", "Untitled Design", "--output-format", "invalid"},
 			ExpectedResponse: "",
 			URLs: []utils.MockURL{
 				{
@@ -142,14 +155,51 @@ func TestDesignView(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=desgin",
+					URL:          testContext.BaseURL + "/api/pattern?page=0&pagesize=10000&populate=pattern_file&search=Untitled+Design",
 					Response:     "view.design.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					// Search paginates: the page-0 fixture reports totalCount 318
+					// with 10 items, so a second page is requested. The empty page
+					// lets the search conclude.
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?page=1&pagesize=10000&populate=pattern_file&search=Untitled+Design",
+					Response:     "pattern.empty.response.golden",
 					ResponseCode: 200,
 				},
 			},
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError:  display.ErrUnsupportedFormat("invalid"),
+		},
+		{
+			Name:             "given substring only match when design view then error is returned",
+			Args:             []string{"view", "nginx"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "pattern.empty.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?page=0&pagesize=10000&populate=pattern_file&search=nginx",
+					Response:     "view.design.api.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?page=1&pagesize=10000&populate=pattern_file&search=nginx",
+					Response:     "pattern.empty.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrDesignNotFound("nginx"),
 		},
 	}
 
