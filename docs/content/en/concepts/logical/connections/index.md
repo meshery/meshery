@@ -26,7 +26,7 @@ Meshery tracks the status of each connections throughout the connection's lifecy
 
 When [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) discovers a resource (or one is provided as part of config) that Meshery can integrate with, a connection is created in the `Discovered` state. At this point the connection has not been tested for reachability or usability; that is, Meshery has not yet attempted to connect to or manage it.
 
-When a connection has been discovered, it will be listed in the MeshSync browser / Connections table in Meshery UI. You can self transition a particular connection to [Register](#state-registered) / [Ignore](#state-ignored) state.
+When a connection has been discovered, it will be listed in the MeshSync browser / Connections table in Meshery UI. Only connection-capable resources in the `Discovered` state expose the `Register` action there; other statuses are displayed without that interactive status control. Available connection lifecycle transitions, including [Register](#state-registered) and [Ignore](#state-ignored), depend on the connection type.
 
 > Example: MeshSync discovers Prometheus components and inform Meshery Server about available Prometheus connection, but Meshery is yet to [connect](#state-connected) and start scraping metrics.
 
