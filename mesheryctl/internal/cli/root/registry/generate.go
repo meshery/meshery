@@ -231,7 +231,17 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		fmt.Println("   (Each model has a timeout of", modelTimeout, ")")
 		fmt.Println()
 
+		versionsBeforeGeneration, err := snapshotModelVersions(registryLocation)
+		if err != nil {
+			return err
+		}
+
 		err = meshkitRegistryUtils.InvokeGenerationFromSheetWithOptions(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv, genOpts)
+		generationErr := err
+		if carryErr := carryForwardRelationships(registryLocation, versionsBeforeGeneration); carryErr != nil {
+			generationErr = errors.Join(generationErr, carryErr)
+		}
+		err = generationErr
 
 		elapsed := time.Since(startTime).Round(time.Second)
 		fmt.Println()
