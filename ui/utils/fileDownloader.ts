@@ -39,7 +39,19 @@ export default async function downloadContent({ id, type, name, source_type, par
   }
   const disposition = response.headers.get('Content-Disposition');
   const filename = disposition?.match(/(?:^|;)\s*filename\s*=\s*(?:"((?:[^"\\]|\\.)*)"|([^;]*))/i);
-  const downloadName = filename?.[1]?.replace(/\\(.)/g, '$1') || filename?.[2]?.trim() || name;
+  const rawDownloadName = filename?.[1]?.replace(/\\(.)/g, '$1') || filename?.[2]?.trim() || name;
+  const downloadName = (() => {
+    if (![...rawDownloadName].every((char) => char.charCodeAt(0) <= 255)) {
+      return rawDownloadName;
+    }
+    try {
+      return new TextDecoder('utf-8', { fatal: true }).decode(
+        Uint8Array.from(rawDownloadName, (char) => char.charCodeAt(0)),
+      );
+    } catch {
+      return rawDownloadName;
+    }
+  })();
   const blob = await response.blob();
   const url = window.URL.createObjectURL(blob);
   try {

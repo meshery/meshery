@@ -99,6 +99,8 @@ describe('downloadContent', () => {
     ['attachment;filename=example.tgz', 'example.tgz'],
     ['attachment;filename=example.tar', 'example.tar'],
     ['attachment; filename="example design.yml"', 'example design.yml'],
+    ['attachment; filename="caf\u00c3\u00a9.yml"', 'caf\u00e9.yml'],
+    ['attachment; filename="r\u00e9sum\u00e9.yml"', 'r\u00e9sum\u00e9.yml'],
   ])('preserves the response filename from %s', async (disposition, filename) => {
     fetchMock.mockResolvedValueOnce({
       ok: true,
