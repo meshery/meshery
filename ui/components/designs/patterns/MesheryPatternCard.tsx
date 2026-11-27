@@ -116,7 +116,7 @@ function MesheryPatternCard_({
 
   const formattedPatternFile = formatPatternFile(patternFile);
   return (
-    <div data-testid="meshery-pattern-card-item">
+    <div data-testid="meshery-pattern-card-item" style={{ height: '100%' }}>
       {fullScreen && (
         <YAMLDialog
           fullScreen={fullScreen}

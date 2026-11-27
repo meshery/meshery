@@ -39,7 +39,14 @@ function FlipCard({ duration = 500, onClick, onShow, children }: FlipCardProps) 
         }}
       >
         {!activeBack ? (
-          <div style={{ backfaceVisibility: 'hidden', height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <div
+            style={{
+              backfaceVisibility: 'hidden',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
             {React.isValidElement(Front) ? Front : null}
           </div>
         ) : (
