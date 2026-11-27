@@ -55,6 +55,9 @@ const BaseInput = (props) => {
   };
 
   const overrideFlag = props?.formContext?.overrideFlag;
+  // RJSF passes hideError to widgets alongside rawErrors (see StringField),
+  // so the error state and icon must honour it directly.
+  const hideError = Boolean(props.hideError);
   const errorTitle = safeDisplayValue(
     Array.isArray(props.rawErrors) ? props.rawErrors.join('  ') : props.rawErrors,
   );
@@ -91,7 +94,7 @@ const BaseInput = (props) => {
           label={xRjsfGridArea ? '' : `${prettifiedName}`}
           rows={props.options?.rows}
           multiline={props?.multiline}
-          error={props.rawErrors?.length > 0}
+          error={!hideError && props.rawErrors?.length > 0}
           onChange={(e) =>
             props.options?.inputType === 'file'
               ? props?.onChange(e)
@@ -112,7 +115,7 @@ const BaseInput = (props) => {
             style: { padding: props.multiline ? '10.5px 0px 10.5px 14px' : '0px' },
             endAdornment: (
               <InputAdornment position="start">
-                {props.rawErrors?.length > 0 && (
+                {!hideError && props.rawErrors?.length > 0 && (
                   <CustomTextTooltip
                     bgColor={theme.palette.error.main}
                     flag={overrideFlag}

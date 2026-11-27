@@ -352,7 +352,7 @@ NOTE: This command is deprecated. Please use 'mesheryctl connection create --typ
 mesheryctl system config [aks|eks|gke|minikube]
 
 // Path to token for authenticating to Meshery API (optional, can be done alternatively using "login")
-mesheryctl system config --token "~/Downloads/auth.json"
+mesheryctl system config gke --token "~/Downloads/auth.json"
 
 // NEW: Use the connection create command instead
 mesheryctl connection create --type [aks|eks|gke|minikube]

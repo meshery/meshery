@@ -20,6 +20,17 @@ func TestCreateWorkspace(t *testing.T) {
 
 	tests := []utils.MesheryCommandTest{
 		{
+			Name:             "given unexpected positional argument when workspace create then throw error",
+			Args:             []string{"create", "extra-arg", "-n", validWorkspaceName, "-d", workspaceDescription, "--orgId", testOrgId},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			Fixture:          "",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", createUsageMsg)),
+		},
+		{
 			Name:             "given no flags provided when workspace create throw error",
 			Args:             []string{"create"},
 			URL:              "/api/workspaces",
@@ -51,6 +62,17 @@ func TestCreateWorkspace(t *testing.T) {
 			ExpectError:      true,
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --name ''")),
+		},
+		{
+			Name:             "given blank flag name when workspace create then throw error",
+			Args:             []string{"create", "--orgId", testOrgId, "-n", "   ", "-d", workspaceDescription},
+			URL:              "/api/workspaces",
+			HttpMethod:       "POST",
+			Fixture:          "",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --name '   ': must not be blank")),
 		},
 		{
 			Name:             "given missing flag description when workspace create then workspace is created with empty description",

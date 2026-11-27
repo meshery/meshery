@@ -35,12 +35,14 @@ var (
 	silentFlagSet bool
 )
 
+var restartUsageMsg = "Usage: mesheryctl system restart [flags]\nRun 'mesheryctl system restart --help' to see detailed help message."
+
 // restartCmd represents the restart command
 var restartCmd = &cobra.Command{
 	Use:   "restart",
 	Short: "Stop, then start Meshery",
 	Long: `Restart all Meshery containers / pods.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/restart`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/system/restart`,
 	Example: `
 // Restart all Meshery containers, their instances and their connected volumes
 mesheryctl system restart
@@ -48,11 +50,9 @@ mesheryctl system restart
 // (optional) skip checking for new updates available in Meshery.
 mesheryctl system restart --skip-update
 	`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) > 0 {
-			return utils.ErrInvalidArgument(
-				fmt.Errorf("restart does not take any arguments, see '%s --help' for more information", cmd.CommandPath()),
-			)
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("restart does not accept positional arguments\n\n%s", restartUsageMsg))
 		}
 		return nil
 	},
@@ -127,7 +127,10 @@ func restart() error {
 				userResponse = true
 			} else {
 				// ask user for confirmation
-				userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
+				userResponse, err = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
+				if err != nil {
+					return err
+				}
 			}
 			if !userResponse {
 				utils.Log.Info("Restart aborted.")
@@ -137,10 +140,10 @@ func restart() error {
 			utils.SilentFlag = true
 		}
 
-		silentFlagSet = utils.SilentFlag
 		utils.Log.Info("Restarting Meshery...")
 
 		if err := stop(); err != nil {
+			utils.SilentFlag = silentFlagSet
 			return ErrRestartMeshery(err)
 		}
 

@@ -4,6 +4,14 @@ on:
     tags:
       - "v*"
 
+# Repository GITHUB_TOKEN default is read. A called workflow cannot request
+# more than the calling job grants. Only helm-chart-releaser.yml declares
+# more than contents: read; that grant is on call-helm-chart-releaser.
+# Goreleaser and Homebrew publish with PATs (RELEASE_NOTES_PAT, GH_ACCESS_TOKEN),
+# not this token. No job uses OIDC.
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Docker build and push
@@ -92,6 +100,10 @@ jobs:
     needs:
       - build
     name: Release Helm Charts
+    # Same set helm-chart-releaser.yml declares at workflow scope.
+    permissions:
+      contents: write
+      packages: write
     uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
     secrets: inherit
   # call-aks-playground-deploy-workflow:

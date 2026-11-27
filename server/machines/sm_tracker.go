@@ -24,6 +24,19 @@ func (smt *ConnectionToStateMachineInstanceTracker) Remove(id core.Uuid) {
 	delete(smt.ConnectToInstanceMap, id)
 }
 
+// CompareAndDelete removes the state machine entry for id only if the currently
+// tracked instance matches the expected inst pointer. It returns true if the
+// entry was removed, or false if the entry was absent or held a different instance.
+func (smt *ConnectionToStateMachineInstanceTracker) CompareAndDelete(id core.Uuid, inst *StateMachine) bool {
+	smt.mx.Lock()
+	defer smt.mx.Unlock()
+	if current, ok := smt.ConnectToInstanceMap[id]; ok && current == inst {
+		delete(smt.ConnectToInstanceMap, id)
+		return true
+	}
+	return false
+}
+
 func (smt *ConnectionToStateMachineInstanceTracker) Add(id core.Uuid, inst *StateMachine) {
 	smt.mx.Lock()
 	defer smt.mx.Unlock()

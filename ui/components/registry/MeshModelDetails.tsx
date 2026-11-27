@@ -16,7 +16,7 @@ import { REGISTRY_ITEM_STATES } from '@/utils/Enum';
 import { normalizeStaticImagePath } from '@/utils/fallback';
 import {
   useUpdateEntityStatusMutation,
-  useGetComponentsQuery,
+  useGetComponentsByModelAndKindQuery,
   useGetMeshModelsQuery,
 } from '@/rtk-query/meshModel';
 import _ from 'lodash';
@@ -34,6 +34,33 @@ import { iconSmall } from 'css/icons.styles';
 const ReactJson = dynamic(() => import('@microlink/react-json-view'), { ssr: false });
 
 const ExportAvailable = true;
+
+/**
+ * Safely extracts `description` from a component's serialized JSON schema
+ * (or pre-parsed schema object), returning `undefined` for empty,
+ * whitespace-only, missing, null, non-object, or malformed values.
+ */
+export const extractSchemaDescription = (rawSchema: unknown): string | undefined => {
+  let parsed: unknown = rawSchema;
+  if (typeof rawSchema === 'string') {
+    const trimmed = rawSchema.trim();
+    if (!trimmed) {
+      return undefined;
+    }
+    try {
+      parsed = JSON.parse(trimmed);
+    } catch {
+      return undefined;
+    }
+  }
+  if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+    const { description } = parsed as { description?: unknown };
+    if (typeof description === 'string' && description.trim() !== '') {
+      return description;
+    }
+  }
+  return undefined;
+};
 
 type KeyValueProps = { property: string; value: string | number | string[] | null | undefined };
 const KeyValue = ({ property, value }: KeyValueProps) => {
@@ -246,9 +273,12 @@ const ModelContents = ({ modelDef }: { modelDef: any }) => {
 };
 
 const ComponentContents = ({ componentDef }: { componentDef: any }) => {
-  const { data, isSuccess } = useGetComponentsQuery({
+  // The registry-wide component listing takes no `id`, so scope the request to
+  // this component's model, kind and apiVersion and pick it out by id below.
+  const { data, isSuccess } = useGetComponentsByModelAndKindQuery({
+    model: componentDef.model?.name,
+    component: componentDef.component.kind,
     params: {
-      id: componentDef.id,
       apiVersion: componentDef.component.version,
       trim: false,
     },
@@ -286,6 +316,11 @@ const ComponentContents = ({ componentDef }: { componentDef: any }) => {
   const orderRight = ['registrant', 'duplicates'];
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
 
+  const description =
+    extractSchemaDescription(componentData?.component?.schema) ||
+    componentData?.description ||
+    undefined;
+
   return (
     <>
       {isSuccess && componentData ? (
@@ -296,7 +331,7 @@ const ComponentContents = ({ componentDef }: { componentDef: any }) => {
               iconSrc={componentData?.styles?.svgColor}
             />
           </div>
-          <Description description={JSON.parse(componentData?.component?.schema)?.description} />
+          <Description description={description} />
           <RenderContents
             metaDataLeft={metaDataLeft}
             metaDataRight={metaDataRight}

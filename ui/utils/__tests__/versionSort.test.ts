@@ -22,6 +22,16 @@ describe('getMostRecentVersion', () => {
     expect(getMostRecentVersion(['v1', 'v2', 'v3'])).toBe('v3');
   });
 
+  it('handles multi-digit stable versions correctly', () => {
+    expect(getMostRecentVersion(['v2', 'v10'])).toBe('v10');
+    expect(getMostRecentVersion(['v1', 'v9', 'v10'])).toBe('v10');
+  });
+
+  it('handles semantic versions for stable releases', () => {
+    expect(getMostRecentVersion(['v1.0.0', 'v2.1.0', 'v1.9.0'])).toBe('v2.1.0');
+    expect(getMostRecentVersion(['1.0.0', '2.0.0'])).toBe('2.0.0');
+  });
+
   it('returns the first entry when no stable/beta/alpha can be classified', () => {
     expect(getMostRecentVersion(['unknown', 'mystery'])).toBe('unknown');
   });
@@ -38,9 +48,10 @@ describe('versionSortComparatorFn', () => {
     expect(versionSortComparatorFn(null, null)).toBeUndefined();
   });
 
-  it('treats WILDCARD_V as the smallest element (sorts to the front)', () => {
+  it('satisfies comparator contract for WILDCARD_V (anti-symmetry and reflexivity)', () => {
     expect(versionSortComparatorFn(WILDCARD_V, '1.0.0')).toBe(-1);
-    expect(versionSortComparatorFn('1.0.0', WILDCARD_V)).toBe(-1);
+    expect(versionSortComparatorFn('1.0.0', WILDCARD_V)).toBe(1);
+    expect(versionSortComparatorFn(WILDCARD_V, WILDCARD_V)).toBe(0);
   });
 
   it('compares simple semver-style versions numerically', () => {
@@ -48,11 +59,9 @@ describe('versionSortComparatorFn', () => {
     expect(versionSortComparatorFn('2.0.0', '1.0.0')).toBeGreaterThan(0);
   });
 
-  it('returns 0 (falls through) when versions are equal', () => {
-    // The function continues looping while equal segments are found, so equal
-    // versions of the same length return `undefined` (no comparison made).
-    const result = versionSortComparatorFn('1.2.3', '1.2.3');
-    expect(result === 0 || result === undefined).toBe(true);
+  it('returns 0 when versions are equal', () => {
+    expect(versionSortComparatorFn('1.2.3', '1.2.3')).toBe(0);
+    expect(versionSortComparatorFn('v1.0.0', 'v1.0.0')).toBe(0);
   });
 
   it('handles a leading v prefix on either operand', () => {
@@ -62,6 +71,13 @@ describe('versionSortComparatorFn', () => {
 
   it('compares the second segment when the first is equal', () => {
     expect(versionSortComparatorFn('1.10.0', '1.2.0')).toBeGreaterThan(0);
+  });
+
+  it('resolves unequal version segment lengths correctly', () => {
+    expect(versionSortComparatorFn('1.0', '1.0.1')).toBeLessThan(0);
+    expect(versionSortComparatorFn('1.0.1', '1.0')).toBeGreaterThan(0);
+    expect(versionSortComparatorFn('2.0', '2.0.0')).toBeLessThan(0);
+    expect(versionSortComparatorFn('2.0.0', '2.0')).toBeGreaterThan(0);
   });
 });
 
@@ -78,6 +94,16 @@ describe('sortByVersionInDecreasingOrder', () => {
   it('prepends WILDCARD_V when there are multiple versions', () => {
     const result = sortByVersionInDecreasingOrder(['1.0.0', '2.0.0']);
     expect(result?.[0]).toBe(WILDCARD_V);
+  });
+
+  it('keeps exactly one WILDCARD_V when the input already contains it', () => {
+    expect(sortByVersionInDecreasingOrder([WILDCARD_V, '2.0.0', '1.0.0'])).toEqual([
+      WILDCARD_V,
+      '2.0.0',
+      '1.0.0',
+    ]);
+    expect(sortByVersionInDecreasingOrder([WILDCARD_V, '2.0.0'])).toEqual([WILDCARD_V, '2.0.0']);
+    expect(sortByVersionInDecreasingOrder([WILDCARD_V])).toEqual([WILDCARD_V]);
   });
 
   it('sorts in decreasing order numerically', () => {
@@ -103,9 +129,7 @@ describe('getGreaterVersion', () => {
     expect(getGreaterVersion('1.0.0', '2.0.0')).toBe('2.0.0');
   });
 
-  it('returns the first when versions are equal (comparator returns 0/undefined)', () => {
-    // When the comparator returns `undefined`, `>= 0` is false, so the function returns v2.
-    // This pins down current behaviour rather than the ideal.
+  it('returns the first when versions are equal (comparator returns 0)', () => {
     const result = getGreaterVersion('1.0.0', '1.0.0');
     expect(result).toBe('1.0.0');
   });
@@ -141,6 +165,17 @@ describe('sortAndGroupVersionsInModel', () => {
     expect(bar!.version).toEqual(['0.5.0']); // single version, no wildcard
   });
 
+  it('does not mutate input model objects in-place', () => {
+    const original = [
+      { name: 'foo', version: '1.0.0' },
+      { name: 'foo', version: '2.0.0' },
+    ];
+
+    sortAndGroupVersionsInModel(original);
+    expect(original[0].version).toBe('1.0.0');
+    expect(original[1].version).toBe('2.0.0');
+  });
+
   it('returns an empty array when given null/undefined', () => {
     expect(sortAndGroupVersionsInModel(null)).toEqual([]);
     expect(sortAndGroupVersionsInModel(undefined)).toEqual([]);
@@ -148,5 +183,96 @@ describe('sortAndGroupVersionsInModel', () => {
 
   it('handles an empty array', () => {
     expect(sortAndGroupVersionsInModel([])).toEqual([]);
+  });
+});
+
+describe('getMostRecentVersion – defensive type guards', () => {
+  it('returns undefined for non-array inputs', () => {
+    expect(getMostRecentVersion(null)).toBeUndefined();
+    expect(getMostRecentVersion(123)).toBeUndefined();
+    expect(getMostRecentVersion('v1.0.0')).toBeUndefined();
+    expect(getMostRecentVersion({})).toBeUndefined();
+    expect(getMostRecentVersion(true)).toBeUndefined();
+  });
+
+  it('safely skips nullish and non-string elements inside array', () => {
+    expect(getMostRecentVersion(['v1', null, undefined, 42, {}])).toBe('v1');
+    expect(getMostRecentVersion([null, undefined, 42])).toBeUndefined();
+    expect(getMostRecentVersion(['v1alpha1', null, 'v1'])).toBe('v1');
+    expect(getMostRecentVersion([null, '', 'mystery'])).toBe('mystery');
+    expect(getMostRecentVersion([''])).toBeUndefined();
+  });
+});
+
+describe('versionSortComparatorFn – defensive type guards', () => {
+  it('returns undefined when either argument is not a string', () => {
+    expect(versionSortComparatorFn(42, '1.0.0')).toBeUndefined();
+    expect(versionSortComparatorFn('1.0.0', 42)).toBeUndefined();
+    expect(versionSortComparatorFn({}, '1.0.0')).toBeUndefined();
+    expect(versionSortComparatorFn('1.0.0', [])).toBeUndefined();
+    expect(versionSortComparatorFn(null, '1.0.0')).toBeUndefined();
+    expect(versionSortComparatorFn('1.0.0', null)).toBeUndefined();
+    expect(versionSortComparatorFn('', '1.0.0')).toBeUndefined();
+    expect(versionSortComparatorFn('1.0.0', '')).toBeUndefined();
+  });
+});
+
+describe('sortByVersionInDecreasingOrder – defensive type guards', () => {
+  it('returns undefined for non-array inputs', () => {
+    expect(sortByVersionInDecreasingOrder(123)).toBeUndefined();
+    expect(sortByVersionInDecreasingOrder('1.0.0')).toBeUndefined();
+    expect(sortByVersionInDecreasingOrder({})).toBeUndefined();
+    expect(sortByVersionInDecreasingOrder(true)).toBeUndefined();
+  });
+
+  it('filters out non-string elements when sorting', () => {
+    expect(sortByVersionInDecreasingOrder(['1.0.0', null, undefined, 42])).toEqual(['1.0.0']);
+    expect(sortByVersionInDecreasingOrder([null, undefined])).toEqual([]);
+    expect(sortByVersionInDecreasingOrder(['1.0.0', '2.0.0', null])).toEqual([
+      WILDCARD_V,
+      '2.0.0',
+      '1.0.0',
+    ]);
+  });
+});
+
+describe('getGreaterVersion – defensive type guards', () => {
+  it('falls back gracefully when non-string arguments are provided', () => {
+    expect(getGreaterVersion(42, '1.0.0')).toBe('1.0.0');
+    expect(getGreaterVersion('1.0.0', 42)).toBe('1.0.0');
+    expect(getGreaterVersion('', '1.0.0')).toBe('1.0.0');
+    expect(getGreaterVersion('1.0.0', '')).toBe('1.0.0');
+    expect(getGreaterVersion(null, undefined)).toBeUndefined();
+  });
+});
+
+describe('sortAndGroupVersionsInModel – defensive type guards', () => {
+  it('returns empty array for non-array inputs', () => {
+    expect(sortAndGroupVersionsInModel(123)).toEqual([]);
+    expect(sortAndGroupVersionsInModel('models')).toEqual([]);
+    expect(sortAndGroupVersionsInModel({})).toEqual([]);
+  });
+
+  it('de-duplicates duplicate versions in a single model entry without adding a wildcard', () => {
+    const singleModelWithDuplicates = [{ name: 'foo', version: ['1.0.0', '1.0.0'] }];
+    const result = sortAndGroupVersionsInModel(singleModelWithDuplicates);
+    expect(result).toHaveLength(1);
+    expect(result[0].name).toBe('foo');
+    expect(result[0].version).toEqual(['1.0.0']);
+  });
+
+  it('safely ignores null or invalid elements in array', () => {
+    const mixed = [
+      null,
+      undefined,
+      42,
+      { name: 'foo', version: '1.0.0' },
+      { notAModel: true },
+      { name: '', version: '2.0.0' },
+    ];
+    const result = sortAndGroupVersionsInModel(mixed);
+    expect(result).toHaveLength(1);
+    expect(result[0].name).toBe('foo');
+    expect(result[0].version).toEqual(['1.0.0']);
   });
 });

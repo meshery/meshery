@@ -49,8 +49,13 @@ Follow these steps to generate, register, sync, and wire up a new permission key
 Generate a unique, lowercase UUID v4 for the new permission key:
 {{< code code=`uuidgen | tr '[:upper:]' '[:lower:]'` >}}
 
-##### Step 2: Add to the Permissions Spreadsheet
-Add a new row to the authoritative **Permissions Spreadsheet**. Ensure the following columns are set:
+##### Step 2: Review the Permissions Spreadsheet
+Review the authoritative [Permissions Spreadsheet](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwzrUSKfuSRcpkp7sJTw1cSB63s4HCjYLJeGPWECsvqn222hjaaONQlN4X8auKvlaB0es3BqV5rQyz/pub?gid=829069645&single=true&output=csv) to check existing permission keys. A version-controlled copy is also available in [`build/permissions.csv`](https://github.com/meshery/schemas/blob/master/build/permissions.csv) in the `meshery/schemas` repository.
+
+The master spreadsheet is maintained by Meshery maintainers and is not directly editable by contributors. To propose a new permission key, [open an issue in the `meshery/schemas` repository](https://github.com/meshery/schemas/issues/new) with the following information: Key ID, Theme, Category, Function, Feature, and whether the key should be seeded for the Local Provider (`TRUE` or `FALSE`), as described in the [Adding a New Permission Key guide](https://docs.meshery.io/reference/extensibility/authorization/#adding-a-new-permission-key). A maintainer will review the proposal and add the key to the maintainer-managed spreadsheet.
+
+A proposed key needs these column values:
+
 *   **Theme**: The high-level category (e.g. `Catalog Management`).
 *   **Category**: Specific feature area (e.g. `Designs`).
 *   **Function**: Human-readable operation name (e.g. `Evaluate Relationships`). This value becomes `key.function` in the Provider API.
@@ -84,7 +89,7 @@ selected, and nothing is seeded from the file - not just for the key you were
 adding. On a fresh or reset database the Key table is left empty on every boot;
 previously seeded keys are not cleared and keep working. `SeedKeys` reports this
 once per seeding run - at boot, and again after a database reset - as
-[`meshery-server-1486`]({{< ref "reference/references/error-codes.md" >}});
+[`meshery-server-1486`]({{< ref "reference/error-codes.md" >}});
 restore the header and restart the server to seed again.
 
 An empty Key table is fail-closed, and its effect is confined to Meshery UI. The
@@ -223,7 +228,7 @@ If the key is missing from `Keys` altogether, it has not made it through the spr
 ##### 5. Local Provider: confirm database seeding
 The key must be in [`server/permissions/keys.csv`](https://github.com/meshery/meshery/blob/master/server/permissions/keys.csv) with **`Local Provider = TRUE`**. Restart Meshery Server (or reset the local DB) after the CSV updates.
 
-If *no* key gates correctly rather than just this one, check the server log for [`meshery-server-1486`]({{< ref "reference/references/error-codes.md" >}}): the CSV's `Local Provider` header itself is missing, so `SeedKeys` seeded nothing at all.
+If *no* key gates correctly rather than just this one, check the server log for [`meshery-server-1486`]({{< ref "reference/error-codes.md" >}}): the CSV's `Local Provider` header itself is missing, so `SeedKeys` seeded nothing at all.
 
 ##### 6. Remote Provider: confirm role assignment
 Keys come from roles assigned in the Remote Provider admin UI. An empty API response usually means a role/keychain issue—not a missing entry in the generated `Keys` alone.

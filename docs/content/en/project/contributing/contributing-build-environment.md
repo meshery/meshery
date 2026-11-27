@@ -42,7 +42,7 @@ Sistent's peers (`@mui/x-date-pickers`, `date-fns`, the `@rjsf/*` set, `xstate`/
 
 A docs build that ends in `TOCSS-DART: failed to transform "/scss/_styles_project.scss" (text/x-scss): got unexpected EOF when executing "sass"` is not a stylesheet problem and not a permissions problem, whatever the message says. The site transpiles its SCSS with `transpiler: "dartsass"`, which shells out to the *first* `sass` on `PATH` and speaks the Dart Sass embedded protocol to it. Anything else on `PATH` under that name - most often a Ruby `sass` gem, or the `sass-embedded` npm package installed in pure-JS mode - answers with nothing and the build dies rendering every page.
 
-`make -C docs check-deps` does not catch this: it only checks that *a* `sass` exists.
+`make -C docs check-deps` verifies that the `sass` on `PATH` speaks the embedded protocol.
 
 Confirm which one you have, and that it speaks the protocol:
 
@@ -52,7 +52,7 @@ A working Dart Sass prints a JSON blob containing `protocolVersion`. If it print
 
 ## `make docs-mesheryctl` rewrites ~100 pages with your home directory
 
-`make docs-mesheryctl` (that is, `cd mesheryctl/doc && go run doc.go`) bakes the machine's `$HOME` into every generated page's "Options inherited from parent commands" block, via the `--config` default path. Running it locally rewrites all ~100 pages under `docs/content/en/reference/references/mesheryctl/` with your local home directory, even when only one command changed.
+`make docs-mesheryctl` (that is, `cd mesheryctl/doc && go run doc.go`) bakes the machine's `$HOME` into every generated page's "Options inherited from parent commands" block, via the `--config` default path. Running it locally rewrites all ~100 pages under `docs/content/en/reference/mesheryctl/` with your local home directory, even when only one command changed.
 
 Committed docs use `/home/runner/...`, the GitHub Actions runner home. After regenerating:
 

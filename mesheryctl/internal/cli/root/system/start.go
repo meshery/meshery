@@ -17,6 +17,7 @@ package system
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"os"
 	"path"
 	"strconv"
@@ -53,13 +54,21 @@ var (
 	skipBrowserFlag bool
 )
 
+var startUsageMsg = `Usage: mesheryctl system start [flags]
+Run 'mesheryctl system start --help' to see detailed help message`
+
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start Meshery",
 	Long: `Start Meshery and each of its cloud native components.
-	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/start`,
-	Args: cobra.NoArgs,
+	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/start`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", startUsageMsg))
+		}
+		return nil
+	},
 	Example: `
 // Start meshery
 mesheryctl system start
@@ -102,6 +111,13 @@ mesheryctl system start --provider Meshery
 		cfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
+		}
+		// Validate the version of the context Meshery will start with, which is
+		// the one given by --context when it is set.
+		if tempContext != "" {
+			if err := cfg.SetCurrentContext(tempContext); err != nil {
+				return ErrGetCurrentContext(err)
+			}
 		}
 		ctx, err := cfg.GetCurrentContext()
 		if err != nil {
@@ -296,15 +312,12 @@ func buildAllowedDockerServices(currCtx *config.Context, mesheryImageVersion, ca
 	requiredServices := []string{"meshery", "watchtower"}
 	allowedServices := map[string]utils.Service{}
 
-	for _, component := range currCtx.GetComponents() {
-		if utils.Services[component].Image == "" {
-			return nil, ErrInvalidComponent(component)
-		}
+	if err := validateComponents(currCtx.GetComponents()); err != nil {
+		return nil, err
+	}
 
-		service, ok := utils.Services[component]
-		if !ok {
-			return nil, errors.Errorf("No Docker Compose service exists for Meshery component `%s`.", component)
-		}
+	for _, component := range currCtx.GetComponents() {
+		service := utils.Services[component]
 
 		spliter := strings.Split(service.Image, ":")
 		service.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
@@ -365,17 +378,27 @@ func resolveDockerEndpoint(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 	if utils.SilentFlag || strings.HasSuffix(userPort[1], "localhost") {
 		userResponse = true
 	} else {
-		userResponse = utils.AskForConfirmation("The endpoint address will be changed to localhost. Are you sure you want to continue?")
+		var err error
+		userResponse, err = utils.AskForConfirmation("The endpoint address will be changed to localhost. Are you sure you want to continue?")
+		if err != nil {
+			return endpoint, err
+		}
 	}
 
+	// endpoint is dialed by TcpCheck as "<Address>:<Port>", so Address holds
+	// the host only. The endpoint saved in the context keeps its scheme.
 	if userResponse {
-		endpoint.Address = utils.EndpointProtocol + "://localhost"
-		currCtx.SetEndpoint(endpoint.Address + ":" + userPort[len(userPort)-1])
+		endpoint.Address = "localhost"
+		currCtx.SetEndpoint(utils.EndpointProtocol + "://localhost:" + userPort[len(userPort)-1])
 		if err := config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName()); err != nil {
 			return endpoint, err
 		}
 	} else {
-		endpoint.Address = userPort[0]
+		host, err := endpointHost(currCtx.GetEndpoint())
+		if err != nil {
+			return endpoint, err
+		}
+		endpoint.Address = host
 	}
 
 	tempPort, err := strconv.Atoi(userPort[len(userPort)-1])
@@ -385,6 +408,22 @@ func resolveDockerEndpoint(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 	endpoint.Port = int32(tempPort)
 
 	return endpoint, nil
+}
+
+// endpointHost returns the host of a Meshery endpoint. Contexts normally store
+// a URL with a scheme, such as "http://meshery.example.com:9081", but an
+// endpoint saved as "meshery.example.com:9081" is accepted too.
+func endpointHost(endpoint string) (string, error) {
+	raw := endpoint
+	if !strings.Contains(raw, "://") {
+		// Without "//", url.Parse reads the host as the scheme.
+		raw = "//" + raw
+	}
+	parsed, err := url.Parse(raw)
+	if err != nil || parsed.Hostname() == "" {
+		return "", utils.ErrInvalidArgument(fmt.Errorf("invalid Meshery endpoint %q in the current context", endpoint))
+	}
+	return parsed.Hostname(), nil
 }
 
 func startDockerCompose(composeClient *utils.ComposeClient) error {
@@ -517,6 +556,13 @@ func init() {
 
 // Apply Meshery helm charts
 func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction, callbackURL, providerURL string) error {
+	// Validate component references before starting
+	if act != meshkitkube.UNINSTALL {
+		if err := validateComponents(currCtx.GetComponents()); err != nil {
+			return err
+		}
+	}
+
 	// get value overrides to install the helm chart
 	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion, callbackURL, providerURL)
 

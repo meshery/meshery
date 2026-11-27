@@ -18,6 +18,29 @@ vi.mock('@sistent/sistent', () => ({
 
 vi.mock('@rjsf/utils', () => ({
   canExpand: (schema: any) => !!schema?.canExpand,
+  // Faithful port of RJSF's real getUiOptions: the registry's global UI
+  // options are the base, then every ui:* key is applied in uiSchema key
+  // order, with ui:options spread in and bare ui:* keys losing their prefix.
+  // (The real one also logs when ui:widget is an object; that path is
+  // skipped here because no test sets it.)
+  getUiOptions: (uiSchema: any = {}, globalOptions: any = {}) => {
+    if (!uiSchema) return { ...globalOptions };
+    return Object.keys(uiSchema)
+      .filter((key: string) => key.startsWith('ui:'))
+      .reduce(
+        (options: any, key: string) => {
+          const value = uiSchema[key];
+          if (key === 'ui:widget' && typeof value === 'object' && value !== null) {
+            return options;
+          }
+          if (key === 'ui:options' && typeof value === 'object' && value !== null) {
+            return { ...options, ...value };
+          }
+          return { ...options, [key.substring(3)]: value };
+        },
+        { ...globalOptions },
+      );
+  },
 }));
 
 vi.mock('../../../../assets/icons/AddIcon', () => ({
@@ -81,12 +104,12 @@ describe('ObjectFieldTemplate', () => {
   });
 
   it('renders an Add button when canExpand is true', () => {
-    const onAddClick = vi.fn(() => vi.fn());
+    const onAddProperty = vi.fn(() => vi.fn());
     render(
       <ObjectFieldTemplate
         {...(baseProps as any)}
         schema={{ canExpand: true, properties: { name: { type: 'string' } } }}
-        onAddClick={onAddClick}
+        onAddProperty={onAddProperty}
       />,
     );
     expect(screen.getByTestId('object-property-expand')).toBeInTheDocument();
@@ -98,6 +121,43 @@ describe('ObjectFieldTemplate', () => {
       <ObjectFieldTemplate {...(baseProps as any)} errorSchema={{ name: { __errors: ['bad'] } }} />,
     );
     expect(screen.getByTestId('error-icon')).toBeInTheDocument();
+  });
+
+  it('hides the error icon when ui:options.hideError is true', () => {
+    // ui:options.hideError must hide the indicator even though RJSF still
+    // passes errorSchema to the template: the caller asked for no error to
+    // be shown. RJSF's ObjectField does not forward hideError to the
+    // template, so the template reads it from the effective UI options.
+    render(
+      <ObjectFieldTemplate
+        {...(baseProps as any)}
+        errorSchema={{ name: { __errors: ['bad'] } }}
+        uiSchema={{ 'ui:options': { hideError: true } }}
+      />,
+    );
+    expect(screen.queryByTestId('error-icon')).not.toBeInTheDocument();
+  });
+
+  it('hides the error icon when the bare ui:hideError option is set', () => {
+    render(
+      <ObjectFieldTemplate
+        {...(baseProps as any)}
+        errorSchema={{ name: { __errors: ['bad'] } }}
+        uiSchema={{ 'ui:hideError': true }}
+      />,
+    );
+    expect(screen.queryByTestId('error-icon')).not.toBeInTheDocument();
+  });
+
+  it('hides the error icon when hideError comes from the registry global UI options', () => {
+    render(
+      <ObjectFieldTemplate
+        {...(baseProps as any)}
+        errorSchema={{ name: { __errors: ['bad'] } }}
+        registry={{ globalUiOptions: { hideError: true } }}
+      />,
+    );
+    expect(screen.queryByTestId('error-icon')).not.toBeInTheDocument();
   });
 
   it('renders only the properties grid when no title is provided', () => {
