@@ -630,9 +630,7 @@ describe('user endpoints', () => {
         okResponse({ anonymousUsageStats: false, anonymousPerfResults: false }),
       )
       .mockResolvedValueOnce(textResponse('internal error', 500))
-      .mockResolvedValue(
-        okResponse({ anonymousUsageStats: false, anonymousPerfResults: false }),
-      );
+      .mockResolvedValue(okResponse({ anonymousUsageStats: false, anonymousPerfResults: false }));
 
     await store.dispatch(userMod.userApi.endpoints.getUserPref.initiate(undefined));
 
