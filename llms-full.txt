@@ -74401,7 +74401,7 @@ You are now ready to [contribute](/project/contributing/) to Meshery.
 
 ## Using Hyper-V to install a linux VM
 
-Here is a link to create a virtual machine using Hyper-V: [Create a virtual machine in Hyper-V](https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/get-started/create-a-virtual-machine-in-hyper-v)
+Here is a link to create a virtual machine using Hyper-V: [Create a virtual machine in Hyper-V](https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/get-started/create-a-virtual-machine-in-hyper-v). Create a **Generation 2** VM, attach your Linux ISO at the **Installation Options** step, and, before its first boot, select **Microsoft UEFI Certificate Authority** as the Secure Boot template so the Linux installer can start.
 
 
 ## Get the code
