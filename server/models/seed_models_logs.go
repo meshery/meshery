@@ -25,7 +25,7 @@ type RegistrationFailureLog struct {
 	// think of it like every model belongs to a global model called ''
 	failureData map[string](map[string](map[string](map[string]error)))
 
-	// invalid definitions while parsing the given input (OCI, tar, directory) into registry entities (models, components, relationships, and policies)
+	// invalid definitions while parsing the given input (OCI, tar, directory) into registry entities (models, components, and relationships)
 	invalidDefinitions map[string](error)
 }
 type EntityRegError struct {

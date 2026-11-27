@@ -329,7 +329,8 @@ func main() {
 		models.RunSeedStage(log, "models", func() {
 			models.SeedComponents(log, hc, regManager, dbHandler)
 		})
-		// Rego is initialized for evaluating policies across models and relationships
+		// Rego is currently initialized from global Meshery Core policies;
+		// this needs revisiting if policies become model-specific
 		models.RunSeedStage(log, "policies", func() {
 			r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
 			if err != nil {

@@ -10,11 +10,12 @@ aliases:
 
 # mesheryctl registry publish
 
-Publish Meshery Models to Websites, Remote Provider, Meshery Server
+Publish Meshery Models to Websites and Remote Provider
 
 ## Synopsis
 
-Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery Server, including model and component icons by reading from a Google Spreadsheet and outputing to markdown or json format.
+Publishes metadata about Meshery Models to Websites or Remote Provider, including model and component icons by reading from a Google Spreadsheet and outputing to markdown or json format.
+For the remote-provider system, [models-output-path] and [imgs-output-path] are resolved relative to the parent of the current working directory, not the current directory itself, and icons are written to a subdirectory named for the model: from /work/project, models writes to /work/models and icons to /work/imgs/my-model.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -31,7 +32,7 @@ Publish To System
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
+mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [md|mdx|js]
 
 </div>
 </div>
@@ -41,7 +42,7 @@ Publish To Remote Provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/models [repo]/ui/public/static/img/meshmodels
+mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [models-output-path] [imgs-output-path]
 
 </div>
 </div>
@@ -51,7 +52,7 @@ Publish To Website
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/static/img/meshmodels -o [output-format]
+mesheryctl registry publish website GoogleCredential GoogleSheetID [models-output-path] [imgs-output-path] -o [md|mdx|js]
 
 </div>
 </div>

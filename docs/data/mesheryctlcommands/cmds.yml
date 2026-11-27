@@ -837,7 +837,7 @@ registry:
   subcommands:
     publish:
       name: publish
-      description: Publish Meshery Models to Websites, Remote Provider, Meshery Server
+      description: Publish Meshery Models to Websites and Remote Provider
       usage: mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]
       flags:
         output-format:
