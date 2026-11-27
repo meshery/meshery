@@ -188,6 +188,16 @@ Troubleshooting guides to using Meshery's various features and components.
     
     <tr>
       <td style="text-align:left">component</td>
+      <td class="title"><a href="#meshery-server">meshery-operator</a></td>
+    </tr>
+  
+    
+    
+    
+      
+    
+    <tr>
+      <td style="text-align:left">component</td>
       <td class="title"><a href="#meshery-server">meshery-server</a></td>
     </tr>
   
@@ -3877,6 +3887,604 @@ The repository url is invalid
 Could not reach the remote git repository</p>
               <div class="error-heading">Suggested Remediation</div>
               <p class="error-details">Make sure the owner, repo and path is correct for fetching crd names</p>
+            </td>
+          </tr>
+        
+      </tbody>
+    </table>
+    <a href="#error-code-reference">Top</a>
+    <hr>
+    <br>
+
+  
+  
+  
+  
+
+    <h2 class="title"></h2>
+    <table class="tbl">
+      <thead>
+        <tr class="tbl-head-row">
+          <th style="width:5%">Severity</th>
+          <th class="error-name-code"><span>Error Name - Code</span></th>
+          <th style="width:85%">Short Description</th>
+          <th>Discussion</th>
+        </tr>
+      </thead>
+      <tbody class="tbl-body">
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrGetMeshsyncCode-1001" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrGetMeshsyncCode-more-info" onclick="toggle_visibility('meshery-operator-ErrGetMeshsyncCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1001" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errgetmeshsynccode-1001/"><code>ErrGetMeshsyncCode-1001</code></a>
+            </td>
+            <td>Unable to get the MeshSync resource</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrGetMeshsyncCode-1001" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrGetMeshsyncCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The MeshSync custom resource was deleted, or operator RBAC denies get/list/watch on meshsyncs</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Confirm the MeshSync CR exists and that the operator&#39;s ClusterRole grants get/list/watch on meshsyncs.meshery.io</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrCreateMeshsyncCode-1002" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrCreateMeshsyncCode-more-info" onclick="toggle_visibility('meshery-operator-ErrCreateMeshsyncCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1002" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errcreatemeshsynccode-1002/"><code>ErrCreateMeshsyncCode-1002</code></a>
+            </td>
+            <td>Unable to create the MeshSync workload</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrCreateMeshsyncCode-1002" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrCreateMeshsyncCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The MeshSync Deployment or its owned objects could not be created</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Check the operator RBAC for deployments and inspect the events in the MeshSync namespace</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrReconcileMeshsyncCode-1003" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrReconcileMeshsyncCode-more-info" onclick="toggle_visibility('meshery-operator-ErrReconcileMeshsyncCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1003" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errreconcilemeshsynccode-1003/"><code>ErrReconcileMeshsyncCode-1003</code></a>
+            </td>
+            <td>MeshSync reconciliation failed</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrReconcileMeshsyncCode-1003" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrReconcileMeshsyncCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Broker configuration, workload deployment, or the health check failed for MeshSync</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Check the MeshSync status conditions and the operator logs for the failing reconcile step</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrGetBrokerCode-1004" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrGetBrokerCode-more-info" onclick="toggle_visibility('meshery-operator-ErrGetBrokerCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1004" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errgetbrokercode-1004/"><code>ErrGetBrokerCode-1004</code></a>
+            </td>
+            <td>Unable to get the Broker resource</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrGetBrokerCode-1004" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrGetBrokerCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The Broker custom resource was deleted, or operator RBAC denies get/list/watch on brokers</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Confirm the Broker CR exists and that the operator&#39;s ClusterRole grants get/list/watch on brokers.meshery.io</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrCreateBrokerCode-1005" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrCreateBrokerCode-more-info" onclick="toggle_visibility('meshery-operator-ErrCreateBrokerCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1005" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errcreatebrokercode-1005/"><code>ErrCreateBrokerCode-1005</code></a>
+            </td>
+            <td>Unable to create the Broker workload</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrCreateBrokerCode-1005" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrCreateBrokerCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The NATS StatefulSet, Service, or ConfigMaps could not be created</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Check the operator RBAC and inspect the events on the owned objects in the broker namespace</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrReconcileBrokerCode-1006" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrReconcileBrokerCode-more-info" onclick="toggle_visibility('meshery-operator-ErrReconcileBrokerCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1006" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errreconcilebrokercode-1006/"><code>ErrReconcileBrokerCode-1006</code></a>
+            </td>
+            <td>Broker reconciliation failed</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrReconcileBrokerCode-1006" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrReconcileBrokerCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The NATS StatefulSet, Service, or ConfigMaps could not be created or updated</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Check the operator RBAC and inspect the events on the owned objects in the broker namespace</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrReconcileCRCode-1007" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrReconcileCRCode-more-info" onclick="toggle_visibility('meshery-operator-ErrReconcileCRCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1007" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errreconcilecrcode-1007/"><code>ErrReconcileCRCode-1007</code></a>
+            </td>
+            <td>Custom resource reconciliation failed</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrReconcileCRCode-1007" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrReconcileCRCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">A reconcile step failed for the custom resource</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Check the operator logs for the underlying cause; the controller will requeue and retry</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrDeleteMeshsyncCode-1008" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrDeleteMeshsyncCode-more-info" onclick="toggle_visibility('meshery-operator-ErrDeleteMeshsyncCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1008" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errdeletemeshsynccode-1008/"><code>ErrDeleteMeshsyncCode-1008</code></a>
+            </td>
+            <td>Unable to delete the MeshSync workload</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrDeleteMeshsyncCode-1008" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrDeleteMeshsyncCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Owned MeshSync objects could not be deleted during finalization</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Inspect the MeshSync finalizers and confirm the operator RBAC grants delete on deployments</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrDeleteBrokerCode-1009" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrDeleteBrokerCode-more-info" onclick="toggle_visibility('meshery-operator-ErrDeleteBrokerCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1009" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errdeletebrokercode-1009/"><code>ErrDeleteBrokerCode-1009</code></a>
+            </td>
+            <td>Unable to delete the Broker workload</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrDeleteBrokerCode-1009" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrDeleteBrokerCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">Owned broker objects could not be deleted during finalization</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Inspect the Broker finalizers and confirm the operator RBAC grants delete on statefulsets, services, and configmaps</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrCheckHealthCode-1010" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrCheckHealthCode-more-info" onclick="toggle_visibility('meshery-operator-ErrCheckHealthCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1010" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errcheckhealthcode-1010/"><code>ErrCheckHealthCode-1010</code></a>
+            </td>
+            <td>Workload health check failed</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrCheckHealthCode-1010" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrCheckHealthCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The StatefulSet or Deployment has not reached its desired ReadyReplicas</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Inspect the pod status and events for the workload; the controller will requeue and retry</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrGetEndpointCode-1011" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrGetEndpointCode-more-info" onclick="toggle_visibility('meshery-operator-ErrGetEndpointCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1011" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errgetendpointcode-1011/"><code>ErrGetEndpointCode-1011</code></a>
+            </td>
+            <td>Unable to derive the broker endpoint</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrGetEndpointCode-1011" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrGetEndpointCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The broker Service has no reachable internal or external address yet</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Verify the broker Service exists and has assigned ports and an address; LoadBalancer addresses may still be pending</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrUpdateResourceCode-1012" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrUpdateResourceCode-more-info" onclick="toggle_visibility('meshery-operator-ErrUpdateResourceCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1012" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errupdateresourcecode-1012/"><code>ErrUpdateResourceCode-1012</code></a>
+            </td>
+            <td>Unable to update the resource</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrUpdateResourceCode-1012" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrUpdateResourceCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">A status patch or resource update conflicted or was rejected by the API server</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Check for concurrent writers and confirm the operator RBAC grants update on the resource and its status; the controller will retry</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrGettingBrokerResourceCode-1013" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrGettingBrokerResourceCode-more-info" onclick="toggle_visibility('meshery-operator-ErrGettingBrokerResourceCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1013" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errgettingbrokerresourcecode-1013/"><code>ErrGettingBrokerResourceCode-1013</code></a>
+            </td>
+            <td>Unable to get a broker-owned resource</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrGettingBrokerResourceCode-1013" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrGettingBrokerResourceCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The broker StatefulSet, Service, or ConfigMap lookup failed</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Check the operator RBAC and confirm the resource exists in the broker namespace</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrBrokerReplicasNotReadyCode-1014" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrBrokerReplicasNotReadyCode-more-info" onclick="toggle_visibility('meshery-operator-ErrBrokerReplicasNotReadyCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1014" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errbrokerreplicasnotreadycode-1014/"><code>ErrBrokerReplicasNotReadyCode-1014</code></a>
+            </td>
+            <td>Broker replicas are not ready</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrBrokerReplicasNotReadyCode-1014" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrBrokerReplicasNotReadyCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The NATS StatefulSet has not reached its desired ReadyReplicas</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Inspect the StatefulSet pod status and events; the controller will requeue and retry</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrBrokerConditionFalseCode-1015" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrBrokerConditionFalseCode-more-info" onclick="toggle_visibility('meshery-operator-ErrBrokerConditionFalseCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1015" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errbrokerconditionfalsecode-1015/"><code>ErrBrokerConditionFalseCode-1015</code></a>
+            </td>
+            <td>A broker readiness condition is false</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrBrokerConditionFalseCode-1015" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrBrokerConditionFalseCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">A required status condition on the broker workload reports False</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Inspect the broker status conditions for the reported reason</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrGettingBrokerEndpointCode-1016" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrGettingBrokerEndpointCode-more-info" onclick="toggle_visibility('meshery-operator-ErrGettingBrokerEndpointCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1016" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errgettingbrokerendpointcode-1016/"><code>ErrGettingBrokerEndpointCode-1016</code></a>
+            </td>
+            <td>Unable to get the broker endpoint</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrGettingBrokerEndpointCode-1016" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrGettingBrokerEndpointCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The broker Service is not yet reachable or has no assigned address</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Verify the broker Service and its ports; a pending LoadBalancer address resolves on a later reconcile</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrMarshalCode-1017" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrMarshalCode-more-info" onclick="toggle_visibility('meshery-operator-ErrMarshalCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1017" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errmarshalcode-1017/"><code>ErrMarshalCode-1017</code></a>
+            </td>
+            <td>Unable to marshal the resource</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrMarshalCode-1017" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrMarshalCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The custom resource could not be serialized for a status patch</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">This indicates a defect in the status builder; please report it with the operator logs</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrGettingMeshsyncResourceCode-1018" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrGettingMeshsyncResourceCode-more-info" onclick="toggle_visibility('meshery-operator-ErrGettingMeshsyncResourceCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1018" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errgettingmeshsyncresourcecode-1018/"><code>ErrGettingMeshsyncResourceCode-1018</code></a>
+            </td>
+            <td>Unable to get a MeshSync-owned resource</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrGettingMeshsyncResourceCode-1018" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrGettingMeshsyncResourceCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The MeshSync Deployment lookup failed</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Check the operator RBAC and confirm the Deployment exists in the MeshSync namespace</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrMeshsyncReplicasNotReadyCode-1019" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrMeshsyncReplicasNotReadyCode-more-info" onclick="toggle_visibility('meshery-operator-ErrMeshsyncReplicasNotReadyCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1019" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errmeshsyncreplicasnotreadycode-1019/"><code>ErrMeshsyncReplicasNotReadyCode-1019</code></a>
+            </td>
+            <td>MeshSync replicas are not ready</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrMeshsyncReplicasNotReadyCode-1019" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrMeshsyncReplicasNotReadyCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The MeshSync Deployment has not reached its desired ReadyReplicas</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Inspect the Deployment pod status and events; the controller will requeue and retry</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrMeshsyncConditionFalseCode-1020" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrMeshsyncConditionFalseCode-more-info" onclick="toggle_visibility('meshery-operator-ErrMeshsyncConditionFalseCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1020" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errmeshsyncconditionfalsecode-1020/"><code>ErrMeshsyncConditionFalseCode-1020</code></a>
+            </td>
+            <td>A MeshSync readiness condition is false</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrMeshsyncConditionFalseCode-1020" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrMeshsyncConditionFalseCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">A required status condition on the MeshSync workload reports False</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Inspect the MeshSync status conditions for the reported reason</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrGettingMeshsyncEndpointCode-1021" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrGettingMeshsyncEndpointCode-more-info" onclick="toggle_visibility('meshery-operator-ErrGettingMeshsyncEndpointCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1021" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errgettingmeshsyncendpointcode-1021/"><code>ErrGettingMeshsyncEndpointCode-1021</code></a>
+            </td>
+            <td>Unable to get the MeshSync broker endpoint</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrGettingMeshsyncEndpointCode-1021" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrGettingMeshsyncEndpointCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The broker referenced by the MeshSync spec has no resolvable endpoint</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Verify the native broker CR or the custom broker URL configured in the MeshSync spec</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrCleanupBrokerCode-1022" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrCleanupBrokerCode-more-info" onclick="toggle_visibility('meshery-operator-ErrCleanupBrokerCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1022" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errcleanupbrokercode-1022/"><code>ErrCleanupBrokerCode-1022</code></a>
+            </td>
+            <td>Unable to clean up obsolete Broker resources</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrCleanupBrokerCode-1022" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrCleanupBrokerCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The operator could not inspect or delete obsolete broker workloads and services during an upgrade</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Inspect the Broker Cleanup condition and operator logs, and confirm RBAC permits listing MeshSync deployments and deleting broker StatefulSets and Services</p>
+            </td>
+          </tr>
+        
+          
+          
+          
+          
+            
+          
+          <tr id="ErrInvalidServiceAccountNameCode-1024" class="tbl-body-row hover-effect" data-details-id="meshery-operator-ErrInvalidServiceAccountNameCode-more-info" onclick="toggle_visibility('meshery-operator-ErrInvalidServiceAccountNameCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1024" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-operator/errinvalidserviceaccountnamecode-1024/"><code>ErrInvalidServiceAccountNameCode-1024</code></a>
+            </td>
+            <td>Invalid MeshSync ServiceAccount name</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInvalidServiceAccountNameCode-1024" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-operator-ErrInvalidServiceAccountNameCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The MESHSYNC_SERVICE_ACCOUNT environment variable on the meshery-operator Deployment is not a valid Kubernetes ServiceAccount name (a DNS-1123 subdomain)</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Set MESHSYNC_SERVICE_ACCOUNT to the ServiceAccount MeshSync should run under (meshery-meshsync for the meshery-operator chart and config/default), or unset it to use the operator&#39;s own ServiceAccount</p>
             </td>
           </tr>
         
