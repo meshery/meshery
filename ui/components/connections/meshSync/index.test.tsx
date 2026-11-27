@@ -466,7 +466,7 @@ describe('MeshSyncTable', () => {
   );
 
   it.each([undefined, null, '', 0, 'unknown', { phase: 'Running' }])(
-    'derives discovered lifecycle status for an inventory row with status %s',
+    'keeps registration unavailable for inventory row with missing or invalid status %s',
     (status) => {
       getColumnValue.mockImplementation((rowData, columnName, cols) => {
         const idx = cols.findIndex((col) => col?.name === columnName);
@@ -482,14 +482,8 @@ describe('MeshSyncTable', () => {
 
       render(statusCol.options.customBodyRender(status, { rowData, rowIndex: 0 }));
 
-      expect(statusSelectProps.value).toBe('discovered');
-      expect(statusSelectProps.defaultValue).toBeUndefined();
-
-      act(() => {
-        statusSelectProps.onChange({ target: { value: 'register' } });
-      });
-
-      expect(registerConnectionModalProps.openRegistrationModal).toBe(true);
+      expect(statusSelectProps).toBeUndefined();
+      expect(screen.getByTestId('meshsync-status-non-interactive')).toBeInTheDocument();
     },
   );
 

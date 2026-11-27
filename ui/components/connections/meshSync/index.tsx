@@ -45,7 +45,7 @@ const resolveMeshSyncLifecycleStatus = (value: unknown): string => {
   if (typeof value === 'string' && meshSyncLifecycleStates.has(value)) {
     return value;
   }
-  return MESHSYNC_STATES.DISCOVERED;
+  return '';
 };
 
 export default function MeshSyncTable(props) {
