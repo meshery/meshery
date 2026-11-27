@@ -89,6 +89,8 @@ describe('downloadContent', () => {
     expect(createObjectURL).toHaveBeenCalledWith(blob);
     expect(setAttributeSpy).toHaveBeenCalledWith('href', 'blob:download');
     expect(setAttributeSpy).toHaveBeenCalledWith('download', 'download');
+    expect(revokeObjectURL).not.toHaveBeenCalled();
+    await new Promise((resolve) => setTimeout(resolve, 0));
     expect(revokeObjectURL).toHaveBeenCalledWith('blob:download');
   });
 

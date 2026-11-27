@@ -232,6 +232,11 @@ export const useContentDownload = () => {
             notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
           } catch (e) {
             console.error(e);
+            notify({
+              message: `Error downloading "${design?.name ?? 'design'}" design`,
+              event_type: EVENT_TYPES.ERROR,
+              details: e instanceof Error ? e.message : String(e),
+            });
           }
         }),
       );

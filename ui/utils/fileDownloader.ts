@@ -45,7 +45,7 @@ export default async function downloadContent({ id, type, name, source_type, par
   try {
     downloadFileFromUrl(url, downloadName);
   } finally {
-    window.URL.revokeObjectURL(url);
+    setTimeout(() => window.URL.revokeObjectURL(url), 0);
   }
 }
 

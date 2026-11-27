@@ -324,10 +324,15 @@ describe('useContentDownload', () => {
       expect.objectContaining({ id: 'valid', name: 'B' }),
     );
     expect(updateProgress).toHaveBeenLastCalledWith({ showProgress: true });
-    expect(notify).not.toHaveBeenCalled();
+    expect(notify).not.toHaveBeenCalledWith(expect.objectContaining({ event_type: 'INFO' }));
     finish();
     await pending;
-    expect(notify).toHaveBeenCalledTimes(1);
+    expect(notify).toHaveBeenCalledTimes(2);
+    expect(notify).toHaveBeenCalledWith({
+      message: 'Error downloading "A" design',
+      event_type: 'ERROR',
+      details: 'HTTP 404',
+    });
     expect(notify).toHaveBeenCalledWith({ message: '"B" design downloaded', event_type: 'INFO' });
     expect(updateProgress).toHaveBeenLastCalledWith({ showProgress: false });
   });
