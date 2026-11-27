@@ -157,7 +157,7 @@ describe('PerformanceCard', () => {
     expect(screen.queryByText('"not-valid-json"')).not.toBeInTheDocument();
     unmountInvalid();
 
-    render(
+    const { unmount: unmountValid } = render(
       <PerformanceCard
         {...baseProps}
         profile={{
@@ -168,5 +168,20 @@ describe('PerformanceCard', () => {
     );
     expect(screen.getByText('my perf profile')).toBeInTheDocument();
     expect(screen.getByText('{"concurrency":4}')).toBeInTheDocument();
+    unmountValid();
+
+    render(
+      <PerformanceCard
+        {...baseProps}
+        profile={{
+          ...baseProps.profile,
+          metadata: { additional_options: ['"example"'] },
+        }}
+      />,
+    );
+    expect(screen.getByText('my perf profile')).toBeInTheDocument();
+    // A successfully parsed string keeps its JSON quotes and escapes.
+    expect(screen.getByText('"example"')).toBeInTheDocument();
+    expect(screen.queryByText('example')).not.toBeInTheDocument();
   });
 });

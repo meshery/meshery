@@ -71,8 +71,10 @@ function PerformanceCard({
       value: (() => {
         const raw = metadata?.additional_options?.[0];
         if (!raw) return '';
+        // Serialize successfully parsed values so a parsed string keeps its
+        // JSON quotes and escapes; fall back to the raw string as-is.
         try {
-          return JSON.parse(raw);
+          return JSON.stringify(JSON.parse(raw));
         } catch {
           return raw;
         }
