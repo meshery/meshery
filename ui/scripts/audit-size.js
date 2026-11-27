@@ -99,35 +99,20 @@ function countSignificantLines(src, file) {
   const sourceFile = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true, scriptKind);
 
   const commentRanges = [];
-  const opaqueTextRanges = [];
-  const opaqueTextKinds = new Set([
-    ts.SyntaxKind.JsxText,
-    ts.SyntaxKind.StringLiteral,
-    ts.SyntaxKind.NoSubstitutionTemplateLiteral,
-    ts.SyntaxKind.TemplateHead,
-    ts.SyntaxKind.TemplateMiddle,
-    ts.SyntaxKind.TemplateTail,
-    ts.SyntaxKind.RegularExpressionLiteral,
-  ]);
 
   function collectRanges(node) {
-    if (opaqueTextKinds.has(node.kind)) {
-      opaqueTextRanges.push({
-        start: node.getStart(sourceFile),
-        end: node.end,
-      });
-    }
-
-    if (node.kind === ts.SyntaxKind.JsxText) {
+    if (node.kind === ts.SyntaxKind.JsxText || node.kind === ts.SyntaxKind.JSDoc) {
       return;
     }
 
     const children = node.getChildren(sourceFile);
     if (children.length === 0) {
-      commentRanges.push(
-        ...(ts.getLeadingCommentRanges(src, node.pos) || []),
-        ...(ts.getTrailingCommentRanges(src, node.end) || []),
-      );
+      if (node.pos < node.getStart(sourceFile)) {
+        commentRanges.push(
+          ...(ts.getTrailingCommentRanges(src, node.pos) || []),
+          ...(ts.getLeadingCommentRanges(src, node.pos) || []),
+        );
+      }
       return;
     }
 
@@ -138,19 +123,8 @@ function countSignificantLines(src, file) {
 
   collectRanges(sourceFile);
 
-  // Trailing-comment detection can mistake JSX text for comments.
-  // Ignore candidate comment ranges overlapping opaque source-text nodes.
   const comments = [
-    ...new Map(
-      commentRanges
-        .filter(
-          (range) =>
-            !opaqueTextRanges.some(
-              (opaque) => range.pos < opaque.end && range.end > opaque.start,
-            ),
-        )
-        .map((range) => [`${range.pos}:${range.end}`, range]),
-    ).values(),
+    ...new Map(commentRanges.map((range) => [`${range.pos}:${range.end}`, range])).values(),
   ].sort((a, b) => a.pos - b.pos);
 
   let count = 0;

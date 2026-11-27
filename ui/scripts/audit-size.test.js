@@ -206,3 +206,30 @@ test('does not treat unclosed or inline comment tokens in JSX text as comments',
   assert.equal(result.over_hard, 0);
   assert.deepEqual(result.files, [{ file: 'components/jsx-slash-text.jsx', lines: 608 }]);
 });
+
+test('skips same-line opening multiline comments and JSDoc containing string literals', (t) => {
+  const fixture = createFixture(t);
+  const jsdocBlock = [
+    '/**',
+    ' * @param {{',
+    ' *   mode: "trait" | "workload",',
+    ' * }} props',
+    ' */',
+  ].join('\n');
+  const entries = Array.from(
+    { length: 65 },
+    (_, i) =>
+      `${jsdocBlock}\nfunction item${i}(props) {\n  const x = ${i}; /* trailing start\n   * trailing body\n   */\n  return (\n    <div>\n      {/* jsx start\n       * jsx body\n       */}\n      {x}\n    </div>\n  );\n}`,
+  );
+
+  writeFile(fixture, 'ui/components/jsdoc-and-trailing.tsx', `${entries.join('\n')}\n`);
+
+  const result = runAudit(fixture);
+  const expectedLinesPerEntry = 10;
+
+  assert.equal(result.over_warn, 1);
+  assert.equal(result.over_hard, 0);
+  assert.deepEqual(result.files, [
+    { file: 'components/jsdoc-and-trailing.tsx', lines: 65 * expectedLinesPerEntry },
+  ]);
+});
