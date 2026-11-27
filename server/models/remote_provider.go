@@ -90,9 +90,10 @@ type RemoteProvider struct {
 	SessionName   string
 	RefCookieName string
 
-	TokenStore    map[string]string
-	TokenStoreMut sync.Mutex
-	Keys          []map[string]string
+	TokenStore     map[string]string
+	TokenStoreMut  sync.Mutex
+	tokenRefreshes map[string]*tokenRefreshCall
+	Keys           []map[string]string
 
 	// mostRecentToken caches the last valid user token observed during the
 	// session so it can be reused at server shutdown to authenticate the
@@ -971,7 +972,7 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 		}
 		l.Log.Info("Token verification and introspection failed, attempting refresh")
 		// Both failed — attempt token refresh as last resort
-		newts, refreshErr := l.refreshToken(ts)
+		newts, refreshErr := l.refreshToken(req.Context(), ts)
 		if refreshErr != nil {
 			l.Log.Error(ErrTokenRefresh(refreshErr))
 			return ErrTokenRefresh(refreshErr)
@@ -994,7 +995,7 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 		if introspectErr := l.introspectToken(ts); introspectErr != nil {
 			l.Log.Info("Token introspection failed, attempting refresh")
 			// Introspection failed — attempt token refresh before giving up
-			newts, refreshErr := l.refreshToken(ts)
+			newts, refreshErr := l.refreshToken(req.Context(), ts)
 			if refreshErr != nil {
 				l.Log.Error(ErrTokenRefresh(refreshErr))
 				return ErrTokenRefresh(refreshErr)
@@ -2108,6 +2109,48 @@ func (l *RemoteProvider) BulkUpdateEventStatus(token string, eventIDs []*core.Uu
 	}
 
 	l.Log.Info("Bulk event status updated successfully in remote provider.")
+	return nil
+}
+
+func (l *RemoteProvider) MarkAllEventsRead(ctx context.Context, token string, _ core.Uuid) error {
+	providerProperties := l.GetProviderProperties()
+	if !providerProperties.Capabilities.IsSupported(PersistEvents) {
+		err := ErrInvalidCapability("PersistEvents", providerProperties.ProviderName)
+		l.Log.Error(err)
+		return err
+	}
+
+	remoteProviderURL, err := url.JoinPath(l.RemoteProviderURL, "api/events/mark-all-read")
+	if err != nil {
+		return ErrPost(err, "mark all events read", 0)
+	}
+
+	cReq, err := http.NewRequestWithContext(ctx, http.MethodPost, remoteProviderURL, nil)
+	if err != nil {
+		return ErrPost(err, "mark all events read", 0)
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		wrappedErr := ErrUnreachableRemoteProvider(err)
+		if status, ok := httputil.ProviderStatusCode(err); ok {
+			return httputil.WithProviderStatus(wrappedErr, status)
+		}
+		return wrappedErr
+	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode != http.StatusOK {
+		return ErrPost(
+			errors.New("error marking all events as read with the remote provider"),
+			"mark all events read",
+			resp.StatusCode,
+		)
+	}
+
 	return nil
 }
 

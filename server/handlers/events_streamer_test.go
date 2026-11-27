@@ -3,6 +3,8 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -15,13 +17,26 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/meshes"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	_events "github.com/meshery/meshkit/utils/events"
 	"github.com/meshery/schemas/models/core"
+	eventv1beta3 "github.com/meshery/schemas/models/v1beta3/event"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 const testTimeout = time.Second
+
+type markAllEventsReadErrorProvider struct {
+	*models.DefaultLocalProvider
+	err error
+}
+
+func (p *markAllEventsReadErrorProvider) MarkAllEventsRead(context.Context, string, core.Uuid) error {
+	return p.err
+}
 
 type testFlusher struct {
 	flushes atomic.Int32
@@ -85,6 +100,133 @@ func newTestLogger(t *testing.T) logger.Handler {
 	}
 
 	return log
+}
+
+func TestMarkAllEventsRead(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to open in-memory database: %v", err)
+	}
+	if err := db.AutoMigrate(&events.Event{}); err != nil {
+		t.Fatalf("failed to migrate event schema: %v", err)
+	}
+
+	userID := uuid.Must(uuid.NewV4())
+	seededEvent := events.Event{Owner: &userID, Status: events.Unread}
+	if err := db.Create(&seededEvent).Error; err != nil {
+		t.Fatalf("failed to seed event: %v", err)
+	}
+
+	provider := &models.DefaultLocalProvider{
+		EventsPersister: &models.EventsPersister{DB: &database.Handler{DB: db}},
+	}
+	handler := &Handler{log: newTestLogger(t)}
+	req := httptest.NewRequest(http.MethodPost, "/api/events/mark-all-read", nil)
+	req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+	recorder := httptest.NewRecorder()
+
+	handler.MarkAllEventsRead(recorder, req, nil, &models.User{ID: userID}, provider)
+
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200; body=%s", recorder.Code, recorder.Body.String())
+	}
+	if got := recorder.Header().Get("Content-Type"); got != "application/json" {
+		t.Errorf("Content-Type = %q, want application/json", got)
+	}
+	var response eventv1beta3.MarkAllEventsReadResponse
+	if err := json.NewDecoder(recorder.Body).Decode(&response); err != nil {
+		t.Fatalf("failed to decode response: %v", err)
+	}
+	if response.Message == "" {
+		t.Error("response message is empty")
+	}
+
+	var stored events.Event
+	if err := db.First(&stored, "id = ?", seededEvent.ID).Error; err != nil {
+		t.Fatalf("failed to load event: %v", err)
+	}
+	if stored.Status != events.Read {
+		t.Errorf("event status = %q, want %q", stored.Status, events.Read)
+	}
+}
+
+func TestMarkAllEventsReadPropagatesProviderStatus(t *testing.T) {
+	tests := []struct {
+		name        string
+		providerErr error
+		wantStatus  int
+	}{
+		{
+			name:        "remote bad request",
+			providerErr: models.ErrPost(stderrors.New("bad request"), "mark all events read", http.StatusBadRequest),
+			wantStatus:  http.StatusBadRequest,
+		},
+		{
+			name:        "remote unauthorized",
+			providerErr: models.ErrPost(stderrors.New("unauthorized"), "mark all events read", http.StatusUnauthorized),
+			wantStatus:  http.StatusUnauthorized,
+		},
+		{
+			name:        "remote rate limited",
+			providerErr: models.ErrPost(stderrors.New("rate limited"), "mark all events read", http.StatusTooManyRequests),
+			wantStatus:  http.StatusTooManyRequests,
+		},
+		{
+			name:        "local database failure",
+			providerErr: stderrors.New("database unavailable"),
+			wantStatus:  http.StatusInternalServerError,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			provider := &markAllEventsReadErrorProvider{
+				DefaultLocalProvider: &models.DefaultLocalProvider{},
+				err:                  tc.providerErr,
+			}
+			handler := &Handler{log: newTestLogger(t)}
+			req := httptest.NewRequest(http.MethodPost, "/api/events/mark-all-read", nil)
+			req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+			recorder := httptest.NewRecorder()
+
+			handler.MarkAllEventsRead(recorder, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
+
+			if recorder.Code != tc.wantStatus {
+				t.Fatalf("status = %d, want %d; body=%s", recorder.Code, tc.wantStatus, recorder.Body.String())
+			}
+		})
+	}
+}
+
+func TestMarkAllEventsReadRejectsMissingDependencies(t *testing.T) {
+	tests := []struct {
+		name     string
+		user     *models.User
+		provider models.Provider
+	}{
+		{
+			name: "missing provider",
+			user: &models.User{ID: uuid.Must(uuid.NewV4())},
+		},
+		{
+			name:     "missing user",
+			provider: &models.DefaultLocalProvider{},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			handler := &Handler{log: newTestLogger(t)}
+			req := httptest.NewRequest(http.MethodPost, "/api/events/mark-all-read", nil)
+			recorder := httptest.NewRecorder()
+
+			handler.MarkAllEventsRead(recorder, req, nil, tc.user, tc.provider)
+
+			if recorder.Code != http.StatusInternalServerError {
+				t.Fatalf("status = %d, want 500; body=%s", recorder.Code, recorder.Body.String())
+			}
+		})
+	}
 }
 
 func waitForPayload(t *testing.T, ch <-chan []byte, name string) []byte {

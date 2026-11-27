@@ -7743,6 +7743,26 @@
       "suggestedRemediation": [
         "Upload the kubeconfig file itself (for example ~/.kube/config), and check it with kubectl config view --kubeconfig <file>."
       ]
+    },
+    {
+      "code": "meshery-server-1502",
+      "moniker": "ErrMarkAllReadCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1502",
+      "severity": "alert",
+      "shortDescription": "Could not mark all notifications as read.",
+      "probableCause": [
+        "The database is unavailable.",
+        "The remote provider is unreachable or rejected the request.",
+        "The current provider does not support event persistence."
+      ],
+      "suggestedRemediation": [
+        "Retry the request.",
+        "Verify the configured provider is reachable and supports event persistence."
+      ]
     }
   ],
   "schemaVersion": 2
