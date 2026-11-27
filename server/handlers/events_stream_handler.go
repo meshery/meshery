@@ -35,8 +35,7 @@ const eventStreamWriteTimeout = 30 * time.Second
 // `id: <event.ID>\ndata: <json>\n\n` when event.ID is non-nil, or
 // `data: <json>\n\n` otherwise) so the browser's EventSource.onmessage
 // receives it and records the last event ID. On reconnect, a `Last-Event-ID`
-// header (or `lastEventId` query parameter fallback for polyfill/custom SSE
-// clients) replays buffered events published after that ID (or the full retained
+// header replays buffered events published after that ID (or the full retained
 // buffer as best effort if an evicted valid cursor or UUID was provided) before
 // streaming live events. Only newly-published (or buffered replay) events are
 // streamed; the initial list is still fetched over REST from GET /api/system/events.
@@ -60,9 +59,6 @@ func (h *Handler) SubscribeEventsHandler(w http.ResponseWriter, req *http.Reques
 	// Subscribe before writing headers so events published between the request
 	// arriving and the stream being ready aren't dropped.
 	lastEventID := strings.TrimSpace(req.Header.Get("Last-Event-ID"))
-	if lastEventID == "" {
-		lastEventID = strings.TrimSpace(req.URL.Query().Get("lastEventId"))
-	}
 	replay, ch, unsubscribe := h.config.EventBroadcaster.SubscribeFrom(user.ID, lastEventID)
 	defer unsubscribe()
 
