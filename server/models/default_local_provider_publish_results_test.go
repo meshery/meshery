@@ -72,3 +72,36 @@ func TestPublishResultsAnonymousSharing(t *testing.T) {
 		})
 	}
 }
+
+// TestPublishResultsMissingPreference verifies that PublishResults handles missing
+// preference records or nil results gracefully without panicking and persists the result locally.
+func TestPublishResultsMissingPreference(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	require.NoError(t, err)
+	require.NoError(t, db.AutoMigrate(&MesheryResult{}))
+
+	log, err := logger.New("test", logger.Options{})
+	require.NoError(t, err)
+
+	preferences, err := NewMapPreferencePersister()
+	require.NoError(t, err)
+
+	provider := &DefaultLocalProvider{
+		MapPreferencePersister: preferences,
+		ProviderBaseURL:        "http://localhost:9081",
+		ResultPersister:        &MesheryResultsPersister{DB: &database.Handler{DB: db}},
+		Log:                    log,
+	}
+
+	// Deliberately do not record any preference for the user
+	req := httptest.NewRequest(http.MethodPost, "/", nil)
+	result := &MesheryResult{Name: "test-missing-pref", Result: map[string]interface{}{"qps": 10.0}}
+
+	resultID, err := provider.PublishResults(req, result, uuid.Must(uuid.NewV4()).String())
+	require.NoError(t, err)
+
+	var saved int64
+	require.NoError(t, db.Table("meshery_results").Where("id = ?", resultID).Count(&saved).Error)
+	assert.Equal(t, int64(1), saved, "the result must still be saved locally when preference is missing")
+}
+

@@ -545,7 +545,8 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 	}
 
 	credential := make(map[string]interface{}, 0)
-	connectionPayload := connections.BuildMesheryConnectionPayload(req.Context().Value(MesheryServerURL).(string), credential)
+	serverURL, _ := req.Context().Value(MesheryServerURL).(string)
+	connectionPayload := connections.BuildMesheryConnectionPayload(serverURL, credential)
 
 	anonnymouseUserEp := providerURL.JoinPath(ep)
 
@@ -4320,11 +4321,18 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	l.clearRefCookie(w)
 
 	go func() {
+		defer func() {
+			if rec := recover(); rec != nil {
+				l.Log.Error(fmt.Errorf("recovered from panic in TokenHandler SaveConnection: %v", rec))
+			}
+		}()
+
 		credential := make(map[string]interface{}, 0)
 		var temp *core.Uuid
 		credential["token"] = temp
 
-		connectionPayload := connections.BuildMesheryConnectionPayload(r.Context().Value(MesheryServerURL).(string), credential)
+		serverURL, _ := r.Context().Value(MesheryServerURL).(string)
+		connectionPayload := connections.BuildMesheryConnectionPayload(serverURL, credential)
 
 		_, err := l.SaveConnection(connectionPayload, tokenString, true)
 		if err != nil {
