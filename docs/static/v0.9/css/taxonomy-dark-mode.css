@@ -1,0 +1,10 @@
+/*
+ * Archived v0.9 taxonomy pages render their article teasers as `.card`, whose
+ * background is hard-coded white in the fingerprinted `styles.min.*.css`. In
+ * dark mode the teaser text is light, so the cards are effectively unreadable.
+ * Apply the theme's dark card gradient on these pages only, without touching
+ * the fingerprinted stylesheet (all archived pages reference it with SRI).
+ */
+.dark-mode .taxonomy-taxonomy-page .card {
+  background: var(--background-light-cards);
+}
