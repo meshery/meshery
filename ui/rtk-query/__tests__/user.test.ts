@@ -80,6 +80,14 @@ const textResponse = (text: string, status = 500) => ({
   },
 });
 
+const createDeferred = <T>() => {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((res) => {
+    resolve = res;
+  });
+  return { promise, resolve };
+};
+
 const setupStore = async () => {
   vi.resetModules();
   const apiMod = await import('../index');
@@ -584,30 +592,42 @@ describe('user endpoints', () => {
   });
 
   it('updateUserPrefWithContext optimistically updates getUserPref(undefined) without string-index corruption', async () => {
-    const { api, store, userMod } = await setupStore();
+    const { store, userMod } = await setupStore();
+    const deferred = createDeferred<ReturnType<typeof okResponse>>();
     fetchMock
       .mockResolvedValueOnce(
         okResponse({ anonymousUsageStats: false, anonymousPerfResults: false }),
       )
-      .mockResolvedValueOnce(okResponse({ anonymousUsageStats: true, anonymousPerfResults: false }))
+      .mockReturnValueOnce(deferred.promise)
       .mockResolvedValue(okResponse({ anonymousUsageStats: true, anonymousPerfResults: false }));
 
     await store.dispatch(userMod.userApi.endpoints.getUserPref.initiate(undefined));
 
-    await store.dispatch(
+    const mutationPromise = store.dispatch(
       userMod.userApi.endpoints.updateUserPrefWithContext.initiate({
         selectedK8sContexts: ['ctx-1'],
         body: JSON.stringify({ anonymousUsageStats: true }),
       }),
     );
+    await Promise.resolve();
+
+    const optimisticCached = userMod.userApi.endpoints.getUserPref.select(undefined)(
+      store.getState(),
+    );
+    expect(optimisticCached.data).toEqual({
+      anonymousUsageStats: true,
+      anonymousPerfResults: false,
+    });
+    expect(Object.keys(optimisticCached.data as Record<string, unknown>)).not.toContain('0');
+
+    deferred.resolve(okResponse({ anonymousUsageStats: true, anonymousPerfResults: false }));
+    await mutationPromise;
 
     const cached = userMod.userApi.endpoints.getUserPref.select(undefined)(store.getState());
     expect(cached.data).toEqual({
       anonymousUsageStats: true,
       anonymousPerfResults: false,
     });
-    expect(Object.keys(cached.data as Record<string, unknown>)).not.toContain('0');
-    expect(api).toBeDefined();
   });
 
   it('updateUserPrefWithContext does not throw when getUserPref cache is unpopulated', async () => {
@@ -625,20 +645,34 @@ describe('user endpoints', () => {
 
   it('updateUserPrefWithContext reverts optimistic getUserPref update when mutation fails', async () => {
     const { store, userMod } = await setupStore();
+    const deferred = createDeferred<ReturnType<typeof textResponse>>();
     fetchMock
       .mockResolvedValueOnce(
         okResponse({ anonymousUsageStats: false, anonymousPerfResults: false }),
       )
-      .mockResolvedValueOnce(textResponse('internal error', 500))
+      .mockReturnValueOnce(deferred.promise)
       .mockResolvedValue(okResponse({ anonymousUsageStats: false, anonymousPerfResults: false }));
 
     await store.dispatch(userMod.userApi.endpoints.getUserPref.initiate(undefined));
 
-    const result = await store.dispatch(
+    const mutationPromise = store.dispatch(
       userMod.userApi.endpoints.updateUserPrefWithContext.initiate({
         body: JSON.stringify({ anonymousUsageStats: true }),
       }),
     );
+    await Promise.resolve();
+
+    const optimisticCached = userMod.userApi.endpoints.getUserPref.select(undefined)(
+      store.getState(),
+    );
+    expect(optimisticCached.data).toEqual({
+      anonymousUsageStats: true,
+      anonymousPerfResults: false,
+    });
+
+    deferred.resolve(textResponse('internal error', 500));
+    const result = await mutationPromise;
+    await Promise.resolve();
 
     expect('error' in result).toBe(true);
     const cached = userMod.userApi.endpoints.getUserPref.select(undefined)(store.getState());
