@@ -2,10 +2,13 @@ package workspaces
 
 import (
 	"fmt"
+	"net/http"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
@@ -129,5 +132,28 @@ func TestFormatWorkspaceLabel_Empty(t *testing.T) {
 	labels := formatWorkspaceLabel(nil)
 	if len(labels) != 0 {
 		t.Fatalf("expected 0 labels for nil slice, got %d", len(labels))
+	}
+}
+
+func TestViewWorkspace_TrimsNameSearchQuery(t *testing.T) {
+	utils.SetupContextEnv(t)
+	utils.StartMockery(t)
+	defer utils.StopMockery(t)
+
+	mesheryctlflags.InitValidators(WorkSpaceCmd)
+
+	var capturedSearch string
+	httpmock.RegisterRegexpResponder("GET", regexp.MustCompile(`/`+workspacesApiPath+`\?`), func(req *http.Request) (*http.Response, error) {
+		capturedSearch = req.URL.Query().Get("search")
+		return httpmock.NewStringResponse(http.StatusOK, `{"workspaces":[],"total_count":0}`), nil
+	})
+
+	WorkSpaceCmd.SetArgs([]string{"view", "  my-workspace  ", "--orgId", "da154170-4582-46d7-8c0f-ea5f1964776d"})
+	defer WorkSpaceCmd.SetArgs(nil)
+	if err := WorkSpaceCmd.Execute(); err == nil {
+		t.Fatal("expected not-found error for empty search results, got nil")
+	}
+	if capturedSearch != "my-workspace" {
+		t.Fatalf("expected trimmed search query %q, got %q", "my-workspace", capturedSearch)
 	}
 }
