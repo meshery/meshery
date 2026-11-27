@@ -154,6 +154,7 @@ const MesheryPerformanceComponent_ = (props) => {
     setJsonError,
     setDisableTest,
     setUrlError,
+    additionalOptions: additionalOptionsState,
   });
 
   const handleDurationChange = (event, newValue) => {

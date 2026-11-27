@@ -1,4 +1,5 @@
 import { URLValidator } from '../../utils/URLValidator';
+import { isValidJSON } from '../../utils/validators';
 
 /**
  * Setters bag for `createPerformanceFormChangeHandler`. Each field maps 1:1
@@ -20,6 +21,7 @@ export interface PerformanceFormSetters {
   setJsonError: (v: boolean) => void;
   setDisableTest: (v: boolean) => void;
   setUrlError: (v: boolean) => void;
+  additionalOptions?: string;
 }
 
 /**
@@ -49,6 +51,7 @@ export const createPerformanceFormChangeHandler = (setters: PerformanceFormSette
     setJsonError,
     setDisableTest,
     setUrlError,
+    additionalOptions,
   } = setters;
 
   return (name: string) => (event: any) => {
@@ -67,18 +70,23 @@ export const createPerformanceFormChangeHandler = (setters: PerformanceFormSette
       reader.readAsText(file);
     }
 
-    if (name === 'url' && value !== '') {
-      let urlPattern = value;
+    if (name === 'url') {
+      if (value !== '') {
+        let urlPattern = value;
 
-      let val = URLValidator(urlPattern);
-      if (!val) {
-        setDisableTest(true);
-        setUrlError(true);
+        let val = URLValidator(urlPattern);
+        if (!val) {
+          setDisableTest(true);
+          setUrlError(true);
+        } else {
+          setDisableTest(false);
+          setUrlError(false);
+        }
       } else {
-        setDisableTest(false);
         setUrlError(false);
+        setDisableTest(!isValidJSON(additionalOptions));
       }
-    } else setUrlError(false);
+    }
 
     if (name === 'additional_options') {
       // Check if the target event is an input element (typing) or a file input (upload)
