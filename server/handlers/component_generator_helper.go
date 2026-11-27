@@ -355,8 +355,8 @@ func (h *Handler) sendFileEvent(userID core.Uuid, provider models.Provider, resp
 	} else if response.EntityCount.TotalErrCount == 0 {
 		eventType = events.Success
 	}
-	description := getFirst42Chars(response.ErrMsg)
-	if len([]rune(response.ErrMsg)) > 42 {
+	description, truncated := truncateTo42Chars(response.ErrMsg)
+	if truncated {
 		description = description + "..."
 	}
 
@@ -372,12 +372,16 @@ func (h *Handler) sendFileEvent(userID core.Uuid, provider models.Provider, resp
 
 	h.persistAndPublish(provider, token, userID, event)
 }
-func getFirst42Chars(s string) string {
+
+// truncateTo42Chars shortens s to at most 42 runes and reports whether it
+// had to truncate, so the caller does not re-count runes to decide if an
+// ellipsis is needed.
+func truncateTo42Chars(s string) (string, bool) {
 	runes := []rune(s)
 	if len(runes) > 42 {
-		return string(runes[:42])
+		return string(runes[:42]), true
 	}
-	return s
+	return s, false
 }
 func (h *Handler) sendEventForImport(userID core.Uuid, provider models.Provider, compsCount int, modelName string, isCsv bool, token string) {
 
