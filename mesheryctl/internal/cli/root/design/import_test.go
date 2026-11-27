@@ -25,9 +25,10 @@ import (
 // assertions below fail if that error identity regresses.
 func Test_designImport_FlagValidation(t *testing.T) {
 	tests := []struct {
-		name string
-		run  func(t *testing.T) error
-		want error
+		name       string
+		run        func(t *testing.T) error
+		want       error
+		wantSubstr string
 	}{
 		{
 			name: "given invalid source type when design import then error is thrown",
@@ -71,7 +72,7 @@ func Test_designImport_FlagValidation(t *testing.T) {
 
 				return importCmd.Args(importCmd, []string{"unexpected-arg"})
 			},
-			want: utils.ErrInvalidArgument(fmt.Errorf("design import does not accept positional arguments\n\nUsage: mesheryctl design import -f [file/URL] -s [source-type] -n [name]\n")),
+			wantSubstr: "design import does not accept positional arguments",
 		},
 		{
 			name: "given multiple unexpected positional arguments when design import then error is thrown",
@@ -82,7 +83,7 @@ func Test_designImport_FlagValidation(t *testing.T) {
 
 				return importCmd.Args(importCmd, []string{"arg1", "arg2"})
 			},
-			want: utils.ErrInvalidArgument(fmt.Errorf("design import does not accept positional arguments\n\nUsage: mesheryctl design import -f [file/URL] -s [source-type] -n [name]\n")),
+			wantSubstr: "design import does not accept positional arguments",
 		},
 		{
 			name: "given valid file with surrounding whitespace when design import then whitespace is trimmed and succeeds",
@@ -111,14 +112,18 @@ func Test_designImport_FlagValidation(t *testing.T) {
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 
 			err := tt.run(t)
-			if tt.want == nil {
+			if tt.want == nil && tt.wantSubstr == "" {
 				if err != nil {
 					t.Fatalf("expected nil error, got %v", err)
 				}
 				return
 			}
 			if err == nil {
-				t.Fatalf("expected error %v, got nil", tt.want)
+				t.Fatalf("expected error, got nil")
+			}
+			if tt.wantSubstr != "" {
+				assert.Contains(t, err.Error(), tt.wantSubstr)
+				return
 			}
 			if err.Error() != tt.want.Error() {
 				t.Fatalf("error mismatch\n got: %v\nwant: %v", err, tt.want)

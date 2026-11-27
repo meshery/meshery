@@ -64,11 +64,11 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 		if len(args) != 0 {
 			return utils.ErrInvalidArgument(fmt.Errorf("design import does not accept positional arguments\n\n%s", errMsg))
 		}
-		if strings.TrimSpace(file) == "" {
+		file = strings.TrimSpace(file)
+		if file == "" {
 			utils.Log.Debug("File path not provided\n" + errMsg)
 			return ErrDesignFileNotProvided()
 		}
-		file = strings.TrimSpace(file)
 
 		return nil
 	},
