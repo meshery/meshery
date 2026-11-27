@@ -115,6 +115,19 @@ export const getModelNamesBasedOnDisplayNames = (meshModels, displayNames) => {
   return compatibilityStore;
 };
 
+export const extractMutationError = (error: any) => {
+  if (!error) return undefined;
+  if (typeof error === 'string') return error;
+  if (error.error && typeof error.error === 'string') return error.error;
+  if (error.data) {
+    if (typeof error.data === 'string') return error.data;
+    if (typeof error.data?.message === 'string') return error.data.message;
+    if (typeof error.data?.error === 'string') return error.data.error;
+  }
+  if (typeof error.message === 'string') return error.message;
+  return error.status ? `Request failed (${error.status})` : 'Request failed';
+};
+
 export const handleUpdatePatternVisibility = async ({
   value,
   updatePatterns,
@@ -130,7 +143,7 @@ export const handleUpdatePatternVisibility = async ({
     },
   });
   return {
-    error: res?.error?.error,
+    error: extractMutationError(res?.error),
   };
 };
 
@@ -142,7 +155,7 @@ export const handleUpdateViewVisibility = async ({ value, updateView, selectedRe
     },
   });
   return {
-    error: res.error?.error,
+    error: extractMutationError(res?.error),
   };
 };
 
