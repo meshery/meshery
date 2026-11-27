@@ -137,6 +137,24 @@ describe('prefTest slice', () => {
       expect(state.results_selection).toEqual({});
     });
 
+    it('clears the page selection when results are nullish or non-object', () => {
+      let state = prefTestReducer(undefined, { type: 'init' } as any);
+      state = prefTestReducer(state, updateResultsSelection({ page: 0, results: { a: 1 } }));
+      state = prefTestReducer(state, updateResultsSelection({ page: 1, results: { b: 2 } }));
+      state = prefTestReducer(state, updateResultsSelection({ page: 0, results: null }));
+      expect(state.results_selection).toEqual({ 1: { b: 2 } });
+      state = prefTestReducer(state, updateResultsSelection({ page: 1, results: 'invalid' }));
+      expect(state.results_selection).toEqual({});
+    });
+
+    it('ignores undefined results for an invalid page instead of clearing anything', () => {
+      let state = prefTestReducer(undefined, { type: 'init' } as any);
+      state = prefTestReducer(state, updateResultsSelection({ page: 0, results: { a: 1 } }));
+      state = prefTestReducer(state, updateResultsSelection({ page: true, results: null }));
+      state = prefTestReducer(state, updateResultsSelection({ page: NaN, results: undefined }));
+      expect(state.results_selection).toEqual({ 0: { a: 1 } });
+    });
+
     it('keeps a string page as its key', () => {
       const state = prefTestReducer(
         prefTestReducer(undefined, { type: 'init' } as any),

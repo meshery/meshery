@@ -42,15 +42,14 @@ const prefTestSlice = createSlice({
     updateResultsSelection: (state, action) => {
       const results = action.payload?.results;
       const page = action.payload?.page;
-      if (results == null || typeof results !== 'object') return;
       if (page == null) return;
       if (typeof page !== 'number' && typeof page !== 'string') return;
       if (typeof page === 'number' && !isFinite(page)) return;
       const pageKey = String(page);
-      if (Object.keys(results).length > 0) {
-        state.results_selection[pageKey] = results;
-      } else {
+      if (results == null || typeof results !== 'object' || Object.keys(results).length === 0) {
         delete state.results_selection[pageKey];
+      } else {
+        state.results_selection[pageKey] = results;
       }
     },
     clearResultsSelection: (state) => {
