@@ -1310,7 +1310,8 @@ func ociRepositoryName(modelName string) string {
 
 // ociRepositoryNameOr maps name to a valid OCI repository name. A valid name
 // is returned unchanged. Any other name is lowercased, and each run of
-// characters a repository name does not allow becomes "-". fallback, itself a
+// characters other than a-z and 0-9, including "." and "_", becomes "-" (so
+// "Istio.Base" becomes "istio-base"). fallback, itself a
 // valid repository name, replaces a name with nothing left and is appended to
 // one that is too short. The mapping is lossy: distinct names can sanitize to
 // the same repository name (for example "foo bar" and "foo-bar"), so callers
