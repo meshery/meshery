@@ -3,23 +3,154 @@ import type { TimeWindow } from './types';
 export const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const quotedString = /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`[^`]*`/.source;
-const comment = /#[^\n]*(?=\n|$)/.source;
-const trivia = `(?:\\s|${comment})*`;
-const template = /\$\{[A-Za-z_]\w*(?::[^}]+)?\}|\$[A-Za-z_]\w*|\[\[[A-Za-z_]\w*(?::[^\]]+)?\]\]/
-  .source;
+const identifier = '[A-Za-z_]\\w*';
+const referencePrefix = (name: string) =>
+  `\\$\\{(?<braced>${name})(?=[:}])|\\[\\[(?<legacy>${name})(?=:|\\]\\])|\\$(?<bare>${name})\\b`;
+const unknownReference = new RegExp(referencePrefix(`(?!__)${identifier}`), 'g');
+const metricName = /^[a-zA-Z_:][\w:]*$/;
 const wordOperator = /^(?:and|or|unless|atan2|bitand|bitor|bitxor)$/i;
 const modifier = /^(?:bool|on|ignoring|group_left|group_right)$/i;
-const selectorOrToken = new RegExp(
-  `(?:(${template}|[a-zA-Z_:][\\w:]*)(${trivia}))?\\{((?:${quotedString}|${comment}|${template}|[^{}"'\x60#])*)\\}` +
-    `|((?:on|ignoring|group_left|group_right|fill(?:_left|_right)?)${trivia}\\((?:${quotedString}|${comment}|[^()"'\x60#])*\\))` +
-    `|${quotedString}|${comment}|(${template})|[\\w:.]+|\\S`,
-  'gi',
-);
-const matcher = new RegExp(
-  `((?:(?:${template}|[a-zA-Z_])(?:${template}|\\w)*|${quotedString})${trivia})(=~|!~|!=|=)(${trivia})(${quotedString})` +
-    `|${comment}|(${quotedString})`,
-  'g',
-);
+const argumentModifier = /^(?:on|ignoring|group_left|group_right|fill(?:_left|_right)?)$/i;
+// Consume complete references and strings before punctuation. An unmatched
+// quote owns the rest of the input, and a literal dollar sign falls through to \S.
+const tokenPrefix = `${referencePrefix(identifier)}|(?<quoted>${quotedString})|["'\x60][\\s\\S]*|#[^\\n]*`;
+const expressionToken = new RegExp(`${tokenPrefix}|[\\w:.]+|\\S`, 'g');
+const matcherToken = new RegExp(`${tokenPrefix}|\\w+|=~|!~|!=|\\S`, 'g');
+
+interface Token {
+  text: string;
+  start: number;
+  end: number;
+  kind: 'template' | 'quoted' | 'comment' | 'plain';
+  name?: string;
+}
+
+function* scanTokens(
+  input: string,
+  pattern: RegExp,
+  keepUnmatched = false,
+): Generator<Token, void> {
+  const re = new RegExp(pattern);
+  // Cache the next closing character for each format syntax. Many incomplete
+  // prefixes can share the same terminator or the same unterminated suffix.
+  const nextClose = { '}': -1, ']': -1 };
+  for (let match = re.exec(input); match; match = re.exec(input)) {
+    const { braced, legacy, bare, quoted } = match.groups ?? {};
+    const start = match.index;
+    let end = re.lastIndex;
+    const closer = braced !== undefined ? '}' : legacy !== undefined ? ']' : undefined;
+    if (closer) {
+      const terminator = closer === '}' ? '}' : ']]';
+      if (input[end] === ':') {
+        const formatStart = end + 1;
+        if (nextClose[closer] < formatStart) {
+          const index = input.indexOf(closer, formatStart);
+          nextClose[closer] = index === -1 ? input.length : index;
+        }
+        end = nextClose[closer];
+        // Legacy formats end at the first ']', which must be part of ']]'.
+        if (end === formatStart || !input.startsWith(terminator, end)) {
+          re.lastIndex = start + 1;
+          if (keepUnmatched) {
+            yield { text: input.slice(start, start + 1), start, end: start + 1, kind: 'plain' };
+          }
+          continue;
+        }
+      }
+      end += terminator.length;
+      re.lastIndex = end;
+    }
+    const text = input.slice(start, end);
+    const name = braced ?? legacy ?? bare;
+    if (name !== undefined) {
+      yield { text, start, end, kind: 'template', name };
+    } else {
+      yield { text, start, end, kind: quoted ? 'quoted' : text[0] === '#' ? 'comment' : 'plain' };
+    }
+  }
+}
+
+function replaceReferences(input: string, pattern: RegExp, value: string): string {
+  let result = '';
+  let cursor = 0;
+  for (const { text, start, end } of scanTokens(input, pattern)) {
+    // Keep String.replace's replacement-string semantics for dashboard values.
+    const replacement = value.replace(/\$([$&\x60'])/g, (_, key) => {
+      switch (key) {
+        case '&':
+          return text;
+        case '`':
+          return input.slice(0, start);
+        case "'":
+          return input.slice(end);
+        default:
+          return '$';
+      }
+    });
+    result += input.slice(cursor, start) + replacement;
+    cursor = end;
+  }
+  return result + input.slice(cursor);
+}
+
+function skipComments(tokens: Token[], index: number): number {
+  while (tokens[index]?.kind === 'comment') index++;
+  return index;
+}
+
+function closingToken(tokens: Token[], index: number, open: string, close: string): number {
+  // Selectors and modifier argument lists do not nest. Stop at another opening
+  // delimiter so an unmatched opener cannot repeatedly scan the remaining input.
+  for (let i = index + 1; i < tokens.length; i++) {
+    const text = tokens[i]?.text;
+    if (text === open) break;
+    if (text === close) return i;
+  }
+  return -1;
+}
+
+function* scanMatchers(body: string) {
+  const tokens = Array.from(scanTokens(body, matcherToken, true));
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (!token) break;
+    let labelEnd = token.end;
+    const quotedLabel = token.kind === 'quoted';
+    const bareLabel = token.kind === 'template' || /^[a-zA-Z_]/.test(token.text);
+    if (bareLabel) {
+      // A label can contain adjacent words and template references. Consume
+      // each whole token once, even if no operator follows the label.
+      for (let next = tokens[i + 1]; next?.start === labelEnd; next = tokens[i + 1]) {
+        if (next.kind !== 'template' && !/^\w+$/.test(next.text)) break;
+        labelEnd = next.end;
+        i++;
+      }
+    }
+    if (bareLabel || quotedLabel) {
+      const operatorIndex = skipComments(tokens, i + 1);
+      const operator = tokens[operatorIndex];
+      if (operator && /^(?:=~|!~|!=|=)$/.test(operator.text)) {
+        const valueIndex = skipComments(tokens, operatorIndex + 1);
+        const value = tokens[valueIndex];
+        if (value?.kind === 'quoted') {
+          yield {
+            start: token.start,
+            end: value.end,
+            label: body.slice(token.start, operator.start),
+            operator: operator.text,
+            space: body.slice(operator.end, value.start),
+            quoted: value.text,
+          };
+          i = valueIndex;
+          continue;
+        }
+      }
+    }
+    if (quotedLabel || token.kind === 'comment') {
+      yield { start: token.start, end: token.end, quotedMetric: quotedLabel };
+    }
+  }
+}
 
 function excludesEmpty(operator: string, quoted: string): boolean {
   const value = quoted.slice(1, -1);
@@ -93,80 +224,92 @@ export function resolveExpr(
       .join(value);
   }
 
-  const variable =
-    /\$(?:\{(?!__)([A-Za-z_]\w*)(?::[^}]+)?\}|(?!__)([A-Za-z_]\w*))|\[\[(?!__)([A-Za-z_]\w*)(?::[^\]]+)?\]\]/;
-  const known = Object.entries(varValues).map(([name, value]) => {
-    const n = escapeRegExp(name);
-    return {
-      ref: new RegExp(`\\$\\{${n}(?::[^}]+)?\\}|\\[\\[${n}(?::[^\\]]+)?\\]\\]|\\$${n}\\b`, 'g'),
-      value,
-    };
-  });
-  const unknown = new RegExp(variable.source, 'g');
+  const known = Object.entries(varValues).map(([name, value]) => ({
+    ref: new RegExp(referencePrefix(escapeRegExp(name)), 'g'),
+    value,
+  }));
   const substitute = (input: string) => {
-    for (const { ref, value } of known) input = input.replace(ref, value);
-    return input.replace(unknown, '.*');
+    for (const { ref, value } of known) input = replaceReferences(input, ref, value);
+    return replaceReferences(input, unknownReference, '.*');
   };
 
   // Scan brace-delimited selectors while skipping strings and comments outside them.
   let resolved = '';
   let cursor = 0;
   let expectsOperand = true;
-  for (const token of out.matchAll(selectorOrToken)) {
-    const [text, metric, spacing, body, modifierWithArguments, variableToken] = token;
-    if (body === undefined) {
-      if (!text.startsWith('#')) {
-        const resolvedToken = variableToken === undefined ? text : substitute(variableToken);
-        expectsOperand =
-          !!modifierWithArguments ||
-          modifier.test(resolvedToken) ||
-          /^[,(+*/%^<>=!@-]$/.test(resolvedToken) ||
-          (!expectsOperand && wordOperator.test(resolvedToken));
+  const tokens = Array.from(scanTokens(out, expressionToken, true));
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (!token) break;
+    if (token.kind === 'comment') continue;
+    const { text, start } = token;
+    const next = skipComments(tokens, i + 1);
+    const hasMetric = token.kind === 'template' || metricName.test(text);
+    const openIndex = hasMetric ? next : i;
+    const open = tokens[openIndex];
+    const closeIndex = open?.text === '{' ? closingToken(tokens, openIndex, '{', '}') : -1;
+    const close = tokens[closeIndex];
+    if (!open || !close) {
+      if (argumentModifier.test(text) && tokens[next]?.text === '(') {
+        const argsEnd = closingToken(tokens, next, '(', ')');
+        if (argsEnd !== -1) {
+          expectsOperand = true;
+          i = argsEnd;
+          continue;
+        }
       }
+      const resolvedToken = token.kind === 'template' ? substitute(text) : text;
+      expectsOperand =
+        modifier.test(resolvedToken) ||
+        /^[,(+*/%^<>=!@-]$/.test(resolvedToken) ||
+        (!expectsOperand && wordOperator.test(resolvedToken));
       continue;
     }
-    resolved += substitute(out.slice(cursor, token.index));
-    cursor = token.index + text.length;
+
+    resolved += substitute(out.slice(cursor, start));
+    cursor = close.end;
+    i = closeIndex;
+    const body = out.slice(open.end, close.start);
 
     // The grammar also accepts set operators as metric identifiers in operand position.
-    const resolvedMetric = substitute(metric ?? '');
+    const resolvedMetric = hasMetric ? substitute(text) : '';
     let constrained =
-      /^[a-zA-Z_:][\w:]*$/.test(resolvedMetric) &&
+      metricName.test(resolvedMetric) &&
       !modifier.test(resolvedMetric) &&
       !/^atan2$/i.test(resolvedMetric) &&
       (expectsOperand || !wordOperator.test(resolvedMetric));
     expectsOperand = false;
-    let firstUpgrade: number | undefined;
+    let upgradedUnknown = false;
     const parts: string[] = [];
     let bodyCursor = 0;
-    for (const entry of body.matchAll(matcher)) {
-      const [original, label, operator, space, quoted, quotedMetric] = entry;
-      parts.push(substitute(body.slice(bodyCursor, entry.index)));
-      bodyCursor = entry.index + original.length;
-      if (
-        label === undefined ||
-        operator === undefined ||
-        space === undefined ||
-        quoted === undefined
-      ) {
+    for (const entry of scanMatchers(body)) {
+      parts.push(substitute(body.slice(bodyCursor, entry.start)));
+      bodyCursor = entry.end;
+      if (entry.operator === undefined) {
         // A standalone quoted metric name inside braces also constrains the selector.
-        constrained ||= !!quotedMetric && substitute(quotedMetric).length > 2;
-        parts.push(substitute(original));
+        const resolvedToken = substitute(body.slice(entry.start, entry.end));
+        constrained ||= entry.quotedMetric && resolvedToken.length > 2;
+        parts.push(resolvedToken);
         continue;
       }
 
+      const { label, operator, space, quoted } = entry;
       const value = quoted.slice(1, -1);
-      const ref = variable.exec(value);
-      const name = ref?.[1] ?? ref?.[2] ?? ref?.[3];
+      const ref = operator === '=' ? scanTokens(value, unknownReference).next().value : undefined;
       const unresolved =
-        operator === '=' && ref?.[0] === value && name && !Object.hasOwn(varValues, name);
+        ref?.name !== undefined &&
+        ref.start === 0 &&
+        ref.end === value.length &&
+        !Object.hasOwn(varValues, ref.name);
       let resolvedOperator = operator;
       if (unresolved) {
         resolvedOperator = '=~';
+        upgradedUnknown = true;
       } else if (
         (operator === '=' || operator === '!=') &&
         known.some(
-          ({ ref, value }) => (value === '.*' || value.includes('|')) && quoted.search(ref) !== -1,
+          ({ ref, value }) =>
+            (value === '.*' || value.includes('|')) && !scanTokens(quoted, ref).next().done,
         )
       ) {
         // Match-all and multi-value dashboard variables require a regex matcher.
@@ -174,19 +317,17 @@ export function resolveExpr(
       }
       const resolvedValue = substitute(quoted);
       constrained ||= excludesEmpty(resolvedOperator, resolvedValue);
-      parts.push(substitute(label) + resolvedOperator + substitute(space));
-      if (unresolved && firstUpgrade === undefined) firstUpgrade = parts.length;
-      parts.push(resolvedValue);
+      parts.push(substitute(label) + resolvedOperator + substitute(space) + resolvedValue);
     }
-    // A metric-less selector needs one matcher that rejects the empty string.
-    if (!constrained && firstUpgrade !== undefined) {
-      const quote = parts[firstUpgrade]?.charAt(0);
-      if (quote) parts[firstUpgrade] = `${quote}.+${quote}`;
-    }
+    // PromQL requires an unnamed selector to reject the empty string somewhere.
+    // Constrain the metric name so =~".*" can still match missing labels. With no
+    // other selective matcher this can query all named series.
+    const nameConstraint = !constrained && upgradedUnknown ? '__name__!="",' : '';
     resolved +=
       resolvedMetric +
-      substitute(spacing ?? '') +
+      substitute(out.slice(hasMetric ? token.end : start, open.start)) +
       '{' +
+      nameConstraint +
       parts.join('') +
       substitute(body.slice(bodyCursor)) +
       '}';
