@@ -35,9 +35,10 @@ const eventStreamWriteTimeout = 30 * time.Second
 // `id: <event.ID>\ndata: <json>\n\n` when event.ID is non-nil, or
 // `data: <json>\n\n` otherwise) so the browser's EventSource.onmessage
 // receives it and records the last event ID. On reconnect, a `Last-Event-ID`
-// header replays any buffered events published after that ID before streaming
-// live events. Only newly-published (or buffered replay) events are streamed;
-// the initial list is still fetched over REST from GET /api/system/events.
+// header replays buffered events published after that ID (or the full retained
+// buffer as best effort if an evicted valid cursor or UUID was provided) before
+// streaming live events. Only newly-published (or buffered replay) events are
+// streamed; the initial list is still fetched over REST from GET /api/system/events.
 //
 // The subscription lives for the duration of the request: when the client
 // disconnects the request context is cancelled, we unsubscribe from the

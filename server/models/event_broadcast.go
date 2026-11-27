@@ -31,7 +31,7 @@ const defaultHistoryIdleTTL = 15 * time.Minute
 // Broadcast.history so Publish/SubscribeFrom stay O(1) in the common path.
 const defaultHistorySweepInterval = time.Minute
 
-// ReplayEvent pairs an event payload with the monotonic per-user SSE cursor
+// ReplayEvent pairs an event payload with the monotonic global SSE cursor
 // assigned when it was published, so repeated event IDs remain distinguishable.
 type ReplayEvent struct {
 	Cursor string
@@ -189,8 +189,9 @@ func (c *Broadcast) subscribe(id core.Uuid, withCursor bool) (chan interface{}, 
 	}
 }
 
-// SubscribeFrom atomically snapshots any buffered events strictly after
-// lastEventID and registers a live listener channel for id. Live and replayed
+// SubscribeFrom atomically snapshots buffered events after lastEventID (or
+// the full retained buffer as best effort if an evicted valid cursor or UUID
+// was provided) and registers a live listener channel for id. Live and replayed
 // items delivered on the returned slice/channel are wrapped as ReplayEvent when
 // they carry an event ID. Holding the per-user replay lock across both steps
 // guarantees no ID-bearing event is missed or duplicated between the replay
