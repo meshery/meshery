@@ -1,6 +1,7 @@
 package model
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"net/url"
@@ -67,6 +68,25 @@ func TestExportModel(t *testing.T) {
 
 	mesheryctlflags.InitValidators(ModelCmd)
 	utils.InvokeMesheryctlTestCommand(t, update, ModelCmd, tests, currDir, "model")
+}
+
+// TestExportModelHelpShowsModelName checks that the help synopsis names the
+// model argument the command requires. Help short-circuits before argument
+// validation and the server request, so no Meshery server is needed.
+func TestExportModelHelpShowsModelName(t *testing.T) {
+	defer utils.ResetCommandFlags(ModelCmd, t)
+
+	buf := new(bytes.Buffer)
+	ModelCmd.SetArgs([]string{"export", "--help"})
+	ModelCmd.SetOut(buf)
+
+	err := ModelCmd.Execute()
+	assert.NoError(t, err)
+
+	// The test runs under ModelCmd, so the usage line starts at "model".
+	output := buf.String()
+	assert.Contains(t, output, "Usage:\n  model export [model-name] [flags]\n")
+	assert.NotContains(t, output, "model export [flags]")
 }
 
 func TestExportModelToFile(t *testing.T) {
