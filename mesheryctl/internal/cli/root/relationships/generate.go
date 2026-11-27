@@ -94,10 +94,6 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 			return err
 		}
 
-		if resp == nil || len(resp.Values) <= 2 {
-			return ErrEmptySheetData(fmt.Errorf("no relationship data found in sheet"))
-		}
-
 		return processSheetData(resp, outputPath)
 	},
 }

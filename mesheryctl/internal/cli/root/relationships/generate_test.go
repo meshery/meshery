@@ -284,6 +284,12 @@ func TestGenerateCSVDataOutput(t *testing.T) {
 }
 
 func TestProcessSheetDataSafety(t *testing.T) {
+	origLog := utils.Log
+	utils.SetupMeshkitLoggerTesting(t, false)
+	t.Cleanup(func() {
+		utils.Log = origLog
+	})
+
 	outputPath := filepath.Join(t.TempDir(), "relationships.json")
 
 	t.Run("nil ValueRange returns ErrEmptySheetData without panicking", func(t *testing.T) {
