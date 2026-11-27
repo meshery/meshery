@@ -197,6 +197,7 @@ describe('MeshSyncTable', () => {
     expect(useGetMeshSyncResourcesQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         clusterIds: JSON.stringify(['cluster-a', 'cluster-b']),
+        status: true,
       }),
     );
     expect(useGetMeshSyncResourceKindsQuery).toHaveBeenCalledWith(
