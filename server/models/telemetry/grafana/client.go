@@ -12,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models/telemetry"
 	"github.com/meshery/meshkit/logger"
 )
@@ -34,16 +35,28 @@ type Client struct {
 }
 
 // New builds a Client for the given Grafana base URL and secret.
+// It uses an SSRF-safe HTTP client that blocks private/loopback destinations.
 //
 // The secret is interpreted the same way the connection wizard captures it:
 //   - "username:password" (contains a colon) -> HTTP Basic auth
 //   - any other non-empty value             -> Bearer token (API key / service-account token)
 //   - empty                                  -> no auth (anonymous Grafana)
 func New(baseURL, secret string, log logger.Handler) *Client {
+	return newClient(baseURL, secret, log, false)
+}
+
+// NewForTest builds a Client for testing against local httptest servers,
+// bypassing loopback address restrictions. It must not be called from
+// production code; use New instead.
+func NewForTest(baseURL, secret string, log logger.Handler) *Client {
+	return newClient(baseURL, secret, log, true)
+}
+
+func newClient(baseURL, secret string, log logger.Handler, allowPrivate bool) *Client {
 	return &Client{
-		baseURL:    strings.TrimRight(strings.TrimSpace(baseURL), "/"),
+		baseURL:    telemetry.NormalizeBaseURL(baseURL),
 		authHeader: authHeader(secret),
-		httpClient: &http.Client{Timeout: defaultTimeout},
+		httpClient: utils.NewSafeHTTPClientWithAllowPrivate(defaultTimeout, allowPrivate),
 		log:        log,
 	}
 }

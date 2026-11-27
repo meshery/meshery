@@ -23,7 +23,7 @@ func TestQueryRangeResponseSizeLimit(t *testing.T) {
 				_, _ = w.Write([]byte(payload))
 			}))
 			defer srv.Close()
-			body, err := New(srv.URL, "", nil).QueryRange(context.Background(), "up", "1", "2", "15")
+			body, err := NewForTest(srv.URL, "", nil).QueryRange(context.Background(), "up", "1", "2", "15")
 			if size == limit {
 				if err != nil || string(body) != payload {
 					t.Fatalf("at limit: body length %d, error %v", len(body), err)
@@ -64,7 +64,7 @@ func TestHealthReturnsVersion(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := New(srv.URL, "glsa_token", nil)
+	c := NewForTest(srv.URL, "glsa_token", nil)
 	info, err := c.Health(context.Background())
 	if err != nil {
 		t.Fatalf("Health: %v", err)
@@ -88,7 +88,7 @@ func TestHealthUnparseableStillReachable(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	info, err := New(srv.URL, "", nil).Health(context.Background())
+	info, err := NewForTest(srv.URL, "", nil).Health(context.Background())
 	if err != nil {
 		t.Fatalf("Health: %v", err)
 	}
@@ -104,7 +104,7 @@ func TestHealthSurfacesNon2xx(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	_, err := New(srv.URL, "bad", nil).Health(context.Background())
+	_, err := NewForTest(srv.URL, "bad", nil).Health(context.Background())
 	if err == nil {
 		t.Fatal("expected error on 401, got nil")
 	}
@@ -123,7 +123,7 @@ func TestMetricNamesFiltersAndLimits(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := New(srv.URL, "", nil)
+	c := NewForTest(srv.URL, "", nil)
 
 	all, err := c.MetricNames(context.Background(), "", 0)
 	if err != nil {
@@ -163,7 +163,7 @@ func TestLabelNamesDecodesData(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	names, err := New(srv.URL, "", nil).LabelNames(context.Background(), "up")
+	names, err := NewForTest(srv.URL, "", nil).LabelNames(context.Background(), "up")
 	if err != nil {
 		t.Fatalf("LabelNames: %v", err)
 	}
@@ -184,7 +184,7 @@ func TestLabelValuesDecodesData(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	values, err := New(srv.URL, "", nil).LabelValues(context.Background(), "job", "up")
+	values, err := NewForTest(srv.URL, "", nil).LabelValues(context.Background(), "job", "up")
 	if err != nil {
 		t.Fatalf("LabelValues: %v", err)
 	}
@@ -216,7 +216,7 @@ func TestQueryRangePassthrough(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	body, err := New(srv.URL, "admin:pass", nil).QueryRange(context.Background(), "up", "1", "2", "15")
+	body, err := NewForTest(srv.URL, "admin:pass", nil).QueryRange(context.Background(), "up", "1", "2", "15")
 	if err != nil {
 		t.Fatalf("QueryRange: %v", err)
 	}
@@ -242,7 +242,7 @@ func TestQueryPassthrough(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	body, err := New(srv.URL, "", nil).Query(context.Background(), "up", "12345")
+	body, err := NewForTest(srv.URL, "", nil).Query(context.Background(), "up", "12345")
 	if err != nil {
 		t.Fatalf("Query: %v", err)
 	}
@@ -274,7 +274,7 @@ func TestQueryRangeBatch(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := New(srv.URL, "", nil)
+	c := NewForTest(srv.URL, "", nil)
 	queries := []BatchQuery{
 		{ID: "1", Query: "up"},
 		{ID: "2", Query: "bad"},
@@ -320,7 +320,7 @@ func TestQueryRangeBatchConcurrencyKeepsAllResults(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := New(srv.URL, "", nil)
+	c := NewForTest(srv.URL, "", nil)
 	const n = 25 // > batchConcurrency (8)
 	queries := make([]BatchQuery, n)
 	for i := 0; i < n; i++ {
@@ -366,7 +366,7 @@ func TestMetadataPassthrough(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	body, err := New(srv.URL, "", nil).Metadata(context.Background(), "up")
+	body, err := NewForTest(srv.URL, "", nil).Metadata(context.Background(), "up")
 	if err != nil {
 		t.Fatalf("Metadata: %v", err)
 	}
@@ -391,4 +391,40 @@ func itoa(i int) string {
 		i /= 10
 	}
 	return string(b[pos:])
+}
+
+func TestNewSafeHTTPClientSSRF(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(`{"status":"success","data":{"version":"2.51.0","revision":"abc"}}`))
+	}))
+	defer srv.Close()
+
+	// New uses NewSafeHTTPClientWithAllowPrivate with allowPrivate=false,
+	// which forbids loopback destinations.
+	c := New(srv.URL, "", nil)
+	_, err := c.Health(context.Background())
+	if err == nil {
+		t.Fatal("expected request to loopback server via New to fail due to SSRF protection, but got nil error")
+	}
+}
+
+func TestNormalizeBaseURL(t *testing.T) {
+	cases := []struct {
+		input string
+		want  string
+	}{
+		{"http://example.com:9090", "http://example.com:9090"},
+		{"http://example.com:9090/", "http://example.com:9090"},
+		{"http://example.com:9090/sub/path/", "http://example.com:9090/sub/path"},
+		{"http://example.com:9090/sub?foo=bar#frag", "http://example.com:9090/sub"},
+		{"http://example.com:9090/sub?", "http://example.com:9090/sub"},
+		{"http://example.com:9090/#/dashboard", "http://example.com:9090"},
+		{"  https://prometheus.internal.net/api/v1  ", "https://prometheus.internal.net/api/v1"},
+	}
+	for _, tc := range cases {
+		c := NewForTest(tc.input, "", nil)
+		if c.BaseURL() != tc.want {
+			t.Errorf("BaseURL(%q) = %q, want %q", tc.input, c.BaseURL(), tc.want)
+		}
+	}
 }
