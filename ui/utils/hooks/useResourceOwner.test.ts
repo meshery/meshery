@@ -78,10 +78,7 @@ describe('useResourceOwner', () => {
     const { owner } = useResourceOwner('  u1  ');
 
     expect(owner).toBe(fetchedOwner);
-    expect(mockGetUserById).toHaveBeenCalledWith(
-      'u1',
-      expect.objectContaining({ skip: false }),
-    );
+    expect(mockGetUserById).toHaveBeenCalledWith('u1', expect.objectContaining({ skip: false }));
   });
 
   it('reports a cloud profile on a remote provider', () => {
