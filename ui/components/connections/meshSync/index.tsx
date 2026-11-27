@@ -352,8 +352,7 @@ export default function MeshSyncTable(props) {
             'component_metadata',
             columns,
           );
-          const currentStatus =
-            typeof value === 'string' && value.length > 0 ? value : MESHSYNC_STATES.DISCOVERED;
+          const currentStatus = typeof value === 'string' ? value : '';
           const isConnectionCapable = componentMetadata?.capabilities?.connection === true;
           const canRegister = isConnectionCapable && currentStatus === MESHSYNC_STATES.DISCOVERED;
 

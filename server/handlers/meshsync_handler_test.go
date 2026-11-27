@@ -140,6 +140,10 @@ func TestGetMeshSyncResourceByID_Success(t *testing.T) {
 		ClusterID: "test-cluster",
 		ComponentMetadata: map[string]interface{}{
 			"name": "test-resource",
+			"capabilities": map[string]interface{}{
+				"connection": true,
+				"urls":       []interface{}{"http://10.0.0.1:9090"},
+			},
 		},
 	}
 	// Insert via Table to preserve exact UUID primary key without BeforeCreate hook overriding it
