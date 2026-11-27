@@ -51,6 +51,17 @@ describe('getWindowDimensions', () => {
 
     expect(getWindowDimensions()).toEqual({ width: 320, height: 480 });
   });
+
+  it('returns { width: 0, height: 0 } when window is undefined in SSR', () => {
+    const originalWindow = globalThis.window;
+    // @ts-expect-error simulating SSR environment
+    delete globalThis.window;
+    try {
+      expect(getWindowDimensions()).toEqual({ width: 0, height: 0 });
+    } finally {
+      globalThis.window = originalWindow;
+    }
+  });
 });
 
 describe('useWindowDimensions', () => {
@@ -131,5 +142,24 @@ describe('useWindowDimensions', () => {
     unmount();
     expect(removeListenerSpy.mock.calls.some(([eventName]) => eventName === 'resize')).toBe(true);
     removeListenerSpy.mockRestore();
+  });
+
+  it('cleans up pending searchTimeout on unmount', () => {
+    const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
+    const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
+    const { unmount } = render(<Probe onRender={() => {}} />);
+
+    act(() => {
+      window.dispatchEvent(new Event('resize'));
+    });
+
+    const pendingTimeout = setTimeoutSpy.mock.results.at(-1)?.value;
+
+    // Unmount before the 500ms debounce timer fires
+    unmount();
+
+    expect(clearTimeoutSpy).toHaveBeenCalledWith(pendingTimeout);
+    clearTimeoutSpy.mockRestore();
+    setTimeoutSpy.mockRestore();
   });
 });

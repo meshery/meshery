@@ -861,7 +861,6 @@ func TestVerifyDestinationTokenFile_DetectsContentMismatch(t *testing.T) {
 	}
 }
 
-
 // readDACL returns whether the file's DACL is protected from inheritance and
 // the SIDs of the entries in it.
 func readDACL(t *testing.T, path string) (protected bool, sids []*windows.SID) {

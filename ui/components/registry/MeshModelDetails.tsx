@@ -35,6 +35,33 @@ const ReactJson = dynamic(() => import('@microlink/react-json-view'), { ssr: fal
 
 const ExportAvailable = true;
 
+/**
+ * Safely extracts `description` from a component's serialized JSON schema
+ * (or pre-parsed schema object), returning `undefined` for empty,
+ * whitespace-only, missing, null, non-object, or malformed values.
+ */
+export const extractSchemaDescription = (rawSchema: unknown): string | undefined => {
+  let parsed: unknown = rawSchema;
+  if (typeof rawSchema === 'string') {
+    const trimmed = rawSchema.trim();
+    if (!trimmed) {
+      return undefined;
+    }
+    try {
+      parsed = JSON.parse(trimmed);
+    } catch {
+      return undefined;
+    }
+  }
+  if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+    const { description } = parsed as { description?: unknown };
+    if (typeof description === 'string' && description.trim() !== '') {
+      return description;
+    }
+  }
+  return undefined;
+};
+
 type KeyValueProps = { property: string; value: string | number | string[] | null | undefined };
 const KeyValue = ({ property, value }: KeyValueProps) => {
   let formattedValue = value;
@@ -289,6 +316,11 @@ const ComponentContents = ({ componentDef }: { componentDef: any }) => {
   const orderRight = ['registrant', 'duplicates'];
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
 
+  const description =
+    extractSchemaDescription(componentData?.component?.schema) ||
+    componentData?.description ||
+    undefined;
+
   return (
     <>
       {isSuccess && componentData ? (
@@ -299,7 +331,7 @@ const ComponentContents = ({ componentDef }: { componentDef: any }) => {
               iconSrc={componentData?.styles?.svgColor}
             />
           </div>
-          <Description description={JSON.parse(componentData?.component?.schema)?.description} />
+          <Description description={description} />
           <RenderContents
             metaDataLeft={metaDataLeft}
             metaDataRight={metaDataRight}
