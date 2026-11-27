@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -16,9 +18,11 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/httputil"
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 )
 
 type fakeLoadTestProvider struct {
@@ -30,6 +34,15 @@ func (f *fakeLoadTestProvider) GetPerformanceProfile(req *http.Request, profileI
 		Metadata: map[string]interface{}{},
 	}
 	return json.Marshal(profile)
+}
+
+type errorLoadTestProvider struct {
+	*models.DefaultLocalProvider
+	err error
+}
+
+func (e *errorLoadTestProvider) GetPerformanceProfile(req *http.Request, profileID string) ([]byte, error) {
+	return nil, e.err
 }
 
 // TestErrParseBoolNilError verifies that ErrParseBool handles a nil error gracefully
@@ -183,8 +196,9 @@ func TestLoadTestUsingSMPHandlerInvalidURL(t *testing.T) {
 
 			req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/run", bytes.NewReader(payloadBytes))
 			rec := httptest.NewRecorder()
+			provider := &fakeLoadTestProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
 
-			h.LoadTestUsingSMPHandler(rec, req, nil, nil, nil)
+			h.LoadTestUsingSMPHandler(rec, req, nil, nil, provider)
 
 			if rec.Code != http.StatusBadRequest {
 				t.Fatalf("expected status 400 Bad Request, got %d. Body: %s", rec.Code, rec.Body.String())
@@ -313,13 +327,17 @@ func TestLoadTestHandler_CertificateTempFileCleanedUpOnExit(t *testing.T) {
 		log:    newTestLogger(t),
 	}
 
-	req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/test-profile-id/run?cert=true&name=test-run&url=:", nil)
+	profileID := uuid.Must(uuid.NewV4()).String()
+	req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/"+profileID+"/run?cert=true&name=test-run&url=:", nil)
 	req = mux.SetURLVars(req, map[string]string{
-		"id": "test-profile-id",
+		"id": profileID,
 	})
 	rec := httptest.NewRecorder()
 
 	h.LoadTestHandler(rec, req, nil, nil, provider)
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+	assert.Contains(t, rec.Body.String(), ErrInvalidLTURLCode)
 
 	// Verify that any temp certificate created with pattern "meshery-test-ca-*.crt" was deleted
 	tempDir := os.TempDir()
@@ -369,9 +387,10 @@ func TestLoadTestHandler_CertificateInvalidFile_NoPanic(t *testing.T) {
 				log:    newTestLogger(t),
 			}
 
-			req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/test-profile-id/run?cert=true&name=test-run&url=:", nil)
+			profileID := uuid.Must(uuid.NewV4()).String()
+			req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/"+profileID+"/run?cert=true&name=test-run&url=:", nil)
 			req = mux.SetURLVars(req, map[string]string{
-				"id": "test-profile-id",
+				"id": profileID,
 			})
 			rec := httptest.NewRecorder()
 
@@ -381,6 +400,7 @@ func TestLoadTestHandler_CertificateInvalidFile_NoPanic(t *testing.T) {
 			})
 
 			assert.Equal(t, http.StatusBadRequest, rec.Code)
+			assert.Contains(t, rec.Body.String(), ErrCreateFileCode)
 
 			// Verify temp file is cleaned up
 			tempDir := os.TempDir()
@@ -413,15 +433,19 @@ func TestLoadTestHandler_CertificateUnsetParam_DoesNotCreateTempFile(t *testing.
 	}
 
 	// Request without cert=true param
-	req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/test-profile-id/run?name=test-run&url=:", nil)
+	profileID := uuid.Must(uuid.NewV4()).String()
+	req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/"+profileID+"/run?name=test-run&url=:", nil)
 	req = mux.SetURLVars(req, map[string]string{
-		"id": "test-profile-id",
+		"id": profileID,
 	})
 	rec := httptest.NewRecorder()
 
 	assert.NotPanics(t, func() {
 		h.LoadTestHandler(rec, req, nil, nil, provider)
 	})
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+	assert.Contains(t, rec.Body.String(), ErrInvalidLTURLCode)
 
 	tempDir := os.TempDir()
 	matches, err := filepath.Glob(filepath.Join(tempDir, "meshery-nocert-test-*.crt"))
@@ -596,4 +620,217 @@ func TestLoadTestHandler_ClientDisconnect_NoPanic(t *testing.T) {
 		// Wait for Fortio and background draining to finish cleanly
 		time.Sleep(1200 * time.Millisecond)
 	})
+}
+
+func TestLoadTestHandler_InvalidProfileID(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	provider := &fakeLoadTestProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/user/performance/profiles/not-a-valid-uuid/run?name=test&url=http://example.com", nil)
+	req = mux.SetURLVars(req, map[string]string{"id": "not-a-valid-uuid"})
+	rec := httptest.NewRecorder()
+
+	h.LoadTestHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want 400 for invalid profile id; body: %s", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
+		t.Errorf("expected error body to contain %s, got: %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+	}
+}
+
+func TestLoadTestHandler_NilProfileID(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	provider := &fakeLoadTestProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
+
+	nilID := uuid.Nil.String()
+	req := httptest.NewRequest(http.MethodGet, "/api/user/performance/profiles/"+nilID+"/run?name=test&url=http://example.com", nil)
+	req = mux.SetURLVars(req, map[string]string{"id": nilID})
+	rec := httptest.NewRecorder()
+
+	h.LoadTestHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want 400 for nil profile id; body: %s", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
+		t.Errorf("expected error body to contain %s, got: %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+	}
+}
+
+func TestLoadTestHandler_InvalidProfileIDRejectedBeforeSMPDispatch(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	provider := &fakeLoadTestProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
+	smpBody := `{"test":{"name":"smp-test","duration":"1s","clients":[{"endpointUrls":["http://example.com"]}]}}`
+
+	for _, tc := range []struct {
+		name string
+		id   string
+	}{
+		{"malformed UUID with SMP body", "not-a-valid-uuid"},
+		{"zero UUID with SMP body", uuid.Nil.String()},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodPost, "/api/user/performance/profiles/"+tc.id+"/run", bytes.NewBufferString(smpBody))
+			req = mux.SetURLVars(req, map[string]string{"id": tc.id})
+			rec := httptest.NewRecorder()
+
+			h.LoadTestHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want 400 before SMP dispatch; body: %s", rec.Code, rec.Body.String())
+			}
+			if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
+				t.Errorf("expected error body to contain %s, got: %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+			}
+		})
+	}
+
+	// Preserve body-based SMP dispatch when profileID is empty.
+	t.Run("empty profile ID still dispatches to SMP handler", func(t *testing.T) {
+		invalidURLBody := `{"test":{"name":"smp-test","duration":"1s","clients":[{"endpointUrls":["example.com"]}]}}`
+		req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/run", bytes.NewBufferString(invalidURLBody))
+		rec := httptest.NewRecorder()
+
+		h.LoadTestHandler(rec, req, nil, nil, provider)
+
+		if rec.Code != http.StatusBadRequest {
+			t.Fatalf("status = %d, want 400 from SMP handler; body: %s", rec.Code, rec.Body.String())
+		}
+		if !strings.Contains(rec.Body.String(), ErrInvalidLTURLCode) {
+			t.Errorf("expected error body to contain %s (proving SMP dispatch ran), got: %s", ErrInvalidLTURLCode, rec.Body.String())
+		}
+	})
+}
+
+func TestLoadTestHandler_NotFoundProfileID(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+	testUUID := uuid.Must(uuid.NewV4()).String()
+
+	tests := []struct {
+		name string
+		err  error
+	}{
+		{"gorm record not found", gorm.ErrRecordNotFound},
+		{"meshkit result not found", models.ErrResultNotFound(fmt.Errorf("profile not found"))},
+		{"provider 404 status", httputil.WithProviderStatus(fmt.Errorf("remote profile not found"), http.StatusNotFound)},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			provider := &errorLoadTestProvider{
+				DefaultLocalProvider: &models.DefaultLocalProvider{},
+				err:                  tc.err,
+			}
+
+			req := httptest.NewRequest(http.MethodGet, "/api/user/performance/profiles/"+testUUID+"/run?name=test&url=http://example.com", nil)
+			req = mux.SetURLVars(req, map[string]string{"id": testUUID})
+			rec := httptest.NewRecorder()
+
+			h.LoadTestHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusNotFound {
+				t.Fatalf("status = %d, want 404 for not found profile; body: %s", rec.Code, rec.Body.String())
+			}
+
+			var body struct {
+				Code string `json:"code"`
+			}
+			if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+				t.Fatalf("failed to decode response JSON: %v; body: %s", err, rec.Body.String())
+			}
+			if body.Code != models.ErrResultNotFoundCode {
+				t.Errorf("code = %q, want %q; body: %s", body.Code, models.ErrResultNotFoundCode, rec.Body.String())
+			}
+		})
+	}
+}
+
+func TestLoadTestHandler_NilProvider(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+
+	testUUID := uuid.Must(uuid.NewV4()).String()
+	req := httptest.NewRequest(http.MethodGet, "/api/user/performance/profiles/"+testUUID+"/run?name=test&url=http://example.com", nil)
+	req = mux.SetURLVars(req, map[string]string{"id": testUUID})
+	rec := httptest.NewRecorder()
+
+	h.LoadTestHandler(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("status = %d, want 500 for nil provider; body: %s", rec.Code, rec.Body.String())
+	}
+}
+
+func TestLoadTestUsingSMPHandler_NilProvider(t *testing.T) {
+	h := &Handler{log: newTestLogger(t)}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/perf/profile/run", bytes.NewBufferString(`{"test":{"name":"smp-test","clients":[{"endpointUrls":["http://example.com"]}]}}`))
+	rec := httptest.NewRecorder()
+
+	h.LoadTestUsingSMPHandler(rec, req, nil, nil, nil)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("status = %d, want 500 for nil provider; body: %s", rec.Code, rec.Body.String())
+	}
+}
+
+func TestLoadTestHandler_NilLogger_DoesNotPanic(t *testing.T) {
+	h := &Handler{log: nil}
+	provider := &fakeLoadTestProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
+
+	// Test 1: Invalid URL error path with nil logger
+	req := httptest.NewRequest(http.MethodGet, "/api/perf/profile/run?name=test&url=invalid-url", nil)
+	rec := httptest.NewRecorder()
+	require.NotPanics(t, func() {
+		h.LoadTestHandler(rec, req, nil, nil, provider)
+	})
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+
+	// Test 2: Invalid profile ID path with nil logger
+	req = httptest.NewRequest(http.MethodGet, "/api/user/performance/profiles/invalid-id/run?name=test&url=http://example.com", nil)
+	req = mux.SetURLVars(req, map[string]string{"id": "invalid-id"})
+	rec = httptest.NewRecorder()
+	require.NotPanics(t, func() {
+		h.LoadTestHandler(rec, req, nil, nil, provider)
+	})
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+
+	// Test 3: Blank name error path with nil logger
+	req = httptest.NewRequest(http.MethodGet, "/api/perf/profile/run?name=", nil)
+	rec = httptest.NewRecorder()
+	require.NotPanics(t, func() {
+		h.LoadTestHandler(rec, req, nil, nil, provider)
+	})
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+func TestGetSMPServiceMeshes_NilRegistryManager(t *testing.T) {
+	h := &Handler{
+		log:             newTestLogger(t),
+		registryManager: nil,
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/perf/service-mesh", nil)
+	rec := httptest.NewRecorder()
+
+	require.NotPanics(t, func() {
+		h.GetSMPServiceMeshes(rec, req, nil, nil, nil)
+	})
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
+}
+
+func TestGetSMPServiceMeshes_NilLogger_DoesNotPanic(t *testing.T) {
+	h := &Handler{
+		log:             nil,
+		registryManager: nil,
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/perf/service-mesh", nil)
+	rec := httptest.NewRecorder()
+
+	require.NotPanics(t, func() {
+		h.GetSMPServiceMeshes(rec, req, nil, nil, nil)
+	})
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 }
