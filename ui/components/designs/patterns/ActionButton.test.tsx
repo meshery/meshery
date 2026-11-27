@@ -40,79 +40,136 @@ vi.mock('@sistent/sistent', () => ({
   MenuList: ({ children }: any) => <ul>{children}</ul>,
   Paper: ({ children }: any) => <div>{children}</div>,
   Popper: ({ children, open }: any) => (open ? <div data-testid="popper">{children}</div> : null),
+  CustomTooltip: ({ children, title }: any) => (
+    <span data-testid="custom-tooltip" data-title={title}>
+      {children}
+    </span>
+  ),
+  Box: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
 }));
 
 import ActionButton from './ActionButton';
 
 describe('ActionButton', () => {
-  it('renders the default Action button', () => {
-    render(<ActionButton defaultActionClick={vi.fn()} options={[]} />);
+  it('renders the Action button and dropdown toggle with tooltips', () => {
+    render(<ActionButton options={[]} />);
     expect(screen.getByRole('button', { name: 'Action' })).toBeInTheDocument();
+    expect(screen.getByTestId('action-btn-toggle')).toBeInTheDocument();
+
+    const tooltips = screen.getAllByTestId('custom-tooltip');
+    const titles = tooltips.map((t) => t.getAttribute('data-title'));
+    expect(titles).toContain('Invoke actions interactively');
+    expect(titles).toContain('Invoke actions in single click');
   });
 
-  it('invokes the default click handler', () => {
+  it('invokes defaultActionClick when provided', () => {
     const handler = vi.fn();
     render(<ActionButton defaultActionClick={handler} options={[]} />);
     fireEvent.click(screen.getByRole('button', { name: 'Action' }));
     expect(handler).toHaveBeenCalled();
   });
 
-  it('toggles the dropdown popper open and lists supplied options', () => {
-    const onClick = vi.fn();
+  it('toggles interactive mode when main Action button is clicked without defaultActionClick', () => {
+    const validateClick = vi.fn();
     render(
       <ActionButton
-        defaultActionClick={vi.fn()}
-        options={[{ label: 'Validate', icon: <svg />, onClick }]}
+        options={[
+          { label: 'Validate', icon: <span data-testid="validate-icon" />, onClick: validateClick },
+        ]}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Action' }));
+    expect(validateClick).not.toHaveBeenCalled();
+    expect(screen.getByTestId('popper')).toBeInTheDocument();
+    expect(screen.getByText('Validate')).toBeInTheDocument();
+    expect(screen.getByTestId('validate-icon')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Validate' }));
+    expect(validateClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('toggles single-click mode when dropdown toggle is clicked', () => {
+    render(
+      <ActionButton
+        options={[
+          { label: 'Validate', icon: <span data-testid="validate-icon" />, onClick: vi.fn() },
+        ]}
       />,
     );
 
     fireEvent.click(screen.getByTestId('action-btn-toggle'));
     expect(screen.getByTestId('popper')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Validate' })).toBeInTheDocument();
+    expect(screen.getByTestId('validate-icon')).toBeInTheDocument();
+    // In single-click mode, the label is inside the tooltip and aria-label for accessibility
+    expect(screen.queryByText('Validate')).not.toBeInTheDocument();
+    expect(screen.getByTestId('action-btn-option-Validate')).toHaveAttribute(
+      'aria-label',
+      'Validate',
+    );
   });
 
-  it('invokes the chosen option and closes the popper', () => {
+  it('invokes onClick in interactive mode', () => {
     const onClick = vi.fn();
-    render(
-      <ActionButton
-        defaultActionClick={vi.fn()}
-        options={[{ label: 'Deploy', icon: <svg />, onClick }]}
-      />,
-    );
+    const onDirectClick = vi.fn();
+    render(<ActionButton options={[{ label: 'Deploy', icon: <svg />, onClick, onDirectClick }]} />);
 
-    fireEvent.click(screen.getByTestId('action-btn-toggle'));
+    fireEvent.click(screen.getByRole('button', { name: 'Action' }));
+    expect(onClick).not.toHaveBeenCalled();
+    expect(onDirectClick).not.toHaveBeenCalled();
+
     fireEvent.click(screen.getByRole('button', { name: 'Deploy' }));
 
-    expect(onClick).toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onDirectClick).not.toHaveBeenCalled();
     expect(screen.queryByTestId('popper')).not.toBeInTheDocument();
+  });
+
+  it('invokes onDirectClick in single-click mode when available', () => {
+    const onClick = vi.fn();
+    const onDirectClick = vi.fn();
+    render(<ActionButton options={[{ label: 'Deploy', icon: <svg />, onClick, onDirectClick }]} />);
+
+    fireEvent.click(screen.getByTestId('action-btn-toggle'));
+    fireEvent.click(screen.getByTestId('action-btn-option-Deploy'));
+
+    expect(onDirectClick).toHaveBeenCalled();
+    expect(onClick).not.toHaveBeenCalled();
+    expect(screen.queryByTestId('popper')).not.toBeInTheDocument();
+  });
+
+  it('falls back to onClick in single-click mode when onDirectClick is not provided', () => {
+    const onClick = vi.fn();
+    render(<ActionButton options={[{ label: 'Deploy', icon: <svg />, onClick }]} />);
+
+    fireEvent.click(screen.getByTestId('action-btn-toggle'));
+    fireEvent.click(screen.getByTestId('action-btn-option-Deploy'));
+
+    expect(onClick).toHaveBeenCalled();
   });
 
   it('respects disabled options', () => {
     render(
       <ActionButton
-        defaultActionClick={vi.fn()}
         options={[{ label: 'Disabled', icon: <svg />, onClick: vi.fn(), disabled: true }]}
       />,
     );
 
-    fireEvent.click(screen.getByTestId('action-btn-toggle'));
+    fireEvent.click(screen.getByRole('button', { name: 'Action' }));
     expect(screen.getByRole('button', { name: 'Disabled' })).toBeDisabled();
   });
 
-  it('forwards permissionKey and permissionAction to the primary Action button', () => {
+  it('forwards permissionKey and permissionAction to the primary Action button while keeping dropdown toggle ungated', () => {
     const keyObj = { id: 'test_key', function: 'read' };
-    render(
-      <ActionButton
-        defaultActionClick={vi.fn()}
-        options={[]}
-        permissionKey={keyObj}
-        permissionAction="hide"
-      />,
-    );
+    render(<ActionButton options={[]} permissionKey={keyObj} permissionAction="hide" />);
 
     const mainBtn = screen.getByRole('button', { name: 'Action' });
     expect(mainBtn).toHaveAttribute('data-permission-key', JSON.stringify(keyObj));
     expect(mainBtn).toHaveAttribute('data-permission-action', 'hide');
+
+    const toggleBtn = screen.getByTestId('action-btn-toggle');
+    expect(toggleBtn).not.toHaveAttribute('data-permission-key');
+    expect(toggleBtn).not.toHaveAttribute('data-permission-action');
   });
 
   it('forwards data-testid to the button group and uses option data-testid when provided', () => {
