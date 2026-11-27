@@ -46,7 +46,6 @@ vi.mock('../import-design-request', () => ({
 }));
 
 import { createPatternsActions } from './patterns-actions';
-import { updateProgress } from '@/store/slices/mesheryUi';
 
 const baseDeps = () => {
   const setSelectedRowData = vi.fn();
@@ -90,7 +89,6 @@ describe('createPatternsActions', () => {
     downloadContent.mockReset();
     updateProgress.mockReset();
     buildImportDesignRequestBody.mockReset();
-    vi.mocked(updateProgress).mockClear();
   });
 
   it('returns the canonical set of action methods', () => {
@@ -150,7 +148,7 @@ describe('createPatternsActions', () => {
     await expect(
       createPatternsActions(deps).handleDeploy({ design: { id: 'd1' }, selectedK8sContexts: [] }),
     ).rejects.toThrow('fail');
-    expect(vi.mocked(updateProgress).mock.calls).toEqual([
+    expect(updateProgress.mock.calls).toEqual([
       [{ showProgress: true }],
       [{ showProgress: false }],
     ]);
