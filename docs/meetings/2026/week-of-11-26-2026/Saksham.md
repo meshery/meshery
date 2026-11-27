@@ -1,1 +1,1 @@
-Hi I am Saksham newbie contributor at meshery
+Hi, I am Saksham, a new contributor to Meshery.
