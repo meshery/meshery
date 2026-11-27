@@ -14,6 +14,7 @@ import ExportDesignModal from '../export/ExportDesignModal';
 import { PublishDesignModal } from '../PublishDesignModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
+import { updateProgress } from '@/store/slices/mesheryUi';
 const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };
 
 function PatternCardGridItem({
@@ -170,6 +171,7 @@ function MesheryPatternGrid({
   });
   const handleDownload = async (e, design, source_type, params) => {
     e.stopPropagation();
+    updateProgress({ showProgress: true });
     try {
       let id = design.id;
       let name = design.name;
@@ -182,6 +184,8 @@ function MesheryPatternGrid({
         event_type: EVENT_TYPES.ERROR,
         details: e instanceof Error ? e.message : String(e),
       });
+    } finally {
+      updateProgress({ showProgress: false });
     }
   };
   const handleDownloadDialogClose = () => {
