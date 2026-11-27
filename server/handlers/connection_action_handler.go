@@ -286,17 +286,21 @@ func (h *Handler) flushMeshsyncAction(
 		return
 	}
 
-	// Keep the connection lifecycle stable while checking its state and
-	// clearing cached resources. The setup lock is released before the
-	// database operation; the lifecycle lock prevents a concurrent disconnect.
+	// Keep the connection lifecycle stable while checking its state,
+	// flushing cached resources, and requesting a MeshSync resync.
+	var resyncErr error
 	connected, flushErr := machineCtx.WithConnectedK8sContext(func(k8sCtx models.K8sContext) error {
-		// Clear only this cluster's cached state, keyed by its Kubernetes server ID.
-		if serverID := k8sCtx.KubernetesServerID; serverID != nil {
-			if perr := models.FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), serverID.String()); perr != nil {
-				return models.ErrFlushMeshSyncData(perr, k8sCtx.Name, k8sCtx.Server)
+		flushCallback := func() error {
+			if serverID := k8sCtx.KubernetesServerID; serverID != nil {
+				if perr := models.FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), serverID.String()); perr != nil {
+					return models.ErrFlushMeshSyncData(perr, k8sCtx.Name, k8sCtx.Server)
+				}
 			}
+			return nil
 		}
-		return nil
+		operationFlushErr, operationResyncErr := mhelpers.FlushAndResyncResources(req.Context(), machine, machineCtx, flushCallback)
+		resyncErr = operationResyncErr
+		return operationFlushErr
 	})
 	if !connected {
 		writeJSONError(w, fmt.Sprintf("connection %s is disconnected; reconnect the cluster before flushing MeshSync", connectionID), http.StatusConflict)
@@ -310,12 +314,12 @@ func (h *Handler) flushMeshsyncAction(
 		return
 	}
 
-	// Repopulate from the live cluster. Fresh data streams back via the broker.
-	if rerr := mhelpers.ResyncResources(req.Context(), machine); rerr != nil {
-		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("MeshSync data flushed but resync failed for connection %s", existing.Name)).WithMetadata(map[string]any{"error": rerr, "connectionId": connectionID}).Build()
+	// The cache flush and resync request have already been performed together.
+	if resyncErr != nil {
+		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("MeshSync resync failed for connection %s", existing.Name)).WithMetadata(map[string]any{"error": resyncErr, "connectionId": connectionID}).Build()
 		h.persistAndPublish(provider, token, userID, event)
-		h.log.Error(rerr)
-		writeJSONError(w, fmt.Sprintf("failed to resync MeshSync data: %v", rerr), http.StatusInternalServerError)
+		h.log.Error(resyncErr)
+		writeJSONError(w, fmt.Sprintf("failed to resync MeshSync data: %v", resyncErr), http.StatusInternalServerError)
 		return
 	}
 
