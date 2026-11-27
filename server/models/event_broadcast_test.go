@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -315,6 +316,24 @@ func TestBroadcastConcurrentPruneAndSubscribe(t *testing.T) {
 	}
 }
 
+func mustReceiveReplayEvent(t *testing.T, ch <-chan interface{}) ReplayEvent {
+	t.Helper()
+	select {
+	case got, ok := <-ch:
+		if !ok {
+			t.Fatal("channel closed before receiving ReplayEvent")
+		}
+		re, ok := got.(ReplayEvent)
+		if !ok {
+			t.Fatalf("expected ReplayEvent, got %T", got)
+		}
+		return re
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for ReplayEvent")
+		return ReplayEvent{}
+	}
+}
+
 func newTestEventWithID(userID uuid.UUID, desc string) *events.Event {
 	ev := events.NewEvent().
 		FromOwner(userID).
@@ -353,17 +372,41 @@ func TestBroadcastSubscribeFromReplaysMissedEvents(t *testing.T) {
 
 	e4 := newTestEventWithID(userID, "e4")
 	b.Publish(userID, e4)
-	select {
-	case got := <-ch:
-		re, ok := got.(ReplayEvent)
-		if !ok {
-			t.Fatalf("expected ReplayEvent, got %T", got)
-		}
-		if re.Data.(*events.Event).ID != e4.ID || re.Cursor == "" {
-			t.Fatalf("live event = (%v, %q), want ID %v with non-empty cursor", re.Data.(*events.Event).ID, re.Cursor, e4.ID)
-		}
-	case <-time.After(time.Second):
-		t.Fatal("timed out waiting for live event after replay")
+	re := mustReceiveReplayEvent(t, ch)
+	if re.Data.(*events.Event).ID != e4.ID || re.Cursor == "" {
+		t.Fatalf("live event = (%v, %q), want ID %v with non-empty cursor", re.Data.(*events.Event).ID, re.Cursor, e4.ID)
+	}
+}
+
+func TestBroadcastSubscribeFromUppercaseBareUUID(t *testing.T) {
+	b := NewBroadcaster("test")
+	userID := uuid.Must(uuid.NewV4())
+
+	e1 := newTestEventWithID(userID, "e1")
+	e2 := newTestEventWithID(userID, "e2")
+	e3 := newTestEventWithID(userID, "e3")
+
+	b.Publish(userID, e1)
+	b.Publish(userID, e2)
+	b.Publish(userID, e3)
+
+	// Uppercase bare UUID must match the lowercase stored event ID.
+	replay, _, unsub := b.SubscribeFrom(userID, strings.ToUpper(e1.ID.String()))
+	defer unsub()
+	if len(replay) != 2 {
+		t.Fatalf("uppercase bare UUID replay len = %d, want 2", len(replay))
+	}
+	if replay[0].Data.(*events.Event).ID != e2.ID || replay[1].Data.(*events.Event).ID != e3.ID {
+		t.Fatalf("unexpected replay IDs: got [%v, %v], want [%v, %v]",
+			replay[0].Data.(*events.Event).ID, replay[1].Data.(*events.Event).ID, e2.ID, e3.ID)
+	}
+
+	// Unknown valid uppercase bare UUID replays full retained buffer.
+	unknownUpper := strings.ToUpper(uuid.Must(uuid.NewV4()).String())
+	fullReplay, _, unsub2 := b.SubscribeFrom(userID, unknownUpper)
+	defer unsub2()
+	if len(fullReplay) != 3 {
+		t.Fatalf("unknown uppercase bare UUID replay len = %d, want 3", len(fullReplay))
 	}
 }
 
@@ -382,12 +425,12 @@ func TestBroadcastSubscribeFromRepeatedEventIDs(t *testing.T) {
 	secondA.ID = sharedID
 
 	b.Publish(userID, firstA)
-	firstMsg := (<-liveCh).(ReplayEvent)
+	firstMsg := mustReceiveReplayEvent(t, liveCh)
 
 	b.Publish(userID, eventB)
-	<-liveCh
+	mustReceiveReplayEvent(t, liveCh)
 	b.Publish(userID, secondA)
-	<-liveCh
+	mustReceiveReplayEvent(t, liveCh)
 
 	if firstMsg.Cursor == "" || firstMsg.Cursor == sharedID.String() {
 		t.Fatalf("expected sequence-qualified cursor, got %q", firstMsg.Cursor)
@@ -535,7 +578,7 @@ func TestBroadcastCursorsUniqueAcrossIdleEviction(t *testing.T) {
 	first.ID = sharedID
 
 	b.Publish(userID, first)
-	firstCursor := (<-liveCh).(ReplayEvent).Cursor
+	firstCursor := mustReceiveReplayEvent(t, liveCh).Cursor
 	liveUnsub()
 
 	time.Sleep(35 * time.Millisecond)
@@ -552,7 +595,7 @@ func TestBroadcastCursorsUniqueAcrossIdleEviction(t *testing.T) {
 	second := newTestEventWithID(userID, "second")
 	second.ID = sharedID
 	b.Publish(userID, second)
-	secondCursor := (<-liveCh2).(ReplayEvent).Cursor
+	secondCursor := mustReceiveReplayEvent(t, liveCh2).Cursor
 
 	if secondCursor == firstCursor {
 		t.Fatalf("cursor reused across buffer eviction: %q", secondCursor)
@@ -614,4 +657,161 @@ func TestBroadcastConcurrentPublishAndSubscribeFromNoRace(t *testing.T) {
 	time.Sleep(200 * time.Millisecond)
 	close(stop)
 	wg.Wait()
+}
+
+// TestBroadcastSubscribeSynchronizesWithIdleEviction verifies that Subscribe and
+// SubscribeFrom(id, "") participate in replay-buffer locking so concurrent idle
+// sweeps cannot evict an active subscriber's replay buffer, while stale buffers
+// without active listeners are still evicted.
+func TestBroadcastSubscribeSynchronizesWithIdleEviction(t *testing.T) {
+	b := &Broadcast{
+		historyIdleTTL:       15 * time.Millisecond,
+		historySweepInterval: time.Millisecond,
+	}
+	userID := uuid.Must(uuid.NewV4())
+	idleUser := uuid.Must(uuid.NewV4())
+	sweepUser := uuid.Must(uuid.NewV4())
+
+	// Seed a buffer for userID, let it go past TTL, then subscribe without Last-Event-ID.
+	b.Publish(userID, newTestEventWithID(userID, "before-subscribe"))
+	b.Publish(idleUser, newTestEventWithID(idleUser, "idle"))
+	time.Sleep(25 * time.Millisecond)
+
+	_, ch, unsub := b.SubscribeFrom(userID, "")
+	_ = ch
+
+	// Sweep now: idleUser has no listener and is stale -> evicted;
+	// userID has an active listener -> must remain retained.
+	b.Publish(sweepUser, newTestEventWithID(sweepUser, "sweep"))
+	if _, ok := b.history.Load(idleUser); ok {
+		t.Fatal("expected stale idle user history without active listener to be evicted")
+	}
+	if _, ok := b.history.Load(userID); !ok {
+		t.Fatal("expected active user history to be retained after SubscribeFrom without Last-Event-ID")
+	}
+	unsub()
+
+	// Concurrent stress: race Subscribe / SubscribeFrom(id, "") against frequent
+	// maybePruneIdleHistory sweeps; whenever a listener is active, its buffer must
+	// not be evicted underneath it.
+	var wg sync.WaitGroup
+	stop := make(chan struct{})
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for {
+			select {
+			case <-stop:
+				return
+			default:
+				b.Publish(sweepUser, newTestEventWithID(sweepUser, "sweep-concurrent"))
+			}
+		}
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for i := 0; i < 50; i++ {
+			b.Publish(userID, newTestEventWithID(userID, "active"))
+			var lch chan interface{}
+			var lunsub func()
+			if i%2 == 0 {
+				lch, lunsub = b.Subscribe(userID)
+			} else {
+				_, lch, lunsub = b.SubscribeFrom(userID, "")
+			}
+			_ = lch
+			if _, ok := b.history.Load(userID); !ok {
+				lunsub()
+				t.Errorf("iteration %d: active subscriber's history buffer was evicted", i)
+				return
+			}
+			lunsub()
+		}
+	}()
+
+	time.Sleep(100 * time.Millisecond)
+	close(stop)
+	wg.Wait()
+}
+
+// TestBroadcastCursorListenerOverflowClosesChannel verifies that when a
+// cursor-enabled listener's channel fills up, publishToClients removes it and
+// closes the channel after the queued items so the SSE handler can drain and
+// close the response to trigger EventSource reconnect, while legacy Subscribe
+// listeners preserve non-blocking drop behavior.
+func TestBroadcastCursorListenerOverflowClosesChannel(t *testing.T) {
+	b := NewBroadcaster("test")
+	userID := uuid.Must(uuid.NewV4())
+
+	_, cursorCh, cursorUnsub := b.SubscribeFrom(userID, "")
+	defer cursorUnsub()
+
+	legacyCh, legacyUnsub := b.Subscribe(userID)
+	defer legacyUnsub()
+
+	total := listenerBufferSize + 5
+	published := make([]*events.Event, total)
+	done := make(chan struct{})
+	go func() {
+		for i := 0; i < total; i++ {
+			published[i] = newTestEventWithID(userID, "overflow")
+			b.Publish(userID, published[i])
+		}
+		close(done)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatal("Publish blocked on full cursor-enabled listener channel")
+	}
+
+	// Drain the listenerBufferSize queued events from cursorCh in order.
+	for i := 0; i < listenerBufferSize; i++ {
+		re := mustReceiveReplayEvent(t, cursorCh)
+		if re.Data.(*events.Event).ID != published[i].ID {
+			t.Fatalf("cursorCh[%d] ID = %v, want %v", i, re.Data.(*events.Event).ID, published[i].ID)
+		}
+	}
+
+	// After draining queued items, cursorCh must be closed.
+	select {
+	case v, open := <-cursorCh:
+		if open {
+			t.Fatalf("expected cursorCh to be closed after queued items, got %v", v)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for overflowed cursorCh to close")
+	}
+
+	// Calling unsubscribe on an already-closed cursor listener must be safe.
+	cursorUnsub()
+
+	// Legacy Subscribe listener must still be open and have retained listenerBufferSize items.
+	for i := 0; i < listenerBufferSize; i++ {
+		select {
+		case got := <-legacyCh:
+			if got.(*events.Event).ID != published[i].ID {
+				t.Fatalf("legacyCh[%d] ID = %v, want %v", i, got.(*events.Event).ID, published[i].ID)
+			}
+		case <-time.After(time.Second):
+			t.Fatalf("timed out draining legacyCh item %d", i)
+		}
+	}
+	extra := newTestEventWithID(userID, "after-overflow")
+	b.Publish(userID, extra)
+	select {
+	case got, open := <-legacyCh:
+		if !open {
+			t.Fatal("legacyCh should remain open after overflow")
+		}
+		if got.(*events.Event).ID != extra.ID {
+			t.Fatalf("legacyCh got %v, want %v", got.(*events.Event).ID, extra.ID)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for event on legacyCh after overflow")
+	}
 }

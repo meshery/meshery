@@ -91,11 +91,20 @@ func (rb *replayBuffer) after(lastEventID string) []ReplayEvent {
 	if rb.count == 0 || !isValidLastEventID(lastEventID) {
 		return nil
 	}
+	parsedUUID, uuidErr := uuid.FromString(lastEventID)
+	isBareUUID := uuidErr == nil
+
 	start := (rb.head - rb.count + replayBufferSize) % replayBufferSize
 	for i := rb.count - 1; i >= 0; i-- {
 		idx := (start + i) % replayBufferSize
 		entry := rb.entries[idx]
-		if entry.cursor == lastEventID || entry.id == lastEventID {
+		matched := entry.cursor == lastEventID
+		if !matched && isBareUUID {
+			if entryUUID, err := uuid.FromString(entry.id); err == nil && entryUUID == parsedUUID {
+				matched = true
+			}
+		}
+		if matched {
 			remaining := rb.count - 1 - i
 			if remaining == 0 {
 				return nil
@@ -152,6 +161,24 @@ func (c *Broadcast) Subscribe(id core.Uuid) (chan interface{}, func()) {
 }
 
 func (c *Broadcast) subscribe(id core.Uuid, withCursor bool) (chan interface{}, func()) {
+	for {
+		if actual, ok := c.history.Load(id); ok {
+			rb := actual.(*replayBuffer)
+			rb.mu.Lock()
+			if rb.evicted {
+				rb.mu.Unlock()
+				continue
+			}
+			rb.lastActivity = time.Now()
+			ch, unsubscribe := c.addListener(id, withCursor)
+			rb.mu.Unlock()
+			return ch, unsubscribe
+		}
+		return c.addListener(id, withCursor)
+	}
+}
+
+func (c *Broadcast) addListener(id core.Uuid, withCursor bool) (chan interface{}, func()) {
 	ch := make(chan interface{}, listenerBufferSize)
 
 	for {
@@ -208,7 +235,7 @@ func (c *Broadcast) SubscribeFrom(id core.Uuid, lastEventID string) ([]ReplayEve
 	rb := c.lockReplayBuffer(id, now)
 	rb.lastActivity = now
 	replay := rb.after(lastEventID)
-	ch, unsubscribe := c.subscribe(id, true)
+	ch, unsubscribe := c.addListener(id, true)
 	rb.mu.Unlock()
 	return replay, ch, unsubscribe
 }
@@ -260,7 +287,7 @@ func (c *Broadcast) maybePruneIdleHistory(now time.Time) {
 		}
 		rb := val.(*replayBuffer)
 		rb.mu.Lock()
-		if !rb.evicted && now.Sub(rb.lastActivity) > ttl {
+		if _, active := c.clients.Load(key); !active && !rb.evicted && now.Sub(rb.lastActivity) > ttl {
 			rb.evicted = true
 			c.history.CompareAndDelete(key, val)
 		}
@@ -318,6 +345,7 @@ func (c *Broadcast) publishToClients(id core.Uuid, data interface{}, cursor stri
 	if cl.evicted {
 		return
 	}
+	n := 0
 	for _, l := range cl.listeners {
 		msg := data
 		if l.withCursor && cursor != "" {
@@ -325,8 +353,24 @@ func (c *Broadcast) publishToClients(id core.Uuid, data interface{}, cursor stri
 		}
 		select {
 		case l.ch <- msg:
+			cl.listeners[n] = l
+			n++
 		default:
+			if l.withCursor {
+				close(l.ch)
+			} else {
+				cl.listeners[n] = l
+				n++
+			}
 		}
+	}
+	for i := n; i < len(cl.listeners); i++ {
+		cl.listeners[i] = listener{}
+	}
+	cl.listeners = cl.listeners[:n]
+	if len(cl.listeners) == 0 {
+		cl.evicted = true
+		c.clients.CompareAndDelete(id, actual)
 	}
 }
 
