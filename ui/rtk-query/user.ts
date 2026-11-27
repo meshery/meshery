@@ -82,17 +82,24 @@ export const userApi = api
         // Perform optimistic update
         onQueryStarted: async (queryArg, { dispatch, queryFulfilled }) => {
           // Optimistically update the cache with the new preferences
-          const patchResult = dispatch(
-            api.util.updateQueryData('getUserPref', queryArg.selectedK8sContexts, (draft) => {
-              Object.assign(draft, queryArg.body);
-            }),
-          );
+          let patchResult: { undo: () => void } | undefined;
           try {
+            const parsedBody =
+              typeof queryArg.body === 'string' ? JSON.parse(queryArg.body) : queryArg.body;
+            if (parsedBody && typeof parsedBody === 'object') {
+              patchResult = dispatch(
+                api.util.updateQueryData('getUserPref', undefined, (draft) => {
+                  if (draft && typeof draft === 'object') {
+                    Object.assign(draft, parsedBody);
+                  }
+                }),
+              );
+            }
             // Wait for the mutation to complete
             await queryFulfilled;
           } catch {
             // If the mutation fails, revert the optimistic update
-            patchResult.undo();
+            patchResult?.undo();
           }
         },
       }),

@@ -582,4 +582,44 @@ describe('user endpoints', () => {
       search: 'a',
     });
   });
+
+  it('updateUserPrefWithContext optimistically updates getUserPref(undefined) without string-index corruption', async () => {
+    const { api, store, userMod } = await setupStore();
+    fetchMock
+      .mockResolvedValueOnce(
+        okResponse({ anonymousUsageStats: false, anonymousPerfResults: false }),
+      )
+      .mockResolvedValueOnce(okResponse({ anonymousUsageStats: true, anonymousPerfResults: false }))
+      .mockResolvedValue(okResponse({ anonymousUsageStats: true, anonymousPerfResults: false }));
+
+    await store.dispatch(userMod.userApi.endpoints.getUserPref.initiate(undefined));
+
+    await store.dispatch(
+      userMod.userApi.endpoints.updateUserPrefWithContext.initiate({
+        selectedK8sContexts: ['ctx-1'],
+        body: JSON.stringify({ anonymousUsageStats: true }),
+      }),
+    );
+
+    const cached = userMod.userApi.endpoints.getUserPref.select(undefined)(store.getState());
+    expect(cached.data).toEqual({
+      anonymousUsageStats: true,
+      anonymousPerfResults: false,
+    });
+    expect(Object.keys(cached.data as Record<string, unknown>)).not.toContain('0');
+    expect(api).toBeDefined();
+  });
+
+  it('updateUserPrefWithContext does not throw when getUserPref cache is unpopulated', async () => {
+    const { store, userMod } = await setupStore();
+    fetchMock.mockResolvedValueOnce(okResponse({ anonymousUsageStats: true }));
+
+    const result = await store.dispatch(
+      userMod.userApi.endpoints.updateUserPrefWithContext.initiate({
+        body: JSON.stringify({ anonymousUsageStats: true }),
+      }),
+    );
+
+    expect('error' in result).toBe(false);
+  });
 });

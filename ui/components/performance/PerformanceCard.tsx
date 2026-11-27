@@ -68,10 +68,15 @@ function PerformanceCard({
     },
     {
       name: 'Additional Option',
-      value:
-        metadata?.additional_options && metadata?.additional_options[0] !== ''
-          ? JSON.parse(metadata?.additional_options[0])
-          : '',
+      value: (() => {
+        const raw = metadata?.additional_options?.[0];
+        if (!raw) return '';
+        try {
+          return JSON.parse(raw);
+        } catch {
+          return raw;
+        }
+      })(),
     },
     {
       name: 'Certifcate Name',

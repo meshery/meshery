@@ -126,4 +126,28 @@ describe('PerformanceCard', () => {
     expect(screen.getByTestId('avatar')).toBeInTheDocument();
     expect(screen.getByTestId('avatar').closest('a')).toBeNull();
   });
+
+  it('renders without crashing when metadata.additional_options is empty or invalid JSON', () => {
+    render(
+      <PerformanceCard
+        {...baseProps}
+        profile={{
+          ...baseProps.profile,
+          metadata: { additional_options: [] },
+        }}
+      />,
+    );
+    expect(screen.getByText('my perf profile')).toBeInTheDocument();
+
+    render(
+      <PerformanceCard
+        {...baseProps}
+        profile={{
+          ...baseProps.profile,
+          metadata: { additional_options: ['not-valid-json'] },
+        }}
+      />,
+    );
+    expect(screen.getAllByText('my perf profile')).toHaveLength(2);
+  });
 });
