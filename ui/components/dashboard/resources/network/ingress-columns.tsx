@@ -89,8 +89,9 @@ export const buildIngressColumns = ({
           let attribute = JSON.parse(val);
           let loadBalancer = attribute?.loadBalancer;
           let ingress = loadBalancer?.ingress;
-          const IPs = ingress?.map((ingress) => ingress.ip);
-          return <>{IPs?.join(',')}</>;
+          // A load balancer reports an IP or, on some clouds such as AWS, a hostname.
+          const addresses = ingress?.map(({ ip, hostname }) => ip || hostname).filter(Boolean);
+          return <>{addresses?.join(', ')}</>;
         },
       },
     },
@@ -106,18 +107,8 @@ export const buildIngressColumns = ({
           let attribute = JSON.parse(val);
 
           let rules = attribute?.rules;
-          return (
-            <>
-              {rules?.map((rule, i) => {
-                return (
-                  <>
-                    {`${rule.host}`}
-                    {i < rules.length - 1 && ','}
-                  </>
-                );
-              })}
-            </>
-          );
+          // A rule without a host matches every host, which kubectl shows as "*".
+          return <>{rules?.map((rule) => rule.host || '*').join(', ')}</>;
         },
       },
     },

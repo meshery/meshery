@@ -74,7 +74,7 @@ export const buildNetworkPolicyColumns = ({
     },
     {
       name: 'spec.attribute',
-      label: 'Ports',
+      label: 'Policy Types',
       options: {
         sort: false,
         customHeadRender: function CustomHead({ ...column }) {
@@ -83,18 +83,7 @@ export const buildNetworkPolicyColumns = ({
         customBodyRender: function CustomBody(val) {
           let attribute = JSON.parse(val);
           let policyTypes = attribute?.policyTypes;
-          return (
-            <>
-              {policyTypes?.map((policy, i) => {
-                return (
-                  <>
-                    {`${policy}`}
-                    {i < policyTypes.length - 1 && ','}
-                  </>
-                );
-              })}
-            </>
-          );
+          return <>{policyTypes?.join(', ')}</>;
         },
       },
     },
