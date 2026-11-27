@@ -8,10 +8,13 @@ const getK8sClusterIdsFromCtxId = vi.fn();
 const useGetMeshSyncResourcesQuery = vi.fn();
 const useGetMeshSyncResourceKindsQuery = vi.fn();
 const getResponsiveColumnVisibility = vi.fn();
+const getColumnValue = vi.fn();
 let dataTableProps: any;
 let searchBarProps: any;
 let filterProps: any;
 let visibilityControlProps: any;
+let registerConnectionModalProps: any;
+let statusSelectProps: any;
 let windowWidth = 1200;
 
 vi.mock('@sistent/sistent', () => ({
@@ -95,9 +98,9 @@ vi.mock('../common', () => ({
 }));
 
 vi.mock('../../../utils/utils', () => ({
-  JsonParse: JSON.parse,
+  JsonParse: (item) => (typeof item === 'string' ? JSON.parse(item || '{}') : item),
   camelcaseToSnakecase: (value) => value,
-  getColumnValue: () => null,
+  getColumnValue: (...args) => getColumnValue(...args),
   getVisibilityColums: (columns) => columns.filter((col) => col.options?.display !== false),
 }));
 
@@ -106,7 +109,10 @@ vi.mock('../../../utils/responsive-column', () => ({
 }));
 
 vi.mock('../RegisterConnectionModal', () => ({
-  default: () => <div />,
+  default: (props) => {
+    registerConnectionModalProps = props;
+    return <div />;
+  },
 }));
 
 vi.mock('../ConnectionChip', () => ({
@@ -115,7 +121,10 @@ vi.mock('../ConnectionChip', () => ({
 
 vi.mock('../styles', () => ({
   ContentContainer: ({ children }) => <div>{children}</div>,
-  ConnectionStyledSelect: ({ children }) => <div>{children}</div>,
+  ConnectionStyledSelect: ({ children, ...props }) => {
+    statusSelectProps = props;
+    return <div>{children}</div>;
+  },
   InnerTableContainer: ({ children }) => <div>{children}</div>,
 }));
 
@@ -129,7 +138,11 @@ describe('MeshSyncTable', () => {
     searchBarProps = undefined;
     filterProps = undefined;
     visibilityControlProps = undefined;
+    registerConnectionModalProps = undefined;
+    statusSelectProps = undefined;
     notify.mockReset();
+    getColumnValue.mockReset();
+    getColumnValue.mockReturnValue(null);
     getK8sClusterIdsFromCtxId.mockReset();
     useGetMeshSyncResourcesQuery.mockReset();
     useGetMeshSyncResourceKindsQuery.mockReset();
@@ -332,6 +345,65 @@ describe('MeshSyncTable', () => {
 
     await waitFor(() => {
       expect(dataTableProps.columnVisibility.model).toBe(false);
+    });
+  });
+
+  it('resolves resourceID from the id column instead of the trailing metadata column when registering', () => {
+    getColumnValue.mockImplementation((rowData, columnName, cols) => {
+      const idx = cols.findIndex((col) => col?.name === columnName);
+      return idx === -1 ? undefined : rowData[idx];
+    });
+
+    render(<MeshSyncTable />);
+
+    const statusCol = dataTableProps.columns.find((col) => col.name === 'status');
+    const rowData = dataTableProps.columns.map((col) => {
+      if (col.name === 'id') return 'resource-uuid-123';
+      if (col.name === 'metadata') return { name: 'pod-a', uid: 'k8s-uid' };
+      if (col.name === 'component_metadata') {
+        return { capabilities: { connection: true }, metadata: '{"host":"10.0.0.1"}' };
+      }
+      return null;
+    });
+
+    render(statusCol.options.customBodyRender('discovered', { rowData, rowIndex: 0 }));
+
+    act(() => {
+      statusSelectProps.onChange();
+    });
+
+    expect(registerConnectionModalProps.connectionData).toEqual({
+      capabilities: { connection: true },
+      metadata: { host: '10.0.0.1' },
+      resourceID: 'resource-uuid-123',
+    });
+  });
+
+  it('does not throw when componentMetadata is undefined during status onChange', () => {
+    getColumnValue.mockImplementation((rowData, columnName, cols) => {
+      const idx = cols.findIndex((col) => col?.name === columnName);
+      return idx === -1 ? undefined : rowData[idx];
+    });
+
+    render(<MeshSyncTable />);
+
+    const statusCol = dataTableProps.columns.find((col) => col.name === 'status');
+    const rowData = dataTableProps.columns.map((col) =>
+      col.name === 'id' ? 'resource-uuid-456' : undefined,
+    );
+
+    render(statusCol.options.customBodyRender('discovered', { rowData, rowIndex: 0 }));
+
+    expect(() => {
+      act(() => {
+        statusSelectProps.onChange();
+      });
+    }).not.toThrow();
+
+    expect(registerConnectionModalProps.connectionData).toEqual({
+      capabilities: undefined,
+      metadata: undefined,
+      resourceID: 'resource-uuid-456',
     });
   });
 });
