@@ -376,11 +376,10 @@ describe('MeshSyncTable', () => {
     render(statusCol.options.customBodyRender('discovered', { rowData, rowIndex: 0 }));
 
     const wrapper = screen.getByTestId('meshsync-status-non-interactive');
-    expect(wrapper).toHaveStyle({ cursor: 'default' });
-    expect(screen.getByTestId('connection-state-chip')).toHaveAttribute(
-      'data-status',
-      'discovered',
-    );
+    const chip = screen.getByTestId('connection-state-chip');
+    expect(wrapper).toBeInTheDocument();
+    expect(wrapper).toContainElement(chip);
+    expect(chip).toHaveAttribute('data-status', 'discovered');
     expect(statusSelectProps).toBeUndefined();
 
     const parentClick = vi.fn();

@@ -355,15 +355,11 @@ export default function MeshSyncTable(props) {
           const currentStatus =
             typeof value === 'string' && value.length > 0 ? value : MESHSYNC_STATES.DISCOVERED;
           const isConnectionCapable = componentMetadata?.capabilities?.connection === true;
-          const canRegister =
-            isConnectionCapable && currentStatus === MESHSYNC_STATES.DISCOVERED;
+          const canRegister = isConnectionCapable && currentStatus === MESHSYNC_STATES.DISCOVERED;
 
           if (!canRegister) {
             return (
-              <MeshSyncNonInteractiveStatus
-                style={{ cursor: 'default' }}
-                onClick={(e) => e.stopPropagation()}
-              >
+              <MeshSyncNonInteractiveStatus onClick={(e) => e.stopPropagation()}>
                 <ConnectionStateChip status={currentStatus} />
               </MeshSyncNonInteractiveStatus>
             );
