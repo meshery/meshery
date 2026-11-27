@@ -43,7 +43,7 @@ section[class*="tabbed"] {
   gap: 10px;
 
   &:hover {
-    color: #888;
+    color: var(--color-secondary-dark);
     background-color: var(--brand-color-secondary-50);
   }
 }
