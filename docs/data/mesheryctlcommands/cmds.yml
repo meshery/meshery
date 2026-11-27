@@ -1122,7 +1122,7 @@ environment:
         org:
           name: -o, --orgId
           description: organization id
-          usage: mesheryctl environment create --orgID [orgID] --name [name] --description [description]
+          usage: mesheryctl environment create --orgId [orgId] --name [name] --description [description]
     delete:
       name: delete
       description: delete a new environments by providing the name and description of the environment
@@ -1135,7 +1135,7 @@ environment:
         org:
           name: --orgId
           description: organization id
-          usage: mesheryctl environment list --orgID [orgId]
+          usage: mesheryctl environment list --orgId [orgId]
     view:
       name: view
       description: view a environments registered in Meshery Server
