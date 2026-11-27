@@ -17,6 +17,7 @@ package perf
 import (
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -44,6 +45,10 @@ mesheryctl perf delete test-3 --yes
 		if len(args) > 1 {
 			return ErrorArgumentOverflow()
 		}
+		profileName := strings.TrimSpace(args[0])
+		if profileName == "" {
+			return ErrNoProfileName()
+		}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -52,15 +57,15 @@ mesheryctl perf delete test-3 --yes
 		baseURL := mctlCfg.GetBaseMesheryURL()
 
 		var profile perfprofile.PerformanceProfile
-		if utils.IsUUID(args[0]) {
-			p, err := fetchPerformanceProfile(baseURL, args[0])
+		if utils.IsUUID(profileName) {
+			p, err := fetchPerformanceProfile(baseURL, profileName)
 			if err != nil {
 				utils.Log.Error(err)
 				return err
 			}
 			profile = *p
 		} else {
-			profiles, err := fetchAllPerformanceProfiles(baseURL, url.QueryEscape(args[0]))
+			profiles, err := fetchAllPerformanceProfiles(baseURL, url.QueryEscape(profileName))
 			if err != nil {
 				utils.Log.Error(err)
 				return err
@@ -69,7 +74,7 @@ mesheryctl perf delete test-3 --yes
 			// The search is a substring match, so prefer profiles named exactly as asked.
 			matches := profiles[:0:0]
 			for _, p := range profiles {
-				if p.Name == args[0] {
+				if p.Name == profileName {
 					matches = append(matches, p)
 				}
 			}
@@ -81,7 +86,7 @@ mesheryctl perf delete test-3 --yes
 				return ErrNoProfileFound()
 			}
 			if len(matches) > 1 && utils.SilentFlag {
-				return utils.ErrFlagsInvalid(fmt.Errorf("%d profiles are named '%s'; run without --yes to choose one", len(matches), args[0]))
+				return utils.ErrFlagsInvalid(fmt.Errorf("%d profiles are named '%s'; run without --yes to choose one", len(matches), profileName))
 			}
 
 			index := 0
