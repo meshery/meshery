@@ -32,6 +32,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const ts = require('typescript');
 
 const UI_ROOT = path.resolve(__dirname, '..');
 
@@ -83,42 +84,89 @@ function walk(dir, out) {
 }
 
 // Count lines the way ESLint's max-lines does with
-// { skipComments: true, skipBlankLines: true }. A line is skipped if
-// it is blank after trimming, or if it lies inside a /* ... */ block,
-// or if it starts with // after whitespace.
-function countSignificantLines(src) {
-  const lines = src.split(/\r?\n/);
-  let count = 0;
-  let inBlockComment = false;
-  for (const rawLine of lines) {
-    let line = rawLine.trim();
-    if (line === '') continue;
+// { skipComments: true, skipBlankLines: true }. Use the TypeScript parser
+// rather than line prefixes so comment-like text in strings, templates,
+// regular expressions, and JSX is treated as source code.
+function countSignificantLines(src, file) {
+  const extension = path.extname(file).toLowerCase();
+  const scriptKind =
+    extension === '.tsx'
+      ? ts.ScriptKind.TSX
+      : extension === '.ts'
+        ? ts.ScriptKind.TS
+        : ts.ScriptKind.JSX;
 
-    if (inBlockComment) {
-      const end = line.indexOf('*/');
-      if (end === -1) continue;
-      line = line.slice(end + 2).trim();
-      inBlockComment = false;
-      if (line === '') continue;
+  const sourceFile = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true, scriptKind);
+
+  const commentRanges = [];
+
+  function collectRanges(node) {
+    if (node.kind === ts.SyntaxKind.JsxText || node.kind === ts.SyntaxKind.JSDoc) {
+      return;
     }
 
-    // Strip a leading // comment.
-    if (line.startsWith('//')) continue;
+    const children = node.getChildren(sourceFile);
+    if (children.every((child) => child.kind === ts.SyntaxKind.JSDoc)) {
+      if (node.pos < node.getStart(sourceFile)) {
+        commentRanges.push(
+          ...(ts.getTrailingCommentRanges(src, node.pos) || []),
+          ...(ts.getLeadingCommentRanges(src, node.pos) || []),
+        );
+      }
+      return;
+    }
 
-    // Strip a leading /* ... */ that begins and ends on this line.
-    while (line.startsWith('/*')) {
-      const end = line.indexOf('*/', 2);
-      if (end === -1) {
-        inBlockComment = true;
-        line = '';
+    for (const child of children) {
+      collectRanges(child);
+    }
+  }
+
+  collectRanges(sourceFile);
+
+  const comments = [
+    ...new Map(commentRanges.map((range) => [`${range.pos}:${range.end}`, range])).values(),
+  ].sort((a, b) => a.pos - b.pos);
+
+  let count = 0;
+  let commentIndex = 0;
+  let offset = 0;
+
+  for (const line of src.split(/\r?\n/)) {
+    const lineEnd = offset + line.length;
+    let cursor = offset;
+    let hasCode = false;
+
+    while (commentIndex < comments.length && comments[commentIndex].end <= cursor) {
+      commentIndex++;
+    }
+
+    let rangeIndex = commentIndex;
+
+    while (rangeIndex < comments.length && comments[rangeIndex].pos < lineEnd) {
+      const comment = comments[rangeIndex];
+
+      if (/\S/.test(src.slice(cursor, Math.min(comment.pos, lineEnd)))) {
+        hasCode = true;
         break;
       }
-      line = line.slice(end + 2).trim();
-    }
-    if (line === '') continue;
 
-    count++;
+      cursor = Math.max(cursor, Math.min(comment.end, lineEnd));
+
+      if (cursor >= lineEnd) break;
+      rangeIndex++;
+    }
+
+    if (!hasCode && cursor < lineEnd && /\S/.test(src.slice(cursor, lineEnd))) {
+      hasCode = true;
+    }
+
+    if (hasCode) count++;
+
+    offset =
+      lineEnd +
+      (src[lineEnd] === '\r' && src[lineEnd + 1] === '\n' ? 2 : src[lineEnd] === '\n' ? 1 : 0);
   }
+
   return count;
 }
 
@@ -134,8 +182,26 @@ function main() {
 
   const measured = [];
   for (const file of files) {
-    const src = fs.readFileSync(file, 'utf8');
-    const lines = countSignificantLines(src);
+    let src;
+    try {
+      src = fs.readFileSync(file, 'utf8');
+    } catch (error) {
+      process.stderr.write(
+        `WARN size: unable to read ${path.relative(UI_ROOT, file)}: ${error.message}\n`,
+      );
+      continue;
+    }
+
+    let lines;
+    try {
+      lines = countSignificantLines(src, file);
+    } catch (error) {
+      process.stderr.write(
+        `WARN size: parser failed for ${path.relative(UI_ROOT, file)}; using non-empty-line fallback: ${error.message}\n`,
+      );
+      lines = src.split(/\r?\n/).filter((line) => line.trim() !== '').length;
+    }
+
     if (lines < WARN_THRESHOLD) continue;
     measured.push({ file: path.relative(UI_ROOT, file), lines });
   }

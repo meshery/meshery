@@ -114,3 +114,35 @@ func TestGraph_EmptyVertexName(t *testing.T) {
 		t.Errorf("expected visited [\"\"], got %v", visited)
 	}
 }
+
+func TestGraph_DetectCycle_RejectsUnknownTargetNode(t *testing.T) {
+	g := NewGraph()
+	g.AddNode("nodeA", component.ComponentDefinition{})
+	g.AddEdge("nodeA", "nonExistent")
+
+	_, err := g.DetectCycle()
+	if err == nil {
+		t.Fatal("expected error when edge points to an unknown node, got nil")
+	}
+}
+
+func BenchmarkGraph_DetectCycle(b *testing.B) {
+	g := NewGraph()
+	for i := 0; i < 50; i++ {
+		g.AddNode(string(rune('A'+i)), component.ComponentDefinition{
+			DisplayName: "benchmark-component",
+		})
+	}
+	for i := 0; i < 49; i++ {
+		g.AddEdge(string(rune('A'+i)), string(rune('A'+i+1)))
+	}
+
+	b.ResetTimer()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		hasCycle, err := g.DetectCycle()
+		if err != nil || hasCycle {
+			b.Fatalf("unexpected result: cycle=%v, err=%v", hasCycle, err)
+		}
+	}
+}

@@ -868,6 +868,15 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	}
 }
 
+// designOCIRepositoryName maps a design name to the repository name of the
+// design's OCI image. Spaces are removed and the name is lowercased, as the
+// export always did, so a name that already gave a valid repository name keeps
+// it. Any other name is sanitized the same way model export sanitizes model
+// names.
+func designOCIRepositoryName(designName string) string {
+	return ociRepositoryNameOr(strings.ToLower(strings.ReplaceAll(designName, " ", "")), "design")
+}
+
 // GetMesheryPatternHandler returns the pattern file with the given id
 
 func (h *Handler) DownloadMesheryPatternHandler(
@@ -1201,9 +1210,9 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		event := newDownloadEvent().WithSeverity(events.Informational).WithDescription(fmt.Sprintf("OCI Image built. Digest: %v, Size: %v", digest, size)).Build()
 		h.persistAndPublish(provider, token, userID, event)
 
-		pretifiedName := strings.ToLower(strings.ReplaceAll(pattern.Name, " ", "")) // ensures that tag validation passes
-		tmpOCITarFilePath := filepath.Join(tmpDir, pretifiedName+".tar")
-		err = oci.SaveOCIArtifact(ociImg, tmpOCITarFilePath, pretifiedName)
+		repositoryName := designOCIRepositoryName(pattern.Name)
+		tmpOCITarFilePath := filepath.Join(tmpDir, "design.tar")
+		err = oci.SaveOCIArtifact(ociImg, tmpOCITarFilePath, repositoryName)
 		if err != nil {
 			h.log.Error(ErrSaveOCIArtifact(err))
 			event := newDownloadEvent().WithSeverity(events.Error).WithMetadata(map[string]interface{}{
