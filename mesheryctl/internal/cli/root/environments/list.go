@@ -101,7 +101,7 @@ func processEnvironmentData(environmentResponse *environment.EnvironmentPage) ([
 		if strings.TrimSpace(environment.Description) != "" {
 			description = environment.Description
 		}
-		row := []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), description, environment.CreatedAt.String(), environment.UpdatedAt.String()}
+		row := []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), description, environment.CreatedAt.Format("2006-01-02 15:04:05"), environment.UpdatedAt.Format("2006-01-02 15:04:05")}
 		rows = append(rows, row)
 	}
 	return rows, int64(environmentResponse.TotalCount)
