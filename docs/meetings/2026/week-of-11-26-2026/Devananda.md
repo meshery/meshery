@@ -9,5 +9,5 @@ I'm also looking forward to connecting with experienced contributors and learnin
 
 Happy to be here. Looking forward to working with you all! 😊
 
-github:https://github.com/sarah-26-bit
+- GitHub: https://github.com/sarah-26-bit
 linkedin:https://www.linkedin.com/in/devananda-s-681b22421/
