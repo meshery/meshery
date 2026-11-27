@@ -254,19 +254,30 @@ func (c *Client) QueryRange(ctx context.Context, dsRef string, params url.Values
 		// dsRef may be a name (or stale uid) rather than a real uid. Resolve it
 		// against the live datasource list and retry once before giving up.
 		sources, listErr := c.ListDatasources(ctx)
-		if errors.Is(listErr, ErrResponseTooLarge) {
-			return nil, listErr
-		}
-		if uid := datasourceUIDByName(sources, dsRef); uid != "" && uid != dsRef {
-			if body, retryErr := c.queryRangeByUID(ctx, uid, params); retryErr == nil || errors.Is(retryErr, ErrResponseTooLarge) {
-				return body, retryErr
-			}
-		}
-		// Still unresolved. Surface a typed error naming the reference and what
-		// datasources are actually available, so the user can see precisely why.
-		return nil, &DatasourceNotFoundError{Ref: dsRef, Available: datasourceIdentifiers(sources)}
+		return c.retryResolvedQueryRange(ctx, dsRef, params, sources, listErr)
 	}
 	return nil, err
+}
+
+// retryResolvedQueryRange resolves a datasource reference that returned 404 by
+// name against sources and retries the range query once against the resolved
+// UID. When the resolved UID exists and the retry fails with anything other
+// than a plain 404 (such as a 400 PromQL error, 401/403 auth failure, 5xx
+// upstream error, oversized response, or transport/context error), that real
+// error is returned instead of being masked as DatasourceNotFoundError.
+func (c *Client) retryResolvedQueryRange(ctx context.Context, dsRef string, params url.Values, sources []Datasource, listErr error) ([]byte, error) {
+	if errors.Is(listErr, ErrResponseTooLarge) {
+		return nil, listErr
+	}
+	if uid := datasourceUIDByName(sources, dsRef); uid != "" && uid != dsRef {
+		body, retryErr := c.queryRangeByUID(ctx, uid, params)
+		if retryErr == nil || errors.Is(retryErr, ErrResponseTooLarge) || StatusCode(retryErr) != http.StatusNotFound {
+			return body, retryErr
+		}
+	}
+	// Still unresolved. Surface a typed error naming the reference and what
+	// datasources are actually available, so the user can see precisely why.
+	return nil, &DatasourceNotFoundError{Ref: dsRef, Available: datasourceIdentifiers(sources)}
 }
 
 func (c *Client) queryRangeByUID(ctx context.Context, uid string, params url.Values) ([]byte, error) {
@@ -358,15 +369,7 @@ func (c *Client) queryRangeWith(ctx context.Context, dsRef string, params url.Va
 	}
 	var apiErr *apiError
 	if errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound && !errors.Is(err, ErrResponseTooLarge) {
-		if errors.Is(listErr, ErrResponseTooLarge) {
-			return nil, listErr
-		}
-		if uid := datasourceUIDByName(sources, dsRef); uid != "" && uid != dsRef {
-			if body, retryErr := c.queryRangeByUID(ctx, uid, params); retryErr == nil || errors.Is(retryErr, ErrResponseTooLarge) {
-				return body, retryErr
-			}
-		}
-		return nil, &DatasourceNotFoundError{Ref: dsRef, Available: datasourceIdentifiers(sources)}
+		return c.retryResolvedQueryRange(ctx, dsRef, params, sources, listErr)
 	}
 	return nil, err
 }
