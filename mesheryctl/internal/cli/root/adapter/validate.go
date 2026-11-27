@@ -62,21 +62,29 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 			return err
 		}
 
-		prefs, err := utils.GetSessionData(mctlCfg)
-		if err != nil {
-			return ErrGettingSessionData(err)
-		}
-		//resolve adapterUrl to adapter Location
-		for _, adapter := range prefs.MeshAdapters {
-			adapterName := strings.Split(adapter.Location, ":")
-			if adapterName[0] == adapterURL {
-				adapterURL = adapter.Location
-				meshName = adapter.Location
+		if len(args) > 0 {
+			if err = parseAndValidateMesh(mctlCfg, args); err != nil {
+				return ErrValidatingAdapters(errors.Wrap(err, "Unable to sync with available adapters"))
 			}
-		}
-		//sync with available adapters
-		if err = validateAdapter(mctlCfg, meshName); err != nil {
-			return ErrValidatingAdapters(errors.Wrap(err, "Unable to sync with available adapters"))
+		} else {
+			prefs, err := utils.GetSessionData(mctlCfg)
+			if err != nil {
+				return ErrGettingSessionData(err)
+			}
+			//resolve adapterUrl to adapter Location
+			for _, adapter := range prefs.MeshAdapters {
+				adapterName := strings.Split(adapter.Location, ":")
+				if adapterURL != "" && adapterName[0] == adapterURL {
+					adapterURL = adapter.Location
+					if meshName == "" {
+						meshName = adapter.Name
+					}
+				}
+			}
+			//sync with available adapters
+			if err = validateAdapter(mctlCfg, meshName); err != nil {
+				return ErrValidatingAdapters(errors.Wrap(err, "Unable to sync with available adapters"))
+			}
 		}
 		utils.Log.Info("verified prerequisites")
 		return nil
@@ -90,7 +98,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 		}
 		s := utils.CreateDefaultSpinner(fmt.Sprintf("Validating %s", meshName), fmt.Sprintf("\n%s validation successful", meshName))
 		s.Start()
-		_, err = sendOperationRequest(mctlCfg, meshName, false, spec)
+		response, err := sendOperationRequest(mctlCfg, meshName, false, spec)
 		if err != nil {
 			s.Stop()
 			return err
@@ -99,7 +107,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
 		if watch {
 			utils.Log.Info("Verifying Operation")
-			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
+			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test", operationIDFromResponse(response))
 			if err != nil {
 				return ErrWaitValidateResponse(err)
 			}

@@ -129,7 +129,7 @@ export default function MeshSyncTable(props) {
       ['model', 'm'],
       ['metadata.namespace', 'xs'],
       ['cluster_id', 'na'],
-      ['pattern_resources', 'na'],
+      ['pattern_resource', 'na'],
       ['metadata.creationTimestamp', 'l'],
       ['status', 'xs'],
       ['metadata', 'na'],
@@ -270,12 +270,11 @@ export default function MeshSyncTable(props) {
       },
     },
     {
-      name: 'pattern_resources',
+      name: 'pattern_resource',
       label: 'Pattern resources',
       options: {
         sort: true,
         sortThirdClickReset: true,
-        display: false,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
             <SortableTableCell
@@ -371,8 +370,8 @@ export default function MeshSyncTable(props) {
                   callbackRef?.current?.(tableMeta);
                   setRegisterConnection({
                     capabilities: componentMetadata?.capabilities,
-                    metadata: JsonParse(componentMetadata.metadata),
-                    resourceID: tableMeta.rowData[tableMeta.rowData.length - 1],
+                    metadata: JsonParse(componentMetadata?.metadata),
+                    resourceID: getColumnValue(tableMeta.rowData, 'id', columns),
                   });
                 }}
                 disableUnderline
@@ -468,6 +467,7 @@ export default function MeshSyncTable(props) {
           break;
         case 'changeRowsPerPage':
           setPageSize(tableState.rowsPerPage.toString());
+          setPage(0);
           break;
         case 'sort':
           if (sortInfo.length == 2) {

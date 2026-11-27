@@ -111,12 +111,15 @@ const filtersData = [
   {
     id: '1',
     name: 'one',
-    filter_resource: JSON.stringify({ settings: { config: 'a: 1' } }),
+    filterResource: JSON.stringify({
+      component: { kind: 'WASMFilter' },
+      configuration: { config: 'a: 1' },
+    }),
   },
   {
     id: '2',
     name: 'two',
-    filter_resource: '',
+    filterResource: '',
   },
 ];
 
@@ -156,6 +159,19 @@ describe('FiltersGrid', () => {
         {...overrides}
       />,
     );
+
+  // Saving a card without editing must send the stored configuration back;
+  // sending '' would overwrite it on the server.
+  it('sends the stored configuration when a card is saved without edits', async () => {
+    const handleSubmit = vi.fn();
+    renderComponent({ handleSubmit });
+
+    await userEvent.click(screen.getByTestId('update-one'));
+
+    expect(handleSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'UPDATE', id: '1', data: 'a: 1' }),
+    );
+  });
 
   it('renders one card per filter in the array', () => {
     renderComponent();

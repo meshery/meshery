@@ -19,10 +19,12 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 
 	"github.com/gofrs/uuid"
+	googleuuid "github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/database"
@@ -306,5 +308,278 @@ func TestDeleteMeshSyncResource_Base64ID_Success(t *testing.T) {
 	}
 	if !response.Deleted {
 		t.Errorf("expected deleted to be true, got false")
+	}
+}
+
+// TestGetMeshSyncResources_OrderBy verifies that the order query parameter properly
+// applies ORDER BY sorting to the returned resources.
+func TestGetMeshSyncResources_OrderBy(t *testing.T) {
+	h, provider, db := newMeshSyncTestFixture(t)
+
+	idA := uuid.Must(uuid.NewV4()).String()
+	metaA := model.KubernetesResourceObjectMeta{
+		ID:   idA,
+		Name: "alpha-resource",
+		UID:  idA,
+	}
+	if err := db.Create(&metaA).Error; err != nil {
+		t.Fatalf("failed to seed metaA: %v", err)
+	}
+	resA := model.KubernetesResource{
+		ID:        idA,
+		ClusterID: "test-cluster",
+		ComponentMetadata: map[string]interface{}{
+			"name": "alpha-resource",
+		},
+	}
+	if err := db.Table("kubernetes_resources").Create(&resA).Error; err != nil {
+		t.Fatalf("failed to seed resA: %v", err)
+	}
+
+	idB := uuid.Must(uuid.NewV4()).String()
+	metaB := model.KubernetesResourceObjectMeta{
+		ID:   idB,
+		Name: "beta-resource",
+		UID:  idB,
+	}
+	if err := db.Create(&metaB).Error; err != nil {
+		t.Fatalf("failed to seed metaB: %v", err)
+	}
+	resB := model.KubernetesResource{
+		ID:        idB,
+		ClusterID: "test-cluster",
+		ComponentMetadata: map[string]interface{}{
+			"name": "beta-resource",
+		},
+	}
+	if err := db.Table("kubernetes_resources").Create(&resB).Error; err != nil {
+		t.Fatalf("failed to seed resB: %v", err)
+	}
+
+	// Test 1: Order by name descending (beta should come before alpha)
+	reqDesc := httptest.NewRequest(http.MethodGet, `/api/system/meshsync/resources?clusterIds=["test-cluster"]&order=name%20desc`, nil)
+	recDesc := httptest.NewRecorder()
+	h.GetMeshSyncResources(recDesc, reqDesc, nil, nil, provider)
+
+	if recDesc.Code != http.StatusOK {
+		t.Fatalf("expected status 200 for desc query, got %d (body=%q)", recDesc.Code, recDesc.Body.String())
+	}
+
+	var respDesc models.MeshSyncResourcesAPIResponse
+	if err := json.Unmarshal(recDesc.Body.Bytes(), &respDesc); err != nil {
+		t.Fatalf("failed to unmarshal desc response: %v (body=%q)", err, recDesc.Body.String())
+	}
+	if len(respDesc.Resources) != 2 {
+		t.Fatalf("expected 2 resources, got %d", len(respDesc.Resources))
+	}
+	if respDesc.Resources[0].ID != idB || respDesc.Resources[1].ID != idA {
+		t.Errorf("expected [beta, alpha] for name desc, got [%s, %s]", respDesc.Resources[0].ID, respDesc.Resources[1].ID)
+	}
+
+	// Test 2: Order by name ascending (alpha should come before beta)
+	reqAsc := httptest.NewRequest(http.MethodGet, `/api/system/meshsync/resources?clusterIds=["test-cluster"]&order=name%20asc`, nil)
+	recAsc := httptest.NewRecorder()
+	h.GetMeshSyncResources(recAsc, reqAsc, nil, nil, provider)
+
+	if recAsc.Code != http.StatusOK {
+		t.Fatalf("expected status 200 for asc query, got %d (body=%q)", recAsc.Code, recAsc.Body.String())
+	}
+
+	var respAsc models.MeshSyncResourcesAPIResponse
+	if err := json.Unmarshal(recAsc.Body.Bytes(), &respAsc); err != nil {
+		t.Fatalf("failed to unmarshal asc response: %v (body=%q)", err, recAsc.Body.String())
+	}
+	if len(respAsc.Resources) != 2 {
+		t.Fatalf("expected 2 resources, got %d", len(respAsc.Resources))
+	}
+	if respAsc.Resources[0].ID != idA || respAsc.Resources[1].ID != idB {
+		t.Errorf("expected [alpha, beta] for name asc, got [%s, %s]", respAsc.Resources[0].ID, respAsc.Resources[1].ID)
+	}
+
+	// Test 3: No order param (exercises empty-guard behavior)
+	reqNoOrder := httptest.NewRequest(http.MethodGet, `/api/system/meshsync/resources?clusterIds=["test-cluster"]`, nil)
+	recNoOrder := httptest.NewRecorder()
+	h.GetMeshSyncResources(recNoOrder, reqNoOrder, nil, nil, provider)
+
+	if recNoOrder.Code != http.StatusOK {
+		t.Fatalf("expected status 200 for no-order query, got %d (body=%q)", recNoOrder.Code, recNoOrder.Body.String())
+	}
+
+	var respNoOrder models.MeshSyncResourcesAPIResponse
+	if err := json.Unmarshal(recNoOrder.Body.Bytes(), &respNoOrder); err != nil {
+		t.Fatalf("failed to unmarshal no-order response: %v (body=%q)", err, recNoOrder.Body.String())
+	}
+	if len(respNoOrder.Resources) != 2 {
+		t.Fatalf("expected 2 resources, got %d", len(respNoOrder.Resources))
+	}
+
+	// Test 4: Bare order param (exercises empty-guard behavior with bare order=)
+	reqBareOrder := httptest.NewRequest(http.MethodGet, `/api/system/meshsync/resources?clusterIds=["test-cluster"]&order=`, nil)
+	recBareOrder := httptest.NewRecorder()
+	h.GetMeshSyncResources(recBareOrder, reqBareOrder, nil, nil, provider)
+
+	if recBareOrder.Code != http.StatusOK {
+		t.Fatalf("expected status 200 for bare-order query, got %d (body=%q)", recBareOrder.Code, recBareOrder.Body.String())
+	}
+
+	var respBareOrder models.MeshSyncResourcesAPIResponse
+	if err := json.Unmarshal(recBareOrder.Body.Bytes(), &respBareOrder); err != nil {
+		t.Fatalf("failed to unmarshal bare-order response: %v (body=%q)", err, recBareOrder.Body.String())
+	}
+	if len(respBareOrder.Resources) != 2 {
+		t.Fatalf("expected 2 resources, got %d", len(respBareOrder.Resources))
+	}
+}
+
+// The MeshSync table offers Cluster ID and Pattern resources as sortable
+// columns, so both must reach the ORDER BY. cluster_id also exists on the joined
+// metadata table and must not be ambiguous there.
+func TestGetMeshSyncResources_OrderByClusterAndPatternResource(t *testing.T) {
+	h, provider, db := newMeshSyncTestFixture(t)
+
+	// Seeded out of order, so no case passes on insertion order. The pattern
+	// resources run opposite to the clusters, so sorting by one is not sorting
+	// by the other, and the metadata's cluster_id is constant. cluster-4 has no
+	// pattern resource: such rows sort first ascending and last descending.
+	for _, seed := range []struct{ cluster, patternResource string }{
+		{"cluster-2", "00000000-0000-4000-8000-000000000002"},
+		{"cluster-4", ""},
+		{"cluster-1", "00000000-0000-4000-8000-000000000003"},
+		{"cluster-3", "00000000-0000-4000-8000-000000000001"},
+	} {
+		id := uuid.Must(uuid.NewV4()).String()
+		meta := model.KubernetesResourceObjectMeta{ID: id, Name: seed.cluster, UID: id, ClusterID: "same"}
+		if err := db.Create(&meta).Error; err != nil {
+			t.Fatalf("seed metadata: %v", err)
+		}
+		var patternResource *googleuuid.UUID
+		if seed.patternResource != "" {
+			parsed := googleuuid.MustParse(seed.patternResource)
+			patternResource = &parsed
+		}
+		res := model.KubernetesResource{
+			ID:                id,
+			ClusterID:         seed.cluster,
+			PatternResource:   patternResource,
+			ComponentMetadata: map[string]interface{}{"name": seed.cluster},
+		}
+		if err := db.Table("kubernetes_resources").Create(&res).Error; err != nil {
+			t.Fatalf("seed resource: %v", err)
+		}
+	}
+
+	for _, tc := range []struct{ order, want string }{
+		{"cluster_id asc", "cluster-1,cluster-2,cluster-3,cluster-4"},
+		{"cluster_id desc", "cluster-4,cluster-3,cluster-2,cluster-1"},
+		{"pattern_resource asc", "cluster-4,cluster-3,cluster-2,cluster-1"},
+		{"pattern_resource desc", "cluster-1,cluster-2,cluster-3,cluster-4"},
+	} {
+		t.Run(tc.order, func(t *testing.T) {
+			q := url.Values{
+				"clusterIds": {`["cluster-1","cluster-2","cluster-3","cluster-4"]`},
+				"order":      {tc.order},
+			}
+			req := httptest.NewRequest(http.MethodGet, "/api/system/meshsync/resources?"+q.Encode(), nil)
+			rec := httptest.NewRecorder()
+			h.GetMeshSyncResources(rec, req, nil, nil, provider)
+			if rec.Code != http.StatusOK {
+				t.Fatalf("status = %d, want 200 (body=%q)", rec.Code, rec.Body.String())
+			}
+
+			var resp models.MeshSyncResourcesAPIResponse
+			if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
+				t.Fatalf("unmarshal response: %v", err)
+			}
+			clusters := make([]string, 0, len(resp.Resources))
+			for _, r := range resp.Resources {
+				clusters = append(clusters, r.ClusterID)
+			}
+			if got := strings.Join(clusters, ","); got != tc.want {
+				t.Errorf("clusters = %s, want %s", got, tc.want)
+			}
+		})
+	}
+}
+
+// TestMeshSyncResources_OrderInputSanitization verifies that allowed sorting columns
+// are safely translated to snake_case while invalid columns and injection attempts are rejected.
+func TestMeshSyncResources_OrderInputSanitization(t *testing.T) {
+	validColumns := []string{"creation_timestamp", "name", "kind", "model", "api_version", "namespace", "cluster_id", "pattern_resource"}
+
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"name desc", "name desc"},
+		{"name asc", "name asc"},
+		{"creationTimestamp desc", "creation_timestamp desc"},
+		{"apiVersion asc", "api_version asc"},
+		{"kind desc", "kind desc"},
+		{"model asc", "model asc"},
+		{"namespace desc", "namespace desc"},
+		{"invalidColumn asc", ""},
+		{"name; DROP TABLE kubernetes_resources; -- desc", ""},
+		{"", ""},
+		{"singleword", ""},
+		{"three words here", ""},
+	}
+
+	for _, tc := range tests {
+		got := models.SanitizeOrderInput(tc.input, validColumns)
+		if got != tc.expected {
+			t.Errorf("SanitizeOrderInput(%q) = %q, want %q", tc.input, got, tc.expected)
+		}
+	}
+}
+
+// TestDeleteMeshSyncResource_RemovesChildRows verifies that deleting a resource
+// through the API also removes the rows that share its id: object meta, spec,
+// status, labels and annotations. Before the fix only the parent row was
+// deleted, and the orphaned labels reattached to the resource when MeshSync
+// discovered it again under the same deterministic id.
+func TestDeleteMeshSyncResource_RemovesChildRows(t *testing.T) {
+	h, provider, db := newMeshSyncTestFixture(t)
+
+	resID := base64.StdEncoding.EncodeToString([]byte("test-cluster.Pod.v1.default.web"))
+	rows := []interface{}{
+		&model.KubernetesResourceObjectMeta{ID: resID, Name: "web", UID: resID},
+		&model.KubernetesResourceSpec{ID: resID, Attribute: `{"containers":[]}`},
+		&model.KubernetesResourceStatus{ID: resID, Attribute: `{"phase":"Running"}`},
+		&model.KubernetesKeyValue{ID: resID, UniqueID: resID + "-label", Kind: model.KindLabel, Key: "app", Value: "web"},
+		&model.KubernetesKeyValue{ID: resID, UniqueID: resID + "-annotation", Kind: model.KindAnnotation, Key: "owner", Value: "team-a"},
+	}
+	for _, row := range rows {
+		if err := db.Create(row).Error; err != nil {
+			t.Fatalf("failed to seed %T: %v", row, err)
+		}
+	}
+	if err := db.Table("kubernetes_resources").Create(&model.KubernetesResource{ID: resID, ClusterID: "test-cluster"}).Error; err != nil {
+		t.Fatalf("failed to seed resource: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/system/meshsync/resources/"+resID, nil)
+	req = mux.SetURLVars(req, map[string]string{"id": resID})
+	rec := httptest.NewRecorder()
+
+	h.DeleteMeshSyncResource(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status 200, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+
+	for name, table := range map[string]interface{}{
+		"resource":           &model.KubernetesResource{},
+		"object meta":        &model.KubernetesResourceObjectMeta{},
+		"spec":               &model.KubernetesResourceSpec{},
+		"status":             &model.KubernetesResourceStatus{},
+		"labels/annotations": &model.KubernetesKeyValue{},
+	} {
+		var n int64
+		if err := db.Model(table).Where("id = ?", resID).Count(&n).Error; err != nil {
+			t.Fatalf("counting %s rows: %v", name, err)
+		}
+		if n != 0 {
+			t.Errorf("%s rows left after delete: got %d, want 0", name, n)
+		}
 	}
 }

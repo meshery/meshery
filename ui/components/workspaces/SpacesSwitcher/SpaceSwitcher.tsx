@@ -153,7 +153,9 @@ const StyledSwitcher = styled('div')(({ theme }) => ({
 }));
 
 export function OrgMenu(props) {
-  const { data: orgsResponse, isSuccess: isOrgsSuccess } = useGetOrgsQuery({});
+  // Every organization, not the server's default first page: the switcher must
+  // offer all of them.
+  const { data: orgsResponse, isSuccess: isOrgsSuccess } = useGetOrgsQuery({ pagesize: 'all' });
   let orgs = orgsResponse?.organizations || [];
   let uniqueOrgs = _.uniqBy(orgs, 'id');
 

@@ -48,8 +48,11 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 		}).Build(), err
 	}
 
-	err = k8sContext.AssignServerID(handler)
+	err = k8sContext.AssignServerID(ctx, handler)
 	if err != nil {
+		if ctx.Err() != nil {
+			return machines.NoOp, nil, ctx.Err()
+		}
 		// The cluster's API server did not answer: the connection moves to
 		// NOTFOUND, and SendEvent reports that as its unreachable condition.
 		// metadata.error carries the error with its nested causes and the cause
@@ -58,8 +61,11 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 		return machines.NotFound, models.AttachEventError(eventBuilder, err, machinectx.log).Build(), err
 	}
 
-	err = k8sContext.AssignVersion(handler)
+	err = k8sContext.AssignVersion(ctx, handler)
 	if err != nil {
+		if ctx.Err() != nil {
+			return machines.NoOp, nil, ctx.Err()
+		}
 		machinectx.log.Info("unable to set kubernes server version, continuing without assigning version")
 	}
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
@@ -87,6 +93,13 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 	} else if err != nil {
 		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", k8sContext.Name, k8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
 	}
+
+	// Update only the enriched server ID and version under setupLock, preserving
+	// any concurrent updates to other fields on the stored context.
+	machinectx.setupLock.Lock()
+	machinectx.K8sContext.KubernetesServerID = k8sContext.KubernetesServerID
+	machinectx.K8sContext.Version = k8sContext.Version
+	machinectx.setupLock.Unlock()
 
 	// machinectx.log.Debug("exiting execute func from discovered state", connection)
 

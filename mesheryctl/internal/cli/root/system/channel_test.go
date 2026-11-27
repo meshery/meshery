@@ -315,6 +315,24 @@ func TestChannelArgsValidation(t *testing.T) {
 			args:    []string{"edge"},
 			wantErr: false,
 		},
+
+		// Rejection paths - view
+		{
+			name:          "view with unexpected args fails in Args validation",
+			cmd:           viewCmd,
+			cliArgs:       []string{"channel", "view", "edge"},
+			args:          []string{"edge"},
+			wantErr:       true,
+			expectedError: "No argument expected",
+		},
+
+		// Acceptance paths - view
+		{
+			name:    "view with no args passes Args validation",
+			cmd:     viewCmd,
+			args:    []string{},
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {

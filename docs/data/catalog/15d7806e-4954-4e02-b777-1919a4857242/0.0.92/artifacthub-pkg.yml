@@ -1,0 +1,21 @@
+version: 0.0.92
+name: cloud-native-mern-application-architecture
+displayName: Cloud-Native MERN Application Architecture
+createdAt: "2026-11-17T19:01:26Z"
+description: |
+    A cloud-native MERN application architecture designed using Kubernetes. It includes MongoDB for persistent data storage, containerized application workloads, Kubernetes StatefulSets, PersistentVolumeClaims, and Services for scalable and reliable deployment.A simple Kubernetes web application architecture using a Kubernetes Deployment to manage and run the web application workload. The design uses the default namespace and provides a basic foundation for deploying a web application on Kubernetes.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/15d7806e-4954-4e02-b777-1919a4857242/0.0.92/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is a basic deployment architecture intended for demonstration and learning purposes. Production deployments should include appropriate resource limits, replicas, networking, security policies, monitoring, and persistent storage requirements based on the application's needs.\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 83274eff-8474-448c-85ad-3a7c55872892
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

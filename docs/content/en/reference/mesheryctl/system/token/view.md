@@ -18,7 +18,7 @@ View a specific token in meshery config
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token view [flags]
+mesheryctl system token view [token-name] [flags]
 
 </div>
 </div>
@@ -26,19 +26,31 @@ mesheryctl system token view [flags]
 
 ## Examples
 
+View a specific token
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token view [token-name]
+mesheryctl system token view my-token
 
 </div>
 </div>
 </pre> 
 
+View token of current context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token view (show token of current context)
+mesheryctl system token view
+
+</div>
+</div>
+</pre> 
+
+View all available tokens
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl system token view --all
 
 </div>
 </div>

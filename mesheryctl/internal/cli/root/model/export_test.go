@@ -1,6 +1,7 @@
 package model
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"net/url"
@@ -34,6 +35,18 @@ func TestExportModel(t *testing.T) {
 			ExpectedError: utils.ErrInvalidArgument(errors.New("Please provide a model name. " + exportUsage)),
 		},
 		{
+			Name:          "given whitespace argument when model export then throw error",
+			Args:          []string{"export", "   "},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(errors.New("Please provide a model name. " + exportUsage)),
+		},
+		{
+			Name:          "given too many arguments when model export then throw error",
+			Args:          []string{"export", modelName, "extra-arg"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", exportUsage)),
+		},
+		{
 			Name:          "given an invalid output format when model export then throw error",
 			Args:          []string{"export", modelName, "--output-format", "invalid-format"},
 			ExpectError:   true,
@@ -57,6 +70,25 @@ func TestExportModel(t *testing.T) {
 	utils.InvokeMesheryctlTestCommand(t, update, ModelCmd, tests, currDir, "model")
 }
 
+// TestExportModelHelpShowsModelName checks that the help synopsis names the
+// model argument the command requires. Help short-circuits before argument
+// validation and the server request, so no Meshery server is needed.
+func TestExportModelHelpShowsModelName(t *testing.T) {
+	defer utils.ResetCommandFlags(ModelCmd, t)
+
+	buf := new(bytes.Buffer)
+	ModelCmd.SetArgs([]string{"export", "--help"})
+	ModelCmd.SetOut(buf)
+
+	err := ModelCmd.Execute()
+	assert.NoError(t, err)
+
+	// The test runs under ModelCmd, so the usage line starts at "model".
+	output := buf.String()
+	assert.Contains(t, output, "Usage:\n  model export [model-name] [flags]\n")
+	assert.NotContains(t, output, "model export [flags]")
+}
+
 func TestExportModelToFile(t *testing.T) {
 	defer utils.ResetCommandFlags(ModelCmd, t)
 	testContext := utils.InitTestEnvironment(t)
@@ -76,7 +108,6 @@ func TestExportModelToFile(t *testing.T) {
 	queryParams.Set("fileType", "oci")
 	queryParams.Set("components", "true")
 	queryParams.Set("relationships", "true")
-	queryParams.Set("page", "1")
 
 	exportURL := fmt.Sprintf("%s/api/registry/export?%s", testContext.BaseURL, queryParams.Encode())
 	httpmock.RegisterResponder("GET", exportURL,
@@ -95,4 +126,43 @@ func TestExportModelToFile(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, exportedContent, got)
 	assert.Contains(t, buf.String(), "Exported model to")
+}
+
+func TestExportModelDeprecatedPageFlag(t *testing.T) {
+	defer utils.ResetCommandFlags(ModelCmd, t)
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	oldToken := utils.TokenFlag
+	defer func() { utils.TokenFlag = oldToken }()
+	utils.TokenFlag = utils.GetToken(t)
+	mesheryctlflags.InitValidators(ModelCmd)
+
+	const modelName = "test-model"
+	exportedContent := []byte("exported-model-archive-bytes")
+
+	// --page is deprecated and must not be sent: the export API ignores it.
+	// httpmock answers only an exact URL match, so a request carrying page=2 would fail.
+	queryParams := url.Values{}
+	queryParams.Set("name", modelName)
+	queryParams.Set("outputFormat", "yaml")
+	queryParams.Set("fileType", "oci")
+	queryParams.Set("components", "true")
+	queryParams.Set("relationships", "true")
+
+	exportURL := fmt.Sprintf("%s/api/registry/export?%s", testContext.BaseURL, queryParams.Encode())
+	httpmock.RegisterResponder("GET", exportURL,
+		httpmock.NewBytesResponder(200, exportedContent))
+
+	outputDir := t.TempDir()
+	buf := utils.SetupMeshkitLoggerTesting(t, false)
+	ModelCmd.SetArgs([]string{"export", modelName, "--output-location", outputDir, "--page", "2"})
+	ModelCmd.SetOut(buf)
+
+	err := ModelCmd.Execute()
+	assert.NoError(t, err)
+
+	got, err := os.ReadFile(filepath.Join(outputDir, modelName+".tar"))
+	assert.NoError(t, err)
+	assert.Equal(t, exportedContent, got)
+	assert.Contains(t, buf.String(), "Flag --page has been deprecated")
 }

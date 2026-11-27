@@ -10,7 +10,7 @@ aliases:
 
 # mesheryctl design view
 
-Display a design content
+Display design content
 
 ## Synopsis
 
@@ -19,7 +19,7 @@ Display the content of a specific design based on name or id.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl design view design name [flags]
+mesheryctl design view [design-name | ID] [flags]
 
 </div>
 </div>

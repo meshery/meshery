@@ -9,6 +9,8 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -68,6 +70,19 @@ func TestViewProviderCmd(t *testing.T) {
 			BreakupFunc()
 		})
 	}
+
+	t.Run("given extra positional arguments when provider view then throw error", func(t *testing.T) {
+		b := utils.SetupMeshkitLoggerTesting(t, false)
+		SystemCmd.SetOut(b)
+		SystemCmd.SetArgs([]string{"provider", "view", "extra-arg"})
+		err := SystemCmd.Execute()
+
+		if assert.Error(t, err) {
+			assert.Contains(t, err.Error(), "too many arguments specified")
+			assert.Contains(t, err.Error(), viewProviderUsageMsg)
+		}
+		BreakupFunc()
+	})
 }
 func TestRunProviderWithNoCmdOrFlag(t *testing.T) {
 	setupSystemOutCmdTest(t)
@@ -135,6 +150,104 @@ func TestSwitchProviderCmdValidatesProviderBeforeConfirmation(t *testing.T) {
 			if assert.Error(t, err) {
 				assert.Contains(t, err.Error(), tt.expectedError)
 			}
+		})
+	}
+}
+
+// TestSwitchProviderCmdValidatesProviderOnContextInFocus checks that
+// `system provider switch --context X` asks X's Meshery server for its
+// providers, not the server of the current context.
+func TestSwitchProviderCmdValidatesProviderOnContextInFocus(t *testing.T) {
+	setupContextTestEnv(t)
+	t.Cleanup(BreakupFunc)
+	viper.Set("contexts.gke.endpoint", "http://gke.example.com:9081")
+	tempContext = "gke"
+
+	httpmock.Activate()
+	t.Cleanup(httpmock.DeactivateAndReset)
+	// The current context's server offers no providers, so validating against
+	// it would reject Local.
+	httpmock.RegisterResponder(http.MethodGet, "http://localhost:9081/api/providers",
+		httpmock.NewStringResponder(http.StatusOK, `{}`))
+	httpmock.RegisterResponder(http.MethodGet, "http://gke.example.com:9081/api/providers",
+		httpmock.NewStringResponder(http.StatusOK, `{"Local":{"providerName":"Local"}}`))
+
+	// Decline the confirmation prompt that follows a successful validation.
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, _ = w.WriteString("n\n")
+	_ = w.Close()
+	stdin := os.Stdin
+	os.Stdin = r
+	t.Cleanup(func() {
+		os.Stdin = stdin
+		_ = r.Close()
+	})
+
+	err = switchProviderCmd.RunE(switchProviderCmd, []string{"Local"})
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "provider switch aborted")
+	}
+	assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET http://gke.example.com:9081/api/providers"])
+	assert.Equal(t, 0, httpmock.GetCallCountInfo()["GET http://localhost:9081/api/providers"])
+
+	// The switch to gke is only for this command: current-context stays local,
+	// both in the loaded config and in the meshconfig file on disk.
+	assert.Equal(t, "local", viper.GetString("current-context"))
+	saved := viper.New()
+	saved.SetConfigFile(viper.ConfigFileUsed())
+	if err := saved.ReadInConfig(); err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, "local", saved.GetString("current-context"))
+}
+
+func TestListProviderCmd(t *testing.T) {
+	setupContextTestEnv(t)
+	t.Cleanup(BreakupFunc)
+
+	httpmock.Activate()
+	t.Cleanup(httpmock.DeactivateAndReset)
+	httpmock.RegisterResponder(http.MethodGet, "http://localhost:9081/api/providers",
+		httpmock.NewStringResponder(http.StatusOK, `{"Local":{"providerName":"Local"}}`))
+
+	tests := []struct {
+		name          string
+		args          []string
+		expectedError string
+		expectError   bool
+	}{
+		{
+			name:        "given no arguments when provider list then succeed",
+			args:        []string{"provider", "list"},
+			expectError: false,
+		},
+		{
+			name:          "given extra positional arguments when provider list then throw error",
+			args:          []string{"provider", "list", "extra-arg"},
+			expectError:   true,
+			expectedError: "too many arguments specified",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			b := utils.SetupMeshkitLoggerTesting(t, false)
+			SystemCmd.SetOut(b)
+			SystemCmd.SetArgs(tt.args)
+			err := SystemCmd.Execute()
+
+			if tt.expectError {
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), tt.expectedError)
+					assert.Contains(t, err.Error(), listProviderUsageMsg)
+				}
+			} else {
+				assert.NoError(t, err)
+			}
+			BreakupFunc()
 		})
 	}
 }

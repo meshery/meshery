@@ -37,6 +37,11 @@ func TestContextViewCmd(t *testing.T) {
 			ExpectedResponse: "viewWithContextExpected.golden",
 		},
 		{
+			Name:             "view with mixed-case context name through context flag",
+			Args:             []string{"context", "view", "--context", "Local2"},
+			ExpectedResponse: "viewWithContextExpected.golden",
+		},
+		{
 			Name:             "Error for viewing a non-existing context",
 			Args:             []string{"context", "view", "local3"},
 			IsOutputGolden:   false,
@@ -54,11 +59,50 @@ func TestContextViewCmd(t *testing.T) {
 			Args:             []string{"context", "view", "--all"},
 			ExpectedResponse: "viewAllExpected.golden",
 		},
+		{
+			Name:             "Error for viewing context with too many arguments",
+			Args:             []string{"context", "view", "local2", "extra-arg"},
+			IsOutputGolden:   false,
+			ExpectedResponse: "",
+			ExpectError:      true,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", contextViewUsageMsg)),
+		},
+		{
+			Name:             "Error for viewing context with all flag and positional context argument",
+			Args:             []string{"context", "view", "local2", "--all"},
+			IsOutputGolden:   false,
+			ExpectedResponse: "",
+			ExpectError:      true,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("--all flag cannot be used when context name is specified\n\n%s", contextViewUsageMsg)),
+		},
+		{
+			Name:             "Error for viewing context with all flag and context flag",
+			Args:             []string{"context", "view", "--context", "local2", "--all"},
+			IsOutputGolden:   false,
+			ExpectedResponse: "",
+			ExpectError:      true,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("--all flag cannot be used when context name is specified\n\n%s", contextViewUsageMsg)),
+		},
+		{
+			Name:             "Error for viewing context with all flag and empty context flag",
+			Args:             []string{"context", "view", "--context=", "--all"},
+			IsOutputGolden:   false,
+			ExpectedResponse: "",
+			ExpectError:      true,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("--all flag cannot be used when context name is specified\n\n%s", contextViewUsageMsg)),
+		},
 	}
 
 	mesheryctlflags.InitValidators(SystemCmd)
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			contextViewFlags = cmdContextViewFlags{}
+			if f := viewContextCmd.Flags().Lookup("context"); f != nil {
+				f.Changed = false
+			}
+			if f := viewContextCmd.Flags().Lookup("all"); f != nil {
+				f.Changed = false
+			}
 			buf := utils.SetupMeshkitLoggerTesting(t, false)
 			defer buf.Reset()
 
@@ -114,6 +158,12 @@ func TestContextListCmd(t *testing.T) {
 			Args:             []string{"context", "list"},
 			ExpectedResponse: "listExpected.golden",
 		},
+		{
+			Name:          "given extra positional arguments when context list then throw error",
+			Args:          []string{"context", "list", "extra-arg"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", listContextUsageMsg)),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
@@ -125,7 +175,15 @@ func TestContextListCmd(t *testing.T) {
 			SystemCmd.SetArgs(tt.Args)
 			err := SystemCmd.Execute()
 			if err != nil {
-				t.Error(err)
+				if tt.ExpectError {
+					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+					return
+				}
+				t.Fatal(err)
+			}
+
+			if tt.ExpectError {
+				t.Fatalf("expected error, got nil")
 			}
 
 			actualResponse := buf.String()
@@ -141,7 +199,6 @@ func TestContextListCmd(t *testing.T) {
 
 			assert.Equal(t, expectedResponse, actualResponse)
 		})
-		t.Log("ListContextCmd test passed")
 	}
 }
 

@@ -14,11 +14,11 @@ Set token for context
 
 ## Synopsis
 
-Set token for current context or context specified with --context flag.
+Set token for current context or context specified with --context flag. The token must already exist in your meshconfig tokens.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token set [flags]
+mesheryctl system token set &lt;token-name&gt; [flags]
 
 </div>
 </div>
@@ -29,7 +29,7 @@ mesheryctl system token set [flags]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl system token set [token-name] 
+mesheryctl system token set my-token
 
 </div>
 </div>
@@ -39,8 +39,7 @@ mesheryctl system token set [token-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --context string   Pass the context
-  -h, --help             help for set
+  -h, --help   help for set
 
 </div>
 </pre>
@@ -49,9 +48,10 @@ mesheryctl system token set [token-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "~/.meshery/config.yaml")
-  -v, --verbose         verbose output
-  -y, --yes             (optional) assume yes for user interactive prompts.
+      --config string    path to config file (default "~/.meshery/config.yaml")
+  -c, --context string   (optional) temporarily change the current context.
+  -v, --verbose          verbose output
+  -y, --yes              (optional) assume yes for user interactive prompts.
 
 </div>
 </pre>

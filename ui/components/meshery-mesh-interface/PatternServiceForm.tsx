@@ -40,6 +40,10 @@ function PatternServiceForm({
   const theme = useTheme();
 
   useEffect(() => {
+    if (!schemaSet?.workload) return;
+    if (!schemaSet.workload.properties) {
+      schemaSet.workload.properties = {};
+    }
     schemaSet.workload.properties.name = {
       description: 'A descriptive label for this component. Must be unique within this design.',
       default: '<Name of the Component>',

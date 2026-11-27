@@ -23,7 +23,7 @@ describe('durationOptions', () => {
       '2h',
       '5h',
       '10h',
-      '1d',
+      '24h',
     ]);
   });
 
@@ -34,14 +34,14 @@ describe('durationOptions', () => {
   });
 
   it('every entry ends with a recognised time unit suffix', () => {
-    const allowedSuffixes = /[smhd]$/;
+    const allowedSuffixes = /[smh]$/;
     durationOptions.forEach((opt) => {
       expect(opt).toMatch(allowedSuffixes);
     });
   });
 
   it('entries follow the "<number><unit>" pattern', () => {
-    const pattern = /^\d+[smhd]$/;
+    const pattern = /^\d+[smh]$/;
     durationOptions.forEach((opt) => {
       expect(opt).toMatch(pattern);
     });
@@ -56,6 +56,6 @@ describe('durationOptions', () => {
   });
 
   it('ends with the largest duration', () => {
-    expect(durationOptions[durationOptions.length - 1]).toBe('1d');
+    expect(durationOptions[durationOptions.length - 1]).toBe('24h');
   });
 });

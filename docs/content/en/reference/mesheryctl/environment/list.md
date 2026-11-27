@@ -27,7 +27,7 @@ mesheryctl environment list [flags]
 
 ## Examples
 
-List all registered environment
+List all registered environments
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -37,7 +37,7 @@ mesheryctl environment list --orgId [orgId]
 </div>
 </pre> 
 
-List count of all registered environment
+List count of all registered environments
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -47,7 +47,7 @@ mesheryctl environment list --orgId [orgId] --count
 </div>
 </pre> 
 
-List all registered environment at a specific page
+List all registered environments at a specific page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -57,7 +57,7 @@ mesheryctl environment list --orgId [orgId] --page [page]
 </div>
 </pre> 
 
-List all registered environment with a specific page size
+List all registered environments with a specific page size
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
