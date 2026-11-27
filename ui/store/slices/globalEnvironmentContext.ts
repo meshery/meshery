@@ -81,7 +81,7 @@ const selectIsConnectionSelected = (state, envId, connectionId) => {
     .includes(connectionId);
 };
 
-// Shared fallback so selectors return a stable reference when the slice is missing
+// Shared fallbacks so selectors return a stable reference when the slice or env is missing
 // (e.g. a component rendered under a different Redux store).
 const EMPTY_SELECTED_ENVS = Object.freeze({});
 const EMPTY_SELECTED_CONNECTIONS = Object.freeze([]);
