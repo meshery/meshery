@@ -499,12 +499,12 @@ export const useUpdateSelectedWorkspaceMutation = () => {
   const [updateUserPref, response] = useUpdateUserPrefMutation();
 
   const updateSelectedWorkspace = async (orgId, workspaceId) => {
-    await updateUserPref({
+    return await updateUserPref({
       selectedWorkspaceForOrganizations: {
-        ...(userPrefs.selectedWorkspaceForOrganizations || {}),
+        ...(userPrefs?.selectedWorkspaceForOrganizations || {}),
         [orgId]: workspaceId,
       },
-    });
+    }).unwrap();
   };
 
   return [updateSelectedWorkspace, response];
