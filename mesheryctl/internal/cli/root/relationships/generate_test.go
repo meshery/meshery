@@ -305,8 +305,8 @@ func TestProcessSheetDataSafety(t *testing.T) {
 				{"header2"},
 				// Row with nil first cell should be skipped safely
 				{nil, "v1", "Pod", "edge", "mount", "desc", "docs", "styles", "eval", "", "", "", "", "", ""},
-				// Row with numeric/boolean/nil cells should convert safely
-				{"k8s", float64(1), "Pod", "edge", "mount", nil, "docs", true, "eval", "", "", "", "", "", ""},
+				// Row with numeric/boolean/nil cells should convert safely without exponent notation
+				{"k8s", float64(1234567), "Pod", "edge", "mount", nil, "docs", true, "eval", "", "", "", "", "", ""},
 			},
 		}
 
@@ -320,7 +320,7 @@ func TestProcessSheetDataSafety(t *testing.T) {
 		assert.NoError(t, json.Unmarshal(raw, &parsed))
 		assert.Len(t, parsed, 1)
 		assert.Equal(t, "k8s", parsed[0].Model)
-		assert.Equal(t, "1", parsed[0].Version)
+		assert.Equal(t, "1234567", parsed[0].Version)
 		assert.Equal(t, "", parsed[0].MetadataDescription)
 		assert.Equal(t, "true", parsed[0].MetadataStyles)
 	})

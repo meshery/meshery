@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
@@ -203,10 +204,14 @@ func sheetCellString(cell interface{}) string {
 	if cell == nil {
 		return ""
 	}
-	if s, ok := cell.(string); ok {
-		return s
+	switch v := cell.(type) {
+	case string:
+		return v
+	case float64:
+		return strconv.FormatFloat(v, 'f', -1, 64)
+	default:
+		return fmt.Sprint(cell)
 	}
-	return fmt.Sprint(cell)
 }
 
 func saveRelationshipsJSON(data []CustomValueRange, jsonFilePath string) error {
