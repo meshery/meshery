@@ -1302,24 +1302,34 @@ const (
 	ociRepositoryNameMaxLength = 255
 )
 
-// ociRepositoryName maps a model name to a valid OCI repository name. The
-// mapping is lossy: distinct names can sanitize to the same repository name
-// (for example "foo bar" and "foo-bar"), so callers pushing to a shared
-// registry should be aware of possible collisions.
+// ociRepositoryName maps a model name to a valid OCI repository name, with
+// "model" as the fallback; see ociRepositoryNameOr.
 func ociRepositoryName(modelName string) string {
-	if len(modelName) >= ociRepositoryNameMinLength && len(modelName) <= ociRepositoryNameMaxLength &&
-		ociRepositoryNamePattern.MatchString(modelName) {
-		return modelName
+	return ociRepositoryNameOr(modelName, "model")
+}
+
+// ociRepositoryNameOr maps name to a valid OCI repository name. A valid name
+// is returned unchanged. Any other name is lowercased, and each run of
+// characters other than a-z and 0-9, including "." and "_", becomes "-" (so
+// "Istio.Base" becomes "istio-base"). fallback, itself a
+// valid repository name, replaces a name with nothing left and is appended to
+// one that is too short. The mapping is lossy: distinct names can sanitize to
+// the same repository name (for example "foo bar" and "foo-bar"), so callers
+// pushing to a shared registry should be aware of possible collisions.
+func ociRepositoryNameOr(name, fallback string) string {
+	if len(name) >= ociRepositoryNameMinLength && len(name) <= ociRepositoryNameMaxLength &&
+		ociRepositoryNamePattern.MatchString(name) {
+		return name
 	}
-	sanitized := strings.Trim(ociRepositoryNameInvalid.ReplaceAllString(strings.ToLower(modelName), "-"), "-")
+	sanitized := strings.Trim(ociRepositoryNameInvalid.ReplaceAllString(strings.ToLower(name), "-"), "-")
 	if len(sanitized) > ociRepositoryNameMaxLength {
 		sanitized = strings.TrimRight(sanitized[:ociRepositoryNameMaxLength], "-")
 	}
 	switch {
 	case sanitized == "":
-		return "model"
+		return fallback
 	case len(sanitized) < ociRepositoryNameMinLength:
-		return sanitized + "-model"
+		return sanitized + "-" + fallback
 	}
 	return sanitized
 }

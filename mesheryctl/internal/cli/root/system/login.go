@@ -66,7 +66,7 @@ mesheryctl system login -p Meshery
 			return ErrGetCurrentContext(err)
 		}
 
-		isRunning, err := utils.IsMesheryRunning(currCtx.GetPlatform())
+		isRunning, err := utils.IsMesheryRunning(currCtx)
 		if err != nil {
 			return utils.ErrMesheryCheckRunningStatus(err)
 		}
