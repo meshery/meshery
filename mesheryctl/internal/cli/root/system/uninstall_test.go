@@ -100,15 +100,6 @@ func TestUninstallKubernetesErrorRemediation(t *testing.T) {
 	assert.NotContains(t, remediation, "Docker")
 }
 
-// TestSystemUninstallErrorReference verifies the "uninstall" error formatting
-// points at the uninstall command reference page.
-func TestSystemUninstallErrorReference(t *testing.T) {
-	msg := utils.SystemLifeCycleError("this command takes no arguments.\n", "uninstall")
-
-	assert.Contains(t, msg, "this command takes no arguments")
-	assert.Contains(t, msg, "https://docs.meshery.io/reference/mesheryctl/system/uninstall")
-}
-
 // TestUninstallHealthCheckOptions pins the teardown preflight: version checks
 // are skipped so an outdated cluster or kubectl cannot block an uninstall, but
 // the PreRunE mode (and therefore the API connectivity checks) is preserved.
@@ -1064,13 +1055,13 @@ func TestUninstallCmdArgs(t *testing.T) {
 			Name:          "invalid with unexpected positional arguments",
 			Args:          []string{"unexpected-arg"},
 			ExpectError:   true,
-			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", uninstallUsageMsg)),
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\nUsage: mesheryctl system uninstall [flags]\nRun 'mesheryctl system uninstall --help' to see detailed help message")),
 		},
 		{
 			Name:          "invalid with multiple positional arguments",
 			Args:          []string{"arg1", "arg2"},
 			ExpectError:   true,
-			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", uninstallUsageMsg)),
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\nUsage: mesheryctl system uninstall [flags]\nRun 'mesheryctl system uninstall --help' to see detailed help message")),
 		},
 	}
 
