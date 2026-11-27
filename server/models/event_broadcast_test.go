@@ -521,6 +521,51 @@ func TestBroadcastHistoryIdleEviction(t *testing.T) {
 	}
 }
 
+func TestBroadcastCursorsUniqueAcrossIdleEviction(t *testing.T) {
+	b := &Broadcast{
+		historyIdleTTL:       20 * time.Millisecond,
+		historySweepInterval: time.Millisecond,
+	}
+	userID := uuid.Must(uuid.NewV4())
+	otherUser := uuid.Must(uuid.NewV4())
+
+	_, liveCh, liveUnsub := b.SubscribeFrom(userID, "")
+	sharedID := uuid.Must(uuid.NewV4())
+	first := newTestEventWithID(userID, "first")
+	first.ID = sharedID
+
+	b.Publish(userID, first)
+	firstCursor := (<-liveCh).(ReplayEvent).Cursor
+	liveUnsub()
+
+	time.Sleep(35 * time.Millisecond)
+
+	// Trigger eviction of userID's idle buffer.
+	b.Publish(otherUser, newTestEventWithID(otherUser, "sweep"))
+	if _, ok := b.history.Load(userID); ok {
+		t.Fatal("expected idle user history to be evicted")
+	}
+
+	// Publish the same event UUID again after buffer recreation.
+	_, liveCh2, liveUnsub2 := b.SubscribeFrom(userID, "")
+	defer liveUnsub2()
+	second := newTestEventWithID(userID, "second")
+	second.ID = sharedID
+	b.Publish(userID, second)
+	secondCursor := (<-liveCh2).(ReplayEvent).Cursor
+
+	if secondCursor == firstCursor {
+		t.Fatalf("cursor reused across buffer eviction: %q", secondCursor)
+	}
+
+	// Reconnecting with firstCursor must not collide with secondCursor and must replay second.
+	replay, _, unsub := b.SubscribeFrom(userID, firstCursor)
+	defer unsub()
+	if len(replay) != 1 || replay[0].Data.(*events.Event).Description != "second" {
+		t.Fatalf("expected [second] on reconnect with old cursor, got %v", replay)
+	}
+}
+
 func TestBroadcastConcurrentPublishAndSubscribeFromNoRace(t *testing.T) {
 	b := NewBroadcaster("test")
 	userID := uuid.Must(uuid.NewV4())

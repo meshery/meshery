@@ -49,14 +49,12 @@ type replayBuffer struct {
 	entries      [replayBufferSize]replayEntry
 	head         int
 	count        int
-	nextSeq      uint64
 	lastActivity time.Time
 	evicted      bool
 }
 
-func (rb *replayBuffer) append(eventID string, data interface{}, now time.Time) string {
-	rb.nextSeq++
-	cursor := fmt.Sprintf("%s:%d", eventID, rb.nextSeq)
+func (rb *replayBuffer) append(eventID string, data interface{}, seq uint64, now time.Time) string {
+	cursor := fmt.Sprintf("%s:%d", eventID, seq)
 	rb.entries[rb.head] = replayEntry{id: eventID, cursor: cursor, data: data}
 	rb.head = (rb.head + 1) % replayBufferSize
 	if rb.count < replayBufferSize {
@@ -132,6 +130,7 @@ type clients struct {
 type Broadcast struct {
 	clients              sync.Map
 	history              sync.Map // core.Uuid -> *replayBuffer
+	nextSeq              atomic.Uint64
 	lastHistorySweepNs   atomic.Int64
 	historyIdleTTL       time.Duration
 	historySweepInterval time.Duration
@@ -293,7 +292,7 @@ func (c *Broadcast) Publish(id core.Uuid, data interface{}) {
 		now := time.Now()
 		c.maybePruneIdleHistory(now)
 		rb := c.lockReplayBuffer(id, now)
-		cursor := rb.append(eventID, data, now)
+		cursor := rb.append(eventID, data, c.nextSeq.Add(1), now)
 		c.publishToClients(id, data, cursor)
 		rb.mu.Unlock()
 		return

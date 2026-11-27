@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -19,8 +20,10 @@ import (
 // a safeBuffer because the handler writes from its own goroutine while the test
 // reads the captured body.
 type sseRecorder struct {
-	header http.Header
-	body   *safeBuffer
+	header    http.Header
+	body      *safeBuffer
+	readyCh   chan struct{}
+	readyOnce sync.Once
 	*testFlusher
 }
 
@@ -28,13 +31,14 @@ func newSSERecorder(writeCh chan struct{}) *sseRecorder {
 	return &sseRecorder{
 		header:      make(http.Header),
 		body:        &safeBuffer{writeCh: writeCh},
+		readyCh:     make(chan struct{}),
 		testFlusher: &testFlusher{},
 	}
 }
 
 func (r *sseRecorder) Header() http.Header         { return r.header }
 func (r *sseRecorder) Write(p []byte) (int, error) { return r.body.Write(p) }
-func (r *sseRecorder) WriteHeader(int)             {}
+func (r *sseRecorder) WriteHeader(int)             { r.readyOnce.Do(func() { close(r.readyCh) }) }
 
 func newEventsTestHandler(t *testing.T) *Handler {
 	t.Helper()
@@ -348,23 +352,18 @@ func TestSubscribeEventsHandler_RepeatedEventIDsReplay(t *testing.T) {
 		close(done1)
 	}()
 
+	// Wait for SubscribeFrom to register the listener before publishing firstA once.
+	select {
+	case <-rec1.readyCh:
+	case <-time.After(testTimeout):
+		t.Fatalf("timed out waiting for SSE handler subscription")
+	}
+
 	sharedID := uuid.Must(uuid.NewV4())
 	firstA := newTestEventWithID(userID, "first-A")
 	firstA.ID = sharedID
-
-	deadline := time.After(testTimeout)
-	for !strings.Contains(rec1.body.String(), "first-A") {
-		select {
-		case <-deadline:
-			t.Fatalf("timed out waiting for first-A; got: %q", rec1.body.String())
-		default:
-		}
-		h.config.EventBroadcaster.Publish(userID, firstA)
-		select {
-		case <-writeCh1:
-		case <-time.After(20 * time.Millisecond):
-		}
-	}
+	h.config.EventBroadcaster.Publish(userID, firstA)
+	waitForBodyContains(t, rec1, writeCh1, "first-A")
 
 	var firstCursor string
 	for _, frame := range strings.Split(rec1.body.String(), "\n\n") {
