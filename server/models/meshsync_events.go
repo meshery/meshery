@@ -396,54 +396,17 @@ func mergeComponentMetadata(existing, compMetadata map[string]interface{}) map[s
 }
 
 func hasMeaningfulMeshSyncCapabilities(value interface{}) bool {
-	switch value := value.(type) {
-	case map[string]interface{}:
-		for _, nested := range value {
-			if hasMeaningfulMeshSyncCapabilities(nested) {
-				return true
-			}
-		}
-		return false
-	case []interface{}:
-		for _, nested := range value {
-			if hasMeaningfulMeshSyncCapabilities(nested) {
-				return true
-			}
-		}
-		return false
-	case bool:
-		return value
-	case string:
-		return strings.TrimSpace(value) != ""
-	case nil:
-		return false
-	case int:
-		return value > 0
-	case int8:
-		return value > 0
-	case int16:
-		return value > 0
-	case int32:
-		return value > 0
-	case int64:
-		return value > 0
-	case uint:
-		return value != 0
-	case uint8:
-		return value != 0
-	case uint16:
-		return value != 0
-	case uint32:
-		return value != 0
-	case uint64:
-		return value != 0
-	case float32:
-		return value > 0
-	case float64:
-		return value > 0
-	default:
+	m, ok := value.(map[string]interface{})
+	if !ok || len(m) == 0 {
 		return false
 	}
+	if conn, ok := m["connection"].(bool); ok && conn {
+		return true
+	}
+	if urls, ok := m["urls"].([]interface{}); ok && len(urls) > 0 {
+		return true
+	}
+	return false
 }
 
 // Returns metadata for the component identified by apiVersion and kind.

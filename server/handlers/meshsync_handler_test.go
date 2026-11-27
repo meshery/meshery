@@ -620,3 +620,59 @@ func TestDeleteMeshSyncResource_RemovesChildRows(t *testing.T) {
 		}
 	}
 }
+
+func TestGetMeshSyncResources_RedactsDiscoveryURLs(t *testing.T) {
+	h, provider, db := newMeshSyncTestFixture(t)
+
+	id := uuid.Must(uuid.NewV4()).String()
+	meta := model.KubernetesResourceObjectMeta{
+		ID:   id,
+		Name: "service-resource",
+		UID:  id,
+	}
+	if err := db.Create(&meta).Error; err != nil {
+		t.Fatalf("failed to seed meta: %v", err)
+	}
+	res := model.KubernetesResource{
+		ID:        id,
+		ClusterID: "test-cluster",
+		ComponentMetadata: map[string]interface{}{
+			"capabilities": map[string]interface{}{
+				"connection": true,
+				"urls":       []interface{}{"http://10.0.0.1:9090"},
+			},
+		},
+	}
+	if err := db.Table("kubernetes_resources").Create(&res).Error; err != nil {
+		t.Fatalf("failed to seed res: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/system/meshsync/resources?clusterIds="+url.QueryEscape(`["test-cluster"]`), nil)
+	rec := httptest.NewRecorder()
+
+	h.GetMeshSyncResources(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status 200, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+
+	var response models.MeshSyncResourcesAPIResponse
+	if err := json.Unmarshal(rec.Body.Bytes(), &response); err != nil {
+		t.Fatalf("unmarshal response: %v", err)
+	}
+
+	if len(response.Resources) != 1 {
+		t.Fatalf("expected 1 resource, got %d", len(response.Resources))
+	}
+
+	caps, ok := response.Resources[0].ComponentMetadata["capabilities"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected capabilities map, got %#v", response.Resources[0].ComponentMetadata["capabilities"])
+	}
+	if conn, ok := caps["connection"].(bool); !ok || !conn {
+		t.Errorf("expected connection: true, got %#v", caps["connection"])
+	}
+	if _, hasURLs := caps["urls"]; hasURLs {
+		t.Errorf("expected urls to be redacted from list response, but got %#v", caps["urls"])
+	}
+}

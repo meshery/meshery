@@ -69,12 +69,10 @@ export default function MeshSyncTable(props) {
   });
   const [registerConnection, setRegisterConnection] = useState<{
     metadata?: unknown;
-    kind?: string;
     capabilities?: unknown;
     resourceID?: string;
   }>({
     metadata: {},
-    kind: '',
   });
   const { width } = useWindowDimensions();
 
@@ -138,7 +136,18 @@ export default function MeshSyncTable(props) {
     ...new Set((clusterSummary?.kinds || []).map((kind) => kind.model).filter(Boolean)),
   ];
   const availableNamespaces = clusterSummary?.namespaces || [];
-  const meshSyncResources = meshSyncData?.resources || [];
+  const meshSyncResources = useMemo(() => {
+    return (meshSyncData?.resources || []).map((resource) => {
+      const isConnectionCapable = resource?.component_metadata?.capabilities?.connection === true;
+      const existingStatus = resolveMeshSyncLifecycleStatus(resource?.status);
+      const status =
+        existingStatus || (isConnectionCapable ? MESHSYNC_STATES.DISCOVERED : resource?.status);
+      return {
+        ...resource,
+        status,
+      };
+    });
+  }, [meshSyncData?.resources]);
 
   const colViews = useMemo(
     () => [
@@ -393,7 +402,6 @@ export default function MeshSyncTable(props) {
                     setRegisterConnection({
                       capabilities: componentMetadata?.capabilities,
                       metadata: JsonParse(componentMetadata?.metadata),
-                      kind: getColumnValue(tableMeta.rowData, 'kind', columns) || '',
                       resourceID: getColumnValue(tableMeta.rowData, 'id', columns),
                     });
                     setRegistrationModal(true);

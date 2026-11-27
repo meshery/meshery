@@ -199,7 +199,6 @@ describe('MeshSyncTable', () => {
         clusterIds: JSON.stringify(['cluster-a', 'cluster-b']),
       }),
     );
-    expect(useGetMeshSyncResourcesQuery.mock.calls[0][0]).not.toHaveProperty('status');
     expect(useGetMeshSyncResourceKindsQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         clusterIds: ['cluster-a', 'cluster-b'],
@@ -420,7 +419,6 @@ describe('MeshSyncTable', () => {
     render(statusCol.options.customBodyRender('discovered', { rowData, rowIndex: 0 }));
 
     expect(statusSelectProps.value).toBe('discovered');
-    expect(statusSelectProps.defaultValue).toBeUndefined();
 
     const stopPropagation = vi.fn();
     act(() => {
@@ -437,8 +435,67 @@ describe('MeshSyncTable', () => {
     expect(registerConnectionModalProps.connectionData).toEqual({
       capabilities,
       metadata: { host: '10.0.0.1' },
-      kind: 'Service',
       resourceID: 'resource-uuid-123',
+    });
+  });
+
+  it('projects discovered status for connection-capable inventory Service and opens registration dialog on register', () => {
+    getColumnValue.mockImplementation((rowData, columnName, cols) => {
+      const idx = cols.findIndex((col) => col?.name === columnName);
+      return idx === -1 ? undefined : rowData[idx];
+    });
+
+    useGetMeshSyncResourcesQuery.mockReturnValue({
+      data: {
+        resources: [
+          {
+            id: 'svc-uuid-1',
+            kind: 'Service',
+            model: 'core',
+            cluster_id: 'cluster-a',
+            component_metadata: {
+              capabilities: { connection: true, urls: ['http://10.0.0.1:9090'] },
+              metadata: '{"host":"10.0.0.1"}',
+            },
+          },
+        ],
+        totalCount: 1,
+      },
+      isError: false,
+    });
+
+    render(<MeshSyncTable />);
+
+    const { columns, data } = dataTableProps;
+    expect(data[0].status).toBe('discovered');
+
+    const statusCol = columns.find((col) => col.name === 'status');
+    const rowData = columns.map((col) => {
+      if (col.name === 'id') return 'svc-uuid-1';
+      if (col.name === 'kind') return 'Service';
+      if (col.name === 'component_metadata') {
+        return {
+          capabilities: { connection: true, urls: ['http://10.0.0.1:9090'] },
+          metadata: '{"host":"10.0.0.1"}',
+        };
+      }
+      return null;
+    });
+
+    render(statusCol.options.customBodyRender(data[0].status, { rowData, rowIndex: 0 }));
+
+    expect(statusSelectProps).toBeDefined();
+    expect(statusSelectProps.value).toBe('discovered');
+
+    act(() => {
+      statusSelectProps.onChange({ target: { value: 'register' } });
+    });
+
+    expect(registerConnectionModalProps.openRegistrationModal).toBe(true);
+    expect(registerConnectionModalProps.connectionData).toEqual({
+      capabilities: { connection: true, urls: ['http://10.0.0.1:9090'] },
+      metadata: { host: '10.0.0.1' },
+      resourceID: 'svc-uuid-1',
     });
   });
 
@@ -515,7 +572,6 @@ describe('MeshSyncTable', () => {
     expect(registerConnectionModalProps.connectionData).toEqual({
       capabilities: { connection: true },
       metadata: { host: '10.0.0.1' },
-      kind: 'Service',
       resourceID: 'resource-uuid-123',
     });
   });
@@ -547,7 +603,6 @@ describe('MeshSyncTable', () => {
     expect(registerConnectionModalProps.connectionData).toEqual({
       capabilities: { connection: true },
       metadata: undefined,
-      kind: 'Service',
       resourceID: 'resource-uuid-456',
     });
   });

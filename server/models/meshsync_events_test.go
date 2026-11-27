@@ -1030,6 +1030,20 @@ func TestMergeComponentMetadataCapabilities(t *testing.T) {
 			wantCapabilities:    registryCapabilities,
 		},
 		{
+			name:                 "scalar positive integer uses registry capabilities",
+			existingCapabilities: 1,
+			includeCapabilities:  true,
+			wantCapabilities:     registryCapabilities,
+		},
+		{
+			name: "nested map without direct connection or urls uses registry capabilities",
+			existingCapabilities: map[string]interface{}{
+				"nested": map[string]interface{}{"connection": true},
+			},
+			includeCapabilities: true,
+			wantCapabilities:    registryCapabilities,
+		},
+		{
 			name:                 "populated discovery map is preserved",
 			existingCapabilities: meshSyncCapabilities,
 			includeCapabilities:  true,

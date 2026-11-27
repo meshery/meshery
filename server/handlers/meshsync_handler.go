@@ -363,6 +363,19 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		return
 	}
 
+	// Redact private discovery URLs from the list response. The connection
+	// boolean is kept so the UI can gate the Register action; endpoint URLs
+	// are only needed by the detail endpoint used during registration.
+	for i := range resources {
+		if caps, ok := resources[i].ComponentMetadata["capabilities"].(map[string]interface{}); ok {
+			redacted := make(map[string]interface{}, 1)
+			if conn, ok := caps["connection"]; ok {
+				redacted["connection"] = conn
+			}
+			resources[i].ComponentMetadata["capabilities"] = redacted
+		}
+	}
+
 	var pgSize int
 	if limit == 0 {
 		pgSize = len(resources)
