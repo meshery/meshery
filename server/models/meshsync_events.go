@@ -388,6 +388,9 @@ func mergeComponentMetadata(existing, compMetadata map[string]interface{}) map[s
 	merged := utils.MergeMaps(existing, compMetadata)
 	if hasExistingCapabilities && hasMeaningfulMeshSyncCapabilities(existingCapabilities) {
 		merged["capabilities"] = existingCapabilities
+		if registryCapabilities, ok := compMetadata["capabilities"]; ok {
+			merged["registry_capabilities"] = registryCapabilities
+		}
 	}
 	return merged
 }

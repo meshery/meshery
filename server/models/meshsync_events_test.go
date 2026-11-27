@@ -1070,6 +1070,11 @@ func TestMergeComponentMetadataCapabilities(t *testing.T) {
 
 			assert.Equal(t, tt.wantCapabilities, merged["capabilities"])
 			assert.Equal(t, map[string]interface{}{"svgColor": "registry"}, merged["styles"])
+			if tt.name == "populated discovery map is preserved" || tt.name == "valid discovery URL is preserved" {
+				assert.Equal(t, registryCapabilities, merged["registry_capabilities"])
+			} else {
+				assert.NotContains(t, merged, "registry_capabilities")
+			}
 			if tt.name == "unrelated discovery metadata is preserved" {
 				assert.Equal(t, "prometheus", merged["discoveryName"])
 			}

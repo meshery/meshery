@@ -76,8 +76,14 @@ func KubernetesResourceToComponentDef(resource model.KubernetesResource, stripSc
 	if _, ok := componentMetadata["capabilities"].(map[string]interface{}); ok {
 		componentMetadata = make(map[string]interface{}, len(resource.ComponentMetadata)-1)
 		for key, value := range resource.ComponentMetadata {
-			if key != "capabilities" {
+			if key != "capabilities" && key != "registry_capabilities" {
 				componentMetadata[key] = value
+			}
+		}
+		if registryCapabilities, ok := resource.ComponentMetadata["registry_capabilities"]; ok {
+			registryMetadata := map[string]interface{}{"capabilities": registryCapabilities}
+			if err := MapToStruct(registryMetadata, &componentDef); err != nil {
+				return nil, fmt.Errorf("failed to map registry capabilities: %w", err)
 			}
 		}
 	}

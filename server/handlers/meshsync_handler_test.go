@@ -144,6 +144,9 @@ func TestGetMeshSyncResourceByID_Success(t *testing.T) {
 				"connection": true,
 				"urls":       []interface{}{"http://10.0.0.1:9090"},
 			},
+			"registry_capabilities": []interface{}{
+				map[string]interface{}{"kind": "action", "displayName": "Connect"},
+			},
 		},
 	}
 	// Insert via Table to preserve exact UUID primary key without BeforeCreate hook overriding it
@@ -163,6 +166,36 @@ func TestGetMeshSyncResourceByID_Success(t *testing.T) {
 
 	if ct := rec.Header().Get("Content-Type"); ct != "application/json" {
 		t.Errorf("expected Content-Type application/json, got %q", ct)
+	}
+}
+
+func TestKubernetesResourceToComponentDefPreservesRegistryCapabilities(t *testing.T) {
+	resource := model.KubernetesResource{
+		ComponentMetadata: map[string]interface{}{
+			"name": "prometheus",
+			"capabilities": map[string]interface{}{
+				"connection": true,
+				"urls":       []interface{}{"http://10.0.0.1:9090"},
+			},
+			"registry_capabilities": []interface{}{
+				map[string]interface{}{"kind": "action", "displayName": "Connect"},
+			},
+		},
+		KubernetesResourceMeta: &model.KubernetesResourceObjectMeta{
+			Name: "prometheus",
+			UID:  "test-resource-id",
+		},
+	}
+
+	componentDef, err := KubernetesResourceToComponentDef(resource, true, true)
+	if err != nil {
+		t.Fatalf("KubernetesResourceToComponentDef returned an error: %v", err)
+	}
+	if componentDef.Capabilities == nil || len(*componentDef.Capabilities) != 1 {
+		t.Fatalf("expected registry capabilities to be preserved, got %#v", componentDef.Capabilities)
+	}
+	if got := (*componentDef.Capabilities)[0].Kind; got != "action" {
+		t.Fatalf("expected registry capability kind action, got %q", got)
 	}
 }
 
