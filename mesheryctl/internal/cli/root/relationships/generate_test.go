@@ -324,4 +324,23 @@ func TestProcessSheetDataSafety(t *testing.T) {
 		assert.Equal(t, "", parsed[0].MetadataDescription)
 		assert.Equal(t, "true", parsed[0].MetadataStyles)
 	})
+
+	t.Run("sheet where all data rows are filtered out returns ErrEmptySheetData", func(t *testing.T) {
+		filteredOutputPath := filepath.Join(t.TempDir(), "filtered-relationships.json")
+		resp := &sheets.ValueRange{
+			Values: [][]interface{}{
+				{"header1"},
+				{"header2"},
+				{"k8s", "v1"},
+				{nil, "v1", "Pod", "edge", "mount", "desc", "docs", "styles", "eval", "", "", "", "", "", ""},
+				{"", "v1", "Pod", "edge", "mount", "desc", "docs", "styles", "eval", "", "", "", "", "", ""},
+			},
+		}
+
+		err := processSheetData(resp, filteredOutputPath)
+		assert.Error(t, err)
+		utils.AssertMeshkitErrorsEqual(t, err, ErrEmptySheetData(fmt.Errorf("no valid relationship rows found in sheet")))
+		_, statErr := os.Stat(filteredOutputPath)
+		assert.True(t, os.IsNotExist(statErr))
+	})
 }

@@ -192,6 +192,10 @@ func processSheetData(resp *sheets.ValueRange, jsonFilePath string) error {
 		}
 	}
 
+	if len(customResp) == 0 {
+		return ErrEmptySheetData(fmt.Errorf("no valid relationship rows found in sheet"))
+	}
+
 	return saveRelationshipsJSON(customResp, jsonFilePath)
 }
 
