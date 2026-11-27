@@ -356,3 +356,31 @@ func TestFilterPOSTRejectsMissingFilterDataAndURL(t *testing.T) {
 		})
 	}
 }
+
+// TestFilterPOSTNormalizesPaddedURL verifies that leading/trailing whitespace
+// around a valid url is trimmed before validation and before reaching RemoteFilterFile.
+func TestFilterPOSTNormalizesPaddedURL(t *testing.T) {
+	allowLoopbackRemoteFileImports(t)
+	h, provider, db := newFilterPOSTFixture(t)
+	provider.Log = h.log
+	source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte("name: from-padded-url\n"))
+	}))
+	t.Cleanup(source.Close)
+
+	rec := postFilter(t, h, provider, models.MesheryFilterRequestBody{
+		Save: true,
+		URL:  "  " + source.URL + "/filter.yaml  ",
+	})
+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+
+	var imported []models.MesheryFilter
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &imported))
+	require.Len(t, imported, 1, "the response must carry the imported filter, got %s", rec.Body.String())
+	assert.Equal(t, "from-padded-url", imported[0].Name)
+	require.NotNil(t, imported[0].ID)
+
+	var stored models.MesheryFilter
+	require.NoError(t, db.Where("id = ?", *imported[0].ID).First(&stored).Error)
+	assert.Equal(t, "from-padded-url", stored.Name)
+}

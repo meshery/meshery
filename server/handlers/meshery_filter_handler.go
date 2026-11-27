@@ -172,7 +172,8 @@ func (h *Handler) handleFilterPOST(
 
 	eventBuilder.ActedUpon(*actedUpon)
 
-	if parsedBody.FilterData == nil && strings.TrimSpace(parsedBody.URL) == "" {
+	parsedBody.URL = strings.TrimSpace(parsedBody.URL)
+	if parsedBody.FilterData == nil && parsedBody.URL == "" {
 		writeBadRequest(
 			fmt.Errorf("either filterData or url is required"),
 			"Filter request body must include either filterData or url.",
