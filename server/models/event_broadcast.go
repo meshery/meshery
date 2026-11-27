@@ -15,8 +15,9 @@ import (
 
 // listenerBufferSize is the per-subscriber channel buffer. It absorbs short
 // bursts of events published faster than a subscriber drains them; once it is
-// full, Publish drops the newest event for that subscriber rather than blocking
-// the publisher (see Publish).
+// full, Publish either drops the newest event for legacy listeners or closes
+// the channel for cursor-enabled listeners to trigger an SSE reconnect rather
+// than blocking the publisher (see Publish).
 const listenerBufferSize = 256
 
 // replayBufferSize bounds how many recent ID-bearing events are retained per
@@ -224,7 +225,8 @@ func (c *Broadcast) addListener(id core.Uuid, withCursor bool) (chan interface{}
 // items delivered on the returned slice/channel are wrapped as ReplayEvent when
 // they carry an event ID. Holding the per-user replay lock across both steps
 // guarantees no ID-bearing event is missed or duplicated between the replay
-// slice and the live channel.
+// slice and the live channel. If the listener buffer fills during live delivery,
+// the channel is closed to prompt an SSE reconnect and resume replay.
 func (c *Broadcast) SubscribeFrom(id core.Uuid, lastEventID string) ([]ReplayEvent, chan interface{}, func()) {
 	if !isValidLastEventID(lastEventID) {
 		ch, unsubscribe := c.subscribe(id, true)
@@ -315,8 +317,9 @@ func extractEventID(data interface{}) string {
 // the same mutex that guards unsubscribe, which makes this safe on two fronts:
 // a channel present in listeners under the lock is guaranteed still open (so
 // the send can never panic on a closed channel), and a slow consumer whose
-// buffer is full simply has the newest event dropped rather than blocking the
-// publisher.
+// buffer is full simply has the newest event dropped (for legacy listeners) or
+// has its channel closed to trigger an SSE reconnect (for cursor-enabled
+// listeners) rather than blocking the publisher.
 func (c *Broadcast) Publish(id core.Uuid, data interface{}) {
 	if eventID := extractEventID(data); eventID != "" {
 		now := time.Now()

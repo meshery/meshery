@@ -42,8 +42,9 @@ const eventStreamWriteTimeout = 30 * time.Second
 // streamed; the initial list is still fetched over REST from GET /api/system/events.
 //
 // The subscription lives for the duration of the request: when the client
-// disconnects the request context is cancelled, we unsubscribe from the
-// broadcaster, and the goroutine returns.
+// disconnects or the broadcaster closes the channel on buffer overflow, we
+// unsubscribe from the broadcaster and the handler returns, prompting
+// EventSource to reconnect and recover missed events via Last-Event-ID replay.
 func (h *Handler) SubscribeEventsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if user == nil {
 		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
