@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"path/filepath"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
@@ -54,14 +55,14 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl workspace view [workspace-name|workspace-id]\nRun 'mesheryctl workspace view --help' to see detailed help message"
-		if len(args) != 1 {
+		if len(args) != 1 || strings.TrimSpace(args[0]) == "" {
 			return utils.ErrInvalidArgument(fmt.Errorf("please provide exactly one workspace name or ID\n\n%v", errMsg))
 		}
 
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		workspaceNameOrID := args[0]
+		workspaceNameOrID := strings.TrimSpace(args[0])
 		var selectedWorkspace workspace.AvailableWorkspace
 
 		var urlPath string
