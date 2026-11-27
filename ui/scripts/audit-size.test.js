@@ -25,11 +25,12 @@ function createFixture(t) {
   return fixture;
 }
 
-function runAudit(fixture) {
+function runAudit(fixture, preload) {
   const script = path.join(fixture, 'ui', 'scripts', 'audit-size.js');
   const typescriptRoot = path.resolve(path.dirname(require.resolve('typescript')), '..', '..');
+  const args = preload ? ['--require', preload, script, '--json'] : [script, '--json'];
 
-  const result = spawnSync(process.execPath, [script, '--json'], {
+  const execution = spawnSync(process.execPath, args, {
     encoding: 'utf8',
     env: {
       ...process.env,
@@ -37,8 +38,8 @@ function runAudit(fixture) {
     },
   });
 
-  assert.equal(result.status, 0, result.stderr);
-  return JSON.parse(result.stdout);
+  assert.equal(execution.status, 0, execution.stderr);
+  return preload ? execution : JSON.parse(execution.stdout);
 }
 
 test('counts comment-like template and JSX text while skipping actual comments', (t) => {
@@ -252,4 +253,73 @@ test('skips JSDoc comments attached to closing tokens and EOF', (t) => {
   assert.equal(result.over_warn, 1);
   assert.equal(result.over_hard, 0);
   assert.deepEqual(result.files, [{ file: 'components/jsdoc-eof.ts', lines: 608 }]);
+});
+
+test('falls back to non-empty-line counting when parser traversal throws', (t) => {
+  const fixture = createFixture(t);
+  const lines = Array.from({ length: 605 }, (_, i) => `const value${i} = ${i};`);
+
+  writeFile(fixture, 'ui/components/parser-fallback.js', `${lines.join('\n')}\n`);
+  writeFile(
+    fixture,
+    'inject-parser-failure.cjs',
+    `
+const Module = require('node:module');
+const originalLoad = Module._load;
+
+Module._load = function (request, parent, isMain) {
+  const loaded = originalLoad.call(this, request, parent, isMain);
+  if (request !== 'typescript') return loaded;
+
+  return new Proxy(loaded, {
+    get(target, property, receiver) {
+      if (property === 'createSourceFile') {
+        return function (file, ...args) {
+          if (file.endsWith('parser-fallback.js')) {
+            throw new Error('injected parser failure');
+          }
+          return Reflect.get(target, property, receiver).apply(target, [file, ...args]);
+        };
+      }
+      return Reflect.get(target, property, receiver);
+    },
+  });
+};
+`,
+  );
+
+  const execution = runAudit(fixture, path.join(fixture, 'inject-parser-failure.cjs'));
+  const result = JSON.parse(execution.stdout);
+
+  assert.match(execution.stderr, /parser failed.*using non-empty-line fallback/);
+  assert.deepEqual(result.files, [{ file: 'components/parser-fallback.js', lines: 605 }]);
+});
+
+test('continues auditing other files when one source file cannot be read', (t) => {
+  const fixture = createFixture(t);
+  const lines = Array.from({ length: 605 }, (_, i) => `const value${i} = ${i};`);
+
+  writeFile(fixture, 'ui/components/unreadable.js', `${lines.join('\n')}\n`);
+  writeFile(fixture, 'ui/components/readable.js', `${lines.join('\n')}\n`);
+  writeFile(
+    fixture,
+    'inject-read-failure.cjs',
+    `
+const fs = require('node:fs');
+const original = fs.readFileSync;
+fs.readFileSync = function (file, ...args) {
+  if (String(file).endsWith('/unreadable.js')) {
+    throw new Error('injected read failure');
+  }
+  return original.call(this, file, ...args);
+};
+`,
+  );
+
+  const execution = runAudit(fixture, path.join(fixture, 'inject-read-failure.cjs'));
+  const result = JSON.parse(execution.stdout);
+
+  assert.match(execution.stderr, /unable to read.*unreadable.js/);
+  assert.deepEqual(result.files, [{ file: 'components/readable.js', lines: 605 }]);
+  assert.equal(result.over_warn, 1);
 });

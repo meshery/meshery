@@ -182,8 +182,26 @@ function main() {
 
   const measured = [];
   for (const file of files) {
-    const src = fs.readFileSync(file, 'utf8');
-    const lines = countSignificantLines(src, file);
+    let src;
+    try {
+      src = fs.readFileSync(file, 'utf8');
+    } catch (error) {
+      process.stderr.write(
+        `WARN size: unable to read ${path.relative(UI_ROOT, file)}: ${error.message}\n`,
+      );
+      continue;
+    }
+
+    let lines;
+    try {
+      lines = countSignificantLines(src, file);
+    } catch (error) {
+      process.stderr.write(
+        `WARN size: parser failed for ${path.relative(UI_ROOT, file)}; using non-empty-line fallback: ${error.message}\n`,
+      );
+      lines = src.split(/\r?\n/).filter((line) => line.trim() !== '').length;
+    }
+
     if (lines < WARN_THRESHOLD) continue;
     measured.push({ file: path.relative(UI_ROOT, file), lines });
   }
