@@ -80,7 +80,7 @@ func (g *Graph) AddEdge(src, dest string) *Graph {
 // DetectCycle will return true if there is a cycle
 // in the graph
 func (g *Graph) DetectCycle() (bool, error) {
-	sorted, err := g.topologicalSort(func(_ string, _ component.ComponentDefinition) bool { return true })
+	sorted, err := g.topologicalSort(nil)
 	if err != nil {
 		return false, err
 	}
@@ -104,11 +104,14 @@ func (g *Graph) topologicalSort(fn VisitFn) (bool, error) {
 		indegree[node] = 0
 	}
 
-	if err := g.Visit(func(name string, _ component.ComponentDefinition) bool {
-		indegree[name]++
-		return true
-	}); err != nil {
-		return false, err
+	for node := range g.Nodes {
+		for _, edgeNode := range g.Edges[node] {
+			if _, known := g.Nodes[edgeNode]; !known {
+				return false, ErrUnknownPlanNode(edgeNode, fmt.Sprintf("the dependency %s -> %s", node, edgeNode))
+			}
+
+			indegree[edgeNode]++
+		}
 	}
 
 	// Hold all the vertices with 0 degree
@@ -131,8 +134,10 @@ func (g *Graph) topologicalSort(fn VisitFn) (bool, error) {
 			return false, ErrUnknownPlanNode(v, "the execution plan")
 		}
 
-		if ok := fn(v, node.Data); !ok {
-			return false, nil
+		if fn != nil {
+			if ok := fn(v, node.Data); !ok {
+				return false, nil
+			}
 		}
 
 		atomic.AddInt64(&vertexCount, 1)
