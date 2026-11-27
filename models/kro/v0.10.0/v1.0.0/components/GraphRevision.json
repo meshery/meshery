@@ -1,0 +1,189 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta2",
+  "version": "v1.0.0",
+  "displayName": "Graph Revision",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta2",
+    "version": "v1.0.0",
+    "name": "kro",
+    "displayName": "Kro",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "type": "registry",
+      "subType": "",
+      "kind": "github",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Orchestration & Management"
+    },
+    "subCategory": "Scheduling & Orchestration",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#2563EB",
+      "secondaryColor": "#60A5FA",
+      "shape": "circle",
+      "source_uri": "git://github.com/kubernetes-sigs/kro/main/manifests",
+      "styleOverrides": "",
+      "svgColor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" height=\"20\" width=\"20\"><defs><linearGradient id=\"kro-grad\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\"><stop offset=\"0%\" stop-color=\"#3B82F6\"/><stop offset=\"100%\" stop-color=\"#1D4ED8\"/></linearGradient></defs><circle cx=\"50\" cy=\"50\" r=\"46\" fill=\"url(#kro-grad)\"/><path d=\"M50 22 L76 66 L24 66 Z\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"5\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"22\" r=\"9\" fill=\"#93C5FD\" stroke=\"#FFFFFF\" stroke-width=\"3\"/><circle cx=\"76\" cy=\"66\" r=\"9\" fill=\"#60A5FA\" stroke=\"#FFFFFF\" stroke-width=\"3\"/><circle cx=\"24\" cy=\"66\" r=\"9\" fill=\"#60A5FA\" stroke=\"#FFFFFF\" stroke-width=\"3\"/><path d=\"M50 22 L50 66\" stroke=\"#FFFFFF\" stroke-width=\"3\" stroke-dasharray=\"3,3\"/><circle cx=\"50\" cy=\"66\" r=\"5\" fill=\"#FFFFFF\"/></svg>",
+      "svgComplete": "",
+      "svgWhite": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" height=\"20\" width=\"20\"><circle cx=\"50\" cy=\"50\" r=\"46\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"6\"/><path d=\"M50 22 L76 66 L24 66 Z\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"5\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"22\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"76\" cy=\"66\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"24\" cy=\"66\" r=\"9\" fill=\"#FFFFFF\"/><path d=\"M50 22 L50 66\" stroke=\"#FFFFFF\" stroke-width=\"3\" stroke-dasharray=\"3,3\"/><circle cx=\"50\" cy=\"66\" r=\"5\" fill=\"#FFFFFF\"/></svg>"
+    },
+    "model": {
+      "version": "v0.10.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for the component",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false,
+    "source_uri": "git://github.com/kubernetes-sigs/kro/main/manifests"
+  },
+  "configuration": null,
+  "component": {
+    "version": "internal.kro.run/v1alpha1",
+    "kind": "GraphRevision",
+    "schema": "{\"description\":\"GraphRevision is an immutable snapshot of a ResourceGraphDefinition revision.\",\"properties\":{\"apiVersion\":{\"description\":\"APIVersion defines the versioned schema of this representation of an object.\\nServers should convert recognized schemas to the latest internal value, and\\nmay reject unrecognized values.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources\",\"type\":\"string\"},\"kind\":{\"description\":\"Kind is a string value representing the REST resource this object represents.\\nServers may infer this from the endpoint the client submits requests to.\\nCannot be updated.\\nIn CamelCase.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\"type\":\"string\"},\"metadata\":{\"type\":\"object\"},\"spec\":{\"description\":\"GraphRevisionSpec defines the desired state of GraphRevision.\\nIt captures an immutable snapshot of the source ResourceGraphDefinition.\",\"properties\":{\"revision\":{\"description\":\"Revision is a monotonic revision number assigned per ResourceGraphDefinition name.\",\"format\":\"int64\",\"minimum\":1,\"type\":\"integer\"},\"snapshot\":{\"description\":\"Snapshot is an immutable capture of the source ResourceGraphDefinition\\nidentity and spec at the time this revision was issued.\",\"properties\":{\"generation\":{\"description\":\"Generation is the metadata.generation of the source ResourceGraphDefinition\\nwhen this revision was issued. Informational only.\",\"format\":\"int64\",\"type\":\"integer\"},\"name\":{\"description\":\"Name identifies the source ResourceGraphDefinition by name.\\nThis is the authoritative identity for adoption decisions.\",\"type\":\"string\"},\"spec\":{\"description\":\"Spec is an immutable copy of the source ResourceGraphDefinition spec.\\nThis includes user-authored schema and resource templates.\",\"properties\":{\"resources\":{\"description\":\"Resources is the list of Kubernetes resources that will be created and managed\\nfor each instance. Resources can reference each other using CEL expressions,\\ncreating a dependency graph that determines creation order.\",\"items\":{\"description\":\"Resource represents a Kubernetes resource that is part of the ResourceGraphDefinition.\\nEach resource can either be created using a template or reference an existing resource.\\nResources can depend on each other through CEL expressions, creating a dependency graph.\",\"properties\":{\"externalRef\":{\"description\":\"ExternalRef references an existing resource in the cluster instead of creating one.\\nThis is useful for reading existing resources and using their values in other resources.\\nExactly one of template or externalRef must be provided.\",\"properties\":{\"apiVersion\":{\"description\":\"APIVersion is the API version of the external resource.\\nExample: \\\"v1\\\" for core resources, \\\"apps/v1\\\" for Deployments.\",\"type\":\"string\"},\"kind\":{\"description\":\"Kind is the kind of the external resource.\\nExample: \\\"Service\\\", \\\"ConfigMap\\\", \\\"Deployment\\\".\",\"type\":\"string\"},\"metadata\":{\"description\":\"Metadata contains the name and optional namespace of the external resource.\",\"properties\":{\"name\":{\"description\":\"Name is the name of the external resource to reference.\\nMutually exclusive with Selector.\",\"minLength\":1,\"type\":\"string\"},\"namespace\":{\"description\":\"Namespace is the namespace of the external resource.\\nFor single external refs (Name), defaults to the instance's namespace.\\nFor external collections (Selector), empty means list across all namespaces.\",\"type\":\"string\"},\"selector\":{\"description\":\"Selector is a label selector for collection external references.\\nWhen set, all resources matching the selector are included.\\nThe selector may be a literal Kubernetes [metav1.LabelSelector] object or a full CEL\\nexpression that resolves to one at reconcile time.\\n\\nMutually exclusive with Name.\",\"x-kubernetes-preserve-unknown-fields\":true}},\"type\":\"object\"}},\"required\":[\"apiVersion\",\"kind\",\"metadata\"],\"type\":\"object\"},\"forEach\":{\"description\":\"ForEach expands this resource into a collection of resources.\\nEach entry binds a variable name to a CEL expression that evaluates to an array.\\nkro creates one resource instance for each element in the array.\\nWith multiple entries, kro creates the cartesian product of all combinations.\\nUse the variable directly in template expressions (e.g., ${region}).\\nExample: [{\\\"region\\\": \\\"${schema.spec.regions}\\\"}, {\\\"tier\\\": \\\"${schema.spec.tiers}\\\"}]\",\"items\":{\"additionalProperties\":{\"type\":\"string\"},\"description\":\"ForEachDimension defines a single expansion axis in a forEach block.\\nEach dimension is a map with exactly one entry where the key is the variable name\\nand the value is the CEL expression. Example: {\\\"region\\\": \\\"${schema.spec.regions}\\\"}\\nMultiple dimensions create a cartesian product of expansions.\",\"maxProperties\":1,\"minProperties\":1,\"type\":\"object\"},\"type\":\"array\"},\"id\":{\"description\":\"ID is a unique identifier for this resource within the ResourceGraphDefinition.\\nIt is used to reference this resource in CEL expressions from other resources.\\nExample: \\\"deployment\\\", \\\"service\\\", \\\"configmap\\\".\",\"type\":\"string\"},\"includeWhen\":{\"description\":\"IncludeWhen is a list of CEL expressions that determine whether this resource should be created.\\nAll expressions must evaluate to true for the resource to be included.\\nIf not specified, the resource is always included.\\nExpressions may reference schema fields and/or fields in other resources in the RGD. They are\\nre-evaluated during reconciliation, so resources may be created later or\\npruned later as conditions change.\\nEach entry must be a single standalone CEL expression wrapped in ${...}.\\nExample: [\\\"${schema.spec.enableMonitoring == true}\\\", \\\"${network.status.ready == true}\\\"]\",\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"readyWhen\":{\"description\":\"ReadyWhen is a list of CEL expressions that determine when this resource is considered ready.\\nAll expressions must evaluate to true for the resource to be ready.\\nIf not specified, the resource is considered ready when it exists.\\nEach entry must be a single standalone CEL expression wrapped in ${...}.\\nExamples:\\n- Single resource: [\\\"${database.status.phase == 'Running'}\\\", \\\"${database.status.readyReplicas > 0}\\\"]\\n- Collection: [\\\"${each.status.phase == 'Running'}\\\"]\",\"items\":{\"type\":\"string\"},\"type\":\"array\"},\"template\":{\"description\":\"Template is the Kubernetes resource manifest to create.\\nIt can contain CEL expressions (using ${...} syntax) that reference other resources.\\nExactly one of template or externalRef must be provided.\",\"type\":\"object\",\"x-kubernetes-preserve-unknown-fields\":true}},\"required\":[\"id\"],\"type\":\"object\",\"x-kubernetes-validations\":[{\"message\":\"exactly one of template or externalRef must be provided\",\"rule\":\"(has(self.template) && !has(self.externalRef)) || (!has(self.template) && has(self.externalRef))\"}]},\"type\":\"array\"},\"schema\":{\"description\":\"Schema defines the structure of instances created from this ResourceGraphDefinition.\\nIt specifies the API version, kind, and fields (spec/status) for the generated CRD.\\nUse SimpleSchema syntax to define the instance schema concisely.\",\"properties\":{\"additionalPrinterColumns\":{\"description\":\"AdditionalPrinterColumns defines additional printer columns\\nthat will be passed down to the created CRD. If set, no\\ndefault printer columns will be added to the created CRD,\\nand if default printer columns need to be retained, they\\nneed to be added explicitly.\",\"items\":{\"description\":\"CustomResourceColumnDefinition specifies a column for server side printing.\",\"properties\":{\"description\":{\"description\":\"description is a human readable description of this column.\",\"type\":\"string\"},\"format\":{\"description\":\"format is an optional OpenAPI type definition for this column. The 'name' format is applied\\nto the primary identifier column to assist in clients identifying column is the resource name.\\nSee https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#data-types for details.\",\"type\":\"string\"},\"jsonPath\":{\"description\":\"jsonPath is a simple JSON path (i.e. with array notation) which is evaluated against\\neach custom resource to produce the value for this column.\",\"type\":\"string\"},\"name\":{\"description\":\"name is a human readable name for the column.\",\"type\":\"string\"},\"priority\":{\"description\":\"priority is an integer defining the relative importance of this column compared to others. Lower\\nnumbers are considered higher priority. Columns that may be omitted in limited space scenarios\\nshould be given a priority greater than 0.\",\"format\":\"int32\",\"type\":\"integer\"},\"type\":{\"description\":\"type is an OpenAPI type definition for this column.\\nSee https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#data-types for details.\",\"type\":\"string\"}},\"required\":[\"jsonPath\",\"name\",\"type\"],\"type\":\"object\"},\"type\":\"array\"},\"apiVersion\":{\"description\":\"APIVersion is the version identifier for the generated CRD.\\nMust follow Kubernetes versioning conventions (v1, v1alpha1, v1beta1, etc.).\\nThis field is immutable after creation.\\nExample: \\\"v1alpha1\\\", \\\"v1\\\", \\\"v2beta1\\\"\",\"pattern\":\"^v[0-9]+(alpha[0-9]+|beta[0-9]+)?$\",\"type\":\"string\",\"x-kubernetes-validations\":[{\"message\":\"apiVersion is immutable\",\"rule\":\"self == oldSelf\"}]},\"categories\":{\"description\":\"Categories is a list of grouped resources this custom resource belongs to.\\nResources in a category can be retrieved together with `kubectl get <category>`.\\nExample: [\\\"kro\\\"] makes instances appear in `kubectl get kro`.\",\"items\":{\"maxLength\":63,\"pattern\":\"^[a-z]([-a-z0-9]*[a-z0-9])?$\",\"type\":\"string\"},\"maxItems\":32,\"type\":\"array\",\"x-kubernetes-list-type\":\"set\"},\"group\":{\"default\":\"kro.run\",\"description\":\"Group is the API group for the generated CRD. Together with APIVersion and Kind,\\nit forms the complete GVK (Group-Version-Kind) identifier.\\nIf omitted, defaults to \\\"kro.run\\\". This field is immutable after creation.\\nExample: \\\"mycompany.io\\\", \\\"databases.example.com\\\"\",\"type\":\"string\",\"x-kubernetes-validations\":[{\"message\":\"group is immutable\",\"rule\":\"self == oldSelf\"}]},\"kind\":{\"description\":\"Kind is the name of the custom resource type that will be created.\\nThis becomes the kind field of the generated CRD and must be a valid Kubernetes kind name\\n(PascalCase, starting with a capital letter). This field is immutable after creation.\\nExample: \\\"WebApplication\\\", \\\"Database\\\", \\\"MicroService\\\"\",\"pattern\":\"^[A-Z][a-zA-Z0-9]{0,62}$\",\"type\":\"string\",\"x-kubernetes-validations\":[{\"message\":\"kind is immutable\",\"rule\":\"self == oldSelf\"}]},\"metadata\":{\"description\":\"Metadata configures instance metadata validation and metadata applied to the generated CRD.\",\"properties\":{\"annotations\":{\"additionalProperties\":{\"type\":\"string\"},\"description\":\"Annotations to apply to the generated CRD\",\"type\":\"object\"},\"labels\":{\"additionalProperties\":{\"type\":\"string\"},\"description\":\"Labels to apply to the generated CRD\",\"type\":\"object\"},\"validation\":{\"description\":\"Validation defines constraints on instance metadata fields.\",\"properties\":{\"name\":{\"description\":\"Name constrains instance metadata.name using marker-only SimpleSchema syntax.\\nSupported markers are minLength, maxLength, pattern, enum, and validation.\\nExample: \\\"maxLength=30 pattern=^[a-z].*$\\\"\",\"type\":\"string\"}},\"type\":\"object\"}},\"type\":\"object\"},\"plural\":{\"description\":\"Plural is the plural form of Kind used as the resource name in the generated\\nCRD, forming its name as \\\"<plural>.<group>\\\". If omitted, it is derived by\\npluralizing the lowercased kind, which follows English rules and is not always\\nwhat you would expect or might even not be correct. (For example: \\\"PodInfo\\\" becomes \\\"podinfoes\\\").\\nSet this explicitly to override the generated value.\\nThis field is immutable after creation! It cannot be changed again.\",\"maxLength\":63,\"pattern\":\"^[a-z]([-a-z0-9]*[a-z0-9])?$\",\"type\":\"string\",\"x-kubernetes-validations\":[{\"message\":\"plural is immutable\",\"rule\":\"self == oldSelf\"}]},\"scope\":{\"default\":\"Namespaced\",\"description\":\"Scope determines whether the generated instance CRD is Namespaced or Cluster scoped.\\nDefaults to Namespaced to preserve existing behaviour. This field is immutable after creation.\",\"enum\":[\"Namespaced\",\"Cluster\"],\"type\":\"string\",\"x-kubernetes-validations\":[{\"message\":\"scope is immutable\",\"rule\":\"self == oldSelf\"}]},\"shortNames\":{\"description\":\"ShortNames are aliases for the generated CRD that can be used with kubectl.\\nExample: [\\\"wa\\\", \\\"webapp\\\"] allows `kubectl get wa` or `kubectl get webapp` instead of `kubectl get webapplications`.\",\"items\":{\"maxLength\":63,\"pattern\":\"^[a-z]([-a-z0-9]*[a-z0-9])?$\",\"type\":\"string\"},\"maxItems\":32,\"type\":\"array\",\"x-kubernetes-list-type\":\"set\"},\"spec\":{\"description\":\"Spec defines the schema for the instance's spec section using SimpleSchema syntax.\\nThis becomes the OpenAPI schema for instances of the generated CRD.\\nUse SimpleSchema's concise syntax to define fields, types, defaults, and validations.\\nMarkers are space-separated after a single \\\"|\\\" separator.\\nExample: {\\\"replicas\\\": \\\"integer | default=1 minimum=1 maximum=10\\\"}\",\"type\":\"object\",\"x-kubernetes-preserve-unknown-fields\":true},\"status\":{\"description\":\"Status defines the schema for the instance's status section using SimpleSchema syntax.\\nUnlike spec, status fields use CEL expressions to project values from underlying resources.\\nThis allows you to surface important information from managed resources at the instance level.\\nExample: {\\\"connectionName\\\": \\\"${database.status.connectionName}\\\", \\\"endpoint\\\": \\\"${service.status.loadBalancer.ingress[0].hostname}\\\"}\",\"type\":\"object\",\"x-kubernetes-preserve-unknown-fields\":true},\"types\":{\"description\":\"Types is a map of custom type definitions that can be referenced in the Spec.\\nThis allows you to define reusable complex types using SimpleSchema syntax.\\nReference custom types in Spec using the type name.\\nExample: {\\\"Server\\\": {\\\"host\\\": \\\"string\\\", \\\"port\\\": \\\"integer\\\"}}\",\"type\":\"object\",\"x-kubernetes-preserve-unknown-fields\":true}},\"required\":[\"apiVersion\",\"kind\",\"scope\"],\"type\":\"object\"}},\"required\":[\"schema\"],\"type\":\"object\"}},\"required\":[\"generation\",\"name\",\"spec\"],\"type\":\"object\"}},\"required\":[\"revision\",\"snapshot\"],\"type\":\"object\",\"x-kubernetes-validations\":[{\"message\":\"spec is immutable\",\"rule\":\"self == oldSelf\"}]},\"status\":{\"description\":\"GraphRevisionStatus defines the observed API state of GraphRevision.\\nInternal runtime states such as Pending, Active, and Failed live in\\nkro's in-memory revision registry and are not persisted here.\",\"properties\":{\"conditions\":{\"description\":\"Conditions represent the latest available observations of the GraphRevision state.\\nGraphRevision exposes GraphVerified plus aggregate Ready.\",\"items\":{\"description\":\"Condition is the common struct used by all CRDs managed by ACK service\\ncontrollers to indicate terminal states  of the CR and its backend AWS\\nservice API resource\",\"properties\":{\"lastTransitionTime\":{\"description\":\"Last time the condition transitioned from one status to another.\",\"format\":\"date-time\",\"type\":\"string\"},\"message\":{\"description\":\"A human-readable message indicating details about the transition.\",\"type\":\"string\"},\"observedGeneration\":{\"description\":\"observedGeneration represents the .metadata.generation that the condition was set based upon.\\nFor instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date\\nwith respect to the current state of the instance.\",\"format\":\"int64\",\"minimum\":0,\"type\":\"integer\"},\"reason\":{\"description\":\"The reason for the condition's last transition.\",\"type\":\"string\"},\"status\":{\"description\":\"Status of the condition, one of True, False, Unknown.\",\"type\":\"string\"},\"type\":{\"description\":\"Type is the type of the Condition\",\"type\":\"string\"}},\"required\":[\"status\",\"type\"],\"type\":\"object\"},\"type\":\"array\",\"x-kubernetes-list-map-keys\":[\"type\"],\"x-kubernetes-list-type\":\"map\"},\"resources\":{\"description\":\"Resources provides detailed information about each resource in the graph.\",\"items\":{\"description\":\"ResourceInformation provides detailed information about a specific resource\\nin the ResourceGraphDefinition, particularly its dependencies on other resources.\",\"properties\":{\"dependencies\":{\"description\":\"Dependencies lists all resources that this resource depends on.\\nA resource depends on another if it references it in a CEL expression.\\nThese dependencies determine the order of resource creation.\",\"items\":{\"description\":\"Dependency represents a dependency relationship between resources.\\nWhen a resource uses CEL expressions to reference another resource,\\na dependency is created to ensure proper ordering.\",\"properties\":{\"id\":{\"description\":\"ID is the unique identifier of the resource that this resource depends on.\",\"type\":\"string\"}},\"type\":\"object\"},\"type\":\"array\"},\"id\":{\"description\":\"ID is the unique identifier of the resource as defined in the resources list.\",\"type\":\"string\"}},\"type\":\"object\"},\"type\":\"array\"},\"topologicalOrder\":{\"description\":\"TopologicalOrder is the ordered list of resource IDs based on dependencies.\",\"items\":{\"type\":\"string\"},\"type\":\"array\"}},\"type\":\"object\"}},\"type\":\"object\"}"
+  },
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
+}
