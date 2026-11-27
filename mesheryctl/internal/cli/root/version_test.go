@@ -191,3 +191,27 @@ func TestVersionCmd(t *testing.T) {
 		})
 	}
 }
+
+func TestVersionPreRunERecoveryDoesNotPanicOnNilConfig(t *testing.T) {
+	origConfigPath := utils.DefaultConfigPath
+	origSilentFlag := utils.SilentFlag
+	t.Cleanup(func() {
+		utils.DefaultConfigPath = origConfigPath
+		utils.SilentFlag = origSilentFlag
+		viper.Reset()
+	})
+
+	utils.DefaultConfigPath = filepath.Join(t.TempDir(), "config.yaml")
+	utils.SilentFlag = true
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	// Force config.GetMesheryCtl(viper.GetViper()) to fail with an invalid contexts value
+	// so PreRunE enters the recovery branch and hits the post-recreation GetMesheryCtl check.
+	viper.Reset()
+	viper.Set("contexts", "invalid-not-a-map")
+
+	require.NotPanics(t, func() {
+		err := versionCmd.PreRunE(versionCmd, []string{})
+		assert.Error(t, err)
+	})
+}

@@ -282,3 +282,46 @@ func TestGenerateCSVDataOutput(t *testing.T) {
 		t.Log("Generate CSV relationship test passed")
 	}
 }
+
+func TestProcessSheetDataSafety(t *testing.T) {
+	outputPath := filepath.Join(t.TempDir(), "relationships.json")
+
+	t.Run("nil ValueRange returns ErrEmptySheetData without panicking", func(t *testing.T) {
+		err := processSheetData(nil, outputPath)
+		assert.Error(t, err)
+		utils.AssertMeshkitErrorsEqual(t, err, ErrEmptySheetData(fmt.Errorf("no relationship data found in sheet")))
+	})
+
+	t.Run("sheet with fewer than 3 rows returns ErrEmptySheetData without panicking", func(t *testing.T) {
+		err := processSheetData(&sheets.ValueRange{Values: [][]interface{}{{"header1"}}}, outputPath)
+		assert.Error(t, err)
+		utils.AssertMeshkitErrorsEqual(t, err, ErrEmptySheetData(fmt.Errorf("no relationship data found in sheet")))
+	})
+
+	t.Run("non-string and nil cells do not panic", func(t *testing.T) {
+		resp := &sheets.ValueRange{
+			Values: [][]interface{}{
+				{"header1"},
+				{"header2"},
+				// Row with nil first cell should be skipped safely
+				{nil, "v1", "Pod", "edge", "mount", "desc", "docs", "styles", "eval", "", "", "", "", "", ""},
+				// Row with numeric/boolean/nil cells should convert safely
+				{"k8s", float64(1), "Pod", "edge", "mount", nil, "docs", true, "eval", "", "", "", "", "", ""},
+			},
+		}
+
+		err := processSheetData(resp, outputPath)
+		assert.NoError(t, err)
+
+		raw, err := os.ReadFile(outputPath)
+		assert.NoError(t, err)
+
+		var parsed []CustomValueRange
+		assert.NoError(t, json.Unmarshal(raw, &parsed))
+		assert.Len(t, parsed, 1)
+		assert.Equal(t, "k8s", parsed[0].Model)
+		assert.Equal(t, "1", parsed[0].Version)
+		assert.Equal(t, "", parsed[0].MetadataDescription)
+		assert.Equal(t, "true", parsed[0].MetadataStyles)
+	})
+}
