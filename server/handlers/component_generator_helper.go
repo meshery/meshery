@@ -356,7 +356,7 @@ func (h *Handler) sendFileEvent(userID core.Uuid, provider models.Provider, resp
 		eventType = events.Success
 	}
 	description := getFirst42Chars(response.ErrMsg)
-	if len(description) == 42 {
+	if len([]rune(response.ErrMsg)) > 42 {
 		description = description + "..."
 	}
 
@@ -373,8 +373,9 @@ func (h *Handler) sendFileEvent(userID core.Uuid, provider models.Provider, resp
 	h.persistAndPublish(provider, token, userID, event)
 }
 func getFirst42Chars(s string) string {
-	if len(s) > 42 {
-		return s[:42]
+	runes := []rune(s)
+	if len(runes) > 42 {
+		return string(runes[:42])
 	}
 	return s
 }
