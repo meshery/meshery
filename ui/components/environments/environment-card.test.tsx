@@ -118,6 +118,14 @@ describe('formattoLongDate', () => {
     expect(typeof formatted).toBe('string');
     expect(formatted).toMatch(/2026/);
   });
+
+  it('guards undefined, empty, invalid or Go zero-time sentinel dates', () => {
+    expect(formattoLongDate(undefined)).toBe('-');
+    expect(formattoLongDate(null)).toBe('-');
+    expect(formattoLongDate('')).toBe('-');
+    expect(formattoLongDate('not-a-valid-date')).toBe('-');
+    expect(formattoLongDate('0001-01-01T00:00:00Z')).toBe('-');
+  });
 });
 
 describe('TransferButton', () => {
@@ -162,7 +170,7 @@ describe('EnvironmentCard', () => {
     can.mockReset();
     can.mockReturnValue(true);
     getEnvironmentConnectionsQuery.mockReset();
-    getEnvironmentConnectionsQuery.mockReturnValue({ data: { totalCount: 7 } });
+    getEnvironmentConnectionsQuery.mockReturnValue({ data: { totalCount: 7 }, isError: false });
   });
 
   it('renders the environment name, description and connections count', () => {
@@ -180,6 +188,87 @@ describe('EnvironmentCard', () => {
     expect(screen.getAllByTestId('env-name')[0]).toHaveTextContent('dev');
     expect(screen.getByTestId('description')).toHaveTextContent('dev env');
     expect(screen.getByTestId('tab-count')).toHaveTextContent('7');
+  });
+
+  it('distinguishes a failed connections lookup from a genuine zero count', () => {
+    getEnvironmentConnectionsQuery.mockReturnValue({ data: undefined, isError: true });
+
+    render(
+      <EnvironmentCard
+        environmentDetails={baseEnvironment}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+
+    expect(screen.getByTestId('tab-count')).toHaveTextContent('—');
+    expect(screen.getByTestId('tab-title')).toHaveTextContent('Connections unavailable');
+    expect(screen.getByTestId('tab-count')).not.toHaveTextContent('0');
+  });
+
+  it('hides a cached zero count when a connections refetch fails', () => {
+    getEnvironmentConnectionsQuery.mockReturnValue({
+      data: { totalCount: 0 },
+      isError: true,
+    });
+
+    render(
+      <EnvironmentCard
+        environmentDetails={baseEnvironment}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+
+    expect(screen.getByTestId('tab-count')).toHaveTextContent('—');
+    expect(screen.getByTestId('tab-title')).toHaveTextContent('Connections unavailable');
+    expect(screen.getByTestId('tab-count')).not.toHaveTextContent('0');
+  });
+
+  it('does not render zero while the connections lookup is pending', () => {
+    getEnvironmentConnectionsQuery.mockReturnValue({ data: undefined, isError: false });
+
+    render(
+      <EnvironmentCard
+        environmentDetails={baseEnvironment}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+
+    expect(screen.getByTestId('tab-count')).toHaveTextContent('—');
+    expect(screen.getByTestId('tab-title')).toHaveTextContent('Connections loading');
+    expect(screen.getByTestId('tab-count')).not.toHaveTextContent('0');
+  });
+
+  it('renders zero when the connections lookup succeeds with no assignments', () => {
+    getEnvironmentConnectionsQuery.mockReturnValue({
+      data: { totalCount: 0 },
+      isError: false,
+    });
+
+    render(
+      <EnvironmentCard
+        environmentDetails={baseEnvironment}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+
+    expect(screen.getByTestId('tab-count')).toHaveTextContent('0');
+    expect(screen.getByTestId('tab-title')).toHaveTextContent('Assigned Connections');
   });
 
   it('falls back to "No description" for environments without a description', () => {
@@ -246,6 +335,40 @@ describe('EnvironmentCard', () => {
       />,
     );
     expect(screen.getByTestId('bulk-checkbox')).not.toBeDisabled();
+  });
+
+  it('considers deletedAt as undefined or omitted as not deleted (checkbox enabled)', () => {
+    render(
+      <EnvironmentCard
+        environmentDetails={{
+          ...baseEnvironment,
+          deletedAt: undefined,
+        }}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    expect(screen.getByTestId('bulk-checkbox')).not.toBeDisabled();
+  });
+
+  it('considers deletedAt as an ISO timestamp string as deleted (checkbox disabled)', () => {
+    render(
+      <EnvironmentCard
+        environmentDetails={{
+          ...baseEnvironment,
+          deletedAt: '2026-01-15T12:00:00Z',
+        }}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    expect(screen.getByTestId('bulk-checkbox')).toBeDisabled();
   });
 
   it('fires onEdit/onDelete callbacks when corresponding buttons are clicked', async () => {

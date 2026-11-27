@@ -105,4 +105,92 @@ describe('useTimeout', () => {
     });
     expect(cb).toHaveBeenCalledTimes(2);
   });
+
+  it('executes callback when delay is 0ms', () => {
+    const cb = vi.fn();
+    renderHook(() => useTimeout(cb, 0));
+
+    act(() => {
+      vi.advanceTimersByTime(0);
+    });
+    expect(cb).toHaveBeenCalledTimes(1);
+  });
+
+  it('skips scheduling when delay is undefined, negative, non-finite, or non-numeric', () => {
+    const cb = vi.fn();
+    const invalidDelays = [
+      undefined,
+      -50,
+      Number.NaN,
+      Number.POSITIVE_INFINITY,
+      Number.NEGATIVE_INFINITY,
+      '100' as unknown as number,
+    ];
+
+    for (const delay of invalidDelays) {
+      renderHook(() => useTimeout(cb, delay));
+    }
+
+    act(() => {
+      vi.advanceTimersByTime(10_000);
+    });
+    expect(cb).not.toHaveBeenCalled();
+  });
+
+  it('cancels a pending timer if delay becomes invalid or nullish before firing', () => {
+    const cb = vi.fn();
+    const { rerender } = renderHook(
+      ({ delay }: { delay: number | null | undefined }) => useTimeout(cb, delay),
+      { initialProps: { delay: 100 as number | null | undefined } },
+    );
+
+    act(() => {
+      vi.advanceTimersByTime(50);
+    });
+    expect(cb).not.toHaveBeenCalled();
+
+    rerender({ delay: undefined });
+
+    act(() => {
+      vi.advanceTimersByTime(10_000);
+    });
+    expect(cb).not.toHaveBeenCalled();
+  });
+
+  it('ignores non-callable callbacks and cancels pending timer if callback becomes non-callable', () => {
+    const invalidCallback = null as unknown as () => void;
+    expect(() => renderHook(() => useTimeout(invalidCallback, 100))).not.toThrow();
+
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+
+    const validCallback = vi.fn();
+    const { rerender } = renderHook(
+      ({ cb }: { cb: (() => void) | null | undefined }) => useTimeout(cb, 100),
+      { initialProps: { cb: validCallback as (() => void) | null | undefined } },
+    );
+
+    act(() => {
+      vi.advanceTimersByTime(50);
+    });
+    rerender({ cb: undefined });
+
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+    expect(validCallback).not.toHaveBeenCalled();
+  });
+
+  it('safely handles non-array deps without throwing', () => {
+    const cb = vi.fn();
+    expect(() =>
+      renderHook(() => useTimeout(cb, 100, null as unknown as ReadonlyArray<unknown>)),
+    ).not.toThrow();
+
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+    expect(cb).toHaveBeenCalledTimes(1);
+  });
 });

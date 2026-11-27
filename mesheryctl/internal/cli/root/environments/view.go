@@ -36,18 +36,26 @@ type environmentViewFlags struct {
 
 var environmentViewFlagsProvided environmentViewFlags
 
+var viewUsageMsg = "Usage: mesheryctl environment view --orgId [orgId]\nRun 'mesheryctl environment view --help' to see detailed help message"
+
 var viewEnvironmentCmd = &cobra.Command{
 	Use:   "view",
-	Short: "View registered environmnents",
+	Short: "View registered environments",
 	Long: `View details of an environment registered in Meshery Server for a specific organization
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/environment/view`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/view`,
 	Example: `
 // View details of a specific environment
 mesheryctl environment view --orgId [orgId]
 	`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", viewUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if environmentViewFlagsProvided.orgId == "" {
-			const errMsg = "[ orgId ] isn't specified\n\nUsage: mesheryctl environment view --orgId [orgId]\nRun 'mesheryctl environment view --help' to see detailed help message"
+			errMsg := "[ orgId ] isn't specified\n\n" + viewUsageMsg
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 
@@ -64,14 +72,19 @@ mesheryctl environment view --orgId [orgId]
 			return err
 		}
 
+		if environmentResponse == nil {
+			utils.Log.Info("No environment(s) found for the given ID: ", environmentViewFlagsProvided.orgId)
+			return nil
+		}
+
 		var selectedEnvironment environment.Environment
 
-		switch environmentResponse.TotalCount {
+		switch len(environmentResponse.Environments) {
 		case 0:
 			utils.Log.Info("No environment(s) found for the given ID: ", environmentViewFlagsProvided.orgId)
 			return nil
 		case 1:
-			selectedEnvironment = environmentResponse.Environments[0] // Update the type of selectedModel
+			selectedEnvironment = environmentResponse.Environments[0]
 		default:
 			selectedEnvironment, err = selectEnvironmentPrompt(environmentResponse.Environments)
 			if err != nil {
@@ -92,14 +105,20 @@ mesheryctl environment view --orgId [orgId]
 			return err
 		}
 
-		// Get the home directory of the user to save the output file
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
-		}
-		environmentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedEnvironment.Name), " ", "_")
-
 		if environmentViewFlagsProvided.save {
+			// Get the home directory of the user to save the output file
+			homeDir, err := os.UserHomeDir()
+			if err != nil {
+				return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
+			}
+
+			environmentString := utils.SanitizeFileName(fmt.Sprintf("%v", selectedEnvironment.Name))
+			if environmentString == "" {
+				environmentString = utils.SanitizeFileName(selectedEnvironment.ID.String())
+				if environmentString == "" {
+					environmentString = "unknown"
+				}
+			}
 			fileName := fmt.Sprintf("environment_%s.%s", environmentString, strings.ToLower(environmentViewFlagsProvided.outputFormat))
 			file := filepath.Join(homeDir, ".meshery", fileName)
 			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[environment.Environment]{}

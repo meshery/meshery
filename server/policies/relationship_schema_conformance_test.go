@@ -28,7 +28,7 @@ import (
 
 // relationshipConformanceModels are the models whose relationship definitions are
 // held to schema conformance. Every version directory of each is checked.
-var relationshipConformanceModels = []string{"kubernetes", "cert-manager"}
+var relationshipConformanceModels = []string{"kubernetes", "cert-manager", "infisical-operator"}
 
 // knownUnresolvedMutationPaths are definitions that already carry the
 // meshery/meshery#21482 defect and predate this guard, keyed

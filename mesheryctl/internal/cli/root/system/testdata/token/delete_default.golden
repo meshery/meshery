@@ -1,1 +1,1 @@
-Token default deleted.
+Could not delete token "default" from config: token "default" is still used by context(s) local; set another token on them first with `mesheryctl system token set <token-name> -c <context>`

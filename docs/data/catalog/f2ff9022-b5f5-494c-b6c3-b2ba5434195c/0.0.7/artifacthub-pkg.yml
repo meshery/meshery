@@ -1,0 +1,20 @@
+version: 0.0.7
+name: threatstack-—-cloud-threat-hunting-reference-architecture-.yaml
+displayName: Threatstack — Cloud Threat Hunting Reference  Architecture .yaml
+createdAt: "2026-08-24T12:08:19Z"
+description: 'A cloud-to-cluster threat hunting reference architecture. AWS VPC/private-subnet substrate bridges into a Kubernetes SOC stack, with edges that narrate the full hunt lifecycle: collect → enrich → ship → store → hunt→ respond. '
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/f2ff9022-b5f5-494c-b6c3-b2ba5434195c/0.0.7/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Demo-oriented: images are lightweight stand-ins (busybox echo for EDR agents/sim), Wazuh/LDAP unauthenticated, ES security disabled. For production: wire real agents, enable xpack security, and front everything  with TLS via the included ingress. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: b5389b81-599e-4a5d-afbf-535767c625de
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

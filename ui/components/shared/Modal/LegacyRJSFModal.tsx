@@ -14,7 +14,7 @@ import {
 } from '@sistent/sistent';
 import RJSFWrapper from '../../meshery-mesh-interface/PatternService/RJSF_wrapper';
 import { ArrowDropDown } from '@/assets/icons';
-import { getSchema } from '../../meshery-mesh-interface/PatternService/helper';
+import { getSchema, getUiSchema } from '../../meshery-mesh-interface/PatternService/helper';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 
@@ -34,18 +34,22 @@ const SchemaVersion: FC<SchemaVersionProps> = ({ schema_array, type, schemaChang
   return (
     <div>
       <Tooltip title="Schema_Changer">
-        <IconButton component="span" onClick={(e) => setAnchorEl(e.currentTarget)}>
+        <IconButton
+          aria-label="Change schema version"
+          component="span"
+          onClick={(e) => setAnchorEl(e.currentTarget)}
+        >
           <ArrowDropDown style={{ color: theme.palette.text.primary }} />
         </IconButton>
       </Tooltip>
       <Menu id="schema-menu" anchorEl={anchorEl} open={open} handleClose={handleClose}>
-        {schema_array.map((version, index) => (
+        {schema_array?.map((version, index) => (
           <MenuItem
             id="schema-menu-item"
-            key={index}
+            key={version || index}
             selected={version === type}
             onClick={() => {
-              schemaChangeHandler(version);
+              schemaChangeHandler?.(version);
               handleClose();
             }}
           >
@@ -75,6 +79,8 @@ const SchemaVersion: FC<SchemaVersionProps> = ({ schema_array, type, schemaChang
  * @param {Object} props.showInfoIcon - Determines whether to show the info icon adjacent to the modal button.
  * @param {string} props.submitBtnText - The text for the submit button.
  * @param {Object} props.uiSchema - The UI schema for the form fields.
+ * @param {boolean} [props.submitDisabled=false] - Optional consumer-controlled flag to disable the submit button (OR-ed with forbidden title and schema-loading pending states).
+ * @param {boolean} [props.closeOnSubmit=true] - Whether to close the modal immediately upon valid submission; set false when callers close only after an async save succeeds.
  */
 
 // Meshery extensions also uses this modal
@@ -83,6 +89,7 @@ function Modal(props) {
     open,
     title,
     handleClose,
+    onChange,
     schema,
     schema_array,
     type,
@@ -94,16 +101,34 @@ function Modal(props) {
     helpText,
     RJSFWrapperComponent = null,
     initialData = {},
+    submitDisabled = false,
+    closeOnSubmit = true,
   } = props;
 
+  const resolvedSchema = schema !== undefined ? schema : getSchema(type);
+  const resolvedUiSchema =
+    uiSchema && Object.keys(uiSchema).length > 0
+      ? uiSchema
+      : (typeof getUiSchema === 'function' ? getUiSchema(type) : undefined) || {};
+  const isSchemaPending = schema === null || (schema === undefined && !type);
+  const hasResolvedSchema = Boolean(resolvedSchema);
   const [canNotSubmit, setCanNotSubmit] = useState(false);
   const formStateRef = useRef({});
   const formRef = React.createRef();
-  const [loadingSchema, setLoadingSchema] = useState(true);
+  const [loadingSchema, setLoadingSchema] = useState(isSchemaPending);
   const { notify } = useNotification();
+  const isSubmitDisabled = Boolean(
+    canNotSubmit || loadingSchema || submitDisabled || !hasResolvedSchema,
+  );
+
   const handleFormSubmit = () => {
+    if (isSubmitDisabled) {
+      return;
+    }
     if (formRef.current && formRef.current.validateForm()) {
-      handleClose();
+      if (closeOnSubmit) {
+        handleClose();
+      }
       handleSubmit(formRef.current.state.formData);
     }
   };
@@ -130,37 +155,42 @@ function Modal(props) {
 
   const handleFormChange = (data) => {
     formStateRef.current = data;
+    onChange?.(data);
   };
 
   useEffect(() => {
-    if (schema) {
-      setLoadingSchema(false);
-    }
-  }, [schema]);
+    setLoadingSchema(isSchemaPending);
+  }, [isSchemaPending]);
 
   return (
     <>
       <SistentModal open={open} closeModal={handleClose} title={title} headerIcon={leftHeaderIcon}>
-        <Typography variant="h5">
-          {schema_array?.length < 1 && (
+        {schema_array && schema_array.length > 0 && (
+          <Typography component="div" variant="h5">
             <SchemaVersion
               schema_array={schema_array}
               type={type}
               schemaChangeHandler={schemaChangeHandler}
             />
-          )}
-        </Typography>
+          </Typography>
+        )}
         <ModalBody>
           {loadingSchema ? (
             <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
               <CircularProgress />
             </div>
+          ) : !hasResolvedSchema ? (
+            <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+              <Typography variant="body1" color="textSecondary">
+                No form is available for this credential type.
+              </Typography>
+            </div>
           ) : (
             <RJSFWrapper
               key={type}
               formData={initialData || formStateRef}
-              jsonSchema={schema || getSchema(type)}
-              uiSchema={uiSchema}
+              jsonSchema={resolvedSchema}
+              uiSchema={resolvedUiSchema}
               onChange={handleFormChange}
               liveValidate={false}
               formRef={formRef}
@@ -175,7 +205,7 @@ function Modal(props) {
             secondaryText="Cancel"
             primaryButtonProps={{
               onClick: handleFormSubmit,
-              disabled: canNotSubmit,
+              disabled: isSubmitDisabled,
             }}
             secondaryButtonProps={{
               onClick: handleClose,
@@ -189,6 +219,23 @@ function Modal(props) {
 
 export default React.memo(Modal);
 
+/**
+ * Renders an RJSF form body and action footer inside an existing modal container.
+ *
+ * @param {Object} props - Component props.
+ * @param {Function} props.handleClose - Function to handle closing the modal.
+ * @param {Object} props.schema - The JSON schema for the form fields.
+ * @param {Object} [props.uiSchema={}] - The UI schema for the form fields.
+ * @param {Object} [props.initialData={}] - Initial form data.
+ * @param {Function} props.handleSubmit - Function invoked with validated form data on submit.
+ * @param {Function} [props.handleNext] - Optional step callback invoked after submit.
+ * @param {string} props.title - Modal title used for forbidden-name checks.
+ * @param {string} [props.submitBtnText] - Label for the primary submit button.
+ * @param {string} [props.helpText] - Optional footer help text.
+ * @param {Object} [props.widgets={}] - Custom RJSF widgets.
+ * @param {boolean} [props.isSubmitting=false] - Shows a spinner and disables submit while submitting.
+ * @param {boolean} [props.submitDisabled=false] - Optional consumer-controlled flag to disable submit.
+ */
 function RJSFModalWrapper({
   handleClose,
   schema,
@@ -201,12 +248,15 @@ function RJSFModalWrapper({
   helpText,
   widgets = {},
   isSubmitting = false,
+  submitDisabled = false,
 }) {
   const formRef = useRef();
   const formStateRef = useRef();
+  const hasSchema = Boolean(schema);
   const [canNotSubmit, setCanNotSubmit] = useState(false);
-  const [loadingSchema, setLoadingSchema] = useState(true);
+  const [loadingSchema, setLoadingSchema] = useState(!hasSchema);
   const { notify } = useNotification();
+  const isSubmitDisabled = Boolean(canNotSubmit || loadingSchema || isSubmitting || submitDisabled);
   useEffect(() => {
     setCanNotSubmit(false);
     const handleDesignNameCheck = () => {
@@ -232,10 +282,13 @@ function RJSFModalWrapper({
   };
 
   useEffect(() => {
-    setLoadingSchema(!schema);
-  }, [schema]);
+    setLoadingSchema(!hasSchema);
+  }, [hasSchema]);
 
   const handleFormSubmit = () => {
+    if (isSubmitDisabled) {
+      return;
+    }
     if (formRef.current && formRef.current.validateForm()) {
       handleSubmit(formRef.current.state.formData);
       if (handleNext) {
@@ -270,7 +323,7 @@ function RJSFModalWrapper({
           secondaryText="Cancel"
           primaryButtonProps={{
             onClick: handleFormSubmit,
-            disabled: canNotSubmit || isSubmitting,
+            disabled: isSubmitDisabled,
             startIcon: isSubmitting ? <CircularProgress size={16} /> : undefined,
           }}
           secondaryButtonProps={{

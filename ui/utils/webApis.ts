@@ -1,6 +1,6 @@
 /**
  * Finds the host on which Meshery is running, it could be
- * localhost:{port} or an IP adress or a webadress
+ * localhost:{port} or an IP address or a web address
  * @returns {string} application host
  */
 function getHost() {

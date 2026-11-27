@@ -27,8 +27,9 @@ describe('groupRelationshipsByKind', () => {
     expect(edge?.relationships[0]).toMatchObject({ id: 'r1', kind: 'edge' });
   });
 
-  it('returns an empty array when input is empty', () => {
+  it('returns an empty array when input is empty or invalid', () => {
     expect(groupRelationshipsByKind([])).toEqual([]);
+    expect(groupRelationshipsByKind(undefined as any)).toEqual([]);
   });
 });
 
@@ -76,6 +77,17 @@ describe('getFilteredDataForDetailsComponent', () => {
 
     expect(result.data).toMatchObject({ id: 'child' });
   });
+
+  it('handles undefined or invalid input gracefully', () => {
+    expect(getFilteredDataForDetailsComponent([], undefined as any)).toEqual({
+      type: '',
+      data: {},
+    });
+    expect(getFilteredDataForDetailsComponent(undefined as any, 'some.id')).toEqual({
+      type: '',
+      data: {},
+    });
+  });
 });
 
 describe('removeDuplicateVersions', () => {
@@ -112,6 +124,39 @@ describe('removeDuplicateVersions', () => {
 
   it('returns an empty array when given no models', () => {
     expect(removeDuplicateVersions([])).toEqual([]);
+    expect(removeDuplicateVersions(undefined as any)).toEqual([]);
+  });
+
+  it('aggregates relationships and components when duplicate models share the same version without nested grouping corruption', () => {
+    const data = [
+      {
+        name: 'kubernetes',
+        model: { version: '1.0.0' },
+        components: ['pod', 'service'],
+        relationships: [{ id: 'rel-1', kind: 'edge', name: 'edge-1' }],
+      },
+      {
+        name: 'kubernetes',
+        model: { version: '1.0.0' },
+        components: ['deployment'],
+        relationships: [{ id: 'rel-2', kind: 'edge', name: 'edge-2' }],
+      },
+    ];
+
+    const result = removeDuplicateVersions(data);
+    expect(result).toHaveLength(1);
+
+    const versionedEntry = result[0].versionBasedData[0];
+    expect(versionedEntry.components).toEqual(['pod', 'service', 'deployment']);
+    expect(versionedEntry.relationships).toEqual([
+      {
+        kind: 'edge',
+        relationships: [
+          { id: 'rel-1', kind: 'edge', name: 'edge-1' },
+          { id: 'rel-2', kind: 'edge', name: 'edge-2' },
+        ],
+      },
+    ]);
   });
 });
 

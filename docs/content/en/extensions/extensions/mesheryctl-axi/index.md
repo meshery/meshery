@@ -8,7 +8,7 @@ aliases:
 
 # 🤖 mesheryctl-axi
 
-`mesheryctl-axi` is an [AXI](https://axi.md/)-compliant wrapper around [`mesheryctl`]({{< ref "reference/references/mesheryctl/_index.md" >}}), built for AI coding agents. Where `mesheryctl` is optimized for a human at a terminal, `mesheryctl-axi` is optimized for an agent consuming the output as context: it wraps the human CLI rather than replacing it, so the two stay in step.
+`mesheryctl-axi` is an [AXI](https://axi.md/)-compliant wrapper around [`mesheryctl`]({{< ref "reference/mesheryctl/_index.md" >}}), built for AI coding agents. Where `mesheryctl` is optimized for a human at a terminal, `mesheryctl-axi` is optimized for an agent consuming the output as context: it wraps the human CLI rather than replacing it, so the two stay in step.
 
 ## Features
 

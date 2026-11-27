@@ -21,12 +21,12 @@ var OrgCmd = &cobra.Command{
 	Use:   "organization",
 	Short: "Interact with registered organizations",
 	Long: `Interact with registered organizations to display detailed information
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/organization`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/organization`,
 	Example: `
-// Number of  registered orgs
+// Number of registered orgs
 mesheryctl organization --count
 
-// List registerd orgs
+// List registered orgs
 mesheryctl organization list
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {

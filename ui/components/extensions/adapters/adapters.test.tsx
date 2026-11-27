@@ -10,8 +10,14 @@ const updateProgressMock = vi.fn();
 
 vi.mock('@sistent/sistent', () => ({
   Grid2: ({ children }: any) => <div data-testid="grid">{children}</div>,
-  Switch: ({ checked, onChange, name }: any) => (
-    <input data-testid={`switch-${name}`} type="checkbox" checked={!!checked} onChange={onChange} />
+  Switch: ({ checked, onChange, name, disabled }: any) => (
+    <input
+      data-testid={`switch-${name}`}
+      type="checkbox"
+      checked={!!checked}
+      disabled={!!disabled}
+      onChange={onChange}
+    />
   ),
   Typography: ({ children }: any) => <div>{children}</div>,
   useTheme: () => ({
@@ -125,9 +131,15 @@ describe('Adapters component', () => {
       await Promise.resolve();
     });
 
-    // The handler doesn't notify directly (handleError is curried); just verify the
-    // initial render still produced cards and didn't crash.
     expect(screen.getAllByText(/Meshery Adapter for Istio/i).length).toBeGreaterThan(0);
+    expect(notifyMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Unable to fetch list of adapters.',
+        event_type: 'error',
+        details: 'Error: boom',
+      }),
+    );
+    expect(updateProgressMock).toHaveBeenLastCalledWith({ showProgress: false });
   });
 
   it('marks adapters returned by system sync as enabled', async () => {
@@ -170,5 +182,38 @@ describe('Adapters component', () => {
     const payload = changeAdapterStateMock.mock.calls[0][1];
     expect(payload.adapter).toBe('meshery-istio');
     expect(payload.status).toBe('ENABLED');
+
+    // the failure is reported and the switch goes back to off
+    expect(notifyMock).toHaveBeenCalledWith(expect.objectContaining({ event_type: 'error' }));
+    expect(notifyMock).not.toHaveBeenCalledWith(expect.objectContaining({ event_type: 'success' }));
+    expect(screen.getAllByTestId('switch-OperatorSwitch')[0]).not.toBeChecked();
+  });
+
+  it('ignores further toggles of an adapter while its request is pending', async () => {
+    let finish: (response: unknown, errors: unknown) => void = () => {};
+    changeAdapterStateMock.mockImplementation((cb: any) => {
+      finish = cb;
+    });
+
+    await act(async () => {
+      render(<Adapters />);
+    });
+
+    const istioSwitch = screen.getAllByTestId('switch-OperatorSwitch')[0];
+    await act(async () => {
+      fireEvent.click(istioSwitch);
+    });
+
+    expect(istioSwitch).toBeDisabled();
+    await act(async () => {
+      fireEvent.click(istioSwitch);
+    });
+    expect(changeAdapterStateMock).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      finish({}, null);
+    });
+    expect(istioSwitch).not.toBeDisabled();
+    expect(istioSwitch).toBeChecked();
   });
 });

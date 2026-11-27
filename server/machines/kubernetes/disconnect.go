@@ -5,9 +5,7 @@ import (
 	"time"
 
 	"github.com/meshery/meshery/server/machines"
-	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
-	"github.com/meshery/schemas/models/core"
 )
 
 type DisconnectAction struct{}
@@ -16,12 +14,13 @@ func (da *DisconnectAction) ExecuteOnEntry(ctx context.Context, machineCtx inter
 	return machines.NoOp, nil, nil
 
 }
-func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	userUUID := user.ID
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
+// Execute cleanly tears down MeshSync data handlers and disconnects from the Kubernetes cluster.
+// It leaves the cluster-scoped Meshery Operator installed.
+func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
+	userUUID, systemID := machines.ResolveUserAndSystemID(ctx)
+
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(systemID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
@@ -29,14 +28,17 @@ func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{},
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	contextID := machinectx.K8sContext.ID
-	go func() {
-		machinectx.MesheryCtrlsHelper.
-			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
-			UndeployDeployedOperators(machinectx.OperatorTracker, contextID).
-			RemoveCtxControllerHandler(ctx, contextID)
-		machinectx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)
+	machinectx.SetDisconnected(true)
 
+	go func() {
+		machinectx.setupLock.Lock()
+		defer machinectx.setupLock.Unlock()
+		if machinectx.MesheryCtrlsHelper != nil {
+			// Releases this connection's claim on the cluster's Meshery Operator
+			// without uninstalling it: the operator is cluster-scoped and other
+			// connections may still depend on it.
+			machinectx.MesheryCtrlsHelper.DetachFromCluster(ctx, machinectx.OperatorTracker, machinectx.K8sContext)
+		}
 	}()
 
 	_ctx, cancel := context.WithTimeout(ctx, 100*time.Millisecond)
