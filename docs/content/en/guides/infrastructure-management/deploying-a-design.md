@@ -27,7 +27,12 @@ Use this guide to put a [Design]({{< ref "concepts/logical/designs.md" >}}) onto
     - **Next** stays disabled while the dry run reports errors. Fix the design, or select **Bypass errors and initiate deployment** to deploy anyway.
     - For components from Artifact Hub-sourced models, Meshery tries to install the CRDs and operators they need before it applies them, on every deployment from Meshery UI. The **Include Dependencies** checkbox on this step does not currently change that. See [Auto-Deployment of CRDs and Operators]({{< ref "guides/infrastructure-management/overview.md#auto-deployment-of-crds-and-operators" >}}).
 6. **Finalize Deployment.** Review the design and the Environments you selected, then click **Deploy**.
-7. Read the deployment summary on the last step. It lists each component's result on each cluster, with error details for any component that failed.
+7. Read the deployment summary on the last step. It lists each component's result on each cluster, with error details for any component that failed. When some or all components failed, it also shows how many failed, for example "2 of 5 components failed".
+
+    If the last step shows one of these messages instead of a summary:
+    - **Your session has expired.** Click **Log In**, then deploy again.
+    - **Error** followed by a status code, or a network error. Click **Retry** to send the request again.
+    - **Deployment status unknown.** Meshery accepted the request but did not report a result within 90 seconds. The deployment may still finish. Click **Open Notification Center** or check the cluster for the result.
 
 Meshery also posts the result to the [Notification Center]({{< ref "guides/infrastructure-management/notification-management/index.md" >}}), so you can come back to it later.
 
