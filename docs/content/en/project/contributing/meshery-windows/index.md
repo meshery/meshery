@@ -178,7 +178,7 @@ You are now ready to [contribute]({{< ref "project/contributing/_index.md" >}}) 
 
 ## Using Hyper-V to install a linux VM
 
-Here is a link to install linux VM using Hyper-V: [https://wiki.ubuntu.com/Hyper-V](https://wiki.ubuntu.com/Hyper-V)
+Here is a link to create a virtual machine using Hyper-V: [Create a virtual machine in Hyper-V](https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/get-started/create-a-virtual-machine-in-hyper-v)
 
 
 ## Get the code
