@@ -127,6 +127,8 @@ type clients struct {
 	evicted   bool
 }
 
+// Broadcast coordinates real-time event dissemination to per-user listener channels
+// and maintains per-user replay buffers for SSE Last-Event-ID reconnection recovery.
 type Broadcast struct {
 	clients              sync.Map
 	history              sync.Map // core.Uuid -> *replayBuffer
