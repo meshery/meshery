@@ -248,6 +248,8 @@ const (
 	ErrInvalidClientEventCode    = "meshery-server-1489"
 	ErrNilProviderCode           = "meshery-server-1492"
 	ErrRequestTooLargeCode       = "meshery-server-1494"
+	ErrGetConnectionDefinitionsCode = "meshery-server-1502"
+	ErrGetConnectionDefinitionCode  = "meshery-server-1503"
 )
 
 var (
@@ -1327,4 +1329,27 @@ func ErrRequestTooLarge(maxSize int) error {
 		[]string{"Request payload exceeds maximum allowed size"},
 		[]string{"Reduce request payload size to within acceptable limits"},
 	)
+}
+
+func ErrGetConnectionDefinitions(err error) error {
+	return errors.New(
+		ErrGetConnectionDefinitionsCode,
+		errors.Alert,
+		[]string{"Unable to get connection definitions"},
+		[]string{err.Error()},
+		[]string{"Database or registry was unreachable or returned an error", "Data in the registry was inconsistent"},
+		[]string{"Make sure the registry is available and try again", "Check server logs for database connectivity issues"},
+	)
+}
+
+func ErrGetConnectionDefinition(err error) error {
+	return errors.New(
+		ErrGetConnectionDefinitionCode,
+		errors.Alert,
+		[]string{"Unable to get connection definition"},
+		[]string{err.Error()},
+		[]string{"Database or registry was unreachable or returned an error", "Connection definition with given ID does not exist or failed during retrieval"},
+		[]string{"Check if the connection definition ID is valid", "Make sure the registry is available and try again"},
+	)
+}
 }
