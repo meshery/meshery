@@ -60,21 +60,23 @@ func TestDownloadMesheryPatternHandler_OCIExportDesignNames(t *testing.T) {
 	}
 
 	tests := []struct {
+		name           string
 		designName     string
 		wantRepository string
 	}{
 		// Names that already exported keep the repository name they had.
-		{"nginx-demo", "nginx-demo"},
-		{"Nginx Demo v2.0", "nginxdemov2.0"},
+		{"nginx-demo", "nginx-demo", "nginx-demo"},
+		{"Nginx Demo v2.0", "Nginx Demo v2.0", "nginxdemov2.0"},
 		// Names that used to fail the export.
-		{"My Design (1)", "mydesign-1"},
-		{"nginx: prod", "nginx-prod"},
-		{"nginx/prod", "nginx-prod"},
-		{"a", "a-design"},
+		{"My Design (1)", "My Design (1)", "mydesign-1"},
+		{"nginx: prod", "nginx: prod", "nginx-prod"},
+		{"nginx/prod", "nginx/prod", "nginx-prod"},
+		{"a", "a", "a-design"},
+		{"300-character name", strings.Repeat("a", 300), strings.Repeat("a", 255)},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.designName, func(t *testing.T) {
+		t.Run(tt.name, func(t *testing.T) {
 			patID := uuid.Must(uuid.NewV4())
 			designFile := fmt.Sprintf("name: %q\nschemaVersion: designs.meshery.io/v1beta1\nversion: 0.0.1\ncomponents: []\n", tt.designName)
 			prov := &roundtripProvider{

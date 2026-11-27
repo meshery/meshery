@@ -1211,7 +1211,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		h.persistAndPublish(provider, token, userID, event)
 
 		repositoryName := designOCIRepositoryName(pattern.Name)
-		tmpOCITarFilePath := filepath.Join(tmpDir, repositoryName+".tar")
+		tmpOCITarFilePath := filepath.Join(tmpDir, "design.tar")
 		err = oci.SaveOCIArtifact(ociImg, tmpOCITarFilePath, repositoryName)
 		if err != nil {
 			h.log.Error(ErrSaveOCIArtifact(err))
