@@ -129,6 +129,7 @@ func TestDesignOCIRepositoryName(t *testing.T) {
 		{"-nginx", "nginx"},
 		// Names too short or with nothing usable left.
 		{"a", "a-design"},
+		{"a!", "a-design"},
 		{"", "design"},
 		{"(!)", "design"},
 		{strings.Repeat("a", 300), strings.Repeat("a", 255)},
