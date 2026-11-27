@@ -619,6 +619,7 @@ Section pages:
 - [ErrInvalidOutputChoiceCode-1047](/reference/error-codes/client-mesheryctl/errinvalidoutputchoicecode-1047/)
 - [ErrInvalidOutputFormatCode-1198](/reference/error-codes/client-mesheryctl/errinvalidoutputformatcode-1198/)
 - [ErrInvalidPatternCode-1072](/reference/error-codes/component-meshery-server/errinvalidpatterncode-1072/)
+- [ErrInvalidPerformanceProfileCode-1502](/reference/error-codes/component-meshery-server/errinvalidperformanceprofilecode-1502/)
 - [ErrInvalidPolicyPaginationCode-11336](/reference/error-codes/library-meshkit/errinvalidpolicypaginationcode-11336/)
 - [ErrInvalidProtocolCode-11167](/reference/error-codes/library-meshkit/errinvalidprotocolcode-11167/)
 - [ErrInvalidRegistrationCode-11320](/reference/error-codes/library-meshkit/errinvalidregistrationcode-11320/)

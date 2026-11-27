@@ -16263,6 +16263,31 @@ Older tooling wrote arbitrary version strings into design files</p>
             </td>
           </tr>
         
+          
+          
+          
+          
+            
+          
+          <tr id="ErrInvalidPerformanceProfileCode-1502" class="tbl-body-row hover-effect" data-details-id="meshery-server-ErrInvalidPerformanceProfileCode-more-info" onclick="toggle_visibility('meshery-server-ErrInvalidPerformanceProfileCode-more-info');">
+            <td class="tbl-severity-alert">Alert</td>
+            <td id=" -1502" class="error-name-code">
+              <a href="/reference/error-codes/component-meshery-server/errinvalidperformanceprofilecode-1502/"><code>ErrInvalidPerformanceProfileCode-1502</code></a>
+            </td>
+            <td>Invalid performance profile</td>
+            <td><a href="https://discuss.meshery.io/search?q=ErrInvalidPerformanceProfileCode-1502" target="_blank">search forum</a></td>
+          </tr>
+          <tr id="meshery-server-ErrInvalidPerformanceProfileCode-more-info" class="tbl-hidden-row">
+            <td style="word-break:break-all;" colspan="4">
+              <div class="error-heading">Long Description</div>
+              <p class="error-details"></p>
+              <div class="error-heading">Probable Cause</div>
+              <p class="error-details">The performance profile object is nil or invalid</p>
+              <div class="error-heading">Suggested Remediation</div>
+              <p class="error-details">Ensure a valid, non-nil performance profile is provided</p>
+            </td>
+          </tr>
+        
       </tbody>
     </table>
     <a href="#error-code-reference">Top</a>
