@@ -15,7 +15,6 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/docker/docker/api/types/container"
-	"github.com/spf13/viper"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -132,22 +131,10 @@ func parseKubectlShortVersion(version string) ([3]int, error) {
 	return getK8sVersion(versionString)
 }
 
-// IsMesheryRunning checks if the meshery server containers are up and running
-func IsMesheryRunning(currPlatform string) (bool, error) {
-	// Get viper instance used for context to extract the endpoint from config file
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return false, err
-	}
-
-	currCtx, err := mctlCfg.GetCurrentContext()
-	if err != nil {
-		return false, err
-	}
-
-	urlEndpoint := currCtx.GetEndpoint()
-
-	urlTest := urlEndpoint + "/api/system/version"
+// IsMesheryRunning checks if the meshery server of the given context is up and running
+func IsMesheryRunning(currCtx *config.Context) (bool, error) {
+	currPlatform := currCtx.GetPlatform()
+	urlTest := currCtx.GetEndpoint() + "/api/system/version"
 
 	// Checking if Meshery is running with the URL obtained
 	resp, err := http.Get(urlTest)

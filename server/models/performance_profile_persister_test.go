@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -127,8 +128,33 @@ func TestGetPerformanceProfilesPropagatesQueryError(t *testing.T) {
 	ppp := &PerformanceProfilePersister{DB: &db}
 
 	raw, err := ppp.GetPerformanceProfiles("", "", "", 0, 10)
+	if raw != nil {
+		t.Errorf("expected nil raw body on DB error, got %s", raw)
+	}
 	if err == nil {
 		t.Fatalf("expected an error querying a missing table, got body %s", raw)
+	}
+	if code := mkerrors.GetCode(err); code != ErrDBReadCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBReadCode, err)
+	}
+}
+
+func TestGetPerformanceProfiles_FindDBError(t *testing.T) {
+	db := newMigratedDB(t)
+	if err := db.Exec("DROP TABLE meshery_results").Error; err != nil {
+		t.Fatalf("drop meshery_results: %v", err)
+	}
+	ppp := &PerformanceProfilePersister{DB: db}
+
+	raw, err := ppp.GetPerformanceProfiles("", "", "", 0, 10)
+	if raw != nil {
+		t.Errorf("expected nil raw body on DB error, got %s", raw)
+	}
+	if err == nil {
+		t.Fatalf("expected ErrDBRead on missing meshery_results table, got nil")
+	}
+	if code := mkerrors.GetCode(err); code != ErrDBReadCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBReadCode, err)
 	}
 }
 
@@ -188,4 +214,148 @@ func TestDeletePerformanceProfileReportsMissingProfile(t *testing.T) {
 	if raw != nil {
 		t.Errorf("expected no body for a missing profile, got %s", raw)
 	}
+}
+
+// TestPerformanceProfilePersister_NilGuards verifies that calling persister methods
+// on a nil receiver or an uninitialized DB returns ErrDBConnection rather than panicking.
+func TestPerformanceProfilePersister_NilGuards(t *testing.T) {
+	cases := []struct {
+		name string
+		ppp  *PerformanceProfilePersister
+	}{
+		{name: "nil receiver", ppp: nil},
+		{name: "nil db handler", ppp: &PerformanceProfilePersister{DB: nil}},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if _, err := tc.ppp.GetPerformanceProfiles("", "", "", 0, 10); !errors.Is(err, ErrDBConnection) {
+				t.Errorf("GetPerformanceProfiles: expected ErrDBConnection, got %v", err)
+			}
+			if got, err := tc.ppp.GetPerformanceProfile(mustUUID(t)); !errors.Is(err, ErrDBConnection) || got != nil {
+				t.Errorf("GetPerformanceProfile: expected (nil, ErrDBConnection), got (%v, %v)", got, err)
+			}
+			if _, err := tc.ppp.DeletePerformanceProfile(mustUUID(t)); !errors.Is(err, ErrDBConnection) {
+				t.Errorf("DeletePerformanceProfile: expected ErrDBConnection, got %v", err)
+			}
+			if err := tc.ppp.SavePerformanceProfile(mustUUID(t), &PerformanceProfile{}); !errors.Is(err, ErrDBConnection) {
+				t.Errorf("SavePerformanceProfile: expected ErrDBConnection, got %v", err)
+			}
+		})
+	}
+}
+
+// TestGetPerformanceProfile_NotFound verifies that requesting a non-existent profile ID
+// returns nil (not a pointer to an empty struct) and an error with ErrResultNotFoundCode.
+func TestGetPerformanceProfile_NotFound(t *testing.T) {
+	db := newMigratedDB(t)
+	ppp := &PerformanceProfilePersister{DB: db}
+
+	id := mustUUID(t)
+	got, err := ppp.GetPerformanceProfile(id)
+	if got != nil {
+		t.Errorf("expected nil profile for missing id, got %+v", got)
+	}
+	if err == nil {
+		t.Fatalf("expected ErrResultNotFound, got nil error")
+	}
+	if code := mkerrors.GetCode(err); code != ErrResultNotFoundCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrResultNotFoundCode, err)
+	}
+}
+
+// TestGetPerformanceProfile_DBError verifies that when a database read fails,
+// ErrDBRead is returned with a nil profile pointer.
+func TestGetPerformanceProfile_DBError(t *testing.T) {
+	db, err := database.New(database.Options{Engine: database.SQLITE, Filename: ":memory:"})
+	if err != nil {
+		t.Fatalf("open database: %v", err)
+	}
+	// Deliberately un-migrated: performance_profiles table does not exist.
+	ppp := &PerformanceProfilePersister{DB: &db}
+
+	got, err := ppp.GetPerformanceProfile(mustUUID(t))
+	if got != nil {
+		t.Errorf("expected nil profile on DB error, got %+v", got)
+	}
+	if err == nil {
+		t.Fatalf("expected ErrDBRead on unmigrated table, got nil error")
+	}
+	if code := mkerrors.GetCode(err); code != ErrDBReadCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBReadCode, err)
+	}
+}
+
+// TestDeletePerformanceProfile_DBError verifies that when a database delete fails,
+// ErrDBDelete is returned with nil body.
+func TestDeletePerformanceProfile_DBError(t *testing.T) {
+	db, err := database.New(database.Options{Engine: database.SQLITE, Filename: ":memory:"})
+	if err != nil {
+		t.Fatalf("open database: %v", err)
+	}
+	// Deliberately un-migrated: performance_profiles table does not exist.
+	ppp := &PerformanceProfilePersister{DB: &db}
+
+	raw, err := ppp.DeletePerformanceProfile(mustUUID(t))
+	if raw != nil {
+		t.Errorf("expected nil raw body on DB error, got %s", raw)
+	}
+	if err == nil {
+		t.Fatalf("expected ErrDBDelete on unmigrated table, got nil error")
+	}
+	if code := mkerrors.GetCode(err); code != ErrDBDeleteCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBDeleteCode, err)
+	}
+}
+
+// TestSavePerformanceProfile_NilGuard verifies that passing a nil profile to
+// SavePerformanceProfile returns an ErrInvalidPerformanceProfile coded error
+// rather than panicking or returning an uncoded error.
+func TestSavePerformanceProfile_NilGuard(t *testing.T) {
+	db := newMigratedDB(t)
+	ppp := &PerformanceProfilePersister{DB: db}
+
+	err := ppp.SavePerformanceProfile(mustUUID(t), nil)
+	if err == nil {
+		t.Fatalf("expected error when saving nil profile, got nil")
+	}
+	if code := mkerrors.GetCode(err); code != ErrInvalidPerformanceProfileCode {
+		t.Errorf("error code = %q, want %q (err: %v)", code, ErrInvalidPerformanceProfileCode, err)
+	}
+}
+
+func TestSavePerformanceProfile_DBErrors(t *testing.T) {
+	t.Run("update error returns ErrDBPut", func(t *testing.T) {
+		db, err := database.New(database.Options{Engine: database.SQLITE, Filename: ":memory:"})
+		if err != nil {
+			t.Fatalf("open database: %v", err)
+		}
+		ppp := &PerformanceProfilePersister{DB: &db}
+
+		profile := &PerformanceProfile{ID: mustUUID(t), Name: "unmigrated"}
+		err = ppp.SavePerformanceProfile(profile.ID, profile)
+		if err == nil {
+			t.Fatalf("expected ErrDBPut on unmigrated table, got nil")
+		}
+		if code := mkerrors.GetCode(err); code != ErrDBPutCode {
+			t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBPutCode, err)
+		}
+	})
+
+	t.Run("create error returns ErrDBCreate", func(t *testing.T) {
+		db := newMigratedDB(t)
+		if err := db.Exec(`CREATE TRIGGER block_perf_profile_insert BEFORE INSERT ON performance_profiles BEGIN SELECT RAISE(ABORT, 'insert blocked'); END`).Error; err != nil {
+			t.Fatalf("create trigger: %v", err)
+		}
+		ppp := &PerformanceProfilePersister{DB: db}
+
+		profile := &PerformanceProfile{ID: mustUUID(t), Name: "blocked", Owner: mustUUID(t), Duration: "10s"}
+		err := ppp.SavePerformanceProfile(profile.ID, profile)
+		if err == nil {
+			t.Fatalf("expected ErrDBCreate when insert fails, got nil")
+		}
+		if code := mkerrors.GetCode(err); code != ErrDBCreateCode {
+			t.Errorf("error code = %q, want %q (err: %v)", code, ErrDBCreateCode, err)
+		}
+	})
 }

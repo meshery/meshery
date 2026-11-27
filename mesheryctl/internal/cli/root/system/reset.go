@@ -99,8 +99,25 @@ func resetMesheryConfig() error {
 		return ErrSettingDefaultContextToConfig(err)
 	}
 
-	return fetchManifests(mctlCfg)
+	// Reload configuration from viper to reflect the reset context
+	mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return err
+	}
+
+	// If a temporary context was set via -c/--context, re-apply it to the refreshed in-memory config
+	if tempContext != "" {
+		err = mctlCfg.SetCurrentContext(tempContext)
+		if err != nil {
+			return ErrSettingTemporaryContext(err)
+		}
+	}
+
+	return fetchManifestsFunc(mctlCfg)
 }
+
+// fetchManifestsFunc allows tests to observe or mock manifest fetching without network calls.
+var fetchManifestsFunc = fetchManifests
 
 // resetContextInConfig replaces the named context with the default context,
 // keeping its platform. It writes to the meshconfig the command runs with:
