@@ -197,9 +197,9 @@ describe('MeshSyncTable', () => {
     expect(useGetMeshSyncResourcesQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         clusterIds: JSON.stringify(['cluster-a', 'cluster-b']),
-        status: true,
       }),
     );
+    expect(useGetMeshSyncResourcesQuery.mock.calls[0][0]).not.toHaveProperty('status');
     expect(useGetMeshSyncResourceKindsQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         clusterIds: ['cluster-a', 'cluster-b'],
@@ -465,7 +465,7 @@ describe('MeshSyncTable', () => {
     },
   );
 
-  it.each([undefined, null, '', 0, 'unknown'])(
+  it.each([undefined, null, '', 0, 'unknown', { phase: 'Running' }])(
     'does not offer registration for a connection-capable row with status %s',
     (status) => {
       getColumnValue.mockImplementation((rowData, columnName, cols) => {

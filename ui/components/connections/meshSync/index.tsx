@@ -103,7 +103,6 @@ export default function MeshSyncTable(props) {
     model: modelFilter,
     namespace: namespaceFilter,
     clusterIds: serializedClusterIds,
-    status: true,
   });
 
   useEffect(() => {

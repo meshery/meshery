@@ -930,3 +930,62 @@ func TestPersistStoreUpdatePreservesMeshSyncCapabilities(t *testing.T) {
 
 	assertPreserved(obj.ID, "http://10.0.0.2:9090")
 }
+
+func TestMergeComponentMetadataCapabilities(t *testing.T) {
+	registryCapabilities := []interface{}{
+		map[string]interface{}{"kind": "action", "displayName": "Connect"},
+	}
+	meshSyncCapabilities := map[string]interface{}{
+		"connection": true,
+		"urls":       []interface{}{"http://10.0.0.1:9090"},
+	}
+	tests := []struct {
+		name                 string
+		existingCapabilities interface{}
+		wantCapabilities     interface{}
+	}{
+		{
+			name:                 "nil discovery capabilities use registry capabilities",
+			existingCapabilities: nil,
+			wantCapabilities:     registryCapabilities,
+		},
+		{
+			name:                 "empty discovery map uses registry capabilities",
+			existingCapabilities: map[string]interface{}{},
+			wantCapabilities:     registryCapabilities,
+		},
+		{
+			name:                 "empty discovery array uses registry capabilities",
+			existingCapabilities: []interface{}{},
+			wantCapabilities:     registryCapabilities,
+		},
+		{
+			name: "placeholder discovery fields use registry capabilities",
+			existingCapabilities: map[string]interface{}{
+				"urls": []interface{}{},
+				"name": " ",
+			},
+			wantCapabilities: registryCapabilities,
+		},
+		{
+			name:                 "populated discovery map is preserved",
+			existingCapabilities: meshSyncCapabilities,
+			wantCapabilities:     meshSyncCapabilities,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			merged := mergeComponentMetadata(
+				map[string]interface{}{"capabilities": tt.existingCapabilities},
+				map[string]interface{}{
+					"capabilities": registryCapabilities,
+					"styles":       map[string]interface{}{"svgColor": "registry"},
+				},
+			)
+
+			assert.Equal(t, tt.wantCapabilities, merged["capabilities"])
+			assert.Equal(t, map[string]interface{}{"svgColor": "registry"}, merged["styles"])
+		})
+	}
+}

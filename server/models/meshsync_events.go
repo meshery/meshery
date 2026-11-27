@@ -380,16 +380,41 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 }
 
 // mergeComponentMetadata merges registry component metadata onto MeshSync-populated
-// metadata while preserving non-nil MeshSync capabilities (such as Service
+// metadata while preserving meaningful MeshSync capabilities (such as Service
 // connection discovery metadata) that ComponentDefinition.Capabilities would
 // otherwise overwrite.
 func mergeComponentMetadata(existing, compMetadata map[string]interface{}) map[string]interface{} {
 	existingCapabilities, hasExistingCapabilities := existing["capabilities"]
 	merged := utils.MergeMaps(existing, compMetadata)
-	if hasExistingCapabilities && existingCapabilities != nil {
+	if hasExistingCapabilities && hasMeaningfulMeshSyncCapabilities(existingCapabilities) {
 		merged["capabilities"] = existingCapabilities
 	}
 	return merged
+}
+
+func hasMeaningfulMeshSyncCapabilities(value interface{}) bool {
+	switch value := value.(type) {
+	case map[string]interface{}:
+		for _, nested := range value {
+			if hasMeaningfulMeshSyncCapabilities(nested) {
+				return true
+			}
+		}
+		return false
+	case []interface{}:
+		for _, nested := range value {
+			if hasMeaningfulMeshSyncCapabilities(nested) {
+				return true
+			}
+		}
+		return false
+	case string:
+		return strings.TrimSpace(value) != ""
+	case nil:
+		return false
+	default:
+		return true
+	}
 }
 
 // Returns metadata for the component identified by apiVersion and kind.
