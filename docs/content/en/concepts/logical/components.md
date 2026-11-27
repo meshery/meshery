@@ -8,7 +8,7 @@ In Meshery, a **Component** is a fundamental building block used to represent an
 
 ## Components as building blocks
 
-Meshery Models and their packaged Components represent a standardized and reusable collection of building blocks used to describe both the desired and actual configuration of infrastructure pre and post-deployment. More than this Components are using to describe non-infrastructure concepts, for example, a component might capture a comment or a visual element that you've placed into a Meshery Design. To aid in distinguishing between types of Components, they are categorized into two groups: Semantic and Non-Semantic components. A component is considered semantically meaningful when it behaves as a direct representation of an aspect of your infrastructure. A component is considered non-semantically meaningful when it behaves as an annotation to aid in the comprehension of your designs.
+Meshery Models and their packaged Components represent a standardized and reusable collection of building blocks used to describe both the desired and actual configuration of infrastructure pre and post-deployment. More than this, Components are used to describe non-infrastructure concepts, for example, a component might capture a comment or a visual element that you've placed into a Meshery Design. To aid in distinguishing between types of Components, they are categorized into two groups: Semantic and Non-Semantic components. A component is considered semantically meaningful when it behaves as a direct representation of an aspect of your infrastructure. A component is considered non-semantically meaningful when it behaves as an annotation to aid in the comprehension of your designs.
 
 ### Semantic Components
 
@@ -45,7 +45,7 @@ Understanding the distinction between semantic and non-semantic components helps
 
 Because a component belongs to a model, and every model records the registrant that registered it, the model a component belongs to also decides who provisions that component when you deploy - see [Deployment Engine]({{< ref "concepts/architecture/deployment-engine/index.md" >}}).
 
-Once registered with Meshery Server (in the [Registry]({{< ref "registry.md" >}})), components are available for inclusion in [Designs]({{< ref "designs.md" >}}) that you create. Components can be created and published by anyone, allowing you to share you custom extensions with the community. This fosters a collaborative ecosystem where you can leverage and contribute to the growing collection of Meshery components.
+Once registered with Meshery Server (in the [Registry]({{< ref "registry.md" >}})), components are available for inclusion in [Designs]({{< ref "designs.md" >}}) that you create. Components can be created and published by anyone, allowing you to share your custom extensions with the community. This fosters a collaborative ecosystem where you can leverage and contribute to the growing collection of Meshery components.
 
 Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.
 
