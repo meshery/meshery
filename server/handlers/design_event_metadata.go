@@ -54,8 +54,8 @@ type patternProcessSummary struct {
 	Failed    int // components with at least one failing outcome
 }
 
-// summarizePatternProcessResponse derives the status and per-component errors
-// from the response of _processPattern, which holds either
+// summarizePatternProcessResponse derives the status, component counts and
+// per-component errors from the response of _processPattern, which holds either
 //
 //   - one entry per component id, carrying the []patterns.DeploymentMessagePerContext
 //     the Provision stage recorded for it (deploy and undeploy), or
