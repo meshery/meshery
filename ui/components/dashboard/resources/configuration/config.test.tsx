@@ -32,7 +32,7 @@ vi.mock('./runtime-class-columns', () => ({
   buildRuntimeClassColumns: () => ({ name: 'RuntimeClass', columns: [] }),
 }));
 vi.mock('./leases-columns', () => ({
-  buildLeasesColumns: () => ({ name: 'Leases', columns: [] }),
+  buildLeasesColumns: () => ({ name: 'Lease', columns: [] }),
 }));
 vi.mock('./mutating-webhook-configuration-columns', () => ({
   buildMutatingWebhookConfigurationColumns: () => ({
@@ -56,7 +56,7 @@ describe('useConfigurationTableConfig', () => {
       'PodDisruptionBudget',
       'PriorityClass',
       'RuntimeClass',
-      'Leases',
+      'Lease',
       'MutatingWebhookConfiguration',
     ]);
     expect(result.ConfigMap.name).toBe('ConfigMap');

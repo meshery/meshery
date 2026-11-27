@@ -27,16 +27,16 @@ vi.mock('../config', () => ({ SINGLE_VIEW: 'single' }));
 import { buildLeasesColumns } from './leases-columns';
 
 describe('buildLeasesColumns', () => {
-  it('returns the Leases name and non-empty columns', () => {
+  it('returns the Lease name and non-empty columns', () => {
     const cfg = buildLeasesColumns({
       switchView: () => {},
       meshSyncResources: [],
       k8sConfig: {},
       connectionMetadataState: {},
-      workloadType: 'Leases',
+      workloadType: 'Lease',
       ping: () => {},
     });
-    expect(cfg.name).toBe('Leases');
+    expect(cfg.name).toBe('Lease');
     expect(cfg.columns.length).toBeGreaterThan(0);
   });
 });

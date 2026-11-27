@@ -16,7 +16,7 @@ export const buildLeasesColumns = ({
   workloadType,
   ping,
 }) => ({
-  name: 'Leases',
+  name: 'Lease',
   colViews: [
     ['id', 'na'],
     ['metadata.name', 'xs'],

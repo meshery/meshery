@@ -37,7 +37,7 @@ export const useConfigurationTableConfig = (
     PodDisruptionBudget: buildPodDisruptionBudgetColumns(args),
     PriorityClass: buildPriorityClassColumns(args),
     RuntimeClass: buildRuntimeClassColumns(args),
-    Leases: buildLeasesColumns(args),
+    Lease: buildLeasesColumns(args),
     MutatingWebhookConfiguration: buildMutatingWebhookConfigurationColumns(args),
   };
 };
