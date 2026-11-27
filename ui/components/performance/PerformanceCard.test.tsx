@@ -138,7 +138,8 @@ describe('PerformanceCard', () => {
       />,
     );
     expect(screen.getByText('my perf profile')).toBeInTheDocument();
-    expect(screen.getByText('""')).toBeInTheDocument();
+    expect(screen.getByText('Additional Option')).toBeInTheDocument();
+    expect(screen.queryByText('""')).not.toBeInTheDocument();
     unmount();
 
     const { unmount: unmountInvalid } = render(
@@ -151,7 +152,9 @@ describe('PerformanceCard', () => {
       />,
     );
     expect(screen.getByText('my perf profile')).toBeInTheDocument();
-    expect(screen.getByText('"not-valid-json"')).toBeInTheDocument();
+    // A fallback string renders as-is, without added JSON quotes.
+    expect(screen.getByText('not-valid-json')).toBeInTheDocument();
+    expect(screen.queryByText('"not-valid-json"')).not.toBeInTheDocument();
     unmountInvalid();
 
     render(

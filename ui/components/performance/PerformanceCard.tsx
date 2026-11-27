@@ -337,12 +337,16 @@ function DetailsTable({ rowKey, value, omitEmpty }) {
   }
 
   const MAX_TEXT_LENGTH = 150;
+  // Fallback strings (unparseable JSON) render as-is; only successfully
+  // parsed values are JSON serialized, so copying a fallback option does
+  // not pick up added quotes or escapes.
+  const displayValue = typeof value === 'string' ? value : JSON.stringify(value);
   const shouldShowButton =
-    rowKey === 'Additional Option' && value && JSON.stringify(value).length > MAX_TEXT_LENGTH;
+    rowKey === 'Additional Option' && value && displayValue.length > MAX_TEXT_LENGTH;
   const displayText =
     isExpanded && rowKey === 'Additional Option'
-      ? JSON.stringify(value)
-      : JSON.stringify(value)?.slice(0, MAX_TEXT_LENGTH);
+      ? displayValue
+      : displayValue?.slice(0, MAX_TEXT_LENGTH);
 
   const handleExpandClick = (e) => {
     setIsExpanded((prevExpanded) => !prevExpanded);
