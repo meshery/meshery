@@ -205,6 +205,57 @@ describe('mesheryUi slice', () => {
     expect(sessionStorage.getItem('keys')).toBe(JSON.stringify(keys));
   });
 
+  it('removes sessionStorage key when value is undefined and ignores nullish payloads', () => {
+    let state = mesheryUiReducer(undefined, { type: 'init' } as any);
+    state = mesheryUiReducer(state, setOrganization({ organization: { id: 'org-1' } }));
+    expect(sessionStorage.getItem('currentOrg')).toBe(JSON.stringify({ id: 'org-1' }));
+
+    state = mesheryUiReducer(state, setOrganization({ organization: undefined }));
+    expect(state.organization).toBeUndefined();
+    expect(sessionStorage.getItem('currentOrg')).toBeNull();
+
+    expect(mesheryUiReducer(state, setOrganization(undefined as never))).toBe(state);
+    expect(mesheryUiReducer(state, setWorkspace(null as never))).toBe(state);
+    expect(mesheryUiReducer(state, setKeys([] as never))).toBe(state);
+  });
+
+  it('updates state safely when sessionStorage throws or is unavailable', () => {
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('QuotaExceededError');
+    });
+    try {
+      let state = mesheryUiReducer(undefined, { type: 'init' } as any);
+      const org = { id: 'org-2' };
+      const ws = { id: 'ws-2' };
+      const keys = { canEdit: false };
+      state = mesheryUiReducer(state, setOrganization({ organization: org }));
+      state = mesheryUiReducer(state, setWorkspace({ workspace: ws }));
+      state = mesheryUiReducer(state, setKeys({ keys }));
+      expect(state.organization).toBe(org);
+      expect(state.workspace).toBe(ws);
+      expect(state.keys).toBe(keys);
+    } finally {
+      setItemSpy.mockRestore();
+    }
+
+    const originalSessionStorage = Object.getOwnPropertyDescriptor(window, 'sessionStorage');
+    Object.defineProperty(window, 'sessionStorage', {
+      configurable: true,
+      get: () => {
+        throw new DOMException('SecurityError');
+      },
+    });
+    try {
+      const initial = mesheryUiReducer(undefined, { type: 'init' } as any);
+      const next = mesheryUiReducer(initial, setOrganization({ organization: { id: 'org-3' } }));
+      expect(next.organization).toEqual({ id: 'org-3' });
+    } finally {
+      if (originalSessionStorage) {
+        Object.defineProperty(window, 'sessionStorage', originalSessionStorage);
+      }
+    }
+  });
+
   describe('setK8sContexts thunk', () => {
     it('dispatches the reducer action and publishes to the event bus', () => {
       const dispatch = vi.fn();
@@ -250,6 +301,11 @@ describe('mesheryUi slice', () => {
     it('selectedOrg returns ui.organization', () => {
       const org = { id: 'o' };
       expect(selectedOrg({ ui: { organization: org } } as any)).toBe(org);
+    });
+
+    it('selectK8sConfig and selectedOrg handle missing ui state safely', () => {
+      expect(selectK8sConfig(undefined as any)).toBeUndefined();
+      expect(selectedOrg({} as any)).toBeUndefined();
     });
 
     it('selectSelectedK8sClusters delegates to getK8sClusterIdsFromCtxId', () => {

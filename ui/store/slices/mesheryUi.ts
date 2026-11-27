@@ -4,6 +4,33 @@ import { getK8sClusterIdsFromCtxId, persistSelectedK8sContexts } from '@/utils/m
 import { mesheryEventBus } from '@/utils/eventBus';
 import { store } from '..';
 
+const isPlainObject = (value: unknown): value is Record<string, any> => {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return false;
+  }
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+};
+
+const persistSessionItem = (key: string, value: unknown): void => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  try {
+    const storage = window.sessionStorage;
+    if (!storage) {
+      return;
+    }
+    if (value === undefined) {
+      storage.removeItem(key);
+    } else {
+      storage.setItem(key, JSON.stringify(value));
+    }
+  } catch {
+    // Ignore storage access or quota errors in restricted browser contexts.
+  }
+};
+
 const initialState = {
   page: {
     path: '',
@@ -77,16 +104,25 @@ const coreSlice = createSlice({
       state.connectionMetadataState = action.payload.connectionMetadataState;
     },
     setOrganization: (state, action) => {
+      if (!isPlainObject(action.payload)) {
+        return;
+      }
       state.organization = action.payload.organization;
-      sessionStorage.setItem('currentOrg', JSON.stringify(action.payload.organization));
+      persistSessionItem('currentOrg', action.payload.organization);
     },
     setWorkspace: (state, action) => {
+      if (!isPlainObject(action.payload)) {
+        return;
+      }
       state.workspace = action.payload.workspace;
-      sessionStorage.setItem('currentWorkspace', JSON.stringify(action.payload.workspace));
+      persistSessionItem('currentWorkspace', action.payload.workspace);
     },
     setKeys: (state, action) => {
+      if (!isPlainObject(action.payload)) {
+        return;
+      }
       state.keys = action.payload.keys;
-      sessionStorage.setItem('keys', JSON.stringify(action.payload.keys));
+      persistSessionItem('keys', action.payload.keys);
     },
   },
 });
@@ -149,10 +185,10 @@ export const selectSelectedK8sClusters = (state) => {
 };
 
 export const selectK8sConfig = (state) => {
-  return state.ui.k8sConfig;
+  return state?.ui?.k8sConfig;
 };
 
 export const selectedOrg = (state) => {
-  return state.ui.organization;
+  return state?.ui?.organization;
 };
 export default coreSlice.reducer;
