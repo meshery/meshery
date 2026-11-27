@@ -91,7 +91,7 @@ vi.mock('next/dynamic', () => ({
   default: () => () => <div data-testid="react-json" />,
 }));
 
-import MeshModelDetails from './MeshModelDetails';
+import MeshModelDetails, { extractSchemaDescription } from './MeshModelDetails';
 
 describe('MeshModelDetails', () => {
   it('renders "No <view> selected" when data is empty', () => {
@@ -120,5 +120,31 @@ describe('MeshModelDetails', () => {
     // No content rendered for unknown type
     expect(screen.queryByText('No Models selected')).not.toBeInTheDocument();
     expect(screen.getByTestId('details-container')).toHaveAttribute('data-is-empty', 'false');
+  });
+});
+
+describe('extractSchemaDescription', () => {
+  it('returns description from a valid JSON schema string', () => {
+    expect(extractSchemaDescription(JSON.stringify({ description: 'Pod workload' }))).toBe(
+      'Pod workload',
+    );
+  });
+
+  it('returns description from an already-parsed schema object', () => {
+    expect(extractSchemaDescription({ description: 'Object schema' })).toBe('Object schema');
+  });
+
+  it.each([
+    ['empty string', ''],
+    ['whitespace-only string', '   \n\t '],
+    ['undefined', undefined],
+    ['null', null],
+    ['malformed JSON', '{bad-json'],
+    ['JSON array', '[]'],
+    ['JSON primitive', '42'],
+    ['blank description', JSON.stringify({ description: '   ' })],
+    ['non-string description', JSON.stringify({ description: 123 })],
+  ])('returns undefined for %s without throwing', (_label, input) => {
+    expect(extractSchemaDescription(input)).toBeUndefined();
   });
 });
