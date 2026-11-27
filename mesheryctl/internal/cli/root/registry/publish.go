@@ -51,18 +51,15 @@ var (
 // Example publishing to remove provider docs
 // mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw /src/collections/integrations /src/collections/integrations -o mdx
 
-// publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
+// publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider
 var publishCmd = &cobra.Command{
 	Use:   "publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]",
-	Short: "Publish Meshery Models to Websites, Remote Provider, Meshery Server",
-	Long: `Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery Server, including model and component icons by reading from a Google Spreadsheet and outputing to markdown or json format.
+	Short: "Publish Meshery Models to Websites or Remote Provider",
+	Long: `Publishes metadata about Meshery Models to Websites or Remote Provider, including model and component icons by reading from a Google Spreadsheet and outputting to markdown or json format.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/registry/publish`,
 	Example: `
 // Publish To System
 mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
-
-// Publish To Meshery
-mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/models
 
 // Publish To Remote Provider
 mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/meshmodels/models [repo]/ui/public/img/meshmodels
