@@ -77,7 +77,7 @@ func TestWriteTokenFileRestrictsWindowsACL(t *testing.T) {
 	}
 }
 
-func TestWriteTokenFileReplacesFileWithOpenReader(t *testing.T) {
+func TestWriteTokenFileRejectsOpenReader(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "token")
 	if err := WriteTokenFile(path, []byte("old token")); err != nil {
 		t.Fatal(err)
@@ -87,16 +87,17 @@ func TestWriteTokenFileReplacesFileWithOpenReader(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer reader.Close()
-	if err := WriteTokenFile(path, []byte("new token")); err != nil {
-		t.Fatalf("replace token with open reader: %v", err)
+	if err := WriteTokenFile(path, []byte("new token")); err == nil {
+		t.Fatal("expected an open reader to block the token update")
 	}
-	data, err := os.ReadFile(path)
-	if err != nil || string(data) != "new token" {
-		t.Fatalf("read replacement token: %q, %v", data, err)
-	}
+	runtime.KeepAlive(reader)
 	oldData, err := io.ReadAll(reader)
 	if err != nil || string(oldData) != "old token" {
 		t.Fatalf("open reader data changed: %q, %v", oldData, err)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil || string(data) != "old token" {
+		t.Fatalf("old token was changed: %q, %v", data, err)
 	}
 }
 
