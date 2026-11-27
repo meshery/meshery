@@ -9,6 +9,34 @@ const win: TimeWindow = { start: 1000, end: 4600, step: 15 }; // range 3600s
 const nameConstraint = '__name__!="",';
 
 describe('resolveExpr', () => {
+  it.each(['"', "'", '`'])(
+    'constrains unnamed selectors after known-value upgrades using %s quotes',
+    (quote) => {
+      expect(resolveExpr(`{pod=${quote}$pod${quote}}`, { pod: '.*' }, win)).toBe(
+        `{${nameConstraint}pod=~${quote}.*${quote}}`,
+      );
+    },
+  );
+
+  it('constrains unnamed selectors after known multi-value upgrades', () => {
+    expect(resolveExpr('{pod="$pod"}', { pod: 'api|' }, win)).toBe(
+      `{${nameConstraint}pod=~"api|"}`,
+    );
+
+    expect(resolveExpr('{pod!="$pod"}', { pod: 'api|worker' }, win)).toBe(
+      `{${nameConstraint}pod!~"api|worker"}`,
+    );
+  });
+
+  it('does not add unnecessary constraints after known-value upgrades', () => {
+    expect(resolveExpr('m{pod="$pod"}', { pod: '.*' }, win)).toBe('m{pod=~".*"}');
+
+    expect(resolveExpr('{pod="$pod",job="api"}', { pod: '.*' }, win)).toBe('{pod=~".*",job="api"}');
+
+    expect(resolveExpr('{pod="$pod"}', { pod: 'api|worker' }, win)).toBe('{pod=~"api|worker"}');
+
+    expect(resolveExpr('{pod!="$pod"}', { pod: '.*' }, win)).toBe('{pod!~".*"}');
+  });
   it.each(['$label', '${label}', '${label:raw}', '[[label]]', '[[label:raw]]'])(
     'substitutes template references in label names: %s',
     (ref) => {

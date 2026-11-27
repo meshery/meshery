@@ -279,7 +279,7 @@ export function resolveExpr(
       !/^atan2$/i.test(resolvedMetric) &&
       (expectsOperand || !wordOperator.test(resolvedMetric));
     expectsOperand = false;
-    let upgradedUnknown = false;
+    let upgradedMatcher = false;
     const parts: string[] = [];
     let bodyCursor = 0;
     for (const entry of scanMatchers(body)) {
@@ -301,10 +301,11 @@ export function resolveExpr(
         ref.start === 0 &&
         ref.end === value.length &&
         !Object.hasOwn(varValues, ref.name);
+
       let resolvedOperator = operator;
+
       if (unresolved) {
         resolvedOperator = '=~';
-        upgradedUnknown = true;
       } else if (
         (operator === '=' || operator === '!=') &&
         known.some(
@@ -315,14 +316,19 @@ export function resolveExpr(
         // Match-all and multi-value dashboard variables require a regex matcher.
         resolvedOperator = operator === '=' ? '=~' : '!~';
       }
+
+      upgradedMatcher ||= resolvedOperator !== operator;
+
       const resolvedValue = substitute(quoted);
       constrained ||= excludesEmpty(resolvedOperator, resolvedValue);
       parts.push(substitute(label) + resolvedOperator + substitute(space) + resolvedValue);
     }
+
     // PromQL requires an unnamed selector to reject the empty string somewhere.
     // Constrain the metric name so =~".*" can still match missing labels. With no
     // other selective matcher this can query all named series.
-    const nameConstraint = !constrained && upgradedUnknown ? '__name__!="",' : '';
+    const nameConstraint = !constrained && upgradedMatcher ? '__name__!="",' : '';
+
     resolved +=
       resolvedMetric +
       substitute(out.slice(hasMetric ? token.end : start, open.start)) +
