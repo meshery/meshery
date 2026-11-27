@@ -79,7 +79,7 @@ mesheryctl model delete [model-name]
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
-mesheryctl model export [flags]
+mesheryctl model export [model-name] [flags]
 
 &lt;/div&gt;
 &lt;/div&gt;

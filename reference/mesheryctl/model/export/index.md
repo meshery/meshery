@@ -15,7 +15,7 @@ Export the registered model to the specified output type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl model export [flags]
+mesheryctl model export [model-name] [flags]
 
 </div>
 </div>
