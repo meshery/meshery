@@ -201,6 +201,7 @@ func TestVersionPreRunERecoveryDoesNotPanicOnNilConfig(t *testing.T) {
 		utils.DefaultConfigPath = origConfigPath
 		mctlCfg = origMctlCfg
 		os.Stdin = origStdin
+		utils.Log.UpdateErrorLogOutput(os.Stderr)
 		utils.Log = origLog
 		viper.Reset()
 	})
