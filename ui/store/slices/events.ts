@@ -285,7 +285,6 @@ export const {
   setCurrentView,
   updateEvent,
   toggleNotificationCenter,
-  openNotificationCenter,
   closeNotificationCenter,
   openNotificationCenter,
   updateEvents,

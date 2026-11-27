@@ -136,13 +136,24 @@ describe('FinishDeploymentStep', () => {
     // A 403 is a signed-in user without permission, not an expired session.
     [403, 'Forbidden', 'Error 403: Forbidden', 'Retry', false],
     [500, errData, 'Error 500: Failed to deploy design', 'Retry', false],
-    ['PARSER', errData, 'Error 502: Failed to deploy design', 'Retry', false],
+    [
+      'PARSER',
+      '<html><body><h1>502 Bad Gateway</h1></body></html>',
+      'Error 502: An unexpected error occurred.',
+      'Retry',
+      false,
+    ],
     ['NO_FIELD', { code: '1' }, 'Error 500: An unexpected error occurred.', 'Retry', false],
     [0, 'Network fail', 'Network fail', 'Retry', false],
   ])('handles rejection: %s', async (code, data, exp, btn, isLogin) => {
     const err =
       code === 'PARSER'
-        ? { status: 'PARSING_ERROR', originalStatus: 502, data }
+        ? {
+            status: 'PARSING_ERROR',
+            originalStatus: 502,
+            data,
+            error: "SyntaxError: Unexpected token '<'",
+          }
         : code === 0
           ? new Error(data as string)
           : { status: typeof code === 'number' ? code : 500, data };

@@ -131,17 +131,19 @@ export const FinishDeploymentStep = ({
       setIsTimedOut(false);
       const d = err?.data;
       const msg =
-        typeof d?.message === 'string'
-          ? d.message
-          : typeof d?.error === 'string'
-            ? d.error
-            : typeof d === 'string'
-              ? d
-              : typeof err?.message === 'string'
-                ? err.message
-                : typeof err?.error === 'string'
-                  ? err.error
-                  : '';
+        err?.status === 'PARSING_ERROR'
+          ? ''
+          : typeof d?.message === 'string'
+            ? d.message
+            : typeof d?.error === 'string'
+              ? d.error
+              : typeof d === 'string'
+                ? d
+                : typeof err?.message === 'string'
+                  ? err.message
+                  : typeof err?.error === 'string'
+                    ? err.error
+                    : '';
       const s = err?.originalStatus ?? err?.status;
       const status = typeof s === 'number' ? s : undefined;
       // Only a 401 means the session expired. A 403 is a signed-in user who
