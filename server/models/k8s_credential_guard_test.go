@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/base64"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -176,6 +177,197 @@ current-context: c
 		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cl})
 		if _, err := K8sContextFromConnection(provider, "", conn); meshkiterrors.GetCode(err) != ErrUnsafeKubeCredentialCode {
 			t.Fatalf("err = %v, want ErrUnsafeKubeCredential", err)
+		}
+	})
+}
+
+// TestK8sContextFromConnectionRequiresMatchingCATrust pins issue #24234 (item 1):
+// a credential that reuses the server's exec plugin must match the server's effective
+// CA trust, whether specified via CA file or inline CA data. Substituting an attacker
+// CA must be rejected so the exec token cannot be exfiltrated.
+func TestK8sContextFromConnectionRequiresMatchingCATrust(t *testing.T) {
+	folder := t.TempDir()
+	caCert := []byte("-----BEGIN CERTIFICATE-----\nTEST-CA-DATA\n-----END CERTIFICATE-----\n")
+	caFile := filepath.Join(folder, "ca.crt")
+	if err := os.WriteFile(caFile, caCert, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	caB64 := base64.StdEncoding.EncodeToString(caCert)
+	attackerB64 := base64.StdEncoding.EncodeToString([]byte("-----BEGIN CERTIFICATE-----\nATTACKER-CA-DATA\n-----END CERTIFICATE-----\n"))
+
+	ownExec := map[string]interface{}{"apiVersion": "client.authentication.k8s.io/v1", "command": "aws", "args": []interface{}{"eks", "get-token"}}
+
+	setKubeconfigFolder(t, folder)
+	if err := os.WriteFile(filepath.Join(folder, "config"), []byte(`apiVersion: v1
+kind: Config
+clusters:
+- name: c
+  cluster:
+    server: https://127.0.0.1:1
+    certificate-authority: ca.crt
+users:
+- name: u
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1
+      command: aws
+      args: [eks, get-token]
+contexts:
+- name: c
+  context: {cluster: c, user: u}
+current-context: c
+`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("server CA file matched by inline credential CA data is allowed", func(t *testing.T) {
+		auth, cl := kubeCredential(map[string]interface{}{"exec": ownExec}, map[string]interface{}{
+			"server":                     "https://127.0.0.1:1",
+			"certificate-authority-data": caB64,
+		})
+		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cl})
+		if _, err := K8sContextFromConnection(provider, "", conn); err != nil {
+			t.Fatalf("expected allowed for matching inline CA data, got %v", err)
+		}
+	})
+
+	t.Run("server CA file with substituted inline CA data is refused", func(t *testing.T) {
+		setKubeconfigFolder(t, folder)
+		auth, cl := kubeCredential(map[string]interface{}{"exec": ownExec}, map[string]interface{}{
+			"server":                     "https://127.0.0.1:1",
+			"certificate-authority-data": attackerB64,
+		})
+		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cl})
+		if _, err := K8sContextFromConnection(provider, "", conn); meshkiterrors.GetCode(err) != ErrUnsafeKubeCredentialCode {
+			t.Fatalf("err = %v, want ErrUnsafeKubeCredentialCode", err)
+		}
+	})
+
+	t.Run("server CA file with missing credential CA data is refused", func(t *testing.T) {
+		setKubeconfigFolder(t, folder)
+		auth, cl := kubeCredential(map[string]interface{}{"exec": ownExec}, map[string]interface{}{
+			"server": "https://127.0.0.1:1",
+		})
+		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cl})
+		if _, err := K8sContextFromConnection(provider, "", conn); meshkiterrors.GetCode(err) != ErrUnsafeKubeCredentialCode {
+			t.Fatalf("err = %v, want ErrUnsafeKubeCredentialCode", err)
+		}
+	})
+
+	t.Run("server inline CA data matched by inline credential CA data is allowed", func(t *testing.T) {
+		inlineFolder := t.TempDir()
+		setKubeconfigFolder(t, inlineFolder)
+		if err := os.WriteFile(filepath.Join(inlineFolder, "config"), []byte(`apiVersion: v1
+kind: Config
+clusters:
+- name: c
+  cluster:
+    server: https://127.0.0.1:1
+    certificate-authority-data: `+caB64+`
+users:
+- name: u
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1
+      command: aws
+      args: [eks, get-token]
+contexts:
+- name: c
+  context: {cluster: c, user: u}
+current-context: c
+`), 0o600); err != nil {
+			t.Fatal(err)
+		}
+
+		auth, cl := kubeCredential(map[string]interface{}{"exec": ownExec}, map[string]interface{}{
+			"server":                     "https://127.0.0.1:1",
+			"certificate-authority-data": caB64,
+		})
+		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cl})
+		if _, err := K8sContextFromConnection(provider, "", conn); err != nil {
+			t.Fatalf("expected allowed for matching inline CA data, got %v", err)
+		}
+	})
+
+	t.Run("server inline CA data with substituted CA data is refused", func(t *testing.T) {
+		inlineFolder := t.TempDir()
+		setKubeconfigFolder(t, inlineFolder)
+		if err := os.WriteFile(filepath.Join(inlineFolder, "config"), []byte(`apiVersion: v1
+kind: Config
+clusters:
+- name: c
+  cluster:
+    server: https://127.0.0.1:1
+    certificate-authority-data: `+caB64+`
+users:
+- name: u
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1
+      command: aws
+      args: [eks, get-token]
+contexts:
+- name: c
+  context: {cluster: c, user: u}
+current-context: c
+`), 0o600); err != nil {
+			t.Fatal(err)
+		}
+
+		auth, cl := kubeCredential(map[string]interface{}{"exec": ownExec}, map[string]interface{}{
+			"server":                     "https://127.0.0.1:1",
+			"certificate-authority-data": attackerB64,
+		})
+		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cl})
+		if _, err := K8sContextFromConnection(provider, "", conn); meshkiterrors.GetCode(err) != ErrUnsafeKubeCredentialCode {
+			t.Fatalf("err = %v, want ErrUnsafeKubeCredentialCode", err)
+		}
+	})
+
+	t.Run("server CA file matched by identical credential CA file path is allowed", func(t *testing.T) {
+		setKubeconfigFolder(t, folder)
+		auth, cl := kubeCredential(map[string]interface{}{"exec": ownExec}, map[string]interface{}{
+			"server":                "https://127.0.0.1:1",
+			"certificate-authority": "ca.crt",
+		})
+		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cl})
+		if _, err := K8sContextFromConnection(provider, "", conn); err != nil {
+			t.Fatalf("expected allowed for matching CA file path, got %v", err)
+		}
+	})
+
+	t.Run("server without a CA and credential adding CA data is refused", func(t *testing.T) {
+		noCAFolder := t.TempDir()
+		setKubeconfigFolder(t, noCAFolder)
+		if err := os.WriteFile(filepath.Join(noCAFolder, "config"), []byte(`apiVersion: v1
+kind: Config
+clusters:
+- name: c
+  cluster:
+    server: https://127.0.0.1:1
+users:
+- name: u
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1
+      command: aws
+      args: [eks, get-token]
+contexts:
+- name: c
+  context: {cluster: c, user: u}
+current-context: c
+`), 0o600); err != nil {
+			t.Fatal(err)
+		}
+
+		auth, cl := kubeCredential(map[string]interface{}{"exec": ownExec}, map[string]interface{}{
+			"server":                     "https://127.0.0.1:1",
+			"certificate-authority-data": attackerB64,
+		})
+		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cl})
+		if _, err := K8sContextFromConnection(provider, "", conn); meshkiterrors.GetCode(err) != ErrUnsafeKubeCredentialCode {
+			t.Fatalf("err = %v, want ErrUnsafeKubeCredentialCode", err)
 		}
 	})
 }

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -146,14 +147,15 @@ func UntrustedKubeCredentialFields(auth, cluster map[string]interface{}) []strin
 }
 
 // pairsMatchServerContext reports whether every user of cfg is paired, in a
-// context of srv, with a cluster of srv that has the same name and endpoint as
-// the one cfg carries.
+// context of srv, with a cluster of srv that has the same name, endpoint, and
+// effective CA trust as the one cfg carries.
 func pairsMatchServerContext(cfg, srv *clientcmdapi.Config) bool {
 	for uname := range cfg.AuthInfos {
 		for cname, c := range cfg.Clusters {
 			sc := srv.Clusters[cname]
 			if sc == nil || c.Server != sc.Server || c.ProxyURL != sc.ProxyURL ||
-				c.TLSServerName != sc.TLSServerName || c.InsecureSkipTLSVerify != sc.InsecureSkipTLSVerify {
+				c.TLSServerName != sc.TLSServerName || c.InsecureSkipTLSVerify != sc.InsecureSkipTLSVerify ||
+				!clusterCAMatches(c, sc) {
 				return false
 			}
 			paired := false
@@ -169,6 +171,43 @@ func pairsMatchServerContext(cfg, srv *clientcmdapi.Config) bool {
 		}
 	}
 	return len(cfg.AuthInfos) > 0
+}
+
+// clusterCAMatches reports whether c's CA trust matches sc's effective CA trust,
+// including comparing contents when sc uses a CA file.
+func clusterCAMatches(c, sc *clientcmdapi.Cluster) bool {
+	if c.InsecureSkipTLSVerify && sc.InsecureSkipTLSVerify {
+		return true
+	}
+
+	serverCA := sc.CertificateAuthorityData
+	if len(serverCA) == 0 && sc.CertificateAuthority != "" {
+		path := sc.CertificateAuthority
+		if !filepath.IsAbs(path) {
+			if folder := viper.GetString("KUBECONFIG_FOLDER"); folder != "" {
+				path = filepath.Join(folder, path)
+			}
+		}
+		var err error
+		serverCA, err = os.ReadFile(path)
+		if err != nil {
+			return false
+		}
+	}
+
+	credCA := c.CertificateAuthorityData
+	if len(credCA) == 0 && c.CertificateAuthority != "" {
+		if c.CertificateAuthority != sc.CertificateAuthority {
+			return false
+		}
+		credCA = serverCA
+	}
+
+	if len(serverCA) == 0 && len(credCA) == 0 {
+		return c.CertificateAuthority == sc.CertificateAuthority
+	}
+
+	return bytes.Equal(bytes.TrimSpace(credCA), bytes.TrimSpace(serverCA))
 }
 
 // RejectUnsafeKubeCredential refuses a Kubernetes credential secret whose

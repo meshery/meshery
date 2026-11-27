@@ -370,8 +370,8 @@ export default function MeshSyncTable(props) {
                   callbackRef?.current?.(tableMeta);
                   setRegisterConnection({
                     capabilities: componentMetadata?.capabilities,
-                    metadata: JsonParse(componentMetadata.metadata),
-                    resourceID: tableMeta.rowData[tableMeta.rowData.length - 1],
+                    metadata: JsonParse(componentMetadata?.metadata),
+                    resourceID: getColumnValue(tableMeta.rowData, 'id', columns),
                   });
                 }}
                 disableUnderline
