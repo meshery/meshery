@@ -376,11 +376,13 @@ const maxEventDescriptionChars = 42
 
 // truncateEventDescription keeps the first maxEventDescriptionChars characters
 // of s and appends "..." only when something was actually cut. It counts runes,
-// not bytes, so a multibyte character is never split into invalid UTF-8.
+// not bytes, so a multibyte character is never split, and it rebuilds the
+// result from the decoded runes so malformed input bytes come out as U+FFFD
+// and the description is always valid UTF-8.
 func truncateEventDescription(s string) string {
 	runes := []rune(s)
 	if len(runes) <= maxEventDescriptionChars {
-		return s
+		return string(runes)
 	}
 	return string(runes[:maxEventDescriptionChars]) + "..."
 }

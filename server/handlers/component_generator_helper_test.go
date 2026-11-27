@@ -70,7 +70,8 @@ func TestTruncateEventDescription(t *testing.T) {
 		{name: "one over the limit", in: strings.Repeat("a", 43), want: strings.Repeat("a", 42) + "..."},
 		{name: "long ASCII", in: long, want: long[:42] + "..."},
 		{name: "multibyte characters count as one", in: strings.Repeat("é", 42), want: strings.Repeat("é", 42)},
-		{name: "multibyte cut on a character boundary", in: accented, want: string([]rune(accented)[:42]) + "..."},
+		{name: "multibyte cut on a character boundary", in: accented, want: "Imported model " + strings.Repeat("é", 27) + "..."},
+		{name: "malformed UTF-8 is replaced, not passed through", in: "bad \xff byte", want: "bad \uFFFD byte"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
