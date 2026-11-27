@@ -929,6 +929,36 @@ func TestPersistStoreUpdatePreservesMeshSyncCapabilities(t *testing.T) {
 	}
 
 	assertPreserved(obj.ID, "http://10.0.0.2:9090")
+
+	if err := handler.meshsyncEventsAccumulator(&meshkitBroker.Message{
+		EventType: meshkitBroker.Update,
+		Object: map[string]interface{}{
+			"apiVersion": "v1",
+			"kind":       "Service",
+			"cluster_id": "cluster-1",
+			"metadata": map[string]interface{}{
+				"name":      "prometheus-service",
+				"namespace": "monitoring",
+			},
+			"component_metadata": map[string]interface{}{
+				"capabilities": map[string]interface{}{
+					"connection": false,
+					"urls":       []interface{}{},
+				},
+			},
+		},
+	}); err != nil {
+		t.Fatalf("meshsyncEventsAccumulator Update with placeholder capabilities failed: %v", err)
+	}
+
+	var stored meshsyncmodel.KubernetesResource
+	if err := db.First(&stored, "id = ?", obj.ID).Error; err != nil {
+		t.Fatalf("failed to read stored resource after placeholder update: %v", err)
+	}
+	caps, ok := stored.ComponentMetadata["capabilities"].([]interface{})
+	if !ok || len(caps) != 1 {
+		t.Fatalf("expected registry capabilities to replace placeholder discovery capabilities, got %#v", stored.ComponentMetadata["capabilities"])
+	}
 }
 
 func TestMergeComponentMetadataCapabilities(t *testing.T) {
@@ -941,22 +971,37 @@ func TestMergeComponentMetadataCapabilities(t *testing.T) {
 	}
 	tests := []struct {
 		name                 string
+		existingMetadata     map[string]interface{}
 		existingCapabilities interface{}
+		includeCapabilities  bool
 		wantCapabilities     interface{}
 	}{
 		{
+			name:             "nil discovery metadata uses registry capabilities",
+			existingMetadata: nil,
+			wantCapabilities: registryCapabilities,
+		},
+		{
+			name:             "missing discovery capabilities use registry capabilities",
+			existingMetadata: map[string]interface{}{"styles": map[string]interface{}{"color": "discovery"}},
+			wantCapabilities: registryCapabilities,
+		},
+		{
 			name:                 "nil discovery capabilities use registry capabilities",
 			existingCapabilities: nil,
+			includeCapabilities:  true,
 			wantCapabilities:     registryCapabilities,
 		},
 		{
 			name:                 "empty discovery map uses registry capabilities",
 			existingCapabilities: map[string]interface{}{},
+			includeCapabilities:  true,
 			wantCapabilities:     registryCapabilities,
 		},
 		{
 			name:                 "empty discovery array uses registry capabilities",
 			existingCapabilities: []interface{}{},
+			includeCapabilities:  true,
 			wantCapabilities:     registryCapabilities,
 		},
 		{
@@ -965,27 +1010,69 @@ func TestMergeComponentMetadataCapabilities(t *testing.T) {
 				"urls": []interface{}{},
 				"name": " ",
 			},
-			wantCapabilities: registryCapabilities,
+			includeCapabilities: true,
+			wantCapabilities:    registryCapabilities,
+		},
+		{
+			name: "false connection placeholder uses registry capabilities",
+			existingCapabilities: map[string]interface{}{
+				"connection": false,
+			},
+			includeCapabilities: true,
+			wantCapabilities:    registryCapabilities,
+		},
+		{
+			name: "zero connection placeholder uses registry capabilities",
+			existingCapabilities: map[string]interface{}{
+				"connection": float64(0),
+			},
+			includeCapabilities: true,
+			wantCapabilities:    registryCapabilities,
 		},
 		{
 			name:                 "populated discovery map is preserved",
 			existingCapabilities: meshSyncCapabilities,
+			includeCapabilities:  true,
 			wantCapabilities:     meshSyncCapabilities,
+		},
+		{
+			name: "valid discovery URL is preserved",
+			existingCapabilities: map[string]interface{}{
+				"urls": []interface{}{"http://10.0.0.1:9090"},
+			},
+			includeCapabilities: true,
+			wantCapabilities: map[string]interface{}{
+				"urls": []interface{}{"http://10.0.0.1:9090"},
+			},
+		},
+		{
+			name: "unrelated discovery metadata is preserved",
+			existingMetadata: map[string]interface{}{
+				"discoveryName": "prometheus",
+				"capabilities":  map[string]interface{}{},
+			},
+			includeCapabilities: true,
+			wantCapabilities:    registryCapabilities,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			merged := mergeComponentMetadata(
-				map[string]interface{}{"capabilities": tt.existingCapabilities},
-				map[string]interface{}{
-					"capabilities": registryCapabilities,
-					"styles":       map[string]interface{}{"svgColor": "registry"},
-				},
-			)
+			existingMetadata := tt.existingMetadata
+			if tt.includeCapabilities && existingMetadata == nil {
+				existingMetadata = map[string]interface{}{"capabilities": tt.existingCapabilities}
+			}
+
+			merged := mergeComponentMetadata(existingMetadata, map[string]interface{}{
+				"capabilities": registryCapabilities,
+				"styles":       map[string]interface{}{"svgColor": "registry"},
+			})
 
 			assert.Equal(t, tt.wantCapabilities, merged["capabilities"])
 			assert.Equal(t, map[string]interface{}{"svgColor": "registry"}, merged["styles"])
+			if tt.name == "unrelated discovery metadata is preserved" {
+				assert.Equal(t, "prometheus", merged["discoveryName"])
+			}
 		})
 	}
 }
