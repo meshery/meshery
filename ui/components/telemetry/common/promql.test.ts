@@ -5,6 +5,22 @@ import type { TimeWindow } from './types';
 const win: TimeWindow = { start: 1000, end: 4600, step: 15 }; // range 3600s
 
 describe('resolveExpr', () => {
+  it.each(['$label', '${label}', '${label:raw}', '[[label]]', '[[label:raw]]'])(
+    'substitutes template references in label names: %s',
+    (ref) => {
+      expect(resolveExpr(`m{${ref}="api"}`, { label: 'job' }, win)).toBe('m{job="api"}');
+
+      expect(resolveExpr(`{${ref}="api",pod="$pod"}`, { label: 'job' }, win)).toBe(
+        '{job="api",pod=~".*"}',
+      );
+    },
+  );
+
+  it('substitutes embedded template references in label names', () => {
+    expect(resolveExpr('m{prefix_${label}="api"}', { label: 'job' }, win)).toBe(
+      'm{prefix_job="api"}',
+    );
+  });
   it.each(['group_left', 'group_right'])(
     'recognizes %s as a vector matching modifier',
     (modifier) => {

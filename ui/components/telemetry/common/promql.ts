@@ -10,13 +10,13 @@ const template = /\$\{[A-Za-z_]\w*(?::[^}]+)?\}|\$[A-Za-z_]\w*|\[\[[A-Za-z_]\w*(
 const wordOperator = /^(?:and|or|unless|atan2|bitand|bitor|bitxor)$/i;
 const modifier = /^(?:bool|on|ignoring|group_left|group_right)$/i;
 const selectorOrToken = new RegExp(
-  `(?:(${template}|[a-zA-Z_:][\\w:]*)(${trivia}))?\\{((?:${quotedString}|${comment}|[^{}"'\x60#])*)\\}` +
+  `(?:(${template}|[a-zA-Z_:][\\w:]*)(${trivia}))?\\{((?:${quotedString}|${comment}|${template}|[^{}"'\x60#])*)\\}` +
     `|((?:on|ignoring|group_left|group_right|fill(?:_left|_right)?)${trivia}\\((?:${quotedString}|${comment}|[^()"'\x60#])*\\))` +
     `|${quotedString}|${comment}|(${template})|[\\w:.]+|\\S`,
   'gi',
 );
 const matcher = new RegExp(
-  `((?:[a-zA-Z_]\\w*|${quotedString})${trivia})(=~|!~|!=|=)(${trivia})(${quotedString})` +
+  `((?:(?:${template}|[a-zA-Z_])(?:${template}|\\w)*|${quotedString})${trivia})(=~|!~|!=|=)(${trivia})(${quotedString})` +
     `|${comment}|(${quotedString})`,
   'g',
 );
