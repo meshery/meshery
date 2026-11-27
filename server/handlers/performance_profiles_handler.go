@@ -36,13 +36,13 @@ func (h *Handler) SavePerformanceProfileHandler(
 	if err != nil {
 		var maxBytesErr *http.MaxBytesError
 		if errors.As(err, &maxBytesErr) {
-			if h.log != nil {
+			if h != nil && h.log != nil {
 				h.log.Error(ErrRequestBody(err))
 			}
 			writeMeshkitError(rw, ErrRequestBody(err), http.StatusRequestEntityTooLarge)
 			return
 		}
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(ErrRequestBody(err))
 		}
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
@@ -51,7 +51,7 @@ func (h *Handler) SavePerformanceProfileHandler(
 	body = bytes.TrimSpace(body)
 	if len(body) == 0 || bytes.Equal(body, []byte("null")) {
 		err := fmt.Errorf("performance profile request body is empty or null")
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(ErrRequestBody(err))
 		}
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
@@ -62,7 +62,7 @@ func (h *Handler) SavePerformanceProfileHandler(
 	err = json.Unmarshal(body, parsedBody)
 	if err != nil {
 		// failed to read request body
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(ErrRequestBody(err))
 		}
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
@@ -72,20 +72,19 @@ func (h *Handler) SavePerformanceProfileHandler(
 		parsedBody.Owner = user.ID
 	}
 
-	if h.log != nil {
+	if h != nil && h.log != nil {
 		j, _ := json.Marshal(parsedBody)
 		h.log.Info("performance profile is ", string(j))
 	}
 
-	if provider == nil {
-		writeJSONError(rw, "provider not initialized", http.StatusInternalServerError)
+	if !h.requireProvider(rw, provider) {
 		return
 	}
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
 		// unable to save user config data
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(ErrRecordPreferences(err))
 		}
 		writeMeshkitError(rw, ErrRecordPreferences(err), http.StatusInternalServerError)
@@ -96,7 +95,7 @@ func (h *Handler) SavePerformanceProfileHandler(
 	if err != nil {
 		obj := "performance profile"
 		// fail to save performance profile
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(ErrFailToSave(err, obj))
 		}
 		writeMeshkitError(rw, ErrFailToSave(err, obj), providerStatusOrInternal(err))
@@ -105,7 +104,7 @@ func (h *Handler) SavePerformanceProfileHandler(
 
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(err)
 		}
 	}
@@ -122,14 +121,13 @@ func (h *Handler) GetPerformanceProfilesHandler(
 ) {
 	q := r.URL.Query()
 
-	if provider == nil {
-		writeJSONError(rw, "provider not initialized", http.StatusInternalServerError)
+	if !h.requireProvider(rw, provider) {
 		return
 	}
 	tokenString, ok := r.Context().Value(models.TokenCtxKey).(string)
 	if (!ok || tokenString == "") && provider.GetProviderType() != models.LocalProviderType {
 		fetchTokenErr := ErrFetchToken(fmt.Errorf("token not found in request context"))
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(fetchTokenErr)
 		}
 		writeMeshkitError(rw, fetchTokenErr, http.StatusUnauthorized)
@@ -143,7 +141,7 @@ func (h *Handler) GetPerformanceProfilesHandler(
 			return
 		}
 		fetchErr := ErrFetchProfiles(err)
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(fetchErr)
 		}
 		writeMeshkitError(rw, fetchErr, providerStatusOrInternal(err))
@@ -152,7 +150,7 @@ func (h *Handler) GetPerformanceProfilesHandler(
 
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(err)
 		}
 	}
@@ -171,15 +169,14 @@ func (h *Handler) DeletePerformanceProfileHandler(
 		writeJSONError(rw, "performanceProfileId is required", http.StatusBadRequest)
 		return
 	}
-	if provider == nil {
-		writeJSONError(rw, "provider not initialized", http.StatusInternalServerError)
+	if !h.requireProvider(rw, provider) {
 		return
 	}
 
 	key, err := uuid.FromString(performanceProfileID)
 	if err != nil || key == uuid.Nil {
 		invalidUUIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid performance profile id: %q", performanceProfileID))
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(invalidUUIDErr)
 		}
 		writeMeshkitError(rw, invalidUUIDErr, http.StatusBadRequest)
@@ -191,7 +188,7 @@ func (h *Handler) DeletePerformanceProfileHandler(
 		obj := "performance profile"
 		// a profile that does not exist is a 404, not a server failure
 		if errors.Is(err, gorm.ErrRecordNotFound) || meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
-			if h.log != nil {
+			if h != nil && h.log != nil {
 				h.log.Warnf("No %s with ID %q found to delete", obj, performanceProfileID)
 			}
 			writeMeshkitError(rw, err, http.StatusNotFound)
@@ -199,7 +196,7 @@ func (h *Handler) DeletePerformanceProfileHandler(
 		}
 
 		// fail to delete performance profile
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(ErrFailToDelete(err, obj))
 		}
 		// Keep the status a remote provider returned (403, 409, ...) and fall
@@ -211,7 +208,7 @@ func (h *Handler) DeletePerformanceProfileHandler(
 
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(err)
 		}
 	}
@@ -230,15 +227,14 @@ func (h *Handler) GetPerformanceProfileHandler(
 		writeJSONError(rw, "performanceProfileId is required", http.StatusBadRequest)
 		return
 	}
-	if provider == nil {
-		writeJSONError(rw, "provider not initialized", http.StatusInternalServerError)
+	if !h.requireProvider(rw, provider) {
 		return
 	}
 
 	key, err := uuid.FromString(performanceProfileID)
 	if err != nil || key == uuid.Nil {
 		invalidUUIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid performance profile id: %q", performanceProfileID))
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(invalidUUIDErr)
 		}
 		writeMeshkitError(rw, invalidUUIDErr, http.StatusBadRequest)
@@ -250,7 +246,7 @@ func (h *Handler) GetPerformanceProfileHandler(
 		obj := "performance profile"
 		// a profile that does not exist is a 404, not a server failure
 		if errors.Is(err, gorm.ErrRecordNotFound) || meshkiterrors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
-			if h.log != nil {
+			if h != nil && h.log != nil {
 				h.log.Warnf("No %s with ID %q found", obj, performanceProfileID)
 			}
 			writeMeshkitError(rw, err, http.StatusNotFound)
@@ -258,7 +254,7 @@ func (h *Handler) GetPerformanceProfileHandler(
 		}
 
 		fetchErr := ErrFetchProfile(err)
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(fetchErr)
 		}
 		writeMeshkitError(rw, fetchErr, providerStatusOrInternal(err))
@@ -267,7 +263,7 @@ func (h *Handler) GetPerformanceProfileHandler(
 
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
-		if h.log != nil {
+		if h != nil && h.log != nil {
 			h.log.Error(err)
 		}
 	}

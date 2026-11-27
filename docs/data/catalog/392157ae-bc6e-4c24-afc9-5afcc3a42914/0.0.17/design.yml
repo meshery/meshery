@@ -1,0 +1,95 @@
+{
+  "id": "392157ae-bc6e-4c24-afc9-5afcc3a42914",
+  "name": "Rajendhar Kubernetes Deployment Design",
+  "schemaVersion": "designs.meshery.io/v1beta1",
+  "version": "0.0.17",
+  "components": [
+    {
+      "id": "9f568ff0-160d-4996-905c-8027e83ab0de",
+      "schemaVersion": "components.meshery.io/v1beta2",
+      "version": "v1.0.0",
+      "displayName": "wonder-deployment",
+      "description": "Kubernetes Nginx Deployment",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Kubernetes",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": ""
+        },
+        "name": "kubernetes",
+        "registrant": {
+          "kind": "github"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "position": {
+          "x": 819.5130625076733,
+          "y": 438.09673867697524
+        },
+        "primaryColor": "",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": ""
+      },
+      "capabilities": null,
+      "status": null,
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false
+      },
+      "configuration": {
+        "metadata": {
+          "labels": {
+            "app": "wonder-app"
+          },
+          "name": "wonder-deployment",
+          "namespace": "playground-sandbox"
+        },
+        "spec": {
+          "replicas": 2,
+          "selector": {
+            "matchLabels": {
+              "app": "wonder-app"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "wonder-app"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx:1.27",
+                  "name": "nginx",
+                  "ports": [
+                    {
+                      "containerPort": 80,
+                      "protocol": "TCP"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "component": {
+        "version": "apps/v1",
+        "kind": "Deployment",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "relationships": []
+}

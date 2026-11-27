@@ -23,22 +23,6 @@ function createFixture(t) {
   fs.mkdirSync(path.join(fixture, 'ui', 'scripts'), { recursive: true });
   fs.copyFileSync(productionScript, path.join(fixture, 'ui', 'scripts', 'audit-hex.js'));
 
-  const scanDirs = [
-    'components',
-    'pages',
-    'utils',
-    'store',
-    'rtk-query',
-    'machines',
-    'hooks',
-    'api',
-    'css',
-  ];
-
-  for (const dir of scanDirs) {
-    fs.mkdirSync(path.join(fixture, 'ui', dir), { recursive: true });
-  }
-
   return fixture;
 }
 
@@ -290,29 +274,52 @@ test('ignores RGB functions in comments but counts actual functions', (t) => {
   assert.equal(result.offenders[0].rgb, 2);
 });
 
-test('scans nested production directories with root-scoped names', (t) => {
+test('scans eligible UI-root directories and root-level source files', (t) => {
   const fixture = createFixture(t);
 
-  const directoryNames = ['assets', 'lib', 'public', 'theme', 'tests'];
+  const eligiblePaths = ['ui/constants/colors.ts', 'ui/graphql/theme.ts', 'ui/root-source.tsx'];
 
-  for (const directory of directoryNames) {
+  for (const file of eligiblePaths) {
+    writeFile(fixture, file, 'const color = "#252E31";\n');
+  }
+
+  const { json: result } = runAudit(fixture);
+
+  assert.equal(result.files, eligiblePaths.length);
+  assert.equal(result.matches, eligiblePaths.length);
+  assert.deepEqual(
+    result.offenders.map((offender) => offender.file).sort(),
+    eligiblePaths.map((file) => file.replace('ui/', '')).sort(),
+  );
+});
+
+test('excludes ESLint-excluded UI-root paths but scans matching nested production directories', (t) => {
+  const fixture = createFixture(t);
+
+  const excludedRootDirs = ['theme', 'assets', 'lib', 'public', 'tests', 'scripts'];
+  const nestedProductionDirs = ['assets', 'lib', 'public', 'theme', 'tests'];
+
+  for (const directory of excludedRootDirs) {
+    writeFile(fixture, `ui/${directory}/root-source.tsx`, 'const color = "#000000";\n');
+  }
+
+  writeFile(fixture, 'ui/eslint.config.js', 'const color = "#000000";\n');
+
+  for (const directory of nestedProductionDirs) {
     writeFile(
       fixture,
       `ui/components/feature/${directory}/source.tsx`,
       'const color = "#252E31";\n',
     );
-
-    // These UI-root directories are intentionally outside SCAN_DIRS.
-    writeFile(fixture, `ui/${directory}/root-source.tsx`, 'const color = "#000000";\n');
   }
 
   const { json: result } = runAudit(fixture);
 
-  assert.equal(result.files, directoryNames.length);
-  assert.equal(result.matches, directoryNames.length);
+  assert.equal(result.files, nestedProductionDirs.length);
+  assert.equal(result.matches, nestedProductionDirs.length);
   assert.deepEqual(
     result.offenders.map((offender) => offender.file).sort(),
-    directoryNames.map((directory) => `components/feature/${directory}/source.tsx`).sort(),
+    nestedProductionDirs.map((directory) => `components/feature/${directory}/source.tsx`).sort(),
   );
 });
 

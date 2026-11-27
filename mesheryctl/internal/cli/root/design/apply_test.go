@@ -183,6 +183,42 @@ func TestApplyCmd(t *testing.T) {
 			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
+		{
+			Name:             "given a design name when the lookup returns an empty list then design not found error is returned",
+			Args:             []string{"apply", "missing-design"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=missing-design",
+					Response:     "pattern.empty.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:          filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrDesignNotFound("missing-design"),
+		},
+		{
+			// A server, proxy or provider can answer 200 with the JSON value null (what
+			// json.Marshal writes for a nil slice). It must read like an empty list.
+			Name:             "given a design name when the lookup returns null then design not found error is returned",
+			Args:             []string{"apply", "missing-design"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=missing-design",
+					Response:     "pattern.null.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:          filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrDesignNotFound("missing-design"),
+		},
 	}
 
 	// Run tests

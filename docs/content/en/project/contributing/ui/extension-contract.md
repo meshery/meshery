@@ -271,6 +271,12 @@ validator's `returnAddress`, which names who receives validation *replies*, not 
 *taps*, and which `ValidateDesign` clears with its own mount-time validation request. Every
 error in Kanvas Designer silently stopped linking for eight months.
 
+`designValidationMachine` handles `TAP_ON_ERROR` at its root, so it re-emits a tap in every
+state. Keep it there. The errors stay on screen while the machine resolves component
+definitions for the next request, which happens when `ValidateDesign` mounts and every time
+Kanvas re-validates a component after a configuration change. A tap handled only in `idle`
+was silently dropped for that whole fetch.
+
 ### How the extension consumes it
 
 On the extension side (`meshery-extensions/ui/src/App.tsx` and

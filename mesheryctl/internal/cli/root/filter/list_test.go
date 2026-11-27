@@ -2,6 +2,7 @@ package filter
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"reflect"
 	"runtime"
@@ -11,8 +12,30 @@ import (
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/core"
 )
+
+func TestFetchFiltersPreservesUnauthenticatedError(t *testing.T) {
+	tokenPath := filepath.Join(t.TempDir(), "auth.json")
+	if err := os.WriteFile(tokenPath, nil, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	originalTokenFlag := utils.TokenFlag
+	utils.TokenFlag = tokenPath
+	t.Cleanup(func() {
+		utils.TokenFlag = originalTokenFlag
+	})
+
+	_, err := fetchFilters("http://127.0.0.1", "", 25, 0)
+	if err == nil {
+		t.Fatal("fetchFilters succeeded with an empty token file")
+	}
+	if got := meshkiterrors.GetCode(err); got != utils.ErrUnauthenticatedCode {
+		t.Fatalf("fetchFilters error code = %q, want %q (error: %v)", got, utils.ErrUnauthenticatedCode, err)
+	}
+}
 
 func TestListCmd(t *testing.T) {
 	// get current directory
@@ -40,6 +63,18 @@ func TestListCmd(t *testing.T) {
 			ExpectedResponse: "list.filter.output.golden",
 			Fixture:          "list.filter.api.response.golden",
 			URL:              "/api/filter?pagesize=10&page=0",
+			ExpectError:      false,
+			HttpMethod:       "GET",
+			HttpStatusCode:   200,
+		},
+		{
+			// A server, proxy or provider can answer 200 with the JSON value null (what
+			// json.Marshal writes for a nil slice). It must read as "no filters".
+			Name:             "Fetch Filter List when the server replies null",
+			Args:             []string{"list"},
+			ExpectedResponse: "list.filter.output.golden",
+			Fixture:          "filter.list.null.api.response.golden",
+			URL:              "/api/filter",
 			ExpectError:      false,
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
@@ -87,6 +122,14 @@ func TestListCmdCount(t *testing.T) {
 			Args:             []string{"list", "--count"},
 			ExpectedResponse: "list.filter.count.output.golden",
 			Fixture:          "filter.list.api.response.golden",
+			URL:              "/api/filter",
+			ExpectError:      false,
+		},
+		{
+			Name:             "Fetch Filter Count when the server replies null",
+			Args:             []string{"list", "--count"},
+			ExpectedResponse: "list.filter.count.empty.output.golden",
+			Fixture:          "filter.list.null.api.response.golden",
 			URL:              "/api/filter",
 			ExpectError:      false,
 		},

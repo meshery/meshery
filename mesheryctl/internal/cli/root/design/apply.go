@@ -22,7 +22,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -100,7 +99,9 @@ mesheryctl design apply [design-name]
 				return err
 			}
 
-			var response *models.PatternsAPIResponse
+			// Decode into a value, not a pointer: a response body of null leaves a value as
+			// an empty list, but would leave a pointer nil for the lines below to crash on.
+			var response models.PatternsAPIResponse
 			defer func() { _ = resp.Body.Close() }()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
@@ -122,12 +123,9 @@ mesheryctl design apply [design-name]
 				designFile = response.Patterns[index].PatternFile
 			}
 		} else {
-			// Method to check if the entered file is a URL or not
-			validURL := strings.HasPrefix(file, "https://github.com") || strings.HasPrefix(file, "https://raw.githubusercontent.com")
-
 			var content []byte
-			if validURL {
-				content, err = fetchDesignFromGithub(file)
+			if utils.IsValidUrl(file) {
+				content, err = fetchDesignFile(file)
 				if err != nil {
 					return err
 				}
@@ -140,7 +138,7 @@ mesheryctl design apply [design-name]
 
 			// if --skip-save is not passed we save the pattern first
 			if !skipSave {
-				fileName := filepath.Base(file)
+				fileName := designFileName(file)
 				if _, err := importDesignFile(patternURL+"/import", fileName, fileName, content); err != nil {
 					return err
 				}

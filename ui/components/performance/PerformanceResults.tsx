@@ -32,6 +32,7 @@ import { isLocalProvider } from '@/utils/provider';
 import { updateProgressAction } from '@/store/slices/mesheryUi';
 import { updateResultsSelection } from '@/store/slices/prefTest';
 import { useGetPerformanceProfileResultsQuery } from '@meshery/schemas/mesheryApi';
+import { formatApiError } from '@/utils/helpers/meshkitError';
 
 const COL_MAPPING = {
   QPS: 3,
@@ -525,12 +526,14 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
     setSocialExpand(socialExpandUpdate);
   };
 
+  // RTK Query errors are objects ({ status, data }), so interpolating them
+  // directly would show "[object Object]".
   function handleError(error) {
     dispatch(updateProgressAction({ showProgress: false }));
+    const { message } = formatApiError(error, 'There was an error fetching results');
     notify({
-      message: `There was an error fetching results: ${error}`,
+      message,
       event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
     });
   }
 

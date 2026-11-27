@@ -1,0 +1,20 @@
+version: 0.0.13
+name: exploring-kubernetes-pod-copy
+displayName: Exploring Kubernetes Pod-copy
+createdAt: "2026-11-19T10:36:27Z"
+description: A generaic model
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/21c1866d-f44e-4eac-a42a-9b8afe9b9416/0.0.13/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "it need many updates \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: c640cd51-f33a-476c-9107-f2ca03d277c6
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

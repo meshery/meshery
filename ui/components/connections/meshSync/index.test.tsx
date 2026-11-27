@@ -8,9 +8,13 @@ const getK8sClusterIdsFromCtxId = vi.fn();
 const useGetMeshSyncResourcesQuery = vi.fn();
 const useGetMeshSyncResourceKindsQuery = vi.fn();
 const getResponsiveColumnVisibility = vi.fn();
+const getColumnValue = vi.fn();
 let dataTableProps: any;
 let searchBarProps: any;
 let filterProps: any;
+let visibilityControlProps: any;
+let registerConnectionModalProps: any;
+let statusSelectProps: any;
 let windowWidth = 1200;
 
 vi.mock('@sistent/sistent', () => ({
@@ -22,7 +26,10 @@ vi.mock('@sistent/sistent', () => ({
   MenuItem: ({ children }) => <div>{children}</div>,
   Table: ({ children }) => <div>{children}</div>,
   FormattedTime: ({ date }) => <span>{String(date)}</span>,
-  CustomColumnVisibilityControl: () => <div />,
+  CustomColumnVisibilityControl: (props) => {
+    visibilityControlProps = props;
+    return <div />;
+  },
   ResponsiveDataTable: (props) => {
     dataTableProps = props;
     return <div data-testid="mesh-sync-table" />;
@@ -91,10 +98,10 @@ vi.mock('../common', () => ({
 }));
 
 vi.mock('../../../utils/utils', () => ({
-  JsonParse: JSON.parse,
+  JsonParse: (item) => (typeof item === 'string' ? JSON.parse(item || '{}') : item),
   camelcaseToSnakecase: (value) => value,
-  getColumnValue: () => null,
-  getVisibilityColums: () => [],
+  getColumnValue: (...args) => getColumnValue(...args),
+  getVisibilityColums: (columns) => columns.filter((col) => col.options?.display !== false),
 }));
 
 vi.mock('../../../utils/responsive-column', () => ({
@@ -102,7 +109,10 @@ vi.mock('../../../utils/responsive-column', () => ({
 }));
 
 vi.mock('../RegisterConnectionModal', () => ({
-  default: () => <div />,
+  default: (props) => {
+    registerConnectionModalProps = props;
+    return <div />;
+  },
 }));
 
 vi.mock('../ConnectionChip', () => ({
@@ -111,7 +121,10 @@ vi.mock('../ConnectionChip', () => ({
 
 vi.mock('../styles', () => ({
   ContentContainer: ({ children }) => <div>{children}</div>,
-  ConnectionStyledSelect: ({ children }) => <div>{children}</div>,
+  ConnectionStyledSelect: ({ children, ...props }) => {
+    statusSelectProps = props;
+    return <div>{children}</div>;
+  },
   InnerTableContainer: ({ children }) => <div>{children}</div>,
 }));
 
@@ -124,7 +137,12 @@ describe('MeshSyncTable', () => {
     dataTableProps = undefined;
     searchBarProps = undefined;
     filterProps = undefined;
+    visibilityControlProps = undefined;
+    registerConnectionModalProps = undefined;
+    statusSelectProps = undefined;
     notify.mockReset();
+    getColumnValue.mockReset();
+    getColumnValue.mockReturnValue(null);
     getK8sClusterIdsFromCtxId.mockReset();
     useGetMeshSyncResourcesQuery.mockReset();
     useGetMeshSyncResourceKindsQuery.mockReset();
@@ -142,7 +160,7 @@ describe('MeshSyncTable', () => {
             kind: 'Pod',
             model: 'core',
             cluster_id: 'cluster-a',
-            pattern_resources: '',
+            pattern_resource: 'pattern-resource-1',
             status: 'discovered',
           },
         ],
@@ -179,6 +197,44 @@ describe('MeshSyncTable', () => {
     );
   });
 
+  it('reads and sorts the pattern resources column by the key the API sends', () => {
+    render(<MeshSyncTable />);
+
+    const { columns, data, options } = dataTableProps;
+    const index = columns.findIndex(({ label }) => label === 'Pattern resources');
+    expect(data[0][columns[index].name]).toBe('pattern-resource-1');
+    // The visibility map is keyed by the same names.
+    expect(dataTableProps.columnVisibility).toHaveProperty(columns[index].name);
+
+    act(() => {
+      options.onTableChange('sort', {
+        activeColumn: index,
+        announceText: 'Table now sorted by Pattern resources : descending',
+      });
+    });
+
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ order: 'pattern_resource desc' }),
+    );
+  });
+
+  it('offers the pattern resources column in the column visibility menu', () => {
+    render(<MeshSyncTable />);
+
+    expect(visibilityControlProps.columns.map(({ label }) => label)).toContain('Pattern resources');
+  });
+
+  it('keeps the pattern resources column hidden until it is turned on', async () => {
+    const { getResponsiveColumnVisibility: actual } = await vi.importActual<any>(
+      '../../../utils/responsive-column',
+    );
+    getResponsiveColumnVisibility.mockImplementation(actual);
+
+    render(<MeshSyncTable />);
+
+    expect(dataTableProps.columnVisibility.pattern_resource).toBe(false);
+  });
+
   it('resets to the first page when the search changes', () => {
     render(<MeshSyncTable />);
 
@@ -195,6 +251,27 @@ describe('MeshSyncTable', () => {
 
     expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
       expect.objectContaining({ page: 0, search: 'cor' }),
+    );
+  });
+
+  it('resets to the first page when rows per page changes', () => {
+    render(<MeshSyncTable />);
+
+    act(() => {
+      dataTableProps.options.onTableChange('changePage', { page: 2 });
+    });
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: '2' }),
+    );
+
+    // The datatable clamps its own page here; keeping page 2 with 25 rows
+    // would ask for a page past the end and show an empty table.
+    act(() => {
+      dataTableProps.options.onTableChange('changeRowsPerPage', { rowsPerPage: 25, page: 0 });
+    });
+
+    expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 0, pagesize: '25' }),
     );
   });
 
@@ -268,6 +345,65 @@ describe('MeshSyncTable', () => {
 
     await waitFor(() => {
       expect(dataTableProps.columnVisibility.model).toBe(false);
+    });
+  });
+
+  it('resolves resourceID from the id column instead of the trailing metadata column when registering', () => {
+    getColumnValue.mockImplementation((rowData, columnName, cols) => {
+      const idx = cols.findIndex((col) => col?.name === columnName);
+      return idx === -1 ? undefined : rowData[idx];
+    });
+
+    render(<MeshSyncTable />);
+
+    const statusCol = dataTableProps.columns.find((col) => col.name === 'status');
+    const rowData = dataTableProps.columns.map((col) => {
+      if (col.name === 'id') return 'resource-uuid-123';
+      if (col.name === 'metadata') return { name: 'pod-a', uid: 'k8s-uid' };
+      if (col.name === 'component_metadata') {
+        return { capabilities: { connection: true }, metadata: '{"host":"10.0.0.1"}' };
+      }
+      return null;
+    });
+
+    render(statusCol.options.customBodyRender('discovered', { rowData, rowIndex: 0 }));
+
+    act(() => {
+      statusSelectProps.onChange();
+    });
+
+    expect(registerConnectionModalProps.connectionData).toEqual({
+      capabilities: { connection: true },
+      metadata: { host: '10.0.0.1' },
+      resourceID: 'resource-uuid-123',
+    });
+  });
+
+  it('does not throw when componentMetadata is undefined during status onChange', () => {
+    getColumnValue.mockImplementation((rowData, columnName, cols) => {
+      const idx = cols.findIndex((col) => col?.name === columnName);
+      return idx === -1 ? undefined : rowData[idx];
+    });
+
+    render(<MeshSyncTable />);
+
+    const statusCol = dataTableProps.columns.find((col) => col.name === 'status');
+    const rowData = dataTableProps.columns.map((col) =>
+      col.name === 'id' ? 'resource-uuid-456' : undefined,
+    );
+
+    render(statusCol.options.customBodyRender('discovered', { rowData, rowIndex: 0 }));
+
+    expect(() => {
+      act(() => {
+        statusSelectProps.onChange();
+      });
+    }).not.toThrow();
+
+    expect(registerConnectionModalProps.connectionData).toEqual({
+      capabilities: undefined,
+      metadata: undefined,
+      resourceID: 'resource-uuid-456',
     });
   });
 });

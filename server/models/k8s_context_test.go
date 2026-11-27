@@ -2,17 +2,25 @@ package models
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"sort"
+	"strings"
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshkit/database"
 	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/core"
+	"gopkg.in/yaml.v2"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -303,7 +311,7 @@ func TestK8sContextsFromKubeconfigDiscoversAllContexts(t *testing.T) {
 
 	// includeUnreachable=true mirrors the import wizard: unreachable contexts are
 	// still returned (flagged Reachable=false) so the user can register them.
-	got := K8sContextsFromKubeconfigWithOptions(nil, uuid.Must(uuid.NewV4()).String(), nil, kubeconfig, &instanceID, eventMetadata, log, true)
+	got := K8sContextsFromKubeconfigWithOptions(nil, uuid.Must(uuid.NewV4()).String(), nil, kubeconfig, &instanceID, eventMetadata, log, KubeconfigDiscoveryOptions{IncludeUnreachable: true})
 
 	if len(got) != wantContexts {
 		var names []string
@@ -487,4 +495,499 @@ func TestFlushMeshSyncDataWithoutContextAllKubeClusterKey(t *testing.T) {
 			t.Fatalf("expected 1 resource preserved for shared server, got %d", count)
 		}
 	})
+}
+
+func TestK8sContext_RedactCredentials(t *testing.T) {
+	ctx := &K8sContext{
+		ID:             "test-id",
+		Name:           "test-name",
+		Server:         "https://cluster.example.com",
+		ConnectionID:   "conn-123",
+		DeploymentType: "out_cluster",
+		Version:        "v1.30.0",
+		Auth: sql.Map{
+			"client-key-data":         "super-secret-key",
+			"token":                   "secret-token",
+			"client-certificate-data": "client-cert",
+		},
+		Cluster: sql.Map{
+			"certificate-authority-data": "ca-cert",
+			"server":                     "https://cluster.example.com",
+		},
+	}
+
+	ctx.RedactCredentials()
+
+	if len(ctx.Auth) != 0 {
+		t.Errorf("expected Auth to be empty, got: %v", ctx.Auth)
+	}
+	if len(ctx.Cluster) != 0 {
+		t.Errorf("expected Cluster to be empty, got: %v", ctx.Cluster)
+	}
+	if ctx.ID != "test-id" {
+		t.Errorf("expected ID to be preserved, got %s", ctx.ID)
+	}
+	if ctx.Name != "test-name" {
+		t.Errorf("expected Name to be preserved, got %s", ctx.Name)
+	}
+	if ctx.Server != "https://cluster.example.com" {
+		t.Errorf("expected Server to be preserved, got %s", ctx.Server)
+	}
+	if ctx.ConnectionID != "conn-123" {
+		t.Errorf("expected ConnectionID to be preserved, got %s", ctx.ConnectionID)
+	}
+	if ctx.DeploymentType != "out_cluster" {
+		t.Errorf("expected DeploymentType to be preserved, got %s", ctx.DeploymentType)
+	}
+	if ctx.Version != "v1.30.0" {
+		t.Errorf("expected Version to be preserved, got %s", ctx.Version)
+	}
+
+	// Nil receiver safety check
+	var nilCtx *K8sContext
+	nilCtx.RedactCredentials() // must not panic
+}
+
+func TestK8sContext_Redacted(t *testing.T) {
+	orig := &K8sContext{
+		ID:             "ctx-copy-id",
+		Name:           "ctx-copy-name",
+		Server:         "https://cluster-copy.example.com",
+		ConnectionID:   "conn-copy-123",
+		DeploymentType: "out_cluster",
+		Version:        "v1.30.0",
+		Auth: sql.Map{
+			"client-key-data": "secret-key",
+			"token":           "secret-token",
+		},
+		Cluster: sql.Map{
+			"certificate-authority-data": "secret-ca",
+		},
+	}
+
+	redacted := orig.Redacted()
+
+	// Redacted copy must have credentials wiped
+	if len(redacted.Auth) != 0 {
+		t.Errorf("expected redacted Auth to be empty, got: %v", redacted.Auth)
+	}
+	if len(redacted.Cluster) != 0 {
+		t.Errorf("expected redacted Cluster to be empty, got: %v", redacted.Cluster)
+	}
+	// Redacted copy must preserve metadata
+	if redacted.ID != "ctx-copy-id" || redacted.Name != "ctx-copy-name" || redacted.Server != "https://cluster-copy.example.com" {
+		t.Errorf("expected metadata to be preserved in copy, got %+v", redacted)
+	}
+	if redacted.ConnectionID != "conn-copy-123" || redacted.DeploymentType != "out_cluster" || redacted.Version != "v1.30.0" {
+		t.Errorf("expected metadata to be preserved in copy, got %+v", redacted)
+	}
+
+	// Original must remain untouched (copy semantics)
+	if len(orig.Auth) == 0 {
+		t.Errorf("expected original Auth to remain untouched, got empty")
+	}
+	if len(orig.Cluster) == 0 {
+		t.Errorf("expected original Cluster to remain untouched, got empty")
+	}
+
+	// Nil receiver safety
+	var nilCtx *K8sContext
+	nilRes := nilCtx.Redacted() // must not panic
+	if len(nilRes.Auth) != 0 || len(nilRes.Cluster) != 0 {
+		t.Errorf("expected empty maps from nil receiver, got %+v", nilRes)
+	}
+}
+
+func TestRedactCredentialsForContext_NilSafety(t *testing.T) {
+	// Calling with nil must not panic
+	res := RedactCredentialsForContext(nil)
+	if len(res.Auth) != 0 || len(res.Cluster) != 0 {
+		t.Errorf("expected empty maps for nil input, got %+v", res)
+	}
+
+	// Calling with populated context
+	ctx := &K8sContext{
+		ID:     "legacy-id",
+		Name:   "legacy-name",
+		Server: "https://legacy.example.com",
+		Auth: sql.Map{
+			"token": "secret",
+		},
+	}
+	resPop := RedactCredentialsForContext(ctx)
+	if len(resPop.Auth) != 0 {
+		t.Errorf("expected empty Auth, got %+v", resPop.Auth)
+	}
+	if resPop.MesheryInstanceID != nil {
+		t.Errorf("expected nil MesheryInstanceID, got %+v", resPop.MesheryInstanceID)
+	}
+}
+
+func testKubeLogger(t *testing.T) logger.Handler {
+	t.Helper()
+	log, err := logger.New("test", logger.Options{Format: logger.JsonLogFormat})
+	if err != nil {
+		t.Fatalf("failed to build logger: %v", err)
+	}
+	return log
+}
+
+func discoverForTest(t *testing.T, kubeconfig []byte) (KubeconfigDiscovery, error) {
+	t.Helper()
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+	return DiscoverKubeconfigContexts(context.Background(), nil, uuid.Must(uuid.NewV4()).String(), nil, kubeconfig, &instanceID, map[string]interface{}{}, testKubeLogger(t), KubeconfigDiscoveryOptions{IncludeUnreachable: true})
+}
+
+func TestDiscoverKubeconfigContextsDistinguishesUnreadableEmptyAndSkipped(t *testing.T) {
+	t.Run("unparseable input is an error", func(t *testing.T) {
+		_, err := discoverForTest(t, []byte("this is not a kubeconfig {{{"))
+		if !errors.Is(err, ErrKubeconfigUnreadable) {
+			t.Fatalf("err = %v, want ErrKubeconfigUnreadable", err)
+		}
+	})
+
+	t.Run("yaml that is not a kubeconfig is an error", func(t *testing.T) {
+		_, err := discoverForTest(t, []byte("foo: bar\n"))
+		if !errors.Is(err, ErrKubeconfigUnreadable) {
+			t.Fatalf("err = %v, want ErrKubeconfigUnreadable", err)
+		}
+	})
+
+	t.Run("a manifest that only has an apiVersion is an error", func(t *testing.T) {
+		for _, doc := range []string{
+			"apiVersion: v1\n",
+			"apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: nginx\n",
+		} {
+			_, err := discoverForTest(t, []byte(doc))
+			if !errors.Is(err, ErrKubeconfigUnreadable) {
+				t.Fatalf("doc %q: err = %v, want ErrKubeconfigUnreadable", doc, err)
+			}
+		}
+	})
+
+	t.Run("a kubeconfig with no contexts is empty, not an error", func(t *testing.T) {
+		got, err := discoverForTest(t, []byte("apiVersion: v1\nkind: Config\ncontexts: []\nclusters: []\nusers: []\n"))
+		if err != nil {
+			t.Fatalf("empty kubeconfig: %v", err)
+		}
+		if len(got.Contexts) != 0 || len(got.SkippedContexts) != 0 {
+			t.Fatalf("contexts=%d skipped=%d, want both empty", len(got.Contexts), len(got.SkippedContexts))
+		}
+	})
+
+	t.Run("exec auth that cannot be loaded is skipped with a reason", func(t *testing.T) {
+		got, err := discoverForTest(t, []byte(`apiVersion: v1
+kind: Config
+current-context: eks
+clusters:
+- cluster:
+    certificate-authority: /no/such/ca.crt
+    server: https://127.0.0.1:1
+  name: eks
+contexts:
+- context:
+    cluster: eks
+    user: eks-user
+  name: eks
+users:
+- name: eks-user
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      command: aws
+      args: ["eks", "get-token"]
+`))
+		if err != nil {
+			t.Fatalf("discover: %v", err)
+		}
+		if len(got.Contexts) != 0 {
+			t.Fatalf("imported %d contexts, want the exec context skipped", len(got.Contexts))
+		}
+		if len(got.SkippedContexts) != 1 {
+			t.Fatalf("skipped %d, want 1", len(got.SkippedContexts))
+		}
+		skipped := got.SkippedContexts[0]
+		if skipped.Name != "eks" {
+			t.Fatalf("skipped name = %q, want eks", skipped.Name)
+		}
+		if !strings.Contains(skipped.Reason, "exec plugin") {
+			t.Fatalf("reason = %q, want it to name the exec plugin", skipped.Reason)
+		}
+	})
+
+	t.Run("auth-provider contexts are skipped with a reason", func(t *testing.T) {
+		got, err := discoverForTest(t, []byte(`apiVersion: v1
+kind: Config
+current-context: gke
+clusters:
+- cluster:
+    server: https://127.0.0.1:1
+  name: gke
+contexts:
+- context:
+    cluster: gke
+    user: gke
+  name: gke
+users:
+- name: gke
+  user:
+    auth-provider:
+      name: gcp
+`))
+		if err != nil {
+			t.Fatalf("discover: %v", err)
+		}
+		if len(got.Contexts) != 0 || len(got.SkippedContexts) != 1 {
+			t.Fatalf("contexts=%d skipped=%d, want 0 and 1", len(got.Contexts), len(got.SkippedContexts))
+		}
+		if !strings.Contains(got.SkippedContexts[0].Reason, "auth-provider") {
+			t.Fatalf("reason = %q, want it to name auth-provider", got.SkippedContexts[0].Reason)
+		}
+	})
+
+	t.Run("a readable token context is returned and a skipped exec context is reported beside it", func(t *testing.T) {
+		got, err := discoverForTest(t, []byte(`apiVersion: v1
+kind: Config
+current-context: good
+clusters:
+- cluster:
+    server: https://127.0.0.1:1
+  name: good
+- cluster:
+    certificate-authority: /no/such/ca.crt
+    server: https://127.0.0.1:1
+  name: bad
+contexts:
+- context:
+    cluster: good
+    user: good
+  name: good
+- context:
+    cluster: bad
+    user: bad
+  name: bad
+users:
+- name: good
+  user:
+    token: token-good
+- name: bad
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      command: aws
+      args: ["eks", "get-token"]
+`))
+		if err != nil {
+			t.Fatalf("discover: %v", err)
+		}
+		if len(got.Contexts) != 1 || got.Contexts[0].Name != "good" {
+			t.Fatalf("contexts = %#v, want only good", got.Contexts)
+		}
+		if len(got.SkippedContexts) != 1 || got.SkippedContexts[0].Name != "bad" {
+			t.Fatalf("skipped = %#v, want bad", got.SkippedContexts)
+		}
+	})
+
+	t.Run("a missing server-side credential path is not echoed in the skip reason", func(t *testing.T) {
+		instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+		eventMetadata := map[string]interface{}{}
+		got, err := DiscoverKubeconfigContexts(context.Background(), nil, uuid.Must(uuid.NewV4()).String(), nil, []byte(`apiVersion: v1
+kind: Config
+current-context: leak
+clusters:
+- cluster:
+    server: https://127.0.0.1:1
+  name: leak
+contexts:
+- context:
+    cluster: leak
+    user: leak
+  name: leak
+users:
+- name: leak
+  user:
+    client-certificate-data: bm90LWEtY2VydA==
+    client-key: /no/such/dir/client.key
+`), &instanceID, eventMetadata, testKubeLogger(t), KubeconfigDiscoveryOptions{IncludeUnreachable: true})
+		if err != nil {
+			t.Fatalf("discover: %v", err)
+		}
+		if len(got.Contexts) != 0 || len(got.SkippedContexts) != 1 {
+			t.Fatalf("contexts=%d skipped=%d, want 0 and 1", len(got.Contexts), len(got.SkippedContexts))
+		}
+		reason := got.SkippedContexts[0].Reason
+		if reason != kubeconfigUnreadableReason {
+			t.Fatalf("reason = %q, want the fixed reason", reason)
+		}
+		if strings.Contains(reason, "/no/such") || strings.Contains(reason, "client.key") {
+			t.Fatalf("reason %q leaks the server-side path", reason)
+		}
+		meta, _ := eventMetadata["leak"].(map[string]interface{})
+		if meta == nil {
+			t.Fatalf("eventMetadata = %#v, want an entry for the skipped context", eventMetadata)
+		}
+		if rendered := fmt.Sprintf("%v %+v", meta["error"], meta); strings.Contains(rendered, "/no/such") || strings.Contains(rendered, "client.key") {
+			t.Fatalf("event metadata %q leaks the server-side path", rendered)
+		}
+	})
+
+	t.Run("a well-formed exec kubeconfig is skipped before the API probe", func(t *testing.T) {
+		kubeconfig := []byte(`apiVersion: v1
+kind: Config
+current-context: eks
+clusters:
+- cluster:
+    server: https://127.0.0.1:1
+  name: eks
+contexts:
+- context:
+    cluster: eks
+    user: eks-user
+  name: eks
+users:
+- name: eks-user
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      command: aws
+      args: ["eks", "get-token"]
+`)
+		// Control: the fixture builds a kube handler on its own, so the skip
+		// below proves the pre-probe guard fired and not a broken fixture.
+		// A PEM fragment as CA data fails client construction, and the
+		// handler-error branch would report the same "exec plugin" reason,
+		// so without this the test would pass even with the guard removed.
+		instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+		kcfg := InternalKubeConfig{}
+		if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
+			t.Fatalf("fixture is not a kubeconfig: %v", err)
+		}
+		kc, _ := kcfg.K8sContext("eks", &instanceID, testKubeLogger(t))
+		if _, err := kc.GenerateKubeHandler(); err != nil {
+			t.Fatalf("fixture cannot build a kube handler: %v", err)
+		}
+
+		got, err := discoverForTest(t, kubeconfig)
+		if err != nil {
+			t.Fatalf("discover: %v", err)
+		}
+		if len(got.Contexts) != 0 {
+			t.Fatalf("imported %d contexts, want the exec context skipped even when a client can be built", len(got.Contexts))
+		}
+		if len(got.SkippedContexts) != 1 {
+			t.Fatalf("skipped %d, want 1", len(got.SkippedContexts))
+		}
+		skipped := got.SkippedContexts[0]
+		if skipped.Name != "eks" {
+			t.Fatalf("skipped name = %q, want eks", skipped.Name)
+		}
+		if !strings.Contains(skipped.Reason, "exec plugin") {
+			t.Fatalf("reason = %q, want it to name the exec plugin", skipped.Reason)
+		}
+		if !strings.Contains(skipped.Reason, "Meshery Server host") {
+			t.Fatalf("reason = %q, want it to say the plugin would run on the Meshery Server host", skipped.Reason)
+		}
+	})
+}
+
+// TestDiscoverKubeconfigContextsRunsExecOnlyForTheServersOwnKubeconfig pins
+// who may make Meshery Server run a kubeconfig's exec plugin. The plugin here
+// is a shell command that leaves a marker file, so the test observes whether
+// the command actually ran rather than inferring it from the skip list.
+func TestDiscoverKubeconfigContextsRunsExecOnlyForTheServersOwnKubeconfig(t *testing.T) {
+	shell, err := exec.LookPath("sh")
+	if err != nil {
+		t.Skip("needs a POSIX shell to stand in for an exec credential plugin")
+	}
+	execKubeconfig := func(marker string) []byte {
+		return []byte(fmt.Sprintf(`apiVersion: v1
+kind: Config
+current-context: eks
+clusters:
+- cluster:
+    server: https://127.0.0.1:1
+  name: eks
+contexts:
+- context:
+    cluster: eks
+    user: eks-user
+  name: eks
+users:
+- name: eks-user
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      command: %q
+      args: ["-c", "touch '%s'; exit 1"]
+`, shell, marker))
+	}
+	discover := func(t *testing.T, kubeconfig []byte, source KubeconfigSource) KubeconfigDiscovery {
+		t.Helper()
+		instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+		got, err := DiscoverKubeconfigContexts(context.Background(), nil, uuid.Must(uuid.NewV4()).String(), nil, kubeconfig, &instanceID, map[string]interface{}{}, testKubeLogger(t), KubeconfigDiscoveryOptions{IncludeUnreachable: true, Source: source})
+		if err != nil {
+			t.Fatalf("discover: %v", err)
+		}
+		return got
+	}
+
+	t.Run("an uploaded kubeconfig never runs its exec command", func(t *testing.T) {
+		marker := filepath.Join(t.TempDir(), "ran")
+		got := discover(t, execKubeconfig(marker), KubeconfigFromUpload)
+		if _, err := os.Stat(marker); !errors.Is(err, os.ErrNotExist) {
+			t.Fatalf("exec command from an uploaded kubeconfig ran on the server (marker stat err = %v)", err)
+		}
+		if len(got.Contexts) != 0 || len(got.SkippedContexts) != 1 {
+			t.Fatalf("got %d contexts and %d skipped, want the exec context skipped", len(got.Contexts), len(got.SkippedContexts))
+		}
+	})
+
+	t.Run("the zero-value source is treated as an upload", func(t *testing.T) {
+		if (KubeconfigDiscoveryOptions{}).Source != KubeconfigFromUpload {
+			t.Fatal("KubeconfigDiscoveryOptions zero value must fail closed as KubeconfigFromUpload")
+		}
+	})
+
+	t.Run("the server's own kubeconfig keeps its exec authentication", func(t *testing.T) {
+		marker := filepath.Join(t.TempDir(), "ran")
+		got := discover(t, execKubeconfig(marker), KubeconfigFromServer)
+		if len(got.SkippedContexts) != 0 {
+			t.Fatalf("server kubeconfig skipped %+v, want its exec context offered", got.SkippedContexts)
+		}
+		if len(got.Contexts) != 1 || got.Contexts[0].Reachable {
+			t.Fatalf("got %d contexts, want the exec context returned unreachable (its plugin exits 1)", len(got.Contexts))
+		}
+		if _, err := os.Stat(marker); err != nil {
+			t.Fatalf("exec plugin of the server's own kubeconfig did not run: %v", err)
+		}
+	})
+}
+
+// Existing callers (import, component registration) keep receiving a context
+// slice. An unreadable file stays an empty slice for them; the discovery
+// endpoint is what turns that into an error.
+func TestK8sContextsFromKubeconfigWithOptionsKeepsUnreadableAsEmpty(t *testing.T) {
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+	got := K8sContextsFromKubeconfigWithOptions(nil, uuid.Must(uuid.NewV4()).String(), nil, []byte("not a kubeconfig {{{"), &instanceID, map[string]interface{}{}, testKubeLogger(t), KubeconfigDiscoveryOptions{IncludeUnreachable: true})
+	if len(got) != 0 {
+		t.Fatalf("got %d contexts, want 0", len(got))
+	}
+}
+
+func TestK8sContextImportErrorIsOptionalJSON(t *testing.T) {
+	withReason, err := json.Marshal(K8sContext{Name: "bad", ImportError: "save failed"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(withReason), `"error":"save failed"`) {
+		t.Fatalf("body = %s, want an error reason", withReason)
+	}
+
+	without, err := json.Marshal(K8sContext{Name: "ok"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(without), `"error"`) {
+		t.Fatalf("body = %s, want error omitted when empty", without)
+	}
 }

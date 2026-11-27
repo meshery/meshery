@@ -27,12 +27,19 @@ describe('hasClass', () => {
     expect(hasClass(undefined, 'whatever')).toBe(false);
   });
 
-  it('does not throw if className is not a string (SVG-like DOM nodes)', () => {
+  it('returns false for empty or non-string className arguments', () => {
+    const el = { className: 'foo bar baz', parentElement: null };
+    expect(hasClass(el, '')).toBe(false);
+    expect(hasClass(el, '   ')).toBe(false);
+    expect(hasClass(el, null as any)).toBe(false);
+    expect(hasClass(el, undefined as any)).toBe(false);
+  });
+
+  it('supports SVG-like DOM nodes with SVGAnimatedString className', () => {
     const svgLike = { className: { baseVal: 'foo' }, parentElement: null };
-    // The function only matches when className is a string, so this should return false
-    // but should not throw.
     expect(() => hasClass(svgLike, 'foo')).not.toThrow();
-    expect(hasClass(svgLike, 'foo')).toBe(false);
+    expect(hasClass(svgLike, 'foo')).toBe(true);
+    expect(hasClass(svgLike, 'bar')).toBe(false);
   });
 
   it('logs and swallows errors when traversal raises', () => {
@@ -90,7 +97,7 @@ describe('AddClassRecursively', () => {
     expect(container.textContent).toContain('child');
   });
 
-  it('handles elements with no existing className', () => {
+  it('handles elements with no existing className without injecting undefined', () => {
     const { container } = render(
       <AddClassRecursively className="extra">
         <div>
@@ -100,6 +107,38 @@ describe('AddClassRecursively', () => {
     );
 
     const div = container.querySelector('div')!;
-    expect(div.className).toContain('extra');
+    const span = container.querySelector('span')!;
+    expect(div.className).toBe('extra');
+    expect(div.className).not.toContain('undefined');
+    expect(span.className).toBe('extra');
+    expect(span.className).not.toContain('undefined');
+  });
+
+  it('returns children unchanged when className is missing, empty, or whitespace-only', () => {
+    const { container: c1 } = render(
+      <AddClassRecursively className={undefined as any}>
+        <div className="keep-me">
+          <span>no-extra-class</span>
+        </div>
+      </AddClassRecursively>,
+    );
+
+    const div1 = c1.querySelector('div')!;
+    const span1 = c1.querySelector('span')!;
+    expect(div1.className).toBe('keep-me');
+    expect(span1.className).toBe('');
+
+    const { container: c2 } = render(
+      <AddClassRecursively className="   ">
+        <div className="keep-me">
+          <span>no-extra-class</span>
+        </div>
+      </AddClassRecursively>,
+    );
+
+    const div2 = c2.querySelector('div')!;
+    const span2 = c2.querySelector('span')!;
+    expect(div2.className).toBe('keep-me');
+    expect(span2.className).toBe('');
   });
 });

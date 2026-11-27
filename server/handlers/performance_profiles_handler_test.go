@@ -29,7 +29,7 @@ func TestSavePerformanceProfileHandler_NilProvider_ReturnsInternalServerError(t 
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("expected status 500 Internal Server Error, got %d (body: %s)", rec.Code, rec.Body.String())
 	}
-	if !strings.Contains(rec.Body.String(), "provider not initialized") {
+	if !strings.Contains(strings.ToLower(rec.Body.String()), "provider not initialized") {
 		t.Errorf("expected 'provider not initialized', got %s", rec.Body.String())
 	}
 }
@@ -45,7 +45,7 @@ func TestGetPerformanceProfilesHandler_NilProvider_ReturnsInternalServerError(t 
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("expected status 500 Internal Server Error, got %d (body: %s)", rec.Code, rec.Body.String())
 	}
-	if !strings.Contains(rec.Body.String(), "provider not initialized") {
+	if !strings.Contains(strings.ToLower(rec.Body.String()), "provider not initialized") {
 		t.Errorf("expected 'provider not initialized', got %s", rec.Body.String())
 	}
 }
@@ -78,7 +78,7 @@ func TestDeletePerformanceProfileHandler_NilProvider_ReturnsInternalServerError(
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("expected status 500 Internal Server Error, got %d (body: %s)", rec.Code, rec.Body.String())
 	}
-	if !strings.Contains(rec.Body.String(), "provider not initialized") {
+	if !strings.Contains(strings.ToLower(rec.Body.String()), "provider not initialized") {
 		t.Errorf("expected 'provider not initialized', got %s", rec.Body.String())
 	}
 }
@@ -242,7 +242,7 @@ func TestGetPerformanceProfileHandler_NilProvider_ReturnsInternalServerError(t *
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("expected status 500 Internal Server Error, got %d (body: %s)", rec.Code, rec.Body.String())
 	}
-	if !strings.Contains(rec.Body.String(), "provider not initialized") {
+	if !strings.Contains(strings.ToLower(rec.Body.String()), "provider not initialized") {
 		t.Errorf("expected 'provider not initialized', got %s", rec.Body.String())
 	}
 }

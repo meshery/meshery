@@ -239,6 +239,18 @@ func GetChannelAndVersion(currCtx *(config.Context)) (string, string, error) {
 	return channel, version, nil
 }
 
+// splitImage returns the repository and tag of an image reference.
+// The tag is empty when the image has no tag (including digest-only images).
+func splitImage(image string) (repo, tag string) {
+	if i := strings.Index(image, "@"); i >= 0 {
+		image = image[:i]
+	}
+	if c := strings.LastIndex(image, ":"); c > strings.LastIndex(image, "/") {
+		return image[:c], image[c+1:]
+	}
+	return image, ""
+}
+
 func GetDeploymentVersion(filePath string) (string, error) {
 	// setting up config type to yaml files
 	ViperCompose.SetConfigType("yaml")
@@ -262,11 +274,23 @@ func GetDeploymentVersion(filePath string) (string, error) {
 		return "", fmt.Errorf("unable to unmarshal config %s | %s", MesheryDeployment, err)
 	}
 
-	image := compose.Spec.Template.Spec.Containers[0].Image
-	spliter := strings.Split(image, ":")
-	version := strings.Split(spliter[1], "-")[1]
+	if len(compose.Spec.Template.Spec.Containers) == 0 {
+		return "", errors.New("deployment spec contains no containers")
+	}
 
-	return version, nil
+	image := compose.Spec.Template.Spec.Containers[0].Image
+	_, tag := splitImage(image)
+	if tag == "" {
+		return "", fmt.Errorf("invalid image format %q: missing tag", image)
+	}
+	if prefix, rest, found := strings.Cut(tag, "-"); found && (prefix == "stable" || prefix == "edge") {
+		if rest == "" {
+			return "", fmt.Errorf("invalid image format %q: empty version", image)
+		}
+		return rest, nil
+	}
+
+	return tag, nil
 }
 
 // CanUseCachedOperatorManifests returns an error if it is not possible to use cached operator manifests
@@ -622,9 +646,19 @@ func ChangeManifestVersion(channel, version, filePath string) error {
 		version = "latest"
 	}
 
+	if len(compose.Spec.Template.Spec.Containers) == 0 {
+		return fmt.Errorf("deployment spec in %s contains no containers", filePath)
+	}
+
 	image := compose.Spec.Template.Spec.Containers[0].Image
-	spliter := strings.Split(image, ":")
-	compose.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s:%s-%s", spliter[0], channel, version)
+	repo, _ := splitImage(image)
+	if repo == "" {
+		return fmt.Errorf("invalid image %q in %s: repository is empty", image, filePath)
+	}
+	if channel == "" || version == "" {
+		return fmt.Errorf("invalid channel %q or version %q for %s", channel, version, filePath)
+	}
+	compose.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s:%s-%s", repo, channel, version)
 
 	log.Debug(image, " changed to ", compose.Spec.Template.Spec.Containers[0].Image)
 
@@ -681,15 +715,32 @@ func GetPodList(client *meshkitkube.Client, namespace string) (*v1core.PodList, 
 // GetRequiredPods checks whether the pods specified by the user are valid and returns a map of the required pods.
 func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) (map[string]string, error) {
 	requiredPodsMap := make(map[string]string)
-	var availablePodsName []string
-	for _, pod := range availablePods {
-		availablePodsName = append(availablePodsName, pod.GetName())
-	}
 	for _, sp := range specifiedPods {
-		if index := StringContainedInSlice(sp, availablePodsName); index != -1 {
-			requiredPodsMap[availablePodsName[index]] = availablePodsName[index]
-		} else {
-			return nil, fmt.Errorf("pod \"%s\" specified, does not exist in the 'meshery' namespace. Please  Run `mesheryctl system status` to view the available pods", sp)
+		var exact, clean, partial []string
+		for _, pod := range availablePods {
+			name := pod.GetName()
+			if name == sp {
+				exact = append(exact, name)
+			} else if GetCleanPodName(name) == sp {
+				clean = append(clean, name)
+			} else if strings.Contains(name, sp) {
+				partial = append(partial, name)
+			}
+		}
+		matches := partial
+		if len(clean) > 0 {
+			matches = clean
+		}
+		if len(exact) > 0 {
+			matches = exact
+		}
+		switch len(matches) {
+		case 0:
+			return nil, fmt.Errorf("pod %q specified, does not exist in the 'meshery' namespace. Please run `mesheryctl system status` to view the available pods", sp)
+		case 1:
+			requiredPodsMap[matches[0]] = matches[0]
+		default:
+			return nil, fmt.Errorf("pod %q is ambiguous; matches: %s", sp, strings.Join(matches, ", "))
 		}
 	}
 
@@ -779,6 +830,7 @@ func InstallprereqDocker() error {
 	if err != nil {
 		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
 	} else {
+		defer SafeClose(resp.Body)
 		var dat map[string]interface{}
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -821,6 +873,15 @@ func ForceCleanupCluster() error {
 	}
 
 	return cleanupCluster(client.KubeClient)
+}
+
+// ForceCleanupClusterWithClient deletes the Meshery resources visible through
+// an already-resolved client, so callers that resolved their configuration
+// once (for example, `system uninstall`) do not re-read the kubeconfig and
+// risk cleaning up a different cluster than the teardown began on. Callers
+// without a resolved client keep using ForceCleanupCluster.
+func ForceCleanupClusterWithClient(kube kubernetes.Interface) error {
+	return cleanupCluster(kube)
 }
 
 // cleanupCluster deletes the Meshery resources visible through kube. A list or

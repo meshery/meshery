@@ -7,6 +7,7 @@ schemaVersion: designs.meshery.io/v1beta1
 components: []`;
 
 const MOCK_CATEGORY = 'Database';
+const MOCK_CATEGORY_ANALYTICS = 'Analytics';
 const MOCK_MODEL = 'azure-db-for-mysql';
 const MOCK_MODEL_VERSION = '1.0.0';
 
@@ -87,7 +88,7 @@ test.describe('Design Configurator Tests', () => {
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          categories: [{ name: MOCK_CATEGORY }],
+          categories: [{ name: MOCK_CATEGORY }, { name: MOCK_CATEGORY_ANALYTICS }],
         } as CategoriesResponse),
       });
     });
@@ -104,6 +105,25 @@ test.describe('Design Configurator Tests', () => {
                 name: MOCK_MODEL,
                 displayName: 'Azure DB for MySQL',
                 version: MOCK_MODEL_VERSION,
+              },
+            ],
+          } as ModelsResponse),
+        });
+      },
+    );
+
+    await page.route(
+      `**/api/registry/categories/${MOCK_CATEGORY_ANALYTICS}/models**`,
+      async (route: Route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            models: [
+              {
+                name: 'apache-spark',
+                displayName: 'Apache Spark',
+                version: '3.0.0',
               },
             ],
           } as ModelsResponse),
@@ -165,5 +185,50 @@ test.describe('Design Configurator Tests', () => {
       id: DESIGN_ID,
       name: 'Sample Design',
     });
+  });
+
+  test('should reset selected model and collapse component panel when category changes', async () => {
+    // 1. Select the Database category
+    await designConfigPage.categorySelector.click();
+    await designConfigPage.databaseCategory.click();
+
+    // 2. Select azure-db-for-mysql
+    await designConfigPage.modelSelector.click();
+    await designConfigPage.modelAzure.click();
+
+    // 3. Verify the model component panel is visible
+    await expect(designConfigPage.modelContainer).toBeVisible();
+
+    // 4. Capture split layout dimensions for comparison
+    const splitEditorBox = await designConfigPage.codeEditor.boundingBox();
+    expect(splitEditorBox).not.toBeNull();
+
+    // 5. Switch to Analytics
+    await designConfigPage.categorySelector.click();
+    await designConfigPage.analyticsCategory.click();
+
+    // 6. Verify the previous model selection is cleared
+    await expect(designConfigPage.modelSelector.locator('input')).toHaveValue('');
+    await expect(designConfigPage.modelSelector).not.toHaveText(/Azure DB for MySQL/i);
+
+    // 7. Verify the previous component panel disappears
+    await expect(designConfigPage.modelContainer).toBeHidden();
+
+    // 8. Verify the editor returns to full width
+    await expect
+      .poll(async () => {
+        const fullEditorBox = await designConfigPage.codeEditor.boundingBox();
+        return fullEditorBox?.width ?? 0;
+      })
+      .toBeGreaterThan(splitEditorBox!.width * 1.5);
+
+    // 9. Round-trip: Switch back to Database
+    await designConfigPage.categorySelector.click();
+    await designConfigPage.databaseCategory.click();
+
+    // 10. Verify model remains cleared and component panel remains hidden
+    await expect(designConfigPage.modelSelector.locator('input')).toHaveValue('');
+    await expect(designConfigPage.modelSelector).not.toHaveText(/Azure DB for MySQL/i);
+    await expect(designConfigPage.modelContainer).toBeHidden();
   });
 });

@@ -18,7 +18,7 @@ const WorkspaceActivityWidget = () => {
     isError: isWorkspacesError,
     isLoading: isWorkspacesLoading,
   } = useGetWorkspacesQuery(
-    { orgId: currentOrg?.id },
+    { orgId: currentOrg?.id, pagesize: 'all' },
     { skip: !currentOrg?.id || !canViewWorkspaces },
   );
 
