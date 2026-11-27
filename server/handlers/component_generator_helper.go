@@ -355,10 +355,7 @@ func (h *Handler) sendFileEvent(userID core.Uuid, provider models.Provider, resp
 	} else if response.EntityCount.TotalErrCount == 0 {
 		eventType = events.Success
 	}
-	description := getFirst42Chars(response.ErrMsg)
-	if len(description) == 42 {
-		description = description + "..."
-	}
+	description := truncateEventDescription(response.ErrMsg)
 
 	event := events.NewEvent().
 		ActedUpon(userID).
@@ -372,11 +369,20 @@ func (h *Handler) sendFileEvent(userID core.Uuid, provider models.Provider, resp
 
 	h.persistAndPublish(provider, token, userID, event)
 }
-func getFirst42Chars(s string) string {
-	if len(s) > 42 {
-		return s[:42]
+
+// maxEventDescriptionChars is how many characters of a registration message
+// the import event shows before shortening it.
+const maxEventDescriptionChars = 42
+
+// truncateEventDescription keeps the first maxEventDescriptionChars characters
+// of s and appends "..." only when something was actually cut. It counts runes,
+// not bytes, so a multibyte character is never split into invalid UTF-8.
+func truncateEventDescription(s string) string {
+	runes := []rune(s)
+	if len(runes) <= maxEventDescriptionChars {
+		return s
 	}
-	return s
+	return string(runes[:maxEventDescriptionChars]) + "..."
 }
 func (h *Handler) sendEventForImport(userID core.Uuid, provider models.Provider, compsCount int, modelName string, isCsv bool, token string) {
 
