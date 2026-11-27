@@ -227,27 +227,28 @@ const (
 	// cause "Result Identifier provided is not valid") - a performance-results
 	// code with nothing to do with any of them. The codes below exist so the
 	// error a user and a maintainer see actually describes what failed.
-	ErrGetEnvironmentsCode       = "meshery-server-1446"
-	ErrGetEnvironmentCode        = "meshery-server-1447"
-	ErrSaveEnvironmentCode       = "meshery-server-1448"
-	ErrUpdateEnvironmentCode     = "meshery-server-1449"
-	ErrDeleteEnvironmentCode     = "meshery-server-1450"
-	ErrEnvironmentConnectionCode = "meshery-server-1451"
-	ErrGetWorkspacesCode         = "meshery-server-1452"
-	ErrGetWorkspaceCode          = "meshery-server-1453"
-	ErrSaveWorkspaceCode         = "meshery-server-1454"
-	ErrUpdateWorkspaceCode       = "meshery-server-1455"
-	ErrDeleteWorkspaceCode       = "meshery-server-1456"
-	ErrWorkspaceResourceCode     = "meshery-server-1457"
-	ErrGetOrganizationsCode      = "meshery-server-1458"
-	ErrGetUsersCode              = "meshery-server-1459"
-	ErrGetUserCode               = "meshery-server-1460"
-	ErrGetUsersKeysCode          = "meshery-server-1461"
-	ErrFetchProfilesCode         = "meshery-server-1464"
-	ErrResetInProgressCode       = "meshery-server-1481"
-	ErrInvalidClientEventCode    = "meshery-server-1489"
-	ErrNilProviderCode           = "meshery-server-1492"
-	ErrRequestTooLargeCode       = "meshery-server-1494"
+	ErrGetEnvironmentsCode        = "meshery-server-1446"
+	ErrGetEnvironmentCode         = "meshery-server-1447"
+	ErrSaveEnvironmentCode        = "meshery-server-1448"
+	ErrUpdateEnvironmentCode      = "meshery-server-1449"
+	ErrDeleteEnvironmentCode      = "meshery-server-1450"
+	ErrEnvironmentConnectionCode  = "meshery-server-1451"
+	ErrGetWorkspacesCode          = "meshery-server-1452"
+	ErrGetWorkspaceCode           = "meshery-server-1453"
+	ErrSaveWorkspaceCode          = "meshery-server-1454"
+	ErrUpdateWorkspaceCode        = "meshery-server-1455"
+	ErrDeleteWorkspaceCode        = "meshery-server-1456"
+	ErrWorkspaceResourceCode      = "meshery-server-1457"
+	ErrGetOrganizationsCode       = "meshery-server-1458"
+	ErrGetUsersCode               = "meshery-server-1459"
+	ErrGetUserCode                = "meshery-server-1460"
+	ErrGetUsersKeysCode           = "meshery-server-1461"
+	ErrFetchProfilesCode          = "meshery-server-1464"
+	ErrResetInProgressCode        = "meshery-server-1481"
+	ErrInvalidClientEventCode     = "meshery-server-1489"
+	ErrNilProviderCode            = "meshery-server-1492"
+	ErrRequestTooLargeCode        = "meshery-server-1494"
+	ErrPolicyDefinitionFilterCode = "replace_me"
 )
 
 var (
@@ -1326,5 +1327,16 @@ func ErrRequestTooLarge(maxSize int) error {
 		[]string{msg},
 		[]string{"Request payload exceeds maximum allowed size"},
 		[]string{"Reduce request payload size to within acceptable limits"},
+	)
+}
+
+func ErrPolicyDefinitionFilter(err error) error {
+	return errors.New(
+		ErrPolicyDefinitionFilterCode,
+		errors.Alert,
+		[]string{"Failed to filter policy definitions"},
+		[]string{"Filter on policy definitions failed: " + err.Error()},
+		[]string{"The policy definitions could not be filtered due to an internal error"},
+		[]string{"Inspect server logs for the underlying error and retry the operation"},
 	)
 }
