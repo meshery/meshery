@@ -127,7 +127,15 @@ function FiltersCard_({
         }
       >
         {/* FRONT PART */}
-        <>
+        <div
+          data-testid="filter-card-front"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            justifyContent: 'space-between',
+          }}
+        >
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant="h6" component="div">
@@ -236,7 +244,7 @@ function FiltersCard_({
               </TooltipButton>
             </CatalogCardButtons>
           </BottomContainer>
-        </>
+        </div>
 
         {/* BACK PART */}
         <>

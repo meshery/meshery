@@ -95,6 +95,7 @@ export const BottomContainer = styled('div')(() => ({
   justifyContent: 'flex-start',
   alignItems: 'center',
   marginTop: 'auto',
+  paddingTop: '1rem',
 }));
 
 export const CatalogCardButtons = styled('div')(() => ({
