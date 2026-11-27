@@ -594,3 +594,43 @@ func TestRemoteProviderInitiateLogin_RefCookieCarriesOnlyThisAttemptsDestination
 		})
 	}
 }
+
+func TestRemoteProviderGetJWK_ConcurrentRefreshIsRaceFree(t *testing.T) {
+	var requestCount int32
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/keys" {
+			atomic.AddInt32(&requestCount, 1)
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write([]byte(`{"keys":[{"kid":"known-key","kty":"RSA","n":"AQAB","e":"AQAB"}]}`))
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+
+	provider := newTestRemoteProvider(t, srv.URL)
+
+	const goroutines = 16
+	var wg sync.WaitGroup
+	wg.Add(goroutines)
+
+	for i := 0; i < goroutines; i++ {
+		go func(id int) {
+			defer wg.Done()
+			if id%2 == 0 {
+				key, err := provider.GetJWK("known-key")
+				if err != nil || key["kid"] != "known-key" {
+					t.Errorf("GetJWK(known-key) = (%v, %v), want the known key", key, err)
+				}
+			} else if _, err := provider.GetJWK("unknown-key"); err != ErrNilKeys {
+				t.Errorf("GetJWK(unknown-key) error = %v, want ErrNilKeys", err)
+			}
+		}(i)
+	}
+
+	wg.Wait()
+
+	if count := atomic.LoadInt32(&requestCount); count == 0 {
+		t.Errorf("expected at least 1 request to /keys, got %d", count)
+	}
+}

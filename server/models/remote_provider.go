@@ -93,6 +93,8 @@ type RemoteProvider struct {
 	TokenStore    map[string]string
 	TokenStoreMut sync.Mutex
 	Keys          []map[string]string
+	// keysMu guards Keys; access Keys only through UpdateJWKs and findJWK.
+	keysMu        sync.RWMutex
 
 	// mostRecentToken caches the last valid user token observed during the
 	// session so it can be reused at server shutdown to authenticate the
