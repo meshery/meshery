@@ -145,6 +145,20 @@ describe('FinishDeploymentStep', () => {
     ],
     ['NO_FIELD', { code: '1' }, 'Error 500: An unexpected error occurred.', 'Retry', false],
     [0, 'Network fail', 'Network fail', 'Retry', false],
+    [
+      'FETCH_ERROR',
+      'TypeError: Failed to fetch',
+      'A network error occurred. Please check your connection and try again.',
+      'Retry',
+      false,
+    ],
+    [
+      'TIMEOUT_ERROR',
+      'AbortError: The operation was aborted.',
+      'A network error occurred. Please check your connection and try again.',
+      'Retry',
+      false,
+    ],
   ])('handles rejection: %s', async (code, data, exp, btn, isLogin) => {
     const err =
       code === 'PARSER'
@@ -154,9 +168,11 @@ describe('FinishDeploymentStep', () => {
             data,
             error: "SyntaxError: Unexpected token '<'",
           }
-        : code === 0
-          ? new Error(data as string)
-          : { status: typeof code === 'number' ? code : 500, data };
+        : code === 'FETCH_ERROR' || code === 'TIMEOUT_ERROR'
+          ? { status: code, error: data }
+          : code === 0
+            ? new Error(data as string)
+            : { status: typeof code === 'number' ? code : 500, data };
 
     renderWithContext({ perform_deployment: vi.fn().mockRejectedValue(err) });
     expect(await screen.findByText(exp)).toBeInTheDocument();
