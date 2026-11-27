@@ -7743,6 +7743,23 @@
       "suggestedRemediation": [
         "Upload the kubeconfig file itself (for example ~/.kube/config), and check it with kubectl config view --kubeconfig <file>."
       ]
+    },
+    {
+      "code": "meshery-server-1502",
+      "moniker": "ErrInvalidPerformanceProfileCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1502",
+      "severity": "alert",
+      "shortDescription": "Invalid performance profile",
+      "probableCause": [
+        "The performance profile object is nil or invalid"
+      ],
+      "suggestedRemediation": [
+        "Ensure a valid, non-nil performance profile is provided"
+      ]
     }
   ],
   "schemaVersion": 2
