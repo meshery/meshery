@@ -120,7 +120,8 @@ export const FormatId = ({ id }) => {
     if (id == null || typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
       return;
     }
-    Promise.resolve(navigator.clipboard.writeText(String(id)))
+    Promise.resolve()
+      .then(() => navigator.clipboard.writeText(String(id)))
       .then(() => {
         if (!isMountedRef.current) {
           return;

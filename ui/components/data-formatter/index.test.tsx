@@ -127,12 +127,15 @@ describe('FormatId', () => {
     expect(screen.getByText(/abcdefghij/)).toBeInTheDocument();
   });
 
-  it('writes id to clipboard when the copy button is clicked', () => {
+  it('writes id to clipboard when the copy button is clicked', async () => {
     render(<FormatId id="abc-xyz" />);
 
     const button = screen.getByTestId('icon-button');
     // fireEvent avoids userEvent which may re-pierce navigator
-    fireEvent.click(button);
+    await act(async () => {
+      fireEvent.click(button);
+      await Promise.resolve();
+    });
 
     expect(writeTextSpy).toHaveBeenCalledWith('abc-xyz');
   });
@@ -197,6 +200,23 @@ describe('FormatId', () => {
       });
       expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copy');
       unmountRejected();
+
+      Object.defineProperty(window.navigator, 'clipboard', {
+        configurable: true,
+        writable: true,
+        value: {
+          writeText: vi.fn(() => {
+            throw new Error('blocked');
+          }),
+        },
+      });
+      const { unmount: unmountSyncThrow } = render(<FormatId id="id-sync" />);
+      await act(async () => {
+        expect(() => fireEvent.click(screen.getByTestId('icon-button'))).not.toThrow();
+        await Promise.resolve();
+      });
+      expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copy');
+      unmountSyncThrow();
 
       let resolveCopy!: () => void;
       const pendingCopy = new Promise<void>((resolve) => {
