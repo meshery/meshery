@@ -363,5 +363,32 @@ describe('resources-table sorting', () => {
 
     sortBy(2, 'ascending');
     await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: 'namespace asc' }));
+
+    sortBy(2, 'descending');
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: 'namespace desc' }));
+
+    sortBy(2, 'none');
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: '' }));
+  });
+
+  it('reads the direction from the end of the announcement when the label holds the separator', async () => {
+    renderTable();
+
+    const announce = (direction: string) =>
+      act(() =>
+        tableOptions.current.onTableChange('sort', {
+          activeColumn: 1,
+          announceText: `Table now sorted by Version : API : ${direction}`,
+        }),
+      );
+
+    announce('ascending');
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: 'api_version asc' }));
+
+    announce('descending');
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: 'api_version desc' }));
+
+    announce('none');
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: '' }));
   });
 });

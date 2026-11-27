@@ -277,10 +277,12 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
             setPageSize(tableState.rowsPerPage.toString());
             break;
           case 'sort':
-            if (sortInfo.length == 2) {
-              if (sortInfo[1] === 'ascending') {
+            // The direction is the last segment, so a label containing " : " still parses.
+            const direction = sortInfo[sortInfo.length - 1];
+            if (sortInfo.length >= 2) {
+              if (direction === 'ascending') {
                 order = `${columnName} asc`;
-              } else if (sortInfo[1] === 'descending') {
+              } else if (direction === 'descending') {
                 order = `${columnName} desc`;
               } else {
                 // The third click on a sortThirdClickReset column announces "none".
