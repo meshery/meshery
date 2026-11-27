@@ -71,7 +71,7 @@ var dashboardCmd = &cobra.Command{
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) > 0 {
 			return utils.ErrInvalidArgument(
-				fmt.Errorf("this command takes no arguments. See '%s --help' for more information", cmd.CommandPath()),
+				fmt.Errorf("unexpected argument(s)\n\nUsage: mesheryctl system dashboard [flags]\nRun 'mesheryctl system dashboard --help' to see detailed help message"),
 			)
 		}
 		return nil

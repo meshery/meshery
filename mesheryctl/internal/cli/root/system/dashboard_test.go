@@ -92,6 +92,10 @@ func TestKeepConnectionAlive_Failure(t *testing.T) {
 }
 
 func TestDashboardCmdArgs(t *testing.T) {
+	expectedErr := utils.ErrInvalidArgument(
+		fmt.Errorf("unexpected argument(s)\n\nUsage: mesheryctl system dashboard [flags]\nRun 'mesheryctl system dashboard --help' to see detailed help message"),
+	)
+
 	tests := []struct {
 		name          string
 		args          []string
@@ -107,13 +111,13 @@ func TestDashboardCmdArgs(t *testing.T) {
 			name:          "single unexpected argument",
 			args:          []string{"foo"},
 			wantErr:       true,
-			expectedError: utils.ErrInvalidArgument(fmt.Errorf("this command takes no arguments. See '%s --help' for more information", dashboardCmd.CommandPath())),
+			expectedError: expectedErr,
 		},
 		{
 			name:          "multiple unexpected arguments",
 			args:          []string{"foo", "bar"},
 			wantErr:       true,
-			expectedError: utils.ErrInvalidArgument(fmt.Errorf("this command takes no arguments. See '%s --help' for more information", dashboardCmd.CommandPath())),
+			expectedError: expectedErr,
 		},
 	}
 
