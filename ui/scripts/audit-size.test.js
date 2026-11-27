@@ -233,3 +233,23 @@ test('skips same-line opening multiline comments and JSDoc containing string lit
     { file: 'components/jsdoc-and-trailing.tsx', lines: 65 * expectedLinesPerEntry },
   ]);
 });
+
+test('skips JSDoc comments attached to closing tokens and EOF', (t) => {
+  const fixture = createFixture(t);
+  const jsdocOnlyLines = Array.from({ length: 605 }, (_, i) => ` * header ${i + 1}`).join('\n');
+  const codeLines = Array.from({ length: 605 }, (_, i) => `const value${i} = ${i};`);
+  const eofTrailer = 'const last = 1; /* c1 */\n/**\n * eof\n */\n// c2\n';
+
+  writeFile(fixture, 'ui/components/jsdoc-only.ts', `/**\n${jsdocOnlyLines}\n */\n`);
+  writeFile(
+    fixture,
+    'ui/components/jsdoc-eof.ts',
+    `function f() {\n${codeLines.join('\n')}\n  /** before brace */\n}\n${eofTrailer}`,
+  );
+
+  const result = runAudit(fixture);
+
+  assert.equal(result.over_warn, 1);
+  assert.equal(result.over_hard, 0);
+  assert.deepEqual(result.files, [{ file: 'components/jsdoc-eof.ts', lines: 608 }]);
+});

@@ -106,7 +106,7 @@ function countSignificantLines(src, file) {
     }
 
     const children = node.getChildren(sourceFile);
-    if (children.length === 0) {
+    if (children.every((child) => child.kind === ts.SyntaxKind.JSDoc)) {
       if (node.pos < node.getStart(sourceFile)) {
         commentRanges.push(
           ...(ts.getTrailingCommentRanges(src, node.pos) || []),
