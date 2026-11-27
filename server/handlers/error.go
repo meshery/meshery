@@ -1,9 +1,13 @@
 package handlers
 
 import (
+	stderrors "errors"
 	"fmt"
+	"net/http"
 	"strings"
 
+	"github.com/meshery/meshery/server/models/telemetry/grafana"
+	"github.com/meshery/meshery/server/models/telemetry/prometheus"
 	"github.com/meshery/meshkit/errors"
 )
 
@@ -217,6 +221,7 @@ const (
 	ErrMeshsyncReconcileCode               = "meshery-server-1442"
 	ErrUnsafeFilePathCode                  = "meshery-server-1443"
 	ErrModelNotFoundCode                   = "meshery-server-1485"
+	ErrTelemetrySizeCode                   = "meshery-server-1493"
 	// Environment, workspace, organization, user and key operations previously
 	// reported every failure as ErrGetResult ("unable to get result", probable
 	// cause "Result Identifier provided is not valid") - a performance-results
@@ -240,6 +245,9 @@ const (
 	ErrGetUsersKeysCode          = "meshery-server-1461"
 	ErrFetchProfilesCode         = "meshery-server-1464"
 	ErrResetInProgressCode       = "meshery-server-1481"
+	ErrInvalidClientEventCode    = "meshery-server-1489"
+	ErrNilProviderCode           = "meshery-server-1492"
+	ErrRequestTooLargeCode       = "meshery-server-1494"
 )
 
 var (
@@ -263,8 +271,14 @@ var (
 func ErrGenerateClusterContext(err error) error {
 	return errors.New(ErrGenerateClusterContextCode, errors.Alert, []string{"Failed to generate in cluster context."}, []string{err.Error()}, []string{}, []string{})
 }
+
+// ErrNilClusterContext occurs when no Kubernetes contexts are detected from in-cluster configuration.
 func ErrNilClusterContext(err error) error {
-	return errors.New(ErrNilClusterContextCode, errors.Alert, []string{"Nil context generated from in cluster config"}, []string{err.Error()}, []string{}, []string{})
+	errStr := ""
+	if err != nil {
+		errStr = err.Error()
+	}
+	return errors.New(ErrNilClusterContextCode, errors.Alert, []string{"Nil context generated from in cluster config"}, []string{errStr}, []string{"No contexts detected in the in-cluster kubeconfig."}, []string{"Ensure Meshery is deployed with a valid service account in a Kubernetes cluster."})
 }
 func ErrWriteResponse(err error) error {
 	return errors.New(ErrWriteResponseCode, errors.Alert, []string{"Error writing response"}, []string{err.Error()}, []string{}, []string{})
@@ -348,11 +362,19 @@ func ErrPatternDeploy(err error, patternName string) error {
 }
 
 func ErrRequestBody(err error) error {
-	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to read the request body"}, []string{err.Error()}, []string{"Request body is empty or faulty"}, []string{"Check if the request is sent with proper values"})
+	errStr := ""
+	if err != nil {
+		errStr = err.Error()
+	}
+	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to read the request body"}, []string{errStr}, []string{"Request body is empty or faulty"}, []string{"Check if the request is sent with proper values"})
 }
 
 func ErrParseBool(err error, obj string) error {
-	return errors.New(ErrParseBoolCode, errors.Alert, []string{"unable to parse : ", obj}, []string{err.Error()}, []string{"Failed due to invalid value of : ", obj}, []string{"please provide a valid value for : ", obj})
+	errStr := ""
+	if err != nil {
+		errStr = err.Error()
+	}
+	return errors.New(ErrParseBoolCode, errors.Alert, []string{"unable to parse : ", obj}, []string{errStr}, []string{"Failed due to invalid value of : ", obj}, []string{"please provide a valid value for : ", obj})
 }
 
 func ErrStreamEvents(err error) error {
@@ -473,6 +495,9 @@ func ErrFailToDelete(err error, obj string) error {
 }
 
 func ErrBlankName(err error) error {
+	if err == nil {
+		err = fmt.Errorf("test name is empty")
+	}
 	return errors.New(ErrBlankNameCode, errors.Alert, []string{"Error: name field is blank."}, []string{err.Error()}, []string{"Load test name empty or not valid."}, []string{"Provide a name for the test."})
 }
 
@@ -680,7 +705,11 @@ func ErrRemoteApplication(err error) error {
 }
 
 func ErrClonePattern(err error) error {
-	return errors.New(ErrClonePatternCode, errors.Alert, []string{"Error failed to clone design"}, []string{err.Error()}, []string{"Failed to clone design with the given ID"}, []string{"Check if the design ID is correct and the design is published"})
+	errStr := ""
+	if err != nil {
+		errStr = err.Error()
+	}
+	return errors.New(ErrClonePatternCode, errors.Alert, []string{"Error failed to clone design"}, []string{errStr}, []string{"Failed to clone design with the given ID"}, []string{"Check if the design ID is correct and the design is published"})
 }
 
 func ErrCloneFilter(err error) error {
@@ -925,7 +954,7 @@ func ErrFetchResults(err error) error {
 }
 
 func ErrMissingResultID() error {
-	return errors.New(ErrMissingResultIDCode, errors.Alert, []string{"Missing result id in request"}, []string{"No result id was supplied in the URL path"}, []string{"The client did not include a result identifier"}, []string{"Provide the result id in the request URL, for example /api/user/performance/results/{id}"})
+	return errors.New(ErrMissingResultIDCode, errors.Alert, []string{"Missing result id in request"}, []string{"No result id was supplied in the URL path"}, []string{"The client did not include a result identifier"}, []string{"Provide the result id in the request URL, for example /api/perf/profile/result/{id}"})
 }
 
 func ErrGenerateUUID(err error) error {
@@ -973,6 +1002,12 @@ func ErrUpdateConnection(err error) error {
 // (health, board search/fetch, datasource listing, or datasource query proxy).
 // The op string identifies the operation that failed. Emitted with HTTP 502.
 func ErrTelemetryGrafana(err error, op string) error {
+	if status := grafana.StatusCode(err); status == http.StatusUnauthorized || status == http.StatusForbidden {
+		return ErrTelemetryGrafanaAuth(err)
+	}
+	if stderrors.Is(err, grafana.ErrResponseTooLarge) {
+		return ErrTelemetrySize(err)
+	}
 	return errors.New(ErrTelemetryGrafanaCode, errors.Alert, []string{fmt.Sprintf("Grafana telemetry request failed during %s", op)}, []string{err.Error()}, []string{"The Grafana instance is unreachable or returned an error.", "The stored credential (API key / basic auth) is missing, expired, or lacks permission.", "The connection's URL is incorrect."}, []string{"Verify the Grafana URL is reachable from the Meshery server and that the connection's credential is valid, then retry."})
 }
 
@@ -998,7 +1033,22 @@ func ErrTelemetryGrafanaAuth(err error) error {
 // connection (health, metric/label discovery, metadata, or query/query_range).
 // The op string identifies the operation that failed. Emitted with HTTP 502.
 func ErrTelemetryPrometheus(err error, op string) error {
+	if status := prometheus.StatusCode(err); status == http.StatusUnauthorized || status == http.StatusForbidden {
+		return ErrTelemetryPrometheusAuth(err)
+	}
+	if stderrors.Is(err, prometheus.ErrResponseTooLarge) {
+		return ErrTelemetrySize(err)
+	}
 	return errors.New(ErrTelemetryPrometheusCode, errors.Alert, []string{fmt.Sprintf("Prometheus telemetry request failed during %s", op)}, []string{err.Error()}, []string{"The Prometheus instance is unreachable or returned an error.", "The stored credential (API key / basic auth) is missing, expired, or lacks permission.", "The connection's URL is incorrect."}, []string{"Verify the Prometheus URL is reachable from the Meshery server and that the connection's credential is valid, then retry."})
+}
+
+// ErrTelemetrySize gives users a useful error when an upstream telemetry response exceeds the limit.
+func ErrTelemetrySize(err error) error {
+	return errors.New(ErrTelemetrySizeCode, errors.Alert,
+		[]string{"Telemetry response exceeds Meshery's 16 MiB limit"},
+		[]string{err.Error()},
+		[]string{"The upstream response contains more data than Meshery can return."},
+		[]string{"Reduce the response size, then retry.", "For panel queries, shorten the time range or use more selective label matchers."})
 }
 
 // ErrTelemetryPrometheusAuth reports that Prometheus rejected the connection's
@@ -1242,5 +1292,39 @@ func ErrModelNotFound(modelName string) error {
 		[]string{fmt.Sprintf("Model %q was not found in the provided CSV input", modelName)},
 		[]string{"The requested model is not present in the CSV input"},
 		[]string{"Verify that the requested model exists in the CSV input"},
+	)
+}
+
+func ErrInvalidClientEvent(err error) error {
+	return errors.New(
+		ErrInvalidClientEventCode,
+		errors.Alert,
+		[]string{"The event's correlation, provenance, trace or metadata.error fields are not valid"},
+		[]string{err.Error()},
+		[]string{"A field breaks the meshery/schemas event contract: a correlationKey, source or type outside 1 to 255 characters, an occurrenceCount below 1, a lastSeenAt before firstSeenAt, a specversion other than 1.0, or a traceId or parentId that is not W3C Trace Context hex", "A metadata.error object carrying a lowercase code key breaks the schemas EventError contract: a value of the wrong JSON type or an unknown key, an empty code, a severity that is not an error severity, too many causes or remediations, a duplicate cause id, one remediation id naming two different remediations, an automatic or requiresApproval actionPolicy without an action, flat probableCause or suggestedRemediation lists that are not the ones derived from probableCauses, or a matchedCauses entry whose causeId is malformed, is not one of probableCauses, or whose confidence is outside 0 to 1. The long description names each failing field path"},
+		[]string{"Send the fields as the schemas EventPayload defines them, or omit the ones the client does not set", "Send metadata.error as the schemas EventError shape (code, shortDescription and the other defined keys only), or drop it when the client has no structured error to attach"},
+	)
+}
+
+func ErrNilProvider() error {
+	return errors.New(
+		ErrNilProviderCode,
+		errors.Alert,
+		[]string{"Provider not initialized"},
+		[]string{"Provider instance passed to the handler is nil"},
+		[]string{"The handler was invoked without an initialized provider instance"},
+		[]string{"Ensure the provider is properly initialized before handling the request"},
+	)
+}
+
+func ErrRequestTooLarge(maxSize int) error {
+	msg := fmt.Sprintf("request body exceeds maximum allowed size of %dMB", maxSize/(1024*1024))
+	return errors.New(
+		ErrRequestTooLargeCode,
+		errors.Alert,
+		[]string{msg},
+		[]string{msg},
+		[]string{"Request payload exceeds maximum allowed size"},
+		[]string{"Reduce request payload size to within acceptable limits"},
 	)
 }

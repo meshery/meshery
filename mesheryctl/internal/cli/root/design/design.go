@@ -17,8 +17,14 @@ package design
 import (
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+	"path"
+	"path/filepath"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -28,6 +34,9 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/spf13/cobra"
 )
+
+// githubDownloadTimeout bounds the download of a design file from GitHub.
+const githubDownloadTimeout = 30 * time.Second
 
 var (
 	availableSubcommands []*cobra.Command
@@ -39,7 +48,7 @@ var DesignCmd = &cobra.Command{
 	Use:   "design",
 	Short: "Manage cloud native designs",
 	Long: `Manage cloud and cloud native infrastructure using predefined designs.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl#command-reference`,
+Find more information at: https://docs.meshery.io/reference/mesheryctl/design`,
 	Example: `
 // Apply design file:
 mesheryctl design apply --file [path to design file | URL of the file]
@@ -48,10 +57,16 @@ mesheryctl design apply --file [path to design file | URL of the file]
 mesheryctl design delete --file [path to design file]
 
 // View design file:
-mesheryctl design view [design name | ID]
+mesheryctl design view [design-name | ID]
 
 // List all designs:
 mesheryctl design list
+
+// Import a design:
+mesheryctl design import -f [file/URL] -n [name]
+
+// Export a design:
+mesheryctl design export [design-name | ID]
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
@@ -125,4 +140,96 @@ func fetchDesignByID(baseUrl, designID string) (pattern.PatternFile, error) {
 		return pattern.PatternFile{}, ErrParseDesignFile(errors.New("bridged pattern file is nil"))
 	}
 	return *bridged, nil
+}
+
+// fetchDesignFromGithub downloads a design file from a github.com or
+// raw.githubusercontent.com URL. The server has no endpoint that reads a design
+// from a URL without saving it, so the file is fetched here. It uses a plain
+// request, because utils.NewRequest would send the Meshery token to GitHub.
+func fetchDesignFromGithub(fileURL string) ([]byte, error) {
+	repoURL, filePath, err := utils.ParseURLGithub(fileURL)
+	if err != nil {
+		return nil, utils.ErrParseGithubFile(err, fileURL)
+	}
+
+	rawURL := repoURL
+	if filePath != "" {
+		rawURL = strings.Replace(repoURL, "https://github.com/", "https://raw.githubusercontent.com/", 1) + "/" + filePath
+	} else {
+		rawURL = fileURL
+	}
+
+	client := &http.Client{Timeout: githubDownloadTimeout}
+	resp, err := client.Get(rawURL)
+	if err != nil {
+		return nil, utils.ErrFailRequest(err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, utils.ErrResponseStatus(resp.StatusCode)
+	}
+
+	content, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, utils.ErrReadFromBody(err)
+	}
+	return content, nil
+}
+
+func isGithubURL(fileURL string) bool {
+	u, err := url.Parse(fileURL)
+	if err != nil {
+		return false
+	}
+	return u.Hostname() == "github.com" || u.Hostname() == "raw.githubusercontent.com"
+}
+
+// designFileName derives a clean file name from a file path or URL, stripping query parameters.
+func designFileName(filePathOrURL string) string {
+	if utils.IsValidUrl(filePathOrURL) {
+		if u, err := url.Parse(filePathOrURL); err == nil && u.Path != "" {
+			base := path.Base(u.Path)
+			if base != "." && base != "/" && base != "" {
+				return base
+			}
+		}
+		return "design.yaml"
+	}
+	return filepath.Base(filePathOrURL)
+}
+
+// fetchDesignFile downloads a design file from a URL. If the URL points to GitHub,
+// it is normalized and fetched via fetchDesignFromGithub. For other HTTP/HTTPS URLs,
+// it is fetched directly.
+func fetchDesignFile(fileURL string) ([]byte, error) {
+	u, err := url.Parse(fileURL)
+	if err != nil {
+		return nil, utils.ErrFailRequest(err)
+	}
+	scheme := strings.ToLower(u.Scheme)
+	if scheme != "http" && scheme != "https" {
+		return nil, ErrInvalidDesignFile(fmt.Errorf("unsupported URL scheme %q: only http and https are supported", u.Scheme))
+	}
+
+	if isGithubURL(fileURL) {
+		return fetchDesignFromGithub(fileURL)
+	}
+
+	client := &http.Client{Timeout: githubDownloadTimeout}
+	resp, err := client.Get(fileURL)
+	if err != nil {
+		return nil, utils.ErrFailRequest(err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, utils.ErrResponseStatus(resp.StatusCode)
+	}
+
+	content, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, utils.ErrReadFromBody(err)
+	}
+	return content, nil
 }

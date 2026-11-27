@@ -28,6 +28,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 // GenMarkdownTreeCustom is a modified version of GenMarkdownTree from spf13/cobra
@@ -36,20 +37,34 @@ title: %s
 display_title: false
 command: %s
 subcommand: %s
----
+categories: [%s]
+%s---
 
 `
+
+// legacyReferencePath is the URL prefix the CLI reference used before it moved
+// from /reference/references/mesheryctl/ to /reference/mesheryctl/. Every
+// generated page carries an alias under this prefix so old links keep working.
+const legacyReferencePath = "/reference/references/"
+
+// aliasesFor returns the front matter aliases block for a generated page.
+func aliasesFor(parts []string) string {
+	if len(parts) == 0 {
+		return ""
+	}
+	return "aliases:\n- " + legacyReferencePath + strings.Join(parts, "/") + "/\n"
+}
 
 // prepender is a function to prepend the frontmatter to the markdown file
 func prepender(filename string) string {
 	idx := strings.Index(filename, "mesheryctl")
 	if idx == -1 {
 		base := strings.TrimSuffix(filepath.Base(filename), ".md")
-		return fmt.Sprintf(markdownTemplateCommand, base, base, "nil")
+		return fmt.Sprintf(markdownTemplateCommand, base, base, "nil", "mesheryctl-ref", "")
 	}
 
-	relPath := strings.TrimSuffix(filename[idx:], ".md")
-	parts := strings.Split(relPath, string(os.PathSeparator))
+	relPath := strings.TrimSuffix(filepath.ToSlash(filename[idx:]), ".md")
+	parts := strings.Split(relPath, "/")
 
 	if len(parts) == 0 {
 		return ""
@@ -72,12 +87,19 @@ func prepender(filename string) string {
 		subcommand = parts[2] // Set the second part as the subcommand
 	}
 
+	category := "mesheryctl-ref"
+	if len(parts) >= 2 {
+		category = fmt.Sprintf("mesheryctl-%s", parts[1])
+	}
+
 	title := strings.Join(parts, "-")
 
 	return fmt.Sprintf(markdownTemplateCommand,
 		title,
 		command,
 		subcommand,
+		category,
+		aliasesFor(parts),
 	)
 }
 
@@ -86,12 +108,12 @@ func linkHandler(name string) string {
 	name = filepath.ToSlash(name)
 
 	// Find the reference root
-	idx := strings.Index(name, "reference/references/mesheryctl")
+	idx := strings.Index(name, "reference/mesheryctl")
 	if idx == -1 {
 		return ""
 	}
 
-	// Trim everything before reference/references/mesheryctl
+	// Trim everything before reference/mesheryctl
 	trimmed := name[idx:]
 
 	// Remove file extension
@@ -110,7 +132,7 @@ func linkHandler(name string) string {
 
 // docs is a function to generate the markdown docs for mesheryctl
 func doc() {
-	markDownPath := "../../docs/content/en/reference/references/mesheryctl/" // Path for docs
+	markDownPath := "../../docs/content/en/reference/mesheryctl/" // Path for docs
 	//yamlPath := "./internal/cli/root/testDoc/"
 
 	fmt.Println("Scanning available commands...")
@@ -139,21 +161,40 @@ func writeCodeBlock(buf *bytes.Buffer, code string) {
 		codeEscaper.Replace(code))
 }
 
+// withPortableConfigDefault runs fn with the "config" flag's displayed default
+// temporarily set to a machine-neutral path, restoring the original default after.
+func withPortableConfigDefault(flags *pflag.FlagSet, fn func()) {
+	configFlag := flags.Lookup("config")
+	if configFlag == nil {
+		fn()
+		return
+	}
+	originalDefault := configFlag.DefValue
+	configFlag.DefValue = "~/.meshery/config.yaml"
+	defer func() { configFlag.DefValue = originalDefault }()
+	fn()
+}
+
 // printOptions prints the options for a command
 func printOptions(buf *bytes.Buffer, cmd *cobra.Command) error {
 	flags := cmd.NonInheritedFlags()
 	flags.SetOutput(buf)
 	if flags.HasAvailableFlags() {
-		buf.WriteString("## Options\n\n<pre class='codeblock-pre'>\n<div class='codeblock'>\n")
-		flags.PrintDefaults()
+		withPortableConfigDefault(flags, func() {
+			buf.WriteString("## Options\n\n<pre class='codeblock-pre'>\n<div class='codeblock'>\n")
+			flags.PrintDefaults()
+		})
 		buf.WriteString("\n</div>\n</pre>\n\n")
 	}
 
 	parentFlags := cmd.InheritedFlags()
 	parentFlags.SetOutput(buf)
+
 	if parentFlags.HasAvailableFlags() {
-		buf.WriteString("## Options inherited from parent commands\n\n<pre class='codeblock-pre'>\n<div class='codeblock'>\n")
-		parentFlags.PrintDefaults()
+		withPortableConfigDefault(parentFlags, func() {
+			buf.WriteString("## Options inherited from parent commands\n\n<pre class='codeblock-pre'>\n<div class='codeblock'>\n")
+			parentFlags.PrintDefaults()
+		})
 		buf.WriteString("\n</div>\n</pre>\n\n")
 	}
 	return nil
@@ -249,7 +290,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 				}
 			})
 		}
-		buf.WriteString(`Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.`)
+		buf.WriteString(`Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.`)
 		buf.WriteString("\n")
 	}
 
@@ -376,8 +417,11 @@ func getManuallyAddedContentMap(filename string) (map[int]string, error) {
 }
 
 func isGeneratedShortcode(shortcodeContent string) bool {
-	return shortcodeContent == `ref "reference/references/mesheryctl/_index.md"` ||
+	return shortcodeContent == `ref "reference/mesheryctl/_index.md"` ||
+		shortcodeContent == `ref "reference/references/mesheryctl/_index.md"` ||
 		shortcodeContent == `ref "reference/reference/mesheryctl/_index.md"` ||
+		shortcodeContent == `ref "project/contributing/cli/cli.md#documenting"` ||
+		shortcodeContent == `ref "project/contributing/cli/index.md#documenting"` ||
 		shortcodeContent == `ref "project/contributing/cli/cli.md#preserving-manually-added-documentation"` ||
 		shortcodeContent == `ref "project/contributing/cli/index.md#preserving-manually-added-documentation"`
 }

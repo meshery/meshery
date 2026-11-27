@@ -6,11 +6,32 @@ import { getUnit8ArrayDecodedFile } from '../../utils/utils';
 import { trueRandom } from '../../lib/trueRandom';
 import downloadContent from '../../utils/fileDownloader';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { formatApiError } from '../../utils/helpers/meshkitError';
 import { ACTION_TYPES } from './Filters.constants';
 
 type Notify = (_args: { message: string; event_type: string; details?: string }) => void;
 
-type ErrorHandler = (_action: { error_msg: string }) => (_error: Error | string) => void;
+type ErrorHandler = (_action: { error_msg: string }) => (_error: unknown) => void;
+
+// Curried: call sites pass the action, then the raw error -
+// `handleError(ACTION_TYPES.X)(error)`. The error is usually an RTK Query
+// rejection object, so it goes through formatApiError instead of being
+// stringified (which would show "[object Object]").
+export function createErrorHandler({ notify }: { notify: Notify }): ErrorHandler {
+  return (action) => (error) => {
+    updateProgress({ showProgress: false });
+    // formatApiError can throw on a malformed MeshKit envelope (e.g. a
+    // non-array suggestedRemediation), which would skip the notification
+    // and leave the rejection unhandled. Fall back to the action message.
+    let message: string;
+    try {
+      ({ message } = formatApiError(error, action.error_msg));
+    } catch {
+      message = action.error_msg;
+    }
+    notify({ message, event_type: EVENT_TYPES.ERROR });
+  };
+}
 
 type SubmitArgs = {
   data: any;
@@ -59,9 +80,9 @@ export function createHandleSubmit({
           notify({ message: `"${name}" filter deleted`, event_type: EVENT_TYPES.SUCCESS });
           resetSelectedRowData()();
         })
-        .catch(() => {
+        .catch((error) => {
           updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.DELETE_FILTERS);
+          handleError(ACTION_TYPES.DELETE_FILTERS)(error);
         });
     }
 
@@ -83,9 +104,9 @@ export function createHandleSubmit({
         .then(() => {
           updateProgress({ showProgress: false });
         })
-        .catch(() => {
+        .catch((error) => {
           updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.UPLOAD_FILTERS);
+          handleError(ACTION_TYPES.UPLOAD_FILTERS)(error);
         });
     }
 
@@ -101,9 +122,9 @@ export function createHandleSubmit({
         .then(() => {
           updateProgress({ showProgress: false });
         })
-        .catch(() => {
+        .catch((error) => {
           updateProgress({ showProgress: false });
-          handleError(ACTION_TYPES.UPLOAD_FILTERS);
+          handleError(ACTION_TYPES.UPDATE_FILTERS)(error);
         });
     }
   };
@@ -181,23 +202,26 @@ export function createHandleImportFilter({
     let requestBody: any = null;
     switch (uploadType) {
       case 'File Upload':
+        // The server reads the binary from `filterData.filterFile`. It still
+        // accepts the legacy `filter_data` wrapper, but not an inner
+        // `filter_file`, which is silently dropped (filter saved empty).
+        // Use the canonical camelCase shape for both.
         requestBody = JSON.stringify({
           config,
           save: true,
-          filter_data: {
+          filterData: {
             name,
-            filter_file: getUnit8ArrayDecodedFile(file),
+            filterFile: getUnit8ArrayDecodedFile(file),
           },
         });
         break;
       case 'URL Upload':
+        // No `filterData` here: its presence makes the server treat the
+        // request as a local upload and never fetch `url`.
         requestBody = JSON.stringify({
           config,
           save: true,
           url,
-          filter_data: {
-            name,
-          },
         });
         break;
     }
@@ -212,9 +236,9 @@ export function createHandleImportFilter({
         });
         getFilters();
       })
-      .catch(() => {
+      .catch((error) => {
         updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.UPLOAD_FILTERS);
+        handleError(ACTION_TYPES.UPLOAD_FILTERS)(error);
       });
   };
 }
@@ -254,9 +278,9 @@ export function createHandleUnpublishModal({
                 event_type: EVENT_TYPES.SUCCESS,
               });
             })
-            .catch(() => {
+            .catch((error) => {
               updateProgress({ showProgress: false });
-              handleError(ACTION_TYPES.UNPUBLISH_CATALOG);
+              handleError(ACTION_TYPES.UNPUBLISH_CATALOG)(error);
             });
         }
       };
@@ -314,9 +338,9 @@ export function createHandlePublish({
           });
         }
       })
-      .catch(() => {
+      .catch((error) => {
         updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.PUBLISH_CATALOG);
+        handleError(ACTION_TYPES.PUBLISH_CATALOG)(error);
       });
   };
 }
@@ -339,9 +363,9 @@ export function createHandleClone({ cloneFilter, notify, handleError }: CreateHa
         updateProgress({ showProgress: false });
         notify({ message: `"${name}" filter cloned`, event_type: EVENT_TYPES.SUCCESS });
       })
-      .catch(() => {
+      .catch((error) => {
         updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.CLONE_FILTERS);
+        handleError(ACTION_TYPES.CLONE_FILTERS)(error);
       });
   };
 }
@@ -364,9 +388,32 @@ export function createDeleteFilter({
         updateProgress({ showProgress: false });
         notify({ message: `Filter deleted`, event_type: EVENT_TYPES.SUCCESS });
       })
-      .catch(() => {
+      .catch((error) => {
         updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.DELETE_FILTERS);
+        handleError(ACTION_TYPES.DELETE_FILTERS)(error);
       });
+  };
+}
+
+type CreateFetchSchemaDataArgs = {
+  getMeshModels: () => Promise<{ models?: any[] }>;
+  onModels: (_models: any[] | undefined) => void;
+  handleError: ErrorHandler;
+};
+
+// Loads the mesh models used to build the publish schema. Errors from the
+// fetch or from building the schema are reported as SCHEMA_FETCH failures.
+export function createFetchSchemaData({
+  getMeshModels,
+  onModels,
+  handleError,
+}: CreateFetchSchemaDataArgs) {
+  return async function fetchSchemaData() {
+    try {
+      const { models } = await getMeshModels();
+      onModels(models);
+    } catch (error) {
+      handleError(ACTION_TYPES.SCHEMA_FETCH)(error);
+    }
   };
 }

@@ -50,3 +50,14 @@ func TestWorkspaces(t *testing.T) {
 
 	utils.InvokeMesheryctlTestListCommand(t, update, WorkSpaceCmd, tests, currentDirectory, "workspace")
 }
+
+// TestWorkspaceCountFlagOnlyOnList verifies that --count is only offered by
+// workspace list, because counting workspaces needs an organization ID.
+func TestWorkspaceCountFlagOnlyOnList(t *testing.T) {
+	if WorkSpaceCmd.Flags().Lookup("count") != nil {
+		t.Error("expected workspace not to offer --count")
+	}
+	if listWorkspaceCmd.Flags().Lookup("count") == nil {
+		t.Error("expected workspace list to offer --count")
+	}
+}

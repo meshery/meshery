@@ -27,13 +27,15 @@ type versionInfo struct {
 	dirPath string
 }
 
-// GetModelDirectoryPaths retrieves model definition directories based on the following criteria:
-// 1. Find the latest version of each model that contains a non-empty 'components' directory.
-//   - If the latest version has a non-empty 'components', use its path.
-//   - If not, search previous versions in descending order to find the nearest version with non-empty 'components'.
+// GetModelDirectoryPaths returns one model-definition directory per model: the
+// definition directory inside each model's newest version directory.
 //
-// 2. For all versions (including the one used for 'components'), check if the 'relationships' directory is non-empty and include their paths if so.
-// The returned directories are sorted with the latest version first.
+// For every model the version directories are sorted in descending order and
+// only the newest (sortedVersionDirs[0]) is used; older versions are not
+// consulted. A model's components and relationships are therefore seeded solely
+// from its newest version, so a model whose relationships live only in an older
+// version will not have them registered. Within that newest version,
+// getLatestModelDefDir selects the most recently modified definition directory.
 func GetModelDirectoryPaths(modelPath string) ([]string, error) {
 	dirEntries := []string{}
 
@@ -135,9 +137,11 @@ func getLatestModelDefDir(latestVersionDirPath string) (string, error) {
 //
 // The cover is bounded by what recover can reach: only panics on the wrapped
 // stage's own goroutine. A stage that itself spawns a goroutine - SeedKeys
-// does, in keys_helper.go - leaves that goroutine outside this recover, and a
-// panic there still terminates the process. Recovering it belongs where it is
-// spawned, not here.
+// does, in keys_helper.go - leaves that goroutine outside this recover, so
+// each such spawn site recovers on its own goroutine instead: SeedKeys
+// reports through ErrSeedingStagePanic, exactly as a stage panic caught here.
+// A wrapper cannot reach a child goroutine, so any future stage that spawns
+// one must recover where it spawns, not here.
 func RunSeedStage(log logger.Handler, stage string, fn func()) {
 	defer func() {
 		if r := recover(); r != nil {

@@ -468,3 +468,129 @@ func TestRemoteProviderDoRequest_XAPIKeyAnonymousOnly(t *testing.T) {
 		t.Fatalf("authenticated request with inbound X-API-Key must strip it, got %q", got)
 	}
 }
+
+func refCookie(rec *httptest.ResponseRecorder, name string) *http.Cookie {
+	for _, c := range rec.Result().Cookies() {
+		if c.Name == name {
+			return c
+		}
+	}
+	return nil
+}
+
+// The ref cookie is the post-login destination Meshery owns on its own domain,
+// and TokenHandler prefers it over the ?ref= a provider sends back. Only the
+// Cloud-bound exit returns through TokenHandler to redeem and clear it, so only
+// that exit writes one - carrying this attempt's ref, or deleted when there is
+// none. The anonymous exit resolves its destination from the request itself and
+// leaves nothing behind. A cookie that outlives its attempt shadows the ?ref= a
+// later Sign In carries for the whole LoginCookieDuration, whether it was
+// written empty or written with an abandoned attempt's destination, and that is
+// how mode=design was dropped from the return address.
+func TestRemoteProviderInitiateLogin_RefCookieCarriesOnlyThisAttemptsDestination(t *testing.T) {
+	const refCookieName = "cloud.layer5.io_ref"
+	refValue := base64.RawURLEncoding.EncodeToString([]byte("/extension/meshmap?mode=design"))
+	staleValue := base64.RawURLEncoding.EncodeToString([]byte("/extension/meshmap?mode=abandoned"))
+
+	// l.ProviderProperties is replaced at runtime by TokenHandler, so one
+	// deployment does cross between these two shapes from one login to the next
+	// - which is why the anonymous exit has to delete a cookie it never writes.
+	shapes := []struct {
+		name        string
+		newProvider func(*testing.T) *RemoteProvider
+		keepsRef    bool
+	}{
+		{
+			name: "cloud-bound login",
+			newProvider: func(t *testing.T) *RemoteProvider {
+				return newTestRemoteProvider(t, "http://localhost:9876")
+			},
+			keepsRef: true,
+		},
+		{
+			name:        "anonymous session",
+			newProvider: newAnonymousSessionProvider,
+		},
+	}
+
+	tests := []struct {
+		name        string
+		requestURL  string
+		staleCookie string
+		expected    string
+	}{
+		{
+			name:       "no ref query deletes the ref cookie",
+			requestURL: "http://localhost:9081/user/login",
+		},
+		{
+			name:       "empty ref query deletes the ref cookie",
+			requestURL: "http://localhost:9081/user/login?ref=",
+		},
+		{
+			name:        "a login with no ref deletes a stale ref cookie",
+			requestURL:  "http://localhost:9081/user/login",
+			staleCookie: staleValue,
+		},
+		{
+			name:       "ref query is captured in the cookie",
+			requestURL: "http://localhost:9081/user/login?ref=" + refValue,
+			expected:   refValue,
+		},
+		{
+			name:        "ref query overwrites a stale ref cookie",
+			requestURL:  "http://localhost:9081/user/login?ref=" + refValue,
+			staleCookie: staleValue,
+			expected:    refValue,
+		},
+	}
+
+	for _, shape := range shapes {
+		shape := shape
+		t.Run(shape.name, func(t *testing.T) {
+			for _, tc := range tests {
+				tc := tc
+				t.Run(tc.name, func(t *testing.T) {
+					provider := shape.newProvider(t)
+					provider.RefCookieName = refCookieName
+					provider.LoginCookieDuration = time.Hour
+
+					req := newRemoteLoginRequest(t, tc.requestURL)
+					req = req.WithContext(context.WithValue(req.Context(), MesheryServerURL, "http://localhost:9081"))
+					if tc.staleCookie != "" {
+						req.AddCookie(&http.Cookie{Name: refCookieName, Value: tc.staleCookie})
+					}
+
+					rec := httptest.NewRecorder()
+					provider.InitiateLogin(rec, req, false)
+
+					if rec.Code != http.StatusFound {
+						t.Fatalf("status = %d, want %d", rec.Code, http.StatusFound)
+					}
+
+					want := tc.expected
+					if !shape.keepsRef {
+						want = ""
+					}
+
+					ck := refCookie(rec, refCookieName)
+					if ck == nil {
+						t.Fatal("expected a ref cookie header, got none")
+					}
+					if want == "" {
+						if ck.Value != "" || ck.MaxAge >= 0 {
+							t.Fatalf("expected the ref cookie to be deleted, got value %q with MaxAge %d", ck.Value, ck.MaxAge)
+						}
+						return
+					}
+					if ck.Value != want {
+						t.Fatalf("ref cookie = %q, want %q", ck.Value, want)
+					}
+					if ck.MaxAge < 0 {
+						t.Fatalf("ref cookie carrying %q was emitted as a deletion", ck.Value)
+					}
+				})
+			}
+		})
+	}
+}

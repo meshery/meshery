@@ -50,26 +50,17 @@ export const isCreateConnectionQuery = (value: string | string[] | undefined): b
 export type ConnectionCreatedNotifyPayload = {
   message: string;
   event_type: typeof EVENT_TYPES.SUCCESS | typeof EVENT_TYPES.WARNING;
-  link?: { href: string; label: string };
 };
 
-const isOnConnectionsPage = (): boolean =>
-  typeof window !== 'undefined' && window.location.pathname.startsWith(CONNECTIONS_PATH);
-
 /**
- * Success snackbar after create/import. Plain string (BasicMarkdown-safe) plus an
- * optional same-tab action when not already on the Connections page.
+ * Success snackbar after create/import. Plain string (BasicMarkdown-safe).
  */
 export const connectionCreatedNotify = (label: string): ConnectionCreatedNotifyPayload => {
   const name = (label && String(label).trim()) || '';
   const summary = name ? `${name} connection created.` : 'Connection created.';
-  if (isOnConnectionsPage()) {
-    return { message: summary, event_type: EVENT_TYPES.SUCCESS };
-  }
   return {
     message: summary,
     event_type: EVENT_TYPES.SUCCESS,
-    link: { href: CONNECTIONS_PATH, label: 'View connections' },
   };
 };
 
@@ -77,13 +68,9 @@ export const kubernetesImportedNotify = (count: number): ConnectionCreatedNotify
   const noun = count === 1 ? 'connection' : 'connections';
   const summary = `Imported ${count} Kubernetes ${noun}.`;
   const event_type = count > 0 ? EVENT_TYPES.SUCCESS : EVENT_TYPES.WARNING;
-  if (isOnConnectionsPage() || count === 0) {
-    return { message: summary, event_type };
-  }
   return {
     message: summary,
     event_type,
-    link: { href: CONNECTIONS_PATH, label: 'View connections' },
   };
 };
 
@@ -338,6 +325,151 @@ export const getKubernetesContexts = (
   const { camel, snake } = KUBERNETES_CONTEXT_KEYS[bucket];
   const value = response?.[camel] ?? response?.[snake];
   return Array.isArray(value) ? (value as GenericRecord[]) : [];
+};
+
+export type KubeconfigDiscoveryContext = {
+  id: string;
+  name: string;
+  server: string;
+  reachable: boolean;
+  connectionId?: string;
+};
+
+export type SkippedKubeContext = {
+  name: string;
+  server?: string;
+  reason: string;
+};
+
+export type KubeconfigDiscoveryResult = {
+  contexts: KubeconfigDiscoveryContext[];
+  skippedContexts: SkippedKubeContext[];
+};
+
+const asDiscoveryContext = (value: unknown): KubeconfigDiscoveryContext | null => {
+  if (!value || typeof value !== 'object') {
+    return null;
+  }
+  const record = value as GenericRecord;
+  const id = record.id;
+  if (typeof id !== 'string' || id.length === 0) {
+    return null;
+  }
+  return {
+    id,
+    name: typeof record.name === 'string' ? record.name : '',
+    server: typeof record.server === 'string' ? record.server : '',
+    reachable: Boolean(record.reachable),
+    connectionId: typeof record.connectionId === 'string' ? record.connectionId : undefined,
+  };
+};
+
+const asSkippedContext = (value: unknown): SkippedKubeContext | null => {
+  if (!value || typeof value !== 'object') {
+    return null;
+  }
+  const record = value as GenericRecord;
+  const name = typeof record.name === 'string' ? record.name : '';
+  const reason = typeof record.reason === 'string' ? record.reason : '';
+  if (!name && !reason) {
+    return null;
+  }
+  return {
+    name,
+    server: typeof record.server === 'string' ? record.server : undefined,
+    reason,
+  };
+};
+
+/**
+ * Accepts both the historical discovery array and the detailed object
+ * (`contexts` + `skippedContexts`) so an older server still loads the wizard.
+ */
+export const normalizeKubeconfigDiscovery = (result: unknown): KubeconfigDiscoveryResult => {
+  if (Array.isArray(result)) {
+    return {
+      contexts: result.map(asDiscoveryContext).filter((context) => context !== null),
+      skippedContexts: [],
+    };
+  }
+  if (result && typeof result === 'object') {
+    const record = result as GenericRecord;
+    const contexts = Array.isArray(record.contexts) ? record.contexts : [];
+    const skipped = Array.isArray(record.skippedContexts) ? record.skippedContexts : [];
+    return {
+      contexts: contexts.map(asDiscoveryContext).filter((context) => context !== null),
+      skippedContexts: skipped.map(asSkippedContext).filter((context) => context !== null),
+    };
+  }
+  return { contexts: [], skippedContexts: [] };
+};
+
+export const kubeconfigFileFingerprint = (file: {
+  name: string;
+  size: number;
+  lastModified: number;
+}): string => `${file.name}:${file.size}:${file.lastModified}`;
+
+export const emptyKubeconfigMessage = 'The kubeconfig does not contain any contexts.';
+
+export const skippedKubeconfigMessage = (skipped: SkippedKubeContext[]): string => {
+  const details = skipped
+    .map((context) => `${context.name || 'Unnamed context'}: ${context.reason}`)
+    .join(' ');
+  return `No contexts could be imported. ${details}`.trim();
+};
+
+export type KubernetesImportIssueKind = 'errored' | 'ignored' | 'failed-connect';
+
+export type KubernetesImportIssue = {
+  name: string;
+  kind: KubernetesImportIssueKind;
+  reason?: string;
+};
+
+export type KubernetesImportPresentation = 'success' | 'partial' | 'failure';
+
+export const kubernetesImportPresentation = (
+  importedCount: number,
+  issueCount: number,
+): KubernetesImportPresentation => {
+  if (importedCount <= 0) {
+    return 'failure';
+  }
+  if (issueCount > 0) {
+    return 'partial';
+  }
+  return 'success';
+};
+
+export const contextRecordReason = (record: GenericRecord): string | undefined => {
+  const error = record.error;
+  if (typeof error === 'string' && error.trim()) {
+    return error.trim();
+  }
+  return undefined;
+};
+
+export const kubernetesImportIssues = (
+  response: GenericRecord | null | undefined,
+  failedConnects: { name: string; reason?: string }[],
+): KubernetesImportIssue[] => {
+  const fromBucket = (kind: 'errored' | 'ignored'): KubernetesImportIssue[] =>
+    getKubernetesContexts(response, kind).map((record) => ({
+      name: String(record.name ?? 'Unnamed context'),
+      kind,
+      reason: contextRecordReason(record),
+    }));
+
+  return [
+    ...fromBucket('errored'),
+    ...fromBucket('ignored'),
+    ...failedConnects.map((failed) => ({
+      name: failed.name || 'Unnamed context',
+      kind: 'failed-connect' as const,
+      reason: failed.reason?.trim() || undefined,
+    })),
+  ];
 };
 
 export type KubernetesImportSummary = {

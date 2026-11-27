@@ -1,0 +1,161 @@
+{
+  "errors_export": {
+    "component_name": "meshsync",
+    "component_type": "controller",
+    "errors": {
+      "1000": {
+        "name": "ErrInitConfigCode",
+        "code": "1000",
+        "severity": "Alert",
+        "long_description": "Missing or outdated CRD. ",
+        "short_description": "Error while initializing MeshSync configuration. ",
+        "probable_cause": "Missing or outdated CRD.",
+        "suggested_remediation": "Confirm that meshsyncs custom resource is present in the cluster."
+      },
+      "1001": {
+        "name": "ErrListCode",
+        "code": "1001",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1002": {
+        "name": "ErrPublishCode",
+        "code": "1002",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1003": {
+        "name": "ErrDynamicClientCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1004": {
+        "name": "ErrGetObjectCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting config object",
+        "probable_cause": "Config doesnt exist",
+        "suggested_remediation": "Check application config is configured correct or restart the server"
+      },
+      "1005": {
+        "name": "ErrNewPipelineCode",
+        "code": "1005",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating pipeline",
+        "probable_cause": "Pipeline step failed",
+        "suggested_remediation": "Investigate on the respective pipeline step that has failed to figure the cause"
+      },
+      "1006": {
+        "name": "ErrNewInformerCode",
+        "code": "1006",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error initializing informer",
+        "probable_cause": "Resource is invalid or doesnt exist",
+        "suggested_remediation": "Make sure to input the existing valid resource"
+      },
+      "1007": {
+        "name": "ErrKubeConfigCode",
+        "code": "1007",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating kubernetes client",
+        "probable_cause": "Kubernetes config is invalid or APi server is not reachable",
+        "suggested_remediation": "Make sure to upload a valid kubernetes config\nMake sure kubernetes API server is reachable"
+      },
+      "1008": {
+        "name": "ErrInitRequestCode",
+        "code": "1008",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while initializing requests channel",
+        "probable_cause": "Application resource deficit",
+        "suggested_remediation": "Make sure meshsync has enough resources to create channels"
+      },
+      "1009": {
+        "name": "ErrSubscribeRequestCode",
+        "code": "1009",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while subscribing to requests",
+        "probable_cause": "Broker resource deficit",
+        "suggested_remediation": "Make sure Broker has enough resources to create channels"
+      },
+      "1010": {
+        "name": "ErrLogStreamCode",
+        "code": "1010",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while open log stream connection",
+        "probable_cause": "requested Resource could be invalid",
+        "suggested_remediation": "Make sure the requested resource is valid and existing"
+      },
+      "1011": {
+        "name": "ErrCopyBufferCode",
+        "code": "1011",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while copying log buffer",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1012": {
+        "name": "ErrInvalidRequestCode",
+        "code": "1012",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Request is invalid",
+        "probable_cause": "Stale request on the broker",
+        "suggested_remediation": "Make sure the request format is correctly configured"
+      },
+      "1013": {
+        "name": "ErrExecTerminalCode",
+        "code": "1013",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while opening a terminal session",
+        "probable_cause": "requested Resource could be invalid",
+        "suggested_remediation": "Make sure the requested resource is valid and existing"
+      },
+      "1014": {
+        "name": "ErrCacheSyncCode",
+        "code": "1014",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1015": {
+        "name": "ErrWriteOutputCode",
+        "code": "1015",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1016": {
+        "name": "ErrNilClientCode",
+        "code": "1016",
+        "severity": "Alert",
+        "long_description": "Handler has no active kubernetes client initialized",
+        "short_description": "Kubernetes client is nil",
+        "probable_cause": "Handler was invoked with an uninitialized or nil Kubernetes client",
+        "suggested_remediation": "Supply a valid Kubernetes client to meshsync.New"
+      }
+    }
+  }
+}

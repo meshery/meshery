@@ -11,10 +11,7 @@ import { ACTION_TYPES } from './MesheryPatterns.constants';
 
 /**
  * Factory that returns the full set of CRUD / publish / clone / download
- * handlers used by the Designs page. Behavior is identical to the
- * original inline definitions in MesheryPatterns.tsx — the same RTK
- * mutations are called with the same payloads, the same notifications
- * are emitted, and the same modal/notification side-effects fire.
+ * handlers used by the Designs page.
  */
 export function createPatternsActions(deps) {
   const {
@@ -369,13 +366,21 @@ export function createPatternsActions(deps) {
     e.stopPropagation();
     updateProgress({ showProgress: true });
     try {
+      if (!design?.id) {
+        throw new Error('Missing design ID');
+      }
       let id = design.id;
       let name = design.name;
       downloadContent({ id, name, type: 'pattern', source_type, params });
-      updateProgress({ showProgress: false });
       notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      notify({
+        message: `Failed to download "${design?.name ?? 'design'}": ${errorMessage}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    } finally {
+      updateProgress({ showProgress: false });
     }
   };
 

@@ -1,0 +1,20 @@
+version: 0.0.9
+name: seekhostel
+displayName: SeekHostel
+createdAt: "2026-10-21T12:58:47Z"
+description: Playing in the playground
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3bbf5d53-ec75-4a20-a714-7f1f848d2f96/0.0.9/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "None so far. Don't get hurt. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 364c5aed-8266-4dcd-b4c8-cd870c2d3171
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

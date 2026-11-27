@@ -25,7 +25,7 @@ import MesheryProgressBar from '../components/general/MesheryProgressBar';
 import getPageContext from '../components/PageContext';
 import { subscribeToControllersStatus } from 'lib/controllersStatusSubscription';
 import { useLazyGetSystemSyncQuery, useLazyGetKubernetesContextsQuery } from '../rtk-query/system';
-import { useGetUserPrefQuery } from '../rtk-query/user';
+import { useSyncCatalogContentPreference } from '@/utils/hooks/useSyncCatalogContentPreference';
 import { api } from '../rtk-query';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -96,7 +96,6 @@ import {
   setK8sContexts,
   setKeys,
   setOrganization,
-  toggleCatalogContent,
   updateExtensionType,
 } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
@@ -130,7 +129,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   const [fetchKubernetesContexts] = useLazyGetKubernetesContextsQuery();
   const [fetchOrganizations] = api.endpoints.getOrgs.useLazyQuery();
   const [fetchUserKeys] = api.endpoints.getUserKeys.useLazyQuery();
-  const { data: userPrefData } = useGetUserPrefQuery();
+  useSyncCatalogContentPreference();
   const dispatch = useDispatch();
   const [state, setState] = useState({
     mobileOpen: false,
@@ -427,7 +426,10 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     }
 
     try {
-      const result = await fetchOrganizations({}).unwrap();
+      // Every organization, so a session org past the server's default first
+      // page is found instead of being replaced by organizations[0]. This is the
+      // generated endpoint, so the key is camelCase pageSize.
+      const result = await fetchOrganizations({ pageSize: 'all' }).unwrap();
       let organizationToSet;
       const sessionOrg = currentOrg ? JSON.parse(currentOrg) : null;
 
@@ -476,15 +478,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
         await loadOrg();
 
         initSubscriptions([]);
-
-        // Catalog content preference is loaded via useGetUserPrefQuery (reactive)
-        if (typeof userPrefData?.usersExtensionPreferences?.catalogContent !== 'undefined') {
-          dispatch(
-            toggleCatalogContent({
-              catalogVisibility: userPrefData?.usersExtensionPreferences?.catalogContent,
-            }),
-          );
-        }
 
         document.addEventListener('fullscreenchange', fullScreenChanged);
         await loadMeshModelComponent();

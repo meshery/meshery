@@ -93,7 +93,7 @@ Renders a responsive card grid from a data file in `docs/data/`. Each card shows
 | `guide_title` | Yes | — | Key in each data entry whose value is used as the card title, and as the image `alt` text. |
 | `guide_description` | Yes | — | Key in each data entry whose value is used as the card description. Entries missing this key render a card with no description. |
 | `guide_svg` | Yes | — | Key in each data entry whose value is the image filename. Entries missing this key render a card with no image. |
-| `guide_assests_folder` | Yes | — | Folder name under `images/`. Lowercased before use, producing `images/<folder>/<filename>`. Note the spelling — `assests` is the parameter name in the implementation. |
+| `guide_assets_folder` | Yes | — | Folder name under `images/`. Lowercased before use, producing `images/<folder>/<filename>`. Preferred when both parameters are provided; `guide_assests_folder` is retained for backward compatibility. |
 
 Takes no body. Use the `{{</* */>}}` form.
 
@@ -105,7 +105,7 @@ Takes no body. Use the `{{</* */>}}` form.
   guide_title="Edge"
   guide_description="Description"
   guide_svg="SVG"
-  guide_assests_folder="shapes"
+  guide_assets_folder="shapes"
 */>}}
 ```
 
@@ -116,7 +116,7 @@ Takes no body. Use the `{{</* */>}}` form.
   guide_title="Edge"
   guide_description="Description"
   guide_svg="SVG"
-  guide_assests_folder="shapes"
+  guide_assets_folder="shapes"
 >}}
 
 ### latest-release
@@ -228,8 +228,9 @@ Renders one `<li>` per immediate child page of a section, each linking to the pa
 | Parameter | Required | Default | Description |
 |---|---|---|---|
 | `section` | No | The page's own Hugo section (`.Page.Section`) | Section whose children are listed. For nested paths the default is rarely what you want — set it explicitly. |
+| `exclude` | No | None | Comma-separated final path segments to leave out, for example `exclude="extensibility"` to list the pages directly under `reference` without its Extensibility subsection. |
 
-Pages are sorted by title. A page is excluded when its front matter sets `hide_homepage`, and the section's own landing page is always excluded. The final path segments `quick-start` and `faq` are excluded unconditionally by the implementation. When nothing matches, a single italic "No pages found in this section." item renders in place of the list.
+Pages are sorted by title. A page is excluded when its front matter sets `hide_homepage`, and the section's own landing page is always excluded. The final path segments `quick-start` and `faq` are always excluded, along with any segments named in `exclude`. When nothing matches, a single italic "No pages found in this section." item renders in place of the list.
 
 Takes no body. Use the `{{</* */>}}` form.
 
@@ -342,13 +343,13 @@ All of them take no body, and all take no parameters except `mesheryctl-command-
 | `adapters-table` | `{{</* adapters-table */>}}` | [Adapters]({{< ref "concepts/architecture/adapters.md" >}}) |
 | `compatibility-matrix-kubernetes` | `{{</* compatibility-matrix-kubernetes */>}}` | [Compatibility Matrix]({{< ref "project/compatibility-matrix/compatibility-matrix.md" >}}) |
 | `integration-tests` | `{{</* integration-tests */>}}` | [Compatibility Matrix]({{< ref "project/compatibility-matrix/compatibility-matrix.md" >}}) |
-| `error-codes-index` | `{{</* error-codes-index */>}}` | [Error Codes Reference]({{< ref "reference/references/error-codes.md" >}}) |
-| `error-codes-detail` | `{{</* error-codes-detail */>}}` | [Error Codes Reference]({{< ref "reference/references/error-codes.md" >}}) |
-| `troubleshooting-guides-list` | `{{</* troubleshooting-guides-list */>}}` | [Error Codes Reference]({{< ref "reference/references/error-codes.md" >}}) |
-| `mesheryctl-command-table` | `{{</* mesheryctl-command-table command="adapter" */>}}` | [mesheryctl Reference]({{< ref "reference/references/mesheryctl/_index.md" >}}) |
+| `error-codes-index` | `{{</* error-codes-index */>}}` | [Error Codes Reference]({{< ref "reference/error-codes.md" >}}) |
+| `error-codes-detail` | `{{</* error-codes-detail */>}}` | [Error Codes Reference]({{< ref "reference/error-codes.md" >}}) |
+| `troubleshooting-guides-list` | `{{</* troubleshooting-guides-list */>}}` | [Error Codes Reference]({{< ref "reference/error-codes.md" >}}) |
+| `mesheryctl-command-table` | `{{</* mesheryctl-command-table command="adapter" */>}}` | [mesheryctl Reference]({{< ref "reference/mesheryctl/_index.md" >}}) |
 | `mesheryctl-guides-list` | `{{</* mesheryctl-guides-list */>}}` | [mesheryctl Installation]({{< ref "installation/mesheryctl/_index.md" >}}) |
 | `network-ports` | `{{</* network-ports */>}}` | [Architecture]({{< ref "concepts/architecture/_index.md" >}}) |
-| `permissions` | `{{</* permissions */>}}` | [Permissions Reference]({{< ref "reference/references/permissions.md" >}}) |
+| `permissions` | `{{</* permissions */>}}` | [Permissions Reference]({{< ref "reference/permissions.md" >}}) |
 | `tutorials-list` | `{{</* tutorials-list */>}}` | [Quick Start]({{< ref "installation/quick-start/index.md" >}}) |
 | `vulnerabilities-table` | `{{</* vulnerabilities-table */>}}` | [Security Vulnerabilities]({{< ref "project/security-vulnerabilities.md" >}}) |
 

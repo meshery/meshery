@@ -1,0 +1,94 @@
+{
+  "evaluationQuery": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "edge",
+  "metadata": {
+    "description": "An InfisicalAuth authenticates against the Infisical instance described by an InfisicalConnection. The connection's name is written into the InfisicalAuth's spec.infisicalConnectionRef.name. Set spec.infisicalConnectionRef.namespace to the connection's namespace.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "Infisical Operator",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v0.11.12"
+    },
+    "name": "infisical-operator",
+    "registrant": {
+      "kind": "github"
+    },
+    "version": "v1.0.0"
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "InfisicalConnection",
+            "model": {
+              "displayName": "Infisical Operator",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "infisical-operator",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "InfisicalAuth",
+            "model": {
+              "displayName": "Infisical Operator",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "infisical-operator",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "infisicalConnectionRef",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "status": "enabled",
+  "subType": "reference",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}

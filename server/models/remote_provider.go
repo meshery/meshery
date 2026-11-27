@@ -21,6 +21,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/meshery/schemas/models/core"
@@ -31,6 +32,7 @@ import (
 	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/encoding"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
@@ -114,6 +116,12 @@ type RemoteProvider struct {
 
 	syncStopChan chan struct{}
 	syncChan     chan *userSession
+
+	// correlatesConditions records whether the remote provider was last seen
+	// applying condition correlation: the answer to the most recent create
+	// that carried a correlationKey said what it did (Event-Disposition) or
+	// did not. It starts false, as unknown.
+	correlatesConditions atomic.Bool
 
 	ProviderVersion    string
 	SmiResultPersister *SMIResultsPersister
@@ -613,10 +621,18 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 	// if the ref points to some page other than under /extension then skip ref
 	refUrl, err := servercore.GetRefURLFromRequest(req)
 	l.Log.Infof("Referrer URL: %s , %v", refUrl, err)
+	// safePostLoginTarget is the same gate TokenHandler and the local provider
+	// use. The "/extension" prefix alone passes a raw string that http.Redirect
+	// then normalizes: "/extension/../../api/user/token" cleans onto the token
+	// endpoint, which re-enters TokenHandler with no token and wipes the session
+	// just minted here.
 	if strings.HasPrefix(refUrl, "/extension") {
-		l.Log.Infof("Redirecting to referrer %s", refUrl)
-		http.Redirect(res, req, refUrl, http.StatusFound)
-		return
+		if target, ok := safePostLoginTarget(refUrl, postLoginHost(req)); ok {
+			l.Log.Infof("Redirecting to referrer %s", target)
+			http.Redirect(res, req, target, http.StatusFound)
+			return
+		}
+		l.Log.Infof("Referrer %s is not a safe post-login destination, falling back", refUrl)
 	}
 
 	if redirectURL == "/" {
@@ -625,6 +641,37 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 	}
 	l.Log.Infof("No source refs resolved , Redirecting to base extension page  %s", redirectURL)
 	http.Redirect(res, req, redirectURL, http.StatusFound)
+}
+
+// clearRefCookie removes the post-login ref cookie, so that neither an
+// abandoned login attempt nor a redeemed one can supply the destination of the
+// next one.
+func (l *RemoteProvider) clearRefCookie(w http.ResponseWriter) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     l.RefCookieName,
+		Path:     "/",
+		HttpOnly: true,
+		MaxAge:   -1,
+	})
+}
+
+// persistRefCookie records this login attempt's post-login destination, and
+// deletes whatever a previous attempt left behind when this one carries none.
+// An empty value is never written: it would still parse as a present cookie on
+// the way back in and outrank the ?ref= the provider echoes back.
+func (l *RemoteProvider) persistRefCookie(w http.ResponseWriter, ref string) {
+	if ref == "" {
+		l.clearRefCookie(w)
+		return
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:     l.RefCookieName,
+		Value:    ref,
+		Expires:  time.Now().Add(l.LoginCookieDuration),
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode, // sent on top-level cross-site GET back from the provider
+	})
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
@@ -647,22 +694,6 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 
 	ck, err := r.Cookie(TokenCookieName)
 	if err != nil || ck.Value == "" {
-		// Capture the originally-requested in-app path as the post-login
-		// redirect target. Meshery owns this state in a cookie on its own
-		// domain rather than round-tripping it through the remote provider's
-		// auth chain, where intermediate hops (e.g. custom-domain bounces)
-		// could drop or rewrite the value and land the user on a non-existent
-		// route after authentication. TokenHandler reads the cookie back when
-		// the provider redirects to /api/user/token.
-		http.SetCookie(w, &http.Cookie{
-			Name:     l.RefCookieName,
-			Value:    refURLqueryParam,
-			Expires:  time.Now().Add(l.LoginCookieDuration),
-			Path:     "/",
-			HttpOnly: true,
-			SameSite: http.SameSiteLaxMode, // sent on top-level cross-site GET back from the provider
-		})
-
 		queryParams := url.Values{
 			"source": []string{base64.RawURLEncoding.EncodeToString([]byte(baseCallbackURL))},
 		}
@@ -673,10 +704,27 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			queryParams.Set("meshery_version", mesheryVersion)
 		}
 
+		// The anonymous exit resolves its destination from this request's own
+		// ref and never returns through TokenHandler, so a cookie here would
+		// only outlive the attempt that set it and outrank the ?ref= a later
+		// Sign In carries - which is how mode=design got dropped. Clear it.
 		if supportsAnonymousUserSessions {
+			l.clearRefCookie(w)
 			l.InterceptLoginAndInitiateAnonymousUserSession(r, w)
 			return
 		}
+
+		// Capture the originally-requested in-app path as the post-login
+		// redirect target. Meshery owns this state in a cookie on its own
+		// domain rather than round-tripping it through the remote provider's
+		// auth chain, where intermediate hops (e.g. custom-domain bounces)
+		// could drop or rewrite the value and land the user on a non-existent
+		// route after authentication. TokenHandler reads the cookie back when
+		// the provider redirects to /api/user/token, and clears it there. A
+		// login that carries no ref deletes the cookie rather than leaving one:
+		// an abandoned earlier attempt would otherwise outrank this login's own
+		// fallback for the whole LoginCookieDuration.
+		l.persistRefCookie(w, refURLqueryParam)
 
 		w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
 		w.Header().Set("Pragma", "no-cache")
@@ -1094,10 +1142,15 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 		k8sServerID = *k8sContext.KubernetesServerID
 	}
 
+	var mesheryInstanceID string
+	if k8sContext.MesheryInstanceID != nil {
+		mesheryInstanceID = k8sContext.MesheryInstanceID.String()
+	}
+
 	_metadata := map[string]string{
 		"id":                 k8sContext.ID,
 		"server":             k8sContext.Server,
-		"mesheryInstanceId":  k8sContext.MesheryInstanceID.String(),
+		"mesheryInstanceId":  mesheryInstanceID,
 		"deploymentType":     k8sContext.DeploymentType,
 		"version":            k8sContext.Version,
 		"name":               k8sContext.Name,
@@ -1141,10 +1194,9 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 		return connections.Connection{}, err
 	}
 	if connection == nil {
-		// SaveConnection can return (nil, nil) when the remote provider answers
-		// 2xx but the connection page is empty or carries a null element. Guard
-		// the dereference below so a malformed response is a structured error,
-		// not a panic.
+		// SaveConnection returns (nil, nil) when a 2xx page's first entry is
+		// null. An empty page is already an error. Guard the dereference
+		// below so a malformed response is a structured error, not a panic.
 		err := ErrPersistConnection(fmt.Errorf("remote provider returned a nil connection for kubernetes context %q", conn.Name))
 		l.Log.Error(err)
 		return connections.Connection{}, err
@@ -1154,9 +1206,10 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 
 	return *connection, nil
 }
+
 func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error) {
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*core.Uuid)
-	if !ok {
+	if !ok || MesheryInstanceID == nil {
 		return nil, ErrMesheryInstanceID
 	}
 	mi := MesheryInstanceID.String()
@@ -1214,8 +1267,20 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 			for _, c := range cp.Connections {
 				ctx, err := K8sContextFromConnection(Provider(l), token, c)
 				if err != nil {
-					l.Log.Error(err)
-					continue
+					// One unsafe credential must not take the whole listing
+					// down; it simply cannot be used to build a client.
+					if c != nil && meshkiterrors.GetCode(err) == ErrUnsafeKubeCredentialCode {
+						l.Log.Warn(fmt.Errorf("skipping Kubernetes connection %q: %w", c.Name, err))
+						continue
+					}
+					if c == nil {
+						return nil, fmt.Errorf("failed to convert remote Kubernetes connection: %w", err)
+					}
+					return nil, fmt.Errorf(
+						"failed to convert remote Kubernetes connection %q: %w",
+						c.Name,
+						err,
+					)
 				}
 				contexts = append(contexts, &ctx)
 			}
@@ -1692,33 +1757,67 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 
 // PersistEvent persists a user-initiated event to the remote provider.
 // When the token is empty or remote persistence fails, it falls back to local persistence.
-func (l *RemoteProvider) PersistEvent(event events.Event, token string) error {
+//
+// The event is sent with every field it carries, including the optional
+// condition correlation (correlationKey, occurrenceCount, firstSeenAt,
+// lastSeenAt, resolvedAt), source, type, specversion and trace context
+// (traceId, parentId). The remote provider applies the createEvent
+// correlation contract to them; the local fallback, EventsPersister, applies
+// the same contract, so an event behaves alike on both paths. It returns the
+// event as the remote provider (or the local fallback) stored it. The event is
+// the server's own: one that names no source is sent with source
+// EventSourceServer.
+func (l *RemoteProvider) PersistEvent(event events.Event, token string) (PersistedEvent, error) {
+	return l.persist(withServerSource(event), token)
+}
+
+// CorrelatesConditions reports whether the remote provider answered the most
+// recent create carrying a correlationKey with an Event-Disposition, which a
+// provider that predates condition correlation omits. Until such a create has
+// been answered it is false.
+func (l *RemoteProvider) CorrelatesConditions() bool {
+	return l.correlatesConditions.Load()
+}
+
+// PersistClientEvent persists an event a client sent as PersistEvent does, but
+// with its source as sent: one that names no source is recorded without one.
+func (l *RemoteProvider) PersistClientEvent(event events.Event, token string) (PersistedEvent, error) {
+	return l.persist(event, token)
+}
+
+func (l *RemoteProvider) persist(event events.Event, token string) (PersistedEvent, error) {
+	// The remote path bypasses EventsPersister, so the event is prepared here
+	// too; the local fallback re-prepares an already prepared event, which
+	// changes nothing.
+	event = PrepareEventForPersistence(event, l.Log)
 	if strings.TrimSpace(token) == "" {
-		return l.EventsPersister.PersistEvent(event, "")
+		return l.EventsPersister.persist(event)
 	}
-	if err := l.persistEventRemote(event, token); err != nil {
+	persisted, err := l.persistEventRemote(event, token)
+	if err != nil {
 		l.Log.Warn(fmt.Errorf("remote event persistence failed, falling back to local DB: %w", err))
-		return l.EventsPersister.PersistEvent(event, "")
+		return l.EventsPersister.persist(event)
 	}
-	return nil
+	return persisted, nil
 }
 
 // PersistSystemEvent persists a system-initiated event (MeshSync, registry seeding,
 // auto-registration) to the local database. These events have no user request context.
-func (l *RemoteProvider) PersistSystemEvent(event events.Event) error {
-	return l.EventsPersister.PersistEvent(event, "")
+func (l *RemoteProvider) PersistSystemEvent(event events.Event) (PersistedEvent, error) {
+	return l.EventsPersister.PersistSystemEvent(event)
 }
 
-// persistEventRemote sends an event to the remote provider for persistence.
-func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString string) error {
+// persistEventRemote sends an event to the remote provider for persistence and
+// returns the event as the remote provider stored it.
+func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString string) (PersistedEvent, error) {
 	if !l.Capabilities.IsSupported(PersistEvents) {
-		return ErrInvalidCapability("PersistEvents", l.ProviderName)
+		return PersistedEvent{}, ErrInvalidCapability("PersistEvents", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEvents)
 
 	data, err := json.Marshal(event)
 	if err != nil {
-		return ErrMarshal(err, "meshery event")
+		return PersistedEvent{}, ErrMarshal(err, "meshery event")
 	}
 
 	l.Log.Infof("attempting to publish event to remote provider, size: %d", len(data))
@@ -1729,17 +1828,71 @@ func (l *RemoteProvider) persistEventRemote(event events.Event, tokenString stri
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return ErrUnreachableRemoteProvider(err)
+		return PersistedEvent{}, ErrUnreachableRemoteProvider(err)
 	}
 	defer func() {
 		_, _ = io.Copy(io.Discard, resp.Body)
 		_ = resp.Body.Close()
 	}()
 
-	if resp.StatusCode != http.StatusOK {
-		return ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
+	// createEvent answers 201 when it records a new event and 200 when it
+	// recorded nothing new: a replayed idempotencyKey, or an occurrence counted
+	// on (or a resolution of) an open condition. Any 2xx means the remote
+	// provider has the event, so none may fall back to the local database,
+	// which would store a second copy.
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
+		return PersistedEvent{}, ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
 	}
-	return nil
+	disposition := EventDisposition(resp.Header.Get(EventDispositionHeader))
+	if event.CorrelationKey != nil && *event.CorrelationKey != "" {
+		l.correlatesConditions.Store(disposition != "")
+	}
+	if disposition == "" && resp.StatusCode == http.StatusCreated {
+		disposition = EventCreated
+	}
+	l.Log.Debugf("remote provider recorded event (%s: %s)", EventDispositionHeader, disposition)
+
+	// The answer carries the event as stored, which for an incremented,
+	// resolved or replayed create is an earlier event with its own ID.
+	var stored *events.Event
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		l.Log.Warn(ErrDataRead(err, "remote provider event response"))
+	} else if len(bytes.TrimSpace(body)) > 0 {
+		var decoded events.Event
+		if err := json.Unmarshal(body, &decoded); err != nil {
+			l.Log.Warn(ErrUnmarshal(err, "remote provider event response"))
+		} else if !decoded.ID.IsNil() {
+			stored = &decoded
+		}
+	}
+	if stored == nil {
+		if recordedNothingNew(disposition) {
+			// The create recorded nothing new, so the event as sent is not
+			// what is stored: its ID names no row. Without the stored event
+			// in the answer there is nothing to present; the caller reports
+			// nothing new for it.
+			l.Log.Warn(fmt.Errorf("remote provider answered %s: %s without the stored event", EventDispositionHeader, disposition))
+			return PersistedEvent{Disposition: disposition}, nil
+		}
+		// A remote provider that answers a create with no event stored the
+		// event as sent.
+		stored = &event
+	}
+	return PersistedEvent{Event: stored, Disposition: disposition}, nil
+}
+
+// recordedNothingNew reports whether a create with disposition recorded no
+// new event: it counted an occurrence on, or resolved, an open condition, or
+// it was a replay. The stored event is then an earlier one, never the event
+// sent.
+func recordedNothingNew(disposition EventDisposition) bool {
+	switch disposition {
+	case EventIncremented, EventResolved, EventReplayed:
+		return true
+	default:
+		return false
+	}
 }
 
 func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID core.Uuid, sysID core.Uuid) (*EventsResponse, error) {
@@ -1803,11 +1956,20 @@ func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilt
 		return nil, ErrUnmarshal(err, "Events Response")
 	}
 
+	// A remote provider may send null (or omit) data and countBySeverityLevel
+	// when there are no events. A nil slice encodes as JSON null, which breaks
+	// the UI; normalize to empty slices, as the local provider does.
 	eventsResponse.Events = response.Data
+	if eventsResponse.Events == nil {
+		eventsResponse.Events = []*events.Event{}
+	}
 	eventsResponse.Page = response.Page
 	eventsResponse.TotalCount = response.TotalCount
 	eventsResponse.PageSize = response.PageSize
 	eventsResponse.CountBySeverityLevel = response.CountBySeverityLevel
+	if eventsResponse.CountBySeverityLevel == nil {
+		eventsResponse.CountBySeverityLevel = []*CountBySeverityLevel{}
+	}
 	eventsResponse.ReadCount = response.ReadCount
 
 	return eventsResponse, nil
@@ -2554,6 +2716,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, patternID))
 	q := remoteProviderURL.Query()
 	q.Set("metrics", includeMetrics)
+	remoteProviderURL.RawQuery = q.Encode()
 
 	l.Log.Debug("constructed design url: ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
@@ -2712,7 +2875,7 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryPatternsCatalog)
 
-	l.Log.Info("attempting to pubish design with id: ", publishPatternRequest.ID)
+	l.Log.Info("attempting to publish design with id: ", publishPatternRequest.ID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	l.Log.Debug("constructed design url: ", remoteProviderURL.String())
@@ -3291,7 +3454,7 @@ func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRe
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryFiltersCatalog)
 
-	l.Log.Info("attempting to pubish filter with id: ", publishFilterRequest.ID)
+	l.Log.Info("attempting to publish filter with id: ", publishFilterRequest.ID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	l.Log.Debug("constructed filter url: ", remoteProviderURL.String())
@@ -4147,19 +4310,14 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		redirectURL = GetRedirectURLForNavigatorExtension(&providerProperties, l.Log)
 	}
 
-	// Post-login redirect target: read from the cookie set by InitiateLogin.
-	// resolvePostLoginRedirect's "/" fallback handles the missing-cookie case
-	// without us needing to trust any provider-side state. See
-	// selectPostLoginRefValue for the rationale.
-	redirectURL = resolvePostLoginRedirect(selectPostLoginRefValue(r, l.RefCookieName), redirectURL)
+	// Post-login redirect target. A ref cookie set by InitiateLogin wins; when
+	// it is absent or empty, selectPostLoginRefValue falls back to ?ref=. An
+	// absolute ref on Meshery's own host is reduced to its path and query.
+	// Refs on any other host are rejected.
+	redirectURL = resolvePostLoginRedirect(selectPostLoginRefValue(r, l.RefCookieName), redirectURL, postLoginHost(r))
 	// One-shot cookie: clear it now that we've resolved the destination so a
 	// stale value can't override the next login flow.
-	http.SetCookie(w, &http.Cookie{
-		Name:     l.RefCookieName,
-		Path:     "/",
-		HttpOnly: true,
-		MaxAge:   -1,
-	})
+	l.clearRefCookie(w)
 
 	go func() {
 		credential := make(map[string]interface{}, 0)
@@ -4428,10 +4586,13 @@ func (l *RemoteProvider) SMPTestConfigDelete(req *http.Request, testUUID string)
 func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error) {
 	l.Log.Info("attempting to request remote provider")
 	// gets the requested path from user_account extension UI in Meshery UI
-	// splits the requested path into '/api/extensions' and '/<remote-provider-endpoint>'
+	// validates that the path begins with '/api/extensions' and extracts '/<remote-provider-endpoint>'
 	p := req.URL.Path
-	split := strings.Split(p, "/api/extensions")
-	path := split[1]
+	const extensionsPrefix = "/api/extensions"
+	if p != extensionsPrefix && !strings.HasPrefix(p, extensionsPrefix+"/") {
+		return nil, ErrInvalidExtensionProxyPath(p)
+	}
+	path := strings.TrimPrefix(p, extensionsPrefix)
 	// gets the available query parameters
 	q := req.URL.Query().Encode()
 	if len(q) > 0 {
@@ -4522,18 +4683,20 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
 	l.Log.Debugf("RemoteProvider::SaveConnection: bdr value is [%s]", string(bdr))
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-		connectionPage := &connections.ConnectionPage{}
-		err = json.Unmarshal(bdr, connectionPage)
-		if err != nil {
-			return nil, ErrUnmarshal(err, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
+		// 200 and 201 may be a ConnectionPage (current Cloud) or a bare
+		// Connection (v1beta3 registerConnection). Anything else on these
+		// statuses is still a failure to save.
+		decoded, decErr := decodeRemoteProviderConnection(bdr)
+		if decErr != nil {
+			if errors.Is(decErr, errRemoteProviderConnectionMissing) {
+				return nil, ErrPost(fmt.Errorf("failed to save the connection"), string(bdr), resp.StatusCode)
+			}
+			return nil, ErrUnmarshal(decErr, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
 		}
-		l.Log.Debugf("RemoteProvider::SaveConnection: parsed %d connection(s) (page=%d, pageSize=%d, totalCount=%d)",
-			len(connectionPage.Connections), connectionPage.Page, connectionPage.PageSize, connectionPage.TotalCount)
-		// On POST request to Remote Provider API, the response always contains single entry/connection.
-		if len(connectionPage.Connections) > 0 {
-			return connectionPage.Connections[0], nil
+		if decoded != nil {
+			l.Log.Debugf("RemoteProvider::SaveConnection: parsed connection %s (%s)", decoded.Name, decoded.ID)
 		}
-		return nil, ErrPost(fmt.Errorf("failed to save the connection"), string(bdr), resp.StatusCode)
+		return decoded, nil
 	}
 
 	return nil, ErrPost(fmt.Errorf("failed to save the connection \"%s\" of type \"%s\" with status \"%s\"", conn.Name, conn.Kind, conn.Status), string(bdr), resp.StatusCode)
@@ -4697,6 +4860,38 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID c
 	return nil, resp.StatusCode, ErrUpdateConnectionStatus(fmt.Errorf("unable to update connection with id %s", connectionID), resp.StatusCode)
 }
 
+// UpdateConnectionStatusIf updates a connection's status to newStatus only
+// when its stored status is one of fromStatuses, and reports whether the
+// write applied. The remote provider has no conditional-update API, so
+// this is best-effort: the stored status is read and compared
+// immediately before the PUT, and a status change landing between the
+// read and the PUT can still slip through. The reporting-path re-check
+// does not cover that window: the PUT overwrites the intervening
+// change, so the gate re-reads the status the PUT already wrote and
+// passes. The gate only covers the window after the PUT, up to the
+// report. Closing the read-to-PUT window needs a conditional-update API
+// on the remote side, tracked as a follow-up to issue #23248; until
+// then, callers must not rely on this alone for the remote path.
+func (l *RemoteProvider) UpdateConnectionStatusIf(token string, connectionID core.Uuid, fromStatuses []connections.ConnectionStatus, newStatus connections.ConnectionStatus) (bool, *connections.Connection, error) {
+	current, _, err := l.GetConnectionByID(token, connectionID)
+	if err != nil {
+		return false, nil, err
+	}
+	if current == nil {
+		return false, nil, nil
+	}
+	for _, fromStatus := range fromStatuses {
+		if current.Status == fromStatus {
+			updated, _, err := l.UpdateConnectionStatusByID(token, connectionID, newStatus)
+			if err != nil {
+				return false, nil, err
+			}
+			return true, updated, nil
+		}
+	}
+	return false, current, nil
+}
+
 // UpdateConnection - to update an existing connection
 func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connections.Connection) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
@@ -4842,13 +5037,13 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID core.U
 		return nil, ErrDataRead(err, "Connection: "+connectionID.String())
 	}
 
-	if resp.StatusCode == http.StatusOK {
+	// deleteConnection is moving from 200 with a Connection body to 204 with
+	// an empty body. Any 2xx is success. A JSON body may be a bare Connection
+	// or a ConnectionPage (first entry). An empty body still has to return a
+	// connection, because callers dereference the result.
+	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
 		l.Log.Info("connection deleted from remote provider")
-		var conn connections.Connection
-		if err = json.Unmarshal(bdr, &conn); err != nil {
-			return nil, err
-		}
-		return &conn, nil
+		return connectionFromRemoteDelete(bdr, resp.StatusCode, connectionID)
 	}
 	err = ErrDelete(fmt.Errorf("error while deleting connection: %s", bdr), string(bdr), resp.StatusCode)
 	l.Log.Error(err)
@@ -4885,7 +5080,10 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 		_ = resp.Body.Close()
 	}()
 
-	if resp.StatusCode == http.StatusOK {
+	// Same success range as DeleteConnection: 200 with a body and 204 No Content
+	// both mean the meshery connection is gone. This endpoint does not return
+	// the deleted row.
+	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
 		return nil
 	}
 
@@ -4935,8 +5133,36 @@ func (l *RemoteProvider) LogoutMesheryServer() error {
 	return nil
 }
 
+// providerPackageStallTimeout aborts a provider UI package download that has
+// received no data for this long. The download runs inside the login handler,
+// so a package host that accepts the connection and then stalls must not be
+// able to hold a user's login open. Measuring silence, not total time, keeps a
+// slow but steady host working however large the package is.
+var providerPackageStallTimeout = 30 * time.Second
+
+// providerPackageDownloadTimeout is the hard upper bound on the whole download,
+// however steadily it progresses. Both timeouts are variables so tests can
+// shorten them.
+var providerPackageDownloadTimeout = 10 * time.Minute
+
+// stalePartialInstallAge is how old a leftover staging directory must be before
+// the next install sweeps it. A process killed mid-extraction leaves its
+// ".<name>.partial-*" directory behind; the age keeps the sweep away from the
+// staging directory of an install that is still running.
+var stalePartialInstallAge = time.Hour
+
+// maxProviderPackageExtractedBytes caps how much a provider UI package may
+// expand to on disk, so a hostile or corrupt archive cannot fill the disk. It
+// is a variable so tests can lower it.
+var maxProviderPackageExtractedBytes int64 = 512 << 20
+
 // TarXZF takes in a source url downloads the tar.gz file
 // uncompresses and then save the file to the destination
+//
+// The download is bounded by providerPackageDownloadTimeout and
+// providerPackageStallTimeout. It runs inside the login handler, so a host that
+// accepts the connection and then stalls must not be able to hold a user's
+// login open.
 func TarXZF(srcURL, destination string, log logger.Handler) error {
 	filename := filepath.Base(srcURL)
 
@@ -4945,32 +5171,167 @@ func TarXZF(srcURL, destination string, log logger.Handler) error {
 		return fmt.Errorf("file is not of type tar.gz or tgz")
 	}
 
-	resp, err := http.Get(srcURL)
-	if err != nil {
-		if resp == nil {
-			return fmt.Errorf("could not reach %v: %w", srcURL, err)
+	ctx, cancel := context.WithTimeout(context.Background(), providerPackageDownloadTimeout)
+	defer cancel()
+
+	// The stall timer starts with the request, so it also covers connecting and
+	// waiting for response headers, and is pushed back each time data arrives.
+	var stalled atomic.Bool
+	stallTimer := time.AfterFunc(providerPackageStallTimeout, func() {
+		stalled.Store(true)
+		cancel()
+	})
+	defer stallTimer.Stop()
+
+	// downloadError says why a download was cut short, which a bare
+	// "context canceled" does not.
+	downloadError := func(err error) error {
+		switch {
+		case stalled.Load():
+			return fmt.Errorf("provider package download stalled: no data received for %s: %w", providerPackageStallTimeout, err)
+		case errors.Is(ctx.Err(), context.DeadlineExceeded):
+			return fmt.Errorf("provider package download exceeded %s: %w", providerPackageDownloadTimeout, err)
 		}
 		return err
 	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, srcURL, nil)
+	if err != nil {
+		return fmt.Errorf("invalid package url %v: %w", srcURL, err)
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return downloadError(fmt.Errorf("could not reach %v: %w", srcURL, err))
+	}
 	defer func() {
-		err := resp.Body.Close()
-		if err != nil {
+		if err := resp.Body.Close(); err != nil && log != nil {
 			log.Error(ErrCloseIoReader(err))
 		}
 	}()
+
+	// The headers are in, so connecting is over. From here the timer runs only
+	// while a body read is waiting (see stallGuardReader), not during the setup
+	// TarXZ does before its first read.
+	stallTimer.Stop()
 
 	if resp.StatusCode != http.StatusOK {
 		return ErrFetch(fmt.Errorf("failed GET request"), "TarTZF file :"+srcURL, resp.StatusCode)
 	}
 
-	return TarXZ(resp.Body, destination)
+	if err := TarXZ(&stallGuardReader{r: resp.Body, timer: stallTimer, timeout: providerPackageStallTimeout}, destination); err != nil {
+		return downloadError(err)
+	}
+	return nil
+}
+
+// stallGuardReader runs the stall timer only while a Read is waiting on the
+// package host. The timer is armed when a Read starts and stopped when it
+// returns, so the time the extractor spends handling data it already received
+// (a slow disk, a busy machine) is never counted as the host going silent.
+//
+// If the timer fires just as a Read returns, the bytes that Read produced are
+// still handed back; the cancellation it caused ends the download on the next
+// Read. That is a genuine stall: the host was silent for the whole timeout.
+type stallGuardReader struct {
+	r       io.Reader
+	timer   *time.Timer
+	timeout time.Duration
+}
+
+func (s *stallGuardReader) Read(p []byte) (int, error) {
+	s.timer.Reset(s.timeout)
+	n, err := s.r.Read(p)
+	s.timer.Stop()
+	return n, err
 }
 
 // TarXZ takes in a gzip stream and untars and uncompresses it to
 // the destination directory
 //
-// If the destination doesn't exists, it will create it
+// The archive is always extracted into a staging directory beside the
+// destination and moved into place only once every entry has been written, never
+// into the destination itself. The callers skip the download whenever the
+// destination exists, so extracting in place would turn one truncated download
+// into a permanently broken install. It also means an install that another
+// login completed in the meantime is never touched: if the destination exists by
+// the time this one is done, that install is kept and this one is discarded.
 func TarXZ(gzipStream io.Reader, destination string) error {
+	// A trailing separator would make filepath.Dir return the destination itself
+	// and stage the archive inside it.
+	destination = filepath.Clean(destination)
+
+	parent := filepath.Dir(destination)
+	if err := os.MkdirAll(parent, 0755); err != nil {
+		return err
+	}
+	sweepStalePartialInstalls(parent, filepath.Base(destination))
+	staging, err := os.MkdirTemp(parent, "."+filepath.Base(destination)+".partial-*")
+	if err != nil {
+		return err
+	}
+	// MkdirTemp creates the directory 0700; the destination has always been 0755.
+	if err := os.Chmod(staging, 0755); err != nil {
+		_ = os.RemoveAll(staging)
+		return err
+	}
+
+	if err := extractTarGz(gzipStream, staging); err != nil {
+		_ = os.RemoveAll(staging)
+		return err
+	}
+
+	// os.Rename refuses to replace an existing directory, even an empty one, so
+	// look at what is already there. A destination with content is an install
+	// that another login completed first: keep it untouched and drop this one.
+	// An empty one, such as a directory made in advance, is replaced.
+	if entries, err := os.ReadDir(destination); err == nil {
+		if len(entries) > 0 {
+			_ = os.RemoveAll(staging)
+			return nil
+		}
+		if err := os.Remove(destination); err != nil {
+			_ = os.RemoveAll(staging)
+			return err
+		}
+	}
+
+	if err := os.Rename(staging, destination); err != nil {
+		_ = os.RemoveAll(staging)
+		// Another install can land between the check above and the rename. If a
+		// populated destination is there now, that install stands.
+		if entries, readErr := os.ReadDir(destination); readErr == nil && len(entries) > 0 {
+			return nil
+		}
+		return err
+	}
+	return nil
+}
+
+// sweepStalePartialInstalls removes the staging directories that an install of
+// <base> left behind when the process died before it could clean up. Only
+// directories older than stalePartialInstallAge are removed, so the staging
+// directory of an install that is still running is left alone. It is best
+// effort: a leftover is harmless, so errors are ignored.
+func sweepStalePartialInstalls(parent, base string) {
+	entries, err := os.ReadDir(parent)
+	if err != nil {
+		return
+	}
+	prefix := "." + base + ".partial-"
+	for _, entry := range entries {
+		if !entry.IsDir() || !strings.HasPrefix(entry.Name(), prefix) {
+			continue
+		}
+		info, err := entry.Info()
+		if err != nil || time.Since(info.ModTime()) < stalePartialInstallAge {
+			continue
+		}
+		_ = os.RemoveAll(filepath.Join(parent, entry.Name()))
+	}
+}
+
+// extractTarGz untars a gzip stream into destination, creating it if needed.
+func extractTarGz(gzipStream io.Reader, destination string) error {
 	if err := os.MkdirAll(destination, 0755); err != nil {
 		return err
 	}
@@ -4979,8 +5340,15 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 	if err != nil {
 		return err
 	}
+	// gzip.Reader owns the flate decompressor state, so release it on every
+	// return path - a truncated archive or a rejected entry leaves the loop
+	// early, and without this the reader is only reclaimed by the GC.
+	defer func() {
+		_ = uncompressedStream.Close()
+	}()
 
 	tarReader := tar.NewReader(uncompressedStream)
+	var extracted int64
 
 	for {
 		header, err := tarReader.Next()
@@ -4993,31 +5361,77 @@ func TarXZ(gzipStream io.Reader, destination string) error {
 			return err
 		}
 
+		// A PAX global header describes the archive as a whole (GitHub's
+		// /archive tarballs and `git archive` begin with one, carrying the
+		// commit id) and holds no file.
+		//
+		// Go's reader does not apply global records to later entries, but the
+		// format says a global "path" or "size" applies to every entry after it.
+		// Skipping such a record would extract the wrong layout, so only the
+		// inert "comment" record is accepted.
+		if header.Typeflag == tar.TypeXGlobalHeader {
+			// Go drops every record of a global header when one of them cannot be
+			// parsed (a non-numeric size, say) and reports no error, so the loop
+			// below would see nothing to reject. A header that real tools write
+			// always carries its comment, so an empty one is refused.
+			if len(header.PAXRecords) == 0 {
+				return fmt.Errorf("unsupported global pax header: no readable records")
+			}
+			for key := range header.PAXRecords {
+				if key != "comment" {
+					return fmt.Errorf("unsupported global pax header record %q", key)
+				}
+			}
+			continue
+		}
+
+		// Clean the name first so "./", "./a" and "a/./b" are understood as the
+		// paths they mean. An archive made with `tar -C dir .` starts with "./",
+		// which is the destination itself and has nothing to extract.
+		name := path.Clean(header.Name)
+		if name == "." {
+			// Only a directory can stand for the root. A link or file named "."
+			// is rejected like any other entry type this extractor refuses.
+			if header.Typeflag != tar.TypeDir {
+				return fmt.Errorf("%s: illegal file path", header.Name)
+			}
+			continue
+		}
+
 		// Prevent Arbitrary file write during zip extraction ("zip slip")
 		// This checks that the zip doesn't contain filenames like
 		// `../../../tmp/some.sh`
 		// see https://snyk.io/research/zip-slip-vulnerability for more
-		err = validateExtractPath(header.Name, destination)
+		err = validateExtractPath(name, destination)
 		if err != nil {
 			return err
 		}
+		target := filepath.Join(destination, filepath.FromSlash(name))
 
 		switch header.Typeflag {
 		case tar.TypeDir:
-			if err := os.MkdirAll(path.Join(destination, header.Name), 0755); err != nil {
+			if err := os.MkdirAll(target, 0755); err != nil {
 				return err
 			}
 		case tar.TypeReg:
+			if header.Size < 0 {
+				return fmt.Errorf("%s: invalid file size", header.Name)
+			}
+			// Compare against what is left of the allowance before adding: a
+			// declared size near MaxInt64 would wrap the running total negative
+			// and slip past a check made after the addition.
+			if header.Size > maxProviderPackageExtractedBytes-extracted {
+				return fmt.Errorf("provider package exceeds the maximum extracted size of %d bytes", maxProviderPackageExtractedBytes)
+			}
+			extracted += header.Size
+
 			// When we encounter files that are in nested dirs this takes care of
 			// creating parent dirs.
-			// #nosec
-			if _, err := os.Stat(path.Join(destination, path.Dir(header.Name))); err != nil {
-				if err := os.MkdirAll(path.Join(destination, path.Dir(header.Name)), 0750); err != nil {
-					return err
-				}
+			if err := os.MkdirAll(filepath.Dir(target), 0750); err != nil {
+				return err
 			}
 
-			outFile, err := os.Create(path.Join(destination, header.Name))
+			outFile, err := os.Create(target)
 			if err != nil {
 				return err
 			}

@@ -46,8 +46,28 @@ func TestListWorkspaces(t *testing.T) {
 			ExpectedResponse: "list.workspace.empty.output.golden",
 			ExpectError:      false,
 		},
+		{
+			Name:             "given extra positional arguments when workspace list then throw error",
+			Args:             []string{"list", "extra-arg", "--orgId", testOrgId},
+			URL:              "",
+			Fixture:          "list.workspace.api.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\nUsage: mesheryctl workspace list --orgId [orgId]\nRun 'mesheryctl workspace list --help' to see detailed help message")),
+		},
 	}
 
 	mesheryctlflags.InitValidators(WorkSpaceCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, WorkSpaceCmd, tests, currentDirectory, "organization")
+}
+
+func TestProcessDataToDisplay_NilResponse(t *testing.T) {
+	rows, total := processDataToDisplay(nil)
+	if len(rows) != 0 {
+		t.Fatalf("expected 0 rows for nil response, got %d", len(rows))
+	}
+	if total != 0 {
+		t.Fatalf("expected total 0 for nil response, got %d", total)
+	}
 }

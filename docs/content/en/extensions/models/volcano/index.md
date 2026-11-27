@@ -45,7 +45,15 @@ components:
   colorIcon: extensions/models/volcano/components/node-shard/icons/color/node-shard-color.svg
   whiteIcon: extensions/models/volcano/components/node-shard/icons/white/node-shard-white.svg
   description: 
-components-count: 9
+- name: namespace-queue
+  colorIcon: extensions/models/volcano/components/namespace-queue/icons/color/namespace-queue-color.svg
+  whiteIcon: extensions/models/volcano/components/namespace-queue/icons/white/namespace-queue-white.svg
+  description: 
+- name: namespace-queue
+  colorIcon: extensions/models/volcano/components/namespace-queue/icons/color/namespace-queue-color.svg
+  whiteIcon: extensions/models/volcano/components/namespace-queue/icons/white/namespace-queue-white.svg
+  description: 
+components-count: 11
 relationships: 
 relationship-count: 0
 featureList: [

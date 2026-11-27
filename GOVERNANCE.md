@@ -267,7 +267,7 @@ First-time contributors are encouraged to start with issues labeled
 
 A current list of contributors is published at
 [the project's contributor list](https://github.com/meshery/meshery/graphs/contributors)
-and celebrated through [meshery.io/community/members](https://meshery.io/community/members).
+and celebrated through [meshery.io/community](https://meshery.io/community).
 
 **Reviewing work in progress.** Everyone is welcome to review and comment on open
 pull requests and issues. The project does not maintain a separate, gated "Reviewer"
@@ -891,7 +891,7 @@ and [OWNERS](https://www.kubernetes.dev/docs/guide/owners/) model.
 ## Appendix A: Mapping to CNCF Incubation Governance Review Criteria
 
 This appendix maps each consideration in the CNCF TOC
-[Governance Review Template](https://github.com/cncf/toc/blob/main/toc_subprojects/project-reviews-subproject/governance-review-template.md)
+[Governance Review Template](https://github.com/cncf/toc/blob/main/operations/project-reviews/governance-review-template.md)
 to where it is addressed, so the project and reviewers can confirm coverage during
 Incubation diligence. It is a self-assessment companion to this document and may be
 maintained as part of the project's Incubation self-assessment rather than published

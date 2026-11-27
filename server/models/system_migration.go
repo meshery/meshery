@@ -5,9 +5,9 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/events"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
-	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	schemasOrganization "github.com/meshery/schemas/models/v1beta2/organization"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 )
 
 // SystemDatabaseModels is the single, authoritative list of every system table
@@ -58,6 +58,7 @@ func SystemDatabaseModels() []interface{} {
 		workspace.WorkspacesTeamsMapping{},
 		workspace.WorkspacesViewsMapping{},
 		events.Event{},
+		EventIdempotencyBinding{},
 		&SystemSetting{},
 	}
 }
@@ -67,5 +68,55 @@ func SystemDatabaseModels() []interface{} {
 // than migrating an inline list, so no path can ever again drop all tables and
 // re-migrate only a subset.
 func AutoMigrateSystemTables(db *database.Handler) error {
-	return db.AutoMigrate(SystemDatabaseModels()...)
+	if err := db.AutoMigrate(SystemDatabaseModels()...); err != nil {
+		return err
+	}
+	if err := migrateEventCorrelationIndex(db); err != nil {
+		return err
+	}
+	return migrateEventQueryIndexes(db)
+}
+
+// openEventCorrelationIndex is the partial unique index that keeps at most one
+// open event (no resolved_at) per owner and correlation_key, which the
+// createEvent correlation contract requires. EventsPersister.PersistEvent
+// relies on it to make opening a condition atomic. Its predicate covers exactly
+// the rows correlatesEvent correlates: rows without a correlation_key, and rows
+// that identify no user (no owner or the zero owner), are recorded
+// uncorrelated, so they are outside the index and never conflict.
+const openEventCorrelationIndex = `CREATE UNIQUE INDEX IF NOT EXISTS idx_events_open_correlation
+	ON events (owner, correlation_key)
+	WHERE correlation_key IS NOT NULL AND correlation_key <> ''
+		AND owner IS NOT NULL AND owner <> '00000000-0000-0000-0000-000000000000'
+		AND resolved_at IS NULL`
+
+// migrateEventCorrelationIndex creates openEventCorrelationIndex. GORM's tags
+// cannot express a partial index, so it is created here, after AutoMigrate has
+// added the correlation columns. The statement is idempotent and runs on every
+// boot and reset.
+func migrateEventCorrelationIndex(db *database.Handler) error {
+	if err := db.Exec(openEventCorrelationIndex).Error; err != nil {
+		return ErrMigrateEventCorrelationIndex(err)
+	}
+	return nil
+}
+
+// eventQueryIndexes back the Notification Center queries. GetEvents filters by
+// owner and sorts by created_at; getCountBySeverity filters by owner and status
+// and groups by severity. events.Event is a meshkit type, so the indexes are
+// created here rather than through gorm tags. Each statement is idempotent and
+// runs on every boot and reset.
+var eventQueryIndexes = []string{
+	"CREATE INDEX IF NOT EXISTS idx_events_owner_created_at ON events (owner, created_at)",
+	"CREATE INDEX IF NOT EXISTS idx_events_owner_status_severity ON events (owner, status, severity)",
+}
+
+// migrateEventQueryIndexes creates every index in eventQueryIndexes.
+func migrateEventQueryIndexes(db *database.Handler) error {
+	for _, stmt := range eventQueryIndexes {
+		if err := db.Exec(stmt).Error; err != nil {
+			return ErrMigrateEventIndexes(err)
+		}
+	}
+	return nil
 }
