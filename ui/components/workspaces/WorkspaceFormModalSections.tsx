@@ -142,9 +142,10 @@ export const WorkspacesSection: FC<WorkspacesSectionProps> = ({
         workspaces.map((workspace) => (
           <CustomTooltip
             title={workspace.name}
-            disableHoverListener={open}
             placement="right"
             key={workspace.id}
+            leaveDelay={0}
+            TransitionProps={{ timeout: 0 }}
           >
             <ListItem
               key={workspace.id}
@@ -173,7 +174,17 @@ export const WorkspacesSection: FC<WorkspacesSectionProps> = ({
                 >
                   {workspace.icon}
                 </ListItemIcon>
-                <ListItemText primary={workspace.name} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText
+                  primary={workspace.name}
+                  sx={{
+                    opacity: open ? 1 : 0,
+                    '& .MuiTypography-root': {
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    },
+                  }}
+                />
               </ListItemButton>
             </ListItem>
           </CustomTooltip>
