@@ -1,12 +1,13 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the leaf dependencies that the SUT pulls in. The SUT itself is NOT
 // mocked — we import it and exercise its real exports below.
 // The fetch echoes the requested page back, like the server does.
-const { fetchResources, clusterIds, notify } = vi.hoisted(() => ({
+const { fetchResources, clusterIds, notify, tableOptions } = vi.hoisted(() => ({
+  tableOptions: { current: undefined as any },
   fetchResources: vi.fn((args: { page: number }) => ({
     unwrap: () =>
       Promise.resolve({ resources: [], page: Number(args.page), totalCount: 40, pageSize: 10 }),
@@ -42,7 +43,7 @@ vi.mock('../../../utils/multi-ctx', () => ({
 }));
 
 vi.mock('../../../utils/responsive-column', () => ({
-  updateVisibleColumns: vi.fn(),
+  updateVisibleColumns: vi.fn(() => ({})),
 }));
 
 vi.mock('../../../utils/dimension', () => ({
@@ -64,16 +65,19 @@ vi.mock('./config', () => ({
 
 vi.mock('@sistent/sistent', () => ({
   CustomColumnVisibilityControl: () => <div data-testid="column-visibility" />,
-  ResponsiveDataTable: ({ options }: any) => (
-    <div data-testid="responsive-data-table">
-      <button
-        data-testid="go-to-page-3"
-        onClick={() => options.onTableChange('changePage', { page: 2 })}
-      >
-        page 3
-      </button>
-    </div>
-  ),
+  ResponsiveDataTable: ({ options }: any) => {
+    tableOptions.current = options;
+    return (
+      <div data-testid="responsive-data-table">
+        <button
+          data-testid="go-to-page-3"
+          onClick={() => options.onTableChange('changePage', { page: 2 })}
+        >
+          page 3
+        </button>
+      </div>
+    );
+  },
   SearchBar: ({ onSearch }: any) => (
     <button data-testid="search-nginx" onClick={() => onSearch('nginx')}>
       search
@@ -276,5 +280,115 @@ describe('resources-table fetch errors', () => {
 
     await waitFor(() => expect(notify).toHaveBeenCalled());
     expect(notify.mock.calls[0][0].message).toBe(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES.error_msg);
+  });
+});
+
+describe('resources-table sorting', () => {
+  const columns = [
+    { name: 'metadata.name' },
+    { name: 'apiVersion' },
+    { name: 'metadata.namespace' },
+  ];
+
+  const renderTable = () =>
+    render(
+      <ResourcesTable
+        updateProgress={vi.fn()}
+        k8sConfig={{}}
+        useResourceConfig={() => ({ name: 'Pod', columns, options: {} })}
+        submenu={false}
+        workloadType="pods"
+        selectedK8sContexts={[]}
+      />,
+    );
+
+  const lastFetchArgs = () => fetchResources.mock.calls.at(-1)?.[0];
+
+  // The table announces the new direction as "<text> : ascending|descending|none".
+  const sortBy = (activeColumn: number, direction: string) =>
+    act(() =>
+      tableOptions.current.onTableChange('sort', {
+        activeColumn,
+        announceText: `Table now sorted by ${columns[activeColumn].name} : ${direction}`,
+      }),
+    );
+
+  beforeEach(() => {
+    routerState.isReady = true;
+    routerState.query = {};
+    clusterIds.current = ['cluster-1'];
+    fetchResources.mockClear();
+  });
+
+  afterEach(() => {
+    clusterIds.current = [];
+  });
+
+  it('clears the order on the third click instead of keeping it descending', async () => {
+    renderTable();
+
+    sortBy(1, 'ascending');
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: 'api_version asc' }));
+
+    sortBy(1, 'descending');
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: 'api_version desc' }));
+
+    sortBy(1, 'none');
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: '' }));
+  });
+
+  it('clears the order on the third click even while the earlier fetches are pending', async () => {
+    // Pending fetches never update the resources, so the table options (and the
+    // sortOrder they captured on the first render) are not rebuilt between clicks.
+    const echoPage = fetchResources.getMockImplementation();
+    fetchResources.mockImplementation(() => ({ unwrap: () => new Promise(() => {}) }));
+    try {
+      renderTable();
+
+      sortBy(1, 'ascending');
+      sortBy(1, 'descending');
+      await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: 'api_version desc' }));
+
+      sortBy(1, 'none');
+      await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: '' }));
+    } finally {
+      fetchResources.mockImplementation(echoPage);
+    }
+  });
+
+  it('sorts metadata columns by the column name the server accepts', async () => {
+    // The server only orders by its own columns (e.g. "namespace"), so a
+    // "metadata.namespace" order is dropped and the rows come back unsorted.
+    renderTable();
+
+    sortBy(2, 'ascending');
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: 'namespace asc' }));
+
+    sortBy(2, 'descending');
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: 'namespace desc' }));
+
+    sortBy(2, 'none');
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: '' }));
+  });
+
+  it('reads the direction from the end of the announcement when the label holds the separator', async () => {
+    renderTable();
+
+    const announce = (direction: string) =>
+      act(() =>
+        tableOptions.current.onTableChange('sort', {
+          activeColumn: 1,
+          announceText: `Table now sorted by Version : API : ${direction}`,
+        }),
+      );
+
+    announce('ascending');
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: 'api_version asc' }));
+
+    announce('descending');
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: 'api_version desc' }));
+
+    announce('none');
+    await waitFor(() => expect(lastFetchArgs()).toMatchObject({ order: '' }));
   });
 });

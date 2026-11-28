@@ -260,7 +260,10 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
       expandableRowsOnClick: true,
       onTableChange: (action, tableState) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
-        const columnName = camelcaseToSnakecase(tableConfig.columns[tableState.activeColumn]?.name);
+        // The server orders by its own columns, so "metadata.namespace" becomes "namespace".
+        const columnName = camelcaseToSnakecase(
+          tableConfig.columns[tableState.activeColumn]?.name,
+        )?.replace(/^metadata\./, '');
 
         let order = '';
         if (tableState.activeColumn) {
@@ -274,16 +277,21 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
             setPageSize(tableState.rowsPerPage.toString());
             break;
           case 'sort':
-            if (sortInfo.length == 2) {
-              if (sortInfo[1] === 'ascending') {
+            // The direction is the last segment, so a label containing " : " still parses.
+            const direction = sortInfo[sortInfo.length - 1];
+            if (sortInfo.length >= 2) {
+              if (direction === 'ascending') {
                 order = `${columnName} asc`;
-              } else {
+              } else if (direction === 'descending') {
                 order = `${columnName} desc`;
+              } else {
+                // The third click on a sortThirdClickReset column announces "none".
+                order = '';
               }
             }
-            if (order !== sortOrder) {
-              setSortOrder(order);
-            }
+            // sortOrder here can be stale (it is not a memo dep), so let React
+            // skip the update when the order hasn't changed.
+            setSortOrder(order);
             break;
         }
       },
