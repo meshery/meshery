@@ -21,7 +21,7 @@
     "@rjsf/utils": "^6.7.1",
     "@rjsf/validator-ajv8": "^6.7.1",
     "@sistent/mui-datatables": "^8.0.0",
-    "@sistent/sistent": "^0.22.0",
+    "@sistent/sistent": "^0.24.3",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",

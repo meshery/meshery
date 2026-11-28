@@ -1,0 +1,20 @@
+version: 0.0.2
+name: canary-release-with-policy-guardrails
+displayName: Canary Release with Policy Guardrails
+createdAt: "2026-11-25T11:32:06Z"
+description: A canary release using stable and canary Deployments behind a weighted Gateway API HTTPRoute, with TLS from cert-manager, autoscaling, and a Kyverno policy that rejects workloads without resource limits. Promote the canary by raising its route weight.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/f04fa69e-5574-45e9-81db-e1d84922f717/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Requires the Kyverno, cert-manager and Gateway API CRDs. Set gatewayClassName to your cluster's gateway class. Dry run fails in Meshery Playground because its sandbox account cannot create namespaces or cluster-scoped resources. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 37136d82-d675-4dac-9a9b-571c25f2349b
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

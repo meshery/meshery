@@ -2,7 +2,7 @@
 
 - This PR fixes #
 
-**[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)**
+**[Signed commits](https://docs.meshery.io/project/contributing#general-contribution-flow)**
 - [ ] Yes, I signed my commits.
 
 <!--

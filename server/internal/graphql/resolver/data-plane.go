@@ -7,7 +7,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 )
 
-func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error) {
+func (r *Resolver) getDataPlanes(ctx context.Context, provider models.GenericPersisterGetter, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error) {
 	selectors := make([]model.MeshType, 0)
 	if filter.Type == nil {
 		selectors = append(selectors, model.AllMeshType...)

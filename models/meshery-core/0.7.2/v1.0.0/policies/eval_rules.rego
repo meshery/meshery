@@ -5,6 +5,7 @@ import rego.v1
 import data.actions
 import data.core_utils
 import data.core_utils.truncate_set
+import data.feasibility_evaluation_utils
 
 approve_relationships_action(relationships, status, max_limit) := update_actions if {
 	update_actions := truncate_set(
@@ -173,6 +174,26 @@ matching_mutators(component_from, component_to, from_clause, to_clause, design_f
 	}
 }
 
+# A selector matches a component's model when the selector carries no model
+# name, or its model name is empty or a wildcard, mirroring the feasibility
+# check. Otherwise the model names must match (wildcard, exact or regex, as
+# in feasibility_evaluation_utils.match_name).
+selector_model_matches(component, selector) if {
+	not selector.model.name
+}
+
+selector_model_matches(component, selector) if {
+	selector.model.name == ""
+}
+
+selector_model_matches(component, selector) if {
+	selector.model.name == "*"
+}
+
+selector_model_matches(component, selector) if {
+	feasibility_evaluation_utils.match_name(component.model.name, selector.model.name)
+}
+
 identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship, design_file) := {declaration |
 	some selector_set in relationship.selectors
 	some from_selector in selector_set.allow.from
@@ -187,6 +208,9 @@ identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship
 
 	component_from.component.kind == from_selector.kind
 	component_to.component.kind == to_selector.kind
+
+	selector_model_matches(component_from, from_selector)
+	selector_model_matches(component_to, to_selector)
 
 	matching_selectors := matching_mutators(component_from, component_to, from_selector, to_selector, design_file)
 
