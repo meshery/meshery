@@ -79,8 +79,12 @@ function HideToggleFunction() {
             $codeblock.addClass('clipboardjs');
             return;
         }
-        // <pre> with raw text: the block text itself is the copy target.
-        $pre.wrapInner('<code class="clipboardjs"></code>');
+        // <pre> with raw text: the block text itself is the copy target. Only
+        // text-only blocks are wrapped; an empty block would get a button that
+        // copies nothing, and element children are not ours to move.
+        if (!$pre.children().length && $pre.text().trim()) {
+            $pre.wrapInner('<code class="clipboardjs"></code>');
+        }
     });
 })();
 
