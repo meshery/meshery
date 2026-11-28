@@ -1206,6 +1206,7 @@ func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, pa
 		return nil, err
 	}
 
+	var ffs []MesheryFilter
 	// Check if hostname is github
 	if parsedURL.Host == "github.com" {
 		parsedPath := strings.Split(parsedURL.Path, "/")
@@ -1226,22 +1227,17 @@ func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, pa
 		if path == "" && len(parsedPath) > 4 {
 			path = strings.Join(parsedPath[4:], "/")
 		}
-		ffs, err := githubRepoFilterScan(owner, repo, path, branch)
-		if err != nil {
-			return nil, err
-		}
-
-		if save {
-			return l.MesheryFilterPersister.SaveMesheryFilters(ffs)
-		}
-
-		return json.Marshal(ffs)
+		ffs, err = githubRepoFilterScan(owner, repo, path, branch)
+	} else {
+		// Fallback to generic HTTP import
+		ffs, err = genericHTTPFilterFile(resourceURL, l.Log)
 	}
-
-	// Fallback to generic HTTP import
-	ffs, err := genericHTTPFilterFile(resourceURL, l.Log)
 	if err != nil {
 		return nil, err
+	}
+	// resource carries the configuration sent with the import.
+	for i := range ffs {
+		ffs[i].FilterResource = resource
 	}
 	if save {
 		return l.MesheryFilterPersister.SaveMesheryFilters(ffs)

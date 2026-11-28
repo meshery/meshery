@@ -183,13 +183,17 @@ func (h *Handler) handleFilterPOST(
 
 	format := r.URL.Query().Get("output")
 
-	filterResource, err := h.generateFilterComponent(parsedBody.Config)
-	if err != nil {
-		if h.log != nil {
-			h.log.Error(ErrEncodeFilter(err))
+	var filterResource string
+	if parsedBody.URL == "" || parsedBody.FilterData != nil || parsedBody.Config != "" ||
+		provider.GetProviderType() != models.LocalProviderType {
+		filterResource, err = h.generateFilterComponent(parsedBody.Config)
+		if err != nil {
+			if h.log != nil {
+				h.log.Error(ErrEncodeFilter(err))
+			}
+			writeMeshkitError(rw, ErrEncodeFilter(err), http.StatusInternalServerError)
+			return
 		}
-		writeMeshkitError(rw, ErrEncodeFilter(err), http.StatusInternalServerError)
-		return
 	}
 
 	// If Content is not empty then assume it's a local upload

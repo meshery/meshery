@@ -27,6 +27,7 @@ func newFilterPOSTFixture(t *testing.T) (*Handler, *models.DefaultLocalProvider,
 	t.Helper()
 
 	h, provider, db := newDeleteFilterFixture(t)
+	provider.ProviderType = models.LocalProviderType
 	t.Cleanup(func() { _ = db.DBClose() })
 	require.NoError(t, db.AutoMigrate(events.Event{}))
 	provider.EventsPersister = &models.EventsPersister{DB: &db}
@@ -173,6 +174,66 @@ func TestFilterPOSTImportsRawWASMFromURL(t *testing.T) {
 	assert.Equal(t, module, stored.FilterFile, "the stored filter file must be the downloaded module")
 }
 
+// TestFilterPOSTURLImportKeepsConfig pins the configuration sent with a URL
+// import (mesheryctl filter import <url> --wasm-config, or the UI's config
+// field): it must reach the filter as filterResource, as a file upload's does.
+func TestFilterPOSTURLImportKeepsConfig(t *testing.T) {
+	const config = "match: route-a\nratelimit: 100\n"
+	for _, tc := range []struct {
+		name   string
+		save   bool
+		config string
+	}{
+		{name: "unsaved with config", config: config},
+		{name: "saved with config", save: true, config: config},
+		{name: "unsaved without config"},
+		{name: "saved without config", save: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			allowLoopbackRemoteFileImports(t)
+			h, provider, db := newFilterPOSTFixture(t)
+			provider.Log = h.log
+			registerWASMFilterComponent(t, h.registryManager)
+			source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				_, _ = w.Write([]byte("\x00asm\x01\x00\x00\x00"))
+			}))
+			t.Cleanup(source.Close)
+
+			rec := postFilter(t, h, provider, models.MesheryFilterRequestBody{
+				Save:   tc.save,
+				URL:    source.URL + "/filters/rate-limit.wasm",
+				Config: tc.config,
+			})
+			require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+
+			var imported []models.MesheryFilter
+			require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &imported))
+			require.Len(t, imported, 1, "the response must carry the imported filter, got %s", rec.Body.String())
+			assertResource := func(filterResource, origin string) {
+				t.Helper()
+				if tc.config == "" {
+					assert.Empty(t, filterResource, origin)
+					return
+				}
+
+				var resource struct {
+					Configuration map[string]interface{} `json:"configuration"`
+				}
+				if assert.NoError(t, json.Unmarshal([]byte(filterResource), &resource), origin) {
+					assert.Equal(t, tc.config, resource.Configuration["config"], origin)
+				}
+			}
+			assertResource(imported[0].FilterResource, "POST response")
+			if tc.save {
+				require.NotNil(t, imported[0].ID)
+				var stored models.MesheryFilter
+				require.NoError(t, db.Where("id = ?", *imported[0].ID).First(&stored).Error)
+				assertResource(stored.FilterResource, "stored filter")
+			}
+		})
+	}
+}
+
 // TestFilterPOSTResponseCarriesUnsavedFilter pins the body when save is false:
 // the handler only converts the filter, so the response is its only output.
 func TestFilterPOSTResponseCarriesUnsavedFilter(t *testing.T) {
@@ -199,6 +260,55 @@ func TestFilterPOSTResponseCarriesUnsavedFilter(t *testing.T) {
 	var eventCount int64
 	require.NoError(t, db.Model(&events.Event{}).Count(&eventCount).Error)
 	assert.Zero(t, eventCount, "a request without save must not persist an event")
+}
+
+func TestFilterPOSTRemoteURLImportForwardsEmptyConfigComponent(t *testing.T) {
+	for _, save := range []bool{false, true} {
+		t.Run(map[bool]string{false: "unsaved", true: "saved"}[save], func(t *testing.T) {
+			h, _, db := newFilterPOSTFixture(t)
+			registerWASMFilterComponent(t, h.registryManager)
+			const sourceURL = "https://example.com/filter.wasm"
+			cloud := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				var payload struct {
+					URL        string `json:"url"`
+					Save       bool   `json:"save"`
+					FilterData struct {
+						FilterResource string `json:"filterResource"`
+					} `json:"filterData"`
+				}
+				if !assert.NoError(t, json.NewDecoder(r.Body).Decode(&payload)) {
+					w.WriteHeader(http.StatusBadRequest)
+					return
+				}
+				assert.Equal(t, sourceURL, payload.URL)
+				assert.Equal(t, save, payload.Save)
+				var resource struct {
+					Component struct {
+						Kind string `json:"kind"`
+					} `json:"component"`
+					Configuration map[string]string `json:"configuration"`
+				}
+				if assert.NoError(t, json.Unmarshal([]byte(payload.FilterData.FilterResource), &resource)) {
+					assert.Equal(t, "WASMFilter", resource.Component.Kind)
+					assert.Equal(t, map[string]string{"config": ""}, resource.Configuration)
+				}
+				_, _ = w.Write([]byte(`[{"name":"rate-limit"}]`))
+			}))
+			t.Cleanup(cloud.Close)
+
+			remote := &models.RemoteProvider{
+				ProviderProperties: models.ProviderProperties{
+					ProviderType: models.RemoteProviderType,
+					Capabilities: models.Capabilities{{Feature: models.PersistMesheryFilters, Endpoint: "/api/content/filters"}},
+				},
+				RemoteProviderURL: cloud.URL,
+				Log:               h.log,
+				EventsPersister:   &models.EventsPersister{DB: &db},
+			}
+			rec := postFilter(t, h, remote, models.MesheryFilterRequestBody{URL: sourceURL, Save: save})
+			require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+		})
+	}
 }
 
 // TestFormatFilterOutputKeepsEmptyListForNull pins the wire shape when a
