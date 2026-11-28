@@ -24,7 +24,7 @@ A connection definition is a first-class [Registry]({{< ref "concepts/logical/re
 - its **visual identity** (`styles`).
 
 {{% alert color="warning" title="Prerequisite reading" %}}
-Connection definitions are packaged in the context of a Model. Be sure you understand <a href='{{< ref "project/contributing/models/models" >}}'>how Models are created and packaged</a> first - without a Model to belong to, your connection definition is homeless.
+Connection definitions are packaged in the context of a Model. Be sure you understand <a href='{{< ref "project/contributing/models/models/index.md" >}}'>how Models are created and packaged</a> first - without a Model to belong to, your connection definition is homeless.
 {{% /alert %}}
 
 ## Anatomy of a connection definition
