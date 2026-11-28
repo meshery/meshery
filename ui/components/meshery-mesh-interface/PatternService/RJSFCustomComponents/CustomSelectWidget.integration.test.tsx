@@ -88,10 +88,18 @@ describe('CustomSelectWidget', () => {
     expect(combo).toHaveFocus();
   });
 
-  it('exposes the full option label in a hover tooltip', async () => {
+  it('keeps checkbox/label rows horizontal and labels ellipsized with tooltips', async () => {
     const { user, combo } = setup();
+    const ellipsis = { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
+    expect(within(combo).getByText('Kubernetes')).toHaveStyle(ellipsis);
     await user.click(combo);
-    await user.hover(within(screen.getByRole('listbox')).getByText(enumOptions[2].label));
+    const option = screen.getByRole('option', { name: enumOptions[2].label });
+    expect(option).toHaveStyle({ display: 'flex', flexDirection: 'row', gap: '8px' });
+    const checkbox = within(option).getByRole('checkbox', { hidden: true });
+    expect(checkbox.parentElement).toHaveStyle({ flexShrink: 0 });
+    const label = within(option).getByText(enumOptions[2].label);
+    expect(label).toHaveStyle(ellipsis);
+    await user.hover(label);
     expect(await screen.findByRole('tooltip')).toHaveTextContent(enumOptions[2].label);
   });
 
