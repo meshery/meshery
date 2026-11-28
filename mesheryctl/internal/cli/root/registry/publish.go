@@ -48,27 +48,25 @@ var (
 // Example publishing to mesheryio docs
 // mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
 
-// Example publishing to remove provider docs
+// Example publishing to remote provider docs
 // mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw /src/collections/integrations /src/collections/integrations -o mdx
 
-// publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
+// publishCmd represents the publish command to publish Meshery Models to Websites and Remote Provider
 var publishCmd = &cobra.Command{
 	Use:   "publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]",
-	Short: "Publish Meshery Models to Websites, Remote Provider, Meshery Server",
-	Long: `Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery Server, including model and component icons by reading from a Google Spreadsheet and outputing to markdown or json format.
+	Short: "Publish Meshery Models to Websites and Remote Provider",
+	Long: `Publishes metadata about Meshery Models to Websites or Remote Provider, including model and component icons by reading from a Google Spreadsheet and outputing to markdown or json format.
+For the remote-provider system, [models-output-path] and [imgs-output-path] are resolved relative to the parent of the current working directory, not the current directory itself, and icons are written to a subdirectory named for the model: from /work/project, models writes to /work/models and icons to /work/imgs/my-model.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/registry/publish`,
 	Example: `
 // Publish To System
-mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
-
-// Publish To Meshery
-mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/models
+mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [md|mdx|js]
 
 // Publish To Remote Provider
-mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/meshmodels/models [repo]/ui/public/img/meshmodels
+mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [models-output-path] [imgs-output-path]
 
 // Publish To Website
-mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/img/meshmodels
+mesheryctl registry publish website GoogleCredential GoogleSheetID [models-output-path] [imgs-output-path] -o [md|mdx|js]
 
 // Publishing to meshery docs
 cd docs;
@@ -83,7 +81,7 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
 		if len(args) != 5 {
-			return errors.New(utils.RegistryError("[ system, google sheet credential, sheet-id, models output path, imgs output path] are required\n\nUsage: \nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]\nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]\nRun 'mesheryctl registry publish --help'", "publish"))
+			return errors.New(utils.RegistryError("[ system, google sheet credential, sheet-id, models output path, imgs output path] are required\n\nUsage: \nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]\nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [md|mdx|js]\nRun 'mesheryctl registry publish --help'", "publish"))
 		}
 
 		return nil
