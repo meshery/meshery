@@ -2,6 +2,7 @@ package system
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"slices"
@@ -97,15 +98,6 @@ func TestUninstallKubernetesErrorRemediation(t *testing.T) {
 	assert.Contains(t, remediation, "mesheryctl system uninstall --force")
 	assert.Contains(t, remediation, "cluster")
 	assert.NotContains(t, remediation, "Docker")
-}
-
-// TestSystemUninstallErrorReference verifies the "uninstall" error formatting
-// points at the uninstall command reference page.
-func TestSystemUninstallErrorReference(t *testing.T) {
-	msg := utils.SystemLifeCycleError("this command takes no arguments.\n", "uninstall")
-
-	assert.Contains(t, msg, "this command takes no arguments")
-	assert.Contains(t, msg, "https://docs.meshery.io/reference/mesheryctl/system/uninstall")
 }
 
 // TestUninstallHealthCheckOptions pins the teardown preflight: version checks
@@ -1044,4 +1036,44 @@ func TestKubernetesUninstallStagesUseOneConfiguration(t *testing.T) {
 		assert.Same(t, &client.RestConfig, got,
 			"CRD deletion must reuse the configuration every other stage targets")
 	})
+}
+
+// TestUninstallCmdArgs verifies that system uninstall rejects unexpected positional arguments upfront.
+func TestUninstallCmdArgs(t *testing.T) {
+	tests := []struct {
+		Name          string
+		Args          []string
+		ExpectError   bool
+		ExpectedError error
+	}{
+		{
+			Name:        "valid with no positional arguments",
+			Args:        []string{},
+			ExpectError: false,
+		},
+		{
+			Name:          "invalid with unexpected positional arguments",
+			Args:          []string{"unexpected-arg"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\nUsage: mesheryctl system uninstall [flags]\nRun 'mesheryctl system uninstall --help' to see detailed help message")),
+		},
+		{
+			Name:          "invalid with multiple positional arguments",
+			Args:          []string{"arg1", "arg2"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\nUsage: mesheryctl system uninstall [flags]\nRun 'mesheryctl system uninstall --help' to see detailed help message")),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			err := uninstallCmd.Args(uninstallCmd, tt.Args)
+			if tt.ExpectError {
+				assert.Error(t, err)
+				utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
 }

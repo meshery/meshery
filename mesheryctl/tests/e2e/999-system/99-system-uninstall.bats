@@ -20,7 +20,7 @@ setup() {
 @test "[cut=System][tg=System Management] given an argument when running mesheryctl system uninstall then an error message is displayed" {
     run $MESHERYCTL_BIN system uninstall invalid-arguments
     assert_failure
-    assert_output --partial "this command takes no arguments"
+    assert_output --partial "too many arguments specified"
 }
 
 @test "[cut=System][tg=System Management] given a running installation when running mesheryctl system uninstall -y then Meshery and its namespace are removed" {
