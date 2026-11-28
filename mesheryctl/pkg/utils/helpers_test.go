@@ -1618,3 +1618,57 @@ func TestDeleteConfiguration_BodyClosed(t *testing.T) {
 		assertBodyClosed(t, transport, "expected response body to be closed on delete configuration")
 	})
 }
+
+func TestParseURLGithub(t *testing.T) {
+	tests := []struct {
+		name         string
+		url          string
+		wantRepoURL  string
+		wantFilePath string
+		wantErr      bool
+	}{
+		{
+			name:         "github.com blob URL",
+			url:          "https://github.com/meshery/meshery/blob/master/.goreleaser.yml",
+			wantRepoURL:  "https://github.com/meshery/meshery/master",
+			wantFilePath: ".goreleaser.yml",
+			wantErr:      false,
+		},
+		{
+			name:         "github.com raw URL",
+			url:          "https://github.com/meshery/meshery/raw/master/install/docker/docker-compose.yaml",
+			wantRepoURL:  "https://github.com/meshery/meshery/master",
+			wantFilePath: "install/docker/docker-compose.yaml",
+			wantErr:      false,
+		},
+		{
+			name:         "raw.githubusercontent.com URL",
+			url:          "https://raw.githubusercontent.com/meshery/meshery/master/install/docker/docker-compose.yaml",
+			wantRepoURL:  "https://raw.githubusercontent.com/meshery/meshery/master/install/docker/docker-compose.yaml",
+			wantFilePath: "",
+			wantErr:      false,
+		},
+		{
+			name:         "unsupported non-github URL",
+			url:          "https://gitlab.com/meshery/meshery/blob/master/file.yaml",
+			wantRepoURL:  "https://gitlab.com/meshery/meshery/blob/master/file.yaml",
+			wantFilePath: "",
+			wantErr:      true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			repoURL, filePath, err := ParseURLGithub(tt.url)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("ParseURLGithub() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if repoURL != tt.wantRepoURL {
+				t.Errorf("ParseURLGithub() repoURL = %v, want %v", repoURL, tt.wantRepoURL)
+			}
+			if filePath != tt.wantFilePath {
+				t.Errorf("ParseURLGithub() filePath = %v, want %v", filePath, tt.wantFilePath)
+			}
+		})
+	}
+}

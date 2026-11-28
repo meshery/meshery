@@ -960,6 +960,7 @@ func ParseURLGithub(URL string) (string, string, error) {
 	host := parsedURL.Host
 	path := parsedURL.Path
 	path = strings.ReplaceAll(path, "/blob/", "/")
+	path = strings.ReplaceAll(path, "/raw/", "/")
 	paths := strings.Split(path, "/")
 	switch host {
 	case "github.com":
