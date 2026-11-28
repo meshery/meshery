@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { render, screen, fireEvent, act } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@sistent/sistent', () => ({
   CustomTooltip: ({ children, title }: any) => (
@@ -99,13 +99,23 @@ describe('FormattedDate', () => {
 
 describe('FormatId', () => {
   let writeTextSpy: ReturnType<typeof vi.fn>;
+  let originalClipboard: Clipboard | undefined;
 
   beforeEach(() => {
+    originalClipboard = window.navigator.clipboard;
     writeTextSpy = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(window.navigator, 'clipboard', {
       configurable: true,
       writable: true,
       value: { writeText: writeTextSpy },
+    });
+  });
+
+  afterEach(() => {
+    Object.defineProperty(window.navigator, 'clipboard', {
+      configurable: true,
+      writable: true,
+      value: originalClipboard,
     });
   });
 
@@ -117,14 +127,142 @@ describe('FormatId', () => {
     expect(screen.getByText(/abcdefghij/)).toBeInTheDocument();
   });
 
-  it('writes id to clipboard when the copy button is clicked', () => {
+  it('writes id to clipboard when the copy button is clicked', async () => {
     render(<FormatId id="abc-xyz" />);
 
     const button = screen.getByTestId('icon-button');
     // fireEvent avoids userEvent which may re-pierce navigator
-    fireEvent.click(button);
+    await act(async () => {
+      fireEvent.click(button);
+      await Promise.resolve();
+    });
 
     expect(writeTextSpy).toHaveBeenCalledWith('abc-xyz');
+  });
+
+  it('resets prior copy timer on consecutive clicks and clears timer on unmount', async () => {
+    vi.useFakeTimers();
+    const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
+    try {
+      const { unmount } = render(<FormatId id="abc-xyz" />);
+      const button = screen.getByTestId('icon-button');
+
+      await act(async () => {
+        fireEvent.click(button);
+        await Promise.resolve();
+      });
+      expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copied!');
+
+      act(() => {
+        vi.advanceTimersByTime(1500);
+      });
+      await act(async () => {
+        fireEvent.click(button);
+        await Promise.resolve();
+      });
+      expect(clearTimeoutSpy).toHaveBeenCalled();
+
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+      expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copied!');
+
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+      expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copy');
+
+      await act(async () => {
+        fireEvent.click(button);
+        await Promise.resolve();
+      });
+      unmount();
+      expect(clearTimeoutSpy).toHaveBeenCalled();
+    } finally {
+      clearTimeoutSpy.mockRestore();
+      vi.useRealTimers();
+    }
+  });
+
+  it('does not show Copy success on rejection or start timer after unmount', async () => {
+    vi.useFakeTimers();
+    const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
+    try {
+      Object.defineProperty(window.navigator, 'clipboard', {
+        configurable: true,
+        writable: true,
+        value: { writeText: vi.fn().mockRejectedValue(new Error('denied')) },
+      });
+      const { unmount: unmountRejected } = render(<FormatId id="id-123" />);
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('icon-button'));
+        await Promise.resolve();
+      });
+      expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copy');
+      unmountRejected();
+
+      Object.defineProperty(window.navigator, 'clipboard', {
+        configurable: true,
+        writable: true,
+        value: {
+          writeText: vi.fn(() => {
+            throw new Error('blocked');
+          }),
+        },
+      });
+      const { unmount: unmountSyncThrow } = render(<FormatId id="id-sync" />);
+      await act(async () => {
+        expect(() => fireEvent.click(screen.getByTestId('icon-button'))).not.toThrow();
+        await Promise.resolve();
+      });
+      expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copy');
+      unmountSyncThrow();
+
+      let resolveCopy!: () => void;
+      const pendingCopy = new Promise<void>((resolve) => {
+        resolveCopy = resolve;
+      });
+      Object.defineProperty(window.navigator, 'clipboard', {
+        configurable: true,
+        writable: true,
+        value: { writeText: vi.fn().mockReturnValue(pendingCopy) },
+      });
+      setTimeoutSpy.mockClear();
+      const { unmount } = render(<FormatId id="id-456" />);
+      fireEvent.click(screen.getByTestId('icon-button'));
+      unmount();
+      await act(async () => {
+        resolveCopy();
+        await Promise.resolve();
+      });
+      expect(setTimeoutSpy).not.toHaveBeenCalled();
+    } finally {
+      setTimeoutSpy.mockRestore();
+      vi.useRealTimers();
+    }
+  });
+
+  it('safely handles nullish id and unavailable or rejecting clipboard', async () => {
+    Object.defineProperty(window.navigator, 'clipboard', {
+      configurable: true,
+      writable: true,
+      value: undefined,
+    });
+    render(<FormatId id={undefined as any} />);
+    expect(() => fireEvent.click(screen.getByTestId('icon-button'))).not.toThrow();
+
+    Object.defineProperty(window.navigator, 'clipboard', {
+      configurable: true,
+      writable: true,
+      value: { writeText: vi.fn().mockRejectedValue(new Error('denied')) },
+    });
+    const { rerender } = render(<FormatId id="id-123" />);
+    rerender(<FormatId id="id-123" />);
+    await act(async () => {
+      expect(() => fireEvent.click(screen.getAllByTestId('icon-button')[1])).not.toThrow();
+      await Promise.resolve();
+    });
+    expect(screen.getAllByTestId('tooltip')[3].getAttribute('data-title')).toBe('Copy');
   });
 });
 
@@ -142,6 +280,13 @@ describe('createColumnUiSchema', () => {
   it('returns an empty mapping per key when no numCols entries', () => {
     const schema = createColumnUiSchema({ metadata: { a: {} }, numCols: {} });
     expect(schema.a).toEqual({});
+  });
+
+  it('returns empty schema safely for nullish metadata or numCols', () => {
+    expect(createColumnUiSchema(undefined as any)).toEqual({});
+    expect(createColumnUiSchema(null as any)).toEqual({});
+    expect(createColumnUiSchema({ metadata: null, numCols: { md: 2 } } as any)).toEqual({});
+    expect(createColumnUiSchema({ metadata: { a: {} }, numCols: null } as any)).toEqual({});
   });
 });
 
@@ -173,9 +318,15 @@ describe('TextWithLinks', () => {
     expect(screen.getByText(/hello world/)).toBeInTheDocument();
   });
 
-  it('converts an http URL into a Link element', () => {
-    const { container } = render(<TextWithLinks text="see https://docs.meshery.io/x for more" />);
-    expect(container.textContent).toContain('Doc');
+  it('converts an http URL into a Link element without React key warnings', () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      const { container } = render(<TextWithLinks text="see https://docs.meshery.io/x for more" />);
+      expect(container.textContent).toContain('Doc');
+      expect(errorSpy).not.toHaveBeenCalled();
+    } finally {
+      errorSpy.mockRestore();
+    }
   });
 
   it('handles undefined / non-string input without crashing', () => {
@@ -188,6 +339,11 @@ describe('KeyValue', () => {
   it('renders the key with underscores replaced by spaces', () => {
     render(<KeyValue Key="some_key_here" Value="123" />);
     expect(screen.getByText(/some key here/)).toBeInTheDocument();
+  });
+
+  it('handles nullish Key values without throwing', () => {
+    const { container } = render(<KeyValue Key={undefined as any} Value="val" />);
+    expect(container.textContent).toContain('val');
   });
 
   it('renders the value as-is when it is a React element', () => {
@@ -213,6 +369,27 @@ describe('ArrayFormatter', () => {
     const { container } = render(<ArrayFormatter items={['one', 'two', 'three']} />);
     const lis = container.querySelectorAll('li');
     expect(lis).toHaveLength(3);
+  });
+
+  it('renders duplicate items and object arrays without duplicate React key warnings', () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      const { container } = render(
+        <ArrayFormatter items={['dup', 'dup', { count: 1 }, { count: 2 }] as any} />,
+      );
+      expect(container.querySelectorAll('li')).toHaveLength(4);
+      const keyWarnings = errorSpy.mock.calls.filter((args) =>
+        args.some((arg) => typeof arg === 'string' && arg.toLowerCase().includes('key')),
+      );
+      expect(keyWarnings).toHaveLength(0);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it('handles non-array items safely without crashing', () => {
+    const { container } = render(<ArrayFormatter items={null as any} style={{}} />);
+    expect(container.querySelectorAll('li')).toHaveLength(0);
   });
 });
 

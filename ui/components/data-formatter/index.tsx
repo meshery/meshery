@@ -99,22 +99,52 @@ export const FormattedDate = ({ date }) => {
 
 export const FormatId = ({ id }) => {
   const [copied, setCopied] = React.useState(false);
+  const copyTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isMountedRef = React.useRef(true);
   const theme = useTheme();
+
+  React.useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      if (copyTimerRef.current) {
+        clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = null;
+      }
+    };
+  }, []);
+
   // truncates the id to 15 characters and adds an ellipsis and adds a clipboard copy button
   const copyToClipboard = (e) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(id);
-    setCopied(true);
-
-    setTimeout(() => {
-      setCopied(false);
-    }, 2000);
+    if (id == null || typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
+      return;
+    }
+    Promise.resolve()
+      .then(() => navigator.clipboard.writeText(String(id)))
+      .then(() => {
+        if (!isMountedRef.current) {
+          return;
+        }
+        setCopied(true);
+        if (copyTimerRef.current) {
+          clearTimeout(copyTimerRef.current);
+        }
+        copyTimerRef.current = setTimeout(() => {
+          copyTimerRef.current = null;
+          if (isMountedRef.current) {
+            setCopied(false);
+          }
+        }, 2000);
+      })
+      .catch(() => {});
   };
 
-  const truncatedId = _.truncate(id, { length: 15 });
+  const displayId = id == null ? '' : String(id);
+  const truncatedId = _.truncate(displayId, { length: 15 });
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-      <CustomTooltip title={id} placement="top">
+      <CustomTooltip title={displayId} placement="top">
         <Typography
           variant="body2"
           style={{
@@ -134,12 +164,16 @@ export const FormatId = ({ id }) => {
   );
 };
 
-export const createColumnUiSchema = ({ metadata, numCols }) => {
+export const createColumnUiSchema = (input: any = {}) => {
+  const { metadata, numCols } = input ?? {};
+  if (!metadata || typeof metadata !== 'object' || !numCols || typeof numCols !== 'object') {
+    return {};
+  }
   return Object.keys(metadata).reduce((schema, key) => {
     schema[key] = Object.keys(numCols).reduce(
-      (colSpan, key) => ({
+      (colSpan, colKey) => ({
         ...colSpan,
-        [key]: Math.floor(12 / numCols[key]),
+        [colKey]: Math.floor(12 / numCols[colKey]),
       }),
       {},
     );
@@ -184,7 +218,7 @@ export const LinkFormatters = {
   },
   DEFAULT: {
     base_url: '',
-    formatter: (link) => <Link title={_.truncate(link, 30)} href={link} />,
+    formatter: (link) => <Link title={_.truncate(link, { length: 30 })} href={link} />,
   },
 };
 
@@ -193,16 +227,15 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
   const linkRegex = /(https?:\/\/[^\s]+)/g;
 
   // Split the text into parts, alternating between text and link components
-  const parts = text?.split?.(linkRegex) || [];
+  const parts = typeof text === 'string' ? text.split(linkRegex) : [];
 
   // Map the parts to React elements
   const elements = parts.map((part, idx) => {
     if (part.match(linkRegex)) {
       // If the part is a link, wrap it in a Link component
-      return getFormattedLink(part);
-    } else {
-      return <span key={idx}>{part}</span>;
+      return <React.Fragment key={idx}>{getFormattedLink(part)}</React.Fragment>;
     }
+    return <span key={idx}>{part}</span>;
   });
 
   return <Typography {...typographyProps}> {elements}</Typography>;
@@ -210,6 +243,7 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
 
 export const KeyValue = ({ Key, Value, style }) => {
   const theme = useTheme();
+  const formattedKey = String(Key ?? '').replaceAll('_', ' ');
   return (
     <div
       style={{
@@ -221,7 +255,7 @@ export const KeyValue = ({ Key, Value, style }) => {
       }}
     >
       <SectionBody
-        body={Key.replaceAll('_', ' ')}
+        body={formattedKey}
         style={{
           textTransform: 'capitalize',
           overflow: 'hidden',
@@ -286,6 +320,7 @@ export const SectionBody = ({ body, style = {} }) => {
 };
 export const ArrayFormatter = ({ items, style }) => {
   const theme = useTheme();
+  const safeItems = Array.isArray(items) ? items : [];
   return (
     <ol
       style={{
@@ -294,8 +329,11 @@ export const ArrayFormatter = ({ items, style }) => {
         margin: '0rem',
       }}
     >
-      {items.map((item) => (
-        <li key={item} style={{ color: theme.palette.text.tertiary, ...style }}>
+      {safeItems.map((item, idx) => (
+        <li
+          key={`${typeof item === 'object' && item !== null ? 'obj' : String(item)}-${idx}`}
+          style={{ color: theme.palette.text.tertiary, ...style }}
+        >
           <Level>
             <DynamicFormatter data={item} />
           </Level>
