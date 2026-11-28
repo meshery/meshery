@@ -108,7 +108,14 @@ func processDataToDisplay(workspaceResponse *workspace.WorkspacePage) ([][]strin
 		if workspace.Description != "" {
 			description = workspace.Description
 		}
-		rows = append(rows, []string{workspace.ID.String(), workspace.Name, workspace.OrganizationID.String(), description, workspace.CreatedAt.String(), workspace.UpdatedAt.String()})
+		rows = append(rows, []string{
+			workspace.ID.String(),
+			workspace.Name,
+			workspace.OrganizationID.String(),
+			description,
+			utils.FormatTime(&workspace.CreatedAt, "2006-01-02 15:04:05", "N/A"),
+			utils.FormatTime(&workspace.UpdatedAt, "2006-01-02 15:04:05", "N/A"),
+		})
 	}
 
 	return rows, int64(workspaceResponse.TotalCount)

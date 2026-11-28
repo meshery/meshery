@@ -4408,6 +4408,15 @@
         "short_description": "The kubeconfig could not be parsed",
         "probable_cause": "A different file was selected, or the kubeconfig was truncated or edited by hand.",
         "suggested_remediation": "Upload the kubeconfig file itself (for example ~/.kube/config), and check it with kubectl config view --kubeconfig <file>."
+      },
+      "1502": {
+        "name": "ErrInvalidPerformanceProfileCode",
+        "code": "1502",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid performance profile",
+        "probable_cause": "The performance profile object is nil or invalid",
+        "suggested_remediation": "Ensure a valid, non-nil performance profile is provided"
       }
     }
   }

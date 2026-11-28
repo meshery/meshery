@@ -181,6 +181,7 @@ const (
 	ErrInvalidDesignVersionCode           = "meshery-server-1496"
 	ErrKubeconfigUnreadableCode           = "meshery-server-1501"
 	ErrUnsafeKubeCredentialCode           = "meshery-server-1500"
+	ErrInvalidPerformanceProfileCode      = "meshery-server-1502"
 )
 
 var (
@@ -423,6 +424,20 @@ func ErrGenerateUUID(err error) error {
 
 func ErrInvalidUUID(err error) error {
 	return errors.New(ErrInvalidUUIDValueCode, errors.Alert, []string{"Invalid UUID"}, []string{err.Error()}, []string{"The provided identifier is not a valid UUID"}, []string{"Provide a valid UUID"})
+}
+
+func ErrInvalidPerformanceProfile(err error) error {
+	return httputil.WithProviderStatus(
+		errors.New(
+			ErrInvalidPerformanceProfileCode,
+			errors.Alert,
+			[]string{"Invalid performance profile"},
+			[]string{err.Error()},
+			[]string{"The performance profile object is nil or invalid"},
+			[]string{"Ensure a valid, non-nil performance profile is provided"},
+		),
+		http.StatusBadRequest,
+	)
 }
 
 func ErrGrafanaOrg(err error) error {

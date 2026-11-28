@@ -72,7 +72,7 @@ export const ResourceMenuConfig = {
     'Leases',
     'MutatingWebhookConfiguration',
   ],
-  Network: ['Service', 'Endpoints', 'EndpointSlice', 'Ingress', 'IngressClass', 'NetworkPoliciy'],
+  Network: ['Service', 'Endpoints', 'EndpointSlice', 'Ingress', 'IngressClass', 'NetworkPolicy'],
   Security: ['ServiceAccount', 'ClusterRole', 'Role', 'ClusterRoleBinding', 'RoleBinding'],
   Storage: ['PersistentVolume', 'PersistentVolumeClaim', 'StorageClass'],
 };
