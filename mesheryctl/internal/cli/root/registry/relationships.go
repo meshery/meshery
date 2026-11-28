@@ -208,16 +208,24 @@ func relationshipKindsMissingFromModel(path, modelName string, previousKinds, co
 	}
 
 	missing := make(map[string]struct{})
+	checkKind := func(endpoint relationshipEndpoint) {
+		// Kinds absent from the previous version, such as "self", are not
+		// component kinds this model could have dropped.
+		if endpoint.Kind == "" || (endpoint.Model.Name != "" && endpoint.Model.Name != modelName) {
+			return
+		}
+		if _, existed := previousKinds[endpoint.Kind]; !existed {
+			return
+		}
+		if _, exists := componentKinds[endpoint.Kind]; !exists {
+			missing[endpoint.Kind] = struct{}{}
+		}
+	}
 	for _, selector := range relationship.Selectors {
 		for _, endpoint := range append(selector.Allow.From, selector.Allow.To...) {
-			if endpoint.Kind == "" || (endpoint.Model.Name != "" && endpoint.Model.Name != modelName) {
-				continue
-			}
-			if _, existed := previousKinds[endpoint.Kind]; !existed {
-				continue
-			}
-			if _, exists := componentKinds[endpoint.Kind]; !exists {
-				missing[endpoint.Kind] = struct{}{}
+			checkKind(endpoint)
+			for _, matched := range append(endpoint.Match.From, endpoint.Match.To...) {
+				checkKind(matched)
 			}
 		}
 	}
@@ -235,6 +243,10 @@ type relationshipEndpoint struct {
 	Model struct {
 		Name string `json:"name"`
 	} `json:"model"`
+	Match struct {
+		From []relationshipEndpoint `json:"from"`
+		To   []relationshipEndpoint `json:"to"`
+	} `json:"match"`
 }
 
 func latestPreviousVersion(version string, versions map[string]struct{}) string {
@@ -282,7 +294,9 @@ func relationshipFiles(directory string) ([]os.DirEntry, error) {
 	return files, nil
 }
 
-func copyRelationships(files []os.DirEntry, source, destination, version string) error {
+// copyRelationships writes every file or none: on failure it removes the
+// files it already wrote so a version is never left half carried.
+func copyRelationships(files []os.DirEntry, source, destination, version string) (err error) {
 	type fileCopy struct {
 		name string
 		data []byte
@@ -307,15 +321,32 @@ func copyRelationships(files []os.DirEntry, source, destination, version string)
 		copies = append(copies, fileCopy{name: file.Name(), data: data, mode: info.Mode().Perm()})
 	}
 
+	_, statErr := os.Stat(destination)
+	createdDestination := errors.Is(statErr, os.ErrNotExist)
 	if err := os.MkdirAll(destination, 0755); err != nil {
 		return fmt.Errorf("create %q: %w", destination, err)
 	}
+
+	written := make([]string, 0, len(copies))
+	defer func() {
+		if err == nil {
+			return
+		}
+		for _, path := range written {
+			_ = os.Remove(path)
+		}
+		if createdDestination {
+			_ = os.Remove(destination)
+		}
+	}()
+
 	for _, file := range copies {
 		path := filepath.Join(destination, file.name)
 		output, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, file.mode)
 		if err != nil {
 			return fmt.Errorf("create %q: %w", path, err)
 		}
+		written = append(written, path)
 		if _, err := output.Write(file.data); err != nil {
 			_ = output.Close()
 			return fmt.Errorf("write %q: %w", path, err)

@@ -239,3 +239,51 @@ func TestCarryForwardRelationshipsOnlyTouchesNewVersions(t *testing.T) {
 		t.Errorf("relationship was copied into a version that existed before generation; stat error = %v", err)
 	}
 }
+
+func TestRelationshipKindsMissingFromModelChecksMatchSelectors(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "policy-edge.json")
+	definition := []byte(`{"selectors":[{"allow":{"from":[{"kind":"Pod","match":{"from":[{"kind":"self"}],"to":[{"kind":"NetworkPolicy"}]}}],"to":[{"kind":"Pod"}]}}]}`)
+	if err := os.WriteFile(path, definition, 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	previousKinds := map[string]struct{}{"Pod": {}, "NetworkPolicy": {}}
+	componentKinds := map[string]struct{}{"Pod": {}}
+	missing, err := relationshipKindsMissingFromModel(path, "sample-model", previousKinds, componentKinds)
+	if err != nil {
+		t.Fatalf("check relationship kinds: %v", err)
+	}
+	if len(missing) != 1 || missing[0] != "NetworkPolicy" {
+		t.Errorf("missing kinds = %v, want [NetworkPolicy]", missing)
+	}
+}
+
+func TestCopyRelationshipsRemovesPartialWrites(t *testing.T) {
+	source := filepath.Join(t.TempDir(), "relationships")
+	if err := os.MkdirAll(source, 0755); err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"a-edge.json", "b-edge.json"} {
+		if err := os.WriteFile(filepath.Join(source, name), []byte(`{"model":{"model":{"version":"v1.2.0"}}}`), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	files, err := relationshipFiles(source)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	destination := filepath.Join(t.TempDir(), "relationships")
+	// A directory with the second file's name makes its create fail after
+	// the first file has been written.
+	if err := os.MkdirAll(filepath.Join(destination, "b-edge.json"), 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := copyRelationships(files, source, destination, "v1.3.0"); err == nil {
+		t.Fatal("copy relationships succeeded, want an error")
+	}
+	if _, err := os.Stat(filepath.Join(destination, "a-edge.json")); !os.IsNotExist(err) {
+		t.Errorf("partially copied relationship was left behind; stat error = %v", err)
+	}
+}
