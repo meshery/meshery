@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { findSelectedFileInDialog } from './fileUpload';
+import { findSelectedFileInDialog, readFileAsBytes } from './fileUpload';
 
 const selectFile = (input: HTMLInputElement, file: File) => {
   Object.defineProperty(input, 'files', {
@@ -55,5 +55,31 @@ describe('findSelectedFileInDialog', () => {
     selectFile(pageInput, pageFile);
 
     expect(findSelectedFileInDialog()).toBe(activeDialogFile);
+  });
+
+  it('returns undefined when no file inputs have selected files', () => {
+    document.body.innerHTML = '<input type="file" id="empty-input" />';
+    expect(findSelectedFileInDialog()).toBeUndefined();
+  });
+});
+
+describe('readFileAsBytes', () => {
+  it('reads a valid File or Blob into byte array', async () => {
+    const file = new File(['ABC'], 'test.txt', { type: 'text/plain' });
+    const bytes = await readFileAsBytes(file);
+    expect(bytes).toEqual([65, 66, 67]);
+  });
+
+  it('rejects with TypeError when file is nullish or invalid', async () => {
+    await expect(readFileAsBytes(null)).rejects.toThrow(TypeError);
+    await expect(readFileAsBytes(undefined)).rejects.toThrow(TypeError);
+    // @ts-expect-error testing invalid argument
+    await expect(readFileAsBytes({} as any)).rejects.toThrow(TypeError);
+  });
+
+  it('resolves to empty array for an empty file', async () => {
+    const emptyFile = new File([], 'empty.txt', { type: 'text/plain' });
+    const bytes = await readFileAsBytes(emptyFile);
+    expect(bytes).toEqual([]);
   });
 });
