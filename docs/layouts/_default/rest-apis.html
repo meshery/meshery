@@ -416,7 +416,9 @@
                   {{ $serverDescription := index $server "description" | default "Meshery Server URL" }}
                   <div class="rest-api-try-item">
                     <p class="rest-api-try-item__label">{{ $serverDescription }}</p>
-                    <code class="rest-api-try-item__url">{{ printf "%s%s" $serverUrl $operationPath }}</code>
+                    <div class="rest-api-try-item__url-wrap">
+                      <code class="rest-api-try-item__url clipboardjs">{{ printf "%s%s" $serverUrl $operationPath }}</code>
+                    </div>
                   </div>
                 {{ end }}
               </div>
