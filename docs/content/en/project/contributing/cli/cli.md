@@ -225,4 +225,4 @@ content, and only the file's modification time recorded that it happened.
 
 #### End-to-end Tests
 
-End-to-end testing of mesheryctl uses the Bash Automated Testing System (BATS) framework to define and execute CLI tests. See [Contributing to Meshery CLI End-to-End Tests]({{< ref "project/contributing/cli/tests.md" >}})
+End-to-end testing of mesheryctl uses the Bash Automated Testing System (BATS) framework to define and execute CLI tests. See [Contributing to Meshery CLI End-to-End Tests]({{< ref "project/contributing/cli/tests/index.md" >}})
