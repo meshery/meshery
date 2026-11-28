@@ -57,7 +57,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	_, _ = w.Write(bdr)
 }
 
-// FetchAllResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
+// FetchAllResultsHandler serves paginated results from the selected provider.
 func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	err := req.ParseForm()
 	if err != nil {

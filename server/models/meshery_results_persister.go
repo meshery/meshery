@@ -78,6 +78,8 @@ func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, from, t
 
 	var res []*localMesheryResultDBRepresentation
 	var count int64
+	// Take the date from the timestamp text to preserve its offset, as the calendar does.
+	// DATETIME validates the timestamp for the query without supplying the comparison date.
 	const runnerStart = "json_extract(CASE WHEN json_valid(result) THEN result END, '$.StartTime')"
 	const startDay = "SUBSTR(CASE WHEN DATETIME(" + runnerStart + ") IS NOT NULL" +
 		" AND SUBSTR(" + runnerStart + ", 11, 1) = 'T'" +
