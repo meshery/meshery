@@ -113,5 +113,5 @@ To export a design as a Helm chart or a Kubernetes manifest, use Meshery UI.
 
 ## See also
 
-- [Creating a Meshery Design]({{< ref "guides/configuration-management/creating-a-meshery-design.md" >}})
+- [Creating a Meshery Design]({{< ref "guides/configuration-management/creating-a-meshery-design/index.md" >}})
 - [`mesheryctl design` reference]({{< ref "reference/mesheryctl/design/_index.md" >}})
