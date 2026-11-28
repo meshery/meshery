@@ -165,7 +165,7 @@ func carryForwardRelationships(modelsPath string, before modelVersions) error {
 			}
 
 			if err := copyRelationships(missingFiles, source, destination, newVersion); err != nil {
-				carryErrors = append(carryErrors, fmt.Errorf("carry relationships to %s %s: %w", modelName, newVersion, err))
+				carryErrors = append(carryErrors, fmt.Errorf("carry relationships to %s %s (remove %q and rerun to retry): %w", modelName, newVersion, filepath.Join(modelPath, newVersion), err))
 			}
 		}
 	}
@@ -294,31 +294,39 @@ func relationshipFiles(directory string) ([]os.DirEntry, error) {
 	return files, nil
 }
 
-// copyRelationships writes every file or none: on failure it removes the
-// files it already wrote so a version is never left half carried.
-func copyRelationships(files []os.DirEntry, source, destination, version string) (err error) {
+// copyRelationships copies the files that can be read and updated, and
+// reports the ones that cannot. A write failure is all or nothing: it removes
+// the files this call already wrote so a version is never left half carried.
+func copyRelationships(files []os.DirEntry, source, destination, version string) error {
 	type fileCopy struct {
 		name string
 		data []byte
 		mode os.FileMode
 	}
 
+	var readErrors []error
 	copies := make([]fileCopy, 0, len(files))
 	for _, file := range files {
 		path := filepath.Join(source, file.Name())
 		data, err := os.ReadFile(path)
 		if err != nil {
-			return fmt.Errorf("read %q: %w", path, err)
+			readErrors = append(readErrors, fmt.Errorf("read %q: %w", path, err))
+			continue
 		}
 		data, err = setRelationshipModelVersion(data, version)
 		if err != nil {
-			return fmt.Errorf("update embedded model version in %q: %w", path, err)
+			readErrors = append(readErrors, fmt.Errorf("update embedded model version in %q: %w", path, err))
+			continue
 		}
 		info, err := file.Info()
 		if err != nil {
-			return fmt.Errorf("read file info for %q: %w", path, err)
+			readErrors = append(readErrors, fmt.Errorf("read file info for %q: %w", path, err))
+			continue
 		}
 		copies = append(copies, fileCopy{name: file.Name(), data: data, mode: info.Mode().Perm()})
+	}
+	if len(copies) == 0 {
+		return errors.Join(readErrors...)
 	}
 
 	_, statErr := os.Stat(destination)
@@ -328,32 +336,37 @@ func copyRelationships(files []os.DirEntry, source, destination, version string)
 	}
 
 	written := make([]string, 0, len(copies))
-	defer func() {
-		if err == nil {
-			return
-		}
-		for _, path := range written {
-			_ = os.Remove(path)
-		}
-		if createdDestination {
-			_ = os.Remove(destination)
-		}
-	}()
-
 	for _, file := range copies {
 		path := filepath.Join(destination, file.name)
-		output, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, file.mode)
-		if err != nil {
-			return fmt.Errorf("create %q: %w", path, err)
+		if err := writeNewFile(path, file.data, file.mode); err != nil {
+			for _, path := range written {
+				_ = os.Remove(path)
+			}
+			if createdDestination {
+				_ = os.Remove(destination)
+			}
+			return err
 		}
 		written = append(written, path)
-		if _, err := output.Write(file.data); err != nil {
-			_ = output.Close()
-			return fmt.Errorf("write %q: %w", path, err)
-		}
-		if err := output.Close(); err != nil {
-			return fmt.Errorf("close %q: %w", path, err)
-		}
+	}
+	return errors.Join(readErrors...)
+}
+
+// writeNewFile creates path, failing if it already exists. A file it created
+// but could not finish writing is removed.
+func writeNewFile(path string, data []byte, mode os.FileMode) error {
+	output, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, mode)
+	if err != nil {
+		return fmt.Errorf("create %q: %w", path, err)
+	}
+	if _, err := output.Write(data); err != nil {
+		_ = output.Close()
+		_ = os.Remove(path)
+		return fmt.Errorf("write %q: %w", path, err)
+	}
+	if err := output.Close(); err != nil {
+		_ = os.Remove(path)
+		return fmt.Errorf("close %q: %w", path, err)
 	}
 	return nil
 }

@@ -287,3 +287,43 @@ func TestCopyRelationshipsRemovesPartialWrites(t *testing.T) {
 		t.Errorf("partially copied relationship was left behind; stat error = %v", err)
 	}
 }
+
+func TestCarryForwardRelationshipsCopiesValidFilesWhenOneIsMalformed(t *testing.T) {
+	modelsPath := t.TempDir()
+	modelPath := filepath.Join(modelsPath, "sample-model")
+	previousRelationships := filepath.Join(modelPath, "v1.2.0", defVersion, "relationships")
+	if err := os.MkdirAll(previousRelationships, 0755); err != nil {
+		t.Fatal(err)
+	}
+	definitions := map[string]string{
+		"valid-edge.json":       `{"model":{"model":{"version":"v1.2.0"}}}`,
+		"malformed-edge.json":   `{"model":`,
+		"unversioned-edge.json": `{"model":{"name":"sample-model"}}`,
+	}
+	for name, definition := range definitions {
+		if err := os.WriteFile(filepath.Join(previousRelationships, name), []byte(definition), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	before, err := snapshotModelVersions(modelsPath)
+	if err != nil {
+		t.Fatalf("snapshot model versions: %v", err)
+	}
+	if err := os.MkdirAll(filepath.Join(modelPath, "v1.3.0", defVersion, "components"), 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := carryForwardRelationships(modelsPath, before); err == nil {
+		t.Error("carry forward relationships succeeded, want an error for the malformed files")
+	}
+	newRelationships := filepath.Join(modelPath, "v1.3.0", defVersion, "relationships")
+	if _, err := os.Stat(filepath.Join(newRelationships, "valid-edge.json")); err != nil {
+		t.Errorf("valid relationship was not copied: %v", err)
+	}
+	for _, name := range []string{"malformed-edge.json", "unversioned-edge.json"} {
+		if _, err := os.Stat(filepath.Join(newRelationships, name)); !os.IsNotExist(err) {
+			t.Errorf("%s was copied; stat error = %v", name, err)
+		}
+	}
+}

@@ -231,17 +231,17 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		fmt.Println("   (Each model has a timeout of", modelTimeout, ")")
 		fmt.Println()
 
-		versionsBeforeGeneration, err := snapshotModelVersions(registryLocation)
-		if err != nil {
-			return err
+		// A failed snapshot only disables carry-forward; generation still runs.
+		versionsBeforeGeneration, snapshotErr := snapshotModelVersions(registryLocation)
+		if snapshotErr != nil {
+			snapshotErr = fmt.Errorf("skipping relationship carry-forward: %w", snapshotErr)
 		}
 
 		err = meshkitRegistryUtils.InvokeGenerationFromSheetWithOptions(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv, genOpts)
-		generationErr := err
-		if carryErr := carryForwardRelationships(registryLocation, versionsBeforeGeneration); carryErr != nil {
-			generationErr = errors.Join(generationErr, carryErr)
+		err = errors.Join(err, snapshotErr)
+		if snapshotErr == nil {
+			err = errors.Join(err, carryForwardRelationships(registryLocation, versionsBeforeGeneration))
 		}
-		err = generationErr
 
 		elapsed := time.Since(startTime).Round(time.Second)
 		fmt.Println()
