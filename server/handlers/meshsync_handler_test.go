@@ -140,6 +140,13 @@ func TestGetMeshSyncResourceByID_Success(t *testing.T) {
 		ClusterID: "test-cluster",
 		ComponentMetadata: map[string]interface{}{
 			"name": "test-resource",
+			"capabilities": map[string]interface{}{
+				"connection": true,
+				"urls":       []interface{}{"http://10.0.0.1:9090"},
+			},
+			"registry_capabilities": []interface{}{
+				map[string]interface{}{"kind": "action", "displayName": "Connect"},
+			},
 		},
 	}
 	// Insert via Table to preserve exact UUID primary key without BeforeCreate hook overriding it
@@ -159,6 +166,36 @@ func TestGetMeshSyncResourceByID_Success(t *testing.T) {
 
 	if ct := rec.Header().Get("Content-Type"); ct != "application/json" {
 		t.Errorf("expected Content-Type application/json, got %q", ct)
+	}
+}
+
+func TestKubernetesResourceToComponentDefPreservesRegistryCapabilities(t *testing.T) {
+	resource := model.KubernetesResource{
+		ComponentMetadata: map[string]interface{}{
+			"name": "prometheus",
+			"capabilities": map[string]interface{}{
+				"connection": true,
+				"urls":       []interface{}{"http://10.0.0.1:9090"},
+			},
+			"registry_capabilities": []interface{}{
+				map[string]interface{}{"kind": "action", "displayName": "Connect"},
+			},
+		},
+		KubernetesResourceMeta: &model.KubernetesResourceObjectMeta{
+			Name: "prometheus",
+			UID:  "test-resource-id",
+		},
+	}
+
+	componentDef, err := KubernetesResourceToComponentDef(resource, true, true)
+	if err != nil {
+		t.Fatalf("KubernetesResourceToComponentDef returned an error: %v", err)
+	}
+	if componentDef.Capabilities == nil || len(*componentDef.Capabilities) != 1 {
+		t.Fatalf("expected registry capabilities to be preserved, got %#v", componentDef.Capabilities)
+	}
+	if got := (*componentDef.Capabilities)[0].Kind; got != "action" {
+		t.Fatalf("expected registry capability kind action, got %q", got)
 	}
 }
 
@@ -581,5 +618,62 @@ func TestDeleteMeshSyncResource_RemovesChildRows(t *testing.T) {
 		if n != 0 {
 			t.Errorf("%s rows left after delete: got %d, want 0", name, n)
 		}
+	}
+}
+
+func TestGetMeshSyncResources_PreservesDiscoveryURLs(t *testing.T) {
+	h, provider, db := newMeshSyncTestFixture(t)
+
+	id := uuid.Must(uuid.NewV4()).String()
+	meta := model.KubernetesResourceObjectMeta{
+		ID:   id,
+		Name: "service-resource",
+		UID:  id,
+	}
+	if err := db.Create(&meta).Error; err != nil {
+		t.Fatalf("failed to seed meta: %v", err)
+	}
+	res := model.KubernetesResource{
+		ID:        id,
+		ClusterID: "test-cluster",
+		ComponentMetadata: map[string]interface{}{
+			"capabilities": map[string]interface{}{
+				"connection": true,
+				"urls":       []interface{}{"http://10.0.0.1:9090"},
+			},
+		},
+	}
+	if err := db.Table("kubernetes_resources").Create(&res).Error; err != nil {
+		t.Fatalf("failed to seed res: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/system/meshsync/resources?clusterIds="+url.QueryEscape(`["test-cluster"]`), nil)
+	rec := httptest.NewRecorder()
+
+	h.GetMeshSyncResources(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status 200, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+
+	var response models.MeshSyncResourcesAPIResponse
+	if err := json.Unmarshal(rec.Body.Bytes(), &response); err != nil {
+		t.Fatalf("unmarshal response: %v", err)
+	}
+
+	if len(response.Resources) != 1 {
+		t.Fatalf("expected 1 resource, got %d", len(response.Resources))
+	}
+
+	caps, ok := response.Resources[0].ComponentMetadata["capabilities"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected capabilities map, got %#v", response.Resources[0].ComponentMetadata["capabilities"])
+	}
+	if conn, ok := caps["connection"].(bool); !ok || !conn {
+		t.Errorf("expected connection: true, got %#v", caps["connection"])
+	}
+	urls, ok := caps["urls"].([]interface{})
+	if !ok || len(urls) != 1 || urls[0] != "http://10.0.0.1:9090" {
+		t.Errorf("expected discovery urls to be preserved in list response, got %#v", caps["urls"])
 	}
 }

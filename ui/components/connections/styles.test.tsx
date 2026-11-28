@@ -16,10 +16,9 @@ vi.mock('@sistent/sistent', () => {
       return React.createElement(tag, elementProps, children);
     };
 
-  // styled(Component)(styleArg) -> returns a passthrough that delegates to Component
-  // while preserving caller-provided data-testid attributes for assertions.
+  // Styled components render as passthroughs while preserving caller-provided test IDs.
   const styledFactory = <P extends object>(Component: React.ComponentType<P> | string) => {
-    return (styleArg: unknown) => {
+    return () => {
       const RemoteStyle = ({ children, ...rest }: AnyProps) =>
         typeof Component === 'string'
           ? React.createElement(Component, rest as never, children)
@@ -28,7 +27,6 @@ vi.mock('@sistent/sistent', () => {
               rest as never,
               children,
             );
-      (RemoteStyle as unknown as { __styleArg: unknown }).__styleArg = styleArg;
       RemoteStyle.displayName = 'StyledMock';
       return RemoteStyle;
     };
@@ -137,6 +135,48 @@ describe('connections/styles - styled components', () => {
     );
     expect(screen.getByTestId('select')).toBeInTheDocument();
     expect(screen.getByTestId('menu')).toHaveTextContent('one');
+  });
+
+  it('MeshSyncNonInteractiveStatus overrides ancestor pointer cursor with default on wrapper and chip', async () => {
+    vi.resetModules();
+    vi.doMock('@sistent/sistent', async () => {
+      const mui = await import('@mui/material');
+      return { ...mui, Grid2: mui.Grid };
+    });
+    vi.doMock('@/theme', async () => await import('@mui/material'));
+
+    const { ThemeProvider, createTheme } = await import('@mui/material');
+    const { MeshSyncNonInteractiveStatus: RealStatus, DiscoveredChip: RealDiscoveredChip } =
+      await import('./styles');
+
+    const theme = createTheme({
+      palette: {
+        border: { normal: '#ccc', brand: '#00b39f' },
+        background: {
+          card: '#fff',
+          default: '#fff',
+          secondary: '#eee',
+          error: { default: '#d32f2f' },
+          success: { default: '#2e7d32' },
+          warning: { default: '#ed6c02' },
+        },
+      } as never,
+    });
+
+    render(
+      <ThemeProvider theme={theme}>
+        <div style={{ cursor: 'pointer' }}>
+          <RealStatus data-testid="real-non-interactive-status">
+            <RealDiscoveredChip data-testid="real-discovered-chip" label="discovered" />
+          </RealStatus>
+        </div>
+      </ThemeProvider>,
+    );
+
+    expect(getComputedStyle(screen.getByTestId('real-non-interactive-status')).cursor).toBe(
+      'default',
+    );
+    expect(getComputedStyle(screen.getByTestId('real-discovered-chip')).cursor).toBe('default');
   });
 
   it('ConnectionIconText renders as a styled div', () => {

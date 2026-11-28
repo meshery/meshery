@@ -72,7 +72,22 @@ func JsonParse(input *string, allowEmpty bool, defaultValue interface{}) interfa
 func KubernetesResourceToComponentDef(resource model.KubernetesResource, stripSchema bool, stripInstanceDetails bool) (*component.ComponentDefinition, error) {
 
 	var componentDef component.ComponentDefinition
-	err := MapToStruct(resource.ComponentMetadata, &componentDef)
+	componentMetadata := resource.ComponentMetadata
+	if _, ok := componentMetadata["capabilities"].(map[string]interface{}); ok {
+		componentMetadata = make(map[string]interface{}, len(resource.ComponentMetadata)-1)
+		for key, value := range resource.ComponentMetadata {
+			if key != "capabilities" && key != "registry_capabilities" {
+				componentMetadata[key] = value
+			}
+		}
+		if registryCapabilities, ok := resource.ComponentMetadata["registry_capabilities"]; ok {
+			registryMetadata := map[string]interface{}{"capabilities": registryCapabilities}
+			if err := MapToStruct(registryMetadata, &componentDef); err != nil {
+				return nil, fmt.Errorf("failed to map registry capabilities: %w", err)
+			}
+		}
+	}
+	err := MapToStruct(componentMetadata, &componentDef)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to map component metadata: %w", err)

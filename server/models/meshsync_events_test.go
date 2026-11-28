@@ -818,3 +818,280 @@ func TestReplaceMeshsyncResourceRejectsMissingIdentity(t *testing.T) {
 		}
 	}
 }
+
+func TestPersistStoreUpdatePreservesMeshSyncCapabilities(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to create in-memory database: %v", err)
+	}
+
+	if err := db.AutoMigrate(
+		&modelv1beta1.ModelDefinition{},
+		&component.ComponentDefinition{},
+		&meshsyncmodel.KubernetesResource{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
+		&meshsyncmodel.KubernetesKeyValue{},
+		&meshsyncmodel.KubernetesResourceSpec{},
+		&meshsyncmodel.KubernetesResourceStatus{},
+	); err != nil {
+		t.Fatalf("failed to migrate schema: %v", err)
+	}
+
+	modelID := uuid.FromStringOrNil("11111111-1111-1111-1111-111111111111")
+	if err := db.Create(&modelv1beta1.ModelDefinition{ID: modelID, Name: "kubernetes"}).Error; err != nil {
+		t.Fatalf("failed to create model definition: %v", err)
+	}
+
+	componentDef := component.ComponentDefinition{
+		ID:      uuid.FromStringOrNil("22222222-2222-2222-2222-222222222222"),
+		ModelID: &modelID,
+		Component: component.Component{
+			Kind:    "Service",
+			Version: "v1",
+		},
+		Styles:       &core.ComponentStyles{SvgColor: "<svg></svg>"},
+		Capabilities: &[]capabilityv1beta1.Capability{{Kind: "action", DisplayName: "Connect"}},
+	}
+	if err := db.Create(&componentDef).Error; err != nil {
+		t.Fatalf("failed to create component definition: %v", err)
+	}
+
+	handler := &MeshsyncDataHandler{
+		dbHandler: database.Handler{DB: db, Mutex: &sync.Mutex{}},
+		log:       &fakeMeshsyncLogger{},
+	}
+
+	obj := &meshsyncmodel.KubernetesResource{
+		APIVersion: "v1",
+		Kind:       "Service",
+		ClusterID:  "cluster-1",
+		KubernetesResourceMeta: &meshsyncmodel.KubernetesResourceObjectMeta{
+			Name:      "prometheus-service",
+			Namespace: "monitoring",
+		},
+		ComponentMetadata: map[string]interface{}{
+			"capabilities": map[string]interface{}{
+				"connection": true,
+				"urls":       []interface{}{"http://10.0.0.1:9090"},
+			},
+		},
+	}
+
+	if err := handler.persistStoreUpdate(obj); err != nil {
+		t.Fatalf("persistStoreUpdate failed: %v", err)
+	}
+
+	assertPreserved := func(resourceID string, expectedURL string) {
+		t.Helper()
+		var stored meshsyncmodel.KubernetesResource
+		if err := db.First(&stored, "id = ?", resourceID).Error; err != nil {
+			t.Fatalf("failed to read stored resource: %v", err)
+		}
+
+		caps, ok := stored.ComponentMetadata["capabilities"].(map[string]interface{})
+		if !ok {
+			t.Fatalf("expected MeshSync capabilities map to be preserved, got %#v", stored.ComponentMetadata["capabilities"])
+		}
+		if conn, ok := caps["connection"].(bool); !ok || !conn {
+			t.Fatalf("expected capabilities.connection=true to be preserved, got %#v", caps["connection"])
+		}
+		urls, ok := caps["urls"].([]interface{})
+		if !ok || len(urls) != 1 || urls[0] != expectedURL {
+			t.Fatalf("expected capabilities.urls to be preserved, got %#v", caps["urls"])
+		}
+		styles, ok := stored.ComponentMetadata["styles"].(map[string]interface{})
+		if !ok || styles["svgColor"] != "<svg></svg>" {
+			t.Fatalf("expected component styles from registry metadata, got %#v", stored.ComponentMetadata["styles"])
+		}
+	}
+
+	assertPreserved(obj.ID, "http://10.0.0.1:9090")
+
+	if err := handler.meshsyncEventsAccumulator(&meshkitBroker.Message{
+		EventType: meshkitBroker.Update,
+		Object: map[string]interface{}{
+			"apiVersion": "v1",
+			"kind":       "Service",
+			"cluster_id": "cluster-1",
+			"metadata": map[string]interface{}{
+				"name":      "prometheus-service",
+				"namespace": "monitoring",
+			},
+			"component_metadata": map[string]interface{}{
+				"capabilities": map[string]interface{}{
+					"connection": true,
+					"urls":       []interface{}{"http://10.0.0.2:9090"},
+				},
+			},
+		},
+	}); err != nil {
+		t.Fatalf("meshsyncEventsAccumulator Update failed: %v", err)
+	}
+
+	assertPreserved(obj.ID, "http://10.0.0.2:9090")
+
+	if err := handler.meshsyncEventsAccumulator(&meshkitBroker.Message{
+		EventType: meshkitBroker.Update,
+		Object: map[string]interface{}{
+			"apiVersion": "v1",
+			"kind":       "Service",
+			"cluster_id": "cluster-1",
+			"metadata": map[string]interface{}{
+				"name":      "prometheus-service",
+				"namespace": "monitoring",
+			},
+			"component_metadata": map[string]interface{}{
+				"capabilities": map[string]interface{}{
+					"connection": false,
+					"urls":       []interface{}{},
+				},
+			},
+		},
+	}); err != nil {
+		t.Fatalf("meshsyncEventsAccumulator Update with placeholder capabilities failed: %v", err)
+	}
+
+	var stored meshsyncmodel.KubernetesResource
+	if err := db.First(&stored, "id = ?", obj.ID).Error; err != nil {
+		t.Fatalf("failed to read stored resource after placeholder update: %v", err)
+	}
+	caps, ok := stored.ComponentMetadata["capabilities"].([]interface{})
+	if !ok || len(caps) != 1 {
+		t.Fatalf("expected registry capabilities to replace placeholder discovery capabilities, got %#v", stored.ComponentMetadata["capabilities"])
+	}
+}
+
+func TestMergeComponentMetadataCapabilities(t *testing.T) {
+	registryCapabilities := []interface{}{
+		map[string]interface{}{"kind": "action", "displayName": "Connect"},
+	}
+	meshSyncCapabilities := map[string]interface{}{
+		"connection": true,
+		"urls":       []interface{}{"http://10.0.0.1:9090"},
+	}
+	tests := []struct {
+		name                 string
+		existingMetadata     map[string]interface{}
+		existingCapabilities interface{}
+		includeCapabilities  bool
+		wantCapabilities     interface{}
+	}{
+		{
+			name:             "nil discovery metadata uses registry capabilities",
+			existingMetadata: nil,
+			wantCapabilities: registryCapabilities,
+		},
+		{
+			name:             "missing discovery capabilities use registry capabilities",
+			existingMetadata: map[string]interface{}{"styles": map[string]interface{}{"color": "discovery"}},
+			wantCapabilities: registryCapabilities,
+		},
+		{
+			name:                 "nil discovery capabilities use registry capabilities",
+			existingCapabilities: nil,
+			includeCapabilities:  true,
+			wantCapabilities:     registryCapabilities,
+		},
+		{
+			name:                 "empty discovery map uses registry capabilities",
+			existingCapabilities: map[string]interface{}{},
+			includeCapabilities:  true,
+			wantCapabilities:     registryCapabilities,
+		},
+		{
+			name:                 "empty discovery array uses registry capabilities",
+			existingCapabilities: []interface{}{},
+			includeCapabilities:  true,
+			wantCapabilities:     registryCapabilities,
+		},
+		{
+			name: "placeholder discovery fields use registry capabilities",
+			existingCapabilities: map[string]interface{}{
+				"urls": []interface{}{},
+				"name": " ",
+			},
+			includeCapabilities: true,
+			wantCapabilities:    registryCapabilities,
+		},
+		{
+			name: "false connection placeholder uses registry capabilities",
+			existingCapabilities: map[string]interface{}{
+				"connection": false,
+			},
+			includeCapabilities: true,
+			wantCapabilities:    registryCapabilities,
+		},
+		{
+			name: "zero connection placeholder uses registry capabilities",
+			existingCapabilities: map[string]interface{}{
+				"connection": float64(0),
+			},
+			includeCapabilities: true,
+			wantCapabilities:    registryCapabilities,
+		},
+		{
+			name:                 "scalar positive integer uses registry capabilities",
+			existingCapabilities: 1,
+			includeCapabilities:  true,
+			wantCapabilities:     registryCapabilities,
+		},
+		{
+			name: "nested map without direct connection or urls uses registry capabilities",
+			existingCapabilities: map[string]interface{}{
+				"nested": map[string]interface{}{"connection": true},
+			},
+			includeCapabilities: true,
+			wantCapabilities:    registryCapabilities,
+		},
+		{
+			name:                 "populated discovery map is preserved",
+			existingCapabilities: meshSyncCapabilities,
+			includeCapabilities:  true,
+			wantCapabilities:     meshSyncCapabilities,
+		},
+		{
+			name: "valid discovery URL is preserved",
+			existingCapabilities: map[string]interface{}{
+				"urls": []interface{}{"http://10.0.0.1:9090"},
+			},
+			includeCapabilities: true,
+			wantCapabilities: map[string]interface{}{
+				"urls": []interface{}{"http://10.0.0.1:9090"},
+			},
+		},
+		{
+			name: "unrelated discovery metadata is preserved",
+			existingMetadata: map[string]interface{}{
+				"discoveryName": "prometheus",
+				"capabilities":  map[string]interface{}{},
+			},
+			includeCapabilities: true,
+			wantCapabilities:    registryCapabilities,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			existingMetadata := tt.existingMetadata
+			if tt.includeCapabilities && existingMetadata == nil {
+				existingMetadata = map[string]interface{}{"capabilities": tt.existingCapabilities}
+			}
+
+			merged := mergeComponentMetadata(existingMetadata, map[string]interface{}{
+				"capabilities": registryCapabilities,
+				"styles":       map[string]interface{}{"svgColor": "registry"},
+			})
+
+			assert.Equal(t, tt.wantCapabilities, merged["capabilities"])
+			assert.Equal(t, map[string]interface{}{"svgColor": "registry"}, merged["styles"])
+			if tt.name == "populated discovery map is preserved" || tt.name == "valid discovery URL is preserved" {
+				assert.Equal(t, registryCapabilities, merged["registry_capabilities"])
+			} else {
+				assert.NotContains(t, merged, "registry_capabilities")
+			}
+			if tt.name == "unrelated discovery metadata is preserved" {
+				assert.Equal(t, "prometheus", merged["discoveryName"])
+			}
+		})
+	}
+}

@@ -92,6 +92,14 @@ export const ConnectionStyledMenuItem = styled(MenuItem)({
   },
 });
 
+export const MeshSyncNonInteractiveStatus = styled('span')({
+  display: 'inline-flex',
+  cursor: 'default',
+  '& .MuiChip-root': {
+    cursor: 'default',
+  },
+});
+
 export const ConnectionIconText = styled('div')({
   display: 'flex',
   alignItems: 'center',
