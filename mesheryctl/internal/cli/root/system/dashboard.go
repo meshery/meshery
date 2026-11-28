@@ -224,19 +224,23 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 				Address: endpoint.Internal.Address,
 				Port:    endpoint.Internal.Port,
 			}, nil) {
-				currCtx.SetEndpoint(fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port))
-				if !meshkitutils.TcpCheck(&meshkitutils.HostPort{
-					Address: endpoint.External.Address,
-					Port:    endpoint.External.Port,
-				}, nil) {
-					u, _ := url.Parse(client.RestConfig.Host)
-					if meshkitutils.TcpCheck(&meshkitutils.HostPort{
-						Address: u.Hostname(),
+				if endpoint.External != nil {
+					currCtx.SetEndpoint(fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.External.Address, endpoint.External.Port))
+					if !meshkitutils.TcpCheck(&meshkitutils.HostPort{
+						Address: endpoint.External.Address,
 						Port:    endpoint.External.Port,
 					}, nil) {
-						mesheryEndpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, u.Hostname(), endpoint.External.Port)
-						currCtx.SetEndpoint(mesheryEndpoint)
+						u, _ := url.Parse(client.RestConfig.Host)
+						if meshkitutils.TcpCheck(&meshkitutils.HostPort{
+							Address: u.Hostname(),
+							Port:    endpoint.External.Port,
+						}, nil) {
+							mesheryEndpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, u.Hostname(), endpoint.External.Port)
+							currCtx.SetEndpoint(mesheryEndpoint)
+						}
 					}
+				} else {
+					utils.Log.Debugf("External endpoint unavailable; keeping internal endpoint %s", mesheryEndpoint)
 				}
 			}
 
