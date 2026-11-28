@@ -79,7 +79,7 @@ func processOrgData(orgs *models.OrganizationsPage) ([][]string, int64) {
 		rows = append(rows, []string{
 			org.ID.String(),
 			org.Name,
-			org.CreatedAt.Format("01-02-2006"),
+			utils.FormatTime(&org.CreatedAt, "2006-01-02 15:04:05", "N/A"),
 		})
 
 	}
