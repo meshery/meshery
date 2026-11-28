@@ -87,7 +87,7 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 	bdr, err := p.FetchAllResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
 	if err != nil {
 		if errors.Is(err, models.ErrInvalidPerformanceResultDate) {
-			writeJSONError(w, err.Error(), http.StatusBadRequest)
+			writeMeshkitError(w, ErrParseForm(err), http.StatusBadRequest)
 			return
 		}
 		if isPaginationError(err) {

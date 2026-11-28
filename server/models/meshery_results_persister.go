@@ -64,20 +64,30 @@ func (mrp *MesheryResultsPersister) GetResults(page, pageSize uint64, profileID 
 // GetAllResults returns a page of results. from and to, when set, are the first
 // and last days (YYYY-MM-DD) of the test start times to return.
 func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, from, to string, log logger.Handler) ([]byte, error) {
-	var res []*localMesheryResultDBRepresentation
-	var count int64
-	query := mrp.DB.Table("meshery_results")
 	if from != "" {
 		if _, err := time.Parse(time.DateOnly, from); err != nil {
 			return nil, fmt.Errorf("%w: from must use YYYY-MM-DD", ErrInvalidPerformanceResultDate)
 		}
-		query = query.Where("DATETIME(test_start_time) >= DATETIME(?)", from)
 	}
 	if to != "" {
 		if _, err := time.Parse(time.DateOnly, to); err != nil {
 			return nil, fmt.Errorf("%w: to must use YYYY-MM-DD", ErrInvalidPerformanceResultDate)
 		}
-		query = query.Where("DATETIME(test_start_time) < DATETIME(?, '+1 day')", to)
+	}
+
+	var res []*localMesheryResultDBRepresentation
+	var count int64
+	query := mrp.DB.Table("meshery_results")
+	const runnerStart = "json_extract(CASE WHEN json_valid(result) THEN result END, '$.StartTime')"
+	const startDay = "SUBSTR(CASE WHEN DATETIME(" + runnerStart + ") IS NOT NULL" +
+		" AND SUBSTR(" + runnerStart + ", 11, 1) = 'T'" +
+		" AND (SUBSTR(" + runnerStart + ", -1) = 'Z' OR SUBSTR(" + runnerStart + ", -6, 1) IN ('+', '-'))" +
+		" AND " + runnerStart + " <> '0001-01-01T00:00:00Z' THEN " + runnerStart + " ELSE test_start_time END, 1, 10)"
+	if from != "" {
+		query = query.Where(startDay+" >= ?", from)
+	}
+	if to != "" {
+		query = query.Where(startDay+" <= ?", to)
 	}
 
 	err := query.Count(&count).Error
@@ -115,8 +125,11 @@ func (mrp *MesheryResultsPersister) WriteResult(key core.Uuid, result []byte) er
 
 	data.ID = key
 
-	t := time.Now()
-	data.TestStartTime = &t
+	start := mesheryRunnerStartTime(data.Result)
+	if start.IsZero() {
+		start = time.Now()
+	}
+	data.TestStartTime = &start
 	return mrp.DB.Table("meshery_results").Save(convertMesheryResultToLocalRepresentation(&data)).Error
 }
 
@@ -126,7 +139,8 @@ func marshalMesheryResultsPage(mrp *MesheryResultPage) []byte {
 	return res
 }
 
-func convertLocalRepresentationSliceToMesheryResultSlice(local []*localMesheryResultDBRepresentation, log logger.Handler) (res []*MesheryResult) {
+func convertLocalRepresentationSliceToMesheryResultSlice(local []*localMesheryResultDBRepresentation, log logger.Handler) []*MesheryResult {
+	res := make([]*MesheryResult, 0, len(local))
 	for _, val := range local {
 		r, _ := convertLocalRepresentationToMesheryResult(val, log)
 		if r != nil {
@@ -134,7 +148,13 @@ func convertLocalRepresentationSliceToMesheryResultSlice(local []*localMesheryRe
 		}
 	}
 
-	return
+	return res
+}
+
+func mesheryRunnerStartTime(result map[string]interface{}) time.Time {
+	raw, _ := result["StartTime"].(string)
+	start, _ := time.Parse(time.RFC3339Nano, raw)
+	return start
 }
 
 func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepresentation, log logger.Handler) (*MesheryResult, error) {
@@ -147,6 +167,10 @@ func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepres
 		return nil, err
 	}
 
+	start := local.TestStartTime
+	if runnerStart := mesheryRunnerStartTime(jsonmap); !runnerStart.IsZero() {
+		start = &runnerStart
+	}
 	res := &MesheryResult{
 		ID:                 local.ID,
 		Name:               local.Name,
@@ -155,7 +179,7 @@ func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepres
 		Result:             jsonmap,
 		ServerMetrics:      local.ServerMetrics,
 		ServerBoardConfig:  local.ServerMetrics,
-		TestStartTime:      local.TestStartTime,
+		TestStartTime:      start,
 	}
 
 	return res, nil
