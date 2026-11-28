@@ -3,6 +3,7 @@ package stages
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/meshery/meshery/server/models/pattern/core"
@@ -128,7 +129,10 @@ func validateWorkload(comp map[string]interface{}, wc component.ComponentDefinit
 	// Validate the json against the schema
 	errs, err := jsonschema.ValidateBytes(context.TODO(), schemaByt, jsonSettings)
 	if err != nil {
-		return err
+		if errors.Is(err, jsonschema.ErrSchemaCreate) {
+			return err
+		}
+		return fmt.Errorf("error occurred during schema validation: %s", err)
 	}
 	if len(errs) > 0 {
 		return fmt.Errorf("invalid settings: %s", errs)
