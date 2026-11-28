@@ -6,9 +6,10 @@
  * which streams the user's events, each framed as `data: <event-json>\n\n`.
  *
  * Being same-origin, the EventSource automatically carries the `meshery-provider`
- * auth cookie and natively reconnects on transient drops. `onError` is only
- * raised once the browser permanently closes the stream, and that notification
- * is throttled (see RECONNECT_NOTIFY_DELAY_MS) so a persistent failure can't turn
+ * auth cookie and natively reconnects on transient drops. `onOpen` is raised on
+ * every stream open, including native reconnects. `onError` is only raised once
+ * the browser permanently closes the stream, and that notification is throttled
+ * (see RECONNECT_NOTIFY_DELAY_MS) so a persistent failure can't turn
  * caller-driven re-subscription into a request storm. The returned `{ dispose }`
  * mirrors the shape of the old Relay subscription so callers stay unchanged.
  */
@@ -28,14 +29,20 @@ export interface EventSubscription {
 
 export type EventCallback = (event: unknown) => void;
 export type ErrorCallback = (error: Event) => void;
+export type OpenCallback = () => void;
 
 export function subscribeToEvents(
   onNext: EventCallback,
   onError?: ErrorCallback,
+  onOpen?: OpenCallback,
 ): EventSubscription {
   let disposed = false;
   let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
   const source = new EventSource(EVENTS_STREAM_URL);
+
+  source.onopen = () => {
+    onOpen?.();
+  };
 
   source.onmessage = (message) => {
     try {
