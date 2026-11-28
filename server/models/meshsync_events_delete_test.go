@@ -147,6 +147,27 @@ func TestMeshsyncDeleteEventForUnknownObject(t *testing.T) {
 	}
 }
 
+func TestMeshsyncDeleteEventRemovesOrphanedChildRows(t *testing.T) {
+	mh := newMeshsyncEventsTestHandler(t)
+	obj := configMapObject("web", "v1")
+	id := configMapID(t, "web")
+	sendMeshsyncEvent(t, mh, meshkitBroker.Add, obj)
+	if err := mh.dbHandler.Where("id = ?", id).Delete(&meshsyncmodel.KubernetesResource{}).Error; err != nil {
+		t.Fatalf("deleting only the parent row: %v", err)
+	}
+	rows := countMeshSyncRows(t, &mh.dbHandler, id)
+	want := map[string]int64{"resource": 0, "object meta": 1, "spec": 1, "status": 1, "key value": 2}
+	for table, n := range want {
+		if rows[table] != n {
+			t.Fatalf("%s rows before the delete event: got %d, want %d", table, rows[table], n)
+		}
+	}
+
+	sendMeshsyncEvent(t, mh, meshkitBroker.Delete, obj)
+
+	assertMeshSyncRows(t, &mh.dbHandler, id, 0)
+}
+
 // TestMeshsyncDeleteEventWithoutIdentity checks that a DELETED event whose
 // object carries neither an id nor the metadata to derive one is reported as
 // an error rather than deleting anything.

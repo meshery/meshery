@@ -960,9 +960,7 @@ func meshSyncResourceChildModels() []any {
 
 // DeleteMeshSyncResourceByID removes one MeshSync resource and every child row
 // that shares its id, in a single transaction. It reports whether the resource
-// existed; when it did not, nothing is deleted. Leaving the children behind would
-// orphan them, and because MeshSync ids are deterministic they would reattach to
-// the resource the next time it is discovered.
+// existed.
 //
 // The children are deleted before the parent, as in
 // FlushMeshSyncResourcesForCluster: their foreign keys are ON DELETE SET NULL on
@@ -976,13 +974,6 @@ func DeleteMeshSyncResourceByID(db *database.Handler, id string) (bool, error) {
 
 	deleted := false
 	err := db.Transaction(func(tx *gorm.DB) error {
-		var exists int64
-		if err := tx.Model(&meshsyncmodel.KubernetesResource{}).Where("id = ?", id).Count(&exists).Error; err != nil {
-			return err
-		}
-		if exists == 0 {
-			return nil
-		}
 		for _, child := range meshSyncResourceChildModels() {
 			if err := tx.Where("id = ?", id).Delete(child).Error; err != nil {
 				return err
