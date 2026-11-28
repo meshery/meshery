@@ -74,6 +74,9 @@ mesheryctl organization list --count
 }
 
 func processOrgData(orgs *models.OrganizationsPage) ([][]string, int64) {
+	if orgs == nil {
+		return nil, 0
+	}
 	var rows [][]string
 	for _, org := range orgs.Organizations {
 		rows = append(rows, []string{

@@ -200,3 +200,13 @@ func TestFormatSaveFileName(t *testing.T) {
 		})
 	}
 }
+
+func TestExtractRelationshipItems_NilResponse(t *testing.T) {
+	items, total := extractRelationshipItems(nil)
+	if len(items) != 0 {
+		t.Fatalf("expected 0 items for nil response, got %d", len(items))
+	}
+	if total != 0 {
+		t.Fatalf("expected total 0 for nil response, got %d", total)
+	}
+}
