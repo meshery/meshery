@@ -194,6 +194,7 @@ vi.mock('@sistent/sistent', () => ({
   Toolbar: ({ children }: any) => <div>{children}</div>,
   Paper: ({ children }: any) => <div>{children}</div>,
   MenuIcon: () => <svg data-testid="menu-icon" />,
+  InputAdornment: ({ children }: any) => <div data-testid="input-adornment">{children}</div>,
 }));
 
 vi.mock('@/utils/can', () => ({

@@ -97,11 +97,17 @@ export const CBadgeContainer = styled('div')({
 
 export const CMenuContainer = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.background.card,
-  borderRadius: '3px',
-  padding: '1rem',
-  boxShadow: '20px #979797',
+  borderRadius: '0px',
+  padding: '1.25rem',
+  minWidth: '520px',
+  maxWidth: 'calc(100vw - 32px)',
+  boxShadow: theme.shadows?.[8] || '0px 4px 20px rgba(0, 0, 0, 0.15)',
   transition: 'linear .2s',
   transitionProperty: 'height',
+  [theme.breakpoints.down('sm')]: {
+    minWidth: 'min(340px, calc(100vw - 32px))',
+    padding: '1rem',
+  },
 }));
 
 export const IconButtonAvatar = styled(IconButton)(({ theme }) => ({
