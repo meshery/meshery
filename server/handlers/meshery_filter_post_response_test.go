@@ -27,6 +27,7 @@ func newFilterPOSTFixture(t *testing.T) (*Handler, *models.DefaultLocalProvider,
 	t.Helper()
 
 	h, provider, db := newDeleteFilterFixture(t)
+	provider.ProviderType = models.LocalProviderType
 	t.Cleanup(func() { _ = db.DBClose() })
 	require.NoError(t, db.AutoMigrate(events.Event{}))
 	provider.EventsPersister = &models.EventsPersister{DB: &db}
@@ -259,6 +260,55 @@ func TestFilterPOSTResponseCarriesUnsavedFilter(t *testing.T) {
 	var eventCount int64
 	require.NoError(t, db.Model(&events.Event{}).Count(&eventCount).Error)
 	assert.Zero(t, eventCount, "a request without save must not persist an event")
+}
+
+func TestFilterPOSTRemoteURLImportForwardsEmptyConfigComponent(t *testing.T) {
+	for _, save := range []bool{false, true} {
+		t.Run(map[bool]string{false: "unsaved", true: "saved"}[save], func(t *testing.T) {
+			h, _, db := newFilterPOSTFixture(t)
+			registerWASMFilterComponent(t, h.registryManager)
+			const sourceURL = "https://example.com/filter.wasm"
+			cloud := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				var payload struct {
+					URL        string `json:"url"`
+					Save       bool   `json:"save"`
+					FilterData struct {
+						FilterResource string `json:"filterResource"`
+					} `json:"filterData"`
+				}
+				if !assert.NoError(t, json.NewDecoder(r.Body).Decode(&payload)) {
+					w.WriteHeader(http.StatusBadRequest)
+					return
+				}
+				assert.Equal(t, sourceURL, payload.URL)
+				assert.Equal(t, save, payload.Save)
+				var resource struct {
+					Component struct {
+						Kind string `json:"kind"`
+					} `json:"component"`
+					Configuration map[string]string `json:"configuration"`
+				}
+				if assert.NoError(t, json.Unmarshal([]byte(payload.FilterData.FilterResource), &resource)) {
+					assert.Equal(t, "WASMFilter", resource.Component.Kind)
+					assert.Equal(t, map[string]string{"config": ""}, resource.Configuration)
+				}
+				_, _ = w.Write([]byte(`[{"name":"rate-limit"}]`))
+			}))
+			t.Cleanup(cloud.Close)
+
+			remote := &models.RemoteProvider{
+				ProviderProperties: models.ProviderProperties{
+					ProviderType: models.RemoteProviderType,
+					Capabilities: models.Capabilities{{Feature: models.PersistMesheryFilters, Endpoint: "/api/content/filters"}},
+				},
+				RemoteProviderURL: cloud.URL,
+				Log:               h.log,
+				EventsPersister:   &models.EventsPersister{DB: &db},
+			}
+			rec := postFilter(t, h, remote, models.MesheryFilterRequestBody{URL: sourceURL, Save: save})
+			require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+		})
+	}
 }
 
 // TestFormatFilterOutputKeepsEmptyListForNull pins the wire shape when a

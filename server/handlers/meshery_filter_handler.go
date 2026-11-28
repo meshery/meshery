@@ -184,7 +184,8 @@ func (h *Handler) handleFilterPOST(
 	format := r.URL.Query().Get("output")
 
 	var filterResource string
-	if parsedBody.URL == "" || parsedBody.FilterData != nil || parsedBody.Config != "" {
+	if parsedBody.URL == "" || parsedBody.FilterData != nil || parsedBody.Config != "" ||
+		provider.GetProviderType() != models.LocalProviderType {
 		filterResource, err = h.generateFilterComponent(parsedBody.Config)
 		if err != nil {
 			if h.log != nil {
