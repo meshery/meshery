@@ -538,48 +538,65 @@ func TestMeshSyncResources_OrderInputSanitization(t *testing.T) {
 // deleted, and the orphaned labels reattached to the resource when MeshSync
 // discovered it again under the same deterministic id.
 func TestDeleteMeshSyncResource_RemovesChildRows(t *testing.T) {
-	h, provider, db := newMeshSyncTestFixture(t)
-
-	resID := base64.StdEncoding.EncodeToString([]byte("test-cluster.Pod.v1.default.web"))
-	rows := []interface{}{
-		&model.KubernetesResourceObjectMeta{ID: resID, Name: "web", UID: resID},
-		&model.KubernetesResourceSpec{ID: resID, Attribute: `{"containers":[]}`},
-		&model.KubernetesResourceStatus{ID: resID, Attribute: `{"phase":"Running"}`},
-		&model.KubernetesKeyValue{ID: resID, UniqueID: resID + "-label", Kind: model.KindLabel, Key: "app", Value: "web"},
-		&model.KubernetesKeyValue{ID: resID, UniqueID: resID + "-annotation", Kind: model.KindAnnotation, Key: "owner", Value: "team-a"},
-	}
-	for _, row := range rows {
-		if err := db.Create(row).Error; err != nil {
-			t.Fatalf("failed to seed %T: %v", row, err)
-		}
-	}
-	if err := db.Table("kubernetes_resources").Create(&model.KubernetesResource{ID: resID, ClusterID: "test-cluster"}).Error; err != nil {
-		t.Fatalf("failed to seed resource: %v", err)
-	}
-
-	req := httptest.NewRequest(http.MethodDelete, "/api/system/meshsync/resources/"+resID, nil)
-	req = mux.SetURLVars(req, map[string]string{"id": resID})
-	rec := httptest.NewRecorder()
-
-	h.DeleteMeshSyncResource(rec, req, nil, nil, provider)
-
-	if rec.Code != http.StatusOK {
-		t.Fatalf("expected status 200, got %d (body=%q)", rec.Code, rec.Body.String())
-	}
-
-	for name, table := range map[string]interface{}{
-		"resource":           &model.KubernetesResource{},
-		"object meta":        &model.KubernetesResourceObjectMeta{},
-		"spec":               &model.KubernetesResourceSpec{},
-		"status":             &model.KubernetesResourceStatus{},
-		"labels/annotations": &model.KubernetesKeyValue{},
+	for _, tc := range []struct {
+		name         string
+		parentExists bool
+		wantStatus   int
+	}{
+		{name: "existing resource", parentExists: true, wantStatus: http.StatusOK},
+		{name: "orphaned child rows", wantStatus: http.StatusNotFound},
 	} {
-		var n int64
-		if err := db.Model(table).Where("id = ?", resID).Count(&n).Error; err != nil {
-			t.Fatalf("counting %s rows: %v", name, err)
-		}
-		if n != 0 {
-			t.Errorf("%s rows left after delete: got %d, want 0", name, n)
-		}
+		t.Run(tc.name, func(t *testing.T) {
+			h, provider, db := newMeshSyncTestFixture(t)
+
+			resID := base64.StdEncoding.EncodeToString([]byte("test-cluster.Pod.v1.default.web"))
+			rows := []interface{}{
+				&model.KubernetesResourceObjectMeta{ID: resID, Name: "web", UID: resID},
+				&model.KubernetesResourceSpec{ID: resID, Attribute: `{"containers":[]}`},
+				&model.KubernetesResourceStatus{ID: resID, Attribute: `{"phase":"Running"}`},
+				&model.KubernetesKeyValue{ID: resID, UniqueID: resID + "-label", Kind: model.KindLabel, Key: "app", Value: "web"},
+				&model.KubernetesKeyValue{ID: resID, UniqueID: resID + "-annotation", Kind: model.KindAnnotation, Key: "owner", Value: "team-a"},
+			}
+			for _, row := range rows {
+				if err := db.Create(row).Error; err != nil {
+					t.Fatalf("failed to seed %T: %v", row, err)
+				}
+			}
+			if tc.parentExists {
+				if err := db.Table("kubernetes_resources").Create(&model.KubernetesResource{ID: resID, ClusterID: "test-cluster"}).Error; err != nil {
+					t.Fatalf("failed to seed resource: %v", err)
+				}
+			}
+
+			req := httptest.NewRequest(http.MethodDelete, "/api/system/meshsync/resources/"+resID, nil)
+			req = mux.SetURLVars(req, map[string]string{"id": resID})
+			rec := httptest.NewRecorder()
+
+			h.DeleteMeshSyncResource(rec, req, nil, nil, provider)
+
+			if rec.Code != tc.wantStatus {
+				t.Fatalf("DELETE status = %d, want %d (body=%q)", rec.Code, tc.wantStatus, rec.Body.String())
+			}
+
+			for table, orphanedRows := range map[any]int64{
+				&model.KubernetesResource{}:           0,
+				&model.KubernetesResourceObjectMeta{}: 1,
+				&model.KubernetesResourceSpec{}:       1,
+				&model.KubernetesResourceStatus{}:     1,
+				&model.KubernetesKeyValue{}:           2,
+			} {
+				var count int64
+				if err := db.Model(table).Where("id = ?", resID).Count(&count).Error; err != nil {
+					t.Fatalf("counting %T rows: %v", table, err)
+				}
+				want := orphanedRows
+				if tc.parentExists {
+					want = 0
+				}
+				if count != want {
+					t.Errorf("%T rows after DELETE = %d, want %d", table, count, want)
+				}
+			}
+		})
 	}
 }
