@@ -284,9 +284,13 @@ current-context: local
 			}
 			utils.SetupCustomContextEnv(t, configPath)
 
-			// Reset flags to prevent bleed-over between tests
-			contextDeleteFlags = cmdContextDeleteFlags{}
-			utils.SilentFlag = false
+			resetFlags := func() {
+				utils.ResetCommandFlags(SystemCmd, t)
+				contextDeleteFlags = cmdContextDeleteFlags{}
+				utils.SilentFlag = false
+			}
+			resetFlags()
+			t.Cleanup(resetFlags)
 
 			buf := utils.SetupMeshkitLoggerTesting(t, false)
 			defer buf.Reset()
