@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
@@ -93,10 +94,6 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 			return err
 		}
 
-		if len(resp.Values) <= 2 {
-			return ErrEmptySheetData(fmt.Errorf("no relationship data found in sheet"))
-		}
-
 		return processSheetData(resp, outputPath)
 	},
 }
@@ -164,31 +161,53 @@ func generateRelationshipsFromCSV(filePath string) ([]CustomValueRange, error) {
 }
 
 func processSheetData(resp *sheets.ValueRange, jsonFilePath string) error {
+	if resp == nil || len(resp.Values) <= 2 {
+		return ErrEmptySheetData(fmt.Errorf("no relationship data found in sheet"))
+	}
+
 	var customResp []CustomValueRange
 
 	for _, row := range resp.Values[2:] {
-		if len(row) >= minRelationshipCSVColumns && row[0] != "" {
+		if len(row) >= minRelationshipCSVColumns && sheetCellString(row[0]) != "" {
 			customResp = append(customResp, CustomValueRange{
-				Model:                row[0].(string),
-				Version:              row[1].(string),
-				Kind:                 row[2].(string),
-				Type:                 row[3].(string),
-				SubType:              row[4].(string),
-				MetadataDescription:  row[5].(string),
-				Docs:                 row[6].(string),
-				MetadataStyles:       row[7].(string),
-				EvalPolicy:           row[8].(string),
-				SelectorsDenyFrom:    row[9].(string),
-				SelectorsDenyTo:      row[10].(string),
-				SelectorsAllowFrom:   row[11].(string),
-				SelectorsAllowTo:     row[12].(string),
-				CompleteDefinition:   row[13].(string),
-				VisualizationExample: row[14].(string),
+				Model:                sheetCellString(row[0]),
+				Version:              sheetCellString(row[1]),
+				Kind:                 sheetCellString(row[2]),
+				Type:                 sheetCellString(row[3]),
+				SubType:              sheetCellString(row[4]),
+				MetadataDescription:  sheetCellString(row[5]),
+				Docs:                 sheetCellString(row[6]),
+				MetadataStyles:       sheetCellString(row[7]),
+				EvalPolicy:           sheetCellString(row[8]),
+				SelectorsDenyFrom:    sheetCellString(row[9]),
+				SelectorsDenyTo:      sheetCellString(row[10]),
+				SelectorsAllowFrom:   sheetCellString(row[11]),
+				SelectorsAllowTo:     sheetCellString(row[12]),
+				CompleteDefinition:   sheetCellString(row[13]),
+				VisualizationExample: sheetCellString(row[14]),
 			})
 		}
 	}
 
+	if len(customResp) == 0 {
+		return ErrEmptySheetData(fmt.Errorf("no valid relationship rows found in sheet"))
+	}
+
 	return saveRelationshipsJSON(customResp, jsonFilePath)
+}
+
+func sheetCellString(cell interface{}) string {
+	if cell == nil {
+		return ""
+	}
+	switch v := cell.(type) {
+	case string:
+		return v
+	case float64:
+		return strconv.FormatFloat(v, 'f', -1, 64)
+	default:
+		return fmt.Sprint(cell)
+	}
 }
 
 func saveRelationshipsJSON(data []CustomValueRange, jsonFilePath string) error {

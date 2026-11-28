@@ -96,6 +96,7 @@ mesheryctl version
 				mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 				if err != nil {
 					utils.Log.Error(ErrUnmarshallingConfigFile)
+					return ErrUnmarshallingConfigFile
 				}
 				currCtx, err := mctlCfg.GetCurrentContext()
 				if err != nil {
