@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -18,8 +20,10 @@ import (
 // a safeBuffer because the handler writes from its own goroutine while the test
 // reads the captured body.
 type sseRecorder struct {
-	header http.Header
-	body   *safeBuffer
+	header    http.Header
+	body      *safeBuffer
+	readyCh   chan struct{}
+	readyOnce sync.Once
 	*testFlusher
 }
 
@@ -27,13 +31,14 @@ func newSSERecorder(writeCh chan struct{}) *sseRecorder {
 	return &sseRecorder{
 		header:      make(http.Header),
 		body:        &safeBuffer{writeCh: writeCh},
+		readyCh:     make(chan struct{}),
 		testFlusher: &testFlusher{},
 	}
 }
 
 func (r *sseRecorder) Header() http.Header         { return r.header }
 func (r *sseRecorder) Write(p []byte) (int, error) { return r.body.Write(p) }
-func (r *sseRecorder) WriteHeader(int)             {}
+func (r *sseRecorder) WriteHeader(int)             { r.readyOnce.Do(func() { close(r.readyCh) }) }
 
 func newEventsTestHandler(t *testing.T) *Handler {
 	t.Helper()
@@ -122,4 +127,290 @@ func TestSubscribeEventsHandler_StopsOnContextCancellation(t *testing.T) {
 	case <-time.After(testTimeout):
 		t.Fatal("handler did not return after context cancellation")
 	}
+}
+
+func newTestEventWithID(userID uuid.UUID, desc string) *events.Event {
+	ev := events.NewEvent().
+		FromOwner(userID).
+		WithCategory("test").
+		WithAction("streamed").
+		WithSeverity(events.Informational).
+		WithDescription(desc).
+		Build()
+	ev.ID = uuid.Must(uuid.NewV4())
+	return ev
+}
+
+func waitForBodyContains(t *testing.T, rec *sseRecorder, writeCh chan struct{}, substr string) {
+	t.Helper()
+	deadline := time.After(testTimeout)
+	for !strings.Contains(rec.body.String(), substr) {
+		select {
+		case <-deadline:
+			t.Fatalf("timed out waiting for %q in SSE body; got: %q", substr, rec.body.String())
+		case <-writeCh:
+		case <-time.After(20 * time.Millisecond):
+		}
+	}
+}
+
+func TestSubscribeEventsHandler_FramesEventID(t *testing.T) {
+	h := newEventsTestHandler(t)
+	userID := uuid.Must(uuid.NewV4())
+	user := &models.User{ID: userID}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	req := httptest.NewRequest(http.MethodGet, "/api/system/events/subscribe", nil).WithContext(ctx)
+
+	writeCh := make(chan struct{}, 16)
+	rec := newSSERecorder(writeCh)
+
+	done := make(chan struct{})
+	go func() {
+		h.SubscribeEventsHandler(rec, req, nil, user, nil)
+		close(done)
+	}()
+
+	eventWithID := newTestEventWithID(userID, "with-id-event")
+	deadline := time.After(testTimeout)
+	for !strings.Contains(rec.body.String(), "with-id-event") {
+		select {
+		case <-deadline:
+			t.Fatalf("timed out waiting for event; got: %q", rec.body.String())
+		default:
+		}
+		h.config.EventBroadcaster.Publish(userID, eventWithID)
+		select {
+		case <-writeCh:
+		case <-time.After(20 * time.Millisecond):
+		}
+	}
+
+	wantIDLine := fmt.Sprintf("id: %s:", eventWithID.ID.String())
+	if !strings.Contains(rec.body.String(), wantIDLine) {
+		t.Fatalf("expected SSE frame to contain %q, got: %q", wantIDLine, rec.body.String())
+	}
+
+	// An event with uuid.Nil ID must omit the `id:` line.
+	nilIDEvent := events.NewEvent().
+		FromOwner(userID).
+		WithCategory("test").
+		WithAction("streamed").
+		WithSeverity(events.Informational).
+		WithDescription("nil-id-event").
+		Build()
+	nilIDEvent.ID = uuid.Nil
+	h.config.EventBroadcaster.Publish(userID, nilIDEvent)
+	waitForBodyContains(t, rec, writeCh, "nil-id-event")
+
+	for _, frame := range strings.Split(rec.body.String(), "\n\n") {
+		if strings.Contains(frame, "nil-id-event") {
+			if strings.Contains(frame, "id: ") {
+				t.Fatalf("expected nil-ID event to omit id: line, got frame %q", frame)
+			}
+			break
+		}
+	}
+
+	cancel()
+	<-done
+}
+
+func TestSubscribeEventsHandler_ReplaysMissedEventsOnLastEventID(t *testing.T) {
+	h := newEventsTestHandler(t)
+	userID := uuid.Must(uuid.NewV4())
+	user := &models.User{ID: userID}
+
+	e1 := newTestEventWithID(userID, "event-one")
+	e2 := newTestEventWithID(userID, "event-two")
+	e3 := newTestEventWithID(userID, "event-three")
+
+	// Published before the client reconnects with Last-Event-ID = e1.ID.
+	h.config.EventBroadcaster.Publish(userID, e1)
+	h.config.EventBroadcaster.Publish(userID, e2)
+	h.config.EventBroadcaster.Publish(userID, e3)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	req := httptest.NewRequest(http.MethodGet, "/api/system/events/subscribe", nil).WithContext(ctx)
+	req.Header.Set("Last-Event-ID", e1.ID.String())
+
+	writeCh := make(chan struct{}, 16)
+	rec := newSSERecorder(writeCh)
+
+	done := make(chan struct{})
+	go func() {
+		h.SubscribeEventsHandler(rec, req, nil, user, nil)
+		close(done)
+	}()
+
+	waitForBodyContains(t, rec, writeCh, "event-three")
+
+	body := rec.body.String()
+	if strings.Contains(body, "event-one") {
+		t.Fatalf("did not expect Last-Event-ID anchor event-one to be replayed; got: %q", body)
+	}
+	idx2 := strings.Index(body, "event-two")
+	idx3 := strings.Index(body, "event-three")
+	if idx2 == -1 || idx3 == -1 || idx2 >= idx3 {
+		t.Fatalf("expected event-two before event-three in replay; got: %q", body)
+	}
+	if !strings.Contains(body, fmt.Sprintf("id: %s:", e2.ID.String())) ||
+		!strings.Contains(body, fmt.Sprintf("id: %s:", e3.ID.String())) {
+		t.Fatalf("replayed events missing id: framing; got: %q", body)
+	}
+
+	// Subsequent live event still streams after replay.
+	e4 := newTestEventWithID(userID, "event-four")
+	h.config.EventBroadcaster.Publish(userID, e4)
+	waitForBodyContains(t, rec, writeCh, "event-four")
+
+	body = rec.body.String()
+	if strings.Index(body, "event-three") >= strings.Index(body, "event-four") {
+		t.Fatalf("expected live event-four after replayed event-three; got: %q", body)
+	}
+
+	cancel()
+	<-done
+}
+
+func TestSubscribeEventsHandler_LastEventIDEdgeCases(t *testing.T) {
+	cases := []struct {
+		name         string
+		lastEventID  string
+		expectReplay bool
+	}{
+		{name: "malformed", lastEventID: "not-a-uuid", expectReplay: false},
+		{name: "unknown", lastEventID: uuid.Must(uuid.NewV4()).String(), expectReplay: true},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newEventsTestHandler(t)
+			userID := uuid.Must(uuid.NewV4())
+			user := &models.User{ID: userID}
+
+			prior := newTestEventWithID(userID, "prior-event")
+			h.config.EventBroadcaster.Publish(userID, prior)
+
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			req := httptest.NewRequest(http.MethodGet, "/api/system/events/subscribe", nil).WithContext(ctx)
+			req.Header.Set("Last-Event-ID", tc.lastEventID)
+
+			writeCh := make(chan struct{}, 8)
+			rec := newSSERecorder(writeCh)
+
+			done := make(chan struct{})
+			go func() {
+				h.SubscribeEventsHandler(rec, req, nil, user, nil)
+				close(done)
+			}()
+
+			// Wait for SubscribeFrom to register the listener before publishing live once.
+			select {
+			case <-rec.readyCh:
+			case <-time.After(testTimeout):
+				t.Fatalf("timed out waiting for SSE handler subscription")
+			}
+
+			live := newTestEventWithID(userID, "live-event")
+			h.config.EventBroadcaster.Publish(userID, live)
+			waitForBodyContains(t, rec, writeCh, "live-event")
+
+			hasPrior := strings.Contains(rec.body.String(), "prior-event")
+			if hasPrior != tc.expectReplay {
+				t.Fatalf("prior-event replay = %v, want %v for %s Last-Event-ID; got: %q",
+					hasPrior, tc.expectReplay, tc.name, rec.body.String())
+			}
+
+			cancel()
+			<-done
+		})
+	}
+}
+
+func TestSubscribeEventsHandler_RepeatedEventIDsReplay(t *testing.T) {
+	h := newEventsTestHandler(t)
+	userID := uuid.Must(uuid.NewV4())
+	user := &models.User{ID: userID}
+
+	ctx1, cancel1 := context.WithCancel(context.Background())
+	defer cancel1()
+	req1 := httptest.NewRequest(http.MethodGet, "/api/system/events/subscribe", nil).WithContext(ctx1)
+	writeCh1 := make(chan struct{}, 8)
+	rec1 := newSSERecorder(writeCh1)
+
+	done1 := make(chan struct{})
+	go func() {
+		h.SubscribeEventsHandler(rec1, req1, nil, user, nil)
+		close(done1)
+	}()
+
+	// Wait for SubscribeFrom to register the listener before publishing firstA once.
+	select {
+	case <-rec1.readyCh:
+	case <-time.After(testTimeout):
+		t.Fatalf("timed out waiting for SSE handler subscription")
+	}
+
+	sharedID := uuid.Must(uuid.NewV4())
+	firstA := newTestEventWithID(userID, "first-A")
+	firstA.ID = sharedID
+	h.config.EventBroadcaster.Publish(userID, firstA)
+	waitForBodyContains(t, rec1, writeCh1, "first-A")
+
+	var firstCursor string
+	for _, frame := range strings.Split(rec1.body.String(), "\n\n") {
+		if strings.Contains(frame, "first-A") {
+			for _, line := range strings.Split(frame, "\n") {
+				if strings.HasPrefix(line, "id: ") {
+					firstCursor = strings.TrimPrefix(line, "id: ")
+					break
+				}
+			}
+			break
+		}
+	}
+	if firstCursor == "" {
+		t.Fatalf("failed to extract SSE id cursor from first-A frame: %q", rec1.body.String())
+	}
+
+	cancel1()
+	<-done1
+
+	// Publish B and a second A with the same UUID while the client is disconnected.
+	eventB := newTestEventWithID(userID, "event-B")
+	secondA := newTestEventWithID(userID, "second-A")
+	secondA.ID = sharedID
+	h.config.EventBroadcaster.Publish(userID, eventB)
+	h.config.EventBroadcaster.Publish(userID, secondA)
+
+	ctx2, cancel2 := context.WithCancel(context.Background())
+	defer cancel2()
+	req2 := httptest.NewRequest(http.MethodGet, "/api/system/events/subscribe", nil).WithContext(ctx2)
+	req2.Header.Set("Last-Event-ID", firstCursor)
+	writeCh2 := make(chan struct{}, 8)
+	rec2 := newSSERecorder(writeCh2)
+
+	done2 := make(chan struct{})
+	go func() {
+		h.SubscribeEventsHandler(rec2, req2, nil, user, nil)
+		close(done2)
+	}()
+
+	waitForBodyContains(t, rec2, writeCh2, "second-A")
+	body := rec2.body.String()
+	if strings.Contains(body, "first-A") {
+		t.Fatalf("did not expect first-A to be replayed; got: %q", body)
+	}
+	idxB := strings.Index(body, "event-B")
+	idxA2 := strings.Index(body, "second-A")
+	if idxB == -1 || idxA2 == -1 || idxB >= idxA2 {
+		t.Fatalf("expected event-B before second-A on replay; got: %q", body)
+	}
+
+	cancel2()
+	<-done2
 }

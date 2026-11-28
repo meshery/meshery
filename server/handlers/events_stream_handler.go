@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
 )
@@ -29,13 +31,19 @@ const eventStreamWriteTimeout = 30 * time.Second
 // ClientEventHandler) reaches this stream unchanged.
 //
 // Each message is the raw meshkit events.Event marshalled to JSON, framed as an
-// unnamed SSE event (`data: <json>\n\n`) so the browser's EventSource.onmessage
-// receives it. Only newly-published events are streamed; the initial list is
-// still fetched over REST from GET /api/system/events.
+// unnamed SSE event (`id: <event.ID>:<seq>\ndata: <json>\n\n` or
+// `id: <event.ID>\ndata: <json>\n\n` when event.ID is non-nil, or
+// `data: <json>\n\n` otherwise) so the browser's EventSource.onmessage
+// receives it and records the last event ID. On reconnect, a `Last-Event-ID`
+// header replays buffered events published after that ID (or the full retained
+// buffer as best effort if an evicted valid cursor or UUID was provided) before
+// streaming live events. Only newly-published (or buffered replay) events are
+// streamed; the initial list is still fetched over REST from GET /api/system/events.
 //
 // The subscription lives for the duration of the request: when the client
-// disconnects the request context is cancelled, we unsubscribe from the
-// broadcaster, and the goroutine returns.
+// disconnects or the broadcaster closes the channel on buffer overflow, we
+// unsubscribe from the broadcaster and the handler returns, prompting
+// EventSource to reconnect and recover missed events via Last-Event-ID replay.
 func (h *Handler) SubscribeEventsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if user == nil {
 		writeJSONError(w, "user unauthorized", http.StatusUnauthorized)
@@ -50,7 +58,8 @@ func (h *Handler) SubscribeEventsHandler(w http.ResponseWriter, req *http.Reques
 
 	// Subscribe before writing headers so events published between the request
 	// arriving and the stream being ready aren't dropped.
-	ch, unsubscribe := h.config.EventBroadcaster.Subscribe(user.ID)
+	lastEventID := strings.TrimSpace(req.Header.Get("Last-Event-ID"))
+	replay, ch, unsubscribe := h.config.EventBroadcaster.SubscribeFrom(user.ID, lastEventID)
 	defer unsubscribe()
 
 	w.Header().Set("Content-Type", "text/event-stream")
@@ -76,6 +85,15 @@ func (h *Handler) SubscribeEventsHandler(w http.ResponseWriter, req *http.Reques
 	responseController := http.NewResponseController(w)
 
 	ctx := req.Context()
+	for _, item := range replay {
+		if ctx.Err() != nil {
+			return
+		}
+		if !h.writeEventFrame(w, flusher, responseController, item) {
+			return
+		}
+	}
+
 	for {
 		select {
 		case <-ctx.Done():
@@ -86,27 +104,9 @@ func (h *Handler) SubscribeEventsHandler(w http.ResponseWriter, req *http.Reques
 			if !open {
 				return
 			}
-			var event *events.Event
-			switch e := data.(type) {
-			case *events.Event:
-				event = e
-			case events.Event:
-				event = &e
-			default:
-				continue
-			}
-			payload, err := json.Marshal(event)
-			if err != nil {
-				h.log.Error(models.ErrMarshal(err, "event"))
-				continue
-			}
-			_ = responseController.SetWriteDeadline(time.Now().Add(eventStreamWriteTimeout))
-			if _, err := fmt.Fprintf(w, "data: %s\n\n", payload); err != nil {
-				// Client disconnected or stalled past the write deadline; context
-				// cancellation will unsubscribe us on the way out.
+			if !h.writeEventFrame(w, flusher, responseController, data) {
 				return
 			}
-			flusher.Flush()
 		case <-keepAlive.C:
 			// SSE comment line: ignored by EventSource, but surfaces a dead
 			// connection and keeps proxies from timing the stream out.
@@ -117,4 +117,52 @@ func (h *Handler) SubscribeEventsHandler(w http.ResponseWriter, req *http.Reques
 			flusher.Flush()
 		}
 	}
+}
+
+// writeEventFrame marshals an event and writes it as an SSE frame. It returns
+// false only when writing to w fails, signaling the caller to abort the stream.
+func (h *Handler) writeEventFrame(w http.ResponseWriter, flusher http.Flusher, rc *http.ResponseController, data interface{}) bool {
+	cursor := ""
+	if re, ok := data.(models.ReplayEvent); ok {
+		cursor = re.Cursor
+		data = re.Data
+	}
+
+	var event *events.Event
+	switch e := data.(type) {
+	case *events.Event:
+		if e == nil {
+			return true
+		}
+		event = e
+	case events.Event:
+		event = &e
+	default:
+		return true
+	}
+
+	payload, err := json.Marshal(event)
+	if err != nil {
+		h.log.Error(models.ErrMarshal(err, "event"))
+		return true
+	}
+
+	sseID := cursor
+	if sseID == "" && event.ID != uuid.Nil {
+		sseID = event.ID.String()
+	}
+
+	_ = rc.SetWriteDeadline(time.Now().Add(eventStreamWriteTimeout))
+	if sseID != "" {
+		_, err = fmt.Fprintf(w, "id: %s\ndata: %s\n\n", sseID, payload)
+	} else {
+		_, err = fmt.Fprintf(w, "data: %s\n\n", payload)
+	}
+	if err != nil {
+		// Client disconnected or stalled past the write deadline; context
+		// cancellation will unsubscribe us on the way out.
+		return false
+	}
+	flusher.Flush()
+	return true
 }

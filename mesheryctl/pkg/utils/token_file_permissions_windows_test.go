@@ -86,11 +86,15 @@ func TestWriteTokenFileRejectsOpenReader(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer reader.Close()
 	if err := WriteTokenFile(path, []byte("new token")); err == nil {
-		reader.Close()
 		t.Fatal("expected an open reader to block the token update")
 	}
-	reader.Close()
+	runtime.KeepAlive(reader)
+	oldData, err := io.ReadAll(reader)
+	if err != nil || string(oldData) != "old token" {
+		t.Fatalf("open reader data changed: %q, %v", oldData, err)
+	}
 	data, err := os.ReadFile(path)
 	if err != nil || string(data) != "old token" {
 		t.Fatalf("old token was changed: %q, %v", data, err)
