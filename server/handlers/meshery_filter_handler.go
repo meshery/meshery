@@ -157,6 +157,24 @@ func (h *Handler) handleFilterPOST(
 		return
 	}
 
+	if parsedBody == nil {
+		err := fmt.Errorf("request body cannot be empty")
+		errSaveFilter := ErrSaveFilter(err)
+		if h.log != nil {
+			h.log.Error(errSaveFilter)
+		}
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": errSaveFilter,
+		}).WithDescription("Filter request body is empty.").Build()
+		h.persistAndPublish(provider, token, userID, event)
+		writeMeshkitError(rw, errSaveFilter, http.StatusBadRequest)
+		addMeshkitErr(&res, errSaveFilter)
+		if h.EventsBuffer != nil {
+			go h.EventsBuffer.Publish(&res)
+		}
+		return
+	}
+
 	if parsedBody.FilterData != nil && parsedBody.FilterData.ID != nil {
 		actedUpon = parsedBody.FilterData.ID
 	}
@@ -422,6 +440,14 @@ func (h *Handler) CloneMesheryFilterHandler(
 		return
 	}
 
+	if r.Body == nil {
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(fmt.Errorf("request body is nil")))
+		}
+		writeMeshkitError(rw, ErrRequestBody(fmt.Errorf("request body is nil")), http.StatusBadRequest)
+		return
+	}
+
 	defer func() {
 		_ = r.Body.Close()
 	}()
@@ -430,9 +456,17 @@ func (h *Handler) CloneMesheryFilterHandler(
 	if !ok {
 		return
 	}
+	if parsedUUID, _ := uuid.FromString(filterID); parsedUUID == uuid.Nil {
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid filter ID: %s", filterID))
+		if h.log != nil {
+			h.log.Warn(invalidIDErr)
+		}
+		writeMeshkitError(rw, invalidIDErr, http.StatusBadRequest)
+		return
+	}
 
 	var parsedBody *models.MesheryCloneFilterRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || parsedBody == nil {
 		if h.log != nil {
 			h.log.Error(ErrRequestBody(err))
 		}
@@ -440,7 +474,7 @@ func (h *Handler) CloneMesheryFilterHandler(
 		return
 	}
 
-	if parsedBody == nil || parsedBody.Name == "" {
+	if parsedBody.Name == "" {
 		cloneErr := ErrCloneFilter(fmt.Errorf("filter name is required"))
 		if h.log != nil {
 			h.log.Error(cloneErr)
@@ -451,6 +485,14 @@ func (h *Handler) CloneMesheryFilterHandler(
 
 	resp, err := provider.CloneMesheryFilter(r, filterID, parsedBody)
 	if err != nil {
+		if errors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			if h.log != nil {
+				h.log.Warnf("No filter with ID %q found to clone", filterID)
+			}
+			writeMeshkitError(rw, err, http.StatusNotFound)
+			return
+		}
+
 		if h.log != nil {
 			h.log.Error(ErrCloneFilter(err))
 		}
@@ -515,6 +557,21 @@ func (h *Handler) PublishCatalogFilterHandler(
 				"error": ErrRequestBody(err),
 			}).
 			WithDescription("Error parsing filter payload.").Build()
+		h.persistAndPublish(provider, token, userID, e)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
+	if parsedBody == nil {
+		err := fmt.Errorf("request body cannot be empty")
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
+		e := eventBuilder.WithSeverity(events.Error).
+			WithMetadata(map[string]interface{}{
+				"error": ErrRequestBody(err),
+			}).
+			WithDescription("Filter payload cannot be empty.").Build()
 		h.persistAndPublish(provider, token, userID, e)
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
@@ -614,6 +671,22 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
+
+	if parsedBody == nil {
+		err := fmt.Errorf("request body cannot be empty")
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
+		e := eventBuilder.WithSeverity(events.Error).
+			WithMetadata(map[string]interface{}{
+				"error": ErrRequestBody(err),
+			}).
+			WithDescription("Filter payload cannot be empty.").Build()
+		h.persistAndPublish(provider, token, userID, e)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
 	resp, err := provider.UnPublishCatalogFilter(r, parsedBody)
 	if err != nil {
 		if h.log != nil {

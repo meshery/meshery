@@ -364,3 +364,42 @@ func TestRemoteProviderCorrelatesConditionsFollowsCorrelatedCreates(t *testing.T
 		t.Fatal("a correlated create answered without a disposition left the remote provider known to correlate")
 	}
 }
+
+// A remote provider that reports no events and sends null (or omits) data and
+// countBySeverityLevel. GetEvents must still return empty slices so the JSON
+// the handler encodes carries arrays, never null.
+func TestRemoteProviderGetEventsReturnsEmptySlicesForNullOrMissing(t *testing.T) {
+	for name, body := range map[string]string{
+		"null":    `{"data":null,"countBySeverityLevel":null,"totalCount":0}`,
+		"missing": `{"totalCount":0}`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			provider := newEventsRemoteProvider(t, func(w http.ResponseWriter, _ *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write([]byte(body))
+			})
+
+			resp, err := provider.GetEvents("token", &events.EventsFilter{}, 0, mustUUID(t), mustUUID(t))
+			if err != nil {
+				t.Fatalf("GetEvents: %v", err)
+			}
+			if resp.Events == nil || resp.CountBySeverityLevel == nil {
+				t.Fatalf("got nil slices: events=%v countBySeverityLevel=%v", resp.Events, resp.CountBySeverityLevel)
+			}
+
+			encoded, err := json.Marshal(resp)
+			if err != nil {
+				t.Fatalf("marshal: %v", err)
+			}
+			var got map[string]json.RawMessage
+			if err := json.Unmarshal(encoded, &got); err != nil {
+				t.Fatalf("unmarshal: %v", err)
+			}
+			for _, key := range []string{"events", "countBySeverityLevel"} {
+				if string(got[key]) != "[]" {
+					t.Errorf("%s = %s, want []", key, got[key])
+				}
+			}
+		})
+	}
+}
