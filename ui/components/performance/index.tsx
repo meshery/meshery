@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { ModalBody, ModalFooter, NoSsr, useHasPermission } from '@sistent/sistent';
-import { URLValidator } from '../../utils/URLValidator';
-import { isValidJSON } from '../../utils/validators';
 import LoadTestTimerDialog from '../load-test-timer-dialog';
 import fetchControlPlanes from '@/graphql/queries/ControlPlanesQuery';
 import { getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
@@ -26,7 +24,10 @@ import PerformanceForm from './PerformanceForm';
 import PerformanceFormActions from './PerformanceFormActions';
 import PerformanceTestResults from './PerformanceTestResults';
 import { generatePerformanceProfile } from './performance-helpers';
-import { createPerformanceFormChangeHandler } from './performance-handlers';
+import {
+  createPerformanceFormChangeHandler,
+  shouldDisablePerformanceTest,
+} from './performance-handlers';
 
 // Re-export the helper so external/legacy callers that imported it from the
 // entry point keep working after the Phase 5.a split.
@@ -88,7 +89,7 @@ const MesheryPerformanceComponent_ = (props) => {
   const [tErrorState, setTError] = useState('');
   const [jsonErrorState, setJsonError] = useState(false);
   const [disableTestState, setDisableTest] = useState(
-    !(URLValidator(urlState) || isValidJSON(additionalOptionsState)),
+    shouldDisablePerformanceTest(urlState, additionalOptionsState),
   );
   const [testUUIDState, setTestUUID] = useState(generateUUID());
   const [selectedMeshState, setSelectedMesh] = useState('');
@@ -154,6 +155,7 @@ const MesheryPerformanceComponent_ = (props) => {
     setJsonError,
     setDisableTest,
     setUrlError,
+    url: urlState,
     additionalOptions: additionalOptionsState,
   });
 

@@ -18,7 +18,7 @@ describe('performance-handlers: URL validation state', () => {
   const setDisableTest = vi.fn();
   const setUrlError = vi.fn();
 
-  const buildHandler = (additionalOptions = '') =>
+  const buildHandler = (additionalOptions = '', url = '') =>
     createPerformanceFormChangeHandler({
       setProfileName,
       setMeshName,
@@ -35,6 +35,7 @@ describe('performance-handlers: URL validation state', () => {
       setJsonError,
       setDisableTest,
       setUrlError,
+      url,
       additionalOptions,
     });
 
@@ -100,5 +101,53 @@ describe('performance-handlers: URL validation state', () => {
 
     expect(setUrlError).toHaveBeenCalledWith(false);
     expect(setDisableTest).toHaveBeenCalledWith(true);
+  });
+
+  it('disables the test when typed additional options become invalid after a valid URL', () => {
+    const handleChange = buildHandler('', 'https://example.com');
+    handleChange('additional_options')({
+      target: { value: '{invalid-json', getAttribute: () => 'text' },
+    });
+
+    expect(setJsonError).toHaveBeenCalledWith(true);
+    expect(setDisableTest).toHaveBeenCalledWith(true);
+  });
+
+  it('enables the test when typed additional options become valid after an invalid URL', () => {
+    const handleChange = buildHandler('', 'not-a-url');
+    handleChange('additional_options')({
+      target: { value: '{"profile":"fast"}', getAttribute: () => 'text' },
+    });
+
+    expect(setJsonError).toHaveBeenCalledWith(false);
+    expect(setDisableTest).toHaveBeenCalledWith(false);
+  });
+
+  it('reconciles test enablement after an additional-options file upload', () => {
+    const originalFileReader = globalThis.FileReader;
+    class FileReaderMock {
+      onload: ((event: any) => void) | null = null;
+
+      readAsText() {
+        this.onload?.({ target: { result: '{invalid-json' } });
+      }
+    }
+    globalThis.FileReader = FileReaderMock as any;
+
+    try {
+      const handleChange = buildHandler('', 'https://example.com');
+      handleChange('additional_options')({
+        target: {
+          value: '',
+          files: [{ name: 'options.json' }],
+          getAttribute: () => 'file',
+        },
+      });
+
+      expect(setJsonError).toHaveBeenCalledWith(true);
+      expect(setDisableTest).toHaveBeenCalledWith(true);
+    } finally {
+      globalThis.FileReader = originalFileReader;
+    }
   });
 });

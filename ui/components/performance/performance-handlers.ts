@@ -21,8 +21,12 @@ export interface PerformanceFormSetters {
   setJsonError: (v: boolean) => void;
   setDisableTest: (v: boolean) => void;
   setUrlError: (v: boolean) => void;
+  url: string;
   additionalOptions: string;
 }
+
+export const shouldDisablePerformanceTest = (url: string, additionalOptions: string) =>
+  additionalOptions.trim() ? !isValidJSON(additionalOptions) : !URLValidator(url);
 
 /**
  * createPerformanceFormChangeHandler builds the `handleChange(name)(event)`
@@ -51,6 +55,7 @@ export const createPerformanceFormChangeHandler = (setters: PerformanceFormSette
     setJsonError,
     setDisableTest,
     setUrlError,
+    url,
     additionalOptions,
   } = setters;
 
@@ -72,19 +77,15 @@ export const createPerformanceFormChangeHandler = (setters: PerformanceFormSette
 
     if (name === 'url') {
       if (value !== '') {
-        let urlPattern = value;
-
-        let val = URLValidator(urlPattern);
-        if (!val) {
-          setDisableTest(true);
+        if (!URLValidator(value)) {
           setUrlError(true);
         } else {
-          setDisableTest(additionalOptions.trim() ? !isValidJSON(additionalOptions) : false);
           setUrlError(false);
         }
+        setDisableTest(shouldDisablePerformanceTest(value, additionalOptions));
       } else {
         setUrlError(false);
-        setDisableTest(!isValidJSON(additionalOptions));
+        setDisableTest(shouldDisablePerformanceTest(value, additionalOptions));
       }
     }
 
@@ -104,9 +105,11 @@ export const createPerformanceFormChangeHandler = (setters: PerformanceFormSette
               JSON.parse(fileContent);
               setAdditionalOptions(fileContent);
               setJsonError(false);
+              setDisableTest(shouldDisablePerformanceTest(url, fileContent));
             } catch {
               setAdditionalOptions(event.target.result);
               setJsonError(true);
+              setDisableTest(true);
             }
           };
           reader.readAsText(file);
@@ -118,9 +121,11 @@ export const createPerformanceFormChangeHandler = (setters: PerformanceFormSette
           if (value !== '') JSON.parse(value);
           setAdditionalOptions(value);
           setJsonError(false);
+          setDisableTest(shouldDisablePerformanceTest(url, value));
         } catch {
           setAdditionalOptions(value);
           setJsonError(true);
+          setDisableTest(true);
         }
       }
     }
