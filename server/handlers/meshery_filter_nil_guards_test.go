@@ -476,6 +476,33 @@ func TestHandleFilterPOST_NullBody_ReturnsBadRequest(t *testing.T) {
 	}
 }
 
+func TestHandleFilterPOST_MissingFilterDataAndURL_ReturnsBadRequest(t *testing.T) {
+	h, provider := newFilterNilGuardsFixture(t)
+	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+	testCases := []struct {
+		name string
+		body string
+	}{
+		{name: "empty json object", body: "{}"},
+		{name: "save only json object", body: `{"save": true}`},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			ctx := context.WithValue(context.Background(), models.TokenCtxKey, "fake-token")
+			req := httptest.NewRequest(http.MethodPost, "/api/filter", strings.NewReader(tc.body)).WithContext(ctx)
+			rec := httptest.NewRecorder()
+
+			h.handleFilterPOST(rec, req, nil, authUser, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected 400 Bad Request for %s, got %d", tc.name, rec.Code)
+			}
+		})
+	}
+}
+
 func TestPublishCatalogFilterHandler_NullBody_ReturnsBadRequest(t *testing.T) {
 	h, provider := newFilterNilGuardsFixture(t)
 	authUser := &models.User{ID: uuid.Must(uuid.NewV4())}
