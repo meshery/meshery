@@ -143,6 +143,58 @@ func TestContextViewCmd(t *testing.T) {
 	}
 }
 
+// TestContextViewShowsOperatorAndEnv checks that the operator and env settings
+// of a context are shown for contexts that have a token, both for a single
+// context and with --all, and stay hidden when a context does not set them.
+func TestContextViewShowsOperatorAndEnv(t *testing.T) {
+	resetVariables()
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	utils.SetupCustomContextEnv(t, currDir+"/fixtures/.meshery/TestContextOperatorEnv.yaml")
+
+	tests := []struct {
+		name   string
+		args   []string
+		golden string
+	}{
+		{name: "current context with a token", args: []string{"context", "view"}, golden: "viewOperatorEnv.golden"},
+		{name: "all contexts", args: []string{"context", "view", "--all"}, golden: "viewAllOperatorEnv.golden"},
+		{name: "context without operator or env", args: []string{"context", "view", "local2"}, golden: "viewWithContextExpected.golden"},
+	}
+
+	mesheryctlflags.InitValidators(SystemCmd)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			contextViewFlags = cmdContextViewFlags{}
+			if f := viewContextCmd.Flags().Lookup("context"); f != nil {
+				f.Changed = false
+			}
+			if f := viewContextCmd.Flags().Lookup("all"); f != nil {
+				f.Changed = false
+			}
+			buf := utils.SetupMeshkitLoggerTesting(t, false)
+			defer buf.Reset()
+
+			SystemCmd.SetOut(buf)
+			SystemCmd.SetErr(buf)
+			SystemCmd.SetArgs(tt.args)
+			if err := SystemCmd.Execute(); err != nil {
+				t.Fatal(err)
+			}
+
+			golden := utils.NewGoldenFile(t, tt.golden, filepath.Join(currDir, "testdata/context"))
+			actualResponse := buf.String()
+			if *update {
+				golden.Write(actualResponse)
+			}
+			utils.Equals(t, golden.Load(), actualResponse)
+		})
+	}
+}
+
 func TestContextListCmd(t *testing.T) {
 	resetVariables()
 	// get current directory

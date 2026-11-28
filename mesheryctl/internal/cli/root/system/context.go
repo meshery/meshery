@@ -32,6 +32,10 @@ type contextWithLocation struct {
 	Channel       string   `mapstructure:"channel,omitempty"`
 	Version       string   `mapstructure:"version,omitempty"`
 	Provider      string   `mapstructure:"provider,omitempty"`
+	// Operator and EnvVars mirror config.Context so `context view` shows them
+	// for contexts with a token too, not only for contexts without one.
+	Operator string         `mapstructure:"operator,omitempty" yaml:"operator,omitempty"`
+	EnvVars  map[string]any `mapstructure:"env,omitempty" yaml:"env,omitempty"`
 }
 
 var linkDocContextCreate = map[string]string{
@@ -521,6 +525,8 @@ func getContextWithTokenLocation(c *config.Context) (*contextWithLocation, bool)
 		Channel:       c.Channel,
 		Version:       c.Version,
 		Provider:      c.Provider,
+		Operator:      c.Operator,
+		EnvVars:       c.EnvVars,
 	}
 	if temp.Tokenlocation == "" {
 		return &temp, false
