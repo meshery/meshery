@@ -379,6 +379,11 @@ func (h *Handler) handlePatternPOST(
 		return
 	}
 
+	if requestPayload == nil {
+		h.logErrorParsingRequestBody(rw, provider, stderrors.New("request body must be a JSON object"), userID, eventBuilder)
+		return
+	}
+
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
 		h.logErrorGettingUserToken(rw, provider, err, userID, eventBuilder)

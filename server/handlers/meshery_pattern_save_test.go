@@ -249,3 +249,28 @@ func TestDesignPostPayload_TracksDesignFilePresence(t *testing.T) {
 		t.Errorf("designFilePresent stayed true on a reused payload without a design file")
 	}
 }
+
+func TestPatternPOST_NullRequestBodyReturnsBadRequest(t *testing.T) {
+	fixture := newPatternPOSTFixture(t)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/pattern", strings.NewReader("null"))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+
+	fixture.h.handlePatternPOST(w, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, fixture.provider)
+
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400 Bad Request on null body, got %d (body: %s)", w.Code, w.Body.String())
+	}
+
+	var errResp map[string]any
+	if err := json.Unmarshal(w.Body.Bytes(), &errResp); err != nil {
+		t.Fatalf("expected JSON error response, got decode error %v (body: %s)", err, w.Body.String())
+	}
+	if !strings.Contains(w.Body.String(), ErrRequestBodyCode) {
+		t.Errorf("expected response to contain %s, got: %s", ErrRequestBodyCode, w.Body.String())
+	}
+	if !strings.Contains(w.Body.String(), "request body must be a JSON object") {
+		t.Errorf("expected response to contain %q, got: %s", "request body must be a JSON object", w.Body.String())
+	}
+}
