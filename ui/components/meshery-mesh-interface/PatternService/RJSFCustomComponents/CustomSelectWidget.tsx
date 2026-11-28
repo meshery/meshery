@@ -175,10 +175,44 @@ export default function CustomSelectWidget({
         {Array.isArray(enumOptions) &&
           enumOptions.map(({ value, label }, i) => {
             const disabled = Array.isArray(enumDisabled) && enumDisabled?.indexOf(value) !== -1;
+            const optionLabel = safeDisplayValue(label);
             return (
-              <MenuItem key={i} value={String(i)} disabled={disabled}>
-                {isMultiple && <Checkbox checked={selectedIndexes?.indexOf(String(i)) !== -1} />}
-                <ListItemText primary={safeDisplayValue(label)} />
+              <MenuItem
+                key={i}
+                value={String(i)}
+                disabled={disabled}
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  paddingRight: '2rem',
+                }}
+              >
+                {isMultiple && (
+                  <Checkbox
+                    checked={selectedIndexes?.indexOf(String(i)) !== -1}
+                    style={{ padding: 0, flexShrink: 0 }}
+                  />
+                )}
+                <CustomTextTooltip
+                  flag={formContext?.overrideFlag}
+                  title={optionLabel}
+                  interactive={true}
+                >
+                  <ListItemText
+                    primary={optionLabel}
+                    primaryTypographyProps={{
+                      noWrap: true,
+                      style: {
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      },
+                    }}
+                    style={{ margin: 0, minWidth: 0 }}
+                  />
+                </CustomTextTooltip>
               </MenuItem>
             );
           })}
