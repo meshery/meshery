@@ -24,6 +24,7 @@ import {
   useGetSelectedWorkspace,
   useUpdateSelectedWorkspaceMutation,
 } from '@/rtk-query/user';
+import { useNotificationHandlers } from '@/utils/hooks/useNotification';
 import { BottomSheetInlineSelect } from './BottomSheetInlineSelect';
 
 export const HoverMenuItem = styled(MenuItem)(({ theme }) => ({
@@ -72,6 +73,7 @@ function WorkspaceSwitcher({ open, fromMobileView, expanded, onExpandedChange, o
 
   const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
     useUpdateSelectedWorkspaceMutation();
+  const { notifyApiError } = useNotificationHandlers();
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -80,16 +82,28 @@ function WorkspaceSwitcher({ open, fromMobileView, expanded, onExpandedChange, o
     }
   }, [open]);
 
-  const handleChangeWorkspace = (e) => {
+  const handleChangeWorkspace = async (e) => {
     setMenuOpen(false);
     const newId = e.target.value;
-    setSelectedWorkspace(allWorkspaces.find((w) => w.id === newId));
-    updateSelectedWorkspace(selectedOrganization.id, newId);
-    onMobileSelect?.();
-    // Mobile UX: selecting a workspace should just switch context and close the sheet.
-    // Desktop UX: selecting should open the workspace explorer modal.
-    if (!fromMobileView) {
-      openWorkspaceModal(true);
+    const nextWorkspace = allWorkspaces?.find((w) => w.id === newId);
+    if (!selectedOrganization?.id || !nextWorkspace) {
+      return;
+    }
+
+    const previousWorkspace = selectedWorkspace;
+    setSelectedWorkspace(nextWorkspace);
+
+    try {
+      await updateSelectedWorkspace(selectedOrganization.id, newId);
+      onMobileSelect?.();
+      // Mobile UX: selecting a workspace should just switch context and close the sheet.
+      // Desktop UX: selecting should open the workspace explorer modal.
+      if (!fromMobileView) {
+        openWorkspaceModal(true);
+      }
+    } catch (error) {
+      setSelectedWorkspace(previousWorkspace);
+      notifyApiError(error, 'Failed to switch workspace');
     }
   };
 
