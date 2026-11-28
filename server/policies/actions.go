@@ -2,6 +2,7 @@ package policies
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	patching "github.com/meshery/meshkit/utils/patching"
@@ -142,19 +143,34 @@ func newAddRelationshipAction(rel *relationship.RelationshipDefinition) PolicyAc
 	}
 }
 
-// getComponentUpdateOp returns the appropriate update op based on whether
-// the path starts with "configuration".
+// isConfigurationPath reports whether a mutator/mutated reference addresses the
+// component's configuration rather than the component envelope. A reference is a
+// literal path into the component object, so only a leading "configuration"
+// segment descends into Configuration; every other path (displayName,
+// metadata.labels, component.kind) addresses the envelope. This is the rule
+// configurationForComponentAtPath reads through, and the one
+// applyComponentConfigPatches must write through, so a mutated value lands in
+// the object it is read back from.
+func isConfigurationPath(path []string) bool {
+	return len(path) > 0 && path[0] == "configuration"
+}
+
+// getComponentUpdateOp returns the appropriate update op based on whether the
+// path addresses the component configuration or the component envelope.
 func getComponentUpdateOp(path []string) string {
-	if len(path) > 0 && path[0] == "configuration" {
+	if isConfigurationPath(path) {
 		return UpdateComponentConfigurationOp
 	}
 	return UpdateComponentOp
 }
 
-// applyActionsToDesign applies all actions to a design, returning a new copy.
-func applyActionsToDesign(design *pattern.PatternFile, actions []PolicyAction) *pattern.PatternFile {
+// applyActionsToDesign applies all actions to a design, returning a new copy
+// and any patch that could not be applied. A failed patch leaves the mutated
+// field unchanged, so the next evaluation re-emits the same action; returning
+// the error lets the caller report that instead of silently not converging.
+func applyActionsToDesign(design *pattern.PatternFile, actions []PolicyAction) (*pattern.PatternFile, []error) {
 	if len(actions) == 0 {
-		return design
+		return design, nil
 	}
 	result := deepCopyDesign(design)
 
@@ -241,14 +257,14 @@ func applyActionsToDesign(design *pattern.PatternFile, actions []PolicyAction) *
 	}
 
 	// Apply component configuration patches.
-	applyComponentConfigPatches(result, actions)
+	errs := applyComponentConfigPatches(result, actions)
 
-	return result
+	return result, errs
 }
 
 // applyComponentConfigPatches applies UpdateComponentConfiguration, UpdateComponent,
 // and RemoveComponentConfiguration actions to component configurations in the design.
-func applyComponentConfigPatches(design *pattern.PatternFile, actions []PolicyAction) {
+func applyComponentConfigPatches(design *pattern.PatternFile, actions []PolicyAction) []error {
 	type updateEntry struct {
 		id    string
 		path  []string
@@ -269,38 +285,102 @@ func applyComponentConfigPatches(design *pattern.PatternFile, actions []PolicyAc
 		}
 	}
 	if len(updates) == 0 && len(removes) == 0 {
-		return
+		return nil
 	}
 
+	var errs []error
+
 	for _, comp := range design.Components {
-		var patches []patching.Patch
+		// A reference is a literal path into the component object: a
+		// "configuration"-prefixed path patches Configuration, any other path
+		// patches the envelope. Splitting here keeps the write target identical
+		// to the read target in configurationForComponentAtPath.
+		var configPatches, envelopePatches []patching.Patch
 		for _, up := range updates {
 			if up.id != comp.ID.String() {
 				continue
 			}
-			path := up.path
-			if len(path) > 0 && path[0] == "configuration" {
-				path = path[1:]
+			if isConfigurationPath(up.path) {
+				configPatches = append(configPatches, patching.Patch{Path: up.path[1:], Value: up.value})
+				continue
 			}
-			patches = append(patches, patching.Patch{Path: path, Value: up.value})
+			envelopePatches = append(envelopePatches, patching.Patch{Path: up.path, Value: up.value})
 		}
-		if len(patches) > 0 {
-			if updated, err := patching.ApplyPatches(comp.Configuration, patches); err == nil {
+		if len(configPatches) > 0 {
+			updated, err := patching.ApplyPatches(comp.Configuration, configPatches)
+			if err != nil {
+				errs = append(errs, fmt.Errorf("patching configuration of component %s: %w", comp.ID, err))
+			} else {
 				comp.Configuration = updated
 			}
 		}
 
-		var compRemoves []PolicyAction
+		var configRemoves, envelopeRemoves []PolicyAction
 		for _, rm := range removes {
-			if rm.ID == comp.ID.String() {
-				compRemoves = append(compRemoves, rm)
+			if rm.ID != comp.ID.String() {
+				continue
+			}
+			if isConfigurationPath(rm.UpdatePath) {
+				configRemoves = append(configRemoves, rm)
+				continue
+			}
+			envelopeRemoves = append(envelopeRemoves, rm)
+		}
+		if len(configRemoves) > 0 {
+			comp.Configuration = applyConfigRemoves(comp.Configuration, orderCleanupActions(configRemoves))
+		}
+
+		if len(envelopePatches) > 0 || len(envelopeRemoves) > 0 {
+			if err := patchComponentEnvelope(comp, envelopePatches, orderCleanupActions(envelopeRemoves)); err != nil {
+				errs = append(errs, fmt.Errorf("patching envelope of component %s: %w", comp.ID, err))
 			}
 		}
-		if len(compRemoves) > 0 {
-			compRemoves = orderCleanupActions(compRemoves)
-			comp.Configuration = applyConfigRemoves(comp.Configuration, compRemoves)
+	}
+	return errs
+}
+
+// patchComponentEnvelope applies envelope-targeted patches and removals through
+// the same JSON projection of the component that
+// configurationForComponentAtPath reads through, then folds the result back onto
+// the component. Mirrors the Rego engine, which applies update_component by
+// json.patch-ing the component object at the raw reference path.
+func patchComponentEnvelope(comp *component.ComponentDefinition, patches []patching.Patch, removes []PolicyAction) error {
+	envelope, err := toGenericMap(comp)
+	if err != nil {
+		return fmt.Errorf("projecting component to JSON: %w", err)
+	}
+	if len(patches) > 0 {
+		envelope, err = patching.ApplyPatches(envelope, patches)
+		if err != nil {
+			return fmt.Errorf("applying envelope patches: %w", err)
 		}
 	}
+	if len(removes) > 0 {
+		// Envelope paths carry no "configuration" prefix, so applyConfigRemoves
+		// addresses them against the envelope as-is, with the same per-segment
+		// escaping the configuration side uses: a dotted key such as the label
+		// "kubernetes.io/service-name" stays one segment.
+		envelope = applyConfigRemoves(envelope, removes)
+	}
+
+	raw, err := json.Marshal(envelope)
+	if err != nil {
+		return fmt.Errorf("encoding patched envelope: %w", err)
+	}
+	// Decode into a fresh value so a removed field is reset rather than left at
+	// its pre-mutation value. ModelId is the one member the projection drops:
+	// it is `json:"-"` and ComponentDefinition has no custom marshaller, unlike
+	// ComponentDefinition_Metadata, whose MarshalJSON/UnmarshalJSON inline
+	// AdditionalProperties as ordinary keys - so a mutation of an unmodelled
+	// metadata key round-trips into the decoded map and must be kept.
+	modelID := comp.ModelId
+	var folded component.ComponentDefinition
+	if err := json.Unmarshal(raw, &folded); err != nil {
+		return fmt.Errorf("decoding patched envelope: %w", err)
+	}
+	folded.ModelId = modelID
+	*comp = folded
+	return nil
 }
 
 // sjsonPathSpecials are the characters gjson/sjson path syntax assigns meaning
