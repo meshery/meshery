@@ -82,6 +82,7 @@ const (
 var (
 	cmdType               string
 	errArgMsg             = "only one argument must be provided"
+	errEmptyNameMsg       = "context name must not be empty or blank"
 	contextCreateUsageMsg = `Usage: mesheryctl system context create [context-name]`
 	contextDeleteUsageMsg = `Usage: mesheryctl system context delete [context name]`
 	contextdocs           = "See https://docs.meshery.io/reference/mesheryctl/system/context for usage details."

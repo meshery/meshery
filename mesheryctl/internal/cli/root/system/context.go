@@ -76,6 +76,12 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errArgMsg, contextCreateUsageMsg))
 		}
 
+		// An empty or blank name would be saved as a context with an empty key, and
+		// `--set` would make that empty name the current context.
+		if strings.TrimSpace(args[0]) == "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errEmptyNameMsg, contextCreateUsageMsg))
+		}
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -107,7 +113,8 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 			tempCntxt.Components = contextCreateFlags.Components
 		}
 
-		contextName := strings.ToLower(args[0])
+		// Trim so a name typed with stray spaces is saved under the key later commands look up.
+		contextName := strings.ToLower(strings.TrimSpace(args[0]))
 
 		err := config.AddContextToConfig(contextName, tempCntxt, viper.ConfigFileUsed(), contextCreateFlags.Set, false)
 		if err != nil {
