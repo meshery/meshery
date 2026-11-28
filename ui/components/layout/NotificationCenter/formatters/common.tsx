@@ -36,6 +36,26 @@ export const TitleLink = ({ href, children, ...props }: TitleLinkProps) => {
   );
 };
 
+/**
+ * Formats an error code into a globally unique universal identifier (mnemonic + numeric code)
+ * per the Meshery error conventions (e.g., '1562' -> 'meshery-server-1562').
+ * If the code already contains a component mnemonic prefix (e.g. 'meshery-server-1133' or 'meshkit-1001'),
+ * it is returned as is.
+ */
+export const formatErrorCode = (code?: unknown, component = 'meshery-server'): string => {
+  if (code === undefined || code === null) return '';
+  const trimmed = String(code).trim();
+  if (!trimmed) return '';
+  if (trimmed.includes('-')) {
+    return trimmed;
+  }
+  if (/^\d+$/.test(trimmed)) {
+    const prefix = component ? component.replace(/_/g, '-') : 'meshery-server';
+    return `${prefix}-${trimmed}`;
+  }
+  return trimmed;
+};
+
 export const EmptyState = ({ event }: { event: { description?: string } }) => {
   return (
     <Typography
