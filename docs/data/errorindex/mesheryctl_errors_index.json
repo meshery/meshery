@@ -4176,6 +4176,23 @@
         "Retry the operation",
         "Run `mesheryctl system login` to re-authenticate"
       ]
+    },
+    {
+      "code": "mesheryctl-1268",
+      "moniker": "ErrDesignInvalidSelectionCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1268",
+      "severity": "alert",
+      "shortDescription": "Invalid design selection",
+      "probableCause": [
+        "The selection prompt returned a design that was not offered"
+      ],
+      "suggestedRemediation": [
+        "Please run the command again and select one of the listed designs"
+      ]
     }
   ],
   "schemaVersion": 2

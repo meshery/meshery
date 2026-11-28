@@ -2225,6 +2225,15 @@
         "short_description": "Failed to replace token file",
         "probable_cause": "The destination path may be locked by another process\nThe filesystem may not support atomic rename",
         "suggested_remediation": "Retry the operation\nRun `mesheryctl system login` to re-authenticate"
+      },
+      "1268": {
+        "name": "ErrDesignInvalidSelectionCode",
+        "code": "1268",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid design selection",
+        "probable_cause": "The selection prompt returned a design that was not offered",
+        "suggested_remediation": "Please run the command again and select one of the listed designs"
       }
     }
   }
