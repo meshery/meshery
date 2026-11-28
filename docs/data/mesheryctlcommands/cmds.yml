@@ -909,6 +909,39 @@ registry:
           description: (optional) assume yes for user interactive prompts
           usage: mesheryctl registry purge -y
           example: mesheryctl registry purge --retain 2 -y
+    init:
+      name: init
+      description: Scaffold models/<model-name>/model-source.yaml, placeholder SVGs and an overrides/ directory for a new model
+      usage: mesheryctl registry init <model-name> --source <url> --category <category> --sub-category <sub-category> --description <description> [flags]
+      example: mesheryctl registry init cert-manager --source https://artifacthub.io/packages/helm/cert-manager/cert-manager --category "Security & Compliance" --sub-category "Key Management" --description "Cloud native certificate management for Kubernetes."
+      flags:
+        source:
+          name: --source, -s
+          description: (required) upstream URL of the model source; the source kind is detected from it
+        source-kind:
+          name: --source-kind
+          description: (optional) kind of source [github | artifacthub | http]
+        category:
+          name: --category
+          description: (required) model category
+        sub-category:
+          name: --sub-category
+          description: (required) model subcategory
+        description:
+          name: --description
+          description: (required) summary description of the model
+        display-name:
+          name: --display-name
+          description: (optional) human-readable model name (default derived from the model name)
+        registrant:
+          name: --registrant
+          description: (optional) registrant of the model (default derived from the source kind)
+        path:
+          name: --path, -p
+          description: (optional) directory the model folder is created under (default "models")
+        force:
+          name: --force
+          description: (optional) overwrite an existing model-source.yaml; SVGs, overrides and version folders are never touched
 
 model:
   name: model
