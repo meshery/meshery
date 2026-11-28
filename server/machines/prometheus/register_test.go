@@ -11,6 +11,7 @@ import (
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/core"
 )
 
@@ -126,6 +127,9 @@ func TestRegisterAction_RejectsUnauthorizedCredential(t *testing.T) {
 	eventType, event, err := action.Execute(registerTestContext(), nil, payload)
 	if err == nil {
 		t.Fatal("expected error for 401 health response, got nil")
+	}
+	if code := errors.GetCode(err); code != models.ErrPrometheusScanCode {
+		t.Errorf("error code = %q, want %q", code, models.ErrPrometheusScanCode)
 	}
 	if eventType != machines.NoOp {
 		t.Errorf("eventType = %q, want %q", eventType, machines.NoOp)
