@@ -140,13 +140,17 @@ function MesheryFilters() {
     data: filtersData,
     isLoading: isFiltersLoading,
     refetch: getFilters,
-  } = useGetFiltersQuery({
-    page: page,
-    pagesize: pageSize,
-    search: search,
-    order: sortOrder,
-    visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
-  });
+  } = useGetFiltersQuery(
+    {
+      page: page,
+      pagesize: pageSize,
+      search: search,
+      order: sortOrder,
+      visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
+    },
+    // A denied viewer sees DefaultError; don't fetch the filters it hides.
+    { skip: !canViewFilters },
+  );
 
   const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
 
