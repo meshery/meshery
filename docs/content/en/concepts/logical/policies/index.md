@@ -7,7 +7,7 @@ Policies offer an evaluation algorithm to ensure desired behavior enforcement. P
 
 ## Policy Evaluation
 
-The relationships are a powerful way to design your infrastructure and each of them are backed by one or more policies. Policies evaluate the designs for potential relationships and the decide whether to create/delete/update the relationships.
+The relationships are a powerful way to design your infrastructure and each of them is backed by one or more policies. Policies evaluate designs for potential relationships and then decide whether to create/delete/update the relationships.
 
 
 [![Meshery Models Policy Evaluation](./images/meshery-models-policy-evaluation.svg
@@ -40,7 +40,7 @@ Each policy is responsible for a specific relationship, matched by its `kind` / 
 The same Go codebase is built for two targets: the native server binary that ships with Meshery Server, and a `js/wasm` WebAssembly module that runs the identical evaluation logic in the browser, enabling client-side relationship evaluation in the Meshery UI without a server round trip.
 
 
-In any given Meshery deployment, you can reference and search the full set of registered policies (in Meshery's internal registry) in using either of Meshery's client interfaces.
+In any given Meshery deployment, you can reference and search the full set of registered policies (in Meshery's internal registry) using either of Meshery's client interfaces.
 
 {{% alert color="info" title="Viewing All Registered Relationships" %}}
 You can view all registered relationships in the Meshery UI.
@@ -60,7 +60,7 @@ You can view all registered relationships in the Meshery UI.
 In the event of a conflict or tie, Meshery relies on Open Policy Agent's [reconciliation behavior](https://www.openpolicyagent.org/docs/latest/faq/) for conflict resolution.
 
 {{% alert color="warning" title="Conflict Resolution" %}}
-It may happen that certain eval decisions contain results such that two different components create a conflicting relationship with same component. While this is semantically correct, the visual representation of the relationship in such cases may be undesirable, and you may see relationships and components being redrawn depending upon how the client / Meshery UI visualizes the relationships.
+It may happen that certain eval decisions contain results such that two different components create a conflicting relationship with the same component. While this is semantically correct, the visual representation of the relationship in such cases may be undesirable, and you may see relationships and components being redrawn depending upon how the client / Meshery UI visualizes the relationships.
 {{% /alert %}}
 
 For an in-depth review, watch this meeting recording.

@@ -155,6 +155,42 @@
         "short_description": "Kubernetes client is nil",
         "probable_cause": "Handler was invoked with an uninitialized or nil Kubernetes client",
         "suggested_remediation": "Supply a valid Kubernetes client to meshsync.New"
+      },
+      "1017": {
+        "name": "ErrBuildDiscovererCode",
+        "code": "1017",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to build the discoverer",
+        "probable_cause": "The platform client could not be initialized",
+        "suggested_remediation": "Check that the platform is reachable and its credentials are valid"
+      },
+      "1018": {
+        "name": "ErrUnsupportedResourceCode",
+        "code": "1018",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Resource cannot be written to the output",
+        "probable_cause": "The output writers only accept Kubernetes resources",
+        "suggested_remediation": "Use the kubernetes discovery platform"
+      },
+      "1019": {
+        "name": "ErrDiscoverNotSupportedCode",
+        "code": "1019",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Standalone discovery pass is not supported",
+        "probable_cause": "The platform's watch mechanism performs the initial inventory itself",
+        "suggested_remediation": "Call Watch instead of Discover"
+      },
+      "1020": {
+        "name": "ErrUnknownPlatformCode",
+        "code": "1020",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unknown discovery platform",
+        "probable_cause": "The requested platform is not supported by this MeshSync build",
+        "suggested_remediation": "Use one of the supported discovery platforms, for example kubernetes"
       }
     }
   }
