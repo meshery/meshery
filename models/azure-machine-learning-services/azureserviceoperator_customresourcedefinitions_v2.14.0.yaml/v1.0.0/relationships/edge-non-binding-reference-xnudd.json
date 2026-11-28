@@ -80,7 +80,7 @@
               "model": {
                 "version": ""
               },
-              "name": "azure-key-vaults",
+              "name": "azure-key-vault",
               "registrant": {
                 "kind": "github"
               },

@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "ec2-controller",
+              "name": "aws-ec2-controller",
               "registrant": {
                 "kind": "artifacthub"
               },
@@ -60,7 +60,7 @@
               "model": {
                 "version": ""
               },
-              "name": "dynamodb-controller",
+              "name": "aws-dynamodb-controller",
               "registrant": {
                 "kind": "artifacthub"
               },

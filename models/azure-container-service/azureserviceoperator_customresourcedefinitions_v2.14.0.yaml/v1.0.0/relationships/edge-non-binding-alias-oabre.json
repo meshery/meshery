@@ -80,7 +80,7 @@
               "model": {
                 "version": ""
               },
-              "name": "azure-machine-learning",
+              "name": "azure-machine-learning-services",
               "registrant": {
                 "kind": "github"
               },
