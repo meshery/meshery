@@ -22,6 +22,7 @@ var (
 	ErrPurgeReadModelsDirCode    = "mesheryctl-1250"
 	ErrPurgeRemoveCode           = "mesheryctl-1251"
 	ErrPurgeUnsafePathCode       = "mesheryctl-1252"
+	ErrRegistryInitCode          = "mesheryctl-1268"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
@@ -78,4 +79,13 @@ func ErrPurgeUnsafePath(path, modelsDir string) error {
 
 func ErrPurgeRemove(err error, path string) error {
 	return errors.New(ErrPurgeRemoveCode, errors.Alert, []string{fmt.Sprintf("error removing model version directory: %s", path)}, []string{err.Error()}, []string{"Insufficient filesystem permissions", "The directory is in use by another process"}, []string{"Ensure sufficient permissions to delete the directory", "Retry the purge after closing any process using the directory"})
+}
+
+// ErrRegistryInit is returned when `mesheryctl registry init` cannot scaffold a model source.
+func ErrRegistryInit(err error) error {
+	return errors.New(ErrRegistryInitCode, errors.Alert,
+		[]string{"Unable to scaffold the model source"},
+		[]string{err.Error()},
+		[]string{"An invalid model name, flag value or source URL was provided", "A model-source.yaml already exists for this model", "The target directory cannot be written"},
+		[]string{"Check the model name and flag values against `mesheryctl registry init --help`", "Pass --force to overwrite an existing model-source.yaml", "Ensure the target directory is writable"})
 }
