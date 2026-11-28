@@ -36,11 +36,11 @@ mesheryctl model build [model-name]
 mesheryctl model build [model-name]/[model-version]
     `,
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 || strings.TrimSpace(args[0]) == "" {
+		if len(args) != 1 {
 			return ErrModelBuildFromStrings(errBuildUsage)
 		}
-		args[0] = strings.TrimSpace(args[0])
-		return nil
+		_, _, err := buildModelParseModelInput(args[0])
+		return err
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		{
@@ -50,27 +50,9 @@ mesheryctl model build [model-name]/[model-version]
 			}
 		}
 
-		inputParam := args[0]
-		name := ""
-		version := ""
-
-		{
-			parts := strings.Split(inputParam, "/")
-			// input param is supposed to be [model-name] or [model-name]/[model-version]
-			// since len(args) is validated to be 1 then parts will have at least one element
-			if len(parts) > 2 {
-				return ErrModelBuildFromStrings(errBuildUsage)
-			}
-			name, version = buildModelParseModelInput(inputParam)
-		}
-
-		// do not validate model name, path and version,
-		// as their purpose is to combine into the folder
-		// only check if they are not empty and combined folder exists
-
-		// validate name is not empty, version could be empty
-		if name == "" {
-			return ErrModelBuildFromStrings(errBuildUsage)
+		name, version, err := buildModelParseModelInput(args[0])
+		if err != nil {
+			return err
 		}
 
 		folder := buildModelCompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)
@@ -118,10 +100,11 @@ mesheryctl model build [model-name]/[model-version]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// validation is done in Args and PreRunE (so args certainly has one element)
-		name, version := buildModelParseModelInput(args[0])
+		name, version, err := buildModelParseModelInput(args[0])
+		if err != nil {
+			return err
+		}
 
-		// validation done above that args contains exactly one argument
 		folder := buildModelCompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)
 
 		utils.Log.Infof("Building meshery model from path %s", folder)
@@ -157,14 +140,14 @@ func init() {
 
 // buildModelParseModelInput parses the user input into model name and version.
 // The input can be `model-name` or `model-name/version`.
-func buildModelParseModelInput(input string) (name, version string) {
-	input = strings.TrimSpace(input)
-	parts := strings.Split(input, "/")
-	name = strings.TrimSpace(parts[0])
-	if len(parts) > 1 {
-		version = strings.TrimSpace(parts[1])
+func buildModelParseModelInput(input string) (string, string, error) {
+	name, version, hasVersion := strings.Cut(input, "/")
+	name = strings.TrimSpace(name)
+	version = strings.TrimSpace(version)
+	if name == "" || (hasVersion && (version == "" || strings.Contains(version, "/"))) {
+		return "", "", ErrModelBuildFromStrings(errBuildUsage)
 	}
-	return
+	return name, version, nil
 }
 
 func buildModelCompileFolderName(path string, name string, version string) string {

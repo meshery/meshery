@@ -225,7 +225,24 @@ An extension matches a Connection by `kind` (optionally narrowed by `type`/`subT
 Each step implements a small contract - an `id` and `label`, a `Component` to render, and optional `canProceed`, `onNext`, `nextLabel`, and `hidden` hooks. Use the existing `kubernetesExtension` as a worked example, and see [Contributing to the Meshery UI]({{< ref "project/contributing/ui" >}}) for building and testing UI changes.
 
 {{% alert color="warning" title="Kubeconfig discovery and who may run exec plugins" %}}
-Kubeconfig upload, discovery, and registration go through `models.DiscoverKubeconfigContexts` in `server/models/k8s_context.go`. Its `KubeconfigDiscoveryOptions.Source` says who supplied the file. `KubeconfigFromUpload`, the zero value, is any kubeconfig that arrived over the API: its exec-plugin and auth-provider contexts are skipped before a client is built, because client-go would otherwise run the named command on the Meshery Server host during the reachability probe. `KubeconfigFromServer` is reserved for the server operator's own kubeconfig (`KUBECONFIG_FOLDER`) and the contexts discovered from it; their authentication runs as configured. A new caller that handles a user-supplied kubeconfig must not pass `KubeconfigFromServer`. This guard applies at discovery only: it does not re-check the credentials of a connection that is already saved, so code that builds a client from stored credentials must not assume they were screened.
+Kubeconfig upload, discovery, and registration go through
+`models.DiscoverKubeconfigContexts` in `server/models/k8s_context.go`. Its
+`KubeconfigDiscoveryOptions.Source` says who supplied the file.
+`KubeconfigFromUpload`, the zero value, is any kubeconfig that arrived over the
+API: its exec-plugin and auth-provider contexts are skipped before a client is
+built, because client-go would otherwise run the named command on the Meshery
+Server host during the reachability probe. `KubeconfigFromServer` is reserved
+for the server operator's own kubeconfig (`KUBECONFIG_FOLDER`) and the contexts
+discovered from it; their authentication runs as configured. A new caller that
+handles a user-supplied kubeconfig must not pass `KubeconfigFromServer`.
+
+When a Connection is reconstructed from stored credentials,
+`models.K8sContextFromConnection` rechecks commands and file references against
+the operator's current kubeconfig. The exception requires a matching user and
+cluster pair, endpoint settings, CA trust, and restricted fields. With TLS
+verification enabled, a relative operator CA path resolves from the operator
+kubeconfig's directory. The reconstructed context embeds the verified CA bytes
+so client construction uses the same trust data.
 {{% /alert %}}
 
 {{% alert color="warning" title="Prefer schemas over code" %}}

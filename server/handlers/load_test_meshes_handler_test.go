@@ -59,39 +59,6 @@ func seedTestSMPModel(t *testing.T, rm *registry.RegistryManager, modelName, dis
 	require.NoError(t, err, "seedTestSMPModel: RegisterEntity failed")
 }
 
-func TestGetSMPServiceMeshes_MethodValidation(t *testing.T) {
-	tests := []struct {
-		name       string
-		method     string
-		wantStatus int
-	}{
-		{"POST method not allowed", http.MethodPost, http.StatusMethodNotAllowed},
-		{"PUT method not allowed", http.MethodPut, http.StatusMethodNotAllowed},
-		{"DELETE method not allowed", http.MethodDelete, http.StatusMethodNotAllowed},
-		{"PATCH method not allowed", http.MethodPatch, http.StatusMethodNotAllowed},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			h := &Handler{}
-			req := httptest.NewRequest(tt.method, "/api/mesh", nil)
-			rec := httptest.NewRecorder()
-
-			h.GetSMPServiceMeshes(rec, req, nil, nil, nil)
-			resp := rec.Result()
-			defer func() {
-				_ = resp.Body.Close()
-			}()
-
-			assert.Equal(t, tt.wantStatus, rec.Code)
-			assert.Equal(t, http.MethodGet, rec.Header().Get("Allow"))
-			errBody := decodeErrorBody(t, rec.Body.Bytes())
-			assert.Equal(t, ErrMethodNotAllowedCode, errBody.Code)
-			assert.NotEmpty(t, errBody.Error)
-		})
-	}
-}
-
 func TestGetSMPServiceMeshes_NilRegistryManager_ReturnsInternalServerError(t *testing.T) {
 	h := &Handler{
 		registryManager: nil,

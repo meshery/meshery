@@ -2,6 +2,7 @@ package design
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"os"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -259,6 +261,45 @@ func TestFetchDesignFile_GithubURL(t *testing.T) {
 	authedContent, err := fetchDesignFile(authedRawURL)
 	require.NoError(t, err)
 	assert.Equal(t, "authed raw content", string(authedContent))
+}
+
+func TestFetchDesignFile_DownloadErrorOmitsURLSecrets(t *testing.T) {
+	httpmock.Activate()
+	t.Cleanup(httpmock.DeactivateAndReset)
+
+	for _, hostPath := range []string{
+		"example.com/design.yaml",
+		"raw.githubusercontent.com/meshery/meshery/master/designs/sample.yaml",
+	} {
+		t.Run(hostPath, func(t *testing.T) {
+			attempted := false
+			httpmock.RegisterNoResponder(func(req *http.Request) (*http.Response, error) {
+				attempted = true
+				assert.Equal(t, "download-token", req.URL.Query().Get("token"))
+				return nil, errors.New("connection closed")
+			})
+			_, err := fetchDesignFile("https://download-user:download-password@" + hostPath + "?token=download-token")
+			require.Error(t, err)
+			require.True(t, attempted)
+			details := append([]string{err.Error(), meshkiterrors.GetCause(err)}, downloadErrorLongDescription(t, err)...)
+			for _, secret := range []string{"download-user", "download-password", "download-token"} {
+				for _, detail := range details {
+					assert.NotContains(t, detail, secret)
+				}
+			}
+		})
+	}
+}
+
+func downloadErrorLongDescription(t *testing.T, err error) []string {
+	t.Helper()
+	var errV2 *meshkiterrors.ErrorV2
+	if errors.As(err, &errV2) {
+		return errV2.LongDescription
+	}
+	var errV1 *meshkiterrors.Error
+	require.ErrorAs(t, err, &errV1)
+	return errV1.LongDescription
 }
 
 func TestIsGithubURL(t *testing.T) {

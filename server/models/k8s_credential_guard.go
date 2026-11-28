@@ -128,35 +128,51 @@ func serverKubeconfig() *clientcmdapi.Config {
 // cannot introduce a command or a path of their choosing, nor reuse the
 // operator's exec plugin to send a token to another host.
 func UntrustedKubeCredentialFields(auth, cluster map[string]interface{}) []string {
+	fields, _ := checkKubeCredential(auth, cluster)
+	return fields
+}
+
+func checkKubeCredential(auth, cluster map[string]interface{}) ([]string, []byte) {
 	if len(auth) == 0 && len(cluster) == 0 {
-		return nil
+		return nil, nil
 	}
 	cfg, err := loadCredentialKubeconfig(auth, cluster)
 	if err != nil {
-		return nil
+		return nil, nil
 	}
 	fields := unsafeFields(cfg, nil)
 	if len(fields) == 0 {
-		return nil
+		return nil, nil
 	}
 	srv := serverKubeconfig()
-	if srv == nil || !pairsMatchServerContext(cfg, srv) {
-		return fields
+	if srv == nil {
+		return fields, nil
 	}
-	return unsafeFields(cfg, srv)
+	fileCA, matched := pairsMatchServerContext(cfg, srv)
+	if !matched {
+		return fields, nil
+	}
+	return unsafeFields(cfg, srv), fileCA
 }
 
 // pairsMatchServerContext reports whether every user of cfg is paired, in a
 // context of srv, with a cluster of srv that has the same name, endpoint, and
 // effective CA trust as the one cfg carries.
-func pairsMatchServerContext(cfg, srv *clientcmdapi.Config) bool {
+func pairsMatchServerContext(cfg, srv *clientcmdapi.Config) ([]byte, bool) {
+	var fileCA []byte
 	for uname := range cfg.AuthInfos {
 		for cname, c := range cfg.Clusters {
 			sc := srv.Clusters[cname]
 			if sc == nil || c.Server != sc.Server || c.ProxyURL != sc.ProxyURL ||
-				c.TLSServerName != sc.TLSServerName || c.InsecureSkipTLSVerify != sc.InsecureSkipTLSVerify ||
-				!clusterCAMatches(c, sc) {
-				return false
+				c.TLSServerName != sc.TLSServerName || c.InsecureSkipTLSVerify != sc.InsecureSkipTLSVerify {
+				return nil, false
+			}
+			ca, matched := matchingClusterCA(c, sc)
+			if !matched {
+				return nil, false
+			}
+			if c.CertificateAuthority != "" {
+				fileCA = ca
 			}
 			paired := false
 			for _, sctx := range srv.Contexts {
@@ -166,48 +182,40 @@ func pairsMatchServerContext(cfg, srv *clientcmdapi.Config) bool {
 				}
 			}
 			if !paired {
-				return false
+				return nil, false
 			}
 		}
 	}
-	return len(cfg.AuthInfos) > 0
+	return fileCA, len(cfg.AuthInfos) > 0 && len(cfg.Clusters) > 0
 }
 
-// clusterCAMatches reports whether c's CA trust matches sc's effective CA trust,
-// including comparing contents when sc uses a CA file.
-func clusterCAMatches(c, sc *clientcmdapi.Cluster) bool {
+func matchingClusterCA(c, sc *clientcmdapi.Cluster) ([]byte, bool) {
 	if c.InsecureSkipTLSVerify && sc.InsecureSkipTLSVerify {
-		return true
+		return []byte{}, true
 	}
 
 	serverCA := sc.CertificateAuthorityData
 	if len(serverCA) == 0 && sc.CertificateAuthority != "" {
 		path := sc.CertificateAuthority
 		if !filepath.IsAbs(path) {
-			if folder := viper.GetString("KUBECONFIG_FOLDER"); folder != "" {
-				path = filepath.Join(folder, path)
-			}
+			path = filepath.Join(filepath.Dir(sc.LocationOfOrigin), path)
 		}
 		var err error
 		serverCA, err = os.ReadFile(path)
-		if err != nil {
-			return false
+		if err != nil || len(bytes.TrimSpace(serverCA)) == 0 {
+			return nil, false
 		}
 	}
 
 	credCA := c.CertificateAuthorityData
 	if len(credCA) == 0 && c.CertificateAuthority != "" {
 		if c.CertificateAuthority != sc.CertificateAuthority {
-			return false
+			return nil, false
 		}
 		credCA = serverCA
 	}
 
-	if len(serverCA) == 0 && len(credCA) == 0 {
-		return c.CertificateAuthority == sc.CertificateAuthority
-	}
-
-	return bytes.Equal(bytes.TrimSpace(credCA), bytes.TrimSpace(serverCA))
+	return serverCA, bytes.Equal(bytes.TrimSpace(credCA), bytes.TrimSpace(serverCA))
 }
 
 // RejectUnsafeKubeCredential refuses a Kubernetes credential secret whose

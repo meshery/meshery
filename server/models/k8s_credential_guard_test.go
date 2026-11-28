@@ -1,6 +1,7 @@
 package models
 
 import (
+	"bytes"
 	"encoding/base64"
 	"os"
 	"path/filepath"
@@ -14,6 +15,7 @@ import (
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 // setKubeconfigFolder points the server's own kubeconfig lookup at folder for
@@ -196,7 +198,7 @@ func TestK8sContextFromConnectionRequiresMatchingCATrust(t *testing.T) {
 	caB64 := base64.StdEncoding.EncodeToString(caCert)
 	attackerB64 := base64.StdEncoding.EncodeToString([]byte("-----BEGIN CERTIFICATE-----\nATTACKER-CA-DATA\n-----END CERTIFICATE-----\n"))
 
-	ownExec := map[string]interface{}{"apiVersion": "client.authentication.k8s.io/v1", "command": "aws", "args": []interface{}{"eks", "get-token"}}
+	ownExec := map[string]interface{}{"apiVersion": "client.authentication.k8s.io/v1", "command": "aws", "interactiveMode": "Never", "args": []interface{}{"eks", "get-token"}}
 
 	setKubeconfigFolder(t, folder)
 	if err := os.WriteFile(filepath.Join(folder, "config"), []byte(`apiVersion: v1
@@ -212,6 +214,7 @@ users:
     exec:
       apiVersion: client.authentication.k8s.io/v1
       command: aws
+      interactiveMode: Never
       args: [eks, get-token]
 contexts:
 - name: c
@@ -271,6 +274,7 @@ users:
     exec:
       apiVersion: client.authentication.k8s.io/v1
       command: aws
+      interactiveMode: Never
       args: [eks, get-token]
 contexts:
 - name: c
@@ -306,6 +310,7 @@ users:
     exec:
       apiVersion: client.authentication.k8s.io/v1
       command: aws
+      interactiveMode: Never
       args: [eks, get-token]
 contexts:
 - name: c
@@ -332,8 +337,24 @@ current-context: c
 			"certificate-authority": "ca.crt",
 		})
 		provider, conn := saveKubeCredentialAndConnection(t, map[string]interface{}{"auth": auth, "cluster": cl})
-		if _, err := K8sContextFromConnection(provider, "", conn); err != nil {
+		ctx, err := K8sContextFromConnection(provider, "", conn)
+		if err != nil {
 			t.Fatalf("expected allowed for matching CA file path, got %v", err)
+		}
+		data, err := ctx.GenerateKubeConfig()
+		if err != nil {
+			t.Fatal(err)
+		}
+		cfg, err := clientcmd.Load(data)
+		if err != nil {
+			t.Fatal(err)
+		}
+		config, err := clientcmd.NewDefaultClientConfig(*cfg, &clientcmd.ConfigOverrides{}).ClientConfig()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if config.CAFile != "" || !bytes.Equal(config.CAData, caCert) {
+			t.Fatalf("client config must use the operator CA bytes without a file reference")
 		}
 	})
 
@@ -352,6 +373,7 @@ users:
     exec:
       apiVersion: client.authentication.k8s.io/v1
       command: aws
+      interactiveMode: Never
       args: [eks, get-token]
 contexts:
 - name: c

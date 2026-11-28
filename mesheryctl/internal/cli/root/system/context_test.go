@@ -55,6 +55,16 @@ func TestContextViewCmd(t *testing.T) {
 			ExpectedResponse: "viewWithContextExpected.golden",
 		},
 		{
+			Name:             "view positional context with all disabled",
+			Args:             []string{"context", "view", "local2", "--all=false"},
+			ExpectedResponse: "viewWithContextExpected.golden",
+		},
+		{
+			Name:             "view named context with all disabled",
+			Args:             []string{"context", "view", "--context", "local2", "--all=false"},
+			ExpectedResponse: "viewWithContextExpected.golden",
+		},
+		{
 			Name:             "view with all flag set",
 			Args:             []string{"context", "view", "--all"},
 			ExpectedResponse: "viewAllExpected.golden",

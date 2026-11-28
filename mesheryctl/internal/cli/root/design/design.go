@@ -147,34 +147,31 @@ func fetchDesignByID(baseUrl, designID string) (pattern.PatternFile, error) {
 // from a URL without saving it, so the file is fetched here. It uses a plain
 // request, because utils.NewRequest would send the Meshery token to GitHub.
 func fetchDesignFromGithub(fileURL string) ([]byte, error) {
-	repoURL, filePath, err := utils.ParseURLGithub(fileURL)
+	u, err := url.Parse(fileURL)
 	if err != nil {
-		return nil, utils.ErrParseGithubFile(err, fileURL)
+		return nil, utils.ErrFailRequest(errors.New("invalid design URL"))
+	}
+	safeURL := designDownloadURL(u)
+	repoURL, filePath, err := utils.ParseURLGithub(safeURL)
+	if err != nil {
+		return nil, utils.ErrParseGithubFile(err, safeURL)
 	}
 
-	rawURL := repoURL
 	if filePath != "" {
-		rawURL = strings.Replace(repoURL, "https://github.com/", "https://raw.githubusercontent.com/", 1) + "/" + filePath
-	} else {
-		rawURL = fileURL
+		fileURL = strings.Replace(repoURL, "https://github.com/", "https://raw.githubusercontent.com/", 1) + "/" + filePath
 	}
 
-	client := &http.Client{Timeout: githubDownloadTimeout}
-	resp, err := client.Get(rawURL)
-	if err != nil {
-		return nil, utils.ErrFailRequest(err)
-	}
-	defer func() { _ = resp.Body.Close() }()
+	return downloadDesign(fileURL)
+}
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, utils.ErrResponseStatus(resp.StatusCode)
-	}
-
-	content, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, utils.ErrReadFromBody(err)
-	}
-	return content, nil
+func designDownloadURL(u *url.URL) string {
+	clean := *u
+	clean.User = nil
+	clean.RawQuery = ""
+	clean.ForceQuery = false
+	clean.Fragment = ""
+	clean.RawFragment = ""
+	return clean.String()
 }
 
 func isGithubURL(fileURL string) bool {
@@ -205,7 +202,7 @@ func designFileName(filePathOrURL string) string {
 func fetchDesignFile(fileURL string) ([]byte, error) {
 	u, err := url.Parse(fileURL)
 	if err != nil {
-		return nil, utils.ErrFailRequest(err)
+		return nil, utils.ErrFailRequest(errors.New("invalid design URL"))
 	}
 	scheme := strings.ToLower(u.Scheme)
 	if scheme != "http" && scheme != "https" {
@@ -216,10 +213,18 @@ func fetchDesignFile(fileURL string) ([]byte, error) {
 		return fetchDesignFromGithub(fileURL)
 	}
 
+	return downloadDesign(fileURL)
+}
+
+func downloadDesign(fileURL string) ([]byte, error) {
 	client := &http.Client{Timeout: githubDownloadTimeout}
 	resp, err := client.Get(fileURL)
 	if err != nil {
-		return nil, utils.ErrFailRequest(err)
+		var transportErr *url.Error
+		if errors.As(err, &transportErr) && transportErr.Timeout() {
+			return nil, utils.ErrFailRequest(errors.New("design download timed out"))
+		}
+		return nil, utils.ErrFailRequest(errors.New("design download request failed"))
 	}
 	defer func() { _ = resp.Body.Close() }()
 

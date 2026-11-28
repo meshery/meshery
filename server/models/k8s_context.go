@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	stderrors "errors"
 	"fmt"
+	"maps"
 	"net"
 	"os"
 	"strings"
@@ -147,8 +148,27 @@ func K8sContextFromConnection(provider Provider, token string, connection *conne
 	// plugin or reads files on this host. Refuse one that carries either unless
 	// it is the server's own (issue #24218). Callers that build a client from the
 	// returned context (ping, the state machine, graphql) get this error instead.
-	if fields := UntrustedKubeCredentialFields(ctx.Auth, ctx.Cluster); len(fields) > 0 {
+	fields, fileCA := checkKubeCredential(ctx.Auth, ctx.Cluster)
+	if len(fields) > 0 {
 		return K8sContext{}, ErrUnsafeKubeCredential(fields)
+	}
+	if fileCA != nil {
+		ctx.Cluster = maps.Clone(ctx.Cluster)
+		for key, value := range ctx.Cluster {
+			if cluster, ok := value.(map[string]interface{}); ok && strings.EqualFold(key, "cluster") {
+				cluster = maps.Clone(cluster)
+				for field := range cluster {
+					if strings.EqualFold(field, kubeFieldCertificateAuthority) ||
+						strings.EqualFold(field, "certificate-authority-data") {
+						delete(cluster, field)
+					}
+				}
+				if len(fileCA) > 0 {
+					cluster["certificate-authority-data"] = base64.StdEncoding.EncodeToString(fileCA)
+				}
+				ctx.Cluster[key] = cluster
+			}
+		}
 	}
 	ctx.CreatedAt = &connection.CreatedAt
 	ctx.UpdatedAt = &connection.UpdatedAt
