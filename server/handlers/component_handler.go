@@ -23,8 +23,7 @@ import (
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
 
-	// "github.com/meshery/meshkit/errors"
-	// "github.com/meshery/meshkit/errors"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 
 	meshkitOci "github.com/meshery/meshkit/models/oci"
@@ -50,6 +49,13 @@ import (
 
 // DefaultPageSizeForMeshModelComponents is the default page size used when listing Meshmodel components.
 const DefaultPageSizeForMeshModelComponents = 25
+
+func (h *Handler) writeCategoryModelsError(rw http.ResponseWriter, err error) {
+	h.log.Error(ErrGetMeshModels(err))
+	publicErr := meshkiterrors.New(ErrGetMeshModelsCode, meshkiterrors.Alert,
+		[]string{"could not get meshmodel entities"}, nil, nil, []string{"Please try again later."})
+	writeMeshkitError(rw, publicErr, http.StatusInternalServerError)
+}
 
 func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
@@ -77,8 +83,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 	entities, count, _, err := h.registryManager.GetEntities(filter)
 	if err != nil {
-		h.log.Error(ErrGetMeshModels(err))
-		writeMeshkitError(rw, ErrGetMeshModels(nil), http.StatusInternalServerError)
+		h.writeCategoryModelsError(rw, err)
 		return
 	}
 	var modelDefs []_model.ModelDefinition
@@ -140,8 +145,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		Relationships: queryParams.Get("relationships") == queryParamTrue,
 	})
 	if err != nil {
-		h.log.Error(ErrGetMeshModels(err))
-		writeMeshkitError(rw, ErrGetMeshModels(nil), http.StatusInternalServerError)
+		h.writeCategoryModelsError(rw, err)
 		return
 	}
 

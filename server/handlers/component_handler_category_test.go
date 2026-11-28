@@ -115,6 +115,8 @@ func TestGetModelsByCategoryEmbedsDefinitionsWhenAsked(t *testing.T) {
 					require.Equal(t, "could not get meshmodel entities", failure["error"])
 					require.Equal(t, "meshery-server-1106", failure["code"])
 					require.NotContains(t, failure, "longDescription")
+					require.NotContains(t, failure, "probableCause")
+					require.Equal(t, []any{"Please try again later."}, failure["suggestedRemediation"])
 					require.NotContains(t, rw.Body.String(), child.Schema.Table)
 				})
 			}
