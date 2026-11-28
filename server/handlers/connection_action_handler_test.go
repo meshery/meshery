@@ -44,8 +44,10 @@ func TestPerformConnectionAction_InvalidConnectionID(t *testing.T) {
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("status = %d, want 400 for invalid connection id; body: %s", rec.Code, rec.Body.String())
 	}
-	if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
-		t.Errorf("expected error body to contain %s, got: %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+
+	body := decodeErrorBody(t, rec.Body.Bytes())
+	if body.Code != models.ErrInvalidUUIDValueCode {
+		t.Errorf("error code = %q, want %q", body.Code, models.ErrInvalidUUIDValueCode)
 	}
 }
 
@@ -62,8 +64,10 @@ func TestPerformConnectionAction_NilConnectionID(t *testing.T) {
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("status = %d, want 400 for nil connection id; body: %s", rec.Code, rec.Body.String())
 	}
-	if !strings.Contains(rec.Body.String(), models.ErrInvalidUUIDValueCode) {
-		t.Errorf("expected error body to contain %s, got: %s", models.ErrInvalidUUIDValueCode, rec.Body.String())
+
+	body := decodeErrorBody(t, rec.Body.Bytes())
+	if body.Code != models.ErrInvalidUUIDValueCode {
+		t.Errorf("error code = %q, want %q", body.Code, models.ErrInvalidUUIDValueCode)
 	}
 }
 
@@ -81,8 +85,10 @@ func TestPerformConnectionAction_NilProvider_ReturnsInternalServerError(t *testi
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("status = %d, want 500 for nil provider; body: %s", rec.Code, rec.Body.String())
 	}
-	if !strings.Contains(rec.Body.String(), "provider not initialized") {
-		t.Errorf("expected 'provider not initialized', got: %s", rec.Body.String())
+
+	body := decodeErrorBody(t, rec.Body.Bytes())
+	if body.Error != "provider not initialized" {
+		t.Errorf("error = %q, want %q", body.Error, "provider not initialized")
 	}
 }
 
@@ -100,8 +106,10 @@ func TestPerformConnectionAction_FlushMeshsync_NilProvider_ReturnsInternalServer
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("status = %d, want 500 for nil provider; body: %s", rec.Code, rec.Body.String())
 	}
-	if !strings.Contains(rec.Body.String(), "provider not initialized") {
-		t.Errorf("expected 'provider not initialized', got: %s", rec.Body.String())
+
+	body := decodeErrorBody(t, rec.Body.Bytes())
+	if body.Error != "provider not initialized" {
+		t.Errorf("error = %q, want %q", body.Error, "provider not initialized")
 	}
 }
 
@@ -119,8 +127,11 @@ func TestPerformConnectionAction_UnsupportedAction(t *testing.T) {
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("status = %d, want 400 for unsupported action; body: %s", rec.Code, rec.Body.String())
 	}
-	if !strings.Contains(rec.Body.String(), "unsupported connection action") {
-		t.Fatalf("expected unsupported-action message, got: %s", rec.Body.String())
+
+	body := decodeErrorBody(t, rec.Body.Bytes())
+	wantError := `unsupported connection action "noSuchAction"`
+	if body.Error != wantError {
+		t.Fatalf("error = %q, want %q", body.Error, wantError)
 	}
 }
 
@@ -137,6 +148,11 @@ func TestPerformConnectionAction_MalformedBody(t *testing.T) {
 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("status = %d, want 400 for malformed body; body: %s", rec.Code, rec.Body.String())
+	}
+
+	body := decodeErrorBody(t, rec.Body.Bytes())
+	if body.Code != models.ErrUnmarshalCode {
+		t.Errorf("error code = %q, want %q", body.Code, models.ErrUnmarshalCode)
 	}
 }
 
