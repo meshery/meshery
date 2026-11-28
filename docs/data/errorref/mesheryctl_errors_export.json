@@ -2225,6 +2225,15 @@
         "short_description": "Failed to replace token file",
         "probable_cause": "The destination path may be locked by another process\nThe filesystem may not support atomic rename",
         "suggested_remediation": "Retry the operation\nRun `mesheryctl system login` to re-authenticate"
+      },
+      "1268": {
+        "name": "ErrPrerequisiteFailedCode",
+        "code": "1268",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Prerequisite check failed for registry generate command",
+        "probable_cause": "Command was executed from an invalid working directory\nCurrent directory is not the root of a meshery/meshery repository fork",
+        "suggested_remediation": "Run mesheryctl registry generate from the root directory of a valid meshery/meshery repository clone or fork with git remote configured"
       }
     }
   }

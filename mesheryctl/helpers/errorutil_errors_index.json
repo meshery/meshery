@@ -4176,6 +4176,24 @@
         "Retry the operation",
         "Run `mesheryctl system login` to re-authenticate"
       ]
+    },
+    {
+      "code": "mesheryctl-1268",
+      "moniker": "ErrPrerequisiteFailedCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1268",
+      "severity": "alert",
+      "shortDescription": "Prerequisite check failed for registry generate command",
+      "probableCause": [
+        "Command was executed from an invalid working directory",
+        "Current directory is not the root of a meshery/meshery repository fork"
+      ],
+      "suggestedRemediation": [
+        "Run mesheryctl registry generate from the root directory of a valid meshery/meshery repository clone or fork with git remote configured"
+      ]
     }
   ],
   "schemaVersion": 2

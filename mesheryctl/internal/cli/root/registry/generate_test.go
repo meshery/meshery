@@ -1,10 +1,12 @@
 package registry
 
 import (
+	"path/filepath"
 	"testing"
 	"time"
 
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	"github.com/meshery/meshkit/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
@@ -294,25 +296,41 @@ func TestGenerationOptionsCreation(t *testing.T) {
 func TestPreRunEValidation(t *testing.T) {
 	// Test PreRunE validation for various input scenarios
 	tests := []struct {
-		name        string
-		args        []string
-		setup       func()
-		expectError bool
-		errorMsg    string
+		name         string
+		args         []string
+		setup        func(t *testing.T, root string)
+		expectError  bool
+		expectedCode string
+		errorMsg     string
 	}{
 		{
-			name:        "No input source specified",
-			args:        []string{},
-			setup:       func() { resetGenerateFlags(generateCmd) },
+			name: "No input source specified from valid repo root",
+			args: []string{},
+			setup: func(t *testing.T, root string) {
+				chdir(t, root)
+				resetGenerateFlags(generateCmd)
+			},
 			expectError: true,
 			errorMsg:    "isn't specified",
+		},
+		{
+			name: "Executed from outside repo root fails prerequisite check",
+			args: []string{},
+			setup: func(t *testing.T, root string) {
+				subDir := filepath.Join(root, "mesheryctl")
+				chdir(t, subDir)
+				resetGenerateFlags(generateCmd)
+			},
+			expectError:  true,
+			expectedCode: ErrPrerequisiteFailedCode,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			root := setupMockMesheryRepo(t, false)
 			if tt.setup != nil {
-				tt.setup()
+				tt.setup(t, root)
 			}
 
 			generateCmd.SetArgs(tt.args)
@@ -320,6 +338,9 @@ func TestPreRunEValidation(t *testing.T) {
 
 			if tt.expectError {
 				assert.Error(t, err)
+				if tt.expectedCode != "" {
+					assert.Equal(t, tt.expectedCode, errors.GetCode(err))
+				}
 				if tt.errorMsg != "" {
 					assert.Contains(t, err.Error(), tt.errorMsg)
 				}
