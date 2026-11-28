@@ -51,16 +51,12 @@
   {{ $pages := $pages_tmp -}}
 
   {{ $withChild := gt (len $pages) 0 -}}
-  {{ $manualLink :=
-      cond
-        (isset $s.Params "manuallink")
-        $s.Params.manualLink
-        (cond
-          (isset $s.Params "manuallinkrelref")
-          (relref $s $s.Params.manualLinkRelref)
-          $s.RelPermalink
-        )
-  -}}
+  {{ $manualLink := $s.RelPermalink -}}
+  {{ if isset $s.Params "manuallink" -}}
+    {{ $manualLink = $s.Params.manualLink -}}
+  {{ else if isset $s.Params "manuallinkrelref" -}}
+    {{ $manualLink = relref $s $s.Params.manualLinkRelref -}}
+  {{ end -}}
   {{ $manualLinkTitle :=
       cond
         (isset $s.Params "manuallinktitle")

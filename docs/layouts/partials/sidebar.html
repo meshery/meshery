@@ -29,7 +29,7 @@
       var $link = $nav.find("#" + activeId);
       $nav.find("a").removeClass("active");
       $link.addClass("active");
-      $nav.find("#" + activeId + "-li span").addClass("td-sidebar-nav-active-item");
+      $link.children("span").addClass("td-sidebar-nav-active-item");
       $link.parents("li").addClass("active-path show");
       $link.parents("li").siblings("li").addClass("show");
       $nav.find("#" + activeId + "-li").siblings("li").addClass("show");
@@ -136,8 +136,19 @@
         onTreeReady();
         return;
       }
+      // Search must stay usable while the tree downloads.
+      showMenu();
       // The URL is fingerprinted, so a cached copy is always the right one.
-      fetch(src, { cache: "force-cache", credentials: "same-origin" })
+      // The timeout covers reading the body too, so a stalled download falls back.
+      var controller = new AbortController();
+      var timer = setTimeout(function () {
+        controller.abort();
+      }, 8000);
+      fetch(src, {
+        cache: "force-cache",
+        credentials: "same-origin",
+        signal: controller.signal,
+      })
         .then(function (response) {
           if (!response.ok) {
             throw new Error("HTTP " + response.status + " " + response.statusText);
@@ -145,10 +156,12 @@
           return response.text();
         })
         .then(function (html) {
+          clearTimeout(timer);
           nav.insertAdjacentHTML("beforeend", html);
           onTreeReady();
         })
         .catch(function (err) {
+          clearTimeout(timer);
           onTreeFailed(nav, src, err);
         });
     }

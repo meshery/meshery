@@ -116,6 +116,9 @@ jobs:
           if [ "$action" = "closed" ] && [ "$pr_state" = "open" ]; then
             echo "::notice::PR #${number} was closed when this run was built but is open now. Not removing its preview, and not deploying the close-run artifact."
             skip=true
+          elif [ "$action" != "closed" ] && [ "$pr_state" != "open" ]; then
+            echo "::notice::PR #${number} is ${pr_state} now, so this ${action} run is stale. Not deploying it, which would restore a removed preview."
+            skip=true
           fi
 
           echo "PULL_REQUEST=$number" >> "$GITHUB_OUTPUT"
