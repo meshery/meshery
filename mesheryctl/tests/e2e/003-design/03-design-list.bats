@@ -10,7 +10,7 @@ setup() {
   export DESIGN_LIST_OUTPUT__HEADER_REGEX_PATTERN="^DESIGN[[:space:]]ID[[:space:]]+(USER[[:space:]]ID)?[[:space:]]+NAME[[:space:]]+CREATED[[:space:]]+UPDATED[[:space:]]+$"
 }
 
-@test "given all requirements met when running mesheryctl design list --page 1 then the total numbers of designs and a list of designs are displayed" {
+@test "[cut=Design][tg=Design List] given all requirements met when running mesheryctl design list --page 1 then the total numbers of designs and a list of designs are displayed" {
   run $MESHERYCTL_BIN design list --page 1
   assert_success
 
@@ -18,7 +18,7 @@ setup() {
   assert_line --regexp "$LIST_COMMAND_OUTPUT_REGEX_PATTERN"
 }
 
-@test "given all requirements met when running mesheryctl design list --count then the total numbers of designs is displayed" {
+@test "[cut=Design][tg=Design List] given all requirements met when running mesheryctl design list --count then the total numbers of designs is displayed" {
   run $MESHERYCTL_BIN design list --count
   assert_success
   
