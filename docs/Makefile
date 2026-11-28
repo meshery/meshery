@@ -52,6 +52,7 @@ check-deps:
 	@echo "Checking if 'npm', local 'sass', and local 'hugo' binary are present..."
 	@command -v npm > /dev/null || { echo "Error: 'npm' not found. Please install Node.js and npm."; exit 1; }
 	@command -v sass > /dev/null || { echo "Error: Dart Sass not found. See https://gohugo.io/functions/css/sass/#dart-sass"; exit 1; }
+	@sass --embedded --version 2>/dev/null | grep -q protocolVersion || { echo "Error: 'sass' at $$(command -v sass) is not a Dart Sass that speaks the embedded protocol. Put a real Dart Sass release (https://github.com/sass/dart-sass/releases) first on PATH. See https://gohugo.io/functions/css/sass/#dart-sass"; exit 1; }
 	@test -x node_modules/.bin/hugo || { echo "Error: Hugo binary not found in node_modules. Please run 'make setup' first."; exit 1; }
 	@echo "Dependencies check passed."
 

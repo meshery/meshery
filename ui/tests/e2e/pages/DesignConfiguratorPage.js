@@ -6,6 +6,7 @@ export class DesignConfiguratorPage {
     this.codeEditor = page.getByTestId('design-configurator-code-editor');
     this.categorySelector = page.getByTestId('category-selector');
     this.databaseCategory = page.getByTestId('Database');
+    this.analyticsCategory = page.getByTestId('Analytics');
     this.modelSelector = page.getByTestId('model-selector');
     this.modelAzure = page.getByTestId('azure-db-for-mysql');
     this.modelContainer = page.getByTestId('model-component-list');

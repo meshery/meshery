@@ -2816,26 +2816,6 @@
       ]
     },
     {
-      "code": "meshery-server-1175",
-      "moniker": "ErrSubscribeChannelCode",
-      "component": {
-        "name": "meshery-server",
-        "type": "component"
-      },
-      "numericCode": "1175",
-      "severity": "alert",
-      "shortDescription": "Unable to subscribe to channel",
-      "longDescription": "Unable to create a broker subscription",
-      "probableCause": [
-        "Could be a network issue",
-        "Meshery Broker could have crashed"
-      ],
-      "suggestedRemediation": [
-        "Check if Meshery Broker is reachable from Meshery Server",
-        "Check if Meshery Broker is up and running inside the configured cluster"
-      ]
-    },
-    {
       "code": "meshery-server-1176",
       "moniker": "ErrPublishBrokerCode",
       "component": {
@@ -3042,42 +3022,6 @@
       ]
     },
     {
-      "code": "meshery-server-1188",
-      "moniker": "ErrAddonSubscriptionCode",
-      "component": {
-        "name": "meshery-server",
-        "type": "component"
-      },
-      "numericCode": "1188",
-      "severity": "alert",
-      "shortDescription": "Addons Subscription failed",
-      "longDescription": "GraphQL subscription for Addons stopped",
-      "probableCause": [
-        "Could be a network issue"
-      ],
-      "suggestedRemediation": [
-        "Check if meshery server is reachable from the browser"
-      ]
-    },
-    {
-      "code": "meshery-server-1189",
-      "moniker": "ErrResolverControlPlaneSubscriptionCode",
-      "component": {
-        "name": "meshery-server",
-        "type": "component"
-      },
-      "numericCode": "1189",
-      "severity": "alert",
-      "shortDescription": "Control Plane Subscription failed",
-      "longDescription": "GraphQL subscription for Control Plane stopped",
-      "probableCause": [
-        "Could be a network issue"
-      ],
-      "suggestedRemediation": [
-        "Confirm that Meshery Server is reachable from your browser."
-      ]
-    },
-    {
       "code": "meshery-server-1190",
       "moniker": "ErrMesheryClientCode",
       "component": {
@@ -3129,24 +3073,6 @@
       "suggestedRemediation": [
         "Enable Meshery Operator from the settings page in the UI",
         "Check for logs in the meshery-operator pods from inside the application for more information"
-      ]
-    },
-    {
-      "code": "meshery-server-1193",
-      "moniker": "ErrDataPlaneSubscriptionCode",
-      "component": {
-        "name": "meshery-server",
-        "type": "component"
-      },
-      "numericCode": "1193",
-      "severity": "alert",
-      "shortDescription": "Data Plane Subscription failed",
-      "longDescription": "GraphQL subscription for Data Plane stopped",
-      "probableCause": [
-        "Could be a network issue"
-      ],
-      "suggestedRemediation": [
-        "Check if meshery server is reachable from the browser"
       ]
     },
     {
@@ -7709,6 +7635,130 @@
       ],
       "suggestedRemediation": [
         "Reduce request payload size to within acceptable limits"
+      ]
+    },
+    {
+      "code": "meshery-server-1495",
+      "moniker": "ErrHandlerPanicCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1495",
+      "severity": "alert",
+      "shortDescription": "Meshery Server hit an unexpected internal error while handling the request",
+      "longDescription": "The handler for this request panicked. The panic value and stack are recorded in the server log, not in this response",
+      "probableCause": [
+        "A defect in Meshery Server caused the handler for this request to panic"
+      ],
+      "suggestedRemediation": [
+        "Retry the request",
+        "If it keeps failing, report it at https://github.com/meshery/meshery/issues/new/choose together with the request that triggered it; the server log holds the full stack"
+      ]
+    },
+    {
+      "code": "meshery-server-1496",
+      "moniker": "ErrInvalidDesignVersionCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1496",
+      "severity": "alert",
+      "shortDescription": "Invalid design version",
+      "probableCause": [
+        "The design file's version is not semver, so a next version cannot be computed from it",
+        "Older tooling wrote arbitrary version strings into design files"
+      ],
+      "suggestedRemediation": [
+        "Set the design file's version to a semver string such as 0.0.1 and save again"
+      ]
+    },
+    {
+      "code": "meshery-server-1497",
+      "moniker": "ErrProvisionPanicCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1497",
+      "severity": "alert",
+      "shortDescription": "Component panicked during provisioning",
+      "probableCause": [
+        "Runtime fault occurred in component visitor execution"
+      ],
+      "suggestedRemediation": [
+        "Inspect component configuration and provider logs for runtime failures"
+      ]
+    },
+    {
+      "code": "meshery-server-1499",
+      "moniker": "ErrKubeConfigFileReferenceCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1499",
+      "severity": "alert",
+      "shortDescription": "The kubeconfig refers to files by path",
+      "longDescription": "certificate-authority, client-certificate, client-key and tokenFile may not be file paths in an uploaded kubeconfig.",
+      "probableCause": [
+        "An uploaded kubeconfig is read on the Meshery Server host, which cannot and must not read files from the machine the kubeconfig came from."
+      ],
+      "suggestedRemediation": [
+        "Embed the credentials instead, for example with `kubectl config view --raw --flatten --minify`, and upload the result."
+      ]
+    },
+    {
+      "code": "meshery-server-1500",
+      "moniker": "ErrUnsafeKubeCredentialCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1500",
+      "severity": "alert",
+      "shortDescription": "The Kubernetes credential is not allowed to run commands or read files on the Meshery Server host",
+      "probableCause": [
+        "exec plugins, auth-providers and certificate, key or token file paths are executed or read on the machine running Meshery Server, so only the server's own kubeconfig may use them"
+      ],
+      "suggestedRemediation": [
+        "Replace the credential with embedded data (client-certificate-data, client-key-data, certificate-authority-data, token) and save it again"
+      ]
+    },
+    {
+      "code": "meshery-server-1501",
+      "moniker": "ErrKubeconfigUnreadableCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1501",
+      "severity": "alert",
+      "shortDescription": "The kubeconfig could not be parsed",
+      "longDescription": "The uploaded file is empty, is not YAML, or does not look like a kubeconfig (it has no kind: Config, current-context, clusters, contexts, or users).",
+      "probableCause": [
+        "A different file was selected, or the kubeconfig was truncated or edited by hand."
+      ],
+      "suggestedRemediation": [
+        "Upload the kubeconfig file itself (for example ~/.kube/config), and check it with kubectl config view --kubeconfig <file>."
+      ]
+    },
+    {
+      "code": "meshery-server-1502",
+      "moniker": "ErrInvalidPerformanceProfileCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1502",
+      "severity": "alert",
+      "shortDescription": "Invalid performance profile",
+      "probableCause": [
+        "The performance profile object is nil or invalid"
+      ],
+      "suggestedRemediation": [
+        "Ensure a valid, non-nil performance profile is provided"
       ]
     }
   ],

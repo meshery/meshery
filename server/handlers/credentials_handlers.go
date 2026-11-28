@@ -56,6 +56,11 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 	// onto another user's account.
 	credential.UserId = userUUID
 
+	if err := models.RejectUnsafeKubeCredential(credential.Secret); err != nil {
+		writeMeshkitError(w, err, http.StatusBadRequest)
+		return
+	}
+
 	createdCredential, err := provider.SaveUserCredential(token, &credential)
 	if err != nil {
 		if h.log != nil {
@@ -215,6 +220,11 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 	// credential (the provider layer's authorization check should rely on this
 	// field to confirm the caller owns the credential being updated).
 	credential.UserId = userUUID
+
+	if err := models.RejectUnsafeKubeCredential(credential.Secret); err != nil {
+		writeMeshkitError(w, err, http.StatusBadRequest)
+		return
+	}
 
 	_, err = provider.UpdateUserCredential(req, credential)
 	if err != nil {
