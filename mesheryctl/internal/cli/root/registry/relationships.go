@@ -332,7 +332,7 @@ func copyRelationships(files []os.DirEntry, source, destination, version string)
 	_, statErr := os.Stat(destination)
 	createdDestination := errors.Is(statErr, os.ErrNotExist)
 	if err := os.MkdirAll(destination, 0755); err != nil {
-		return fmt.Errorf("create %q: %w", destination, err)
+		return errors.Join(append(readErrors, fmt.Errorf("create %q: %w", destination, err))...)
 	}
 
 	written := make([]string, 0, len(copies))
@@ -345,7 +345,7 @@ func copyRelationships(files []os.DirEntry, source, destination, version string)
 			if createdDestination {
 				_ = os.Remove(destination)
 			}
-			return err
+			return errors.Join(append(readErrors, err)...)
 		}
 		written = append(written, path)
 	}

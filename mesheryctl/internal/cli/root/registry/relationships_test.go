@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -268,6 +269,9 @@ func TestCopyRelationshipsRemovesPartialWrites(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+	if err := os.WriteFile(filepath.Join(source, "c-unversioned.json"), []byte(`{"model":{"name":"sample-model"}}`), 0644); err != nil {
+		t.Fatal(err)
+	}
 	files, err := relationshipFiles(source)
 	if err != nil {
 		t.Fatal(err)
@@ -280,8 +284,12 @@ func TestCopyRelationshipsRemovesPartialWrites(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := copyRelationships(files, source, destination, "v1.3.0"); err == nil {
+	err = copyRelationships(files, source, destination, "v1.3.0")
+	if err == nil {
 		t.Fatal("copy relationships succeeded, want an error")
+	}
+	if !strings.Contains(err.Error(), "c-unversioned.json") {
+		t.Errorf("error %q does not report the unversioned relationship", err)
 	}
 	if _, err := os.Stat(filepath.Join(destination, "a-edge.json")); !os.IsNotExist(err) {
 		t.Errorf("partially copied relationship was left behind; stat error = %v", err)
