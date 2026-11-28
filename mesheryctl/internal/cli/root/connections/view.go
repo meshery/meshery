@@ -55,7 +55,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json
 mesheryctl connection view [connection-name|connection-id] --output-format json --save
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) == 0 {
+		if len(args) == 0 || strings.TrimSpace(args[0]) == "" {
 			return utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errNoArgMsg, viewUsageMsg))
 		}
 
@@ -150,6 +150,10 @@ func selectConnectionPrompt(connectionsList []*connection.Connection) (*connecti
 		return nil, nil
 	}
 
+	if !utils.IsInteractiveTerminal() {
+		return nil, display.ErrAmbiguousSelection(int64(len(validConnections)))
+	}
+
 	connectionNames := make([]string, len(validConnections))
 
 	for i, conn := range validConnections {
@@ -159,6 +163,9 @@ func selectConnectionPrompt(connectionsList []*connection.Connection) (*connecti
 	i, err := runSelectPrompt("Select connection", connectionNames)
 	if err != nil {
 		return nil, err
+	}
+	if i < 0 || i >= len(validConnections) {
+		return nil, utils.ErrInvalidArgument(fmt.Errorf("selected connection index %d out of range [0, %d)", i, len(validConnections)))
 	}
 
 	return validConnections[i], nil
@@ -198,13 +205,27 @@ func fetchConnectionByName(connectionName string) (*connection.Connection, error
 	}
 
 	validConnections := filterNonNilConnections(connectionsResponse.Connections)
-	switch len(validConnections) {
+	var exactMatches []*connection.Connection
+	if connectionName != "" {
+		for _, conn := range validConnections {
+			if conn.Name == connectionName {
+				exactMatches = append(exactMatches, conn)
+			}
+		}
+	}
+
+	candidates := validConnections
+	if len(exactMatches) > 0 {
+		candidates = exactMatches
+	}
+
+	switch len(candidates) {
 	case 0:
 		return nil, nil
 	case 1:
-		return validConnections[0], nil
+		return candidates[0], nil
 	default:
-		return selectConnectionPrompt(validConnections)
+		return selectConnectionPrompt(candidates)
 	}
 }
 

@@ -14,6 +14,7 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/v1beta3/connection"
 )
 
@@ -150,13 +151,26 @@ func TestFetchConnectionByName(t *testing.T) {
 		ConnectionType: "platform",
 	}
 
+	connExact := &connection.Connection{
+		ID:             uuid.Must(uuid.NewV4()),
+		Name:           "minikube",
+		ConnectionType: "platform",
+	}
+	connExactDup := &connection.Connection{
+		ID:             uuid.Must(uuid.NewV4()),
+		Name:           "minikube",
+		ConnectionType: "platform",
+	}
+
 	tests := []struct {
 		name            string
 		page            connection.ConnectionPage
+		interactive     bool
 		promptChoice    int
 		wantPromptCall  bool
 		wantPromptItems []string
 		wantConn        *connection.Connection
+		wantErrCode     string
 	}{
 		{
 			name: "TotalCount > 0 with empty Connections slice returns nil without panicking",
@@ -236,6 +250,7 @@ func TestFetchConnectionByName(t *testing.T) {
 				TotalCount:  2,
 				Connections: []*connection.Connection{conn1, conn2},
 			},
+			interactive:    true,
 			promptChoice:   1,
 			wantPromptCall: true,
 			wantPromptItems: []string{
@@ -250,6 +265,7 @@ func TestFetchConnectionByName(t *testing.T) {
 				TotalCount:  3,
 				Connections: []*connection.Connection{conn1, nil, conn2},
 			},
+			interactive:    true,
 			promptChoice:   1,
 			wantPromptCall: true,
 			wantPromptItems: []string{
@@ -257,6 +273,41 @@ func TestFetchConnectionByName(t *testing.T) {
 				fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn2.ID.String(), conn2.Name, conn2.ConnectionType),
 			},
 			wantConn: conn2,
+		},
+		{
+			name: "exact match preferred over substring match without prompting",
+			page: connection.ConnectionPage{
+				TotalCount:  2,
+				Connections: []*connection.Connection{conn1, connExact},
+			},
+			interactive:    false,
+			wantPromptCall: false,
+			wantConn:       connExact,
+		},
+		{
+			name: "multiple exact matches prompt only exact matches and exclude substring matches",
+			page: connection.ConnectionPage{
+				TotalCount:  3,
+				Connections: []*connection.Connection{connExact, conn1, connExactDup},
+			},
+			interactive:    true,
+			promptChoice:   1,
+			wantPromptCall: true,
+			wantPromptItems: []string{
+				fmt.Sprintf("ID: %s, Name: %s, Type: %s", connExact.ID.String(), connExact.Name, connExact.ConnectionType),
+				fmt.Sprintf("ID: %s, Name: %s, Type: %s", connExactDup.ID.String(), connExactDup.Name, connExactDup.ConnectionType),
+			},
+			wantConn: connExactDup,
+		},
+		{
+			name: "ambiguous substring matches fail with ErrAmbiguousSelection in non-interactive terminal",
+			page: connection.ConnectionPage{
+				TotalCount:  2,
+				Connections: []*connection.Connection{conn1, conn2},
+			},
+			interactive:    false,
+			wantPromptCall: false,
+			wantErrCode:    display.ErrAmbiguousSelectionCode,
 		},
 	}
 
@@ -266,6 +317,12 @@ func TestFetchConnectionByName(t *testing.T) {
 			defer utils.StopMockery(t)
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			utils.TokenFlag = utils.GetToken(t)
+
+			origInteractive := utils.IsInteractiveTerminal
+			utils.IsInteractiveTerminal = func() bool { return tt.interactive }
+			t.Cleanup(func() {
+				utils.IsInteractiveTerminal = origInteractive
+			})
 
 			origRunSelectPrompt := runSelectPrompt
 			defer func() {
@@ -298,6 +355,15 @@ func TestFetchConnectionByName(t *testing.T) {
 			httpmock.RegisterResponder(http.MethodGet, reqURL, httpmock.NewBytesResponder(http.StatusOK, body))
 
 			got, err := fetchConnectionByName("minikube")
+			if tt.wantErrCode != "" {
+				if err == nil {
+					t.Fatalf("expected error with code %q, got nil", tt.wantErrCode)
+				}
+				if gotCode := meshkiterrors.GetCode(err); gotCode != tt.wantErrCode {
+					t.Fatalf("error code = %q, want %q (err: %v)", gotCode, tt.wantErrCode, err)
+				}
+				return
+			}
 			if err != nil {
 				t.Fatalf("fetchConnectionByName returned unexpected error: %v", err)
 			}
@@ -332,10 +398,12 @@ func TestSelectConnectionPromptNilEntries(t *testing.T) {
 	tests := []struct {
 		name            string
 		input           []*connection.Connection
+		interactive     bool
 		promptChoice    int
 		wantPromptCall  bool
 		wantPromptItems []string
 		wantConn        *connection.Connection
+		wantErrCode     string
 	}{
 		{
 			name:           "all nil entries return nil without prompting",
@@ -346,6 +414,7 @@ func TestSelectConnectionPromptNilEntries(t *testing.T) {
 		{
 			name:           "mixed nil and valid entries filter nil entries without mutating input",
 			input:          []*connection.Connection{nil, conn1, nil, conn2},
+			interactive:    true,
 			promptChoice:   1,
 			wantPromptCall: true,
 			wantPromptItems: []string{
@@ -357,6 +426,7 @@ func TestSelectConnectionPromptNilEntries(t *testing.T) {
 		{
 			name:           "multiple valid entries preserve order and selection",
 			input:          []*connection.Connection{conn1, conn2},
+			interactive:    true,
 			promptChoice:   0,
 			wantPromptCall: true,
 			wantPromptItems: []string{
@@ -365,11 +435,41 @@ func TestSelectConnectionPromptNilEntries(t *testing.T) {
 			},
 			wantConn: conn1,
 		},
+		{
+			name:           "negative prompt index returns ErrInvalidArgument instead of panicking",
+			input:          []*connection.Connection{conn1, conn2},
+			interactive:    true,
+			promptChoice:   -1,
+			wantPromptCall: true,
+			wantPromptItems: []string{
+				fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn1.ID.String(), conn1.Name, conn1.ConnectionType),
+				fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn2.ID.String(), conn2.Name, conn2.ConnectionType),
+			},
+			wantErrCode: utils.ErrInvalidArgumentCode,
+		},
+		{
+			name:           "out-of-range prompt index returns ErrInvalidArgument instead of panicking",
+			input:          []*connection.Connection{conn1, conn2},
+			interactive:    true,
+			promptChoice:   2,
+			wantPromptCall: true,
+			wantPromptItems: []string{
+				fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn1.ID.String(), conn1.Name, conn1.ConnectionType),
+				fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn2.ID.String(), conn2.Name, conn2.ConnectionType),
+			},
+			wantErrCode: utils.ErrInvalidArgumentCode,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			snapshot := append([]*connection.Connection(nil), tt.input...)
+
+			origInteractive := utils.IsInteractiveTerminal
+			utils.IsInteractiveTerminal = func() bool { return tt.interactive }
+			t.Cleanup(func() {
+				utils.IsInteractiveTerminal = origInteractive
+			})
 
 			origRunSelectPrompt := runSelectPrompt
 			defer func() {
@@ -391,6 +491,15 @@ func TestSelectConnectionPromptNilEntries(t *testing.T) {
 			}
 
 			got, err := selectConnectionPrompt(tt.input)
+			if tt.wantErrCode != "" {
+				if err == nil {
+					t.Fatalf("expected error with code %q, got nil", tt.wantErrCode)
+				}
+				if gotCode := meshkiterrors.GetCode(err); gotCode != tt.wantErrCode {
+					t.Fatalf("error code = %q, want %q (err: %v)", gotCode, tt.wantErrCode, err)
+				}
+				return
+			}
 			if err != nil {
 				t.Fatalf("selectConnectionPrompt returned unexpected error: %v", err)
 			}
@@ -537,6 +646,23 @@ func TestConnectionViewNotFoundOutput(t *testing.T) {
 		err := ConnectionsCmd.Execute()
 		if err == nil {
 			t.Fatalf("expected error on 500 server error, got nil")
+		}
+	})
+
+	t.Run("given whitespace-only name argument then return ErrInvalidArgument", func(t *testing.T) {
+		defer utils.ResetCommandFlags(ConnectionsCmd, t)
+		utils.TokenFlag = utils.GetToken(t)
+
+		var buf bytes.Buffer
+		ConnectionsCmd.SetOut(&buf)
+		ConnectionsCmd.SetArgs([]string{"view", "   "})
+
+		err := ConnectionsCmd.Execute()
+		if err == nil {
+			t.Fatalf("expected error for whitespace-only connection name, got nil")
+		}
+		if gotCode := meshkiterrors.GetCode(err); gotCode != utils.ErrInvalidArgumentCode {
+			t.Fatalf("error code = %q, want %q (err: %v)", gotCode, utils.ErrInvalidArgumentCode, err)
 		}
 	})
 }
