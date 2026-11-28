@@ -60,7 +60,7 @@
         "to": [
           {
             "id": null,
-            "kind": "StorageAccountTableService",
+            "kind": "StorageAccountsTableService",
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
