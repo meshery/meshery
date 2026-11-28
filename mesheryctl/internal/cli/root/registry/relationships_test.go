@@ -163,6 +163,19 @@ func TestCarryForwardRelationshipsSkipsRemovedComponentKinds(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(previousRelationships, "external-edge.json"), externalDefinition, 0644); err != nil {
 		t.Fatal(err)
 	}
+	unlistedDefinition := []byte(`{"model":{"model":{"version":"v1.2.0"}},"selectors":[{"allow":{"from":[{"kind":"ExistingKind","model":{"name":"sample-model"}}],"to":[{"kind":"UnlistedKind","model":{"name":"sample-model"}}]}}]}`)
+	if err := os.WriteFile(filepath.Join(previousRelationships, "unlisted-edge.json"), unlistedDefinition, 0644); err != nil {
+		t.Fatal(err)
+	}
+	previousComponents := filepath.Join(modelPath, "v1.2.0", defVersion, "components")
+	if err := os.MkdirAll(previousComponents, 0755); err != nil {
+		t.Fatal(err)
+	}
+	for _, kind := range []string{"ExistingKind", "RemovedKind"} {
+		if err := os.WriteFile(filepath.Join(previousComponents, kind+".json"), []byte(`{}`), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
 
 	before, err := snapshotModelVersions(modelsPath)
 	if err != nil {
@@ -186,6 +199,9 @@ func TestCarryForwardRelationshipsSkipsRemovedComponentKinds(t *testing.T) {
 	if _, err := os.Stat(filepath.Join(newRelationships, "external-edge.json")); err != nil {
 		t.Errorf("relationship referencing another model's kind was not copied: %v", err)
 	}
+	if _, err := os.Stat(filepath.Join(newRelationships, "unlisted-edge.json")); err != nil {
+		t.Errorf("relationship referencing a kind absent from both versions was not copied: %v", err)
+	}
 }
 
 func TestCarryForwardRelationshipsOnlyTouchesNewVersions(t *testing.T) {
@@ -197,6 +213,10 @@ func TestCarryForwardRelationshipsOnlyTouchesNewVersions(t *testing.T) {
 	}
 	definition := []byte(`{"model":{"model":{"version":"v1.2.0"}}}`)
 	if err := os.WriteFile(filepath.Join(relationships, "edge.json"), definition, 0644); err != nil {
+		t.Fatal(err)
+	}
+	existingComponents := filepath.Join(modelPath, "v1.3.0", defVersion, "components")
+	if err := os.MkdirAll(existingComponents, 0755); err != nil {
 		t.Fatal(err)
 	}
 
@@ -214,5 +234,8 @@ func TestCarryForwardRelationshipsOnlyTouchesNewVersions(t *testing.T) {
 	}
 	if string(got) != string(definition) {
 		t.Errorf("existing relationship changed: got %s, want %s", got, definition)
+	}
+	if _, err := os.Stat(filepath.Join(modelPath, "v1.3.0", defVersion, "relationships", "edge.json")); !os.IsNotExist(err) {
+		t.Errorf("relationship was copied into a version that existed before generation; stat error = %v", err)
 	}
 }

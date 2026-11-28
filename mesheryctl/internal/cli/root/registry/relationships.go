@@ -71,7 +71,7 @@ func snapshotModelVersions(modelsPath string) (modelVersions, error) {
 // carryForwardRelationships copies missing relationships from the closest
 // older model version into each version directory created by this generation
 // run. Explicit relationships generated for the new version take precedence,
-// and inherited relationships with missing component kinds are skipped.
+// and inherited relationships whose component kinds were removed are skipped.
 func carryForwardRelationships(modelsPath string, before modelVersions) error {
 	after, err := snapshotModelVersions(modelsPath)
 	if err != nil {
@@ -131,8 +131,12 @@ func carryForwardRelationships(modelsPath string, before modelVersions) error {
 				existingFiles[file.Name()] = struct{}{}
 			}
 
-			components := filepath.Join(modelPath, newVersion, defVersion, "components")
-			componentKinds, err := modelComponentKinds(components)
+			previousKinds, err := modelComponentKinds(filepath.Join(modelPath, previousVersion, defVersion, "components"))
+			if err != nil {
+				carryErrors = append(carryErrors, fmt.Errorf("read components for %s %s: %w", modelName, previousVersion, err))
+				continue
+			}
+			componentKinds, err := modelComponentKinds(filepath.Join(modelPath, newVersion, defVersion, "components"))
 			if err != nil {
 				carryErrors = append(carryErrors, fmt.Errorf("read components for new %s %s: %w", modelName, newVersion, err))
 				continue
@@ -143,7 +147,7 @@ func carryForwardRelationships(modelsPath string, before modelVersions) error {
 				if _, exists := existingFiles[file.Name()]; exists {
 					continue
 				}
-				staleKinds, err := relationshipKindsMissingFromModel(filepath.Join(source, file.Name()), modelName, componentKinds)
+				staleKinds, err := relationshipKindsMissingFromModel(filepath.Join(source, file.Name()), modelName, previousKinds, componentKinds)
 				if err != nil {
 					carryErrors = append(carryErrors, fmt.Errorf("check relationship %s for %s %s: %w", file.Name(), modelName, newVersion, err))
 					continue
@@ -185,7 +189,7 @@ func modelComponentKinds(directory string) (map[string]struct{}, error) {
 	return kinds, nil
 }
 
-func relationshipKindsMissingFromModel(path, modelName string, componentKinds map[string]struct{}) ([]string, error) {
+func relationshipKindsMissingFromModel(path, modelName string, previousKinds, componentKinds map[string]struct{}) ([]string, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -207,6 +211,9 @@ func relationshipKindsMissingFromModel(path, modelName string, componentKinds ma
 	for _, selector := range relationship.Selectors {
 		for _, endpoint := range append(selector.Allow.From, selector.Allow.To...) {
 			if endpoint.Kind == "" || (endpoint.Model.Name != "" && endpoint.Model.Name != modelName) {
+				continue
+			}
+			if _, existed := previousKinds[endpoint.Kind]; !existed {
 				continue
 			}
 			if _, exists := componentKinds[endpoint.Kind]; !exists {
