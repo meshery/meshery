@@ -2,7 +2,6 @@ package design
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -21,8 +20,6 @@ func TestUndeployCmd(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
-
-	_, expectedFileReadErr := os.ReadFile(invalidFilePath)
 
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
@@ -73,7 +70,7 @@ func TestUndeployCmd(t *testing.T) {
 			URLs:             []utils.MockURL{},
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrFileRead(expectedFileReadErr),
+			ExpectedError:    utils.ErrFileRead(fmt.Errorf(errInvalidPathMsg, invalidFilePath)),
 		},
 		{
 			Name:             "given URL when design undeploy then error is thrown",
