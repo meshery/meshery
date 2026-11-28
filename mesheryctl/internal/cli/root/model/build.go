@@ -35,11 +35,13 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/model/bui
 mesheryctl model build [model-name]
 mesheryctl model build [model-name]/[model-version]
     `,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 1 || strings.TrimSpace(args[0]) == "" {
 			return ErrModelBuildFromStrings(errBuildUsage)
 		}
-
+		return nil
+	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		{
 			err := mesheryctlflags.ValidateCmdFlags(cmd, &cmdModelBuildFlagsProvided)
 			if err != nil {
@@ -47,7 +49,7 @@ mesheryctl model build [model-name]/[model-version]
 			}
 		}
 
-		inputParam := args[0]
+		inputParam := strings.TrimSpace(args[0])
 		name := ""
 		version := ""
 
@@ -115,8 +117,8 @@ mesheryctl model build [model-name]/[model-version]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// validation (if any) is done in PreRunE (so args certainly has one element)
-		name, version := buildModelParseModelInput(args[0])
+		// validation is done in Args and PreRunE (so args certainly has one non-empty element)
+		name, version := buildModelParseModelInput(strings.TrimSpace(args[0]))
 
 		// validation done above that args contains exactly one argument
 		folder := buildModelCompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)

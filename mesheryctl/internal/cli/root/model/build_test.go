@@ -88,6 +88,7 @@ func TestModelBuild(t *testing.T) {
 			Short:   buildModelCmd.Short,
 			Long:    buildModelCmd.Long,
 			Example: buildModelCmd.Example,
+			Args:    buildModelCmd.Args,
 			PreRunE: buildModelCmd.PreRunE,
 			RunE:    buildModelCmd.RunE,
 		}
@@ -424,6 +425,66 @@ func TestModelBuild(t *testing.T) {
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
 			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage),
+		},
+		{
+			Name:             "given multiple params when model build then throw error",
+			Args:             []string{"build", buildTestDynamoController, "extra-arg"},
+			ExpectError:      true,
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage),
+		},
+		{
+			Name:             "given empty param when model build then throw error",
+			Args:             []string{"build", ""},
+			ExpectError:      true,
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage),
+		},
+		{
+			Name:             "given whitespace-only param when model build then throw error",
+			Args:             []string{"build", "   "},
+			ExpectError:      true,
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectedError:    ErrModelBuildFromStrings(errBuildUsage),
+		},
+		{
+			Name:             "given padded model name when model build then model is built",
+			Args:             []string{"build", "  " + buildTestDynamoController + "  "},
+			ExpectError:      false,
+			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedFiles: []string{
+				buildTestDynamoController + ".tar",
+			},
+			SetupHooks: []func(){
+				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					buildTestDynamoController,
+					buildTestDynamoController+".tar",
+				),
+			},
+		},
+		{
+			Name:             "given padded model name and version when model build then model is built",
+			Args:             []string{"build", "  test-case-model-build-aws-lambda-controller/v0.1.0  "},
+			ExpectError:      false,
+			ExpectedResponse: "model.build.from-model-name-version.golden",
+			ExpectedFiles: []string{
+				"test-case-model-build-aws-lambda-controller-v0-1-0.tar",
+			},
+			SetupHooks: []func(){
+				setupHookModelInit("init", "test-case-model-build-aws-lambda-controller", "--version", "v0.1.0"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					"test-case-model-build-aws-lambda-controller",
+					"test-case-model-build-aws-lambda-controller-v0-1-0.tar",
+				),
+			},
 		},
 		{
 			Name:             "given wrong input param format when model build then throw error",
