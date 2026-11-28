@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -451,14 +452,17 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 // getAllConnections serves pageSize=all by walking the provider in pages of
 // the per-request maximum until totalCount rows have been read, so callers
 // that ask for every connection get every connection while each provider
-// request stays capped. A connection updated between two pages can shift
-// across the page boundary, so rows are de-duplicated by ID.
+// request stays capped. The walk always orders by created_at, which status
+// updates never change, so a connection updated mid-walk cannot move across
+// a page boundary; the result is then sorted into the requested order. Rows
+// are de-duplicated by ID. A connection deleted during the walk can still
+// shift one row past the boundary and drop it from the result.
 func getAllConnections(req *http.Request, provider models.Provider, userID, search, order, filter string, status, kind, connType []string, name string) (*connections.ConnectionPage, error) {
 	const pageSize = 100
 	var all *connections.ConnectionPage
 	seen := map[core.Uuid]bool{}
 	for page := 0; ; page++ {
-		p, err := provider.GetConnections(req, userID, page, pageSize, search, order, filter, status, kind, connType, name)
+		p, err := provider.GetConnections(req, userID, page, pageSize, search, "created_at asc", filter, status, kind, connType, name)
 		if err != nil {
 			return nil, err
 		}
@@ -480,9 +484,34 @@ func getAllConnections(req *http.Request, provider models.Provider, userID, sear
 			break
 		}
 	}
+	sortConnections(all.Connections, order)
 	all.Page = 0
 	all.PageSize = len(all.Connections)
 	return all, nil
+}
+
+// sortConnections orders rows the way ConnectionPersister would for the same
+// order parameter, falling back to its updated_at desc default.
+func sortConnections(conns []*connections.Connection, order string) {
+	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	if order == "" {
+		order = "updated_at desc"
+	}
+	col, dir, _ := strings.Cut(order, " ")
+	sort.SliceStable(conns, func(i, j int) bool {
+		a, b := conns[i], conns[j]
+		if dir == "desc" {
+			a, b = b, a
+		}
+		switch col {
+		case "name":
+			return a.Name < b.Name
+		case "created_at":
+			return a.CreatedAt.Before(b.CreatedAt)
+		default:
+			return a.UpdatedAt.Before(b.UpdatedAt)
+		}
+	})
 }
 
 // GetConnectionsByKind is an internal handler that fetches connections filtered by kind.
