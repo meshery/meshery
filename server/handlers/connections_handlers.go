@@ -393,13 +393,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	filter := q.Get("filter")
 	name := q.Get("name")
 
-	var pageSize int
-	if pageSizeStr == "all" {
-		pageSize = 100
-	} else {
-		pageSize, _ = strconv.Atoi(pageSizeStr)
-	}
-
+	pageSize, _ := strconv.Atoi(pageSizeStr)
 	if pageSize > 100 {
 		pageSize = 100
 	}
@@ -433,7 +427,12 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		Type:   q["type"],
 	}
 
-	connectionsPage, err := provider.GetConnections(req, user.ID.String(), page, pageSize, search, order, filter, queryParam.Status, queryParam.Kind, queryParam.Type, name)
+	var connectionsPage *connections.ConnectionPage
+	if pageSizeStr == "all" {
+		connectionsPage, err = getAllConnections(req, provider, user.ID.String(), search, order, filter, queryParam.Status, queryParam.Kind, queryParam.Type, name)
+	} else {
+		connectionsPage, err = provider.GetConnections(req, user.ID.String(), page, pageSize, search, order, filter, queryParam.Status, queryParam.Kind, queryParam.Type, name)
+	}
 	obj := "connections"
 
 	if err != nil {
@@ -447,6 +446,43 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
 		return
 	}
+}
+
+// getAllConnections serves pageSize=all by walking the provider in pages of
+// the per-request maximum until totalCount rows have been read, so callers
+// that ask for every connection get every connection while each provider
+// request stays capped. A connection updated between two pages can shift
+// across the page boundary, so rows are de-duplicated by ID.
+func getAllConnections(req *http.Request, provider models.Provider, userID, search, order, filter string, status, kind, connType []string, name string) (*connections.ConnectionPage, error) {
+	const pageSize = 100
+	var all *connections.ConnectionPage
+	seen := map[core.Uuid]bool{}
+	for page := 0; ; page++ {
+		p, err := provider.GetConnections(req, userID, page, pageSize, search, order, filter, status, kind, connType, name)
+		if err != nil {
+			return nil, err
+		}
+		if p == nil {
+			return nil, ErrGetConnections(fmt.Errorf("provider returned no connections page"))
+		}
+		if all == nil {
+			first := *p
+			first.Connections = []*connections.Connection{}
+			all = &first
+		}
+		for _, c := range p.Connections {
+			if c != nil && !seen[c.ID] {
+				seen[c.ID] = true
+				all.Connections = append(all.Connections, c)
+			}
+		}
+		if len(p.Connections) < pageSize || len(all.Connections) >= all.TotalCount {
+			break
+		}
+	}
+	all.Page = 0
+	all.PageSize = len(all.Connections)
+	return all, nil
 }
 
 // GetConnectionsByKind is an internal handler that fetches connections filtered by kind.
