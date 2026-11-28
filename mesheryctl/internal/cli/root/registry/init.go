@@ -23,6 +23,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
@@ -242,7 +243,7 @@ func validateModelSource(ms modelSource) error {
 		if c.value == "" {
 			return ErrRegistryInit(fmt.Errorf("%s must not be empty", c.field))
 		}
-		if len(c.value) > c.max {
+		if utf8.RuneCountInString(c.value) > c.max {
 			return ErrRegistryInit(fmt.Errorf("%s must be at most %d characters", c.field, c.max))
 		}
 	}

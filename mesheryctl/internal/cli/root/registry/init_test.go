@@ -15,12 +15,14 @@
 package registry
 
 import (
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
@@ -164,6 +166,18 @@ func TestBuildModelSource(t *testing.T) {
 		{
 			name:    "description over the schema limit",
 			modify:  func(f *cmdRegistryInitFlags) { f.Description = strings.Repeat("d", maxDescriptionLength+1) },
+			wantErr: "--description",
+		},
+		{
+			name:           "multibyte description at the schema limit",
+			modify:         func(f *cmdRegistryInitFlags) { f.Description = strings.Repeat("証", maxDescriptionLength) },
+			wantKind:       sourceKindArtifactHub,
+			wantRegistrant: "artifacthub",
+			wantDisplay:    "Cert Manager",
+		},
+		{
+			name:    "multibyte description over the schema limit",
+			modify:  func(f *cmdRegistryInitFlags) { f.Description = strings.Repeat("証", maxDescriptionLength+1) },
 			wantErr: "--description",
 		},
 	}
@@ -329,10 +343,38 @@ func TestRegistryInitArgs(t *testing.T) {
 }
 
 func TestRegistryInitRequiredFlags(t *testing.T) {
-	for _, name := range []string{"source", "category", "sub-category", "description"} {
-		flag := initCmd.Flags().Lookup(name)
-		require.NotNil(t, flag, "flag --%s is not registered", name)
-		assert.Equal(t, []string{"true"}, flag.Annotations["cobra_annotation_bash_completion_one_required_flag"],
-			"flag --%s should be required", name)
+	values := map[string]string{
+		"source":       testArtifactHubSource,
+		"category":     "Security & Compliance",
+		"sub-category": "Key Management",
+		"description":  "Cloud native certificate management for Kubernetes.",
+	}
+	for _, missing := range []string{"source", "category", "sub-category", "description"} {
+		t.Run(missing, func(t *testing.T) {
+			setRegistryInitFlags(t, validInitFlags(t.TempDir()))
+			t.Cleanup(func() {
+				initCmd.Flags().VisitAll(func(f *pflag.Flag) {
+					_ = f.Value.Set(f.DefValue)
+					f.Changed = false
+				})
+				RegistryCmd.SetArgs(nil)
+				RegistryCmd.SetOut(nil)
+				RegistryCmd.SetErr(nil)
+			})
+
+			args := []string{"init", "cert-manager", "--path", t.TempDir()}
+			for flag, value := range values {
+				if flag != missing {
+					args = append(args, "--"+flag, value)
+				}
+			}
+			RegistryCmd.SetArgs(args)
+			RegistryCmd.SetOut(io.Discard)
+			RegistryCmd.SetErr(io.Discard)
+
+			err := RegistryCmd.Execute()
+			require.Error(t, err)
+			assert.Contains(t, err.Error(), `required flag(s) "`+missing+`" not set`)
+		})
 	}
 }
