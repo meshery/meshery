@@ -33,3 +33,12 @@ linters:
       # asset resolution, not API surface — keep off the hook.
       - path: 'server/handlers/ui_handler\.go'
         linters: [forbidigo]
+      # SA5011 (possible nil pointer dereference) false-positives on the
+      # common test shape `if got == nil { t.Fatal(...) }; got.Field` when it
+      # appears inside a subtest closure: staticcheck does not model t.Fatal
+      # there as terminating, so it cannot see the dereference is unreachable.
+      # Scoped to _test.go files only — SA5011 stays enabled for non-test code
+      # so genuine nil-deref findings are still reported.
+      - path: '_test\.go'
+        linters: [staticcheck]
+        text: 'SA5011'
