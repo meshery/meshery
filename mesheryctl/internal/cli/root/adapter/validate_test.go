@@ -1,7 +1,11 @@
 package adapter
 
 import (
+	"encoding/json"
+	"io"
 	"net/http"
+	"net/url"
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -25,6 +29,29 @@ func resetValidateFlags(t *testing.T) {
 	})
 }
 
+// adapterLocationFromFixture returns the location of the named adapter in a
+// sync fixture.
+func adapterLocationFromFixture(t *testing.T, path, name string) string {
+	t.Helper()
+	data, err := os.ReadFile(path)
+	require.NoError(t, err)
+	var prefs struct {
+		MeshAdapters []struct {
+			Location string `json:"adapterLocation"`
+			Name     string `json:"name"`
+		} `json:"meshAdapters"`
+	}
+	require.NoError(t, json.Unmarshal(data, &prefs))
+	for _, a := range prefs.MeshAdapters {
+		if a.Name == name {
+			require.NotEmpty(t, a.Location, "adapter %s has no location in %s", name, path)
+			return a.Location
+		}
+	}
+	t.Fatalf("adapter %s not found in %s", name, path)
+	return ""
+}
+
 func TestValidateMesh(t *testing.T) {
 	utils.SetupContextEnv(t)
 
@@ -43,6 +70,14 @@ func TestValidateMesh(t *testing.T) {
 	fixturesDir := filepath.Join(currDir, "fixtures")
 	testdataDir := filepath.Join(currDir, "testdata")
 
+	// The validate request must carry the location of the ISTIO adapter from
+	// the sync fixture. Read it from the fixture so the test does not depend
+	// on the fixture's order or contents.
+	expectedAdapter := adapterLocationFromFixture(t, filepath.Join(fixturesDir, "sync.golden"), "ISTIO")
+	// sync.compose.golden lists the adapters under their Docker Compose
+	// hostnames, so --adapter meshery-istio resolves without a positional mesh.
+	composeIstioAdapter := adapterLocationFromFixture(t, filepath.Join(fixturesDir, "sync.compose.golden"), "ISTIO")
+
 	syncURL := testContext.BaseURL + "/api/system/sync"
 	operationURL := testContext.BaseURL + "/api/system/adapter/operation"
 
@@ -52,6 +87,13 @@ func TestValidateMesh(t *testing.T) {
 		URLs             []utils.MockURL
 		ExpectedResponse string
 		ExpectError      bool
+		// query expected in the adapter operation POST body
+		ExpectedQuery string
+		// adapter expected in the adapter operation POST body; defaults to the
+		// ISTIO location in sync.golden
+		ExpectedAdapter string
+		// number of GET requests expected on the sync endpoint; defaults to 1
+		ExpectedSyncCalls int
 		// number of POST requests expected on the adapter operation endpoint
 		ExpectedOperationCalls int
 	}{
@@ -73,6 +115,7 @@ func TestValidateMesh(t *testing.T) {
 				},
 			},
 			ExpectedResponse:       "validate.istio.output.golden",
+			ExpectedQuery:          "smi_conformance",
 			ExpectedOperationCalls: 1,
 		},
 		{
@@ -80,11 +123,19 @@ func TestValidateMesh(t *testing.T) {
 			Args: []string{"validate", "istio", "--adapter", "meshery-istio"},
 			// Cobra checks required flags after PreRunE, so the adapter sync
 			// still runs; the validation request itself must never be sent.
+			// The operation responder is registered anyway so that an
+			// unexpected POST would be counted instead of going unmatched.
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
 					URL:          syncURL,
 					Response:     "sync.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          operationURL,
+					Response:     "deploy.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -111,6 +162,81 @@ func TestValidateMesh(t *testing.T) {
 			},
 			ExpectedResponse:       "validate.operation-error.output.golden",
 			ExpectError:            true,
+			ExpectedQuery:          "smi_conformance",
+			ExpectedOperationCalls: 1,
+		},
+		{
+			// The Istio adapter in sync.golden is at localhost:10000, not the
+			// Docker Compose hostname meshery-istio:10000, so this guards against
+			// istio-vet being tied to one deployment's adapter location.
+			Name: "Validate Istio with the istio-vet spec at a non-default location",
+			Args: []string{"validate", "istio", "--adapter", "meshery-istio", "--spec", "istio-vet"},
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          syncURL,
+					Response:     "sync.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          operationURL,
+					Response:     "deploy.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectedResponse:       "validate.istio.output.golden",
+			ExpectedQuery:          "istio-vet",
+			ExpectedOperationCalls: 1,
+		},
+		{
+			Name: "Reject the istio-vet spec for a mesh other than Istio",
+			Args: []string{"validate", "linkerd", "--adapter", "meshery-linkerd", "--spec", "istio-vet"},
+			// The operation responder is registered so that a request that
+			// should have been rejected would be counted.
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          syncURL,
+					Response:     "sync.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          operationURL,
+					Response:     "deploy.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectedResponse:       "validate.istio-vet-non-istio.output.golden",
+			ExpectError:            true,
+			ExpectedOperationCalls: 0,
+		},
+		{
+			// With no positional mesh, validate's PreRunE derives meshName from
+			// the adapter whose host matches --adapter, so istio-vet must work on
+			// that path too. This path reads the session data twice: once to
+			// resolve --adapter and once more in validateAdapter.
+			Name: "Validate with the istio-vet spec when the mesh comes from --adapter",
+			Args: []string{"validate", "--adapter", "meshery-istio", "--spec", "istio-vet"},
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          syncURL,
+					Response:     "sync.compose.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          operationURL,
+					Response:     "deploy.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectedResponse:       "validate.istio.output.golden",
+			ExpectedQuery:          "istio-vet",
+			ExpectedAdapter:        composeIstioAdapter,
+			ExpectedSyncCalls:      2,
 			ExpectedOperationCalls: 1,
 		},
 	}
@@ -118,13 +244,44 @@ func TestValidateMesh(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
 			resetValidateFlags(t)
+			// meshName is package state that the no-positional-mesh path only
+			// fills when empty, as it is in a fresh mesheryctl process; clear it
+			// so one case's mesh cannot leak into the next.
+			meshName = ""
+			wantAdapter := expectedAdapter
+			if tc.ExpectedAdapter != "" {
+				wantAdapter = tc.ExpectedAdapter
+			}
+			wantSyncCalls := 1
+			if tc.ExpectedSyncCalls != 0 {
+				wantSyncCalls = tc.ExpectedSyncCalls
+			}
 			httpmock.Reset()
 
-			for _, url := range tc.URLs {
-				apiResponse := utils.NewGoldenFile(t, url.Response, fixturesDir).Load()
-				// mock response
-				httpmock.RegisterResponder(url.Method, url.URL,
-					httpmock.NewStringResponder(url.ResponseCode, apiResponse))
+			for _, mock := range tc.URLs {
+				apiResponse := utils.NewGoldenFile(t, mock.Response, fixturesDir).Load()
+				// mock response; for the operation POST, also check what was sent.
+				// The request is form-encoded, so parse the raw body and compare
+				// complete values rather than substrings.
+				httpmock.RegisterResponder(mock.Method, mock.URL,
+					func(req *http.Request) (*http.Response, error) {
+						if mock.Method == http.MethodPost {
+							// This runs inside the HTTP transport, not the test
+							// goroutine, so use assert (not require, which calls
+							// t.FailNow) and return the error to the client.
+							body, err := io.ReadAll(req.Body)
+							if !assert.NoError(t, err) {
+								return nil, err
+							}
+							form, err := url.ParseQuery(string(body))
+							if !assert.NoError(t, err) {
+								return nil, err
+							}
+							assert.Equal(t, tc.ExpectedQuery, form.Get("query"))
+							assert.Equal(t, wantAdapter, form.Get("adapter"))
+						}
+						return httpmock.NewStringResponse(mock.ResponseCode, apiResponse), nil
+					})
 			}
 			utils.TokenFlag = filepath.Join(fixturesDir, "token.golden")
 
@@ -138,6 +295,10 @@ func TestValidateMesh(t *testing.T) {
 			assert.Equal(t, tc.ExpectedOperationCalls,
 				httpmock.GetCallCountInfo()["POST "+operationURL],
 				"unexpected number of adapter operation requests")
+			// Cobra checks required flags after PreRunE, so the sync request
+			// runs in every case, including the missing-spec one.
+			assert.Equal(t, wantSyncCalls, httpmock.GetCallCountInfo()["GET "+syncURL],
+				"unexpected number of adapter sync requests")
 
 			if tc.ExpectError {
 				require.Error(t, err)

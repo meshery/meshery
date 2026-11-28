@@ -42,7 +42,7 @@ Sistent's peers (`@mui/x-date-pickers`, `date-fns`, the `@rjsf/*` set, `xstate`/
 
 A docs build that ends in `TOCSS-DART: failed to transform "/scss/_styles_project.scss" (text/x-scss): got unexpected EOF when executing "sass"` is not a stylesheet problem and not a permissions problem, whatever the message says. The site transpiles its SCSS with `transpiler: "dartsass"`, which shells out to the *first* `sass` on `PATH` and speaks the Dart Sass embedded protocol to it. Anything else on `PATH` under that name - most often a Ruby `sass` gem, or the `sass-embedded` npm package installed in pure-JS mode - answers with nothing and the build dies rendering every page.
 
-`make -C docs check-deps` does not catch this: it only checks that *a* `sass` exists.
+`make -C docs check-deps` verifies that the `sass` on `PATH` speaks the embedded protocol.
 
 Confirm which one you have, and that it speaks the protocol:
 
