@@ -411,8 +411,12 @@ func TestInitiateLogin_PersistsRegistrationKey(t *testing.T) {
 	if persisted["meshery-provider"] != "cloud-b" {
 		t.Fatalf("persisted meshery-provider %q, want %q", persisted["meshery-provider"], "cloud-b")
 	}
-	if persisted["meshery-token"] != "tok" {
-		t.Fatalf("persisted meshery-token %q, want %q", persisted["meshery-token"], "tok")
+	// Login persists only the fields AddAuthDetails reads back, so the
+	// response's extra "meshery-token" is dropped. ExtractToken sends the
+	// token under TokenCookieName ("token"), which is the field that must
+	// survive.
+	if persisted[tokenName] != "tok" {
+		t.Fatalf("persisted %s %q, want %q", tokenName, persisted[tokenName], "tok")
 	}
 
 	// A later authenticated request built from the persisted token must

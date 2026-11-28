@@ -84,9 +84,9 @@ mesheryctl system login -p Meshery
 		}
 
 		if err != nil {
-			// A structured MeshKit error (for example an unknown --provider)
-			// already names its cause and remediation; wrapping it as a
-			// connectivity failure would mislabel it.
+			// A structured MeshKit error (for example an unknown --provider or
+			// an invalid /api/token response) already names its cause and
+			// remediation; wrapping it as a connectivity failure would mislabel it.
 			var structured *meshkitErrors.Error
 			if stderrors.As(err, &structured) {
 				utils.Log.Error(err)
@@ -94,8 +94,6 @@ mesheryctl system login -p Meshery
 			}
 			return errors.Wrap(err, "authentication failed: Unable to reach Meshery Server. Verify system readiness with `mesheryctl system check`.")
 		}
-
-		utils.Log.Info("authenticated")
 
 		token, err := utils.EnsureContextToken(mctlCfg, mctlCfg.GetCurrentContextName())
 		if err != nil {
@@ -106,6 +104,7 @@ mesheryctl system login -p Meshery
 			return utils.ErrCreateFile(token.GetLocation(), err)
 		}
 
+		utils.Log.Info("authenticated")
 		return nil
 	},
 }
