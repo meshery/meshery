@@ -40,7 +40,7 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/filter`,
 // Display total count of all available filters
 mesheryctl filter --count
 
-// List all available filters
+// List filters (first 25 by default; use --page or --pagesize for more)
 mesheryctl filter list
 
 // View a specific filter by name or ID
