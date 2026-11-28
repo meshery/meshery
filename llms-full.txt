@@ -72585,7 +72585,7 @@ A task page shows how to do a **single** thing, typically by giving a short sequ
 
 - **Task Guides:** Step-by-step instructions for common tasks (deploying applications, managing resources).
 - **Configuration Management:** Designing infrastructure, managing configuration files.
-- **Lifecycle Management:** Discoverying, registering, configuring infrastructure
+- **Lifecycle Management:** Discovering, registering, configuring infrastructure
   - Discovery (MeshSync): Greenfield/Brownfield scenarios.
   - Managing Connections: Registering, updating, and deleting connections.
   - Managing Credentials: Registering, updating, and deleting credentials.
@@ -72598,7 +72598,7 @@ Designed for platform engineers, operators, DevOps, and other advanced users who
 
 - **Performance Optimization:** Resource usage analysis, profiling tools, tuning techniques.
 - **GitOps / DevOps & CI/CD**: Integrating Meshery with continuous integration and deployment pipelines.  
-- **Best Practices:** Recommendations for securing the Meshery, monitoring performance, managing versions.
+- **Best Practices:** Recommendations for securing Meshery, monitoring performance, managing versions.
 - **Advanced Concepts:** Advanced Meshery concepts, features, and capabilities.
 - **Air-gapped Environments:** Deploying Meshery in air-gapped environments.
 - **Troubleshooting Guides:** Common errors, debugging, tips.  
@@ -72617,7 +72617,7 @@ Meshery’s extensibility allows for seamless integration with existing systems 
   - **APIs:** Simple summary of Meshery's APIs.
   - **Extension Points:** Providers, plugins, adapters, modules.
 - **Integrations:** Meshery Models. Integrating Meshery with different infrastructure and systems.
-- **Extensions:** List of all of Meshery adapters, plugins, and modules for different extension points.
+- **Extensions:** List of all Meshery adapters, plugins, and modules for different extension points.
   - **Adapters:** Integrating Meshery with different infrastructure and extended capabilities.
   - **Plugins:** Extended capabilities for Meshery.
   - **Remote Providers:** Remote providers for additional functionality.
@@ -114095,13 +114095,13 @@ Interwoven into Meshery’s web-based user interface are a variety of extension 
 |navigator |Menu Items   |This is supposed to be a full page extension which will get a dedicated endpoint in the meshery UI. And will be listed in the meshery UI’s navigator/sidebar. Menu items may refer to full page extensions.   |
 |userPrefs   |Single Component   |This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. As of now, the only place where this extension can be loaded is the “User Preference” section under meshery settings.   |
 |account   |Full Page   |Remote Reactjs components (or other) are placed in a pre-existing page and will have dedicated endpoint: `/extension/account`.   |
-|collaborator |Single Component|This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Mehery UI. Its work is to show active Meshery users under the same remote provider.|
-  |/extension/\<your name here>|Full Page|The Provider package is unzipped into Meshery server filesystem under `~/.meshery/provider/<provider-name>/<package-version>`.|
+|collaborator |Single Component|This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Meshery UI. Its work is to show active Meshery users under the same remote provider.|
+|/extension/\<your name here>|Full Page|The Provider package is unzipped into Meshery server filesystem under `~/.meshery/provider/<provider-name>/<package-version>`.|
 
 Remote Providers must fulfill the following endpoints:
 
 1. `/login` - return valid token
-1. `/logout` - invalidating token
+1. `/logout` - invalidate token
 1. `/capabilities` - return capabilities.json
 
 ## UI Extension Points
