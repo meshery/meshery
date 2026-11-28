@@ -262,6 +262,46 @@ func TestDeleteCmd(t *testing.T) {
 			},
 			ExpectError: false,
 		},
+		{
+			Name:             "given github raw link with -f flag when design delete then design is deleted",
+			Args:             []string{"delete", "-f", "https://github.com/meshery/meshery/raw/master/mesheryctl/internal/cli/root/design/fixtures/sampleDesign.golden"},
+			ExpectedResponse: "delete.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          "https://raw.githubusercontent.com/meshery/meshery/master/mesheryctl/internal/cli/root/design/fixtures/sampleDesign.golden",
+					Response:     "sampleDesign.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
+		{
+			Name:             "given github raw link with a full ref when design delete then design is deleted",
+			Args:             []string{"delete", "https://github.com/meshery/meshery/raw/refs/heads/master/mesheryctl/internal/cli/root/design/fixtures/sampleDesign.golden"},
+			ExpectedResponse: "delete.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          "https://raw.githubusercontent.com/meshery/meshery/refs/heads/master/mesheryctl/internal/cli/root/design/fixtures/sampleDesign.golden",
+					Response:     "sampleDesign.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
 	}
 
 	// Run tests
