@@ -84,7 +84,20 @@ export const userApi = api
           // Optimistically update the cache with the new preferences
           const patchResult = dispatch(
             api.util.updateQueryData('getUserPref', queryArg.selectedK8sContexts, (draft) => {
-              Object.assign(draft, queryArg.body);
+              if (!draft) return;
+              const { remoteProviderPreferences, ...otherPreferences } = queryArg.body;
+              Object.assign(draft, otherPreferences);
+              // Deep-merge remoteProviderPreferences so sibling keys (e.g.
+              // catalogContent) are preserved when only the theme is being
+              // updated via a partial body.
+              if (remoteProviderPreferences && typeof remoteProviderPreferences === 'object') {
+                draft.remoteProviderPreferences = {
+                  ...(draft.remoteProviderPreferences ?? {}),
+                  ...remoteProviderPreferences,
+                };
+              } else if ('remoteProviderPreferences' in queryArg.body) {
+                draft.remoteProviderPreferences = remoteProviderPreferences;
+              }
             }),
           );
           try {
