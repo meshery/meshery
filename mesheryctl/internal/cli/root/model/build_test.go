@@ -461,6 +461,18 @@ func TestModelBuild(t *testing.T) {
 			},
 		},
 		{
+			Name:          "given an explicit but empty version then model build rejects it",
+			Args:          []string{"build", buildTestDynamoController + "/"},
+			ExpectError:   true,
+			ExpectedError: ErrModelBuildFromStrings(errBuildUsage),
+			SetupHooks: []func(){
+				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(buildTestDynamoController, buildTestDynamoController+".tar"),
+			},
+		},
+		{
 			Name:             "given wrong input param format when model build then throw error",
 			Args:             []string{"build", buildTestEC2Controller + "/" + buildTestVersion + "/smthelse"},
 			ExpectError:      true,

@@ -20,13 +20,7 @@ type SMPMeshes struct {
 // technologies are sourced from the Meshery Registry's model names rather than
 // the legacy, fixed service-mesh enum, so users can target any registered
 // model and are not constrained to service-mesh technologies.
-func (h *Handler) GetSMPServiceMeshes(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
-	if req != nil && req.Method != http.MethodGet {
-		w.Header().Set("Allow", http.MethodGet)
-		writeMeshkitError(w, ErrMethodNotAllowed(req.Method), http.StatusMethodNotAllowed)
-		return
-	}
-
+func (h *Handler) GetSMPServiceMeshes(w http.ResponseWriter, _ *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	if h.registryManager == nil {
 		err := fmt.Errorf("registry manager not initialized")
 		if h.log != nil {
