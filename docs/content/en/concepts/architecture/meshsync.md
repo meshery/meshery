@@ -71,6 +71,8 @@ MeshSync registers a Kubernetes informer per watched resource type and listens f
 
 MeshSync also watches the cluster's `CustomResourceDefinition` set: when a CRD is added or removed, MeshSync updates its pipeline and re-runs discovery so that newly installed custom resources begin to be tracked.
 
+When Meshery processes a `DELETED` event, it removes the stored resource and any associated metadata, spec, status, labels, and annotations in one transaction. Cleanup also removes rows that still reference the resource ID after the resource row is gone, so a resource discovered again under that ID starts with its own data.
+
 ### Publish and request subjects
 
 In operator (broker) mode, MeshSync publishes resource events to the NATS subject `meshery.meshsync.core` and answers requests on `meshery.meshsync.request`. It supports request/reply for a full store snapshot (`informer-store`), an on-demand resync, its running version (`meshsync-meta`), pod log streaming (`meshery.meshsync.logs`), and interactive `exec` sessions into pods (`meshery.meshsync.exec`). These primitives back the ad hoc connectivity tests and pod-level troubleshooting available from Meshery clients.

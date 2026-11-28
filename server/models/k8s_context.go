@@ -960,7 +960,7 @@ func meshSyncResourceChildModels() []any {
 
 // DeleteMeshSyncResourceByID removes one MeshSync resource and every child row
 // that shares its id, in a single transaction. It reports whether the resource
-// existed.
+// was deleted. If the resource row is absent, child rows are left intact.
 //
 // The children are deleted before the parent, as in
 // FlushMeshSyncResourcesForCluster: their foreign keys are ON DELETE SET NULL on
