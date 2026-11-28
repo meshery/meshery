@@ -13,13 +13,13 @@ As the central repository for all capabilities known to Meshery, the registry co
 <details>
   <summary>Contents of the Registry</summary>
   <br /><br />
-  <a href="{{< ref "models/index.md" >}}">Models</a>: Blueprints defining configurations for interacting with cloud native infrastructure. They consist of operations, components, relationships, and policies.
+  <a href="{{< ref "concepts/logical/models/index.md" >}}">Models</a>: Blueprints defining configurations for interacting with cloud native infrastructure. They consist of operations, components, relationships, and policies.
   <ul>
-    <li><a href="{{< ref "components.md" >}}">Components</a>: Reusable building blocks for depicting capabilities defined within models.</li>
-    <li><a href="{{< ref "relationships/index.md" >}}">Relationships</a>: Define the nature of connections between components within a model, describing how they interact and depend on each other.</li>
-    <li><a href="{{< ref "policies/index.md" >}}">Policies</a>: Enforce specific rules and governance for system behavior under Meshery's management.</li>
-    <li><a href="{{< ref "connections/index.md" >}}">Connections</a>: Managed and unmanaged resources that Meshery can interact with.</li>
-    <li><a href="{{< ref "credentials.md" >}}">Credentials</a>: Optionally, included secrets associated with connections contained in a model.</li>
+    <li><a href="{{< ref "concepts/logical/components.md" >}}">Components</a>: Reusable building blocks for depicting capabilities defined within models.</li>
+    <li><a href="{{< ref "concepts/logical/relationships/index.md" >}}">Relationships</a>: Define the nature of connections between components within a model, describing how they interact and depend on each other.</li>
+    <li><a href="{{< ref "concepts/logical/policies/index.md" >}}">Policies</a>: Enforce specific rules and governance for system behavior under Meshery's management.</li>
+    <li><a href="{{< ref "concepts/logical/connections/index.md" >}}">Connections</a>: Managed and unmanaged resources that Meshery can interact with.</li>
+    <li><a href="{{< ref "concepts/logical/credentials.md" >}}">Credentials</a>: Optionally, included secrets associated with connections contained in a model.</li>
   </ul>
   <br />
 </details>
@@ -61,7 +61,7 @@ See [`mesheryctl registry generate`]({{< ref "reference/mesheryctl/registry/gene
 
 Once registered in the Meshery Registry, Models and their entities are available for use within that specific Meshery Server.
 
-Meshery [Adapters]({{< ref "concepts/architecture/adapters.md" >}}) are one example of a Registrant. Registrants are responsible for the registration of entities in the Meshery Registry. Adapters are responsible for the sourcing and registration of entities and the packaging of these enties into one or more models.
+Meshery [Adapters]({{< ref "concepts/architecture/adapters.md" >}}) are one example of a Registrant. Registrants are responsible for the registration of entities in the Meshery Registry. Adapters are responsible for the sourcing and registration of entities and the packaging of these entities into one or more models.
 
 A model's registrant is not only a record of provenance. At deployment time, the registrant of a component's model determines who fulfills that component: Meshery Server itself, or an Adapter reached over the network. See [Deployment Engine]({{< ref "concepts/architecture/deployment-engine/index.md" >}}).
 
