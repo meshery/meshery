@@ -1,0 +1,4 @@
+'' is an invalid subcommand. Please provide required options from [generate, list, search, view]. Use 'mesheryctl relationship --help' to display usage guide.
+
+See https://docs.meshery.io/reference/mesheryctl/relationship for usage details
+ | Short Description: Invalid Argument | Probable Cause: Invalid Argument | Suggested Remediation: Please check the arguments passed

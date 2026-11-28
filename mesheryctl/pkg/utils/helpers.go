@@ -530,6 +530,37 @@ func IsValidSubcommand(available []*cobra.Command, sub string) bool {
 	return false
 }
 
+type logCommandErrorKey struct{}
+
+func ExecuteWithLoggedErrors(cmd *cobra.Command) error {
+	ctx, silenceErrors := cmd.Context(), cmd.SilenceErrors
+	defer func() {
+		cmd.SetContext(ctx)
+		cmd.SilenceErrors = silenceErrors
+	}()
+
+	parent := ctx
+	if parent == nil {
+		parent = context.Background()
+	}
+	return cmd.ExecuteContext(context.WithValue(parent, logCommandErrorKey{}, cmd))
+}
+
+func LogCommandError(cmd *cobra.Command, err error) error {
+	Log.Error(err)
+	root := cmd.Root()
+	if ctx := root.Context(); ctx != nil && ctx.Value(logCommandErrorKey{}) == root {
+		root.SilenceErrors = true
+	}
+	return err
+}
+
+// IsValidCountUsage reports whether count mode is enabled without positional
+// arguments. An explicitly empty argument still counts as an argument.
+func IsValidCountUsage(count bool, args []string) bool {
+	return count && len(args) == 0
+}
+
 // SubcommandNames renders the names of available subcommands for use in an
 // "invalid subcommand" message, e.g. "generate, list, search, view".
 //

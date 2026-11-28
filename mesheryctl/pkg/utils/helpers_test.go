@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -1509,6 +1510,34 @@ func TestSubcommandNames(t *testing.T) {
 	}
 }
 
+// TestIsValidCountUsage verifies that count mode requires zero positional
+// arguments, including rejecting an explicitly empty argument.
+func TestIsValidCountUsage(t *testing.T) {
+	tests := []struct {
+		name  string
+		count bool
+		args  []string
+		want  bool
+	}{
+		{"count only", true, nil, true},
+		{"count disabled", false, nil, false},
+		{"unexpected argument", true, []string{"invalid"}, false},
+		{"multiple arguments", true, []string{"invalid", "extra"}, false},
+		{"explicit empty argument", true, []string{""}, false},
+		{"empty followed by argument", true, []string{"", "extra"}, false},
+		{"argument without count", false, []string{"invalid"}, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IsValidCountUsage(tt.count, tt.args); got != tt.want {
+				t.Errorf("IsValidCountUsage(%v, %q) = %v, want %v",
+					tt.count, tt.args, got, tt.want)
+			}
+		})
+	}
+}
+
 // TestTrimFileExtension checks that only the final extension is removed.
 // Regression test: strings.Trim(name, ext) strips a character set from both
 // ends, turning "my-app.yaml" into "-app". Use strings.TrimSuffix instead.
@@ -1617,4 +1646,44 @@ func TestDeleteConfiguration_BodyClosed(t *testing.T) {
 		}
 		assertBodyClosed(t, transport, "expected response body to be closed on delete configuration")
 	})
+}
+
+func TestExecuteWithLoggedErrors(t *testing.T) {
+	logOutput := SetupMeshkitLoggerTesting(t, false)
+	Log.UpdateErrorLogOutput(logOutput)
+	t.Cleanup(func() { Log.UpdateErrorLogOutput(os.Stderr) })
+	var cobraOutput bytes.Buffer
+	root := &cobra.Command{Use: "mesheryctl", SilenceUsage: true}
+	root.SetErr(&cobraOutput)
+
+	invalid := ErrInvalidArgument(fmt.Errorf("unexpected resource name"))
+	requestFailure := fmt.Errorf("count request failed")
+	parent := &cobra.Command{
+		Use: "resource",
+		Args: func(cmd *cobra.Command, args []string) error {
+			if len(args) > 0 {
+				return LogCommandError(cmd, invalid)
+			}
+			return nil
+		},
+		RunE: func(*cobra.Command, []string) error { return requestFailure },
+	}
+	parent.Flags().Bool("count", false, "")
+	root.AddCommand(parent)
+
+	root.SetArgs([]string{"resource", "--count", "bogus"})
+	if err := ExecuteWithLoggedErrors(root); err != invalid {
+		t.Fatalf("invalid subcommand returned %v, want %v", err, invalid)
+	}
+	if got := strings.Count(logOutput.String(), "unexpected resource name"); got != 1 || cobraOutput.Len() != 0 {
+		t.Fatalf("expected one structured diagnostic, got log %q and Cobra output %q", logOutput, &cobraOutput)
+	}
+
+	root.SetArgs([]string{"resource", "--count"})
+	if err := ExecuteWithLoggedErrors(root); err != requestFailure {
+		t.Fatalf("count request returned %v, want %v", err, requestFailure)
+	}
+	if got := cobraOutput.String(); got != "Error: count request failed\n" {
+		t.Fatalf("count request diagnostic = %q", got)
+	}
 }

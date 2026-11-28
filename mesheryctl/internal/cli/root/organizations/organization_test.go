@@ -3,13 +3,16 @@ package organizations
 import (
 	goerrors "errors"
 	"flag"
+	"fmt"
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshkit/errors"
+	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -90,6 +93,77 @@ func TestOrganization(t *testing.T) {
 			expectedResponse := golden.Load()
 
 			utils.Equals(t, expectedResponse, actualResponse)
+		})
+	}
+}
+
+// TestOrganizationCountArgs verifies that count-only usage is valid,
+// missing subcommands without --count are rejected, and invalid
+// subcommands are rejected regardless of --count.
+func TestOrganizationCountArgs(t *testing.T) {
+	utils.SetupMeshkitLoggerTesting(t, false)
+
+	tests := []struct {
+		name    string
+		args    []string
+		count   bool
+		wantErr string
+	}{
+		{
+			name:    "rejects missing subcommand without count",
+			wantErr: "please provide a subcommand",
+		},
+		{
+			name:  "accepts count without arguments",
+			count: true,
+		},
+		{
+			name:    "rejects invalid subcommand without count",
+			args:    []string{"invalid"},
+			wantErr: "invalid command",
+		},
+		{
+			name:    "rejects invalid subcommand with count",
+			args:    []string{"invalid"},
+			count:   true,
+			wantErr: "invalid command",
+		},
+		{
+			name:    "rejects empty subcommand with count",
+			args:    []string{""},
+			count:   true,
+			wantErr: "invalid command",
+		},
+		{
+			name:    "rejects multiple invalid arguments with count",
+			args:    []string{"invalid", "extra"},
+			count:   true,
+			wantErr: "invalid command",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cmd := &cobra.Command{
+				Use:  "resource",
+				Args: OrgCmd.Args,
+				Run:  func(*cobra.Command, []string) {},
+			}
+			cmd.Flags().Bool("count", false, "")
+			args := append([]string{}, tt.args...)
+			if tt.count {
+				args = append([]string{"--count"}, args...)
+			}
+			cmd.SetArgs(args)
+
+			err := cmd.Execute()
+			if tt.wantErr == "" {
+				if err != nil {
+					t.Fatalf("Execute() error = %v", err)
+				}
+			} else if err == nil || !strings.Contains(fmt.Sprint(errors.GetLDescription(err)), tt.wantErr) {
+				t.Fatalf("Execute() error = %+v, want %q", err, tt.wantErr)
+			}
 		})
 	}
 }

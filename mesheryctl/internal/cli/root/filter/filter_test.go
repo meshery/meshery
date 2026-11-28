@@ -8,6 +8,7 @@ import (
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshkit/errors"
 )
 
 var update = flag.Bool("update", false, "update golden files")
@@ -44,7 +45,43 @@ func TestFilterCmdCount(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 
+	expectedInvalidCommand := func(description string) error {
+		return errors.New("mesheryctl-1171", errors.Alert, nil, []string{description}, nil, nil)
+	}
+
 	tests := []utils.MesheryListCommandTest{
+		{
+			Name:           "Reject invalid subcommand without --count",
+			Args:           []string{"invalidCommand"},
+			Fixture:        "filter.list.api.response.golden",
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  expectedInvalidCommand("'invalidCommand' is an invalid command"),
+		},
+		{
+			Name:           "Reject invalid subcommand with --count",
+			Args:           []string{"invalidCommand", "--count"},
+			Fixture:        "filter.list.api.response.golden",
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  expectedInvalidCommand("'invalidCommand' is an invalid command"),
+		},
+		{
+			Name:           "Reject empty subcommand with --count",
+			Args:           []string{"--count", ""},
+			Fixture:        "filter.list.api.response.golden",
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  expectedInvalidCommand("'' is an invalid command"),
+		},
+		{
+			Name:           "Reject multiple invalid arguments with --count",
+			Args:           []string{"invalidCommand", "extra", "--count"},
+			Fixture:        "filter.list.api.response.golden",
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  expectedInvalidCommand("'invalidCommand' is an invalid command"),
+		},
 		{
 			Name:             "Fetch Filter Count on root command",
 			Args:             []string{"--count"},

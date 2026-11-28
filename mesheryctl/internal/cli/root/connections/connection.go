@@ -4,12 +4,10 @@ import (
 	"fmt"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 const connectionApiPath = "api/integrations/connections"
@@ -41,37 +39,28 @@ mesheryctl connection list --count
 mesheryctl connection delete [connection_id]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
-		countFlag, _ := cmd.Flags().GetBool("count")
-		if len(args) == 0 && !countFlag {
-			return utils.ErrInvalidArgument(errors.New("no subcommand provided for connection"))
-		}
-		return nil
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		countFlag, _ := cmd.Flags().GetBool("count")
-		if countFlag {
-			connectionsResponse, err := api.Fetch[connection.ConnectionPage](connectionApiPath)
-
-			if err != nil {
-				return err
-			}
-
-			utils.DisplayCount("connection", int64(connectionsResponse.TotalCount))
-
-			return nil
-		}
-
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Use 'mesheryctl connection --help' to display usage", args[0]))
-		}
-		_, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-		err = cmd.Usage()
+		count, err := cmd.Flags().GetBool("count")
 		if err != nil {
 			return err
 		}
+		if utils.IsValidCountUsage(count, args) {
+			return nil
+		}
+		if len(args) == 0 {
+			return utils.ErrInvalidArgument(errors.New("no subcommand provided for connection"))
+		}
+		err = utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Use 'mesheryctl connection --help' to display usage", args[0]))
+		return utils.LogCommandError(cmd, err)
+	},
+	RunE: func(_ *cobra.Command, _ []string) error {
+		connectionsResponse, err := api.Fetch[connection.ConnectionPage](connectionApiPath)
+
+		if err != nil {
+			return err
+		}
+
+		utils.DisplayCount("connection", int64(connectionsResponse.TotalCount))
+
 		return nil
 	},
 }
