@@ -331,6 +331,14 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 		return
 	}
 
+	if err := models.RejectUnsafeKubeCredential(connection.CredentialSecret); err != nil {
+		if h.log != nil {
+			h.log.Error(err)
+		}
+		writeMeshkitError(w, err, http.StatusBadRequest)
+		return
+	}
+
 	systemID := uuid.Nil
 	if h.SystemID != nil {
 		systemID = *h.SystemID
@@ -606,6 +614,14 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	if err != nil {
 		h.log.Error(models.ErrUnmarshal(err, obj))
 		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
+		return
+	}
+
+	if err := models.RejectUnsafeKubeCredential(connection.CredentialSecret); err != nil {
+		if h.log != nil {
+			h.log.Error(err)
+		}
+		writeMeshkitError(w, err, http.StatusBadRequest)
 		return
 	}
 
