@@ -715,14 +715,15 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 	if err != nil {
 		return "", ErrMarshal(err, "meshery result for shipping")
 	}
-	user, _ := l.GetUserDetails(req)
-	pref, _ := l.ReadFromPersister(user.ID.String())
-
-	// The preference only controls sending the result. It is always saved locally.
+	user, err := l.GetUserDetails(req)
 	var resultID string
-	if pref.AnonymousPerfResults {
-		l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
-		resultID, _ = l.shipResults(req, data)
+	if err == nil && user != nil {
+		pref, err := l.ReadFromPersister(user.ID.String())
+		// The preference only controls sending the result. It is always saved locally.
+		if err == nil && pref != nil && pref.AnonymousPerfResults {
+			l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
+			resultID, _ = l.shipResults(req, data)
+		}
 	}
 
 	key := uuid.FromStringOrNil(resultID)
