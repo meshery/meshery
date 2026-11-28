@@ -23,8 +23,7 @@ import (
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
 
-	// "github.com/meshery/meshkit/errors"
-	// "github.com/meshery/meshkit/errors"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 
 	meshkitOci "github.com/meshery/meshkit/models/oci"
@@ -51,6 +50,13 @@ import (
 // DefaultPageSizeForMeshModelComponents is the default page size used when listing Meshmodel components.
 const DefaultPageSizeForMeshModelComponents = 25
 
+func (h *Handler) writeCategoryModelsError(rw http.ResponseWriter, err error) {
+	h.log.Error(ErrGetMeshModels(err))
+	publicErr := meshkiterrors.New(ErrGetMeshModelsCode, meshkiterrors.Alert,
+		[]string{"could not get meshmodel entities"}, nil, nil, []string{"Please try again later."})
+	writeMeshkitError(rw, publicErr, http.StatusInternalServerError)
+}
+
 func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -67,12 +73,19 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
+
+		Components:    queryParams.Get("components") == queryParamTrue,
+		Relationships: queryParams.Get("relationships") == queryParamTrue,
 	}
 	if search != "" {
 		filter.Greedy = true
 		filter.DisplayName = search
 	}
-	entities, count, _, _ := h.registryManager.GetEntities(filter)
+	entities, count, _, err := h.registryManager.GetEntities(filter)
+	if err != nil {
+		h.writeCategoryModelsError(rw, err)
+		return
+	}
 	var modelDefs []_model.ModelDefinition
 	for _, model := range entities {
 		model, ok := model.(*_model.ModelDefinition)
@@ -117,7 +130,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 	returnAnnotationComp := queryParams.Get("annotations")
 
-	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ModelFilter{
+	entities, count, _, err := h.registryManager.GetEntities(&regv1beta1.ModelFilter{
 		Category:    cat,
 		Name:        model,
 		Version:     queryParams.Get("version"),
@@ -127,7 +140,14 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
+
+		Components:    queryParams.Get("components") == queryParamTrue,
+		Relationships: queryParams.Get("relationships") == queryParamTrue,
 	})
+	if err != nil {
+		h.writeCategoryModelsError(rw, err)
+		return
+	}
 
 	var modelDefs []_model.ModelDefinition
 	for _, model := range entities {
