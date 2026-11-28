@@ -65,8 +65,7 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 		}
 
 		if selectedModel == nil {
-			utils.Log.Infof("No model found with name or ID: %s", modelNameOrId)
-			return nil
+			return utils.ErrNotFound(fmt.Errorf("No model found with name or ID: %s", modelNameOrId))
 		}
 
 		savePath := ""
