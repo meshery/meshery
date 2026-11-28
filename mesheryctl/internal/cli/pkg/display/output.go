@@ -1,7 +1,6 @@
 package display
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -148,17 +147,13 @@ func (j *JSONOutputFormatterSaver[T]) Save() error {
 	}
 
 	fmt.Println()
-	var output bytes.Buffer
-	encoder := json.NewEncoder(&output)
-	encoder.SetEscapeHTML(j.OutputFormatter.EncoderSettings.SetEscapeHTML)
-	encoder.SetIndent(j.OutputFormatter.EncoderSettings.IndentPrefix, j.OutputFormatter.EncoderSettings.IndentValue)
-	if err := encoder.Encode(j.OutputFormatter.Data); err != nil {
+	output, err := json.MarshalIndent(j.OutputFormatter.Data, j.OutputFormatter.EncoderSettings.IndentPrefix,
+		j.OutputFormatter.EncoderSettings.IndentValue)
+	if err != nil {
 		return utils.ErrMarshalIndent(errors.Wrap(err, "failed to format output in JSON"))
 	}
 
-	// Encoder.Encode adds a newline; MarshalIndent did not, so trim it to preserve saved-file formatting.
-	encoded := bytes.TrimSuffix(output.Bytes(), []byte("\n"))
-	err := writeFile(j.FilePath, encoded)
+	err = writeFile(j.FilePath, output)
 	if err != nil {
 		return utils.ErrCreateFile(j.FilePath, errors.Wrap(err, "failed to save output as JSON file"))
 	}
