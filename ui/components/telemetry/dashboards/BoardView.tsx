@@ -19,6 +19,7 @@ import {
   useQueryGrafanaRangeBatchQuery,
 } from '@/rtk-query/telemetryGrafana';
 import Panel from '../common/Panel';
+import TelemetryError from '../common/TelemetryError';
 import { parsePromMatrix } from '../common/time';
 import { buildVarValues, resolveDatasourceUid, resolveExpr } from './resolve';
 import type { Board, ChartSeries, Datasource, PinnedBoard, TimeWindow } from './types';
@@ -88,7 +89,12 @@ const ExpandButton = styled(IconButton, {
 const BoardView: React.FC<BoardViewProps> = ({ connectionID, board, timeWindow, onRemove }) => {
   const theme = useTheme();
   const [open, setOpen] = useState(true);
-  const { data, isFetching, isError } = useGetGrafanaBoardQuery(
+  const {
+    data,
+    isFetching,
+    isError,
+    error: boardError,
+  } = useGetGrafanaBoardQuery(
     { connectionID, uid: board.uid },
     { skip: !connectionID || !board.uid },
   );
@@ -97,10 +103,11 @@ const BoardView: React.FC<BoardViewProps> = ({ connectionID, board, timeWindow, 
   // Datasources resolve `$datasource` variables and datasource names to concrete
   // UIDs; cached per connection by RTK Query. Wait for them before querying so
   // references resolve correctly on the first request.
-  const { data: datasourcesData, isLoading: datasourcesLoading } = useGetGrafanaDatasourcesQuery(
-    { connectionID },
-    { skip: !connectionID },
-  );
+  const {
+    data: datasourcesData,
+    isLoading: datasourcesLoading,
+    error: datasourcesError,
+  } = useGetGrafanaDatasourcesQuery({ connectionID }, { skip: !connectionID });
   const datasources = (datasourcesData as Datasource[] | undefined) ?? [];
 
   // Resolve every panel target into an executable query once per board/window.
@@ -207,12 +214,20 @@ const BoardView: React.FC<BoardViewProps> = ({ connectionID, board, timeWindow, 
       </Header>
 
       <Collapse in={open} unmountOnExit>
+        {!isError && fullBoard && datasourcesError && (
+          <Box sx={{ p: 2 }}>
+            <TelemetryError
+              error={datasourcesError}
+              fallback="Could not load Grafana datasources"
+            />
+          </Box>
+        )}
         {isError ? (
           <Box sx={{ p: 3 }}>
-            <Typography color="textSecondary">
-              Could not load this dashboard from Grafana. It may have been deleted or the connection
-              may be unreachable.
-            </Typography>
+            <TelemetryError
+              error={boardError}
+              fallback="Could not load this dashboard from Grafana. Check the connection and try again."
+            />
           </Box>
         ) : !fullBoard ? (
           <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>

@@ -545,6 +545,17 @@ describe('urlEncodeArrayParam / urlEncodeParams', () => {
     expect(urlEncodeArrayParam('id', ['a', 'b'])).toBe('id=a&id=b');
   });
 
+  it('returns empty string for null, undefined, or empty array', () => {
+    expect(urlEncodeArrayParam('id', undefined)).toBe('');
+    expect(urlEncodeArrayParam('id', null)).toBe('');
+    expect(urlEncodeArrayParam('id', [])).toBe('');
+    expect(urlEncodeArrayParam('id', {} as any)).toBe('');
+  });
+
+  it('url encodes array elements with special characters', () => {
+    expect(urlEncodeArrayParam('filter', ['a b', 'c&d'])).toBe('filter=a%20b&filter=c%26d');
+  });
+
   it('produces a query string from a record', () => {
     expect(urlEncodeParams({ name: 'demo', mode: 'design' })).toBe('name=demo&mode=design');
   });

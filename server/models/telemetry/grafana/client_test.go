@@ -8,10 +8,76 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"reflect"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
 )
+
+func TestQueryRangeResponseSizeLimit(t *testing.T) {
+	const limit = 16 << 20
+	for _, size := range []int{limit, limit + 1} {
+		t.Run(strconv.Itoa(size), func(t *testing.T) {
+			payload := `"` + strings.Repeat("x", size-2) + `"`
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				w.(http.Flusher).Flush() // Exercise a chunked response without Content-Length.
+				_, _ = w.Write([]byte(payload))
+			}))
+			defer srv.Close()
+			body, err := New(srv.URL, "", nil).QueryRange(context.Background(), "ds1", nil)
+			if size == limit {
+				if err != nil || string(body) != payload {
+					t.Fatalf("at limit: body length %d, error %v", len(body), err)
+				}
+			} else if body != nil || !errors.Is(err, ErrResponseTooLarge) || !strings.Contains(err.Error(), "16 MiB") {
+				t.Fatalf("over limit: body length %d, error %v", len(body), err)
+			}
+		})
+	}
+}
+
+func TestQueryRangeFallbackPreservesSizeErrors(t *testing.T) {
+	oversized := []byte(`"` + strings.Repeat("x", 16<<20) + `"`)
+	for _, tc := range []struct {
+		name       string
+		sizeAt     string
+		wantStatus int
+	}{
+		{"oversized primary 404", "primary", http.StatusNotFound},
+		{"oversized resolved query", "retry", 0},
+		{"oversized datasource list", "list", 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				switch r.URL.Path {
+				case "/api/datasources":
+					if tc.sizeAt == "list" {
+						_, _ = w.Write(oversized)
+					} else {
+						_, _ = w.Write([]byte(`[{"uid":"real-uid","name":"prometheus"}]`))
+					}
+				case "/api/datasources/proxy/uid/real-uid/api/v1/query_range":
+					_, _ = w.Write(oversized)
+				default:
+					w.WriteHeader(http.StatusNotFound)
+					if tc.sizeAt == "primary" {
+						_, _ = w.Write(oversized)
+					}
+				}
+			}))
+			defer srv.Close()
+			c := New(srv.URL, "", nil)
+			body, err := c.QueryRange(context.Background(), "prometheus", url.Values{"query": {"bad"}})
+			if body != nil || !errors.Is(err, ErrResponseTooLarge) || StatusCode(err) != tc.wantStatus {
+				t.Fatalf("single query: body length %d, error %v", len(body), err)
+			}
+			results := c.QueryRangeBatch(context.Background(), "1", "2", "15", []BatchQuery{{ID: "bad", DS: "prometheus", Query: "bad"}})
+			if len(results) != 1 || results[0].Body != nil || !errors.Is(results[0].Err, ErrResponseTooLarge) || StatusCode(results[0].Err) != tc.wantStatus {
+				t.Fatalf("batch query: got %+v", results)
+			}
+		})
+	}
+}
 
 func TestAuthHeader(t *testing.T) {
 	cases := []struct {
@@ -404,9 +470,9 @@ func TestQueryRangeBatch(t *testing.T) {
 
 	c := New(srv.URL, "", nil)
 	queries := []BatchQuery{
-		{ID: "1:A", DS: "good-uid", Query: "up"},      // valid uid, direct success
-		{ID: "2:B", DS: "dev-cortex", Query: "mem"},   // name -> resolves to abc123
-		{ID: "3:C", DS: "ghost", Query: "cpu"},        // unresolvable -> per-result error
+		{ID: "1:A", DS: "good-uid", Query: "up"},    // valid uid, direct success
+		{ID: "2:B", DS: "dev-cortex", Query: "mem"}, // name -> resolves to abc123
+		{ID: "3:C", DS: "ghost", Query: "cpu"},      // unresolvable -> per-result error
 	}
 	results := c.QueryRangeBatch(context.Background(), "1", "2", "15", queries)
 	if len(results) != 3 {
@@ -471,5 +537,174 @@ func TestHealthReturnsVersion(t *testing.T) {
 	}
 	if info.Version != "10.4.2" || info.Database != "ok" {
 		t.Errorf("unexpected health info: %+v", info)
+	}
+}
+
+// TestQueryRangeFallbackPreservesNon404RetryErrors verifies that when a
+// datasource name resolves to a real UID via /api/datasources and the retried
+// query fails with a non-404 status (e.g. invalid PromQL 400, auth 401/403, or
+// upstream 500/502), both QueryRange and QueryRangeBatch surface the real error
+// instead of masking it as DatasourceNotFoundError.
+func TestQueryRangeFallbackPreservesNon404RetryErrors(t *testing.T) {
+	cases := []struct {
+		name       string
+		retryCode  int
+		retryBody  string
+		wantSubstr string
+	}{
+		{
+			name:       "400 invalid PromQL",
+			retryCode:  http.StatusBadRequest,
+			retryBody:  `{"status":"error","errorType":"bad_data","error":"parse error: unexpected end of input"}`,
+			wantSubstr: "parse error",
+		},
+		{
+			name:       "401 unauthorized",
+			retryCode:  http.StatusUnauthorized,
+			retryBody:  `{"message":"invalid api key"}`,
+			wantSubstr: "invalid api key",
+		},
+		{
+			name:       "403 forbidden",
+			retryCode:  http.StatusForbidden,
+			retryBody:  `{"message":"permission denied"}`,
+			wantSubstr: "permission denied",
+		},
+		{
+			name:       "500 internal error",
+			retryCode:  http.StatusInternalServerError,
+			retryBody:  `{"message":"query execution failed"}`,
+			wantSubstr: "query execution failed",
+		},
+		{
+			name:       "502 bad gateway",
+			retryCode:  http.StatusBadGateway,
+			retryBody:  `{"message":"upstream prometheus unreachable"}`,
+			wantSubstr: "upstream prometheus unreachable",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				switch r.URL.Path {
+				case "/api/datasources":
+					_, _ = w.Write([]byte(`[{"uid":"abc123","name":"dev-cortex","type":"prometheus"}]`))
+				case "/api/datasources/proxy/uid/abc123/api/v1/query_range":
+					w.WriteHeader(tc.retryCode)
+					_, _ = w.Write([]byte(tc.retryBody))
+				default:
+					w.WriteHeader(http.StatusNotFound)
+					_, _ = w.Write([]byte(`{"message":"Unable to find datasource"}`))
+				}
+			}))
+			defer srv.Close()
+
+			c := New(srv.URL, "", nil)
+			params := url.Values{"query": {"bad(("}, "start": {"1"}, "end": {"2"}, "step": {"15"}}
+
+			body, err := c.QueryRange(context.Background(), "dev-cortex", params)
+			if body != nil || err == nil {
+				t.Fatalf("single query: body=%q, err=%v; want error", body, err)
+			}
+			var dsErr *DatasourceNotFoundError
+			if errors.As(err, &dsErr) {
+				t.Fatalf("single query: retry %d was masked as DatasourceNotFoundError: %v", tc.retryCode, err)
+			}
+			if StatusCode(err) != tc.retryCode || !strings.Contains(err.Error(), tc.wantSubstr) {
+				t.Fatalf("single query: status=%d, err=%v; want status %d containing %q", StatusCode(err), err, tc.retryCode, tc.wantSubstr)
+			}
+
+			results := c.QueryRangeBatch(context.Background(), "1", "2", "15", []BatchQuery{
+				{ID: "1:A", DS: "dev-cortex", Query: "bad(("},
+			})
+			if len(results) != 1 || results[0].Body != nil || results[0].Err == nil {
+				t.Fatalf("batch query: got %+v, want error", results)
+			}
+			if errors.As(results[0].Err, &dsErr) {
+				t.Fatalf("batch query: retry %d was masked as DatasourceNotFoundError: %v", tc.retryCode, results[0].Err)
+			}
+			if StatusCode(results[0].Err) != tc.retryCode || !strings.Contains(results[0].Err.Error(), tc.wantSubstr) {
+				t.Fatalf("batch query: status=%d, err=%v; want status %d containing %q", StatusCode(results[0].Err), results[0].Err, tc.retryCode, tc.wantSubstr)
+			}
+		})
+	}
+}
+
+// TestQueryRangeFallbackPreservesTransportRetryError verifies that a network /
+// connection error during the resolved-UID retry is surfaced rather than masked
+// as DatasourceNotFoundError.
+func TestQueryRangeFallbackPreservesTransportRetryError(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/api/datasources":
+			_, _ = w.Write([]byte(`[{"uid":"abc123","name":"dev-cortex","type":"prometheus"}]`))
+		case "/api/datasources/proxy/uid/abc123/api/v1/query_range":
+			hj, ok := w.(http.Hijacker)
+			if !ok {
+				t.Error("response writer does not support hijacking")
+				return
+			}
+			conn, _, err := hj.Hijack()
+			if err == nil {
+				_ = conn.Close()
+			}
+		default:
+			w.WriteHeader(http.StatusNotFound)
+			_, _ = w.Write([]byte(`{"message":"Unable to find datasource"}`))
+		}
+	}))
+	defer srv.Close()
+
+	c := New(srv.URL, "", nil)
+	_, err := c.QueryRange(context.Background(), "dev-cortex", url.Values{"query": {"up"}})
+	if err == nil {
+		t.Fatal("single query: expected transport error, got nil")
+	}
+	var dsErr *DatasourceNotFoundError
+	if errors.As(err, &dsErr) {
+		t.Fatalf("single query: transport error was masked as DatasourceNotFoundError: %v", err)
+	}
+	if StatusCode(err) != 0 {
+		t.Fatalf("single query: StatusCode = %d, want 0 for transport error (%v)", StatusCode(err), err)
+	}
+
+	results := c.QueryRangeBatch(context.Background(), "1", "2", "15", []BatchQuery{
+		{ID: "1:A", DS: "dev-cortex", Query: "up"},
+	})
+	if len(results) != 1 || results[0].Err == nil {
+		t.Fatalf("batch query: got %+v, want transport error", results)
+	}
+	if errors.As(results[0].Err, &dsErr) {
+		t.Fatalf("batch query: transport error was masked as DatasourceNotFoundError: %v", results[0].Err)
+	}
+}
+
+// TestQueryRangeFallbackStillReturnsNotFoundWhenResolvedUID404s confirms that
+// if the resolved UID itself still returns 404, DatasourceNotFoundError is
+// still returned as before.
+func TestQueryRangeFallbackStillReturnsNotFoundWhenResolvedUID404s(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/api/datasources" {
+			_, _ = w.Write([]byte(`[{"uid":"abc123","name":"dev-cortex","type":"prometheus"}]`))
+			return
+		}
+		w.WriteHeader(http.StatusNotFound)
+		_, _ = w.Write([]byte(`{"message":"Unable to find datasource"}`))
+	}))
+	defer srv.Close()
+
+	c := New(srv.URL, "", nil)
+	_, err := c.QueryRange(context.Background(), "dev-cortex", url.Values{"query": {"up"}})
+	var dsErr *DatasourceNotFoundError
+	if !errors.As(err, &dsErr) || dsErr.Ref != "dev-cortex" {
+		t.Fatalf("single query: got %T (%v), want *DatasourceNotFoundError for dev-cortex", err, err)
+	}
+
+	results := c.QueryRangeBatch(context.Background(), "1", "2", "15", []BatchQuery{
+		{ID: "1:A", DS: "dev-cortex", Query: "up"},
+	})
+	if len(results) != 1 || !errors.As(results[0].Err, &dsErr) || dsErr.Ref != "dev-cortex" {
+		t.Fatalf("batch query: got %+v, want *DatasourceNotFoundError for dev-cortex", results)
 	}
 }

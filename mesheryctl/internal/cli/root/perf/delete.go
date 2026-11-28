@@ -15,7 +15,6 @@
 package perf
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
 
@@ -52,37 +51,48 @@ mesheryctl perf delete test-3 --yes
 		}
 		baseURL := mctlCfg.GetBaseMesheryURL()
 
-		profiles, err := fetchAllPerformanceProfiles(baseURL, url.QueryEscape(args[0]))
-		if err != nil {
-			return err
-		}
-
-		// The search is a substring match, so prefer profiles named exactly as asked.
-		matches := profiles[:0:0]
-		for _, p := range profiles {
-			if p.Name == args[0] {
-				matches = append(matches, p)
-			}
-		}
-		// --yes only authorizes the profile named, never a similarly named one.
-		if len(matches) == 0 && !utils.SilentFlag {
-			matches = profiles
-		}
-		if len(matches) == 0 {
-			return ErrNoProfileFound()
-		}
-		if len(matches) > 1 && utils.SilentFlag {
-			return utils.ErrFlagsInvalid(fmt.Errorf("%d profiles are named '%s'; run without --yes to choose one", len(matches), args[0]))
-		}
-
-		index := 0
-		if len(matches) > 1 {
-			index, err = userPrompt("profile", "Enter index of the profile", profilesToStringArrays(matches))
+		var profile perfprofile.PerformanceProfile
+		if utils.IsUUID(args[0]) {
+			p, err := fetchPerformanceProfile(baseURL, args[0])
 			if err != nil {
-				return ErrUserPrompt(err)
+				utils.Log.Error(err)
+				return err
 			}
+			profile = *p
+		} else {
+			profiles, err := fetchAllPerformanceProfiles(baseURL, url.QueryEscape(args[0]))
+			if err != nil {
+				utils.Log.Error(err)
+				return err
+			}
+
+			// The search is a substring match, so prefer profiles named exactly as asked.
+			matches := profiles[:0:0]
+			for _, p := range profiles {
+				if p.Name == args[0] {
+					matches = append(matches, p)
+				}
+			}
+			// --yes only authorizes the profile named, never a similarly named one.
+			if len(matches) == 0 && !utils.SilentFlag {
+				matches = profiles
+			}
+			if len(matches) == 0 {
+				return ErrNoProfileFound()
+			}
+			if len(matches) > 1 && utils.SilentFlag {
+				return utils.ErrFlagsInvalid(fmt.Errorf("%d profiles are named '%s'; run without --yes to choose one", len(matches), args[0]))
+			}
+
+			index := 0
+			if len(matches) > 1 {
+				index, err = userPrompt("profile", "Enter index of the profile", profilesToStringArrays(matches))
+				if err != nil {
+					return ErrUserPrompt(err)
+				}
+			}
+			profile = matches[index]
 		}
-		profile := matches[index]
 
 		if !utils.SilentFlag {
 			confirmed, err := utils.AskForConfirmation("Performance profile '" + profile.Name + "' (" + profile.ID.String() + ") will be deleted. Are you sure you want to continue")
@@ -108,24 +118,4 @@ mesheryctl perf delete test-3 --yes
 		utils.Log.Infof("Performance profile '%s' (%s) deleted", profile.Name, profile.ID.String())
 		return nil
 	},
-}
-
-// fetchAllPerformanceProfiles returns every profile matching searchString, across all pages.
-func fetchAllPerformanceProfiles(baseURL, searchString string) ([]perfprofile.PerformanceProfile, error) {
-	var all []perfprofile.PerformanceProfile
-	for page := 0; ; page++ {
-		profiles, body, err := fetchPerformanceProfiles(baseURL, searchString, pageSize, page)
-		if err != nil {
-			return nil, err
-		}
-		all = append(all, profiles...)
-
-		var res perfprofile.PerformanceProfilePage
-		if err := json.Unmarshal(body, &res); err != nil {
-			return nil, ErrFailUnmarshal(err)
-		}
-		if len(profiles) == 0 || len(all) >= res.TotalCount {
-			return all, nil
-		}
-	}
 }

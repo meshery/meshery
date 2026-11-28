@@ -119,7 +119,7 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 	// read user preferences from JSON request body
 	if err := json.NewDecoder(req.Body).Decode(&prefObj); err != nil {
 		h.log.Error(ErrDecoding(err, "user preferences"))
-		writeMeshkitError(w, ErrDecoding(err, "user preferences"), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrDecoding(err, "user preferences"), http.StatusBadRequest)
 		return
 	}
 
