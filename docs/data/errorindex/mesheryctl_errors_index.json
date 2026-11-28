@@ -4176,6 +4176,24 @@
         "Retry the operation",
         "Run `mesheryctl system login` to re-authenticate"
       ]
+    },
+    {
+      "code": "mesheryctl-1270",
+      "moniker": "ErrDesignValidationFailedCode",
+      "component": {
+        "name": "mesheryctl",
+        "type": "client"
+      },
+      "numericCode": "1270",
+      "severity": "alert",
+      "shortDescription": "Meshery Server could not deploy the design",
+      "probableCause": [
+        "Meshery Server rejected the design during validation, or hit an internal error while deploying it"
+      ],
+      "suggestedRemediation": [
+        "Fix the reported component configuration, or rerun with --skip-validation to deploy without server-side validation",
+        "Check `mesheryctl system logs` if the design configuration is valid, since the server may have failed while deploying it"
+      ]
     }
   ],
   "schemaVersion": 2

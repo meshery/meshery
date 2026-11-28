@@ -15,6 +15,8 @@
 package design
 
 import (
+	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"strings"
 
@@ -40,6 +42,7 @@ const (
 	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
 	ErrEvaluateDesignCode             = "mesheryctl-1247"
 	ErrEvaluateDesignResponseCode     = "mesheryctl-1248"
+	ErrDesignValidationFailedCode     = "mesheryctl-1270"
 )
 
 const (
@@ -198,4 +201,47 @@ func ErrEvaluateDesignResponse(err error) error {
 		[]string{err.Error()},
 		[]string{"The Meshery server returned an error while evaluating the design", "The design file may be invalid or the server may be experiencing issues"},
 		[]string{"Ensure the design file is valid", "Check that the Meshery server is running and accessible", "Verify that the server has the required policies loaded"})
+}
+
+func ErrDesignValidationFailed(err error) error {
+	return errors.New(ErrDesignValidationFailedCode, errors.Alert,
+		[]string{"Meshery Server could not deploy the design"},
+		[]string{err.Error()},
+		[]string{"Meshery Server rejected the design during validation, or hit an internal error while deploying it"},
+		[]string{"Fix the reported component configuration, or rerun with --skip-validation to deploy without server-side validation", "Check `mesheryctl system logs` if the design configuration is valid, since the server may have failed while deploying it"})
+}
+
+// mesheryServerError is the wire shape Meshery Server uses for non-2xx
+// responses written through WriteMeshkitError.
+type mesheryServerError struct {
+	Error           string   `json:"error"`
+	LongDescription []string `json:"longDescription"`
+}
+
+// serverErrorCause extracts the actionable detail from a server error body,
+// falling back to the short description and then to the body itself.
+//
+// It deliberately reads less than the client contract in
+// docs/content/en/project/contributing/error-contract.md: mesheryctl supplies
+// its own remediation, and a non-JSON body is passed through as the cause.
+func serverErrorCause(body string) string {
+	var resp mesheryServerError
+	if err := json.Unmarshal([]byte(body), &resp); err != nil {
+		return body
+	}
+
+	if detail := strings.TrimSpace(strings.Join(resp.LongDescription, "\n")); detail != "" {
+		return detail
+	}
+	if short := strings.TrimSpace(resp.Error); short != "" {
+		return short
+	}
+	return body
+}
+
+func designDeployRequestError(err error, skipValidation bool) error {
+	if !skipValidation && errors.GetCode(err) == utils.ErrMesheryServerInternalErrorCode {
+		return ErrDesignValidationFailed(stderrors.New(serverErrorCause(errors.GetLDescription(err))))
+	}
+	return err
 }

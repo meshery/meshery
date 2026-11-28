@@ -1,6 +1,7 @@
 package design
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 	"runtime"
@@ -51,7 +52,7 @@ func TestDeployCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
 					Response:     "deploy.designdeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -77,7 +78,7 @@ func TestDeployCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
 					Response:     "deploy.designdeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -127,6 +128,79 @@ func TestDeployCmd(t *testing.T) {
 			ExpectError:    true,
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound("nonexistent-design"),
+		},
+		{
+			Name:             "given valid file and source type when design deploy uses --skip-validation then design is deployed",
+			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "Kubernetes Manifest", "--skip-validation"},
+			ExpectedResponse: "deploy.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern/types",
+					Response:     "view.designTypes.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/Kubernetes%20Manifest",
+					Response:     "deploy.applicationSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/import",
+					Response:     "apply.designSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "deploy.designdeploy.response.golden",
+					ResponseCode: 200,
+				},
+				// Override the responder from the default cases to catch an unexpected query.
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
+					Response:     "deploy.designdeploy.response.golden",
+					ResponseCode: 400,
+				},
+			},
+			ExpectError: false,
+		},
+		{
+			Name:             "given invalid component configuration when design deploy then the server validation detail is reported",
+			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "Kubernetes Manifest"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern/types",
+					Response:     "view.designTypes.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/Kubernetes%20Manifest",
+					Response:     "deploy.applicationSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/import",
+					Response:     "apply.designSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
+					Response:     "deploy.validationError.response.golden",
+					ResponseCode: 500,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrDesignValidationFailed(errors.New(validationErrorDetail)),
 		},
 	}
 

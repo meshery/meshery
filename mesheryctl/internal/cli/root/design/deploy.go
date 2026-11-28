@@ -31,7 +31,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/patterns"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	"github.com/spf13/cobra"
@@ -40,9 +39,10 @@ import (
 )
 
 type cmdDesignDeployFlags struct {
-	File       string `json:"file" validate:"omitempty,file"`
-	SourceType string `json:"source-type" validate:"omitempty,design-source-type"`
-	SkipSave   bool   `json:"skip-save" validate:"boolean"`
+	File           string `json:"file" validate:"omitempty,file"`
+	SourceType     string `json:"source-type" validate:"omitempty,design-source-type"`
+	SkipSave       bool   `json:"skip-save" validate:"boolean"`
+	SkipValidation bool   `json:"skip-validation" validate:"boolean"`
 }
 
 var designDeployFlags cmdDesignDeployFlags
@@ -108,7 +108,11 @@ mesheryctl design deploy -f [filepath] -s [source type]
 		var err error
 		var patternFile *pattern.PatternFile
 
+		// By default, the CLI relies on the server to validate component configuration.
 		deployURLPath := "api/pattern/deploy"
+		if !designDeployFlags.SkipValidation {
+			deployURLPath += "?verify=true"
+		}
 		patternURLPath := "api/pattern"
 
 		// pattern name has been passed
@@ -169,10 +173,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 
 		res, err := api.Add(deployURLPath, bytes.NewBuffer(payloadBytes), nil)
 		if err != nil {
-			if errors.GetCode(err) == utils.ErrMesheryServerInternalErrorCode {
-				return ErrDeployDesign()
-			}
-			return err
+			return designDeployRequestError(err, designDeployFlags.SkipValidation)
 		}
 
 		defer func() { _ = res.Body.Close() }()
@@ -225,5 +226,6 @@ func multiplepatternsConfirmation(profiles []models.MesheryPattern) int {
 func init() {
 	deployDesignCmd.Flags().StringVarP(&designDeployFlags.File, "file", "f", "", "Path to design file")
 	deployDesignCmd.Flags().BoolVarP(&designDeployFlags.SkipSave, "skip-save", "", false, "Skip saving a design")
+	deployDesignCmd.Flags().BoolVarP(&designDeployFlags.SkipValidation, "skip-validation", "", false, "Skip server-side validation of the design before deploying")
 	deployDesignCmd.Flags().StringVarP(&designDeployFlags.SourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
 }

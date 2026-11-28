@@ -34,8 +34,9 @@ import (
 )
 
 var (
-	skipSave   bool // skip saving a design
-	designFile string
+	skipSave       bool // skip saving a design
+	skipValidation bool // skip server-side validation of the design
+	designFile     string
 )
 
 var linkDocPatternApply = map[string]string{
@@ -78,7 +79,11 @@ mesheryctl design apply [design-name]
 			return err
 		}
 
+		// By default, the CLI relies on the server to validate component configuration.
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
+		if !skipValidation {
+			deployURL += "?verify=true"
+		}
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
 		// pattern name has been passed
@@ -171,7 +176,7 @@ mesheryctl design apply [design-name]
 		s.Start()
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
+			return designDeployRequestError(err, skipValidation)
 		}
 
 		defer func() { _ = res.Body.Close() }()
@@ -223,4 +228,5 @@ func multiplePatternsConfirmation(profiles []models.MesheryPattern) int {
 func init() {
 	applyCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
 	applyCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a design")
+	applyCmd.Flags().BoolVarP(&skipValidation, "skip-validation", "", false, "Skip server-side validation of the design before deploying")
 }

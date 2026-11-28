@@ -3,11 +3,14 @@ package design
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	"github.com/pkg/errors"
 )
@@ -24,6 +27,10 @@ func TestApplyCmd(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
+	validationErrorResponse, err := os.ReadFile(filepath.Join(fixturesDir, "deploy.validationError.response.golden"))
+	if err != nil {
+		t.Fatalf("failed to read validation response fixture: %v", err)
+	}
 
 	// test scenrios for fetching data
 	tests := []utils.MesheryMultiURLCommamdTest{
@@ -40,7 +47,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
 					Response:     "apply.designDeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -55,7 +62,7 @@ func TestApplyCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
 					Response:     "apply.designDeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -154,7 +161,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
 					Response:     "apply.designDeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -175,7 +182,7 @@ func TestApplyCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
 					Response:     "apply.designDeploy.response.golden",
 					ResponseCode: 200,
 				},
@@ -219,8 +226,91 @@ func TestApplyCmd(t *testing.T) {
 			IsOutputGolden: false,
 			ExpectedError:  ErrDesignNotFound("missing-design"),
 		},
+		{
+			Name:             "given valid file when design apply uses --skip-validation then design is applied",
+			Args:             []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-validation"},
+			ExpectedResponse: "apply.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/import",
+					Response:     "apply.designSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "apply.designDeploy.response.golden",
+					ResponseCode: 200,
+				},
+				// Override the responder from the default cases to catch an unexpected query.
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
+					Response:     "apply.designDeploy.response.golden",
+					ResponseCode: 400,
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: false,
+		},
+		{
+			Name: "reports a deployment HTTP 500 when validation is requested",
+			Args: []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save"},
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy?verify=true",
+					Response:     "deploy.validationError.response.golden",
+					ResponseCode: 500,
+				},
+			},
+			ExpectError:   true,
+			ExpectedError: ErrDesignValidationFailed(errors.New(validationErrorDetail)),
+		},
+		{
+			Name: "reports a deployment HTTP 500 with --skip-validation",
+			Args: []string{"apply", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save", "--skip-validation"},
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "deploy.validationError.response.golden",
+					ResponseCode: 500,
+				},
+			},
+			ExpectError:   true,
+			ExpectedError: utils.ErrMesheryServerInternalError(errors.New(string(validationErrorResponse))),
+		},
 	}
 
 	// Run tests
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}
+
+func TestDesignDeployRequestErrorRemediation(t *testing.T) {
+	err := designDeployRequestError(utils.ErrMesheryServerInternalError(errors.New("invalid spec.replicas")), false)
+	remedy := meshkiterrors.GetRemedy(err)
+	if !strings.Contains(remedy, "--skip-validation") {
+		t.Errorf("expected remediation to mention --skip-validation, got %q", remedy)
+	}
+	if !strings.Contains(remedy, "mesheryctl system logs") {
+		t.Errorf("expected remediation to mention mesheryctl system logs for server-side failures, got %q", remedy)
+	}
+}
+
+func TestDesignDeployRequestErrorSurfacesServerDetail(t *testing.T) {
+	// Body shape written by server/models/httputil.WriteMeshkitError for
+	// server/handlers.ErrPatternDeploy: the actionable detail is carried in
+	// longDescription, while error and probableCause describe the wrapper.
+	body := `{"error":"Unable to deploy the selected design \"SampleApp\"","code":"meshery-server-1073","severity":"ALERT","probableCause":["Connection Error: There was an error connecting to the selected target platform (i.e. Kubernetes cluster(s))."],"suggestedRemediation":["Verify that the Kubernetes connection status is 'Connected' or try uploading a new kubeconfig."],"longDescription":["` + validationErrorDetail + `"]}`
+
+	err := designDeployRequestError(utils.ErrMesheryServerInternalError(errors.New(body)), false)
+
+	if code := meshkiterrors.GetCode(err); code != ErrDesignValidationFailedCode {
+		t.Errorf("expected error code %s, got %s", ErrDesignValidationFailedCode, code)
+	}
+	if desc := meshkiterrors.GetLDescription(err); desc != validationErrorDetail {
+		t.Errorf("expected the server's long description %q, got %q", validationErrorDetail, desc)
+	}
 }

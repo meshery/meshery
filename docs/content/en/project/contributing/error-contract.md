@@ -71,6 +71,14 @@ originated outside the MeshKit error catalog.
 - When the body is not valid JSON, treat the response as a bug and report
   the offending endpoint; do not attempt a text fallback.
 
+The `mesheryctl` `design apply` / `design deploy` path reads less than this
+contract: `serverErrorCause` in `mesheryctl/internal/cli/root/design/error.go`
+reports the server's `longDescription`, falling back to `error`, and ignores
+`code`, `probableCause`, and `suggestedRemediation` in favor of mesheryctl's own
+remediation (including `--skip-validation`); a body that is not JSON is passed
+through as the cause, because an intermediary can answer a 500 with HTML. New
+client code should follow the rules above rather than this narrower read.
+
 ## Producing errors in handlers
 
 Use `writeMeshkitError(w, err, status)` in `server/handlers/utils.go`:
