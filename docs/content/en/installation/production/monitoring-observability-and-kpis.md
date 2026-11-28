@@ -42,7 +42,7 @@ curl -s 'http://localhost:8080/healthz/ready?verbose=1'
 
 ```
 [+]capabilities ok
-[i]extension extension package found
+[i]extension package found
 healthz check passed
 ```
 
