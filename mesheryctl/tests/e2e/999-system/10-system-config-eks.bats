@@ -17,7 +17,7 @@ setup() {
     run $MESHERYCTL_BIN system config eks extra-arg
 
     assert_failure
-    assert_output --partial "more than one config name provided"
+    assert_output --partial "too many arguments specified"
 }
 
 @test "[TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] given aws CLI is not installed when running mesheryctl system config eks then an error is displayed" {

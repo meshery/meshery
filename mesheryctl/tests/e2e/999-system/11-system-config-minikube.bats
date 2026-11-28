@@ -17,5 +17,5 @@ setup() {
     run $MESHERYCTL_BIN system config minikube extra-arg
 
     assert_failure
-    assert_output --partial "more than one config name provided"
+    assert_output --partial "too many arguments specified"
 }
