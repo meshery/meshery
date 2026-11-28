@@ -61,15 +61,15 @@ func (s *SMIResultsPersister) WriteResult(key core.Uuid, result []byte) error {
 	if result == nil {
 		return ErrResultData()
 	}
-	var r SmiResultWithID
-	if err := s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).First(&r).Error; err == nil {
-		return s.UpdateResult(key, r)
-	}
-	err := json.Unmarshal(result, &r.SmiResult)
-	if err != nil {
+	var incoming SmiResult
+	if err := json.Unmarshal(result, &incoming); err != nil {
 		return err
 	}
-	r.ID = key
+	r := SmiResultWithID{ID: key, SmiResult: incoming}
+	var existing SmiResultWithID
+	if err := s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).First(&existing).Error; err == nil {
+		return s.UpdateResult(key, r)
+	}
 	return s.DB.Model(&SmiResultWithID{}).Create(&r).Error
 }
 
