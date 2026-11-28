@@ -7,7 +7,7 @@ weight: 10
 ---
 **Components are defined by schemas.** Each component's structure, capabilities, and metadata follow the [Component schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/component) in `meshery/schemas`. When creating or modifying components, ensure they conform to the schema specification. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
 
-In Meshery, a [Components]({{< ref "concepts/logical/components.md" >}}) is a fundamental building block used to represent and define the infrastructure under management. Each component provides granular and specific support for your infrastructure and applications. Once registered with Meshery Server (in the [Registry]({{< ref "concepts/logical/registry.md" >}})), components are available for inclusion in [Designs]({{< ref "concepts/logical/designs.md" >}}) that you create. Components can be created and published by anyone, allowing you to share you custom extensions with the community.
+In Meshery, a [Component]({{< ref "concepts/logical/components.md" >}}) is a fundamental building block used to represent and define the infrastructure under management. Each component provides granular and specific support for your infrastructure and applications. Once registered with Meshery Server (in the [Registry]({{< ref "concepts/logical/registry.md" >}})), components are available for inclusion in [Designs]({{< ref "concepts/logical/designs.md" >}}) that you create. Components can be created and published by anyone, allowing you to share your custom extensions with the community.
 
 ## Overview of Steps to Create Components
 
@@ -128,4 +128,4 @@ Submit a pull request to the Meshery repository with your new component definiti
 
 Keeping your component definition in a separate file allows for easier management and review of the component(s) you have defined.
 
-{{% alert color="info" title="Keeping your custom Components private" %}}Alternatively, if you would like to keep the component definition private, you can bundle your component(s) in a custom model, import the custom model into your Meshery deployment. Your private component definition(s) will be registered in your Meshery Server's <a href='{{< ref "concepts/logical/registry.md" >}}'>registry</a> and available for use within your Meshery deployment.{{% /alert %}}
+{{% alert color="info" title="Keeping your custom Components private" %}}Alternatively, if you would like to keep the component definition private, you can bundle your component(s) in a custom model and import the custom model into your Meshery deployment. Your private component definition(s) will be registered in your Meshery Server's <a href='{{< ref "concepts/logical/registry.md" >}}'>registry</a> and available for use within your Meshery deployment.{{% /alert %}}
