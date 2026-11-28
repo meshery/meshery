@@ -29,11 +29,11 @@ We first identify **who** this documentation serves before diving into how it’
 After defining our audience, we introduce the **overall structure** of Meshery’s documentation. Each section below addresses a different need, level of expertise, or user focus.
 
 1. [Overview and Installation (User Persona)](#overview-and-installation-user-persona)
-2. [Tasks & Operations (User Guide)](#tasks--operations-user-guide)
-3. [Administrator’s Guide (Advanced Topics)](#administrators-guide-platform-engineer--operator-persona-advanced-topics)
+2. [Tasks & Operations (User Guide)](#tasks-operations-user-guide)
+3. [Administrator’s Guide (Advanced Topics)](#administrators-guide-platform-engineer-operator-persona-advanced-topics)
 4. [Integrations and Extensions (All Personas)](#integrations-and-extensions-all-personas)
 5. [Tutorials (All Personas)](#tutorials-all-personas)
-6. [Reference & Resources (All Personas)](#reference--resources-all-personas)
+6. [Reference & Resources (All Personas)](#reference-resources-all-personas)
 7. [Contributing and Community (All Personas)](#contributing-and-community-all-personas)
 
 ## Overview and Installation (User Persona)
