@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
 
         const handleSystemThemeChange = event => {
-            if (localStorage.getItem("mode") === null) {
+            if (safeGetItem("mode") === null) {
                 applyTheme(event.matches);
             }
         };
@@ -29,7 +29,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Synchronize theme changes made in other tabs.
     window.addEventListener("storage", event => {
-        if (event.storageArea !== localStorage) return;
+        try {
+            if (event.storageArea !== localStorage) return;
+        } catch (e) {
+            return;
+        }
 
         if (event.key === "mode" || event.key === null) {
             applyCurrentPreference();
@@ -38,6 +42,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // Reconcile the theme in case preferences changed before listeners were registered.
     applyCurrentPreference();
 });
+
+function safeGetItem(key) {
+    try {
+        return localStorage.getItem(key);
+    } catch (e) {
+        return null;
+    }
+}
+
+function safeSetItem(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch (e) {
+        // Ignore storage errors in restricted/private browsing modes
+    }
+}
 
 function applyTheme(isDark) {
     if (window.applyDocsTheme) {
@@ -49,7 +69,7 @@ function applyTheme(isDark) {
 }
 
 function applyCurrentPreference() {
-    const savedMode = localStorage.getItem("mode");
+    const savedMode = safeGetItem("mode");
 
     if (savedMode === "light-mode") {
         applyTheme(false);
@@ -67,7 +87,7 @@ function applyCurrentPreference() {
 function setMode() {
     const isDark = !document.body.classList.contains("dark-mode");
 
-    localStorage.setItem(
+    safeSetItem(
         "mode",
         isDark ? "dark-mode" : "light-mode"
     );
