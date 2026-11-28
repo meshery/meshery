@@ -126,4 +126,74 @@ describe('ShareWorkspaceModal visibility updates', () => {
     expect(updatePatterns).not.toHaveBeenCalled();
     expect(updateView).not.toHaveBeenCalled();
   });
+
+  it('propagates 4xx/5xx/network errors and success for designs', async () => {
+    render(<ShareWorkspaceModal resource={design} type="design" handleClose={vi.fn()} />);
+
+    updatePatterns.mockResolvedValueOnce({ error: { status: 403, data: 'Forbidden' } });
+    expect(await shareModalProps.handleUpdateVisibility('public')).toEqual({ error: 'Forbidden' });
+
+    updatePatterns.mockResolvedValueOnce({
+      error: { status: 500, data: { message: 'Internal Server Error' } },
+    });
+    expect(await shareModalProps.handleUpdateVisibility('private')).toEqual({
+      error: { message: 'Internal Server Error' },
+    });
+
+    updatePatterns.mockResolvedValueOnce({
+      error: { status: 'FETCH_ERROR', error: 'Failed to fetch' },
+    });
+    expect(await shareModalProps.handleUpdateVisibility('private')).toEqual({
+      error: 'Failed to fetch',
+    });
+
+    updatePatterns.mockResolvedValueOnce({ data: { success: true } });
+    expect(await shareModalProps.handleUpdateVisibility('public')).toEqual({ error: undefined });
+  });
+
+  it('propagates 4xx/5xx/network errors and success for views', async () => {
+    render(
+      <ShareWorkspaceModal
+        resource={{ id: 'v-1', name: 'my-view', userId: 'user-1' }}
+        type="view"
+        handleClose={vi.fn()}
+      />,
+    );
+
+    updateView.mockResolvedValueOnce({ error: { status: 400, data: 'Bad Request' } });
+    expect(await shareModalProps.handleUpdateVisibility('private')).toEqual({
+      error: 'Bad Request',
+    });
+
+    updateView.mockResolvedValueOnce({
+      error: { status: 500, data: { message: 'Internal Server Error' } },
+    });
+    expect(await shareModalProps.handleUpdateVisibility('public')).toEqual({
+      error: { message: 'Internal Server Error' },
+    });
+
+    updateView.mockResolvedValueOnce({
+      error: { status: 'FETCH_ERROR', error: 'Failed to fetch' },
+    });
+    expect(await shareModalProps.handleUpdateVisibility('private')).toEqual({
+      error: 'Failed to fetch',
+    });
+
+    updateView.mockResolvedValueOnce({ data: { success: true } });
+    expect(await shareModalProps.handleUpdateVisibility('public')).toEqual({ error: undefined });
+  });
+
+  it('returns undefined error without calling mutations for unsupported resource types', async () => {
+    render(
+      <ShareWorkspaceModal
+        resource={{ id: 'c-1', name: 'catalog-item', userId: 'user-1' }}
+        type="catalog"
+        handleClose={vi.fn()}
+      />,
+    );
+
+    expect(await shareModalProps.handleUpdateVisibility('public')).toEqual({ error: undefined });
+    expect(updatePatterns).not.toHaveBeenCalled();
+    expect(updateView).not.toHaveBeenCalled();
+  });
 });
