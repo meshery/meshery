@@ -28,10 +28,19 @@ describe('isValidColumnName', () => {
     expect(isValidColumnName(null)).toBe(false);
   });
 
-  it('treats arbitrary whitespace beyond a single space as valid', () => {
-    // The implementation only checks against '' and ' '. Multi-character
-    // whitespace strings are considered valid by current rules.
-    expect(isValidColumnName('  ')).toBe(true);
+  it('returns false for multi-character whitespace strings', () => {
+    expect(isValidColumnName('  ')).toBe(false);
+    expect(isValidColumnName('   ')).toBe(false);
+    expect(isValidColumnName('\t\n')).toBe(false);
+  });
+
+  it('returns false for non-string values', () => {
+    expect(isValidColumnName(0)).toBe(false);
+    expect(isValidColumnName(123)).toBe(false);
+    expect(isValidColumnName(false)).toBe(false);
+    expect(isValidColumnName(true)).toBe(false);
+    expect(isValidColumnName({})).toBe(false);
+    expect(isValidColumnName([])).toBe(false);
   });
 });
 
@@ -50,6 +59,13 @@ describe('getChartColors', () => {
     const theme = makeTheme();
     const colors = getChartColors(theme);
     expect(colors[3]).toBe(theme.palette.primary.main);
+  });
+
+  it('returns empty array when theme is nullish or palette colors are missing', () => {
+    expect(getChartColors(null)).toEqual([]);
+    expect(getChartColors(undefined)).toEqual([]);
+    expect(getChartColors({} as never)).toEqual([]);
+    expect(getChartColors({ palette: {} } as never)).toEqual([]);
   });
 });
 
@@ -79,8 +95,36 @@ describe('dataToColors', () => {
     expect(mapping[`row-${palette.length + 1}`]).toBe(palette[1]);
   });
 
-  it('returns an empty object for empty data', () => {
+  it('returns an empty object for empty or nullish data', () => {
     expect(dataToColors([], makeTheme())).toEqual({});
+    expect(dataToColors(null, makeTheme())).toEqual({});
+    expect(dataToColors(undefined, makeTheme())).toEqual({});
+    expect(dataToColors('not-an-array' as never, makeTheme())).toEqual({});
+  });
+
+  it('safely handles nullish theme when generating color mappings', () => {
+    const data = [['healthy', 10]];
+    const mapping = dataToColors(data, null);
+    expect(mapping).toEqual({});
+  });
+
+  it('skips nullish, empty, or blank-label rows gracefully and assigns consecutive palette colors to valid rows', () => {
+    const theme = makeTheme();
+    const data = [
+      ['valid', 5],
+      null as never,
+      undefined as never,
+      [] as never,
+      [null as never, 10],
+      ['', 12],
+      ['   ', 15],
+      ['another', 20],
+    ];
+    const mapping = dataToColors(data, theme);
+    const palette = getChartColors(theme);
+    expect(Object.keys(mapping)).toEqual(['valid', 'another']);
+    expect(mapping.valid).toBe(palette[0]);
+    expect(mapping.another).toBe(palette[1]);
   });
 
   it('handles duplicate column labels by overwriting earlier entries', () => {
@@ -93,7 +137,6 @@ describe('dataToColors', () => {
       theme,
     );
     const palette = getChartColors(theme);
-    // The forEach over `columns` will set `a` twice -- the latest assignment wins
     expect(mapping.a).toBe(palette[1]);
   });
 });
