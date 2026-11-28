@@ -165,7 +165,7 @@ button {
   border: 1px solid var(--color-secondary-light);
 }
 
-:root:not(.dark-mode) {
+body:not(.dark-mode) {
   .td-content a,
   ul.section-title li > a,
   p > a {
