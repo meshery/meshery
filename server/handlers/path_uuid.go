@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gofrs/uuid"
@@ -10,15 +11,21 @@ import (
 )
 
 // requirePathUUID reads the named path variable and checks that it is a
-// well-formed UUID. A malformed value is a client error, so it is answered
-// here with 400 and models.ErrInvalidUUID instead of being passed to the
-// provider, where it used to surface as 502 Bad Gateway. ok is false when the
-// response has already been written and the caller must return.
+// well-formed, non-nil UUID. A malformed or zero-value UUID is a client error,
+// so it is answered here with 400 and models.ErrInvalidUUID instead of being passed
+// to the provider or database layer. ok is false when the response has already been
+// written and the caller must return.
 func (h *Handler) requirePathUUID(w http.ResponseWriter, req *http.Request, name string) (id string, ok bool) {
 	raw := mux.Vars(req)[name]
-	if _, err := uuid.FromString(raw); err != nil {
-		invalidIDErr := models.ErrInvalidUUID(err)
-		if h.log != nil {
+	parsed, err := uuid.FromString(raw)
+	if err != nil || parsed == uuid.Nil {
+		var invalidIDErr error
+		if err != nil {
+			invalidIDErr = models.ErrInvalidUUID(err)
+		} else {
+			invalidIDErr = models.ErrInvalidUUID(fmt.Errorf("invalid %s: zero or nil UUID is not allowed", name))
+		}
+		if h != nil && h.log != nil {
 			h.log.Error(invalidIDErr)
 		}
 		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)

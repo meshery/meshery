@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta3/environment"
@@ -18,6 +19,7 @@ const (
 	pathUUIDSecond     = "22222222-2222-2222-2222-222222222222"
 	pathUUIDThird      = "33333333-3333-3333-3333-333333333333"
 	pathUUIDMalformed  = "not-a-uuid"
+	pathUUIDNil        = "00000000-0000-0000-0000-000000000000"
 	pathUUIDOrgID      = "44444444-4444-4444-4444-444444444444"
 	pathUUIDUpdateBody = `{"name":"updated","organizationId":"44444444-4444-4444-4444-444444444444"}`
 )
@@ -149,6 +151,41 @@ func (p *pathUUIDSpyProvider) RemoveConnectionFromEnvironment(_ *http.Request, e
 	return []byte(`{}`), nil
 }
 
+func (p *pathUUIDSpyProvider) GetMesheryFilter(_ *http.Request, filterID string) ([]byte, error) {
+	p.record("GetMesheryFilter", filterID)
+	return []byte(`{}`), nil
+}
+
+func (p *pathUUIDSpyProvider) GetMesheryFilterFile(_ *http.Request, filterID string) ([]byte, error) {
+	p.record("GetMesheryFilterFile", filterID)
+	return []byte(`{}`), nil
+}
+
+func (p *pathUUIDSpyProvider) CloneMesheryFilter(_ *http.Request, filterID string, _ *models.MesheryCloneFilterRequestBody) ([]byte, error) {
+	p.record("CloneMesheryFilter", filterID)
+	return []byte(`{}`), nil
+}
+
+func (p *pathUUIDSpyProvider) GetMesheryPattern(_ *http.Request, patternID, _ string) ([]byte, error) {
+	p.record("GetMesheryPattern", patternID)
+	return []byte(`{}`), nil
+}
+
+func (p *pathUUIDSpyProvider) DeleteMesheryPattern(_ *http.Request, patternID string) ([]byte, error) {
+	p.record("DeleteMesheryPattern", patternID)
+	return []byte(`{}`), nil
+}
+
+func (p *pathUUIDSpyProvider) CloneMesheryPattern(_ *http.Request, patternID string, _ *models.MesheryClonePatternRequestBody) ([]byte, error) {
+	p.record("CloneMesheryPattern", patternID)
+	return []byte(`{}`), nil
+}
+
+func (p *pathUUIDSpyProvider) GetDesignSourceContent(_, designID string) ([]byte, error) {
+	p.record("GetDesignSourceContent", designID)
+	return []byte(`{}`), nil
+}
+
 type pathUUIDHandlerFunc func(h *Handler, w http.ResponseWriter, r *http.Request, p models.Provider)
 
 // pathUUIDCase describes one handler: the path variables it reads (in the
@@ -256,6 +293,70 @@ func pathUUIDCases() []pathUUIDCase {
 	}
 }
 
+func filterAndPatternCases() []pathUUIDCase {
+	testUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+	return []pathUUIDCase{
+		{
+			name:       "GetMesheryFilterFileHandler",
+			httpMethod: http.MethodGet,
+			vars:       []string{"id"},
+			call: func(h *Handler, w http.ResponseWriter, r *http.Request, p models.Provider) {
+				h.GetMesheryFilterFileHandler(w, r, nil, nil, p)
+			},
+		},
+		{
+			name:       "GetMesheryFilterHandler",
+			httpMethod: http.MethodGet,
+			vars:       []string{"id"},
+			call: func(h *Handler, w http.ResponseWriter, r *http.Request, p models.Provider) {
+				h.GetMesheryFilterHandler(w, r, nil, nil, p)
+			},
+		},
+		{
+			name:       "CloneMesheryFilterHandler",
+			httpMethod: http.MethodPost,
+			vars:       []string{"id"},
+			body:       `{"name":"cloned-filter"}`,
+			call: func(h *Handler, w http.ResponseWriter, r *http.Request, p models.Provider) {
+				h.CloneMesheryFilterHandler(w, r, nil, testUser, p)
+			},
+		},
+		{
+			name:       "DownloadMesheryPatternHandler",
+			httpMethod: http.MethodGet,
+			vars:       []string{"id"},
+			call: func(h *Handler, w http.ResponseWriter, r *http.Request, p models.Provider) {
+				h.DownloadMesheryPatternHandler(w, r, nil, testUser, p)
+			},
+		},
+		{
+			name:       "GetMesheryPatternHandler",
+			httpMethod: http.MethodGet,
+			vars:       []string{"id"},
+			call: func(h *Handler, w http.ResponseWriter, r *http.Request, p models.Provider) {
+				h.GetMesheryPatternHandler(w, r, nil, testUser, p)
+			},
+		},
+		{
+			name:       "CloneMesheryPatternHandler",
+			httpMethod: http.MethodPost,
+			vars:       []string{"id"},
+			body:       `{"name":"cloned-pattern"}`,
+			call: func(h *Handler, w http.ResponseWriter, r *http.Request, p models.Provider) {
+				h.CloneMesheryPatternHandler(w, r, nil, testUser, p)
+			},
+		},
+		{
+			name:       "GetMesheryPatternSourceHandler",
+			httpMethod: http.MethodGet,
+			vars:       []string{"id"},
+			call: func(h *Handler, w http.ResponseWriter, r *http.Request, p models.Provider) {
+				h.GetMesheryPatternSourceHandler(w, r, nil, testUser, p)
+			},
+		},
+	}
+}
+
 // validPathUUIDs returns distinct valid UUIDs for each path variable of c.
 func (c pathUUIDCase) validPathUUIDs() map[string]string {
 	pool := []string{pathUUIDWorkspace, pathUUIDSecond, pathUUIDThird}
@@ -292,6 +393,7 @@ func TestRequirePathUUID(t *testing.T) {
 		{name: "valid uppercase UUID", value: strings.ToUpper(valid), wantOK: true, wantStatus: http.StatusOK},
 		{name: "not a UUID", value: "not-a-uuid", wantStatus: http.StatusBadRequest},
 		{name: "empty string", value: "", wantStatus: http.StatusBadRequest},
+		{name: "explicit nil UUID", value: pathUUIDNil, wantStatus: http.StatusBadRequest},
 		{name: "UUID with one character removed", value: valid[:len(valid)-1], wantStatus: http.StatusBadRequest},
 	}
 
@@ -328,6 +430,78 @@ func TestRequirePathUUID(t *testing.T) {
 
 func TestWorkspaceAndEnvironmentHandlers_MalformedPathUUID_ReturnsBadRequest(t *testing.T) {
 	for _, hc := range pathUUIDCases() {
+		for _, bad := range hc.vars {
+			t.Run(hc.name+"/malformed_"+bad, func(t *testing.T) {
+				vars := hc.validPathUUIDs()
+				vars[bad] = pathUUIDMalformed
+				provider := newPathUUIDSpyProvider()
+
+				rec := hc.run(t, vars, provider)
+
+				if rec.Code != http.StatusBadRequest {
+					t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+				}
+				if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
+					t.Errorf("code = %q, want %q", decoded.Code, models.ErrInvalidUUIDValueCode)
+				}
+				if len(provider.calls) != 0 {
+					t.Fatalf("provider must not be called, got calls %v", provider.calls)
+				}
+			})
+		}
+	}
+}
+
+func TestWorkspaceAndEnvironmentHandlers_NilPathUUID_ReturnsBadRequest(t *testing.T) {
+	for _, hc := range pathUUIDCases() {
+		for _, bad := range hc.vars {
+			t.Run(hc.name+"/nil_"+bad, func(t *testing.T) {
+				vars := hc.validPathUUIDs()
+				vars[bad] = pathUUIDNil
+				provider := newPathUUIDSpyProvider()
+
+				rec := hc.run(t, vars, provider)
+
+				if rec.Code != http.StatusBadRequest {
+					t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+				}
+				if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
+					t.Errorf("code = %q, want %q", decoded.Code, models.ErrInvalidUUIDValueCode)
+				}
+				if len(provider.calls) != 0 {
+					t.Fatalf("provider must not be called, got calls %v", provider.calls)
+				}
+			})
+		}
+	}
+}
+
+func TestFilterAndPatternHandlers_NilPathUUID_ReturnsBadRequest(t *testing.T) {
+	for _, hc := range filterAndPatternCases() {
+		for _, bad := range hc.vars {
+			t.Run(hc.name+"/nil_"+bad, func(t *testing.T) {
+				vars := hc.validPathUUIDs()
+				vars[bad] = pathUUIDNil
+				provider := newPathUUIDSpyProvider()
+
+				rec := hc.run(t, vars, provider)
+
+				if rec.Code != http.StatusBadRequest {
+					t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+				}
+				if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != models.ErrInvalidUUIDValueCode {
+					t.Errorf("code = %q, want %q", decoded.Code, models.ErrInvalidUUIDValueCode)
+				}
+				if len(provider.calls) != 0 {
+					t.Fatalf("provider must not be called, got calls %v", provider.calls)
+				}
+			})
+		}
+	}
+}
+
+func TestFilterAndPatternHandlers_MalformedPathUUID_ReturnsBadRequest(t *testing.T) {
+	for _, hc := range filterAndPatternCases() {
 		for _, bad := range hc.vars {
 			t.Run(hc.name+"/malformed_"+bad, func(t *testing.T) {
 				vars := hc.validPathUUIDs()
