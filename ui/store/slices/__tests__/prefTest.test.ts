@@ -128,6 +128,22 @@ describe('prefTest slice', () => {
       state = prefTestReducer(state, updateResultsSelection({ page: 2, results: { b: 2 } }));
       expect(state.results_selection).toEqual({ 1: { a: 1 }, 2: { b: 2 } });
     });
+
+    it('ignores boolean and object pages instead of stringifying them into keys', () => {
+      let state = prefTestReducer(undefined, { type: 'init' } as any);
+      state = prefTestReducer(state, updateResultsSelection({ page: true, results: { a: 1 } }));
+      state = prefTestReducer(state, updateResultsSelection({ page: {}, results: { b: 2 } }));
+      state = prefTestReducer(state, updateResultsSelection({ page: NaN, results: { c: 3 } }));
+      expect(state.results_selection).toEqual({});
+    });
+
+    it('keeps a string page as its key', () => {
+      const state = prefTestReducer(
+        prefTestReducer(undefined, { type: 'init' } as any),
+        updateResultsSelection({ page: 'page-2', results: { a: 1 } }),
+      );
+      expect(state.results_selection).toEqual({ 'page-2': { a: 1 } });
+    });
   });
 
   describe('clearResultsSelection', () => {
