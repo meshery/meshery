@@ -99,78 +99,127 @@ func carryForwardRelationships(modelsPath string, before modelVersions) error {
 			return left.LessThan(right)
 		})
 
+		modelPath := filepath.Join(modelsPath, modelName)
+		// A version that failed or is incomplete is not a source for newer
+		// versions; they fall back to the next older one and are reported as
+		// incomplete too, so removing them all and rerunning retries the chain.
+		failed := make(map[string]struct{})
 		for _, newVersion := range newVersions {
-			previousVersion := latestPreviousVersion(newVersion, versions)
-			if previousVersion == "" {
-				continue
-			}
-
-			modelPath := filepath.Join(modelsPath, modelName)
-			source := filepath.Join(modelPath, previousVersion, defVersion, "relationships")
-			destination := filepath.Join(modelPath, newVersion, defVersion, "relationships")
-			files, err := relationshipFiles(source)
-			if errors.Is(err, os.ErrNotExist) {
-				continue
-			}
-			if err != nil {
-				carryErrors = append(carryErrors, fmt.Errorf("read relationships for %s %s: %w", modelName, previousVersion, err))
-				continue
-			}
-			if len(files) == 0 {
-				continue
-			}
-
-			destinationFiles, err := relationshipFiles(destination)
-			if err != nil && !errors.Is(err, os.ErrNotExist) {
-				carryErrors = append(carryErrors, fmt.Errorf("read relationships for new %s %s: %w", modelName, newVersion, err))
-				continue
-			}
-
-			existingFiles := make(map[string]struct{}, len(destinationFiles))
-			for _, file := range destinationFiles {
-				existingFiles[file.Name()] = struct{}{}
-			}
-
-			previousKinds, err := modelComponentKinds(filepath.Join(modelPath, previousVersion, defVersion, "components"))
-			if err != nil {
-				carryErrors = append(carryErrors, fmt.Errorf("read components for %s %s: %w", modelName, previousVersion, err))
-				continue
-			}
-			componentKinds, err := modelComponentKinds(filepath.Join(modelPath, newVersion, defVersion, "components"))
-			if err != nil {
-				carryErrors = append(carryErrors, fmt.Errorf("read components for new %s %s: %w", modelName, newVersion, err))
-				continue
-			}
-
-			missingFiles := make([]os.DirEntry, 0, len(files))
-			for _, file := range files {
-				if _, exists := existingFiles[file.Name()]; exists {
-					continue
+			sources := make(map[string]struct{}, len(versions))
+			for version := range versions {
+				if _, isFailed := failed[version]; !isFailed {
+					sources[version] = struct{}{}
 				}
-				staleKinds, err := relationshipKindsMissingFromModel(filepath.Join(source, file.Name()), modelName, previousKinds, componentKinds)
-				if err != nil {
-					carryErrors = append(carryErrors, fmt.Errorf("check relationship %s for %s %s: %w", file.Name(), modelName, newVersion, err))
-					continue
-				}
-				if len(staleKinds) > 0 {
-					if utils.Log != nil {
-						utils.Log.Warnf("Skipping inherited relationship %s for %s %s: referenced component kinds are missing: %s", file.Name(), modelName, newVersion, strings.Join(staleKinds, ", "))
-					}
-					continue
-				}
-				missingFiles = append(missingFiles, file)
 			}
-			if len(missingFiles) == 0 {
-				continue
-			}
+			previousVersion := latestPreviousVersion(newVersion, sources)
+			skipped := failedVersionsBetween(failed, previousVersion, newVersion)
 
-			if err := copyRelationships(missingFiles, source, destination, newVersion); err != nil {
-				carryErrors = append(carryErrors, fmt.Errorf("carry relationships to %s %s (remove %q and rerun to retry): %w", modelName, newVersion, filepath.Join(modelPath, newVersion), err))
+			var versionErrors []error
+			if previousVersion != "" {
+				if err := carryVersionRelationships(modelPath, modelName, previousVersion, newVersion); err != nil {
+					versionErrors = append(versionErrors, err)
+				}
+			}
+			if len(skipped) > 0 {
+				versionErrors = append(versionErrors, fmt.Errorf("%s %s did not inherit from %s, which failed", modelName, newVersion, strings.Join(skipped, ", ")))
+			}
+			if len(versionErrors) > 0 {
+				failed[newVersion] = struct{}{}
+				carryErrors = append(carryErrors, fmt.Errorf("carry relationships to %s %s (remove %q and rerun to retry): %w", modelName, newVersion, filepath.Join(modelPath, newVersion), errors.Join(versionErrors...)))
 			}
 		}
 	}
 
 	return errors.Join(carryErrors...)
+}
+
+// modelComponentKinds returns the kinds declared by the component files in
+// directory. Filenames don't always match the kind ("digital ocean.json"
+// declares "digital-ocean"), so the filename is only used when a file
+// declares no kind.
+// carryVersionRelationships copies the relationships of previousVersion that
+// newVersion does not already have and whose component kinds it still has.
+func carryVersionRelationships(modelPath, modelName, previousVersion, newVersion string) error {
+	source := filepath.Join(modelPath, previousVersion, defVersion, "relationships")
+	destination := filepath.Join(modelPath, newVersion, defVersion, "relationships")
+	files, err := relationshipFiles(source)
+	if errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("read relationships for %s %s: %w", modelName, previousVersion, err)
+	}
+	if len(files) == 0 {
+		return nil
+	}
+
+	destinationFiles, err := relationshipFiles(destination)
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return fmt.Errorf("read relationships for new %s %s: %w", modelName, newVersion, err)
+	}
+	existingFiles := make(map[string]struct{}, len(destinationFiles))
+	for _, file := range destinationFiles {
+		existingFiles[file.Name()] = struct{}{}
+	}
+
+	previousKinds, err := modelComponentKinds(filepath.Join(modelPath, previousVersion, defVersion, "components"))
+	if err != nil {
+		return fmt.Errorf("read components for %s %s: %w", modelName, previousVersion, err)
+	}
+	componentKinds, err := modelComponentKinds(filepath.Join(modelPath, newVersion, defVersion, "components"))
+	if err != nil {
+		return fmt.Errorf("read components for new %s %s: %w", modelName, newVersion, err)
+	}
+
+	var checkErrors []error
+	missingFiles := make([]os.DirEntry, 0, len(files))
+	for _, file := range files {
+		if _, exists := existingFiles[file.Name()]; exists {
+			continue
+		}
+		staleKinds, err := relationshipKindsMissingFromModel(filepath.Join(source, file.Name()), modelName, previousKinds, componentKinds)
+		if err != nil {
+			checkErrors = append(checkErrors, fmt.Errorf("check relationship %s: %w", file.Name(), err))
+			continue
+		}
+		if len(staleKinds) > 0 {
+			if utils.Log != nil {
+				utils.Log.Warnf("Skipping inherited relationship %s for %s %s: referenced component kinds are missing: %s", file.Name(), modelName, newVersion, strings.Join(staleKinds, ", "))
+			}
+			continue
+		}
+		missingFiles = append(missingFiles, file)
+	}
+	if len(missingFiles) == 0 {
+		return errors.Join(checkErrors...)
+	}
+	return errors.Join(append(checkErrors, copyRelationships(missingFiles, source, destination, newVersion))...)
+}
+
+// failedVersionsBetween lists the failed versions newer than source and older
+// than version, which version would otherwise have inherited from.
+func failedVersionsBetween(failed map[string]struct{}, source, version string) []string {
+	upper, err := semver.NewVersion(version)
+	if err != nil {
+		return nil
+	}
+	var lower *semver.Version
+	if source != "" {
+		if lower, err = semver.NewVersion(source); err != nil {
+			return nil
+		}
+	}
+
+	skipped := make([]string, 0)
+	for candidate := range failed {
+		parsed, err := semver.NewVersion(candidate)
+		if err != nil || !parsed.LessThan(upper) || (lower != nil && !parsed.GreaterThan(lower)) {
+			continue
+		}
+		skipped = append(skipped, candidate)
+	}
+	sort.Strings(skipped)
+	return skipped
 }
 
 func modelComponentKinds(directory string) (map[string]struct{}, error) {
@@ -184,7 +233,24 @@ func modelComponentKinds(directory string) (map[string]struct{}, error) {
 
 	kinds := make(map[string]struct{}, len(files))
 	for _, file := range files {
-		kinds[strings.TrimSuffix(file.Name(), ".json")] = struct{}{}
+		path := filepath.Join(directory, file.Name())
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return nil, fmt.Errorf("read %q: %w", path, err)
+		}
+		var definition struct {
+			Component struct {
+				Kind string `json:"kind"`
+			} `json:"component"`
+		}
+		if err := json.Unmarshal(data, &definition); err != nil {
+			return nil, fmt.Errorf("decode %q: %w", path, err)
+		}
+		kind := definition.Component.Kind
+		if kind == "" {
+			kind = strings.TrimSuffix(file.Name(), ".json")
+		}
+		kinds[kind] = struct{}{}
 	}
 	return kinds, nil
 }
@@ -383,6 +449,9 @@ func setRelationshipModelVersion(data []byte, version string) ([]byte, error) {
 	}
 	var modelVersion map[string]json.RawMessage
 	if err := json.Unmarshal(model["model"], &modelVersion); err != nil || modelVersion == nil {
+		return nil, errors.New("relationship has no embedded model version")
+	}
+	if _, ok := modelVersion["version"]; !ok {
 		return nil, errors.New("relationship has no embedded model version")
 	}
 

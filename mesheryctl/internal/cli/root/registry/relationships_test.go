@@ -173,7 +173,7 @@ func TestCarryForwardRelationshipsSkipsRemovedComponentKinds(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, kind := range []string{"ExistingKind", "RemovedKind"} {
-		if err := os.WriteFile(filepath.Join(previousComponents, kind+".json"), []byte(`{}`), 0644); err != nil {
+		if err := os.WriteFile(filepath.Join(previousComponents, kind+".json"), []byte(`{"component":{"kind":"`+kind+`"}}`), 0644); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -186,7 +186,7 @@ func TestCarryForwardRelationshipsSkipsRemovedComponentKinds(t *testing.T) {
 	if err := os.MkdirAll(components, 0755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(components, "ExistingKind.json"), []byte(`{}`), 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(components, "ExistingKind.json"), []byte(`{"component":{"kind":"ExistingKind"}}`), 0644); err != nil {
 		t.Fatal(err)
 	}
 
@@ -307,6 +307,7 @@ func TestCarryForwardRelationshipsCopiesValidFilesWhenOneIsMalformed(t *testing.
 		"valid-edge.json":       `{"model":{"model":{"version":"v1.2.0"}}}`,
 		"malformed-edge.json":   `{"model":`,
 		"unversioned-edge.json": `{"model":{"name":"sample-model"}}`,
+		"empty-model-edge.json": `{"model":{"model":{}}}`,
 	}
 	for name, definition := range definitions {
 		if err := os.WriteFile(filepath.Join(previousRelationships, name), []byte(definition), 0644); err != nil {
@@ -329,9 +330,80 @@ func TestCarryForwardRelationshipsCopiesValidFilesWhenOneIsMalformed(t *testing.
 	if _, err := os.Stat(filepath.Join(newRelationships, "valid-edge.json")); err != nil {
 		t.Errorf("valid relationship was not copied: %v", err)
 	}
-	for _, name := range []string{"malformed-edge.json", "unversioned-edge.json"} {
+	for _, name := range []string{"malformed-edge.json", "unversioned-edge.json", "empty-model-edge.json"} {
 		if _, err := os.Stat(filepath.Join(newRelationships, name)); !os.IsNotExist(err) {
 			t.Errorf("%s was copied; stat error = %v", name, err)
 		}
+	}
+}
+
+func TestModelComponentKindsReadsDeclaredKind(t *testing.T) {
+	components := t.TempDir()
+	// Mirrors models/meshery-dev-icons, where "digital ocean.json" declares
+	// the kind "digital-ocean".
+	if err := os.WriteFile(filepath.Join(components, "digital ocean.json"), []byte(`{"component":{"kind":"digital-ocean"}}`), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	kinds, err := modelComponentKinds(components)
+	if err != nil {
+		t.Fatalf("read component kinds: %v", err)
+	}
+	if _, ok := kinds["digital-ocean"]; !ok || len(kinds) != 1 {
+		t.Errorf("component kinds = %v, want only digital-ocean", kinds)
+	}
+}
+
+func TestCarryForwardRelationshipsSkipsFailedVersionAsSource(t *testing.T) {
+	modelsPath := t.TempDir()
+	modelPath := filepath.Join(modelsPath, "sample-model")
+	previousRelationships := filepath.Join(modelPath, "v1.2.0", defVersion, "relationships")
+	if err := os.MkdirAll(previousRelationships, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(previousRelationships, "edge.json"), []byte(`{"model":{"model":{"version":"v1.2.0"}}}`), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	before, err := snapshotModelVersions(modelsPath)
+	if err != nil {
+		t.Fatalf("snapshot model versions: %v", err)
+	}
+	// v1.3.0 fails because one of its component files can't be decoded.
+	failedComponents := filepath.Join(modelPath, "v1.3.0", defVersion, "components")
+	if err := os.MkdirAll(failedComponents, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(failedComponents, "Broken.json"), []byte(`{"component":`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(modelPath, "v1.4.0", defVersion, "components"), 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	err = carryForwardRelationships(modelsPath, before)
+	if err == nil {
+		t.Fatal("carry forward relationships succeeded, want an error for v1.3.0")
+	}
+	if !strings.Contains(err.Error(), filepath.Join(modelPath, "v1.4.0")) {
+		t.Errorf("error does not report v1.4.0 as incomplete: %v", err)
+	}
+
+	carried, readErr := os.ReadFile(filepath.Join(modelPath, "v1.4.0", defVersion, "relationships", "edge.json"))
+	if readErr != nil {
+		t.Fatalf("v1.4.0 did not fall back to v1.2.0: %v", readErr)
+	}
+	var relationship struct {
+		Model struct {
+			Model struct {
+				Version string `json:"version"`
+			} `json:"model"`
+		} `json:"model"`
+	}
+	if err := json.Unmarshal(carried, &relationship); err != nil {
+		t.Fatalf("decode carried relationship: %v", err)
+	}
+	if relationship.Model.Model.Version != "v1.4.0" {
+		t.Errorf("embedded model version = %q, want v1.4.0", relationship.Model.Model.Version)
 	}
 }
