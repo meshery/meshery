@@ -87,7 +87,7 @@
   --code:#952a1e;
   --sidebar-text-color: var(--color-secondary-medium);
   --sidebar-active-text-color: var(--color-secondary-dark);
-  --sidebar-active-link-color: #00483f;
+  --sidebar-active-link-color: #00483f; /* Darkened brand teal: 5.06:1 against the darkest light sidebar gradient stop (#adb5bd) */
 }
 
 .dark-mode {
@@ -189,7 +189,7 @@
   
     --code:#bf3526;
   --sidebar-text-color: var(--color-secondary-light);
-  --sidebar-active-text-color: var(--color-secondary-light);
+  --sidebar-active-text-color: var(--color-secondary-medium);
   --sidebar-active-link-color: var(--brand-color);
 }
 

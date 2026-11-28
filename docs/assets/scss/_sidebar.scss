@@ -399,12 +399,26 @@
     }
   }
 
+  // Additional font weight on active leaf links provides clearer orientation in light mode
+  // while preserving existing dark-mode typography.
   body:not(.dark-mode) & .td-sidebar-nav ul:not(.with-child) > li > a.td-sidebar-link.active {
     font-weight: 600;
   }
 
-  & .td-sidebar-nav__section-title.active-path > .td-sidebar-link:not(.active):not(:hover):not(:focus),
-  & .td-sidebar-nav__section-title.active-path > .sidebar-section-flex-wrapper > .td-sidebar-link:not(.active):not(:hover):not(:focus) {
+  // Expanded ancestor links in light mode use the darkened secondary color for contrast.
+  body:not(.dark-mode) & .td-sidebar-nav__section-title.active-path > .td-sidebar-link:not(.active):not(:hover):not(:focus),
+  body:not(.dark-mode) & .td-sidebar-nav__section-title.active-path > .sidebar-section-flex-wrapper > .td-sidebar-link:not(.active):not(:hover):not(:focus) {
+    scroll-margin-bottom: 8rem;
+    color: var(--sidebar-active-text-color);
+    text-decoration: none;
+
+    & > span {
+      color: var(--sidebar-active-text-color);
+    }
+  }
+
+  // In dark mode, preserve upstream active-path selector behavior exactly.
+  .dark-mode & .td-sidebar-nav__section-title.active-path > .td-sidebar-link:not(.active):not(:hover):not(:focus) {
     scroll-margin-bottom: 8rem;
     color: var(--sidebar-active-text-color);
     text-decoration: none;
