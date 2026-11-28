@@ -297,12 +297,12 @@ describe('makeTitle', () => {
         nodes: [
           {
             hostname: 'node-1',
-            allocatable_cpu: '4',
-            allocatable_memory: '16Gi',
+            allocatableCpu: '4',
+            allocatableMemory: '16Gi',
             architecture: 'amd64',
-            os_image: 'linux',
-            kubelet_version: 'v1.28.0',
-            container_runtime_version: 'containerd://1.7',
+            osImage: 'linux',
+            kubeletVersion: 'v1.28.0',
+            containerRuntimeVersion: 'containerd://1.7',
           },
         ],
       },
@@ -310,6 +310,17 @@ describe('makeTitle', () => {
     const result = makeTitle(null, res);
     expect(result.some((s: string) => s.includes('Kubernetes server version'))).toBe(true);
     expect(result.some((s: string) => s.includes('Node 1'))).toBe(true);
+    const node = result.find((s: string) => s.includes('Node 1')) as string;
+    for (const v of [
+      'CPU: 4',
+      'Memory: 16Gi',
+      'OS: linux',
+      'Kubelet version: v1.28.0',
+      'containerd://1.7',
+    ]) {
+      expect(node).toContain(v);
+    }
+    expect(node).not.toContain('undefined');
   });
 });
 
