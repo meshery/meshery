@@ -582,4 +582,114 @@ describe('user endpoints', () => {
       search: 'a',
     });
   });
+
+  describe('updateUserPrefWithContext optimistic update deep-merge', () => {
+    it('deep-merges remoteProviderPreferences, preserving sibling keys and top-level fields', async () => {
+      // Pre-populate the getUserPref cache with existing preferences.
+      fetchMock.mockResolvedValueOnce(
+        okResponse({
+          remoteProviderPreferences: { theme: 'light', catalogContent: true },
+          anonymousUsageStats: true,
+          selectedOrganizationId: 'org-1',
+        }),
+      );
+      const { api, store } = await setupStore();
+      await store.dispatch(api.endpoints.getUserPref.initiate([]));
+
+      // Verify the cache was populated.
+      const initialData = api.endpoints.getUserPref.select([])(store.getState())?.data;
+      expect(initialData).toMatchObject({
+        remoteProviderPreferences: { theme: 'light', catalogContent: true },
+        anonymousUsageStats: true,
+        selectedOrganizationId: 'org-1',
+      });
+
+      // Initiate a theme-only update. The optimistic update must deep-merge
+      // remoteProviderPreferences instead of replacing it wholesale.
+      fetchMock.mockResolvedValueOnce(okResponse({}));
+      const mutationPromise = store.dispatch(
+        api.endpoints.updateUserPrefWithContext.initiate({
+          selectedK8sContexts: [],
+          body: { remoteProviderPreferences: { theme: 'dark' } },
+        }),
+      );
+
+      // The optimistic update is applied synchronously before the request resolves.
+      const optimisticData = api.endpoints.getUserPref.select([])(store.getState())?.data;
+      expect(optimisticData).toMatchObject({
+        remoteProviderPreferences: { theme: 'dark', catalogContent: true },
+        anonymousUsageStats: true,
+        selectedOrganizationId: 'org-1',
+      });
+
+      await mutationPromise;
+
+      const finalData = api.endpoints.getUserPref.select([])(store.getState())?.data;
+      expect(finalData).toMatchObject({
+        remoteProviderPreferences: { theme: 'dark', catalogContent: true },
+        anonymousUsageStats: true,
+        selectedOrganizationId: 'org-1',
+      });
+
+      // The outgoing request body must contain only the theme field.
+      const postReq = fetchMock.mock.calls[1][0] as Request;
+      const postBody = JSON.parse(await postReq.text());
+      expect(postBody).toEqual({ remoteProviderPreferences: { theme: 'dark' } });
+    });
+
+    it('rolls back the optimistic update when the theme request fails', async () => {
+      // Pre-populate the cache.
+      fetchMock.mockResolvedValueOnce(
+        okResponse({
+          remoteProviderPreferences: { theme: 'light', catalogContent: true },
+          anonymousUsageStats: true,
+        }),
+      );
+      const { api, store } = await setupStore();
+      await store.dispatch(api.endpoints.getUserPref.initiate([]));
+
+      const initialData = api.endpoints.getUserPref.select([])(store.getState())?.data;
+      expect(initialData?.remoteProviderPreferences?.theme).toBe('light');
+
+      // The theme request fails.
+      fetchMock.mockRejectedValueOnce(new Error('network down'));
+      const mutationPromise = store.dispatch(
+        api.endpoints.updateUserPrefWithContext.initiate({
+          selectedK8sContexts: [],
+          body: { remoteProviderPreferences: { theme: 'dark' } },
+        }),
+      );
+
+      await expect(mutationPromise.unwrap()).rejects.toMatchObject({ status: 'FETCH_ERROR' });
+
+      // The cache must be rolled back to the original values.
+      const rolledBackData = api.endpoints.getUserPref.select([])(store.getState())?.data;
+      expect(rolledBackData).toMatchObject({
+        remoteProviderPreferences: { theme: 'light', catalogContent: true },
+        anonymousUsageStats: true,
+      });
+    });
+
+    it('adds remoteProviderPreferences when the cache does not have them yet', async () => {
+      fetchMock.mockResolvedValueOnce(okResponse({ anonymousUsageStats: true }));
+      const { api, store } = await setupStore();
+      await store.dispatch(api.endpoints.getUserPref.initiate([]));
+
+      fetchMock.mockResolvedValueOnce(okResponse({}));
+      const mutationPromise = store.dispatch(
+        api.endpoints.updateUserPrefWithContext.initiate({
+          selectedK8sContexts: [],
+          body: { remoteProviderPreferences: { theme: 'dark' } },
+        }),
+      );
+
+      const optimisticData = api.endpoints.getUserPref.select([])(store.getState())?.data;
+      expect(optimisticData).toEqual({
+        anonymousUsageStats: true,
+        remoteProviderPreferences: { theme: 'dark' },
+      });
+
+      await mutationPromise;
+    });
+  });
 });
