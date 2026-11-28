@@ -193,8 +193,11 @@ mesheryctl system context delete [context name]
 					}
 				}
 
+				// Defensive check: guaranteed false since len(configuration.Contexts) <= 1 returns early above
 				if len(listContexts) == 0 {
-					return utils.ErrInvalidArgument(errors.New("cannot delete the only context; create another with `mesheryctl system context create` and try again"))
+					err := utils.ErrInvalidArgument(errors.New("cannot delete the only context; create another with `mesheryctl system context create` and try again"))
+					utils.Log.Error(err)
+					return err
 				}
 
 				prompt := promptui.Select{

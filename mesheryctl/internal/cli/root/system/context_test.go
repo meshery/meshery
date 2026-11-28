@@ -225,6 +225,7 @@ func TestContextDeleteCmd(t *testing.T) {
 		expectError        bool
 		expectedError      error
 		expectedResponse   string
+		expectedGoldenFile string
 		expectedSubstr     string
 		expectedCurrentCtx string
 		expectedDeletedCtx string
@@ -233,6 +234,7 @@ func TestContextDeleteCmd(t *testing.T) {
 			name:               "delete given context",
 			args:               []string{"context", "delete", "local2"},
 			expectedResponse:   "delete.context.golden",
+			expectedGoldenFile: "deleteExpected.golden",
 			expectedCurrentCtx: "local",
 			expectedDeletedCtx: "local2",
 		},
@@ -326,6 +328,16 @@ current-context: local
 				t.Fatal(err)
 			}
 
+			if tt.expectedGoldenFile != "" {
+				testdataDir := filepath.Join(currDir, "testdata/context")
+				golden := utils.NewGoldenFile(t, tt.expectedGoldenFile, testdataDir)
+				if *update {
+					golden.Write(string(content))
+				}
+				expectedFileContent := golden.Load()
+				assert.Equal(t, expectedFileContent, string(content), "Meshconfig content mismatch")
+			}
+
 			var data map[string]interface{}
 			if err := yaml.Unmarshal(content, &data); err != nil {
 				t.Fatal(err)
@@ -336,9 +348,15 @@ current-context: local
 			}
 
 			if tt.expectedDeletedCtx != "" {
-				if contexts, ok := data["contexts"].(map[string]interface{}); ok {
+				contexts, ok := data["contexts"].(map[string]interface{})
+				assert.True(t, ok, "contexts missing from meshconfig")
+				if ok {
 					_, exists := contexts[tt.expectedDeletedCtx]
 					assert.False(t, exists, "deleted context should not exist in contexts")
+					if tt.expectedCurrentCtx != "" {
+						_, currentExists := contexts[tt.expectedCurrentCtx]
+						assert.True(t, currentExists, "surviving/current context should be retained in contexts")
+					}
 				}
 			}
 
