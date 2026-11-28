@@ -9,7 +9,7 @@ weight: -10
 Meshery runs as a set of containers on either a Kubernetes cluster or a Docker host. This guide installs Meshery's command line interface, `mesheryctl`, and uses it to start Meshery Server, then walks you through signing in and connecting your clusters.
 
 {{% alert color="warning" title="Quick Start Assumptions" %}}
-This guide downloads, installs, and runs Meshery with a single command, and assumes that your current kubeconfig context points at the cluster you want to use. A kubeconfig is a settings file on your computer that tells tools like Meshery how to reach your Kubernetes clusters, and the context is the cluster currently selected in it. For instructions specific to your environment, see all <a href='{{< ref "installation/_index.md" >}}'>supported platforms</a>.
+This guide downloads, installs, and runs Meshery with a single command, and assumes that your current kubeconfig context points at the cluster you want to use. A kubeconfig is a settings file on your computer that tells tools like Meshery how to reach your Kubernetes clusters, and the context is the set of cluster access settings currently selected in it. For instructions specific to your environment, see all <a href='{{< ref "installation/_index.md" >}}'>supported platforms</a>.
 {{% /alert %}}
 
 ## 1. Download, install, and run Meshery
