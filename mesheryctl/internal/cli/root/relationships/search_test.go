@@ -37,11 +37,28 @@ func TestSearch_WithoutFlags(t *testing.T) {
 			ExpectError:   true,
 			ExpectedError: expectedSearchMissingFlagsError(),
 		},
+		{
+			Name:          "Search with whitespace-only --kind flag",
+			Args:          []string{"search", "--kind", "   "},
+			ExpectError:   true,
+			ExpectedError: expectedSearchMissingFlagsError(),
+		},
+		{
+			Name:          "Search with whitespace-only --model, --type, and --subtype flags",
+			Args:          []string{"search", "--model", "   ", "--type", "\t", "--subtype", "  "},
+			ExpectError:   true,
+			ExpectedError: expectedSearchMissingFlagsError(),
+		},
 	}
 
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
+			origFlags := searchRelationshipFlagsProvided
+			t.Cleanup(func() {
+				searchRelationshipFlagsProvided = origFlags
+			})
+			defer utils.ResetCommandFlags(RelationshipCmd, t)
 			mesheryctlflags.InitValidators(RelationshipCmd)
 			RelationshipCmd.SetArgs(tt.Args)
 			err := RelationshipCmd.Execute()
@@ -116,4 +133,38 @@ func TestSearch_WithFlags(t *testing.T) {
 
 	mesheryctlflags.InitValidators(RelationshipCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, RelationshipCmd, tests, currDir, "relationships")
+}
+
+func TestBuildSearchUrl_TrimsWhitespace(t *testing.T) {
+	origFlags := searchRelationshipFlagsProvided
+	t.Cleanup(func() {
+		searchRelationshipFlagsProvided = origFlags
+	})
+
+	t.Run("trims flag values and omits whitespace-only params", func(t *testing.T) {
+		searchRelationshipFlagsProvided = searchRelationshipFlags{
+			Model:   " kubernetes ",
+			Kind:    " edge ",
+			Type:    "   ",
+			SubType: "\tinventory\n",
+		}
+
+		got := buildSearchUrl()
+		want := "api/registry/models/kubernetes/relationships?kind=edge&subType=inventory"
+		if got != want {
+			t.Errorf("expected %q, got %q", want, got)
+		}
+	})
+
+	t.Run("omits trailing question mark when no query params remain", func(t *testing.T) {
+		searchRelationshipFlagsProvided = searchRelationshipFlags{
+			Model: " kubernetes ",
+		}
+
+		got := buildSearchUrl()
+		want := "api/registry/models/kubernetes/relationships"
+		if got != want {
+			t.Errorf("expected %q, got %q", want, got)
+		}
+	})
 }
