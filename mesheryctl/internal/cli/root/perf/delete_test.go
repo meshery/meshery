@@ -57,12 +57,42 @@ func TestDeleteCmd(t *testing.T) {
 			},
 			ExpectedResponse: "delete.success.output.golden",
 		},
+		{
+			Name: "given a padded profile name when delete with yes then trim and delete it",
+			Args: []string{"delete", "  istio-test  ", "--yes"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: profileURL, Response: "profile.delete.single.response.golden", ResponseCode: 200},
+				{Method: "DELETE", URL: deleteURL, Response: "profile.delete.success.response.golden", ResponseCode: 200},
+			},
+			ExpectedResponse: "delete.success.output.golden",
+		},
+		{
+			Name: "given a padded profile id when delete with yes then trim and delete it",
+			Args: []string{"delete", "  " + profileID + "  ", "--yes"},
+			URLs: []utils.MockURL{
+				{Method: "GET", URL: deleteURL, Response: "profile.get.single.response.golden", ResponseCode: 200},
+				{Method: "DELETE", URL: deleteURL, Response: "profile.delete.success.response.golden", ResponseCode: 200},
+			},
+			ExpectedResponse: "delete.success.output.golden",
+		},
 	}
 
 	errorTests := []utils.MesheryMultiURLCommamdTest{
 		{
 			Name:          "given no argument when delete then throw no profile name error",
 			Args:          []string{"delete"},
+			ExpectError:   true,
+			ExpectedError: ErrNoProfileName(),
+		},
+		{
+			Name:          "given empty argument when delete then throw no profile name error",
+			Args:          []string{"delete", ""},
+			ExpectError:   true,
+			ExpectedError: ErrNoProfileName(),
+		},
+		{
+			Name:          "given whitespace-only argument when delete then throw no profile name error",
+			Args:          []string{"delete", "   "},
 			ExpectError:   true,
 			ExpectedError: ErrNoProfileName(),
 		},
