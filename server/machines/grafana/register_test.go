@@ -65,6 +65,16 @@ func TestRegisterAction_ResolvesAllCredentialShapes(t *testing.T) {
 			credSecret: map[string]interface{}{},
 			wantAuth:   "",
 		},
+		{
+			name:       "malformed non-string grafanaAPIKey falls back to anonymous",
+			credSecret: map[string]interface{}{"grafanaAPIKey": 123},
+			wantAuth:   "",
+		},
+		{
+			name:       "malformed non-string secret falls back to anonymous",
+			credSecret: map[string]interface{}{"secret": 123},
+			wantAuth:   "",
+		},
 	}
 
 	for _, tc := range cases {
