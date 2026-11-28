@@ -93,7 +93,7 @@ mesheryctl perf profile test --view
 
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
-			return utils.ErrLoadConfig(err)
+			return err
 		}
 
 		if len(profiles) == 0 {
@@ -143,13 +143,14 @@ mesheryctl perf profile test --view
 				fmt.Printf("Last Run: %v\n", "nil")
 			}
 
-			if _, ok := a.Metadata["additional_options"]; ok {
-				var out bytes.Buffer
-				err := json.Indent(&out, []byte(a.Metadata["additional_options"].(string)), "", "  ")
+			if addOpts, ok := a.Metadata["additional_options"]; ok {
+				formatted, err := formatAdditionalOptions(addOpts)
 				if err != nil {
-					return ErrFailMarshal(err)
+					return err
 				}
-				fmt.Printf("Load generator options:\n%s\n", out.String())
+				if formatted != "" {
+					fmt.Printf("Load generator options:\n%s\n", formatted)
+				}
 			}
 		}
 
@@ -348,4 +349,36 @@ func init() {
 	profileCmd.Flags().IntVarP(&pageSize, "pagesize", "s", 25, "(optional) Number of performance profiles to be displayed per page (default = 25)")
 	profileCmd.Flags().IntVar(&pageSize, "page-size", 25, "(optional) Number of performance profiles to be displayed per page")
 	_ = profileCmd.Flags().MarkHidden("page-size")
+}
+
+// formatAdditionalOptions safely formats additional options metadata as an indented JSON string or plain text,
+// avoiding panics when additional_options is deserialized as a non-string type (e.g. map or slice).
+func formatAdditionalOptions(addOpts interface{}) (string, error) {
+	if addOpts == nil {
+		return "", nil
+	}
+
+	var raw []byte
+	switch v := addOpts.(type) {
+	case string:
+		raw = []byte(v)
+	case []byte:
+		raw = v
+	default:
+		b, err := json.Marshal(v)
+		if err != nil {
+			return "", ErrFailMarshal(err)
+		}
+		raw = b
+	}
+
+	if len(raw) == 0 {
+		return "", nil
+	}
+
+	var out bytes.Buffer
+	if err := json.Indent(&out, raw, "", "  "); err == nil {
+		return out.String(), nil
+	}
+	return string(raw), nil
 }
