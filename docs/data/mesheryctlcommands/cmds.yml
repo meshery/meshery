@@ -127,7 +127,7 @@ system:
       flags:
         skip-reset:
           name: --skip-reset
-          description: Pull the latest manifest files
+          description: Skip checking for new Meshery manifest files
           usage: mesheryctl system update --skip-reset
 
     config:

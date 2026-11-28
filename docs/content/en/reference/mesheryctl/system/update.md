@@ -37,7 +37,7 @@ mesheryctl system update
 </div>
 </pre> 
 
-Pull the latest manifest files alone
+Skip checking for new Meshery manifest files
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
