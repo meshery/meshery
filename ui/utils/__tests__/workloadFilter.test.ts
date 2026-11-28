@@ -68,6 +68,26 @@ describe('groupWorkloadByVersion', () => {
   it('returns an empty object for an empty workload list', () => {
     expect(groupWorkloadByVersion([])).toEqual({});
   });
+
+  it('safely handles nullish and non-array input without throwing', () => {
+    expect(groupWorkloadByVersion(null)).toEqual({});
+    expect(groupWorkloadByVersion(undefined)).toEqual({});
+    expect(groupWorkloadByVersion('not an array' as unknown as unknown[])).toEqual({});
+  });
+
+  it('skips nullish elements and handles null workload properties gracefully', () => {
+    const valid = makeWorkload();
+    const result = groupWorkloadByVersion([
+      null,
+      undefined,
+      { workload: null },
+      { workload: undefined },
+      valid,
+    ]);
+    expect(result['v1.0.0']).toHaveLength(1);
+    expect(result['v1.0.0'][0]).toBe(valid);
+    expect(result.Meshery).toHaveLength(2);
+  });
 });
 
 describe('getUnformattedName', () => {
@@ -84,6 +104,14 @@ describe('getUnformattedName', () => {
 
   it('returns "Un-Named" when oam_definition is missing', () => {
     expect(getUnformattedName({ workload: {} })).toBe('Un-Named');
+  });
+
+  it('returns "" when input is null, undefined, or non-object and "Un-Named" when workload is nullish', () => {
+    expect(getUnformattedName(null)).toBe('');
+    expect(getUnformattedName(undefined)).toBe('');
+    expect(getUnformattedName(42 as unknown as Record<string, unknown>)).toBe('');
+    expect(getUnformattedName({ workload: null })).toBe('Un-Named');
+    expect(getUnformattedName({ workload: undefined })).toBe('Un-Named');
   });
 });
 
@@ -108,5 +136,20 @@ describe('findWorkloadByName', () => {
   it('returns undefined when workloads is null/undefined', () => {
     expect(findWorkloadByName('whatever', null)).toBeUndefined();
     expect(findWorkloadByName('whatever', undefined)).toBeUndefined();
+  });
+
+  it('safely skips nullish items in workloads array without throwing', () => {
+    const target = makeWorkload();
+    expect(findWorkloadByName('WorkloadA', [null, undefined, { workload: null }, target])).toBe(
+      target,
+    );
+  });
+
+  it('does not match nullish items or invalid workloads when searching for "Un-Named"', () => {
+    const realUnnamed = { workload: { oam_definition: { metadata: {} } } };
+    expect(findWorkloadByName('Un-Named', [null, undefined, { workload: null }, realUnnamed])).toBe(
+      realUnnamed,
+    );
+    expect(findWorkloadByName('Un-Named', [null, undefined, { workload: null }])).toBeUndefined();
   });
 });
