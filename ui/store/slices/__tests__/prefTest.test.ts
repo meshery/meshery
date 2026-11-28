@@ -79,6 +79,56 @@ describe('prefTest slice', () => {
       );
       expect(state.loadTestPref.ts).toBe(ts);
     });
+
+    it('clones frozen Date payloads without mutating the caller object', () => {
+      const initial = prefTestReducer(undefined, { type: 'init' } as any);
+      const dateObj = new Date('2024-06-01T00:01:00Z');
+      const frozenPayload = Object.freeze({
+        qps: 10,
+        t: '30s',
+        c: 2,
+        gen: 'fortio',
+        ts: dateObj,
+      });
+      const state = prefTestReducer(initial, updateLoadTestPref({ loadTestPref: frozenPayload }));
+      expect(state.loadTestPref.ts).toBe(dateObj.getTime());
+      expect(frozenPayload.ts).toBe(dateObj);
+    });
+
+    it('ignores nullish or non-object payloads without altering state', () => {
+      const initial = prefTestReducer(undefined, { type: 'init' } as any);
+      expect(prefTestReducer(initial, updateLoadTestPref(undefined as never))).toBe(initial);
+      expect(prefTestReducer(initial, updateLoadTestPref({ loadTestPref: null } as never))).toBe(
+        initial,
+      );
+      expect(prefTestReducer(initial, updateLoadTestPref({ loadTestPref: [] } as never))).toBe(
+        initial,
+      );
+      expect(
+        prefTestReducer(initial, updateLoadTestPref({ loadTestPref: new Date(0) } as never)),
+      ).toBe(initial);
+      expect(
+        prefTestReducer(initial, updateLoadTestPref({ loadTestPref: new Map() } as never)),
+      ).toBe(initial);
+    });
+
+    it('accepts null-prototype records including Date in ts', () => {
+      const initial = prefTestReducer(undefined, { type: 'init' } as any);
+      const dateObj = new Date('2024-06-01T00:01:00Z');
+      const nullProtoPayload = Object.assign(Object.create(null), {
+        qps: 25,
+        t: '45s',
+        c: 3,
+        gen: 'fortio',
+        ts: dateObj,
+      });
+      const state = prefTestReducer(
+        initial,
+        updateLoadTestPref({ loadTestPref: nullProtoPayload }),
+      );
+      expect(state.loadTestPref.qps).toBe(25);
+      expect(state.loadTestPref.ts).toBe(dateObj.getTime());
+    });
   });
 
   describe('updateLoadTest', () => {
@@ -96,6 +146,19 @@ describe('prefTest slice', () => {
       const state = prefTestReducer(initial, updateLoadTest({ loadTest }));
       expect(state.loadTest).toEqual(loadTest);
     });
+
+    it('ignores nullish or non-object payloads without altering state', () => {
+      const initial = prefTestReducer(undefined, { type: 'init' } as any);
+      expect(prefTestReducer(initial, updateLoadTest(undefined as never))).toBe(initial);
+      expect(prefTestReducer(initial, updateLoadTest({ loadTest: null } as never))).toBe(initial);
+      expect(prefTestReducer(initial, updateLoadTest({ loadTest: 'bad' } as never))).toBe(initial);
+      expect(prefTestReducer(initial, updateLoadTest({ loadTest: new Date(0) } as never))).toBe(
+        initial,
+      );
+      expect(prefTestReducer(initial, updateLoadTest({ loadTest: new Map() } as never))).toBe(
+        initial,
+      );
+    });
   });
 
   describe('updateResultsSelection', () => {
@@ -108,11 +171,34 @@ describe('prefTest slice', () => {
       expect(state.results_selection).toEqual({ 0: { a: 'b' } });
     });
 
-    it('removes selection for a page when results object is empty', () => {
+    it('removes selection for a page when results object is empty or nullish', () => {
       let state = prefTestReducer(undefined, { type: 'init' } as any);
       state = prefTestReducer(state, updateResultsSelection({ page: 0, results: { a: 'b' } }));
       state = prefTestReducer(state, updateResultsSelection({ page: 0, results: {} }));
       expect(state.results_selection).toEqual({});
+
+      state = prefTestReducer(state, updateResultsSelection({ page: 0, results: { a: 'b' } }));
+      state = prefTestReducer(state, updateResultsSelection({ page: 0, results: null } as never));
+      expect(state.results_selection).toEqual({});
+
+      state = prefTestReducer(state, updateResultsSelection({ page: 0, results: { a: 'b' } }));
+      state = prefTestReducer(
+        state,
+        updateResultsSelection({ page: 0, results: undefined } as never),
+      );
+      expect(state.results_selection).toEqual({});
+    });
+
+    it('ignores invalid page keys without mutating results_selection', () => {
+      const initial = prefTestReducer(undefined, { type: 'init' } as any);
+      for (const badPage of [undefined, null, Number.NaN, -1, '', '   ']) {
+        const next = prefTestReducer(
+          initial,
+          updateResultsSelection({ page: badPage, results: { a: 1 } } as never),
+        );
+        expect(next.results_selection).toEqual({});
+      }
+      expect(prefTestReducer(initial, updateResultsSelection(undefined as never))).toBe(initial);
     });
 
     it('overwrites existing selection on the same page', () => {
