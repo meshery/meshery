@@ -35,6 +35,15 @@ func TestComponentView(t *testing.T) {
 			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errInvalidArg, viewUsageMsg)),
 		},
 		{
+			Name:           "given whitespace argument provided when component view then throw error",
+			Args:           []string{"view", "   "},
+			URL:            "/api/registry/components",
+			Fixture:        "components.empty.api.response.golden",
+			IsOutputGolden: false,
+			ExpectError:    true,
+			ExpectedError:  utils.ErrInvalidArgument(fmt.Errorf("%s\n%s", errInvalidArg, viewUsageMsg)),
+		},
+		{
 			Name:             "given non-existent component provided when component view then display no component found",
 			Args:             []string{"view", "foo"},
 			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=foo", componentApiPath),
@@ -63,6 +72,15 @@ func TestComponentView(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
+			Name:             "given padded component name when component view then display detailed information",
+			Args:             []string{"view", "  Test  "},
+			URL:              fmt.Sprintf("/%s?page=0&pagesize=10&search=Test", componentApiPath),
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.view.output.golden",
+			IsOutputGolden:   true,
+			ExpectError:      false,
+		},
+		{
 			Name:           "given invalid argument value provided for --output-format flag when component view then throw error",
 			Args:           []string{"view", "Test", "--output-format", "invalid"},
 			URL:            fmt.Sprintf("/%s?pagesize=all&search=Test", componentApiPath),
@@ -83,6 +101,15 @@ func TestComponentView(t *testing.T) {
 		{
 			Name:             "given a valid UUID provided when component view then display detailed information of the component",
 			Args:             []string{"view", "fda1c4e7-14ae-4435-8236-adfb9cea0395"},
+			URL:              fmt.Sprintf("/%s?id=fda1c4e7-14ae-4435-8236-adfb9cea0395&page=0&pagesize=10", componentApiPath),
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.view.output.golden",
+			IsOutputGolden:   true,
+			ExpectError:      false,
+		},
+		{
+			Name:             "given padded valid UUID when component view then display detailed information of the component",
+			Args:             []string{"view", "  fda1c4e7-14ae-4435-8236-adfb9cea0395  "},
 			URL:              fmt.Sprintf("/%s?id=fda1c4e7-14ae-4435-8236-adfb9cea0395&page=0&pagesize=10", componentApiPath),
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "components.view.output.golden",

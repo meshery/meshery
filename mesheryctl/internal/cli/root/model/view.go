@@ -40,13 +40,13 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 		return mesheryctlflags.ValidateCmdFlags(cmd, &modelViewFlags)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		if len(args) != 1 {
+		if len(args) != 1 || strings.TrimSpace(args[0]) == "" {
 			return utils.ErrInvalidArgument(errors.New(errInvalidArg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		modelNameOrId := args[0]
+		modelNameOrId := strings.TrimSpace(args[0])
 
 		var selectedModel *model.ModelDefinition
 		var err error
