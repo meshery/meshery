@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@sistent/sistent', () => ({
+  Box: ({ children }: any) => <span>{children}</span>,
   IconButton: ({ children }: any) => <button>{children}</button>,
   InputAdornment: ({ children }: any) => <div data-testid="adornment">{children}</div>,
   ListItemText: ({ primary }: any) => <span>{primary}</span>,
@@ -20,6 +21,7 @@ vi.mock('@sistent/sistent', () => ({
     error,
     InputProps,
     SelectProps,
+    slotProps,
     children,
   }: any) => (
     <div data-testid="textfield-wrapper" data-id={id}>
@@ -31,7 +33,12 @@ vi.mock('@sistent/sistent', () => ({
         disabled={!!disabled}
         onChange={(e) => onChange(e)}
       />
-      {InputProps?.endAdornment}
+      {
+        (typeof slotProps?.input === 'function'
+          ? slotProps.input({ disabled, error, value })
+          : slotProps?.input || InputProps
+        )?.endAdornment
+      }
       <div data-testid="select-children">{children}</div>
     </div>
   ),
