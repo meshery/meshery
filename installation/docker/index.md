@@ -143,6 +143,10 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
 
 <div class="related-discussions">
   <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-to-guide-me-through-my-first-stint-in-oss/8374" target="_blank" rel="noopener noreferrer">
+            Looking for a meshmate to guide me through my first stint in OSS
+          </a>
+        </li><li>
           <a href="https://discuss.meshery.io/t/looking-for-a-meshmate-building-first-principles-fluency-in-ci-cd-mesheryctl-backend-kubernetes/8366" target="_blank" rel="noopener noreferrer">
             Looking for a MeshMate — Building First-Principles Fluency in CI/CD, mesheryctl/Backend &amp; Kubernetes
           </a>
@@ -169,10 +173,6 @@ Whichever way you installed Meshery, verify that Meshery is connected to your cl
         </li><li>
           <a href="https://discuss.meshery.io/t/jekyll-build-and-regeneration-are-very-slow-on-windows/8314" target="_blank" rel="noopener noreferrer">
             Jekyll Build and Regeneration Are Very Slow on Windows
-          </a>
-        </li><li>
-          <a href="https://discuss.meshery.io/t/need-meshmate-to-assist-in-start-contributing-to-meshery-doc/8324" target="_blank" rel="noopener noreferrer">
-            Need meshmate to assist in start contributing to meshery Doc
           </a>
         </li></ul><p>
     <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
