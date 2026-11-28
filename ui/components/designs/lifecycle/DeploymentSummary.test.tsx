@@ -47,8 +47,16 @@ vi.mock('../../data-formatter', () => ({
 }));
 
 vi.mock('../../layout/NotificationCenter/constants', () => ({
+  SEVERITY: {
+    INFO: 'informational',
+    ERROR: 'error',
+    WARNING: 'warning',
+    SUCCESS: 'success',
+  },
   SEVERITY_STYLE: {
+    informational: { color: '#00f' },
     success: { color: '#0f0' },
+    warning: { color: '#f80' },
     error: { color: '#f00' },
   },
 }));
@@ -87,6 +95,7 @@ vi.mock('next/router', () => ({
 }));
 
 import { DeploymentSummaryFormatter } from './DeploymentSummary';
+import { SEVERITY } from '../../layout/NotificationCenter/constants';
 
 const errorLines = () =>
   screen.getAllByTestId('design-event-error').map((line) => line.textContent);
@@ -358,5 +367,98 @@ describe('DeploymentSummaryFormatter', () => {
       />,
     );
     expect(screen.getByTestId('error-metadata')).toHaveTextContent('E_FAIL');
+  });
+
+  // The metadata a deploy or undeploy outcome event carries from a server with
+  // meshery/meshery#22549: the slim summary plus component counts, never the
+  // legacy raw summary. failed counts components and errorCount counts failing
+  // outcomes, so a component that failed on two clusters makes errorCount
+  // exceed failed.
+  const outcomeMetadata = ({ status, total, failed, errors }) => ({
+    designId: '8c5a1f4e-2b7d-4e0a-9f3c-6d1e2a4b7c90',
+    designName: 'bookinfo',
+    status,
+    errorCount: errors.length,
+    errors,
+    truncated: false,
+    total,
+    succeeded: total - failed,
+    failed,
+  });
+
+  it.each([
+    {
+      severity: SEVERITY.WARNING,
+      status: 'partial',
+      total: 3,
+      failed: 1,
+      errors: [{ code: '', componentId: 'reviews' }],
+      countLine: '1 of 3 components failed',
+      errorCount: '1 error',
+    },
+    {
+      severity: SEVERITY.ERROR,
+      status: 'failed',
+      total: 2,
+      failed: 2,
+      errors: [
+        { code: 'meshery-server-1480', componentId: 'reviews' },
+        { code: 'meshery-server-1480', componentId: 'reviews' },
+        { code: 'FieldValueInvalid', componentId: 'ratings' },
+      ],
+      countLine: '2 of 2 components failed',
+      errorCount: '3 errors',
+    },
+  ])(
+    'renders the component counts beside the errors of a $status outcome',
+    ({ severity, status, total, failed, errors, countLine, errorCount }) => {
+      render(
+        <DeploymentSummaryFormatter
+          event={{
+            description: 'Outcome',
+            severity,
+            action: 'deploy',
+            metadata: outcomeMetadata({ status, total, failed, errors }),
+          }}
+        />,
+      );
+      expect(screen.getByText(countLine)).toBeInTheDocument();
+      expect(screen.getByText(/Status:/)).toHaveTextContent(`Status: ${status} - ${errorCount}`);
+      expect(errorLines()).toHaveLength(errors.length);
+    },
+  );
+
+  it('shows no failed-components line for a successful outcome that carries counts', () => {
+    render(
+      <DeploymentSummaryFormatter
+        event={{
+          description: "Deployment completed for design 'bookinfo'.",
+          severity: SEVERITY.INFO,
+          action: 'deploy',
+          metadata: outcomeMetadata({ status: 'success', total: 3, failed: 0, errors: [] }),
+        }}
+      />,
+    );
+    expect(screen.queryByText(/components failed/)).not.toBeInTheDocument();
+  });
+
+  it('renders old-server event without the new keys as today without crashing', () => {
+    const summary = {
+      c: [
+        { Location: 'cluster-1', Summary: [{ CompName: 'web', Kind: 'Service', Success: true }] },
+      ],
+    };
+    render(
+      <DeploymentSummaryFormatter
+        event={{
+          description: 'Deployment completed',
+          severity: SEVERITY.INFO,
+          action: 'deploy',
+          metadata: { summary },
+        }}
+      />,
+    );
+    expect(screen.getByText('Deployed Service "web"')).toBeInTheDocument();
+    expect(screen.queryByText(/components failed/)).not.toBeInTheDocument();
   });
 });

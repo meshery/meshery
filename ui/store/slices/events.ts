@@ -253,7 +253,6 @@ export const eventsSlice = createSlice({
     },
 
     openNotificationCenter: (state, action) => {
-      console.log('Opening notification center with view:', action.payload);
       state.isNotificationCenterOpen = true;
       const viewToOpen = isSerializable(action.payload.view_to_open)
         ? action.payload.view_to_open
