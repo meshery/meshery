@@ -262,6 +262,126 @@ func TestDeleteCmd(t *testing.T) {
 			},
 			ExpectError: false,
 		},
+		{
+			Name:             "given valid design name as positional argument when design delete then design is deleted",
+			Args:             []string{"delete", "test-design"},
+			ExpectedResponse: "delete.byName.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=test-design&pagesize=10000&page=0",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/a12b3c4d-5e6f-4890-abcd-ef1234567890",
+					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
+		{
+			Name:             "given nonexistent design name when design delete then error is thrown",
+			Args:             []string{"delete", "nonexistent-design"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=nonexistent-design&pagesize=10000&page=0",
+					Response:     "pattern.empty.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrDesignNotFound("nonexistent-design"),
+		},
+		{
+			Name:             "given partial name match when design delete then not found error is thrown and nothing is deleted",
+			Args:             []string{"delete", "test-design"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=test-design&pagesize=10000&page=0",
+					Response:     "delete.partialName.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  ErrDesignNotFound("test-design"),
+		},
+		{
+			Name:             "given ambiguous name on a later search page when design delete then ambiguity error is thrown",
+			Args:             []string{"delete", "shared-name"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=shared-name&pagesize=10000&page=0",
+					Response:     "delete.namePage0.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=shared-name&pagesize=10000&page=1",
+					Response:     "delete.namePage1.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  utils.ErrAmbiguousID("shared-name", []string{"a12b3c4d-5e6f-4890-abcd-ef1234567890", "a12f9e8d-7c6b-4a59-8d4c-3b2a19087654"}),
+		},
+		{
+			Name:             "given ambiguous design name shared by two designs when design delete then ambiguity error is thrown and nothing is deleted",
+			Args:             []string{"delete", "shared-name"},
+			ExpectedResponse: "",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
+					Response:     "delete.idList.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=shared-name&pagesize=10000&page=0",
+					Response:     "delete.ambiguousName.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError:    true,
+			IsOutputGolden: false,
+			ExpectedError:  utils.ErrAmbiguousID("shared-name", []string{"a12b3c4d-5e6f-4890-abcd-ef1234567890", "a12f9e8d-7c6b-4a59-8d4c-3b2a19087654"}),
+		},
 	}
 
 	// Run tests
@@ -332,4 +452,20 @@ func TestDeleteWithGenericURL(t *testing.T) {
 			assert.Equal(t, expectedContent, undeployPayload.PatternFile)
 		})
 	}
+}
+
+// TestResolveDesignByNameLookupFailure verifies that a non-200 search response
+// is surfaced as a lookup error rather than being mistaken for "not found"
+// or silently falling through to file-path handling.
+func TestResolveDesignByNameLookupFailure(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+
+	const name = "test-design"
+	searchURL := testContext.BaseURL + "/api/pattern?search=test-design&pagesize=10000&page=0"
+	httpmock.RegisterResponder(http.MethodGet, searchURL,
+		httpmock.NewStringResponder(http.StatusInternalServerError, `{"message":"internal server error"}`))
+
+	_, err := resolveDesignByName(testContext.BaseURL, name)
+	assert.Error(t, err, "a non-200 search response must fail the name lookup")
 }
