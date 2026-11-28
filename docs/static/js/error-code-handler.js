@@ -1,10 +1,17 @@
 function displayErrorCode() {
-  const hash = window.location.hash.substring(1);
-  if (!hash) {
+  const rawHash = window.location.hash.substring(1);
+  if (!rawHash) {
     return;
   }
 
-  const errorRow = document.getElementById(hash);
+  let hash = rawHash;
+  try {
+    hash = decodeURIComponent(rawHash);
+  } catch (e) {
+    // Keep rawHash if it cannot be URI-decoded
+  }
+
+  const errorRow = document.getElementById(hash) || document.getElementById(rawHash);
   if (!errorRow) {
     return;
   }

@@ -18,6 +18,9 @@ const animatedTerminal = [];
 
 function inView(containerName) {
     var element = document.getElementById(containerName);
+    if (!element) {
+        return false;
+    }
 
     var elementHeight = element.clientHeight;
 
