@@ -111,7 +111,7 @@ When a model is marked for visual annotation only, it means the model will be us
 <p>A notification will also appear in the <a href="{{< ref "guides/infrastructure-management/notification-management/index.md" >}}">Notification Center</a> to confirm whether the operation succeeded or failed, providing additional context if needed.</p>
 
 {{% alert color="warning" title="Note on Deletion" %}}
-You cannot delete a generated model from Meshery UI. To stop using it, mark it as ignored, or delete it with <code>mesheryctl model delete &lt;model-name&gt;</code>.
+You cannot delete a generated model from Meshery UI. To stop using it, mark it as ignored. To delete it, pass the exact model name to <code>mesheryctl model delete &lt;model-name&gt;</code>.
 {{% /alert %}}
 
 <!-- tab -->
