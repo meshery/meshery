@@ -116,6 +116,12 @@ describe('getReadyReplicas / getTotalReplicas', () => {
     expect(getReadyReplicas({ status: {} })).toBe(0);
   });
 
+  it('defaults to 0 when item or status is nullish', () => {
+    expect(getReadyReplicas(null)).toBe(0);
+    expect(getReadyReplicas(undefined)).toBe(0);
+    expect(getReadyReplicas({ status: null })).toBe(0);
+  });
+
   it('reads total replicas from spec.replicas first', () => {
     expect(getTotalReplicas({ spec: { replicas: 5 }, status: { currentNumberScheduled: 9 } })).toBe(
       5,
@@ -129,6 +135,12 @@ describe('getReadyReplicas / getTotalReplicas', () => {
   it('defaults to 0 when neither field is present', () => {
     expect(getTotalReplicas({ spec: {}, status: {} })).toBe(0);
   });
+
+  it('defaults to 0 when item or spec is nullish', () => {
+    expect(getTotalReplicas(null)).toBe(0);
+    expect(getTotalReplicas(undefined)).toBe(0);
+    expect(getTotalReplicas({ spec: null, status: null })).toBe(0);
+  });
 });
 
 describe('compareUnits', () => {
@@ -139,6 +151,12 @@ describe('compareUnits', () => {
 
   it('returns false when numeric prefixes differ', () => {
     expect(compareUnits('100Mi', '200Mi')).toBe(false);
+  });
+
+  it('returns false safely when arguments are not strings', () => {
+    expect(compareUnits(null as unknown as string, '100Mi')).toBe(false);
+    expect(compareUnits('100Mi', undefined as unknown as string)).toBe(false);
+    expect(compareUnits(100 as unknown as string, 100 as unknown as string)).toBe(false);
   });
 });
 
@@ -185,6 +203,14 @@ describe('normalizeUnit', () => {
 
   it('passes through quantities for unknown resource types', () => {
     expect(normalizeUnit('unknown', '42')).toBe('42');
+  });
+
+  it('handles invalid or non-string inputs safely', () => {
+    expect(normalizeUnit(undefined, 0)).toBe('0');
+    expect(normalizeUnit(null as any, '100')).toBe('100');
+    expect(normalizeUnit('memory', undefined)).toBe('');
+    expect(normalizeUnit('memory', 1024 as any)).toBe('1024');
+    expect(normalizeUnit('cpu', Symbol('x'))).toBe('Symbol(x) cores');
   });
 });
 
@@ -275,6 +301,18 @@ describe('resourceParsers / getResourceStr', () => {
 
   it('formats memory via unparseRam', () => {
     expect(getResourceStr(1024, 'memory')).toBe('1Ki');
+  });
+
+  it('handles unknown or missing resource types safely without throwing', () => {
+    expect(getResourceStr('500', 'unknown' as any)).toBe('500');
+    expect(getResourceStr('500', undefined as any)).toBe('500');
+    expect(getResourceStr('500', 'toString')).toBe('500');
+    expect(getResourceStr('500', 'valueOf')).toBe('500');
+  });
+
+  it('returns string fallback for unsupported value types like bigint and symbol', () => {
+    expect(getResourceStr(1024n, 'memory')).toBe('1024');
+    expect(getResourceStr(Symbol('x'), 'memory')).toBe('Symbol(x)');
   });
 });
 
