@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -80,10 +79,6 @@ func TestConnectionErrorShowsTrimmedEndpoint(t *testing.T) {
 // "/", the form `system context create --url http://host:9081/` stores, and attaches the test token.
 func useTrailingSlashEndpoint(t *testing.T, baseURL string) {
 	t.Helper()
-
-	// TestMakeRequest_Failures activates httpmock through utils.InitTestEnvironment and never
-	// deactivates it, so when it runs first (as with -shuffle) httpmock would intercept these requests.
-	httpmock.Deactivate()
 
 	configPath := filepath.Join(t.TempDir(), "config.yaml")
 	config := fmt.Sprintf(`contexts:

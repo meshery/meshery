@@ -76,3 +76,24 @@ func TestMakeRequest_Failures(t *testing.T) {
 		})
 	}
 }
+
+// utils.InitTestEnvironment swaps http.DefaultTransport for the whole test binary. The
+// httptest-based tests in this package only reach their server if that swap is undone
+// when the test that made it ends, whatever order -shuffle runs them in.
+func TestInitTestEnvironmentDeactivatesHTTPMockWhenTestEnds(t *testing.T) {
+	t.Run("caller", func(t *testing.T) {
+		testContext := utils.InitTestEnvironment(t)
+		if http.DefaultTransport != httpmock.DefaultTransport {
+			t.Fatal("InitTestEnvironment did not activate httpmock")
+		}
+		httpmock.RegisterResponder(http.MethodGet, testContext.BaseURL+"/api/system/version",
+			httpmock.NewStringResponder(http.StatusOK, `{}`))
+	})
+
+	if http.DefaultTransport == httpmock.DefaultTransport {
+		t.Error("httpmock is still active after the test that called InitTestEnvironment ended")
+	}
+	if n := httpmock.DefaultTransport.NumResponders(); n != 0 {
+		t.Errorf("%d httpmock responder(s) left registered after the test that called InitTestEnvironment ended", n)
+	}
+}

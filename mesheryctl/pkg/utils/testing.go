@@ -70,9 +70,14 @@ func NewGoldenFile(t *testing.T, name string, directory string) *GoldenFile {
 	return &GoldenFile{t: t, name: name, dir: directory}
 }
 
+// InitTestEnvironment loads a private copy of the shared test config and activates
+// httpmock. httpmock replaces http.DefaultTransport for the whole test binary, so it is
+// deactivated and reset when t finishes; left active, it would intercept the requests
+// of whichever test runs next, such as one talking to a real httptest server.
 func InitTestEnvironment(t *testing.T) *TestHelper {
 	SetupContextEnv(t)
 	StartMockery(t)
+	t.Cleanup(func() { StopMockery(t) })
 	viper.Set("LOG_LEVEL", int(logrus.InfoLevel))
 	testContext := NewTestHelper(t)
 	return testContext
@@ -934,7 +939,6 @@ func RunMesheryctlCommand(t *testing.T, run MesheryCommandRun) (string, error) {
 	}
 
 	testContext := InitTestEnvironment(t)
-	t.Cleanup(func() { StopMockery(t) })
 	t.Cleanup(func() { ResetCommandFlags(run.Cmd, t) })
 
 	if run.Token != "" {
