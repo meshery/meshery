@@ -740,6 +740,9 @@ func TestSendEvent_DiscoveryFailureReportsUnreachableCondition(t *testing.T) {
 	if event.ResolvedAt != nil {
 		t.Fatalf("a failure carries resolvedAt %v", event.ResolvedAt)
 	}
+	if event.LastSeenAt == nil || event.LastSeenAt.After(time.Now().UTC().Add(time.Second)) {
+		t.Fatalf("failure lastSeenAt = %v, want the observation time", event.LastSeenAt)
+	}
 
 	// The connection is NOTFOUND now; the same failure again changes nothing,
 	// so it is not reported to the user again (issue #20818), but it comes back
@@ -752,6 +755,9 @@ func TestSendEvent_DiscoveryFailureReportsUnreachableCondition(t *testing.T) {
 	}
 	if *event.CorrelationKey != want {
 		t.Fatalf("recurrence key = %q, want %q", *event.CorrelationKey, want)
+	}
+	if event.LastSeenAt == nil {
+		t.Fatal("recurrence has no lastSeenAt")
 	}
 
 	// The cluster answers again: the Discovery that leaves NOTFOUND resolves the
@@ -767,6 +773,9 @@ func TestSendEvent_DiscoveryFailureReportsUnreachableCondition(t *testing.T) {
 	}
 	if event.Severity != events.Success || event.Category != "connection" {
 		t.Fatalf("resolution severity %q category %q, want success and connection", event.Severity, event.Category)
+	}
+	if event.LastSeenAt != nil {
+		t.Fatalf("resolution lastSeenAt = %v, want it left unset", event.LastSeenAt)
 	}
 
 	// A healthy Discovery afterwards is routine: no second resolution.
