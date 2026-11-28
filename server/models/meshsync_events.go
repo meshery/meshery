@@ -296,7 +296,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 		if obj.ID == "" {
 			return ErrDBDelete(fmt.Errorf("cannot delete MeshSync resource without an identity"), "")
 		}
-		if _, err := DeleteMeshSyncResourceByID(&mh.dbHandler, obj.ID); err != nil {
+		if _, err := deleteMeshSyncResourceByID(&mh.dbHandler, obj.ID, true); err != nil {
 			return ErrDBDelete(err, "")
 		}
 	}
