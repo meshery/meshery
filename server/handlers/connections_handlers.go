@@ -869,7 +869,8 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(systemID).WithCategory("connection").WithAction("delete")
 
 	// A Kubernetes connection deleted while NOTFOUND retires its unreachable
-	// condition, so the deletion event resolves it.
+	// condition, so the deletion event resolves it. Read the status before the
+	// machine is retired below: its Delete transition rewrites the row.
 	resolvesUnreachable := false
 	existing, _, gerr := provider.GetConnectionByID(token, connectionID)
 	if gerr == nil && existing != nil {
@@ -883,6 +884,13 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	// the database.
 	isKubernetes := (gerr == nil && existing != nil && strings.EqualFold(existing.Kind, "kubernetes"))
 	var inst *machines.StateMachine
+	// retired reports that the Delete transition completed, so the row already
+	// reads "deleted" and the cluster-side teardown has started; teardownErr
+	// holds the reason it did not. Both are reported on the delete event below:
+	// a teardown that failed, or one that cannot be undone because the provider
+	// then refused the row delete, is invisible to the user otherwise.
+	var retired bool
+	var teardownErr error
 
 	if isKubernetes && h.ConnectionToStateMachineInstanceTracker != nil {
 		if tracked, ok := h.ConnectionToStateMachineInstanceTracker.Get(connectionID); ok && tracked != nil && helpers.HasMachineContext(tracked) {
@@ -979,9 +987,13 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 			defer cancel()
 			event, sendErr := inst.SendEvent(detachedCtx, machines.Delete, nil)
 			if sendErr != nil {
+				teardownErr = sendErr
 				h.log.Warnf("failed to transition Kubernetes connection %s to deleted during teardown: %v", connectionID, sendErr)
-			} else if event != nil && event.ResolvedAt != nil {
-				resolvesUnreachable = true
+			} else {
+				retired = true
+				if event != nil && event.ResolvedAt != nil {
+					resolvesUnreachable = true
+				}
 			}
 		}
 	}
@@ -1015,7 +1027,17 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		metadata := map[string]interface{}{
 			"error": _err,
 		}
-		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error deleting connection").WithMetadata(metadata).Build()
+		description := "Error deleting connection"
+		if retired {
+			// The machine cannot be put back: its teardown has started and the
+			// row was left in the "deleted" state by the transition.
+			description = "Error deleting connection; it was already disconnected and marked deleted"
+			metadata["connectionRetired"] = true
+		}
+		if teardownErr != nil {
+			metadata["teardownError"] = teardownErr.Error() // an error value marshals to {}
+		}
+		event := eventBuilder.WithSeverity(events.Error).WithDescription(description).WithMetadata(metadata).Build()
 		h.persistAndPublish(provider, token, userID, event)
 
 		h.log.Error(_err)
@@ -1057,7 +1079,13 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	} else {
 		eventBuilder = eventBuilder.WithSeverity(events.Informational)
 	}
-	event := eventBuilder.WithDescription(description).Build()
+	eventBuilder = eventBuilder.WithDescription(description)
+	if teardownErr != nil {
+		eventBuilder = eventBuilder.WithSeverity(events.Warning).WithMetadata(map[string]interface{}{
+			"teardownError": teardownErr.Error(), // an error value marshals to {}
+		})
+	}
+	event := eventBuilder.Build()
 
 	h.persistAndPublish(provider, token, userID, event)
 

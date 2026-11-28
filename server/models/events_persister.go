@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"errors"
 	"strings"
 	"sync"
@@ -356,6 +357,32 @@ func (e *EventsPersister) persistCorrelatedEvent(event events.Event) (PersistedE
 			}
 			if event.Description != "" {
 				updates["description"] = event.Description
+			}
+			// The open row's metadata says why the condition opened; the
+			// resolution's says what cleared it. Both matter, so they are
+			// merged rather than one replacing the other: a resolution
+			// reporting a failed teardown would otherwise be stored without
+			// its reason, because this branch updates the open row instead of
+			// recording the resolution as its own event. A resolution that
+			// carries no metadata leaves the stored metadata untouched.
+			if len(event.Metadata) > 0 {
+				merged := make(map[string]interface{}, len(open.Metadata)+len(event.Metadata))
+				for key, value := range open.Metadata {
+					merged[key] = value
+				}
+				for key, value := range event.Metadata {
+					merged[key] = value
+				}
+				// Metadata is a gorm `serializer:json` field, and that
+				// serializer runs for a struct field, not for a column named
+				// in an Updates map - handing the map over directly fails the
+				// statement with "unsupported type map[string]interface {}".
+				// Encode it here, exactly as the serializer would.
+				encoded, err := json.Marshal(merged)
+				if err != nil {
+					return err
+				}
+				updates["metadata"] = encoded
 			}
 			if err := updateOpenEvent(tx, &open, updates, EventResolved, &persisted); err != nil {
 				return err
