@@ -59,6 +59,29 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
  Try Meshery in your browser using the <a href="https://play.meshery.io">Cloud Native Playground</a> (<a href="https://www.youtube.com/watch?v=034nVaQUyME&list=PL3A-A6hPO2IO_yzN83wSJJUNQActzCJvO&index=9">teaser video</a>)
 </div>
 <br />
+
+## Quick Start
+
+Install and start Meshery on macOS or Linux:
+
+```bash
+curl -L https://meshery.io/install | bash
+```
+
+### Non-interactive installation
+
+CI systems, scripts, and AI agents without a controlling TTY must set
+`PLATFORM` explicitly:
+
+```bash
+# Docker
+curl -L https://meshery.io/install | PLATFORM=docker bash -
+
+# Kubernetes
+curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
+```
+
+See the [Quick Start Guide](https://docs.meshery.io/installation/quick-start) for platform-specific instructions.
 <!--
 - [Functionality](#functionality)
   - [Meshery Architecture](#meshery-architecture)
@@ -212,13 +235,9 @@ SCREENSHOT / GIF NEEDED HERE
 
 </details>
 
-<h2><a name="running"></a>Get Started with Meshery</h2>
-<p style="clear:both;"></p>
-<!-- <img alt="Control Kubernetes and your workloads with mesheryctl" src=".github/assets/images/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right" /> -->
-<h3>Using `mesheryctl`</h3>
+<h2><a name="running"></a>Installation Options</h2>
 <p>Meshery runs as a set of containers inside or outside of your Kubernetes clusters.</p>
-<pre>curl -L https://meshery.io/install | bash -</pre>
-<p>Use the <a href="https://docs.meshery.io/installation/quick-start">quick start</a> guide.</p>
+<p>See the <a href="https://docs.meshery.io/installation/quick-start">Quick Start Guide</a> for installation instructions.</p>
 <details>
   <summary><strong>See all supported platforms</strong></summary>
 
