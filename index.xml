@@ -37956,6 +37956,7 @@ Adapters share a common Day 1 / Day 2 model: they install infrastructure with th
 	Broker CRD
 &lt;/h2&gt;
 &lt;p&gt;The CRD is used to configure &lt;a href="/concepts/architecture/broker/"&gt;Broker&lt;/a&gt; instances in a cluster.&lt;/p&gt;
+&lt;p&gt;The full CRD definition is &lt;a href="https://github.com/meshery/meshery-operator/blob/master/config/crd/bases/meshery.io_brokers.yaml"&gt;&lt;code&gt;meshery.io_brokers.yaml&lt;/code&gt;&lt;/a&gt; in the Meshery Operator repository.&lt;/p&gt;
 &lt;h2 id="yaml-synopsis"&gt;
 	YAML synopsis
 &lt;/h2&gt;
