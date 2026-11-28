@@ -94,13 +94,14 @@ export const BottomContainer = styled('div')(() => ({
   display: 'flex',
   justifyContent: 'flex-start',
   alignItems: 'center',
-  marginTop: '1rem',
+  marginTop: 'auto',
+  paddingTop: '1rem',
 }));
 
 export const CatalogCardButtons = styled('div')(() => ({
   display: 'flex',
   flexWrap: 'wrap',
-  marginTop: '50px',
+  marginTop: 'auto',
   height: '100%',
   gap: '.5rem',
 }));

@@ -116,7 +116,7 @@ function MesheryPatternCard_({
 
   const formattedPatternFile = formatPatternFile(patternFile);
   return (
-    <div data-testid="meshery-pattern-card-item">
+    <div data-testid="meshery-pattern-card-item" style={{ height: '100%' }}>
       {fullScreen && (
         <YAMLDialog
           fullScreen={fullScreen}
@@ -144,7 +144,15 @@ function MesheryPatternCard_({
         data-testid="pattern-flip-card"
       >
         {/* FRONT PART */}
-        <div data-testid="pattern-card-front">
+        <div
+          data-testid="pattern-card-front"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            justifyContent: 'space-between',
+          }}
+        >
           <div>
             <div
               style={{ height: 'max', display: 'flex', justifyContent: 'space-between' }}

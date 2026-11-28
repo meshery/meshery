@@ -7,6 +7,10 @@ export const FlipCardWrapper = styled('div')(({ theme }) => ({
 }));
 
 export const InnerCard = styled('div')(({ theme }) => ({
+  height: '100%',
+  boxSizing: 'border-box',
+  display: 'flex',
+  flexDirection: 'column',
   padding: theme.spacing(2),
   borderRadius: theme.spacing(1),
   transformStyle: 'preserve-3d',
