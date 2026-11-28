@@ -2,6 +2,10 @@ import type { TimeWindow } from './types';
 
 export const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+// Grafana's default Prometheus data source scrape interval. The data source's
+// own setting is not available here, so assume the default Grafana assumes.
+const DEFAULT_SCRAPE_INTERVAL_SEC = 15;
+
 /**
  * resolveExpr substitutes Grafana global time macros and (optionally) dashboard
  * template variables into a PromQL expression so it can be executed directly.
@@ -17,7 +21,14 @@ export function resolveExpr(
   if (!expr) return expr;
   const step = Math.max(1, window.step);
   const rangeSec = Math.max(1, window.end - window.start);
-  const rateInterval = Math.max(step * 4, step + 15);
+  // Grafana defines $__rate_interval as
+  // max($__interval + scrape_interval, 4 * scrape_interval). The 4x factor
+  // applies to the scrape interval, not to the step, so wide ranges keep a
+  // window just over one step instead of four steps.
+  const rateInterval = Math.max(
+    step + DEFAULT_SCRAPE_INTERVAL_SEC,
+    4 * DEFAULT_SCRAPE_INTERVAL_SEC,
+  );
 
   let out = expr;
 
