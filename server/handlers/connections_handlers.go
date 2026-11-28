@@ -1129,10 +1129,6 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context is nil for connection %s", connectionID)
 		}
 
-		// One snapshot for the teardown and redeploy below: both steps must
-		// use the same context even if a credential refresh lands in between.
-		k8sCtx := machineCtx.K8sContextSnapshot()
-
 		ctrlHelper := machineCtx.MesheryCtrlsHelper
 		if ctrlHelper == nil {
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context does not contain reference to MesheryCtrlsHelper for connection %s", connectionID)
@@ -1150,26 +1146,32 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return existingMeshSyncMode, newMeshSyncMode, false, resolveErr
 		}
 
-		// disconnect. The cluster's Meshery Operator stays installed: it is
-		// cluster-scoped, and this connection's mode change does not speak for
-		// the others using it.
-		ctrlHelper.DetachFromCluster(ctx, machineCtx.OperatorTracker, k8sCtx)
-		// connect. The controllers configuration is refreshed and stashed
-		// before AddCtxControllerHandlers, which constructs the operator
-		// controller handler with the Helm chart version that document
-		// resolves to (operator.version) and captures it there. Resolving from
-		// the incoming payload's metadata rather than the helper's stale copy
-		// is what lets one save change the mode and the chart version at once.
-		{
+		// Serialize teardown and redeployment against connection setup.
+		connected, lockErr := machineCtx.WithSetupLock(func(k8sCtx models.K8sContext) error {
+			// Disconnect. The cluster's Meshery Operator stays installed.
+			ctrlHelper.DetachFromCluster(ctx, machineCtx.OperatorTracker, k8sCtx)
+
+			// Reconnect with the updated controllers configuration.
+			// Set it before AddCtxControllerHandlers because the operator
+			// controller captures the Helm chart version during construction.
 			ctrlHelper.SetControllersConfig(merged)
+
 			ctrlHelper.
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
 				AddCtxControllerHandlers(k8sCtx).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
 				DeployUndeployedOperators(machineCtx.OperatorTracker, k8sCtx).
 				AddMeshsyncDataHandlers(ctx, k8sCtx, userID, mesheryInstanceID, provider)
+
+			return nil
+		})
+		if lockErr != nil {
+			return existingMeshSyncMode, newMeshSyncMode, false, lockErr
 		}
 
+		if !connected {
+			return existingMeshSyncMode, newMeshSyncMode, false, nil
+		}
 	}
 
 	return existingMeshSyncMode, newMeshSyncMode, meshSyncModeChanged, nil

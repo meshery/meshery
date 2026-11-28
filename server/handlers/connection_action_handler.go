@@ -361,27 +361,33 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 	}
 
 	ctrlHelper := machineCtx.MesheryCtrlsHelper
-	// One snapshot for the whole reconcile: teardown and redeploy must agree
-	// on the same context even if a credential refresh lands mid-reconcile.
-	k8sCtx := machineCtx.K8sContextSnapshot()
 
-	// Tear down the previous MeshSync setup for this context. The cluster's
-	// Meshery Operator stays installed: it is cluster-scoped, and switching this
-	// connection to embedded mode does not speak for the others using it.
-	ctrlHelper.DetachFromCluster(ctx, machineCtx.OperatorTracker, k8sCtx)
+	connected, err := machineCtx.WithSetupLock(func(k8sCtx models.K8sContext) error {
+		// Tear down the previous MeshSync setup for this context.
+		// The cluster's Meshery Operator stays installed.
+		ctrlHelper.DetachFromCluster(ctx, machineCtx.OperatorTracker, k8sCtx)
 
-	// Deploy MeshSync for the new mode. The resolved configuration is stashed
-	// first: AddCtxControllerHandlers constructs the operator controller handler
-	// with the Helm chart version it resolves to (operator.version).
-	if merged != nil {
-		ctrlHelper.SetControllersConfig(merged)
+		// Deploy MeshSync for the new mode.
+		if merged != nil {
+			ctrlHelper.SetControllersConfig(merged)
+		}
+
+		ctrlHelper.
+			SetMeshsyncDeploymentMode(newMode).
+			AddCtxControllerHandlers(k8sCtx).
+			UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
+			DeployUndeployedOperators(machineCtx.OperatorTracker, k8sCtx).
+			AddMeshsyncDataHandlers(ctx, k8sCtx, userID, mesheryInstanceID, provider)
+
+		return nil
+	})
+	if err != nil {
+		return err
 	}
-	ctrlHelper.
-		SetMeshsyncDeploymentMode(newMode).
-		AddCtxControllerHandlers(k8sCtx).
-		UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-		DeployUndeployedOperators(machineCtx.OperatorTracker, k8sCtx).
-		AddMeshsyncDataHandlers(ctx, k8sCtx, userID, mesheryInstanceID, provider)
+
+	if !connected {
+		return nil
+	}
 
 	return nil
 }

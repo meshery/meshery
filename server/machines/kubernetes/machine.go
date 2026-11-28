@@ -185,6 +185,26 @@ func (m *MachineCtx) WithConnectedK8sContext(fn func(models.K8sContext) error) (
 	return true, nil
 }
 
+// WithSetupLock serializes an operation against Kubernetes connection setup.
+// The callback receives a consistent Kubernetes context snapshot and executes
+// while setupLock remains held.
+func (m *MachineCtx) WithSetupLock(fn func(models.K8sContext) error) (bool, error) {
+	m.setupLock.Lock()
+	defer m.setupLock.Unlock()
+
+	if m.disconnected {
+		return false, nil
+	}
+
+	if fn != nil {
+		if err := fn(m.K8sContext); err != nil {
+			return true, err
+		}
+	}
+
+	return true, nil
+}
+
 // K8sContextSnapshot returns a copy of K8sContext taken under setupLock, so a
 // reader outside the setup goroutine does not race a RefreshK8sContext write.
 // RefreshK8sContext replaces the whole struct (it never mutates the stored
