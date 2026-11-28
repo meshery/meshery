@@ -15,11 +15,15 @@
 package system
 
 import (
+	"fmt"
+
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+var logoutUsageMsg = "Usage: mesheryctl system logout [flags]\nRun 'mesheryctl system logout --help' to see detailed help message"
 
 var logoutCmd = &cobra.Command{
 	Use:   "logout",
@@ -28,7 +32,12 @@ var logoutCmd = &cobra.Command{
 Remove authentication for Meshery Server
 
 This command removes the authentication token from the user's filesystem`,
-	Args: cobra.NoArgs,
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s): %q\n\n%s", args, logoutUsageMsg))
+		}
+		return nil
+	},
 	Example: `
 // Logout current session with your Meshery Provider.
 mesheryctl system logout
