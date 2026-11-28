@@ -25,8 +25,8 @@ export interface PerformanceFormSetters {
   additionalOptions: string;
 }
 
-export const shouldDisablePerformanceTest = (url: string, additionalOptions: string) =>
-  additionalOptions.trim() ? !isValidJSON(additionalOptions) : !URLValidator(url);
+export const shouldDisablePerformanceTest = (url: string, additionalOptions: unknown) =>
+  additionalOptions ? !isValidJSON(additionalOptions) : !URLValidator(url);
 
 /**
  * createPerformanceFormChangeHandler builds the `handleChange(name)(event)`

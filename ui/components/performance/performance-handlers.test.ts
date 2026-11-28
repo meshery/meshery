@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createPerformanceFormChangeHandler } from './performance-handlers';
+import {
+  createPerformanceFormChangeHandler,
+  shouldDisablePerformanceTest,
+} from './performance-handlers';
 
 describe('performance-handlers: URL validation state', () => {
   const setProfileName = vi.fn();
@@ -149,5 +152,21 @@ describe('performance-handlers: URL validation state', () => {
     } finally {
       globalThis.FileReader = originalFileReader;
     }
+  });
+
+  it('keeps test disabled when a valid URL is entered with whitespace-only additionalOptions', () => {
+    const handleChange = buildHandler('   ');
+    handleChange('url')({ target: { value: 'https://example.com' } });
+
+    expect(setUrlError).toHaveBeenCalledWith(false);
+    expect(setDisableTest).toHaveBeenCalledWith(true);
+  });
+
+  it('disables test for whitespace-only and non-string additionalOptions without throwing', () => {
+    expect(shouldDisablePerformanceTest('https://example.com', '   ')).toBe(true);
+    expect(shouldDisablePerformanceTest('https://example.com', { invalid: true })).toBe(true);
+    expect(shouldDisablePerformanceTest('https://example.com', 123)).toBe(true);
+    expect(shouldDisablePerformanceTest('https://example.com', null)).toBe(false);
+    expect(shouldDisablePerformanceTest('not-a-url', null)).toBe(true);
   });
 });
