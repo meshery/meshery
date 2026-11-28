@@ -14,7 +14,7 @@ Manage workspaces under an organization
 
 ## Synopsis
 
-Create, list of workspaces under an organization
+Create, list, and view workspaces under an organization
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -27,7 +27,7 @@ mesheryctl workspace [flags]
 
 ## Examples
 
-To view a list workspaces
+List workspaces under a specific organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -37,11 +37,31 @@ mesheryctl workspace list --orgId [orgId]
 </div>
 </pre> 
 
-To create a workspace
+Create a workspace
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
 mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
+
+</div>
+</div>
+</pre> 
+
+View details of a specific workspace by ID
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl workspace view [workspace-id] --orgId [orgId]
+
+</div>
+</div>
+</pre> 
+
+View details of a specific workspace by name
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl workspace view [workspace-name] --orgId [orgId]
 
 </div>
 </div>
