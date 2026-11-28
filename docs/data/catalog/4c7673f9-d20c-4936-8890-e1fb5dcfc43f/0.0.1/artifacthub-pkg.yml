@@ -1,6 +1,6 @@
 version: 0.0.1
-name: votesecure-architecture
-displayName: VoteSecure-Architecture
+name: votesecure-k8s-architecture
+displayName: VoteSecure-K8s-Architecture
 createdAt: "2026-11-21T02:25:43Z"
 description: End-to-end Kubernetes deployment architecture for the VoteSecure full-stack voting application, featuring Ingress routing, an Nginx web tier, a FastAPI backend service, and a PostgreSQL database backed by a PersistentVolumeClaim.
 logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg

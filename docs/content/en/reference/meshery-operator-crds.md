@@ -11,6 +11,8 @@ Included in [Meshery Operator]({{< ref "concepts/architecture/operator/index.md"
 
 The CRD is used to configure [Broker]({{< ref "concepts/architecture/broker/index.md" >}}) instances in a cluster.
 
+The full CRD definition is [`meshery.io_brokers.yaml`](https://github.com/meshery/meshery-operator/blob/master/config/crd/bases/meshery.io_brokers.yaml) in the Meshery Operator repository.
+
 ## YAML synopsis
 
 The following section shows a summary of the structure of the Custom Resource and the required fields.
@@ -74,6 +76,8 @@ spec:
 ## MeshSync CRD
 
 The MeshSync CRD is used as a configuration tool the [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}). The CRD is used to control the replica count for MeshSync instances, [Broker]({{< ref "concepts/architecture/broker/index.md" >}}) configuration and the resources that MeshSync watches and listens to in a cluster.
+
+The full CRD definition is [`meshery.io_meshsyncs.yaml`](https://github.com/meshery/meshery-operator/blob/master/config/crd/bases/meshery.io_meshsyncs.yaml) in the Meshery Operator repository.
 
 ### YAML Synopsis
 

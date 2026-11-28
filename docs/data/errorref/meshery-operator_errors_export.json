@@ -1,0 +1,215 @@
+{
+  "errors_export": {
+    "component_name": "meshery-operator",
+    "component_type": "component",
+    "errors": {
+      "1001": {
+        "name": "ErrGetMeshsyncCode",
+        "code": "1001",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to get the MeshSync resource",
+        "probable_cause": "The MeshSync custom resource was deleted, or operator RBAC denies get/list/watch on meshsyncs",
+        "suggested_remediation": "Confirm the MeshSync CR exists and that the operator's ClusterRole grants get/list/watch on meshsyncs.meshery.io"
+      },
+      "1002": {
+        "name": "ErrCreateMeshsyncCode",
+        "code": "1002",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to create the MeshSync workload",
+        "probable_cause": "The MeshSync Deployment or its owned objects could not be created",
+        "suggested_remediation": "Check the operator RBAC for deployments and inspect the events in the MeshSync namespace"
+      },
+      "1003": {
+        "name": "ErrReconcileMeshsyncCode",
+        "code": "1003",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "MeshSync reconciliation failed",
+        "probable_cause": "Broker configuration, workload deployment, or the health check failed for MeshSync",
+        "suggested_remediation": "Check the MeshSync status conditions and the operator logs for the failing reconcile step"
+      },
+      "1004": {
+        "name": "ErrGetBrokerCode",
+        "code": "1004",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to get the Broker resource",
+        "probable_cause": "The Broker custom resource was deleted, or operator RBAC denies get/list/watch on brokers",
+        "suggested_remediation": "Confirm the Broker CR exists and that the operator's ClusterRole grants get/list/watch on brokers.meshery.io"
+      },
+      "1005": {
+        "name": "ErrCreateBrokerCode",
+        "code": "1005",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to create the Broker workload",
+        "probable_cause": "The NATS StatefulSet, Service, or ConfigMaps could not be created",
+        "suggested_remediation": "Check the operator RBAC and inspect the events on the owned objects in the broker namespace"
+      },
+      "1006": {
+        "name": "ErrReconcileBrokerCode",
+        "code": "1006",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Broker reconciliation failed",
+        "probable_cause": "The NATS StatefulSet, Service, or ConfigMaps could not be created or updated",
+        "suggested_remediation": "Check the operator RBAC and inspect the events on the owned objects in the broker namespace"
+      },
+      "1007": {
+        "name": "ErrReconcileCRCode",
+        "code": "1007",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Custom resource reconciliation failed",
+        "probable_cause": "A reconcile step failed for the custom resource",
+        "suggested_remediation": "Check the operator logs for the underlying cause; the controller will requeue and retry"
+      },
+      "1008": {
+        "name": "ErrDeleteMeshsyncCode",
+        "code": "1008",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to delete the MeshSync workload",
+        "probable_cause": "Owned MeshSync objects could not be deleted during finalization",
+        "suggested_remediation": "Inspect the MeshSync finalizers and confirm the operator RBAC grants delete on deployments"
+      },
+      "1009": {
+        "name": "ErrDeleteBrokerCode",
+        "code": "1009",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to delete the Broker workload",
+        "probable_cause": "Owned broker objects could not be deleted during finalization",
+        "suggested_remediation": "Inspect the Broker finalizers and confirm the operator RBAC grants delete on statefulsets, services, and configmaps"
+      },
+      "1010": {
+        "name": "ErrCheckHealthCode",
+        "code": "1010",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Workload health check failed",
+        "probable_cause": "The StatefulSet or Deployment has not reached its desired ReadyReplicas",
+        "suggested_remediation": "Inspect the pod status and events for the workload; the controller will requeue and retry"
+      },
+      "1011": {
+        "name": "ErrGetEndpointCode",
+        "code": "1011",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to derive the broker endpoint",
+        "probable_cause": "The broker Service has no reachable internal or external address yet",
+        "suggested_remediation": "Verify the broker Service exists and has assigned ports and an address; LoadBalancer addresses may still be pending"
+      },
+      "1012": {
+        "name": "ErrUpdateResourceCode",
+        "code": "1012",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to update the resource",
+        "probable_cause": "A status patch or resource update conflicted or was rejected by the API server",
+        "suggested_remediation": "Check for concurrent writers and confirm the operator RBAC grants update on the resource and its status; the controller will retry"
+      },
+      "1013": {
+        "name": "ErrGettingBrokerResourceCode",
+        "code": "1013",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to get a broker-owned resource",
+        "probable_cause": "The broker StatefulSet, Service, or ConfigMap lookup failed",
+        "suggested_remediation": "Check the operator RBAC and confirm the resource exists in the broker namespace"
+      },
+      "1014": {
+        "name": "ErrBrokerReplicasNotReadyCode",
+        "code": "1014",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Broker replicas are not ready",
+        "probable_cause": "The NATS StatefulSet has not reached its desired ReadyReplicas",
+        "suggested_remediation": "Inspect the StatefulSet pod status and events; the controller will requeue and retry"
+      },
+      "1015": {
+        "name": "ErrBrokerConditionFalseCode",
+        "code": "1015",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "A broker readiness condition is false",
+        "probable_cause": "A required status condition on the broker workload reports False",
+        "suggested_remediation": "Inspect the broker status conditions for the reported reason"
+      },
+      "1016": {
+        "name": "ErrGettingBrokerEndpointCode",
+        "code": "1016",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to get the broker endpoint",
+        "probable_cause": "The broker Service is not yet reachable or has no assigned address",
+        "suggested_remediation": "Verify the broker Service and its ports; a pending LoadBalancer address resolves on a later reconcile"
+      },
+      "1017": {
+        "name": "ErrMarshalCode",
+        "code": "1017",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to marshal the resource",
+        "probable_cause": "The custom resource could not be serialized for a status patch",
+        "suggested_remediation": "This indicates a defect in the status builder; please report it with the operator logs"
+      },
+      "1018": {
+        "name": "ErrGettingMeshsyncResourceCode",
+        "code": "1018",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to get a MeshSync-owned resource",
+        "probable_cause": "The MeshSync Deployment lookup failed",
+        "suggested_remediation": "Check the operator RBAC and confirm the Deployment exists in the MeshSync namespace"
+      },
+      "1019": {
+        "name": "ErrMeshsyncReplicasNotReadyCode",
+        "code": "1019",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "MeshSync replicas are not ready",
+        "probable_cause": "The MeshSync Deployment has not reached its desired ReadyReplicas",
+        "suggested_remediation": "Inspect the Deployment pod status and events; the controller will requeue and retry"
+      },
+      "1020": {
+        "name": "ErrMeshsyncConditionFalseCode",
+        "code": "1020",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "A MeshSync readiness condition is false",
+        "probable_cause": "A required status condition on the MeshSync workload reports False",
+        "suggested_remediation": "Inspect the MeshSync status conditions for the reported reason"
+      },
+      "1021": {
+        "name": "ErrGettingMeshsyncEndpointCode",
+        "code": "1021",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to get the MeshSync broker endpoint",
+        "probable_cause": "The broker referenced by the MeshSync spec has no resolvable endpoint",
+        "suggested_remediation": "Verify the native broker CR or the custom broker URL configured in the MeshSync spec"
+      },
+      "1022": {
+        "name": "ErrCleanupBrokerCode",
+        "code": "1022",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to clean up obsolete Broker resources",
+        "probable_cause": "The operator could not inspect or delete obsolete broker workloads and services during an upgrade",
+        "suggested_remediation": "Inspect the Broker Cleanup condition and operator logs, and confirm RBAC permits listing MeshSync deployments and deleting broker StatefulSets and Services"
+      },
+      "1024": {
+        "name": "ErrInvalidServiceAccountNameCode",
+        "code": "1024",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid MeshSync ServiceAccount name",
+        "probable_cause": "The MESHSYNC_SERVICE_ACCOUNT environment variable on the meshery-operator Deployment is not a valid Kubernetes ServiceAccount name (a DNS-1123 subdomain)",
+        "suggested_remediation": "Set MESHSYNC_SERVICE_ACCOUNT to the ServiceAccount MeshSync should run under (meshery-meshsync for the meshery-operator chart and config/default), or unset it to use the operator's own ServiceAccount"
+      }
+    }
+  }
+}
