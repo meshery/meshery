@@ -71,8 +71,12 @@ func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page,
 		query = query.Where("(lower(meshery_filters.name) like ?)", like)
 	}
 
-	query.Count(&count)
-	Paginate(uint(page), uint(pageSize))(query).Find(&filters)
+	if err := query.Count(&count).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
+	if err := Paginate(uint(page), uint(pageSize))(query).Find(&filters).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
 
 	for _, f := range filters {
 		stampLocalProviderFilterOwner(f)
@@ -85,7 +89,7 @@ func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page,
 		Filters:    filters,
 	}
 
-	return marshalMesheryFilterPage(mesheryFilterPage), nil
+	return marshalMesheryFilterPage(mesheryFilterPage)
 }
 
 // GetMesheryCatalogFilters returns all of the published filters
@@ -133,13 +137,16 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, sear
 	err = query.Model(&MesheryFilter{}).Count(&count).Error
 
 	if err != nil {
-		return nil, err
+		return nil, ErrDBRead(err)
 	}
 
 	if pgSize != 0 {
-		Paginate(uint(pg), uint(pgSize))(query).Find(&filters)
+		err = Paginate(uint(pg), uint(pgSize))(query).Find(&filters).Error
 	} else {
-		query.Find(&filters)
+		err = query.Find(&filters).Error
+	}
+	if err != nil {
+		return nil, ErrDBRead(err)
 	}
 
 	response := FiltersAPIResponse{
@@ -149,7 +156,10 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, sear
 		Filters:    filters,
 	}
 
-	marshalledResponse, _ := json.Marshal(response)
+	marshalledResponse, err := json.Marshal(response)
+	if err != nil {
+		return nil, ErrMarshal(err, "filter catalog page")
+	}
 	return marshalledResponse, nil
 }
 
@@ -355,10 +365,13 @@ func (mfp *MesheryFilterPersister) GetMesheryFilterFile(id core.Uuid) ([]byte, e
 	return []byte(mesheryFilter.FilterFile), nil
 }
 
-func marshalMesheryFilterPage(mfp *MesheryFilterPage) []byte {
-	res, _ := json.Marshal(mfp)
+func marshalMesheryFilterPage(mfp *MesheryFilterPage) ([]byte, error) {
+	res, err := json.Marshal(mfp)
+	if err != nil {
+		return nil, ErrMarshal(err, "filter page")
+	}
 
-	return res
+	return res, nil
 }
 
 func marshalMesheryFilter(mf *MesheryFilter) []byte {

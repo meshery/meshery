@@ -85,8 +85,12 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 		query = query.Where("(lower(meshery_patterns.name) like ?)", like)
 	}
 
-	query.Count(&count)
-	Paginate(uint(page), uint(pageSize))(query).Find(&patterns)
+	if err := query.Count(&count).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
+	if err := Paginate(uint(page), uint(pageSize))(query).Find(&patterns).Error; err != nil {
+		return nil, ErrDBRead(err)
+	}
 
 	for _, p := range patterns {
 		stampLocalProviderOwner(p)
@@ -99,7 +103,7 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 		Patterns:   patterns,
 	}
 
-	return marshalMesheryPatternPage(mesheryPatternPage), nil
+	return marshalMesheryPatternPage(mesheryPatternPage)
 }
 
 // GetMesheryCatalogPatterns returns all of the published patterns
@@ -147,13 +151,16 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, se
 	err = query.Model(&MesheryPattern{}).Count(&count).Error
 
 	if err != nil {
-		return nil, err
+		return nil, ErrDBRead(err)
 	}
 
 	if pgSize != 0 {
-		Paginate(uint(pg), uint(pgSize))(query).Find(&patterns)
+		err = Paginate(uint(pg), uint(pgSize))(query).Find(&patterns).Error
 	} else {
-		query.Find(&patterns)
+		err = query.Find(&patterns).Error
+	}
+	if err != nil {
+		return nil, ErrDBRead(err)
 	}
 
 	response := PatternsAPIResponse{
@@ -163,7 +170,10 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, se
 		Patterns:   patterns,
 	}
 
-	marshalledResponse, _ := json.Marshal(response)
+	marshalledResponse, err := json.Marshal(response)
+	if err != nil {
+		return nil, ErrMarshal(err, "design catalog page")
+	}
 	return marshalledResponse, nil
 }
 
@@ -535,10 +545,13 @@ func (mpp *MesheryPatternPersister) GetMesheryPatternSource(id core.Uuid) ([]byt
 	return mesheryPattern.SourceContent, err
 }
 
-func marshalMesheryPatternPage(mpp *MesheryPatternPage) []byte {
-	res, _ := json.Marshal(mpp)
+func marshalMesheryPatternPage(mpp *MesheryPatternPage) ([]byte, error) {
+	res, err := json.Marshal(mpp)
+	if err != nil {
+		return nil, ErrMarshal(err, "design page")
+	}
 
-	return res
+	return res, nil
 }
 
 func marshalMesheryPattern(mp *MesheryPattern) []byte {
