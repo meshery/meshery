@@ -16,23 +16,54 @@ package system
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
 )
 
-// TestLogoutCmdArgs pins the argument validator of `system logout`:
-// the command takes no positional arguments, so any supplied argument
-// must be rejected before the logout handler runs.
 func TestLogoutCmdArgs(t *testing.T) {
-	if err := logoutCmd.Args(logoutCmd, []string{"unexpected-arg"}); err == nil {
-		t.Error("expected an error when passing a positional argument to 'system logout', got nil")
+	expectedUsage := "Usage: mesheryctl system logout [flags]\nRun 'mesheryctl system logout --help' to see detailed help message"
+
+	tests := []struct {
+		Name          string
+		Args          []string
+		ExpectError   bool
+		ExpectedError error
+	}{
+		{
+			Name:        "valid with no positional arguments",
+			Args:        []string{},
+			ExpectError: false,
+		},
+		{
+			Name:          "invalid with unexpected positional argument",
+			Args:          []string{"unexpected-arg"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s): %q\n\n%s", []string{"unexpected-arg"}, expectedUsage)),
+		},
+		{
+			Name:          "invalid with multiple unexpected positional arguments",
+			Args:          []string{"arg1", "arg2"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s): %q\n\n%s", []string{"arg1", "arg2"}, expectedUsage)),
+		},
 	}
-	if err := logoutCmd.Args(logoutCmd, []string{}); err != nil {
-		t.Errorf("expected no error when passing no arguments to 'system logout', got %v", err)
+
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			err := logoutCmd.Args(logoutCmd, tt.Args)
+			if tt.ExpectError {
+				assert.Error(t, err)
+				utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
 	}
 }
 
