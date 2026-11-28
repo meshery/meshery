@@ -46,10 +46,12 @@ mesheryctl model delete [model-name]
 
 		// Delete model by ID
 		if utils.IsUUID(modelArg) {
-			_, err := api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, modelArg))
+			resp, err := api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, modelArg))
 			if err != nil {
 				return ErrDeleteModel(err, modelArg)
 			}
+			defer utils.SafeClose(resp.Body)
+
 			utils.Log.Infof("Model with ID %s has been deleted", modelArg)
 			return nil
 		}
@@ -66,10 +68,12 @@ mesheryctl model delete [model-name]
 		}
 
 		// Delete the selected model by its UUID
-		_, err = api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, selectedModel.ID.String()))
+		resp, err := api.Delete(fmt.Sprintf("%s/%s", modelsApiPath, selectedModel.ID.String()))
 		if err != nil {
 			return ErrDeleteModel(err, modelArg)
 		}
+		defer utils.SafeClose(resp.Body)
+
 		utils.Log.Infof("Model '%s' (ID: %s) has been deleted", selectedModel.DisplayName, selectedModel.ID.String())
 
 		return nil

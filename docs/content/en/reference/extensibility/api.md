@@ -24,7 +24,7 @@ See [REST API Reference]({{< ref "reference/rest-apis/_index.md" >}}) Self-gener
 <!-- tab -->
 GraphQL API | fa fa-globe
 
-<p>Meshery Server's GraphQl API is available at <code>{hostname]:[port]/api/graphql/query</code>. A GraphQL request can be made as a POST request to the endpoint with the query as the payload. Meshery Server's GraphQL API can be used to perform three operations:</p>
+<p>Meshery Server's GraphQl API is available at <code>{hostname]:[port]/api/system/graphql/query</code>. A GraphQL request can be made as a POST request to the endpoint with the query as the payload. Meshery Server's GraphQL API can be used to perform three operations:</p>
 
 - Queries for data retrieval.
 - Mutations for creating, updating, and deleting data.
@@ -39,7 +39,7 @@ See [GraphQL API Reference]({{< ref "reference/graphql-apis.md" >}}) Self-genera
 
 ### Authentication
 
-Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected [Provider](#providers). Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication.
+Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected [Provider]({{< ref "reference/extensibility/providers/index.md" >}}). Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication.
 
 {{% alert color="dark" title="What are authentication tokens?" %}}
 Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, [Meshery CLI]({{< ref "reference/mesheryctl/_index.md" >}}) and [UI]({{< ref "reference/extensibility/api.md#how-to-get-your-token" >}}), or its two APIs: [REST]({{< ref "reference/rest-apis/_index.md" >}}) or [GraphQL]({{< ref "reference/graphql-apis.md" >}}). 

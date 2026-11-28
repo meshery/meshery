@@ -127,8 +127,11 @@ const EnvironmentConnections = ({ environment, connections, onAddConnection }) =
 
 const EnvironmentCard = ({ environment, onAddConnection }) => {
   const theme = useTheme();
+  // Without a page size the server returns only its first 10 connections, of
+  // any kind, and the Kubernetes ones are picked out of that page below.
   const { data, isLoading } = useGetEnvironmentConnectionsQuery({
     environmentId: environment.id,
+    pagesize: 'all',
   });
   const dispatch = useDispatch();
   const connections =
@@ -208,7 +211,12 @@ export const EnvironmentsEmptyState = ({ message, onButtonClick }) => {
 export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
   const theme = useTheme();
   const organization = useContext(DeploymentTargetContext).organization;
-  const { data, isLoading, isError } = useGetEnvironmentsQuery({ orgId: organization.id });
+  // Without a page size the server returns only its default first page of 10,
+  // which would hide every later environment as a deployment target.
+  const { data, isLoading, isError } = useGetEnvironmentsQuery({
+    orgId: organization.id,
+    pagesize: 'all',
+  });
   const environments = data?.environments || [];
   if (isLoading) {
     return <Loading />;

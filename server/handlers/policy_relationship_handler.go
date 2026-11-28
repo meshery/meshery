@@ -274,27 +274,89 @@ const defaultPolicyEvalTimeout = 3 * time.Minute
 
 var errEvalTimeout = errors.New("relationship policy evaluation timed out")
 
-// buildPolicyEvaluationEventMetadata builds the metadata map emitted on
-// the relationship-evaluation success event. Extracted into a named
-// function so the canonical camelCase keys (`historyTitle`, `trace`,
-// `evaluationResponse`, `evaluatedAt`) are pinned by a focused unit test
-// — see TestBuildPolicyEvaluationEventMetadata_UsesCanonicalCamelCaseKeys.
-// Drift here would silently re-introduce the snake_case keys that
-// production carried for 125,840 rows pre-flip.
-func buildPolicyEvaluationEventMetadata(resp pattern.EvaluationResponse) map[string]interface{} {
-	return map[string]interface{}{
-		"historyTitle":       fmt.Sprintf("%d changes made at version %s", len(resp.Actions), resp.Design.Version),
-		"trace":              resp.Trace,
-		"evaluationResponse": resp,
-		"evaluatedAt":        *resp.Timestamp,
+// relationshipChangeCounts classifies the relationship actions an evaluation
+// produced. The ops are the gopolicies action constants carried in
+// pattern.Action.Op:
+//
+//   - add_relationship    -> relationshipsAdded
+//   - delete_relationship -> relationshipsRemoved
+//   - update_relationship -> relationshipsUpdated
+//
+// Component ops (add_component, delete_component, update_component,
+// update_component_configuration, remove_component_configuration) are not
+// relationship changes and are not counted.
+func relationshipChangeCounts(actions []pattern.Action) (added, removed, updated int) {
+	for _, action := range actions {
+		switch action.Op {
+		case gopolicies.AddRelationshipOp:
+			added++
+		case gopolicies.DeleteRelationshipOp:
+			removed++
+		case gopolicies.UpdateRelationshipOp:
+			updated++
+		}
 	}
+	return added, removed, updated
 }
 
-func policyEvalTimeout() time.Duration {
-	if d := viper.GetDuration("POLICY_EVAL_TIMEOUT"); d > 0 {
-		return d
+// policyEvaluationStatusCompleted is the evaluationStatus of an evaluation
+// that returned a response. Failed or timed-out evaluations do not emit the
+// success event this status belongs to.
+const policyEvaluationStatusCompleted = "completed"
+
+// buildPolicyEvaluationEventMetadata builds the metadata map emitted on
+// the relationship-evaluation success event. It carries the design's
+// identity and a summary of the evaluation - never the evaluated design,
+// its trace or the raw evaluation response (#22764). Keys are camelCase
+// and pinned by TestBuildPolicyEvaluationEventMetadata_*.
+func buildPolicyEvaluationEventMetadata(resp pattern.EvaluationResponse, serverURL string, duration time.Duration) map[string]interface{} {
+	design := resp.Design
+	metadata := models.DesignEventIdentity(serverURL, design.ID, design.Name, string(design.Version))
+
+	added, removed, updated := relationshipChangeCounts(resp.Actions)
+	metadata[models.EventMetadataHistoryTitle] = fmt.Sprintf("%d changes made at version %s", len(resp.Actions), design.Version)
+	metadata["relationshipsAdded"] = added
+	metadata["relationshipsRemoved"] = removed
+	metadata["relationshipsUpdated"] = updated
+	metadata["evaluationStatus"] = policyEvaluationStatusCompleted
+	metadata["evaluationDurationMs"] = duration.Milliseconds()
+	if resp.Timestamp != nil {
+		metadata["evaluatedAt"] = *resp.Timestamp
 	}
-	return defaultPolicyEvalTimeout
+	return metadata
+}
+
+// parsePolicyEvalTimeout reads a POLICY_EVAL_TIMEOUT value as a Go duration
+// such as "90s" or "5m". An empty value means the default. A value that does
+// not parse, or is not positive, returns the default and an error saying why
+// it was ignored. That includes a bare number such as "300", which
+// viper.GetDuration would read as 300ns (#24330).
+func parsePolicyEvalTimeout(raw string) (time.Duration, error) {
+	if raw == "" {
+		return defaultPolicyEvalTimeout, nil
+	}
+	d, err := time.ParseDuration(raw)
+	if err != nil {
+		return defaultPolicyEvalTimeout, err
+	}
+	if d <= 0 {
+		return defaultPolicyEvalTimeout, fmt.Errorf("duration must be positive, got %q", raw)
+	}
+	return d, nil
+}
+
+// policyEvalTimeout returns the timeout for one relationship evaluation. An
+// invalid POLICY_EVAL_TIMEOUT falls back to the default and is logged once per
+// Handler (h.policyEvalTimeoutWarnOnce), not once per evaluation.
+func (h *Handler) policyEvalTimeout() time.Duration {
+	raw := viper.GetString("POLICY_EVAL_TIMEOUT")
+	d, err := parsePolicyEvalTimeout(raw)
+	if err != nil && h.log != nil {
+		h.policyEvalTimeoutWarnOnce.Do(func() {
+			h.log.Warnf("ignoring POLICY_EVAL_TIMEOUT=%q (%v); using the default %s. Set a Go duration such as 5m.", raw, err, defaultPolicyEvalTimeout)
+		})
+	}
+	return d
 }
 
 // EvaluateDesign evaluates the design based on the relationship policies.
@@ -312,19 +374,29 @@ func (h *Handler) EvaluateDesign(
 	// via a typed shallow copy and fold the hydrated fields back onto the
 	// v1beta1 design before the policy passes run.
 	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&relationshipPolicyEvalPayload.Design); bridgeErr == nil && bridged != nil {
-		if hydrateErrs := patternHelpers.HydratePattern(bridged, h.registryManager); len(hydrateErrs) > 0 {
-			h.log.Warnf("failed to hydrate pattern for evaluation: %v", hydrateErrs)
+		if h.registryManager != nil {
+			if hydrateErrs := patternHelpers.HydratePattern(bridged, h.registryManager); len(hydrateErrs) > 0 {
+				if h.log != nil {
+					h.log.Warnf("failed to hydrate pattern for evaluation: %v", hydrateErrs)
+				}
+			}
 		}
 		if roundtripped, rtErr := utils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
 			relationshipPolicyEvalPayload.Design = *roundtripped
 		} else if rtErr != nil {
-			h.log.Warnf("failed v1beta3→v1beta1 round-trip after Hydrate; evaluation will proceed against the pre-hydration design: %v", rtErr)
+			if h.log != nil {
+				h.log.Warnf("failed v1beta3→v1beta1 round-trip after Hydrate; evaluation will proceed against the pre-hydration design: %v", rtErr)
+			}
 		}
 	} else if bridgeErr != nil {
-		h.log.Warnf("failed to bridge pattern for evaluation: %v", bridgeErr)
+		if h.log != nil {
+			h.log.Warnf("failed to bridge pattern for evaluation: %v", bridgeErr)
+		}
 	}
 
-	defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
+	if h.log != nil {
+		defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
+	}
 
 	var lastEvaluationResponse pattern.EvaluationResponse
 	lastEvaluationResponse.Design = relationshipPolicyEvalPayload.Design
@@ -333,7 +405,7 @@ func (h *Handler) EvaluateDesign(
 
 	// Pre-fetch and convert registered relationships once, outside the re-evaluation loop.
 	var convertedRels []*relationship.RelationshipDefinition
-	if useGoEngine && h.GoEngine != nil {
+	if useGoEngine && h.GoEngine != nil && h.registryManager != nil {
 		registeredRels, _, _, relErr := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
 		if relErr != nil {
 			return lastEvaluationResponse, fmt.Errorf("failed to get relationships for Go engine: %w", relErr)
@@ -360,7 +432,9 @@ func (h *Handler) EvaluateDesign(
 		}
 
 		if err != nil {
-			h.log.Debug(err)
+			if h.log != nil {
+				h.log.Debug(err)
+			}
 			// log an event
 			return pattern.EvaluationResponse{}, err
 		}
@@ -386,11 +460,15 @@ func (h *Handler) EvaluateDesign(
 		mergeTraceUnique(&lastEvaluationResponse.Trace, &evaluationResponse.Trace)
 
 		if evalIterations == i+1 || doesntNeedReeval(evaluationResponse) {
-			h.log.Info("Evaluation completed in iteration ", i+1)
+			if h.log != nil {
+				h.log.Info("Evaluation completed in iteration ", i+1)
+			}
 			break
 		}
 		if i == (MAX_RE_EVALUATION_DEPTH - 1) {
-			h.log.Warnf("Evaluation depth limit of %d reached; returning partial result", MAX_RE_EVALUATION_DEPTH)
+			if h.log != nil {
+				h.log.Warnf("Evaluation depth limit of %d reached; returning partial result", MAX_RE_EVALUATION_DEPTH)
+			}
 			break
 		}
 
@@ -410,10 +488,14 @@ func (h *Handler) EvaluateDesign(
 		if roundtripped, rtErr := utils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
 			lastEvaluationResponse.Design = *roundtripped
 		} else if rtErr != nil {
-			h.log.Warnf("failed v1beta3→v1beta1 round-trip after Dehydrate; response will ship un-dehydrated: %v", rtErr)
+			if h.log != nil {
+				h.log.Warnf("failed v1beta3→v1beta1 round-trip after Dehydrate; response will ship un-dehydrated: %v", rtErr)
+			}
 		}
 	} else if bridgeErr != nil {
-		h.log.Warnf("failed to bridge pattern for dehydration: %v", bridgeErr)
+		if h.log != nil {
+			h.log.Warnf("failed to bridge pattern for dehydration: %v", bridgeErr)
+		}
 	}
 
 	return lastEvaluationResponse, nil
@@ -481,7 +563,11 @@ func processEvaluationResponse(reg *registry.RegistryManager, evalPayload patter
 		}
 
 		defaultCapabilities := []capability.Capability{} // only assign empty capabilities for component declarations
-		_component.Metadata.IsAnnotation = _c.Metadata.IsAnnotation
+		// Preserve authoritative classification from the component registry definition.
+		// Propagate annotation status only when explicitly marked on the synthesized component.
+		if _c.Metadata.IsAnnotation {
+			_component.Metadata.IsAnnotation = true
+		}
 		_component.Configuration = _c.Configuration
 		_component.Capabilities = &defaultCapabilities
 		if originalStyles != nil && originalStyles.Position != nil {
@@ -719,7 +805,9 @@ func runRelationshipEvaluation(
 		// so the full stack is logged here and only the panic value
 		// propagates to errCh / coalesced followers / the response body.
 		panicErr := fmt.Errorf("panic during relationship evaluation: %v", r)
-		log.Error(fmt.Errorf("%s\n%s", panicErr.Error(), debug.Stack()))
+		if log != nil {
+			log.Error(fmt.Errorf("%s\n%s", panicErr.Error(), debug.Stack()))
+		}
 		tracker.publish(designKey, evalResult{err: panicErr})
 		// Non-blocking send: if the leader's select already returned
 		// via ctx.Done() the receiver is gone and a blocking send
@@ -752,35 +840,75 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	user *models.User,
 	provider models.Provider,
 ) {
+	if user == nil {
+		writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if provider == nil {
+		if h.log != nil {
+			h.log.Error(ErrNilProvider())
+		}
+		writeMeshkitError(rw, ErrNilProvider(), http.StatusInternalServerError)
+		return
+	}
+
 	// Wall-clock timeout bounds the HTTP response; the eval goroutine
 	// may still run to completion in the background.
-	evalCtx, cancel := context.WithTimeout(r.Context(), policyEvalTimeout())
+	evalTimeout := h.policyEvalTimeout()
+	evalCtx, cancel := context.WithTimeout(r.Context(), evalTimeout)
 	defer cancel()
 
 	token, _ := evalCtx.Value(models.TokenCtxKey).(string)
 
-	userUUID := user.ID
 	defer func() {
 		_ = r.Body.Close()
 	}()
 
-	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromOwner(userUUID).WithCategory("relationship").WithAction("evaluation")
-
-	body, err := io.ReadAll(r.Body)
+	const maxPolicyPayloadSize = 4 << 20 // 4MB
+	body, err := io.ReadAll(http.MaxBytesReader(rw, r.Body, maxPolicyPayloadSize))
 	if err != nil {
-		h.log.Error(ErrRequestBody(err))
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			if h.log != nil {
+				h.log.Error(ErrRequestBody(err))
+			}
+			writeMeshkitError(rw, ErrRequestBody(err), http.StatusRequestEntityTooLarge)
+			return
+		}
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
+	if len(body) == 0 {
+		err := fmt.Errorf("request body is empty")
+		if h.log != nil {
+			h.log.Error(ErrRequestBody(err))
+		}
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
 	relationshipPolicyEvalPayload := pattern.EvaluationRequest{}
 	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
-
 	if err != nil {
-		h.log.Error(ErrDecoding(err, "design file"))
+		if h.log != nil {
+			h.log.Error(ErrDecoding(err, "design file"))
+		}
 		writeMeshkitError(rw, ErrDecoding(err, "design file"), http.StatusBadRequest)
 		return
 	}
+
+	userUUID := user.ID
+	var systemID legacycoremodel.Uuid
+	if h.SystemID != nil {
+		systemID = *h.SystemID
+	}
+
+	eventBuilder := events.NewEvent().FromSystem(systemID).FromOwner(userUUID).WithCategory("relationship").WithAction("evaluation")
+
 	// decode the pattern file
 	patternUUID := relationshipPolicyEvalPayload.Design.ID
 	eventBuilder.ActedUpon(patternUUID)
@@ -790,17 +918,20 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	leader, waitCh := h.evalTracker.acquire(designKey)
 
 	if !leader {
-		h.log.Debug("coalescing relationship evaluation request for design ", designKey)
+		if h.log != nil {
+			h.log.Debug("coalescing relationship evaluation request for design ", designKey)
+		}
 		select {
 		case result := <-waitCh:
 			h.writeEvaluationResult(rw, result)
 			return
 		case <-evalCtx.Done():
-			h.writeEvalCtxError(rw, evalCtx)
+			h.writeEvalCtxError(rw, evalCtx, evalTimeout)
 			return
 		}
 	}
 
+	evalStart := time.Now()
 	evalRespChan := make(chan pattern.EvaluationResponse, 1)
 	evalErrChan := make(chan error, 1)
 
@@ -819,33 +950,47 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	select {
 
 	case err := <-evalErrChan:
-		h.log.Debug(err)
+		if h.log != nil {
+			h.log.Debug(err)
+		}
 		// log an event
 		writeMeshkitError(rw, ErrPolicyEval(err), http.StatusInternalServerError)
 		return
 
 	case evaluationResponse := <-evalRespChan:
-		// include trace instead of design file in the event
+		evalDuration := time.Since(evalStart)
+		// the event carries the design's identity and an evaluation summary, never the design itself
 		description := fmt.Sprintf("Relationship evaluation complete: %d changes in '%s' at version '%s'", len(evaluationResponse.Actions), evaluationResponse.Design.Name, evaluationResponse.Design.Version)
 		event := eventBuilder.WithDescription(description).
-			WithMetadata(buildPolicyEvaluationEventMetadata(evaluationResponse)).
+			WithMetadata(buildPolicyEvaluationEventMetadata(evaluationResponse, models.ServerURLFromRequest(r), evalDuration)).
 			WithSeverity(events.Informational).Build()
-		go func() {
-			_ = provider.PersistEvent(*event, token)
-		}()
+		if provider != nil && event != nil {
+			go func() {
+				defer func() {
+					if r := recover(); r != nil {
+						if h.log != nil {
+							h.log.Error(fmt.Errorf("recovered from panic in PersistEvent: %v", r))
+						}
+					}
+				}()
+				_, _ = provider.PersistEvent(*event, token)
+			}()
+		}
 
 		h.writeEvaluationResult(rw, evalResult{resp: evaluationResponse})
 	case <-evalCtx.Done():
 		// Unblock any followers waiting on this designID.
 		h.evalTracker.publish(designKey, evalResult{err: errEvalTimeout})
-		h.writeEvalCtxError(rw, evalCtx)
+		h.writeEvalCtxError(rw, evalCtx, evalTimeout)
 		return
 	}
 }
 
 func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResult) {
 	if result.err != nil {
-		h.log.Debug(result.err)
+		if h.log != nil {
+			h.log.Debug(result.err)
+		}
 		writeMeshkitError(rw, ErrPolicyEval(result.err), http.StatusInternalServerError)
 		return
 	}
@@ -854,7 +999,9 @@ func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResul
 	if bridged, bridgeErr := utils.PatternV1beta1ToV1beta3(&result.resp.Design); bridgeErr == nil && bridged != nil {
 		design = bridged
 	} else if bridgeErr != nil {
-		h.log.Warnf("failed to bridge evaluation response design for canonical wire encoding: %v", bridgeErr)
+		if h.log != nil {
+			h.log.Warnf("failed to bridge evaluation response design for canonical wire encoding: %v", bridgeErr)
+		}
 	}
 	response := struct {
 		Design         any              `json:"design"`
@@ -875,18 +1022,31 @@ func (h *Handler) writeEvaluationResult(rw http.ResponseWriter, result evalResul
 		// Response body has already started streaming via json.Encoder —
 		// a partial JSON envelope is on the wire and a fresh error
 		// response would corrupt it, so log only.
-		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
+		if h.log != nil {
+			h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
+		}
 	}
 }
 
-func (h *Handler) writeEvalCtxError(rw http.ResponseWriter, ctx context.Context) {
+// writeEvalCtxError reports why evalCtx ended. timeout is the value that
+// bounded the evaluation, so the log line and the 504 name the same timeout.
+func (h *Handler) writeEvalCtxError(rw http.ResponseWriter, ctx context.Context, timeout time.Duration) {
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
-		timeout := policyEvalTimeout()
-		h.log.Warnf("relationship policy evaluation exceeded %s", timeout)
+		if h.log != nil {
+			h.log.Warnf("relationship policy evaluation exceeded %s", timeout)
+		}
 		writeMeshkitError(rw, ErrPolicyEvalTimeout(timeout), http.StatusGatewayTimeout)
 		return
 	}
-	h.log.Info("Evaluation terminated: request context closed")
+	if ctx.Err() != nil {
+		if h.log != nil {
+			h.log.Debug(ctx.Err())
+		}
+		writeMeshkitError(rw, ErrPolicyEval(ctx.Err()), http.StatusInternalServerError)
+	}
+	if h.log != nil {
+		h.log.Info("Evaluation terminated: request context closed")
+	}
 }
 
 // Needs to be reinstiated inorder to load the policies based on the evaluation queries.
@@ -937,10 +1097,11 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 		greedy = true
 	}
 
-	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
+	entities, totalCount, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		Kind:      name,
 		ModelName: typ,
 		Greedy:    greedy,
+		Limit:     limit,
 		Offset:    offset,
 		OrderOn:   order,
 		Sort:      sort,
@@ -956,7 +1117,7 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	response := models.MeshmodelPoliciesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount: 0,
+		TotalCount: totalCount,
 		Policies:   entities,
 	}
 
@@ -980,9 +1141,10 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 		greedy = true
 	}
 
-	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
+	entities, totalCount, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		ModelName: typ,
 		Greedy:    greedy,
+		Limit:     limit,
 		Offset:    offset,
 		OrderOn:   order,
 		Sort:      sort,
@@ -999,7 +1161,7 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	response := models.MeshmodelPoliciesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount: 0,
+		TotalCount: totalCount,
 		Policies:   entities,
 	}
 

@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/viewoutput"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/spf13/cobra"
@@ -69,35 +69,32 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 			return nil
 		}
 
-		outputFormatterFactory := display.OutputFormatterFactory[*model.ModelDefinition]{}
-		outputFormatter, err := outputFormatterFactory.New(strings.ToLower(modelViewFlags.OutputFormat), selectedModel)
-		if err != nil {
-			return err
-		}
-
-		err = outputFormatter.WithOutput(cmd.OutOrStdout()).Display()
-		if err != nil {
-			return err
-		}
+		savePath := ""
 
 		if modelViewFlags.Save {
-			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[*model.ModelDefinition]{}
-			outputFormatterSaver, err := outputFormatterSaverFactory.New(modelViewFlags.OutputFormat, outputFormatter)
-			if err != nil {
-				return err
+			modelString := utils.SanitizeFileName(fmt.Sprintf("%v", selectedModel.DisplayName))
+			if modelString == "" {
+				modelString = utils.SanitizeFileName(selectedModel.Name)
+			}
+			if modelString == "" {
+				modelString = utils.SanitizeFileName(selectedModel.ID.String())
+			}
+			if modelString == "" {
+				modelString = "unknown"
 			}
 
-			modelString := strings.ReplaceAll(fmt.Sprintf("%v", selectedModel.DisplayName), " ", "_")
-			fileName := filepath.Join(utils.MesheryFolder, fmt.Sprintf("model_%s.%s", modelString, modelViewFlags.OutputFormat))
-
-			outputFormatterSaver = outputFormatterSaver.WithFilePath(fileName)
-			err = outputFormatterSaver.Save()
-			if err != nil {
-				return err
-			}
+			savePath = filepath.Join(
+				utils.MesheryFolder,
+				fmt.Sprintf("model_%s.%s", modelString, modelViewFlags.OutputFormat),
+			)
 		}
 
-		return nil
+		return viewoutput.HandleViewOutput(
+			strings.ToLower(modelViewFlags.OutputFormat),
+			selectedModel,
+			cmd.OutOrStdout(),
+			savePath,
+		)
 	},
 }
 

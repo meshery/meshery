@@ -2,7 +2,7 @@
   "id": "a7701717-2abc-4223-aab0-3eb09693561e",
   "name": "autoscaling-demo",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.2",
+  "version": "0.0.9",
   "components": [
     {
       "id": "30000000-0000-4000-8000-000000000001",
@@ -30,8 +30,8 @@
         "border-style": "dashed",
         "border-width": 2,
         "position": {
-          "x": 315.75,
-          "y": 367
+          "x": 953.5523805646853,
+          "y": 932.0097632540435
         },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",
@@ -87,8 +87,8 @@
       "styles": {
         "background-opacity": 1,
         "position": {
-          "x": 220,
-          "y": 280
+          "x": 857.8023805646852,
+          "y": 849.5097632540435
         },
         "primaryColor": "#326CE5",
         "shape": "rectangle",
@@ -187,8 +187,8 @@
       "styles": {
         "background-opacity": 1,
         "position": {
-          "x": 420,
-          "y": 280
+          "x": 1057.8023805646853,
+          "y": 849.5097632540435
         },
         "primaryColor": "#326CE5",
         "shape": "rectangle",
@@ -260,8 +260,8 @@
       "styles": {
         "background-opacity": 1,
         "position": {
-          "x": 320,
-          "y": 420
+          "x": 957.8023805646853,
+          "y": 989.5097632540435
         },
         "primaryColor": "#326CE5",
         "shape": "rectangle",

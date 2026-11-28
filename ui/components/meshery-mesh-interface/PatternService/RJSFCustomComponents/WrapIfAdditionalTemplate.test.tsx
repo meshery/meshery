@@ -16,13 +16,14 @@ vi.mock('@sistent/sistent', () => ({
       {children}
     </button>
   ),
-  Input: ({ defaultValue, onChange, disabled, id }: any) => (
+  Input: ({ defaultValue, onChange, disabled, id, onBlur }: any) => (
     <input
       data-testid="key-input"
       id={id}
       defaultValue={defaultValue}
       disabled={!!disabled}
       onChange={onChange}
+      onBlur={onBlur}
     />
   ),
   InputLabel: ({ children }: any) => <label>{children}</label>,
@@ -40,8 +41,8 @@ describe('WrapIfAdditionalTemplate', () => {
         classNames="classy"
         id="id1"
         label="key1"
-        onDropPropertyClick={() => vi.fn()}
-        onKeyChange={vi.fn()}
+        onRemoveProperty={vi.fn()}
+        onKeyRenameBlur={vi.fn()}
         schema={{}}
       />,
     );
@@ -50,21 +51,21 @@ describe('WrapIfAdditionalTemplate', () => {
   });
 
   it('renders a key editor and delete button when the schema has the additional flag', () => {
-    const onDrop = vi.fn();
+    const onRemoveProperty = vi.fn();
     render(
       <WrapIfAdditionalTemplate
         children={<div>child</div>}
         classNames="cls"
         id="id1"
         label="key1"
-        onDropPropertyClick={(label: string) => () => onDrop(label)}
-        onKeyChange={vi.fn()}
+        onRemoveProperty={onRemoveProperty}
+        onKeyRenameBlur={vi.fn()}
         schema={{ __ADDITIONAL_PROPERTY__: true }}
       />,
     );
     expect(screen.getByTestId('key-input')).toBeInTheDocument();
     fireEvent.click(screen.getByTestId('delete-btn'));
-    expect(onDrop).toHaveBeenCalledWith('key1');
+    expect(onRemoveProperty).toHaveBeenCalledTimes(1);
   });
 
   it('paints the delete icon with the theme icon colour', () => {
@@ -74,8 +75,8 @@ describe('WrapIfAdditionalTemplate', () => {
         classNames="cls"
         id="id1"
         label="key1"
-        onDropPropertyClick={() => vi.fn()}
-        onKeyChange={vi.fn()}
+        onRemoveProperty={vi.fn()}
+        onKeyRenameBlur={vi.fn()}
         schema={{ __ADDITIONAL_PROPERTY__: true }}
       />,
     );
@@ -89,29 +90,32 @@ describe('WrapIfAdditionalTemplate', () => {
         classNames="cls"
         id="id1"
         label="newKey-foo"
-        onDropPropertyClick={() => vi.fn()}
-        onKeyChange={vi.fn()}
+        onRemoveProperty={vi.fn()}
+        onKeyRenameBlur={vi.fn()}
         schema={{ __ADDITIONAL_PROPERTY__: true }}
       />,
     );
     expect(screen.getByTestId('key-input')).toHaveValue('');
   });
 
-  it('forwards key edits to onKeyChange', () => {
-    const onKeyChange = vi.fn();
+  it('forwards key edits to onKeyRenameBlur', () => {
+    const onKeyRenameBlur = vi.fn();
     render(
       <WrapIfAdditionalTemplate
         children={<div>child</div>}
         classNames="cls"
         id="id1"
         label="key1"
-        onDropPropertyClick={() => vi.fn()}
-        onKeyChange={onKeyChange}
+        onRemoveProperty={vi.fn()}
+        onKeyRenameBlur={onKeyRenameBlur}
         schema={{ __ADDITIONAL_PROPERTY__: true }}
       />,
     );
+
     fireEvent.change(screen.getByTestId('key-input'), { target: { value: 'newKey' } });
-    expect(onKeyChange).toHaveBeenCalledWith('newKey');
+    expect(onKeyRenameBlur).not.toHaveBeenCalled();
+    fireEvent.blur(screen.getByTestId('key-input'));
+    expect(onKeyRenameBlur.mock.calls[0][0].target.value).toBe('newKey');
   });
 
   it('disables the input and delete button when readonly is true', () => {
@@ -122,8 +126,8 @@ describe('WrapIfAdditionalTemplate', () => {
         id="id1"
         label="key1"
         readonly
-        onDropPropertyClick={() => vi.fn()}
-        onKeyChange={vi.fn()}
+        onRemoveProperty={vi.fn()}
+        onKeyRenameBlur={vi.fn()}
         schema={{ __ADDITIONAL_PROPERTY__: true }}
       />,
     );

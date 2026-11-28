@@ -61,9 +61,10 @@ mesheryctl perf profile test --view
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help       help for profile
-  -p, --page int   (optional) List next set of performance results with --page (default = 1) (default 1)
-      --view       (optional) View single performance profile with more info
+  -h, --help           help for profile
+  -p, --page int       (optional) List next set of performance results with --page (default = 1) (default 1)
+  -s, --pagesize int   (optional) Number of performance profiles to be displayed per page (default = 25) (default 25)
+      --view           (optional) View single performance profile with more info
 
 </div>
 </pre>
@@ -72,7 +73,7 @@ mesheryctl perf profile test --view
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string          path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string          path to config file (default "~/.meshery/config.yaml")
   -o, --output-format string   (optional) format to display in [json|yaml]
   -t, --token string           (required) Path to meshery auth config
   -v, --verbose                verbose output
@@ -83,4 +84,4 @@ mesheryctl perf profile test --view
 
 ## See Also
 
-Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

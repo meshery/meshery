@@ -13,7 +13,6 @@ import { modifyRJSFSchema } from '../../utils/utils';
 import { getMeshModels } from '../../api/meshmodel';
 import _ from 'lodash';
 import { useNotification } from '../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../lib/event-types';
 import {
   CustomColumnVisibilityControl,
   ResponsiveDataTable,
@@ -44,16 +43,17 @@ import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { isLocalProvider } from '@/utils/provider';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useSelector } from 'react-redux';
-import { updateProgress } from '@/store/slices/mesheryUi';
 import { CreateButton, ViewSwitchButton, BtnText } from './Filters.styled';
 import YAMLEditor from './YAMLEditor';
 import ImportModal from './ImportModal';
 import PublishModal from './PublishModal';
-import { ACTION_TYPES, COLUMN_VIEWS } from './Filters.constants';
+import { COLUMN_VIEWS } from './Filters.constants';
 import { buildFiltersColumns } from './Filters.columns';
 import { buildFiltersTableOptions } from './Filters.tableOptions';
 import {
   createDeleteFilter,
+  createErrorHandler,
+  createFetchSchemaData,
   createHandleClone,
   createHandleDownload,
   createHandleImportFilter,
@@ -157,14 +157,7 @@ function MesheryFilters() {
   const [updateFilterFile] = useUpdateFilterFileMutation();
   const [uploadFilterFile] = useUploadFilterFileMutation();
 
-  const handleError = (action: { error_msg: string }) => (error: Error | string) => {
-    updateProgress({ showProgress: false });
-    notify({
-      message: `${action.error_msg}: ${error}`,
-      event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
-    });
-  };
+  const handleError = createErrorHandler({ notify });
 
   const handleSetFilters = (filters: any[] | undefined) => {
     if (filters != undefined) {
@@ -301,9 +294,10 @@ function MesheryFilters() {
    * publish filter capability and setting the canPublishFilter state accordingly
    */
   useEffect(() => {
-    const fetchSchemaData = async () => {
-      try {
-        const { models } = await getMeshModels();
+    const fetchSchemaData = createFetchSchemaData({
+      getMeshModels,
+      handleError,
+      onModels: (models) => {
         const modelNames = _.uniq(models?.map((model) => model.displayName));
         modelNames.sort();
 
@@ -315,10 +309,8 @@ function MesheryFilters() {
         );
         setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
         setMeshModels(models);
-      } catch {
-        handleError(ACTION_TYPES.SCHEMA_FETCH);
-      }
-    };
+      },
+    });
 
     if (capabilitiesData) {
       // `capabilitiesData.capabilities` is the provider-declared feature list.

@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -35,21 +36,30 @@ var immutableAssetPrefixes = []string{
 //     are returned with "public, max-age=31536000, immutable". A new release ships
 //     new hashes (new URLs), so old entries simply fall out of use - no purge.
 //
-//   - Tier B - version-validated HTML: HTML documents live at stable URLs
+//   - Tier B - revalidated HTML: HTML documents live at stable URLs
 //     (/ -> index.html, <route>.html, /extension/[...component].html), so they
 //     must never be cached blindly. They are returned with "public, no-cache"
-//     plus a strong ETag set to the build/release version. "no-cache" means the
-//     edge/browser may store the response but must revalidate on every use; while
-//     the release is unchanged the origin answers If-None-Match with 304, and a
-//     new release changes BUILD -> changes the ETag -> the next revalidation
-//     returns 200 with fresh HTML. Browser caches cannot be purged, so HTML is
-//     never given a positive max-age.
+//     plus a strong ETag made of the build/release version and the file's
+//     modification time and size. "no-cache" means the edge/browser may store the
+//     response but must revalidate on every use; while the file is unchanged the
+//     origin answers If-None-Match with 304, and a new build writes new files ->
+//     changes the ETag -> the next revalidation returns 200 with fresh HTML.
+//     Browser caches cannot be purged, so HTML is never given a positive max-age.
+//
+//     BUILD alone cannot carry the ETag: every edge image is built with the
+//     latest stable tag as its version, and `make` builds use that tag too, so
+//     BUILD stays the same while the HTML changes. Replicas of one image share
+//     the files' mtime and size, so they still agree on the ETag.
 //
 // reqURL is the request URL AFTER reqBasePath has been stripped; filePath is the
-// resolved on-disk relative path (used only to detect HTML via its suffix).
+// resolved on-disk relative path (used only to detect HTML via its suffix);
+// modTime and size describe the file that will be served.
 // It returns the Cache-Control value and the ETag value (already wrapped in the
 // HTTP strong-validator double-quote form, or "" when no validator applies).
-func uiCacheHeaders(reqURL, filePath string) (cacheControl, etag string) {
+// No ETag is set when BUILD is empty or main's "Not Set" default (any case), as
+// in a `go run` without -ldflags; http.ServeContent then validates with
+// Last-Modified instead.
+func uiCacheHeaders(reqURL, filePath string, modTime time.Time, size int64) (cacheControl, etag string) {
 	for _, prefix := range immutableAssetPrefixes {
 		if strings.HasPrefix(reqURL, prefix) {
 			// Tier A.
@@ -60,8 +70,8 @@ func uiCacheHeaders(reqURL, filePath string) (cacheControl, etag string) {
 	if strings.HasSuffix(filePath, ".html") {
 		// Tier B.
 		cacheControl = "public, no-cache"
-		if v := viper.GetString("BUILD"); v != "" && v != "Not set" {
-			etag = `"` + v + `"`
+		if v := viper.GetString("BUILD"); v != "" && !strings.EqualFold(v, "Not Set") {
+			etag = fmt.Sprintf(`"%s-%x-%x"`, v, modTime.UnixNano(), size)
 		}
 		return cacheControl, etag
 	}
@@ -139,9 +149,9 @@ func (h *Handler) ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, b
 	// http.ServeContent reads the ETag header to emit conditional 304 responses
 	// and then writes the body, so the headers must already be present on
 	// w.Header() at call time. See uiCacheHeaders for the two-tier (immutable
-	// assets vs. version-validated HTML) cache-busting scheme.
+	// assets vs. revalidated HTML) cache-busting scheme.
 	if stat, err := os.Stat(finalPath); err == nil && !stat.IsDir() {
-		if cacheControl, etag := uiCacheHeaders(reqURL, filePath.String()); cacheControl != "" {
+		if cacheControl, etag := uiCacheHeaders(reqURL, filePath.String(), stat.ModTime(), stat.Size()); cacheControl != "" {
 			w.Header().Set("Cache-Control", cacheControl)
 			if etag != "" {
 				w.Header().Set("ETag", etag)

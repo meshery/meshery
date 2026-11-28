@@ -2,7 +2,7 @@
   "id": "8ee7c57f-66bf-4b50-83d0-7960145b74e5",
   "name": "aws-infra",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "components": [
     {
       "id": "10000000-0000-4000-8000-000000000001",
@@ -28,8 +28,8 @@
         "background-opacity": 0,
         "body-text": "",
         "position": {
-          "x": 305.4243671781569,
-          "y": 94.78440703793837
+          "x": 294.6937719012776,
+          "y": 82.7515392671049
         },
         "primaryColor": "#8C4FFF",
         "shape": "rectangle",
@@ -86,8 +86,8 @@
       "styles": {
         "background-opacity": 0,
         "position": {
-          "x": 143.0383772069565,
-          "y": 229.10824032059523
+          "x": 132.30778193007723,
+          "y": 217.07537254976177
         },
         "primaryColor": "#ED7100",
         "shape": "rectangle",
@@ -144,8 +144,8 @@
       "styles": {
         "background-opacity": 0,
         "position": {
-          "x": 440.8568650628351,
-          "y": 215.28664616172034
+          "x": 430.1262697859558,
+          "y": 203.25377839088688
         },
         "primaryColor": "#ED7100",
         "shape": "rectangle",
@@ -202,8 +202,8 @@
       "styles": {
         "background-opacity": 0,
         "position": {
-          "x": 291.8131698050383,
-          "y": 352.6699241296667
+          "x": 281.082574528159,
+          "y": 340.6370563588332
         },
         "primaryColor": "#C925D1",
         "shape": "rectangle",
@@ -263,8 +263,8 @@
         "border-style": "dashed",
         "border-width": 2,
         "position": {
-          "x": 292.1976211348958,
-          "y": 232.72716558380253
+          "x": 281.46702585801654,
+          "y": 220.69429781296907
         },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",

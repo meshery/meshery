@@ -8,8 +8,10 @@ import {
   Paper,
   styled,
   Typography,
+  useHasPermission,
   useResourceCleanData,
 } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
 import { ALL_VIEW } from './resources/config';
 import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
 import { normalizeStaticImagePath } from '@/utils/fallback';
@@ -80,22 +82,29 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
     [getResourceCleanData, resource, router],
   );
 
+  const canViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
+
   // kind is a plain repeated query param (?kind=kubernetes) — not JSON-encoded.
-  const { data: connectionsData } = useGetConnectionsQuery({
-    page: 0,
-    pageSize: 100,
-    search: '',
-    order: '',
-    status: '',
-    kind: CoreConnectionKinds.kubernetes,
-  });
+  const { data: connectionsData } = useGetConnectionsQuery(
+    {
+      page: 0,
+      pageSize: 100,
+      search: '',
+      order: '',
+      status: '',
+      kind: CoreConnectionKinds.kubernetes,
+    },
+    {
+      skip: !canViewConnections || !resource,
+    },
+  );
 
   if (!resource) return null;
 
   const context = getK8sContextFromClusterId(resource.cluster_id, k8sConfig);
-  const connection = connectionsData?.connections?.find(
-    (conn) => conn.id === context?.connectionId,
-  );
+  const connection = canViewConnections
+    ? connectionsData?.connections?.find((conn) => conn.id === context?.connectionId)
+    : undefined;
   const connectionStatus = connection?.status || CONNECTION_STATES.DISCONNECTED;
   const iconSrc = normalizeStaticImagePath(resource.component_metadata?.styles?.svgColor);
 
@@ -126,9 +135,13 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
               <Typography variant="h6">{resource?.metadata?.name}</Typography>
             </HeaderLeft>
             <TooltipWrappedConnectionChip
-              title={context.name}
+              title={context?.name}
               width="100%"
-              handlePing={() => ping(context.name, context.server, context.connectionId)}
+              handlePing={
+                context?.connectionId
+                  ? () => ping(context?.name, context?.server, context?.connectionId)
+                  : undefined
+              }
               status={connectionStatus}
               iconSrc={'/static/img/integrations/kubernetes.svg'}
             />

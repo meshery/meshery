@@ -27,7 +27,7 @@ mesheryctl environment list [flags]
 
 ## Examples
 
-List all registered environment
+List all registered environments
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -37,7 +37,7 @@ mesheryctl environment list --orgId [orgId]
 </div>
 </pre> 
 
-List count of all registered environment
+List count of all registered environments
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -47,7 +47,7 @@ mesheryctl environment list --orgId [orgId] --count
 </div>
 </pre> 
 
-List all registered environment at a specific page
+List all registered environments at a specific page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -57,7 +57,7 @@ mesheryctl environment list --orgId [orgId] --page [page]
 </div>
 </pre> 
 
-List all registered environment with a specific page size
+List all registered environments with a specific page size
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
@@ -84,7 +84,7 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
@@ -92,4 +92,4 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 
 ## See Also
 
-Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.
+Go back to [command reference index]({{< ref "reference/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#documenting" >}}) for guidance.

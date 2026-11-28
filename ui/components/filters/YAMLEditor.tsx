@@ -19,6 +19,7 @@ import { Keys } from '@meshery/schemas/permissions';
 import TooltipIcon from './TooltipIcon';
 import { YmlDialogTitle, YmlDialogTitleText } from './Filters.styled';
 import type { YAMLEditorProps } from './Filters.types';
+import { getFilterConfig } from './filterConfig';
 
 function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
   const [fullScreen, setFullScreen] = useState(false);
@@ -35,16 +36,7 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
     },
   }));
 
-  let resourceData;
-  try {
-    resourceData = JSON.parse(filter.filter_resource);
-  } catch (error) {
-    // Handling the error or provide a default value
-    console.error('Error parsing JSON:', error);
-    resourceData = {}; // Setting a default value if parsing fails
-  }
-
-  const config = resourceData?.settings?.config || '';
+  const config = getFilterConfig(filter);
   const [yaml, setYaml] = useState(config);
 
   return (

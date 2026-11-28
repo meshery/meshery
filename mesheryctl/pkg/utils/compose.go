@@ -215,17 +215,27 @@ func (l *LogConsumer) Register(containerName string) {
 	// Skip registration
 }
 
-// Logs streams logs from containers (equivalent to docker-compose logs -f)
-func (c *ComposeClient) Logs(ctx context.Context, composefile string, follow bool, out io.Writer) error {
+// Logs streams logs from containers (equivalent to docker-compose logs -f).
+// When services are given, only their logs are streamed, and a service that
+// isn't in the project is an error.
+func (c *ComposeClient) Logs(ctx context.Context, composefile string, follow bool, out io.Writer, services ...string) error {
 	project, err := LoadProject(ctx, composefile)
 	if err != nil {
 		return err
 	}
 
+	for _, service := range services {
+		if _, ok := project.Services[service]; !ok {
+			return fmt.Errorf("service %q specified, does not exist in the Meshery deployment; available services: %s",
+				service, strings.Join(project.ServiceNames(), ", "))
+		}
+	}
+
 	logConsumer := &LogConsumer{Out: out}
 
 	logOptions := api.LogOptions{
-		Follow: follow,
+		Follow:   follow,
+		Services: services,
 	}
 
 	return c.service.Logs(ctx, project.Name, logConsumer, logOptions)

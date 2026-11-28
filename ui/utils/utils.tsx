@@ -31,7 +31,7 @@ export function isEmptyObj(obj) {
  * @returns {Boolean} if arr is empty
  */
 export function isEmptyArr(arr) {
-  return arr && arr.length === 0;
+  return Array.isArray(arr) && arr.length === 0;
 }
 
 /**
@@ -43,13 +43,18 @@ export function isEmptyArr(arr) {
  * @returns
  */
 export function isEqualArr(arr1, arr2, orderMatters = true) {
-  if (arr1 === arr2) return true;
   if (arr1 == null || arr2 == null) return false;
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) return false;
+  if (arr1 === arr2) return true;
   if (arr1.length !== arr2.length) return false;
 
   if (!orderMatters) {
-    arr1.sort();
-    arr2.sort();
+    const sorted1 = [...arr1].sort();
+    const sorted2 = [...arr2].sort();
+    for (var i = 0; i < sorted1.length; ++i) {
+      if (sorted1[i] !== sorted2[i]) return false;
+    }
+    return true;
   }
 
   for (var i = 0; i < arr1.length; ++i) {
@@ -225,7 +230,9 @@ export function getSharableCommonHostAndprotocolLink(sharedResource) {
   if (sharedResource?.patternFile) {
     return `${webAddr}?mode=${DESIGN}&${DESIGN}=${sharedResource.id}`;
   }
-  if (sharedResource?.filter_resource) {
+  // A filter carries filterResource even when it was saved without a
+  // configuration, so test for the field rather than its value.
+  if (typeof sharedResource?.filterResource === 'string') {
     return `${webAddr}?${FILTER}=${sharedResource.id}`;
   }
 
@@ -242,7 +249,13 @@ export function getSharableCommonHostAndprotocolLink(sharedResource) {
  */
 
 export const getColumnValue = (rowData, columnName, columns) => {
-  const columnIndex = columns.findIndex((column) => column.name === columnName);
+  if (!Array.isArray(columns) || !rowData) {
+    return undefined;
+  }
+  const columnIndex = columns.findIndex((column) => column?.name === columnName);
+  if (columnIndex === -1) {
+    return undefined;
+  }
   return rowData[columnIndex];
 };
 
@@ -254,6 +267,9 @@ export const getColumnValue = (rowData, columnName, columns) => {
  */
 
 export const getVisibilityColums = (columns) => {
+  if (!Array.isArray(columns)) {
+    return [];
+  }
   return columns.filter((col) => col?.options?.display !== false);
 };
 
@@ -332,7 +348,10 @@ export const createScrollHandler = (scrollingView, setPage, scrollRef, buffer) =
  */
 
 export const camelcaseToSnakecase = (value) => {
-  return value?.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`);
+  if (typeof value !== 'string') {
+    return value === undefined ? undefined : '';
+  }
+  return value.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`);
 };
 
 export const formatToTitleCase = (value) => {
@@ -430,7 +449,10 @@ export const processDesign = (design = {}) => {
 };
 
 export const getComponentFromDesign = (design, componentId) => {
-  const component = design.components.find((component) => component.id === componentId);
+  if (!Array.isArray(design?.components) || !componentId) {
+    return undefined;
+  }
+  const component = design.components.find((component) => component?.id === componentId);
   return component;
 };
 
@@ -440,7 +462,7 @@ export const getComponentFromDesign = (design, componentId) => {
  */
 export const getDesignVersion = (design) => {
   if (design?.visibility === 'published') {
-    return design.catalog_data?.published_version;
+    return design.catalogData?.publishedVersion || design.catalog_data?.published_version;
   } else {
     try {
       const parsedYaml = jsYaml.load(design.patternFile);
@@ -451,14 +473,23 @@ export const getDesignVersion = (design) => {
   }
 };
 export const urlEncodeArrayParam = (key, array) => {
+  if (!array || !key) {
+    return '';
+  }
   if (typeof array === 'string') {
     return array;
   }
-  return array.map((item) => `${key}=${item}`).join('&');
+  if (!Array.isArray(array)) {
+    return '';
+  }
+  return array.map((item) => `${encodeURIComponent(key)}=${encodeURIComponent(item)}`).join('&');
 };
 
 export const urlEncodeParams = (params) => {
   const urlSearchParams = new URLSearchParams();
+  if (!params || typeof params !== 'object') {
+    return '';
+  }
 
   Object.entries(params).forEach(([key, value]) => {
     if (_.isNil(value)) {

@@ -48,6 +48,11 @@ jobs:
             exit 1
           fi
           echo '{ "errors_export": "" }' | jq --slurpfile export ./server/helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ./docs/data/errorref/meshery-server_errors_export.json
+          # The nested export (an ErrorReferenceIndex) carries each probable cause with its own remediations.
+          # The docs build prefers it over the flat export; errorutil releases before it existed write none.
+          if [ -f ./server/helpers/errorutil_errors_index.json ]; then
+            jq . ./server/helpers/errorutil_errors_index.json > ./docs/data/errorindex/meshery-server_errors_index.json
+          fi
 
       - name: Run Utility For Mesheryctl
         run: |
@@ -58,6 +63,9 @@ jobs:
             exit 1
           fi
           echo '{ "errors_export": "" }' | jq --slurpfile export ../mesheryctl/helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ../docs/data/errorref/mesheryctl_errors_export.json
+          if [ -f ./helpers/errorutil_errors_index.json ]; then
+            jq . ./helpers/errorutil_errors_index.json > ../docs/data/errorindex/mesheryctl_errors_index.json
+          fi
 
       - name: Pull changes from remote
         if: ${{ github.event_name != 'pull_request' }}  # Skip for pull requests

@@ -3,7 +3,7 @@ package stages
 import (
 	"fmt"
 	"regexp"
-	"strings"
+	"strconv"
 
 	"github.com/meshery/meshery/server/models/pattern/planner"
 	"github.com/meshery/meshery/server/models/pattern/utils"
@@ -13,9 +13,29 @@ import (
 	"github.com/pkg/errors"
 )
 
-const FillerPattern = `\$\(#ref\..+\)`
+const FillerPattern = `\$\(#ref\.([^)]+)\)`
 
 var FillerRegex = regexp.MustCompile(FillerPattern)
+
+// formatScalar formats scalar values (strings, integers, floats, booleans) into strings.
+func formatScalar(val interface{}) string {
+	switch v := val.(type) {
+	case string:
+		return v
+	case int, int8, int16, int32, int64:
+		return fmt.Sprintf("%d", v)
+	case uint, uint8, uint16, uint32, uint64:
+		return fmt.Sprintf("%d", v)
+	case float32:
+		return strconv.FormatFloat(float64(v), 'f', -1, 32)
+	case float64:
+		return strconv.FormatFloat(v, 'f', -1, 64)
+	case bool:
+		return strconv.FormatBool(v)
+	default:
+		return fmt.Sprintf("%v", v)
+	}
+}
 
 // Filler - filler stage processes the pattern to subsitute Pattern
 func Filler(skipPrintLogs bool) ChainStageFunction {
@@ -37,6 +57,7 @@ func Filler(skipPrintLogs bool) ChainStageFunction {
 	}
 }
 
+// fill resolves references across all components within the design pattern file.
 func fill(p *pattern.PatternFile, flattenedComponent map[string]interface{}) error {
 	var errs []error
 	for _, component := range p.Components {
@@ -90,12 +111,7 @@ func fillDependsOn(designName string, component *component.ComponentDefinition, 
 			return fmt.Errorf("failed to resolve reference \"%s\": %s", "dependsOn", k)
 		}
 
-		cval, err := mutils.Cast[string](val)
-		if err != nil {
-			return errors.Wrapf(err, "failed to resolve reference \"%s\": %s", "dependsOn", val)
-		}
-
-		dependsOn[i] = cval
+		dependsOn[i] = formatScalar(val)
 	}
 
 	component.Metadata.AdditionalProperties["dependsOn"] = dependsOn
@@ -103,30 +119,30 @@ func fillDependsOn(designName string, component *component.ComponentDefinition, 
 	return nil
 }
 
+// fillVersion resolves references declared in a component's model or component version.
 func fillVersion(component *component.ComponentDefinition, flattenedPattern map[string]interface{}) error {
-	// Refernce to a version?
-	// So that if user chooses a comp def of other comps but all other comps in design refer to some other version,
-	// So instead of choosing new comp of correct version, user can quickly point to particular version?
-	// But it can be that the version are not compatible??
-	versionKey, ok := matchPattern(component.Model.Model.Version)
-	if !ok {
-		return nil
+	if versionKey, ok := matchPattern(component.Model.Model.Version); ok {
+		val, found := flattenedPattern[versionKey]
+		if !found || mutils.IsInterfaceNil(val) {
+			return fmt.Errorf("failed to resolve reference \"%s\": %s", "version", versionKey)
+		}
+
+		component.Model.Model.Version = formatScalar(val)
 	}
 
-	val, found := flattenedPattern[versionKey]
-	if !found || mutils.IsInterfaceNil(val) {
-		return fmt.Errorf("failed to resolve reference \"%s\": %s", "version", versionKey)
+	if compVerKey, ok := matchPattern(component.Component.Version); ok {
+		val, found := flattenedPattern[compVerKey]
+		if !found || mutils.IsInterfaceNil(val) {
+			return fmt.Errorf("failed to resolve reference \"%s\": %s", "version", compVerKey)
+		}
+
+		component.Component.Version = formatScalar(val)
 	}
 
-	vVal, err := mutils.Cast[string](val)
-	if err != nil {
-		return errors.Wrapf(err, "failed to resolve reference \"%s\": %s", "version", versionKey)
-	}
-
-	component.Model.Model.Version = vVal
 	return nil
 }
 
+// fillNamespace resolves namespace references declared within a component's metadata configuration.
 func fillNamespace(component *component.ComponentDefinition, flattenedPattern map[string]interface{}) error {
 	_metadata, ok := component.Configuration["metadata"]
 	if !ok || mutils.IsInterfaceNil(_metadata) {
@@ -134,7 +150,6 @@ func fillNamespace(component *component.ComponentDefinition, flattenedPattern ma
 	}
 
 	configurationMetadata, err := mutils.Cast[map[string]interface{}](_metadata)
-	fmt.Println("configurationMetadata: ", configurationMetadata, err)
 	if err != nil {
 		return errors.Wrapf(err, "failed to resolve namespace reference for \"%s: %s\"", component.DisplayName, component.Component.Kind)
 	}
@@ -159,16 +174,12 @@ func fillNamespace(component *component.ComponentDefinition, flattenedPattern ma
 		return fmt.Errorf("invalid reference query: %s", nsKey)
 	}
 
-	nsVal, err := mutils.Cast[string](val)
-	if err != nil {
-		return errors.Wrapf(err, "failed to resolve reference \"%s\": %s", "namespace", nsKey)
-	}
-
-	configurationMetadata["namespace"] = nsVal
+	configurationMetadata["namespace"] = formatScalar(val)
 	component.Configuration["metadata"] = configurationMetadata
 	return nil
 }
 
+// fillType resolves references declared in a component's kind definition.
 func fillType(component *component.ComponentDefinition, flattenedPattern map[string]interface{}) error {
 	kindKey, ok := matchPattern(component.Component.Kind)
 	if !ok {
@@ -180,22 +191,48 @@ func fillType(component *component.ComponentDefinition, flattenedPattern map[str
 		return errors.Wrapf(fmt.Errorf("failed to resolve reference"), "failed to resolve \"kind\" reference for \"%s: %s\"", kindKey, component.Component.Kind)
 	}
 
-	kindVal, err := mutils.Cast[string](val)
-	if err != nil {
-		return errors.Wrapf(err, "failed to resolved \"kind\" reference: %s", kindKey)
-	}
-
-	component.Component.Kind = kindVal
+	component.Component.Kind = formatScalar(val)
 	return nil
 }
 
+// fillConfiguration resolves references within a component's configuration dictionary.
 func fillConfiguration(component *component.ComponentDefinition, flattenedPattern map[string]interface{}) (err error) {
 	component.Configuration, err = fillMap(component.Configuration, flattenedPattern)
 	return
 }
 
+// fillMap recursively processes maps and slices to interpolate references in strings.
 func fillMap(mp map[string]interface{}, flattenedPattern map[string]interface{}) (map[string]interface{}, error) {
 	var _fillMap func(mp map[string]interface{}) (map[string]interface{}, error)
+	var _fillSlice func(s []interface{}) ([]interface{}, error)
+
+	_fillSlice = func(s []interface{}) ([]interface{}, error) {
+		for i, el := range s {
+			switch ccNode := el.(type) {
+			case string:
+				val, ok, err := fillMapString(ccNode, flattenedPattern)
+				if err != nil {
+					return s, err
+				}
+				if ok {
+					s[i] = val
+				}
+			case map[string]interface{}:
+				val, err := _fillMap(ccNode)
+				if err != nil {
+					return s, err
+				}
+				s[i] = val
+			case []interface{}:
+				val, err := _fillSlice(ccNode)
+				if err != nil {
+					return s, err
+				}
+				s[i] = val
+			}
+		}
+		return s, nil
+	}
 
 	_fillMap = func(mp map[string]interface{}) (map[string]interface{}, error) {
 		for k, v := range mp {
@@ -212,28 +249,11 @@ func fillMap(mp map[string]interface{}, flattenedPattern map[string]interface{})
 
 				mp[k] = val
 			case []interface{}:
-				for i, el := range cNode {
-					switch ccNode := el.(type) {
-					case string:
-						val, ok, err := fillMapString(ccNode, flattenedPattern)
-						if err != nil {
-							return mp, err
-						}
-
-						if !ok {
-							continue
-						}
-
-						mp[k].([]interface{})[i] = val
-					case map[string]interface{}:
-						val, err := _fillMap(ccNode)
-						if err != nil {
-							return mp, err
-						}
-
-						mp[k].([]interface{})[i] = val
-					}
+				val, err := _fillSlice(cNode)
+				if err != nil {
+					return mp, err
 				}
+				mp[k] = val
 			case map[string]interface{}:
 				var err error
 				mp[k], err = _fillMap(cNode)
@@ -249,33 +269,47 @@ func fillMap(mp map[string]interface{}, flattenedPattern map[string]interface{})
 	return _fillMap(mp)
 }
 
+// fillMapString substitutes all references in a string in a single pass without reprocessing substituted values.
 func fillMapString(str string, flattenedPattern map[string]interface{}) (string, bool, error) {
-	res, ok := matchPattern(str)
-	if !ok {
+	if !FillerRegex.MatchString(str) {
 		return "", false, nil
 	}
 
-	val, found := flattenedPattern[res]
-	if !found || mutils.IsInterfaceNil(val) {
-		return "", false, fmt.Errorf("invalid reference query: %s", res)
+	var resolveErr error
+	result := FillerRegex.ReplaceAllStringFunc(str, func(m string) string {
+		if resolveErr != nil {
+			return m
+		}
+
+		sub := FillerRegex.FindStringSubmatch(m)
+		if len(sub) < 2 {
+			return m
+		}
+
+		val, found := flattenedPattern[sub[1]]
+		if !found || mutils.IsInterfaceNil(val) {
+			resolveErr = fmt.Errorf("invalid reference query: %s", sub[1])
+			return m
+		}
+
+		return formatScalar(val)
+	})
+
+	if resolveErr != nil {
+		return "", false, resolveErr
 	}
 
-	cval, err := mutils.Cast[string](val)
-	if err != nil {
-		return "", false, fmt.Errorf("resolved reference query [%s] does not return string", res)
-	}
-
-	return cval, true, nil
+	return result, true, nil
 }
 
 // matchPattern takes in a string and tests it against the pattern
 // if match is successful it returns the string after removing the pattern
 // specific details from it
 func matchPattern(str string) (string, bool) {
-	res := FillerRegex.FindString(str)
-	if res == "" {
-		return res, false
+	sub := FillerRegex.FindStringSubmatch(str)
+	if len(sub) < 2 {
+		return "", false
 	}
 
-	return strings.TrimSuffix(strings.TrimPrefix(res, "$(#ref."), ")"), true
+	return sub[1], true
 }

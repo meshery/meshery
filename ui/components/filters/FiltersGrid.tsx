@@ -14,6 +14,7 @@ import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import { Keys } from '@meshery/schemas/permissions';
 import { Modal as SistentModal } from '@sistent/sistent';
 import Filter from '../../public/static/img/drawer-icons/filter_svg';
+import { getFilterConfig } from './filterConfig';
 
 const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };
 
@@ -191,14 +192,6 @@ function FiltersGrid({
     });
   };
 
-  const getYamlConfig = (filter_resource: string) => {
-    if (filter_resource) {
-      return JSON.parse(filter_resource).settings.config;
-    }
-
-    return '';
-  };
-
   return (
     <div>
       {!selectedFilter.show && (
@@ -207,7 +200,7 @@ function FiltersGrid({
             <FilterCardGridItem
               key={filter.id}
               filter={filter}
-              yamlConfig={getYamlConfig(filter.filter_resource)}
+              yamlConfig={getFilterConfig(filter)}
               handleClone={() => handleClone(filter.id, filter.name)}
               handleDownload={handleDownload}
               handleSubmit={handleSubmit}
