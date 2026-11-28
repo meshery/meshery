@@ -305,26 +305,45 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 		return nil, ErrTokenDecode(err)
 	}
 	tokenString = dtoken.AccessToken
-	tokenUP, x, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
+	tokenUP, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
 	if err != nil {
 		return nil, ErrPraseUnverified(err)
 	}
-	kid := tokenUP.Header["kid"].(string)
+	// The token is unverified at this point, so its header and claims are
+	// attacker-controlled and every field read from them must be checked.
+	// An unchecked assertion on a missing or mistyped "kid" panics and
+	// aborts the request before authentication (pre-auth DoS).
+	kid, ok := tokenUP.Header["kid"].(string)
+	if !ok || kid == "" {
+		return nil, ErrPraseUnverified(fmt.Errorf("token header missing kid"))
+	}
 
-	var jtk map[string]interface{}
-	t, _ := base64.RawStdEncoding.DecodeString(x[1])
-	if err := json.Unmarshal(t, &jtk); err != nil {
-		return nil, ErrPraseUnverified(err)
+	unverifiedClaims, ok := tokenUP.Claims.(jwt.MapClaims)
+	if !ok {
+		return nil, ErrPraseUnverified(fmt.Errorf("token claims are not MapClaims"))
 	}
 
 	// TODO: Once hydra fixes https://github.com/ory/hydra/issues/1542
 	// we should rather configure hydra auth server to remove nbf field in the token
-	_, ok := jtk["exp"]
-	if ok {
-		exp := int64(jtk["exp"].(float64))
-		if time.Now().Unix() > exp {
+	// Read exp from the claims ParseUnverified already decoded (base64url)
+	// instead of decoding the payload by hand: JWTs use base64url, so
+	// decoding with base64.RawStdEncoding silently fails on payloads
+	// containing '-' or '_' and expired tokens were not recognised.
+	expTime, err := unverifiedClaims.GetExpirationTime()
+	if err != nil {
+		return nil, ErrPraseUnverified(err)
+	}
+	// GetExpirationTime reports a numeric zero exp as absent, but
+	// exp 0 means expired at the epoch, so reject it explicitly:
+	// the jwt validator treats zero the same way, and without this
+	// a signed token with exp 0 would verify as never expiring.
+	if expVal, ok := unverifiedClaims["exp"]; ok {
+		if expNum, ok := expVal.(float64); ok && expNum == 0 {
 			return nil, ErrTokenExpired
 		}
+	}
+	if expTime != nil && time.Now().After(expTime.Time) {
+		return nil, ErrTokenExpired
 	}
 
 	keyJSON, err := l.GetJWK(kid)
