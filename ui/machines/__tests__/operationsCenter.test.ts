@@ -979,5 +979,78 @@ describe('operationsCenter machine', () => {
       expect(shouldNotifyEvent(lifecycleEvent('conn-0', 'disconnected'), map)).toBe(false);
       expect(map.size).toBeLessThanOrEqual(MAX_TRACKED_CONNECTIONS);
     });
+
+    it('correctly extracts, normalizes, and deduplicates "not found" connection status (CodeRabbit review)', () => {
+      // 1. Metadata with "not found"
+      expect(
+        extractConnectionStatus({
+          description: 'connection update',
+          metadata: { currentStatus: 'not found' },
+        }),
+      ).toBe('notfound');
+
+      // 2. Metadata with "notfound"
+      expect(
+        extractConnectionStatus({
+          description: 'connection update',
+          metadata: { currentStatus: 'notfound' },
+        }),
+      ).toBe('notfound');
+
+      // 3. Description containing "connection changed to not found"
+      expect(
+        extractConnectionStatus({
+          description: 'kubernetes connection changed to not found',
+        }),
+      ).toBe('notfound');
+
+      // 4. Description containing "connection status updated to not found."
+      expect(
+        extractConnectionStatus({
+          description: 'kubernetes connection status updated to not found.',
+        }),
+      ).toBe('notfound');
+
+      // 5. Existing extraction behavior preserved for connected/disconnected
+      expect(
+        extractConnectionStatus({
+          description: 'kubernetes connection changed to connected',
+        }),
+      ).toBe('connected');
+
+      // 6. Deduplication across both spellings for the same connection
+      const map = new Map<string, string>();
+      const evtNotFound1 = {
+        category: 'connection',
+        action: 'update',
+        severity: 'informational',
+        actedUpon: 'conn-notfound-1',
+        description: 'kubernetes connection changed to not found',
+        metadata: { currentStatus: 'not found' },
+      };
+      const evtNotFound2 = {
+        category: 'connection',
+        action: 'update',
+        severity: 'informational',
+        actedUpon: 'conn-notfound-1',
+        description: 'kubernetes connection status updated to notfound',
+        metadata: { currentStatus: 'notfound' },
+      };
+      // First event should notify
+      expect(shouldNotifyEvent(evtNotFound1, map)).toBe(true);
+      // Second event with alternate spelling should be deduped
+      expect(shouldNotifyEvent(evtNotFound2, map)).toBe(false);
+
+      // 7. Recovery from not found to connected
+      const evtConnected = {
+        category: 'connection',
+        action: 'update',
+        severity: 'informational',
+        actedUpon: 'conn-notfound-1',
+        description: 'kubernetes connection changed to connected',
+        metadata: { currentStatus: 'connected' },
+      };
+      expect(shouldNotifyEvent(evtConnected, map)).toBe(true);
+    });
   });
 });

@@ -54,10 +54,11 @@ const GENERIC_CONNECTION_UPDATE_PATTERN = /^Connection(?:\s+.*)?\s+updated\.?$/i
 /**
  * Lifecycle state transition description pattern emitted by the state machine
  * e.g. "kubernetes connection changed to disconnected", "kubernetes connection was deleted",
- * "kubernetes connection is reachable again and changed to connected"
+ * "kubernetes connection is reachable again and changed to connected",
+ * "kubernetes connection status updated to not found."
  */
 const LIFECYCLE_STATUS_PATTERN =
-  /(?:connection.*(?:changed to|status updated to|is reachable again and changed to)\s+(\w+)|connection\s+was\s+(\w+))/i;
+  /(?:connection.*(?:changed to|status updated to|is reachable again and changed to)\s+([\w\s]+?)(?:\.|$)|connection\s+was\s+(\w+))/i;
 
 /** Bound on tracked connections to prevent unbounded map growth in long-running UI sessions */
 export const MAX_TRACKED_CONNECTIONS = 200;
@@ -75,6 +76,9 @@ export function extractConnectionStatus(event: OperationsCenterMeshkitEvent): st
       return null;
     }
     const normalized = raw.trim().toLowerCase();
+    if (normalized === 'not found' || normalized === 'notfound') {
+      return 'notfound';
+    }
     return CANONICAL_CONNECTION_STATES.has(normalized) ? normalized : null;
   };
 
@@ -92,9 +96,10 @@ export function extractConnectionStatus(event: OperationsCenterMeshkitEvent): st
   if (typeof event.description === 'string') {
     const match = event.description.match(LIFECYCLE_STATUS_PATTERN);
     if (match) {
-      const candidate = (match[1] || match[2] || '').trim().toLowerCase();
-      if (CANONICAL_CONNECTION_STATES.has(candidate)) {
-        return candidate;
+      const candidate = (match[1] || match[2] || '').trim();
+      const validated = validateStatus(candidate);
+      if (validated) {
+        return validated;
       }
     }
   }
