@@ -101,14 +101,37 @@ export const FormatId = ({ id }) => {
   const [copied, setCopied] = React.useState(false);
   const theme = useTheme();
   // truncates the id to 15 characters and adds an ellipsis and adds a clipboard copy button
+  const timerRef = React.useRef(null);
+  const unmountedRef = React.useRef(false);
+  React.useEffect(() => {
+    unmountedRef.current = false;
+    return () => {
+      unmountedRef.current = true;
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
   const copyToClipboard = (e) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(id);
-    setCopied(true);
-
-    setTimeout(() => {
-      setCopied(false);
-    }, 2000);
+    if (!id || !navigator.clipboard) return;
+    navigator.clipboard
+      .writeText(id)
+      .then(() => {
+        if (unmountedRef.current) return;
+        if (timerRef.current) clearTimeout(timerRef.current);
+        setCopied(true);
+        timerRef.current = setTimeout(() => {
+          setCopied(false);
+          timerRef.current = null;
+        }, 2000);
+      })
+      .catch(() => {
+        if (unmountedRef.current) return;
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+          timerRef.current = null;
+        }
+        setCopied(false);
+      });
   };
 
   const truncatedId = _.truncate(id, { length: 15 });
@@ -199,7 +222,7 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
   const elements = parts.map((part, idx) => {
     if (part.match(linkRegex)) {
       // If the part is a link, wrap it in a Link component
-      return getFormattedLink(part);
+      return <React.Fragment key={idx}>{getFormattedLink(part)}</React.Fragment>;
     } else {
       return <span key={idx}>{part}</span>;
     }

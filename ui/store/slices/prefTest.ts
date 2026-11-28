@@ -29,20 +29,27 @@ const prefTestSlice = createSlice({
   initialState,
   reducers: {
     updateLoadTestPref: (state, action) => {
-      const payload = action.payload.loadTestPref;
-      if (payload.ts && payload.ts instanceof Date) {
-        payload.ts = payload.ts.getTime();
-      }
-      state.loadTestPref = payload;
+      const pref = action.payload?.loadTestPref;
+      if (!pref || typeof pref !== 'object') return;
+      const ts = pref.ts instanceof Date ? pref.ts.getTime() : pref.ts;
+      state.loadTestPref = { ...pref, ts };
     },
     updateLoadTest: (state, action) => {
-      state.loadTest = action.payload.loadTest;
+      const loadTest = action.payload?.loadTest;
+      if (!loadTest || typeof loadTest !== 'object') return;
+      state.loadTest = loadTest;
     },
     updateResultsSelection: (state, action) => {
-      if (Object.keys(action.payload.results).length > 0) {
-        state.results_selection[action.payload.page] = action.payload.results;
+      const results = action.payload?.results;
+      const page = action.payload?.page;
+      if (page == null) return;
+      if (typeof page !== 'number' && typeof page !== 'string') return;
+      if (typeof page === 'number' && !isFinite(page)) return;
+      const pageKey = String(page);
+      if (results == null || typeof results !== 'object' || Object.keys(results).length === 0) {
+        delete state.results_selection[pageKey];
       } else {
-        delete state.results_selection[action.payload.page];
+        state.results_selection[pageKey] = results;
       }
     },
     clearResultsSelection: (state) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@sistent/sistent', () => ({
@@ -125,6 +125,44 @@ describe('FormatId', () => {
     fireEvent.click(button);
 
     expect(writeTextSpy).toHaveBeenCalledWith('abc-xyz');
+  });
+
+  it('shows Copied! only after the clipboard write succeeds', async () => {
+    render(<FormatId id="abc-xyz" />);
+
+    fireEvent.click(screen.getByTestId('icon-button'));
+
+    await waitFor(() =>
+      expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copied!'),
+    );
+  });
+
+  it('keeps the Copy tooltip when the clipboard write is rejected', async () => {
+    writeTextSpy.mockRejectedValueOnce(new Error('denied'));
+    render(<FormatId id="abc-xyz" />);
+
+    fireEvent.click(screen.getByTestId('icon-button'));
+
+    await waitFor(() => expect(writeTextSpy).toHaveBeenCalledWith('abc-xyz'));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copy');
+  });
+
+  it('clears Copied! when a later write rejects before the reset timer', async () => {
+    render(<FormatId id="abc-xyz" />);
+    const button = screen.getByTestId('icon-button');
+
+    fireEvent.click(button);
+    await waitFor(() =>
+      expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copied!'),
+    );
+
+    writeTextSpy.mockRejectedValueOnce(new Error('denied'));
+    fireEvent.click(button);
+
+    await waitFor(() =>
+      expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copy'),
+    );
   });
 });
 
