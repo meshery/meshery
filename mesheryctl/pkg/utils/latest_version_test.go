@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
 	"github.com/sirupsen/logrus"
 )
@@ -51,6 +52,9 @@ func TestGetLatestVersionForMesheryctl(t *testing.T) {
 		version, err := GetLatestVersionForMesheryctl()
 		if err == nil {
 			t.Errorf("expected error on 404 status code, got version %q", version)
+		}
+		if meshkiterrors.GetCode(err) != ErrDocsReleaseCheckCode {
+			t.Errorf("expected error code %s, got: %s", ErrDocsReleaseCheckCode, meshkiterrors.GetCode(err))
 		}
 		if version != "" {
 			t.Errorf("expected empty version on error, got %q", version)

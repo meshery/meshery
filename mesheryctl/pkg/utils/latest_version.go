@@ -29,7 +29,7 @@ func GetLatestVersionForMesheryctl() (string, error) {
 	defer SafeClose(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
-		return "", ErrResponseStatus(resp.StatusCode)
+		return "", ErrDocsReleaseCheck(resp.StatusCode, mesheryctlReleaseVersionURL)
 	}
 
 	data, err := io.ReadAll(resp.Body)

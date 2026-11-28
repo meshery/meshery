@@ -93,6 +93,7 @@ var (
 	ErrRedirectChangesMethodCode      = "mesheryctl-1263"
 	ErrAcquireTokenFileLockCode       = "mesheryctl-1266"
 	ErrReplaceTokenFileCode           = "mesheryctl-1267"
+	ErrDocsReleaseCheckCode           = "mesheryctl-1268"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -1120,4 +1121,13 @@ func ErrReplaceTokenFile(err error) error {
 		[]string{"The destination path may be locked by another process", "The filesystem may not support atomic rename"},
 		[]string{"Retry the operation", "Run `mesheryctl system login` to re-authenticate"})
 	return &meshkitWrappedError{meshErr: meshErr, cause: err}
+}
+
+// ErrDocsReleaseCheck returns an error when the documentation service returns a non-200 HTTP response.
+func ErrDocsReleaseCheck(statusCode int, url string) error {
+	return errors.New(ErrDocsReleaseCheckCode, errors.Alert,
+		[]string{"Unable to fetch latest release version"},
+		[]string{fmt.Sprintf("Documentation service at %s returned status %d", url, statusCode)},
+		[]string{"The documentation service might be down or unreachable"},
+		[]string{"Check your network connection and verify https://docs.meshery.io is accessible"})
 }
