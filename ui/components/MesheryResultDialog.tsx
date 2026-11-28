@@ -27,6 +27,8 @@ const StyledTitle = styled(Typography)(({ theme }) => ({
 function MesheryResultDialog(props) {
   const { rowData, close } = props;
   const [dialogOpen, setDialogOpen] = useState(true);
+  // The server sends camelCase; the snake_case fallback keeps older payloads working.
+  const runnerResults = rowData?.runnerResults ?? rowData?.runner_results;
 
   const handleDialogClose = () => {
     setDialogOpen(false);
@@ -119,31 +121,29 @@ function MesheryResultDialog(props) {
 
   const renderLoadProfile = (rowData) => {
     let contents = '';
-    if (rowData.runner_results) {
+    if (runnerResults) {
       let percentiles = '';
-      if (
-        rowData.runner_results.DurationHistogram &&
-        rowData.runner_results.DurationHistogram.Percentiles
-      ) {
-        percentiles = rowData.runner_results.DurationHistogram.Percentiles.map((p) =>
+      if (runnerResults.DurationHistogram && runnerResults.DurationHistogram.Percentiles) {
+        percentiles = runnerResults.DurationHistogram.Percentiles.map((p) =>
           createTableRow(`p${p.Percentile} Response Time`, p.Value),
         );
       }
 
       contents = [
-        createTableRow('URL', rowData.runner_results.URL),
-        createTableRow('Requested QPS', rowData.runner_results.RequestedQPS),
-        createTableRow('Actual QPS', rowData.runner_results.ActualQPS),
-        createTableRow('Threads', rowData.runner_results.NumThreads),
-        createTableRow('Connections', rowData.runner_results.SocketCount),
-        createTableRow('Requested Duration', rowData.runner_results.RequestedDuration),
-        createTableRow(
-          'Actual Duration',
-          (rowData.runner_results.ActualDuration / 1000000000).toFixed(1),
-        ),
-        createTableRow('Average Response Time', rowData.runner_results.DurationHistogram.Avg),
+        createTableRow('URL', runnerResults.URL),
+        createTableRow('Requested QPS', runnerResults.RequestedQPS),
+        createTableRow('Actual QPS', runnerResults.ActualQPS),
+        createTableRow('Threads', runnerResults.NumThreads),
+        createTableRow('Connections', runnerResults.SocketCount),
+        createTableRow('Requested Duration', runnerResults.RequestedDuration),
+        createTableRow('Actual Duration', (runnerResults.ActualDuration / 1000000000).toFixed(1)),
+        ...(runnerResults.DurationHistogram
+          ? [createTableRow('Average Response Time', runnerResults.DurationHistogram.Avg)]
+          : []),
         ...percentiles,
-        createTableRow('Maximum Response Time', rowData.runner_results.DurationHistogram.Max),
+        ...(runnerResults.DurationHistogram
+          ? [createTableRow('Maximum Response Time', runnerResults.DurationHistogram.Max)]
+          : []),
       ];
     }
     return (
@@ -167,15 +167,15 @@ function MesheryResultDialog(props) {
         content={
           <div>
             <Grid2 container spacing={1} size="grow">
-              {rowData && rowData.runner_results && rowData.runner_results.kubernetes && (
+              {rowData && runnerResults && runnerResults.kubernetes && (
                 <Grid2 size={{ xs: 12, sm: 6 }}>
-                  {renderKubernetesInfo(rowData.runner_results.kubernetes)}
+                  {renderKubernetesInfo(runnerResults.kubernetes)}
                 </Grid2>
               )}
               {rowData && <Grid2 size={{ xs: 12, sm: 6 }}>{renderLoadProfile(rowData)}</Grid2>}
-              {rowData && rowData.runner_results && rowData.runner_results['detected-meshes'] && (
+              {rowData && runnerResults && runnerResults['detected-meshes'] && (
                 <Grid2 size={{ xs: 12, sm: 6 }}>
-                  {renderMeshesInfo(rowData.runner_results['detected-meshes'])}
+                  {renderMeshesInfo(runnerResults['detected-meshes'])}
                 </Grid2>
               )}
             </Grid2>
