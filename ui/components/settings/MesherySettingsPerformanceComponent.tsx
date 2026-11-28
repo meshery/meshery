@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { durationOptions } from '../../lib/prePopulatedOptions';
 import { useNotification } from '../../utils/hooks/useNotification';
@@ -18,23 +17,29 @@ import {
   NoSsr,
   Radio,
   SaveIcon,
+  KEPPEL,
   Box,
 } from '@sistent/sistent';
 import { useGetLoadTestPrefsQuery, useUpdateLoadTestPrefsMutation } from '@/rtk-query/user';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
-import {
-  isValidLoadTestDuration,
-  isZeroLoadTestDuration,
-  normalizeLoadTestPrefs,
-} from '../../lib/load-test-prefs';
+import { isValidLoadTestDuration, isZeroLoadTestDuration } from '../../lib/load-test-prefs';
 
 const loadGenerators = ['fortio'];
 
 const FormControlWrapper = styled(FormControl)({
   minWidth: 180,
   margin: '10px',
+});
+
+const ActionsWrapper = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-end',
+});
+
+const StyledSaveIcon = styled(SaveIcon)({
+  marginRight: '3px',
 });
 
 const MesherySettingsPerformanceComponent = () => {
@@ -143,7 +148,6 @@ const MesherySettingsPerformanceComponent = () => {
     notify({ message: finalMsg, event_type: EVENT_TYPES.ERROR, details: error.toString() });
   };
 
-  // const { blockRunTest, qps, t, c, gen, tValue, tError } = state;
   const theme = useTheme();
   return (
     <NoSsr>
@@ -198,14 +202,13 @@ const MesherySettingsPerformanceComponent = () => {
                   label="Duration*"
                   fullWidth
                   variant="outlined"
-                  // className={classes.errorValue}
                   classes={{ root: tError }}
                   value={tValue}
                   inputValue={t}
                   onChange={handleDurationChange}
                   onInputChange={handleInputDurationChange}
                   options={durationOptions}
-                  style={{ marginTop: '16px', marginBottom: '8px' }}
+                  sx={{ marginTop: '16px', marginBottom: '8px' }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -242,9 +245,7 @@ const MesherySettingsPerformanceComponent = () => {
                           sx={{
                             '&.Mui-checked': {
                               color:
-                                theme.palette.mode === 'dark'
-                                  ? '#00B39F'
-                                  : theme.palette.primary.main,
+                                theme.palette.mode === 'dark' ? KEPPEL : theme.palette.primary.main,
                             },
                           }}
                         />
@@ -256,7 +257,7 @@ const MesherySettingsPerformanceComponent = () => {
               </FormControlWrapper>
             </Grid2>
           </Grid2>
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <ActionsWrapper>
             <Button
               type="submit"
               variant="contained"
@@ -265,10 +266,10 @@ const MesherySettingsPerformanceComponent = () => {
               onClick={handleSubmit}
               disabled={isSaving}
             >
-              <SaveIcon style={{ marginRight: '3px' }} />
+              <StyledSaveIcon />
               {isSaving ? <CircularProgress size={30} /> : 'Save'}
             </Button>
-          </div>
+          </ActionsWrapper>
         </Box>
       </React.Fragment>
     </NoSsr>
