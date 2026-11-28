@@ -13,15 +13,15 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/stretchr/testify/require"
 )
 
-// registerMesheryCoreModelWithComponent registers the meshery-core model and
-// its WASMFilter component the way a model import does: model first, so the
-// model has its own registry entry and is listed.
-func registerMesheryCoreModelWithComponent(t *testing.T, rm *registry.RegistryManager) {
+// registerCategoryTestModel registers the model before its component and
+// relationship, as a model import does.
+func registerCategoryTestModel(t *testing.T, rm *registry.RegistryManager) {
 	t.Helper()
 
 	_, filename, _, ok := runtime.Caller(0)
@@ -47,14 +47,18 @@ func registerMesheryCoreModelWithComponent(t *testing.T, rm *registry.RegistryMa
 	require.NoError(t, err, "registering the meshery-core model")
 	_, _, err = rm.RegisterEntity(host, &comp)
 	require.NoError(t, err, "registering the WASMFilter component")
+	_, _, err = rm.RegisterEntity(host, &relationship.RelationshipDefinition{
+		Kind:             "edge",
+		RelationshipType: "binding",
+		SubType:          "reference",
+		ModelId:          &comp.Model.ID,
+	})
+	require.NoError(t, err, "registering the meshery-core relationship")
 }
 
-// The category model routes document `components` and `relationships`
-// ("When `true`, embeds the model's ... definitions in the response"), as the
-// other model routes do. They must embed the components when asked.
-func TestGetModelsByCategoryEmbedsComponentsWhenAsked(t *testing.T) {
+func TestGetModelsByCategoryEmbedsDefinitionsWhenAsked(t *testing.T) {
 	rm, _ := newTestRegistryDB(t)
-	registerMesheryCoreModelWithComponent(t, rm)
+	registerCategoryTestModel(t, rm)
 	log, err := logger.New("component_handler_category_test", logger.Options{})
 	require.NoError(t, err)
 	h := &Handler{registryManager: rm, log: log}
@@ -70,23 +74,36 @@ func TestGetModelsByCategoryEmbedsComponentsWhenAsked(t *testing.T) {
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			req := httptest.NewRequest(http.MethodGet, "/api/registry/categories/x/models?components=true", nil)
-			req = mux.SetURLVars(req, tc.vars)
-			rw := httptest.NewRecorder()
+			for _, query := range []struct {
+				param         string
+				components    int
+				relationships int
+			}{
+				{param: "components", components: 1},
+				{param: "relationships", relationships: 1},
+			} {
+				t.Run(query.param, func(t *testing.T) {
+					req := httptest.NewRequest(http.MethodGet, "/api/registry/categories/x/models?"+query.param+"=true", nil)
+					req = mux.SetURLVars(req, tc.vars)
+					rw := httptest.NewRecorder()
 
-			tc.handler(rw, req)
+					tc.handler(rw, req)
 
-			require.Equal(t, http.StatusOK, rw.Code)
-			var page struct {
-				Models []struct {
-					Name       string            `json:"name"`
-					Components []json.RawMessage `json:"components"`
-				} `json:"models"`
+					require.Equal(t, http.StatusOK, rw.Code)
+					var page struct {
+						Models []struct {
+							Name          string            `json:"name"`
+							Components    []json.RawMessage `json:"components"`
+							Relationships []json.RawMessage `json:"relationships"`
+						} `json:"models"`
+					}
+					require.NoError(t, json.Unmarshal(rw.Body.Bytes(), &page))
+					require.Len(t, page.Models, 1)
+					require.Equal(t, "meshery-core", page.Models[0].Name)
+					require.Len(t, page.Models[0].Components, query.components)
+					require.Len(t, page.Models[0].Relationships, query.relationships)
+				})
 			}
-			require.NoError(t, json.Unmarshal(rw.Body.Bytes(), &page))
-			require.Len(t, page.Models, 1)
-			require.Equal(t, "meshery-core", page.Models[0].Name)
-			require.Len(t, page.Models[0].Components, 1, "?components=true must embed the model's WASMFilter component")
 		})
 	}
 }
