@@ -178,8 +178,17 @@ func TestFilterPOSTImportsRawWASMFromURL(t *testing.T) {
 // field): it must reach the filter as filterResource, as a file upload's does.
 func TestFilterPOSTURLImportKeepsConfig(t *testing.T) {
 	const config = "match: route-a\nratelimit: 100\n"
-	for _, save := range []bool{false, true} {
-		t.Run(map[bool]string{false: "without save", true: "with save"}[save], func(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		save   bool
+		config string
+	}{
+		{name: "unsaved with config", config: config},
+		{name: "saved with config", save: true, config: config},
+		{name: "unsaved without config"},
+		{name: "saved without config", save: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
 			allowLoopbackRemoteFileImports(t)
 			h, provider, db := newFilterPOSTFixture(t)
 			provider.Log = h.log
@@ -190,29 +199,36 @@ func TestFilterPOSTURLImportKeepsConfig(t *testing.T) {
 			t.Cleanup(source.Close)
 
 			rec := postFilter(t, h, provider, models.MesheryFilterRequestBody{
-				Save:   save,
+				Save:   tc.save,
 				URL:    source.URL + "/filters/rate-limit.wasm",
-				Config: config,
+				Config: tc.config,
 			})
 			require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
 
 			var imported []models.MesheryFilter
 			require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &imported))
 			require.Len(t, imported, 1, "the response must carry the imported filter, got %s", rec.Body.String())
-			filterResource := imported[0].FilterResource
-			if save {
+			assertResource := func(filterResource, origin string) {
+				t.Helper()
+				if tc.config == "" {
+					assert.Empty(t, filterResource, origin)
+					return
+				}
+
+				var resource struct {
+					Configuration map[string]interface{} `json:"configuration"`
+				}
+				if assert.NoError(t, json.Unmarshal([]byte(filterResource), &resource), origin) {
+					assert.Equal(t, tc.config, resource.Configuration["config"], origin)
+				}
+			}
+			assertResource(imported[0].FilterResource, "POST response")
+			if tc.save {
 				require.NotNil(t, imported[0].ID)
 				var stored models.MesheryFilter
 				require.NoError(t, db.Where("id = ?", *imported[0].ID).First(&stored).Error)
-				filterResource = stored.FilterResource
+				assertResource(stored.FilterResource, "stored filter")
 			}
-			require.NotEmpty(t, filterResource, "the configuration sent with a URL import must not be dropped")
-
-			var resource struct {
-				Configuration map[string]interface{} `json:"configuration"`
-			}
-			require.NoError(t, json.Unmarshal([]byte(filterResource), &resource))
-			assert.Equal(t, config, resource.Configuration["config"])
 		})
 	}
 }
