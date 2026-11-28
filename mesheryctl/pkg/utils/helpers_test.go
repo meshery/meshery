@@ -13,6 +13,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/schemas/models/core"
@@ -1617,4 +1618,33 @@ func TestDeleteConfiguration_BodyClosed(t *testing.T) {
 		}
 		assertBodyClosed(t, transport, "expected response body to be closed on delete configuration")
 	})
+}
+
+// TestGetNameSkipsMalformedEntries pins GetName against a server response where
+// an entry's name or id isn't a string: the entry is left out of the map instead
+// of taking down the whole lookup (used by ValidName, behind `filter delete` when
+// the argument doesn't parse as an ID).
+func TestGetNameSkipsMalformedEntries(t *testing.T) {
+	StartMockery(t)
+	defer StopMockery(t)
+
+	TokenFlag = GetToken(t)
+	defer func() { TokenFlag = "Not Set" }()
+
+	httpmock.RegisterResponder("GET", MesheryEndpoint+"/api/filter?page_size=10000",
+		httpmock.NewStringResponder(200, `{"filters":[
+			{"id":"11111111-1111-4111-8111-111111111111","name":"good"},
+			{"id":"22222222-2222-4222-8222-222222222222","name":42},
+			{"id":33,"name":"numeric-id"}
+		]}`))
+
+	got, err := GetName(MesheryEndpoint, "filter")
+	if err != nil {
+		t.Fatalf("GetName returned an error: %v", err)
+	}
+
+	want := map[string]string{"good": "11111111-1111-4111-8111-111111111111"}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("GetName() = %v, want %v (entries without a string name/id should be skipped, not crash the lookup)", got, want)
+	}
 }
