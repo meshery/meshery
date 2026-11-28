@@ -9,6 +9,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/schemas/models/core"
+	"gorm.io/gorm"
 )
 
 type MesheryResultsPersister struct {
@@ -77,24 +78,27 @@ func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, from, t
 
 	var res []*localMesheryResultDBRepresentation
 	var count int64
-	query := mrp.DB.Table("meshery_results")
 	const runnerStart = "json_extract(CASE WHEN json_valid(result) THEN result END, '$.StartTime')"
 	const startDay = "SUBSTR(CASE WHEN DATETIME(" + runnerStart + ") IS NOT NULL" +
 		" AND SUBSTR(" + runnerStart + ", 11, 1) = 'T'" +
 		" AND (SUBSTR(" + runnerStart + ", -1) = 'Z' OR SUBSTR(" + runnerStart + ", -6, 1) IN ('+', '-'))" +
 		" AND " + runnerStart + " <> '0001-01-01T00:00:00Z' THEN " + runnerStart + " ELSE test_start_time END, 1, 10)"
-	if from != "" {
-		query = query.Where(startDay+" >= ?", from)
-	}
-	if to != "" {
-		query = query.Where(startDay+" <= ?", to)
-	}
-
-	err := query.Count(&count).Error
+	err := mrp.DB.Transaction(func(tx *gorm.DB) error {
+		query := tx.Table("meshery_results")
+		if from != "" {
+			query = query.Where(startDay+" >= ?", from)
+		}
+		if to != "" {
+			query = query.Where(startDay+" <= ?", to)
+		}
+		if err := query.Count(&count).Error; err != nil {
+			return err
+		}
+		return Paginate(uint(page), uint(pageSize))(query).Find(&res).Error
+	})
 	if err != nil {
 		return nil, err
 	}
-	err = Paginate(uint(page), uint(pageSize))(query).Find(&res).Error
 
 	results := convertLocalRepresentationSliceToMesheryResultSlice(res, log)
 	if results == nil {
@@ -113,7 +117,7 @@ func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, from, t
 		Results:    results,
 	}
 
-	return marshalMesheryResultsPage(resultPage), err
+	return marshalMesheryResultsPage(resultPage), nil
 }
 
 func (mrp *MesheryResultsPersister) GetResult(key core.Uuid, log logger.Handler) (*MesheryResult, error) {

@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -12,6 +13,48 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
+
+func TestFetchAllResultsUsesOneSnapshot(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(filepath.Join(t.TempDir(), "results.db")), &gorm.Config{})
+	require.NoError(t, err)
+	sqlDB, err := db.DB()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = sqlDB.Close() })
+	var journalMode string
+	require.NoError(t, db.Raw("PRAGMA journal_mode=WAL").Scan(&journalMode).Error)
+	require.Equal(t, "wal", journalMode)
+	require.NoError(t, db.AutoMigrate(&MesheryResult{}))
+	persister := &MesheryResultsPersister{DB: &database.Handler{DB: db}}
+
+	lateResult, err := json.Marshal(&MesheryResult{
+		Result: map[string]interface{}{"StartTime": "2026-11-30T23:59:00Z"},
+	})
+	require.NoError(t, err)
+	saved := false
+	require.NoError(t, db.Callback().Query().After("gorm:query").Register("save-late-result", func(_ *gorm.DB) {
+		if !saved {
+			saved = true
+			require.NoError(t, persister.WriteResult(uuid.Must(uuid.NewV4()), lateResult))
+		}
+	}))
+
+	fetch := func() MesheryResultPage {
+		t.Helper()
+		body, err := persister.GetAllResults(0, 10, "2026-11-30", "2026-11-30", nil)
+		require.NoError(t, err)
+		var page MesheryResultPage
+		require.NoError(t, json.Unmarshal(body, &page))
+		return page
+	}
+
+	first := fetch()
+	require.True(t, saved)
+	require.Zero(t, first.TotalCount)
+	require.Empty(t, first.Results)
+	second := fetch()
+	require.Equal(t, 1, second.TotalCount)
+	require.Len(t, second.Results, 1)
+}
 
 // GET /api/performance/results documents `from` and `to` as the dates that
 // bound a result's test start time; the performance calendar asks for the
