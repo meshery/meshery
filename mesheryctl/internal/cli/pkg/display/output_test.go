@@ -195,3 +195,48 @@ func Test_Given_UnsupportedFormat_When_Factories_New_Then_Error_Is_Returned(t *t
 	_, err = saverFactory.New("XML", NewJSONOutputFormatter(data))
 	assert.Error(t, err)
 }
+
+func Test_JSONOutputFormatterSaver_Save_HTML_Escaping(t *testing.T) {
+	utils.SetupMeshkitLoggerTesting(t, false)
+
+	tests := []struct {
+		name       string
+		escapeHTML bool
+		want       string
+	}{
+		{
+			name:       "preserves HTML characters when escaping is disabled",
+			escapeHTML: false,
+			want:       "{\n  \"name\": \"\",\n  \"content\": \"<>&\"\n}",
+		},
+		{
+			name:       "escapes HTML characters when escaping is enabled",
+			escapeHTML: true,
+			want:       "{\n  \"name\": \"\",\n  \"content\": \"\\u003c\\u003e\\u0026\"\n}",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			path := t.TempDir() + string(os.PathSeparator) + "output.json"
+			formatter := JSONOutputFormatter[testStruct]{
+				Data: testStruct{Content: "<>&"},
+				EncoderSettings: JsonEncoderSettings{
+					SetEscapeHTML: tt.escapeHTML,
+					IndentValue:   "  ",
+				},
+			}
+
+			saver := NewJSONOutputFormatterSaver(formatter).WithFilePath(path)
+			if err := saver.Save(); err != nil {
+				t.Fatal(err)
+			}
+
+			content, err := os.ReadFile(path)
+			if err != nil {
+				t.Fatal(err)
+			}
+			assert.Equal(t, tt.want, string(content))
+		})
+	}
+}
