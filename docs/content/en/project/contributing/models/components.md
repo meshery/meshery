@@ -7,7 +7,7 @@ weight: 10
 ---
 **Components are defined by schemas.** Each component's structure, capabilities, and metadata follow the [Component schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/component) in `meshery/schemas`. When creating or modifying components, ensure they conform to the schema specification. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
 
-In Meshery, a [Components]({{< ref "concepts/logical/components.md" >}}) is a fundamental building block used to represent and define the infrastructure under management. Each component provides granular and specific support for your infrastructure and applications. Once registered with Meshery Server (in the [Registry]({{< ref "concepts/logical/registry.md" >}})), components are available for inclusion in [Designs]({{< ref "concepts/logical/designs.md" >}}) that you create. Components can be created and published by anyone, allowing you to share you custom extensions with the community.
+In Meshery, a [Component]({{< ref "concepts/logical/components.md" >}}) is a fundamental building block used to represent and define the infrastructure under management. Each component provides granular and specific support for your infrastructure and applications. Once registered with Meshery Server (in the [Registry]({{< ref "concepts/logical/registry.md" >}})), components are available for inclusion in [Designs]({{< ref "concepts/logical/designs.md" >}}) that you create. Components can be created and published by anyone, allowing you to share your custom extensions with the community.
 
 ## Overview of Steps to Create Components
 
@@ -30,7 +30,7 @@ In Meshery, a [Components]({{< ref "concepts/logical/components.md" >}}) is a fu
 
 ### 1. Understand Model Generation and Packaging
 
-{{% alert color="warning" title="Prerequisite Reading" %}}Components are defined and packaged in context of a Model. Be sure to first read and understand <a href='{{<ref "project/contributing/models/models" >}}' >how models are created and packaged</a> before attempting to create a new component. Without a model defined first, the component will be homeless.{{% /alert %}}
+{{% alert color="warning" title="Prerequisite Reading" %}}Components are defined and packaged in context of a Model. Be sure to first read and understand <a href='{{< ref "project/contributing/models/models/index.md" >}}' >how models are created and packaged</a> before attempting to create a new component. Without a model defined first, the component will be homeless.{{% /alert %}}
 
 <a id="component-customization"></a>
 
@@ -100,7 +100,7 @@ Component icons will be written to the `/meshmodel/components/<model-name>/icon/
 
 ### 3. Create a Component Definition as a JSON file
 
-Create a component definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models]({{<ref "project/contributing/models/models" >}})). Component definition files are commonly named after the component kind as a convention, however, this name is not required. A model may include any number of component definitions. Include the following attributes in your component definition:
+Create a component definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models]({{< ref "project/contributing/models/models/index.md" >}})). Component definition files are commonly named after the component kind as a convention, however, this name is not required. A model may include any number of component definitions. Include the following attributes in your component definition:
 
 - `kind`: The genre of component (e.g., `Pod`).
 - `model`: The model to which the component belongs (e.g., `kubernetes`).
