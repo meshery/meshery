@@ -138,7 +138,7 @@ Once selected, note the relationship's `kind`, `type`, and `subType`. If an exis
 
 ### 3. Create a Relationship Definition as a JSON file
 
-Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models]({{<ref "project/contributing/models" >}})). A model may include any number of relationship definitions. Filename convention: `{kind}-{type}-{subType}-<suffix>.json`.
+Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models]({{< ref "project/contributing/models/models/index.md" >}})). A model may include any number of relationship definitions. Filename convention: `{kind}-{type}-{subType}-<suffix>.json`.
 
 Include:
 
