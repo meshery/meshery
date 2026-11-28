@@ -439,7 +439,7 @@ describe('MeshSyncTable', () => {
     });
   });
 
-  it('projects discovered status for connection-capable inventory Service and opens registration dialog on register', () => {
+  it('opens registration dialog for connection-capable Service with authoritative discovered status', () => {
     getColumnValue.mockImplementation((rowData, columnName, cols) => {
       const idx = cols.findIndex((col) => col?.name === columnName);
       return idx === -1 ? undefined : rowData[idx];
@@ -453,6 +453,7 @@ describe('MeshSyncTable', () => {
             kind: 'Service',
             model: 'core',
             cluster_id: 'cluster-a',
+            status: 'discovered',
             component_metadata: {
               capabilities: { connection: true, urls: ['http://10.0.0.1:9090'] },
               metadata: '{"host":"10.0.0.1"}',
@@ -498,6 +499,62 @@ describe('MeshSyncTable', () => {
       resourceID: 'svc-uuid-1',
     });
   });
+
+  it.each([
+    ['missing', undefined],
+    ['raw Kubernetes status', { phase: 'Running' }],
+  ])(
+    'does not project discovered status or offer registration for a connection-capable inventory row with %s',
+    (_label, status) => {
+      getColumnValue.mockImplementation((rowData, columnName, cols) => {
+        const idx = cols.findIndex((col) => col?.name === columnName);
+        return idx === -1 ? undefined : rowData[idx];
+      });
+
+      useGetMeshSyncResourcesQuery.mockReturnValue({
+        data: {
+          resources: [
+            {
+              id: 'svc-uuid-no-status',
+              kind: 'Service',
+              model: 'core',
+              cluster_id: 'cluster-a',
+              status,
+              component_metadata: {
+                capabilities: { connection: true, urls: ['http://10.0.0.1:9090'] },
+                metadata: '{"host":"10.0.0.1"}',
+              },
+            },
+          ],
+          totalCount: 1,
+        },
+        isError: false,
+      });
+
+      render(<MeshSyncTable />);
+
+      const { columns, data } = dataTableProps;
+      expect(data[0].status).toBe(status);
+
+      const statusCol = columns.find((col) => col.name === 'status');
+      const rowData = columns.map((col) => {
+        if (col.name === 'id') return 'svc-uuid-no-status';
+        if (col.name === 'component_metadata') {
+          return {
+            capabilities: { connection: true, urls: ['http://10.0.0.1:9090'] },
+            metadata: '{"host":"10.0.0.1"}',
+          };
+        }
+        return null;
+      });
+
+      render(statusCol.options.customBodyRender(data[0].status, { rowData, rowIndex: 0 }));
+
+      expect(statusSelectProps).toBeUndefined();
+      expect(screen.getByTestId('meshsync-status-non-interactive')).toBeInTheDocument();
+      expect(registerConnectionModalProps.openRegistrationModal).toBe(false);
+    },
+  );
 
   it.each(['ignored', 'connected', 'registered'])(
     'renders connection-capable %s rows without a registration dropdown',

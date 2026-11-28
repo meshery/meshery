@@ -621,7 +621,7 @@ func TestDeleteMeshSyncResource_RemovesChildRows(t *testing.T) {
 	}
 }
 
-func TestGetMeshSyncResources_RedactsDiscoveryURLs(t *testing.T) {
+func TestGetMeshSyncResources_PreservesDiscoveryURLs(t *testing.T) {
 	h, provider, db := newMeshSyncTestFixture(t)
 
 	id := uuid.Must(uuid.NewV4()).String()
@@ -672,7 +672,8 @@ func TestGetMeshSyncResources_RedactsDiscoveryURLs(t *testing.T) {
 	if conn, ok := caps["connection"].(bool); !ok || !conn {
 		t.Errorf("expected connection: true, got %#v", caps["connection"])
 	}
-	if _, hasURLs := caps["urls"]; hasURLs {
-		t.Errorf("expected urls to be redacted from list response, but got %#v", caps["urls"])
+	urls, ok := caps["urls"].([]interface{})
+	if !ok || len(urls) != 1 || urls[0] != "http://10.0.0.1:9090" {
+		t.Errorf("expected discovery urls to be preserved in list response, got %#v", caps["urls"])
 	}
 }

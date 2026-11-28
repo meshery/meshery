@@ -136,18 +136,7 @@ export default function MeshSyncTable(props) {
     ...new Set((clusterSummary?.kinds || []).map((kind) => kind.model).filter(Boolean)),
   ];
   const availableNamespaces = clusterSummary?.namespaces || [];
-  const meshSyncResources = useMemo(() => {
-    return (meshSyncData?.resources || []).map((resource) => {
-      const isConnectionCapable = resource?.component_metadata?.capabilities?.connection === true;
-      const existingStatus = resolveMeshSyncLifecycleStatus(resource?.status);
-      const status =
-        existingStatus || (isConnectionCapable ? MESHSYNC_STATES.DISCOVERED : resource?.status);
-      return {
-        ...resource,
-        status,
-      };
-    });
-  }, [meshSyncData?.resources]);
+  const meshSyncResources = meshSyncData?.resources || [];
 
   const colViews = useMemo(
     () => [
