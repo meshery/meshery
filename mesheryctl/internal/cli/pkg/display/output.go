@@ -156,10 +156,7 @@ func (j *JSONOutputFormatterSaver[T]) Save() error {
 		return utils.ErrMarshalIndent(errors.Wrap(err, "failed to format output in JSON"))
 	}
 	output := bytes.TrimSuffix(buf.Bytes(), []byte("\n"))
-	var err error
-
-	err = writeFile(j.FilePath, output)
-	if err != nil {
+	if err := writeFile(j.FilePath, output); err != nil {
 		return utils.ErrCreateFile(j.FilePath, errors.Wrap(err, "failed to save output as JSON file"))
 	}
 
