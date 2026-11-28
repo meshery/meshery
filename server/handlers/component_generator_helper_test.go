@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"unicode/utf8"
 )
 
 // TestCreateTemp pins the contract the model import handler relies on: the
@@ -51,5 +52,36 @@ func TestCreateTempFailureLeavesNoFile(t *testing.T) {
 	}
 	if len(entries) != 0 {
 		t.Errorf("failed CreateTemp left %d file(s) behind", len(entries))
+	}
+}
+
+func TestTruncateEventDescription(t *testing.T) {
+	long := strings.Repeat("a", 50)
+	accented := "Imported model " + strings.Repeat("é", 40)
+
+	tests := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{name: "empty", in: "", want: ""},
+		{name: "shorter than the limit", in: "model imported", want: "model imported"},
+		{name: "exactly the limit is not shortened", in: strings.Repeat("a", 42), want: strings.Repeat("a", 42)},
+		{name: "one over the limit", in: strings.Repeat("a", 43), want: strings.Repeat("a", 42) + "..."},
+		{name: "long ASCII", in: long, want: long[:42] + "..."},
+		{name: "multibyte characters count as one", in: strings.Repeat("é", 42), want: strings.Repeat("é", 42)},
+		{name: "multibyte cut on a character boundary", in: accented, want: "Imported model " + strings.Repeat("é", 27) + "..."},
+		{name: "malformed UTF-8 is replaced, not passed through", in: "bad \xff byte", want: "bad \uFFFD byte"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := truncateEventDescription(tt.in)
+			if got != tt.want {
+				t.Errorf("truncateEventDescription(%q) = %q, want %q", tt.in, got, tt.want)
+			}
+			if !utf8.ValidString(got) {
+				t.Errorf("truncateEventDescription(%q) = %q is not valid UTF-8", tt.in, got)
+			}
+		})
 	}
 }
