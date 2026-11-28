@@ -448,6 +448,15 @@ describe('operationsCenter machine', () => {
         occurrenceCount: 2,
         description: 'Kubernetes cluster is unreachable',
       };
+      const errorRecurrenceEvent = {
+        id: 'evt-cond-err-repeat',
+        category: 'connection',
+        action: 'update',
+        severity: 'error',
+        correlationKey: 'unreachable:cluster-conn-1',
+        occurrenceCount: 2,
+        description: 'Kubernetes cluster is unreachable repeat error',
+      };
       const resolutionEvent = {
         id: 'evt-cond-1',
         category: 'connection',
@@ -458,12 +467,20 @@ describe('operationsCenter machine', () => {
         description: 'kubernetes connection is reachable again and changed to connected',
       };
 
-      // Recurrence: stored in redux, toast suppressed
+      // Informational Recurrence: stored in redux, toast suppressed
       actor.send({
         type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
         data: { event: recurrenceEvent },
       });
       expect(pushEvent).toHaveBeenCalledWith(recurrenceEvent);
+      expect(notify).not.toHaveBeenCalled();
+
+      // Error Recurrence: repeated error condition (occurrenceCount > 1) toast is suppressed
+      actor.send({
+        type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+        data: { event: errorRecurrenceEvent },
+      });
+      expect(pushEvent).toHaveBeenCalledWith(errorRecurrenceEvent);
       expect(notify).not.toHaveBeenCalled();
 
       // Resolution: state change, should toast
@@ -481,7 +498,7 @@ describe('operationsCenter machine', () => {
       actor.stop();
     });
 
-    it('toasts connection deletion and cleans up state from the map', () => {
+    it('toasts connection deletion once and suppresses duplicate deletion events as a tombstone', () => {
       const { actor, notify } = startActor();
       const connectEvent = {
         id: 'evt-c1',
@@ -492,8 +509,17 @@ describe('operationsCenter machine', () => {
         description: 'kubernetes connection changed to connected',
         metadata: { currentStatus: 'connected' },
       };
-      const deleteEvent = {
+      const deleteEvent1 = {
         id: 'evt-del-1',
+        category: 'connection',
+        action: 'update',
+        severity: 'informational',
+        actedUpon: 'cluster-conn-1',
+        description: 'kubernetes connection was deleted',
+        metadata: { currentStatus: 'deleted' },
+      };
+      const deleteEvent2 = {
+        id: 'evt-del-2',
         category: 'connection',
         action: 'update',
         severity: 'informational',
@@ -518,10 +544,10 @@ describe('operationsCenter machine', () => {
       });
       expect(notify).toHaveBeenCalledTimes(1);
 
-      // 2. Deletes -> Should toast deletion and clean up state
+      // 2. Deletes -> Should toast deletion and set tombstone
       actor.send({
         type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
-        data: { event: deleteEvent },
+        data: { event: deleteEvent1 },
       });
       expect(notify).toHaveBeenCalledTimes(2);
       expect(notify).toHaveBeenLastCalledWith(
@@ -530,7 +556,14 @@ describe('operationsCenter machine', () => {
         }),
       );
 
-      // 3. Re-creating connection with same ID connects cleanly and toasts
+      // 3. Second identical deletion event for same connection -> Suppressed as duplicate tombstone!
+      actor.send({
+        type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+        data: { event: deleteEvent2 },
+      });
+      expect(notify).toHaveBeenCalledTimes(2); // Still 2!
+
+      // 4. Re-creating connection with same ID connects cleanly and toasts ('connected' != 'deleted')
       actor.send({
         type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
         data: { event: recreateConnectEvent },

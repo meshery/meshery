@@ -142,12 +142,7 @@ function trackConnectionStatus(
   connectionId: string,
   status: string,
 ): void {
-  // When a connection is deleted, remove it from the map so invalid state is not retained
-  // and memory is released.
-  if (status === 'deleted') {
-    connectionStates.delete(connectionId);
-    return;
-  }
+  // Always delete first so subsequent set moves this key to the end (most recently updated)
   connectionStates.delete(connectionId);
   // Enforce capacity to prevent unbounded growth in very large / long-running sessions
   if (connectionStates.size >= MAX_TRACKED_CONNECTIONS) {
@@ -156,6 +151,8 @@ function trackConnectionStatus(
       connectionStates.delete(oldestKey);
     }
   }
+  // Keep status (including 'deleted' as a tombstone) so repeat deletion events are deduped,
+  // while recreation ('connected' != 'deleted') still toasts.
   connectionStates.set(connectionId, status);
 }
 
@@ -172,16 +169,6 @@ export function shouldNotifyEvent(
   const connectionId = isConnectionCategory ? extractConnectionId(event) : null;
   const targetStatus = isConnectionCategory ? extractConnectionStatus(event) : null;
 
-  // Rule 1: Always toast errors, warnings, and critical issues regardless of category
-  if (severity === 'error' || severity === 'warning' || severity === 'critical') {
-    // If this error/warning event also transitions connection status (e.g. to notfound/disconnected),
-    // update the tracked state so subsequent recovery events are recognized as valid state changes.
-    if (connectionId && targetStatus) {
-      trackConnectionStatus(connectionStates, connectionId, targetStatus);
-    }
-    return true;
-  }
-
   // Condition resolutions (event.resolvedAt) represent state recovery on an issue or condition.
   // They must always toast even if targetStatus matches the currently recorded state in connectionStates.
   if (isConnectionCategory && event.resolvedAt) {
@@ -191,15 +178,30 @@ export function shouldNotifyEvent(
     return true;
   }
 
-  // Rule 2: Open condition recurrences on connections (repeat occurrences without resolution)
-  // should not produce repeated toast popups. Scoped strictly to the connection category.
+  // Open condition recurrences on connections (repeat occurrences without resolution)
+  // should not produce repeated toast popups, regardless of severity (informational, warning, or error).
+  // The first error/warning still toasts, but repeated recurrences are suppressed while updating history.
   if (
     isConnectionCategory &&
     event.correlationKey &&
     !event.resolvedAt &&
     ((event.occurrenceCount !== undefined && event.occurrenceCount > 1) || event.isRecurrence)
   ) {
+    // Still track targetStatus for suppressed recurrences so recovery is recognized
+    if (connectionId && targetStatus) {
+      trackConnectionStatus(connectionStates, connectionId, targetStatus);
+    }
     return false;
+  }
+
+  // Rule 1: Always toast errors, warnings, and critical issues (when not a recurring repeat)
+  if (severity === 'error' || severity === 'warning' || severity === 'critical') {
+    // If this error/warning event also transitions connection status (e.g. to notfound/disconnected),
+    // update the tracked state so subsequent recovery events are recognized as valid state changes.
+    if (connectionId && targetStatus) {
+      trackConnectionStatus(connectionStates, connectionId, targetStatus);
+    }
+    return true;
   }
 
   if (isConnectionCategory) {
