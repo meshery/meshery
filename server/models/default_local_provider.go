@@ -73,6 +73,9 @@ type DefaultLocalProvider struct {
 	// downloadMu serializes provider package downloads so concurrent installs
 	// don't race on the shared on-disk package location.
 	downloadMu sync.Mutex
+	// persistMu serializes PersistCapabilitiesForUser so that stored
+	// capabilities are never overwritten by an older snapshot.
+	persistMu sync.Mutex
 }
 
 // LocalProviderName is the canonical name of the built-in local provider.
@@ -314,6 +317,21 @@ func (l *DefaultLocalProvider) DownloadProviderExtensionPackageFromURL(packageUr
 	}
 
 	return nil
+}
+
+// PersistCapabilitiesForUser stores the provider's current properties as the
+// capabilities of userID, which /api/provider/capabilities serves.
+//
+// The snapshot is taken inside persistMu, so writes land in the order their
+// snapshots were taken and the last one always carries the latest installs and
+// removals. Taking it before the lock, or copying ProviderProperties without
+// l.mu, lets a slow write store an older set of extensions over a newer one.
+func (l *DefaultLocalProvider) PersistCapabilitiesForUser(userID string) error {
+	l.persistMu.Lock()
+	defer l.persistMu.Unlock()
+
+	props := l.GetProviderProperties()
+	return l.WriteCapabilitiesForUser(userID, &props)
 }
 
 func (l *DefaultLocalProvider) SetProviderProperties(providerProperties ProviderProperties) {
