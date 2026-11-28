@@ -99,6 +99,10 @@ func init() {
 }
 
 func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponentsAPIResponse) ([][]string, int64) {
+	if componentsResponse == nil {
+		return [][]string{}, 0
+	}
+
 	rows := [][]string{}
 	for _, component := range componentsResponse.Components {
 		componentID := component.ID.String()

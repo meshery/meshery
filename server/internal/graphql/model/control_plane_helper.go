@@ -13,7 +13,7 @@ import (
 )
 
 // GetControlPlaneState fetches the control plane state across the specified clusters and mesh types.
-func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider models.Provider, cid []string) ([]*ControlPlane, error) {
+func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider models.GenericPersisterGetter, cid []string) ([]*ControlPlane, error) {
 	if len(cid) > 0 {
 		seen := make(map[string]struct{}, len(cid))
 		uniq := make([]string, 0, len(cid))
@@ -54,6 +54,10 @@ func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider mo
 
 	for _, c := range cid {
 		cidMap[c] = true
+	}
+
+	if provider == nil || provider.GetGenericPersister() == nil {
+		return controlplanelist, nil
 	}
 
 	for _, selector := range selectors {
@@ -113,7 +117,7 @@ func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider mo
 
 // BatchGetControlPlaneState fetches control plane data for multiple clusters in a single batched query
 // grouping results by clusterID.
-func BatchGetControlPlaneState(ctx context.Context, selectors []MeshType, provider models.Provider, clusterIDs []string) (map[string][]*ControlPlane, error) {
+func BatchGetControlPlaneState(ctx context.Context, selectors []MeshType, provider models.GenericPersisterGetter, clusterIDs []string) (map[string][]*ControlPlane, error) {
 	if len(clusterIDs) > 0 {
 		seen := make(map[string]struct{}, len(clusterIDs))
 		uniq := make([]string, 0, len(clusterIDs))

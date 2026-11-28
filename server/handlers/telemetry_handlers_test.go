@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -666,5 +667,109 @@ func TestTelemetryHandlers_NilConnection_ReturnsNotFound(t *testing.T) {
 	_, _, prCode, prErr := h.prometheusTelemetryClientForConnection("token", connUUID, provider)
 	if prCode != http.StatusNotFound || meshkiterrors.GetCode(prErr) != models.ErrResultNotFoundCode {
 		t.Errorf("prometheusTelemetryClientForConnection expected 404 and ErrResultNotFoundCode for nil connection, got code=%d, err=%v", prCode, prErr)
+	}
+}
+
+// TestGrafanaTelemetryQueryRange_SurfacesResolvedDatasourceRetryError verifies
+// that when a datasource name resolves to a real UID and Grafana's proxied
+// query fails with a non-404 status (400 invalid PromQL or 403 forbidden), both
+// GrafanaTelemetryQueryRangeHandler and GrafanaTelemetryQueryRangeBatchHandler
+// surface the real error classification instead of returning HTTP 404
+// ErrTelemetryGrafanaDatasourceCode.
+func TestGrafanaTelemetryQueryRange_SurfacesResolvedDatasourceRetryError(t *testing.T) {
+	cases := []struct {
+		name           string
+		retryCode      int
+		retryBody      string
+		wantCode       string
+		wantBatchError string
+	}{
+		{
+			name:           "400 PromQL error",
+			retryCode:      http.StatusBadRequest,
+			retryBody:      `{"status":"error","error":"parse error"}`,
+			wantCode:       ErrTelemetryGrafanaCode,
+			wantBatchError: "parse error",
+		},
+		{
+			name:           "403 forbidden",
+			retryCode:      http.StatusForbidden,
+			retryBody:      `{"message":"permission denied"}`,
+			wantCode:       ErrTelemetryGrafanaAuthCode,
+			wantBatchError: "permission denied",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			grafanaSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				switch r.URL.Path {
+				case "/api/datasources":
+					_, _ = w.Write([]byte(`[{"uid":"abc123","name":"dev-cortex","type":"prometheus"}]`))
+				case "/api/datasources/proxy/uid/abc123/api/v1/query_range":
+					w.WriteHeader(tc.retryCode)
+					_, _ = w.Write([]byte(tc.retryBody))
+				default:
+					w.WriteHeader(http.StatusNotFound)
+					_, _ = w.Write([]byte(`{"message":"Unable to find datasource"}`))
+				}
+			}))
+			defer grafanaSrv.Close()
+
+			connUUID := uuid.Must(uuid.NewV4())
+			connID := connUUID.String()
+			provider := newTelemetrySpyProvider()
+			provider.getConnectionFn = func(_ string, _ core.Uuid) (*connections.Connection, int, error) {
+				return &connections.Connection{
+					ID:       connUUID,
+					Name:     "test-grafana",
+					Kind:     "grafana",
+					Metadata: core.Map{"url": grafanaSrv.URL},
+				}, http.StatusOK, nil
+			}
+			h := &Handler{log: newTestLogger(t)}
+
+			// Single query_range endpoint
+			req := httptest.NewRequest(http.MethodGet, "/api/telemetry/grafana/"+connID+"/query_range?ds=dev-cortex&query=bad&start=1&end=2&step=15", nil)
+			req = mux.SetURLVars(req, map[string]string{"connectionID": connID})
+			rec := httptest.NewRecorder()
+			h.GrafanaTelemetryQueryRangeHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusBadGateway {
+				t.Fatalf("single query status = %d, want 502 (body=%s)", rec.Code, rec.Body.String())
+			}
+			var singleResp struct {
+				Code string `json:"code"`
+			}
+			if err := json.Unmarshal(rec.Body.Bytes(), &singleResp); err != nil {
+				t.Fatalf("decode single query response: %v (body=%s)", err, rec.Body.String())
+			}
+			if singleResp.Code != tc.wantCode {
+				t.Errorf("single query error code = %q, want %q (body=%s)", singleResp.Code, tc.wantCode, rec.Body.String())
+			}
+
+			// Batch query_range_batch endpoint
+			batchBody := `{"start":"1","end":"2","step":"15","queries":[{"id":"1:A","ds":"dev-cortex","query":"bad"}]}`
+			batchReq := httptest.NewRequest(http.MethodPost, "/api/telemetry/grafana/"+connID+"/query_range_batch", strings.NewReader(batchBody))
+			batchReq = mux.SetURLVars(batchReq, map[string]string{"connectionID": connID})
+			batchRec := httptest.NewRecorder()
+			h.GrafanaTelemetryQueryRangeBatchHandler(batchRec, batchReq, nil, nil, provider)
+
+			if batchRec.Code != http.StatusOK {
+				t.Fatalf("batch query status = %d, want 200 (body=%s)", batchRec.Code, batchRec.Body.String())
+			}
+			var batchResp struct {
+				Results []grafanaBatchResultItem `json:"results"`
+			}
+			if err := json.Unmarshal(batchRec.Body.Bytes(), &batchResp); err != nil {
+				t.Fatalf("decode batch response: %v (body=%s)", err, batchRec.Body.String())
+			}
+			if len(batchResp.Results) != 1 {
+				t.Fatalf("expected 1 batch result, got %d", len(batchResp.Results))
+			}
+			if strings.Contains(batchResp.Results[0].Error, "was not found") || !strings.Contains(batchResp.Results[0].Error, tc.wantBatchError) {
+				t.Errorf("batch result error = %q, want error containing %q (and not datasource-not-found)", batchResp.Results[0].Error, tc.wantBatchError)
+			}
+		})
 	}
 }

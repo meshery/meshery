@@ -96,6 +96,16 @@ describe('sortByVersionInDecreasingOrder', () => {
     expect(result?.[0]).toBe(WILDCARD_V);
   });
 
+  it('keeps exactly one WILDCARD_V when the input already contains it', () => {
+    expect(sortByVersionInDecreasingOrder([WILDCARD_V, '2.0.0', '1.0.0'])).toEqual([
+      WILDCARD_V,
+      '2.0.0',
+      '1.0.0',
+    ]);
+    expect(sortByVersionInDecreasingOrder([WILDCARD_V, '2.0.0'])).toEqual([WILDCARD_V, '2.0.0']);
+    expect(sortByVersionInDecreasingOrder([WILDCARD_V])).toEqual([WILDCARD_V]);
+  });
+
   it('sorts in decreasing order numerically', () => {
     expect(sortByVersionInDecreasingOrder(['2.2.1', '2.10.11', '10.1.2', '10.1.1'])).toEqual([
       WILDCARD_V,
@@ -173,5 +183,96 @@ describe('sortAndGroupVersionsInModel', () => {
 
   it('handles an empty array', () => {
     expect(sortAndGroupVersionsInModel([])).toEqual([]);
+  });
+});
+
+describe('getMostRecentVersion – defensive type guards', () => {
+  it('returns undefined for non-array inputs', () => {
+    expect(getMostRecentVersion(null)).toBeUndefined();
+    expect(getMostRecentVersion(123)).toBeUndefined();
+    expect(getMostRecentVersion('v1.0.0')).toBeUndefined();
+    expect(getMostRecentVersion({})).toBeUndefined();
+    expect(getMostRecentVersion(true)).toBeUndefined();
+  });
+
+  it('safely skips nullish and non-string elements inside array', () => {
+    expect(getMostRecentVersion(['v1', null, undefined, 42, {}])).toBe('v1');
+    expect(getMostRecentVersion([null, undefined, 42])).toBeUndefined();
+    expect(getMostRecentVersion(['v1alpha1', null, 'v1'])).toBe('v1');
+    expect(getMostRecentVersion([null, '', 'mystery'])).toBe('mystery');
+    expect(getMostRecentVersion([''])).toBeUndefined();
+  });
+});
+
+describe('versionSortComparatorFn – defensive type guards', () => {
+  it('returns undefined when either argument is not a string', () => {
+    expect(versionSortComparatorFn(42, '1.0.0')).toBeUndefined();
+    expect(versionSortComparatorFn('1.0.0', 42)).toBeUndefined();
+    expect(versionSortComparatorFn({}, '1.0.0')).toBeUndefined();
+    expect(versionSortComparatorFn('1.0.0', [])).toBeUndefined();
+    expect(versionSortComparatorFn(null, '1.0.0')).toBeUndefined();
+    expect(versionSortComparatorFn('1.0.0', null)).toBeUndefined();
+    expect(versionSortComparatorFn('', '1.0.0')).toBeUndefined();
+    expect(versionSortComparatorFn('1.0.0', '')).toBeUndefined();
+  });
+});
+
+describe('sortByVersionInDecreasingOrder – defensive type guards', () => {
+  it('returns undefined for non-array inputs', () => {
+    expect(sortByVersionInDecreasingOrder(123)).toBeUndefined();
+    expect(sortByVersionInDecreasingOrder('1.0.0')).toBeUndefined();
+    expect(sortByVersionInDecreasingOrder({})).toBeUndefined();
+    expect(sortByVersionInDecreasingOrder(true)).toBeUndefined();
+  });
+
+  it('filters out non-string elements when sorting', () => {
+    expect(sortByVersionInDecreasingOrder(['1.0.0', null, undefined, 42])).toEqual(['1.0.0']);
+    expect(sortByVersionInDecreasingOrder([null, undefined])).toEqual([]);
+    expect(sortByVersionInDecreasingOrder(['1.0.0', '2.0.0', null])).toEqual([
+      WILDCARD_V,
+      '2.0.0',
+      '1.0.0',
+    ]);
+  });
+});
+
+describe('getGreaterVersion – defensive type guards', () => {
+  it('falls back gracefully when non-string arguments are provided', () => {
+    expect(getGreaterVersion(42, '1.0.0')).toBe('1.0.0');
+    expect(getGreaterVersion('1.0.0', 42)).toBe('1.0.0');
+    expect(getGreaterVersion('', '1.0.0')).toBe('1.0.0');
+    expect(getGreaterVersion('1.0.0', '')).toBe('1.0.0');
+    expect(getGreaterVersion(null, undefined)).toBeUndefined();
+  });
+});
+
+describe('sortAndGroupVersionsInModel – defensive type guards', () => {
+  it('returns empty array for non-array inputs', () => {
+    expect(sortAndGroupVersionsInModel(123)).toEqual([]);
+    expect(sortAndGroupVersionsInModel('models')).toEqual([]);
+    expect(sortAndGroupVersionsInModel({})).toEqual([]);
+  });
+
+  it('de-duplicates duplicate versions in a single model entry without adding a wildcard', () => {
+    const singleModelWithDuplicates = [{ name: 'foo', version: ['1.0.0', '1.0.0'] }];
+    const result = sortAndGroupVersionsInModel(singleModelWithDuplicates);
+    expect(result).toHaveLength(1);
+    expect(result[0].name).toBe('foo');
+    expect(result[0].version).toEqual(['1.0.0']);
+  });
+
+  it('safely ignores null or invalid elements in array', () => {
+    const mixed = [
+      null,
+      undefined,
+      42,
+      { name: 'foo', version: '1.0.0' },
+      { notAModel: true },
+      { name: '', version: '2.0.0' },
+    ];
+    const result = sortAndGroupVersionsInModel(mixed);
+    expect(result).toHaveLength(1);
+    expect(result[0].name).toBe('foo');
+    expect(result[0].version).toEqual(['1.0.0']);
   });
 });
