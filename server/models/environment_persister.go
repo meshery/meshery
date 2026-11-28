@@ -28,7 +28,10 @@ func (ep *EnvironmentPersister) fetchUserDetails() *User {
 	return LocalProviderUser()
 }
 
-// GetEnvironments returns all of the environments
+// GetEnvironments returns a page of Local Provider environments. An empty
+// purpose leaves the list unfiltered by purpose. The user filter includes rows
+// with an empty or NULL purpose for compatibility with legacy data. An unknown
+// nonempty purpose matches no rows.
 func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, pageSize, filter, purpose string) ([]byte, error) {
 	// Sanitize the order input
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
@@ -51,7 +54,6 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 	switch purpose {
 	case "":
 	case string(environment.EnvironmentPurposeUser):
-		// Rows written before the purpose column existed read back as "", which means user.
 		query = query.Where("(purpose = ? OR purpose = '' OR purpose IS NULL)", purpose)
 	case string(environment.EnvironmentPurposeAdministrative):
 		query = query.Where("purpose = ?", purpose)
