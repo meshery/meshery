@@ -63,12 +63,19 @@ func newDashboardOptions() *dashboardOptions {
 	}
 }
 
+var dashboardUsageMsg = "Usage: mesheryctl system dashboard [flags]\nRun 'mesheryctl system dashboard --help' to see detailed help message"
+
 var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
 	Short: "Open Meshery UI in browser.",
 	Long: `Open Meshery UI in browser.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/dashboard`,
-	Args: cobra.NoArgs,
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s)\n\n%s", dashboardUsageMsg))
+		}
+		return nil
+	},
 	Example: `
 // Open Meshery UI in browser
 mesheryctl system dashboard
@@ -102,7 +109,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		if err != nil {
 			return ErrGetCurrentContext(err)
 		}
-		running, err := utils.IsMesheryRunning(currCtx.GetPlatform())
+		running, err := utils.IsMesheryRunning(currCtx)
 		if err != nil {
 			return err
 		}

@@ -286,22 +286,28 @@ func (h *Handler) flushMeshsyncAction(
 		return
 	}
 
-	// One snapshot of the context under setupLock: a credential refresh can
-	// replace machineCtx.K8sContext while this handler runs, so every read
-	// below uses the same copy instead of re-reading a field that may change.
-	k8sCtx := machineCtx.K8sContextSnapshot()
-
-	// Clear the cached cluster state. Keyed on the Kubernetes server id so only
-	// this cluster's rows are removed (matches the resolver's per-cluster path).
-	if serverID := k8sCtx.KubernetesServerID; serverID != nil {
-		if perr := models.FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), serverID.String()); perr != nil {
-			_err := models.ErrFlushMeshSyncData(perr, k8sCtx.Name, k8sCtx.Server)
-			event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to flush MeshSync data").WithMetadata(map[string]any{"error": _err, "connectionId": connectionID}).Build()
-			h.persistAndPublish(provider, token, userID, event)
-			h.log.Error(_err)
-			writeMeshkitError(w, _err, http.StatusInternalServerError)
-			return
+	// Keep the connection lifecycle stable while checking its state and
+	// clearing cached resources. The setup lock is released before the
+	// database operation; the lifecycle lock prevents a concurrent disconnect.
+	connected, flushErr := machineCtx.WithConnectedK8sContext(func(k8sCtx models.K8sContext) error {
+		// Clear only this cluster's cached state, keyed by its Kubernetes server ID.
+		if serverID := k8sCtx.KubernetesServerID; serverID != nil {
+			if perr := models.FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), serverID.String()); perr != nil {
+				return models.ErrFlushMeshSyncData(perr, k8sCtx.Name, k8sCtx.Server)
+			}
 		}
+		return nil
+	})
+	if !connected {
+		writeJSONError(w, fmt.Sprintf("connection %s is disconnected; reconnect the cluster before flushing MeshSync", connectionID), http.StatusConflict)
+		return
+	}
+	if flushErr != nil {
+		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to flush MeshSync data").WithMetadata(map[string]any{"error": flushErr, "connectionId": connectionID}).Build()
+		h.persistAndPublish(provider, token, userID, event)
+		h.log.Error(flushErr)
+		writeMeshkitError(w, flushErr, http.StatusInternalServerError)
+		return
 	}
 
 	// Repopulate from the live cluster. Fresh data streams back via the broker.
@@ -321,8 +327,9 @@ func (h *Handler) flushMeshsyncAction(
 	writeJSONMessage(w, existing, http.StatusOK)
 }
 
-// reconcileMeshsyncDeploymentMode drives the FSM's controller helper to undeploy
-// the previous MeshSync setup and (re)deploy it for newMode. It reads the live
+// reconcileMeshsyncDeploymentMode drives the FSM's controller helper to tear
+// down the previous MeshSync setup and (re)deploy it for newMode. Teardown
+// never uninstalls the cluster-scoped Meshery Operator. It reads the live
 // machine context, so it must run after the connection's FSM exists (i.e. the
 // connection is connected). Safe to run in a detached goroutine.
 //
@@ -357,14 +364,11 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 	// One snapshot for the whole reconcile: teardown and redeploy must agree
 	// on the same context even if a credential refresh lands mid-reconcile.
 	k8sCtx := machineCtx.K8sContextSnapshot()
-	contextID := k8sCtx.ID
 
-	// Undeploy the previous MeshSync setup for this context.
-	ctrlHelper.
-		UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-		UndeployDeployedOperators(machineCtx.OperatorTracker, contextID).
-		RemoveCtxControllerHandler(ctx, contextID)
-	ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
+	// Tear down the previous MeshSync setup for this context. The cluster's
+	// Meshery Operator stays installed: it is cluster-scoped, and switching this
+	// connection to embedded mode does not speak for the others using it.
+	ctrlHelper.DetachFromCluster(ctx, machineCtx.OperatorTracker, k8sCtx)
 
 	// Deploy MeshSync for the new mode. The resolved configuration is stashed
 	// first: AddCtxControllerHandlers constructs the operator controller handler
@@ -376,7 +380,7 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 		SetMeshsyncDeploymentMode(newMode).
 		AddCtxControllerHandlers(k8sCtx).
 		UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-		DeployUndeployedOperators(machineCtx.OperatorTracker, contextID).
+		DeployUndeployedOperators(machineCtx.OperatorTracker, k8sCtx).
 		AddMeshsyncDataHandlers(ctx, k8sCtx, userID, mesheryInstanceID, provider)
 
 	return nil

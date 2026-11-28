@@ -64,7 +64,7 @@ built-in `Local` provider (legacy alias `None`) needs no base URL.
 | `MESHERY_MANAGED_BROKER_PORTFORWARD` | `true` | Whether Meshery Server tunnels to an operator-mode connection's Meshery Broker through the Kubernetes API when that connection's cluster is not the one Meshery runs in. Set `false` to provide your own path to the Broker. See [Managed port-forward]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#managed-port-forward-automatic" >}}). | `MESHERY_MANAGED_BROKER_PORTFORWARD=false` |
 | `SKIP_DOWNLOAD_CONTENT` | `false` | Skips downloading bundled seed content such as patterns and filters before loading local content. | `SKIP_DOWNLOAD_CONTENT=true make server` |
 | `SKIP_COMP_GEN` | `false` | Skips background Kubernetes component generation during startup. Explicit API-triggered registration can still run. | `SKIP_COMP_GEN=true make server` |
-| `POLICY_EVAL_TIMEOUT` | `3m` | Maximum duration for a single relationship-policy evaluation. Uses Go duration syntax. | `POLICY_EVAL_TIMEOUT=5m make server` |
+| `POLICY_EVAL_TIMEOUT` | `3m` | Maximum duration for a single relationship-policy evaluation. Uses Go duration syntax, such as `90s` or `5m`. A value that is not a valid Go duration (such as `300`, which has no unit), or one that is not positive, is ignored with a warning and the default is used. | `POLICY_EVAL_TIMEOUT=5m make server` |
 | `USE_GO_POLICY_ENGINE` | `false` | Uses the Go relationship-policy engine instead of the default Rego/OPA path. The local `make server` target sets this to `true`. | `USE_GO_POLICY_ENGINE=true make server` |
 
 ## Build and runtime metadata
@@ -76,7 +76,7 @@ The build or deployment pipeline usually injects these variables; end users rare
 | `BUILD` | Build-time value; runtime fallback `Not Set` | Meshery Server version string used in server metadata, provider capability requests, and chart selection. | `BUILD=v1.0.0 make server` |
 | `COMMITSHA` | Build-time value; runtime fallback `Not Set` | Git commit SHA reported in server metadata. | `COMMITSHA=$(git rev-parse HEAD) make server` |
 | `RELEASE_CHANNEL` | Build-time value; runtime fallback `Not Set` | Release channel reported by the server, such as `stable` or `edge`. | `RELEASE_CHANNEL=stable make server` |
-| `INSTANCE_ID` | Auto-generated UUID | Unique Meshery instance identifier used in eventing, connection metadata, and system-owned resources. | `INSTANCE_ID=$(uuidgen) make server` |
+| `INSTANCE_ID` | Auto-generated UUID | Unique Meshery instance identifier used in eventing, connection metadata, and system-owned resources. Must be a UUID; it takes precedence over an `INSTANCE_ID` in `server-config.env`. Any other value, including one that is only whitespace or the all-zero UUID, is ignored with a warning, and a new ID is generated. An empty value counts as unset: the ID from `server-config.env` is used, or a new one is generated without a warning. | `INSTANCE_ID=$(uuidgen) make server` |
 | `OS` | `meshery` | Value forwarded to remote-provider capability requests so providers can tailor responses to the caller. | `OS=meshery make server` |
 
 ## Platform-provided environment variables

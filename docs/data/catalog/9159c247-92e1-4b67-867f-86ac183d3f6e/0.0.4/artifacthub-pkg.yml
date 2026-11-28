@@ -1,0 +1,20 @@
+version: 0.0.4
+name: wordpress-on-kubernetes-with-mysql
+displayName: WordPress on Kubernetes with MySQL
+createdAt: "2026-11-24T12:19:56Z"
+description: A Kubernetes WordPress site backed by MySQL. The design groups resources in a dedicated namespace and includes an Ingress, WordPress Service and Deployment, MySQL Service and StatefulSet, persistent volume claims, ConfigMap, Secret, and a NetworkPolicy intended to restrict database ingress to WordPress pods. Prepared with AI assistance and checked in Meshery Kanvas; its design validator reported zero errors. It has not been deployed to a cluster.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/9159c247-92e1-4b67-867f-86ac183d3f6e/0.0.4/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This is an illustrative starting point, not a production deployment. Replace sample Secret values before use; configure TLS, StorageClass and storage sizing, database backups, resource requests and limits, and appropriate health probes for your environment. Review the NetworkPolicy against your CNI and confirm the ingress class and host. No live cluster or runtime testing has been performed. AI assistance was used in preparing the manifest and description. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a2e74217-2741-4b22-bb63-dd0e19d61650
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

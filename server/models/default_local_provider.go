@@ -1776,8 +1776,21 @@ func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential 
 			}
 			return fmt.Errorf("error getting user credential: %v", err)
 		}
-		if err := live.Updates(credential).Error; err != nil {
+		toUpdate := *credential
+		typeChanged := toUpdate.Type != "" && !strings.EqualFold(toUpdate.Type, updatedCredential.Type)
+		if !typeChanged {
+			toUpdate.Secret = MergeCredentialSecrets(updatedCredential.Secret, credential.Secret)
+		} else if toUpdate.Secret == nil {
+			toUpdate.Secret = core.Map{}
+		}
+		if err := live.Updates(&toUpdate).Error; err != nil {
 			return fmt.Errorf("error updating user credential: %v", err)
+		}
+		// GORM's struct Updates ignores an empty map, so clear stale secret keys explicitly on a type switch.
+		if typeChanged && len(toUpdate.Secret) == 0 {
+			if err := live.Update("secret", core.Map{}).Error; err != nil {
+				return fmt.Errorf("error clearing credential secret on type change: %v", err)
+			}
 		}
 		if err := live.First(updatedCredential).Error; err != nil {
 			return fmt.Errorf("error getting updated user credential: %v", err)
@@ -2057,6 +2070,8 @@ func githubRepoPatternScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
+		Timeout(remoteFileFetchTimeout).
+		MaxFileSize(maxRemoteFileSize).
 		RegisterFileInterceptor(func(f walker.File) error {
 			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
@@ -2101,6 +2116,8 @@ func githubRepoFilterScan(
 		Repo(repo).
 		Branch(branch).
 		Root(path).
+		Timeout(remoteFileFetchTimeout).
+		MaxFileSize(maxRemoteFileSize).
 		RegisterFileInterceptor(func(f walker.File) error {
 			ext := filepath.Ext(f.Name)
 			if ext == ".yml" || ext == ".yaml" {
@@ -2132,18 +2149,8 @@ func githubRepoFilterScan(
 	return result, err
 }
 
-func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPattern, error) {
-	resp, err := http.Get(fileURL)
-	if err != nil {
-		return nil, err
-	}
-	defer SafeClose(resp.Body, log)
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("file not found")
-	}
-
-	body, err := io.ReadAll(resp.Body)
+func genericHTTPPatternFile(fileURL string, _ logger.Handler) ([]MesheryPattern, error) {
+	body, err := fetchRemoteFile(fileURL)
 	if err != nil {
 		return nil, err
 	}
@@ -2169,31 +2176,20 @@ func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPatter
 	return []MesheryPattern{pf}, nil
 }
 
-func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter, error) {
-	resp, err := http.Get(fileURL)
+func genericHTTPFilterFile(fileURL string, _ logger.Handler) ([]MesheryFilter, error) {
+	body, err := fetchRemoteFile(fileURL)
 	if err != nil {
 		return nil, err
 	}
-	defer SafeClose(resp.Body, log)
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("file not found")
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	result := string(body)
-
-	name, err := GetFilterName(result)
+	name, err := filterNameForURLImport(fileURL, body)
 	if err != nil {
 		return nil, err
 	}
 
 	ff := MesheryFilter{
 		Name:       name,
-		FilterFile: []byte(result),
+		FilterFile: body,
 		Location: map[string]interface{}{
 			"type":   "http",
 			"host":   fileURL,

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"sync/atomic"
 	"testing"
 
@@ -295,7 +296,7 @@ func TestGetUserCredentialByID_RejectsMissingOrInvalidID(t *testing.T) {
 }
 
 // TestGetUserCredentialByID_ValidID verifies that a valid UUID successfully
-// queries the provider and returns 200 OK for the owning user.
+// queries the provider and returns 200 OK along with the credential payload for the owning user.
 func TestGetUserCredentialByID_ValidID(t *testing.T) {
 	validID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
 	authUser := &models.User{ID: uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))}
@@ -304,6 +305,7 @@ func TestGetUserCredentialByID_ValidID(t *testing.T) {
 	p.stubbedCredential = &models.Credential{
 		ID:     validID,
 		UserId: authUser.ID,
+		Name:   "valid-cred",
 	}
 
 	req := httptest.NewRequest(http.MethodGet, "/api/integrations/credentials/"+validID.String(), nil)
@@ -315,6 +317,19 @@ func TestGetUserCredentialByID_ValidID(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
 	}
+	var cred models.Credential
+	if err := json.Unmarshal(rec.Body.Bytes(), &cred); err != nil {
+		t.Fatalf("failed to unmarshal credential response body: %v (body=%q)", err, rec.Body.String())
+	}
+	if cred.ID != validID {
+		t.Fatalf("credential ID = %v, want %v", cred.ID, validID)
+	}
+	if cred.UserId != authUser.ID {
+		t.Fatalf("credential UserId = %v, want %v", cred.UserId, authUser.ID)
+	}
+	if cred.Name != "valid-cred" {
+		t.Fatalf("credential Name = %q, want %q", cred.Name, "valid-cred")
+	}
 	observed := p.observedGet.Load()
 	if observed == nil {
 		t.Fatalf("provider GetCredentialByID was not invoked")
@@ -324,8 +339,23 @@ func TestGetUserCredentialByID_ValidID(t *testing.T) {
 	}
 }
 
+// assertCredentialNotFoundEnvelope decodes the response body and asserts that
+// it contains a structured MeshKit ErrResultNotFound error envelope with a
+// case-insensitive 'not found' message.
+func assertCredentialNotFoundEnvelope(t *testing.T, body []byte) {
+	t.Helper()
+	decoded := decodeErrorBody(t, body)
+	if decoded.Code != models.ErrResultNotFoundCode {
+		t.Fatalf("expected %s, got %s", models.ErrResultNotFoundCode, decoded.Code)
+	}
+	if !strings.Contains(strings.ToLower(decoded.Error), "not found") {
+		t.Fatalf("expected error containing 'not found', got %q", decoded.Error)
+	}
+}
+
 // TestGetUserCredentialByID_UnownedCredentialReturns404 verifies that requesting
-// a legacy unowned credential (UserId == uuid.Nil) returns 404 Not Found (fail-closed).
+// a legacy unowned credential (UserId == uuid.Nil) returns 404 Not Found (fail-closed)
+// with a structured MeshKit error envelope.
 func TestGetUserCredentialByID_UnownedCredentialReturns404(t *testing.T) {
 	credID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
 	authUser := &models.User{ID: uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))}
@@ -346,10 +376,12 @@ func TestGetUserCredentialByID_UnownedCredentialReturns404(t *testing.T) {
 	if rec.Code != http.StatusNotFound {
 		t.Fatalf("expected 404, got %d (body=%q)", rec.Code, rec.Body.String())
 	}
+	assertCredentialNotFoundEnvelope(t, rec.Body.Bytes())
 }
 
 // TestGetUserCredentialByID_NilUserReturns404 verifies that calling GetUserCredentialByID
-// when the caller is unauthenticated/unresolved (user is nil) returns 404 Not Found (fail-closed).
+// when the caller is unauthenticated/unresolved (user is nil) returns 404 Not Found (fail-closed)
+// with a structured MeshKit error envelope.
 func TestGetUserCredentialByID_NilUserReturns404(t *testing.T) {
 	credID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
 
@@ -369,10 +401,12 @@ func TestGetUserCredentialByID_NilUserReturns404(t *testing.T) {
 	if rec.Code != http.StatusNotFound {
 		t.Fatalf("expected 404, got %d (body=%q)", rec.Code, rec.Body.String())
 	}
+	assertCredentialNotFoundEnvelope(t, rec.Body.Bytes())
 }
 
 // TestGetUserCredentialByID_ForeignUserReturns404 verifies that requesting
-// a credential belonging to another user returns 404 Not Found.
+// a credential belonging to another user returns 404 Not Found
+// with a structured MeshKit error envelope.
 func TestGetUserCredentialByID_ForeignUserReturns404(t *testing.T) {
 	credID := uuid.Must(uuid.FromString("11111111-2222-3333-4444-555555555555"))
 	authUser := &models.User{ID: uuid.Must(uuid.FromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))}
@@ -394,6 +428,7 @@ func TestGetUserCredentialByID_ForeignUserReturns404(t *testing.T) {
 	if rec.Code != http.StatusNotFound {
 		t.Fatalf("expected 404, got %d (body=%q)", rec.Code, rec.Body.String())
 	}
+	assertCredentialNotFoundEnvelope(t, rec.Body.Bytes())
 }
 
 // TestGetUserCredentialByID_OwnerReturns200 verifies that the owner of a
@@ -418,6 +453,19 @@ func TestGetUserCredentialByID_OwnerReturns200(t *testing.T) {
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+	var cred models.Credential
+	if err := json.Unmarshal(rec.Body.Bytes(), &cred); err != nil {
+		t.Fatalf("failed to unmarshal credential response body: %v (body=%q)", err, rec.Body.String())
+	}
+	if cred.ID != credID {
+		t.Fatalf("credential ID = %v, want %v", cred.ID, credID)
+	}
+	if cred.UserId != owner.ID {
+		t.Fatalf("credential UserId = %v, want %v", cred.UserId, owner.ID)
+	}
+	if cred.Name != "my-cred" {
+		t.Fatalf("credential Name = %q, want %q", cred.Name, "my-cred")
 	}
 }
 
@@ -600,4 +648,67 @@ func TestDeleteUserCredential_NilProvider_ReturnsInternalServerError(t *testing.
 	if decoded.Code != ErrNilProviderCode {
 		t.Fatalf("expected %s, got %s", ErrNilProviderCode, decoded.Code)
 	}
+}
+
+// TestSaveAndUpdateUserCredential_RejectUnsafeKubeCredential pins issue #24218:
+// a Kubernetes credential secret must not carry an exec plugin, an
+// auth-provider or a certificate, key or token file path, in either the
+// canonical {auth, cluster} shape or the legacy {credentialName, secret} wrapper.
+// The provider must never see it, and the response must not echo the command or
+// the path.
+func TestSaveAndUpdateUserCredential_RejectUnsafeKubeCredential(t *testing.T) {
+	cluster := `"cluster":{"name":"c","cluster":{"server":"https://127.0.0.1:1"}}`
+	secrets := map[string]string{
+		"exec":                `{"auth":{"name":"u","user":{"exec":{"apiVersion":"client.authentication.k8s.io/v1","command":"leak-cmd","args":["/leak/path"]}}},` + cluster + `}`,
+		"auth-provider":       `{"auth":{"name":"u","user":{"auth-provider":{"name":"oidc"}}},` + cluster + `}`,
+		"tokenFile":           `{"auth":{"name":"u","user":{"tokenFile":"/leak/path"}},` + cluster + `}`,
+		"client-key":          `{"auth":{"name":"u","user":{"client-key":"/leak/path"}},` + cluster + `}`,
+		"ca path":             `{"auth":{"name":"u","user":{"token":"t"}},"cluster":{"name":"c","cluster":{"server":"https://k","certificate-authority":"/leak/path"}}}`,
+		"legacy wrapper exec": `{"credentialName":"x","secret":{"auth":{"name":"u","user":{"exec":{"apiVersion":"client.authentication.k8s.io/v1","command":"leak-cmd"}}},` + cluster + `}}`,
+	}
+	for name, secret := range secrets {
+		for _, method := range []string{http.MethodPost, http.MethodPut} {
+			t.Run(name+" "+method, func(t *testing.T) {
+				body := `{"id":"abcdefab-abcd-abcd-abcd-abcdefabcdef","name":"k","type":"kubernetes","secret":` + secret + `}`
+				h := newTestHandler(t, map[string]models.Provider{}, "")
+				p := newCredentialSpyProvider()
+				req := httptest.NewRequest(method, "/api/integrations/credentials", bytes.NewBufferString(body))
+				req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+				rec := httptest.NewRecorder()
+				user := &models.User{ID: uuid.Must(uuid.NewV4())}
+
+				if method == http.MethodPost {
+					h.SaveUserCredential(rec, req, nil, user, p)
+				} else {
+					h.UpdateUserCredential(rec, req, nil, user, p)
+				}
+
+				if rec.Code != http.StatusBadRequest {
+					t.Fatalf("status = %d, want 400 (body=%q)", rec.Code, rec.Body.String())
+				}
+				if p.observedSave.Load() != nil || p.observedUpdate.Load() != nil {
+					t.Fatalf("the provider was asked to store an unsafe credential")
+				}
+				if strings.Contains(rec.Body.String(), "leak-cmd") || strings.Contains(rec.Body.String(), "/leak/path") {
+					t.Fatalf("response echoes the credential: %s", rec.Body.String())
+				}
+				if got := decodeErrorBody(t, rec.Body.Bytes()).Code; got != models.ErrUnsafeKubeCredentialCode {
+					t.Fatalf("error code = %q, want %q", got, models.ErrUnsafeKubeCredentialCode)
+				}
+			})
+		}
+	}
+
+	t.Run("embedded data is stored", func(t *testing.T) {
+		body := `{"name":"k","type":"kubernetes","secret":{"auth":{"name":"u","user":{"token":"t","client-key-data":"Yg=="}},` + cluster + `}}`
+		h := newTestHandler(t, map[string]models.Provider{}, "")
+		p := newCredentialSpyProvider()
+		req := httptest.NewRequest(http.MethodPost, "/api/integrations/credentials", bytes.NewBufferString(body))
+		req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+		rec := httptest.NewRecorder()
+		h.SaveUserCredential(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, p)
+		if rec.Code != http.StatusCreated || p.observedSave.Load() == nil {
+			t.Fatalf("status = %d, saved = %v (body=%q)", rec.Code, p.observedSave.Load() != nil, rec.Body.String())
+		}
+	})
 }

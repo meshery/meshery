@@ -54,6 +54,9 @@ describe('generateDynamicURL', () => {
   it('locates a specific kind within its category', () => {
     expect(generateDynamicURL('Pod')).toBe('?resourceCategory=Workload&resource=Pod');
     expect(generateDynamicURL('Ingress')).toBe('?resourceCategory=Network&resource=Ingress');
+    expect(generateDynamicURL('NetworkPolicy')).toBe(
+      '?resourceCategory=Network&resource=NetworkPolicy',
+    );
     expect(generateDynamicURL('Secret')).toBe('?resourceCategory=Configuration&resource=Secret');
   });
 
@@ -67,6 +70,7 @@ describe('getAllCustomResourceDefinitionsKinds', () => {
     const kinds = [
       { kind: 'Pod' },
       { kind: 'Service' },
+      { kind: 'NetworkPolicy' },
       { kind: 'NotebookSpec' },
       { kind: 'Node' },
       { kind: 'Namespace' },

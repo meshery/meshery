@@ -203,3 +203,61 @@ func TestK8sContextSnapshot_ConcurrentRefreshDoesNotRace(t *testing.T) {
 	}
 	<-done
 }
+
+// TestWithConnectedK8sContext_HoldsLifecycleLock verifies that the
+// lifecycle lock remains held throughout a connected operation.
+func TestWithConnectedK8sContext_HoldsLifecycleLock(t *testing.T) {
+	machinectx := &MachineCtx{
+		K8sContext: models.K8sContext{ID: "ctx-1"},
+	}
+
+	connected, err := machinectx.WithConnectedK8sContext(func(ctx models.K8sContext) error {
+		if ctx.ID != "ctx-1" {
+			t.Errorf("context ID = %q, want ctx-1", ctx.ID)
+		}
+
+		if machinectx.lifecycleLock.TryLock() {
+			machinectx.lifecycleLock.Unlock()
+			t.Error("lifecycle lock was available during the connected operation")
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("connected operation failed: %v", err)
+	}
+	if !connected {
+		t.Fatal("connected = false, want true")
+	}
+
+	if !machinectx.lifecycleLock.TryLock() {
+		t.Fatal("lifecycle lock remained held after the connected operation")
+	}
+	machinectx.lifecycleLock.Unlock()
+
+	machinectx.SetDisconnected(true)
+	if !machinectx.IsDisconnected() {
+		t.Fatal("expected machine to be disconnected after the connected operation")
+	}
+}
+
+// TestWithConnectedK8sContext_SkipsDisconnectedMachine verifies that the
+// callback is not invoked when the connection is already disconnected.
+func TestWithConnectedK8sContext_SkipsDisconnectedMachine(t *testing.T) {
+	machinectx := &MachineCtx{}
+	machinectx.SetDisconnected(true)
+
+	called := false
+	connected, err := machinectx.WithConnectedK8sContext(func(models.K8sContext) error {
+		called = true
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if connected {
+		t.Fatal("connected = true, want false")
+	}
+	if called {
+		t.Fatal("callback was called for a disconnected machine")
+	}
+}

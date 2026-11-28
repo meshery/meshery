@@ -35,6 +35,8 @@ var (
 	silentFlagSet bool
 )
 
+var restartUsageMsg = "Usage: mesheryctl system restart [flags]\nRun 'mesheryctl system restart --help' to see detailed help message."
+
 // restartCmd represents the restart command
 var restartCmd = &cobra.Command{
 	Use:   "restart",
@@ -48,11 +50,9 @@ mesheryctl system restart
 // (optional) skip checking for new updates available in Meshery.
 mesheryctl system restart --skip-update
 	`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) > 0 {
-			return utils.ErrInvalidArgument(
-				fmt.Errorf("restart does not take any arguments, see '%s --help' for more information", cmd.CommandPath()),
-			)
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("restart does not accept positional arguments\n\n%s", restartUsageMsg))
 		}
 		return nil
 	},
