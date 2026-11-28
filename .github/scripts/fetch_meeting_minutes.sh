@@ -6,7 +6,11 @@
 set -e
 
 # DISCOURSE_URL should be provided as an environment variable
-DISCOURSE_URL="${DISCOURSE_URL:-http://discuss.meshery.io/}"
+DISCOURSE_URL="${DISCOURSE_URL:-https://discuss.meshery.io}"
+# Strip trailing slashes so path joins never produce double slashes (e.g. //t/...).
+while [[ "$DISCOURSE_URL" == */ ]]; do
+    DISCOURSE_URL="${DISCOURSE_URL%/}"
+done
 TAG="meetings"
 ARCHIVE_DIR=".github/meetings/archive"
 

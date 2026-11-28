@@ -3,6 +3,7 @@ package root
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -16,6 +17,45 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestVersionCmdArgs(t *testing.T) {
+	tests := []struct {
+		Name          string
+		Args          []string
+		ExpectError   bool
+		ExpectedError error
+	}{
+		{
+			Name:        "valid with no positional arguments",
+			Args:        []string{},
+			ExpectError: false,
+		},
+		{
+			Name:          "invalid with unexpected positional argument",
+			Args:          []string{"unexpected-arg"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("this command does not accept positional arguments\n\n%s", versionUsageMsg)),
+		},
+		{
+			Name:          "invalid with multiple unexpected positional arguments",
+			Args:          []string{"arg1", "arg2"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("this command does not accept positional arguments\n\n%s", versionUsageMsg)),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			err := versionCmd.Args(versionCmd, tt.Args)
+			if tt.ExpectError {
+				assert.Error(t, err)
+				utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
 
 const (
 	// The local context in pkg/utils/TestConfig.yaml points at this endpoint.
@@ -107,6 +147,24 @@ func TestVersionCmd(t *testing.T) {
 			responder:  httpmock.NewStringResponder(http.StatusOK, `not json`),
 			wantStdout: []string{"Client", "Server", "unavailable"},
 			wantLog:    "Error processing json API data",
+		},
+		{
+			name:       "given server returns 500 Internal Server Error when version then show server version as unavailable and log status error",
+			responder:  httpmock.NewStringResponder(http.StatusInternalServerError, `{"error":"internal error"}`),
+			wantStdout: []string{"Client", "Server", "unavailable"},
+			wantLog:    "Server returned with status code: 500",
+		},
+		{
+			name:       "given server returns 502 Bad Gateway when version then show server version as unavailable and log status error",
+			responder:  httpmock.NewStringResponder(http.StatusBadGateway, `<html>502 Bad Gateway</html>`),
+			wantStdout: []string{"Client", "Server", "unavailable"},
+			wantLog:    "Server returned with status code: 502",
+		},
+		{
+			name:       "given server returns 401 Unauthorized when version then show server version as unavailable and log status error",
+			responder:  httpmock.NewStringResponder(http.StatusUnauthorized, `{"message":"Unauthorized"}`),
+			wantStdout: []string{"Client", "Server", "unavailable"},
+			wantLog:    "Server returned with status code: 401",
 		},
 	}
 

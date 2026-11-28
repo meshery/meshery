@@ -1956,11 +1956,20 @@ func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilt
 		return nil, ErrUnmarshal(err, "Events Response")
 	}
 
+	// A remote provider may send null (or omit) data and countBySeverityLevel
+	// when there are no events. A nil slice encodes as JSON null, which breaks
+	// the UI; normalize to empty slices, as the local provider does.
 	eventsResponse.Events = response.Data
+	if eventsResponse.Events == nil {
+		eventsResponse.Events = []*events.Event{}
+	}
 	eventsResponse.Page = response.Page
 	eventsResponse.TotalCount = response.TotalCount
 	eventsResponse.PageSize = response.PageSize
 	eventsResponse.CountBySeverityLevel = response.CountBySeverityLevel
+	if eventsResponse.CountBySeverityLevel == nil {
+		eventsResponse.CountBySeverityLevel = []*CountBySeverityLevel{}
+	}
 	eventsResponse.ReadCount = response.ReadCount
 
 	return eventsResponse, nil
@@ -3414,7 +3423,7 @@ func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string, 
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		err = ErrClone(err, "filter")
+		err = httputil.WithProviderStatus(ErrClone(err, "filter"), resp.StatusCode)
 		l.Log.Error(err)
 		return nil, err
 	}
@@ -3431,7 +3440,7 @@ func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string, 
 		l.Log.Info("filter cloned from remote provider")
 		return bdr, nil
 	}
-	err = ErrClone(fmt.Errorf("error while cloning filter with id %s: %s", filterID, bdr), "filter")
+	err = httputil.WithProviderStatus(ErrClone(fmt.Errorf("error while cloning filter with id %s: %s", filterID, bdr), "filter"), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }

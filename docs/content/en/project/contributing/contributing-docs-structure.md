@@ -77,7 +77,7 @@ A task page shows how to do a **single** thing, typically by giving a short sequ
 
 - **Task Guides:** Step-by-step instructions for common tasks (deploying applications, managing resources).
 - **Configuration Management:** Designing infrastructure, managing configuration files.
-- **Lifecycle Management:** Discoverying, registering, configuring infrastructure
+- **Lifecycle Management:** Discovering, registering, configuring infrastructure
   - Discovery (MeshSync): Greenfield/Brownfield scenarios.
   - Managing Connections: Registering, updating, and deleting connections.
   - Managing Credentials: Registering, updating, and deleting credentials.
@@ -90,7 +90,7 @@ Designed for platform engineers, operators, DevOps, and other advanced users who
 
 - **Performance Optimization:** Resource usage analysis, profiling tools, tuning techniques.
 - **GitOps / DevOps & CI/CD**: Integrating Meshery with continuous integration and deployment pipelines.  
-- **Best Practices:** Recommendations for securing the Meshery, monitoring performance, managing versions.
+- **Best Practices:** Recommendations for securing Meshery, monitoring performance, managing versions.
 - **Advanced Concepts:** Advanced Meshery concepts, features, and capabilities.
 - **Air-gapped Environments:** Deploying Meshery in air-gapped environments.
 - **Troubleshooting Guides:** Common errors, debugging, tips.  
@@ -109,7 +109,7 @@ Meshery’s extensibility allows for seamless integration with existing systems 
   - **APIs:** Simple summary of Meshery's APIs.
   - **Extension Points:** Providers, plugins, adapters, modules.
 - **Integrations:** Meshery Models. Integrating Meshery with different infrastructure and systems.
-- **Extensions:** List of all of Meshery adapters, plugins, and modules for different extension points.
+- **Extensions:** List of all Meshery adapters, plugins, and modules for different extension points.
   - **Adapters:** Integrating Meshery with different infrastructure and extended capabilities.
   - **Plugins:** Extended capabilities for Meshery.
   - **Remote Providers:** Remote providers for additional functionality.

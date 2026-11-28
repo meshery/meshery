@@ -157,16 +157,23 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, sear
 // keeps the source's file, resource and location, but gets its own creation
 // time and no catalog data.
 func (mfp *MesheryFilterPersister) CloneMesheryFilter(filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error) {
+	if cloneFilterRequest == nil {
+		return nil, fmt.Errorf("clone request body is required")
+	}
 	var mesheryFilter MesheryFilter
 	filterUUID, err := uuid.FromString(filterID)
 	if err != nil {
 		return nil, ErrInvalidUUID(err)
 	}
-	if err := mfp.DB.First(&mesheryFilter, filterUUID).Error; err != nil {
+	err = mfp.DB.First(&mesheryFilter, filterUUID).Error
+	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrResultNotFound(err)
 		}
-		return nil, fmt.Errorf("unable to get filter: %w", err)
+		return nil, ErrDBRead(err)
+	}
+	if mesheryFilter.ID == nil || *mesheryFilter.ID == uuid.Nil {
+		return nil, ErrResultNotFound(fmt.Errorf("filter %s not found", filterID))
 	}
 
 	id, err := uuid.NewV4()

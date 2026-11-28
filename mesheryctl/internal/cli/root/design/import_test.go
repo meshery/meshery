@@ -2,6 +2,7 @@ package design
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"path/filepath"
@@ -24,9 +25,10 @@ import (
 // assertions below fail if that error identity regresses.
 func Test_designImport_FlagValidation(t *testing.T) {
 	tests := []struct {
-		name string
-		run  func(t *testing.T) error
-		want error
+		name       string
+		run        func(t *testing.T) error
+		want       error
+		wantSubstr string
 	}{
 		{
 			name: "given invalid source type when design import then error is thrown",
@@ -50,6 +52,57 @@ func Test_designImport_FlagValidation(t *testing.T) {
 			},
 			want: ErrDesignFileNotProvided(),
 		},
+		{
+			name: "given whitespace file flag when design import then error is thrown",
+			run: func(t *testing.T) error {
+				previous := file
+				file = "   "
+				t.Cleanup(func() { file = previous })
+
+				return importCmd.Args(importCmd, nil)
+			},
+			want: ErrDesignFileNotProvided(),
+		},
+		{
+			name: "given unexpected positional argument when design import then error is thrown",
+			run: func(t *testing.T) error {
+				previous := file
+				file = "design.yaml"
+				t.Cleanup(func() { file = previous })
+
+				return importCmd.Args(importCmd, []string{"unexpected-arg"})
+			},
+			wantSubstr: "design import does not accept positional arguments",
+		},
+		{
+			name: "given multiple unexpected positional arguments when design import then error is thrown",
+			run: func(t *testing.T) error {
+				previous := file
+				file = "design.yaml"
+				t.Cleanup(func() { file = previous })
+
+				return importCmd.Args(importCmd, []string{"arg1", "arg2"})
+			},
+			wantSubstr: "design import does not accept positional arguments",
+		},
+		{
+			name: "given valid file with surrounding whitespace when design import then whitespace is trimmed and succeeds",
+			run: func(t *testing.T) error {
+				previous := file
+				file = "  design.yaml  "
+				t.Cleanup(func() { file = previous })
+
+				err := importCmd.Args(importCmd, nil)
+				if err != nil {
+					return err
+				}
+				if file != "design.yaml" {
+					return fmt.Errorf("expected trimmed file 'design.yaml', got %q", file)
+				}
+				return nil
+			},
+			want: nil,
+		},
 	}
 
 	for _, tt := range tests {
@@ -59,8 +112,18 @@ func Test_designImport_FlagValidation(t *testing.T) {
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 
 			err := tt.run(t)
+			if tt.want == nil && tt.wantSubstr == "" {
+				if err != nil {
+					t.Fatalf("expected nil error, got %v", err)
+				}
+				return
+			}
 			if err == nil {
-				t.Fatalf("expected error %v, got nil", tt.want)
+				t.Fatalf("expected error, got nil")
+			}
+			if tt.wantSubstr != "" {
+				assert.Contains(t, err.Error(), tt.wantSubstr)
+				return
 			}
 			if err.Error() != tt.want.Error() {
 				t.Fatalf("error mismatch\n got: %v\nwant: %v", err, tt.want)
