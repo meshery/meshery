@@ -203,8 +203,9 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			}
 
 			resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
-			if err != nil || resp.HTTPStatusCode != 200 {
-				utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
+			if err != nil || resp == nil || resp.HTTPStatusCode != 200 {
+				err = handleSpreadsheetResponseError(resp, err, outputLocation)
+				utils.Log.Error(err)
 				return err
 			}
 			fmt.Println("✅ Connected to spreadsheet successfully")
@@ -252,6 +253,21 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 
 		return err
 	},
+}
+
+// handleSpreadsheetResponseError processes Google Spreadsheet request failures,
+// ensuring non-nil errors, preserving request diagnostics, and wrapping them with ErrUpdateRegistry.
+func handleSpreadsheetResponseError(resp *sheets.Spreadsheet, err error, location string) error {
+	if err == nil {
+		if resp != nil {
+			err = fmt.Errorf("request to Google Spreadsheet returned HTTP status %d", resp.HTTPStatusCode)
+		} else {
+			err = fmt.Errorf("request to Google Spreadsheet returned empty response")
+		}
+	} else if resp != nil && resp.HTTPStatusCode != 0 {
+		err = fmt.Errorf("%w (HTTP status %d)", err, resp.HTTPStatusCode)
+	}
+	return ErrUpdateRegistry(err, location)
 }
 
 func init() {

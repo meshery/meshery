@@ -2,10 +2,12 @@ package registry
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"testing"
 
 	meshkiterrors "github.com/meshery/meshkit/errors"
+	"github.com/stretchr/testify/assert"
 )
 
 // TestErrGenerateComponentFormat is a regression test for issue #22681: the
@@ -35,4 +37,44 @@ func TestErrGenerateComponentFormat(t *testing.T) {
 	if strings.Contains(sdesc, "%s") || strings.Contains(sdesc, "%v") {
 		t.Errorf("short description %q still contains a literal format verb", sdesc)
 	}
+}
+
+func TestRegistryErrors_NilErrorPanicGuards(t *testing.T) {
+	tests := []struct {
+		name string
+		fn   func() error
+	}{
+		{"ErrUpdateRegistry with nil error", func() error { return ErrUpdateRegistry(nil, "./models") }},
+		{"ErrGenerateModel with nil error", func() error { return ErrGenerateModel(nil, "my-model") }},
+		{"ErrGenerateComponent with nil error", func() error { return ErrGenerateComponent(nil, "my-model", "my-comp") }},
+		{"ErrUpdateModel with nil error", func() error { return ErrUpdateModel(nil, "my-model") }},
+		{"ErrUpdateComponent with nil error", func() error { return ErrUpdateComponent(nil, "my-model", "my-comp") }},
+		{"ErrParsingSheet with nil error", func() error { return ErrParsingSheet(nil, "models") }},
+		{"ErrParsingRelationship with nil error", func() error { return ErrParsingRelationship(nil, "my-model") }},
+		{"ErrPublish with nil error", func() error { return ErrPublish(nil, "website") }},
+		{"ErrModelGenerationFailed with nil error", func() error { return ErrModelGenerationFailed("my-model", nil) }},
+		{"ErrPurgeReadModelsDir with nil error", func() error { return ErrPurgeReadModelsDir(nil, "./models") }},
+		{"ErrPurgeRemove with nil error", func() error { return ErrPurgeRemove(nil, "./models/v1.0.0") }},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.NotPanics(t, func() {
+				err := tt.fn()
+				assert.NotNil(t, err)
+			})
+		})
+	}
+}
+
+func TestErrUpdateRegistry_NilAndCustomErrors(t *testing.T) {
+	// Assert nil error does not panic and returns non-nil error
+	errNil := ErrUpdateRegistry(nil, "./models")
+	assert.NotNil(t, errNil)
+
+	// Assert custom error is captured
+	customErr := fmt.Errorf("request to Google Spreadsheet returned HTTP status 500")
+	errCustom := ErrUpdateRegistry(customErr, "./models")
+	assert.NotNil(t, errCustom)
+	assert.Contains(t, errCustom.Error(), "500")
 }
