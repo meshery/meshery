@@ -21,7 +21,7 @@ export interface PerformanceFormSetters {
   setJsonError: (v: boolean) => void;
   setDisableTest: (v: boolean) => void;
   setUrlError: (v: boolean) => void;
-  additionalOptions?: string;
+  additionalOptions: string;
 }
 
 /**
@@ -79,7 +79,7 @@ export const createPerformanceFormChangeHandler = (setters: PerformanceFormSette
           setDisableTest(true);
           setUrlError(true);
         } else {
-          setDisableTest(false);
+          setDisableTest(additionalOptions.trim() ? !isValidJSON(additionalOptions) : false);
           setUrlError(false);
         }
       } else {

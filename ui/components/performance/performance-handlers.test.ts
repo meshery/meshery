@@ -50,13 +50,16 @@ describe('performance-handlers: URL validation state', () => {
     expect(setDisableTest).toHaveBeenCalledWith(true);
   });
 
-  it('preserves urlError when editing an unrelated field (e.g., qps or profileName)', () => {
+  it('preserves urlError when editing an unrelated field after entering an invalid URL', () => {
     const handleChange = buildHandler();
 
+    handleChange('url')({ target: { value: 'not-a-url' } });
     handleChange('qps')({ target: { value: '10' } });
     handleChange('profileName')({ target: { value: 'load-test-1' } });
 
-    expect(setUrlError).not.toHaveBeenCalled();
+    expect(setUrlError).toHaveBeenCalledTimes(1);
+    expect(setUrlError).toHaveBeenCalledWith(true);
+    expect(setUrlError).not.toHaveBeenCalledWith(false);
   });
 
   it('clears urlError and re-enables test when URL is cleared with valid additionalOptions JSON', () => {
@@ -67,7 +70,15 @@ describe('performance-handlers: URL validation state', () => {
     expect(setDisableTest).toHaveBeenCalledWith(false);
   });
 
-  it('clears urlError and keeps test disabled when URL is cleared with invalid or empty additionalOptions', () => {
+  it('clears urlError and keeps test disabled when URL is cleared with empty additionalOptions', () => {
+    const handleChange = buildHandler('');
+    handleChange('url')({ target: { value: '' } });
+
+    expect(setUrlError).toHaveBeenCalledWith(false);
+    expect(setDisableTest).toHaveBeenCalledWith(true);
+  });
+
+  it('clears urlError and keeps test disabled when URL is cleared with invalid additionalOptions', () => {
     const handleChange = buildHandler('{invalid-json');
     handleChange('url')({ target: { value: '' } });
 
@@ -75,11 +86,19 @@ describe('performance-handlers: URL validation state', () => {
     expect(setDisableTest).toHaveBeenCalledWith(true);
   });
 
-  it('clears urlError and enables test when a valid URL is entered', () => {
-    const handleChange = buildHandler();
+  it('clears urlError and enables test when a valid URL is entered with empty or valid additionalOptions', () => {
+    const handleChange = buildHandler('');
     handleChange('url')({ target: { value: 'https://example.com' } });
 
     expect(setUrlError).toHaveBeenCalledWith(false);
     expect(setDisableTest).toHaveBeenCalledWith(false);
+  });
+
+  it('clears urlError but keeps test disabled when a valid URL is entered with invalid additionalOptions', () => {
+    const handleChange = buildHandler('{invalid-json');
+    handleChange('url')({ target: { value: 'https://example.com' } });
+
+    expect(setUrlError).toHaveBeenCalledWith(false);
+    expect(setDisableTest).toHaveBeenCalledWith(true);
   });
 });
