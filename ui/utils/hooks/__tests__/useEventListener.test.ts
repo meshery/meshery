@@ -102,4 +102,157 @@ describe('useEventListener', () => {
       renderHook(() => useEventListener('ping', handler, fakeTarget));
     }).not.toThrow();
   });
+
+  it('gracefully no-ops and does not subscribe when eventName is empty or whitespace-only', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const target = new EventTarget();
+    const addSpy = vi.spyOn(target, 'addEventListener');
+    const handler = vi.fn();
+
+    try {
+      renderHook(() => useEventListener('', handler, target));
+      renderHook(() => useEventListener('   ', handler, target));
+      renderHook(() => useEventListener('\t\n', handler, target));
+
+      expect(addSpy).not.toHaveBeenCalled();
+    } finally {
+      warnSpy.mockRestore();
+    }
+  });
+
+  it('gracefully no-ops and does not subscribe when eventName is not a string', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const target = new EventTarget();
+    const addSpy = vi.spyOn(target, 'addEventListener');
+    const handler = vi.fn();
+
+    try {
+      // @ts-expect-error testing invalid eventName inputs
+      renderHook(() => useEventListener(null, handler, target));
+      // @ts-expect-error testing invalid eventName inputs
+      renderHook(() => useEventListener(undefined, handler, target));
+      // @ts-expect-error testing invalid eventName inputs
+      renderHook(() => useEventListener(123, handler, target));
+
+      expect(addSpy).not.toHaveBeenCalled();
+    } finally {
+      warnSpy.mockRestore();
+    }
+  });
+
+  it('trims whitespace from eventName when subscribing', () => {
+    const target = new EventTarget();
+    const addSpy = vi.spyOn(target, 'addEventListener');
+    const handler = vi.fn();
+
+    renderHook(() => useEventListener('  customPing  ', handler, target));
+
+    expect(addSpy).toHaveBeenCalledWith('customPing', expect.any(Function));
+
+    act(() => {
+      target.dispatchEvent(new Event('customPing'));
+    });
+
+    expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  it('gracefully no-ops when handler is null, undefined, or non-callable', () => {
+    const target = new EventTarget();
+    const addSpy = vi.spyOn(target, 'addEventListener');
+
+    renderHook(() => useEventListener('ping', null, target));
+    renderHook(() => useEventListener('ping', undefined, target));
+    // @ts-expect-error testing non-callable handler
+    renderHook(() => useEventListener('ping', 'not-a-function', target));
+
+    expect(addSpy).not.toHaveBeenCalled();
+  });
+
+  it('starts listening when handler transitions from non-callable to callable', () => {
+    const target = new EventTarget();
+    const handler = vi.fn();
+    const { rerender } = renderHook(({ h }) => useEventListener('ping', h, target), {
+      initialProps: { h: null as ((e: Event) => void) | null },
+    });
+
+    act(() => {
+      target.dispatchEvent(new Event('ping'));
+    });
+    expect(handler).not.toHaveBeenCalled();
+
+    rerender({ h: handler });
+
+    act(() => {
+      target.dispatchEvent(new Event('ping'));
+    });
+    expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  it('stops listening when handler transitions from callable to null', () => {
+    const target = new EventTarget();
+    const handler = vi.fn();
+    const { rerender } = renderHook(({ h }) => useEventListener('ping', h, target), {
+      initialProps: { h: handler as ((e: Event) => void) | null },
+    });
+
+    act(() => {
+      target.dispatchEvent(new Event('ping'));
+    });
+    expect(handler).toHaveBeenCalledTimes(1);
+
+    rerender({ h: null });
+
+    act(() => {
+      target.dispatchEvent(new Event('ping'));
+    });
+    expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  it('safely unmounts even if target lacks removeEventListener', () => {
+    const fakeTarget = {
+      addEventListener: vi.fn(),
+    } as unknown as EventTarget;
+
+    const { unmount } = renderHook(() => useEventListener('ping', vi.fn(), fakeTarget));
+
+    expect(() => unmount()).not.toThrow();
+  });
+
+  it('does not re-subscribe when only surrounding whitespace in eventName changes', () => {
+    const target = new EventTarget();
+    const addSpy = vi.spyOn(target, 'addEventListener');
+    const removeSpy = vi.spyOn(target, 'removeEventListener');
+    const handler = vi.fn();
+
+    const { rerender } = renderHook(({ name }) => useEventListener(name, handler, target), {
+      initialProps: { name: '  ping  ' },
+    });
+
+    expect(addSpy).toHaveBeenCalledTimes(1);
+    expect(removeSpy).not.toHaveBeenCalled();
+
+    rerender({ name: 'ping' });
+
+    expect(addSpy).toHaveBeenCalledTimes(1);
+    expect(removeSpy).not.toHaveBeenCalled();
+  });
+
+  it('logs a dev-only warning when eventName is empty or non-string outside production', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const target = new EventTarget();
+
+    try {
+      renderHook(() => useEventListener('', vi.fn(), target));
+      expect(warnSpy).toHaveBeenCalledTimes(1);
+
+      vi.stubEnv('NODE_ENV', 'production');
+      warnSpy.mockClear();
+
+      renderHook(() => useEventListener('   ', vi.fn(), target));
+      expect(warnSpy).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllEnvs();
+      warnSpy.mockRestore();
+    }
+  });
 });
