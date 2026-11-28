@@ -791,11 +791,18 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 			writeMeshkitError(rw, models.ErrUnmarshal(err, "component definition"), http.StatusBadRequest)
 			return
 		}
-		// Reject a model version that could escape the export working
-		// directory. Registration is unauthenticated, so a hostile version
-		// planted here would otherwise reach ExportModel (CWE-22).
-		if c.Model != nil && (!isSafePathComponent(c.Model.Version) || !isSafePathComponent(c.Model.Model.Version)) {
-			err := fmt.Errorf("invalid model version: must be a single path component")
+		// Reject a nil model, or a model version, model name, or component kind that could escape the working
+		// directory. Registration is unauthenticated, so a hostile version or path planted here
+		// would reach ExportModel or WriteSVGsOnFileSystem (CWE-22).
+		if c.Model == nil {
+			err := fmt.Errorf("model is required in component definition")
+			h.log.Error(ErrRequestBody(err))
+			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+			return
+		}
+		if !isSafePathComponent(c.Model.Version) || !isSafePathComponent(c.Model.Model.Version) ||
+			!isSafePathComponent(c.Model.Name) || !isSafePathComponent(c.Component.Kind) || strings.Contains(c.Component.Kind, `\`) {
+			err := fmt.Errorf("invalid model version, name, or component kind: must be a single path component")
 			h.log.Error(ErrRequestBody(err))
 			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 			return
