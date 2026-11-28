@@ -57,7 +57,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 	_, _ = w.Write(bdr)
 }
 
-// FetchAllResultsHandler fetchs pages of results from Remote Provider and presents it to the UI
+// FetchAllResultsHandler serves paginated results from the selected provider.
 func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	err := req.ParseForm()
 	if err != nil {
@@ -86,6 +86,10 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 
 	bdr, err := p.FetchAllResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
 	if err != nil {
+		if errors.Is(err, models.ErrInvalidPerformanceResultDate) {
+			writeMeshkitError(w, ErrParseForm(err), http.StatusBadRequest)
+			return
+		}
 		if isPaginationError(err) {
 			writeMeshkitError(w, err, http.StatusBadRequest)
 			return

@@ -16,6 +16,11 @@ Open **Performance → Profiles**, open a profile, and select a result. The char
 
 Latency and throughput are the two signals to examine first. A rising p99 with a steady p50 usually points to contention or queuing that affects only some requests.
 
+With the Local Provider, the performance calendar's date filter includes runs
+by the day they started, using the offset recorded in each run's start
+timestamp. Runs without a usable start timestamp use the day Meshery saved the
+result. The date filter applies before pagination.
+
 ## Compare results
 
 Compare tests that share a similar configuration. Tests with very different settings, for example one that ran for 5 minutes and another that ran for an hour, produce comparisons that are hard to draw conclusions from. To compare, select two or more results and choose **Compare selected**.

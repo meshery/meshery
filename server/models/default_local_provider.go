@@ -675,7 +675,7 @@ func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, _, _, profileID s
 }
 
 // FetchAllResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchAllResults(_, page, pageSize, _, _, _, _ string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchAllResults(_, page, pageSize, _, _, from, to string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -691,7 +691,7 @@ func (l *DefaultLocalProvider) FetchAllResults(_, page, pageSize, _, _, _, _ str
 		return nil, ErrPageSize(err)
 	}
 
-	return l.ResultPersister.GetAllResults(pg, pgs, l.Log)
+	return l.ResultPersister.GetAllResults(pg, pgs, from, to, l.Log)
 }
 
 // GetResult - fetches result from provider backend for the given result id
