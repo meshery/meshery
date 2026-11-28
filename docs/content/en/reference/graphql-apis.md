@@ -28,7 +28,7 @@ The `Query` type contains the API's top-level entry points for all executable qu
 
 ### `Query.connectToNats`
 
-Check is Meshey Server is connected to NATS, if not connect to the NATS Server.
+Check if Meshery Server is connected to NATS; if not, connect to the NATS Server.
 
 ###### **Returns** [`Status!`](#status).
 
@@ -40,7 +40,7 @@ Check is Meshey Server is connected to NATS, if not connect to the NATS Server.
 
 ### `Query.deployMeshsync`
 
-Check the Meshsync Status and deploy if not enabled.
+Check the MeshSync status and deploy if not enabled.
 
 ###### **Returns** [`Status!`](#status).
 
@@ -48,7 +48,7 @@ Check the Meshsync Status and deploy if not enabled.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="querydeploymeshsynck8scontextid"></a>`k8scontextID` | [`String!`](#string) | what to do in-order to deploy meshsync on multiple clusters/contexts. |
+| <a id="querydeploymeshsynck8scontextid"></a>`k8scontextID` | [`String!`](#string) | what to do in-order to deploy MeshSync on multiple clusters/contexts. |
 
 ### `Query.fetchAllResults`
 
@@ -200,7 +200,7 @@ Query for getting kubectl describe details with meshkit.
 
 ### `Query.getMeshModelSummary`
 
-Query for meshmodel summary.
+Query for MeshModel summary.
 
 ###### **Returns** [`MeshModelSummary!`](#meshmodelsummary).
 
@@ -212,7 +212,7 @@ Query for meshmodel summary.
 
 ### `Query.getMeshsyncStatus`
 
-Check the Meshsync Status.
+Check the MeshSync status.
 
 ###### **Returns** [`OperatorControllerStatus!`](#operatorcontrollerstatus).
 
@@ -224,7 +224,7 @@ Check the Meshsync Status.
 
 ### `Query.getNatsStatus`
 
-Check is Meshey Server is connected to NATS.
+Check if Meshery Server is connected to NATS.
 
 ###### **Returns** [`OperatorControllerStatus!`](#operatorcontrollerstatus).
 
@@ -408,7 +408,7 @@ Listen to changes in Broker (NATS) Connection.
 ### `Subscription.subscribeMeshSyncEvents`
 
 Listen to the events that MeshSync is sending through Meshery Broker.
-Note: It does not listen to the changes in meshery database, but to meshsync events.
+Note: It does not listen to the changes in the Meshery database, but to MeshSync events.
 
 ###### **Returns** [`MeshSyncEvent!`](#meshsyncevent).
 
