@@ -86,7 +86,8 @@
   
   --code:#952a1e;
   --sidebar-text-color: var(--color-secondary-medium);
-  --sidebar-active-text-color: var(--color-grey-light);
+  --sidebar-active-text-color: var(--color-secondary-dark);
+  --sidebar-active-link-color: #00483f;
 }
 
 .dark-mode {
@@ -188,7 +189,8 @@
   
     --code:#bf3526;
   --sidebar-text-color: var(--color-secondary-light);
-  --sidebar-active-text-color: var(--color-secondary-medium);
+  --sidebar-active-text-color: var(--color-secondary-light);
+  --sidebar-active-link-color: var(--brand-color);
 }
 
 @media (max-width: 600px) {
