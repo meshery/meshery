@@ -17,6 +17,7 @@ package perf
 import (
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -43,6 +44,11 @@ mesheryctl perf delete test-3 --yes
 		}
 		if len(args) > 1 {
 			return ErrorArgumentOverflow()
+		}
+
+		args[0] = strings.TrimSpace(args[0])
+		if args[0] == "" {
+			return ErrNoProfileName()
 		}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

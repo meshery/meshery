@@ -67,6 +67,18 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectedError: ErrNoProfileName(),
 		},
 		{
+			Name:          "given empty string argument when delete then throw no profile name error",
+			Args:          []string{"delete", ""},
+			ExpectError:   true,
+			ExpectedError: ErrNoProfileName(),
+		},
+		{
+			Name:          "given whitespace-only argument when delete then throw no profile name error",
+			Args:          []string{"delete", "   "},
+			ExpectError:   true,
+			ExpectedError: ErrNoProfileName(),
+		},
+		{
 			Name:          "given two arguments when delete then throw argument overflow error",
 			Args:          []string{"delete", "one", "two"},
 			ExpectError:   true,
