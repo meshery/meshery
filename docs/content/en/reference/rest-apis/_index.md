@@ -95,3 +95,5 @@ If the request returns an authentication or authorization error (e.g. 401 Unauth
 ## Endpoints
 
 See the published Meshery OpenAPI bundles in [meshery/schemas](https://github.com/meshery/schemas) for the authoritative REST API definitions.
+
+With the Local Provider, `GET /api/system/events` returns the requested zero-based page in the response's `page` field. For example, `?page=2&pageSize=10` returns `"page": 2` and skips the first 20 matching events.
