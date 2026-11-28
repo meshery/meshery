@@ -196,3 +196,175 @@ func TestGetConnectionsPageSizeAllSurvivesUpdateDuringWalk(t *testing.T) {
 		t.Fatalf("first connection = %q, want the most recently updated %q", page.Connections[0].Name, stub.moved.Name)
 	}
 }
+
+func newPageSizeAllPersister(t *testing.T) (*models.ConnectionPersister, *database.Handler) {
+	t.Helper()
+	db, err := database.New(database.Options{Engine: database.SQLITE, Filename: filepath.Join(t.TempDir(), "meshery.db")})
+	if err != nil {
+		t.Fatalf("open database: %v", err)
+	}
+	t.Cleanup(func() { _ = db.DBClose() })
+	if err := db.AutoMigrate(connections.Connection{}, environment.Environment{}, environment.EnvironmentConnectionMapping{}); err != nil {
+		t.Fatalf("migrate tables: %v", err)
+	}
+	return &models.ConnectionPersister{DB: &db}, &db
+}
+
+func getAllPage(t *testing.T, provider models.Provider, query string) (*httptest.ResponseRecorder, connections.ConnectionPage) {
+	t.Helper()
+	h := &Handler{config: &models.HandlerConfig{}, log: newTestLogger(t)}
+	req := httptest.NewRequest(http.MethodGet, "/api/integrations/connections?"+query, nil)
+	rec := httptest.NewRecorder()
+	h.GetConnections(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
+	var page connections.ConnectionPage
+	if rec.Code == http.StatusOK {
+		if err := json.Unmarshal(rec.Body.Bytes(), &page); err != nil {
+			t.Fatalf("decode response: %v", err)
+		}
+	}
+	return rec, page
+}
+
+// statusFlipProvider disconnects one connection right after the first page
+// is read, as a status write landing mid-walk would.
+type statusFlipProvider struct {
+	*models.DefaultLocalProvider
+	flip  core.Uuid
+	reads int
+}
+
+func (p *statusFlipProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order, filter string, status, kind, connType []string, name string) (*connections.ConnectionPage, error) {
+	res, err := p.DefaultLocalProvider.GetConnections(req, userID, page, pageSize, search, order, filter, status, kind, connType, name)
+	p.reads++
+	if p.reads == 1 {
+		if _, uerr := p.ConnectionPersister.UpdateConnectionStatusByID(p.flip, connections.DISCONNECTED); uerr != nil {
+			return nil, uerr
+		}
+	}
+	return res, err
+}
+
+// A connection leaving a status filter mid-walk must not shift the offsets of
+// the connections after it: every connection that stays connected for the
+// whole request is returned.
+func TestGetConnectionsPageSizeAllSurvivesStatusChangeDuringWalk(t *testing.T) {
+	persister, _ := newPageSizeAllPersister(t)
+	const count = 250
+	var saved []*connections.Connection
+	for i := 0; i < count; i++ {
+		c, err := persister.SaveConnection(&connections.Connection{Name: fmt.Sprintf("cluster-%03d", i), Kind: "kubernetes", ConnectionType: "platform", SubType: "orchestration", Status: connections.CONNECTED})
+		if err != nil {
+			t.Fatalf("save connection: %v", err)
+		}
+		saved = append(saved, c)
+	}
+	// The oldest connection sits on the first created_at page.
+	stub := &statusFlipProvider{DefaultLocalProvider: &models.DefaultLocalProvider{ConnectionPersister: persister}, flip: saved[0].ID}
+
+	rec, page := getAllPage(t, stub, "pageSize=all&status=connected&kind=kubernetes")
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body: %s", rec.Code, rec.Body.String())
+	}
+	got := make(map[core.Uuid]int, count)
+	for _, c := range page.Connections {
+		got[c.ID]++
+		if c.Status != connections.CONNECTED {
+			t.Fatalf("connection %s has status %q, want only connected", c.Name, c.Status)
+		}
+	}
+	for _, c := range saved[1:] {
+		if got[c.ID] != 1 {
+			t.Fatalf("connection %s returned %d times, want exactly once", c.Name, got[c.ID])
+		}
+	}
+	// The flipped connection was read while still connected, so it is part of
+	// the snapshot; what must not happen is a later connection going missing.
+	if page.TotalCount != len(page.Connections) {
+		t.Fatalf("totalCount=%d, want the %d rows returned", page.TotalCount, len(page.Connections))
+	}
+}
+
+// Connections created in the same instant must still be walked without
+// overlap or gaps between pages.
+func TestGetConnectionsPageSizeAllWithTiedCreatedAt(t *testing.T) {
+	persister, db := newPageSizeAllPersister(t)
+	const count = 250
+	ts := time.Now().Add(-time.Hour).UTC()
+	for i := 0; i < count; i++ {
+		c := &connections.Connection{ID: core.Uuid(uuid.Must(uuid.NewV4())), Name: fmt.Sprintf("cluster-%03d", i), Kind: "kubernetes", Status: connections.CONNECTED, CreatedAt: ts, UpdatedAt: ts}
+		if err := db.Create(c).Error; err != nil {
+			t.Fatalf("create connection: %v", err)
+		}
+	}
+
+	rec, page := getAllPage(t, &models.DefaultLocalProvider{ConnectionPersister: persister}, "pageSize=all")
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body: %s", rec.Code, rec.Body.String())
+	}
+	seen := make(map[core.Uuid]bool, count)
+	for _, c := range page.Connections {
+		seen[c.ID] = true
+	}
+	if len(page.Connections) != count || len(seen) != count {
+		t.Fatalf("returned=%d unique=%d, want %d", len(page.Connections), len(seen), count)
+	}
+}
+
+// scriptedProvider serves a fixed first page and then either fails or, when
+// stuck is set, keeps returning that same page, as a provider that ignores the
+// page number would.
+type scriptedProvider struct {
+	models.Provider
+	first []*connections.Connection
+	total int
+	stuck bool
+	reads int
+}
+
+func (s *scriptedProvider) GetConnections(_ *http.Request, _ string, page, pageSize int, _, _, _ string, _, _, _ []string, _ string) (*connections.ConnectionPage, error) {
+	s.reads++
+	if s.reads > 5 {
+		return nil, fmt.Errorf("walk did not stop after %d reads", s.reads-1)
+	}
+	if page > 0 && !s.stuck {
+		return nil, fmt.Errorf("provider unavailable")
+	}
+	return &connections.ConnectionPage{Connections: s.first, TotalCount: s.total, Page: page, PageSize: pageSize}, nil
+}
+
+func scriptedConnections(n int) []*connections.Connection {
+	out := make([]*connections.Connection, n)
+	for i := range out {
+		out[i] = &connections.Connection{ID: core.Uuid(uuid.Must(uuid.NewV4())), Name: fmt.Sprintf("cluster-%03d", i), Status: connections.CONNECTED}
+	}
+	return out
+}
+
+// A provider error after the first page must fail the request, not return
+// the rows read so far as a successful partial list.
+func TestGetConnectionsPageSizeAllProviderErrorMidWalk(t *testing.T) {
+	stub := &scriptedProvider{first: scriptedConnections(100), total: 250}
+	rec, _ := getAllPage(t, stub, "pageSize=all")
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("status = %d, want %d; body: %s", rec.Code, http.StatusInternalServerError, rec.Body.String())
+	}
+	if strings.Contains(rec.Body.String(), `"connections"`) {
+		t.Fatalf("error response carries a partial connections list: %s", rec.Body.String())
+	}
+	if stub.reads != 2 {
+		t.Fatalf("provider reads = %d, want 2", stub.reads)
+	}
+}
+
+// A provider that ignores the page number keeps returning the same full page;
+// the walk must stop once a page adds nothing new instead of looping.
+func TestGetConnectionsPageSizeAllStopsWhenPageAddsNothing(t *testing.T) {
+	stub := &scriptedProvider{first: scriptedConnections(100), total: 250, stuck: true}
+	rec, page := getAllPage(t, stub, "pageSize=all")
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body: %s", rec.Code, rec.Body.String())
+	}
+	if stub.reads != 2 || len(page.Connections) != 100 {
+		t.Fatalf("reads=%d returned=%d, want reads=2 returned=100", stub.reads, len(page.Connections))
+	}
+}

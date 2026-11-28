@@ -453,16 +453,24 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 // the per-request maximum until totalCount rows have been read, so callers
 // that ask for every connection get every connection while each provider
 // request stays capped. The walk always orders by created_at, which status
-// updates never change, so a connection updated mid-walk cannot move across
-// a page boundary; the result is then sorted into the requested order. Rows
-// are de-duplicated by ID. A connection deleted during the walk can still
-// shift one row past the boundary and drop it from the result.
+// updates never change, and leaves the status filter out of the provider
+// query, applying it here instead: a connection whose status changes
+// mid-walk can then neither move across a page boundary nor shift the
+// offsets of the rows after it. The result is sorted into the requested
+// order. Rows are de-duplicated by ID, and the walk stops on a full page that
+// adds no new rows, so a provider that ignores the page number cannot keep
+// it looping. A connection deleted during the walk can still shift one row
+// past a boundary and drop it from the result.
 func getAllConnections(req *http.Request, provider models.Provider, userID, search, order, filter string, status, kind, connType []string, name string) (*connections.ConnectionPage, error) {
 	const pageSize = 100
+	wantStatus := make(map[string]bool, len(status))
+	for _, st := range status {
+		wantStatus[st] = true
+	}
 	var all *connections.ConnectionPage
 	seen := map[core.Uuid]bool{}
 	for page := 0; ; page++ {
-		p, err := provider.GetConnections(req, userID, page, pageSize, search, "created_at asc", filter, status, kind, connType, name)
+		p, err := provider.GetConnections(req, userID, page, pageSize, search, "created_at asc", filter, nil, kind, connType, name)
 		if err != nil {
 			return nil, err
 		}
@@ -474,17 +482,23 @@ func getAllConnections(req *http.Request, provider models.Provider, userID, sear
 			first.Connections = []*connections.Connection{}
 			all = &first
 		}
+		added := 0
 		for _, c := range p.Connections {
-			if c != nil && !seen[c.ID] {
-				seen[c.ID] = true
+			if c == nil || seen[c.ID] {
+				continue
+			}
+			seen[c.ID] = true
+			added++
+			if len(status) == 0 || wantStatus[string(c.Status)] {
 				all.Connections = append(all.Connections, c)
 			}
 		}
-		if len(p.Connections) < pageSize || len(all.Connections) >= all.TotalCount {
+		if len(p.Connections) < pageSize || added == 0 || len(seen) >= all.TotalCount {
 			break
 		}
 	}
 	sortConnections(all.Connections, order)
+	all.TotalCount = len(all.Connections)
 	all.Page = 0
 	all.PageSize = len(all.Connections)
 	return all, nil
