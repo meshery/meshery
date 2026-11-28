@@ -147,6 +147,23 @@ describe('FormatId', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copy');
   });
+
+  it('clears Copied! when a later write rejects before the reset timer', async () => {
+    render(<FormatId id="abc-xyz" />);
+    const button = screen.getByTestId('icon-button');
+
+    fireEvent.click(button);
+    await waitFor(() =>
+      expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copied!'),
+    );
+
+    writeTextSpy.mockRejectedValueOnce(new Error('denied'));
+    fireEvent.click(button);
+
+    await waitFor(() =>
+      expect(screen.getAllByTestId('tooltip')[1].getAttribute('data-title')).toBe('Copy'),
+    );
+  });
 });
 
 describe('createColumnUiSchema', () => {

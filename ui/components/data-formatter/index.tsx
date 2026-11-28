@@ -124,7 +124,14 @@ export const FormatId = ({ id }) => {
           timerRef.current = null;
         }, 2000);
       })
-      .catch(() => {});
+      .catch(() => {
+        if (unmountedRef.current) return;
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+          timerRef.current = null;
+        }
+        setCopied(false);
+      });
   };
 
   const truncatedId = _.truncate(id, { length: 15 });
