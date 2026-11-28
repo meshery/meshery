@@ -89,7 +89,7 @@ Meshery UI | fa fa-desktop
 | **Kubernetes Manifest (yaml)** | The design's Kubernetes resources as a plain manifest, for use with `kubectl` or other tools. |
 | **Helm Chart (tar.gz)** | The design packaged as a Helm chart. |
 
-The Designs page announces a successful download only after retrieving the file. This notification means the file was passed to the browser for saving; it does not confirm that it was saved to disk. When downloading multiple designs from a workspace, the progress indicator stays visible until every retrieval finishes or fails, and only successful retrievals produce success notifications.
+The Designs page shows a progress indicator while retrieving a design from either the grid or table view and announces success only after retrieval finishes. This notification means the file was passed to the browser for saving; it does not confirm that it was saved to disk. When downloading multiple designs from a workspace, the progress indicator stays visible until every retrieval finishes or fails, and only successful retrievals produce success notifications.
 
 <!-- tab -->
 mesheryctl | fa fa-terminal
