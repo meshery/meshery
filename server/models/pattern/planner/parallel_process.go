@@ -1,6 +1,7 @@
 package planner
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"sync"
@@ -105,7 +106,16 @@ func NewParallelProcessGraph(g *Graph) (*ParallelProcessGraph, error) {
 
 // Traverse spins up the processes concurrently if it can, bounding concurrent
 // visitor execution using a semaphore to avoid thundering herd on downstream APIs.
-func (g *ParallelProcessGraph) Traverse(fn VisitFn, withheld WithheldFn, log logger.Handler) {
+// If ctx is cancelled before or during traversal, Traverse aborts remaining work
+// and returns ctx.Err().
+func (g *ParallelProcessGraph) Traverse(ctx context.Context, fn VisitFn, withheld WithheldFn, log logger.Handler) error {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+
 	limit := g.ConcurrencyLimit
 	if limit <= 0 {
 		limit = DefaultConcurrencyLimit
@@ -117,15 +127,27 @@ func (g *ParallelProcessGraph) Traverse(fn VisitFn, withheld WithheldFn, log log
 		node.sem = sem
 		node.maxJitter = g.MaxJitter
 		g.wg.Add(1)
-		go node.Process(g.dependents[name], &g.wg, fn, withheld, log)
+		go node.Process(ctx, g.dependents[name], &g.wg, fn, withheld, log)
 	}
 
-	g.wg.Wait()
+	waitCh := make(chan struct{})
+	go func() {
+		g.wg.Wait()
+		close(waitCh)
+	}()
+
+	select {
+	case <-ctx.Done():
+		<-waitCh
+		return ctx.Err()
+	case <-waitCh:
+		return ctx.Err()
+	}
 }
 
 // Process starts an internal loop which listens for the signals on the channels
 // and operate accordingly
-func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg *sync.WaitGroup, fn VisitFn, withheld WithheldFn, log logger.Handler) {
+func (v *ParallelProcessGraphNode) Process(ctx context.Context, deps []*ParallelProcessGraphNode, wg *sync.WaitGroup, fn VisitFn, withheld WithheldFn, log logger.Handler) {
 	signaled := make(map[*ParallelProcessGraphNode]bool, len(deps))
 	sendSignals := func(ok bool) {
 		for _, dep := range deps {
@@ -162,6 +184,10 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 	// dependencies.
 	for depSuccessCount+depFailCount < v.DepCount {
 		select {
+		case <-ctx.Done():
+			log.Debug("aborted due to context cancellation:", v.Name)
+			sendSignals(false)
+			return
 		case name := <-v.DepCancleCh:
 			depFailCount++
 
@@ -186,6 +212,12 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 		return
 	}
 
+	// Check context cancellation before initiating deployment work
+	if err := ctx.Err(); err != nil {
+		sendSignals(false)
+		return
+	}
+
 	// The resources are deployed in correct order and dependsOn is respected but sometimes it has issues, for eg: CR depends on CRD, hence when deployment request to k8s to deploy CRD succeeds, we continue with the deployment of dependent CR.
 	// The 200 response from k8s doesn’t guarantee that resource is available to use, it is just an indication that req is received and being worked on, therefore in ceratin cases, deployment failures are experienced and hence we need a mechanism to ensure that the dependent resource is actually deployed and ready to use before conitnuing.
 	// Bounded concurrency & jitter: Apply optional jitter first to desynchronize
@@ -194,15 +226,29 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg 
 	ok := func() bool {
 		if v.maxJitter > 0 {
 			jitter := time.Duration(rand.Int63n(int64(v.maxJitter)))
-			time.Sleep(jitter)
+			timer := time.NewTimer(jitter)
+			defer timer.Stop()
+			select {
+			case <-ctx.Done():
+				return false
+			case <-timer.C:
+			}
 		}
 
 		if v.sem != nil {
-			v.sem <- struct{}{}
-			defer func() { <-v.sem }()
+			select {
+			case <-ctx.Done():
+				return false
+			case v.sem <- struct{}{}:
+				defer func() { <-v.sem }()
+			}
 		}
 
-		return fn(v.Name, v.Data.Data)
+		if err := ctx.Err(); err != nil {
+			return false
+		}
+
+		return fn(ctx, v.Name, v.Data.Data)
 	}()
 	log.Debug("RESPONSE GOT FOR", v.Name, ":", ok)
 

@@ -1,6 +1,7 @@
 package stages
 
 import (
+	"context"
 	"sync"
 
 	"github.com/meshery/schemas/models/core"
@@ -10,6 +11,7 @@ import (
 
 // Data is the struct that will be passed on each stage
 type Data struct {
+	Ctx                           context.Context
 	Pattern                       *pattern.PatternFile
 	DeclartionToDefinitionMapping map[core.Uuid]component.ComponentDefinition
 	// Other is for passing metadata across different stages

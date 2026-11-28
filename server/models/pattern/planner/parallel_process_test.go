@@ -1,6 +1,7 @@
 package planner
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"sync"
@@ -49,7 +50,8 @@ func TestParallelProcess_HighConcurrencyFanIn(t *testing.T) {
 	done := make(chan error, 1)
 	go func() {
 		done <- plan.Execute(
-			func(id string, comp component.ComponentDefinition) bool {
+			context.Background(),
+			func(_ context.Context, id string, comp component.ComponentDefinition) bool {
 				if comp.DisplayName == "target" {
 					completed := atomic.LoadInt64(&prereqCompletedCount)
 					if completed == int64(numPrereqs) {
@@ -106,7 +108,8 @@ func TestParallelProcess_DiamondTopology(t *testing.T) {
 	done := make(chan error, 1)
 	go func() {
 		done <- plan.Execute(
-			func(id string, comp component.ComponentDefinition) bool {
+			context.Background(),
+			func(_ context.Context, id string, comp component.ComponentDefinition) bool {
 				mx.Lock()
 				dispatched = append(dispatched, comp.DisplayName)
 				mx.Unlock()
@@ -166,7 +169,8 @@ func TestParallelProcess_MultiDependentFanOutNonBlocking(t *testing.T) {
 	done := make(chan error, 1)
 	go func() {
 		done <- plan.Execute(
-			func(id string, comp component.ComponentDefinition) bool {
+			context.Background(),
+			func(_ context.Context, id string, comp component.ComponentDefinition) bool {
 				if comp.DisplayName != "producer" {
 					atomic.AddInt64(&consumersExecuted, 1)
 				}
@@ -213,7 +217,8 @@ func TestPlanExecute_RejectsCyclicDependency(t *testing.T) {
 	done := make(chan error, 1)
 	go func() {
 		done <- plan.Execute(
-			func(string, component.ComponentDefinition) bool { return true },
+			context.Background(),
+			func(_ context.Context, _ string, _ component.ComponentDefinition) bool { return true },
 			func(string, component.ComponentDefinition, string) {},
 			testLogger(t),
 		)
@@ -264,7 +269,8 @@ func TestParallelProcess_MixedOutcomesWithManyPrereqs(t *testing.T) {
 	done := make(chan error, 1)
 	go func() {
 		done <- plan.Execute(
-			func(id string, comp component.ComponentDefinition) bool {
+			context.Background(),
+			func(_ context.Context, id string, comp component.ComponentDefinition) bool {
 				mx.Lock()
 				defer mx.Unlock()
 
@@ -339,7 +345,8 @@ func TestParallelProcess_PanicInPrerequisiteDoesNotDeadlockDependents(t *testing
 			_ = recover()
 		}()
 		_ = plan.Execute(
-			func(id string, comp component.ComponentDefinition) bool {
+			context.Background(),
+			func(_ context.Context, id string, comp component.ComponentDefinition) bool {
 				if comp.DisplayName == "prereq" {
 					panic("simulated fatal panic in component visitor")
 				}
@@ -416,7 +423,8 @@ func TestParallelProcess_PanicInMiddleOfDeepChainPropagatesWithholding(t *testin
 			_ = recover()
 		}()
 		_ = plan.Execute(
-			func(id string, comp component.ComponentDefinition) bool {
+			context.Background(),
+			func(_ context.Context, id string, comp component.ComponentDefinition) bool {
 				mu.Lock()
 				defer mu.Unlock()
 				switch comp.DisplayName {
@@ -505,7 +513,8 @@ func TestParallelProcess_DiamondTopologyPanicOneBranchWithholdsSink(t *testing.T
 			_ = recover()
 		}()
 		_ = plan.Execute(
-			func(id string, comp component.ComponentDefinition) bool {
+			context.Background(),
+			func(_ context.Context, id string, comp component.ComponentDefinition) bool {
 				switch comp.DisplayName {
 				case "branchA":
 					panic("simulated fatal panic in branchA")
@@ -587,7 +596,8 @@ func TestParallelProcess_FanInHalfPanickingPrereqsDoesNotDeadlock(t *testing.T) 
 			_ = recover()
 		}()
 		_ = plan.Execute(
-			func(id string, comp component.ComponentDefinition) bool {
+			context.Background(),
+			func(_ context.Context, id string, comp component.ComponentDefinition) bool {
 				if comp.DisplayName == "fan-target" {
 					mu.Lock()
 					targetVisited = true
@@ -656,7 +666,7 @@ func TestParallelProcess_ExactSingleSignalPerDependent(t *testing.T) {
 	wg.Add(1)
 
 	// Panicking node
-	node.Process(deps, &wg, func(name string, comp component.ComponentDefinition) bool {
+	node.Process(context.Background(), deps, &wg, func(_ context.Context, name string, comp component.ComponentDefinition) bool {
 		panic("deliberate source panic")
 	}, nil, testLogger(t))
 
@@ -722,7 +732,7 @@ func TestParallelProcess_PartialDispatchPanicSignalsRemainingDependentsExactlyOn
 	wg.Add(1)
 
 	// Panicking node triggers dispatch which panics at dep1
-	node.Process(deps, &wg, func(name string, comp component.ComponentDefinition) bool {
+	node.Process(context.Background(), deps, &wg, func(_ context.Context, name string, comp component.ComponentDefinition) bool {
 		panic("initial visitor panic")
 	}, nil, testLogger(t))
 
@@ -783,7 +793,7 @@ func TestParallelProcess_BoundedConcurrency(t *testing.T) {
 	var peakActive int64
 	var totalExecuted int64
 
-	pg.Traverse(func(name string, comp component.ComponentDefinition) bool {
+	_ = pg.Traverse(context.Background(), func(_ context.Context, name string, comp component.ComponentDefinition) bool {
 		cur := atomic.AddInt64(&currentActive, 1)
 
 		// Record peak concurrency observed
@@ -834,7 +844,7 @@ func TestParallelProcess_BoundedConcurrency_DefaultLimitFallback(t *testing.T) {
 	var peakActive int64
 	var totalExecuted int64
 
-	pg.Traverse(func(name string, comp component.ComponentDefinition) bool {
+	_ = pg.Traverse(context.Background(), func(_ context.Context, name string, comp component.ComponentDefinition) bool {
 		cur := atomic.AddInt64(&currentActive, 1)
 
 		for {
@@ -857,5 +867,165 @@ func TestParallelProcess_BoundedConcurrency_DefaultLimitFallback(t *testing.T) {
 
 	if peakActive > int64(DefaultConcurrencyLimit) {
 		t.Errorf("peakActive concurrency = %d exceeded DefaultConcurrencyLimit of %d", peakActive, DefaultConcurrencyLimit)
+	}
+}
+
+// TestPlanExecute_ContextCancellation_AbortsHangingDeployment verifies that when a context
+// is cancelled during execution (e.g. user aborts or connection drops), Plan.Execute
+// aborts promptly and returns context.Canceled without leaking goroutines or hanging indefinitely.
+func TestPlanExecute_ContextCancellation_AbortsHangingDeployment(t *testing.T) {
+	root := newComponent("root")
+	dependent := newComponent("dependent", "root")
+
+	design := newDesign("context-cancel-test", root, dependent)
+	plan, err := CreatePlan(design, nil, false)
+	if err != nil {
+		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	var (
+		mu               sync.Mutex
+		rootStarted      = make(chan struct{})
+		dependentVisited bool
+	)
+
+	done := make(chan error, 1)
+	go func() {
+		done <- plan.Execute(
+			ctx,
+			func(reqCtx context.Context, id string, comp component.ComponentDefinition) bool {
+				if comp.DisplayName == "root" {
+					close(rootStarted)
+					// Simulate hanging downstream API call
+					<-reqCtx.Done()
+					return false
+				}
+				mu.Lock()
+				if comp.DisplayName == "dependent" {
+					dependentVisited = true
+				}
+				mu.Unlock()
+				return true
+			},
+			func(string, component.ComponentDefinition, string) {},
+			testLogger(t),
+		)
+	}()
+
+	// Wait for root to start, then trigger cancellation
+	select {
+	case <-rootStarted:
+		cancel()
+	case <-time.After(2 * time.Second):
+		t.Fatal("root node never started")
+	}
+
+	select {
+	case err := <-done:
+		if err != context.Canceled {
+			t.Errorf("Plan.Execute() error = %v, want %v", err, context.Canceled)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("Plan.Execute() hung indefinitely on context cancellation; goroutine leak")
+	}
+
+	mu.Lock()
+	defer mu.Unlock()
+	if dependentVisited {
+		t.Error("dependent was visited, want it aborted due to context cancellation")
+	}
+}
+
+// TestPlanExecute_PreCancelledContext verifies that Plan.Execute returns immediately
+// if given an already-cancelled context without executing any plan nodes.
+func TestPlanExecute_PreCancelledContext(t *testing.T) {
+	root := newComponent("root")
+	design := newDesign("pre-cancelled-test", root)
+	plan, err := CreatePlan(design, nil, false)
+	if err != nil {
+		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel() // Cancel immediately
+
+	var visited bool
+	err = plan.Execute(
+		ctx,
+		func(_ context.Context, id string, comp component.ComponentDefinition) bool {
+			visited = true
+			return true
+		},
+		func(string, component.ComponentDefinition, string) {},
+		testLogger(t),
+	)
+
+	if err != context.Canceled {
+		t.Errorf("Plan.Execute() error = %v, want %v", err, context.Canceled)
+	}
+	if visited {
+		t.Error("visitor was executed despite pre-cancelled context")
+	}
+}
+
+// TestPlanExecute_ContextCancellation_SemaphoreContention verifies that nodes queued
+// on the concurrency semaphore unblock cleanly on context cancellation.
+func TestPlanExecute_ContextCancellation_SemaphoreContention(t *testing.T) {
+	const totalNodes = 10
+	components := make([]*component.ComponentDefinition, 0, totalNodes)
+	for i := 0; i < totalNodes; i++ {
+		components = append(components, newComponent(fmt.Sprintf("node-%d", i)))
+	}
+
+	design := newDesign("sem-cancel-test", components...)
+	plan, err := CreatePlan(design, nil, false)
+	if err != nil {
+		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	pg, err := NewParallelProcessGraph(plan.Graph)
+	if err != nil {
+		t.Fatalf("NewParallelProcessGraph() failed: %v", err)
+	}
+	pg.ConcurrencyLimit = 1
+
+	started := make(chan struct{})
+	var once sync.Once
+
+	done := make(chan error, 1)
+	go func() {
+		done <- pg.Traverse(
+			ctx,
+			func(reqCtx context.Context, id string, comp component.ComponentDefinition) bool {
+				once.Do(func() {
+					close(started)
+				})
+				// Block until cancelled
+				<-reqCtx.Done()
+				return false
+			},
+			func(string, component.ComponentDefinition, string) {},
+			testLogger(t),
+		)
+	}()
+
+	select {
+	case <-started:
+		cancel()
+	case <-time.After(2 * time.Second):
+		t.Fatal("first node never acquired semaphore")
+	}
+
+	select {
+	case err := <-done:
+		if err != context.Canceled {
+			t.Errorf("Traverse() error = %v, want %v", err, context.Canceled)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("Traverse() hung waiting for semaphore acquisition after context cancellation")
 	}
 }

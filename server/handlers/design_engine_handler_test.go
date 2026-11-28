@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -91,7 +92,7 @@ func TestMutateOrdersComponentsBehindACustomResourceDefinition(t *testing.T) {
 	}
 
 	order := []string{}
-	if err := plan.Execute(func(id string, comp component.ComponentDefinition) bool {
+	if err := plan.Execute(context.Background(), func(_ context.Context, id string, comp component.ComponentDefinition) bool {
 		order = append(order, comp.DisplayName)
 		return true
 	}, func(string, component.ComponentDefinition, string) {}, log); err != nil {

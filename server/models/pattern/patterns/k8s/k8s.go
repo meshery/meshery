@@ -21,7 +21,10 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-func Deploy(kubeClient *meshkube.Client, comp component.ComponentDefinition, isDel bool) error {
+func Deploy(ctx context.Context, kubeClient *meshkube.Client, comp component.ComponentDefinition, isDel bool) error {
+	if ctx != nil && ctx.Err() != nil {
+		return ctx.Err()
+	}
 
 	resource := converter.CreateK8sResourceStructure(&comp)
 	manifest, err := yaml.Marshal(resource)
