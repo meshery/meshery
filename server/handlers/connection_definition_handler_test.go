@@ -75,27 +75,161 @@ func TestUpdateConnectionDefinition(t *testing.T) {
 	}
 }
 
+// TestGetConnectionDefinitionByID_InvalidAndZeroUUID verifies that GetConnectionDefinitionByID
+// returns HTTP 400 Bad Request when an invalid or zero UUID string is provided in the route parameters.
+func TestGetConnectionDefinitionByID_InvalidAndZeroUUID(t *testing.T) {
+	for _, id := range []string{"invalid-uuid", "12345", uuid.Nil.String()} {
+		t.Run(id, func(t *testing.T) {
+			h := &Handler{
+				config: &models.HandlerConfig{},
+				log:    newTestLogger(t),
+			}
+			req := httptest.NewRequest(http.MethodGet, "/api/registry/connections/"+id, nil)
+			req = mux.SetURLVars(req, map[string]string{
+				"connectionDefinitionId": id,
+			})
+			rw := httptest.NewRecorder()
+			h.GetConnectionDefinitionByID(rw, req)
+
+			assert.Equal(t, http.StatusBadRequest, rw.Code)
+			if id == uuid.Nil.String() {
+				assert.Contains(t, rw.Body.String(), "must not be the nil UUID")
+			}
+		})
+	}
+}
+
+// TestUpdateConnectionDefinition_InvalidAndZeroUUID verifies that UpdateConnectionDefinition
+// returns HTTP 400 Bad Request when an invalid or zero UUID string is provided in the route parameters.
+func TestUpdateConnectionDefinition_InvalidAndZeroUUID(t *testing.T) {
+	for _, id := range []string{"invalid-uuid", "12345", uuid.Nil.String()} {
+		t.Run(id, func(t *testing.T) {
+			h := &Handler{
+				config: &models.HandlerConfig{},
+				log:    newTestLogger(t),
+			}
+			req := httptest.NewRequest(http.MethodPut, "/api/registry/connections/"+id, strings.NewReader(`{"name":"updated"}`))
+			req = mux.SetURLVars(req, map[string]string{
+				"connectionDefinitionId": id,
+			})
+			rw := httptest.NewRecorder()
+			h.UpdateConnectionDefinition(rw, req, nil, nil, nil)
+
+			assert.Equal(t, http.StatusBadRequest, rw.Code)
+			if id == uuid.Nil.String() {
+				assert.Contains(t, rw.Body.String(), "must not be the nil UUID")
+			}
+		})
+	}
+}
+
 // TestDeleteConnectionDefinition_InvalidUUID verifies that DeleteConnectionDefinition returns
-// HTTP 400 Bad Request when an invalid UUID string is provided in the route parameters.
+// HTTP 400 Bad Request when an invalid or zero UUID string is provided in the route parameters.
 func TestDeleteConnectionDefinition_InvalidUUID(t *testing.T) {
+	for _, id := range []string{"invalid-uuid", "12345", uuid.Nil.String()} {
+		t.Run(id, func(t *testing.T) {
+			h := &Handler{
+				config: &models.HandlerConfig{},
+				log:    newTestLogger(t),
+			}
+
+			req := httptest.NewRequest(http.MethodDelete, "/api/registry/connections/"+id, nil)
+			req = mux.SetURLVars(req, map[string]string{
+				"connectionDefinitionId": id,
+			})
+			rw := httptest.NewRecorder()
+
+			h.DeleteConnectionDefinition(rw, req, nil, nil, nil)
+			resp := rw.Result()
+			defer func() {
+				_ = resp.Body.Close()
+			}()
+
+			assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+			if id == uuid.Nil.String() {
+				assert.Contains(t, rw.Body.String(), "must not be the nil UUID")
+			}
+		})
+	}
+}
+
+// TestConnectionDefinition_NilLogger_DoesNotPanic verifies that the handlers guard
+// against nil logger dereferences across validation failure branches.
+func TestConnectionDefinition_NilLogger_DoesNotPanic(t *testing.T) {
 	h := &Handler{
 		config: &models.HandlerConfig{},
-		log:    newTestLogger(t),
-	}
+	} // nil logger
 
-	req := httptest.NewRequest(http.MethodDelete, "/api/registry/connections/invalid-uuid", nil)
-	req = mux.SetURLVars(req, map[string]string{
-		"connectionDefinitionId": "invalid-uuid",
+	t.Run("GetConnectionDefinitionByID invalid UUID", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/api/registry/connections/invalid-uuid", nil)
+		req = mux.SetURLVars(req, map[string]string{"connectionDefinitionId": "invalid-uuid"})
+		rw := httptest.NewRecorder()
+		h.GetConnectionDefinitionByID(rw, req)
+		assert.Equal(t, http.StatusBadRequest, rw.Code)
 	})
-	rw := httptest.NewRecorder()
 
-	h.DeleteConnectionDefinition(rw, req, nil, nil, nil)
-	resp := rw.Result()
-	defer func() {
-		_ = resp.Body.Close()
-	}()
+	t.Run("GetConnectionDefinitionByID zero UUID", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/api/registry/connections/"+uuid.Nil.String(), nil)
+		req = mux.SetURLVars(req, map[string]string{"connectionDefinitionId": uuid.Nil.String()})
+		rw := httptest.NewRecorder()
+		h.GetConnectionDefinitionByID(rw, req)
+		assert.Equal(t, http.StatusBadRequest, rw.Code)
+	})
 
-	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+	t.Run("RegisterConnectionDefinition malformed JSON", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPost, "/api/registry/connections", strings.NewReader("not-json"))
+		rw := httptest.NewRecorder()
+		h.RegisterConnectionDefinition(rw, req, nil, nil, nil)
+		assert.Equal(t, http.StatusBadRequest, rw.Code)
+	})
+
+	t.Run("RegisterConnectionDefinition missing ModelReference", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPost, "/api/registry/connections", strings.NewReader(`{}`))
+		rw := httptest.NewRecorder()
+		h.RegisterConnectionDefinition(rw, req, nil, nil, nil)
+		assert.Equal(t, http.StatusBadRequest, rw.Code)
+	})
+
+	t.Run("UpdateConnectionDefinition invalid UUID", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPut, "/api/registry/connections/invalid-uuid", strings.NewReader(`{}`))
+		req = mux.SetURLVars(req, map[string]string{"connectionDefinitionId": "invalid-uuid"})
+		rw := httptest.NewRecorder()
+		h.UpdateConnectionDefinition(rw, req, nil, nil, nil)
+		assert.Equal(t, http.StatusBadRequest, rw.Code)
+	})
+
+	t.Run("UpdateConnectionDefinition zero UUID", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPut, "/api/registry/connections/"+uuid.Nil.String(), strings.NewReader(`{}`))
+		req = mux.SetURLVars(req, map[string]string{"connectionDefinitionId": uuid.Nil.String()})
+		rw := httptest.NewRecorder()
+		h.UpdateConnectionDefinition(rw, req, nil, nil, nil)
+		assert.Equal(t, http.StatusBadRequest, rw.Code)
+	})
+
+	t.Run("UpdateConnectionDefinition malformed JSON with valid UUID", func(t *testing.T) {
+		validID := uuid.Must(uuid.NewV4()).String()
+		req := httptest.NewRequest(http.MethodPut, "/api/registry/connections/"+validID, strings.NewReader("not-json"))
+		req = mux.SetURLVars(req, map[string]string{"connectionDefinitionId": validID})
+		rw := httptest.NewRecorder()
+		h.UpdateConnectionDefinition(rw, req, nil, nil, nil)
+		assert.Equal(t, http.StatusBadRequest, rw.Code)
+	})
+
+	t.Run("DeleteConnectionDefinition invalid UUID", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodDelete, "/api/registry/connections/invalid-uuid", nil)
+		req = mux.SetURLVars(req, map[string]string{"connectionDefinitionId": "invalid-uuid"})
+		rw := httptest.NewRecorder()
+		h.DeleteConnectionDefinition(rw, req, nil, nil, nil)
+		assert.Equal(t, http.StatusBadRequest, rw.Code)
+	})
+
+	t.Run("DeleteConnectionDefinition zero UUID", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodDelete, "/api/registry/connections/"+uuid.Nil.String(), nil)
+		req = mux.SetURLVars(req, map[string]string{"connectionDefinitionId": uuid.Nil.String()})
+		rw := httptest.NewRecorder()
+		h.DeleteConnectionDefinition(rw, req, nil, nil, nil)
+		assert.Equal(t, http.StatusBadRequest, rw.Code)
+	})
 }
 
 // TestDeleteConnectionDefinition_NotFound verifies that DeleteConnectionDefinition returns

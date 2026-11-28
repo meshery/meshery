@@ -59,7 +59,9 @@ func (h *Handler) GetConnectionDefinitions(rw http.ResponseWriter, r *http.Reque
 		Offset:    offset,
 	})
 	if err != nil {
-		h.log.Error(ErrQueryGet("connection definitions"))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrQueryGet("connection definitions"))
+		}
 		writeMeshkitError(rw, ErrQueryGet("connection definitions"), http.StatusInternalServerError)
 		return
 	}
@@ -77,7 +79,9 @@ func (h *Handler) GetConnectionDefinitions(rw http.ResponseWriter, r *http.Reque
 	}
 
 	if err := enc.Encode(response); err != nil {
-		h.log.Error(models.ErrEncoding(err, "connection definitions"))
+		if h != nil && h.log != nil {
+			h.log.Error(models.ErrEncoding(err, "connection definitions"))
+		}
 		writeMeshkitError(rw, models.ErrEncoding(err, "connection definitions"), http.StatusInternalServerError)
 	}
 }
@@ -91,9 +95,18 @@ func (h *Handler) GetConnectionDefinitions(rw http.ResponseWriter, r *http.Reque
 func (h *Handler) GetConnectionDefinitionByID(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	connectionDefinitionID := mux.Vars(r)["connectionDefinitionId"]
-	if _, err := uuid.FromString(connectionDefinitionID); err != nil {
-		h.log.Error(models.ErrInvalidUUID(err))
-		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
+	parsedID, err := uuid.FromString(connectionDefinitionID)
+	if err != nil || parsedID == uuid.Nil {
+		var invalidErr error
+		if err != nil {
+			invalidErr = models.ErrInvalidUUID(fmt.Errorf("invalid connection definition ID %q: %w", connectionDefinitionID, err))
+		} else {
+			invalidErr = models.ErrInvalidUUID(fmt.Errorf("invalid connection definition ID %q: must not be the nil UUID", connectionDefinitionID))
+		}
+		if h != nil && h.log != nil {
+			h.log.Error(invalidErr)
+		}
+		writeMeshkitError(rw, invalidErr, http.StatusBadRequest)
 		return
 	}
 
@@ -102,7 +115,9 @@ func (h *Handler) GetConnectionDefinitionByID(rw http.ResponseWriter, r *http.Re
 		Limit: 1,
 	})
 	if err != nil {
-		h.log.Error(ErrQueryGet("connection definition"))
+		if h != nil && h.log != nil {
+			h.log.Error(ErrQueryGet("connection definition"))
+		}
 		writeMeshkitError(rw, ErrQueryGet("connection definition"), http.StatusInternalServerError)
 		return
 	}
@@ -113,7 +128,9 @@ func (h *Handler) GetConnectionDefinitionByID(rw http.ResponseWriter, r *http.Re
 	}
 
 	if err := json.NewEncoder(rw).Encode(defs[0]); err != nil {
-		h.log.Error(models.ErrEncoding(err, "connection definition"))
+		if h != nil && h.log != nil {
+			h.log.Error(models.ErrEncoding(err, "connection definition"))
+		}
 		writeMeshkitError(rw, models.ErrEncoding(err, "connection definition"), http.StatusInternalServerError)
 	}
 }
@@ -130,14 +147,18 @@ func (h *Handler) RegisterConnectionDefinition(rw http.ResponseWriter, r *http.R
 
 	def := connectionv1beta3.ConnectionDefinition{}
 	if err := json.NewDecoder(r.Body).Decode(&def); err != nil {
-		h.log.Error(models.ErrUnmarshal(err, obj))
+		if h != nil && h.log != nil {
+			h.log.Error(models.ErrUnmarshal(err, obj))
+		}
 		writeMeshkitError(rw, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
 		return
 	}
 
 	if def.ModelReference == nil {
 		err := ErrFailToSave(fmt.Errorf("a modelReference (with registrant) is required to register a connection definition"), obj)
-		h.log.Error(err)
+		if h != nil && h.log != nil {
+			h.log.Error(err)
+		}
 		writeMeshkitError(rw, err, http.StatusBadRequest)
 		return
 	}
@@ -145,7 +166,9 @@ func (h *Handler) RegisterConnectionDefinition(rw http.ResponseWriter, r *http.R
 	registrant := connectionv1beta1.Connection{Kind: def.ModelReference.Registrant.Kind}
 	if _, _, err := h.registryManager.RegisterEntity(registry.RegistrantHostToV1beta3(registrant), &def); err != nil {
 		_err := ErrFailToSave(err, obj)
-		h.log.Error(_err)
+		if h != nil && h.log != nil {
+			h.log.Error(_err)
+		}
 		writeMeshkitError(rw, _err, http.StatusInternalServerError)
 		return
 	}
@@ -153,7 +176,9 @@ func (h *Handler) RegisterConnectionDefinition(rw http.ResponseWriter, r *http.R
 	rw.Header().Add("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(rw).Encode(def); err != nil {
-		h.log.Error(models.ErrEncoding(err, obj))
+		if h != nil && h.log != nil {
+			h.log.Error(models.ErrEncoding(err, obj))
+		}
 	}
 }
 
@@ -167,15 +192,25 @@ func (h *Handler) UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Req
 	obj := "connection definition"
 	connectionDefinitionID := mux.Vars(r)["connectionDefinitionId"]
 	id, err := uuid.FromString(connectionDefinitionID)
-	if err != nil {
-		h.log.Error(models.ErrInvalidUUID(err))
-		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
+	if err != nil || id == uuid.Nil {
+		var invalidErr error
+		if err != nil {
+			invalidErr = models.ErrInvalidUUID(fmt.Errorf("invalid connection definition ID %q: %w", connectionDefinitionID, err))
+		} else {
+			invalidErr = models.ErrInvalidUUID(fmt.Errorf("invalid connection definition ID %q: must not be the nil UUID", connectionDefinitionID))
+		}
+		if h != nil && h.log != nil {
+			h.log.Error(invalidErr)
+		}
+		writeMeshkitError(rw, invalidErr, http.StatusBadRequest)
 		return
 	}
 
 	def := connectionv1beta3.ConnectionDefinition{}
 	if err := json.NewDecoder(r.Body).Decode(&def); err != nil {
-		h.log.Error(models.ErrUnmarshal(err, obj))
+		if h != nil && h.log != nil {
+			h.log.Error(models.ErrUnmarshal(err, obj))
+		}
 		writeMeshkitError(rw, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
 		return
 	}
@@ -188,7 +223,9 @@ func (h *Handler) UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Req
 			return
 		}
 		_err := ErrQueryGet(obj)
-		h.log.Error(_err)
+		if h != nil && h.log != nil {
+			h.log.Error(_err)
+		}
 		writeMeshkitError(rw, _err, http.StatusInternalServerError)
 		return
 	}
@@ -200,7 +237,9 @@ func (h *Handler) UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Req
 		Select("*").Omit(clause.Associations, "created_at").Updates(&def)
 	if result.Error != nil {
 		_err := ErrFailToSave(result.Error, obj)
-		h.log.Error(_err)
+		if h != nil && h.log != nil {
+			h.log.Error(_err)
+		}
 		writeMeshkitError(rw, _err, http.StatusInternalServerError)
 		return
 	}
@@ -211,7 +250,9 @@ func (h *Handler) UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Req
 
 	rw.Header().Add("Content-Type", "application/json")
 	if err := json.NewEncoder(rw).Encode(def); err != nil {
-		h.log.Error(models.ErrEncoding(err, obj))
+		if h != nil && h.log != nil {
+			h.log.Error(models.ErrEncoding(err, obj))
+		}
 	}
 }
 
@@ -228,9 +269,17 @@ func (h *Handler) UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Req
 func (h *Handler) DeleteConnectionDefinition(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	connectionDefinitionID := mux.Vars(r)["connectionDefinitionId"]
 	id, err := uuid.FromString(connectionDefinitionID)
-	if err != nil {
-		h.log.Error(models.ErrInvalidUUID(err))
-		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
+	if err != nil || id == uuid.Nil {
+		var invalidErr error
+		if err != nil {
+			invalidErr = models.ErrInvalidUUID(fmt.Errorf("invalid connection definition ID %q: %w", connectionDefinitionID, err))
+		} else {
+			invalidErr = models.ErrInvalidUUID(fmt.Errorf("invalid connection definition ID %q: must not be the nil UUID", connectionDefinitionID))
+		}
+		if h != nil && h.log != nil {
+			h.log.Error(invalidErr)
+		}
+		writeMeshkitError(rw, invalidErr, http.StatusBadRequest)
 		return
 	}
 
@@ -254,7 +303,9 @@ func (h *Handler) DeleteConnectionDefinition(rw http.ResponseWriter, r *http.Req
 			return
 		}
 		_err := ErrFailToDelete(err, "connection definition")
-		h.log.Error(_err)
+		if h != nil && h.log != nil {
+			h.log.Error(_err)
+		}
 		writeMeshkitError(rw, _err, http.StatusInternalServerError)
 		return
 	}
