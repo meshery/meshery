@@ -9,7 +9,7 @@ import {
   useTheme,
   useHasPermission,
 } from '@sistent/sistent';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StyledSearchBar } from '@sistent/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
@@ -29,15 +29,26 @@ const RecentContent = () => {
   const isViewVisible = useHasPermission(Keys.KanvasViewViews);
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
 
-  const [filters, setFilters] = useState({
-    type: getDefaultFilterType(),
+  const [filters, setFilters] = useState(() => ({
+    type: getDefaultFilterType(isViewVisible),
     searchQuery: '',
     author: '',
     sortBy: 'updated_at desc',
     visibility: visibilityItems,
     designsPage: 0,
     viewsPage: 0,
-  });
+  }));
+
+  useEffect(() => {
+    if (!isViewVisible && filters.type === RESOURCE_TYPE.VIEW) {
+      setFilters((prev) => ({
+        ...prev,
+        type: RESOURCE_TYPE.DESIGN,
+        designsPage: 0,
+        viewsPage: 0,
+      }));
+    }
+  }, [isViewVisible, filters.type]);
 
   const handleTypeChange = useCallback((event) => {
     setFilters((prev) => ({
@@ -99,6 +110,9 @@ const RecentContent = () => {
     }));
   }, []);
 
+  const effectiveType =
+    !isViewVisible && filters.type === RESOURCE_TYPE.VIEW ? RESOURCE_TYPE.DESIGN : filters.type;
+
   const {
     data: designsData,
     isLoading,
@@ -116,7 +130,7 @@ const RecentContent = () => {
       userId: filters.author,
     },
     {
-      skip: filters.type !== RESOURCE_TYPE.DESIGN,
+      skip: effectiveType !== RESOURCE_TYPE.DESIGN,
     },
   );
 
@@ -135,20 +149,20 @@ const RecentContent = () => {
       search: filters.searchQuery,
     },
     {
-      skip: filters.type !== RESOURCE_TYPE.VIEW,
+      skip: effectiveType !== RESOURCE_TYPE.VIEW || !isViewVisible,
     },
   );
 
   const theme = useTheme();
   const refetch = useCallback(() => {
-    if (filters.type === RESOURCE_TYPE.DESIGN) {
+    if (effectiveType === RESOURCE_TYPE.DESIGN) {
       if (filters.designsPage > 0) setDesignsPage(0);
       else refetchDesigns();
     } else {
       if (filters.viewsPage > 0) setViewsPage(0);
       else refetchViews();
     }
-  }, [filters.type, filters.designsPage, filters.viewsPage, refetchDesigns, refetchViews]);
+  }, [effectiveType, filters.designsPage, filters.viewsPage, refetchDesigns, refetchViews]);
 
   return (
     <>
@@ -160,12 +174,12 @@ const RecentContent = () => {
               sx={{ backgroundColor: 'transparent' }}
               width="auto"
               placeholder={
-                filters.type === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'
+                effectiveType === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'
               }
               value={filters.searchQuery}
               onChange={onSearchChange}
               endAdornment={
-                filters.type === RESOURCE_TYPE.DESIGN ? (
+                effectiveType === RESOURCE_TYPE.DESIGN ? (
                   <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
                     Total: {designsData?.totalCount ?? 0}
                   </p>
@@ -183,7 +197,7 @@ const RecentContent = () => {
             <FormControl fullWidth>
               <InputLabel>Type</InputLabel>
               <Select
-                value={filters.type}
+                value={effectiveType}
                 label="Type"
                 onChange={handleTypeChange}
                 sx={{
@@ -220,7 +234,7 @@ const RecentContent = () => {
           </Grid2>
 
           {/* Import Button */}
-          {filters.type === RESOURCE_TYPE.DESIGN && (
+          {effectiveType === RESOURCE_TYPE.DESIGN && (
             <Grid2 size={{ xs: 6, sm: 3, md: 3, lg: 1 }}>
               <ImportButton refetch={refetch} permissionKey={Keys.CatalogManagementImportDesign} />
             </Grid2>
@@ -230,7 +244,7 @@ const RecentContent = () => {
         <>
           <TableListHeader />
 
-          {filters.type == RESOURCE_TYPE.DESIGN && (
+          {effectiveType === RESOURCE_TYPE.DESIGN && (
             <MainDesignsContent
               key={RESOURCE_TYPE.DESIGN}
               page={filters.designsPage}
@@ -243,7 +257,7 @@ const RecentContent = () => {
               refetch={refetch}
             />
           )}
-          {filters.type == RESOURCE_TYPE.VIEW && (
+          {effectiveType === RESOURCE_TYPE.VIEW && isViewVisible && (
             <MainViewsContent
               key={RESOURCE_TYPE.VIEW}
               page={filters.viewsPage}

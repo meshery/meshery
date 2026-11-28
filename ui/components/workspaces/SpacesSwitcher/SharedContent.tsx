@@ -9,7 +9,7 @@ import {
   useTheme,
   useHasPermission,
 } from '@sistent/sistent';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StyledSearchBar } from '@sistent/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
@@ -29,15 +29,26 @@ const SharedContent = () => {
 
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
 
-  const [filters, setFilters] = useState({
-    type: getDefaultFilterType(),
+  const [filters, setFilters] = useState(() => ({
+    type: getDefaultFilterType(isViewVisible),
     searchQuery: '',
     sortBy: 'updated_at desc',
     author: '',
     visibility: visibilityItems,
     designsPage: 0,
     viewsPage: 0,
-  });
+  }));
+
+  useEffect(() => {
+    if (!isViewVisible && filters.type === RESOURCE_TYPE.VIEW) {
+      setFilters((prev) => ({
+        ...prev,
+        type: RESOURCE_TYPE.DESIGN,
+        designsPage: 0,
+        viewsPage: 0,
+      }));
+    }
+  }, [isViewVisible, filters.type]);
 
   const handleTypeChange = useCallback((event) => {
     setFilters((prev) => ({
@@ -99,6 +110,9 @@ const SharedContent = () => {
     }));
   }, []);
 
+  const effectiveType =
+    !isViewVisible && filters.type === RESOURCE_TYPE.VIEW ? RESOURCE_TYPE.DESIGN : filters.type;
+
   const {
     data: designsData,
     isLoading,
@@ -117,7 +131,7 @@ const SharedContent = () => {
       userId: filters.author,
     },
     {
-      skip: filters.type !== RESOURCE_TYPE.DESIGN,
+      skip: effectiveType !== RESOURCE_TYPE.DESIGN,
     },
   );
 
@@ -137,18 +151,18 @@ const SharedContent = () => {
       shared: true,
     },
     {
-      skip: filters.type !== RESOURCE_TYPE.VIEW,
+      skip: effectiveType !== RESOURCE_TYPE.VIEW || !isViewVisible,
     },
   );
   const refetch = useCallback(() => {
-    if (filters.type === RESOURCE_TYPE.DESIGN) {
+    if (effectiveType === RESOURCE_TYPE.DESIGN) {
       if (filters.designsPage > 0) setDesignsPage(0);
       else refetchDesigns();
     } else {
       if (filters.viewsPage > 0) setViewsPage(0);
       else refetchViews();
     }
-  }, [filters.type, filters.designsPage, filters.viewsPage, refetchDesigns, refetchViews]);
+  }, [effectiveType, filters.designsPage, filters.viewsPage, refetchDesigns, refetchViews]);
   const theme = useTheme();
 
   return (
@@ -161,12 +175,12 @@ const SharedContent = () => {
               sx={{ backgroundColor: 'transparent' }}
               width="auto"
               placeholder={
-                filters.type === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'
+                effectiveType === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'
               }
               value={filters.searchQuery}
               onChange={onSearchChange}
               endAdornment={
-                filters.type === RESOURCE_TYPE.DESIGN ? (
+                effectiveType === RESOURCE_TYPE.DESIGN ? (
                   <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
                     Total: {designsData?.totalCount ?? 0}
                   </p>
@@ -184,7 +198,7 @@ const SharedContent = () => {
             <FormControl fullWidth>
               <InputLabel>Type</InputLabel>
               <Select
-                value={filters.type}
+                value={effectiveType}
                 label="Type"
                 onChange={handleTypeChange}
                 sx={{
@@ -224,7 +238,7 @@ const SharedContent = () => {
         <>
           <TableListHeader />
 
-          {filters.type == RESOURCE_TYPE.DESIGN && (
+          {effectiveType === RESOURCE_TYPE.DESIGN && (
             <MainDesignsContent
               key={'shared-designs-content'}
               page={filters.designsPage}
@@ -237,7 +251,7 @@ const SharedContent = () => {
               refetch={refetch}
             />
           )}
-          {filters.type == RESOURCE_TYPE.VIEW && (
+          {effectiveType === RESOURCE_TYPE.VIEW && isViewVisible && (
             <MainViewsContent
               key={'shared-views-content'}
               page={filters.viewsPage}

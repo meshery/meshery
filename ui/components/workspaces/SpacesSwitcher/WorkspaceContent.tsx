@@ -11,7 +11,7 @@ import {
   WorkspaceContentMoveModal,
   useHasPermission,
 } from '@sistent/sistent';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { StyledSearchBar } from '@sistent/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import MainViewsContent from './MainViewsContent';
@@ -47,23 +47,41 @@ const WorkspaceContent = ({ workspace }) => {
 
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
 
-  const [filters, setFilters] = useState({
-    type: getDefaultFilterType(),
+  const [filters, setFilters] = useState(() => ({
+    type: getDefaultFilterType(isViewVisible),
     searchQuery: '',
     sortBy: 'updated_at desc',
     visibility: visibilityItems,
     designsPage: 0,
     viewsPage: 0,
-  });
+  }));
 
-  const handleTypeChange = useCallback((event) => {
-    setFilters((prev) => ({
-      ...prev,
-      type: event.target.value,
-      designsPage: 0,
-      viewsPage: 0,
-    }));
-  }, []);
+  const { setMultiSelectedContent } = useContext(WorkspaceModalContext);
+
+  useEffect(() => {
+    if (!isViewVisible && filters.type === RESOURCE_TYPE.VIEW) {
+      setMultiSelectedContent([]);
+      setFilters((prev) => ({
+        ...prev,
+        type: RESOURCE_TYPE.DESIGN,
+        designsPage: 0,
+        viewsPage: 0,
+      }));
+    }
+  }, [isViewVisible, filters.type, setMultiSelectedContent]);
+
+  const handleTypeChange = useCallback(
+    (event) => {
+      setMultiSelectedContent([]);
+      setFilters((prev) => ({
+        ...prev,
+        type: event.target.value,
+        designsPage: 0,
+        viewsPage: 0,
+      }));
+    },
+    [setMultiSelectedContent],
+  );
 
   const handleSortByChange = useCallback((event) => {
     setFilters((prev) => ({
@@ -107,6 +125,9 @@ const WorkspaceContent = ({ workspace }) => {
     }));
   }, []);
 
+  const effectiveType =
+    !isViewVisible && filters.type === RESOURCE_TYPE.VIEW ? RESOURCE_TYPE.DESIGN : filters.type;
+
   const {
     data: designsData,
     isLoading,
@@ -123,7 +144,7 @@ const WorkspaceContent = ({ workspace }) => {
       visibility: filters.visibility,
     },
     {
-      skip: filters.type !== RESOURCE_TYPE.DESIGN || !workspace?.id,
+      skip: effectiveType !== RESOURCE_TYPE.DESIGN || !workspace?.id,
     },
   );
 
@@ -143,7 +164,7 @@ const WorkspaceContent = ({ workspace }) => {
       order: 'updated_at desc',
     },
     {
-      skip: filters.type !== RESOURCE_TYPE.VIEW || !workspace?.id,
+      skip: effectiveType !== RESOURCE_TYPE.VIEW || !workspace?.id || !isViewVisible,
     },
   );
 
@@ -171,14 +192,14 @@ const WorkspaceContent = ({ workspace }) => {
   const { handleDesignDownload, handleViewDownload } = useContentDownload();
 
   const refetch = useCallback(() => {
-    if (filters.type === RESOURCE_TYPE.DESIGN) {
+    if (effectiveType === RESOURCE_TYPE.DESIGN) {
       if (filters.designsPage > 0) setDesignsPage(0);
       else refetchDesigns();
     } else {
       if (filters.viewsPage > 0) setViewsPage(0);
       else refetchViews();
     }
-  }, [filters.type, filters.designsPage, filters.viewsPage, refetchDesigns, refetchViews]);
+  }, [effectiveType, filters.designsPage, filters.viewsPage, refetchDesigns, refetchViews]);
   const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
   const [assignViewToWorkspace] = useAssignViewToWorkspaceMutation();
   const router = useRouter();
@@ -194,12 +215,12 @@ const WorkspaceContent = ({ workspace }) => {
               sx={{ backgroundColor: 'transparent' }}
               width="auto"
               placeholder={
-                filters.type === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'
+                effectiveType === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'
               }
               value={filters.searchQuery}
               onChange={onSearchChange}
               endAdornment={
-                filters.type === RESOURCE_TYPE.DESIGN ? (
+                effectiveType === RESOURCE_TYPE.DESIGN ? (
                   <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
                     Total: {designsData?.totalCount ?? 0}
                   </p>
@@ -217,7 +238,7 @@ const WorkspaceContent = ({ workspace }) => {
             <FormControl fullWidth>
               <InputLabel>Type</InputLabel>
               <Select
-                value={filters.type}
+                value={effectiveType}
                 label="Type"
                 onChange={handleTypeChange}
                 sx={{
@@ -247,7 +268,7 @@ const WorkspaceContent = ({ workspace }) => {
           </Grid2>
 
           <Grid2 size={{ xs: 3, md: 1 }}>
-            {filters.type == RESOURCE_TYPE.DESIGN && (
+            {effectiveType === RESOURCE_TYPE.DESIGN && (
               <ImportButton
                 refetch={refetch}
                 workspaceId={workspace?.id}
@@ -259,7 +280,7 @@ const WorkspaceContent = ({ workspace }) => {
 
         <>
           <MultiContentSelectToolbar
-            type={filters.type}
+            type={effectiveType}
             handleDelete={handleDelete}
             handleDownload={handleDownloadModalOpen}
             handleViewDownload={handleViewDownload}
@@ -270,7 +291,7 @@ const WorkspaceContent = ({ workspace }) => {
             workspaceContentMoveModal={workspaceContentMoveModal}
             setWorkspaceContentMoveModal={setWorkspaceContentMoveModal}
             currentWorkspace={workspace}
-            type={filters.type}
+            type={effectiveType}
             refetch={refetch}
             useGetWorkspacesQuery={useGetWorkspacesQuery}
             WorkspaceModalContext={WorkspaceModalContext}
@@ -286,14 +307,14 @@ const WorkspaceContent = ({ workspace }) => {
 
           <TableListHeader
             content={
-              RESOURCE_TYPE.DESIGN === filters.type ? designsData?.designs : viewsData?.views
+              RESOURCE_TYPE.DESIGN === effectiveType ? designsData?.designs : viewsData?.views
             }
             isMultiSelectMode={true}
             showOrganizationName={false}
             showWorkspaceName={false}
           />
 
-          {filters.type == RESOURCE_TYPE.DESIGN && (
+          {effectiveType === RESOURCE_TYPE.DESIGN && (
             <MainDesignsContent
               showWorkspaceName={false}
               showOrganizationName={false}
@@ -309,7 +330,7 @@ const WorkspaceContent = ({ workspace }) => {
               isMultiSelectMode={true}
             />
           )}
-          {filters.type == RESOURCE_TYPE.VIEW && (
+          {effectiveType === RESOURCE_TYPE.VIEW && isViewVisible && (
             <MainViewsContent
               showWorkspaceName={false}
               showOrganizationName={false}
