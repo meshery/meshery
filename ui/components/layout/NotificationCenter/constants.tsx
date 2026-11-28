@@ -1,7 +1,7 @@
 import AlertIcon from '../../../assets/icons/AlertIcon';
 import ErrorIcon from '../../../assets/icons/ErrorIcon';
 import ReadIcon from '../../../assets/icons/ReadIcon';
-import { InfoIcon, notificationColors } from '@sistent/sistent';
+import { CheckCircleIcon, InfoIcon, notificationColors } from '@sistent/sistent';
 import type { Theme } from '@sistent/sistent';
 
 export const SEVERITY = {
@@ -54,7 +54,7 @@ export const SEVERITY_STYLE = {
     darkColor: notificationColors.warning.main,
   },
   [SEVERITY.SUCCESS]: {
-    icon: InfoIcon,
+    icon: CheckCircleIcon,
     color: notificationColors.success.main,
     darkColor: notificationColors.success.main,
   },
