@@ -252,7 +252,7 @@ custom resource of those types - is an explicit, manual step:
 
 You can toggle operator deployment per cluster in Meshery UI under
 **Settings**, or avoid deploying the operator entirely by choosing MeshSync's
-[embedded mode]({{< ref "concepts/architecture/meshsync.md#meshsync-deployment-mode" >}})
+[embedded mode]({{< ref "concepts/architecture/meshsync.md#embedded-mode-default" >}})
 for the connection. See
 [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}) for
 the architecture.

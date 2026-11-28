@@ -171,7 +171,7 @@ For details, see [Registering a Connection]({{< ref "guides/infrastructure-manag
 
 ## Troubleshooting Meshery Installation
 
-If you run into problems during installation, see [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation/index.md#setting-up-meshery-using-kind-or-minikube" >}}).
+If you run into problems during installation, see [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation/index.md#access-meshery-ui-on-kind-or-minikube" >}}).
 
 # Post-Installation Steps
 
