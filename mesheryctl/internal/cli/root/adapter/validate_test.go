@@ -84,6 +84,8 @@ func TestValidateMesh(t *testing.T) {
 		URLs             []utils.MockURL
 		ExpectedResponse string
 		ExpectError      bool
+		// query expected in the adapter operation POST body
+		ExpectedQuery string
 		// number of POST requests expected on the adapter operation endpoint
 		ExpectedOperationCalls int
 	}{
@@ -105,6 +107,7 @@ func TestValidateMesh(t *testing.T) {
 				},
 			},
 			ExpectedResponse:       "validate.istio.output.golden",
+			ExpectedQuery:          "smi_conformance",
 			ExpectedOperationCalls: 1,
 		},
 		{
@@ -151,7 +154,55 @@ func TestValidateMesh(t *testing.T) {
 			},
 			ExpectedResponse:       "validate.operation-error.output.golden",
 			ExpectError:            true,
+			ExpectedQuery:          "smi_conformance",
 			ExpectedOperationCalls: 1,
+		},
+		{
+			// The Istio adapter in sync.golden is at localhost:10000, not the
+			// Docker Compose hostname meshery-istio:10000, so this guards against
+			// istio-vet being tied to one deployment's adapter location.
+			Name: "Validate Istio with the istio-vet spec at a non-default location",
+			Args: []string{"validate", "istio", "--adapter", "meshery-istio", "--spec", "istio-vet"},
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          syncURL,
+					Response:     "sync.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          operationURL,
+					Response:     "deploy.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectedResponse:       "validate.istio.output.golden",
+			ExpectedQuery:          "istio-vet",
+			ExpectedOperationCalls: 1,
+		},
+		{
+			Name: "Reject the istio-vet spec for a mesh other than Istio",
+			Args: []string{"validate", "linkerd", "--adapter", "meshery-linkerd", "--spec", "istio-vet"},
+			// The operation responder is registered so that a request that
+			// should have been rejected would be counted.
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          syncURL,
+					Response:     "sync.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          operationURL,
+					Response:     "deploy.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectedResponse:       "validate.istio-vet-non-istio.output.golden",
+			ExpectError:            true,
+			ExpectedOperationCalls: 0,
 		},
 	}
 
@@ -179,7 +230,7 @@ func TestValidateMesh(t *testing.T) {
 							if !assert.NoError(t, err) {
 								return nil, err
 							}
-							assert.Equal(t, "smi_conformance", form.Get("query"))
+							assert.Equal(t, tc.ExpectedQuery, form.Get("query"))
 							assert.Equal(t, expectedAdapter, form.Get("adapter"))
 						}
 						return httpmock.NewStringResponse(mock.ResponseCode, apiResponse), nil
