@@ -1,8 +1,10 @@
 import { URLValidator } from '../../utils/URLValidator';
+import { isValidJSON } from '../../utils/validators';
 
 /**
- * Setters bag for `createPerformanceFormChangeHandler`. Each field maps 1:1
- * to a `setX` call from the parent component's `useState` hooks.
+ * State and setter bag for `createPerformanceFormChangeHandler`. The current
+ * values provide cross-field validation context; the setters map to the
+ * parent component's `useState` hooks.
  */
 export interface PerformanceFormSetters {
   setProfileName: (v: string) => void;
@@ -20,7 +22,12 @@ export interface PerformanceFormSetters {
   setJsonError: (v: boolean) => void;
   setDisableTest: (v: boolean) => void;
   setUrlError: (v: boolean) => void;
+  url: string;
+  additionalOptions: string;
 }
+
+export const shouldDisablePerformanceTest = (url: string, additionalOptions: unknown) =>
+  additionalOptions ? !isValidJSON(additionalOptions) : !URLValidator(url);
 
 /**
  * createPerformanceFormChangeHandler builds the `handleChange(name)(event)`
@@ -29,8 +36,8 @@ export interface PerformanceFormSetters {
  * for `url` validation, `caCertificate` file upload, and `additional_options`
  * JSON parsing.
  *
- * Extracted in Phase 5.a so the entry point stays under the 600-line size
- * budget. No behaviour changes — only the setters are now received as a bag.
+ * Extracted so the entry point stays under the 600-line size budget and the
+ * form's validation transitions can be tested independently.
  */
 export const createPerformanceFormChangeHandler = (setters: PerformanceFormSetters) => {
   const {
@@ -49,6 +56,8 @@ export const createPerformanceFormChangeHandler = (setters: PerformanceFormSette
     setJsonError,
     setDisableTest,
     setUrlError,
+    url,
+    additionalOptions,
   } = setters;
 
   return (name: string) => (event: any) => {
@@ -67,18 +76,19 @@ export const createPerformanceFormChangeHandler = (setters: PerformanceFormSette
       reader.readAsText(file);
     }
 
-    if (name === 'url' && value !== '') {
-      let urlPattern = value;
-
-      let val = URLValidator(urlPattern);
-      if (!val) {
-        setDisableTest(true);
-        setUrlError(true);
+    if (name === 'url') {
+      if (value !== '') {
+        if (!URLValidator(value)) {
+          setUrlError(true);
+        } else {
+          setUrlError(false);
+        }
+        setDisableTest(shouldDisablePerformanceTest(value, additionalOptions));
       } else {
-        setDisableTest(false);
         setUrlError(false);
+        setDisableTest(shouldDisablePerformanceTest(value, additionalOptions));
       }
-    } else setUrlError(false);
+    }
 
     if (name === 'additional_options') {
       // Check if the target event is an input element (typing) or a file input (upload)
@@ -96,9 +106,11 @@ export const createPerformanceFormChangeHandler = (setters: PerformanceFormSette
               JSON.parse(fileContent);
               setAdditionalOptions(fileContent);
               setJsonError(false);
+              setDisableTest(shouldDisablePerformanceTest(url, fileContent));
             } catch {
               setAdditionalOptions(event.target.result);
               setJsonError(true);
+              setDisableTest(true);
             }
           };
           reader.readAsText(file);
@@ -110,9 +122,11 @@ export const createPerformanceFormChangeHandler = (setters: PerformanceFormSette
           if (value !== '') JSON.parse(value);
           setAdditionalOptions(value);
           setJsonError(false);
+          setDisableTest(shouldDisablePerformanceTest(url, value));
         } catch {
           setAdditionalOptions(value);
           setJsonError(true);
+          setDisableTest(true);
         }
       }
     }
