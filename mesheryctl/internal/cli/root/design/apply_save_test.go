@@ -16,8 +16,9 @@ import (
 )
 
 const (
-	githubBlobURL = "https://github.com/meshery/meshery/blob/master/designs/sample.yaml"
-	githubRawURL  = "https://raw.githubusercontent.com/meshery/meshery/master/designs/sample.yaml"
+	githubBlobURL    = "https://github.com/meshery/meshery/blob/master/designs/sample.yaml"
+	githubRawLinkURL = "https://github.com/meshery/meshery/raw/master/designs/sample.yaml"
+	githubRawURL     = "https://raw.githubusercontent.com/meshery/meshery/master/designs/sample.yaml"
 )
 
 // designRequests records the requests a design command sends to the server.
@@ -195,24 +196,35 @@ func assertUndeployPayload(t *testing.T, body, content []byte) {
 	assert.Equal(t, string(content), payload.PatternFile)
 }
 
-// TestFetchDesignFromGithub verifies that both GitHub URL forms resolve to the
-// raw file, that no Meshery token is sent to GitHub, and that failures surface.
+// TestFetchDesignFromGithub verifies that the blob, raw-link and
+// raw.githubusercontent.com URL forms resolve to the raw file, that no Meshery
+// token is sent to GitHub, and that failures surface.
 func TestFetchDesignFromGithub(t *testing.T) {
 	httpmock.Activate()
 	t.Cleanup(httpmock.DeactivateAndReset)
 
+	// A raw link whose file name has encoded characters must reach the
+	// encoded raw.githubusercontent.com URL with %20 and %23 intact.
+	const encodedRawLinkURL = "https://github.com/meshery/meshery/raw/master/designs/my%20design%23v1.yaml"
+	const encodedRawURL = "https://raw.githubusercontent.com/meshery/meshery/master/designs/my%20design%23v1.yaml"
+
 	var authorization []string
-	httpmock.RegisterResponder("GET", githubRawURL, func(req *http.Request) (*http.Response, error) {
+	responder := func(req *http.Request) (*http.Response, error) {
 		authorization = append(authorization, req.Header.Get("Authorization"), req.Header.Get("Cookie"))
 		return httpmock.NewStringResponse(http.StatusOK, "design content"), nil
-	})
+	}
+	httpmock.RegisterResponder("GET", githubRawURL, responder)
+	httpmock.RegisterResponder("GET", encodedRawURL, responder)
 
-	for _, fileURL := range []string{githubBlobURL, githubRawURL} {
+	for _, fileURL := range []string{githubBlobURL, githubRawLinkURL, encodedRawLinkURL, githubRawURL} {
 		content, err := fetchDesignFromGithub(fileURL)
-		require.NoError(t, err)
+		require.NoError(t, err, fileURL)
 		assert.Equal(t, "design content", string(content))
 	}
-	assert.Equal(t, []string{"", "", "", ""}, authorization)
+	require.NotEmpty(t, authorization)
+	for _, header := range authorization {
+		assert.Empty(t, header)
+	}
 
 	httpmock.RegisterResponder("GET", githubRawURL, httpmock.NewStringResponder(http.StatusNotFound, "404: Not Found"))
 	_, err := fetchDesignFromGithub(githubRawURL)
@@ -276,4 +288,69 @@ func TestDesignFileName(t *testing.T) {
 	assert.Equal(t, "design.yaml", designFileName("https://example.com"))
 	assert.Equal(t, "sample.yaml", designFileName("https://example.com/sample.yaml"))
 	assert.Equal(t, "local.yaml", designFileName("designs/local.yaml"))
+}
+
+func TestGithubRawLinkToRawURL(t *testing.T) {
+	tests := []struct {
+		name  string
+		input string
+		want  string
+	}{
+		{
+			name:  "given github raw link when converted then raw.githubusercontent.com URL is returned",
+			input: githubRawLinkURL,
+			want:  githubRawURL,
+		},
+		{
+			name:  "given github raw link with full ref when converted then ref is kept",
+			input: "https://github.com/meshery/meshery/raw/refs/heads/master/sample.yaml",
+			want:  "https://raw.githubusercontent.com/meshery/meshery/refs/heads/master/sample.yaml",
+		},
+		{
+			name:  "given github raw link with a raw directory in the path when converted then the directory is kept",
+			input: "https://github.com/meshery/meshery/raw/master/raw/sample.yaml",
+			want:  "https://raw.githubusercontent.com/meshery/meshery/master/raw/sample.yaml",
+		},
+		{
+			name:  "given github raw link with encoded characters when converted then they stay encoded",
+			input: "https://github.com/meshery/meshery/raw/master/my%20design%23v1.yaml",
+			want:  "https://raw.githubusercontent.com/meshery/meshery/master/my%20design%23v1.yaml",
+		},
+		{
+			name:  "given github raw link with query when converted then query is kept",
+			input: "https://github.com/meshery/meshery/raw/master/sample.yaml?token=abc",
+			want:  "https://raw.githubusercontent.com/meshery/meshery/master/sample.yaml?token=abc",
+		},
+		{
+			name:  "given github blob link when converted then it is unchanged",
+			input: githubBlobURL,
+			want:  githubBlobURL,
+		},
+		{
+			name:  "given repository named raw when converted then it is unchanged",
+			input: "https://github.com/meshery/raw/blob/master/sample.yaml",
+			want:  "https://github.com/meshery/raw/blob/master/sample.yaml",
+		},
+		{
+			name:  "given raw.githubusercontent.com URL when converted then it is unchanged",
+			input: githubRawURL,
+			want:  githubRawURL,
+		},
+		{
+			name:  "given github raw link without a file path when converted then it is unchanged",
+			input: "https://github.com/meshery/meshery/raw/master",
+			want:  "https://github.com/meshery/meshery/raw/master",
+		},
+		{
+			name:  "given non-github URL with a raw segment when converted then it is unchanged",
+			input: "https://example.com/meshery/meshery/raw/master/sample.yaml",
+			want:  "https://example.com/meshery/meshery/raw/master/sample.yaml",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, githubRawLinkToRawURL(tt.input))
+		})
+	}
 }

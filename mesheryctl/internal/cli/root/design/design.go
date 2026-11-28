@@ -147,6 +147,7 @@ func fetchDesignByID(baseUrl, designID string) (pattern.PatternFile, error) {
 // from a URL without saving it, so the file is fetched here. It uses a plain
 // request, because utils.NewRequest would send the Meshery token to GitHub.
 func fetchDesignFromGithub(fileURL string) ([]byte, error) {
+	fileURL = githubRawLinkToRawURL(fileURL)
 	repoURL, filePath, err := utils.ParseURLGithub(fileURL)
 	if err != nil {
 		return nil, utils.ErrParseGithubFile(err, fileURL)
@@ -175,6 +176,29 @@ func fetchDesignFromGithub(fileURL string) ([]byte, error) {
 		return nil, utils.ErrReadFromBody(err)
 	}
 	return content, nil
+}
+
+// githubRawLinkToRawURL rewrites a github.com/<owner>/<repo>/raw/<ref>/<path>
+// link (the target of GitHub's "Raw" button) to
+// raw.githubusercontent.com/<owner>/<repo>/<ref>/<path>. ParseURLGithub only
+// strips the /blob/ marker, so a /raw/ link kept "raw" in the path and the
+// download returned 404. Any other URL is returned unchanged.
+func githubRawLinkToRawURL(fileURL string) string {
+	u, err := url.Parse(fileURL)
+	if err != nil || u.Hostname() != "github.com" {
+		return fileURL
+	}
+	// segments: "", owner, repo, "raw", ref, path...
+	// EscapedPath keeps percent-encoded characters such as %20 or %23 intact.
+	segments := strings.Split(u.EscapedPath(), "/")
+	if len(segments) < 6 || segments[3] != "raw" {
+		return fileURL
+	}
+	rawURL := "https://raw.githubusercontent.com/" + strings.Join(segments[1:3], "/") + "/" + strings.Join(segments[4:], "/")
+	if u.RawQuery != "" {
+		rawURL += "?" + u.RawQuery
+	}
+	return rawURL
 }
 
 func isGithubURL(fileURL string) bool {
