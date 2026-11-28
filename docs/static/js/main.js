@@ -53,6 +53,24 @@ function HideToggleFunction() {
 
 /*clipboard*/
 
+// Extend clipboard support to standard Hugo/Chroma fenced code blocks.
+// Hugo renders ``` fences as <pre class="chroma"><code> without the
+// .clipboardjs class, so the existing clipboard hook misses them.
+// This block adds .clipboardjs to every <code> inside a <pre> that is
+// not already handled. The getcodeelement.each() loop below then injects
+// the copy button, so nothing is injected here.
+// Fixes: https://github.com/meshery/meshery/issues/22425
+(function addClipboardToStandardCodeBlocks() {
+    $('pre').each(function () {
+        var $pre = $(this);
+        // Skip blocks that already have or contain .clipboardjs
+        if ($pre.hasClass('clipboardjs') || $pre.find('.clipboardjs').length) return;
+        var $code = $pre.find('code');
+        if (!$code.length) return;
+        $code.addClass('clipboardjs');
+    });
+})();
+
 var getcodeelement = $('.clipboardjs');
 
 getcodeelement.each(function () {
