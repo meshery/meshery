@@ -243,6 +243,10 @@ func (h *Handler) deleteAdapter(meshAdapters []*models.Adapter, w http.ResponseW
 		return meshAdapters, ErrValidAdapter
 	}
 
+	if h.config != nil && h.config.AdapterTracker != nil {
+		h.config.AdapterTracker.RemoveAdapter(req.Context(), *meshAdapters[aID])
+	}
+
 	newMeshAdapters := []*models.Adapter{}
 	switch aID {
 	case 0:
@@ -316,6 +320,8 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		// Generate Kube Handler
 		kc, err := c.GenerateKubeConfig()
 		if err != nil {
+			h.log.Error(ErrInvalidKubeConfig(err, c.Name))
+			writeMeshkitError(w, ErrInvalidKubeConfig(err, c.Name), http.StatusBadRequest)
 			return
 		}
 		configs = append(configs, string(kc))
@@ -336,6 +342,9 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		writeMeshkitError(w, ErrGenerateUUID(err), http.StatusInternalServerError)
 		return
 	}
+	// Record the owner first: the adapter may send the operation's events
+	// before ApplyOperation returns.
+	h.adapterOperations.record(operationID.String(), user.ID.String())
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
 		OperationId: operationID.String(),
 		OpName:      opName,
@@ -347,8 +356,21 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		Version:     version,
 	})
 	if err != nil {
+		h.adapterOperations.forget(operationID.String())
 		h.log.Error(ErrApplyChange(err))
 		writeMeshkitError(w, ErrApplyChange(err), http.StatusInternalServerError)
 		return
 	}
+
+	// Return the operation ID, so a client can pick its own operation's events
+	// out of the event stream.
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(adapterOperationResponse{OperationID: operationID.String()}); err != nil {
+		h.log.Error(ErrEncodeResponse(err))
+	}
+}
+
+// adapterOperationResponse is the response to POST /api/system/adapter/operation.
+type adapterOperationResponse struct {
+	OperationID string `json:"operationId"`
 }

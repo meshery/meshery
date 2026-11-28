@@ -10,12 +10,17 @@ Meshery Broker
 | ---- | ------ | --- |
 | Meshery Authors | <maintainers@meshery.io> |  |
 | darrenlau | <panyuenlau@gmail.com> |  |
-
+| maintainers | <maintainers@meshery.io> |  |
 
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| name | string | `"meshery-broker"` |  |
-| replica | int | `1` |  |
-
+| name | string | `"meshery-broker"` | Name of the Broker custom resource. Meshery Server addresses it as `meshery-broker`. |
+| replica | int | `1` | NATS server replicas (Broker `spec.size`, 1-10). |
+| service.annotations | object | `{}` | Annotations merged onto the client Service (cloud load-balancer hints, MetalLB pools). |
+| service.externalEndpointOverride | string | `""` | Advertised external endpoint (`host:port`) when it cannot be derived from the Service (ingress, gateway, NAT). |
+| service.loadBalancerClass | string | `""` | Load-balancer implementation to use. Requires `type: LoadBalancer`. |
+| service.loadBalancerSourceRanges | list | `[]` | CIDRs allowed to reach the Broker. Requires `type: LoadBalancer`. |
+| service.type | string | `""` | `ClusterIP`, `NodePort` or `LoadBalancer`. Empty: the operator default, `ClusterIP`. |
+| version | string | `""` | NATS server image tag (Broker `spec.version`). Empty: the operator's pinned NATS release. |

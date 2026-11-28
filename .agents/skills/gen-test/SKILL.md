@@ -29,6 +29,8 @@ Invoke this skill with a target file or package path:
 - Mock external dependencies using interfaces — check if mock implementations already exist in the package
 - Test both success and error paths
 - Include edge cases: nil inputs, empty strings, boundary values
+- **Avoid Negative-Only Error Assertions**: Never assert merely that a specific error code did *not* occur (e.g., `assert.NotEqual(t, ErrCodeA, err)`). Always assert the exact expected error or the full success outcome; otherwise unexpected HTTP 500 or DB lookup errors pass silently and mask bugs.
+- **SQLite Test Fixture Cleanup**: When using `database.New` with `t.TempDir()`, always register `t.Cleanup(func() { _ = db.DBClose() })` so database file handles are closed before directory removal.
 
 ### File Placement
 

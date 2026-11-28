@@ -65,7 +65,7 @@ export const ConnectionTabs = styled(Tabs)(({ theme }) => ({
 
 export const ConnectionStyledSelect = styled(Select)(({ theme }) => ({
   '& .MuiSelect-select': {
-    padding: '0 !important',
+    padding: '0 32px 0 0 !important',
   },
   '& .MuiOutlinedInput-notchedOutline': {
     borderColor: theme.palette.border.normal,

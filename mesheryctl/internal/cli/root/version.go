@@ -40,6 +40,8 @@ var linkDoc = map[string]string{
 	"caption": "Usage of mesheryctl version",
 }
 
+var versionUsageMsg = "Usage: mesheryctl version [flags]\nRun 'mesheryctl version --help' to see detailed help message"
+
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
@@ -50,6 +52,12 @@ var versionCmd = &cobra.Command{
 mesheryctl version
 	`,
 	Annotations: linkDoc,
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("this command does not accept positional arguments\n\n%s", versionUsageMsg))
+		}
+		return nil
+	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		var err error
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
@@ -148,8 +156,14 @@ mesheryctl version
 			return
 		}
 
-		// needs multiple defer as Body.Close needs a valid response
-		defer func() { _ = resp.Body.Close() }()
+		defer utils.SafeClose(resp.Body)
+
+		if resp.StatusCode != http.StatusOK {
+			utils.PrintToTable(header, rows, nil)
+			utils.Log.Error(utils.ErrResponseStatus(resp.StatusCode))
+			return
+		}
+
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.PrintToTable(header, rows, nil)

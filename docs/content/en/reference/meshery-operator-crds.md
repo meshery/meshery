@@ -11,6 +11,8 @@ Included in [Meshery Operator]({{< ref "concepts/architecture/operator/index.md"
 
 The CRD is used to configure [Broker]({{< ref "concepts/architecture/broker/index.md" >}}) instances in a cluster.
 
+The full CRD definition is [`meshery.io_brokers.yaml`](https://github.com/meshery/meshery-operator/blob/master/config/crd/bases/meshery.io_brokers.yaml) in the Meshery Operator repository.
+
 ## YAML synopsis
 
 The following section shows a summary of the structure of the Custom Resource and the required fields.
@@ -74,6 +76,8 @@ spec:
 ## MeshSync CRD
 
 The MeshSync CRD is used as a configuration tool the [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}). The CRD is used to control the replica count for MeshSync instances, [Broker]({{< ref "concepts/architecture/broker/index.md" >}}) configuration and the resources that MeshSync watches and listens to in a cluster.
+
+The full CRD definition is [`meshery.io_meshsyncs.yaml`](https://github.com/meshery/meshery-operator/blob/master/config/crd/bases/meshery.io_meshsyncs.yaml) in the Meshery Operator repository.
 
 ### YAML Synopsis
 
@@ -148,12 +152,12 @@ The following section outlines the fields and their descriptions
         Events   []string
       ]
       ```
-      The string should be json enconded for example
+      The string should be json encoded for example
       ```yaml
       '[{"Resource":"namespaces.v1.","Events":["ADDED","MODIFIED","DELETED"]}]'
       ```
     - **blacklist**:
-      Alternatively one can use the blacklist field to define resources that should be ingored by MeshSync. The resources and their respective events will not be tracked.
+      Alternatively one can use the blacklist field to define resources that should be ignored by MeshSync. The resources and their respective events will not be tracked.
       The blacklist is an array of resources of the format **_resource.version.group_** format
       ```yaml
       '["namespaces.v1.","configmaps.v1."]'

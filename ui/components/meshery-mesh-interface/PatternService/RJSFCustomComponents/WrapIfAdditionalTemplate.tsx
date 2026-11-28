@@ -39,7 +39,8 @@ const WrapIfAdditionalTemplate = ({
       alignItems="center"
       spacing={2}
       className={classNames}
-      size="grow"
+      size={12}
+      sx={{ width: '100%', minWidth: 0 }}
     >
       <Grid2 size={{ xs: 12 }}>
         <FormControl fullWidth={true} required={required}>
@@ -58,7 +59,9 @@ const WrapIfAdditionalTemplate = ({
       <Grid2 style={{ alignSelf: 'flex-end' }}>
         <span style={{ fontSize: '1.25rem' }}>&nbsp;:&nbsp;</span>
       </Grid2>
-      <Grid2 size={{ xs: 12 }}>{children}</Grid2>
+      <Grid2 size={{ xs: 12 }} sx={{ minWidth: 0 }}>
+        {children}
+      </Grid2>
       <Grid2>
         <IconButton component="span" disabled={disabled || readonly} onClick={onRemoveProperty}>
           <DeleteIcon style={iconMedium} fill={theme?.palette?.icon?.default} />

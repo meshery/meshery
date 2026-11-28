@@ -79,7 +79,7 @@ var viewCmd = &cobra.Command{
 Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/view`,
 	Example: `
 // View current release channel
-mesheryctl system channel view edge
+mesheryctl system channel view
 
 // View release channel for all contexts
 mesheryctl system channel view --all

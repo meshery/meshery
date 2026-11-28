@@ -14,7 +14,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/models/registration"
-	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 )
 
 // artifactHubRegistrantModelDir is a minimal in-repo model published under the

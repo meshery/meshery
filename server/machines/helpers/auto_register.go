@@ -79,8 +79,11 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 	}
 	regChan := models.GetMeshSyncRegistrationQueue().RegChan
 
-	for regData := range regChan {
-		go func(data models.MeshSyncRegistrationData) {
+	for data := range regChan {
+		// One registration per goroutine, driven by objects MeshSync reports from the
+		// cluster. SafeGo contains a panic raised by one malformed object, so it costs
+		// that registration and not the server.
+		helpers.SafeGo("auto-registration", arh.log, func() {
 			// Ideally iterate all Connection defs, extract fingerprint composite key and try to match with the given obj,
 			// For all connections that match the fingerprint and autoRegsiter is set to true, try to do auto registration.
 
@@ -139,7 +142,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 							event.Description = fmt.Sprintf("Failed to auto register \"%s\" connection at %s", connectionName, url)
 							// Do not publish the event if auto registration fails.
 							if data.MeshsyncDataHandler.Provider != nil {
-								_ = data.MeshsyncDataHandler.Provider.PersistSystemEvent(*event)
+								_, _ = data.MeshsyncDataHandler.Provider.PersistSystemEvent(*event)
 							}
 							continue
 						}
@@ -151,17 +154,16 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 
 						event = events.NewEvent().WithCategory("connection").WithAction("register").FromOwner(data.MeshsyncDataHandler.UserID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
 
-						if arh.eventBroadcast != nil {
-							go arh.eventBroadcast.Publish(data.MeshsyncDataHandler.UserID, event)
-						}
+						var persister models.SystemEventPersister
 						if data.MeshsyncDataHandler.Provider != nil {
-							_ = data.MeshsyncDataHandler.Provider.PersistSystemEvent(*event)
+							persister = data.MeshsyncDataHandler.Provider
 						}
+						_ = models.PersistAndPublishSystemEvent(persister, arh.eventBroadcast, data.MeshsyncDataHandler.UserID, event)
 					}
 				}
 
 			}
-		}(regData)
+		})
 	}
 }
 

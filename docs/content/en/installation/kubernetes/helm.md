@@ -23,7 +23,7 @@ helm install meshery meshery/meshery --namespace meshery --create-namespace` >}}
 
 Optionally, customize the callback URL that your Remote Provider redirects to after sign-in:
 
-{{< code code="helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host --create-namespace" >}}
+{{< code code="helm install meshery meshery/meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host/api/user/token --create-namespace" >}}
 
 ### Customizing Meshery's Installation with values.yaml
 

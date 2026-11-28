@@ -89,8 +89,18 @@ mesheryctl design deploy -f [filepath] -s [source type]
 		return flagValidator.Validate(&designDeployFlags)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		if designDeployFlags.File == "" && len(args) == 0 {
+		designDeployFlags.File = strings.TrimSpace(designDeployFlags.File)
+		hasFile := designDeployFlags.File != ""
+		hasDesignName := strings.TrimSpace(strings.Join(args, " ")) != ""
+
+		if len(args) > 0 && !hasDesignName {
+			return utils.ErrInvalidArgument(fmt.Errorf("design name cannot be empty"))
+		}
+		if !hasDesignName && !hasFile {
 			return ErrDeployDesign()
+		}
+		if len(args) > 0 && hasFile {
+			return utils.ErrInvalidArgument(fmt.Errorf("cannot specify both a design name and the --file flag"))
 		}
 		return nil
 	},
@@ -104,7 +114,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 		// pattern name has been passed
 		if len(args) > 0 {
 			// Merge args to get pattern-name
-			patternName := strings.Join(args, " ")
+			patternName := strings.TrimSpace(strings.Join(args, " "))
 
 			queryParams := url.Values{}
 			queryParams.Set("populate", "pattern_file")
@@ -184,14 +194,12 @@ mesheryctl design deploy -f [filepath] -s [source type]
 func multiplepatternsConfirmation(profiles []models.MesheryPattern) int {
 	reader := bufio.NewReader(os.Stdin)
 
-	patternFileByt, _ := yaml.Marshal(designFile)
-
 	for index, a := range profiles {
 		fmt.Printf("Index: %v\n", index)
 		fmt.Printf("Name: %v\n", a.Name)
-		fmt.Printf("ID: %s\n", a.ID.String())
+		fmt.Printf("ID: %s\n", utils.FormatUUID(a.ID, "N/A"))
 		fmt.Printf("patternFile:\n")
-		fmt.Println(string(patternFileByt))
+		fmt.Println(a.PatternFile)
 		fmt.Println("---------------------")
 	}
 

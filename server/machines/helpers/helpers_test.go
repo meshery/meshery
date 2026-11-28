@@ -2,8 +2,12 @@ package helpers
 
 import (
 	"context"
+	"errors"
 	"reflect"
+	"sync"
+	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
@@ -12,6 +16,7 @@ import (
 	"github.com/meshery/meshery/server/machines/prometheus"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
 )
 
@@ -31,9 +36,8 @@ func TestHasMachineContext(t *testing.T) {
 			want: false,
 		},
 		{
-			// InitializeMachineWithContext Adds to the tracker before checking the
-			// Start error, so this is what every call after the first one sees for
-			// a connection whose cluster was unreachable.
+			// Defensive check: an uninitialized or broken instance whose Context
+			// was never assigned must be rejected even if encountered.
 			name: "cached instance whose Start failed",
 			inst: &machines.StateMachine{Context: nil},
 			want: false,
@@ -159,5 +163,156 @@ func TestGetMachineRegistersKindsWithoutVerifyAction(t *testing.T) {
 				t.Fatalf("events available from %q = %v, want %v", mch.CurrentState, got, want)
 			}
 		})
+	}
+}
+
+// InitializeMachineWithContext must not add a state machine to smInstanceTracker
+// when its initialization/Start fails. Caching an uninitialized instance strands
+// a broken machine with a nil Context in the tracker, causing subsequent calls
+// to return that cached instance with a nil error.
+func TestInitializeMachineWithContext_DoesNotCacheOnStartError(t *testing.T) {
+	connID := core.Uuid(uuid.Must(uuid.NewV4()))
+	userID := core.Uuid(uuid.Must(uuid.NewV4()))
+	log, err := logger.New("test", logger.Options{Format: logger.JsonLogFormat})
+	if err != nil {
+		t.Fatalf("logger.New() error = %v", err)
+	}
+
+	tracker := &machines.ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
+	}
+	ctx := context.Background()
+
+	expectedErr := errors.New("simulated init failure")
+	failingInit := func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
+		return nil, nil, expectedErr
+	}
+
+	// First attempt: initFunc fails
+	inst, err := InitializeMachineWithContext(
+		nil,
+		ctx,
+		connID,
+		userID,
+		tracker,
+		log,
+		nil,
+		machines.InitialState,
+		"kubernetes",
+		failingInit,
+	)
+	if err == nil {
+		t.Fatal("expected InitializeMachineWithContext to fail, got nil")
+	}
+	if inst != nil {
+		t.Fatalf("expected nil instance on error, got %v", inst)
+	}
+
+	// Crucial check: the tracker must NOT contain the failed instance
+	if cached, ok := tracker.Get(connID); ok {
+		t.Fatalf("tracker cached failed machine instance: %v", cached)
+	}
+
+	// Second attempt: initFunc succeeds (simulating recovery)
+	successfulInit := func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
+		return &kubernetes.MachineCtx{}, nil, nil
+	}
+
+	inst, err = InitializeMachineWithContext(
+		nil,
+		ctx,
+		connID,
+		userID,
+		tracker,
+		log,
+		nil,
+		machines.InitialState,
+		"kubernetes",
+		successfulInit,
+	)
+	if err != nil {
+		t.Fatalf("expected InitializeMachineWithContext to succeed on retry, got %v", err)
+	}
+	if inst == nil {
+		t.Fatal("expected non-nil instance on success")
+	}
+
+	// Now the tracker SHOULD contain it
+	cached, ok := tracker.Get(connID)
+	if !ok || cached != inst {
+		t.Fatalf("expected tracker to cache successfully initialized machine, got ok=%v, cached=%v", ok, cached)
+	}
+	if !HasMachineContext(inst) {
+		t.Fatal("expected cached instance to have a valid context")
+	}
+}
+
+// InitializeMachineWithContext must serialize initialization per connection ID
+// so that concurrent callers do not spawn redundant machines or race on Start.
+func TestInitializeMachineWithContext_SerializesConcurrentCalls(t *testing.T) {
+	connID := core.Uuid(uuid.Must(uuid.NewV4()))
+	userID := core.Uuid(uuid.Must(uuid.NewV4()))
+	log, err := logger.New("test", logger.Options{Format: logger.JsonLogFormat})
+	if err != nil {
+		t.Fatalf("logger.New() error = %v", err)
+	}
+
+	tracker := &machines.ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
+	}
+	ctx := context.Background()
+
+	var initCount atomic.Int32
+	initFunc := func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
+		initCount.Add(1)
+		time.Sleep(10 * time.Millisecond)
+		return &kubernetes.MachineCtx{}, nil, nil
+	}
+
+	const goroutines = 10
+	var wg sync.WaitGroup
+	instances := make([]*machines.StateMachine, goroutines)
+
+	for i := 0; i < goroutines; i++ {
+		wg.Add(1)
+		go func(idx int) {
+			defer wg.Done()
+			inst, err := InitializeMachineWithContext(
+				nil,
+				ctx,
+				connID,
+				userID,
+				tracker,
+				log,
+				nil,
+				machines.InitialState,
+				"kubernetes",
+				initFunc,
+			)
+			if err != nil {
+				t.Errorf("goroutine %d failed: %v", idx, err)
+			}
+			instances[idx] = inst
+		}(i)
+	}
+
+	wg.Wait()
+
+	if count := initCount.Load(); count != 1 {
+		t.Fatalf("expected initFunc to run exactly once, ran %d times", count)
+	}
+
+	for i := 1; i < goroutines; i++ {
+		if instances[i] != instances[0] {
+			t.Fatalf("expected all goroutines to receive the same instance, goroutine %d received %p != %p", i, instances[i], instances[0])
+		}
+	}
+
+	// Verify that the per-key mutex was cleanly evicted from initLockMap after completion
+	initLockMapMu.Lock()
+	remainingLocks := len(initLockMap)
+	initLockMapMu.Unlock()
+	if remainingLocks != 0 {
+		t.Fatalf("expected initLockMap to be empty after completion, found %d entries", remainingLocks)
 	}
 }

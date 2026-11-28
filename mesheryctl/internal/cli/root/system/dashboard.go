@@ -63,12 +63,19 @@ func newDashboardOptions() *dashboardOptions {
 	}
 }
 
+var dashboardUsageMsg = "Usage: mesheryctl system dashboard [flags]\nRun 'mesheryctl system dashboard --help' to see detailed help message"
+
 var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
 	Short: "Open Meshery UI in browser.",
 	Long: `Open Meshery UI in browser.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/dashboard`,
-	Args: cobra.NoArgs,
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s)\n\n%s", dashboardUsageMsg))
+		}
+		return nil
+	},
 	Example: `
 // Open Meshery UI in browser
 mesheryctl system dashboard
@@ -94,11 +101,15 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		if err != nil {
 			return err
 		}
+		// if a temp context is set using the -c flag, use it as the current context
+		if err := mctlCfg.SetCurrentContext(tempContext); err != nil {
+			return ErrGetCurrentContext(err)
+		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return ErrGetCurrentContext(err)
 		}
-		running, err := utils.IsMesheryRunning(currCtx.GetPlatform())
+		running, err := utils.IsMesheryRunning(currCtx)
 		if err != nil {
 			return err
 		}
@@ -112,6 +123,10 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
+		}
+		// if a temp context is set using the -c flag, use it as the current context
+		if err := mctlCfg.SetCurrentContext(tempContext); err != nil {
+			return ErrGetCurrentContext(err)
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
@@ -152,8 +167,23 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 				}
 
 				if err = portforward.Init(); err != nil {
-					// TODO: consider falling back to an ephemeral port if defaultPort is taken
-					return ErrRunPortForward(err)
+					if !utils.IsPortBusyError(err) || cmd.Flags().Changed("port") {
+						return ErrRunPortForward(err)
+					}
+					requestedPort := dashboardCmdFlags.Port
+					utils.Log.Warnf("Default port %d is already in use. Falling back to an available port...", requestedPort)
+					utils.Log.Debugf("Port-forward listener error: %v", err)
+					portforward, err = utils.NewPortForward(
+						cmd.Context(), client, utils.MesheryNamespace, "meshery",
+						options.host, 0, options.podPort, false,
+					)
+					if err != nil {
+						return ErrInitPortForward(err)
+					}
+					if err = portforward.Init(); err != nil {
+						return ErrRunPortForward(err)
+					}
+					utils.Log.Infof("Using ephemeral port %d instead of requested port %d", portforward.LocalPort(), requestedPort)
 				}
 				utils.Log.Info("Port-forwarding for Meshery UI...")
 
@@ -173,13 +203,8 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 						}
 					}
 				}()
-				utils.Log.Infof("Forwarding port %v -> %v", options.podPort, dashboardCmdFlags.Port)
-				utils.Log.Infof("Meshery UI available at: %s", mesheryURL)
-				utils.Log.Info("Opening Meshery UI in default browser...")
-				err = utils.NavigateToBrowser(mesheryURL)
-				if err != nil {
-					utils.Log.Warnf("Opening Meshery UI in browser at %s.", currCtx.GetEndpoint())
-				}
+				utils.Log.Infof("Forwarding port %v -> %v", options.podPort, portforward.LocalPort())
+				openMesheryUI(mesheryURL, "")
 
 				<-portforward.GetStop()
 				return nil
@@ -224,15 +249,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 		}
 
-		if !dashboardCmdFlags.SkipBrowser {
-			utils.Log.Infof("Opening Meshery UI in browser at %s", currCtx.GetEndpoint())
-			err = utils.NavigateToBrowser(currCtx.GetEndpoint())
-			if err != nil {
-				utils.Log.Warnf("Failed to open Meshery UI in your browser, please point your browser to %s to access Meshery UI.\n\nOr run `mesheryctl system dashboard --port-forward` to access Meshery UI via port-forwarding.", currCtx.GetEndpoint())
-			}
-		} else {
-			utils.Log.Infof("Meshery UI available at: %s", currCtx.GetEndpoint())
-		}
+		openMesheryUI(currCtx.GetEndpoint(), "\n\nOr run `mesheryctl system dashboard --port-forward` to access Meshery UI via port-forwarding.")
 
 		return nil
 	},
@@ -253,9 +270,27 @@ func keepConnectionAlive(url string) {
 	}
 }
 
+// navigateToBrowser opens a URL in the default browser. Tests replace it.
+var navigateToBrowser = utils.NavigateToBrowser
+
+// openMesheryUI opens the Meshery UI at mesheryURL in the default browser,
+// unless --skip-browser is set, and tells the user where to find it either
+// way. hint is added to the message shown when the browser can't be opened.
+func openMesheryUI(mesheryURL, hint string) {
+	if dashboardCmdFlags.SkipBrowser {
+		utils.Log.Infof("Meshery UI available at: %s", mesheryURL)
+		return
+	}
+
+	utils.Log.Infof("Opening Meshery UI in browser at %s", mesheryURL)
+	if err := navigateToBrowser(mesheryURL); err != nil {
+		utils.Log.Warnf("Failed to open Meshery UI in your browser, please point your browser to %s to access Meshery UI.%s", mesheryURL, hint)
+	}
+}
+
 func init() {
 	dashboardCmd.Flags().BoolVarP(&dashboardCmdFlags.PortForward, "port-forward", "", false, "(optional) Use port forwarding to access Meshery UI")
-	dashboardCmd.Flags().IntVarP(&dashboardCmdFlags.Port, "port", "p", 9081, "(optional) Local port that is not in use from which traffic is to be forwarded to the server running inside the Pod.")
+	dashboardCmd.Flags().IntVarP(&dashboardCmdFlags.Port, "port", "p", 9081, "(optional) Local port for forwarding to the server in the Pod. If the default port is in use and --port is not specified, an available port is chosen.")
 
 	dashboardCmd.Flags().BoolVarP(&dashboardCmdFlags.SkipBrowser, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
 }

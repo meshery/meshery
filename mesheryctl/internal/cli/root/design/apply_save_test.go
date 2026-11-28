@@ -141,7 +141,58 @@ func TestDeleteWithGithubURLUndeploysTheDownloadedDesign(t *testing.T) {
 	require.NoError(t, deleteCmd.RunE(deleteCmd, nil))
 
 	assert.Equal(t, []string{"github", "undeploy"}, requests.calls)
-	assert.Equal(t, string(content), string(requests.deployBody))
+	assertUndeployPayload(t, requests.deployBody, content)
+}
+
+// TestDeleteWithLocalFileUndeploysWithDeployPayload verifies that a design
+// given as a local file reaches DELETE /api/pattern/deploy as the JSON payload
+// the server decodes, whether it is passed with --file or positionally.
+func TestDeleteWithLocalFileUndeploysWithDeployPayload(t *testing.T) {
+	_, filename, _, _ := runtime.Caller(0)
+	localFile := filepath.Join(filepath.Dir(filename), "fixtures", "sampleDesign.golden")
+
+	tests := []struct {
+		name string
+		file string
+		args []string
+	}{
+		{name: "file flag", file: localFile},
+		{name: "positional file argument", args: []string{localFile}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			testContext := utils.InitTestEnvironment(t)
+			defer utils.StopMockery(t)
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
+			utils.TokenFlag = utils.GetToken(t)
+
+			content := sampleDesign(t)
+			requests := mockDesignServer(t, testContext.BaseURL, content)
+
+			originalFile := file
+			defer func() { file = originalFile }()
+			file = tt.file
+
+			require.NoError(t, deleteCmd.RunE(deleteCmd, tt.args))
+
+			assert.Equal(t, []string{"undeploy"}, requests.calls)
+			assertUndeployPayload(t, requests.deployBody, content)
+		})
+	}
+}
+
+// assertUndeployPayload checks that body is the JSON deploy payload the server's
+// PatternFileHandler decodes, carrying content as its patternFile. A raw design
+// body is rejected by the server with HTTP 400 (meshery-server-1049).
+func assertUndeployPayload(t *testing.T, body, content []byte) {
+	t.Helper()
+
+	var payload struct {
+		PatternFile string `json:"patternFile"`
+	}
+	require.NoError(t, json.Unmarshal(body, &payload), "undeploy body must be a JSON deploy payload, got: %.80q", body)
+	assert.Equal(t, string(content), payload.PatternFile)
 }
 
 // TestFetchDesignFromGithub verifies that both GitHub URL forms resolve to the
@@ -169,4 +220,60 @@ func TestFetchDesignFromGithub(t *testing.T) {
 
 	_, err = fetchDesignFromGithub("https://example.com/design.yaml")
 	assert.Error(t, err, "only GitHub URLs are supported")
+}
+
+func TestFetchDesignFile_GenericURL(t *testing.T) {
+	httpmock.Activate()
+	t.Cleanup(httpmock.DeactivateAndReset)
+
+	genericURL := "https://example.com/designs/sample.yaml"
+	httpmock.RegisterResponder("GET", genericURL, httpmock.NewStringResponder(http.StatusOK, "generic design content"))
+
+	content, err := fetchDesignFile(genericURL)
+	require.NoError(t, err)
+	assert.Equal(t, "generic design content", string(content))
+
+	// 404 response returns error
+	httpmock.RegisterResponder("GET", genericURL, httpmock.NewStringResponder(http.StatusNotFound, "404 Not Found"))
+	_, err = fetchDesignFile(genericURL)
+	assert.Error(t, err)
+
+	// Non-HTTP(S) schemes are rejected cleanly
+	_, err = fetchDesignFile("ftp://example.com/designs/sample.yaml")
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "unsupported URL scheme")
+}
+
+func TestFetchDesignFile_GithubURL(t *testing.T) {
+	httpmock.Activate()
+	t.Cleanup(httpmock.DeactivateAndReset)
+
+	httpmock.RegisterResponder("GET", githubRawURL, httpmock.NewStringResponder(http.StatusOK, "github design content"))
+
+	content, err := fetchDesignFile(githubBlobURL)
+	require.NoError(t, err)
+	assert.Equal(t, "github design content", string(content))
+
+	authedRawURL := githubRawURL + "?token=secret123"
+	httpmock.RegisterResponder("GET", authedRawURL, httpmock.NewStringResponder(http.StatusOK, "authed raw content"))
+	authedContent, err := fetchDesignFile(authedRawURL)
+	require.NoError(t, err)
+	assert.Equal(t, "authed raw content", string(authedContent))
+}
+
+func TestIsGithubURL(t *testing.T) {
+	assert.True(t, isGithubURL(githubBlobURL))
+	assert.True(t, isGithubURL(githubRawURL))
+	assert.False(t, isGithubURL("https://github.com.evil.com/meshery/design.yaml"))
+	assert.False(t, isGithubURL("https://gitlab.com/meshery/design.yaml"))
+	assert.False(t, isGithubURL("https://example.com/design.yaml"))
+	assert.False(t, isGithubURL("not-a-url"))
+}
+
+func TestDesignFileName(t *testing.T) {
+	assert.Equal(t, "design.yaml", designFileName("https://example.com/designs/design.yaml?token=secret&sig=123"))
+	assert.Equal(t, "design.yaml", designFileName("https://example.com/?token=secret"))
+	assert.Equal(t, "design.yaml", designFileName("https://example.com"))
+	assert.Equal(t, "sample.yaml", designFileName("https://example.com/sample.yaml"))
+	assert.Equal(t, "local.yaml", designFileName("designs/local.yaml"))
 }

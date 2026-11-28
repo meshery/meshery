@@ -96,8 +96,7 @@ func TestPatternResourceOwnerColumnIsPinned(t *testing.T) {
 // The failure this catches is the one documented for PerformanceProfile - gorm
 // derives a column from the *field name* via its naming strategy, so renaming
 // Owner to UserID renames `owner` to `user_id` unless the explicit column tag
-// holds. The persister discards gorm's errors (see GetPatternResources), so a
-// drifted column reads back as an empty list with nothing logged.
+// holds. A drifted column would break the readback.
 func TestPatternResourceRoundTripsOwnerThroughMigratedDB(t *testing.T) {
 	db := newMigratedDB(t)
 

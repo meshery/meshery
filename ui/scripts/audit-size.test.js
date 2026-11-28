@@ -1,0 +1,325 @@
+'use strict';
+
+const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const { test } = require('node:test');
+
+const productionScript = path.join(__dirname, 'audit-size.js');
+
+function writeFile(root, relativePath, contents) {
+  const file = path.join(root, relativePath);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, contents);
+}
+
+function createFixture(t) {
+  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'audit-size-'));
+  t.after(() => fs.rmSync(fixture, { recursive: true, force: true }));
+
+  fs.mkdirSync(path.join(fixture, 'ui', 'scripts'), { recursive: true });
+  fs.copyFileSync(productionScript, path.join(fixture, 'ui', 'scripts', 'audit-size.js'));
+
+  return fixture;
+}
+
+function runAudit(fixture, preload) {
+  const script = path.join(fixture, 'ui', 'scripts', 'audit-size.js');
+  const typescriptRoot = path.resolve(path.dirname(require.resolve('typescript')), '..', '..');
+  const args = preload ? ['--require', preload, script, '--json'] : [script, '--json'];
+
+  const execution = spawnSync(process.execPath, args, {
+    encoding: 'utf8',
+    env: {
+      ...process.env,
+      NODE_PATH: [typescriptRoot, process.env.NODE_PATH].filter(Boolean).join(path.delimiter),
+    },
+  });
+
+  assert.equal(execution.status, 0, execution.stderr);
+  return preload ? execution : JSON.parse(execution.stdout);
+}
+
+test('counts comment-like template and JSX text while skipping actual comments', (t) => {
+  const fixture = createFixture(t);
+  const templateLines = Array.from({ length: 605 }, (_, i) => `// template content ${i + 1}`);
+  const jsxLines = Array.from({ length: 605 }, (_, i) => `// JSX content ${i + 1}`);
+
+  writeFile(
+    fixture,
+    'ui/components/template.js',
+    `const template = \`\n${templateLines.join('\n')}\n\`;\n`,
+  );
+
+  writeFile(
+    fixture,
+    'ui/components/jsx.tsx',
+    `const view = <div>\n${jsxLines.join('\n')}\n</div>;\n`,
+  );
+
+  writeFile(
+    fixture,
+    'ui/components/comments.js',
+    `${Array.from({ length: 605 }, (_, i) => `// actual comment ${i + 1}`).join('\n')}\nconst value = 1;\n`,
+  );
+
+  const result = runAudit(fixture);
+
+  assert.equal(result.over_warn, 2);
+  assert.equal(result.over_hard, 0);
+  assert.deepEqual(result.files, [
+    { file: 'components/jsx.tsx', lines: 607 },
+    { file: 'components/template.js', lines: 607 },
+  ]);
+});
+
+test('counts code sharing a line with comments and regex literals containing slashes', (t) => {
+  const fixture = createFixture(t);
+  const mixedLines = Array.from(
+    { length: 303 },
+    (_, i) =>
+      `const regex${i} = /[//]/; // trailing comment\n/* leading comment */ const value${i} = ${i};`,
+  );
+
+  writeFile(fixture, 'ui/components/mixed.js', `${mixedLines.join('\n')}\n`);
+
+  const result = runAudit(fixture);
+
+  assert.equal(result.over_warn, 1);
+  assert.equal(result.over_hard, 0);
+  assert.deepEqual(result.files, [{ file: 'components/mixed.js', lines: 606 }]);
+});
+
+test('handles multiline block comments and code after their closing delimiter', (t) => {
+  const fixture = createFixture(t);
+  const blockCodeEntries = Array.from(
+    { length: 605 },
+    (_, i) => `/* documentation\n * continues\n */ const value${i} = ${i};`,
+  );
+
+  writeFile(
+    fixture,
+    'ui/components/block-comments.js',
+    `/*\n${Array.from({ length: 605 }, (_, i) => ` * documentation ${i + 1}`).join('\n')}\n */\nconst value = 1;\n`,
+  );
+
+  writeFile(fixture, 'ui/components/block-comment-code.js', `${blockCodeEntries.join('\n')}\n`);
+
+  const result = runAudit(fixture);
+
+  assert.equal(result.over_warn, 1);
+  assert.equal(result.over_hard, 0);
+  assert.deepEqual(result.files, [{ file: 'components/block-comment-code.js', lines: 605 }]);
+});
+
+test('counts JSX text in JavaScript files and regex literals containing comment-like text', (t) => {
+  const fixture = createFixture(t);
+  const jsxLines = Array.from({ length: 605 }, (_, i) => `// JSX text ${i + 1}`);
+  const regexLines = Array.from({ length: 605 }, (_, i) => `const pattern${i} = /[//]/;`);
+
+  writeFile(
+    fixture,
+    'ui/components/jsx.js',
+    `const view = <div>\n${jsxLines.join('\n')}\n{title}\n</div>;\n`,
+  );
+
+  writeFile(fixture, 'ui/components/regex.js', `${regexLines.join('\n')}\n`);
+
+  const result = runAudit(fixture);
+
+  assert.equal(result.over_warn, 2);
+  assert.equal(result.over_hard, 0);
+  assert.deepEqual(result.files, [
+    { file: 'components/jsx.js', lines: 608 },
+    { file: 'components/regex.js', lines: 605 },
+  ]);
+});
+
+test('counts code on lines containing block comments', (t) => {
+  const fixture = createFixture(t);
+  const lines = Array.from(
+    { length: 605 },
+    (_, i) => `/* comment ${i + 1} */ const value${i} = ${i};`,
+  );
+
+  writeFile(fixture, 'ui/components/inline-block-comments.js', `${lines.join('\n')}\n`);
+
+  const result = runAudit(fixture);
+
+  assert.equal(result.over_warn, 1);
+  assert.equal(result.over_hard, 0);
+  assert.equal(result.files[0].file, 'components/inline-block-comments.js');
+  assert.equal(result.files[0].lines, 605);
+});
+
+test('skips comments before closing delimiters, keywords, JSX tags, and EOF', (t) => {
+  const fixture = createFixture(t);
+  const snippetLines = [
+    "import {\n  foo,\n  // after last import\n} from 'pkg';",
+    'interface Props {\n  a: string;\n  // after last prop\n}',
+    'interface EmptyInterface {\n  // empty interface\n}',
+    'type Box = {\n  x: number;\n  // after last type member\n};',
+    'enum Kind {\n  A,\n  // after last enum member\n}',
+    'class Widget {\n  run() {\n    return 1;\n    // after last statement\n  }\n  // after last class member\n}',
+    'function emptyFn(\n  // empty params\n) {\n  // empty block\n}',
+    'const obj = {\n  k: 1,\n  // after last property\n};',
+    'const emptyObj = {\n  // empty object\n};',
+    'const arr = [\n  1,\n  // after last element\n];',
+    'const emptyArr = [\n  // empty array\n];',
+    'call(\n  1,\n  // after last arg\n);',
+    'call(\n  // empty args\n);',
+    'if (cond) {\n  a();\n}\n// before else\nelse {\n  b();\n}',
+    'try {\n  a();\n}\n// before catch\ncatch (err) {\n  b(err);\n}\n// before finally\nfinally {\n  c();\n}',
+    'switch (v) {\n  case 1:\n    a();\n    // after case stmt\n  default:\n    // inside default\n}',
+    'const view = (\n  <div\n    id="x"\n    // before >\n  >\n    {/*\n      multiline jsx comment\n    */}\n    {\n      // line jsx comment\n    }\n    <span\n      // before />\n    />\n  </div>\n);',
+  ];
+  const padding = Array.from({ length: 560 }, (_, i) => `const pad${i} = ${i};`);
+  const source = `${snippetLines.join('\n')}\n${padding.join('\n')}\n// trailing eof comment\n`;
+
+  writeFile(fixture, 'ui/components/punctuation-comments.tsx', source);
+
+  const result = runAudit(fixture);
+  const expectedSnippetCodeLines = 69;
+  const expectedTotal = expectedSnippetCodeLines + padding.length;
+
+  assert.equal(result.over_warn, 1);
+  assert.equal(result.over_hard, 0);
+  assert.deepEqual(result.files, [
+    { file: 'components/punctuation-comments.tsx', lines: expectedTotal },
+  ]);
+});
+
+test('does not treat unclosed or inline comment tokens in JSX text as comments', (t) => {
+  const fixture = createFixture(t);
+  const afterLines = Array.from({ length: 605 }, (_, i) => `export const after${i} = ${i};`);
+
+  writeFile(
+    fixture,
+    'ui/components/jsx-slash-text.jsx',
+    `const first = <div>{base} /* glob\n</div>;\nconst second = <div>{base} // text</div>;\n${afterLines.join('\n')}\n`,
+  );
+
+  const result = runAudit(fixture);
+
+  assert.equal(result.over_warn, 1);
+  assert.equal(result.over_hard, 0);
+  assert.deepEqual(result.files, [{ file: 'components/jsx-slash-text.jsx', lines: 608 }]);
+});
+
+test('skips same-line opening multiline comments and JSDoc containing string literals', (t) => {
+  const fixture = createFixture(t);
+  const jsdocBlock = [
+    '/**',
+    ' * @param {{',
+    ' *   mode: "trait" | "workload",',
+    ' * }} props',
+    ' */',
+  ].join('\n');
+  const entries = Array.from(
+    { length: 65 },
+    (_, i) =>
+      `${jsdocBlock}\nfunction item${i}(props) {\n  const x = ${i}; /* trailing start\n   * trailing body\n   */\n  return (\n    <div>\n      {/* jsx start\n       * jsx body\n       */}\n      {x}\n    </div>\n  );\n}`,
+  );
+
+  writeFile(fixture, 'ui/components/jsdoc-and-trailing.tsx', `${entries.join('\n')}\n`);
+
+  const result = runAudit(fixture);
+  const expectedLinesPerEntry = 10;
+
+  assert.equal(result.over_warn, 1);
+  assert.equal(result.over_hard, 0);
+  assert.deepEqual(result.files, [
+    { file: 'components/jsdoc-and-trailing.tsx', lines: 65 * expectedLinesPerEntry },
+  ]);
+});
+
+test('skips JSDoc comments attached to closing tokens and EOF', (t) => {
+  const fixture = createFixture(t);
+  const jsdocOnlyLines = Array.from({ length: 605 }, (_, i) => ` * header ${i + 1}`).join('\n');
+  const codeLines = Array.from({ length: 605 }, (_, i) => `const value${i} = ${i};`);
+  const eofTrailer = 'const last = 1; /* c1 */\n/**\n * eof\n */\n// c2\n';
+
+  writeFile(fixture, 'ui/components/jsdoc-only.ts', `/**\n${jsdocOnlyLines}\n */\n`);
+  writeFile(
+    fixture,
+    'ui/components/jsdoc-eof.ts',
+    `function f() {\n${codeLines.join('\n')}\n  /** before brace */\n}\n${eofTrailer}`,
+  );
+
+  const result = runAudit(fixture);
+
+  assert.equal(result.over_warn, 1);
+  assert.equal(result.over_hard, 0);
+  assert.deepEqual(result.files, [{ file: 'components/jsdoc-eof.ts', lines: 608 }]);
+});
+
+test('falls back to non-empty-line counting when parser traversal throws', (t) => {
+  const fixture = createFixture(t);
+  const lines = Array.from({ length: 605 }, (_, i) => `const value${i} = ${i};`);
+
+  writeFile(fixture, 'ui/components/parser-fallback.js', `${lines.join('\n')}\n`);
+  writeFile(
+    fixture,
+    'inject-parser-failure.cjs',
+    `
+const Module = require('node:module');
+const originalLoad = Module._load;
+
+Module._load = function (request, parent, isMain) {
+  const loaded = originalLoad.call(this, request, parent, isMain);
+  if (request !== 'typescript') return loaded;
+
+  return new Proxy(loaded, {
+    get(target, property, receiver) {
+      if (property === 'createSourceFile') {
+        return function (file, ...args) {
+          if (file.endsWith('parser-fallback.js')) {
+            throw new Error('injected parser failure');
+          }
+          return Reflect.get(target, property, receiver).apply(target, [file, ...args]);
+        };
+      }
+      return Reflect.get(target, property, receiver);
+    },
+  });
+};
+`,
+  );
+
+  const execution = runAudit(fixture, path.join(fixture, 'inject-parser-failure.cjs'));
+  const result = JSON.parse(execution.stdout);
+
+  assert.match(execution.stderr, /parser failed.*using non-empty-line fallback/);
+  assert.deepEqual(result.files, [{ file: 'components/parser-fallback.js', lines: 605 }]);
+});
+
+test('continues auditing other files when one source file cannot be read', (t) => {
+  const fixture = createFixture(t);
+  const lines = Array.from({ length: 605 }, (_, i) => `const value${i} = ${i};`);
+
+  writeFile(fixture, 'ui/components/unreadable.js', `${lines.join('\n')}\n`);
+  writeFile(fixture, 'ui/components/readable.js', `${lines.join('\n')}\n`);
+  writeFile(
+    fixture,
+    'inject-read-failure.cjs',
+    `
+const fs = require('node:fs');
+const original = fs.readFileSync;
+fs.readFileSync = function (file, ...args) {
+  if (String(file).endsWith('/unreadable.js')) {
+    throw new Error('injected read failure');
+  }
+  return original.call(this, file, ...args);
+};
+`,
+  );
+
+  const execution = runAudit(fixture, path.join(fixture, 'inject-read-failure.cjs'));
+  const result = JSON.parse(execution.stdout);
+
+  assert.match(execution.stderr, /unable to read.*unreadable.js/);
+  assert.deepEqual(result.files, [{ file: 'components/readable.js', lines: 605 }]);
+  assert.equal(result.over_warn, 1);
+});

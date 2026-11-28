@@ -17,9 +17,13 @@ package design
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"path"
+	"path/filepath"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -57,6 +61,10 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl design import -f [file/URL] -s [source-type] -n [name]\n"
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("design import does not accept positional arguments\n\n%s", errMsg))
+		}
+		file = strings.TrimSpace(file)
 		if file == "" {
 			utils.Log.Debug("File path not provided\n" + errMsg)
 			return ErrDesignFileNotProvided()
@@ -100,7 +108,7 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 			return err
 		}
 
-		utils.Log.Infof("The design file '%s' has been imported. Design ID: %s", pattern.Name, utils.TruncateID(pattern.ID.String()))
+		utils.Log.Infof("The design file '%s' has been imported. Design ID: %s", pattern.Name, utils.TruncateID(utils.FormatUUID(pattern.ID, "N/A")))
 
 		return nil
 	},
@@ -135,7 +143,17 @@ func importPattern(sourceType string, file string, patternURL string) (*models.M
 	// If design name is not provided
 	// use file name as default
 	var patternName string
-	fileName := path.Base(file)
+	fileName := filepath.Base(file)
+	if utils.IsValidUrl(file) {
+		parsed, err := url.Parse(file)
+		if err != nil {
+			return nil, utils.ErrParsingUrl(err)
+		}
+		fileName = path.Base(parsed.Path)
+		if name == "" && (fileName == "." || fileName == "/") {
+			return nil, utils.ErrParsingUrl(fmt.Errorf("URL %q has no file name in its path; pass --name to set the design name", file))
+		}
+	}
 	if name == "" {
 		patternName = fileName
 	} else {

@@ -18,13 +18,19 @@ export const viewsApi = api
           url: mesheryApiPath(`extensions/api/content/views/${viewId}`),
           method: 'GET',
         }),
-        providesTags: () => [{ type: TAGS.VIEWS }],
+        providesTags: (result, error, { viewId }) => [{ type: TAGS.VIEWS, id: viewId }],
       }),
+      // The view mutations invalidate only the changed view's id, so an open
+      // getView refetches. They deliberately leave fetchViews alone: it merges
+      // every page into one cache entry, so an invalidation would refetch the
+      // current page and append it a second time. List callers refetch from
+      // page 0 themselves.
       deleteView: builder.mutation({
         query: ({ id }) => ({
           url: mesheryApiPath(`extensions/api/content/views/${id}`),
           method: 'DELETE',
         }),
+        invalidatesTags: (result, error, { id }) => [{ type: TAGS.VIEWS, id }],
       }),
       updateViewVisibility: builder.mutation({
         query: ({ id, body }) => ({
@@ -32,24 +38,29 @@ export const viewsApi = api
           method: 'PUT',
           body: body,
         }),
-        providesTags: () => [{ type: TAGS.VIEWS }],
+        invalidatesTags: (result, error, { id }) => [{ type: TAGS.VIEWS, id }],
       }),
       fetchViews: builder.query({
-        query: (queryArg) =>
-          mesheryApiPath(
-            `extensions/api/content/views?${urlEncodeArrayParam(
-              'visibility',
-              queryArg.visibility,
-            )}&${urlEncodeParams({
-              page: queryArg.page,
-              pagesize: queryArg.pagesize,
-              search: queryArg.search || '',
-              order: queryArg.order || '',
-              trim: queryArg.trim || false,
-              shared: queryArg.shared || false,
-              userId: queryArg.userId,
-            })}`,
-          ),
+        query: (queryArg) => {
+          const visibilityParam = queryArg.visibility
+            ? typeof queryArg.visibility === 'string' && !queryArg.visibility.includes('=')
+              ? `visibility=${encodeURIComponent(queryArg.visibility)}`
+              : urlEncodeArrayParam('visibility', queryArg.visibility)
+            : '';
+          const otherParams = urlEncodeParams({
+            page: queryArg.page,
+            pagesize: queryArg.pagesize,
+            search: queryArg.search || '',
+            order: queryArg.order || '',
+            trim: queryArg.trim || false,
+            shared: queryArg.shared || false,
+            userId: queryArg.userId,
+          });
+          const queryString = [visibilityParam, otherParams].filter(Boolean).join('&');
+          return mesheryApiPath(
+            `extensions/api/content/views${queryString ? `?${queryString}` : ''}`,
+          );
+        },
 
         // Only have one cache entry
         serializeQueryArgs: ({ endpointName }) => {

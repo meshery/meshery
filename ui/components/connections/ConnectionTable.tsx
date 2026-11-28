@@ -107,8 +107,10 @@ const ConnectionTable = ({
 
   const { page, pageSize, sortOrder, search } = tableState;
   const setPage = useCallback((p: number) => updateTableState({ page: p }), [updateTableState]);
+  // Reset the page in the same URL update: a separate setPage(0) would be a
+  // second router.replace built from the same query and could drop the new size.
   const setPageSize = useCallback(
-    (ps: number) => updateTableState({ pageSize: ps }),
+    (ps: number) => updateTableState({ pageSize: ps, page: 0 }),
     [updateTableState],
   );
   const setSortOrder = useCallback(
@@ -231,7 +233,9 @@ const ConnectionTable = ({
     isError: isEnvironmentsError,
     error: environmentsError,
   } = useGetEnvironmentsQuery(
-    { orgId: organization?.id },
+    // Without a page size the server returns only its default first page of
+    // 10, which would hide every later environment from this select.
+    { orgId: organization?.id, pagesize: 'all' },
     {
       skip: !organization?.id,
     },
