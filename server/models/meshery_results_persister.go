@@ -2,6 +2,8 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"time"
 
 	"github.com/meshery/meshkit/database"
@@ -12,6 +14,9 @@ import (
 type MesheryResultsPersister struct {
 	DB *database.Handler
 }
+
+// ErrInvalidPerformanceResultDate indicates a malformed date filter.
+var ErrInvalidPerformanceResultDate = errors.New("invalid performance result date")
 
 // MesheryResultPage - represents a page of meshery results
 type MesheryResultPage struct {
@@ -63,9 +68,15 @@ func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, from, t
 	var count int64
 	query := mrp.DB.Table("meshery_results")
 	if from != "" {
+		if _, err := time.Parse(time.DateOnly, from); err != nil {
+			return nil, fmt.Errorf("%w: from must use YYYY-MM-DD", ErrInvalidPerformanceResultDate)
+		}
 		query = query.Where("DATETIME(test_start_time) >= DATETIME(?)", from)
 	}
 	if to != "" {
+		if _, err := time.Parse(time.DateOnly, to); err != nil {
+			return nil, fmt.Errorf("%w: to must use YYYY-MM-DD", ErrInvalidPerformanceResultDate)
+		}
 		query = query.Where("DATETIME(test_start_time) < DATETIME(?, '+1 day')", to)
 	}
 

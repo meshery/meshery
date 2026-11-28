@@ -162,6 +162,27 @@ func TestFetchAllResultsHandler_NilProvider_ReturnsInternalServerError(t *testin
 	}
 }
 
+func TestFetchAllResultsHandler_InvalidDateReturnsBadRequest(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	p := &mockFetchResultsProvider{
+		fetchAllResultsFn: func(_, _, _, _, _, from, _ string) ([]byte, error) {
+			if from != "2026-13-40" {
+				t.Fatalf("expected the provider to receive the from filter, got %q", from)
+			}
+			return nil, fmt.Errorf("%w: from must use YYYY-MM-DD", models.ErrInvalidPerformanceResultDate)
+		},
+	}
+	req := httptest.NewRequest(http.MethodGet, "/api/performance/results?from=2026-13-40", nil)
+	req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+	rec := httptest.NewRecorder()
+
+	h.FetchAllResultsHandler(rec, req, nil, nil, p)
+
+	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "from must use YYYY-MM-DD") {
+		t.Fatalf("expected a 400 with the from filter error, got %d: %s", rec.Code, rec.Body.String())
+	}
+}
+
 func TestFetchSingleSmiResultHandler_NilProvider_ReturnsInternalServerError(t *testing.T) {
 	h := newTestHandler(t, map[string]models.Provider{}, "")
 

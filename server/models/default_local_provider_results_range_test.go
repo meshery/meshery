@@ -56,4 +56,19 @@ func TestFetchAllResultsKeepsOnlyTheRequestedDateRange(t *testing.T) {
 	}
 	require.ElementsMatch(t, []string{"november", "last day"}, names)
 	require.Equal(t, 2, page.TotalCount)
+
+	for _, tc := range []struct {
+		name string
+		from string
+		to   string
+	}{
+		{name: "from", from: "2026-13-40"},
+		{name: "to", to: "2026-02-30"},
+	} {
+		t.Run("invalid "+tc.name, func(t *testing.T) {
+			_, err := provider.FetchAllResults("", "0", "10", "", "", tc.from, tc.to)
+			require.ErrorIs(t, err, ErrInvalidPerformanceResultDate)
+			require.ErrorContains(t, err, tc.name+" must use YYYY-MM-DD")
+		})
+	}
 }
