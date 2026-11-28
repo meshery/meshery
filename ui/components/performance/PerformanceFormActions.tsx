@@ -6,6 +6,7 @@ import { Keys } from '@meshery/schemas/permissions';
 
 interface PerformanceFormActionsProps {
   disableTest: boolean;
+  invalidLoadParams: boolean;
   blockRunTest: boolean;
   hasTestResult: boolean;
   onAbort: () => void;
@@ -23,6 +24,7 @@ interface PerformanceFormActionsProps {
  */
 const PerformanceFormActions: React.FC<PerformanceFormActionsProps> = ({
   disableTest,
+  invalidLoadParams,
   blockRunTest,
   hasTestResult,
   onAbort,
@@ -63,7 +65,7 @@ const PerformanceFormActions: React.FC<PerformanceFormActionsProps> = ({
         size="large"
         onClick={onSaveProfile}
         sx={{ marginLeft: '1rem' }}
-        disabled={disableTest}
+        disabled={disableTest || invalidLoadParams}
         startIcon={<SaveOutlinedIcon />}
       >
         Save Profile
@@ -76,7 +78,7 @@ const PerformanceFormActions: React.FC<PerformanceFormActionsProps> = ({
         size="large"
         onClick={onRunTest}
         sx={{ marginLeft: '1rem' }}
-        disabled={blockRunTest || disableTest}
+        disabled={blockRunTest || disableTest || invalidLoadParams}
         permissionKey={Keys.PerformanceManagementRunTest}
       >
         {blockRunTest ? <CircularProgress size={30} /> : 'Run Test'}

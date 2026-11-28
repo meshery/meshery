@@ -4,7 +4,12 @@ vi.mock('uuid', () => ({
   v4: () => 'mocked-uuid-value',
 }));
 
-import { buildPerformanceRunUrl, generateTestName, generateUUID } from './helper';
+import {
+  buildPerformanceRunUrl,
+  generateTestName,
+  generateUUID,
+  validateLoadParams,
+} from './helper';
 
 describe('generateTestName', () => {
   it('returns the original name when one is supplied', () => {
@@ -65,5 +70,59 @@ describe('buildPerformanceRunUrl', () => {
   it('handles empty params string', () => {
     const url = buildPerformanceRunUrl('test-profile-id', []);
     expect(url).toBe('/api/user/performance/profiles/test-profile-id/run?cert=true');
+  });
+});
+
+describe('validateLoadParams', () => {
+  it.each([
+    [1, 0],
+    ['1', '0'],
+    [50, 100],
+    ['25', '1000'],
+  ])('accepts concurrent requests %s with QPS %s', (c, qps) => {
+    expect(validateLoadParams(c, qps)).toEqual({ cError: '', qpsError: '' });
+  });
+
+  // A digit string past Number.MAX_SAFE_INTEGER no longer converts to the
+  // typed value: '9007199254740993' becomes 9007199254740992, and 400 nines
+  // become Infinity, which the saved profile would store as null.
+  const unsafeDigits = ['9007199254740993', '9'.repeat(400)];
+
+  it.each([
+    -10,
+    '-10',
+    0,
+    '0',
+    1.5,
+    '1.5',
+    '5.0',
+    '1e3',
+    '',
+    '   ',
+    'abc',
+    null,
+    undefined,
+    ...unsafeDigits,
+  ])('rejects concurrent requests %s', (c) => {
+    expect(validateLoadParams(c, 0).cError).not.toBe('');
+  });
+
+  it.each([-5, '-5', 2.5, '5.0', '1e3', '', 'abc', null, undefined, ...unsafeDigits])(
+    'rejects QPS %s',
+    (qps) => {
+      expect(validateLoadParams(1, qps).qpsError).not.toBe('');
+    },
+  );
+
+  it('accepts a signed and padded decimal-integer spelling', () => {
+    expect(validateLoadParams(' 5 ', '+10')).toEqual({ cError: '', qpsError: '' });
+  });
+
+  it('reports each field independently', () => {
+    const { cError, qpsError } = validateLoadParams(-10, -5);
+    expect(cError).not.toBe('');
+    expect(qpsError).not.toBe('');
+    expect(validateLoadParams(-10, 0).qpsError).toBe('');
+    expect(validateLoadParams(1, -5).cError).toBe('');
   });
 });

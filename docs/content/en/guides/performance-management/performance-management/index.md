@@ -29,7 +29,7 @@ Use this guide to measure the latency and throughput of a service with Meshery. 
     - **Profile Name**: leave it empty and Meshery generates one.
     - **Technology**: the infrastructure the service runs on, if any.
     - **URL to test**: the endpoint to send load to.
-    - **Concurrent requests**, **Queries per second**, and **Duration**: the shape of the load. Duration defaults to 30 seconds. Leave queries per second empty to send as many as possible.
+    - **Concurrent requests**, **Queries per second**, and **Duration**: the shape of the load. Duration defaults to 30 seconds. Concurrent requests must be a whole number of 1 or more, and queries per second a whole number of 0 or more; set queries per second to 0 to send as many as possible. **Save Profile** and **Run Test** stay disabled until both are valid.
     - **Advanced Options** (optional): request headers, cookies, body, and content type as JSON, additional load generator options, and a CA certificate for HTTPS endpoints.
     - **Load generator**: Meshery UI runs tests with fortio.
 

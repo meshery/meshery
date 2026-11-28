@@ -35,7 +35,9 @@ interface PerformanceFormProps {
   url: string;
   urlError: boolean;
   c: string | number;
+  cError: string;
   qps: string | number;
+  qpsError: string;
   t: string;
   tValue: string;
   tError: string;
@@ -72,7 +74,9 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
   url,
   urlError,
   c,
+  cError,
   qps,
+  qpsError,
   t,
   tValue,
   tError,
@@ -170,7 +174,9 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
           type="number"
           fullWidth
           value={c}
-          inputProps={{ min: '0', step: '1' }}
+          error={!!cError}
+          helperText={cError}
+          inputProps={{ min: '1', step: '1' }}
           margin="normal"
           variant="outlined"
           onChange={handleChange('c')}
@@ -193,6 +199,8 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
           type="number"
           fullWidth
           value={qps}
+          error={!!qpsError}
+          helperText={qpsError}
           inputProps={{ min: '0', step: '1' }}
           margin="normal"
           variant="outlined"
@@ -200,7 +208,7 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
           InputLabelProps={{ shrink: true }}
           InputProps={{
             endAdornment: (
-              <CustomTooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
+              <CustomTooltip title="The number of queries/second. Set 0 to request the MAX number of queries/second">
                 <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
               </CustomTooltip>
             ),
