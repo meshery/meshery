@@ -53,6 +53,41 @@ function HideToggleFunction() {
 
 /*clipboard*/
 
+// Extend clipboard support to standard Hugo/Chroma fenced code blocks and
+// to two shapes the .clipboardjs markup misses: <pre class="codeblock-pre">
+// blocks without a .clipboardjs child, and bare <pre> blocks that hold raw
+// text instead of a <code> child. Hugo renders ``` fences as
+// <pre class="chroma"><code> without the .clipboardjs class, so the existing
+// clipboard hook misses them too. This block only marks what should be
+// copied; the getcodeelement.each() loop below injects the copy button.
+// Fixes: https://github.com/meshery/meshery/issues/22425
+// Related: https://github.com/meshery/meshery/issues/24537
+(function addClipboardToStandardCodeBlocks() {
+    $('pre').each(function () {
+        var $pre = $(this);
+        // Skip blocks that already have or contain .clipboardjs
+        if ($pre.hasClass('clipboardjs') || $pre.find('.clipboardjs').length) return;
+        var $code = $pre.find('code');
+        if ($code.length) {
+            $code.addClass('clipboardjs');
+            return;
+        }
+        // <pre class="codeblock-pre"><div class="codeblock">… — the button has
+        // to land inside the flex frame, so mark the child the CSS sizes.
+        var $codeblock = $pre.children('.codeblock');
+        if ($codeblock.length) {
+            $codeblock.addClass('clipboardjs');
+            return;
+        }
+        // <pre> with raw text: the block text itself is the copy target. Only
+        // text-only blocks are wrapped; an empty block would get a button that
+        // copies nothing, and element children are not ours to move.
+        if (!$pre.children().length && $pre.text().trim()) {
+            $pre.wrapInner('<code class="clipboardjs"></code>');
+        }
+    });
+})();
+
 var getcodeelement = $('.clipboardjs');
 
 getcodeelement.each(function () {
@@ -65,7 +100,7 @@ getcodeelement.each(function () {
 
 var clipboard = new Clipboard('.clipbtn', {
     text: function (trigger) {
-        var container = trigger.closest('pre') || trigger.closest('.highlight');
+        var container = trigger.closest('pre') || trigger.closest('.highlight') || trigger.closest('.rest-api-try-item__url-wrap');
         var content = container ? container.querySelector('.clipboardjs') : null;
         var text = content ? content.textContent : '';
         return text.trim().replace(/^\s*\$\s+/gm, '');

@@ -9,7 +9,7 @@ Use this guide to put a [Design]({{< ref "concepts/logical/designs.md" >}}) onto
 
 ## Before you begin
 
-- A design in Meshery. Create one with the [Design Configurator]({{< ref "guides/configuration-management/creating-a-meshery-design.md" >}}) or [import]({{< ref "guides/configuration-management/import-export-designs.md" >}}) your Kubernetes manifests, Helm chart, Docker Compose file, or Kustomize package.
+- A design in Meshery. Create one with the [Design Configurator]({{< ref "guides/configuration-management/creating-a-meshery-design/index.md" >}}) or [import]({{< ref "guides/configuration-management/import-export-designs.md" >}}) your Kubernetes manifests, Helm chart, Docker Compose file, or Kustomize package.
 - At least one Kubernetes [Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}) in the **Connected** state.
 - That Connection assigned to an Environment. The deployment wizard only offers clusters that belong to an Environment. To assign one, see [Sharing a Cluster with Your Team]({{< ref "guides/infrastructure-management/sharing-a-cluster-with-your-team.md#create-an-environment-and-add-the-cluster" >}}), or use the **Environments** column in **Lifecycle → Connections**.
 - Permission to deploy designs. If the **Deploy** action is disabled, ask your organization admin.
@@ -57,7 +57,7 @@ Undeploying deletes the resources that the design describes from the selected cl
 
 ## Related
 
-- [Creating a Meshery Design]({{< ref "guides/configuration-management/creating-a-meshery-design.md" >}})
+- [Creating a Meshery Design]({{< ref "guides/configuration-management/creating-a-meshery-design/index.md" >}})
 - [Importing and Exporting Designs]({{< ref "guides/configuration-management/import-export-designs.md" >}})
 - [Deployment Engine]({{< ref "concepts/architecture/deployment-engine/index.md" >}})
 - [Sharing a Cluster with Your Team]({{< ref "guides/infrastructure-management/sharing-a-cluster-with-your-team.md" >}})

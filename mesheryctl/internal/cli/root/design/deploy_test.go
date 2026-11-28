@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 var invalidDesignSourceType = "invalid-source"
@@ -131,4 +132,111 @@ func TestDeployCmd(t *testing.T) {
 
 	// Run tests
 	utils.RunMesheryctlMultiURLTests(t, update, DesignCmd, tests, currDir, "design", resetVariables)
+}
+
+func Test_designDeploy_FlagValidation(t *testing.T) {
+	tests := []struct {
+		name       string
+		run        func(t *testing.T) error
+		want       error
+		wantSubstr string
+	}{
+		{
+			name: "given no file and no design name when design deploy then ErrDeployDesign is returned",
+			run: func(t *testing.T) error {
+				previous := designDeployFlags.File
+				designDeployFlags.File = ""
+				t.Cleanup(func() { designDeployFlags.File = previous })
+
+				return deployDesignCmd.Args(deployDesignCmd, nil)
+			},
+			want: ErrDeployDesign(),
+		},
+		{
+			name: "given whitespace-only file flag when design deploy then ErrDeployDesign is returned",
+			run: func(t *testing.T) error {
+				previous := designDeployFlags.File
+				designDeployFlags.File = "   "
+				t.Cleanup(func() { designDeployFlags.File = previous })
+
+				return deployDesignCmd.Args(deployDesignCmd, nil)
+			},
+			want: ErrDeployDesign(),
+		},
+		{
+			name: "given whitespace-only design name when design deploy then ErrInvalidArgument is returned",
+			run: func(t *testing.T) error {
+				previous := designDeployFlags.File
+				designDeployFlags.File = ""
+				t.Cleanup(func() { designDeployFlags.File = previous })
+
+				return deployDesignCmd.Args(deployDesignCmd, []string{"   "})
+			},
+			wantSubstr: "design name cannot be empty",
+		},
+		{
+			name: "given both design name and --file flag when design deploy then ErrInvalidArgument is returned",
+			run: func(t *testing.T) error {
+				previous := designDeployFlags.File
+				designDeployFlags.File = "sampleDesign.yaml"
+				t.Cleanup(func() { designDeployFlags.File = previous })
+
+				return deployDesignCmd.Args(deployDesignCmd, []string{"my-design"})
+			},
+			wantSubstr: "cannot specify both a design name and the --file flag",
+		},
+		{
+			name: "given valid file with surrounding whitespace when design deploy then whitespace is trimmed and succeeds",
+			run: func(t *testing.T) error {
+				previous := designDeployFlags.File
+				designDeployFlags.File = "  sampleDesign.yaml  "
+				t.Cleanup(func() { designDeployFlags.File = previous })
+
+				err := deployDesignCmd.Args(deployDesignCmd, nil)
+				if err != nil {
+					return err
+				}
+				if designDeployFlags.File != "sampleDesign.yaml" {
+					return fmt.Errorf("expected trimmed file 'sampleDesign.yaml', got %q", designDeployFlags.File)
+				}
+				return nil
+			},
+			want: nil,
+		},
+		{
+			name: "given valid design name when design deploy then succeeds",
+			run: func(t *testing.T) error {
+				previous := designDeployFlags.File
+				designDeployFlags.File = ""
+				t.Cleanup(func() { designDeployFlags.File = previous })
+
+				return deployDesignCmd.Args(deployDesignCmd, []string{"my-design"})
+			},
+			want: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+			err := tt.run(t)
+			if tt.want == nil && tt.wantSubstr == "" {
+				if err != nil {
+					t.Fatalf("expected nil error, got %v", err)
+				}
+				return
+			}
+			if err == nil {
+				t.Fatalf("expected error, got nil")
+			}
+			if tt.wantSubstr != "" {
+				assert.Contains(t, err.Error(), tt.wantSubstr)
+				return
+			}
+			if err.Error() != tt.want.Error() {
+				t.Fatalf("error mismatch\n got: %v\nwant: %v", err, tt.want)
+			}
+		})
+	}
 }
