@@ -2173,7 +2173,12 @@ func (h *Handler) handlePatternUpdate(
 		return
 	}
 
-	eventBuilder = eventBuilder.WithSeverity(events.Informational).ActedUpon(*mesheryPattern.ID)
+	eventBuilder = eventBuilder.WithSeverity(events.Informational)
+	// mesheryPattern.ID is nil when pattern_data.id was omitted and the provider
+	// did not mutate it in place; formatPatternOutput sets ActedUpon from the saved response.
+	if mesheryPattern.ID != nil {
+		eventBuilder = eventBuilder.ActedUpon(*mesheryPattern.ID)
+	}
 
 	h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL, models.Update)
 	event := eventBuilder.Build()

@@ -659,6 +659,7 @@ func TestBuildDesignSavedEventMetadata_UsesCanonicalCamelCaseKeys(t *testing.T) 
 
 type mockPatternHandlerProvider struct {
 	*models.DefaultLocalProvider
+	saveMesheryPatternFn func(tokenString string, pattern *models.MesheryPattern) ([]byte, error)
 }
 
 func (m *mockPatternHandlerProvider) PersistEvent(event _events.Event, token string) (models.PersistedEvent, error) {
@@ -667,6 +668,13 @@ func (m *mockPatternHandlerProvider) PersistEvent(event _events.Event, token str
 
 func (m *mockPatternHandlerProvider) GetProviderToken(_ *http.Request) (string, error) {
 	return "test-token", nil
+}
+
+func (m *mockPatternHandlerProvider) SaveMesheryPattern(tokenString string, pattern *models.MesheryPattern) ([]byte, error) {
+	if m.saveMesheryPatternFn != nil {
+		return m.saveMesheryPatternFn(tokenString, pattern)
+	}
+	return m.DefaultLocalProvider.SaveMesheryPattern(tokenString, pattern)
 }
 
 func TestDesignFileRequestHandlerWithSourceType_MissingPatternDataReturnsBadRequest(t *testing.T) {
@@ -727,6 +735,57 @@ func TestDesignFileRequestHandlerWithSourceType_MissingPatternDataReturnsBadRequ
 			assert.Contains(t, rec.Body.String(), "patternData", "expected error to name the missing field for %s", tc.name)
 		})
 	}
+}
+
+func TestDesignFileRequestHandlerWithSourceType_UpdateWithoutPatternIDDoesNotPanic(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	userID := uuid.Must(uuid.NewV4())
+	savedID := uuid.Must(uuid.NewV4())
+
+	h := &Handler{
+		config: &models.HandlerConfig{
+			EventBroadcaster: &models.Broadcast{},
+		},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+
+	// Simulate a provider (such as RemoteProvider) that returns the saved pattern JSON
+	// without mutating the request's mesheryPattern.ID pointer in place (#24294).
+	provider := &mockPatternHandlerProvider{
+		DefaultLocalProvider: &models.DefaultLocalProvider{},
+		saveMesheryPatternFn: func(_ string, pattern *models.MesheryPattern) ([]byte, error) {
+			return json.Marshal([]models.MesheryPattern{
+				{
+					ID:          &savedID,
+					Name:        pattern.Name,
+					PatternFile: pattern.PatternFile,
+					UserID:      &userID,
+				},
+			})
+		},
+	}
+
+	req := httptest.NewRequest(
+		http.MethodPut,
+		"/api/pattern/manifest",
+		bytes.NewBufferString(`{"pattern_data":{"name":"unsaved-id-design","pattern_file":"name: unsaved-id-design\n"}}`),
+	)
+	req = mux.SetURLVars(req, map[string]string{"sourcetype": "manifest"})
+	ctx := context.WithValue(req.Context(), models.TokenCtxKey, "test-token")
+	ctx = context.WithValue(ctx, models.UserCtxKey, &models.User{ID: userID})
+	ctx = context.WithValue(ctx, models.SystemIDKey, &systemID)
+	req = req.WithContext(ctx)
+
+	rec := httptest.NewRecorder()
+
+	require.NotPanics(t, func() {
+		h.DesignFileRequestHandlerWithSourceType(rec, req, nil, &models.User{ID: userID}, provider)
+	})
+
+	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Contains(t, rec.Body.String(), "unsaved-id-design")
+	assert.Contains(t, rec.Body.String(), savedID.String())
 }
 
 // mockCloneProvider is a minimal Provider mock for CloneMesheryPatternHandler tests.
