@@ -203,18 +203,28 @@ func TestFetchDesignFromGithub(t *testing.T) {
 	httpmock.Activate()
 	t.Cleanup(httpmock.DeactivateAndReset)
 
+	// A raw link whose file name has encoded characters must reach the
+	// encoded raw.githubusercontent.com URL with %20 and %23 intact.
+	const encodedRawLinkURL = "https://github.com/meshery/meshery/raw/master/designs/my%20design%23v1.yaml"
+	const encodedRawURL = "https://raw.githubusercontent.com/meshery/meshery/master/designs/my%20design%23v1.yaml"
+
 	var authorization []string
-	httpmock.RegisterResponder("GET", githubRawURL, func(req *http.Request) (*http.Response, error) {
+	responder := func(req *http.Request) (*http.Response, error) {
 		authorization = append(authorization, req.Header.Get("Authorization"), req.Header.Get("Cookie"))
 		return httpmock.NewStringResponse(http.StatusOK, "design content"), nil
-	})
+	}
+	httpmock.RegisterResponder("GET", githubRawURL, responder)
+	httpmock.RegisterResponder("GET", encodedRawURL, responder)
 
-	for _, fileURL := range []string{githubBlobURL, githubRawLinkURL, githubRawURL} {
+	for _, fileURL := range []string{githubBlobURL, githubRawLinkURL, encodedRawLinkURL, githubRawURL} {
 		content, err := fetchDesignFromGithub(fileURL)
 		require.NoError(t, err, fileURL)
 		assert.Equal(t, "design content", string(content))
 	}
-	assert.Equal(t, []string{"", "", "", "", "", ""}, authorization)
+	require.NotEmpty(t, authorization)
+	for _, header := range authorization {
+		assert.Empty(t, header)
+	}
 
 	httpmock.RegisterResponder("GET", githubRawURL, httpmock.NewStringResponder(http.StatusNotFound, "404: Not Found"))
 	_, err := fetchDesignFromGithub(githubRawURL)
