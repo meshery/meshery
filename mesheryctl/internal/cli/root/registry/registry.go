@@ -25,7 +25,7 @@ import (
 )
 
 var (
-	availableSubcommands = []*cobra.Command{generateCmd, publishCmd, updateCmd, purgeCmd}
+	availableSubcommands = []*cobra.Command{generateCmd, publishCmd, updateCmd, purgeCmd, initCmd}
 
 	spreadsheeetID          string
 	spreadsheeetCred        string
@@ -40,9 +40,12 @@ var (
 var RegistryCmd = &cobra.Command{
 	Use:   "registry",
 	Short: "Manage the capability registry",
-	Long: `Generate, publish, update, and purge models and components in Meshery's capability registry.
+	Long: `Scaffold, generate, publish, update, and purge models and components in Meshery's capability registry.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/registry`,
 	Example: `
+// Scaffold a model-source.yaml for a new model
+mesheryctl registry init [model-name] --source [source-url] --category [category] --sub-category [sub-category] --description [description]
+
 // Generate models from a spreadsheet
 mesheryctl registry generate --spreadsheet-id [spreadsheet-id] --spreadsheet-cred [base64-encoded-google-service-account-credential]
 

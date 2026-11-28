@@ -14,7 +14,7 @@ Manage the capability registry
 
 ## Synopsis
 
-Generate, publish, update, and purge models and components in Meshery's capability registry.
+Scaffold, generate, publish, update, and purge models and components in Meshery's capability registry.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -26,6 +26,16 @@ mesheryctl registry [flags]
 </pre> 
 
 ## Examples
+
+Scaffold a model-source.yaml for a new model
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl registry init [model-name] --source [source-url] --category [category] --sub-category [sub-category] --description [description]
+
+</div>
+</div>
+</pre> 
 
 Generate models from a spreadsheet
 <pre class='codeblock-pre'>
