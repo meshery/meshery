@@ -274,10 +274,10 @@ describe('useContentDelete', () => {
 });
 
 describe('useContentDownload', () => {
-  it('handleDesignDownload calls downloadContent and notifies', () => {
+  it('handleDesignDownload calls downloadContent and notifies', async () => {
     const { result } = renderHook(() => useContentDownload());
     const ev = { stopPropagation: vi.fn() } as any;
-    result.current.handleDesignDownload(ev, { id: 'd-1', name: 'a' }, 'src', {});
+    await result.current.handleDesignDownload(ev, { id: 'd-1', name: 'a' }, 'src', {});
     expect(downloadContent).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'd-1', name: 'a', type: 'pattern' }),
     );
@@ -287,9 +287,9 @@ describe('useContentDownload', () => {
     });
   });
 
-  it('handleDesignDownload supports an array of designs', () => {
+  it('handleDesignDownload supports an array of designs', async () => {
     const { result } = renderHook(() => useContentDownload());
-    result.current.handleDesignDownload(
+    await result.current.handleDesignDownload(
       { stopPropagation: vi.fn() } as any,
       [
         { id: 'd-1', name: 'a' },
@@ -299,6 +299,42 @@ describe('useContentDownload', () => {
       {},
     );
     expect(downloadContent).toHaveBeenCalledTimes(2);
+  });
+
+  it('attempts every selected design and waits for the surviving download after a failure', async () => {
+    const { result } = renderHook(() => useContentDownload());
+    let finish!: () => void;
+    downloadContent.mockRejectedValueOnce(new Error('HTTP 404')).mockReturnValueOnce(
+      new Promise<void>((resolve) => {
+        finish = resolve;
+      }),
+    );
+    const pending = result.current.handleDesignDownload(
+      { stopPropagation: vi.fn() } as any,
+      [
+        { id: 'deleted', name: 'A' },
+        { id: 'valid', name: 'B' },
+      ],
+      undefined,
+      undefined,
+    );
+    await Promise.resolve();
+    expect(downloadContent).toHaveBeenCalledTimes(2);
+    expect(downloadContent).toHaveBeenLastCalledWith(
+      expect.objectContaining({ id: 'valid', name: 'B' }),
+    );
+    expect(updateProgress).toHaveBeenLastCalledWith({ showProgress: true });
+    expect(notify).not.toHaveBeenCalledWith(expect.objectContaining({ event_type: 'INFO' }));
+    finish();
+    await pending;
+    expect(notify).toHaveBeenCalledTimes(2);
+    expect(notify).toHaveBeenCalledWith({
+      message: 'Error downloading "A" design',
+      event_type: 'ERROR',
+      details: 'HTTP 404',
+    });
+    expect(notify).toHaveBeenCalledWith({ message: '"B" design downloaded', event_type: 'INFO' });
+    expect(updateProgress).toHaveBeenLastCalledWith({ showProgress: false });
   });
 
   it('handleViewDownload writes each view to a JSON file and notifies', () => {

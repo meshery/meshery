@@ -56,7 +56,7 @@ The `--name` flag applies only to local file imports. Remote URL imports do not 
 The Filters page lists every filter you own, in grid or table view. Filter the list by **Visibility** (Public, Private, and, when the Catalog is enabled, Published). Each filter offers these actions:
 
 - **Config**: edit the filter's configuration.
-- **Download**: download the filter binary.
+- **Download**: download the filter binary. The progress indicator stays visible while Meshery retrieves the file, then clears on success or failure. A failed download shows an error notification with details.
 - **Filter Information**: view the filter's details.
 - **Clone**: copy a published filter into your own filters.
 {{% /tab %}}
