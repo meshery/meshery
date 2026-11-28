@@ -23,6 +23,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -60,6 +61,10 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl design import -f [file/URL] -s [source-type] -n [name]\n"
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("design import does not accept positional arguments\n\n%s", errMsg))
+		}
+		file = strings.TrimSpace(file)
 		if file == "" {
 			utils.Log.Debug("File path not provided\n" + errMsg)
 			return ErrDesignFileNotProvided()
