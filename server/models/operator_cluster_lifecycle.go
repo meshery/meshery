@@ -230,3 +230,35 @@ func (ot *OperatorTracker) otherOperatorConsumers(k8sctx K8sContext) []string {
 	}
 	return others
 }
+
+// ReleaseOperatorClaimOnRefresh drops the claim prev's connection holds under
+// the cluster keys that next no longer reaches. RefreshK8sContext calls it
+// before it replaces a connection's context: claims are recorded under the
+// context's cluster keys, and disconnect and delete release only the keys of
+// the current context, so a claim left under the previous cluster's keys would
+// outlive the connection's use of that cluster and make an explicit uninstall
+// there name it as an affected consumer. Keys next still reaches keep the
+// claim: a refresh that only rotates credentials for the same cluster must not
+// drop it. The next setup pass claims under next's keys.
+func (ot *OperatorTracker) ReleaseOperatorClaimOnRefresh(prev, next K8sContext) {
+	if ot == nil {
+		return
+	}
+	id := operatorConsumerID(prev)
+	kept := make(map[string]struct{})
+	if operatorConsumerID(next) == id {
+		for _, key := range operatorClusterKeys(next) {
+			kept[key] = struct{}{}
+		}
+	}
+	ot.mx.Lock()
+	defer ot.mx.Unlock()
+	for _, key := range operatorClusterKeys(prev) {
+		if _, ok := kept[key]; ok {
+			continue
+		}
+		if c, ok := ot.clustersByKey[key]; ok {
+			delete(c.consumers, id)
+		}
+	}
+}
