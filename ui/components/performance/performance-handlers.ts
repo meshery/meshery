@@ -2,8 +2,9 @@ import { URLValidator } from '../../utils/URLValidator';
 import { isValidJSON } from '../../utils/validators';
 
 /**
- * Setters bag for `createPerformanceFormChangeHandler`. Each field maps 1:1
- * to a `setX` call from the parent component's `useState` hooks.
+ * State and setter bag for `createPerformanceFormChangeHandler`. The current
+ * values provide cross-field validation context; the setters map to the
+ * parent component's `useState` hooks.
  */
 export interface PerformanceFormSetters {
   setProfileName: (v: string) => void;
@@ -35,8 +36,8 @@ export const shouldDisablePerformanceTest = (url: string, additionalOptions: unk
  * for `url` validation, `caCertificate` file upload, and `additional_options`
  * JSON parsing.
  *
- * Extracted in Phase 5.a so the entry point stays under the 600-line size
- * budget. No behaviour changes — only the setters are now received as a bag.
+ * Extracted so the entry point stays under the 600-line size budget and the
+ * form's validation transitions can be tested independently.
  */
 export const createPerformanceFormChangeHandler = (setters: PerformanceFormSetters) => {
   const {
