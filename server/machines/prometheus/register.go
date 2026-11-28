@@ -56,12 +56,8 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	promCred, err := utils.MarshalAndUnmarshal[map[string]interface{}, connections.PromCred](connPayload.CredentialSecret)
-	if err != nil && !connPayload.SkipCredentialVerification {
-		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
-		return machines.NoOp, eventBuilder.Build(), err
-	}
-	promClient := prometheustelemetry.New(promConn.URL, promCred.APIKeyOrBasicAuth, log)
+	secret := models.CredentialAuthSecret(connPayload.CredentialSecret)
+	promClient := prometheustelemetry.New(promConn.URL, secret, log)
 
 	_, err = promClient.Health(ctx)
 

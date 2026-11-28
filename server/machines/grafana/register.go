@@ -56,13 +56,8 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	grafanaCred, err := utils.MarshalAndUnmarshal[map[string]interface{}, connections.GrafanaCred](connPayload.CredentialSecret)
-	if err != nil && !connPayload.SkipCredentialVerification {
-		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
-		return machines.NoOp, eventBuilder.Build(), err
-	}
-
-	grafanaClient := grafanatelemetry.New(grafanaConn.URL, grafanaCred.APIKeyOrBasicAuth, log)
+	secret := models.CredentialAuthSecret(connPayload.CredentialSecret)
+	grafanaClient := grafanatelemetry.New(grafanaConn.URL, secret, log)
 	_, err = grafanaClient.Health(ctx)
 	if err != nil && !connPayload.SkipCredentialVerification {
 		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrGrafanaScan(err)}).Build(), models.ErrGrafanaScan(err)
