@@ -53,30 +53,31 @@ function MesheryResultDialog(props) {
         <Table size="small" aria-label="Environment">
           <TableBody>
             {createTableRow('Kubernetes API Server', kubernetes.server_version)}
-            {kubernetes.nodes.map((node, ind) => (
-              <NoSsr key={node.uniqueID}>
-                <StyledTableRow>
-                  <StyledTableCell colSpan={2} align="center">
-                    <strong>
-                      Node
-                      {ind + 1}
-                    </strong>
-                  </StyledTableCell>
-                </StyledTableRow>
-                {createTableRow('Internal IP Address', node.internalIp)}
-                {createTableRow('Hostname', node.hostname)}
-                {createTableRow('Allocatable CPU', node.allocatableCpu)}
-                {createTableRow('Allocatable Memory', node.allocatableMemory)}
-                {createTableRow('Capacity CPU', node.capacityCpu)}
-                {createTableRow('Capacity Memory', node.capacityMemory)}
-                {createTableRow('Architecture', node.architecture)}
-                {createTableRow('Operating system', node.operatingSystem)}
-                {createTableRow('OS Image', node.osImage)}
-                {createTableRow('Container runtime version', node.containerRuntimeVersion)}
-                {createTableRow('Kubelet version', node.kubeletVersion)}
-                {createTableRow('Kubeproxy version', node.kubeproxyVersion)}
-              </NoSsr>
-            ))}
+            {Array.isArray(kubernetes?.nodes) &&
+              kubernetes.nodes.map((node, ind) => (
+                <NoSsr key={node.uniqueID}>
+                  <StyledTableRow>
+                    <StyledTableCell colSpan={2} align="center">
+                      <strong>
+                        Node
+                        {ind + 1}
+                      </strong>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  {createTableRow('Internal IP Address', node.internalIp)}
+                  {createTableRow('Hostname', node.hostname)}
+                  {createTableRow('Allocatable CPU', node.allocatableCpu)}
+                  {createTableRow('Allocatable Memory', node.allocatableMemory)}
+                  {createTableRow('Capacity CPU', node.capacityCpu)}
+                  {createTableRow('Capacity Memory', node.capacityMemory)}
+                  {createTableRow('Architecture', node.architecture)}
+                  {createTableRow('Operating system', node.operatingSystem)}
+                  {createTableRow('OS Image', node.osImage)}
+                  {createTableRow('Container runtime version', node.containerRuntimeVersion)}
+                  {createTableRow('Kubelet version', node.kubeletVersion)}
+                  {createTableRow('Kubeproxy version', node.kubeproxyVersion)}
+                </NoSsr>
+              ))}
           </TableBody>
         </Table>
       </NoSsr>
@@ -141,9 +142,9 @@ function MesheryResultDialog(props) {
           'Actual Duration',
           (rowData.runner_results.ActualDuration / 1000000000).toFixed(1),
         ),
-        createTableRow('Average Response Time', rowData.runner_results.DurationHistogram.Avg),
+        createTableRow('Average Response Time', rowData.runner_results.DurationHistogram?.Avg),
         ...percentiles,
-        createTableRow('Maximum Response Time', rowData.runner_results.DurationHistogram.Max),
+        createTableRow('Maximum Response Time', rowData.runner_results.DurationHistogram?.Max),
       ];
     }
     return (

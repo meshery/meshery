@@ -126,4 +126,62 @@ describe('PerformanceCard', () => {
     expect(screen.getByTestId('avatar')).toBeInTheDocument();
     expect(screen.getByTestId('avatar').closest('a')).toBeNull();
   });
+
+  it('renders without crashing when metadata.additional_options is empty, valid, or invalid JSON', () => {
+    const { unmount } = render(
+      <PerformanceCard
+        {...baseProps}
+        profile={{
+          ...baseProps.profile,
+          metadata: { additional_options: [] },
+        }}
+      />,
+    );
+    expect(screen.getByText('my perf profile')).toBeInTheDocument();
+    expect(screen.getByText('Additional Option')).toBeInTheDocument();
+    expect(screen.queryByText('""')).not.toBeInTheDocument();
+    unmount();
+
+    const { unmount: unmountInvalid } = render(
+      <PerformanceCard
+        {...baseProps}
+        profile={{
+          ...baseProps.profile,
+          metadata: { additional_options: ['not-valid-json'] },
+        }}
+      />,
+    );
+    expect(screen.getByText('my perf profile')).toBeInTheDocument();
+    // A fallback string renders as-is, without added JSON quotes.
+    expect(screen.getByText('not-valid-json')).toBeInTheDocument();
+    expect(screen.queryByText('"not-valid-json"')).not.toBeInTheDocument();
+    unmountInvalid();
+
+    const { unmount: unmountValid } = render(
+      <PerformanceCard
+        {...baseProps}
+        profile={{
+          ...baseProps.profile,
+          metadata: { additional_options: ['{"concurrency":4}'] },
+        }}
+      />,
+    );
+    expect(screen.getByText('my perf profile')).toBeInTheDocument();
+    expect(screen.getByText('{"concurrency":4}')).toBeInTheDocument();
+    unmountValid();
+
+    render(
+      <PerformanceCard
+        {...baseProps}
+        profile={{
+          ...baseProps.profile,
+          metadata: { additional_options: ['"example"'] },
+        }}
+      />,
+    );
+    expect(screen.getByText('my perf profile')).toBeInTheDocument();
+    // A successfully parsed string keeps its JSON quotes and escapes.
+    expect(screen.getByText('"example"')).toBeInTheDocument();
+    expect(screen.queryByText('example')).not.toBeInTheDocument();
+  });
 });
