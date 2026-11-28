@@ -6,6 +6,7 @@ import { parsePromMatrix } from '../common/time';
 import { resolveExpr } from '../common/promql';
 import type { ChartSeries, TimeWindow } from '../common/types';
 import type { MetricPanel } from './types';
+import { GRID_COLUMNS, normalizeGridPos } from './gridPosition';
 
 interface MetricsGridProps {
   connectionID: string;
@@ -25,7 +26,7 @@ const EMPTY_STATE: PanelState = { series: [], loading: false, error: null };
 // A 24-column grid mirrors the Grafana layout model used across telemetry.
 const PanelGrid = styled(Box)(({ theme }) => ({
   display: 'grid',
-  gridTemplateColumns: 'repeat(24, 1fr)',
+  gridTemplateColumns: `repeat(${GRID_COLUMNS}, 1fr)`,
   gridAutoRows: '30px',
   gap: theme.spacing(1),
 }));
@@ -118,12 +119,13 @@ const MetricsGrid: React.FC<MetricsGridProps> = ({
     <PanelGrid>
       {panels.map((panel) => {
         const state = panelStates.get(panel.id) ?? EMPTY_STATE;
+        const { x, y, w, h } = normalizeGridPos(panel.gridPos);
         return (
           <Cell
             key={panel.id}
             sx={{
-              gridColumn: `${(panel.gridPos?.x ?? 0) + 1} / span ${panel.gridPos?.w || 12}`,
-              gridRow: `${(panel.gridPos?.y ?? 0) + 1} / span ${panel.gridPos?.h || 8}`,
+              gridColumn: `${x + 1} / span ${w}`,
+              gridRow: `${y + 1} / span ${h}`,
             }}
           >
             <Actions className="panel-actions">

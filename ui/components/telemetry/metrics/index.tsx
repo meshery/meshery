@@ -28,6 +28,7 @@ import RefreshControl from '../common/RefreshControl';
 import { DEFAULT_RANGE, resolveWindow } from '../common/time';
 import MetricsGrid from './MetricsGrid';
 import MetricExplorer from './MetricExplorer';
+import { nextGridPos } from './gridPosition';
 import type { MetricPanel } from './types';
 
 const Toolbar = styled(Box)(({ theme }) => ({
@@ -67,14 +68,6 @@ const DrawerBody = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
   gap: theme.spacing(1),
 }));
-
-// Assigns a default 12-wide, 8-tall slot, flowing two panels per row.
-const nextGridPos = (count: number) => ({
-  x: (count % 2) * 12,
-  y: Math.floor(count / 2) * 8,
-  w: 12,
-  h: 8,
-});
 
 const newId = () =>
   typeof crypto !== 'undefined' && 'randomUUID' in crypto
@@ -148,7 +141,7 @@ const TelemetryMetrics: React.FC = () => {
   };
 
   const handleAdd = (draft: Omit<MetricPanel, 'id' | 'gridPos'>) => {
-    const panel: MetricPanel = { ...draft, id: newId(), gridPos: nextGridPos(panels.length) };
+    const panel: MetricPanel = { ...draft, id: newId(), gridPos: nextGridPos(panels) };
     persist([...panels, panel]);
     setExplorerOpen(false);
   };
