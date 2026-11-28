@@ -116,6 +116,12 @@ describe('getReadyReplicas / getTotalReplicas', () => {
     expect(getReadyReplicas({ status: {} })).toBe(0);
   });
 
+  it('handles nullish item defensively without throwing', () => {
+    expect(getReadyReplicas(null)).toBe(0);
+    expect(getReadyReplicas(undefined)).toBe(0);
+    expect(getReadyReplicas({})).toBe(0);
+  });
+
   it('reads total replicas from spec.replicas first', () => {
     expect(getTotalReplicas({ spec: { replicas: 5 }, status: { currentNumberScheduled: 9 } })).toBe(
       5,
@@ -129,6 +135,12 @@ describe('getReadyReplicas / getTotalReplicas', () => {
   it('defaults to 0 when neither field is present', () => {
     expect(getTotalReplicas({ spec: {}, status: {} })).toBe(0);
   });
+
+  it('handles nullish item defensively in getTotalReplicas', () => {
+    expect(getTotalReplicas(null)).toBe(0);
+    expect(getTotalReplicas(undefined)).toBe(0);
+    expect(getTotalReplicas({})).toBe(0);
+  });
 });
 
 describe('compareUnits', () => {
@@ -139,6 +151,12 @@ describe('compareUnits', () => {
 
   it('returns false when numeric prefixes differ', () => {
     expect(compareUnits('100Mi', '200Mi')).toBe(false);
+  });
+
+  it('handles nullish or numeric values gracefully', () => {
+    expect(compareUnits(null, '100Mi')).toBe(false);
+    expect(compareUnits('100Mi', undefined)).toBe(false);
+    expect(compareUnits(100, 100)).toBe(true);
   });
 });
 
@@ -185,6 +203,14 @@ describe('normalizeUnit', () => {
 
   it('passes through quantities for unknown resource types', () => {
     expect(normalizeUnit('unknown', '42')).toBe('42');
+  });
+
+  it('handles nullish or numeric inputs defensively', () => {
+    expect(normalizeUnit(undefined, '100Mi')).toBe('100Mi');
+    expect(normalizeUnit('cpu', null)).toBe('');
+    expect(normalizeUnit('memory', undefined)).toBe('');
+    expect(normalizeUnit('cpu', 2)).toBe('2 cores');
+    expect(normalizeUnit('memory', 1024)).toBe('1.02 KB');
   });
 });
 
@@ -275,6 +301,12 @@ describe('resourceParsers / getResourceStr', () => {
 
   it('formats memory via unparseRam', () => {
     expect(getResourceStr(1024, 'memory')).toBe('1Ki');
+  });
+
+  it('falls back gracefully on unknown resource types', () => {
+    expect(getResourceStr('100Gi', 'storage')).toBe('100Gi');
+    expect(getResourceStr(50, undefined)).toBe('50');
+    expect(getResourceStr(50, 'toString')).toBe('50');
   });
 });
 
