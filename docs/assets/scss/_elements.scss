@@ -166,14 +166,23 @@ button {
 }
 
 body:not(.dark-mode) {
-  .td-content a,
-  ul.section-title li > a,
-  p > a {
+  .td-content a {
     color: var(--sidebar-text-color);
 
-    &:hover {
+    > * {
+      color: inherit;
+    }
+
+    &:hover,
+    &:focus-visible {
       color: var(--brand-color);
     }
+  }
+
+  .td-content p a,
+  .td-content li a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 }
 
