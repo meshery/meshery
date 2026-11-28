@@ -364,7 +364,7 @@ func verifyDestinationTokenFile(destFile *os.File, expectedInfo windows.ByHandle
 		return fmt.Errorf("verify destination owner: %w", err)
 	}
 	if err := verifyTokenFileACL(destFile, user.User.Sid); err != nil {
-		return fmt.Errorf("verify destination ACL: %w", err)
+		return err
 	}
 	if len(expectedData) > 0 {
 		content := make([]byte, len(expectedData))
@@ -638,28 +638,32 @@ func isTrustedTokenOwner(owner, user, defaultOwner, administrators *windows.SID)
 }
 
 func verifyTokenFileACL(file *os.File, sid *windows.SID) error {
+	if file == nil {
+		return ErrVerifyTokenFileACL("", 0, 0, errors.New("token file handle is nil"))
+	}
+	path := file.Name()
 	actual, err := windows.GetSecurityInfo(windows.Handle(file.Fd()), windows.SE_FILE_OBJECT, windows.DACL_SECURITY_INFORMATION)
 	if err != nil {
-		return fmt.Errorf("read token file ACL: %w", err)
+		return ErrVerifyTokenFileACL(path, 0, 0, fmt.Errorf("read token file ACL: %w", err))
 	}
 	control, _, err := actual.Control()
 	if err != nil {
-		return fmt.Errorf("read token file ACL control: %w", err)
+		return ErrVerifyTokenFileACL(path, 0, 0, fmt.Errorf("read token file ACL control: %w", err))
 	}
 	dacl, _, err := actual.DACL()
 	if err != nil || dacl == nil || dacl.AceCount != 1 || control&windows.SE_DACL_PROTECTED == 0 {
-		return fmt.Errorf("token file ACL is not restricted to the current user")
+		return ErrVerifyTokenFileACL(path, 0, 0, fmt.Errorf("token file ACL is not restricted to the current user"))
 	}
 	var ace *windows.ACCESS_ALLOWED_ACE
 	if err := windows.GetAce(dacl, 0, &ace); err != nil {
-		return fmt.Errorf("read token file ACL entry: %w", err)
+		return ErrVerifyTokenFileACL(path, 0, 0, fmt.Errorf("read token file ACL entry: %w", err))
 	}
 	if ace.Header.AceType != windows.ACCESS_ALLOWED_ACE_TYPE || !windows.EqualSid((*windows.SID)(unsafe.Pointer(&ace.SidStart)), sid) {
-		return fmt.Errorf("token file ACL grants access to an unexpected account")
+		return ErrVerifyTokenFileACL(path, 0, 0, fmt.Errorf("token file ACL grants access to an unexpected account"))
 	}
 	const fileAllAccess = 0x001f01ff
 	if ace.Mask != windows.GENERIC_ALL && ace.Mask != fileAllAccess {
-		return fmt.Errorf("token file ACL does not grant the current user full access")
+		return ErrVerifyTokenFileACL(path, uint32(ace.Mask), fileAllAccess, fmt.Errorf("token file ACL does not grant the current user full access (expected GENERIC_ALL or %#x)", fileAllAccess))
 	}
 	return nil
 }
