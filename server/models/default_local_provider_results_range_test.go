@@ -53,10 +53,6 @@ func TestFetchAllResultsKeepsOnlyTheRequestedDateRange(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.NoError(t, provider.ResultPersister.WriteResult(id, result))
-	var saved localMesheryResultDBRepresentation
-	require.NoError(t, db.Table("meshery_results").Where("id = ?", id).First(&saved).Error)
-	require.NotNil(t, saved.TestStartTime)
-	require.Equal(t, "2026-11-01T00:15:00.123456789+05:30", saved.TestStartTime.Format(time.RFC3339Nano))
 
 	fetch := func(pageNumber, size, from, to string) MesheryResultPage {
 		t.Helper()

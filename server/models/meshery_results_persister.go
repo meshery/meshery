@@ -96,11 +96,21 @@ func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, from, t
 	}
 	err = Paginate(uint(page), uint(pageSize))(query).Find(&res).Error
 
+	results := convertLocalRepresentationSliceToMesheryResultSlice(res, log)
+	if results == nil {
+		results = []*MesheryResult{}
+	}
+	for _, result := range results {
+		raw, _ := result.Result["StartTime"].(string)
+		if start, err := time.Parse(time.RFC3339Nano, raw); err == nil && !start.IsZero() {
+			result.TestStartTime = &start
+		}
+	}
 	resultPage := &MesheryResultPage{
 		Page:       page,
 		PageSize:   pageSize,
 		TotalCount: int(count),
-		Results:    convertLocalRepresentationSliceToMesheryResultSlice(res, log),
+		Results:    results,
 	}
 
 	return marshalMesheryResultsPage(resultPage), err
@@ -125,11 +135,8 @@ func (mrp *MesheryResultsPersister) WriteResult(key core.Uuid, result []byte) er
 
 	data.ID = key
 
-	start := mesheryRunnerStartTime(data.Result)
-	if start.IsZero() {
-		start = time.Now()
-	}
-	data.TestStartTime = &start
+	t := time.Now()
+	data.TestStartTime = &t
 	return mrp.DB.Table("meshery_results").Save(convertMesheryResultToLocalRepresentation(&data)).Error
 }
 
@@ -139,8 +146,7 @@ func marshalMesheryResultsPage(mrp *MesheryResultPage) []byte {
 	return res
 }
 
-func convertLocalRepresentationSliceToMesheryResultSlice(local []*localMesheryResultDBRepresentation, log logger.Handler) []*MesheryResult {
-	res := make([]*MesheryResult, 0, len(local))
+func convertLocalRepresentationSliceToMesheryResultSlice(local []*localMesheryResultDBRepresentation, log logger.Handler) (res []*MesheryResult) {
 	for _, val := range local {
 		r, _ := convertLocalRepresentationToMesheryResult(val, log)
 		if r != nil {
@@ -148,13 +154,7 @@ func convertLocalRepresentationSliceToMesheryResultSlice(local []*localMesheryRe
 		}
 	}
 
-	return res
-}
-
-func mesheryRunnerStartTime(result map[string]interface{}) time.Time {
-	raw, _ := result["StartTime"].(string)
-	start, _ := time.Parse(time.RFC3339Nano, raw)
-	return start
+	return
 }
 
 func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepresentation, log logger.Handler) (*MesheryResult, error) {
@@ -167,10 +167,6 @@ func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepres
 		return nil, err
 	}
 
-	start := local.TestStartTime
-	if runnerStart := mesheryRunnerStartTime(jsonmap); !runnerStart.IsZero() {
-		start = &runnerStart
-	}
 	res := &MesheryResult{
 		ID:                 local.ID,
 		Name:               local.Name,
@@ -179,7 +175,7 @@ func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepres
 		Result:             jsonmap,
 		ServerMetrics:      local.ServerMetrics,
 		ServerBoardConfig:  local.ServerMetrics,
-		TestStartTime:      start,
+		TestStartTime:      local.TestStartTime,
 	}
 
 	return res, nil
