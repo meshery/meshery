@@ -323,7 +323,7 @@ Interwoven into Meshery’s web-based user interface are a variety of extension 
 
 |**Name**   |**Type**   | **Description**  |
 |---|---|---|
-|navigator |Menu Items   |This is supposed to be a full page extension which will get a dedicated endpoint in the meshery UI. And will be listed in the meshery UI’s navigator/sidebar. Menu items may refer to full page extensions.   |
+|navigator |Menu Items   |This is a full page extension that gets a dedicated endpoint in the Meshery UI and is listed in the Meshery UI’s navigator/sidebar. Menu items may refer to full page extensions.   |
 |userPrefs   |Single Component   |This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. As of now, the only place where this extension can be loaded is the “User Preference” section under meshery settings.   |
 |account   |Full Page   |Remote Reactjs components (or other) are placed in a pre-existing page and will have dedicated endpoint: `/extension/account`.   |
 |collaborator |Single Component|This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Meshery UI. Its work is to show active Meshery users under the same remote provider.|
@@ -576,7 +576,7 @@ Let's understand this through an example deployment scenario below.
 
 ### Example Deployment Scenario: Meshery Cloud, Istio, and Azure Kubernetes Service
 
-User has deployed the Meshery behind a Istio Ingress Gateway and the Istio is also behind an Application Gateway (e.g. AKS Application Gateway). Generally, when you use a GitHub Remote Provider for authentication, it redirect the request to the Istio Ingress Gateway FQDN. In this setup, redirection won't be successful because the Ingress Gateway is behind an additional Application Gateway. In this case, you have to define where the request should be redirected once it is authenticated from GitHub.
+A user has deployed Meshery behind an Istio Ingress Gateway, and Istio is also behind an Application Gateway (e.g. AKS Application Gateway). Generally, when you use a GitHub Remote Provider for authentication, it redirects the request to the Istio Ingress Gateway FQDN. In this setup, redirection will not be successful because the Ingress Gateway is behind an additional Application Gateway. In this case, you have to define where the request should be redirected once it is authenticated from GitHub.
 
 **_SOLUTION_**
 
@@ -588,13 +588,13 @@ First, construct the URL in the format
 ```https://[CUSTOM_URL]/api/user/token```
 
 - Where `[CUSTOM_URL]` is the URL where **Meshery server** will be or is installed. For example, `https://k8s-staging.test.io/`.
-- And `api/user/token` is the **Auth Endpoint** and is append at the end of your custom URL.
+- And `api/user/token` is the **Auth Endpoint** and is appended to the end of your custom URL.
 
 So, the final URL would look similar to
 ```https://k8s-staging.test.io/api/user/token```
 
 {{% alert color="info" title="Note" %}}
-Callback URL is not the same as Provider URL. In scenarios where Meshery server and Provider is installed on same server, pay attention to paths or subdomains.
+Callback URL is not the same as Provider URL. In scenarios where Meshery server and Provider are installed on the same server, pay attention to paths or subdomains.
 {{% /alert %}}
 
 Next, set the `MESHERY_SERVER_CALLBACK_URL` variable when running the `helm install`. Below is an example:
