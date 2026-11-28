@@ -2,17 +2,38 @@ package jsonschema
 
 import (
 	"context"
+	"encoding/json"
 	"sync"
 
 	"github.com/qri-io/jsonschema"
 )
 
-var JSONSchema = &Schema{}
+var (
+	// mu synchronizes schema unmarshaling and validation to prevent concurrent
+	// map writes in the underlying qri-io/jsonschema library.
+	mu sync.Mutex
+
+	// JSONSchema is retained for backwards compatibility.
+	JSONSchema = &Schema{}
+)
+
+// ValidateBytes parses schemaBytes and validates dataBytes against it in a thread-safe manner.
+// A fresh jsonschema.Schema instance is instantiated on each call to prevent concurrent
+// schema mutation and cross-component validation pollution.
+func ValidateBytes(ctx context.Context, schemaBytes, dataBytes []byte) ([]jsonschema.KeyError, error) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	rs := &jsonschema.Schema{}
+	if err := json.Unmarshal(schemaBytes, rs); err != nil {
+		return nil, err
+	}
+	return rs.ValidateBytes(ctx, dataBytes)
+}
 
 // GlobalJSONSchema returns the package's shared Schema instance.
-// This approach is bad, and we are not the ones implementing this. The qri-io/jsonschema internally is creating a global instance of Schema.
-// Hence for concurrent operations, we have to make sure that the package qri-io/jsonschema is accessed in a thread-safe way.
-// So use this Global instance for now.
+//
+// Deprecated: Use ValidateBytes directly for thread-safe component validation.
 func GlobalJSONSchema() *Schema {
 	return JSONSchema
 }
@@ -23,8 +44,6 @@ type Schema struct {
 }
 
 // ValidateBytes validates data against the schema while holding the schema instance's lock.
-// JsonSchema package creates a global instance(without any locks) of Schema struct which panics when concurrent routines try to call ValidateBytes.
-// So this package creates a thin shim to avoid internal concurrent map writes
 func (s *Schema) ValidateBytes(ctx context.Context, data []byte) ([]jsonschema.KeyError, error) {
 	s.Lock.Lock()
 	defer s.Lock.Unlock()
