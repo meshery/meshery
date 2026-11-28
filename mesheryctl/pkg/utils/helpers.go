@@ -522,8 +522,11 @@ func UploadFileWithParams(uri string, params map[string]string, paramName, path 
 
 // IsValidSubcommand checks if the passed subcommand is supported by the parent command
 func IsValidSubcommand(available []*cobra.Command, sub string) bool {
+	if sub == "" {
+		return false
+	}
 	for _, s := range available {
-		if sub == s.CalledAs() {
+		if s != nil && (sub == s.Name() || s.HasAlias(sub)) {
 			return true
 		}
 	}
