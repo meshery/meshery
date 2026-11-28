@@ -143,6 +143,7 @@ func InvokeCompUpdate() (err error) {
 		totalAggregateComponents = 0
 	}()
 	modelToCompUpdateTracker := store.NewGenericThreadSafeStore[[]compUpdateTracker]()
+	updatedCompPaths := map[string]map[string]bool{}
 
 	url := GoogleSpreadSheetURL + spreadsheeetID
 
@@ -173,7 +174,6 @@ func InvokeCompUpdate() (err error) {
 
 		// Iterate all models
 		for modelName, components := range model {
-			availableComponentsPerModelPerVersion := 0
 			modelPath := filepath.Join(pwd, modelLocation, modelName)
 			utils.Log.Info("Starting to update components of model ", modelName)
 
@@ -188,7 +188,7 @@ func InvokeCompUpdate() (err error) {
 			// Comps, relationships, policies
 			compUpdateArray := []compUpdateTracker{}
 			for _, content := range modelContents {
-				totalCompsUpdatedPerModelPerVersion := 0
+				availableComponentsPerModelPerVersion := 0
 
 				if content.IsDir() {
 					if mutils.FindIndexInSlice(content.Name(), ExcludeDirs) != -1 {
@@ -197,11 +197,18 @@ func InvokeCompUpdate() (err error) {
 
 					// A model can have components with multiple versions
 					versionPath := filepath.Join(modelPath, content.Name(), "v1.0.0") // remove the hard coded definition version, add just for testing
-					entries, _ := os.ReadDir(versionPath)
-					availableComponentsPerModelPerVersion += len(entries)
+					entries, _ := os.ReadDir(filepath.Join(versionPath, "components"))
+					for _, entry := range entries {
+						if !entry.IsDir() && filepath.Ext(entry.Name()) == ".json" {
+							availableComponentsPerModelPerVersion++
+						}
+					}
 
 					utils.Log.Info("Updating component of model ", modelName, " with version: ", content.Name())
 
+					if updatedCompPaths[versionPath] == nil {
+						updatedCompPaths[versionPath] = map[string]bool{}
+					}
 					for _, component := range components {
 						compPath := filepath.Join(versionPath, "components", fmt.Sprintf("%s.json", component.Component))
 						componentByte, err := os.ReadFile(compPath)
@@ -237,12 +244,12 @@ func InvokeCompUpdate() (err error) {
 							utils.Log.Error(err)
 							continue
 						}
-						totalCompsUpdatedPerModelPerVersion++
+						updatedCompPaths[versionPath][compPath] = true
 					}
 
 					compUpdateArray = append(compUpdateArray, compUpdateTracker{
 						totalComps:        availableComponentsPerModelPerVersion,
-						totalCompsUpdated: totalCompsUpdatedPerModelPerVersion,
+						totalCompsUpdated: len(updatedCompPaths[versionPath]),
 						version:           content.Name(),
 					})
 				}
@@ -258,14 +265,21 @@ func InvokeCompUpdate() (err error) {
 
 func logModelUpdateSummary(modelToCompUpdateTracker *store.GenerticThreadSafeStore[[]compUpdateTracker]) {
 	values := modelToCompUpdateTracker.GetAllPairs()
-	for key, val := range values {
-		for _, value := range val {
+	for key, val := range values { // once per model
+		modelUpdated := false
+		for _, value := range val { // once per version
 			utils.Log.Info(fmt.Sprintf("For model %s-%s, updated %d out of %d components.", key, value.version, value.totalCompsUpdated, value.totalComps))
 			totalAggregateComponents += value.totalCompsUpdated
+			if value.totalCompsUpdated > 0 {
+				modelUpdated = true
+			}
+		}
+		if modelUpdated {
+			totalAggregateModel++
 		}
 	}
 
-	utils.Log.Info(fmt.Sprintf("For %d models updated %d components", len(values), totalAggregateComponents))
+	utils.Log.Info(fmt.Sprintf("For %d models updated %d components", totalAggregateModel, totalAggregateComponents))
 }
 
 func init() {
