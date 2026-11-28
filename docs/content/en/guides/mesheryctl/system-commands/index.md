@@ -139,7 +139,7 @@ This page shows the commands you use most. For every flag, see the [`mesheryctl 
 | --- | --- |
 | `mesheryctl system context create <name>` | Creates a context with default settings. |
 | `mesheryctl system context list` | Lists your contexts and marks the current one. |
-| `mesheryctl system context view [name]` | Shows a context's settings. Add `--all` for every context. |
+| `mesheryctl system context view [name]` | Shows a context's settings. |
 | `mesheryctl system context switch <name>` | Makes another context current. |
 | `mesheryctl system context delete <name>` | Deletes a context. Add `-s <name>` to choose the new current context. |
 
