@@ -169,6 +169,10 @@ func (h *Handler) PatternFileHandler(
 
 	if err != nil {
 		err := ErrPatternDeploy(err, patternFile.Name)
+		// No outcome counts here: the response that comes with an error can
+		// omit targets (a cluster whose client could not be created is skipped
+		// without an outcome), so counts could report a component as succeeded
+		// that never reached every target.
 		metadata := patternErrorEventMetadata(r, patternID, patternFile.Name, string(patternFile.Version), err)
 
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to %s design '%s'.", action, patternFile.Name)).WithMetadata(metadata).Build()
@@ -181,15 +185,17 @@ func (h *Handler) PatternFileHandler(
 
 	// The raw response embeds every component, so the event carries only its
 	// status and per-component errors.
-	metadata := buildPatternProcessEventMetadata(response, models.ServerURLFromRequest(r), patternID, patternFile.Name, string(patternFile.Version))
+	summary := summarizePatternProcessResponse(response)
+	metadata := buildPatternProcessEventMetadata(summary, models.ServerURLFromRequest(r), patternID, patternFile.Name, string(patternFile.Version))
 	description = fmt.Sprintf("%s.", description)
 
-	var event *events.Event
-	if action == "deploy" || action == "dry-run" {
-		event = eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
-	} else {
-		event = eventBuilder.WithSeverity(events.Success).WithDescription(description).WithMetadata(metadata).Build()
+	// action is deploy, undeploy or dry-run; a dry-run event stays Informational.
+	severity := events.Informational
+	if action == "deploy" || action == "undeploy" {
+		addOutcomeCounts(metadata, summary)
+		severity, description = deploymentOutcomeEvent(action, summary, patternFile.Name, description)
 	}
+	event := eventBuilder.WithSeverity(severity).WithDescription(description).WithMetadata(metadata).Build()
 
 	h.persistAndPublish(provider, token, userID, event)
 
