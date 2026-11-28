@@ -599,9 +599,10 @@ func TestGetEnvironmentsHandler_FiltersByPurpose(t *testing.T) {
 
 	orgID := uuid.Must(uuid.NewV4())
 	seed := map[string]environment.EnvironmentPurpose{
-		"admin-env":  environment.EnvironmentPurposeAdministrative,
-		"user-env":   environment.EnvironmentPurposeUser,
-		"legacy-env": "",
+		"admin-env":   environment.EnvironmentPurposeAdministrative,
+		"invalid-env": "User",
+		"user-env":    environment.EnvironmentPurposeUser,
+		"legacy-env":  "",
 	}
 	for name, purpose := range seed {
 		env := environment.Environment{ID: uuid.Must(uuid.NewV4()), Name: name, OrganizationID: orgID, Purpose: purpose}
@@ -623,7 +624,8 @@ func TestGetEnvironmentsHandler_FiltersByPurpose(t *testing.T) {
 	}{
 		{"&purpose=administrative", []string{"admin-env"}},
 		{"&purpose=user", []string{"legacy-env", "user-env"}},
-		{"", []string{"admin-env", "legacy-env", "user-env"}},
+		{"&purpose=User", nil},
+		{"", []string{"admin-env", "invalid-env", "legacy-env", "user-env"}},
 	}
 	for _, tc := range cases {
 		t.Run(tc.query, func(t *testing.T) {

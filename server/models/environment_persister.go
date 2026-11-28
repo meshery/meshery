@@ -53,8 +53,10 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 	case string(environment.EnvironmentPurposeUser):
 		// Rows written before the purpose column existed read back as "", which means user.
 		query = query.Where("(purpose = ? OR purpose = '' OR purpose IS NULL)", purpose)
-	default:
+	case string(environment.EnvironmentPurposeAdministrative):
 		query = query.Where("purpose = ?", purpose)
+	default:
+		query = query.Where("1 = 0")
 	}
 
 	dynamicKeys := []string{"owner", "organization_id"}
