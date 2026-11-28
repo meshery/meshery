@@ -80,11 +80,10 @@ In operator (broker) mode, MeshSync publishes resource events to the NATS subjec
 When it starts, MeshSync serves two HTTP endpoints on port `11000`:
 
 - `GET /healthz` - liveness; always returns `200` while the process is alive.
-- `GET /readyz` - readiness; returns `200` once MeshSync has established its connection to the Broker (broker mode), and `503` before that.
+- `GET /readyz` - startup readiness; see the
+  [Broker configuration guide][broker-config] for its semantics.
 
-{{% alert color="info" title="Readiness caveat" %}}
-`/readyz` reflects that MeshSync has <strong>connected to the Broker</strong>, not that its informer caches have finished syncing. A <code>200</code> from <code>/readyz</code> therefore means "connected", not necessarily "cluster snapshot fully primed".
-{{% /alert %}}
+[broker-config]: ../../../guides/infrastructure-management/configuring-operator-meshsync-broker/#health-endpoints-and-probes
 
 # Scalability and Performance
 
@@ -164,7 +163,7 @@ kubectl -n meshery rollout status deploy/meshery-meshsync
 ```bash
 kubectl -n meshery port-forward deploy/meshery-meshsync 11000:11000 &
 curl -sS http://127.0.0.1:11000/healthz   # liveness: "ok"
-curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:11000/readyz   # 200 once connected to Broker
+curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:11000/readyz   # 200 after initial Broker connection
 ```
 
 **Verify which Broker MeshSync is connected to:**

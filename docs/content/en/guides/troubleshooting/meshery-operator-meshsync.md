@@ -80,6 +80,8 @@ For the full walkthrough of the Kubernetes connection lifecycle, its components,
 
 Some common failure situations that Meshery users might face are described below.
 
+[broker-config]: ../infrastructure-management/configuring-operator-meshsync-broker.md#health-endpoints-and-probes
+
 1. **Situation:** No deployment of Meshery Operator, MeshSync, and Broker.
    1. **Probable cause:** Meshery Server cannot connect to Kubernetes cluster; cluster unreachable or kubeconfig without proper permissions needed to deploy Meshery Operator; Kubernetes config initialization issues.
 1. **Situation:** Meshery Operator with MeshSync and Broker deployed, but Meshery Server is not receiving data from MeshSync or data the [Meshery Database]({{< ref "concepts/architecture/database/index.md" >}}) is stale.
@@ -88,6 +90,56 @@ Some common failure situations that Meshery users might face are described below
       - The Meshery Database is stale. Meshery Server's database is a cache of cluster state, and you can reset it from Meshery UI.
       - MeshSync and Broker are orphaned: Meshery Operator is gone, but MeshSync and Broker are still running.
       - **Broker unreachable / not authenticated (out-of-cluster Meshery):** the Broker is `ClusterIP`-only and unreachable, or Meshery is not presenting the NATS token. See [Out-of-Cluster Deployment](#out-of-cluster-deployment); the connection's [Diagnostics](#diagnostics-in-the-connection-detail-view) will report `broker_unreachable` with remediation.
+
+1. **Situation:** A MeshSync flush/resync operation fails because the Broker is
+   disconnected, or resources do not reappear after a successful flush.
+   1. **Probable causes:**
+      - The MeshSync handler is unavailable or the Broker is disconnected, so
+        Meshery Server cannot publish the resync request. In this case, the
+        cache is not flushed.
+      - A resync request was published and the cache flush succeeded, but
+        resources have not yet repopulated. Allow discovery time to complete
+        before triggering another resync.
+   2. **Diagnostics:**
+      - Open the Kubernetes connection's **Diagnostics** section in Meshery UI
+        and check the Operator, MeshSync, and Broker connectivity status.
+
+      - Inspect MeshSync logs:
+
+        ```bash
+        kubectl -n meshery logs deploy/meshery-meshsync
+        ```
+
+      - Check MeshSync startup readiness with `/readyz` (see the
+        [Broker configuration guide][broker-config]).
+        For current connectivity, check the connection's **Diagnostics**
+        section in Meshery and inspect MeshSync and Meshery Server logs:
+
+        ```bash
+        kubectl -n meshery port-forward deploy/meshery-meshsync 11000:11000
+        curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:11000/readyz
+        ```
+
+      - Inspect Meshery Server logs for Broker disconnection or resync
+        publication errors.
+
+   3. **Remediation and verification:**
+      - Restore Broker connectivity. For out-of-cluster deployments, verify
+        Broker reachability and NATS authentication as described in
+        [Out-of-Cluster Deployment](#out-of-cluster-deployment).
+      - Confirm current MeshSync and Broker connectivity in the connection's
+        **Diagnostics** section.
+      - If a previous flush succeeded but resources remain absent after
+        allowing discovery time, trigger a fresh discovery by restarting
+        MeshSync:
+
+        ```bash
+        kubectl -n meshery rollout restart deploy/meshery-meshsync
+        ```
+
+      - Allow discovery time to complete, then verify that cluster resources
+        reappear in Meshery.
+
 1. **Situation:** The `meshery-nats` (Broker) pod is in `CrashLoopBackOff` and never becomes ready.
    1. **Probable cause:** Some Meshery Operator versions inject the NATS token into `nats.conf` **unquoted** (`token: $NATS_TOKEN`). When the generated token happens to look like a number, the NATS config parser rejects it and the pod crash-loops. Confirm with `kubectl logs -n meshery meshery-nats-0 -c nats` (look for a `variable reference for 'NATS_TOKEN' ... could not be parsed` error). The fix belongs in the Operator (quote it: `token: "$NATS_TOKEN"`); redeploying often generates a token that parses.
 1. **Situation:** The `meshery-operator` pod never becomes ready after connecting a cluster. Its `kube-rbac-proxy` container is in `ImagePullBackOff`, and/or its `manager` container crash-loops with `open /tmp/k8s-webhook-server/serving-certs/tls.crt: no such file or directory`.
@@ -291,11 +343,13 @@ kubectl -n meshery set env deploy/meshery-meshsync DEBUG=true
 ```bash
 kubectl -n meshery port-forward deploy/meshery-meshsync 11000:11000 &
 curl -sS http://127.0.0.1:11000/healthz    # liveness
-curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:11000/readyz   # 200 == connected to Broker
+curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:11000/readyz
 ```
 
 {{% alert color="info" title="What readiness does and does not mean" %}}
-<code>/readyz</code> returns <code>200</code> once MeshSync has connected to the Broker, <strong>not</strong> once its informer caches have finished priming. Immediately after a (re)start MeshSync may report ready while its cluster snapshot is still filling in. If Meshery shows a partial cluster right after a restart, give discovery a moment or trigger a fresh discovery with <code>kubectl -n meshery rollout restart deploy/meshery-meshsync</code>.
+For `/readyz` semantics and how to check current Broker connectivity, see the
+[Broker configuration guide][broker-config]. Allow discovery time after a
+restart for informer caches to populate.
 {{% /alert %}}
 
 **Verify the Broker is reachable from MeshSync.** On startup MeshSync runs a connectivity test against the Broker's monitoring endpoint (`http://<broker-host>:8222/connz`) before opening its NATS client; a failure here appears in the MeshSync logs and blocks readiness. Confirm the `BROKER_URL` value and that the Broker Service is reachable:

@@ -877,7 +877,11 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			return
 		}
 
-		if err := FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), sid); err != nil {
+		dbHandler := provider.GetGenericPersister()
+		unlock := lockDatabaseHandler(dbHandler)
+		err := FlushMeshSyncResourcesForCluster(dbHandler, sid)
+		unlock()
+		if err != nil {
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(mesheryInstanceUUID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			})
@@ -897,6 +901,14 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 		// Also add context name, as id is not helpful
 		persistAndPublish(builtEvent)
 	}
+}
+
+func lockDatabaseHandler(db *database.Handler) func() {
+	if db != nil && db.Mutex != nil {
+		db.Lock()
+		return db.Unlock
+	}
+	return func() {}
 }
 
 // FlushMeshSyncResourcesForCluster removes every MeshSync-discovered Kubernetes

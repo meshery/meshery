@@ -27,12 +27,17 @@ type testMeshsyncBroker struct {
 	subscriptions []chan *meshkitBroker.Message
 	// subjects counts the active subscriptions per subject, so a test can
 	// tell whether a handler is paused (unsubscribed) or receiving.
-	subjects map[string]int
-	closed   bool
+	subjects   map[string]int
+	closed     bool
+	published  int
+	publishErr error
 }
 
 func (b *testMeshsyncBroker) Publish(_ string, _ *meshkitBroker.Message) error {
-	return nil
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	b.published++
+	return b.publishErr
 }
 
 func (b *testMeshsyncBroker) PublishWithChannel(_ string, _ chan *meshkitBroker.Message) error {
@@ -146,7 +151,7 @@ func newTestMeshsyncHandler(t *testing.T, broker meshkitBroker.Handler, stopFunc
 
 	return NewMeshsyncDataHandler(
 		broker,
-		database.Handler{DB: db},
+		database.Handler{DB: db, Mutex: &sync.Mutex{}},
 		mockLogger,
 		nil,
 		uuid.Nil,
