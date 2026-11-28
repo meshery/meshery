@@ -76,7 +76,8 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 		query = utils.ApplyFilters(query, filter, []string{"connection_type", "sub_type"})
 	}
 
-	query = query.Order(order)
+	// id breaks ties in the requested column so offset pages never overlap or skip rows.
+	query = query.Order(order).Order("id asc")
 	count := int64(0)
 
 	connectionsFetched := []*connections.Connection{}

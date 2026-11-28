@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -393,13 +394,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	filter := q.Get("filter")
 	name := q.Get("name")
 
-	var pageSize int
-	if pageSizeStr == "all" {
-		pageSize = 100
-	} else {
-		pageSize, _ = strconv.Atoi(pageSizeStr)
-	}
-
+	pageSize, _ := strconv.Atoi(pageSizeStr)
 	if pageSize > 100 {
 		pageSize = 100
 	}
@@ -433,7 +428,12 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		Type:   q["type"],
 	}
 
-	connectionsPage, err := provider.GetConnections(req, user.ID.String(), page, pageSize, search, order, filter, queryParam.Status, queryParam.Kind, queryParam.Type, name)
+	var connectionsPage *connections.ConnectionPage
+	if pageSizeStr == "all" {
+		connectionsPage, err = getAllConnections(req, provider, user.ID.String(), search, order, filter, queryParam.Status, queryParam.Kind, queryParam.Type, name)
+	} else {
+		connectionsPage, err = provider.GetConnections(req, user.ID.String(), page, pageSize, search, order, filter, queryParam.Status, queryParam.Kind, queryParam.Type, name)
+	}
 	obj := "connections"
 
 	if err != nil {
@@ -447,6 +447,85 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		writeMeshkitError(w, models.ErrEncoding(err, obj), http.StatusInternalServerError)
 		return
 	}
+}
+
+// getAllConnections serves pageSize=all by walking the provider in pages of
+// the per-request maximum until totalCount rows have been read, so callers
+// that ask for every connection get every connection while each provider
+// request stays capped. The walk always orders by created_at, which status
+// updates never change, and leaves the status filter out of the provider
+// query, applying it here instead: a connection whose status changes
+// mid-walk can then neither move across a page boundary nor shift the
+// offsets of the rows after it. The result is sorted into the requested
+// order. Rows are de-duplicated by ID, and the walk stops on a full page that
+// adds no new rows, so a provider that ignores the page number cannot keep
+// it looping. A connection deleted during the walk can still shift one row
+// past a boundary and drop it from the result.
+func getAllConnections(req *http.Request, provider models.Provider, userID, search, order, filter string, status, kind, connType []string, name string) (*connections.ConnectionPage, error) {
+	const pageSize = 100
+	wantStatus := make(map[string]bool, len(status))
+	for _, st := range status {
+		wantStatus[st] = true
+	}
+	var all *connections.ConnectionPage
+	seen := map[core.Uuid]bool{}
+	for page := 0; ; page++ {
+		p, err := provider.GetConnections(req, userID, page, pageSize, search, "created_at asc", filter, nil, kind, connType, name)
+		if err != nil {
+			return nil, err
+		}
+		if p == nil {
+			return nil, ErrGetConnections(fmt.Errorf("provider returned no connections page"))
+		}
+		if all == nil {
+			first := *p
+			first.Connections = []*connections.Connection{}
+			all = &first
+		}
+		added := 0
+		for _, c := range p.Connections {
+			if c == nil || seen[c.ID] {
+				continue
+			}
+			seen[c.ID] = true
+			added++
+			if len(status) == 0 || wantStatus[string(c.Status)] {
+				all.Connections = append(all.Connections, c)
+			}
+		}
+		if len(p.Connections) < pageSize || added == 0 || len(seen) >= all.TotalCount {
+			break
+		}
+	}
+	sortConnections(all.Connections, order)
+	all.TotalCount = len(all.Connections)
+	all.Page = 0
+	all.PageSize = len(all.Connections)
+	return all, nil
+}
+
+// sortConnections orders rows the way ConnectionPersister would for the same
+// order parameter, falling back to its updated_at desc default.
+func sortConnections(conns []*connections.Connection, order string) {
+	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	if order == "" {
+		order = "updated_at desc"
+	}
+	col, dir, _ := strings.Cut(order, " ")
+	sort.SliceStable(conns, func(i, j int) bool {
+		a, b := conns[i], conns[j]
+		if dir == "desc" {
+			a, b = b, a
+		}
+		switch col {
+		case "name":
+			return a.Name < b.Name
+		case "created_at":
+			return a.CreatedAt.Before(b.CreatedAt)
+		default:
+			return a.UpdatedAt.Before(b.UpdatedAt)
+		}
+	})
 }
 
 // GetConnectionsByKind is an internal handler that fetches connections filtered by kind.
