@@ -37,6 +37,15 @@ mesheryctl design deploy -f [filepath] -s [source type]
 </div>
 </pre> 
 
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design deploy -f ./pattern.yml -s manifest
+
+</div>
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
@@ -44,7 +53,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
   -f, --file string          Path to design file
   -h, --help                 help for deploy
       --skip-save            Skip saving a design
-  -s, --source-type string   Type of source file (ex. manifest / compose / helm)
+  -s, --source-type string   Type of source file (ex. manifest / compose / helm / kustomize / design)
 
 </div>
 </pre>

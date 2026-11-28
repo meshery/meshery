@@ -81,7 +81,7 @@ func ErrDesignManifest() error {
 		[]string{"No manifest file path detected"},
 		[]string{"Manifest path not provided"},
 		[]string{"Provide the path to the design manifest.", `Usage: mesheryctl design import -f [file/url] -s [source-type]
-Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`})
+Example: mesheryctl design import -f ./pattern.yml -s manifest`})
 }
 
 func ErrDesignFileNotProvided() error {
@@ -90,7 +90,7 @@ func ErrDesignFileNotProvided() error {
 		[]string{"Design [File | File Path | URL] isn't specified"},
 		[]string{"[File | File Path | URL] not detected. The '-f' flag is missing or empty in the 'mesheryctl design import' command"},
 		[]string{"Provide the path to the design file using the '-f' flag. Ensure that the file path or URL is correctly specified and accessible.", `Usage: mesheryctl design import -f [file/url] -s [source-type]
-Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`})
+Example: mesheryctl design import -f ./pattern.yml -s manifest`})
 }
 
 func ErrDeployDesign() error {
@@ -108,7 +108,7 @@ func ErrDesignSourceType() error {
 		[]string{"Empty  source type detected"},
 		[]string{"Design source type not provided"},
 		[]string{"Provide one of the supported source type for the design to import.", `Usage: mesheryctl design import -f [file/url] -s [source-type]
-Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`})
+Example: mesheryctl design import -f ./pattern.yml -s manifest`})
 }
 
 func ErrViewDesignFlag() error {

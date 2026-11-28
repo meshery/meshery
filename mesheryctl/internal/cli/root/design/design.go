@@ -22,15 +22,13 @@ import (
 	"net/url"
 	"path"
 	"path/filepath"
-	"slices"
 	"strings"
 	"time"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/pattern/core"
 	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
+	schemaCore "github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/spf13/cobra"
 )
@@ -95,24 +93,71 @@ func init() {
 	DesignCmd.AddCommand(availableSubcommands...)
 }
 
+// ValidSourceTypes contains the schema-driven canonical source types from github.com/meshery/schemas/models/core.
+var ValidSourceTypes = []schemaCore.IaCFileTypes{
+	schemaCore.HelmChart,
+	schemaCore.DockerCompose,
+	schemaCore.K8sManifest,
+	schemaCore.K8sKustomize,
+	schemaCore.MesheryDesign,
+}
+
+// sourceTypesMap maps canonical schema values, shorthand aliases, and legacy titles
+// (all case-insensitive) to canonical schemaCore.IaCFileTypes.
+var sourceTypesMap = map[string]schemaCore.IaCFileTypes{
+	// Canonical schema values
+	string(schemaCore.HelmChart):     schemaCore.HelmChart,
+	string(schemaCore.DockerCompose): schemaCore.DockerCompose,
+	string(schemaCore.K8sManifest):   schemaCore.K8sManifest,
+	string(schemaCore.K8sKustomize):  schemaCore.K8sKustomize,
+	string(schemaCore.MesheryDesign): schemaCore.MesheryDesign,
+
+	// Shorthand aliases
+	"helm":      schemaCore.HelmChart,
+	"compose":   schemaCore.DockerCompose,
+	"docker":    schemaCore.DockerCompose,
+	"manifest":  schemaCore.K8sManifest,
+	"k8s":       schemaCore.K8sManifest,
+	"kustomize": schemaCore.K8sKustomize,
+	"design":    schemaCore.MesheryDesign,
+
+	// Human-readable titles (for backward compatibility)
+	"helm chart":          schemaCore.HelmChart,
+	"docker compose":      schemaCore.DockerCompose,
+	"kubernetes manifest": schemaCore.K8sManifest,
+	"k8s kustomize":       schemaCore.K8sKustomize,
+	"meshery design":      schemaCore.MesheryDesign,
+}
+
+// GetDesignSourceTypes returns the slice of canonical source type strings.
+func GetDesignSourceTypes() []string {
+	types := make([]string, 0, len(ValidSourceTypes))
+	for _, t := range ValidSourceTypes {
+		types = append(types, string(t))
+	}
+	return types
+}
+
+// ValidateAndNormalizeSourceType validates and normalizes a source type string into its canonical schemaCore.IaCFileTypes.
+func ValidateAndNormalizeSourceType(sType string) (schemaCore.IaCFileTypes, error) {
+	clean := strings.ToLower(strings.TrimSpace(sType))
+	if clean == "" {
+		return "", ErrInValidSource(sType, GetDesignSourceTypes())
+	}
+	if canonical, ok := sourceTypesMap[clean]; ok {
+		return canonical, nil
+	}
+	return "", ErrInValidSource(sType, GetDesignSourceTypes())
+}
+
 func getDesignSourceTypes() ([]string, error) {
-	apiResponse, err := api.Fetch[[]models.PatternSourceTypesAPIResponse]("api/pattern/types")
-	if err != nil {
-		return nil, err
-	}
-
-	sourceTypes := make([]string, 0, len(*apiResponse))
-	for _, sourceTypeResponse := range *apiResponse {
-		sourceTypes = append(sourceTypes, strings.ToLower(sourceTypeResponse.DesignType))
-	}
-
-	return sourceTypes, nil
+	return GetDesignSourceTypes(), nil
 }
 
 func retrieveProvidedSourceType(sType string, validDesignSourceTypes []string) (string, error) {
-	sType = strings.ToLower(sType)
-	if slices.Contains(validDesignSourceTypes, sType) {
-		return sType, nil
+	canonical, err := ValidateAndNormalizeSourceType(sType)
+	if err == nil {
+		return string(canonical), nil
 	}
 	return "", ErrInValidSource(sType, validDesignSourceTypes)
 }
@@ -152,7 +197,7 @@ func fetchDesignFromGithub(fileURL string) ([]byte, error) {
 		return nil, utils.ErrParseGithubFile(err, fileURL)
 	}
 
-	rawURL := repoURL
+	var rawURL string
 	if filePath != "" {
 		rawURL = strings.Replace(repoURL, "https://github.com/", "https://raw.githubusercontent.com/", 1) + "/" + filePath
 	} else {

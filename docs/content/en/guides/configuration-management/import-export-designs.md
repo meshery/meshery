@@ -48,7 +48,7 @@ mesheryctl design import -f <path-or-URL> [-n <design-name>] [-s <source-type>]
 
 - `-f` is a local path or a direct URL to the file.
 - `-n` names the design. Without it, `mesheryctl` uses the file name.
-- `-s` is optional because Meshery Server detects the format. If you pass it, use one of `"Kubernetes Manifest"`, `"Helm Chart"`, `"Docker Compose"`, or `"Design"` (case-insensitive).
+- `-s` is optional because Meshery Server detects the format. If you pass it, use canonical schema values (`k8s-manifest`, `helm-chart`, `docker-compose`, `k8s-kustomize`, `meshery-design`) or shorthand aliases (`manifest`, `helm`, `compose`, `kustomize`, `design`). Legacy titles like `"Kubernetes Manifest"` are also accepted (case-insensitive).
 
 URL imports are restricted to public HTTP(S) destinations and have bounded response size and request time. See [Remote URL imports]({{< ref "installation/production/security-hardening.md#remote-url-imports" >}}) for the limits.
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -104,7 +105,47 @@ func TestDeployCmd(t *testing.T) {
 			},
 			ExpectError:    true,
 			IsOutputGolden: false,
-			ExpectedError:  utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --source-type '%s': valid values are helm chart, docker compose, kubernetes manifest", invalidDesignSourceType)),
+			ExpectedError:  utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --source-type '%s': valid values are %s", invalidDesignSourceType, strings.Join(GetDesignSourceTypes(), ", "))),
+		},
+		{
+			Name:             "given valid file and shorthand source type when design deploy then design is deployed",
+			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "manifest"},
+			ExpectedResponse: "deploy.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/import",
+					Response:     "apply.designSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "deploy.designdeploy.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
+		{
+			Name:             "given valid file and canonical schema source type when design deploy then design is deployed",
+			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "k8s-manifest"},
+			ExpectedResponse: "deploy.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/import",
+					Response:     "apply.designSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "deploy.designdeploy.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
 		},
 		{
 			Name:             "given non-existent design name when design deploy then throw error",

@@ -57,7 +57,7 @@ mesheryctl design import -f [file/URL] -s [source-type] -n [name]
 
 mesheryctl design import -f design.tar
 mesheryctl design import -f design.yml -n design-name
-mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
+mesheryctl design import -f design.yml -s manifest -n design-name
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl design import -f [file/URL] -s [source-type] -n [name]\n"
@@ -93,14 +93,16 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 		}
 
 		switch sourceType {
-		case "Helm Chart":
+		case "Helm Chart", string(core.HelmChart):
 			sourceType = string(core.HelmChart)
-		case "Kubernetes Manifest":
+		case "Kubernetes Manifest", string(core.K8sManifest):
 			sourceType = string(core.K8sManifest)
-		case "Meshery Design":
+		case "Meshery Design", string(core.MesheryDesign):
 			sourceType = string(core.MesheryDesign)
-		case "Docker Compose":
+		case "Docker Compose", string(core.DockerCompose):
 			sourceType = string(core.DockerCompose)
+		case "K8s Kustomize", string(core.K8sKustomize):
+			sourceType = string(core.K8sKustomize)
 		}
 
 		pattern, err := importPattern(sourceType, file, patternURL)
@@ -250,7 +252,7 @@ func postDesignImport(patternURL string, jsonValues []byte) (*models.MesheryPatt
 
 func init() {
 	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to design file")
-	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm / design)")
+	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm / kustomize / design)")
 	importCmd.Flags().StringVarP(&name, "name", "n", "", "Name for the design file")
 }
 
