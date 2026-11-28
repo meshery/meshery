@@ -3423,7 +3423,7 @@ func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string, 
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		err = ErrClone(err, "filter")
+		err = httputil.WithProviderStatus(ErrClone(err, "filter"), resp.StatusCode)
 		l.Log.Error(err)
 		return nil, err
 	}
@@ -3440,7 +3440,7 @@ func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string, 
 		l.Log.Info("filter cloned from remote provider")
 		return bdr, nil
 	}
-	err = ErrClone(fmt.Errorf("error while cloning filter with id %s: %s", filterID, bdr), "filter")
+	err = httputil.WithProviderStatus(ErrClone(fmt.Errorf("error while cloning filter with id %s: %s", filterID, bdr), "filter"), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }

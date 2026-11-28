@@ -173,7 +173,11 @@ func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete
 		}
 	case "istio-vet":
 		{
-			if adapterURL == "meshery-istio:10000" {
+			// istio-vet is supported by the Istio adapter wherever it runs, so
+			// check the selected mesh rather than the adapter location, which
+			// varies by platform (meshery-istio:10000 under Docker Compose,
+			// localhost:10000 locally, a service DNS name on Kubernetes).
+			if strings.EqualFold(meshName, "ISTIO") {
 				data.Set("query", "istio-vet")
 				break
 			}
