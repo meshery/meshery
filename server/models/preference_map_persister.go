@@ -13,18 +13,12 @@ import (
 
 // MapPreferencePersister assists with persisting session in a badger store
 type MapPreferencePersister struct {
-	db *sync.Map
+	db  *sync.Map
+	log logger.Handler
 }
 
 // NewMapPreferencePersister creates a new MapPreferencePersister instance
 func NewMapPreferencePersister() (*MapPreferencePersister, error) {
-	return &MapPreferencePersister{
-		db: &sync.Map{},
-	}, nil
-}
-
-// ReadFromPersister reads the session data for the given userID
-func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, error) {
 	logLevel := viper.GetInt("LOG_LEVEL")
 	if viper.GetBool("DEBUG") {
 		logLevel = int(logrus.DebugLevel)
@@ -36,6 +30,15 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 	if err != nil {
 		logrus.Error(err)
 	}
+	return &MapPreferencePersister{
+		db:  &sync.Map{},
+		log: log,
+	}, nil
+}
+
+// ReadFromPersister reads the session data for the given userID
+func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, error) {
+	log := s.log
 	data := NewDefaultPreference()
 
 	if s.db == nil {

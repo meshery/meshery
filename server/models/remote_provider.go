@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"context"
+	"crypto/rsa"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -23,6 +24,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"golang.org/x/sync/singleflight"
 
 	"github.com/meshery/schemas/models/core"
 
@@ -94,6 +97,26 @@ type RemoteProvider struct {
 	TokenStoreMut sync.Mutex
 	Keys          []map[string]string
 
+	// keysMu protects Keys and parsedKeys across concurrent VerifyToken reads
+	// and UpdateJWKs refreshes.
+	keysMu     sync.RWMutex
+	parsedKeys map[string]*rsa.PublicKey
+	keysFlight singleflight.Group
+
+	// httpClientOnce lazily initializes a shared pooled HTTP client with
+	// bounded timeouts for outbound RemoteProvider requests.
+	httpClientOnce sync.Once
+	httpClient     *http.Client
+
+	// Short-TTL caches for token introspection and user profile lookups, paired
+	// with singleflight groups to collapse concurrent cache misses.
+	authCacheMu       sync.RWMutex
+	authCacheEpoch    uint64
+	introspectCache   map[string]time.Time
+	userProfileCache  map[string]cachedUserEntry
+	introspectFlight  singleflight.Group
+	userProfileFlight singleflight.Group
+
 	// mostRecentToken caches the last valid user token observed during the
 	// session so it can be reused at server shutdown to authenticate the
 	// deregistration call (DeleteMesheryConnection) and the subsequent token
@@ -150,11 +173,30 @@ type UserPref struct {
 	Preferences *Preference `json:"preferences,omitempty"`
 }
 
+// cachedUserEntry stores a cached User and its expiration time.
+// Note: user is shallow-copied on read (userCopy := entry.user in readUserProfileCacheOrEpoch
+// and *v.(*User) in GetUserDetails). Pointer, slice, and map fields on v1beta3.User
+// (Preferences, Organizations, Teams, Country, Region, RoleNames, Socials) share underlying
+// memory with the cached struct. Callers must treat the returned User as read-only and
+// must not mutate these nested fields in place.
+type cachedUserEntry struct {
+	user      User
+	expiresAt time.Time
+}
+
 const (
 	remoteUploadURL   = "/upload"
 	remoteDownloadURL = "/download"
 	refURLCookie      = "meshery_ref"
+
+	defaultAuthCacheTTL = 30 * time.Second
+	maxAuthCacheEntries = 4096
 )
+
+// remoteAuthRequestTimeout bounds auth/profile control-plane calls
+// (/introspect, /refresh, /revoke, /keys, and UsersProfile) without cutting off
+// large or slow /upload and /download transfers routed through DoRequest.
+var remoteAuthRequestTimeout = 15 * time.Second
 
 // Initialize stamps the minimum addressable metadata onto the
 // RemoteProvider so it can be inserted into the registration map and
@@ -745,12 +787,60 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 		return &User{}, ErrInvalidCapability("UserProfile", l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(UsersProfile)
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 	token, err := l.GetToken(req)
 	if err != nil {
 		return nil, err
+	}
+
+	effectiveToken := l.resolveEffectiveToken(token)
+	if effectiveToken == "" || effectiveToken == GlobalTokenForAnonymousResults {
+		return l.fetchUserDetails(effectiveToken)
+	}
+
+	cacheKey := tokenCacheKey(effectiveToken)
+	if user, ok := l.getCachedUserProfile(cacheKey); ok {
+		return user, nil
+	}
+
+	v, err, _ := l.userProfileFlight.Do(cacheKey, func() (interface{}, error) {
+		epoch, cachedUser, ok := l.readUserProfileCacheOrEpoch(cacheKey)
+		if ok {
+			return cachedUser, nil
+		}
+
+		user, fetchErr := l.fetchUserDetails(effectiveToken)
+		if fetchErr != nil {
+			return nil, fetchErr
+		}
+
+		activeToken := l.resolveEffectiveToken(effectiveToken)
+		activeKey := tokenCacheKey(activeToken)
+		ttl := l.authCacheTTLForToken(activeToken)
+		if ttl > 0 {
+			l.setCachedUserProfileIfEpoch(activeKey, user, ttl, epoch)
+			if activeKey != cacheKey {
+				l.setCachedUserProfileIfEpoch(cacheKey, user, ttl, epoch)
+			}
+		}
+
+		return user, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	userCopy := *v.(*User)
+	return &userCopy, nil
+}
+
+func (l *RemoteProvider) fetchUserDetails(token string) (*User, error) {
+	ep, _ := l.Capabilities.GetEndpointForFeature(UsersProfile)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	ctx, cancel := context.WithTimeout(context.Background(), remoteAuthRequestTimeout)
+	defer cancel()
+	cReq, err := http.NewRequestWithContext(ctx, http.MethodGet, remoteProviderURL.String(), nil)
+	if err != nil {
+		return nil, ErrFetch(err, "User Data", http.StatusInternalServerError)
 	}
 
 	resp, err := l.DoRequest(cReq, token)
@@ -767,6 +857,9 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 	if err != nil {
 		return nil, ErrDataRead(err, "User Data")
 	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, ErrFetch(fmt.Errorf("unexpected status code %d", resp.StatusCode), "User Data", resp.StatusCode)
+	}
 
 	up := &UserPref{
 		Preferences: &Preference{
@@ -779,15 +872,17 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 		return nil, ErrUnmarshal(err, "User Pref")
 	}
 
-	prefLocal, _ := l.ReadFromPersister(up.ID.String())
+	if l.SessionPreferencePersister != nil {
+		prefLocal, _ := l.ReadFromPersister(up.ID.String())
 
-	// Guard up.Preferences: up is pre-initialized with a non-nil Preferences, so
-	// an absent `preferences` field stays non-nil; but an explicit
-	// `"preferences": null` from the remote provider overwrites it to nil, and
-	// dereferencing UpdatedAt / RemoteProviderPreferences below would then panic.
-	// Nothing to persist in that case.
-	if up.Preferences != nil && (prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences)) {
-		_ = l.WriteToPersister(up.ID.String(), up.Preferences)
+		// Guard up.Preferences: up is pre-initialized with a non-nil Preferences, so
+		// an absent `preferences` field stays non-nil; but an explicit
+		// `"preferences": null` from the remote provider overwrites it to nil, and
+		// dereferencing UpdatedAt / RemoteProviderPreferences below would then panic.
+		// Nothing to persist in that case.
+		if up.Preferences != nil && (prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences)) {
+			_ = l.WriteToPersister(up.ID.String(), up.Preferences)
+		}
 	}
 
 	// Uncomment when Debug verbosity is figured out project wide. | @leecalcote
@@ -991,15 +1086,20 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 	// Step 2: If JWT has an expiry claim, introspect to confirm it's not revoked.
 	// Tokens without exp are infinite JWTs — skip introspection for those.
 	if (*jwtClaims)["exp"] != nil {
-		if introspectErr := l.introspectToken(ts); introspectErr != nil {
+		var expTime time.Time
+		if expFloat, ok := (*jwtClaims)["exp"].(float64); ok {
+			expTime = time.Unix(int64(expFloat), 0)
+		}
+		if introspectErr := l.introspectTokenCached(ts, expTime); introspectErr != nil {
 			l.Log.Info("Token introspection failed, attempting refresh")
+			l.invalidateTokenCache(ts)
 			// Introspection failed — attempt token refresh before giving up
 			newts, refreshErr := l.refreshToken(ts)
 			if refreshErr != nil {
 				l.Log.Error(ErrTokenRefresh(refreshErr))
 				return ErrTokenRefresh(refreshErr)
 			}
-			if introspectErr2 := l.introspectToken(newts); introspectErr2 != nil {
+			if introspectErr2 := l.introspectTokenCached(newts, l.tokenExpiry(newts)); introspectErr2 != nil {
 				return introspectErr2
 			}
 		}
@@ -1076,8 +1176,10 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 		// gets the token from the request headers
 		ck, err := req.Cookie(TokenCookieName)
 		if err == nil {
+			l.invalidateTokenCache(ck.Value)
 			err = l.revokeToken(ck.Value)
 		}
+		l.invalidateTokenCache(tokenString)
 		if err != nil {
 			l.Log.Error(ErrLogout(fmt.Errorf("token cannot be revoked:%v", err)))
 		}

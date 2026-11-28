@@ -2,9 +2,12 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"crypto/rsa"
+	"crypto/sha256"
 	"crypto/x509"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
@@ -102,7 +105,7 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	if err != nil {
 		return "", ErrMarshal(err, "refreshing token")
 	}
-	r, err := http.Post(l.RemoteProviderURL+"/refresh", "application/json; charset=utf-8", bytes.NewReader(jsonString))
+	r, err := l.postJSON(l.RemoteProviderURL+"/refresh", "application/json; charset=utf-8", jsonString)
 	if err != nil {
 		return "", err
 	}
@@ -165,10 +168,241 @@ func cloneRequestForRetry(req *http.Request) (*http.Request, error) {
 	return retryReq, nil
 }
 
-func (l *RemoteProvider) doRequestHelper(req *http.Request, token string) (*http.Response, error) {
-	c := &http.Client{
-		Transport: tracing.NewTransport(http.DefaultTransport), // Create tracing transport to pass tracing context
+func (l *RemoteProvider) getHTTPClient() *http.Client {
+	l.httpClientOnce.Do(func() {
+		var transport *http.Transport
+		if base, ok := http.DefaultTransport.(*http.Transport); ok {
+			transport = base.Clone()
+		} else {
+			transport = &http.Transport{}
+		}
+		transport.MaxIdleConns = 100
+		transport.MaxIdleConnsPerHost = 20
+		transport.IdleConnTimeout = 90 * time.Second
+		transport.TLSHandshakeTimeout = 10 * time.Second
+
+		// Do not set a blanket http.Client.Timeout or ResponseHeaderTimeout here:
+		// DoRequest shares this pooled transport for /upload and /download transfers,
+		// while auth/profile paths enforce remoteAuthRequestTimeout via request context.
+		l.httpClient = &http.Client{
+			Transport: tracing.NewTransport(transport),
+		}
+	})
+	return l.httpClient
+}
+
+type cancelOnCloseReadCloser struct {
+	io.ReadCloser
+	cancel context.CancelFunc
+}
+
+func (c *cancelOnCloseReadCloser) Close() error {
+	err := c.ReadCloser.Close()
+	c.cancel()
+	return err
+}
+
+func tokenCacheKey(token string) string {
+	sum := sha256.Sum256([]byte(token))
+	return hex.EncodeToString(sum[:])
+}
+
+func evictExpiredAndCap[V any](m map[string]V, now time.Time, expiryOf func(V) time.Time, maxEntries int) {
+	if len(m) < maxEntries {
+		return
 	}
+	for k, v := range m {
+		if !now.Before(expiryOf(v)) {
+			delete(m, k)
+		}
+	}
+	for k := range m {
+		if len(m) < maxEntries {
+			break
+		}
+		delete(m, k)
+	}
+}
+
+func (l *RemoteProvider) resolveEffectiveToken(token string) string {
+	l.TokenStoreMut.Lock()
+	defer l.TokenStoreMut.Unlock()
+	if refreshed := strings.TrimSpace(l.TokenStore[token]); refreshed != "" {
+		return refreshed
+	}
+	return token
+}
+
+func (l *RemoteProvider) tokenExpiry(tokenString string) time.Time {
+	dtoken, err := l.DecodeTokenData(tokenString)
+	if err != nil || dtoken == nil {
+		return time.Time{}
+	}
+	_, parts, err := new(jwt.Parser).ParseUnverified(dtoken.AccessToken, jwt.MapClaims{})
+	if err != nil || len(parts) < 2 {
+		return time.Time{}
+	}
+	rawClaims, err := base64.RawURLEncoding.DecodeString(parts[1])
+	if err != nil {
+		return time.Time{}
+	}
+	var claims map[string]interface{}
+	if err := json.Unmarshal(rawClaims, &claims); err != nil {
+		return time.Time{}
+	}
+	if expFloat, ok := claims["exp"].(float64); ok {
+		return time.Unix(int64(expFloat), 0)
+	}
+	return time.Time{}
+}
+
+func (l *RemoteProvider) authCacheTTLForToken(tokenString string) time.Duration {
+	return authCacheTTLFromExpiry(l.tokenExpiry(tokenString))
+}
+
+func authCacheTTLFromExpiry(expTime time.Time) time.Duration {
+	ttl := defaultAuthCacheTTL
+	if !expTime.IsZero() {
+		remaining := time.Until(expTime)
+		if remaining <= 0 {
+			return 0
+		}
+		if remaining < ttl {
+			ttl = remaining
+		}
+	}
+	return ttl
+}
+
+func (l *RemoteProvider) isIntrospectCached(cacheKey string) bool {
+	_, ok := l.readIntrospectCacheOrEpoch(cacheKey)
+	return ok
+}
+
+func (l *RemoteProvider) readIntrospectCacheOrEpoch(cacheKey string) (uint64, bool) {
+	now := time.Now()
+	l.authCacheMu.RLock()
+	epoch := l.authCacheEpoch
+	exp, ok := l.introspectCache[cacheKey]
+	l.authCacheMu.RUnlock()
+	return epoch, ok && now.Before(exp)
+}
+
+func (l *RemoteProvider) setIntrospectCacheIfEpoch(cacheKey string, ttl time.Duration, expectedEpoch uint64) {
+	if ttl <= 0 {
+		return
+	}
+	now := time.Now()
+	l.authCacheMu.Lock()
+	defer l.authCacheMu.Unlock()
+	if l.authCacheEpoch != expectedEpoch {
+		return
+	}
+	if l.introspectCache == nil {
+		l.introspectCache = make(map[string]time.Time)
+	}
+	if _, exists := l.introspectCache[cacheKey]; !exists {
+		evictExpiredAndCap(l.introspectCache, now, func(exp time.Time) time.Time { return exp }, maxAuthCacheEntries)
+	}
+	l.introspectCache[cacheKey] = now.Add(ttl)
+}
+
+func (l *RemoteProvider) introspectTokenCached(tokenString string, expTime time.Time) error {
+	cacheKey := tokenCacheKey(tokenString)
+	if l.isIntrospectCached(cacheKey) {
+		return nil
+	}
+
+	_, err, _ := l.introspectFlight.Do(cacheKey, func() (interface{}, error) {
+		epoch, ok := l.readIntrospectCacheOrEpoch(cacheKey)
+		if ok {
+			return nil, nil
+		}
+		if err := l.introspectToken(tokenString); err != nil {
+			return nil, err
+		}
+		l.setIntrospectCacheIfEpoch(cacheKey, authCacheTTLFromExpiry(expTime), epoch)
+		return nil, nil
+	})
+	return err
+}
+
+func (l *RemoteProvider) getCachedUserProfile(cacheKey string) (*User, bool) {
+	_, user, ok := l.readUserProfileCacheOrEpoch(cacheKey)
+	return user, ok
+}
+
+func (l *RemoteProvider) readUserProfileCacheOrEpoch(cacheKey string) (uint64, *User, bool) {
+	now := time.Now()
+	l.authCacheMu.RLock()
+	epoch := l.authCacheEpoch
+	entry, ok := l.userProfileCache[cacheKey]
+	l.authCacheMu.RUnlock()
+	if !ok || !now.Before(entry.expiresAt) {
+		return epoch, nil, false
+	}
+	userCopy := entry.user
+	return epoch, &userCopy, true
+}
+
+func (l *RemoteProvider) setCachedUserProfileIfEpoch(cacheKey string, user *User, ttl time.Duration, expectedEpoch uint64) {
+	if user == nil || ttl <= 0 {
+		return
+	}
+	now := time.Now()
+	l.authCacheMu.Lock()
+	defer l.authCacheMu.Unlock()
+	if l.authCacheEpoch != expectedEpoch {
+		return
+	}
+	if l.userProfileCache == nil {
+		l.userProfileCache = make(map[string]cachedUserEntry)
+	}
+	if _, exists := l.userProfileCache[cacheKey]; !exists {
+		evictExpiredAndCap(l.userProfileCache, now, func(e cachedUserEntry) time.Time { return e.expiresAt }, maxAuthCacheEntries)
+	}
+	l.userProfileCache[cacheKey] = cachedUserEntry{
+		user:      *user,
+		expiresAt: now.Add(ttl),
+	}
+}
+
+func (l *RemoteProvider) invalidateTokenCache(tokenString string) {
+	if strings.TrimSpace(tokenString) == "" {
+		return
+	}
+	keys := []string{tokenCacheKey(tokenString)}
+	if effective := l.resolveEffectiveToken(tokenString); effective != "" && effective != tokenString {
+		keys = append(keys, tokenCacheKey(effective))
+	}
+	l.authCacheMu.Lock()
+	l.authCacheEpoch++
+	for _, k := range keys {
+		delete(l.introspectCache, k)
+		delete(l.userProfileCache, k)
+	}
+	l.authCacheMu.Unlock()
+}
+
+func (l *RemoteProvider) postJSON(urlStr, contentType string, body []byte) (*http.Response, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), remoteAuthRequestTimeout)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, urlStr, bytes.NewReader(body))
+	if err != nil {
+		cancel()
+		return nil, err
+	}
+	req.Header.Set("Content-Type", contentType)
+	resp, err := l.getHTTPClient().Do(req)
+	if err != nil {
+		cancel()
+		return nil, err
+	}
+	resp.Body = &cancelOnCloseReadCloser{ReadCloser: resp.Body, cancel: cancel}
+	return resp, nil
+}
+
+func (l *RemoteProvider) doRequestHelper(req *http.Request, token string) (*http.Response, error) {
+	c := l.getHTTPClient()
 	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", token))
 	if token == GlobalTokenForAnonymousResults {
 		req.Header.Set("X-API-Key", token)
@@ -214,7 +448,13 @@ func (l *RemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.Token, 
 
 // UpdateJWKs - Updates Keys to the JWKS
 func (l *RemoteProvider) UpdateJWKs() error {
-	resp, err := http.Get(l.RemoteProviderURL + "/keys")
+	ctx, cancel := context.WithTimeout(context.Background(), remoteAuthRequestTimeout)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, l.RemoteProviderURL+"/keys", nil)
+	if err != nil {
+		return ErrJWKsKeys(err)
+	}
+	resp, err := l.getHTTPClient().Do(req)
 	if err != nil {
 		return ErrJWKsKeys(err)
 	}
@@ -234,28 +474,79 @@ func (l *RemoteProvider) UpdateJWKs() error {
 		return ErrNilJWKs
 	}
 
+	l.keysMu.Lock()
 	l.Keys = jwks
+	l.parsedKeys = make(map[string]*rsa.PublicKey)
+	l.keysMu.Unlock()
 
 	return nil
 }
 
-// GetJWK - Takes a keyId and returns the JWK
-func (l *RemoteProvider) GetJWK(kid string) (JWK, error) {
+func (l *RemoteProvider) findJWK(kid string) (JWK, bool) {
+	l.keysMu.RLock()
+	defer l.keysMu.RUnlock()
 	for _, key := range l.Keys {
 		if key["kid"] == kid {
-			return key, nil
+			return key, true
 		}
 	}
-	err := l.UpdateJWKs()
+	return nil, false
+}
+
+// GetJWK - Takes a keyId and returns the JWK
+func (l *RemoteProvider) GetJWK(kid string) (JWK, error) {
+	if key, ok := l.findJWK(kid); ok {
+		return key, nil
+	}
+	_, err, _ := l.keysFlight.Do("update-jwks", func() (interface{}, error) {
+		if _, ok := l.findJWK(kid); ok {
+			return nil, nil
+		}
+		return nil, l.UpdateJWKs()
+	})
 	if err != nil {
 		return nil, err
 	}
-	for _, key := range l.Keys {
-		if key["kid"] == kid {
-			return key, nil
-		}
+	if key, ok := l.findJWK(kid); ok {
+		return key, nil
 	}
 	return nil, ErrNilKeys
+}
+
+func (l *RemoteProvider) getParsedKey(kid string) (*rsa.PublicKey, error) {
+	l.keysMu.RLock()
+	if key, ok := l.parsedKeys[kid]; ok && key != nil {
+		l.keysMu.RUnlock()
+		return key, nil
+	}
+	l.keysMu.RUnlock()
+
+	keyJSON, err := l.GetJWK(kid)
+	if err != nil {
+		return nil, err
+	}
+	key, err := l.GenerateKey(keyJSON)
+	if err != nil {
+		return nil, err
+	}
+
+	l.storeParsedKeyIfCurrent(kid, keyJSON, key)
+
+	return key, nil
+}
+
+func (l *RemoteProvider) storeParsedKeyIfCurrent(kid string, keyJSON JWK, key *rsa.PublicKey) {
+	l.keysMu.Lock()
+	defer l.keysMu.Unlock()
+	if l.parsedKeys == nil {
+		l.parsedKeys = make(map[string]*rsa.PublicKey)
+	}
+	for _, current := range l.Keys {
+		if current["kid"] == kid && current["n"] == keyJSON["n"] && current["e"] == keyJSON["e"] {
+			l.parsedKeys[kid] = key
+			break
+		}
+	}
 }
 
 // GenerateKey - generate the actual key from the JWK
@@ -309,29 +600,27 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	if err != nil {
 		return nil, ErrPraseUnverified(err)
 	}
-	kid := tokenUP.Header["kid"].(string)
+	kid, ok := tokenUP.Header["kid"].(string)
+	if !ok || kid == "" {
+		return nil, ErrNilKeys
+	}
 
 	var jtk map[string]interface{}
-	t, _ := base64.RawStdEncoding.DecodeString(x[1])
+	t, _ := base64.RawURLEncoding.DecodeString(x[1])
 	if err := json.Unmarshal(t, &jtk); err != nil {
 		return nil, ErrPraseUnverified(err)
 	}
 
 	// TODO: Once hydra fixes https://github.com/ory/hydra/issues/1542
 	// we should rather configure hydra auth server to remove nbf field in the token
-	_, ok := jtk["exp"]
-	if ok {
-		exp := int64(jtk["exp"].(float64))
+	if expVal, ok := jtk["exp"].(float64); ok {
+		exp := int64(expVal)
 		if time.Now().Unix() > exp {
 			return nil, ErrTokenExpired
 		}
 	}
 
-	keyJSON, err := l.GetJWK(kid)
-	if err != nil {
-		return nil, err
-	}
-	key, err := l.GenerateKey(keyJSON)
+	key, err := l.getParsedKey(kid)
 	if err != nil {
 		return nil, err
 	}
@@ -376,7 +665,7 @@ func (l *RemoteProvider) revokeToken(tokenString string) error {
 		l.Log.Error(ErrUrlParse(err))
 		return err
 	}
-	r, err := http.Post(remoteURL.String(), "application/json", bytes.NewReader(body))
+	r, err := l.postJSON(remoteURL.String(), "application/json", body)
 
 	if err != nil {
 		err = ErrTokenRevoke(err)
@@ -388,6 +677,7 @@ func (l *RemoteProvider) revokeToken(tokenString string) error {
 	if r.StatusCode != http.StatusOK {
 		return ErrTokenRevoke(fmt.Errorf("failed to revoke token: status %d", r.StatusCode))
 	}
+	l.invalidateTokenCache(tokenString)
 	return nil
 }
 
@@ -411,7 +701,7 @@ func (l *RemoteProvider) introspectToken(tokenString string) error {
 		l.Log.Error(ErrUrlParse(err))
 		return err
 	}
-	r, err := http.Post(remoteURL.String(), "application/json", bytes.NewReader(body))
+	r, err := l.postJSON(remoteURL.String(), "application/json", body)
 	if err != nil {
 		err = ErrTokenIntrospect(err)
 		l.Log.Error(err)
