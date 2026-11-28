@@ -75,7 +75,13 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		filter.Greedy = true
 		filter.DisplayName = search
 	}
-	entities, count, _, _ := h.registryManager.GetEntities(filter)
+	entities, count, _, err := h.registryManager.GetEntities(filter)
+	if err != nil {
+		wrappedErr := ErrGetMeshModels(err)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
+		return
+	}
 	var modelDefs []_model.ModelDefinition
 	for _, model := range entities {
 		model, ok := model.(*_model.ModelDefinition)
@@ -120,7 +126,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 	returnAnnotationComp := queryParams.Get("annotations")
 
-	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ModelFilter{
+	entities, count, _, err := h.registryManager.GetEntities(&regv1beta1.ModelFilter{
 		Category:    cat,
 		Name:        model,
 		Version:     queryParams.Get("version"),
@@ -134,6 +140,12 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		Components:    queryParams.Get("components") == queryParamTrue,
 		Relationships: queryParams.Get("relationships") == queryParamTrue,
 	})
+	if err != nil {
+		wrappedErr := ErrGetMeshModels(err)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
+		return
+	}
 
 	var modelDefs []_model.ModelDefinition
 	for _, model := range entities {
