@@ -10,11 +10,13 @@ import { createActor } from 'xstate';
 
 type EventCallback = (event: unknown) => void;
 type ErrorCallback = (err: unknown) => void;
+type OpenCallback = () => void;
 
 const hoisted = vi.hoisted(() => ({
   subscriptionState: {
     onEvent: undefined as EventCallback | undefined,
     onError: undefined as ErrorCallback | undefined,
+    onOpen: undefined as OpenCallback | undefined,
     dispose: vi.fn(),
   },
   dispatch: vi.fn(),
@@ -25,9 +27,10 @@ const dispatch = hoisted.dispatch;
 const pushEvent = hoisted.pushEvent;
 
 vi.mock('lib/eventsSubscription', () => ({
-  subscribeToEvents: (next: EventCallback, error: ErrorCallback) => {
+  subscribeToEvents: (next: EventCallback, error: ErrorCallback, open: OpenCallback) => {
     hoisted.subscriptionState.onEvent = next;
     hoisted.subscriptionState.onError = error;
+    hoisted.subscriptionState.onOpen = open;
     return { dispose: hoisted.subscriptionState.dispose };
   },
 }));
@@ -79,6 +82,7 @@ describe('operationsCenter machine', () => {
     subscriptionState.dispose.mockClear();
     subscriptionState.onEvent = undefined;
     subscriptionState.onError = undefined;
+    subscriptionState.onOpen = undefined;
   });
 
   it('boots into idle after init and spawns the subscription actor', () => {
@@ -87,6 +91,7 @@ describe('operationsCenter machine', () => {
     expect(snap.value).toBe('idle');
     expect(subscriptionState.onEvent).toBeTypeOf('function');
     expect(subscriptionState.onError).toBeTypeOf('function');
+    expect(subscriptionState.onOpen).toBeTypeOf('function');
     actor.stop();
   });
 
@@ -94,6 +99,7 @@ describe('operationsCenter machine', () => {
     expect(OPERATION_CENTER_EVENTS).toEqual({
       EVENT_RECEIVED_FROM_SERVER: 'EVENT_RECEIVED_FROM_SERVER',
       ERROR_OCCURRED_IN_SUBSCRIPTION: 'ERROR_OCCURRED_IN_SUBSCRIPTION',
+      SUBSCRIPTION_OPENED: 'SUBSCRIPTION_OPENED',
     });
   });
 
@@ -886,6 +892,59 @@ describe('operationsCenter machine', () => {
       );
 
       actor.stop();
+    });
+
+    it('drops stale dedup state when the SSE stream reopens after a silent reconnect', () => {
+      const { actor, notify } = startActor();
+      const lifecycleEvent = (id: string) => ({
+        id,
+        category: 'connection',
+        action: 'update',
+        severity: 'informational',
+        actedUpon: 'conn-silent-reconnect',
+        description: 'kubernetes connection changed to connected',
+        metadata: { currentStatus: 'connected' },
+      });
+
+      actor.send({
+        type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+        data: { event: lifecycleEvent('evt-silent-1') },
+      });
+      expect(notify).toHaveBeenCalledTimes(1);
+
+      subscriptionState.onOpen?.();
+
+      actor.send({
+        type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+        data: { event: lifecycleEvent('evt-silent-2') },
+      });
+      expect(notify).toHaveBeenCalledTimes(2);
+      expect(pushEvent).toHaveBeenCalledTimes(2);
+
+      actor.stop();
+    });
+
+    it('evicts the least recently updated connection when the cache is full', () => {
+      const map = new Map<string, string>();
+      const lifecycleEvent = (connectionId: string, status: string) => ({
+        category: 'connection',
+        action: 'update',
+        severity: 'informational',
+        actedUpon: connectionId,
+        description: `kubernetes connection changed to ${status}`,
+        metadata: { currentStatus: status },
+      });
+
+      for (let i = 0; i < MAX_TRACKED_CONNECTIONS; i++) {
+        shouldNotifyEvent(lifecycleEvent(`conn-${i}`, 'connected'), map);
+      }
+      shouldNotifyEvent(lifecycleEvent('conn-0', 'disconnected'), map);
+
+      expect(shouldNotifyEvent(lifecycleEvent('conn-0', 'disconnected'), map)).toBe(false);
+      shouldNotifyEvent(lifecycleEvent(`conn-${MAX_TRACKED_CONNECTIONS}`, 'connected'), map);
+      expect(shouldNotifyEvent(lifecycleEvent('conn-1', 'connected'), map)).toBe(true);
+      expect(shouldNotifyEvent(lifecycleEvent('conn-0', 'disconnected'), map)).toBe(false);
+      expect(map.size).toBeLessThanOrEqual(MAX_TRACKED_CONNECTIONS);
     });
   });
 });

@@ -148,8 +148,9 @@ function trackConnectionStatus(
     connectionStates.delete(connectionId);
     return;
   }
+  connectionStates.delete(connectionId);
   // Enforce capacity to prevent unbounded growth in very large / long-running sessions
-  if (connectionStates.size >= MAX_TRACKED_CONNECTIONS && !connectionStates.has(connectionId)) {
+  if (connectionStates.size >= MAX_TRACKED_CONNECTIONS) {
     const oldestKey = connectionStates.keys().next().value;
     if (oldestKey) {
       connectionStates.delete(oldestKey);
@@ -241,6 +242,7 @@ export function shouldNotifyEvent(
 export const OPERATION_CENTER_EVENTS = {
   EVENT_RECEIVED_FROM_SERVER: 'EVENT_RECEIVED_FROM_SERVER',
   ERROR_OCCURRED_IN_SUBSCRIPTION: 'ERROR_OCCURRED_IN_SUBSCRIPTION',
+  SUBSCRIPTION_OPENED: 'SUBSCRIPTION_OPENED',
 };
 const events = {
   eventReceivedFromServer: (event) => ({
@@ -254,6 +256,9 @@ const events = {
     data: {
       error,
     },
+  }),
+  subscriptionOpened: () => ({
+    type: OPERATION_CENTER_EVENTS.SUBSCRIPTION_OPENED,
   }),
 };
 
@@ -277,6 +282,9 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
     (error) => {
       console.error('[operationsCenter] An error occurred in subscription to events', error);
       sendBack(events.errorOccurredInSubscription(error));
+    },
+    () => {
+      sendBack(events.subscriptionOpened());
     },
   );
 
@@ -349,6 +357,9 @@ export const operationsCenterActor = setup({
             stopChild('subscriptionActor'),
             'spawnSubscriptionActor',
           ],
+        },
+        [OPERATION_CENTER_EVENTS.SUBSCRIPTION_OPENED]: {
+          actions: ['resetConnectionStates'],
         },
       },
     },
