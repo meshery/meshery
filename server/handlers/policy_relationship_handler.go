@@ -96,6 +96,9 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (coremodelv1beta2.NonResolvedAlias, bool) {
 
 	for _, relationship := range relationships {
+		if relationship == nil {
+			continue
+		}
 		alias, ok := parseRelationshipToAlias(*relationship)
 		if !ok {
 			continue
@@ -112,6 +115,9 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 // getComponentById retrieves a component from the design by its ID
 func getComponentById(design pattern.PatternFile, id legacycoremodel.Uuid) *component.ComponentDefinition {
 	for _, comp := range design.Components {
+		if comp == nil {
+			continue
+		}
 		if comp.ID == id {
 			return comp
 		}
@@ -119,24 +125,54 @@ func getComponentById(design pattern.PatternFile, id legacycoremodel.Uuid) *comp
 	return nil
 }
 
-func ResolveAlias(nonResolvedAlias coremodelv1beta2.NonResolvedAlias, currentNonResolved coremodelv1beta2.NonResolvedAlias, path []string, design pattern.PatternFile) coremodelv1beta2.ResolvedAlias {
+func joinResolvedAliasPath(parentPath, childPath []string) []string {
+	extra := 0
+	if len(childPath) > 1 {
+		extra = len(childPath) - 1
+	}
+	combined := make([]string, 0, len(parentPath)+extra)
+	combined = append(combined, parentPath...)
+	if extra > 0 {
+		combined = append(combined, childPath[1:]...)
+	}
+	return combined
+}
+
+func resolveAlias(
+	nonResolvedAlias coremodelv1beta2.NonResolvedAlias,
+	currentNonResolved coremodelv1beta2.NonResolvedAlias,
+	path []string,
+	design pattern.PatternFile,
+	visited map[legacycoremodel.Uuid]bool,
+) coremodelv1beta2.ResolvedAlias {
+	if visited[currentNonResolved.ImmediateParentId] {
+		return coremodelv1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
+	}
+
 	parentComponent := getComponentById(design, currentNonResolved.ImmediateParentId)
 	if parentComponent == nil {
 		return coremodelv1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
 	}
 
 	parentAlias, ok := ParseComponentToAlias(*parentComponent, design.Relationships)
-
 	if !ok {
-
 		return coremodelv1beta2.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
-
 	}
+
+	visited[currentNonResolved.ImmediateParentId] = true
 
 	// slicing from 1 to remove "configuration" prefix when building the resolved ref
 	// so we dont get something like configuration,spec,configuration , containers , _
-	// appending to aprentAlias.ImmediateReffiled , than path , because this a recursive function it will otherwise build the path in reverse
-	return ResolveAlias(nonResolvedAlias, parentAlias, append(parentAlias.ImmediateRefFieldPath, path[1:]...), design)
+	// appending to parentAlias.ImmediateRefFieldPath, then path, because this recursive function would otherwise build the path in reverse
+	return resolveAlias(nonResolvedAlias, parentAlias, joinResolvedAliasPath(parentAlias.ImmediateRefFieldPath, path), design, visited)
+}
+
+func ResolveAlias(nonResolvedAlias coremodelv1beta2.NonResolvedAlias, currentNonResolved coremodelv1beta2.NonResolvedAlias, path []string, design pattern.PatternFile) coremodelv1beta2.ResolvedAlias {
+	visited := map[legacycoremodel.Uuid]bool{
+		nonResolvedAlias.AliasComponentId:   true,
+		currentNonResolved.AliasComponentId: true,
+	}
+	return resolveAlias(nonResolvedAlias, currentNonResolved, path, design, visited)
 }
 
 func ResolveAliasesInDesign(design pattern.PatternFile) map[string]coremodelv1beta2.ResolvedAlias {
@@ -144,6 +180,9 @@ func ResolveAliasesInDesign(design pattern.PatternFile) map[string]coremodelv1be
 	resolvedAliases := make(map[string]coremodelv1beta2.ResolvedAlias)
 
 	for _, relationship := range design.Relationships {
+		if relationship == nil {
+			continue
+		}
 		nonResolvedalias, ok := parseRelationshipToAlias(*relationship)
 		if ok {
 			resolvedAlias := ResolveAlias(nonResolvedalias, nonResolvedalias, nonResolvedalias.ImmediateRefFieldPath, design)
