@@ -165,3 +165,24 @@ button {
   border: 1px solid var(--color-secondary-light);
 }
 
+body:not(.dark-mode) {
+  .td-content a {
+    color: var(--sidebar-text-color);
+
+    > * {
+      color: inherit;
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: var(--brand-color);
+    }
+  }
+
+  .td-content p a,
+  .td-content li a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
