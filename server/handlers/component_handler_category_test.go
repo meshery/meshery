@@ -16,6 +16,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 )
 
 // registerCategoryTestModel registers the model before its component and
@@ -103,15 +104,18 @@ func TestGetModelsByCategoryEmbedsDefinitionsWhenAsked(t *testing.T) {
 					require.Len(t, page.Models[0].Components, query.components)
 					require.Len(t, page.Models[0].Relationships, query.relationships)
 
+					child := &gorm.Statement{DB: db.DB}
+					require.NoError(t, child.Parse(query.child))
 					require.NoError(t, db.Migrator().DropTable(query.child))
 					rw = httptest.NewRecorder()
 					tc.handler(h, rw, req)
 					require.Equal(t, http.StatusInternalServerError, rw.Code)
-					var failure struct {
-						Error string `json:"error"`
-					}
+					var failure map[string]any
 					require.NoError(t, json.Unmarshal(rw.Body.Bytes(), &failure))
-					require.Equal(t, "could not get meshmodel entities", failure.Error)
+					require.Equal(t, "could not get meshmodel entities", failure["error"])
+					require.Equal(t, "meshery-server-1106", failure["code"])
+					require.NotContains(t, failure, "longDescription")
+					require.NotContains(t, rw.Body.String(), child.Schema.Table)
 				})
 			}
 		})
