@@ -18,7 +18,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -54,11 +56,19 @@ mesheryctl filter import /path/to/filter.wasm --wasm-config [filepath|string]
 // Remote URL imports do not support --name.
 mesheryctl filter import /path/to/filter.wasm --name [string]
 	`,
-	Args: cobra.MinimumNArgs(0),
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return ErrFilterURIRequired(cmd.Name())
+		}
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("expected 1 argument (URI or file path), received %d\n\nUsage: %s\nRun '%s --help' to see detailed help message", len(args), cmd.UseLine(), cmd.CommandPath()))
+		}
+		if strings.TrimSpace(args[0]) == "" {
+			return ErrFilterURIRequired(cmd.Name())
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// for formatting errors
-		subCmdUsed := cmd.Use
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
@@ -66,15 +76,11 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 
 		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/filter"
 
-		if len(args) == 0 {
-			return ErrFilterURIRequired(subCmdUsed)
-		}
-
 		body := models.MesheryFilterRequestBody{
 			Save: true,
 		}
 
-		uri := args[0]
+		uri := strings.TrimSpace(args[0])
 		isRemoteURL := utils.IsValidUrl(uri)
 		if isRemoteURL && name != "" {
 			return errors.New("--name is only supported for local filter file imports")

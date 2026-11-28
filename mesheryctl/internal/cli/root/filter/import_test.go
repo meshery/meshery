@@ -94,3 +94,46 @@ func TestImportCmdRemoteURLRejectsName(t *testing.T) {
 	err := FilterCmd.Execute()
 	require.ErrorContains(t, err, "--name is only supported for local filter file imports")
 }
+
+func TestImportCmdArgsValidation(t *testing.T) {
+	utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	defer utils.ResetCommandFlags(FilterCmd, t)
+
+	tests := []struct {
+		name           string
+		args           []string
+		expectedSubstr string
+	}{
+		{
+			name:           "missing URI argument",
+			args:           []string{"import"},
+			expectedSubstr: "No URI provided for filter import",
+		},
+		{
+			name:           "whitespace-only URI argument",
+			args:           []string{"import", "   "},
+			expectedSubstr: "No URI provided for filter import",
+		},
+		{
+			name:           "extra positional arguments",
+			args:           []string{"import", "filter1.wasm", "filter2.wasm"},
+			expectedSubstr: "expected 1 argument (URI or file path), received 2",
+		},
+		{
+			name:           "whitespace-only first argument with extra positional argument",
+			args:           []string{"import", "   ", "filter.wasm"},
+			expectedSubstr: "expected 1 argument (URI or file path), received 2",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			FilterCmd.SetArgs(tc.args)
+			err := FilterCmd.Execute()
+			require.Error(t, err)
+			require.ErrorContains(t, err, tc.expectedSubstr)
+		})
+	}
+}
