@@ -128,7 +128,7 @@ func validateWorkload(comp map[string]interface{}, wc component.ComponentDefinit
 	// Validate the json against the schema
 	errs, err := jsonschema.ValidateBytes(context.TODO(), schemaByt, jsonSettings)
 	if err != nil {
-		return fmt.Errorf("error occurred during schema validation: %s", err)
+		return err
 	}
 	if len(errs) > 0 {
 		return fmt.Errorf("invalid settings: %s", errs)

@@ -3,6 +3,7 @@ package jsonschema
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
 	"testing"
 )
@@ -55,6 +56,9 @@ func TestValidateBytes_InvalidSchema(t *testing.T) {
 	_, err := ValidateBytes(context.Background(), []byte(`{invalid-json`), []byte(`{}`))
 	if err == nil {
 		t.Fatalf("expected unmarshal error for invalid schema, got nil")
+	}
+	if !strings.Contains(err.Error(), "failed to create schema") {
+		t.Fatalf("expected error to contain 'failed to create schema', got: %v", err)
 	}
 }
 
