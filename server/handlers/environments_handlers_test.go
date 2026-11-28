@@ -9,8 +9,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/v1beta3/environment"
 	"gorm.io/gorm"
 )
@@ -182,7 +184,7 @@ func (m *environmentFailingProvider) SaveEnvironment(_ *http.Request, _ *environ
 	return nil, m.err
 }
 
-func (m *environmentFailingProvider) GetEnvironments(_, _, _, _, _, _, _ string) ([]byte, error) {
+func (m *environmentFailingProvider) GetEnvironments(_, _, _, _, _, _, _, _ string) ([]byte, error) {
 	return nil, m.err
 }
 
@@ -578,6 +580,74 @@ func TestIsNotFoundError(t *testing.T) {
 			got := isNotFoundError(tc.err, tc.status)
 			if got != tc.want {
 				t.Errorf("isNotFoundError(%v, %d) = %v, want %v", tc.err, tc.status, got, tc.want)
+			}
+		})
+	}
+}
+
+// TestGetEnvironmentsHandler_FiltersByPurpose pins the documented `purpose`
+// query parameter of getEnvironments: it narrows the page to that purpose, and
+// a legacy row whose purpose is empty counts as `user`.
+func TestGetEnvironmentsHandler_FiltersByPurpose(t *testing.T) {
+	db, err := database.New(database.Options{Engine: database.SQLITE, Filename: ":memory:"})
+	if err != nil {
+		t.Fatalf("open database: %v", err)
+	}
+	if err := db.AutoMigrate(environment.Environment{}); err != nil {
+		t.Fatalf("migrate environments: %v", err)
+	}
+
+	orgID := uuid.Must(uuid.NewV4())
+	seed := map[string]environment.EnvironmentPurpose{
+		"admin-env":   environment.EnvironmentPurposeAdministrative,
+		"invalid-env": "User",
+		"user-env":    environment.EnvironmentPurposeUser,
+		"legacy-env":  "",
+	}
+	for name, purpose := range seed {
+		env := environment.Environment{ID: uuid.Must(uuid.NewV4()), Name: name, OrganizationID: orgID, Purpose: purpose}
+		if err := db.Create(&env).Error; err != nil {
+			t.Fatalf("seed %s: %v", name, err)
+		}
+		// gorm substitutes the column default for a zero value, so write the legacy empty purpose explicitly.
+		if err := db.Model(&env).Update("purpose", string(purpose)).Error; err != nil {
+			t.Fatalf("set purpose of %s: %v", name, err)
+		}
+	}
+
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := &models.DefaultLocalProvider{EnvironmentPersister: &models.EnvironmentPersister{DB: &db}}
+
+	cases := []struct {
+		query string
+		want  []string
+	}{
+		{"&purpose=administrative", []string{"admin-env"}},
+		{"&purpose=user", []string{"legacy-env", "user-env"}},
+		{"&purpose=User", nil},
+		{"", []string{"admin-env", "invalid-env", "legacy-env", "user-env"}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.query, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, "/api/environments?pagesize=all&order=name+asc&orgId="+orgID.String()+tc.query, nil)
+			req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+			rec := httptest.NewRecorder()
+
+			h.GetEnvironments(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusOK {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusOK, rec.Body.String())
+			}
+			var page environment.EnvironmentPage
+			if err := json.Unmarshal(rec.Body.Bytes(), &page); err != nil {
+				t.Fatalf("decode response: %v", err)
+			}
+			got := make([]string, 0, len(page.Environments))
+			for _, env := range page.Environments {
+				got = append(got, env.Name)
+			}
+			if strings.Join(got, ",") != strings.Join(tc.want, ",") || page.TotalCount != len(tc.want) {
+				t.Errorf("environments = %v (totalCount %d), want %v", got, page.TotalCount, tc.want)
 			}
 		})
 	}

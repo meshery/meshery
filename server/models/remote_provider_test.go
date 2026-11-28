@@ -48,7 +48,7 @@ func TestRemoteProvider_OutboundOrgIdIsCanonical(t *testing.T) {
 			feature:  PersistEnvironments,
 			endpoint: "/environments",
 			invoke: func(t *testing.T, l *RemoteProvider) {
-				if _, err := l.GetEnvironments("test-token", "0", "10", "", "", "", orgID); err != nil {
+				if _, err := l.GetEnvironments("test-token", "0", "10", "", "", "", orgID, ""); err != nil {
 					t.Fatalf("GetEnvironments: %v", err)
 				}
 			},
@@ -155,6 +155,27 @@ func TestRemoteProvider_OutboundOrgIdIsCanonical(t *testing.T) {
 				t.Errorf("expected path %q, got %q", tc.wantPath, got.path)
 			}
 		})
+	}
+}
+
+// TestRemoteProvider_GetEnvironmentsForwardsPurpose asserts the documented
+// getEnvironments `purpose` filter reaches the remote provider.
+func TestRemoteProvider_GetEnvironmentsForwardsPurpose(t *testing.T) {
+	var gotPurpose atomic.Value
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		gotPurpose.Store(r.URL.Query().Get("purpose"))
+		_, _ = w.Write([]byte(`{}`))
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+	provider.Capabilities = Capabilities{{Feature: PersistEnvironments, Endpoint: "/environments"}}
+
+	if _, err := provider.GetEnvironments("test-token", "0", "10", "", "", "", "org-123", "administrative"); err != nil {
+		t.Fatalf("GetEnvironments: %v", err)
+	}
+	if got, _ := gotPurpose.Load().(string); got != "administrative" {
+		t.Errorf("outbound purpose = %q, want %q", got, "administrative")
 	}
 }
 

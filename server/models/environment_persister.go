@@ -28,8 +28,11 @@ func (ep *EnvironmentPersister) fetchUserDetails() *User {
 	return LocalProviderUser()
 }
 
-// GetEnvironments returns all of the environments
-func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, pageSize, filter string) ([]byte, error) {
+// GetEnvironments returns a page of Local Provider environments. An empty
+// purpose leaves the list unfiltered by purpose. The user filter includes rows
+// with an empty or NULL purpose for compatibility with legacy data. An unknown
+// nonempty purpose matches no rows.
+func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, pageSize, filter, purpose string) ([]byte, error) {
 	// Sanitize the order input
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order == "" {
@@ -46,6 +49,16 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
 		query = query.Where("lower(name) like ?", like)
+	}
+
+	switch purpose {
+	case "":
+	case string(environment.EnvironmentPurposeUser):
+		query = query.Where("(purpose = ? OR purpose = '' OR purpose IS NULL)", purpose)
+	case string(environment.EnvironmentPurposeAdministrative):
+		query = query.Where("purpose = ?", purpose)
+	default:
+		query = query.Where("1 = 0")
 	}
 
 	dynamicKeys := []string{"owner", "organization_id"}

@@ -5721,7 +5721,7 @@ func (l *RemoteProvider) ShareFilter(req *http.Request) (int, error) {
 	return resp.StatusCode, nil
 }
 
-func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, filter, orgID string) ([]byte, error) {
+func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, filter, orgID, purpose string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		l.Log.Warn(ErrOperationNotAvailable)
 
@@ -5748,6 +5748,9 @@ func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, f
 	}
 	if orgID != "" {
 		q.Set("orgId", orgID)
+	}
+	if purpose != "" {
+		q.Set("purpose", purpose)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 

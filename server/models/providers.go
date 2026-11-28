@@ -746,7 +746,7 @@ type Provider interface {
 	UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error)
 	DeleteUserCredential(req *http.Request, credentialID core.Uuid) (*Credential, error)
 
-	GetEnvironments(token, page, pageSize, search, order, filter, orgID string) ([]byte, error)
+	GetEnvironments(token, page, pageSize, search, order, filter, orgID, purpose string) ([]byte, error)
 	GetEnvironmentByID(req *http.Request, environmentID, orgID string) ([]byte, error)
 	SaveEnvironment(req *http.Request, env *environment.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error)
 	DeleteEnvironment(req *http.Request, environmentID string) ([]byte, error)

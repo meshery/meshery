@@ -178,7 +178,7 @@ func TestDefaultLocalProvider_GetEnvironments_InvalidPagination(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			_, err := provider.GetEnvironments("", tc.page, tc.pageSize, "", "", "", orgID)
+			_, err := provider.GetEnvironments("", tc.page, tc.pageSize, "", "", "", orgID, "")
 			if err == nil {
 				t.Fatalf("expected an error for page=%q pagesize=%q, got nil", tc.page, tc.pageSize)
 			}
