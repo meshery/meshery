@@ -74,6 +74,9 @@ func TestValidateMesh(t *testing.T) {
 	// the sync fixture. Read it from the fixture so the test does not depend
 	// on the fixture's order or contents.
 	expectedAdapter := adapterLocationFromFixture(t, filepath.Join(fixturesDir, "sync.golden"), "ISTIO")
+	// sync.compose.golden lists the adapters under their Docker Compose
+	// hostnames, so --adapter meshery-istio resolves without a positional mesh.
+	composeIstioAdapter := adapterLocationFromFixture(t, filepath.Join(fixturesDir, "sync.compose.golden"), "ISTIO")
 
 	syncURL := testContext.BaseURL + "/api/system/sync"
 	operationURL := testContext.BaseURL + "/api/system/adapter/operation"
@@ -84,6 +87,13 @@ func TestValidateMesh(t *testing.T) {
 		URLs             []utils.MockURL
 		ExpectedResponse string
 		ExpectError      bool
+		// query expected in the adapter operation POST body
+		ExpectedQuery string
+		// adapter expected in the adapter operation POST body; defaults to the
+		// ISTIO location in sync.golden
+		ExpectedAdapter string
+		// number of GET requests expected on the sync endpoint; defaults to 1
+		ExpectedSyncCalls int
 		// number of POST requests expected on the adapter operation endpoint
 		ExpectedOperationCalls int
 	}{
@@ -105,6 +115,7 @@ func TestValidateMesh(t *testing.T) {
 				},
 			},
 			ExpectedResponse:       "validate.istio.output.golden",
+			ExpectedQuery:          "smi_conformance",
 			ExpectedOperationCalls: 1,
 		},
 		{
@@ -151,6 +162,81 @@ func TestValidateMesh(t *testing.T) {
 			},
 			ExpectedResponse:       "validate.operation-error.output.golden",
 			ExpectError:            true,
+			ExpectedQuery:          "smi_conformance",
+			ExpectedOperationCalls: 1,
+		},
+		{
+			// The Istio adapter in sync.golden is at localhost:10000, not the
+			// Docker Compose hostname meshery-istio:10000, so this guards against
+			// istio-vet being tied to one deployment's adapter location.
+			Name: "Validate Istio with the istio-vet spec at a non-default location",
+			Args: []string{"validate", "istio", "--adapter", "meshery-istio", "--spec", "istio-vet"},
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          syncURL,
+					Response:     "sync.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          operationURL,
+					Response:     "deploy.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectedResponse:       "validate.istio.output.golden",
+			ExpectedQuery:          "istio-vet",
+			ExpectedOperationCalls: 1,
+		},
+		{
+			Name: "Reject the istio-vet spec for a mesh other than Istio",
+			Args: []string{"validate", "linkerd", "--adapter", "meshery-linkerd", "--spec", "istio-vet"},
+			// The operation responder is registered so that a request that
+			// should have been rejected would be counted.
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          syncURL,
+					Response:     "sync.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          operationURL,
+					Response:     "deploy.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectedResponse:       "validate.istio-vet-non-istio.output.golden",
+			ExpectError:            true,
+			ExpectedOperationCalls: 0,
+		},
+		{
+			// With no positional mesh, validate's PreRunE derives meshName from
+			// the adapter whose host matches --adapter, so istio-vet must work on
+			// that path too. This path reads the session data twice: once to
+			// resolve --adapter and once more in validateAdapter.
+			Name: "Validate with the istio-vet spec when the mesh comes from --adapter",
+			Args: []string{"validate", "--adapter", "meshery-istio", "--spec", "istio-vet"},
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          syncURL,
+					Response:     "sync.compose.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          operationURL,
+					Response:     "deploy.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectedResponse:       "validate.istio.output.golden",
+			ExpectedQuery:          "istio-vet",
+			ExpectedAdapter:        composeIstioAdapter,
+			ExpectedSyncCalls:      2,
 			ExpectedOperationCalls: 1,
 		},
 	}
@@ -158,6 +244,18 @@ func TestValidateMesh(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
 			resetValidateFlags(t)
+			// meshName is package state that the no-positional-mesh path only
+			// fills when empty, as it is in a fresh mesheryctl process; clear it
+			// so one case's mesh cannot leak into the next.
+			meshName = ""
+			wantAdapter := expectedAdapter
+			if tc.ExpectedAdapter != "" {
+				wantAdapter = tc.ExpectedAdapter
+			}
+			wantSyncCalls := 1
+			if tc.ExpectedSyncCalls != 0 {
+				wantSyncCalls = tc.ExpectedSyncCalls
+			}
 			httpmock.Reset()
 
 			for _, mock := range tc.URLs {
@@ -179,8 +277,8 @@ func TestValidateMesh(t *testing.T) {
 							if !assert.NoError(t, err) {
 								return nil, err
 							}
-							assert.Equal(t, "smi_conformance", form.Get("query"))
-							assert.Equal(t, expectedAdapter, form.Get("adapter"))
+							assert.Equal(t, tc.ExpectedQuery, form.Get("query"))
+							assert.Equal(t, wantAdapter, form.Get("adapter"))
 						}
 						return httpmock.NewStringResponse(mock.ResponseCode, apiResponse), nil
 					})
@@ -198,9 +296,9 @@ func TestValidateMesh(t *testing.T) {
 				httpmock.GetCallCountInfo()["POST "+operationURL],
 				"unexpected number of adapter operation requests")
 			// Cobra checks required flags after PreRunE, so the sync request
-			// runs exactly once in every case, including the missing-spec one.
-			assert.Equal(t, 1, httpmock.GetCallCountInfo()["GET "+syncURL],
-				"expected exactly one adapter sync request")
+			// runs in every case, including the missing-spec one.
+			assert.Equal(t, wantSyncCalls, httpmock.GetCallCountInfo()["GET "+syncURL],
+				"unexpected number of adapter sync requests")
 
 			if tc.ExpectError {
 				require.Error(t, err)
