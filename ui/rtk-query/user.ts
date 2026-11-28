@@ -499,9 +499,13 @@ export const useUpdateSelectedWorkspaceMutation = () => {
   const [updateUserPref, response] = useUpdateUserPrefMutation();
 
   const updateSelectedWorkspace = async (orgId, workspaceId) => {
+    if (!userPrefs) {
+      throw new Error('User preferences are not available');
+    }
+
     return await updateUserPref({
       selectedWorkspaceForOrganizations: {
-        ...(userPrefs?.selectedWorkspaceForOrganizations || {}),
+        ...(userPrefs.selectedWorkspaceForOrganizations || {}),
         [orgId]: workspaceId,
       },
     }).unwrap();

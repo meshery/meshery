@@ -1,9 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { EVENT_TYPES } from 'lib/event-types';
 
-const mockNotify = vi.fn();
+const mockNotifyApiError = vi.fn();
 const mockUpdateSelectedWorkspace = vi.fn();
 const mockSetSelectedWorkspace = vi.fn();
 const mockOpenModal = vi.fn();
@@ -34,7 +33,7 @@ vi.mock('@/utils/context/WorkspaceModalContextProvider', async () => {
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 
 vi.mock('@/utils/hooks/useNotification', () => ({
-  useNotification: () => ({ notify: mockNotify }),
+  useNotificationHandlers: () => ({ notifyApiError: mockNotifyApiError }),
 }));
 
 vi.mock('@/rtk-query/user', () => ({
@@ -152,9 +151,15 @@ describe('WorkspaceSwitcher', () => {
   });
 
   it('reverts workspace selection, skips opening modal, and notifies error when updateSelectedWorkspace rejects', async () => {
-    mockUpdateSelectedWorkspace.mockRejectedValueOnce({
-      data: { message: 'Forbidden' },
-    });
+    const meshkitError = {
+      status: 403,
+      meshkit: {
+        code: 'meshery-server-1001',
+        message: 'Workspace access denied',
+        suggestedRemediation: ['Verify organization permissions'],
+      },
+    };
+    mockUpdateSelectedWorkspace.mockRejectedValueOnce(meshkitError);
     renderSwitcher();
 
     const select = screen.getByTestId('workspace-select');
@@ -166,13 +171,7 @@ describe('WorkspaceSwitcher', () => {
       expect(mockSetSelectedWorkspace).toHaveBeenNthCalledWith(2, mockWorkspaces[0]);
       expect(mockOpenModal).not.toHaveBeenCalled();
       expect(mockOnMobileSelect).not.toHaveBeenCalled();
-      expect(mockNotify).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: 'Failed to switch workspace',
-          event_type: EVENT_TYPES.ERROR,
-          details: 'Forbidden',
-        }),
-      );
+      expect(mockNotifyApiError).toHaveBeenCalledWith(meshkitError, 'Failed to switch workspace');
     });
   });
 
@@ -188,7 +187,7 @@ describe('WorkspaceSwitcher', () => {
       expect(mockSetSelectedWorkspace).toHaveBeenCalledTimes(1);
       expect(mockSetSelectedWorkspace).toHaveBeenCalledWith(mockWorkspaces[1]);
       expect(mockOpenModal).toHaveBeenCalledWith(true);
-      expect(mockNotify).not.toHaveBeenCalled();
+      expect(mockNotifyApiError).not.toHaveBeenCalled();
     });
   });
 });

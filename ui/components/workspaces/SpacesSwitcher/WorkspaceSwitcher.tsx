@@ -24,8 +24,7 @@ import {
   useGetSelectedWorkspace,
   useUpdateSelectedWorkspaceMutation,
 } from '@/rtk-query/user';
-import { useNotification } from '@/utils/hooks/useNotification';
-import { EVENT_TYPES } from 'lib/event-types';
+import { useNotificationHandlers } from '@/utils/hooks/useNotification';
 import { BottomSheetInlineSelect } from './BottomSheetInlineSelect';
 
 export const HoverMenuItem = styled(MenuItem)(({ theme }) => ({
@@ -74,7 +73,7 @@ function WorkspaceSwitcher({ open, fromMobileView, expanded, onExpandedChange, o
 
   const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
     useUpdateSelectedWorkspaceMutation();
-  const { notify } = useNotification();
+  const { notifyApiError } = useNotificationHandlers();
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -104,11 +103,7 @@ function WorkspaceSwitcher({ open, fromMobileView, expanded, onExpandedChange, o
       }
     } catch (error) {
       setSelectedWorkspace(previousWorkspace);
-      notify({
-        message: 'Failed to switch workspace',
-        event_type: EVENT_TYPES.ERROR,
-        details: error?.data?.message || error?.message || 'An unexpected error occurred',
-      });
+      notifyApiError(error, 'Failed to switch workspace');
     }
   };
 
