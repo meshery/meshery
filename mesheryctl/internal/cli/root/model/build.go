@@ -35,11 +35,14 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/model/bui
 mesheryctl model build [model-name]
 mesheryctl model build [model-name]/[model-version]
     `,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 || strings.TrimSpace(args[0]) == "" {
 			return ErrModelBuildFromStrings(errBuildUsage)
 		}
-
+		args[0] = strings.TrimSpace(args[0])
+		return nil
+	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		{
 			err := mesheryctlflags.ValidateCmdFlags(cmd, &cmdModelBuildFlagsProvided)
 			if err != nil {
@@ -115,7 +118,7 @@ mesheryctl model build [model-name]/[model-version]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// validation (if any) is done in PreRunE (so args certainly has one element)
+		// validation is done in Args and PreRunE (so args certainly has one element)
 		name, version := buildModelParseModelInput(args[0])
 
 		// validation done above that args contains exactly one argument
@@ -152,13 +155,14 @@ func init() {
 	buildModelCmd.Flags().StringVarP(&cmdModelBuildFlagsProvided.Path, "path", "p", ".", "(optional) target directory to get model from (default: current dir)")
 }
 
-// parseModelInput parses the user input into model name and version.
+// buildModelParseModelInput parses the user input into model name and version.
 // The input can be `model-name` or `model-name/version`.
 func buildModelParseModelInput(input string) (name, version string) {
+	input = strings.TrimSpace(input)
 	parts := strings.Split(input, "/")
-	name = parts[0]
+	name = strings.TrimSpace(parts[0])
 	if len(parts) > 1 {
-		version = parts[1]
+		version = strings.TrimSpace(parts[1])
 	}
 	return
 }
