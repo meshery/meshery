@@ -41,12 +41,20 @@ const TipsCarousel = ({ tips }) => {
       <Typography style={{ marginTop: '1rem' }}>{tips[String(activeStep)]}</Typography>
       <div style={{ textAlign: 'center' }}>
         {tips.map((tip, index) => (
-          <span
+          <button
             key={index}
+            type="button"
             onClick={() => handleClick(index)}
+            aria-label={`Show tip ${index + 1} of ${tips.length}`}
+            aria-current={index === activeStep ? 'true' : undefined}
             style={{
               cursor: 'pointer',
+              background: 'none',
+              border: 'none',
+              padding: '0.25rem',
+              borderRadius: '0.25rem',
               fontSize: '3rem',
+              lineHeight: 1,
               marginRight: '0.25rem',
               color:
                 index === activeStep
@@ -55,7 +63,7 @@ const TipsCarousel = ({ tips }) => {
             }}
           >
             &bull;
-          </span>
+          </button>
         ))}
       </div>
     </Box>
