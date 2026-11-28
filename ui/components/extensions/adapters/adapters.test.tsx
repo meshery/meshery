@@ -164,6 +164,62 @@ describe('Adapters component', () => {
     expect(switches[0]).toBeChecked();
   });
 
+  it('handles sync payload omitting meshAdapters without throwing or showing error toast', async () => {
+    fetchSystemSyncMock.mockReturnValue({
+      unwrap: () => Promise.resolve({}),
+    });
+
+    await act(async () => {
+      render(<Adapters />);
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(screen.getAllByText(/Meshery Adapter for Istio/i).length).toBeGreaterThan(0);
+    expect(notifyMock).not.toHaveBeenCalled();
+    expect(updateProgressMock).toHaveBeenLastCalledWith({ showProgress: false });
+    const switches = screen.getAllByTestId('switch-OperatorSwitch');
+    switches.forEach((sw) => expect(sw).not.toBeChecked());
+  });
+
+  it('handles sync payload with null meshAdapters without throwing or showing error toast', async () => {
+    fetchSystemSyncMock.mockReturnValue({
+      unwrap: () => Promise.resolve({ meshAdapters: null }),
+    });
+
+    await act(async () => {
+      render(<Adapters />);
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(notifyMock).not.toHaveBeenCalled();
+    expect(updateProgressMock).toHaveBeenLastCalledWith({ showProgress: false });
+    const switches = screen.getAllByTestId('switch-OperatorSwitch');
+    switches.forEach((sw) => expect(sw).not.toBeChecked());
+  });
+
+  it('handles null sync result without throwing or showing error toast', async () => {
+    fetchSystemSyncMock.mockReturnValue({
+      unwrap: () => Promise.resolve(null),
+    });
+
+    await act(async () => {
+      render(<Adapters />);
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(notifyMock).not.toHaveBeenCalled();
+    expect(updateProgressMock).toHaveBeenLastCalledWith({ showProgress: false });
+  });
+
   it('passes the deploy payload through to changeAdapterState on toggle', async () => {
     changeAdapterStateMock.mockImplementation((cb: any) => cb(null, new Error('fail')));
 

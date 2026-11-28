@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { isNil, isUndefined } from 'lodash';
+import { isNil } from 'lodash';
 import { CardContainer, FrontSideDescription, ImageWrapper } from '../../../css/icons.styles';
 import { ADAPTER_STATUS, adaptersList, AdaptersListType } from './constants';
 import changeAdapterState from '@/graphql/mutations/AdapterStatusMutation';
@@ -22,7 +22,7 @@ interface MeshAdapter {
 }
 
 interface SyncResult {
-  meshAdapters: MeshAdapter[];
+  meshAdapters?: MeshAdapter[] | null;
 }
 
 const Adapters: React.FC = () => {
@@ -52,12 +52,13 @@ const Adapters: React.FC = () => {
       .then((result: SyncResult) => {
         showLoader && updateProgress({ showProgress: false });
 
-        if (!isUndefined(result)) {
+        if (!isNil(result)) {
           // Deep copying to avoid mutability.
           const currentAdaptersList = structuredClone(adaptersList);
+          const meshAdapters = Array.isArray(result.meshAdapters) ? result.meshAdapters : [];
 
-          result.meshAdapters.forEach((element) => {
-            const adapterId = element.name;
+          meshAdapters.forEach((element) => {
+            const adapterId = element?.name;
             if (adapterId && currentAdaptersList[adapterId]) {
               currentAdaptersList[adapterId].enabled = true;
               currentAdaptersList[adapterId].url = element.adapter_location;
