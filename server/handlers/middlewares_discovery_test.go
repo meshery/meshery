@@ -10,7 +10,9 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/models/events"
 	"gorm.io/driver/sqlite"
@@ -285,6 +287,40 @@ func TestReportBackgroundDiscoveryResolvesSharedConnection(t *testing.T) {
 		if row.ID == unrelated.ID && row.ResolvedAt != nil {
 			t.Errorf("unrelated condition %s was resolved", row.ID)
 		}
+	}
+}
+
+func TestHealthyDiscoveryRetriesUnresolvedCondition(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	owner := uuid.Must(uuid.NewV4())
+	observer := uuid.Must(uuid.NewV4())
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name: "shared", Kind: "kubernetes", ConnectionType: "platform", Status: connections.CONNECTED,
+	})
+	if err != nil {
+		t.Fatalf("save connection: %v", err)
+	}
+	key := models.ConditionKey("k8s-connection", saved.ID.String(), machines.ConditionUnreachable)
+	opened, err := provider.PersistEvent(*events.NewEvent().FromOwner(owner).WithCategory("connection").
+		WithAction("update").WithSeverity(events.Error).WithCorrelationKey(key).Build(), "")
+	if err != nil {
+		t.Fatalf("open condition: %v", err)
+	}
+	stream, stop := h.config.EventBroadcaster.Subscribe(owner)
+	defer stop()
+	healthy := events.NewEvent().FromOwner(observer).ActedUpon(saved.ID).WithCategory("connection").
+		WithAction("update").WithSeverity(events.Informational).
+		WithMetadata(map[string]interface{}{"currentStatus": machines.CONNECTED}).Build()
+	h.reportBackgroundDiscovery(provider, "", observer, healthy, nil)
+	got := receiveEvent(t, stream)
+	if got.ID != opened.Event.ID || got.ResolvedAt == nil {
+		t.Fatalf("healthy discovery published %+v", got)
+	}
+	h.reportBackgroundDiscovery(provider, "", observer, healthy, nil)
+	select {
+	case duplicate := <-stream:
+		t.Errorf("repeated recovery published %+v", duplicate)
+	default:
 	}
 }
 

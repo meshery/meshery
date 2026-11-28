@@ -607,6 +607,20 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 // Recurrence: it is counted on the open condition without notifying anyone. A
 // routine successful Discovery reports nothing.
 func (h *Handler) reportBackgroundDiscovery(provider models.Provider, token string, userUUID core.Uuid, event *events.Event, err error) {
+	if err == nil && event != nil && event.ResolvedAt == nil {
+		if _, local := provider.(*models.DefaultLocalProvider); local {
+			if status, ok := eventCurrentStatus(event); ok && status == machines.CONNECTED && !event.ActedUpon.IsNil() {
+				// A later healthy observation retries a resolution whose earlier
+				// transaction failed after the connection status was saved.
+				key := models.ConditionKey("k8s-connection", event.ActedUpon.String(), machines.ConditionUnreachable)
+				observedAt := event.CreatedAt
+				event.CorrelationKey = &key
+				event.ResolvedAt = &observedAt
+				event.Severity = events.Success
+				event.Description = "kubernetes connection is reachable again"
+			}
+		}
+	}
 	if provider == nil || event == nil || (err == nil && event.ResolvedAt == nil && !machines.IsRecurrence(event, err)) {
 		return
 	}
@@ -726,12 +740,23 @@ func (h *Handler) reportMachineOutcome(provider models.Provider, token string, u
 					h.config.EventBroadcaster.Publish(*resolved[i].Owner, &resolved[i])
 				}
 			}
-			// DeleteConnection records a Resolves event, so a deletion with no
-			// open condition takes this branch and would otherwise be dropped.
-			// Persist that event. A discovery recovery is not a deletion: when
-			// it closes nothing, a repeat must stay a no-op.
-			if len(resolved) == 0 && isConnectionDeletion(event) {
-				h.persistAndPublish(provider, token, userID, event)
+			// A deletion still needs a record for the deleting user when only
+			// another owner's condition was closed, or a newer failure was skipped.
+			if isConnectionDeletion(event) {
+				ownerResolved := false
+				for i := range resolved {
+					ownerResolved = ownerResolved || *resolved[i].Owner == userID
+				}
+				if !ownerResolved {
+					persisted, persistErr := localProvider.PersistStandaloneConnectionDeletion(*event)
+					if persistErr != nil {
+						if h.log != nil {
+							h.log.Error(persistErr)
+						}
+					} else if persisted.Event != nil && h.config != nil && h.config.EventBroadcaster != nil {
+						h.config.EventBroadcaster.Publish(userID, persisted.Event)
+					}
+				}
 			}
 			return
 		}

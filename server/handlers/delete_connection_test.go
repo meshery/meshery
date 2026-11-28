@@ -357,11 +357,84 @@ func TestDeleteConnectionResolvesOpenConditionWithoutASecondEvent(t *testing.T) 
 	}
 
 	var rows []events.Event
-	if err := provider.EventsPersister.DB.Where("correlation_key = ?", key).Find(&rows).Error; err != nil {
+	if err := provider.EventsPersister.DB.Find(&rows).Error; err != nil {
 		t.Fatalf("read events: %v", err)
 	}
 	if len(rows) != 1 || rows[0].ID != opened.Event.ID || rows[0].ResolvedAt == nil || rows[0].Action != "update" {
 		t.Fatalf("conditions after delete = %+v, want the original row %s resolved", rows, opened.Event.ID)
+	}
+}
+
+func TestDeleteConnectionRecordsDeletingUserWhenAnotherOwnerHadTheCondition(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	deletingUser := &models.User{ID: uuid.Must(uuid.NewV4())}
+	otherOwner := uuid.Must(uuid.NewV4())
+	saved, err := provider.ConnectionPersister.SaveConnection(&connections.Connection{
+		Name: "shared", Kind: "kubernetes", ConnectionType: "platform",
+		Status: connections.ConnectionStatus(machines.NOTFOUND),
+	})
+	if err != nil {
+		t.Fatalf("save connection: %v", err)
+	}
+	key := kubernetes.UnreachableConditionKey(saved.ID)
+	opened, err := provider.PersistEvent(*events.NewEvent().FromOwner(otherOwner).WithCategory("connection").
+		WithAction("update").WithSeverity(events.Error).WithCorrelationKey(key).Build(), "")
+	if err != nil {
+		t.Fatalf("open condition: %v", err)
+	}
+	deletingEvents, stop := h.config.EventBroadcaster.Subscribe(deletingUser.ID)
+	defer stop()
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/integrations/connections/"+saved.ID.String(), nil)
+	req = mux.SetURLVars(req, map[string]string{"connectionId": saved.ID.String()})
+	rec := httptest.NewRecorder()
+	h.DeleteConnection(rec, req, nil, deletingUser, provider)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("delete status = %d", rec.Code)
+	}
+	var rows []events.Event
+	if err := provider.EventsPersister.DB.Find(&rows).Error; err != nil {
+		t.Fatalf("read events: %v", err)
+	}
+	if len(rows) != 2 {
+		t.Fatalf("got %d rows, want resolved condition and deletion", len(rows))
+	}
+	for _, row := range rows {
+		if row.ID == opened.Event.ID && row.ResolvedAt == nil {
+			t.Error("other owner's condition remains open")
+		}
+	}
+	if got := receiveEvent(t, deletingEvents); got.Owner == nil || *got.Owner != deletingUser.ID || got.Action != "delete" {
+		t.Fatalf("deleting user's event = %+v", got)
+	}
+}
+
+func TestDeletionKeepsNewerConditionOpen(t *testing.T) {
+	h, provider := newDeleteConnectionFixture(t)
+	owner := uuid.Must(uuid.NewV4())
+	key := kubernetes.UnreachableConditionKey(uuid.Must(uuid.NewV4()))
+	deletedAt := time.Now().UTC().Add(-time.Minute)
+	observedAt := deletedAt.Add(30 * time.Second)
+	opened, err := provider.PersistEvent(*events.NewEvent().FromOwner(owner).WithCategory("connection").
+		WithAction("update").WithSeverity(events.Error).WithCorrelationKey(key).
+		WithLastSeenAt(observedAt).Build(), "")
+	if err != nil {
+		t.Fatalf("open condition: %v", err)
+	}
+	deletion := events.NewEvent().FromOwner(owner).WithCategory("connection").WithAction("delete").
+		WithSeverity(events.Success).Resolves(key, deletedAt).Build()
+	h.reportMachineOutcome(provider, "", owner, deletion, nil)
+	var rows []events.Event
+	if err := provider.EventsPersister.DB.Find(&rows).Error; err != nil {
+		t.Fatalf("read events: %v", err)
+	}
+	if len(rows) != 2 {
+		t.Fatalf("got %d rows, want open condition and deletion", len(rows))
+	}
+	for _, row := range rows {
+		if row.ID == opened.Event.ID && row.ResolvedAt != nil {
+			t.Fatal("deletion closed a newer failure")
+		}
 	}
 }
 

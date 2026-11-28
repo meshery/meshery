@@ -649,6 +649,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			event.Category = "connection"
 			event.Severity = events.Success
 			if sm.CurrentState == DELETED {
+				event.Action = "delete"
 				event.Description = fmt.Sprintf("%s connection was deleted", sm.Name)
 			} else {
 				event.Description = fmt.Sprintf("%s connection is reachable again and changed to %s", sm.Name, sm.CurrentState)

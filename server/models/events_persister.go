@@ -325,6 +325,30 @@ func (l *DefaultLocalProvider) ResolveConnectionCondition(event events.Event) ([
 	return resolved, nil
 }
 
+// PersistStandaloneConnectionDeletion records a deletion for its owner even
+// when a newer failure with the same key must remain open.
+func (l *DefaultLocalProvider) PersistStandaloneConnectionDeletion(event events.Event) (PersistedEvent, error) {
+	correlatedEventsMu.Lock()
+	defer correlatedEventsMu.Unlock()
+
+	event = PrepareEventForPersistence(withServerSource(event), l.EventsPersister.Log)
+	if replayed, ok, err := l.EventsPersister.replayedEvent(event); err != nil {
+		return PersistedEvent{}, ErrPersistEvent(err)
+	} else if ok {
+		return replayed, nil
+	}
+	err := l.EventsPersister.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&event).Error; err != nil {
+			return err
+		}
+		return bindIdempotencyKey(tx, event, event.ID)
+	})
+	if err != nil {
+		return PersistedEvent{}, ErrPersistEvent(err)
+	}
+	return PersistedEvent{Event: &event, Disposition: EventCreated}, nil
+}
+
 // persistCorrelatedEvent applies the createEvent correlation steps to an event
 // for which correlatesEvent holds, in one transaction, and returns the event as
 // stored.
