@@ -61,12 +61,12 @@ mesheryctl model delete [model-name]
 		// model whose name contains the argument, and a single such match is selected
 		// without a prompt, so a model the user did not name would be deleted.
 		// Versions of the named model still go through the selection prompt.
-		selectedModel, err := promptModelSelection("", fmt.Sprintf("%s/%s", modelsApiPath, url.PathEscape(modelArg)))
+		selectedModel, err := promptModelSelection("", fmt.Sprintf("%s/%s", modelsApiPath, url.PathEscape(modelArg)), &modelArg)
 		if err != nil {
 			return err
 		}
 
-		if selectedModel == nil {
+		if selectedModel == nil || selectedModel.Name == "" {
 			utils.Log.Infof("No model(s) found with the name: %s", modelArg)
 			return nil
 		}

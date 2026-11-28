@@ -113,21 +113,36 @@ func TestDeleteModelByNameDeletesOnlyThatModel(t *testing.T) {
 
 	tests := []struct {
 		name        string
+		arg         string
 		registered  []fakeRegistryModel
 		wantDeletes []string
 		wantOutput  string
 	}{
 		{
 			name:        "given only a model whose name contains the requested name when running model delete then nothing is deleted",
+			arg:         "kubernetes",
 			registered:  []fakeRegistryModel{secretGenerator},
 			wantDeletes: nil,
 			wantOutput:  "No model(s) found with the name: kubernetes",
 		},
 		{
 			name:        "given the requested model and another model containing its name when running model delete then only the requested model is deleted",
+			arg:         "kubernetes",
 			registered:  []fakeRegistryModel{secretGenerator, kubernetes},
 			wantDeletes: []string{kubernetesID},
 			wantOutput:  fmt.Sprintf("Model 'Kubernetes' (ID: %s) has been deleted", kubernetesID),
+		},
+		{
+			name:       "normalized argument matches another model route",
+			arg:        "./kubernetes",
+			registered: []fakeRegistryModel{kubernetes},
+			wantOutput: "No model(s) found with the name: ./kubernetes",
+		},
+		{
+			name:       "normalized argument matches the model list route",
+			arg:        ".",
+			registered: []fakeRegistryModel{kubernetes},
+			wantOutput: "No model(s) found with the name: .",
 		},
 	}
 
@@ -138,9 +153,9 @@ func TestDeleteModelByNameDeletesOnlyThatModel(t *testing.T) {
 			out := utils.SetupMeshkitLoggerTesting(t, false)
 			defer utils.ResetCommandFlags(ModelCmd, t)
 
-			ModelCmd.SetArgs([]string{"delete", "kubernetes"})
+			ModelCmd.SetArgs([]string{"delete", tt.arg})
 			if err := ModelCmd.Execute(); err != nil {
-				t.Fatalf("model delete kubernetes returned error: %v", err)
+				t.Fatalf("model delete %q returned error: %v", tt.arg, err)
 			}
 
 			if got := deletes(); fmt.Sprint(got) != fmt.Sprint(tt.wantDeletes) {

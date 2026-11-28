@@ -52,12 +52,12 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 		var err error
 
 		if !utils.IsUUID(modelNameOrId) {
-			selectedModel, err = promptModelSelection(modelNameOrId, modelsApiPath)
+			selectedModel, err = promptModelSelection(modelNameOrId, modelsApiPath, nil)
 		} else {
 			queryParams := url.Values{}
 			queryParams.Add("id", modelNameOrId)
 			modelViewApiPath := fmt.Sprintf("%s?%s", modelsApiPath, queryParams.Encode())
-			selectedModel, err = promptModelSelection("", modelViewApiPath)
+			selectedModel, err = promptModelSelection("", modelViewApiPath, nil)
 		}
 
 		if err != nil {

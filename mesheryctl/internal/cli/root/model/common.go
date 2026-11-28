@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -11,7 +12,7 @@ import (
 
 var modelsApiPath = "api/registry/models"
 
-func promptModelSelection(modelSearchTerm string, apiPath string) (*model.ModelDefinition, error) {
+func promptModelSelection(modelSearchTerm string, apiPath string, exactName *string) (*model.ModelDefinition, error) {
 	selectedModel := new(model.ModelDefinition)
 	err := display.PromptAsyncPagination(
 		display.DisplayDataAsync{
@@ -27,7 +28,13 @@ func promptModelSelection(modelSearchTerm string, apiPath string) (*model.ModelD
 			if data.TotalCount != nil {
 				total = int64(*data.TotalCount)
 			}
-			return *data.Models, total
+			rows := *data.Models
+			if exactName != nil {
+				rows = slices.DeleteFunc(rows, func(row model.ModelDefinition) bool {
+					return row.Name == "" || row.Name != *exactName
+				})
+			}
+			return rows, total
 		},
 		selectedModel,
 	)
