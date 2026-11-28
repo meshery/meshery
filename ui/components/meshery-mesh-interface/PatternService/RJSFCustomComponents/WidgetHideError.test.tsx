@@ -15,7 +15,17 @@ vi.mock('@sistent/sistent', () => {
   return {
     IconButton: ({ children, ...props }: any) => <button {...props}>{children}</button>,
     InputAdornment: ({ children }: any) => <div>{children}</div>,
-    TextField: ({ value, onChange, error, id, disabled, type, InputProps, slotProps, children }: any) => (
+    TextField: ({
+      value,
+      onChange,
+      error,
+      id,
+      disabled,
+      type,
+      InputProps,
+      slotProps,
+      children,
+    }: any) => (
       <div data-testid="textfield-wrapper">
         <input
           data-testid="textfield"

@@ -2,7 +2,7 @@ import React from 'react';
 import {
   IconButton,
   InputAdornment,
-  ListItemText,
+  Box,
   MenuItem,
   TextField,
   InputLabel,
@@ -20,6 +20,17 @@ import {
 } from '@rjsf/utils';
 import { safeDisplayValue } from '../helper';
 import { Checkbox } from '@sistent/sistent';
+// Sistent does not export MUI's slot composition utility.
+// eslint-disable-next-line no-restricted-imports
+import { mergeSlotProps } from '@mui/material/utils';
+
+const resolveSlot = (props, ownerState) =>
+  (typeof props === 'function' ? props(ownerState) : props) || {};
+
+// Resolve each callback before merging: MUI's callback merger also copies
+// ownerState.className, which can apply input sizing to an unrelated slot.
+const mergeSlots = (ownerState, ...sources) =>
+  sources.reduce((merged, source) => mergeSlotProps(resolveSlot(source, ownerState), merged), {});
 
 export default function CustomSelectWidget({
   schema,
@@ -62,9 +73,7 @@ export default function CustomSelectWidget({
 
   const emptyValue = isMultiple ? [] : '';
   const isEmpty =
-    typeof value === 'undefined' ||
-    (isMultiple && value.length < 1) ||
-    (!isMultiple && value === emptyValue);
+    value == null || (isMultiple && value.length < 1) || (!isMultiple && value === emptyValue);
 
   const _onChange = ({ target: { value } }) => {
     let safeValue = value;
@@ -80,6 +89,8 @@ export default function CustomSelectWidget({
     onFocus(id, enumOptionsValueForIndex(value, enumOptions, optEmptyVal));
   const selectedIndexes = enumOptionsIndexForValue(value, enumOptions, isMultiple);
   const theme = useTheme();
+  const showError = !hideError && rawErrors?.length > 0;
+  const hasDescription = typeof schema?.description === 'string' && !!schema.description;
 
   const labelContent = labelValue(label, hideLabel || !label, false);
   const safeLabel = safeDisplayValue(labelContent);
@@ -100,7 +111,7 @@ export default function CustomSelectWidget({
         autoFocus={autofocus}
         placeholder={placeholder}
         label={xRjsfGridArea ? '' : safeLabel}
-        error={!hideError && rawErrors?.length > 0}
+        error={showError}
         onChange={_onChange}
         onBlur={_onBlur}
         onFocus={_onFocus}
@@ -108,29 +119,25 @@ export default function CustomSelectWidget({
         slotProps={{
           ...incomingSlotProps,
           input: (ownerState: any) => {
-            const resolvedIncoming =
-              typeof incomingSlotProps.input === 'function'
-                ? incomingSlotProps.input(ownerState)
-                : incomingSlotProps.input || {};
-            const resolvedLegacy =
-              typeof legacyInputProps === 'function'
-                ? legacyInputProps(ownerState)
-                : legacyInputProps || {};
-            const callerEndAdornment = resolvedIncoming.endAdornment || resolvedLegacy.endAdornment;
-            const hasWidgetAdornment =
-              rawErrors?.length > 0 ||
-              (typeof schema?.description === 'string' && !!schema.description);
+            const inputProps = mergeSlots(ownerState, legacyInputProps, incomingSlotProps.input);
+            const callerEndAdornment = inputProps.endAdornment;
+            const hasWidgetAdornment = showError || hasDescription;
 
             const widgetAdornment = hasWidgetAdornment ? (
-              <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
-                {!hideError && rawErrors?.length > 0 && (
+              <InputAdornment position="end" sx={{ flexShrink: 0, ml: 0.5 }}>
+                {showError && (
                   <CustomTextTooltip
                     bgColor={theme.palette.error.main}
                     flag={formContext?.overrideFlag}
                     title={rawErrors?.join('  ')}
-                    interactive={true}
+                    disableInteractive={false}
                   >
-                    <IconButton component="span" size="small">
+                    <IconButton
+                      component="span"
+                      size="small"
+                      aria-label="Validation errors"
+                      tabIndex={0}
+                    >
                       <ErrorOutlineIcon
                         width="14px"
                         height="14px"
@@ -140,13 +147,13 @@ export default function CustomSelectWidget({
                     </IconButton>
                   </CustomTextTooltip>
                 )}
-                {typeof schema?.description === 'string' && schema.description && (
+                {hasDescription && (
                   <CustomTextTooltip
                     flag={formContext?.overrideFlag}
                     title={schema.description}
-                    interactive={true}
+                    disableInteractive={false}
                   >
-                    <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
+                    <IconButton component="span" size="small" aria-label="Field help" tabIndex={0}>
                       <HelpOutlineIcon
                         width="14px"
                         height="14px"
@@ -170,66 +177,61 @@ export default function CustomSelectWidget({
               );
 
             return {
-              ...resolvedLegacy,
-              ...resolvedIncoming,
-              style: {
-                ...resolvedLegacy?.style,
-                ...resolvedIncoming?.style,
-                paddingRight: '0px',
-              },
+              ...inputProps,
+              // Keep the chevron in the select's own padding box; adornments follow it.
+              sx: [
+                {
+                  minWidth: 0,
+                  '& .MuiSelect-select': { minWidth: 0 },
+                  '& .MuiSelect-icon': { position: 'static', flexShrink: 0, ml: -3, mr: 1 },
+                },
+                ...(Array.isArray(inputProps.sx) ? inputProps.sx : [inputProps.sx]),
+              ],
               endAdornment: finalEndAdornment,
             };
           },
-          inputLabel: (ownerState: any) => {
-            const resolvedIncoming =
-              typeof incomingSlotProps.inputLabel === 'function'
-                ? incomingSlotProps.inputLabel(ownerState)
-                : incomingSlotProps.inputLabel || {};
-            const resolvedLegacy =
-              typeof legacyInputLabelProps === 'function'
-                ? legacyInputLabelProps(ownerState)
-                : legacyInputLabelProps || {};
-            return {
-              ...resolvedLegacy,
-              ...resolvedIncoming,
-              shrink: !isEmpty,
-            };
-          },
+          inputLabel: (ownerState) => ({
+            ...mergeSlots(ownerState, legacyInputLabelProps, incomingSlotProps.inputLabel),
+            shrink: !isEmpty,
+          }),
           select: (ownerState: any) => {
-            const resolvedIncoming =
-              typeof incomingSlotProps.select === 'function'
-                ? incomingSlotProps.select(ownerState)
-                : incomingSlotProps.select || {};
-            const resolvedLegacy =
-              typeof legacySelectProps === 'function'
-                ? legacySelectProps(ownerState)
-                : legacySelectProps || {};
-            const incomingMenuProps = resolvedIncoming.MenuProps || resolvedLegacy.MenuProps || {};
-            const incomingPaperSlot = incomingMenuProps.slotProps?.paper || {};
-            const incomingPaperProps = incomingMenuProps.PaperProps || {};
+            const legacy = resolveSlot(legacySelectProps, ownerState);
+            const incoming = resolveSlot(incomingSlotProps.select, ownerState);
+            const { PaperProps: _paperProps, ...menuProps } = mergeSlotProps(
+              incoming.MenuProps,
+              legacy.MenuProps || {},
+            );
 
             return {
-              ...resolvedLegacy,
-              ...resolvedIncoming,
+              ...mergeSlotProps(incoming, legacy),
               multiple: isMultiple,
               renderValue: (selected: any) => {
-                if (isMultiple && Array.isArray(selected)) {
-                  return selected.map((i: any, index: number) => {
-                    const rawLabel = enumOptions?.[i]?.label;
-                    const labelNode = React.isValidElement(rawLabel)
-                      ? rawLabel
-                      : safeDisplayValue(rawLabel);
-                    return (
-                      <React.Fragment key={i}>
-                        {labelNode}
-                        {index < selected.length - 1 ? ', ' : ''}
-                      </React.Fragment>
-                    );
-                  });
-                }
-                const idx = selected as number;
-                const rawLabel = enumOptions?.[idx]?.label;
-                return React.isValidElement(rawLabel) ? rawLabel : safeDisplayValue(rawLabel);
+                const indexes = isMultiple
+                  ? Array.isArray(selected)
+                    ? selected
+                    : String(selected).split(',').filter(Boolean)
+                  : [selected];
+                const labels = indexes.map((i, index) => (
+                  <React.Fragment key={i}>
+                    {index > 0 && ', '}
+                    {safeDisplayValue(enumOptions?.[i]?.label)}
+                  </React.Fragment>
+                ));
+                return (
+                  <CustomTextTooltip title={<>{labels}</>} flag={formContext?.overrideFlag}>
+                    <Box
+                      component="span"
+                      sx={{
+                        display: 'block',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {labels}
+                    </Box>
+                  </CustomTextTooltip>
+                );
               },
               MenuProps: {
                 anchorOrigin: {
@@ -240,24 +242,19 @@ export default function CustomSelectWidget({
                   vertical: 'top',
                   horizontal: 'left',
                 },
-                ...incomingMenuProps,
-                PaperProps: {
-                  ...incomingPaperProps,
-                  style: {
-                    ...incomingPaperProps.style,
-                    maxHeight: '400px',
-                  },
-                },
+                ...menuProps,
                 slotProps: {
-                  ...incomingMenuProps.slotProps,
-                  paper: {
-                    ...incomingPaperSlot,
-                    style: {
-                      ...incomingPaperProps.style,
-                      ...incomingPaperSlot.style,
-                      maxHeight: '400px',
-                    },
-                  },
+                  ...legacy.MenuProps?.slotProps,
+                  ...incoming.MenuProps?.slotProps,
+                  paper: (paperOwnerState) =>
+                    mergeSlots(
+                      paperOwnerState,
+                      { style: { maxHeight: '400px' } },
+                      legacy.MenuProps?.PaperProps,
+                      legacy.MenuProps?.slotProps?.paper,
+                      incoming.MenuProps?.PaperProps,
+                      incoming.MenuProps?.slotProps?.paper,
+                    ),
                 },
               },
             };
@@ -281,44 +278,41 @@ export default function CustomSelectWidget({
                   flexDirection: 'row',
                   alignItems: 'center',
                   flexWrap: 'nowrap',
-                  gap: '0.5rem',
-                  paddingRight: '2rem',
+                  gap: 1,
+                  minWidth: 0,
                 }}
               >
                 {isMultiple && (
                   <Checkbox
+                    tabIndex={-1}
+                    disableRipple
+                    slotProps={{ input: { 'aria-hidden': true } }}
                     checked={
                       Array.isArray(selectedIndexes) ? selectedIndexes.includes(String(i)) : false
                     }
                     sx={{
                       padding: 0,
                       flexShrink: 0,
-                      marginRight: '0.25rem',
                     }}
                   />
                 )}
                 <CustomTextTooltip
                   flag={formContext?.overrideFlag}
                   title={optionLabel}
-                  interactive={true}
+                  disableInteractive={false}
                 >
-                  <ListItemText
-                    primary={optionLabel}
-                    primaryTypographyProps={{
-                      noWrap: true,
-                      style: {
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      },
-                    }}
-                    style={{
-                      margin: 0,
+                  <Box
+                    component="span"
+                    sx={{
                       minWidth: 0,
-                      flex: '1 1 auto',
+                      flex: 1,
                       overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
                     }}
-                  />
+                  >
+                    {optionLabel}
+                  </Box>
                 </CustomTextTooltip>
               </MenuItem>
             );
