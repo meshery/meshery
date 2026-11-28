@@ -9,7 +9,7 @@ weight: -10
 Meshery runs as a set of containers on either a Kubernetes cluster or a Docker host. This guide installs Meshery's command line interface, `mesheryctl`, and uses it to start Meshery Server, then walks you through signing in and connecting your clusters.
 
 {{% alert color="warning" title="Quick Start Assumptions" %}}
-This guide downloads, installs, and runs Meshery with a single command, and assumes that your current kubeconfig context points at the cluster you want to use. For instructions specific to your environment, see all <a href='{{< ref "installation/_index.md" >}}'>supported platforms</a>.
+This guide downloads, installs, and runs Meshery with a single command, and assumes that your current kubeconfig context points at the cluster you want to use. A kubeconfig is a settings file on your computer that tells tools like Meshery how to reach your Kubernetes clusters, and the context is the set of cluster access settings currently selected in it. For instructions specific to your environment, see all <a href='{{< ref "installation/_index.md" >}}'>supported platforms</a>.
 {{% /alert %}}
 
 ## 1. Download, install, and run Meshery
@@ -38,7 +38,7 @@ On macOS or Linux, run the following command to download and install `mesheryctl
 
 To run Meshery on your local Docker host instead, replace `PLATFORM=kubernetes` with `PLATFORM=docker`. If you omit `PLATFORM`, the script prompts you to choose a platform.
 
-On Windows, add the Meshery bucket to <a href="https://scoop.sh">Scoop</a>, install `mesheryctl`, and start Meshery:
+On Windows, add the Meshery bucket to <a href="https://scoop.sh">Scoop</a> (a command-line installer for Windows, similar to Homebrew on macOS), install `mesheryctl`, and start Meshery:
 
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -77,7 +77,7 @@ Choose one of the listed [Providers]({{< ref "reference/extensibility/providers/
 ## 4. Configure Connections to your Kubernetes Clusters
 
 **Out-of-Cluster Deployments**
-If you deployed Meshery out-of-cluster, Meshery Server automatically tries to connect to the Kubernetes clusters in your kubeconfig (`$HOME/.kube/config`) and in any kubeconfig files you upload through Meshery UI. By default, [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) runs embedded inside Meshery Server and nothing is installed into your cluster. Only when a connection uses operator mode does Meshery Server deploy [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}), MeshSync, and Broker into the `meshery` namespace. To switch a connection between the two, see [MeshSync deployment modes]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#meshsync-deployment-modes" >}}).
+If you deployed Meshery out-of-cluster (meaning Meshery Server runs outside the cluster it manages, for example in Docker on your own computer), Meshery Server automatically tries to connect to the Kubernetes clusters in your kubeconfig (`$HOME/.kube/config`) and in any kubeconfig files you upload through Meshery UI. By default, [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) runs embedded inside Meshery Server and nothing is installed into your cluster. Only when a connection uses operator mode does Meshery Server deploy [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}), MeshSync, and Broker into the `meshery` namespace. To switch a connection between the two, see [MeshSync deployment modes]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#meshsync-deployment-modes" >}}).
 
 **In-Cluster Deployments**
 If you deployed Meshery in-cluster, Meshery Server automatically connects to the API server of the cluster it runs in.
