@@ -29,6 +29,7 @@ describe('usePreventUserFromLeavingPage', () => {
   beforeEach(() => {
     originalOnBeforeUnload = window.onbeforeunload;
     originalConfirm = window.confirm;
+    window.onbeforeunload = null;
     window.confirm = vi.fn(() => true);
     routerInstance.change = undefined;
     (RouterPrototype.change as unknown as ReturnType<typeof vi.fn>).mockClear();
@@ -49,14 +50,14 @@ describe('usePreventUserFromLeavingPage', () => {
     expect(typeof routerInstance.change).toBe('function');
   });
 
-  it('skips installation when starting disabled', () => {
-    renderHook(() => usePreventUserFromLeavingPage(false));
+  it('skips installation when starting disabled and leaves handler null on unmount', () => {
+    const { unmount } = renderHook(() => usePreventUserFromLeavingPage(false));
 
-    // onbeforeunload was assigned a noop, not the confirmation function.
-    expect(typeof window.onbeforeunload).toBe('function');
-    const result = (window.onbeforeunload as () => unknown)();
-    expect(result).toBeUndefined();
+    expect(window.onbeforeunload).toBeNull();
     expect(routerInstance.change).toBeUndefined();
+
+    unmount();
+    expect(window.onbeforeunload).toBeNull();
   });
 
   it('routes navigation through prototype.change when the user confirms', async () => {
@@ -78,6 +79,63 @@ describe('usePreventUserFromLeavingPage', () => {
     expect(ret).toBe(false);
   });
 
+  it('blocks navigation fail-safe when window.confirm is unavailable', async () => {
+    renderHook(() => usePreventUserFromLeavingPage(true));
+    // @ts-expect-error simulating missing confirm function
+    window.confirm = undefined;
+
+    const ret = await routerInstance.change!('/new');
+    expect(RouterPrototype.change).not.toHaveBeenCalled();
+    expect(ret).toBe(false);
+  });
+
+  it('keeps handlers active across overlapping enabled instances regardless of unmount order', () => {
+    const first = renderHook(() => usePreventUserFromLeavingPage(true));
+    const second = renderHook(() => usePreventUserFromLeavingPage(true));
+
+    expect(typeof window.onbeforeunload).toBe('function');
+    expect(typeof routerInstance.change).toBe('function');
+
+    // Unmounting the second instance first must preserve handlers for the first.
+    second.unmount();
+    expect(typeof window.onbeforeunload).toBe('function');
+    expect(typeof routerInstance.change).toBe('function');
+
+    // Unmounting the remaining instance clears both handlers.
+    first.unmount();
+    expect(window.onbeforeunload).toBeNull();
+    expect(routerInstance.change).toBeUndefined();
+
+    // Reverse unmount order: first unmounts while second stays active.
+    const a = renderHook(() => usePreventUserFromLeavingPage(true));
+    const b = renderHook(() => usePreventUserFromLeavingPage(true));
+    a.unmount();
+    expect(typeof window.onbeforeunload).toBe('function');
+    expect(typeof routerInstance.change).toBe('function');
+    b.unmount();
+    expect(window.onbeforeunload).toBeNull();
+    expect(routerInstance.change).toBeUndefined();
+  });
+
+  it('does not clear external handlers when unmounting a disabled or superseded instance', () => {
+    const first = renderHook(() => usePreventUserFromLeavingPage(true));
+    const externalUnload = vi.fn();
+    const externalChange = vi.fn();
+    window.onbeforeunload = externalUnload;
+    routerInstance.change = externalChange;
+
+    first.unmount();
+    expect(window.onbeforeunload).toBe(externalUnload);
+    expect(routerInstance.change).toBe(externalChange);
+
+    const disabled = renderHook(() => usePreventUserFromLeavingPage(false));
+    routerInstance.change = externalChange;
+    window.onbeforeunload = externalUnload;
+    disabled.unmount();
+    expect(window.onbeforeunload).toBe(externalUnload);
+    expect(routerInstance.change).toBe(externalChange);
+  });
+
   it('clears the router.change override on unmount', () => {
     const { unmount } = renderHook(() => usePreventUserFromLeavingPage(true));
     expect(routerInstance.change).toBeDefined();
@@ -85,9 +143,31 @@ describe('usePreventUserFromLeavingPage', () => {
     expect(routerInstance.change).toBeUndefined();
   });
 
-  it('returns a setter that toggles the prevention state and re-runs the effect', () => {
-    const { result } = renderHook(() => usePreventUserFromLeavingPage(false));
+  it('clears window.onbeforeunload on unmount', () => {
+    const { unmount } = renderHook(() => usePreventUserFromLeavingPage(true));
+    expect(typeof window.onbeforeunload).toBe('function');
+    unmount();
+    expect(window.onbeforeunload).toBeNull();
+  });
+
+  it('safely handles missing or nullish SingletonRouter.router without throwing', () => {
+    const originalRouter = hoisted.singleton.router;
+    try {
+      // @ts-expect-error testing runtime missing router
+      hoisted.singleton.router = null;
+      expect(() => {
+        const { unmount } = renderHook(() => usePreventUserFromLeavingPage(true));
+        unmount();
+      }).not.toThrow();
+    } finally {
+      hoisted.singleton.router = originalRouter;
+    }
+  });
+
+  it('returns a setter that toggles the prevention state and leaves handler null after disabling and unmount', () => {
+    const { result, unmount } = renderHook(() => usePreventUserFromLeavingPage(false));
     expect(routerInstance.change).toBeUndefined();
+    expect(window.onbeforeunload).toBeNull();
 
     act(() => {
       result.current(true);
@@ -99,7 +179,10 @@ describe('usePreventUserFromLeavingPage', () => {
     act(() => {
       result.current(false);
     });
-    // The effect cleanup runs and the new effect installs an inert noop handler.
     expect(routerInstance.change).toBeUndefined();
+    expect(window.onbeforeunload).toBeNull();
+
+    unmount();
+    expect(window.onbeforeunload).toBeNull();
   });
 });
