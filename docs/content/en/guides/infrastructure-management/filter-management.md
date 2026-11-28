@@ -25,6 +25,8 @@ Meshery stores Envoy WebAssembly (WASM) filters alongside your designs, so you c
    - **File Upload**: select the `.wasm` file on your machine.
    - **URL Upload**: paste the URL that serves the file.
 5. Click **Import**.
+
+URL imports are restricted to public HTTP(S) destinations and have bounded response size and request time. See [Remote URL imports]({{< ref "installation/production/security-hardening.md#remote-url-imports" >}}) for the limits.
 {{% /tab %}}
 {{% tab header="mesheryctl" %}}
 Import from a local file or a URL:

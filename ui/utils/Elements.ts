@@ -4,11 +4,20 @@ import React from 'react';
 
 // recursively check if element or any of its parent has the class
 export const hasClass = (element, className) => {
+  if (!element || typeof className !== 'string' || !className.trim()) {
+    return false;
+  }
   try {
-    if (typeof element?.className == 'string' && element?.className?.includes(className)) {
+    const rawClass =
+      typeof element.className === 'string'
+        ? element.className
+        : typeof element.className?.baseVal === 'string'
+          ? element.className.baseVal
+          : '';
+    if (rawClass && rawClass.includes(className)) {
       return true;
     }
-    if (element?.parentElement) {
+    if (element.parentElement) {
       return hasClass(element.parentElement, className);
     }
   } catch (e) {
@@ -21,11 +30,25 @@ export const hasClass = (element, className) => {
 // This is required to prevent the clickaway listener from blocking the click event
 // on the notification center IconButton create it as a HOC and use react.cloneElement to add the class
 export const AddClassRecursively = ({ children, className }) => {
+  const trimmedClassName = typeof className === 'string' ? className.trim() : '';
+  if (!trimmedClassName) {
+    return children;
+  }
   return React.Children.map(children, (child) => {
     if (React.isValidElement(child)) {
+      const existingClassName =
+        typeof (child.props as { className?: unknown })?.className === 'string'
+          ? (child.props as { className?: string }).className.trim()
+          : '';
+      const combinedClassName = existingClassName
+        ? `${existingClassName} ${trimmedClassName}`
+        : trimmedClassName;
       return React.cloneElement(child, {
-        className: `${child.props.className} ${className}`,
-        children: AddClassRecursively({ children: child.props.children, className }),
+        className: combinedClassName,
+        children: AddClassRecursively({
+          children: (child.props as { children?: React.ReactNode })?.children,
+          className: trimmedClassName,
+        }),
       });
     }
 

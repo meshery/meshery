@@ -744,6 +744,103 @@ func TestGetContext_RedactsCredentials(t *testing.T) {
 	}
 }
 
+func TestGetContext_NotFoundReturns404(t *testing.T) {
+	h := &Handler{
+		log: newTestLogger(t),
+	}
+
+	testCases := []struct {
+		name        string
+		errToReturn error
+	}{
+		{
+			name:        "gorm ErrRecordNotFound",
+			errToReturn: gorm.ErrRecordNotFound,
+		},
+		{
+			name:        "models ErrResultNotFound",
+			errToReturn: models.ErrResultNotFound(errors.New("not found")),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			contextID := uuid.Must(uuid.NewV4())
+			mockP := &mockContextsProvider{
+				getK8sContextFn: func(token, id string) (models.K8sContext, error) {
+					return models.K8sContext{}, tc.errToReturn
+				},
+			}
+
+			reqCtx := context.WithValue(context.Background(), models.TokenCtxKey, "test-token")
+			req := httptest.NewRequest(http.MethodGet, "/api/system/kubernetes/contexts/"+contextID.String(), nil)
+			req = req.WithContext(reqCtx)
+			req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
+			rec := httptest.NewRecorder()
+
+			h.GetContext(rec, req, nil, nil, mockP)
+
+			if rec.Code != http.StatusNotFound {
+				t.Fatalf("expected status %d, got %d. body: %s", http.StatusNotFound, rec.Code, rec.Body.String())
+			}
+			if !strings.Contains(rec.Body.String(), models.ErrResultNotFoundCode) {
+				t.Errorf("expected error code %s in body, got: %s", models.ErrResultNotFoundCode, rec.Body.String())
+			}
+		})
+	}
+}
+
+func TestDeleteContext_NotFoundReturns404(t *testing.T) {
+	systemID := uuid.Must(uuid.NewV4())
+	userID := uuid.Must(uuid.NewV4())
+	h := &Handler{
+		config:   &models.HandlerConfig{EventBroadcaster: &models.Broadcast{}},
+		log:      newTestLogger(t),
+		SystemID: &systemID,
+	}
+
+	testCases := []struct {
+		name        string
+		errToReturn error
+	}{
+		{
+			name:        "gorm ErrRecordNotFound",
+			errToReturn: gorm.ErrRecordNotFound,
+		},
+		{
+			name:        "models ErrResultNotFound",
+			errToReturn: models.ErrResultNotFound(errors.New("not found")),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			mockP := &mockContextsProvider{
+				DefaultLocalProvider: &models.DefaultLocalProvider{},
+				getK8sContextFn: func(token, id string) (models.K8sContext, error) {
+					return models.K8sContext{}, tc.errToReturn
+				},
+			}
+
+			contextID := uuid.Must(uuid.NewV4())
+			req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+contextID.String(), nil)
+			req = mux.SetURLVars(req, map[string]string{"id": contextID.String()})
+			ctx := context.WithValue(req.Context(), models.TokenCtxKey, "test-token")
+			req = req.WithContext(ctx)
+			rec := httptest.NewRecorder()
+
+			h.DeleteContext(rec, req, nil, &models.User{ID: userID}, mockP)
+
+			if rec.Code != http.StatusNotFound {
+				t.Fatalf("expected status %d, got %d. body: %s", http.StatusNotFound, rec.Code, rec.Body.String())
+			}
+			if !strings.Contains(rec.Body.String(), models.ErrResultNotFoundCode) {
+				t.Errorf("expected error code %s in body, got: %s", models.ErrResultNotFoundCode, rec.Body.String())
+			}
+		})
+	}
+}
+
 func TestGetAllContexts_NilProvider(t *testing.T) {
 	h := &Handler{
 		log: newTestLogger(t),

@@ -81,7 +81,15 @@ components:
   colorIcon: extensions/models/gatekeeper/components/sync-set/icons/color/sync-set-color.svg
   whiteIcon: extensions/models/gatekeeper/components/sync-set/icons/white/sync-set-white.svg
   description: 
-components-count: 18
+- name: audit-trigger
+  colorIcon: extensions/models/gatekeeper/components/audit-trigger/icons/color/audit-trigger-color.svg
+  whiteIcon: extensions/models/gatekeeper/components/audit-trigger/icons/white/audit-trigger-white.svg
+  description: 
+- name: audit-trigger
+  colorIcon: extensions/models/gatekeeper/components/audit-trigger/icons/color/audit-trigger-color.svg
+  whiteIcon: extensions/models/gatekeeper/components/audit-trigger/icons/white/audit-trigger-white.svg
+  description: 
+components-count: 20
 relationships: 
 relationship-count: 0
 featureList: [

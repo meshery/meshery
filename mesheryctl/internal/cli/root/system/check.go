@@ -126,12 +126,19 @@ var linkDocCheck = map[string]string{
 	"caption": "Usage of mesheryctl system check",
 }
 
+var checkUsageMsg = "Usage: mesheryctl system check [flags]\nRun 'mesheryctl system check --help' to see detailed help message"
+
 var checkCmd = &cobra.Command{
 	Use:   "check",
 	Short: "Pre-deployment and post-deployment healthchecks for Meshery",
 	Long: `Verify environment pre/post-deployment of Meshery.
 Find more information at: https://docs.meshery.io/reference/mesheryctl/system/check`,
-	Args: cobra.MaximumNArgs(1),
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", checkUsageMsg))
+		}
+		return nil
+	},
 	Example: `
 // Run all system checks for both pre and post-deployment scenarios
 mesheryctl system check
@@ -543,6 +550,10 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		if err != nil {
 			return errors.Errorf("\n  Unable to unmarshal data: %v", err)
 		}
+		// A body of null decodes without error but leaves serverVersion nil.
+		if serverVersion == nil {
+			return errors.New("\n  Invalid response: the server returned no version information")
+		}
 
 		isOutdated, _, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
 		if err != nil {
@@ -747,6 +758,9 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		}
 	}
 	if len(adapters) == 0 {
+		if adapterName != "" {
+			return utils.ErrInvalidArgument(fmt.Errorf("adapter %q is not configured in the current context", adapterName))
+		}
 		utils.Log.Info("- No components configured in current context")
 		return nil
 	}

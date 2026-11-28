@@ -200,7 +200,7 @@
       if (
         window.matchMedia("(max-width: 37.5em)").matches &&
         document.querySelector(".left-container.left-container--active") &&
-        (event.target.closest("#td-sidebar-menu a") || event.target.closest("#td-sidebar-menu button"))
+        event.target.closest("#td-sidebar-menu a[href]")
       ) {
         var toggle = document.getElementById("toggleBtnSidebarNav");
         if (toggle) toggle.click();

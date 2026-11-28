@@ -120,6 +120,7 @@ type MachineCtx struct {
 	K8scontextChannel  *models.K8scontextChan
 	RegistryManager    *meshmodel.RegistryManager
 	setupLock          sync.Mutex
+	lifecycleLock      sync.Mutex
 	setupInProgress    bool
 	retryPending       bool
 	disconnected       bool
@@ -144,6 +145,44 @@ func (m *MachineCtx) IsDisconnected() bool {
 	m.setupLock.Lock()
 	defer m.setupLock.Unlock()
 	return m.disconnected
+}
+
+// SetDisconnected updates the connection lifecycle state while serializing
+// against cache flushes. Always acquire lifecycleLock before setupLock.
+func (m *MachineCtx) SetDisconnected(disconnected bool) {
+	m.lifecycleLock.Lock()
+	defer m.lifecycleLock.Unlock()
+
+	m.setupLock.Lock()
+	m.disconnected = disconnected
+	if disconnected {
+		m.retryPending = false
+	}
+	m.setupLock.Unlock()
+}
+
+// WithConnectedK8sContext runs fn with a consistent Kubernetes context snapshot
+// while preventing the connection from transitioning to disconnected. The
+// lifecycle lock is released when fn returns; callers should keep fn limited
+// to the operation that must be atomic with respect to disconnect.
+func (m *MachineCtx) WithConnectedK8sContext(fn func(models.K8sContext) error) (bool, error) {
+	m.lifecycleLock.Lock()
+	defer m.lifecycleLock.Unlock()
+
+	m.setupLock.Lock()
+	if m.disconnected {
+		m.setupLock.Unlock()
+		return false, nil
+	}
+	k8sCtx := m.K8sContext
+	m.setupLock.Unlock()
+
+	if fn != nil {
+		if err := fn(k8sCtx); err != nil {
+			return true, err
+		}
+	}
+	return true, nil
 }
 
 // K8sContextSnapshot returns a copy of K8sContext taken under setupLock, so a

@@ -79,8 +79,11 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 	}
 	regChan := models.GetMeshSyncRegistrationQueue().RegChan
 
-	for regData := range regChan {
-		go func(data models.MeshSyncRegistrationData) {
+	for data := range regChan {
+		// One registration per goroutine, driven by objects MeshSync reports from the
+		// cluster. SafeGo contains a panic raised by one malformed object, so it costs
+		// that registration and not the server.
+		helpers.SafeGo("auto-registration", arh.log, func() {
 			// Ideally iterate all Connection defs, extract fingerprint composite key and try to match with the given obj,
 			// For all connections that match the fingerprint and autoRegsiter is set to true, try to do auto registration.
 
@@ -160,7 +163,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 				}
 
 			}
-		}(regData)
+		})
 	}
 }
 

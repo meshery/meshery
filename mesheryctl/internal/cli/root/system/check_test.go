@@ -2,6 +2,7 @@ package system
 
 import (
 	"flag"
+	"fmt"
 	"path/filepath"
 	"reflect"
 	"runtime"
@@ -9,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshkit/errors"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -83,5 +85,45 @@ func TestPreflightCmdIntegration(t *testing.T) {
 			assert.Equal(t, expectedResponse, actualResponse)
 		})
 		t.Log("PreflightCmdIntegration Test Passed")
+	}
+}
+
+func TestCheckCmdArgs(t *testing.T) {
+	tests := []struct {
+		Name          string
+		Args          []string
+		ExpectError   bool
+		ExpectedError error
+	}{
+		{
+			Name:        "valid with no positional arguments",
+			Args:        []string{},
+			ExpectError: false,
+		},
+		{
+			Name:          "invalid with unexpected positional argument",
+			Args:          []string{"unexpected-arg"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", checkUsageMsg)),
+		},
+		{
+			Name:          "invalid with multiple unexpected positional arguments",
+			Args:          []string{"arg1", "arg2"},
+			ExpectError:   true,
+			ExpectedError: utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", checkUsageMsg)),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			err := checkCmd.Args(checkCmd, tt.Args)
+			if tt.ExpectError {
+				assert.Error(t, err)
+				assert.Equal(t, utils.ErrInvalidArgumentCode, errors.GetCode(err))
+				utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Masterminds/semver/v3"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/utils"
@@ -64,10 +65,27 @@ func CheckLatestVersion(serverVersion string) (*bool, string, error) {
 	}
 	latestVersion := latestVersions[len(latestVersions)-1]
 	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
-	if latestVersion != serverVersion {
-		isOutdated = true
-		return &isOutdated, latestVersion, nil
-	}
-
+	isOutdated = isCoreVersionOutdated(serverVersion, latestVersion)
 	return &isOutdated, latestVersion, nil
+}
+
+// isCoreVersionOutdated reports whether serverVersion's core vX.Y.Z is
+// strictly older than latestVersion's. Prerelease or revision suffixes
+// (for example the "-1" on a kanvas-channel build "v1.0.82-1") and build
+// metadata are ignored, so a server at v1.0.82-1 is not outdated relative
+// to GitHub release v1.0.82. A newer or equal core is not outdated. If
+// either string is not a semver version, the result falls back to exact
+// string inequality, which is the previous comparison.
+func isCoreVersionOutdated(serverVersion, latestVersion string) bool {
+	server, err := semver.NewVersion(serverVersion)
+	if err != nil {
+		return latestVersion != serverVersion
+	}
+	latest, err := semver.NewVersion(latestVersion)
+	if err != nil {
+		return latestVersion != serverVersion
+	}
+	serverCore := semver.New(server.Major(), server.Minor(), server.Patch(), "", "")
+	latestCore := semver.New(latest.Major(), latest.Minor(), latest.Patch(), "", "")
+	return serverCore.LessThan(latestCore)
 }
