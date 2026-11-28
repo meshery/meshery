@@ -648,13 +648,35 @@ $method-head: #7d8790;
     text-transform: uppercase;
   }
 
-  .rest-api-try-item__url {
-    display: block;
+  .rest-api-try-item__url-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     width: 100%;
-    padding: 0.8rem 0.95rem;
+    padding: 0.35rem 0.5rem 0.35rem 0.95rem;
     border-radius: 0.9rem;
     border: 1px solid var(--color-grey-light);
     background: var(--color-primary-medium);
+
+    .btn-copy-wrap {
+      flex-shrink: 0;
+    }
+
+    .clipbtn i.fa-copy::before {
+      color: var(--color-secondary-medium);
+    }
+  }
+
+  .rest-api-try-item__url {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    width: auto;
+    padding: 0.45rem 0;
+    margin: 0;
+    color: var(--color-secondary-dark);
+    white-space: normal;
+    background: transparent;
   }
 
   .rest-api-variant-grid {

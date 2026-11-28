@@ -53,21 +53,29 @@ function HideToggleFunction() {
 
 /*clipboard*/
 
-// Extend clipboard support to standard Hugo/Chroma fenced code blocks.
+// Extend clipboard support to standard Hugo/Chroma fenced code blocks and bare <pre> blocks.
 // Hugo renders ``` fences as <pre class="chroma"><code> without the
 // .clipboardjs class, so the existing clipboard hook misses them.
-// This block adds .clipboardjs to every <code> inside a <pre> that is
-// not already handled. The getcodeelement.each() loop below then injects
-// the copy button, so nothing is injected here.
-// Fixes: https://github.com/meshery/meshery/issues/22425
+// Some pages also have <pre class="codeblock-pre"><div class="codeblock"> without
+// a .clipboardjs child, or bare <pre> blocks with raw text and no <code> child.
+// The getcodeelement.each() loop below injects the copy button inside each block.
+// Related: https://github.com/meshery/meshery/issues/22425, https://github.com/meshery/meshery/issues/24537
 (function addClipboardToStandardCodeBlocks() {
     $('pre').each(function () {
         var $pre = $(this);
         // Skip blocks that already have or contain .clipboardjs
         if ($pre.hasClass('clipboardjs') || $pre.find('.clipboardjs').length) return;
         var $code = $pre.find('code');
-        if (!$code.length) return;
-        $code.addClass('clipboardjs');
+        if ($code.length) {
+            $code.addClass('clipboardjs');
+            return;
+        }
+        var $codeblock = $pre.children('.codeblock');
+        if ($codeblock.length) {
+            $codeblock.addClass('clipboardjs');
+            return;
+        }
+        $pre.wrapInner('<code class="clipboardjs"></code>');
     });
 })();
 
@@ -83,7 +91,7 @@ getcodeelement.each(function () {
 
 var clipboard = new Clipboard('.clipbtn', {
     text: function (trigger) {
-        var container = trigger.closest('pre') || trigger.closest('.highlight');
+        var container = trigger.closest('pre') || trigger.closest('.highlight') || trigger.closest('.rest-api-try-item__url-wrap');
         var content = container ? container.querySelector('.clipboardjs') : null;
         var text = content ? content.textContent : '';
         return text.trim().replace(/^\s*\$\s+/gm, '');
