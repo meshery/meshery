@@ -115,7 +115,8 @@
 
     $(document).ready(function () {
         const urlParams = new URLSearchParams(window.location.search);
-        const searchQuery = urlParams.get('q');
+        const rawQuery = urlParams.get('q');
+        const searchQuery = rawQuery ? rawQuery.trim() : '';
         const $resultsContainer = $('#search-results');
         const $loading = $('#search-loading');
         const $title = $('#search-title');
