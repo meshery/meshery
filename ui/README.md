@@ -45,7 +45,7 @@ const { tableState, updateTableState, copyRowDeepLink } = useTableUrlState({
 
 #### `useColumnVisibilityPreference` — localStorage-backed column visibility
 
-Located at `utils/hooks/useColumnVisibilityPreference.ts`. User-initiated column toggles are persisted to `localStorage` under a `meshery_cols_<tableKey>` key. Responsive-layout updates (e.g. hiding columns at narrow widths) are applied on top without overwriting saved preferences.
+Located at `utils/hooks/useColumnVisibilityPreference.ts`. User-initiated boolean column toggles are persisted to `localStorage` under a `meshery_cols_<tableKey>` key. Malformed stored values are ignored, and responsive-layout updates are merged only for columns included in the current layout, so a stored preference cannot restore an omitted column.
 
 ```tsx
 const { columnVisibility, setColumnVisibilityByUser, setColumnVisibilityByResponsive } =
