@@ -26,7 +26,7 @@ To get started quickly, check out the [Creating Models]({{< ref "guides/configur
 
 ### Next Steps
 
-To learn more about how to contribute and customize your models, check out the full [Contributing to Models]({{< ref "project/contributing/models" >}}) documentation. We encourage you to get involved in the development of Meshery Models and to share your feedback!
+To learn more about how to contribute and customize your models, check out the full [Contributing to Models]({{< ref "project/contributing/models/models/index.md" >}}) documentation. We encourage you to get involved in the development of Meshery Models and to share your feedback!
 
 {{% alert color="info" title="Meshery Models are Extensible" %}}
 Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community.
